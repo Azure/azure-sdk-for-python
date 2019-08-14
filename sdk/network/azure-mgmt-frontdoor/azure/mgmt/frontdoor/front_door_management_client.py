@@ -25,6 +25,7 @@ from .operations.load_balancing_settings_operations import LoadBalancingSettings
 from .operations.backend_pools_operations import BackendPoolsOperations
 from .operations.frontend_endpoints_operations import FrontendEndpointsOperations
 from .operations.endpoints_operations import EndpointsOperations
+from .operations.rules_engines_operations import RulesEnginesOperations
 from .operations.policies_operations import PoliciesOperations
 from .operations.managed_rule_sets_operations import ManagedRuleSetsOperations
 from . import models
@@ -84,6 +85,8 @@ class FrontDoorManagementClient(SDKClient):
     :vartype frontend_endpoints: azure.mgmt.frontdoor.operations.FrontendEndpointsOperations
     :ivar endpoints: Endpoints operations
     :vartype endpoints: azure.mgmt.frontdoor.operations.EndpointsOperations
+    :ivar rules_engines: RulesEngines operations
+    :vartype rules_engines: azure.mgmt.frontdoor.operations.RulesEnginesOperations
     :ivar policies: Policies operations
     :vartype policies: azure.mgmt.frontdoor.operations.PoliciesOperations
     :ivar managed_rule_sets: ManagedRuleSets operations
@@ -123,6 +126,8 @@ class FrontDoorManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.endpoints = EndpointsOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.rules_engines = RulesEnginesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.policies = PoliciesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.managed_rule_sets = ManagedRuleSetsOperations(
@@ -151,7 +156,7 @@ class FrontDoorManagementClient(SDKClient):
         """
         check_front_door_name_availability_input = models.CheckNameAvailabilityInput(name=name, type=type)
 
-        api_version = "2019-05-01"
+        api_version = "2019-08-01"
 
         # Construct URL
         url = self.check_front_door_name_availability.metadata['url']
@@ -216,7 +221,7 @@ class FrontDoorManagementClient(SDKClient):
         """
         check_front_door_name_availability_input = models.CheckNameAvailabilityInput(name=name, type=type)
 
-        api_version = "2019-05-01"
+        api_version = "2019-08-01"
 
         # Construct URL
         url = self.check_front_door_name_availability_with_subscription.metadata['url']

@@ -16,6 +16,7 @@ from .load_balancing_settings_operations import LoadBalancingSettingsOperations
 from .backend_pools_operations import BackendPoolsOperations
 from .frontend_endpoints_operations import FrontendEndpointsOperations
 from .endpoints_operations import EndpointsOperations
+from .rules_engines_operations import RulesEnginesOperations
 from .policies_operations import PoliciesOperations
 from .managed_rule_sets_operations import ManagedRuleSetsOperations
 
@@ -27,6 +28,7 @@ __all__ = [
     'BackendPoolsOperations',
     'FrontendEndpointsOperations',
     'EndpointsOperations',
+    'RulesEnginesOperations',
     'PoliciesOperations',
     'ManagedRuleSetsOperations',
 ]

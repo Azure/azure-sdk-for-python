@@ -32,6 +32,9 @@ class FrontDoorUpdateParameters(Model):
     :param frontend_endpoints: Frontend endpoints available to routing rules.
     :type frontend_endpoints:
      list[~azure.mgmt.frontdoor.models.FrontendEndpoint]
+    :param rules_engines: Rules Engine Configurations available to routing
+     rules.
+    :type rules_engines: list[~azure.mgmt.frontdoor.models.RulesEngine]
     :param backend_pools_settings: Settings for all backendPools
     :type backend_pools_settings:
      ~azure.mgmt.frontdoor.models.BackendPoolsSettings
@@ -49,6 +52,7 @@ class FrontDoorUpdateParameters(Model):
         'health_probe_settings': {'key': 'healthProbeSettings', 'type': '[HealthProbeSettingsModel]'},
         'backend_pools': {'key': 'backendPools', 'type': '[BackendPool]'},
         'frontend_endpoints': {'key': 'frontendEndpoints', 'type': '[FrontendEndpoint]'},
+        'rules_engines': {'key': 'rulesEngines', 'type': '[RulesEngine]'},
         'backend_pools_settings': {'key': 'backendPoolsSettings', 'type': 'BackendPoolsSettings'},
         'enabled_state': {'key': 'enabledState', 'type': 'str'},
     }
@@ -61,5 +65,6 @@ class FrontDoorUpdateParameters(Model):
         self.health_probe_settings = kwargs.get('health_probe_settings', None)
         self.backend_pools = kwargs.get('backend_pools', None)
         self.frontend_endpoints = kwargs.get('frontend_endpoints', None)
+        self.rules_engines = kwargs.get('rules_engines', None)
         self.backend_pools_settings = kwargs.get('backend_pools_settings', None)
         self.enabled_state = kwargs.get('enabled_state', None)

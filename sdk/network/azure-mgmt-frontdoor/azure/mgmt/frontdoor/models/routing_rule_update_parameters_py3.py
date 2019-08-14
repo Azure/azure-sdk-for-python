@@ -29,6 +29,9 @@ class RoutingRuleUpdateParameters(Model):
      ~azure.mgmt.frontdoor.models.RoutingRuleEnabledState
     :param route_configuration: A reference to the routing configuration.
     :type route_configuration: ~azure.mgmt.frontdoor.models.RouteConfiguration
+    :param rules_engine: A reference to a specific Rules Engine Configuration
+     to apply to this route.
+    :type rules_engine: ~azure.mgmt.frontdoor.models.SubResource
     """
 
     _attribute_map = {
@@ -37,12 +40,14 @@ class RoutingRuleUpdateParameters(Model):
         'patterns_to_match': {'key': 'patternsToMatch', 'type': '[str]'},
         'enabled_state': {'key': 'enabledState', 'type': 'str'},
         'route_configuration': {'key': 'routeConfiguration', 'type': 'RouteConfiguration'},
+        'rules_engine': {'key': 'rulesEngine', 'type': 'SubResource'},
     }
 
-    def __init__(self, *, frontend_endpoints=None, accepted_protocols=None, patterns_to_match=None, enabled_state=None, route_configuration=None, **kwargs) -> None:
+    def __init__(self, *, frontend_endpoints=None, accepted_protocols=None, patterns_to_match=None, enabled_state=None, route_configuration=None, rules_engine=None, **kwargs) -> None:
         super(RoutingRuleUpdateParameters, self).__init__(**kwargs)
         self.frontend_endpoints = frontend_endpoints
         self.accepted_protocols = accepted_protocols
         self.patterns_to_match = patterns_to_match
         self.enabled_state = enabled_state
         self.route_configuration = route_configuration
+        self.rules_engine = rules_engine

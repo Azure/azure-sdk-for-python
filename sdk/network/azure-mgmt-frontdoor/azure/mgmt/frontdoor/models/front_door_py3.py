@@ -46,6 +46,9 @@ class FrontDoor(Resource):
     :param frontend_endpoints: Frontend endpoints available to routing rules.
     :type frontend_endpoints:
      list[~azure.mgmt.frontdoor.models.FrontendEndpoint]
+    :param rules_engines: Rules Engine Configurations available to routing
+     rules.
+    :type rules_engines: list[~azure.mgmt.frontdoor.models.RulesEngine]
     :param backend_pools_settings: Settings for all backendPools
     :type backend_pools_settings:
      ~azure.mgmt.frontdoor.models.BackendPoolsSettings
@@ -85,6 +88,7 @@ class FrontDoor(Resource):
         'health_probe_settings': {'key': 'properties.healthProbeSettings', 'type': '[HealthProbeSettingsModel]'},
         'backend_pools': {'key': 'properties.backendPools', 'type': '[BackendPool]'},
         'frontend_endpoints': {'key': 'properties.frontendEndpoints', 'type': '[FrontendEndpoint]'},
+        'rules_engines': {'key': 'properties.rulesEngines', 'type': '[RulesEngine]'},
         'backend_pools_settings': {'key': 'properties.backendPoolsSettings', 'type': 'BackendPoolsSettings'},
         'enabled_state': {'key': 'properties.enabledState', 'type': 'str'},
         'resource_state': {'key': 'properties.resourceState', 'type': 'str'},
@@ -92,7 +96,7 @@ class FrontDoor(Resource):
         'cname': {'key': 'properties.cname', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str=None, tags=None, friendly_name: str=None, routing_rules=None, load_balancing_settings=None, health_probe_settings=None, backend_pools=None, frontend_endpoints=None, backend_pools_settings=None, enabled_state=None, resource_state=None, **kwargs) -> None:
+    def __init__(self, *, location: str=None, tags=None, friendly_name: str=None, routing_rules=None, load_balancing_settings=None, health_probe_settings=None, backend_pools=None, frontend_endpoints=None, rules_engines=None, backend_pools_settings=None, enabled_state=None, resource_state=None, **kwargs) -> None:
         super(FrontDoor, self).__init__(location=location, tags=tags, **kwargs)
         self.friendly_name = friendly_name
         self.routing_rules = routing_rules
@@ -100,6 +104,7 @@ class FrontDoor(Resource):
         self.health_probe_settings = health_probe_settings
         self.backend_pools = backend_pools
         self.frontend_endpoints = frontend_endpoints
+        self.rules_engines = rules_engines
         self.backend_pools_settings = backend_pools_settings
         self.enabled_state = enabled_state
         self.resource_state = resource_state

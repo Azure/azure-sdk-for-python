@@ -32,6 +32,9 @@ class FrontDoorUpdateParameters(Model):
     :param frontend_endpoints: Frontend endpoints available to routing rules.
     :type frontend_endpoints:
      list[~azure.mgmt.frontdoor.models.FrontendEndpoint]
+    :param rules_engines: Rules Engine Configurations available to routing
+     rules.
+    :type rules_engines: list[~azure.mgmt.frontdoor.models.RulesEngine]
     :param backend_pools_settings: Settings for all backendPools
     :type backend_pools_settings:
      ~azure.mgmt.frontdoor.models.BackendPoolsSettings
@@ -49,11 +52,12 @@ class FrontDoorUpdateParameters(Model):
         'health_probe_settings': {'key': 'healthProbeSettings', 'type': '[HealthProbeSettingsModel]'},
         'backend_pools': {'key': 'backendPools', 'type': '[BackendPool]'},
         'frontend_endpoints': {'key': 'frontendEndpoints', 'type': '[FrontendEndpoint]'},
+        'rules_engines': {'key': 'rulesEngines', 'type': '[RulesEngine]'},
         'backend_pools_settings': {'key': 'backendPoolsSettings', 'type': 'BackendPoolsSettings'},
         'enabled_state': {'key': 'enabledState', 'type': 'str'},
     }
 
-    def __init__(self, *, friendly_name: str=None, routing_rules=None, load_balancing_settings=None, health_probe_settings=None, backend_pools=None, frontend_endpoints=None, backend_pools_settings=None, enabled_state=None, **kwargs) -> None:
+    def __init__(self, *, friendly_name: str=None, routing_rules=None, load_balancing_settings=None, health_probe_settings=None, backend_pools=None, frontend_endpoints=None, rules_engines=None, backend_pools_settings=None, enabled_state=None, **kwargs) -> None:
         super(FrontDoorUpdateParameters, self).__init__(**kwargs)
         self.friendly_name = friendly_name
         self.routing_rules = routing_rules
@@ -61,5 +65,6 @@ class FrontDoorUpdateParameters(Model):
         self.health_probe_settings = health_probe_settings
         self.backend_pools = backend_pools
         self.frontend_endpoints = frontend_endpoints
+        self.rules_engines = rules_engines
         self.backend_pools_settings = backend_pools_settings
         self.enabled_state = enabled_state

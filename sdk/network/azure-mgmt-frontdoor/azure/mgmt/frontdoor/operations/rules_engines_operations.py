@@ -17,8 +17,8 @@ from msrestazure.polling.arm_polling import ARMPolling
 from .. import models
 
 
-class LoadBalancingSettingsOperations(object):
-    """LoadBalancingSettingsOperations operations.
+class RulesEnginesOperations(object):
+    """RulesEnginesOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -40,7 +40,7 @@ class LoadBalancingSettingsOperations(object):
 
     def list_by_front_door(
             self, resource_group_name, front_door_name, custom_headers=None, raw=False, **operation_config):
-        """Lists all of the LoadBalancingSettings within a Front Door.
+        """Lists all of the Rules Engine Configurations within a Front Door.
 
         :param resource_group_name: Name of the Resource group within the
          Azure subscription.
@@ -53,9 +53,9 @@ class LoadBalancingSettingsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of LoadBalancingSettingsModel
+        :return: An iterator like instance of RulesEngine
         :rtype:
-         ~azure.mgmt.frontdoor.models.LoadBalancingSettingsModelPaged[~azure.mgmt.frontdoor.models.LoadBalancingSettingsModel]
+         ~azure.mgmt.frontdoor.models.RulesEnginePaged[~azure.mgmt.frontdoor.models.RulesEngine]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.frontdoor.models.ErrorResponseException>`
         """
@@ -99,19 +99,19 @@ class LoadBalancingSettingsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.LoadBalancingSettingsModelPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.RulesEnginePaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.LoadBalancingSettingsModelPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.RulesEnginePaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    list_by_front_door.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/frontDoors/{frontDoorName}/loadBalancingSettings'}
+    list_by_front_door.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/frontDoors/{frontDoorName}/rulesEngines'}
 
     def get(
-            self, resource_group_name, front_door_name, load_balancing_settings_name, custom_headers=None, raw=False, **operation_config):
-        """Gets a LoadBalancingSettings with the specified Rule name within the
+            self, resource_group_name, front_door_name, rules_engine_name, custom_headers=None, raw=False, **operation_config):
+        """Gets a Rules Engine Configuration with the specified name within the
         specified Front Door.
 
         :param resource_group_name: Name of the Resource group within the
@@ -120,16 +120,16 @@ class LoadBalancingSettingsOperations(object):
         :param front_door_name: Name of the Front Door which is globally
          unique.
         :type front_door_name: str
-        :param load_balancing_settings_name: Name of the load balancing
-         settings which is unique within the Front Door.
-        :type load_balancing_settings_name: str
+        :param rules_engine_name: Name of the Rules Engine which is unique
+         within the Front Door.
+        :type rules_engine_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: LoadBalancingSettingsModel or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.frontdoor.models.LoadBalancingSettingsModel or
+        :return: RulesEngine or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.frontdoor.models.RulesEngine or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.frontdoor.models.ErrorResponseException>`
@@ -140,7 +140,7 @@ class LoadBalancingSettingsOperations(object):
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=80, min_length=1, pattern=r'^[a-zA-Z0-9_\-\(\)\.]*[^\.]$'),
             'frontDoorName': self._serialize.url("front_door_name", front_door_name, 'str', max_length=64, min_length=5, pattern=r'^[a-zA-Z0-9]+([-a-zA-Z0-9]?[a-zA-Z0-9])*$'),
-            'loadBalancingSettingsName': self._serialize.url("load_balancing_settings_name", load_balancing_settings_name, 'str', max_length=90, min_length=1, pattern=r'^[a-zA-Z0-9]+(-*[a-zA-Z0-9])*$')
+            'rulesEngineName': self._serialize.url("rules_engine_name", rules_engine_name, 'str', max_length=90, min_length=1, pattern=r'^[a-zA-Z0-9]+(-*[a-zA-Z0-9])*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -168,25 +168,27 @@ class LoadBalancingSettingsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('LoadBalancingSettingsModel', response)
+            deserialized = self._deserialize('RulesEngine', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/frontDoors/{frontDoorName}/loadBalancingSettings/{loadBalancingSettingsName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/frontDoors/{frontDoorName}/rulesEngines/{rulesEngineName}'}
 
 
     def _create_or_update_initial(
-            self, resource_group_name, front_door_name, load_balancing_settings_name, load_balancing_settings_parameters, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, front_door_name, rules_engine_name, rules=None, resource_state=None, custom_headers=None, raw=False, **operation_config):
+        rules_engine_parameters = models.RulesEngine(rules=rules, resource_state=resource_state)
+
         # Construct URL
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=80, min_length=1, pattern=r'^[a-zA-Z0-9_\-\(\)\.]*[^\.]$'),
             'frontDoorName': self._serialize.url("front_door_name", front_door_name, 'str', max_length=64, min_length=5, pattern=r'^[a-zA-Z0-9]+([-a-zA-Z0-9]?[a-zA-Z0-9])*$'),
-            'loadBalancingSettingsName': self._serialize.url("load_balancing_settings_name", load_balancing_settings_name, 'str', max_length=90, min_length=1, pattern=r'^[a-zA-Z0-9]+(-*[a-zA-Z0-9])*$')
+            'rulesEngineName': self._serialize.url("rules_engine_name", rules_engine_name, 'str', max_length=90, min_length=1, pattern=r'^[a-zA-Z0-9]+(-*[a-zA-Z0-9])*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -206,7 +208,7 @@ class LoadBalancingSettingsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(load_balancing_settings_parameters, 'LoadBalancingSettingsModel')
+        body_content = self._serialize.body(rules_engine_parameters, 'RulesEngine')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -218,11 +220,11 @@ class LoadBalancingSettingsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('LoadBalancingSettingsModel', response)
+            deserialized = self._deserialize('RulesEngine', response)
         if response.status_code == 201:
-            deserialized = self._deserialize('LoadBalancingSettingsModel', response)
+            deserialized = self._deserialize('RulesEngine', response)
         if response.status_code == 202:
-            deserialized = self._deserialize('LoadBalancingSettingsModel', response)
+            deserialized = self._deserialize('RulesEngine', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -231,8 +233,8 @@ class LoadBalancingSettingsOperations(object):
         return deserialized
 
     def create_or_update(
-            self, resource_group_name, front_door_name, load_balancing_settings_name, load_balancing_settings_parameters, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Creates a new LoadBalancingSettings with the specified Rule name within
+            self, resource_group_name, front_door_name, rules_engine_name, rules=None, resource_state=None, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Creates a new Rules Engine Configuration with the specified name within
         the specified Front Door.
 
         :param resource_group_name: Name of the Resource group within the
@@ -241,40 +243,43 @@ class LoadBalancingSettingsOperations(object):
         :param front_door_name: Name of the Front Door which is globally
          unique.
         :type front_door_name: str
-        :param load_balancing_settings_name: Name of the load balancing
-         settings which is unique within the Front Door.
-        :type load_balancing_settings_name: str
-        :param load_balancing_settings_parameters: LoadBalancingSettings
-         properties needed to create a new Front Door.
-        :type load_balancing_settings_parameters:
-         ~azure.mgmt.frontdoor.models.LoadBalancingSettingsModel
+        :param rules_engine_name: Name of the Rules Engine which is unique
+         within the Front Door.
+        :type rules_engine_name: str
+        :param rules: A list of rules that define a particular Rules Engine
+         Configuration.
+        :type rules: list[~azure.mgmt.frontdoor.models.RulesEngineRule]
+        :param resource_state: Resource status. Possible values include:
+         'Creating', 'Enabling', 'Enabled', 'Disabling', 'Disabled', 'Deleting'
+        :type resource_state: str or
+         ~azure.mgmt.frontdoor.models.FrontDoorResourceState
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns
-         LoadBalancingSettingsModel or
-         ClientRawResponse<LoadBalancingSettingsModel> if raw==True
+        :return: An instance of LROPoller that returns RulesEngine or
+         ClientRawResponse<RulesEngine> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.frontdoor.models.LoadBalancingSettingsModel]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.frontdoor.models.RulesEngine]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.frontdoor.models.LoadBalancingSettingsModel]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.frontdoor.models.RulesEngine]]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.frontdoor.models.ErrorResponseException>`
         """
         raw_result = self._create_or_update_initial(
             resource_group_name=resource_group_name,
             front_door_name=front_door_name,
-            load_balancing_settings_name=load_balancing_settings_name,
-            load_balancing_settings_parameters=load_balancing_settings_parameters,
+            rules_engine_name=rules_engine_name,
+            rules=rules,
+            resource_state=resource_state,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('LoadBalancingSettingsModel', response)
+            deserialized = self._deserialize('RulesEngine', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -289,18 +294,18 @@ class LoadBalancingSettingsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/frontDoors/{frontDoorName}/loadBalancingSettings/{loadBalancingSettingsName}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/frontDoors/{frontDoorName}/rulesEngines/{rulesEngineName}'}
 
 
     def _delete_initial(
-            self, resource_group_name, front_door_name, load_balancing_settings_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, front_door_name, rules_engine_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=80, min_length=1, pattern=r'^[a-zA-Z0-9_\-\(\)\.]*[^\.]$'),
             'frontDoorName': self._serialize.url("front_door_name", front_door_name, 'str', max_length=64, min_length=5, pattern=r'^[a-zA-Z0-9]+([-a-zA-Z0-9]?[a-zA-Z0-9])*$'),
-            'loadBalancingSettingsName': self._serialize.url("load_balancing_settings_name", load_balancing_settings_name, 'str', max_length=90, min_length=1, pattern=r'^[a-zA-Z0-9]+(-*[a-zA-Z0-9])*$')
+            'rulesEngineName': self._serialize.url("rules_engine_name", rules_engine_name, 'str', max_length=90, min_length=1, pattern=r'^[a-zA-Z0-9]+(-*[a-zA-Z0-9])*$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -329,8 +334,8 @@ class LoadBalancingSettingsOperations(object):
             return client_raw_response
 
     def delete(
-            self, resource_group_name, front_door_name, load_balancing_settings_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Deletes an existing LoadBalancingSettings with the specified
+            self, resource_group_name, front_door_name, rules_engine_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Deletes an existing Rules Engine Configuration with the specified
         parameters.
 
         :param resource_group_name: Name of the Resource group within the
@@ -339,9 +344,9 @@ class LoadBalancingSettingsOperations(object):
         :param front_door_name: Name of the Front Door which is globally
          unique.
         :type front_door_name: str
-        :param load_balancing_settings_name: Name of the load balancing
-         settings which is unique within the Front Door.
-        :type load_balancing_settings_name: str
+        :param rules_engine_name: Name of the Rules Engine which is unique
+         within the Front Door.
+        :type rules_engine_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -357,7 +362,7 @@ class LoadBalancingSettingsOperations(object):
         raw_result = self._delete_initial(
             resource_group_name=resource_group_name,
             front_door_name=front_door_name,
-            load_balancing_settings_name=load_balancing_settings_name,
+            rules_engine_name=rules_engine_name,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -375,4 +380,4 @@ class LoadBalancingSettingsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/frontDoors/{frontDoorName}/loadBalancingSettings/{loadBalancingSettingsName}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/frontDoors/{frontDoorName}/rulesEngines/{rulesEngineName}'}

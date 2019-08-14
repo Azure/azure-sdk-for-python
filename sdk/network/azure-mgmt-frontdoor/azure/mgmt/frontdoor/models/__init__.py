@@ -18,6 +18,7 @@ try:
     from .key_vault_certificate_source_parameters_vault_py3 import KeyVaultCertificateSourceParametersVault
     from .custom_https_configuration_py3 import CustomHttpsConfiguration
     from .frontend_endpoint_py3 import FrontendEndpoint
+    from .rules_engine_py3 import RulesEngine
     from .backend_pools_settings_py3 import BackendPoolsSettings
     from .front_door_update_parameters_py3 import FrontDoorUpdateParameters
     from .purge_parameters_py3 import PurgeParameters
@@ -33,6 +34,11 @@ try:
     from .backend_pool_update_parameters_py3 import BackendPoolUpdateParameters
     from .frontend_endpoint_update_parameters_web_application_firewall_policy_link_py3 import FrontendEndpointUpdateParametersWebApplicationFirewallPolicyLink
     from .frontend_endpoint_update_parameters_py3 import FrontendEndpointUpdateParameters
+    from .header_action_py3 import HeaderAction
+    from .rules_engine_match_condition_py3 import RulesEngineMatchCondition
+    from .rules_engine_action_py3 import RulesEngineAction
+    from .rules_engine_rule_py3 import RulesEngineRule
+    from .rules_engine_update_parameters_py3 import RulesEngineUpdateParameters
     from .validate_custom_domain_input_py3 import ValidateCustomDomainInput
     from .validate_custom_domain_output_py3 import ValidateCustomDomainOutput
     from .error_response_py3 import ErrorResponse, ErrorResponseException
@@ -65,6 +71,7 @@ except (SyntaxError, ImportError):
     from .key_vault_certificate_source_parameters_vault import KeyVaultCertificateSourceParametersVault
     from .custom_https_configuration import CustomHttpsConfiguration
     from .frontend_endpoint import FrontendEndpoint
+    from .rules_engine import RulesEngine
     from .backend_pools_settings import BackendPoolsSettings
     from .front_door_update_parameters import FrontDoorUpdateParameters
     from .purge_parameters import PurgeParameters
@@ -80,6 +87,11 @@ except (SyntaxError, ImportError):
     from .backend_pool_update_parameters import BackendPoolUpdateParameters
     from .frontend_endpoint_update_parameters_web_application_firewall_policy_link import FrontendEndpointUpdateParametersWebApplicationFirewallPolicyLink
     from .frontend_endpoint_update_parameters import FrontendEndpointUpdateParameters
+    from .header_action import HeaderAction
+    from .rules_engine_match_condition import RulesEngineMatchCondition
+    from .rules_engine_action import RulesEngineAction
+    from .rules_engine_rule import RulesEngineRule
+    from .rules_engine_update_parameters import RulesEngineUpdateParameters
     from .validate_custom_domain_input import ValidateCustomDomainInput
     from .validate_custom_domain_output import ValidateCustomDomainOutput
     from .error_response import ErrorResponse, ErrorResponseException
@@ -109,6 +121,7 @@ from .health_probe_settings_model_paged import HealthProbeSettingsModelPaged
 from .load_balancing_settings_model_paged import LoadBalancingSettingsModelPaged
 from .backend_pool_paged import BackendPoolPaged
 from .frontend_endpoint_paged import FrontendEndpointPaged
+from .rules_engine_paged import RulesEnginePaged
 from .web_application_firewall_policy_paged import WebApplicationFirewallPolicyPaged
 from .managed_rule_set_definition_paged import ManagedRuleSetDefinitionPaged
 from .front_door_management_client_enums import (
@@ -131,6 +144,11 @@ from .front_door_management_client_enums import (
     FrontDoorHealthProbeMethod,
     HealthProbeEnabled,
     SessionAffinityEnabledState,
+    HeaderActionType,
+    RulesEngineMatchVariable,
+    RulesEngineOperator,
+    Transform,
+    MatchProcessingBehavior,
     ResourceType,
     Availability,
     NetworkOperationStatus,
@@ -155,6 +173,7 @@ __all__ = [
     'KeyVaultCertificateSourceParametersVault',
     'CustomHttpsConfiguration',
     'FrontendEndpoint',
+    'RulesEngine',
     'BackendPoolsSettings',
     'FrontDoorUpdateParameters',
     'PurgeParameters',
@@ -170,6 +189,11 @@ __all__ = [
     'BackendPoolUpdateParameters',
     'FrontendEndpointUpdateParametersWebApplicationFirewallPolicyLink',
     'FrontendEndpointUpdateParameters',
+    'HeaderAction',
+    'RulesEngineMatchCondition',
+    'RulesEngineAction',
+    'RulesEngineRule',
+    'RulesEngineUpdateParameters',
     'ValidateCustomDomainInput',
     'ValidateCustomDomainOutput',
     'ErrorResponse', 'ErrorResponseException',
@@ -199,6 +223,7 @@ __all__ = [
     'LoadBalancingSettingsModelPaged',
     'BackendPoolPaged',
     'FrontendEndpointPaged',
+    'RulesEnginePaged',
     'WebApplicationFirewallPolicyPaged',
     'ManagedRuleSetDefinitionPaged',
     'FrontDoorResourceState',
@@ -220,6 +245,11 @@ __all__ = [
     'FrontDoorHealthProbeMethod',
     'HealthProbeEnabled',
     'SessionAffinityEnabledState',
+    'HeaderActionType',
+    'RulesEngineMatchVariable',
+    'RulesEngineOperator',
+    'Transform',
+    'MatchProcessingBehavior',
     'ResourceType',
     'Availability',
     'NetworkOperationStatus',
