@@ -26,7 +26,7 @@ class BillingRoleDefinition(Resource):
     :vartype type: str
     :ivar description: The role description
     :vartype description: str
-    :ivar value: The list OF billingPermissions a caller has on a billing
+    :ivar value: The list of billingPermissions a caller has on a billing
      account.
     :vartype value:
      list[~azure.mgmt.billing.models.BillingPermissionsProperties]

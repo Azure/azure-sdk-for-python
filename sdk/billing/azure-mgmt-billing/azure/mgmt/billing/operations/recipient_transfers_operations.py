@@ -112,8 +112,8 @@ class RecipientTransfersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: ValidateTransferResponse or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.billing.models.ValidateTransferResponse or
+        :return: ValidateTransferListResponse or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.billing.models.ValidateTransferListResponse or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
@@ -154,7 +154,7 @@ class RecipientTransfersOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('ValidateTransferResponse', response)
+            deserialized = self._deserialize('ValidateTransferListResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)

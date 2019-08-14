@@ -10,6 +10,9 @@
 # --------------------------------------------------------------------------
 
 try:
+    from .azure_plan_py3 import AzurePlan
+    from .reseller_py3 import Reseller
+    from .customer_py3 import Customer
     from .initiate_transfer_request_py3 import InitiateTransferRequest
     from .address_details_py3 import AddressDetails
     from .validate_address_response_py3 import ValidateAddressResponse
@@ -26,7 +29,6 @@ try:
     from .validate_subscription_transfer_eligibility_error_py3 import ValidateSubscriptionTransferEligibilityError
     from .validate_subscription_transfer_eligibility_result_py3 import ValidateSubscriptionTransferEligibilityResult
     from .update_auto_renew_operation_py3 import UpdateAutoRenewOperation
-    from .azure_plan_py3 import AzurePlan
     from .invoice_section_py3 import InvoiceSection
     from .billing_profile_py3 import BillingProfile
     from .enrollment_policies_py3 import EnrollmentPolicies
@@ -79,8 +81,12 @@ try:
     from .agreement_list_result_py3 import AgreementListResult
     from .validation_result_properties_py3 import ValidationResultProperties
     from .validate_transfer_response_py3 import ValidateTransferResponse
+    from .validate_transfer_list_response_py3 import ValidateTransferListResponse
     from .line_of_credit_py3 import LineOfCredit
 except (SyntaxError, ImportError):
+    from .azure_plan import AzurePlan
+    from .reseller import Reseller
+    from .customer import Customer
     from .initiate_transfer_request import InitiateTransferRequest
     from .address_details import AddressDetails
     from .validate_address_response import ValidateAddressResponse
@@ -97,7 +103,6 @@ except (SyntaxError, ImportError):
     from .validate_subscription_transfer_eligibility_error import ValidateSubscriptionTransferEligibilityError
     from .validate_subscription_transfer_eligibility_result import ValidateSubscriptionTransferEligibilityResult
     from .update_auto_renew_operation import UpdateAutoRenewOperation
-    from .azure_plan import AzurePlan
     from .invoice_section import InvoiceSection
     from .billing_profile import BillingProfile
     from .enrollment_policies import EnrollmentPolicies
@@ -150,8 +155,10 @@ except (SyntaxError, ImportError):
     from .agreement_list_result import AgreementListResult
     from .validation_result_properties import ValidationResultProperties
     from .validate_transfer_response import ValidateTransferResponse
+    from .validate_transfer_list_response import ValidateTransferListResponse
     from .line_of_credit import LineOfCredit
 from .payment_method_paged import PaymentMethodPaged
+from .customer_paged import CustomerPaged
 from .billing_subscription_paged import BillingSubscriptionPaged
 from .product_paged import ProductPaged
 from .transaction_paged import TransactionPaged
@@ -184,6 +191,9 @@ from .billing_management_client_enums import (
 )
 
 __all__ = [
+    'AzurePlan',
+    'Reseller',
+    'Customer',
     'InitiateTransferRequest',
     'AddressDetails',
     'ValidateAddressResponse',
@@ -200,7 +210,6 @@ __all__ = [
     'ValidateSubscriptionTransferEligibilityError',
     'ValidateSubscriptionTransferEligibilityResult',
     'UpdateAutoRenewOperation',
-    'AzurePlan',
     'InvoiceSection',
     'BillingProfile',
     'EnrollmentPolicies',
@@ -253,8 +262,10 @@ __all__ = [
     'AgreementListResult',
     'ValidationResultProperties',
     'ValidateTransferResponse',
+    'ValidateTransferListResponse',
     'LineOfCredit',
     'PaymentMethodPaged',
+    'CustomerPaged',
     'BillingSubscriptionPaged',
     'ProductPaged',
     'TransactionPaged',

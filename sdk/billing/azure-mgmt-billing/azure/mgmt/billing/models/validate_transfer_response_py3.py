@@ -20,20 +20,25 @@ class ValidateTransferResponse(Model):
 
     :ivar status: The status of validation
     :vartype status: str
+    :ivar product_id: The product id for which this result applies.
+    :vartype product_id: str
     :param results: Array of validation results.
     :type results: list[~azure.mgmt.billing.models.ValidationResultProperties]
     """
 
     _validation = {
         'status': {'readonly': True},
+        'product_id': {'readonly': True},
     }
 
     _attribute_map = {
         'status': {'key': 'properties.status', 'type': 'str'},
+        'product_id': {'key': 'properties.productId', 'type': 'str'},
         'results': {'key': 'properties.results', 'type': '[ValidationResultProperties]'},
     }
 
     def __init__(self, *, results=None, **kwargs) -> None:
         super(ValidateTransferResponse, self).__init__(**kwargs)
         self.status = None
+        self.product_id = None
         self.results = results

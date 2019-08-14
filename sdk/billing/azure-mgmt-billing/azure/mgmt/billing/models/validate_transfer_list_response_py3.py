@@ -12,34 +12,29 @@
 from msrest.serialization import Model
 
 
-class ValidationResultProperties(Model):
-    """The properties of the validation result.
+class ValidateTransferListResponse(Model):
+    """Result of transfer validation.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar level: Result Level.
-    :vartype level: str
-    :ivar code: Result Code.
-    :vartype code: str
-    :ivar message: The validation message.
-    :vartype message: str
+    :ivar value: The list of transfer validation results.
+    :vartype value: list[~azure.mgmt.billing.models.ValidateTransferResponse]
+    :ivar next_link: The link (url) to the next page of results.
+    :vartype next_link: str
     """
 
     _validation = {
-        'level': {'readonly': True},
-        'code': {'readonly': True},
-        'message': {'readonly': True},
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
     }
 
     _attribute_map = {
-        'level': {'key': 'level', 'type': 'str'},
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        'value': {'key': 'value', 'type': '[ValidateTransferResponse]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
     }
 
     def __init__(self, **kwargs) -> None:
-        super(ValidationResultProperties, self).__init__(**kwargs)
-        self.level = None
-        self.code = None
-        self.message = None
+        super(ValidateTransferListResponse, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None

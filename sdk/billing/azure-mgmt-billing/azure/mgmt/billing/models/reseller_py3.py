@@ -12,34 +12,29 @@
 from msrest.serialization import Model
 
 
-class ValidationResultProperties(Model):
-    """The properties of the validation result.
+class Reseller(Model):
+    """Details about a reseller.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar level: Result Level.
-    :vartype level: str
-    :ivar code: Result Code.
-    :vartype code: str
-    :ivar message: The validation message.
-    :vartype message: str
+    :ivar reseller_id: The reseller id.
+    :vartype reseller_id: str
+    :ivar description: A description of the reseller.
+    :vartype description: str
     """
 
     _validation = {
-        'level': {'readonly': True},
-        'code': {'readonly': True},
-        'message': {'readonly': True},
+        'reseller_id': {'readonly': True},
+        'description': {'readonly': True},
     }
 
     _attribute_map = {
-        'level': {'key': 'level', 'type': 'str'},
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        'reseller_id': {'key': 'resellerId', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
     }
 
     def __init__(self, **kwargs) -> None:
-        super(ValidationResultProperties, self).__init__(**kwargs)
-        self.level = None
-        self.code = None
-        self.message = None
+        super(Reseller, self).__init__(**kwargs)
+        self.reseller_id = None
+        self.description = None

@@ -18,8 +18,6 @@ class ValidationResultProperties(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar product_id: The product id for which this result applies.
-    :vartype product_id: str
     :ivar level: Result Level.
     :vartype level: str
     :ivar code: Result Code.
@@ -29,14 +27,12 @@ class ValidationResultProperties(Model):
     """
 
     _validation = {
-        'product_id': {'readonly': True},
         'level': {'readonly': True},
         'code': {'readonly': True},
         'message': {'readonly': True},
     }
 
     _attribute_map = {
-        'product_id': {'key': 'productId', 'type': 'str'},
         'level': {'key': 'level', 'type': 'str'},
         'code': {'key': 'code', 'type': 'str'},
         'message': {'key': 'message', 'type': 'str'},
@@ -44,7 +40,6 @@ class ValidationResultProperties(Model):
 
     def __init__(self, **kwargs):
         super(ValidationResultProperties, self).__init__(**kwargs)
-        self.product_id = None
         self.level = None
         self.code = None
         self.message = None
