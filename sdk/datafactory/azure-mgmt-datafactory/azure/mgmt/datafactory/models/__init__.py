@@ -491,6 +491,7 @@ try:
     from ._models_py3 import TriggerResource
     from ._models_py3 import TriggerRun
     from ._models_py3 import TriggerRunsQueryResponse
+    from ._models_py3 import TriggerSubscriptionOperationStatus
     from ._models_py3 import TumblingWindowTrigger
     from ._models_py3 import TumblingWindowTriggerDependencyReference
     from ._models_py3 import UntilActivity
@@ -1002,6 +1003,7 @@ except (SyntaxError, ImportError):
     from ._models import TriggerResource
     from ._models import TriggerRun
     from ._models import TriggerRunsQueryResponse
+    from ._models import TriggerSubscriptionOperationStatus
     from ._models import TumblingWindowTrigger
     from ._models import TumblingWindowTriggerDependencyReference
     from ._models import UntilActivity
@@ -1046,6 +1048,7 @@ from ._data_factory_management_client_enums import (
     DependencyCondition,
     VariableType,
     TriggerRuntimeState,
+    EventSubscriptionStatus,
     RunQueryFilterOperand,
     RunQueryFilterOperator,
     RunQueryOrderByField,
@@ -1594,6 +1597,7 @@ __all__ = [
     'TriggerResource',
     'TriggerRun',
     'TriggerRunsQueryResponse',
+    'TriggerSubscriptionOperationStatus',
     'TumblingWindowTrigger',
     'TumblingWindowTriggerDependencyReference',
     'UntilActivity',
@@ -1637,6 +1641,7 @@ __all__ = [
     'DependencyCondition',
     'VariableType',
     'TriggerRuntimeState',
+    'EventSubscriptionStatus',
     'RunQueryFilterOperand',
     'RunQueryFilterOperator',
     'RunQueryOrderByField',
