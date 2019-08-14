@@ -9200,7 +9200,7 @@
             "in": "query",
             "required": true,
             "type": "string",
-            "x-m-parameter-location": "method",
+            "x-ms-parameter-location": "method",
             "description": "The filter parameter enables the caller to query blobs whose tags match a given expression. The given expression must evaluate to true for a blob to be returned in the results."
         },
         "BlockId": {
@@ -9659,6 +9659,7 @@
             "in": "query",
             "required": false,
             "type": "string",
+            "x-ms-parameter-location": "method",
             "enum": [
                 "legacy",
                 "posix"
