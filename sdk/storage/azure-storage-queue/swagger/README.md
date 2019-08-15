@@ -21,7 +21,11 @@ autorest --use=C:/work/autorest.python --version=2.0.4280
 ``` yaml
 input-file: ./queue-2018-03-28.json
 output-folder: ../azure/storage/queue/_generated
-namespace: queue
+namespace: azure.storage.queue
+no-namespace-folders: true
+license-header: MICROSOFT_MIT_NO_VERSION
+enable-xml: true
+vanilla: true
 clear-output-folder: true
 python: true
 ```
