@@ -35,6 +35,7 @@ class _PartitionedQueryExecutionInfo(object):
     TopPath = [QueryInfoPath, 'top']
     OffsetPath = [QueryInfoPath, 'offset']
     LimitPath = [QueryInfoPath, 'limit']
+    DistinctTypePath = [QueryInfoPath, 'distinctType']
     OrderByPath = [QueryInfoPath, 'orderBy']
     AggregatesPath = [QueryInfoPath, 'aggregates']
     QueryRangesPath = 'queryRanges'
@@ -61,6 +62,11 @@ class _PartitionedQueryExecutionInfo(object):
         """Returns the offset count (if any) or None
         """
         return self._extract(_PartitionedQueryExecutionInfo.OffsetPath)
+
+    def get_distinct_type(self):
+        """Returns the offset count (if any) or None
+        """
+        return self._extract(_PartitionedQueryExecutionInfo.DistinctTypePath)
 
     def get_order_by(self):
         """Returns order by items (if any) or None
@@ -97,6 +103,9 @@ class _PartitionedQueryExecutionInfo(object):
 
     def has_offset(self):
         return self.get_offset() is not None
+
+    def has_distinct_type(self):
+        return self.get_distinct_type() != "None"
 
     def has_order_by(self):
         order_by = self.get_order_by()

@@ -4,7 +4,9 @@ import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos._retry_utility as retry_utility
 from azure.cosmos._execution_context.query_execution_info import _PartitionedQueryExecutionInfo
 import azure.cosmos.errors as errors
+from azure.cosmos.partition_key import PartitionKey
 import pytest
+import collections
 import test_config
 
 pytestmark = pytest.mark.cosmosEmulator
@@ -218,16 +220,16 @@ class QueryTest(unittest.TestCase):
 
     def test_get_query_plan_through_gateway(self):
         created_collection = self.config.create_multi_partition_collection_with_custom_pk_if_not_exist(self.client)
-        query_plan_dict = self.client.client_connection._GetQueryPlanThroughGateway("Select top 10 value count(c.id) from c", created_collection.container_link)
-        query_execution_info = _PartitionedQueryExecutionInfo(query_plan_dict)
-        self._validate_query_plan(query_execution_info, 10, [], ['Count'], True, None, None)
+        self._validate_query_plan("Select top 10 value count(c.id) from c", created_collection.container_link, 10, [], ['Count'], True, None, None, "None")
+        self._validate_query_plan("Select * from c order by c._ts offset 5 limit 10", created_collection.container_link, None, ['Ascending'], [], False, 5, 10, "None")
+        self._validate_query_plan("Select distinct value c.id from c order by c.id", created_collection.container_link, None, ['Ascending'], [], True, None, None, "Ordered")
 
-        query_plan_dict = self.client.client_connection._GetQueryPlanThroughGateway("Select * from c order by c._ts offset 5 limit 10", created_collection.container_link)
+    def _validate_query_plan(self, query, container_link, top, order_by, aggregate, select_value, offset, limit, distinct):
+        query_plan_dict = self.client.client_connection._GetQueryPlanThroughGateway(query, container_link)
         query_execution_info = _PartitionedQueryExecutionInfo(query_plan_dict)
-        self._validate_query_plan(query_execution_info, None, ['Ascending'], [], False, 5, 10)
-
-    def _validate_query_plan(self, query_execution_info, top, order_by, aggregate, select_value, offset, limit):
         self.assertTrue(query_execution_info.has_rewritten_query())
+        self.assertEquals(query_execution_info.has_distinct_type(), distinct != "None")
+        self.assertEquals(query_execution_info.get_distinct_type(), distinct)
         self.assertEquals(query_execution_info.has_top(), top is not None)
         self.assertEquals(query_execution_info.get_top(), top)
         self.assertEquals(query_execution_info.has_order_by(), len(order_by) > 0)
@@ -263,17 +265,130 @@ class QueryTest(unittest.TestCase):
             document_definition = {'pk': i, 'id': 'myId' + str(uuid.uuid4())}
             values.append(created_collection.create_item(body=document_definition)['pk'])
 
-        self._validate_skip_take(created_collection, 'SELECT * from c ORDER BY c.pk OFFSET 0 LIMIT 5', values[:5])
-        self._validate_skip_take(created_collection, 'SELECT * from c ORDER BY c.pk OFFSET 5 LIMIT 10', values[5:])
-        self._validate_skip_take(created_collection, 'SELECT * from c ORDER BY c.pk OFFSET 10 LIMIT 5', [])
-        self._validate_skip_take(created_collection, 'SELECT * from c ORDER BY c.pk OFFSET 100 LIMIT 1', [])
+        self._validate_offset_limit(created_collection, 'SELECT * from c ORDER BY c.pk OFFSET 0 LIMIT 5', values[:5])
+        self._validate_offset_limit(created_collection, 'SELECT * from c ORDER BY c.pk OFFSET 5 LIMIT 10', values[5:])
+        self._validate_offset_limit(created_collection, 'SELECT * from c ORDER BY c.pk OFFSET 10 LIMIT 5', [])
+        self._validate_offset_limit(created_collection, 'SELECT * from c ORDER BY c.pk OFFSET 100 LIMIT 1', [])
 
-    def _validate_skip_take(self, created_collection, query, results):
+    def _validate_offset_limit(self, created_collection, query, results):
         query_iterable = created_collection.query_items(
             query=query,
             enable_cross_partition_query=True
         )
         self.assertListEqual(list(map(lambda doc: doc['pk'], list(query_iterable))), results)
+
+    def test_distinct(self):
+        created_database = self.config.create_database_if_not_exist(self.client)
+        distinct_field = 'distinct_field'
+        pk_field = "pk"
+        different_field = "different_field"
+
+        created_collection = created_database.create_container(
+            id='collection with composite index ' + str(uuid.uuid4()),
+            partition_key=PartitionKey(path="/pk", kind="Hash"),
+            indexing_policy={
+                "compositeIndexes": [
+                    [{"path": "/" + pk_field, "order": "ascending"}, {"path": "/" + distinct_field, "order": "ascending"}],
+                    [{"path": "/" + distinct_field, "order": "ascending"}, {"path": "/" + pk_field, "order": "ascending"}]
+                ]
+            }
+        )
+        documents = []
+        for i in range(5):
+            j = i
+            while j > i - 5:
+                document_definition = {pk_field: i, 'id': str(uuid.uuid4()), distinct_field: j}
+                documents.append(created_collection.create_item(body=document_definition))
+                document_definition = {pk_field: i, 'id': str(uuid.uuid4()), distinct_field: j}
+                documents.append(created_collection.create_item(body=document_definition))
+                document_definition = {pk_field: i, 'id': str(uuid.uuid4())}
+                documents.append(created_collection.create_item(body=document_definition))
+                j -= 1
+
+        padded_docs = self._pad_with_none(documents, distinct_field)
+
+        self._validate_distinct(created_collection, 'SELECT distinct c.%s from c ORDER BY c.%s' % (distinct_field, distinct_field),
+                                self._get_distinct_docs(self._get_order_by_docs(padded_docs, distinct_field, None), distinct_field, None, True),
+                                False, [distinct_field])
+
+        self._validate_distinct(created_collection, 'SELECT distinct c.%s, c.%s from c ORDER BY c.%s, c.%s' % (distinct_field, pk_field, pk_field, distinct_field),
+                                self._get_distinct_docs(self._get_order_by_docs(padded_docs, pk_field, distinct_field), distinct_field, pk_field, True),
+                                False, [distinct_field, pk_field])
+
+        self._validate_distinct(created_collection, 'SELECT distinct c.%s, c.%s from c ORDER BY c.%s, c.%s' % (distinct_field, pk_field, distinct_field, pk_field),
+                                self._get_distinct_docs(self._get_order_by_docs(padded_docs, distinct_field, pk_field), distinct_field, pk_field, True),
+                                False, [distinct_field, pk_field])
+
+        self._validate_distinct(created_collection, 'SELECT distinct value c.%s from c ORDER BY c.%s' % (distinct_field, distinct_field),
+                                self._get_distinct_docs(self._get_order_by_docs(padded_docs, distinct_field, None), distinct_field, None, True),
+                                False, [distinct_field])
+
+        self._validate_distinct(created_collection, 'SELECT distinct c.%s from c' % (distinct_field),
+                                self._get_distinct_docs(padded_docs, distinct_field, None, False),
+                                True, [distinct_field])
+
+        self._validate_distinct(created_collection, 'SELECT distinct c.%s, c.%s from c' % (distinct_field, pk_field),
+                                self._get_distinct_docs(padded_docs, distinct_field, pk_field, False),
+                                True, [distinct_field, pk_field])
+
+        self._validate_distinct(created_collection, 'SELECT distinct value c.%s from c' % (distinct_field),
+                                self._get_distinct_docs(padded_docs, distinct_field, None, True),
+                                True, [distinct_field])
+
+        self._validate_distinct(created_collection, 'SELECT distinct c.%s from c ORDER BY c.%s' % (different_field, different_field), [],
+                                True, [different_field])
+
+        self._validate_distinct(created_collection, 'SELECT distinct c.%s from c' % (different_field), ['None'],
+                                True, different_field)
+
+        created_database.delete_container(created_collection.id)
+
+    def _get_order_by_docs(self, documents, field1, field2):
+        if field2 is None:
+            return sorted(documents, key=lambda d: (d[field1] is not None, d[field1]))
+        else:
+            return sorted(documents, key=lambda d: (d[field1] is not None, d[field1], d[field2] is not None, d[field2]))
+
+    def _get_distinct_docs(self, documents, field1, field2, is_order_by_or_value):
+        if field2 is None:
+            res = collections.OrderedDict.fromkeys(doc[field1] for doc in documents)
+            if is_order_by_or_value:
+                res = filter(lambda x: False if x is None else True, res)
+        else:
+            res = collections.OrderedDict.fromkeys(str(doc[field1]) + "," + str(doc[field2]) for doc in documents)
+        return list(res)
+
+    def _pad_with_none(self, documents, field):
+        for doc in documents:
+            if field not in doc:
+                doc[field] = None
+        return documents
+
+    def _validate_distinct(self, created_collection, query, results, is_select, fields):
+        query_iterable = created_collection.query_items(
+            query=query,
+            enable_cross_partition_query=True
+        )
+        query_results = list(query_iterable)
+        self.assertEquals(len(results), len(query_results))
+        query_results_strings = []
+        result_strings = []
+        for i in range(len(results)):
+            query_results_strings.append(self._get_query_result_string(query_results[i], fields))
+            result_strings.append(str(results[i]))
+        if is_select:
+            query_results_strings = sorted(query_results_strings)
+            result_strings = sorted(result_strings)
+        self.assertListEqual(result_strings, query_results_strings)
+
+    def _get_query_result_string(self, query_result, fields):
+        if type(query_result) is not dict:
+            return str(query_result)
+        res = str(query_result[fields[0]] if fields[0] in query_result else None)
+        if len(fields) == 2:
+            res = res + "," + str(query_result[fields[1]] if fields[1] in query_result else None)
+
+        return res
 
 if __name__ == "__main__":
     unittest.main()

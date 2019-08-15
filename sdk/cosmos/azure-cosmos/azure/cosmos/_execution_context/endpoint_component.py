@@ -69,6 +69,40 @@ class _QueryExecutionTopEndpointComponent(_QueryExecutionEndpointComponent):
         raise StopIteration
 
 
+class _QueryExecutionDistinctOrderedEndpointComponent(_QueryExecutionEndpointComponent):
+    """Represents an endpoint in handling distinct query.
+
+    It returns only those values not already returned.
+    """
+    def __init__(self, execution_context):
+        super(_QueryExecutionDistinctOrderedEndpointComponent, self).__init__(execution_context)
+        self.last_result = None
+
+    def next(self):
+        res = next(self._execution_context)
+        while self.last_result == res:
+            res = next(self._execution_context)
+        self.last_result = res
+        return res
+
+
+class _QueryExecutionDistinctUnorderedEndpointComponent(_QueryExecutionEndpointComponent):
+    """Represents an endpoint in handling distinct query.
+
+    It returns only those values not already returned.
+    """
+    def __init__(self, execution_context):
+        super(_QueryExecutionDistinctUnorderedEndpointComponent, self).__init__(execution_context)
+        self.last_result = set()
+
+    def next(self):
+        res = next(self._execution_context)
+        while str(res) in self.last_result:
+            res = next(self._execution_context)
+        self.last_result.add(str(res))
+        return res
+
+
 class _QueryExecutionOffsetEndpointComponent(_QueryExecutionEndpointComponent):
     """Represents an endpoint in handling offset query.
 
