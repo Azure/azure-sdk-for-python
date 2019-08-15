@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import logging
 try:
     from typing import TYPE_CHECKING
 except ImportError:
@@ -19,6 +20,7 @@ from azure.core.pipeline.transport import HttpRequest
 from .http_challenge import HttpChallenge
 from . import http_challenge_cache as ChallengeCache
 
+_LOGGER = logging.getLogger(__name__)
 
 class ChallengeAuthPolicyBase(_BearerTokenCredentialPolicyBase):
     """Sans I/O base for challenge authentication policies"""
@@ -54,6 +56,8 @@ class ChallengeAuthPolicy(ChallengeAuthPolicyBase, HTTPPolicy):
             )
             if request.http_request.body:
                 # no_body was created with request's headers -> if request has a body, no_body's content-length is wrong
+                _LOGGER.debug("no_body was created with request's headers."
+                              "If request has a body, no_body's content length is wrong")
                 no_body.headers["Content-Length"] = "0"
 
             challenger = self.next.send(PipelineRequest(http_request=no_body, context=request.context))
@@ -61,6 +65,7 @@ class ChallengeAuthPolicy(ChallengeAuthPolicyBase, HTTPPolicy):
                 challenge = self._update_challenge(request, challenger)
             except ValueError:
                 # didn't receive the expected challenge -> nothing more this policy can do
+                _LOGGER.debug("Did not receive the expected challenge.")
                 return challenger
 
         self._handle_challenge(request, challenge)
@@ -72,6 +77,7 @@ class ChallengeAuthPolicy(ChallengeAuthPolicyBase, HTTPPolicy):
                 challenge = self._update_challenge(request, response)
             except ValueError:
                 # 401 with no legible challenge -> nothing more this policy can do
+                _LOGGER.debug("Received a 401 with no legible challenge.")
                 return response
 
             self._handle_challenge(request, challenge)
