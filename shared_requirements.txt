@@ -56,7 +56,7 @@ azure-mgmt-monitor~=0.5.2
 azure-mgmt-msi~=0.2.0
 azure-mgmt-network~=2.0
 azure-mgmt-notificationhubs~=2.0
-azure-mgmt-nspkg
+azure-mgmt-nspkg; python_version < "3.0"
 azure-mgmt-policyinsights~=0.1.0
 azure-mgmt-powerbiembedded~=2.0
 azure-mgmt-rdbms~=1.2
