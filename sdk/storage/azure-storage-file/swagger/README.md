@@ -21,7 +21,11 @@ autorest --use=C:/work/autorest.python --version=2.0.4280
 ``` yaml
 input-file: ./file-2018-11-09.json
 output-folder: ../azure/storage/file/_generated
-namespace: file
+namespace: azure.storage.file
+no-namespace-folders: true
+license-header: MICROSOFT_MIT_NO_VERSION
+enable-xml: true
+vanilla: true
 clear-output-folder: true
 python: true
 ```
