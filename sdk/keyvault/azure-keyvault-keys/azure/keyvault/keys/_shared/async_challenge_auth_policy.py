@@ -2,11 +2,14 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import logging
 from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.policies import AsyncHTTPPolicy
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
 from . import ChallengeAuthPolicyBase, HttpChallenge, HttpChallengeCache
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class AsyncChallengeAuthPolicy(ChallengeAuthPolicyBase, AsyncHTTPPolicy):
@@ -21,6 +24,8 @@ class AsyncChallengeAuthPolicy(ChallengeAuthPolicyBase, AsyncHTTPPolicy):
             )
             if request.http_request.body:
                 # no_body was created with request's headers -> if request has a body, no_body's content-length is wrong
+                _LOGGER.debug("no_body was created with request's headers."
+                              "If request has a body, no_body's content length is wrong")
                 no_body.headers["Content-Length"] = "0"
 
             challenger = await self.next.send(PipelineRequest(http_request=no_body, context=request.context))
@@ -28,6 +33,7 @@ class AsyncChallengeAuthPolicy(ChallengeAuthPolicyBase, AsyncHTTPPolicy):
                 challenge = self._update_challenge(request, challenger)
             except ValueError:
                 # didn't receive the expected challenge -> nothing more this policy can do
+                _LOGGER.debug("Did not receive the expected challenge.")
                 return challenger
 
         await self._handle_challenge(request, challenge)
@@ -39,6 +45,7 @@ class AsyncChallengeAuthPolicy(ChallengeAuthPolicyBase, AsyncHTTPPolicy):
                 challenge = self._update_challenge(request, response)
             except ValueError:
                 # 401 with no legible challenge -> nothing more this policy can do
+                _LOGGER.debug("Received a 401 with no legible challenge.")
                 return response
 
             await self._handle_challenge(request, challenge)
