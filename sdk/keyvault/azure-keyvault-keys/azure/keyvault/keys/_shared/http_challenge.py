@@ -2,13 +2,10 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import logging
 try:
     import urllib.parse as parse
 except ImportError:
     import urlparse as parse  # type: ignore
-
-_LOGGER = logging.getLogger(__name__)
 
 
 class HttpChallenge(object):

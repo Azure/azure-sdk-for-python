@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import logging
 from typing import Any, Callable, Mapping, AsyncIterator, TYPE_CHECKING
 
 from azure.core.configuration import Configuration
@@ -23,8 +22,6 @@ if TYPE_CHECKING:
     except ImportError:
         # TokenCredential is a typing_extensions.Protocol; we don't depend on that package
         pass
-
-_LOGGER = logging.getLogger(__name__)
 
 
 class AsyncKeyVaultClientBase:

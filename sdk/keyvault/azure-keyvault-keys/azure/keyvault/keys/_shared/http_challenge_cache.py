@@ -3,7 +3,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import threading
-import logging
 
 try:
     import urllib.parse as parse
@@ -23,8 +22,6 @@ if TYPE_CHECKING:
 
 _cache = {}  # type: Dict[str, HttpChallenge]
 _lock = threading.Lock()
-
-_LOGGER = logging.getLogger(__name__)
 
 
 def get_challenge_for_url(url):

@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import logging
 from typing import TYPE_CHECKING
 
 from azure.core import Configuration
@@ -24,8 +23,6 @@ from .._user_agent import USER_AGENT
 
 KEY_VAULT_SCOPE = "https://vault.azure.net/.default"
 
-
-_LOGGER = logging.getLogger(__name__)
 
 class KeyVaultClientBase(object):
     """Base class for Key Vault clients"""
