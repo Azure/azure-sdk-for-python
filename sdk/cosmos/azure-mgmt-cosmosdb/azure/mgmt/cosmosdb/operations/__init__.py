@@ -9,24 +9,24 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .database_accounts_operations import DatabaseAccountsOperations
-from .operations import Operations
-from .database_operations import DatabaseOperations
-from .collection_operations import CollectionOperations
-from .collection_region_operations import CollectionRegionOperations
-from .database_account_region_operations import DatabaseAccountRegionOperations
-from .percentile_source_target_operations import PercentileSourceTargetOperations
-from .percentile_target_operations import PercentileTargetOperations
-from .percentile_operations import PercentileOperations
-from .collection_partition_region_operations import CollectionPartitionRegionOperations
-from .collection_partition_operations import CollectionPartitionOperations
-from .partition_key_range_id_operations import PartitionKeyRangeIdOperations
-from .partition_key_range_id_region_operations import PartitionKeyRangeIdRegionOperations
-from .sql_resources_operations import SqlResourcesOperations
-from .mongo_db_resources_operations import MongoDBResourcesOperations
-from .table_resources_operations import TableResourcesOperations
-from .cassandra_resources_operations import CassandraResourcesOperations
-from .gremlin_resources_operations import GremlinResourcesOperations
+from ._database_accounts_operations import DatabaseAccountsOperations
+from ._operations import Operations
+from ._database_operations import DatabaseOperations
+from ._collection_operations import CollectionOperations
+from ._collection_region_operations import CollectionRegionOperations
+from ._database_account_region_operations import DatabaseAccountRegionOperations
+from ._percentile_source_target_operations import PercentileSourceTargetOperations
+from ._percentile_target_operations import PercentileTargetOperations
+from ._percentile_operations import PercentileOperations
+from ._collection_partition_region_operations import CollectionPartitionRegionOperations
+from ._collection_partition_operations import CollectionPartitionOperations
+from ._partition_key_range_id_operations import PartitionKeyRangeIdOperations
+from ._partition_key_range_id_region_operations import PartitionKeyRangeIdRegionOperations
+from ._sql_resources_operations import SqlResourcesOperations
+from ._mongo_db_resources_operations import MongoDBResourcesOperations
+from ._table_resources_operations import TableResourcesOperations
+from ._cassandra_resources_operations import CassandraResourcesOperations
+from ._gremlin_resources_operations import GremlinResourcesOperations
 
 __all__ = [
     'DatabaseAccountsOperations',
