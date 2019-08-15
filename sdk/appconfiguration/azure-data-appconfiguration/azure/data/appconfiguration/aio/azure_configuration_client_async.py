@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-import platform
 import re
 from datetime import datetime
 from azure.core.pipeline import AsyncPipeline
@@ -83,7 +82,7 @@ class AzureAppConfigurationClient():
 
         from azure.data.appconfiguration.aio import AzureAppConfigurationClient
         connection_str = "<my connection string>"
-        async_client = AzureAppConfigurationClient(connection_str)
+        async_client = AzureAppConfigurationClient.from_connection_string(connection_str)
     """
 
     @classmethod
