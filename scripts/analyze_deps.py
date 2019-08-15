@@ -89,7 +89,8 @@ def get_wheel_deps(wheel_dir):
 
                 requires = pkg_info.get_all('Requires-Dist')
                 for req in requires:
-                    req = re.sub(r'[\s\(\)]', '', req)
+                    req = req.split(';')[0] # Extras conditions appear after a semicolon
+                    req = re.sub(r'[\s\(\)]', '', req) # Version specifiers appear in parentheses
                     record_dep(dependencies, req, lib_name)
         except:
             print('Failed to parse METADATA from %s' % (whl_path))
