@@ -1069,6 +1069,7 @@ class StorageContainerTestAsync(StorageTestCase):
 
     async def _test_list_blobs_with_include_metadata(self):
         # Arrange
+        pytest.skip("Waiting on metadata XML fix in msrest")
         container = await self._create_container()
         data = b'hello world'
         blob1 = container.get_blob_client('blob1')
@@ -1235,6 +1236,7 @@ class StorageContainerTestAsync(StorageTestCase):
 
     async def _test_list_blobs_with_include_multiple(self):
         # Arrange
+        pytest.skip("Waiting on metadata XML fix in msrest")
         container = await self._create_container()
         data = b'hello world'
         blob1 = container.get_blob_client('blob1')
