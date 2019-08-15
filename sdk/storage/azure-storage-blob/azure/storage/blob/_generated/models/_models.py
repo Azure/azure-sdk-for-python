@@ -1407,13 +1407,12 @@ class SignedIdentifier(Model):
 
     :param id: Required. a unique id
     :type id: str
-    :param access_policy: Required.
+    :param access_policy:
     :type access_policy: ~azure.storage.blob.models.AccessPolicy
     """
 
     _validation = {
         'id': {'required': True},
-        'access_policy': {'required': True},
     }
 
     _attribute_map = {

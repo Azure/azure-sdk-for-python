@@ -1407,13 +1407,12 @@ class SignedIdentifier(Model):
 
     :param id: Required. a unique id
     :type id: str
-    :param access_policy: Required.
+    :param access_policy:
     :type access_policy: ~azure.storage.blob.models.AccessPolicy
     """
 
     _validation = {
         'id': {'required': True},
-        'access_policy': {'required': True},
     }
 
     _attribute_map = {
@@ -1424,7 +1423,7 @@ class SignedIdentifier(Model):
         'name': 'SignedIdentifier'
     }
 
-    def __init__(self, *, id: str, access_policy, **kwargs) -> None:
+    def __init__(self, *, id: str, access_policy=None, **kwargs) -> None:
         super(SignedIdentifier, self).__init__(**kwargs)
         self.id = id
         self.access_policy = access_policy

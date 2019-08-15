@@ -76,7 +76,15 @@ directive:
   transform: >
     $.properties.BlobPrefixes.xml = { "name": "BlobPrefix" };
     $.properties.BlobItems.xml = { "name": "Blob" };
+```
 
+### SignedIdentifier shouldn't require an AccessPolicy, only ID
+``` yaml
+directive:
+- from: swagger-document
+  where: $.definitions.SignedIdentifier
+  transform: >
+    $.required = [ "Id" ];
 ```
 
 ### Make AccessTier Unique
