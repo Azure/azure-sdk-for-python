@@ -30,10 +30,10 @@ class Bookmark(Resource):
     :type etag: str
     :param display_name: Required. The display name of the bookmark
     :type display_name: str
-    :param last_updated_time_utc: The last time the bookmark was updated
-    :type last_updated_time_utc: datetime
-    :param created_time_utc: The time the bookmark was created
-    :type created_time_utc: datetime
+    :param updated: The last time the bookmark was updated
+    :type updated: datetime
+    :param created: The time the bookmark was created
+    :type created: datetime
     :param created_by: Describes a user that created the bookmark
     :type created_by: ~azure.mgmt.securityinsight.models.UserInfo
     :param updated_by: Describes a user that updated the bookmark
@@ -44,6 +44,8 @@ class Bookmark(Resource):
     :type labels: list[str]
     :param query: Required. The query of the bookmark.
     :type query: str
+    :param query_result: The query result of the bookmark.
+    :type query_result: str
     """
 
     _validation = {
@@ -60,23 +62,25 @@ class Bookmark(Resource):
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'last_updated_time_utc': {'key': 'properties.lastUpdatedTimeUtc', 'type': 'iso-8601'},
-        'created_time_utc': {'key': 'properties.createdTimeUtc', 'type': 'iso-8601'},
+        'updated': {'key': 'properties.updated', 'type': 'iso-8601'},
+        'created': {'key': 'properties.created', 'type': 'iso-8601'},
         'created_by': {'key': 'properties.createdBy', 'type': 'UserInfo'},
         'updated_by': {'key': 'properties.updatedBy', 'type': 'UserInfo'},
         'notes': {'key': 'properties.notes', 'type': 'str'},
         'labels': {'key': 'properties.labels', 'type': '[str]'},
         'query': {'key': 'properties.query', 'type': 'str'},
+        'query_result': {'key': 'properties.queryResult', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(Bookmark, self).__init__(**kwargs)
         self.etag = kwargs.get('etag', None)
         self.display_name = kwargs.get('display_name', None)
-        self.last_updated_time_utc = kwargs.get('last_updated_time_utc', None)
-        self.created_time_utc = kwargs.get('created_time_utc', None)
+        self.updated = kwargs.get('updated', None)
+        self.created = kwargs.get('created', None)
         self.created_by = kwargs.get('created_by', None)
         self.updated_by = kwargs.get('updated_by', None)
         self.notes = kwargs.get('notes', None)
         self.labels = kwargs.get('labels', None)
         self.query = kwargs.get('query', None)
+        self.query_result = kwargs.get('query_result', None)

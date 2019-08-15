@@ -15,6 +15,37 @@ from enum import Enum
 class AlertRuleKind(str, Enum):
 
     scheduled = "Scheduled"
+    filter = "Filter"
+    fusion = "Fusion"
+
+
+class TriggerOperator(str, Enum):
+
+    greater_than = "GreaterThan"
+    less_than = "LessThan"
+    equal = "Equal"
+    not_equal = "NotEqual"
+
+
+class AttackTactic(str, Enum):
+
+    initial_access = "InitialAccess"
+    execution = "Execution"
+    persistence = "Persistence"
+    privilege_escalation = "PrivilegeEscalation"
+    defense_evasion = "DefenseEvasion"
+    credential_access = "CredentialAccess"
+    discovery = "Discovery"
+    lateral_movement = "LateralMovement"
+    collection = "Collection"
+    exfiltration = "Exfiltration"
+    command_and_control = "CommandAndControl"
+
+
+class DataTypeStatus(str, Enum):
+
+    exist = "Exist"
+    not_exist = "NotExist"
 
 
 class AlertSeverity(str, Enum):
@@ -25,12 +56,11 @@ class AlertSeverity(str, Enum):
     informational = "Informational"  #: Informational severity
 
 
-class TriggerOperator(str, Enum):
+class TemplateStatus(str, Enum):
 
-    greater_than = "GreaterThan"
-    less_than = "LessThan"
-    equal = "Equal"
-    not_equal = "NotEqual"
+    installed = "Installed"  #: Alert rule template installed. and can not use more then once
+    available = "Available"  #: Alert rule template is available.
+    not_available = "NotAvailable"  #: Alert rule template is not available
 
 
 class CaseSeverity(str, Enum):

@@ -16,6 +16,7 @@ from .version import VERSION
 from .operations.operations import Operations
 from .operations.alert_rules_operations import AlertRulesOperations
 from .operations.actions_operations import ActionsOperations
+from .operations.alert_rule_templates_operations import AlertRuleTemplatesOperations
 from .operations.cases_operations import CasesOperations
 from .operations.comments_operations import CommentsOperations
 from .operations.case_comments_operations import CaseCommentsOperations
@@ -73,6 +74,8 @@ class SecurityInsights(SDKClient):
     :vartype alert_rules: azure.mgmt.securityinsight.operations.AlertRulesOperations
     :ivar actions: Actions operations
     :vartype actions: azure.mgmt.securityinsight.operations.ActionsOperations
+    :ivar alert_rule_templates: AlertRuleTemplates operations
+    :vartype alert_rule_templates: azure.mgmt.securityinsight.operations.AlertRuleTemplatesOperations
     :ivar cases: Cases operations
     :vartype cases: azure.mgmt.securityinsight.operations.CasesOperations
     :ivar comments: Comments operations
@@ -118,6 +121,8 @@ class SecurityInsights(SDKClient):
         self.alert_rules = AlertRulesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.actions = ActionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.alert_rule_templates = AlertRuleTemplatesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.cases = CasesOperations(
             self._client, self.config, self._serialize, self._deserialize)

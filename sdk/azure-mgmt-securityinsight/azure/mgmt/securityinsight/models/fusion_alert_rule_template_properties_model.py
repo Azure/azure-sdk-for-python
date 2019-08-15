@@ -12,18 +12,18 @@
 from msrest.serialization import Model
 
 
-class AlertRuleKind1(Model):
-    """Describes an Azure resource with kind.
+class FusionAlertRuleTemplatePropertiesModel(Model):
+    """Filter alert rule template property bag.
 
-    :param kind: The kind of the alert rule. Possible values include:
-     'Scheduled', 'Filter', 'Fusion'
-    :type kind: str or ~azure.mgmt.securityinsight.models.AlertRuleKind
+    :param severity: The severity for alerts created by this alert rule.
+     Possible values include: 'High', 'Medium', 'Low', 'Informational'
+    :type severity: str or ~azure.mgmt.securityinsight.models.AlertSeverity
     """
 
     _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
+        'severity': {'key': 'severity', 'type': 'AlertSeverity'},
     }
 
-    def __init__(self, *, kind=None, **kwargs) -> None:
-        super(AlertRuleKind1, self).__init__(**kwargs)
-        self.kind = kind
+    def __init__(self, **kwargs):
+        super(FusionAlertRuleTemplatePropertiesModel, self).__init__(**kwargs)
+        self.severity = kwargs.get('severity', None)

@@ -9,21 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from msrest.paging import Paged
 
 
-class AlertRuleKind1(Model):
-    """Describes an Azure resource with kind.
-
-    :param kind: The kind of the alert rule. Possible values include:
-     'Scheduled', 'Filter', 'Fusion'
-    :type kind: str or ~azure.mgmt.securityinsight.models.AlertRuleKind
+class AlertRuleTemplatePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`AlertRuleTemplate <azure.mgmt.securityinsight.models.AlertRuleTemplate>` object
     """
 
     _attribute_map = {
-        'kind': {'key': 'kind', 'type': 'str'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[AlertRuleTemplate]'}
     }
 
-    def __init__(self, *, kind=None, **kwargs) -> None:
-        super(AlertRuleKind1, self).__init__(**kwargs)
-        self.kind = kind
+    def __init__(self, *args, **kwargs):
+
+        super(AlertRuleTemplatePaged, self).__init__(*args, **kwargs)

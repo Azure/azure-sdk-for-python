@@ -14,7 +14,16 @@ try:
     from .operation_py3 import Operation
     from .alert_rule_py3 import AlertRule
     from .alert_rule_kind1_py3 import AlertRuleKind1
+    from .data_connector_status_py3 import DataConnectorStatus
     from .scheduled_alert_rule_py3 import ScheduledAlertRule
+    from .alert_rule_template_py3 import AlertRuleTemplate
+    from .scheduled_alert_rule_template_py3 import ScheduledAlertRuleTemplate
+    from .base_alert_rule_template_properties_py3 import BaseAlertRuleTemplateProperties
+    from .scheduled_alert_rule_template_properties_model_py3 import ScheduledAlertRuleTemplatePropertiesModel
+    from .filter_alert_rule_template_py3 import FilterAlertRuleTemplate
+    from .filter_alert_rule_template_properties_model_py3 import FilterAlertRuleTemplatePropertiesModel
+    from .fusion_alert_rule_template_py3 import FusionAlertRuleTemplate
+    from .fusion_alert_rule_template_properties_model_py3 import FusionAlertRuleTemplatePropertiesModel
     from .action_py3 import Action
     from .user_info_py3 import UserInfo
     from .case_py3 import Case
@@ -87,7 +96,16 @@ except (SyntaxError, ImportError):
     from .operation import Operation
     from .alert_rule import AlertRule
     from .alert_rule_kind1 import AlertRuleKind1
+    from .data_connector_status import DataConnectorStatus
     from .scheduled_alert_rule import ScheduledAlertRule
+    from .alert_rule_template import AlertRuleTemplate
+    from .scheduled_alert_rule_template import ScheduledAlertRuleTemplate
+    from .base_alert_rule_template_properties import BaseAlertRuleTemplateProperties
+    from .scheduled_alert_rule_template_properties_model import ScheduledAlertRuleTemplatePropertiesModel
+    from .filter_alert_rule_template import FilterAlertRuleTemplate
+    from .filter_alert_rule_template_properties_model import FilterAlertRuleTemplatePropertiesModel
+    from .fusion_alert_rule_template import FusionAlertRuleTemplate
+    from .fusion_alert_rule_template_properties_model import FusionAlertRuleTemplatePropertiesModel
     from .action import Action
     from .user_info import UserInfo
     from .case import Case
@@ -158,6 +176,7 @@ except (SyntaxError, ImportError):
 from .operation_paged import OperationPaged
 from .alert_rule_paged import AlertRulePaged
 from .action_paged import ActionPaged
+from .alert_rule_template_paged import AlertRuleTemplatePaged
 from .case_paged import CasePaged
 from .case_comment_paged import CaseCommentPaged
 from .bookmark_paged import BookmarkPaged
@@ -167,8 +186,11 @@ from .office_consent_paged import OfficeConsentPaged
 from .entity_query_paged import EntityQueryPaged
 from .security_insights_enums import (
     AlertRuleKind,
-    AlertSeverity,
     TriggerOperator,
+    AttackTactic,
+    DataTypeStatus,
+    AlertSeverity,
+    TemplateStatus,
     CaseSeverity,
     CaseStatus,
     CloseReason,
@@ -196,7 +218,16 @@ __all__ = [
     'Operation',
     'AlertRule',
     'AlertRuleKind1',
+    'DataConnectorStatus',
     'ScheduledAlertRule',
+    'AlertRuleTemplate',
+    'ScheduledAlertRuleTemplate',
+    'BaseAlertRuleTemplateProperties',
+    'ScheduledAlertRuleTemplatePropertiesModel',
+    'FilterAlertRuleTemplate',
+    'FilterAlertRuleTemplatePropertiesModel',
+    'FusionAlertRuleTemplate',
+    'FusionAlertRuleTemplatePropertiesModel',
     'Action',
     'UserInfo',
     'Case',
@@ -267,6 +298,7 @@ __all__ = [
     'OperationPaged',
     'AlertRulePaged',
     'ActionPaged',
+    'AlertRuleTemplatePaged',
     'CasePaged',
     'CaseCommentPaged',
     'BookmarkPaged',
@@ -275,8 +307,11 @@ __all__ = [
     'OfficeConsentPaged',
     'EntityQueryPaged',
     'AlertRuleKind',
-    'AlertSeverity',
     'TriggerOperator',
+    'AttackTactic',
+    'DataTypeStatus',
+    'AlertSeverity',
+    'TemplateStatus',
     'CaseSeverity',
     'CaseStatus',
     'CloseReason',
