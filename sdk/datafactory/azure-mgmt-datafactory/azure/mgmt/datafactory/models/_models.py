@@ -1566,6 +1566,10 @@ class CopySink(Model):
      for the sink data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
+    :param table_option: The option to handle sink table, such as autoCreate.
+     For now only 'autoCreate' value is supported. Type: string (or Expression
+     with resultType string).
+    :type table_option: object
     :param type: Required. Constant filled by server.
     :type type: str
     """
@@ -1581,6 +1585,7 @@ class CopySink(Model):
         'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'table_option': {'key': 'tableOption', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
@@ -1596,6 +1601,7 @@ class CopySink(Model):
         self.sink_retry_count = kwargs.get('sink_retry_count', None)
         self.sink_retry_wait = kwargs.get('sink_retry_wait', None)
         self.max_concurrent_connections = kwargs.get('max_concurrent_connections', None)
+        self.table_option = kwargs.get('table_option', None)
         self.type = None
 
 
@@ -1625,6 +1631,10 @@ class AvroSink(CopySink):
      for the sink data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
+    :param table_option: The option to handle sink table, such as autoCreate.
+     For now only 'autoCreate' value is supported. Type: string (or Expression
+     with resultType string).
+    :type table_option: object
     :param type: Required. Constant filled by server.
     :type type: str
     :param store_settings: Avro store settings.
@@ -1644,6 +1654,7 @@ class AvroSink(CopySink):
         'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'table_option': {'key': 'tableOption', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'store_settings': {'key': 'storeSettings', 'type': 'StoreWriteSettings'},
         'format_settings': {'key': 'formatSettings', 'type': 'AvroWriteSettings'},
@@ -2197,6 +2208,10 @@ class AzureBlobFSSink(CopySink):
      for the sink data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
+    :param table_option: The option to handle sink table, such as autoCreate.
+     For now only 'autoCreate' value is supported. Type: string (or Expression
+     with resultType string).
+    :type table_option: object
     :param type: Required. Constant filled by server.
     :type type: str
     :param copy_behavior: The type of copy behavior for copy sink.
@@ -2214,6 +2229,7 @@ class AzureBlobFSSink(CopySink):
         'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'table_option': {'key': 'tableOption', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'copy_behavior': {'key': 'copyBehavior', 'type': 'object'},
     }
@@ -2910,6 +2926,10 @@ class AzureDataExplorerSink(CopySink):
      for the sink data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
+    :param table_option: The option to handle sink table, such as autoCreate.
+     For now only 'autoCreate' value is supported. Type: string (or Expression
+     with resultType string).
+    :type table_option: object
     :param type: Required. Constant filled by server.
     :type type: str
     :param ingestion_mapping_name: A name of a pre-created csv mapping that
@@ -2934,6 +2954,7 @@ class AzureDataExplorerSink(CopySink):
         'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'table_option': {'key': 'tableOption', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'ingestion_mapping_name': {'key': 'ingestionMappingName', 'type': 'object'},
         'ingestion_mapping_as_json': {'key': 'ingestionMappingAsJson', 'type': 'object'},
@@ -3433,6 +3454,10 @@ class AzureDataLakeStoreSink(CopySink):
      for the sink data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
+    :param table_option: The option to handle sink table, such as autoCreate.
+     For now only 'autoCreate' value is supported. Type: string (or Expression
+     with resultType string).
+    :type table_option: object
     :param type: Required. Constant filled by server.
     :type type: str
     :param copy_behavior: The type of copy behavior for copy sink.
@@ -3452,6 +3477,7 @@ class AzureDataLakeStoreSink(CopySink):
         'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'table_option': {'key': 'tableOption', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'copy_behavior': {'key': 'copyBehavior', 'type': 'object'},
         'enable_adls_single_file_parallel': {'key': 'enableAdlsSingleFileParallel', 'type': 'object'},
@@ -4288,6 +4314,10 @@ class AzureMySqlSink(CopySink):
      for the sink data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
+    :param table_option: The option to handle sink table, such as autoCreate.
+     For now only 'autoCreate' value is supported. Type: string (or Expression
+     with resultType string).
+    :type table_option: object
     :param type: Required. Constant filled by server.
     :type type: str
     :param pre_copy_script: A query to execute before starting the copy. Type:
@@ -4306,6 +4336,7 @@ class AzureMySqlSink(CopySink):
         'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'table_option': {'key': 'tableOption', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'pre_copy_script': {'key': 'preCopyScript', 'type': 'object'},
     }
@@ -4505,6 +4536,10 @@ class AzurePostgreSqlSink(CopySink):
      for the sink data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
+    :param table_option: The option to handle sink table, such as autoCreate.
+     For now only 'autoCreate' value is supported. Type: string (or Expression
+     with resultType string).
+    :type table_option: object
     :param type: Required. Constant filled by server.
     :type type: str
     :param pre_copy_script: A query to execute before starting the copy. Type:
@@ -4523,6 +4558,7 @@ class AzurePostgreSqlSink(CopySink):
         'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'table_option': {'key': 'tableOption', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'pre_copy_script': {'key': 'preCopyScript', 'type': 'object'},
     }
@@ -4676,6 +4712,10 @@ class AzureQueueSink(CopySink):
      for the sink data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
+    :param table_option: The option to handle sink table, such as autoCreate.
+     For now only 'autoCreate' value is supported. Type: string (or Expression
+     with resultType string).
+    :type table_option: object
     :param type: Required. Constant filled by server.
     :type type: str
     """
@@ -4691,6 +4731,7 @@ class AzureQueueSink(CopySink):
         'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'table_option': {'key': 'tableOption', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
@@ -4786,6 +4827,10 @@ class AzureSearchIndexSink(CopySink):
      for the sink data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
+    :param table_option: The option to handle sink table, such as autoCreate.
+     For now only 'autoCreate' value is supported. Type: string (or Expression
+     with resultType string).
+    :type table_option: object
     :param type: Required. Constant filled by server.
     :type type: str
     :param write_behavior: Specify the write behavior when upserting documents
@@ -4805,6 +4850,7 @@ class AzureSearchIndexSink(CopySink):
         'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'table_option': {'key': 'tableOption', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'write_behavior': {'key': 'writeBehavior', 'type': 'str'},
     }
@@ -5264,6 +5310,10 @@ class AzureSqlSink(CopySink):
      for the sink data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
+    :param table_option: The option to handle sink table, such as autoCreate.
+     For now only 'autoCreate' value is supported. Type: string (or Expression
+     with resultType string).
+    :type table_option: object
     :param type: Required. Constant filled by server.
     :type type: str
     :param sql_writer_stored_procedure_name: SQL writer stored procedure name.
@@ -5295,6 +5345,7 @@ class AzureSqlSink(CopySink):
         'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'table_option': {'key': 'tableOption', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'sql_writer_stored_procedure_name': {'key': 'sqlWriterStoredProcedureName', 'type': 'object'},
         'sql_writer_table_type': {'key': 'sqlWriterTableType', 'type': 'object'},
@@ -5602,6 +5653,10 @@ class AzureTableSink(CopySink):
      for the sink data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
+    :param table_option: The option to handle sink table, such as autoCreate.
+     For now only 'autoCreate' value is supported. Type: string (or Expression
+     with resultType string).
+    :type table_option: object
     :param type: Required. Constant filled by server.
     :type type: str
     :param azure_table_default_partition_key_value: Azure Table default
@@ -5629,6 +5684,7 @@ class AzureTableSink(CopySink):
         'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'table_option': {'key': 'tableOption', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'azure_table_default_partition_key_value': {'key': 'azureTableDefaultPartitionKeyValue', 'type': 'object'},
         'azure_table_partition_key_name': {'key': 'azureTablePartitionKeyName', 'type': 'object'},
@@ -5858,10 +5914,14 @@ class BinarySink(CopySink):
      for the sink data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
+    :param table_option: The option to handle sink table, such as autoCreate.
+     For now only 'autoCreate' value is supported. Type: string (or Expression
+     with resultType string).
+    :type table_option: object
     :param type: Required. Constant filled by server.
     :type type: str
     :param store_settings: Binary store settings.
-    :type store_settings: ~azure.mgmt.datafactory.models.StoreReadSettings
+    :type store_settings: ~azure.mgmt.datafactory.models.StoreWriteSettings
     """
 
     _validation = {
@@ -5875,8 +5935,9 @@ class BinarySink(CopySink):
         'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'table_option': {'key': 'tableOption', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
-        'store_settings': {'key': 'storeSettings', 'type': 'StoreReadSettings'},
+        'store_settings': {'key': 'storeSettings', 'type': 'StoreWriteSettings'},
     }
 
     def __init__(self, **kwargs):
@@ -6140,6 +6201,10 @@ class BlobSink(CopySink):
      for the sink data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
+    :param table_option: The option to handle sink table, such as autoCreate.
+     For now only 'autoCreate' value is supported. Type: string (or Expression
+     with resultType string).
+    :type table_option: object
     :param type: Required. Constant filled by server.
     :type type: str
     :param blob_writer_overwrite_files: Blob writer overwrite files. Type:
@@ -6166,6 +6231,7 @@ class BlobSink(CopySink):
         'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'table_option': {'key': 'tableOption', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'blob_writer_overwrite_files': {'key': 'blobWriterOverwriteFiles', 'type': 'object'},
         'blob_writer_date_time_format': {'key': 'blobWriterDateTimeFormat', 'type': 'object'},
@@ -6739,6 +6805,10 @@ class CommonDataServiceForAppsSink(CopySink):
      for the sink data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
+    :param table_option: The option to handle sink table, such as autoCreate.
+     For now only 'autoCreate' value is supported. Type: string (or Expression
+     with resultType string).
+    :type table_option: object
     :param type: Required. Constant filled by server.
     :type type: str
     :ivar write_behavior: Required. The write behavior for the operation.
@@ -6762,6 +6832,7 @@ class CommonDataServiceForAppsSink(CopySink):
         'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'table_option': {'key': 'tableOption', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'write_behavior': {'key': 'writeBehavior', 'type': 'str'},
         'ignore_null_values': {'key': 'ignoreNullValues', 'type': 'object'},
@@ -7319,6 +7390,10 @@ class CosmosDbMongoDbApiSink(CopySink):
      for the sink data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
+    :param table_option: The option to handle sink table, such as autoCreate.
+     For now only 'autoCreate' value is supported. Type: string (or Expression
+     with resultType string).
+    :type table_option: object
     :param type: Required. Constant filled by server.
     :type type: str
     :param write_behavior: Specifies whether the document with same key to be
@@ -7339,6 +7414,7 @@ class CosmosDbMongoDbApiSink(CopySink):
         'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'table_option': {'key': 'tableOption', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'write_behavior': {'key': 'writeBehavior', 'type': 'object'},
     }
@@ -8846,6 +8922,10 @@ class DelimitedTextSink(CopySink):
      for the sink data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
+    :param table_option: The option to handle sink table, such as autoCreate.
+     For now only 'autoCreate' value is supported. Type: string (or Expression
+     with resultType string).
+    :type table_option: object
     :param type: Required. Constant filled by server.
     :type type: str
     :param store_settings: DelimitedText store settings.
@@ -8866,6 +8946,7 @@ class DelimitedTextSink(CopySink):
         'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'table_option': {'key': 'tableOption', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'store_settings': {'key': 'storeSettings', 'type': 'StoreWriteSettings'},
         'format_settings': {'key': 'formatSettings', 'type': 'DelimitedTextWriteSettings'},
@@ -9118,6 +9199,10 @@ class DocumentDbCollectionSink(CopySink):
      for the sink data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
+    :param table_option: The option to handle sink table, such as autoCreate.
+     For now only 'autoCreate' value is supported. Type: string (or Expression
+     with resultType string).
+    :type table_option: object
     :param type: Required. Constant filled by server.
     :type type: str
     :param nesting_separator: Nested properties separator. Default is . (dot).
@@ -9139,6 +9224,7 @@ class DocumentDbCollectionSink(CopySink):
         'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'table_option': {'key': 'tableOption', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'nesting_separator': {'key': 'nestingSeparator', 'type': 'object'},
         'write_behavior': {'key': 'writeBehavior', 'type': 'object'},
@@ -9749,6 +9835,10 @@ class DynamicsCrmSink(CopySink):
      for the sink data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
+    :param table_option: The option to handle sink table, such as autoCreate.
+     For now only 'autoCreate' value is supported. Type: string (or Expression
+     with resultType string).
+    :type table_option: object
     :param type: Required. Constant filled by server.
     :type type: str
     :ivar write_behavior: Required. The write behavior for the operation.
@@ -9772,6 +9862,7 @@ class DynamicsCrmSink(CopySink):
         'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'table_option': {'key': 'tableOption', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'write_behavior': {'key': 'writeBehavior', 'type': 'str'},
         'ignore_null_values': {'key': 'ignoreNullValues', 'type': 'object'},
@@ -10017,6 +10108,10 @@ class DynamicsSink(CopySink):
      for the sink data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
+    :param table_option: The option to handle sink table, such as autoCreate.
+     For now only 'autoCreate' value is supported. Type: string (or Expression
+     with resultType string).
+    :type table_option: object
     :param type: Required. Constant filled by server.
     :type type: str
     :ivar write_behavior: Required. The write behavior for the operation.
@@ -10040,6 +10135,7 @@ class DynamicsSink(CopySink):
         'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'table_option': {'key': 'tableOption', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'write_behavior': {'key': 'writeBehavior', 'type': 'str'},
         'ignore_null_values': {'key': 'ignoreNullValues', 'type': 'object'},
@@ -11195,6 +11291,10 @@ class FileSystemSink(CopySink):
      for the sink data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
+    :param table_option: The option to handle sink table, such as autoCreate.
+     For now only 'autoCreate' value is supported. Type: string (or Expression
+     with resultType string).
+    :type table_option: object
     :param type: Required. Constant filled by server.
     :type type: str
     :param copy_behavior: The type of copy behavior for copy sink.
@@ -11212,6 +11312,7 @@ class FileSystemSink(CopySink):
         'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'table_option': {'key': 'tableOption', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'copy_behavior': {'key': 'copyBehavior', 'type': 'object'},
     }
@@ -14591,6 +14692,10 @@ class InformixSink(CopySink):
      for the sink data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
+    :param table_option: The option to handle sink table, such as autoCreate.
+     For now only 'autoCreate' value is supported. Type: string (or Expression
+     with resultType string).
+    :type table_option: object
     :param type: Required. Constant filled by server.
     :type type: str
     :param pre_copy_script: A query to execute before starting the copy. Type:
@@ -14609,6 +14714,7 @@ class InformixSink(CopySink):
         'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'table_option': {'key': 'tableOption', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'pre_copy_script': {'key': 'preCopyScript', 'type': 'object'},
     }
@@ -15727,6 +15833,10 @@ class JsonSink(CopySink):
      for the sink data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
+    :param table_option: The option to handle sink table, such as autoCreate.
+     For now only 'autoCreate' value is supported. Type: string (or Expression
+     with resultType string).
+    :type table_option: object
     :param type: Required. Constant filled by server.
     :type type: str
     :param store_settings: Json store settings.
@@ -15746,6 +15856,7 @@ class JsonSink(CopySink):
         'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'table_option': {'key': 'tableOption', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'store_settings': {'key': 'storeSettings', 'type': 'StoreWriteSettings'},
         'format_settings': {'key': 'formatSettings', 'type': 'JsonWriteSettings'},
@@ -17041,6 +17152,10 @@ class MicrosoftAccessSink(CopySink):
      for the sink data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
+    :param table_option: The option to handle sink table, such as autoCreate.
+     For now only 'autoCreate' value is supported. Type: string (or Expression
+     with resultType string).
+    :type table_option: object
     :param type: Required. Constant filled by server.
     :type type: str
     :param pre_copy_script: A query to execute before starting the copy. Type:
@@ -17059,6 +17174,7 @@ class MicrosoftAccessSink(CopySink):
         'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'table_option': {'key': 'tableOption', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'pre_copy_script': {'key': 'preCopyScript', 'type': 'object'},
     }
@@ -18290,6 +18406,10 @@ class OdbcSink(CopySink):
      for the sink data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
+    :param table_option: The option to handle sink table, such as autoCreate.
+     For now only 'autoCreate' value is supported. Type: string (or Expression
+     with resultType string).
+    :type table_option: object
     :param type: Required. Constant filled by server.
     :type type: str
     :param pre_copy_script: A query to execute before starting the copy. Type:
@@ -18308,6 +18428,7 @@ class OdbcSink(CopySink):
         'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'table_option': {'key': 'tableOption', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'pre_copy_script': {'key': 'preCopyScript', 'type': 'object'},
     }
@@ -19141,6 +19262,10 @@ class OracleSink(CopySink):
      for the sink data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
+    :param table_option: The option to handle sink table, such as autoCreate.
+     For now only 'autoCreate' value is supported. Type: string (or Expression
+     with resultType string).
+    :type table_option: object
     :param type: Required. Constant filled by server.
     :type type: str
     :param pre_copy_script: SQL pre-copy script. Type: string (or Expression
@@ -19159,6 +19284,7 @@ class OracleSink(CopySink):
         'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'table_option': {'key': 'tableOption', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'pre_copy_script': {'key': 'preCopyScript', 'type': 'object'},
     }
@@ -19488,6 +19614,10 @@ class ParquetSink(CopySink):
      for the sink data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
+    :param table_option: The option to handle sink table, such as autoCreate.
+     For now only 'autoCreate' value is supported. Type: string (or Expression
+     with resultType string).
+    :type table_option: object
     :param type: Required. Constant filled by server.
     :type type: str
     :param store_settings: Parquet store settings.
@@ -19505,6 +19635,7 @@ class ParquetSink(CopySink):
         'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'table_option': {'key': 'tableOption', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'store_settings': {'key': 'storeSettings', 'type': 'StoreWriteSettings'},
     }
@@ -22320,6 +22451,10 @@ class SalesforceServiceCloudSink(CopySink):
      for the sink data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
+    :param table_option: The option to handle sink table, such as autoCreate.
+     For now only 'autoCreate' value is supported. Type: string (or Expression
+     with resultType string).
+    :type table_option: object
     :param type: Required. Constant filled by server.
     :type type: str
     :param write_behavior: The write behavior for the operation. Default is
@@ -22352,6 +22487,7 @@ class SalesforceServiceCloudSink(CopySink):
         'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'table_option': {'key': 'tableOption', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'write_behavior': {'key': 'writeBehavior', 'type': 'str'},
         'external_id_field_name': {'key': 'externalIdFieldName', 'type': 'object'},
@@ -22443,6 +22579,10 @@ class SalesforceSink(CopySink):
      for the sink data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
+    :param table_option: The option to handle sink table, such as autoCreate.
+     For now only 'autoCreate' value is supported. Type: string (or Expression
+     with resultType string).
+    :type table_option: object
     :param type: Required. Constant filled by server.
     :type type: str
     :param write_behavior: The write behavior for the operation. Default is
@@ -22475,6 +22615,7 @@ class SalesforceSink(CopySink):
         'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'table_option': {'key': 'tableOption', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'write_behavior': {'key': 'writeBehavior', 'type': 'str'},
         'external_id_field_name': {'key': 'externalIdFieldName', 'type': 'object'},
@@ -22867,6 +23008,10 @@ class SapCloudForCustomerSink(CopySink):
      for the sink data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
+    :param table_option: The option to handle sink table, such as autoCreate.
+     For now only 'autoCreate' value is supported. Type: string (or Expression
+     with resultType string).
+    :type table_option: object
     :param type: Required. Constant filled by server.
     :type type: str
     :param write_behavior: The write behavior for the operation. Default is
@@ -22886,6 +23031,7 @@ class SapCloudForCustomerSink(CopySink):
         'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'table_option': {'key': 'tableOption', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'write_behavior': {'key': 'writeBehavior', 'type': 'str'},
     }
@@ -25196,6 +25342,10 @@ class SqlDWSink(CopySink):
      for the sink data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
+    :param table_option: The option to handle sink table, such as autoCreate.
+     For now only 'autoCreate' value is supported. Type: string (or Expression
+     with resultType string).
+    :type table_option: object
     :param type: Required. Constant filled by server.
     :type type: str
     :param pre_copy_script: SQL pre-copy script. Type: string (or Expression
@@ -25221,6 +25371,7 @@ class SqlDWSink(CopySink):
         'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'table_option': {'key': 'tableOption', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'pre_copy_script': {'key': 'preCopyScript', 'type': 'object'},
         'allow_poly_base': {'key': 'allowPolyBase', 'type': 'object'},
@@ -25319,6 +25470,10 @@ class SqlMISink(CopySink):
      for the sink data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
+    :param table_option: The option to handle sink table, such as autoCreate.
+     For now only 'autoCreate' value is supported. Type: string (or Expression
+     with resultType string).
+    :type table_option: object
     :param type: Required. Constant filled by server.
     :type type: str
     :param sql_writer_stored_procedure_name: SQL writer stored procedure name.
@@ -25350,6 +25505,7 @@ class SqlMISink(CopySink):
         'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'table_option': {'key': 'tableOption', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'sql_writer_stored_procedure_name': {'key': 'sqlWriterStoredProcedureName', 'type': 'object'},
         'sql_writer_table_type': {'key': 'sqlWriterTableType', 'type': 'object'},
@@ -25517,6 +25673,10 @@ class SqlServerSink(CopySink):
      for the sink data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
+    :param table_option: The option to handle sink table, such as autoCreate.
+     For now only 'autoCreate' value is supported. Type: string (or Expression
+     with resultType string).
+    :type table_option: object
     :param type: Required. Constant filled by server.
     :type type: str
     :param sql_writer_stored_procedure_name: SQL writer stored procedure name.
@@ -25548,6 +25708,7 @@ class SqlServerSink(CopySink):
         'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'table_option': {'key': 'tableOption', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'sql_writer_stored_procedure_name': {'key': 'sqlWriterStoredProcedureName', 'type': 'object'},
         'sql_writer_table_type': {'key': 'sqlWriterTableType', 'type': 'object'},
@@ -25781,6 +25942,10 @@ class SqlSink(CopySink):
      for the sink data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
+    :param table_option: The option to handle sink table, such as autoCreate.
+     For now only 'autoCreate' value is supported. Type: string (or Expression
+     with resultType string).
+    :type table_option: object
     :param type: Required. Constant filled by server.
     :type type: str
     :param sql_writer_stored_procedure_name: SQL writer stored procedure name.
@@ -25812,6 +25977,7 @@ class SqlSink(CopySink):
         'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'table_option': {'key': 'tableOption', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
         'sql_writer_stored_procedure_name': {'key': 'sqlWriterStoredProcedureName', 'type': 'object'},
         'sql_writer_table_type': {'key': 'sqlWriterTableType', 'type': 'object'},
@@ -27439,6 +27605,36 @@ class TriggerRunsQueryResponse(Model):
         super(TriggerRunsQueryResponse, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
         self.continuation_token = kwargs.get('continuation_token', None)
+
+
+class TriggerSubscriptionOperationStatus(Model):
+    """Defines the response of a trigger subscription operation.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar trigger_name: Trigger name.
+    :vartype trigger_name: str
+    :ivar status: Event Subscription Status. Possible values include:
+     'Enabled', 'Provisioning', 'Deprovisioning', 'Disabled', 'Unknown'
+    :vartype status: str or
+     ~azure.mgmt.datafactory.models.EventSubscriptionStatus
+    """
+
+    _validation = {
+        'trigger_name': {'readonly': True},
+        'status': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'trigger_name': {'key': 'triggerName', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(TriggerSubscriptionOperationStatus, self).__init__(**kwargs)
+        self.trigger_name = None
+        self.status = None
 
 
 class TumblingWindowTrigger(Trigger):
