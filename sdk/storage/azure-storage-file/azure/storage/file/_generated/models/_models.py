@@ -17,16 +17,16 @@ class AccessPolicy(Model):
     """An Access policy.
 
     :param start: The date-time the policy is active.
-    :type start: datetime
+    :type start: str
     :param expiry: The date-time the policy expires.
-    :type expiry: datetime
+    :type expiry: str
     :param permission: The permissions for the ACL policy.
     :type permission: str
     """
 
     _attribute_map = {
-        'start': {'key': 'Start', 'type': 'iso-8601', 'xml': {'name': 'Start'}},
-        'expiry': {'key': 'Expiry', 'type': 'iso-8601', 'xml': {'name': 'Expiry'}},
+        'start': {'key': 'Start', 'type': 'str', 'xml': {'name': 'Start'}},
+        'expiry': {'key': 'Expiry', 'type': 'str', 'xml': {'name': 'Expiry'}},
         'permission': {'key': 'Permission', 'type': 'str', 'xml': {'name': 'Permission'}},
     }
     _xml_map = {

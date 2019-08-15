@@ -17,22 +17,22 @@ class AccessPolicy(Model):
     """An Access policy.
 
     :param start: The date-time the policy is active.
-    :type start: datetime
+    :type start: str
     :param expiry: The date-time the policy expires.
-    :type expiry: datetime
+    :type expiry: str
     :param permission: The permissions for the ACL policy.
     :type permission: str
     """
 
     _attribute_map = {
-        'start': {'key': 'Start', 'type': 'iso-8601', 'xml': {'name': 'Start'}},
-        'expiry': {'key': 'Expiry', 'type': 'iso-8601', 'xml': {'name': 'Expiry'}},
+        'start': {'key': 'Start', 'type': 'str', 'xml': {'name': 'Start'}},
+        'expiry': {'key': 'Expiry', 'type': 'str', 'xml': {'name': 'Expiry'}},
         'permission': {'key': 'Permission', 'type': 'str', 'xml': {'name': 'Permission'}},
     }
     _xml_map = {
     }
 
-    def __init__(self, *, start=None, expiry=None, permission: str=None, **kwargs) -> None:
+    def __init__(self, *, start: str=None, expiry: str=None, permission: str=None, **kwargs) -> None:
         super(AccessPolicy, self).__init__(**kwargs)
         self.start = start
         self.expiry = expiry
