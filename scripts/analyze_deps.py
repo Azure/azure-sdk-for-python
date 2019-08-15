@@ -290,7 +290,6 @@ if __name__ == '__main__':
                 override_specs = overrides.get(changed_req, [])
 
                 for spec in unmatched_specs:
-                    non_overridden_libs = []
                     if spec in override_specs:
                         non_overridden_libs = set(dependencies[changed_req][spec]) - set(override_specs[spec])
                     else:
