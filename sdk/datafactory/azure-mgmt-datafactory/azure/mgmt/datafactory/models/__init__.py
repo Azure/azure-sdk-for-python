@@ -271,7 +271,11 @@ try:
     from ._models_py3 import JiraLinkedService
     from ._models_py3 import JiraObjectDataset
     from ._models_py3 import JiraSource
+    from ._models_py3 import JsonDataset
     from ._models_py3 import JsonFormat
+    from ._models_py3 import JsonSink
+    from ._models_py3 import JsonSource
+    from ._models_py3 import JsonWriteSettings
     from ._models_py3 import LinkedIntegrationRuntime
     from ._models_py3 import LinkedIntegrationRuntimeKeyAuthorization
     from ._models_py3 import LinkedIntegrationRuntimeRbacAuthorization
@@ -783,7 +787,11 @@ except (SyntaxError, ImportError):
     from ._models import JiraLinkedService
     from ._models import JiraObjectDataset
     from ._models import JiraSource
+    from ._models import JsonDataset
     from ._models import JsonFormat
+    from ._models import JsonSink
+    from ._models import JsonSource
+    from ._models import JsonWriteSettings
     from ._models import LinkedIntegrationRuntime
     from ._models import LinkedIntegrationRuntimeKeyAuthorization
     from ._models import LinkedIntegrationRuntimeRbacAuthorization
@@ -1100,6 +1108,7 @@ from ._data_factory_management_client_enums import (
     SalesforceSinkWriteBehavior,
     AzureSearchIndexWriteBehaviorType,
     PolybaseSettingsRejectType,
+    JsonWriteFilePattern,
     SapCloudForCustomerSinkWriteBehavior,
     WebHookActivityMethod,
     IntegrationRuntimeType,
@@ -1377,7 +1386,11 @@ __all__ = [
     'JiraLinkedService',
     'JiraObjectDataset',
     'JiraSource',
+    'JsonDataset',
     'JsonFormat',
+    'JsonSink',
+    'JsonSource',
+    'JsonWriteSettings',
     'LinkedIntegrationRuntime',
     'LinkedIntegrationRuntimeKeyAuthorization',
     'LinkedIntegrationRuntimeRbacAuthorization',
@@ -1693,6 +1706,7 @@ __all__ = [
     'SalesforceSinkWriteBehavior',
     'AzureSearchIndexWriteBehaviorType',
     'PolybaseSettingsRejectType',
+    'JsonWriteFilePattern',
     'SapCloudForCustomerSinkWriteBehavior',
     'WebHookActivityMethod',
     'IntegrationRuntimeType',
