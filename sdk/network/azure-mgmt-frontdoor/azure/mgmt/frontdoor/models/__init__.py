@@ -29,9 +29,12 @@ try:
     from .forwarding_configuration_py3 import ForwardingConfiguration
     from .redirect_configuration_py3 import RedirectConfiguration
     from .backend_py3 import Backend
+    from .load_balancing_settings_list_result_py3 import LoadBalancingSettingsListResult
     from .load_balancing_settings_update_parameters_py3 import LoadBalancingSettingsUpdateParameters
+    from .health_probe_settings_list_result_py3 import HealthProbeSettingsListResult
     from .health_probe_settings_update_parameters_py3 import HealthProbeSettingsUpdateParameters
     from .backend_pool_update_parameters_py3 import BackendPoolUpdateParameters
+    from .backend_pool_list_result_py3 import BackendPoolListResult
     from .frontend_endpoint_update_parameters_web_application_firewall_policy_link_py3 import FrontendEndpointUpdateParametersWebApplicationFirewallPolicyLink
     from .frontend_endpoint_update_parameters_py3 import FrontendEndpointUpdateParameters
     from .header_action_py3 import HeaderAction
@@ -82,9 +85,12 @@ except (SyntaxError, ImportError):
     from .forwarding_configuration import ForwardingConfiguration
     from .redirect_configuration import RedirectConfiguration
     from .backend import Backend
+    from .load_balancing_settings_list_result import LoadBalancingSettingsListResult
     from .load_balancing_settings_update_parameters import LoadBalancingSettingsUpdateParameters
+    from .health_probe_settings_list_result import HealthProbeSettingsListResult
     from .health_probe_settings_update_parameters import HealthProbeSettingsUpdateParameters
     from .backend_pool_update_parameters import BackendPoolUpdateParameters
+    from .backend_pool_list_result import BackendPoolListResult
     from .frontend_endpoint_update_parameters_web_application_firewall_policy_link import FrontendEndpointUpdateParametersWebApplicationFirewallPolicyLink
     from .frontend_endpoint_update_parameters import FrontendEndpointUpdateParameters
     from .header_action import HeaderAction
@@ -117,9 +123,6 @@ except (SyntaxError, ImportError):
     from .managed_rule_set_definition import ManagedRuleSetDefinition
 from .front_door_paged import FrontDoorPaged
 from .routing_rule_paged import RoutingRulePaged
-from .health_probe_settings_model_paged import HealthProbeSettingsModelPaged
-from .load_balancing_settings_model_paged import LoadBalancingSettingsModelPaged
-from .backend_pool_paged import BackendPoolPaged
 from .frontend_endpoint_paged import FrontendEndpointPaged
 from .rules_engine_paged import RulesEnginePaged
 from .web_application_firewall_policy_paged import WebApplicationFirewallPolicyPaged
@@ -184,9 +187,12 @@ __all__ = [
     'ForwardingConfiguration',
     'RedirectConfiguration',
     'Backend',
+    'LoadBalancingSettingsListResult',
     'LoadBalancingSettingsUpdateParameters',
+    'HealthProbeSettingsListResult',
     'HealthProbeSettingsUpdateParameters',
     'BackendPoolUpdateParameters',
+    'BackendPoolListResult',
     'FrontendEndpointUpdateParametersWebApplicationFirewallPolicyLink',
     'FrontendEndpointUpdateParameters',
     'HeaderAction',
@@ -219,9 +225,6 @@ __all__ = [
     'ManagedRuleSetDefinition',
     'FrontDoorPaged',
     'RoutingRulePaged',
-    'HealthProbeSettingsModelPaged',
-    'LoadBalancingSettingsModelPaged',
-    'BackendPoolPaged',
     'FrontendEndpointPaged',
     'RulesEnginePaged',
     'WebApplicationFirewallPolicyPaged',
