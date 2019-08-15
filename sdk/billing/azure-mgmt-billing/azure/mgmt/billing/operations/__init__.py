@@ -10,12 +10,12 @@
 # --------------------------------------------------------------------------
 
 from .billing_accounts_operations import BillingAccountsOperations
-from .invoice_sections_operations import InvoiceSectionsOperations
 from .payment_methods_operations import PaymentMethodsOperations
 from .address_operations import AddressOperations
 from .available_balances_operations import AvailableBalancesOperations
 from .billing_profiles_operations import BillingProfilesOperations
 from .customers_operations import CustomersOperations
+from .invoice_sections_operations import InvoiceSectionsOperations
 from .billing_permissions_operations import BillingPermissionsOperations
 from .billing_subscriptions_operations import BillingSubscriptionsOperations
 from .products_operations import ProductsOperations
@@ -38,12 +38,12 @@ from .line_of_credits_operations import LineOfCreditsOperations
 
 __all__ = [
     'BillingAccountsOperations',
-    'InvoiceSectionsOperations',
     'PaymentMethodsOperations',
     'AddressOperations',
     'AvailableBalancesOperations',
     'BillingProfilesOperations',
     'CustomersOperations',
+    'InvoiceSectionsOperations',
     'BillingPermissionsOperations',
     'BillingSubscriptionsOperations',
     'ProductsOperations',

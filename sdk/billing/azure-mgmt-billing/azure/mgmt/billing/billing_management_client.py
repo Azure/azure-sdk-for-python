@@ -14,12 +14,12 @@ from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
 from .operations.billing_accounts_operations import BillingAccountsOperations
-from .operations.invoice_sections_operations import InvoiceSectionsOperations
 from .operations.payment_methods_operations import PaymentMethodsOperations
 from .operations.address_operations import AddressOperations
 from .operations.available_balances_operations import AvailableBalancesOperations
 from .operations.billing_profiles_operations import BillingProfilesOperations
 from .operations.customers_operations import CustomersOperations
+from .operations.invoice_sections_operations import InvoiceSectionsOperations
 from .operations.billing_permissions_operations import BillingPermissionsOperations
 from .operations.billing_subscriptions_operations import BillingSubscriptionsOperations
 from .operations.products_operations import ProductsOperations
@@ -82,8 +82,6 @@ class BillingManagementClient(SDKClient):
 
     :ivar billing_accounts: BillingAccounts operations
     :vartype billing_accounts: azure.mgmt.billing.operations.BillingAccountsOperations
-    :ivar invoice_sections: InvoiceSections operations
-    :vartype invoice_sections: azure.mgmt.billing.operations.InvoiceSectionsOperations
     :ivar payment_methods: PaymentMethods operations
     :vartype payment_methods: azure.mgmt.billing.operations.PaymentMethodsOperations
     :ivar address: Address operations
@@ -94,6 +92,8 @@ class BillingManagementClient(SDKClient):
     :vartype billing_profiles: azure.mgmt.billing.operations.BillingProfilesOperations
     :ivar customers: Customers operations
     :vartype customers: azure.mgmt.billing.operations.CustomersOperations
+    :ivar invoice_sections: InvoiceSections operations
+    :vartype invoice_sections: azure.mgmt.billing.operations.InvoiceSectionsOperations
     :ivar billing_permissions: BillingPermissions operations
     :vartype billing_permissions: azure.mgmt.billing.operations.BillingPermissionsOperations
     :ivar billing_subscriptions: BillingSubscriptions operations
@@ -154,8 +154,6 @@ class BillingManagementClient(SDKClient):
 
         self.billing_accounts = BillingAccountsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.invoice_sections = InvoiceSectionsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.payment_methods = PaymentMethodsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.address = AddressOperations(
@@ -165,6 +163,8 @@ class BillingManagementClient(SDKClient):
         self.billing_profiles = BillingProfilesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.customers = CustomersOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.invoice_sections = InvoiceSectionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.billing_permissions = BillingPermissionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
