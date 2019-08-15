@@ -197,7 +197,7 @@ def SynchronizedRequest(
     :param object client:
         Document client instance
     :param dict request:
-    :param _GlobalEndpointManager global_endpoint_manager: 
+    :param _GlobalEndpointManager global_endpoint_manager:
     :param  documents.ConnectionPolicy connection_policy:
     :param requests.Session requests_session:
         Session object in requests module

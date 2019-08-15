@@ -47,14 +47,14 @@ class PartitionKeyRangeCache(object):
 
     def get_overlapping_ranges(self, collection_link, partition_key_ranges):
         """
-        Given a partition key range and a collection, 
+        Given a partition key range and a collection,
         returns the list of overlapping partition key ranges
-        
+
         :param str collection_link:
             The name of the collection.
-        :param list partition_key_range: 
+        :param list partition_key_range:
             List of partition key range.
-        
+
         :return:
             List of overlapping partition key ranges.
         :rtype: list
@@ -137,7 +137,7 @@ class SmartRoutingMapProvider(PartitionKeyRangeCache):
         """
         Given the sorted ranges and a collection,
         Returns the list of overlapping partition key ranges
-        
+
         :param str collection_link:
             The collection link.
         :param (list of routing_range.Range) sorted_ranges: The sorted list of non-overlapping ranges.

@@ -29,15 +29,15 @@ from azure.cosmos._routing import routing_range
 
 
 class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
-    """This class is capable of queries which requires rewriting based on 
+    """This class is capable of queries which requires rewriting based on
     backend's returned query execution info.
-    
+
     This class maintains the execution context for each partition key range
     and aggregates the corresponding results from each execution context.
-    
-    When handling an orderby query, _MultiExecutionContextAggregator instantiates one instance of 
+
+    When handling an orderby query, _MultiExecutionContextAggregator instantiates one instance of
     DocumentProducer per target partition key range and aggregates the result of each.
-    
+
     TODO improvement: this class needs to be parallelized
     """
 
@@ -105,12 +105,12 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
 
     def next(self):
         """returns the next result
-        
+
         :return:
             The next result.
         :rtype: dict
         :raises StopIteration: If no more result is left.
-            
+
         """
         if self._orderByPQ.size() > 0:
 

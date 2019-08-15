@@ -180,7 +180,7 @@ class CosmosClientConnection(object):
             Database Self Link or ID based link.
         :param object partition_resolver:
             An instance of PartitionResolver.
-        
+
         """
         if not database_link:
             raise ValueError("database_link is None or empty.")
@@ -252,7 +252,7 @@ class CosmosClientConnection(object):
         :param dict options:
             The request options for the request.
 
-        :return: 
+        :return:
             Query Iterable of Databases.
         :rtype:
             query_iterable.QueryIterable
@@ -293,7 +293,7 @@ class CosmosClientConnection(object):
             The link to the database.
         :param dict options:
             The request options for the request.
-            
+
         :return: Query Iterable of Collections.
         :rtype:
             query_iterable.QueryIterable
@@ -361,7 +361,7 @@ class CosmosClientConnection(object):
 
         :param str collection_link:
             The link to the collection entity.
-        :param dict collection: 
+        :param dict collection:
             The collection to be used.
         :param dict options:
             The request options for the request.
@@ -499,7 +499,7 @@ class CosmosClientConnection(object):
 
         :return:
             Query Iterable of Users.
-        :rtype:   
+        :rtype:
             query_iterable.QueryIterable
 
         """
@@ -775,7 +775,7 @@ class CosmosClientConnection(object):
             The request options for the request.
         :param str partition_key:
             Partition key for the query(default value None)
-        :param response_hook: 
+        :param response_hook:
             A callable invoked with the response metadata
 
         :return:
@@ -823,7 +823,7 @@ class CosmosClientConnection(object):
         :param dict options:
             The request options for the request.
             options may also specify partition key range id.
-        :param response_hook: 
+        :param response_hook:
             A callable invoked with the response metadata
 
         :return:
@@ -854,7 +854,7 @@ class CosmosClientConnection(object):
             The request options for the request.
         :param str partition_key_range_id:
             Specifies partition key range id.
-        :param response_hook: 
+        :param response_hook:
             A callable invoked with the response metadata
 
         :return:
@@ -1637,7 +1637,7 @@ class CosmosClientConnection(object):
 
         :param str document_link:
             The link to the document.
-        :param (file-like stream object) readable_stream: 
+        :param (file-like stream object) readable_stream:
         :param dict options:
             The request options for the request.
 
@@ -2232,7 +2232,7 @@ class CosmosClientConnection(object):
 
     def Upsert(self, body, path, type, id, initial_headers, options=None):
         """Upserts a Azure Cosmos resource and returns it.
-        
+
         :param dict body:
         :param str path:
         :param str type:
@@ -2502,7 +2502,7 @@ class CosmosClientConnection(object):
 
         :rtype:
             list
-        
+
         :raises SystemError: If the query compatibility mode is undefined.
 
         """

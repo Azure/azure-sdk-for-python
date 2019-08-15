@@ -110,7 +110,7 @@ class _GlobalEndpointManager(object):
 
     def _GetDatabaseAccount(self):
         """Gets the database account first by using the default endpoint, and if that doesn't returns
-           use the endpoints for the preferred locations in the order they are specified to get 
+           use the endpoints for the preferred locations in the order they are specified to get
            the database account.
         """
         try:

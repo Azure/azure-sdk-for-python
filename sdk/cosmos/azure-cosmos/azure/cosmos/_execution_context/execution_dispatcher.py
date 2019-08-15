@@ -54,12 +54,12 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):
 
     def next(self):
         """Returns the next query result.
-        
+
         :return:
             The next query result.
         :rtype: dict
         :raises StopIteration: If no more result is left.
-            
+
         """
         try:
             return next(self._execution_context)
@@ -73,11 +73,11 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):
         return next(self._execution_context)
 
     def fetch_next_block(self):
-        """Returns a block of results. 
-        
+        """Returns a block of results.
+
         This method only exists for backward compatibility reasons. (Because QueryIterable
         has exposed fetch_next_block api).
-        
+
         :return:
             List of results.
         :rtype: list
@@ -147,24 +147,24 @@ class _PipelineExecutionContext(_QueryExecutionContextBase):
 
     def next(self):
         """Returns the next query result.
-        
+
         :return:
             The next query result.
         :rtype: dict
         :raises StopIteration: If no more result is left.
-            
+
         """
         return next(self._endpoint)
 
     def fetch_next_block(self):
-        """Returns a block of results. 
-        
+        """Returns a block of results.
+
         This method only exists for backward compatibility reasons. (Because QueryIterable
         has exposed fetch_next_block api).
-        
-        This method internally invokes next() as many times required to collect the 
+
+        This method internally invokes next() as many times required to collect the
         requested fetch size.
-        
+
         :return:
             List of results.
         :rtype: list

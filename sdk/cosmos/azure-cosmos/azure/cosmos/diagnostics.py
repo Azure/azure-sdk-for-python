@@ -19,7 +19,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Diagnostic tools for Cosmos 
+"""Diagnostic tools for Cosmos
 """
 
 from requests.structures import CaseInsensitiveDict
@@ -29,7 +29,7 @@ class RecordDiagnostics(object):
     """ Record Response headers from Cosmos read operations.
 
     The full response headers are stored in the ``headers`` property.
-    
+
     Examples:
 
         >>> rh = RecordDiagnostics()

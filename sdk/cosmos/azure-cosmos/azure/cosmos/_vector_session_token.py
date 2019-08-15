@@ -64,7 +64,7 @@ class VectorSessionToken(object):
         :param str session_token:
 
         :return:
-            A Vector session Token 
+            A Vector session Token
         :rtype: VectorSessionToken
         """
 

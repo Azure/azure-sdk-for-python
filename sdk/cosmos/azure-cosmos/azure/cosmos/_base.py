@@ -102,7 +102,7 @@ def GetHeaders(
     """ get default client consistency level"""
     default_client_consistency_level = headers.get(http_constants.HttpHeaders.ConsistencyLevel)
 
-    """ set consistency level. check if set via options, this will 
+    """ set consistency level. check if set via options, this will
     override the default """
     if options.get("consistencyLevel"):
         consistency_level = options["consistencyLevel"]
@@ -446,10 +446,10 @@ def GetItemContainerInfo(self_link, alt_content_path, id_from_response):
     """ Given the self link and alt_content_path from the reponse header and result
         extract the collection name and collection id
 
-        Ever response header has alt-content-path that is the 
+        Ever response header has alt-content-path that is the
         owner's path in ascii. For document create / update requests, this can be used
         to get the collection name, but for collection create response, we can't use it.
-        So we also rely on  
+        So we also rely on
 
     :param str self_link:
         Self link of the resource, as obtained from response result.

@@ -67,7 +67,7 @@ class HashPartitionResolver(object):
 
     def ResolveForCreate(self, document):
         """Resolves the collection for creating the document based on the partition key.
-        
+
         :param dict document:
             The document to be created.
 

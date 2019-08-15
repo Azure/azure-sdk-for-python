@@ -32,7 +32,7 @@ from six.moves import xrange
 
 class _DocumentProducer(object):
     """This class takes care of handling of the results for one single partition key range.
-    
+
     When handling an orderby query, MultiExecutionContextAggregator instantiates one instance of this class
     per target partition key range and aggregates the result of each.
     """
@@ -75,9 +75,9 @@ class _DocumentProducer(object):
     def next(self):
         """
         :return: The next result item.
-        :rtype: dict 
+        :rtype: dict
         :raises StopIteration: If there is no more result.
-            
+
         """
         if self._cur_item is not None:
             res = self._cur_item
@@ -94,9 +94,9 @@ class _DocumentProducer(object):
         """
         TODO: use more_itertools.peekable instead
         :return: The current result item.
-        :rtype: dict. 
+        :rtype: dict.
         :raises StopIteration: If there is no current item.
-            
+
         """
         if self._cur_item is None:
             self._cur_item = next(self._ex_context)
@@ -115,7 +115,7 @@ def _compare_helper(a, b):
 
 class _PartitionKeyRangeDocumentProduerComparator(object):
     """
-    Provides a Comparator for document producers using the min value of the corresponding target 
+    Provides a Comparator for document producers using the min value of the corresponding target
     partition.
     """
 
@@ -132,9 +132,9 @@ class _OrderByHelper:
     @staticmethod
     def getTypeOrd(orderby_item):
         """Returns the ordinal of the value of the item pair in the dictionary.
-        
+
         :param dict orderby_item:
-        
+
         :return:
             0 if the item_pair doesn't have any 'item' key
             1 if the value is undefined
@@ -160,9 +160,9 @@ class _OrderByHelper:
     @staticmethod
     def getTypeStr(orderby_item):
         """Returns the string representation of the type
-        
+
         :param dict orderby_item:
-        
+
         :return: String representation of the type
         :rtype: str
         """
@@ -188,7 +188,7 @@ class _OrderByHelper:
 
         :return:
             Integer comparison result.
-            The comparator acts such that 
+            The comparator acts such that
             - if the types are different we get:
                 Undefined value < Null < booleans < Numbers < Strings
             - if both arguments are of the same type:
@@ -216,18 +216,18 @@ class _OrderByHelper:
 class _OrderByDocumentProducerComparator(_PartitionKeyRangeDocumentProduerComparator):
     """
     Provides a Comparator for document producers which respects orderby sort order.
-    
+
     """
 
     def __init__(self, sort_order):
         """Instantiates this class
-        
+
         :param list sort_order:
             List of sort orders (i.e., Ascending, Descending)
-            
+
         :ivar list sort_order:
             List of sort orders (i.e., Ascending, Descending)
-        
+
         """
         self._sort_order = sort_order
 
@@ -236,20 +236,20 @@ class _OrderByDocumentProducerComparator(_PartitionKeyRangeDocumentProduerCompar
 
     def compare(self, doc_producer1, doc_producer2):
         """Compares the given two instances of DocumentProducers.
-        
+
         Based on the orderby query items and whether the sort order
         is Ascending or Descending compares the peek result of
         the two DocumentProducers.
-        
+
         If the peek results are equal based on the sort order, this
-        comparator compares the target partition key range of the 
+        comparator compares the target partition key range of the
         two DocumentProducers.
-        
+
         :param _DocumentProducer doc_producers1:
              first instance
         :param _DocumentProducer doc_producers2:
              first instance
-        
+
         :return:
             Integer value of compare result.
                 positive integer if doc_producers1 > doc_producers2

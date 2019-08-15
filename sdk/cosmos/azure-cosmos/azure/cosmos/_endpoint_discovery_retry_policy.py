@@ -61,7 +61,7 @@ class EndpointDiscoveryRetryPolicy(object):
     def ShouldRetry(self, exception):
         """Returns true if should retry based on the passed-in exception.
 
-        :param (errors.HTTPFailure instance) exception: 
+        :param (errors.HTTPFailure instance) exception:
 
         :rtype:
             boolean

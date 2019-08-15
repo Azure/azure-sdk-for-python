@@ -41,7 +41,7 @@ a proper c-module is suggested!
 
 This module is written to have the same format as mmh3 python package found here for simple conversions:
 
-https://pypi.python.org/pypi/mmh3/2.0 
+https://pypi.python.org/pypi/mmh3/2.0
 """
 
 

@@ -40,7 +40,7 @@ class _QueryExecutionContextBase(object):
         :param CosmosClient client:
         :param dict options:
             The request options for the request.
-            
+
         """
         self._client = client
         self._options = options
@@ -57,10 +57,10 @@ class _QueryExecutionContextBase(object):
 
     def fetch_next_block(self):
         """Returns a block of results with respecting retry policy.
-        
+
         This method only exists for backward compatibility reasons. (Because QueryIterable
         has exposed fetch_next_block api).
-        
+
         :return:
             List of results.
         :rtype: list
@@ -86,7 +86,7 @@ class _QueryExecutionContextBase(object):
 
     def next(self):
         """Returns the next query result.
-        
+
         :return:
             The next query result.
         :rtype: dict
@@ -157,7 +157,7 @@ class _DefaultQueryExecutionContext(_QueryExecutionContextBase):
         :param CosmosClient client:
         :param dict options:
             The request options for the request.
-        :param method fetch_function: 
+        :param method fetch_function:
             Will be invoked for retrieving each page
             Example of `fetch_function`:
             >>> def result_fn(result):
@@ -186,7 +186,7 @@ class _MultiCollectionQueryExecutionContext(_QueryExecutionContextBase):
         :param str database_link: database self link or ID based link
         :param (str or dict) query:
             Partition_key (str): partition key for the query
-        
+
         """
         super(_MultiCollectionQueryExecutionContext, self).__init__(client, options)
 
@@ -232,7 +232,7 @@ class _MultiCollectionQueryExecutionContext(_QueryExecutionContextBase):
 
     def _fetch_next_block(self):
         """Fetches the next block of query results.
-        
+
         This iterates fetches the next block of results from the current collection link.
         Once the current collection results were exhausted. It moves to the next collection link.
 

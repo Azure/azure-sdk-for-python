@@ -34,7 +34,7 @@ class QueryIterable(object):
         """
         Instantiates a QueryIterable for non-client side partitioning queries.
         _ProxyQueryExecutionContext will be used as the internal query execution context
-         
+
         :param CosmosClient client:
             Instance of document client.
         :param (str or dict) query:
@@ -43,12 +43,12 @@ class QueryIterable(object):
         :param method fetch_function:
         :param str collection_link:
             If this is a Document query/feed collection_link is required.
- 
+
         Example of `fetch_function`:
- 
+
         >>> def result_fn(result):
         >>>     return result['Databases']
- 
+
         """
         self._client = client
         self.retry_options = client.connection_policy.RetryOptions
@@ -62,11 +62,11 @@ class QueryIterable(object):
     def PartitioningQueryIterable(cls, client, query, options, database_link, partition_key):
         """
         Represents a client side partitioning query iterable.
-        
+
         This constructor instantiates a QueryIterable for
         client side partitioning queries, and sets _MultiCollectionQueryExecutionContext
         as the internal execution context.
-        
+
         :param CosmosClient client:
             Instance of document client
         :param (str or dict) options:
@@ -123,7 +123,7 @@ class QueryIterable(object):
 
     def fetch_next_block(self):
         """Returns a block of results with respecting retry policy.
-        
+
         This method only exists for backward compatibility reasons. (Because QueryIterable
         has exposed fetch_next_block api).
 

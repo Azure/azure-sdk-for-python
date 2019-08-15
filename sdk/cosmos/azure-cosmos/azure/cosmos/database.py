@@ -518,7 +518,7 @@ class Database(object):
         :param user: The ID (name), dict representing the properties or :class:`User` instance of the user to be retrieved.
         :returns: A :class:`User` instance representing the retrieved user.
         :raise `HTTPFailure`: If the given user couldn't be retrieved.
-        
+
         """
         if isinstance(user, User):
             id_value = user.id
