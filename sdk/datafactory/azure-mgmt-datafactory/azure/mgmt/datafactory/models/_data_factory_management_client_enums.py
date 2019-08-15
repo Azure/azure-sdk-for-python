@@ -463,6 +463,12 @@ class PolybaseSettingsRejectType(str, Enum):
     percentage = "percentage"
 
 
+class JsonWriteFilePattern(str, Enum):
+
+    set_of_objects = "setOfObjects"
+    array_of_objects = "arrayOfObjects"
+
+
 class SapCloudForCustomerSinkWriteBehavior(str, Enum):
 
     insert = "Insert"
