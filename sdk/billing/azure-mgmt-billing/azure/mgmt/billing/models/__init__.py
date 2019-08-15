@@ -46,7 +46,6 @@ try:
     from .invoice_section_creation_request_py3 import InvoiceSectionCreationRequest
     from .invoice_section_list_result_py3 import InvoiceSectionListResult
     from .invoice_section_with_create_sub_permission_py3 import InvoiceSectionWithCreateSubPermission
-    from .invoice_section_list_with_create_sub_permission_result_py3 import InvoiceSectionListWithCreateSubPermissionResult
     from .download_url_py3 import DownloadUrl
     from .error_details_py3 import ErrorDetails
     from .error_response_py3 import ErrorResponse, ErrorResponseException
@@ -119,7 +118,6 @@ except (SyntaxError, ImportError):
     from .invoice_section_creation_request import InvoiceSectionCreationRequest
     from .invoice_section_list_result import InvoiceSectionListResult
     from .invoice_section_with_create_sub_permission import InvoiceSectionWithCreateSubPermission
-    from .invoice_section_list_with_create_sub_permission_result import InvoiceSectionListWithCreateSubPermissionResult
     from .download_url import DownloadUrl
     from .error_details import ErrorDetails
     from .error_response import ErrorResponse, ErrorResponseException
@@ -155,6 +153,7 @@ except (SyntaxError, ImportError):
     from .agreement import Agreement
     from .agreement_list_result import AgreementListResult
     from .line_of_credit import LineOfCredit
+from .invoice_section_with_create_sub_permission_paged import InvoiceSectionWithCreateSubPermissionPaged
 from .payment_method_paged import PaymentMethodPaged
 from .customer_paged import CustomerPaged
 from .billing_subscription_paged import BillingSubscriptionPaged
@@ -225,7 +224,6 @@ __all__ = [
     'InvoiceSectionCreationRequest',
     'InvoiceSectionListResult',
     'InvoiceSectionWithCreateSubPermission',
-    'InvoiceSectionListWithCreateSubPermissionResult',
     'DownloadUrl',
     'ErrorDetails',
     'ErrorResponse', 'ErrorResponseException',
@@ -261,6 +259,7 @@ __all__ = [
     'Agreement',
     'AgreementListResult',
     'LineOfCredit',
+    'InvoiceSectionWithCreateSubPermissionPaged',
     'PaymentMethodPaged',
     'CustomerPaged',
     'BillingSubscriptionPaged',
