@@ -1,23 +1,23 @@
-﻿#The MIT License (MIT)
-#Copyright (c) 2014 Microsoft Corporation
+﻿# The MIT License (MIT)
+# Copyright (c) 2014 Microsoft Corporation
 
-#Permission is hereby granted, free of charge, to any person obtaining a copy
-#of this software and associated documentation files (the "Software"), to deal
-#in the Software without restriction, including without limitation the rights
-#to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-#copies of the Software, and to permit persons to whom the Software is
-#furnished to do so, subject to the following conditions:
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
 
-#The above copyright notice and this permission notice shall be included in all
-#copies or substantial portions of the Software.
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
 
-#THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-#IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-#FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-#AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-#LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-#OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-#SOFTWARE.
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 
 """Base functions in the Azure Cosmos database service.
 """
@@ -40,14 +40,17 @@ import six
 from six.moves.urllib.parse import quote as urllib_quote
 from six.moves import xrange
 
-def GetHeaders(cosmos_client_connection,
-               default_headers,
-               verb,
-               path,
-               resource_id,
-               resource_type,
-               options,
-               partition_key_range_id = None):
+
+def GetHeaders(
+    cosmos_client_connection,
+    default_headers,
+    verb,
+    path,
+    resource_id,
+    resource_type,
+    options,
+    partition_key_range_id=None,
+):
     """Gets HTTP request headers.
 
     :param cosmos_client_connection.CosmosClient cosmos_client:
@@ -69,114 +72,105 @@ def GetHeaders(cosmos_client_connection,
     if cosmos_client_connection._useMultipleWriteLocations:
         headers[http_constants.HttpHeaders.AllowTentativeWrites] = "true"
 
-    pre_trigger_include = options.get('preTriggerInclude')
+    pre_trigger_include = options.get("preTriggerInclude")
     if pre_trigger_include:
         headers[http_constants.HttpHeaders.PreTriggerInclude] = (
-            pre_trigger_include
-            if isinstance(pre_trigger_include, str)
-            else (',').join(pre_trigger_include))
+            pre_trigger_include if isinstance(pre_trigger_include, str) else (",").join(pre_trigger_include)
+        )
 
-    post_trigger_include = options.get('postTriggerInclude')
+    post_trigger_include = options.get("postTriggerInclude")
     if post_trigger_include:
         headers[http_constants.HttpHeaders.PostTriggerInclude] = (
-            post_trigger_include
-            if isinstance(post_trigger_include, str)
-            else (',').join(post_trigger_include))
+            post_trigger_include if isinstance(post_trigger_include, str) else (",").join(post_trigger_include)
+        )
 
-    if options.get('maxItemCount'):
-        headers[http_constants.HttpHeaders.PageSize] = options['maxItemCount']
+    if options.get("maxItemCount"):
+        headers[http_constants.HttpHeaders.PageSize] = options["maxItemCount"]
 
-    access_condition = options.get('accessCondition')
+    access_condition = options.get("accessCondition")
     if access_condition:
-        if access_condition['type'] == 'IfMatch':
-            headers[http_constants.HttpHeaders.IfMatch] = access_condition['condition']
+        if access_condition["type"] == "IfMatch":
+            headers[http_constants.HttpHeaders.IfMatch] = access_condition["condition"]
         else:
-            headers[http_constants.HttpHeaders.IfNoneMatch] = access_condition['condition']
+            headers[http_constants.HttpHeaders.IfNoneMatch] = access_condition["condition"]
 
-    if options.get('indexingDirective'):
-        headers[http_constants.HttpHeaders.IndexingDirective] = (
-            options['indexingDirective'])
+    if options.get("indexingDirective"):
+        headers[http_constants.HttpHeaders.IndexingDirective] = options["indexingDirective"]
 
     consistency_level = None
-    
-    ''' get default client consistency level'''
+
+    """ get default client consistency level"""
     default_client_consistency_level = headers.get(http_constants.HttpHeaders.ConsistencyLevel)
 
-    ''' set consistency level. check if set via options, this will 
-    override the default '''
-    if options.get('consistencyLevel'):
-        consistency_level = options['consistencyLevel']
+    """ set consistency level. check if set via options, this will 
+    override the default """
+    if options.get("consistencyLevel"):
+        consistency_level = options["consistencyLevel"]
         headers[http_constants.HttpHeaders.ConsistencyLevel] = consistency_level
     elif default_client_consistency_level is not None:
         consistency_level = default_client_consistency_level
         headers[http_constants.HttpHeaders.ConsistencyLevel] = consistency_level
 
     # figure out if consistency level for this request is session
-    is_session_consistency = (consistency_level == documents.ConsistencyLevel.Session)
+    is_session_consistency = consistency_level == documents.ConsistencyLevel.Session
 
     # set session token if required
     if is_session_consistency is True and not IsMasterResource(resource_type):
         # if there is a token set via option, then use it to override default
-        if options.get('sessionToken'):
-            headers[http_constants.HttpHeaders.SessionToken] = options['sessionToken']
+        if options.get("sessionToken"):
+            headers[http_constants.HttpHeaders.SessionToken] = options["sessionToken"]
         else:
-            # check if the client's default consistency is session (and request consistency level is same), 
+            # check if the client's default consistency is session (and request consistency level is same),
             # then update from session container
             if default_client_consistency_level == documents.ConsistencyLevel.Session:
                 # populate session token from the client's session container
-                headers[http_constants.HttpHeaders.SessionToken] = (
-                    cosmos_client_connection.session.get_session_token(path))
-           
-    if options.get('enableScanInQuery'):
-        headers[http_constants.HttpHeaders.EnableScanInQuery] = (
-            options['enableScanInQuery'])
+                headers[http_constants.HttpHeaders.SessionToken] = cosmos_client_connection.session.get_session_token(
+                    path
+                )
 
-    if options.get('resourceTokenExpirySeconds'):
-        headers[http_constants.HttpHeaders.ResourceTokenExpiry] = (
-            options['resourceTokenExpirySeconds'])
+    if options.get("enableScanInQuery"):
+        headers[http_constants.HttpHeaders.EnableScanInQuery] = options["enableScanInQuery"]
 
-    if options.get('offerType'):
-        headers[http_constants.HttpHeaders.OfferType] = options['offerType']
+    if options.get("resourceTokenExpirySeconds"):
+        headers[http_constants.HttpHeaders.ResourceTokenExpiry] = options["resourceTokenExpirySeconds"]
 
-    if options.get('offerThroughput'):
-        headers[http_constants.HttpHeaders.OfferThroughput] = options['offerThroughput']
+    if options.get("offerType"):
+        headers[http_constants.HttpHeaders.OfferType] = options["offerType"]
 
-    if 'partitionKey' in options:
+    if options.get("offerThroughput"):
+        headers[http_constants.HttpHeaders.OfferThroughput] = options["offerThroughput"]
+
+    if "partitionKey" in options:
         # if partitionKey value is Undefined, serialize it as [{}] to be consistent with other SDKs.
-        if options.get('partitionKey') is partition_key._Undefined:
+        if options.get("partitionKey") is partition_key._Undefined:
             headers[http_constants.HttpHeaders.PartitionKey] = [{}]
         # If partitionKey value is Empty, serialize it as [], which is the equivalent to be sent for migrated collections
-        elif options.get('partitionKey') is partition_key._Empty:
+        elif options.get("partitionKey") is partition_key._Empty:
             headers[http_constants.HttpHeaders.PartitionKey] = []
         # else serialize using json dumps method which apart from regular values will serialize None into null
         else:
-            headers[http_constants.HttpHeaders.PartitionKey] = json.dumps([options['partitionKey']])
+            headers[http_constants.HttpHeaders.PartitionKey] = json.dumps([options["partitionKey"]])
 
-    if options.get('enableCrossPartitionQuery'):
-        headers[http_constants.HttpHeaders.EnableCrossPartitionQuery] = options['enableCrossPartitionQuery']
+    if options.get("enableCrossPartitionQuery"):
+        headers[http_constants.HttpHeaders.EnableCrossPartitionQuery] = options["enableCrossPartitionQuery"]
 
-    if options.get('populateQueryMetrics'):
-        headers[http_constants.HttpHeaders.PopulateQueryMetrics] = options['populateQueryMetrics']
+    if options.get("populateQueryMetrics"):
+        headers[http_constants.HttpHeaders.PopulateQueryMetrics] = options["populateQueryMetrics"]
 
     if cosmos_client_connection.master_key:
-        headers[http_constants.HttpHeaders.XDate] = (
-            datetime.datetime.utcnow().strftime('%a, %d %b %Y %H:%M:%S GMT'))
+        headers[http_constants.HttpHeaders.XDate] = datetime.datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S GMT")
 
     if cosmos_client_connection.master_key or cosmos_client_connection.resource_tokens:
-        authorization = auth.GetAuthorizationHeader(cosmos_client_connection,
-                                        verb,
-                                        path,
-                                        resource_id,
-                                        IsNameBased(resource_id),
-                                        resource_type,
-                                        headers)
+        authorization = auth.GetAuthorizationHeader(
+            cosmos_client_connection, verb, path, resource_id, IsNameBased(resource_id), resource_type, headers
+        )
         # urllib.quote throws when the input parameter is None
         if authorization:
             # -_.!~*'() are valid characters in url, and shouldn't be quoted.
-            authorization = urllib_quote(authorization, '-_.!~*\'()')
+            authorization = urllib_quote(authorization, "-_.!~*'()")
         headers[http_constants.HttpHeaders.Authorization] = authorization
 
-    if verb == 'post' or verb == 'put':
+    if verb == "post" or verb == "put":
         if not headers.get(http_constants.HttpHeaders.ContentType):
             headers[http_constants.HttpHeaders.ContentType] = _runtime_constants.MediaTypes.Json
 
@@ -186,34 +180,38 @@ def GetHeaders(cosmos_client_connection,
     if partition_key_range_id is not None:
         headers[http_constants.HttpHeaders.PartitionKeyRangeID] = partition_key_range_id
 
-    if options.get('enableScriptLogging'):
-        headers[http_constants.HttpHeaders.EnableScriptLogging] = options['enableScriptLogging']
+    if options.get("enableScriptLogging"):
+        headers[http_constants.HttpHeaders.EnableScriptLogging] = options["enableScriptLogging"]
 
-    if options.get('offerEnableRUPerMinuteThroughput'):
-        headers[http_constants.HttpHeaders.OfferIsRUPerMinuteThroughputEnabled] = options['offerEnableRUPerMinuteThroughput']
+    if options.get("offerEnableRUPerMinuteThroughput"):
+        headers[http_constants.HttpHeaders.OfferIsRUPerMinuteThroughputEnabled] = options[
+            "offerEnableRUPerMinuteThroughput"
+        ]
 
-    if options.get('disableRUPerMinuteUsage'):
-        headers[http_constants.HttpHeaders.DisableRUPerMinuteUsage] = options['disableRUPerMinuteUsage']
+    if options.get("disableRUPerMinuteUsage"):
+        headers[http_constants.HttpHeaders.DisableRUPerMinuteUsage] = options["disableRUPerMinuteUsage"]
 
-    if options.get('changeFeed') is True:
+    if options.get("changeFeed") is True:
         # On REST level, change feed is using IfNoneMatch/ETag instead of continuation.
         if_none_match_value = None
-        if options.get('continuation'):
-            if_none_match_value = options['continuation']
-        elif options.get('isStartFromBeginning') and options['isStartFromBeginning'] == False:
-            if_none_match_value = '*'
+        if options.get("continuation"):
+            if_none_match_value = options["continuation"]
+        elif options.get("isStartFromBeginning") and options["isStartFromBeginning"] == False:
+            if_none_match_value = "*"
         if if_none_match_value:
             headers[http_constants.HttpHeaders.IfNoneMatch] = if_none_match_value
         headers[http_constants.HttpHeaders.AIM] = http_constants.HttpHeaders.IncrementalFeedHeaderValue
     else:
-        if options.get('continuation'):
-            headers[http_constants.HttpHeaders.Continuation] = (options['continuation'])
+        if options.get("continuation"):
+            headers[http_constants.HttpHeaders.Continuation] = options["continuation"]
 
-    if options.get('populatePartitionKeyRangeStatistics'):
-            headers[http_constants.HttpHeaders.PopulatePartitionKeyRangeStatistics] = options['populatePartitionKeyRangeStatistics']
+    if options.get("populatePartitionKeyRangeStatistics"):
+        headers[http_constants.HttpHeaders.PopulatePartitionKeyRangeStatistics] = options[
+            "populatePartitionKeyRangeStatistics"
+        ]
 
-    if options.get('populateQuotaInfo'):
-            headers[http_constants.HttpHeaders.PopulateQuotaInfo] = options['populateQuotaInfo']
+    if options.get("populateQuotaInfo"):
+        headers[http_constants.HttpHeaders.PopulateQuotaInfo] = options["populateQuotaInfo"]
 
     return headers
 
@@ -230,15 +228,15 @@ def GetResourceIdOrFullNameFromLink(resource_link):
     # For named based, the resource link is the full name
     if IsNameBased(resource_link):
         return TrimBeginningAndEndingSlashes(resource_link)
-    
+
     # Padding the resource link with leading and trailing slashes if not already
-    if resource_link[-1] != '/':
-        resource_link = resource_link + '/'
+    if resource_link[-1] != "/":
+        resource_link = resource_link + "/"
 
-    if resource_link[0] != '/':
-        resource_link = '/' + resource_link
+    if resource_link[0] != "/":
+        resource_link = "/" + resource_link
 
-    # The path will be in the form of 
+    # The path will be in the form of
     # /[resourceType]/[resourceId]/ .... /[resourceType]/[resourceId]/ or
     # /[resourceType]/[resourceId]/ .... /[resourceType]/
     # The result of split will be in the form of
@@ -265,18 +263,18 @@ def GetAttachmentIdFromMediaId(media_id):
         The attachment id from the media id.
     :rtype: str
     """
-    altchars = '+-'
+    altchars = "+-"
     if not six.PY2:
-        altchars = altchars.encode('utf-8')
+        altchars = altchars.encode("utf-8")
     # altchars for '+' and '/'. We keep '+' but replace '/' with '-'
     buffer = base64.b64decode(str(media_id), altchars)
     resoure_id_length = 20
-    attachment_id = ''
+    attachment_id = ""
     if len(buffer) > resoure_id_length:
         # We are cutting off the storage index.
         attachment_id = base64.b64encode(buffer[0:resoure_id_length], altchars)
         if not six.PY2:
-            attachment_id = attachment_id.decode('utf-8')
+            attachment_id = attachment_id.decode("utf-8")
     else:
         attachment_id = media_id
 
@@ -295,7 +293,8 @@ def GenerateGuidId():
     """
     return str(uuid.uuid4())
 
-def GetPathFromLink(resource_link, resource_type=''):
+
+def GetPathFromLink(resource_link, resource_type=""):
     """Gets path from resource link with optional resource type
 
     :param str resource_link:
@@ -306,18 +305,19 @@ def GetPathFromLink(resource_link, resource_type=''):
     :rtype: str
     """
     resource_link = TrimBeginningAndEndingSlashes(resource_link)
-        
+
     if IsNameBased(resource_link):
         # Replace special characters in string using the %xx escape. For example, space(' ') would be replaced by %20
         # This function is intended for quoting the path section of the URL and excludes '/' to be quoted as that's the default safe char
         resource_link = urllib_quote(resource_link)
-        
+
     # Padding leading and trailing slashes to the path returned both for name based and resource id based links
     if resource_type:
-        return '/' + resource_link + '/' + resource_type + '/'
+        return "/" + resource_link + "/" + resource_type + "/"
     else:
-        return '/' + resource_link + '/'
-    
+        return "/" + resource_link + "/"
+
+
 def IsNameBased(link):
     """Finds whether the link is name based or not
 
@@ -331,38 +331,42 @@ def IsNameBased(link):
         return False
 
     # trimming the leading "/"
-    if link.startswith('/') and len(link) > 1:
+    if link.startswith("/") and len(link) > 1:
         link = link[1:]
 
-    # Splitting the link(separated by "/") into parts 
-    parts = link.split('/')
+    # Splitting the link(separated by "/") into parts
+    parts = link.split("/")
 
-    # First part should be "dbs" 
-    if len(parts) == 0 or not parts[0] or not parts[0].lower() == 'dbs':
+    # First part should be "dbs"
+    if len(parts) == 0 or not parts[0] or not parts[0].lower() == "dbs":
         return False
 
     # The second part is the database id(ResourceID or Name) and cannot be empty
     if len(parts) < 2 or not parts[1]:
-    	return False
+        return False
 
     # Either ResourceID or database name
     databaseID = parts[1]
-    	
+
     # Length of databaseID(in case of ResourceID) is always 8
     if len(databaseID) != 8:
         return True
 
     return not IsValidBase64String(str(databaseID))
 
+
 def IsMasterResource(resourceType):
-    return (resourceType == http_constants.ResourceType.Offer or
-            resourceType == http_constants.ResourceType.Database or
-            resourceType == http_constants.ResourceType.User or
-            resourceType == http_constants.ResourceType.Permission or
-            resourceType == http_constants.ResourceType.Topology  or
-            resourceType == http_constants.ResourceType.DatabaseAccount or
-            resourceType == http_constants.ResourceType.PartitionKeyRange or
-            resourceType == http_constants.ResourceType.Collection)
+    return (
+        resourceType == http_constants.ResourceType.Offer
+        or resourceType == http_constants.ResourceType.Database
+        or resourceType == http_constants.ResourceType.User
+        or resourceType == http_constants.ResourceType.Permission
+        or resourceType == http_constants.ResourceType.Topology
+        or resourceType == http_constants.ResourceType.DatabaseAccount
+        or resourceType == http_constants.ResourceType.PartitionKeyRange
+        or resourceType == http_constants.ResourceType.Collection
+    )
+
 
 def IsDatabaseLink(link):
     """Finds whether the link is a database Self Link or a database ID based link
@@ -380,21 +384,22 @@ def IsDatabaseLink(link):
     # trimming the leading and trailing "/" from the input string
     link = TrimBeginningAndEndingSlashes(link)
 
-    # Splitting the link(separated by "/") into parts 
-    parts = link.split('/')
+    # Splitting the link(separated by "/") into parts
+    parts = link.split("/")
 
     if len(parts) != 2:
-    	return False
+        return False
 
-    # First part should be "dbs" 
-    if not parts[0] or not parts[0].lower() == 'dbs':
+    # First part should be "dbs"
+    if not parts[0] or not parts[0].lower() == "dbs":
         return False
 
     # The second part is the database id(ResourceID or Name) and cannot be empty
     if not parts[1]:
-    	return False
+        return False
 
     return True
+
 
 def IsItemContainerLink(link):
     """Finds whether the link is a document colllection Self Link or a document colllection ID based link
@@ -412,30 +417,31 @@ def IsItemContainerLink(link):
     # trimming the leading and trailing "/" from the input string
     link = TrimBeginningAndEndingSlashes(link)
 
-    # Splitting the link(separated by "/") into parts 
-    parts = link.split('/')
+    # Splitting the link(separated by "/") into parts
+    parts = link.split("/")
 
     if len(parts) != 4:
-    	return False
-
-    # First part should be "dbs" 
-    if not parts[0] or not parts[0].lower() == 'dbs':
         return False
 
-    # Third part should be "colls" 
-    if not parts[2] or not parts[2].lower() == 'colls':
+    # First part should be "dbs"
+    if not parts[0] or not parts[0].lower() == "dbs":
+        return False
+
+    # Third part should be "colls"
+    if not parts[2] or not parts[2].lower() == "colls":
         return False
 
     # The second part is the database id(ResourceID or Name) and cannot be empty
     if not parts[1]:
-    	return False
+        return False
 
     # The fourth part is the document collection id(ResourceID or Name) and cannot be empty
     if not parts[3]:
-    	return False
+        return False
 
     return True
-        
+
+
 def GetItemContainerInfo(self_link, alt_content_path, id_from_response):
     """ Given the self link and alt_content_path from the reponse header and result
         extract the collection name and collection id
@@ -456,29 +462,33 @@ def GetItemContainerInfo(self_link, alt_content_path, id_from_response):
     :return:
         tuple of (collection rid, collection name)
     :rtype: tuple
-    """ 
+    """
 
-    self_link = TrimBeginningAndEndingSlashes(self_link) + '/'
+    self_link = TrimBeginningAndEndingSlashes(self_link) + "/"
 
-    index = IndexOfNth(self_link, '/', 4)
+    index = IndexOfNth(self_link, "/", 4)
 
     if index != -1:
         collection_id = self_link[0:index]
 
-        if 'colls' in self_link:
+        if "colls" in self_link:
             # this is a collection request
-            index_second_slash = IndexOfNth(alt_content_path, '/', 2)
+            index_second_slash = IndexOfNth(alt_content_path, "/", 2)
             if index_second_slash == -1:
-                collection_name = alt_content_path + '/colls/' + urllib_quote(id_from_response)
+                collection_name = alt_content_path + "/colls/" + urllib_quote(id_from_response)
                 return collection_id, collection_name
             else:
                 collection_name = alt_content_path
                 return collection_id, collection_name
         else:
-            raise ValueError('Response Not from Server Partition, self_link: {0}, alt_content_path: {1}, id: {2}'
-                .format(self_link, alt_content_path, id_from_response))
+            raise ValueError(
+                "Response Not from Server Partition, self_link: {0}, alt_content_path: {1}, id: {2}".format(
+                    self_link, alt_content_path, id_from_response
+                )
+            )
     else:
-        raise ValueError('Unable to parse document collection link from ' + self_link)
+        raise ValueError("Unable to parse document collection link from " + self_link)
+
 
 def GetItemContainerLink(link):
     """Gets the document collection link
@@ -491,14 +501,15 @@ def GetItemContainerLink(link):
     :rtype: str
 
     """
-    link = TrimBeginningAndEndingSlashes(link) + '/'
+    link = TrimBeginningAndEndingSlashes(link) + "/"
 
-    index = IndexOfNth(link, '/', 4)
-    
+    index = IndexOfNth(link, "/", 4)
+
     if index != -1:
         return link[0:index]
     else:
-        raise ValueError('Unable to parse document collection link from ' + link)
+        raise ValueError("Unable to parse document collection link from " + link)
+
 
 def IndexOfNth(s, value, n):
     """Gets the index of Nth occurance of a given character in a string
@@ -523,6 +534,7 @@ def IndexOfNth(s, value, n):
                 return i
     return -1
 
+
 def IsValidBase64String(string_to_validate):
     """Verifies if a string is a valid Base64 encoded string, after replacing '-' with '/'
 
@@ -535,7 +547,7 @@ def IsValidBase64String(string_to_validate):
     """
     # '-' is not supported char for decoding in Python(same as C# and Java) which has similar logic while parsing ResourceID generated by backend
     try:
-        buffer = base64.standard_b64decode(string_to_validate.replace('-', '/'))
+        buffer = base64.standard_b64decode(string_to_validate.replace("-", "/"))
         if len(buffer) != 4:
             return False
     except Exception as e:
@@ -547,6 +559,7 @@ def IsValidBase64String(string_to_validate):
             raise e
     return True
 
+
 def TrimBeginningAndEndingSlashes(path):
     """Trims beginning and ending slashes
 
@@ -556,22 +569,23 @@ def TrimBeginningAndEndingSlashes(path):
         Path with beginning and ending slashes trimmed.
     :rtype: str
     """
-    if path.startswith('/'):
+    if path.startswith("/"):
         # Returns substring starting from index 1 to end of the string
         path = path[1:]
 
-    if path.endswith('/'):
+    if path.endswith("/"):
         # Returns substring starting from beginning to last but one char in the string
         path = path[:-1]
 
     return path
 
+
 # Parses the paths into a list of token each representing a property
 def ParsePaths(paths):
     if len(paths) != 1:
         raise ValueError("Unsupported paths count.")
-        
-    segmentSeparator = '/'
+
+    segmentSeparator = "/"
     path = paths[0]
     tokens = []
     currentIndex = 0
@@ -579,28 +593,28 @@ def ParsePaths(paths):
     while currentIndex < len(path):
         if path[currentIndex] != segmentSeparator:
             raise ValueError("Invalid path character at index " + currentIndex)
-            
+
         currentIndex += 1
         if currentIndex == len(path):
             break
 
         # " and ' are treated specially in the sense that they can have the / (segment separator) between them which is considered part of the token
-        if path[currentIndex] == '\"' or path[currentIndex] == '\'':
+        if path[currentIndex] == '"' or path[currentIndex] == "'":
             quote = path[currentIndex]
             newIndex = currentIndex + 1
-                
+
             while True:
                 newIndex = path.find(quote, newIndex)
                 if newIndex == -1:
                     raise ValueError("Invalid path character at index " + currentIndex)
-                
+
                 # check if the quote itself is escaped by a preceding \ in which case it's part of the token
-                if path[newIndex - 1] != '\\':
+                if path[newIndex - 1] != "\\":
                     break
                 newIndex += 1
 
             # This will extract the token excluding the quote chars
-            token = path[currentIndex+1:newIndex]
+            token = path[currentIndex + 1 : newIndex]
             tokens.append(token)
             currentIndex = newIndex + 1
         else:
@@ -619,5 +633,3 @@ def ParsePaths(paths):
             tokens.append(token)
 
     return tokens
-
-    

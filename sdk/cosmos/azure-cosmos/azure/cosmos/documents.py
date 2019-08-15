@@ -1,28 +1,29 @@
-﻿#The MIT License (MIT)
-#Copyright (c) 2014 Microsoft Corporation
+﻿# The MIT License (MIT)
+# Copyright (c) 2014 Microsoft Corporation
 
-#Permission is hereby granted, free of charge, to any person obtaining a copy
-#of this software and associated documentation files (the "Software"), to deal
-#in the Software without restriction, including without limitation the rights
-#to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-#copies of the Software, and to permit persons to whom the Software is
-#furnished to do so, subject to the following conditions:
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
 
-#The above copyright notice and this permission notice shall be included in all
-#copies or substantial portions of the Software.
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
 
-#THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-#IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-#FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-#AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-#LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-#OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-#SOFTWARE.
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 
 """AzureDocument classes and enums for the Azure Cosmos database service.
 """
 
 from . import _retry_options
+
 
 class DatabaseAccount(object):
     """Database account. A DatabaseAccount is the container for databases.
@@ -53,8 +54,8 @@ class DatabaseAccount(object):
     """
 
     def __init__(self):
-        self.DatabasesLink = ''
-        self.MediaLink = ''
+        self.DatabasesLink = ""
+        self.MediaLink = ""
         self.MaxMediaStorageUsageInMB = 0
         self.CurrentMediaStorageUsageInMB = 0
         self.ConsumedDocumentStorageInMB = 0
@@ -76,6 +77,7 @@ class DatabaseAccount(object):
         """Gets the list of readable locations for a geo-replicated database account.
         """
         return self._ReadableLocations
+
 
 class ConsistencyLevel(object):
     """Represents the consistency levels supported for Azure Cosmos client
@@ -108,11 +110,12 @@ class ConsistencyLevel(object):
         reads will return some prefix of all writes with no gaps. All writes
         will be eventually be available for reads.
     """
-    Strong = 'Strong'
-    BoundedStaleness = 'BoundedStaleness'
-    Session = 'Session'
-    Eventual = 'Eventual'
-    ConsistentPrefix = 'ConsistentPrefix'
+
+    Strong = "Strong"
+    BoundedStaleness = "BoundedStaleness"
+    Session = "Session"
+    Eventual = "Eventual"
+    ConsistentPrefix = "ConsistentPrefix"
 
 
 class IndexingMode(object):
@@ -139,9 +142,10 @@ class IndexingMode(object):
         storage cost or improve the write throughput. Your queries will
         degenerate to scans of the entire collection.
     """
-    Consistent = 'consistent'
-    Lazy = 'lazy'
-    NoIndex = 'none'
+
+    Consistent = "consistent"
+    Lazy = "lazy"
+    NoIndex = "none"
 
 
 class IndexKind(object):
@@ -156,8 +160,10 @@ class IndexKind(object):
         inequality predicate queries with efficient range scans.
         Can be used to serve queries like: SELECT * FROM docs d WHERE d.prop > 5
     """
-    Hash = 'Hash'
-    Range = 'Range'
+
+    Hash = "Hash"
+    Range = "Range"
+
 
 class PartitionKind(object):
     """Specifies the kind of partitioning to be applied.
@@ -165,7 +171,9 @@ class PartitionKind(object):
     :ivar str PartitionKind.Hash:
         The partition key definition path is hashed.
     """
-    Hash = 'Hash'
+
+    Hash = "Hash"
+
 
 class DataType(object):
     """Specifies the data type of index specs.
@@ -183,12 +191,13 @@ class DataType(object):
     :ivar str MultiPolygon:
         Represents a multi-polygon data type.
     """
-    Number = 'Number'
-    String = 'String'
-    Point = 'Point'
-    LineString = 'LineString'
-    Polygon = 'Polygon'
-    MultiPolygon = 'MultiPolygon'
+
+    Number = "Number"
+    String = "String"
+    Point = "Point"
+    LineString = "LineString"
+    Polygon = "Polygon"
+    MultiPolygon = "MultiPolygon"
 
 
 class IndexingDirective(object):
@@ -201,6 +210,7 @@ class IndexingDirective(object):
     :ivar int Include:
         Do not index the resource.
     """
+
     Default = 0
     Exclude = 1
     Include = 2
@@ -213,6 +223,7 @@ class ConnectionMode(object):
         Use the Azure Cosmos gateway to route all requests. The
         gateway proxies requests to the right data partition.
     """
+
     Gateway = 0
 
 
@@ -232,8 +243,9 @@ class MediaReadMode(object):
         Use Streamed to reduce the client memory overhead of reading and
         writing media files.
     """
-    Buffered = 'Buffered'
-    Streamed = 'Streamed'
+
+    Buffered = "Buffered"
+    Streamed = "Streamed"
 
 
 class PermissionMode(object):
@@ -246,9 +258,10 @@ class PermissionMode(object):
     :ivar str PermissionMode.All:
         Permission applicable for all operations.
     """
-    NoneMode = 'none'  # None is python's key word.
-    Read = 'read'
-    All = 'all'
+
+    NoneMode = "none"  # None is python's key word.
+    Read = "read"
+    All = "all"
 
 
 class TriggerType(object):
@@ -259,8 +272,9 @@ class TriggerType(object):
     :ivar str TriggerType.Post:
         Trigger should be executed after the associated operation(s).
     """
-    Pre = 'pre'
-    Post = 'post'
+
+    Pre = "pre"
+    Post = "post"
 
 
 class TriggerOperation(object):
@@ -277,11 +291,12 @@ class TriggerOperation(object):
     :ivar str TriggerOperation.Replace:
         Replace operations only.
     """
-    All = 'all'
-    Create = 'create'
-    Update = 'update'
-    Delete = 'delete'
-    Replace = 'replace'
+
+    All = "all"
+    Create = "create"
+    Update = "update"
+    Delete = "delete"
+    Replace = "replace"
 
 
 class SSLConfiguration(object):
@@ -296,6 +311,7 @@ class SSLConfiguration(object):
     :ivar str SSLCaCerts:
         The path of the CA_BUNDLE file with certificates of trusted CAs.
     """
+
     def __init__(self):
         self.SSLKeyFile = None
         self.SSLCertFile = None
@@ -310,6 +326,7 @@ class ProxyConfiguration(object):
     :ivar int Port:
         The port number of the proxy.
     """
+
     def __init__(self):
         self.Host = None
         self.Port = None
@@ -372,39 +389,44 @@ class ConnectionPolicy(object):
         self.DisableSSLVerification = False
         self.UseMultipleWriteLocations = False
 
+
 class _OperationType(object):
     """Represents the type of the operation
     """
-    Create = 'Create'
-    Delete = 'Delete'
-    ExecuteJavaScript = 'ExecuteJavaScript'
-    Head = 'Head'
-    HeadFeed = 'HeadFeed'
-    Query = 'Query'
-    Read = 'Read'
-    ReadFeed = 'ReadFeed'
-    Recreate = 'Recreate'
-    Replace = 'Replace'
-    SqlQuery = 'SqlQuery'
-    Update = 'Update'
-    Upsert = 'Upsert'
+
+    Create = "Create"
+    Delete = "Delete"
+    ExecuteJavaScript = "ExecuteJavaScript"
+    Head = "Head"
+    HeadFeed = "HeadFeed"
+    Query = "Query"
+    Read = "Read"
+    ReadFeed = "ReadFeed"
+    Recreate = "Recreate"
+    Replace = "Replace"
+    SqlQuery = "SqlQuery"
+    Update = "Update"
+    Upsert = "Upsert"
 
     @staticmethod
     def IsWriteOperation(operationType):
-        return (operationType == _OperationType.Create or
-               operationType == _OperationType.Delete or
-               operationType == _OperationType.Recreate or
-               operationType == _OperationType.ExecuteJavaScript or
-               operationType == _OperationType.Replace or
-               operationType == _OperationType.Upsert or
-               operationType == _OperationType.Update)
+        return (
+            operationType == _OperationType.Create
+            or operationType == _OperationType.Delete
+            or operationType == _OperationType.Recreate
+            or operationType == _OperationType.ExecuteJavaScript
+            or operationType == _OperationType.Replace
+            or operationType == _OperationType.Upsert
+            or operationType == _OperationType.Update
+        )
 
     @staticmethod
     def IsReadOnlyOperation(operationType):
-        return (operationType == _OperationType.Read or
-               operationType == _OperationType.ReadFeed or
-               operationType == _OperationType.Head or
-               operationType == _OperationType.HeadFeed or
-               operationType == _OperationType.Query or
-               operationType == _OperationType.SqlQuery)
-
+        return (
+            operationType == _OperationType.Read
+            or operationType == _OperationType.ReadFeed
+            or operationType == _OperationType.Head
+            or operationType == _OperationType.HeadFeed
+            or operationType == _OperationType.Query
+            or operationType == _OperationType.SqlQuery
+        )

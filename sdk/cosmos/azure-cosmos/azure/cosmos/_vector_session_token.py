@@ -1,23 +1,23 @@
-#The MIT License (MIT)
-#Copyright (c) 2018 Microsoft Corporation
+# The MIT License (MIT)
+# Copyright (c) 2018 Microsoft Corporation
 
-#Permission is hereby granted, free of charge, to any person obtaining a copy
-#of this software and associated documentation files (the "Software"), to deal
-#in the Software without restriction, including without limitation the rights
-#to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-#copies of the Software, and to permit persons to whom the Software is
-#furnished to do so, subject to the following conditions:
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
 
-#The above copyright notice and this permission notice shall be included in all
-#copies or substantial portions of the Software.
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
 
-#THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-#IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-#FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-#AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-#LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-#OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-#SOFTWARE.
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 
 """Session Consistency Tracking in the Azure Cosmos database service.
 """
@@ -25,8 +25,9 @@
 from . import errors
 from .http_constants import StatusCodes
 
+
 class VectorSessionToken(object):
-    segment_separator = '#'
+    segment_separator = "#"
     region_progress_separator = "="
 
     def __init__(self, version, global_lsn, local_lsn_by_region, session_token=None):
@@ -38,15 +39,23 @@ class VectorSessionToken(object):
 
         if self.session_token == None:
             region_and_local_lsn = []
-            
+
             for key in self.local_lsn_by_region:
-                region_and_local_lsn.append(str(key) + self.region_progress_separator + str(self.local_lsn_by_region[key]))
-            
+                region_and_local_lsn.append(
+                    str(key) + self.region_progress_separator + str(self.local_lsn_by_region[key])
+                )
+
             region_progress = self.segment_separator.join(region_and_local_lsn)
             if not region_progress:
                 self.session_token = "%s%s%s" % (self.version, self.segment_separator, self.global_lsn)
             else:
-                self.session_token = "%s%s%s%s%s" % (self.version, self.segment_separator, self.global_lsn, self.segment_separator, region_progress)
+                self.session_token = "%s%s%s%s%s" % (
+                    self.version,
+                    self.segment_separator,
+                    self.global_lsn,
+                    self.segment_separator,
+                    region_progress,
+                )
 
     @classmethod
     def create(cls, session_token):
@@ -67,7 +76,7 @@ class VectorSessionToken(object):
             return None
 
         segments = session_token.split(cls.segment_separator)
-        
+
         if len(segments) < 2:
             return None
 
@@ -101,15 +110,23 @@ class VectorSessionToken(object):
         if other is None:
             return False
         else:
-            return self.version == other.version and self.global_lsn == other.global_lsn and self.are_region_progress_equal(other.local_lsn_by_region)
+            return (
+                self.version == other.version
+                and self.global_lsn == other.global_lsn
+                and self.are_region_progress_equal(other.local_lsn_by_region)
+            )
 
     def merge(self, other):
         if other is None:
             raise ValueError("Invalid Session Token (should not be None)")
 
         if self.version == other.version and len(self.local_lsn_by_region) != len(other.local_lsn_by_region):
-            raise errors.CosmosError(Exception("Status Code: %s. Compared session tokens '%s' and '%s' have unexpected regions."
-                                                   % (StatusCodes.INTERNAL_SERVER_ERROR, self.session_token, other.session_token)))
+            raise errors.CosmosError(
+                Exception(
+                    "Status Code: %s. Compared session tokens '%s' and '%s' have unexpected regions."
+                    % (StatusCodes.INTERNAL_SERVER_ERROR, self.session_token, other.session_token)
+                )
+            )
 
         if self.version < other.version:
             session_token_with_lower_version = self
@@ -123,17 +140,27 @@ class VectorSessionToken(object):
         for key in session_token_with_higher_version.local_lsn_by_region:
             region_id = key
             local_lsn1 = session_token_with_higher_version.local_lsn_by_region[key]
-            local_lsn2 = session_token_with_lower_version.local_lsn_by_region[region_id] if region_id in session_token_with_lower_version.local_lsn_by_region else None
+            local_lsn2 = (
+                session_token_with_lower_version.local_lsn_by_region[region_id]
+                if region_id in session_token_with_lower_version.local_lsn_by_region
+                else None
+            )
 
             if local_lsn2 is not None:
                 highest_local_lsn_by_region[region_id] = max(local_lsn1, local_lsn2)
             elif self.version == other.version:
-                raise errors.CosmosError(Exception("Status Code: %s. Compared session tokens '%s' and '%s' have unexpected regions."
-                                                   % (StatusCodes.INTERNAL_SERVER_ERROR, self.session_token, other.session_token)))
+                raise errors.CosmosError(
+                    Exception(
+                        "Status Code: %s. Compared session tokens '%s' and '%s' have unexpected regions."
+                        % (StatusCodes.INTERNAL_SERVER_ERROR, self.session_token, other.session_token)
+                    )
+                )
             else:
                 highest_local_lsn_by_region[region_id] = local_lsn1
 
-        return VectorSessionToken(max(self.version, other.version), max(self.global_lsn, other.global_lsn), highest_local_lsn_by_region)
+        return VectorSessionToken(
+            max(self.version, other.version), max(self.global_lsn, other.global_lsn), highest_local_lsn_by_region
+        )
 
     def convert_to_string(self):
         return self.session_token

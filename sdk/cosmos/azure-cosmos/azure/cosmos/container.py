@@ -1,23 +1,23 @@
-#The MIT License (MIT)
-#Copyright (c) 2014 Microsoft Corporation
+# The MIT License (MIT)
+# Copyright (c) 2014 Microsoft Corporation
 
-#Permission is hereby granted, free of charge, to any person obtaining a copy
-#of this software and associated documentation files (the "Software"), to deal
-#in the Software without restriction, including without limitation the rights
-#to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-#copies of the Software, and to permit persons to whom the Software is
-#furnished to do so, subject to the following conditions:
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
 
-#The above copyright notice and this permission notice shall be included in all
-#copies or substantial portions of the Software.
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
 
-#THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-#IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-#FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-#AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-#LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-#OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-#SOFTWARE.
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 
 """Create, read, update and delete items in the Azure Cosmos DB SQL API service.
 """
@@ -30,19 +30,10 @@ from .offer import Offer
 from .scripts import Scripts
 from ._query_iterable import QueryIterable
 from .partition_key import NonePartitionKeyValue
-from typing import (
-    Any,
-    Callable,
-    Dict,
-    List,
-    Optional,
-    Union,
-    cast
-)
+from typing import Any, Callable, Dict, List, Optional, Union, cast
 
-__all__ = (
-    'Container',
-)
+__all__ = ("Container",)
+
 
 class Container:
     """ An Azure Cosmos DB container.
@@ -77,8 +68,9 @@ class Container:
     def is_system_key(self):
         if self._is_system_key is None:
             properties = self._get_properties()
-            self._is_system_key = (properties['partitionKey']['systemKey'] 
-                                    if 'systemKey' in properties['partitionKey'] else False)
+            self._is_system_key = (
+                properties["partitionKey"]["systemKey"] if "systemKey" in properties["partitionKey"] else False
+            )
         return self._is_system_key
 
     @property
@@ -108,7 +100,7 @@ class Container:
         populate_partition_key_range_statistics=None,
         populate_quota_info=None,
         request_options=None,
-        response_hook=None
+        response_hook=None,
     ):
         # type: (str, Dict[str, str], bool, bool, bool, Dict[str, Any], Optional[Callable]) -> Container
         """ Read the container properties
@@ -125,7 +117,7 @@ class Container:
 
         """
         if not request_options:
-            request_options = {} # type: Dict[str, Any]
+            request_options = {}  # type: Dict[str, Any]
         if session_token:
             request_options["sessionToken"] = session_token
         if initial_headers:
@@ -138,13 +130,11 @@ class Container:
             request_options["populateQuotaInfo"] = populate_quota_info
 
         collection_link = self.container_link
-        self._properties = self.client_connection.ReadContainer(
-            collection_link, options=request_options
-        )
+        self._properties = self.client_connection.ReadContainer(collection_link, options=request_options)
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, self._properties)
-        
+
         return self._properties
 
     def read_item(
@@ -155,8 +145,8 @@ class Container:
         initial_headers=None,
         populate_query_metrics=None,
         post_trigger_include=None,
-        request_options=None, 
-        response_hook=None
+        request_options=None,
+        response_hook=None,
     ):
         # type: (Union[str, Dict[str, Any]], Any, str, Dict[str, str], bool, str, Dict[str, Any], Optional[Callable]) -> Dict[str, str]
         """
@@ -185,7 +175,7 @@ class Container:
         doc_link = self._get_document_link(item)
 
         if not request_options:
-            request_options = {} # type: Dict[str, Any]
+            request_options = {}  # type: Dict[str, Any]
         if partition_key:
             request_options["partitionKey"] = self._set_partition_key(partition_key)
         if session_token:
@@ -197,9 +187,7 @@ class Container:
         if post_trigger_include:
             request_options["postTriggerInclude"] = post_trigger_include
 
-        result = self.client_connection.ReadItem(
-            document_link=doc_link, options=request_options
-        )
+        result = self.client_connection.ReadItem(document_link=doc_link, options=request_options)
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
         return result
@@ -210,8 +198,8 @@ class Container:
         session_token=None,
         initial_headers=None,
         populate_query_metrics=None,
-        feed_options=None, 
-        response_hook=None
+        feed_options=None,
+        response_hook=None,
     ):
         # type: (int, str, Dict[str, str], bool, Dict[str, Any], Optional[Callable]) -> QueryIterable
         """ List all items in the container.
@@ -225,7 +213,7 @@ class Container:
         :returns: An Iterable of items (dicts).
         """
         if not feed_options:
-            feed_options = {} # type: Dict[str, Any]
+            feed_options = {}  # type: Dict[str, Any]
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
         if session_token:
@@ -235,7 +223,7 @@ class Container:
         if populate_query_metrics is not None:
             feed_options["populateQueryMetrics"] = populate_query_metrics
 
-        if hasattr(response_hook, 'clear'):
+        if hasattr(response_hook, "clear"):
             response_hook.clear()
 
         items = self.client_connection.ReadItems(
@@ -246,13 +234,13 @@ class Container:
         return items
 
     def query_items_change_feed(
-            self,
-            partition_key_range_id=None,
-            is_start_from_beginning=False,
-            continuation=None,
-            max_item_count=None,
-            feed_options=None, 
-            response_hook=None, 
+        self,
+        partition_key_range_id=None,
+        is_start_from_beginning=False,
+        continuation=None,
+        max_item_count=None,
+        feed_options=None,
+        response_hook=None,
     ):
         """ Get a sorted list of items that were changed, in the order in which they were modified.
 
@@ -268,7 +256,7 @@ class Container:
 
         """
         if not feed_options:
-            feed_options = {} # type: Dict[str, Any]
+            feed_options = {}  # type: Dict[str, Any]
         if partition_key_range_id is not None:
             feed_options["partitionKeyRangeId"] = partition_key_range_id
         if is_start_from_beginning is not None:
@@ -278,7 +266,7 @@ class Container:
         if continuation is not None:
             feed_options["continuation"] = continuation
 
-        if hasattr(response_hook, 'clear'):
+        if hasattr(response_hook, "clear"):
             response_hook.clear()
 
         result = self.client_connection.QueryItemsChangeFeed(
@@ -299,8 +287,8 @@ class Container:
         initial_headers=None,
         enable_scan_in_query=None,
         populate_query_metrics=None,
-        feed_options=None, 
-        response_hook=None
+        feed_options=None,
+        response_hook=None,
     ):
         # type: (str, List, Any, bool, int, str, Dict[str, str], bool, bool, Dict[str, Any, Optional[Callable]) -> QueryIterable
         """Return all results matching the given `query`.
@@ -341,7 +329,7 @@ class Container:
 
         """
         if not feed_options:
-            feed_options = {} # type: Dict[str, Any]
+            feed_options = {}  # type: Dict[str, Any]
         if enable_cross_partition_query is not None:
             feed_options["enableCrossPartitionQuery"] = enable_cross_partition_query
         if max_item_count is not None:
@@ -357,17 +345,15 @@ class Container:
         if enable_scan_in_query is not None:
             feed_options["enableScanInQuery"] = enable_scan_in_query
 
-        if hasattr(response_hook, 'clear'):
+        if hasattr(response_hook, "clear"):
             response_hook.clear()
 
         items = self.client_connection.QueryItems(
             database_or_Container_link=self.container_link,
-            query=query
-            if parameters is None
-            else dict(query=query, parameters=parameters),
+            query=query if parameters is None else dict(query=query, parameters=parameters),
             options=feed_options,
             partition_key=partition_key,
-            response_hook=response_hook
+            response_hook=response_hook,
         )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, items)
@@ -383,8 +369,8 @@ class Container:
         populate_query_metrics=None,
         pre_trigger_include=None,
         post_trigger_include=None,
-        request_options=None, 
-        response_hook=None
+        request_options=None,
+        response_hook=None,
     ):
         # type: (Union[str, Dict[str, Any]], Dict[str, Any], str, Dict[str, str], Dict[str, str], bool, str, str, Dict[str, Any], Optional[Callable]) -> Dict[str, str]
         """ Replaces the specified item if it exists in the container.
@@ -405,7 +391,7 @@ class Container:
         """
         item_link = self._get_document_link(item)
         if not request_options:
-            request_options = {} # type: Dict[str, Any]
+            request_options = {}  # type: Dict[str, Any]
         request_options["disableIdGeneration"] = True
         if session_token:
             request_options["sessionToken"] = session_token
@@ -420,11 +406,7 @@ class Container:
         if post_trigger_include:
             request_options["postTriggerInclude"] = post_trigger_include
 
-        result = self.client_connection.ReplaceItem(
-            document_link=item_link,
-            new_document=body,
-            options=request_options
-        )
+        result = self.client_connection.ReplaceItem(document_link=item_link, new_document=body, options=request_options)
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
         return result
@@ -438,8 +420,8 @@ class Container:
         populate_query_metrics=None,
         pre_trigger_include=None,
         post_trigger_include=None,
-        request_options=None, 
-        response_hook=None
+        request_options=None,
+        response_hook=None,
     ):
         # type: (Dict[str, Any], str, Dict[str, str], Dict[str, str], bool, str, str, Dict[str, Any], Optional[Callable]) -> Dict[str, str]
         """ Insert or update the specified item.
@@ -460,7 +442,7 @@ class Container:
 
         """
         if not request_options:
-            request_options = {} # type: Dict[str, Any]
+            request_options = {}  # type: Dict[str, Any]
         request_options["disableIdGeneration"] = True
         if session_token:
             request_options["sessionToken"] = session_token
@@ -475,10 +457,7 @@ class Container:
         if post_trigger_include:
             request_options["postTriggerInclude"] = post_trigger_include
 
-        result = self.client_connection.UpsertItem(
-            database_or_Container_link=self.container_link,
-            document=body
-        )
+        result = self.client_connection.UpsertItem(database_or_Container_link=self.container_link, document=body)
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
         return result
@@ -493,8 +472,8 @@ class Container:
         pre_trigger_include=None,
         post_trigger_include=None,
         indexing_directive=None,
-        request_options=None, 
-        response_hook=None
+        request_options=None,
+        response_hook=None,
     ):
         # type: (Dict[str, Any], str, Dict[str, str], Dict[str, str], bool, str, str, Any, Dict[str, Any], Optional[Callable]) -> Dict[str, str]
         """ Create an item in the container.
@@ -516,7 +495,7 @@ class Container:
 
         """
         if not request_options:
-            request_options = {} # type: Dict[str, Any]
+            request_options = {}  # type: Dict[str, Any]
 
         request_options["disableAutomaticIdGeneration"] = True
         if session_token:
@@ -535,9 +514,7 @@ class Container:
             request_options["indexingDirective"] = indexing_directive
 
         result = self.client_connection.CreateItem(
-            database_or_Container_link=self.container_link,
-            document=body,
-            options=request_options
+            database_or_Container_link=self.container_link, document=body, options=request_options
         )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
@@ -553,8 +530,8 @@ class Container:
         populate_query_metrics=None,
         pre_trigger_include=None,
         post_trigger_include=None,
-        request_options=None, 
-        response_hook=None
+        request_options=None,
+        response_hook=None,
     ):
         # type: (Union[Dict[str, Any], str], Any, str, Dict[str, str], Dict[str, str], bool, str, str, Dict[str, Any], Optional[Callable]) -> None
         """ Delete the specified item from the container.
@@ -573,7 +550,7 @@ class Container:
 
         """
         if not request_options:
-            request_options = {} # type: Dict[str, Any]
+            request_options = {}  # type: Dict[str, Any]
         if partition_key:
             request_options["partitionKey"] = self._set_partition_key(partition_key)
         if session_token:
@@ -590,11 +567,9 @@ class Container:
             request_options["postTriggerInclude"] = post_trigger_include
 
         document_link = self._get_document_link(item)
-        result = self.client_connection.DeleteItem(
-            document_link=document_link, options=request_options
-        )
+        result = self.client_connection.DeleteItem(document_link=document_link, options=request_options)
         if response_hook:
-            response_hook(self.client_connection.last_response_headers, result) 
+            response_hook(self.client_connection.last_response_headers, result)
 
     def read_offer(self, response_hook=None):
         # type: (Optional[Callable]) -> Offer
@@ -606,13 +581,11 @@ class Container:
 
         """
         properties = self._get_properties()
-        link = properties['_self']
+        link = properties["_self"]
         query_spec = {
-                        'query': 'SELECT * FROM root r WHERE r.resource=@link',
-                        'parameters': [
-                            {'name': '@link', 'value': link}
-                        ]
-                     }
+            "query": "SELECT * FROM root r WHERE r.resource=@link",
+            "parameters": [{"name": "@link", "value": link}],
+        }
         offers = list(self.client_connection.QueryOffers(query_spec))
         if len(offers) <= 0:
             raise HTTPFailure(StatusCodes.NOT_FOUND, "Could not find Offer for container " + self.container_link)
@@ -620,15 +593,9 @@ class Container:
         if response_hook:
             response_hook(self.client_connection.last_response_headers, offers)
 
-        return Offer(
-            offer_throughput=offers[0]['content']['offerThroughput'],
-            properties=offers[0])
+        return Offer(offer_throughput=offers[0]["content"]["offerThroughput"], properties=offers[0])
 
-    def replace_throughput(
-            self,
-            throughput, 
-            response_hook=None
-    ):
+    def replace_throughput(self, throughput, response_hook=None):
         # type: (in, Optional[Callable]) -> Offer
         """ Replace the container's throughput
 
@@ -639,36 +606,24 @@ class Container:
 
         """
         properties = self._get_properties()
-        link = properties['_self']
+        link = properties["_self"]
         query_spec = {
-                        'query': 'SELECT * FROM root r WHERE r.resource=@link',
-                        'parameters': [
-                            {'name': '@link', 'value': link}
-                        ]
-                     }
+            "query": "SELECT * FROM root r WHERE r.resource=@link",
+            "parameters": [{"name": "@link", "value": link}],
+        }
         offers = list(self.client_connection.QueryOffers(query_spec))
         if len(offers) <= 0:
             raise HTTPFailure(StatusCodes.NOT_FOUND, "Could not find Offer for container " + self.container_link)
         new_offer = offers[0].copy()
-        new_offer['content']['offerThroughput'] = throughput
-        data = self.client_connection.ReplaceOffer(
-            offer_link=offers[0]['_self'],
-            offer=offers[0]
-        )
+        new_offer["content"]["offerThroughput"] = throughput
+        data = self.client_connection.ReplaceOffer(offer_link=offers[0]["_self"], offer=offers[0])
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, data)
 
-        return Offer(
-            offer_throughput=data['content']['offerThroughput'],
-            properties=data)
+        return Offer(offer_throughput=data["content"]["offerThroughput"], properties=data)
 
-    def read_all_conflicts(
-            self,
-            max_item_count=None,
-            feed_options=None, 
-            response_hook=None
-    ):
+    def read_all_conflicts(self, max_item_count=None, feed_options=None, response_hook=None):
         # type: (int, Dict[str, Any], Optional[Callable]) -> QueryIterable
         """ List all conflicts in the container.
 
@@ -679,27 +634,24 @@ class Container:
 
         """
         if not feed_options:
-            feed_options = {} # type: Dict[str, Any]
+            feed_options = {}  # type: Dict[str, Any]
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
-        result = self.client_connection.ReadConflicts(
-            collection_link=self.container_link,
-            feed_options=feed_options
-        )
+        result = self.client_connection.ReadConflicts(collection_link=self.container_link, feed_options=feed_options)
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
         return result
 
     def query_conflicts(
-            self,
-            query,
-            parameters=None,
-            enable_cross_partition_query=None,
-            partition_key=None,
-            max_item_count=None,
-            feed_options=None, 
-            response_hook=None
+        self,
+        query,
+        parameters=None,
+        enable_cross_partition_query=None,
+        partition_key=None,
+        max_item_count=None,
+        feed_options=None,
+        response_hook=None,
     ):
         # type: (str, List, bool, Any, int, Dict[str, Any], Optional[Callable]) -> QueryIterable
         """Return all conflicts matching the given `query`.
@@ -716,7 +668,7 @@ class Container:
 
         """
         if not feed_options:
-            feed_options = {} # type: Dict[str, Any]
+            feed_options = {}  # type: Dict[str, Any]
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
         if enable_cross_partition_query is not None:
@@ -726,22 +678,14 @@ class Container:
 
         result = self.client_connection.QueryConflicts(
             collection_link=self.container_link,
-            query=query
-            if parameters is None
-            else dict(query=query, parameters=parameters),
+            query=query if parameters is None else dict(query=query, parameters=parameters),
             options=feed_options,
         )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
         return result
 
-    def get_conflict(
-            self,
-            conflict,
-            partition_key,
-            request_options=None, 
-            response_hook=None
-    ):
+    def get_conflict(self, conflict, partition_key, request_options=None, response_hook=None):
         # type: (Union[str, Dict[str, Any]], Any, Dict[str, Any], Optional[Callable]) -> Dict[str, str]
         """ Get the conflict identified by `id`.
 
@@ -754,25 +698,18 @@ class Container:
 
         """
         if not request_options:
-            request_options = {} # type: Dict[str, Any]
+            request_options = {}  # type: Dict[str, Any]
         if partition_key:
             request_options["partitionKey"] = self._set_partition_key(partition_key)
 
         result = self.client_connection.ReadConflict(
-            conflict_link=self._get_conflict_link(conflict),
-            options=request_options
+            conflict_link=self._get_conflict_link(conflict), options=request_options
         )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
         return result
 
-    def delete_conflict(
-            self,
-            conflict,
-            partition_key,
-            request_options=None, 
-            response_hook=None
-    ):
+    def delete_conflict(self, conflict, partition_key, request_options=None, response_hook=None):
         # type: (Union[str, Dict[str, Any]], Any, Dict[str, Any], Optional[Callable]) -> None
         """ Delete the specified conflict from the container.
 
@@ -784,13 +721,12 @@ class Container:
 
         """
         if not request_options:
-            request_options = {} # type: Dict[str, Any]
+            request_options = {}  # type: Dict[str, Any]
         if partition_key:
             request_options["partitionKey"] = self._set_partition_key(partition_key)
 
         result = self.client_connection.DeleteConflict(
-            conflict_link=self._get_conflict_link(conflict),
-            options=request_options
+            conflict_link=self._get_conflict_link(conflict), options=request_options
         )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
@@ -799,4 +735,4 @@ class Container:
         if partition_key == NonePartitionKeyValue:
             return CosmosClientConnection._return_undefined_or_empty_partition_key(self.is_system_key)
         else:
-         return partition_key
+            return partition_key
