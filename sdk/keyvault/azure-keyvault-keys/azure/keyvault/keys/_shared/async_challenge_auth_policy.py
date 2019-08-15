@@ -28,6 +28,10 @@ class AsyncChallengeAuthPolicy(ChallengeAuthPolicyBase, AsyncHTTPPolicy):
                               "If request has a body, no_body's content length is wrong")
                 no_body.headers["Content-Length"] = "0"
 
+            _LOGGER.info("Provoking challenge with an unauthorized, bodiless {} to url {} with the following headers".
+                         format(request.http_request.method, request.http_request.url))
+            for header in request.http_request.headers:
+                _LOGGER.info("Header {}".format(header))
             challenger = await self.next.send(PipelineRequest(http_request=no_body, context=request.context))
             try:
                 challenge = self._update_challenge(request, challenger)
@@ -37,7 +41,18 @@ class AsyncChallengeAuthPolicy(ChallengeAuthPolicyBase, AsyncHTTPPolicy):
                 return challenger
 
         await self._handle_challenge(request, challenge)
+        _LOGGER.info("Sending {} request to url {} with the following headers".format(
+            request.http_request.method, request.http_request.url)
+        )
+        for header in request.http_request.headers:
+            _LOGGER.info("Header {}".format(header))
         response = await self.next.send(request)
+
+        _LOGGER.info("Received response with status code {} {} with the following headers from request to {}".format(
+            response.http_response.status_code, response.http_response.reason, response.http_request.url
+        ))
+        for header in response.http_response.headers:
+            _LOGGER.info("Header {}".format(header))
 
         if response.http_response.status_code == 401:
             # cached challenge could be outdated; maybe this response has a new one?
@@ -48,8 +63,19 @@ class AsyncChallengeAuthPolicy(ChallengeAuthPolicyBase, AsyncHTTPPolicy):
                 _LOGGER.debug("Received a 401 with no legible challenge.")
                 return response
 
+            _LOGGER.info("Resending request with new challenge because old one might be outdated.")
             await self._handle_challenge(request, challenge)
+            _LOGGER.info("Sending {} request to url {} with the following headers".format(
+                request.http_request.method, request.http_request.url)
+            )
             response = await self.next.send(request)
+
+            _LOGGER.info(
+                "Received response with status code {} {} with the following headers from request to {}".format(
+                    response.http_response.status_code, response.http_response.reason, response.http_request.url
+                ))
+            for header in response.http_response.headers:
+                _LOGGER.info("Header {}".format(header))
 
         return response
 
