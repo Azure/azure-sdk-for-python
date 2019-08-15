@@ -19,7 +19,7 @@ This version uses a next-generation code generator that *might* introduce breaki
 In summary, some modules were incorrectly visible/importable and have been renamed. This fixed several issues caused by usage of classes that were not supposed to be used in the first place.
 
 - CosmosDB cannot be imported from `azure.mgmt.cosmosdb.cosmos_db` anymore (import from `azure.mgmt.cosmosdb` works like before)
-- CosmosDBConfiguration import has been moved from `azure.mgmt.cosmosdb.cosmos_db_client` to `azure.mgmt.cosmosdb`
+- CosmosDBConfiguration import has been moved from `azure.mgmt.cosmosdb.cosmos_db` to `azure.mgmt.cosmosdb`
 - A model `MyClass` from a "models" sub-module cannot be imported anymore using `azure.mgmt.cosmosdb.models.my_class` (import from `azure.mgmt.cosmosdb.models` works like before)
 - An operation class `MyClassOperations` from an `operations` sub-module cannot be imported anymore using `azure.mgmt.cosmosdb.operations.my_class_operations` (import from `azure.mgmt.cosmosdb.operations` works like before)
         
