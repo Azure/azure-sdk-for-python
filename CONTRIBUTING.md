@@ -3,15 +3,19 @@
 If you would like to become an active contributor to this project please
 follow the instructions provided in [Microsoft Azure Projects Contribution Guidelines](http://azure.github.io/guidelines/).
 
-## The Local Development Loop
+## Building and Testing
 
 The Azure SDK team's Python CI leverages the tool `tox` to distribute tests to virtual environments, handle test dependency installation, and coordinate tooling reporting during PR/CI builds. This means that a dev working locally can reproduce _exactly_ what the build machine is doing. 
 
-< todo, put a placeholder diagram that shows that build ci executes the `tox` for each package that is being build >
-
 [A Brief Overview of Tox](https://tox.readthedocs.io/en/latest/)
 
-Traditionally, the `tox.ini` file for a package sits _alongside the setup.py_ in source code. The `azure-sdk-for-python` repo adheres to this same philosophy.
+#### A Monorepo and Tox in Harmony
+
+Traditionally, the `tox.ini` file for a package sits _alongside the setup.py_ in source code. The `azure-sdk-for-python` necessarily does not adhere to this policy. There are over one-hundred packages contained here-in. That's a lot of `tox.ini` files to maintain!
+
+Instead, the CI system leverages an tox plugin called `tox-monorepo`. This plugin allows `tox` to act as if the `tox.ini` is located in whatever directory you executed tox in!
+
+#### Tox Environments
 
 A given `tox.ini` works on the concept of `test environments`. A given test environment is a combination of:
 
@@ -37,17 +41,19 @@ sdist
 
 ```
 
-Unfortunately, the command `tox -l` only returns the _default_ builds. The common `tox.ini` file also supports `pylint` and `mypy` environments.
+Unfortunately, the command `tox -l` only returns the _default_ test builds. The common `tox.ini` file also supports `pylint` and `mypy` environments.
 
-### Example Usage of the Azure SDK For Python `tox.ini` Files
+### Example Usage of the common Azure SDK For Python `tox.ini` 
 
-Basic usage of `tox` is:
+Basic usage of `tox` within this monorepo is:
 
 1. `pip install tox tox-monorepo`
 2. `cd` to target package folder
-3. run `tox`
+3. run `tox -c path/to/tox.ini`
 
-Not only this, but `tox` created virtual directories are tied to the location of the `tox.ini` file! The only way around this behavior is to utilize a plugin, `tox-monorepo`, to update the actual working directories prior to execution.
+The common `tox.ini` location is `eng/tox/tox.ini` within the repository.
+
+If at any time you want to blow away the tox created virtual environments and start over, simply append `-r` to any tox invocation! 
 
 #### Example `azure-core` mypy
 
@@ -82,6 +88,30 @@ Used for the local dev loop.
 \> tox -e sdist -c <path to tox.ini>
 
 ```
+
+#### `mypy` environment
+Pylint install and run.
+
+```
+\> tox -e pylint -c <path to tox.ini>
+```
+
+
+#### `mypy` environment
+Mypy install and run.
+
+```
+\> tox -e mypy -c <path to tox.ini>
+```
+
+### Custom Pytest Arguments
+
+`tox` supports custom arguments, and the defined pytest environments within the common `tox.ini` also allow these. Essentially, separate the arguments you want passed to `pytest` by a `--` in your tox invocation.
+
+[Tox Documentation on Positional Arguments](https://tox.readthedocs.io/en/latest/example/general.html#interactively-passing-positional-arguments)
+
+**Example: Invoke tox, breaking into the debugger on failure**
+`tox -e windows-wheel_tests -c ../../../eng/tox/tox.ini -- --pdb`
 
 ## Code of Conduct
 This project's code of conduct can be found in the
