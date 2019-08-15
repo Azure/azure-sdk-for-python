@@ -79,9 +79,9 @@ class ChallengeAuthPolicy(ChallengeAuthPolicyBase, HTTPPolicy):
             _LOGGER.info("Header {}".format(header))
         response = self.next.send(request)
 
-        _LOGGER.info("Received response with status code {} {} with the following headers from request to {}").format(
+        _LOGGER.info("Received response with status code {} {} with the following headers from request to {}".format(
             response.http_response.status_code, response.http_response.reason, response.http_request.url
-        )
+        ))
         for header in response.http_response.headers:
             _LOGGER.info("Header {}".format(header))
 
@@ -101,9 +101,9 @@ class ChallengeAuthPolicy(ChallengeAuthPolicyBase, HTTPPolicy):
             )
             response = self.next.send(request)
             _LOGGER.info(
-                "Received response with status code {} {} with the following headers from request to {}").format(
+                "Received response with status code {} {} with the following headers from request to {}".format(
                 response.http_response.status_code, response.http_response.reason, response.http_request.url
-            )
+            ))
             for header in response.http_response.headers:
                 _LOGGER.info("Header {}".format(header))
 
