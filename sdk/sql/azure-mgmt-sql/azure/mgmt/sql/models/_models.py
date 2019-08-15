@@ -4845,6 +4845,60 @@ class ManagedInstance(TrackedResource):
         self.instance_pool_id = kwargs.get('instance_pool_id', None)
 
 
+class ManagedInstanceAdministrator(ProxyResource):
+    """An Azure SQL managed instance administrator.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar administrator_type: Required. Type of the managed instance
+     administrator. Default value: "ActiveDirectory" .
+    :vartype administrator_type: str
+    :param login: Required. Login name of the managed instance administrator.
+    :type login: str
+    :param sid: Required. SID (object ID) of the managed instance
+     administrator.
+    :type sid: str
+    :param tenant_id: Tenant ID of the managed instance administrator.
+    :type tenant_id: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'administrator_type': {'required': True, 'constant': True},
+        'login': {'required': True},
+        'sid': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'administrator_type': {'key': 'properties.administratorType', 'type': 'str'},
+        'login': {'key': 'properties.login', 'type': 'str'},
+        'sid': {'key': 'properties.sid', 'type': 'str'},
+        'tenant_id': {'key': 'properties.tenantId', 'type': 'str'},
+    }
+
+    administrator_type = "ActiveDirectory"
+
+    def __init__(self, **kwargs):
+        super(ManagedInstanceAdministrator, self).__init__(**kwargs)
+        self.login = kwargs.get('login', None)
+        self.sid = kwargs.get('sid', None)
+        self.tenant_id = kwargs.get('tenant_id', None)
+
+
 class ManagedInstanceEditionCapability(Model):
     """The managed server capability.
 

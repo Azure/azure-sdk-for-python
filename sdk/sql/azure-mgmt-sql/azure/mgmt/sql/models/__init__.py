@@ -83,6 +83,7 @@ try:
     from ._models_py3 import ManagedDatabaseSecurityAlertPolicy
     from ._models_py3 import ManagedDatabaseUpdate
     from ._models_py3 import ManagedInstance
+    from ._models_py3 import ManagedInstanceAdministrator
     from ._models_py3 import ManagedInstanceEditionCapability
     from ._models_py3 import ManagedInstanceEncryptionProtector
     from ._models_py3 import ManagedInstanceFamilyCapability
@@ -239,6 +240,7 @@ except (SyntaxError, ImportError):
     from ._models import ManagedDatabaseSecurityAlertPolicy
     from ._models import ManagedDatabaseUpdate
     from ._models import ManagedInstance
+    from ._models import ManagedInstanceAdministrator
     from ._models import ManagedInstanceEditionCapability
     from ._models import ManagedInstanceEncryptionProtector
     from ._models import ManagedInstanceFamilyCapability
@@ -348,6 +350,7 @@ from ._paged_models import LongTermRetentionBackupPaged
 from ._paged_models import ManagedBackupShortTermRetentionPolicyPaged
 from ._paged_models import ManagedDatabasePaged
 from ._paged_models import ManagedDatabaseSecurityAlertPolicyPaged
+from ._paged_models import ManagedInstanceAdministratorPaged
 from ._paged_models import ManagedInstanceEncryptionProtectorPaged
 from ._paged_models import ManagedInstanceKeyPaged
 from ._paged_models import ManagedInstancePaged
@@ -546,6 +549,7 @@ __all__ = [
     'ManagedDatabaseSecurityAlertPolicy',
     'ManagedDatabaseUpdate',
     'ManagedInstance',
+    'ManagedInstanceAdministrator',
     'ManagedInstanceEditionCapability',
     'ManagedInstanceEncryptionProtector',
     'ManagedInstanceFamilyCapability',
@@ -682,6 +686,7 @@ __all__ = [
     'ManagedDatabaseSecurityAlertPolicyPaged',
     'ManagedServerSecurityAlertPolicyPaged',
     'SensitivityLabelPaged',
+    'ManagedInstanceAdministratorPaged',
     'DatabaseOperationPaged',
     'ElasticPoolOperationPaged',
     'VulnerabilityAssessmentScanRecordPaged',

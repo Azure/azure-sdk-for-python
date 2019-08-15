@@ -71,6 +71,7 @@ from ._restore_points_operations import RestorePointsOperations
 from ._managed_database_security_alert_policies_operations import ManagedDatabaseSecurityAlertPoliciesOperations
 from ._managed_server_security_alert_policies_operations import ManagedServerSecurityAlertPoliciesOperations
 from ._sensitivity_labels_operations import SensitivityLabelsOperations
+from ._managed_instance_administrators_operations import ManagedInstanceAdministratorsOperations
 from ._database_operations import DatabaseOperations
 from ._elastic_pool_operations import ElasticPoolOperations
 from ._capabilities_operations import CapabilitiesOperations
@@ -155,6 +156,7 @@ __all__ = [
     'ManagedDatabaseSecurityAlertPoliciesOperations',
     'ManagedServerSecurityAlertPoliciesOperations',
     'SensitivityLabelsOperations',
+    'ManagedInstanceAdministratorsOperations',
     'DatabaseOperations',
     'ElasticPoolOperations',
     'CapabilitiesOperations',

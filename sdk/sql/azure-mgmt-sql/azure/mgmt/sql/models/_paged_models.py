@@ -714,6 +714,19 @@ class SensitivityLabelPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(SensitivityLabelPaged, self).__init__(*args, **kwargs)
+class ManagedInstanceAdministratorPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ManagedInstanceAdministrator <azure.mgmt.sql.models.ManagedInstanceAdministrator>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ManagedInstanceAdministrator]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ManagedInstanceAdministratorPaged, self).__init__(*args, **kwargs)
 class DatabaseOperationPaged(Paged):
     """
     A paging container for iterating over a list of :class:`DatabaseOperation <azure.mgmt.sql.models.DatabaseOperation>` object
