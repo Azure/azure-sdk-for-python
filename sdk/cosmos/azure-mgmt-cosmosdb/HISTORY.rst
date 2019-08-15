@@ -3,6 +3,16 @@
 Release History
 ===============
 
+0.8.0 (2019-08-15)
+++++++++++++++++++
+
+**Features**
+
+- Model DatabaseAccount has a new parameter enable_cassandra_connector
+- Model DatabaseAccount has a new parameter connector_offer
+- Model DatabaseAccountCreateUpdateParameters has a new parameter enable_cassandra_connector
+- Model DatabaseAccountCreateUpdateParameters has a new parameter connector_offer
+
 0.7.0 (2019-06-07)
 ++++++++++++++++++
 
