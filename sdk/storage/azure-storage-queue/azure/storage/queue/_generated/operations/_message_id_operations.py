@@ -35,7 +35,7 @@ class MessageIdOperations(object):
 
         self._config = config
 
-    def update(self, queue_message, pop_receipt, visibilitytimeout, timeout=None, request_id=None, cls=None, **kwargs):
+    def update(self, pop_receipt, visibilitytimeout, queue_message=None, timeout=None, request_id=None, cls=None, **kwargs):
         """The Update operation was introduced with version 2011-08-18 of the
         Queue service API. The Update Message operation updates the visibility
         timeout of a message. You can also use this operation to update the
@@ -43,8 +43,6 @@ class MessageIdOperations(object):
         included in an XML request with UTF-8 encoding, and the encoded message
         can be up to 64KB in size.
 
-        :param queue_message: A Message object which can be stored in a Queue
-        :type queue_message: ~azure.storage.queue.models.QueueMessage
         :param pop_receipt: Required. Specifies the valid pop receipt value
          returned from an earlier call to the Get Messages or Update Message
          operation.
@@ -56,6 +54,8 @@ class MessageIdOperations(object):
          REST protocol versions prior to version 2011-08-18. The visibility
          timeout of a message can be set to a value later than the expiry time.
         :type visibilitytimeout: int
+        :param queue_message: A Message object which can be stored in a Queue
+        :type queue_message: ~azure.storage.queue.models.QueueMessage
         :param timeout: The The timeout parameter is expressed in seconds. For
          more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations>Setting
@@ -95,7 +95,10 @@ class MessageIdOperations(object):
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
 
         # Construct body
-        body_content = self._serialize.body(queue_message, 'QueueMessage')
+        if queue_message is not None:
+            body_content = self._serialize.body(queue_message, 'QueueMessage')
+        else:
+            body_content = None
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)

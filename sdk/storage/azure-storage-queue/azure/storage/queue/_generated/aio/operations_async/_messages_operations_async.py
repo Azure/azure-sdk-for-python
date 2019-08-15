@@ -177,7 +177,7 @@ class MessagesOperations:
             return cls(response, None, response_headers)
     clear.metadata = {'url': '/{queueName}/messages'}
 
-    async def enqueue(self, queue_message, visibilitytimeout=None, message_time_to_live=None, timeout=None, request_id=None, *, cls=None, **kwargs):
+    async def enqueue(self, queue_message=None, visibilitytimeout=None, message_time_to_live=None, timeout=None, request_id=None, *, cls=None, **kwargs):
         """The Enqueue operation adds a new message to the back of the message
         queue. A visibility timeout can also be specified to make the message
         invisible until the visibility timeout expires. A message must be in a
@@ -243,7 +243,10 @@ class MessagesOperations:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
 
         # Construct body
-        body_content = self._serialize.body(queue_message, 'QueueMessage')
+        if queue_message is not None:
+            body_content = self._serialize.body(queue_message, 'QueueMessage')
+        else:
+            body_content = None
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters, body_content)

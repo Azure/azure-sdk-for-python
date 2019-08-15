@@ -39,3 +39,31 @@ directive:
   transform: >
     if ($["x-ms-pageable"]) { delete $["x-ms-pageable"]; }
 ```
+
+### Use strings for dates when python doesn't have enough precision
+``` yaml
+directive:
+- from: swagger-document
+  where: $.definitions.AccessPolicy.properties
+  transform: >
+    $.Start.format = "str";
+    $.Expiry.format = "str";
+```
+
+### SignedIdentifier shouldn't require an AccessPolicy, only ID
+``` yaml
+directive:
+- from: swagger-document
+  where: $.definitions.SignedIdentifier
+  transform: >
+    $.required = [ "Id" ];
+```
+
+### QueueMessage is required for enqueue, but not for update
+``` yaml
+directive:
+- from: swagger-document
+  where: $.parameters.QueueMessage
+  transform: >
+    $.required = false;
+```

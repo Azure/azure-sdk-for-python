@@ -19,9 +19,9 @@ class AccessPolicy(Model):
     All required parameters must be populated in order to send to Azure.
 
     :param start: Required. the date-time the policy is active
-    :type start: datetime
+    :type start: str
     :param expiry: Required. the date-time the policy expires
-    :type expiry: datetime
+    :type expiry: str
     :param permission: Required. the permissions for the acl policy
     :type permission: str
     """
@@ -33,14 +33,14 @@ class AccessPolicy(Model):
     }
 
     _attribute_map = {
-        'start': {'key': 'Start', 'type': 'iso-8601', 'xml': {'name': 'Start'}},
-        'expiry': {'key': 'Expiry', 'type': 'iso-8601', 'xml': {'name': 'Expiry'}},
+        'start': {'key': 'Start', 'type': 'str', 'xml': {'name': 'Start'}},
+        'expiry': {'key': 'Expiry', 'type': 'str', 'xml': {'name': 'Expiry'}},
         'permission': {'key': 'Permission', 'type': 'str', 'xml': {'name': 'Permission'}},
     }
     _xml_map = {
     }
 
-    def __init__(self, *, start, expiry, permission: str, **kwargs) -> None:
+    def __init__(self, *, start: str, expiry: str, permission: str, **kwargs) -> None:
         super(AccessPolicy, self).__init__(**kwargs)
         self.start = start
         self.expiry = expiry
@@ -525,13 +525,12 @@ class SignedIdentifier(Model):
 
     :param id: Required. a unique id
     :type id: str
-    :param access_policy: Required. The access policy
+    :param access_policy: The access policy
     :type access_policy: ~azure.storage.queue.models.AccessPolicy
     """
 
     _validation = {
         'id': {'required': True},
-        'access_policy': {'required': True},
     }
 
     _attribute_map = {
@@ -541,7 +540,7 @@ class SignedIdentifier(Model):
     _xml_map = {
     }
 
-    def __init__(self, *, id: str, access_policy, **kwargs) -> None:
+    def __init__(self, *, id: str, access_policy=None, **kwargs) -> None:
         super(SignedIdentifier, self).__init__(**kwargs)
         self.id = id
         self.access_policy = access_policy
