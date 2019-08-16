@@ -6613,6 +6613,72 @@ class CloudErrorException(HttpOperationError):
         super(CloudErrorException, self).__init__(deserialize, response, 'CloudError', *args)
 
 
+class CustomSetupBase(Model):
+    """The base definition of the custom setup.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: ComponentSetup, EnvironmentVariableSetup, CmdkeySetup
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Constant filled by server.
+    :type type: str
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'type': {'ComponentSetup': 'ComponentSetup', 'EnvironmentVariableSetup': 'EnvironmentVariableSetup', 'CmdkeySetup': 'CmdkeySetup'}
+    }
+
+    def __init__(self, **kwargs):
+        super(CustomSetupBase, self).__init__(**kwargs)
+        self.type = None
+
+
+class CmdkeySetup(CustomSetupBase):
+    """The custom setup of running cmdkey commands.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param target_name: Required. The server name of data source access.
+    :type target_name: object
+    :param user_name: Required. The user name of data source access.
+    :type user_name: object
+    :param password: Required. The password of data source access.
+    :type password: ~azure.mgmt.datafactory.models.SecretBase
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'target_name': {'required': True},
+        'user_name': {'required': True},
+        'password': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'target_name': {'key': 'typeProperties.targetName', 'type': 'object'},
+        'user_name': {'key': 'typeProperties.userName', 'type': 'object'},
+        'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
+    }
+
+    def __init__(self, **kwargs):
+        super(CmdkeySetup, self).__init__(**kwargs)
+        self.target_name = kwargs.get('target_name', None)
+        self.user_name = kwargs.get('user_name', None)
+        self.password = kwargs.get('password', None)
+        self.type = 'CmdkeySetup'
+
+
 class CommonDataServiceForAppsEntityDataset(Dataset):
     """The Common Data Service for Apps entity dataset.
 
@@ -6890,6 +6956,55 @@ class CommonDataServiceForAppsSource(CopySource):
         super(CommonDataServiceForAppsSource, self).__init__(**kwargs)
         self.query = kwargs.get('query', None)
         self.type = 'CommonDataServiceForAppsSource'
+
+
+class ComponentSetup(CustomSetupBase):
+    """The custom setup of installing 3rd party components.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param component_name: Required. The name of the 3rd party component.
+    :type component_name: str
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'component_name': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'component_name': {'key': 'typeProperties.componentName', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ComponentSetup, self).__init__(**kwargs)
+        self.component_name = kwargs.get('component_name', None)
+        self.type = 'ComponentSetup'
+
+
+class ComponentSetupTypeProperties(Model):
+    """Install 3rd party component setup type properties.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param component_name: Required. The name of the 3rd party component.
+    :type component_name: str
+    """
+
+    _validation = {
+        'component_name': {'required': True},
+    }
+
+    _attribute_map = {
+        'component_name': {'key': 'componentName', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ComponentSetupTypeProperties, self).__init__(**kwargs)
+        self.component_name = kwargs.get('component_name', None)
 
 
 class ConcurLinkedService(LinkedService):
@@ -10399,6 +10514,38 @@ class EntityReference(Model):
         super(EntityReference, self).__init__(**kwargs)
         self.type = kwargs.get('type', None)
         self.reference_name = kwargs.get('reference_name', None)
+
+
+class EnvironmentVariableSetup(CustomSetupBase):
+    """The custom setup of setting environment variable.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param variable_name: Required. The name of the environment variable.
+    :type variable_name: str
+    :param variable_value: Required. The value of the environment variable.
+    :type variable_value: str
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'variable_name': {'required': True},
+        'variable_value': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'variable_name': {'key': 'typeProperties.variableName', 'type': 'str'},
+        'variable_value': {'key': 'typeProperties.variableValue', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(EnvironmentVariableSetup, self).__init__(**kwargs)
+        self.variable_name = kwargs.get('variable_name', None)
+        self.variable_value = kwargs.get('variable_value', None)
+        self.type = 'EnvironmentVariableSetup'
 
 
 class ExecutePipelineActivity(ControlActivity):
@@ -15316,6 +15463,10 @@ class IntegrationRuntimeSsisProperties(Model):
      values include: 'Standard', 'Enterprise'
     :type edition: str or
      ~azure.mgmt.datafactory.models.IntegrationRuntimeEdition
+    :param express_custom_setup_properties: Custom setup without script
+     properties for a SSIS integration runtime.
+    :type express_custom_setup_properties:
+     list[~azure.mgmt.datafactory.models.CustomSetupBase]
     """
 
     _attribute_map = {
@@ -15325,6 +15476,7 @@ class IntegrationRuntimeSsisProperties(Model):
         'custom_setup_script_properties': {'key': 'customSetupScriptProperties', 'type': 'IntegrationRuntimeCustomSetupScriptProperties'},
         'data_proxy_properties': {'key': 'dataProxyProperties', 'type': 'IntegrationRuntimeDataProxyProperties'},
         'edition': {'key': 'edition', 'type': 'str'},
+        'express_custom_setup_properties': {'key': 'expressCustomSetupProperties', 'type': '[CustomSetupBase]'},
     }
 
     def __init__(self, **kwargs):
@@ -15335,6 +15487,7 @@ class IntegrationRuntimeSsisProperties(Model):
         self.custom_setup_script_properties = kwargs.get('custom_setup_script_properties', None)
         self.data_proxy_properties = kwargs.get('data_proxy_properties', None)
         self.edition = kwargs.get('edition', None)
+        self.express_custom_setup_properties = kwargs.get('express_custom_setup_properties', None)
 
 
 class IntegrationRuntimeStatus(Model):
@@ -15944,6 +16097,32 @@ class JsonWriteSettings(FormatWriteSettings):
     def __init__(self, **kwargs):
         super(JsonWriteSettings, self).__init__(**kwargs)
         self.file_pattern = kwargs.get('file_pattern', None)
+
+
+class LicensedComponentSetupTypeProperties(ComponentSetupTypeProperties):
+    """Installation of licensed component setup type properties.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param component_name: Required. The name of the 3rd party component.
+    :type component_name: str
+    :param license_key: Required. The license key to activate the component.
+    :type license_key: ~azure.mgmt.datafactory.models.SecretBase
+    """
+
+    _validation = {
+        'component_name': {'required': True},
+        'license_key': {'required': True},
+    }
+
+    _attribute_map = {
+        'component_name': {'key': 'componentName', 'type': 'str'},
+        'license_key': {'key': 'licenseKey', 'type': 'SecretBase'},
+    }
+
+    def __init__(self, **kwargs):
+        super(LicensedComponentSetupTypeProperties, self).__init__(**kwargs)
+        self.license_key = kwargs.get('license_key', None)
 
 
 class LinkedIntegrationRuntime(Model):

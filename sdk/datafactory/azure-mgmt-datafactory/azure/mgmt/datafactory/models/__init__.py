@@ -105,10 +105,13 @@ try:
     from ._models_py3 import CassandraLinkedService
     from ._models_py3 import CassandraSource
     from ._models_py3 import CassandraTableDataset
+    from ._models_py3 import CmdkeySetup
     from ._models_py3 import CommonDataServiceForAppsEntityDataset
     from ._models_py3 import CommonDataServiceForAppsLinkedService
     from ._models_py3 import CommonDataServiceForAppsSink
     from ._models_py3 import CommonDataServiceForAppsSource
+    from ._models_py3 import ComponentSetup
+    from ._models_py3 import ComponentSetupTypeProperties
     from ._models_py3 import ConcurLinkedService
     from ._models_py3 import ConcurObjectDataset
     from ._models_py3 import ConcurSource
@@ -130,6 +133,7 @@ try:
     from ._models_py3 import CustomActivityReferenceObject
     from ._models_py3 import CustomDataset
     from ._models_py3 import CustomDataSourceLinkedService
+    from ._models_py3 import CustomSetupBase
     from ._models_py3 import DatabricksNotebookActivity
     from ._models_py3 import DatabricksSparkJarActivity
     from ._models_py3 import DatabricksSparkPythonActivity
@@ -177,6 +181,7 @@ try:
     from ._models_py3 import EloquaObjectDataset
     from ._models_py3 import EloquaSource
     from ._models_py3 import EntityReference
+    from ._models_py3 import EnvironmentVariableSetup
     from ._models_py3 import ExecutePipelineActivity
     from ._models_py3 import ExecuteSSISPackageActivity
     from ._models_py3 import ExecutionActivity
@@ -276,6 +281,7 @@ try:
     from ._models_py3 import JsonSink
     from ._models_py3 import JsonSource
     from ._models_py3 import JsonWriteSettings
+    from ._models_py3 import LicensedComponentSetupTypeProperties
     from ._models_py3 import LinkedIntegrationRuntime
     from ._models_py3 import LinkedIntegrationRuntimeKeyAuthorization
     from ._models_py3 import LinkedIntegrationRuntimeRbacAuthorization
@@ -621,10 +627,13 @@ except (SyntaxError, ImportError):
     from ._models import CassandraLinkedService
     from ._models import CassandraSource
     from ._models import CassandraTableDataset
+    from ._models import CmdkeySetup
     from ._models import CommonDataServiceForAppsEntityDataset
     from ._models import CommonDataServiceForAppsLinkedService
     from ._models import CommonDataServiceForAppsSink
     from ._models import CommonDataServiceForAppsSource
+    from ._models import ComponentSetup
+    from ._models import ComponentSetupTypeProperties
     from ._models import ConcurLinkedService
     from ._models import ConcurObjectDataset
     from ._models import ConcurSource
@@ -646,6 +655,7 @@ except (SyntaxError, ImportError):
     from ._models import CustomActivityReferenceObject
     from ._models import CustomDataset
     from ._models import CustomDataSourceLinkedService
+    from ._models import CustomSetupBase
     from ._models import DatabricksNotebookActivity
     from ._models import DatabricksSparkJarActivity
     from ._models import DatabricksSparkPythonActivity
@@ -693,6 +703,7 @@ except (SyntaxError, ImportError):
     from ._models import EloquaObjectDataset
     from ._models import EloquaSource
     from ._models import EntityReference
+    from ._models import EnvironmentVariableSetup
     from ._models import ExecutePipelineActivity
     from ._models import ExecuteSSISPackageActivity
     from ._models import ExecutionActivity
@@ -792,6 +803,7 @@ except (SyntaxError, ImportError):
     from ._models import JsonSink
     from ._models import JsonSource
     from ._models import JsonWriteSettings
+    from ._models import LicensedComponentSetupTypeProperties
     from ._models import LinkedIntegrationRuntime
     from ._models import LinkedIntegrationRuntimeKeyAuthorization
     from ._models import LinkedIntegrationRuntimeRbacAuthorization
@@ -1220,10 +1232,13 @@ __all__ = [
     'CassandraLinkedService',
     'CassandraSource',
     'CassandraTableDataset',
+    'CmdkeySetup',
     'CommonDataServiceForAppsEntityDataset',
     'CommonDataServiceForAppsLinkedService',
     'CommonDataServiceForAppsSink',
     'CommonDataServiceForAppsSource',
+    'ComponentSetup',
+    'ComponentSetupTypeProperties',
     'ConcurLinkedService',
     'ConcurObjectDataset',
     'ConcurSource',
@@ -1245,6 +1260,7 @@ __all__ = [
     'CustomActivityReferenceObject',
     'CustomDataset',
     'CustomDataSourceLinkedService',
+    'CustomSetupBase',
     'DatabricksNotebookActivity',
     'DatabricksSparkJarActivity',
     'DatabricksSparkPythonActivity',
@@ -1292,6 +1308,7 @@ __all__ = [
     'EloquaObjectDataset',
     'EloquaSource',
     'EntityReference',
+    'EnvironmentVariableSetup',
     'ExecutePipelineActivity',
     'ExecuteSSISPackageActivity',
     'ExecutionActivity',
@@ -1391,6 +1408,7 @@ __all__ = [
     'JsonSink',
     'JsonSource',
     'JsonWriteSettings',
+    'LicensedComponentSetupTypeProperties',
     'LinkedIntegrationRuntime',
     'LinkedIntegrationRuntimeKeyAuthorization',
     'LinkedIntegrationRuntimeRbacAuthorization',
