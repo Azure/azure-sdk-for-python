@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-import platform
 import re
 from datetime import datetime
 from azure.core.pipeline import Pipeline
@@ -80,7 +79,7 @@ class AzureAppConfigurationClient():
 
         from azure.data.appconfiguration import AzureAppConfigurationClient
         connection_str = "<my connection string>"
-        client = AzureAppConfigurationClient(connection_str)
+        client = AzureAppConfigurationClient.from_connection_string(connection_str)
     """
 
     @classmethod

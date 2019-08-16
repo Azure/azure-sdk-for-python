@@ -199,6 +199,7 @@ Key Vault clients raise exceptions defined in azure-core. For more detailed infr
 
 For example, if you try to retrieve a secret after it is deleted a `404` error is returned, indicating resource not found. In the following snippet, the error is handled gracefully by catching the exception and displaying additional information about the error.
 ```python
+from azure.core.exceptions import ResourceNotFoundError
 try:
     secret_client.get_secret("deleted_secret")
 except ResourceNotFoundError as e:
