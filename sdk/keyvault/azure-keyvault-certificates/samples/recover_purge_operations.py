@@ -61,7 +61,7 @@ def run_sample():
                                         content_type='application/x-pkcs12',
                                         issuer_name='Self',
                                         subject_name='CN=*.microsoft.com',
-                                        san_dns_names=['onedrive.microsoft.com', 'xbox.microsoft.com'],
+                                        san_dns_names=['sdk.azure-int.net'],
                                         validity_in_months=24
                                         )
         bank_cert_name = "BankRecoverCertificate"

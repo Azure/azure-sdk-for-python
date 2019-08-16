@@ -189,7 +189,7 @@ class CertificateClientTests(KeyVaultTestCase):
                                                  x509_certificate_properties=X509CertificateProperties(
                                                      subject='CN=*.microsoft.com',
                                                      subject_alternative_names=SubjectAlternativeNames(
-                                                         dns_names=['onedrive.microsoft.com', 'xbox.microsoft.com']
+                                                         dns_names=['sdk.azure-int.net']
                                                      ),
                                                      validity_in_months=24
                                                  ))
@@ -401,7 +401,7 @@ class CertificateClientTests(KeyVaultTestCase):
                                         x509_certificate_properties=X509CertificateProperties(
                                             subject='CN=*.microsoft.com',
                                             subject_alternative_names=SubjectAlternativeNames(
-                                                dns_names=['onedrive.microsoft.com', 'xbox.microsoft.com']
+                                                dns_names=['sdk.azure-int.net']
                                             ),
                                             validity_in_months=24
                                         ))
@@ -492,7 +492,7 @@ class CertificateClientTests(KeyVaultTestCase):
                                                  x509_certificate_properties=X509CertificateProperties(
                                                      subject='CN=*.microsoft.com',
                                                      subject_alternative_names=SubjectAlternativeNames(
-                                                         dns_names=['onedrive.microsoft.com', 'xbox.microsoft.com']
+                                                         dns_names=['sdk.azure-int.net']
                                                      ),
                                                      validity_in_months=24
                                                  ))
@@ -528,7 +528,7 @@ class CertificateClientTests(KeyVaultTestCase):
                                         x509_certificate_properties=X509CertificateProperties(
                                             subject='CN=*.microsoft.com',
                                             subject_alternative_names=SubjectAlternativeNames(
-                                                dns_names=['onedrive.microsoft.com', 'xbox.microsoft.com']
+                                                dns_names=['sdk.azure-int.net']
                                             ),
                                             validity_in_months=24
                                         ))
