@@ -18,8 +18,14 @@ import logging
 logging.getLogger().setLevel(logging.INFO)
 
 OMITTED_CI_PACKAGES = ["azure-mgmt-documentdb", "azure-servicemanagement-legacy",
-                        "azure-data-appconfiguration" #not certain what's going on here
 
+                        "azure-data-appconfiguration", # not certain what's going on here. Looks like it's erroring when running test.
+                                                       # a transition back to using `__init.py__` will probably fix this
+
+                        # repro: python .\scripts\devops_tasks\setup_execute_tests.py azure-mgmt-applicationinsights -t windows-wheel_tests
+                        "azure-mgmt-applicationinsights" # this won't install into the virtual environment properly
+                        
+                        "azure-cognitiveservices-vision-contentmoderator" # same issue with this one
 ]
 
 
