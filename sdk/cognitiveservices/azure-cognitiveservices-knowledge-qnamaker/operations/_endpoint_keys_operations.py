@@ -46,10 +46,10 @@ class EndpointKeysOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: EndpointKeysDTO or ClientRawResponse if raw=true
         :rtype:
-         ~azure.cognitiveservices.knowledge.qnamaker.models.EndpointKeysDTO or
-         ~msrest.pipeline.ClientRawResponse
+         ~azure.cognitiveservices.knowledge.qnamaker.authoring.models.EndpointKeysDTO
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.cognitiveservices.knowledge.qnamaker.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.cognitiveservices.knowledge.qnamaker.authoring.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get_keys.metadata['url']
@@ -98,10 +98,10 @@ class EndpointKeysOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: EndpointKeysDTO or ClientRawResponse if raw=true
         :rtype:
-         ~azure.cognitiveservices.knowledge.qnamaker.models.EndpointKeysDTO or
-         ~msrest.pipeline.ClientRawResponse
+         ~azure.cognitiveservices.knowledge.qnamaker.authoring.models.EndpointKeysDTO
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.cognitiveservices.knowledge.qnamaker.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.cognitiveservices.knowledge.qnamaker.authoring.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.refresh_keys.metadata['url']

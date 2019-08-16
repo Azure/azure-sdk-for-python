@@ -28,15 +28,15 @@ class QnAMakerClient(SDKClient):
     :vartype config: QnAMakerClientConfiguration
 
     :ivar endpoint_settings: EndpointSettings operations
-    :vartype endpoint_settings: azure.cognitiveservices.knowledge.qnamaker.operations.EndpointSettingsOperations
+    :vartype endpoint_settings: azure.cognitiveservices.knowledge.qnamaker.authoring.operations.EndpointSettingsOperations
     :ivar endpoint_keys: EndpointKeys operations
-    :vartype endpoint_keys: azure.cognitiveservices.knowledge.qnamaker.operations.EndpointKeysOperations
+    :vartype endpoint_keys: azure.cognitiveservices.knowledge.qnamaker.authoring.operations.EndpointKeysOperations
     :ivar alterations: Alterations operations
-    :vartype alterations: azure.cognitiveservices.knowledge.qnamaker.operations.AlterationsOperations
+    :vartype alterations: azure.cognitiveservices.knowledge.qnamaker.authoring.operations.AlterationsOperations
     :ivar knowledgebase: Knowledgebase operations
-    :vartype knowledgebase: azure.cognitiveservices.knowledge.qnamaker.operations.KnowledgebaseOperations
+    :vartype knowledgebase: azure.cognitiveservices.knowledge.qnamaker.authoring.operations.KnowledgebaseOperations
     :ivar operations: Operations operations
-    :vartype operations: azure.cognitiveservices.knowledge.qnamaker.operations.Operations
+    :vartype operations: azure.cognitiveservices.knowledge.qnamaker.authoring.operations.Operations
 
     :param endpoint: Supported Cognitive Services endpoints (protocol and
      hostname, for example: https://westus.api.cognitive.microsoft.com).

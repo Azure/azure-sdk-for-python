@@ -46,10 +46,10 @@ class EndpointSettingsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: EndpointSettingsDTO or ClientRawResponse if raw=true
         :rtype:
-         ~azure.cognitiveservices.knowledge.qnamaker.models.EndpointSettingsDTO
+         ~azure.cognitiveservices.knowledge.qnamaker.authoring.models.EndpointSettingsDTO
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.cognitiveservices.knowledge.qnamaker.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.cognitiveservices.knowledge.qnamaker.authoring.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get_settings.metadata['url']
@@ -91,7 +91,7 @@ class EndpointSettingsOperations(object):
 
         :param active_learning: Active Learning settings of the endpoint.
         :type active_learning:
-         ~azure.cognitiveservices.knowledge.qnamaker.models.EndpointSettingsDTOActiveLearning
+         ~azure.cognitiveservices.knowledge.qnamaker.authoring.models.EndpointSettingsDTOActiveLearning
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -100,7 +100,7 @@ class EndpointSettingsOperations(object):
         :return: str or ClientRawResponse if raw=true
         :rtype: str or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.cognitiveservices.knowledge.qnamaker.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.cognitiveservices.knowledge.qnamaker.authoring.models.ErrorResponseException>`
         """
         endpoint_settings_payload = models.EndpointSettingsDTO(active_learning=active_learning)
 

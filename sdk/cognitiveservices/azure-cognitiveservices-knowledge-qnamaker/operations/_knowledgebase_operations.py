@@ -46,10 +46,10 @@ class KnowledgebaseOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: KnowledgebasesDTO or ClientRawResponse if raw=true
         :rtype:
-         ~azure.cognitiveservices.knowledge.qnamaker.models.KnowledgebasesDTO
+         ~azure.cognitiveservices.knowledge.qnamaker.authoring.models.KnowledgebasesDTO
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.cognitiveservices.knowledge.qnamaker.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.cognitiveservices.knowledge.qnamaker.authoring.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.list_all.metadata['url']
@@ -98,10 +98,10 @@ class KnowledgebaseOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: KnowledgebaseDTO or ClientRawResponse if raw=true
         :rtype:
-         ~azure.cognitiveservices.knowledge.qnamaker.models.KnowledgebaseDTO or
-         ~msrest.pipeline.ClientRawResponse
+         ~azure.cognitiveservices.knowledge.qnamaker.authoring.models.KnowledgebaseDTO
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.cognitiveservices.knowledge.qnamaker.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.cognitiveservices.knowledge.qnamaker.authoring.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get_details.metadata['url']
@@ -152,7 +152,7 @@ class KnowledgebaseOperations(object):
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.cognitiveservices.knowledge.qnamaker.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.cognitiveservices.knowledge.qnamaker.authoring.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.delete.metadata['url']
@@ -197,7 +197,7 @@ class KnowledgebaseOperations(object):
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.cognitiveservices.knowledge.qnamaker.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.cognitiveservices.knowledge.qnamaker.authoring.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.publish.metadata['url']
@@ -237,7 +237,7 @@ class KnowledgebaseOperations(object):
          knowledgebase. Q-A Ids are assigned by the service and should be
          omitted.
         :type qn_alist:
-         list[~azure.cognitiveservices.knowledge.qnamaker.models.QnADTO]
+         list[~azure.cognitiveservices.knowledge.qnamaker.authoring.models.QnADTO]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -246,7 +246,7 @@ class KnowledgebaseOperations(object):
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.cognitiveservices.knowledge.qnamaker.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.cognitiveservices.knowledge.qnamaker.authoring.models.ErrorResponseException>`
         """
         replace_kb = models.ReplaceKbDTO(qn_alist=qn_alist)
 
@@ -290,17 +290,18 @@ class KnowledgebaseOperations(object):
         :type kb_id: str
         :param update_kb: Post body of the request.
         :type update_kb:
-         ~azure.cognitiveservices.knowledge.qnamaker.models.UpdateKbOperationDTO
+         ~azure.cognitiveservices.knowledge.qnamaker.authoring.models.UpdateKbOperationDTO
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: Operation or ClientRawResponse if raw=true
-        :rtype: ~azure.cognitiveservices.knowledge.qnamaker.models.Operation
+        :rtype:
+         ~azure.cognitiveservices.knowledge.qnamaker.authoring.models.Operation
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.cognitiveservices.knowledge.qnamaker.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.cognitiveservices.knowledge.qnamaker.authoring.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.update.metadata['url']
@@ -352,17 +353,18 @@ class KnowledgebaseOperations(object):
 
         :param create_kb_payload: Post body of the request.
         :type create_kb_payload:
-         ~azure.cognitiveservices.knowledge.qnamaker.models.CreateKbDTO
+         ~azure.cognitiveservices.knowledge.qnamaker.authoring.models.CreateKbDTO
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: Operation or ClientRawResponse if raw=true
-        :rtype: ~azure.cognitiveservices.knowledge.qnamaker.models.Operation
+        :rtype:
+         ~azure.cognitiveservices.knowledge.qnamaker.authoring.models.Operation
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.cognitiveservices.knowledge.qnamaker.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.cognitiveservices.knowledge.qnamaker.authoring.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.create.metadata['url']
@@ -411,7 +413,7 @@ class KnowledgebaseOperations(object):
         :param environment: Specifies whether environment is Test or Prod.
          Possible values include: 'Prod', 'Test'
         :type environment: str or
-         ~azure.cognitiveservices.knowledge.qnamaker.models.EnvironmentType
+         ~azure.cognitiveservices.knowledge.qnamaker.authoring.models.EnvironmentType
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -419,10 +421,10 @@ class KnowledgebaseOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: QnADocumentsDTO or ClientRawResponse if raw=true
         :rtype:
-         ~azure.cognitiveservices.knowledge.qnamaker.models.QnADocumentsDTO or
-         ~msrest.pipeline.ClientRawResponse
+         ~azure.cognitiveservices.knowledge.qnamaker.authoring.models.QnADocumentsDTO
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.cognitiveservices.knowledge.qnamaker.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.cognitiveservices.knowledge.qnamaker.authoring.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.download.metadata['url']

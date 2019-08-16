@@ -62,7 +62,7 @@ class ContextDTO(Model):
     :type is_context_only: bool
     :param prompts: List of prompts associated with the answer.
     :type prompts:
-     list[~azure.cognitiveservices.knowledge.qnamaker.models.PromptDTO]
+     list[~azure.cognitiveservices.knowledge.qnamaker.authoring.models.PromptDTO]
     """
 
     _validation = {
@@ -90,12 +90,12 @@ class CreateKbDTO(Model):
     :param qna_list: List of Q-A (QnADTO) to be added to the knowledgebase.
      Q-A Ids are assigned by the service and should be omitted.
     :type qna_list:
-     list[~azure.cognitiveservices.knowledge.qnamaker.models.QnADTO]
+     list[~azure.cognitiveservices.knowledge.qnamaker.authoring.models.QnADTO]
     :param urls: List of URLs to be used for extracting Q-A.
     :type urls: list[str]
     :param files: List of files from which to Extract Q-A.
     :type files:
-     list[~azure.cognitiveservices.knowledge.qnamaker.models.FileDTO]
+     list[~azure.cognitiveservices.knowledge.qnamaker.authoring.models.FileDTO]
     """
 
     _validation = {
@@ -123,12 +123,12 @@ class CreateKbInputDTO(Model):
     :param qna_list: List of QNA to be added to the index. Ids are generated
      by the service and should be omitted.
     :type qna_list:
-     list[~azure.cognitiveservices.knowledge.qnamaker.models.QnADTO]
+     list[~azure.cognitiveservices.knowledge.qnamaker.authoring.models.QnADTO]
     :param urls: List of URLs to be added to knowledgebase.
     :type urls: list[str]
     :param files: List of files to be added to knowledgebase.
     :type files:
-     list[~azure.cognitiveservices.knowledge.qnamaker.models.FileDTO]
+     list[~azure.cognitiveservices.knowledge.qnamaker.authoring.models.FileDTO]
     """
 
     _attribute_map = {
@@ -197,7 +197,7 @@ class EndpointSettingsDTO(Model):
 
     :param active_learning: Active Learning settings of the endpoint.
     :type active_learning:
-     ~azure.cognitiveservices.knowledge.qnamaker.models.EndpointSettingsDTOActiveLearning
+     ~azure.cognitiveservices.knowledge.qnamaker.authoring.models.EndpointSettingsDTOActiveLearning
     """
 
     _attribute_map = {
@@ -237,7 +237,7 @@ class Error(Model):
      'OperationNotFound', 'ServiceError', 'ValidationFailure',
      'ExtractionFailure'
     :type code: str or
-     ~azure.cognitiveservices.knowledge.qnamaker.models.ErrorCodeType
+     ~azure.cognitiveservices.knowledge.qnamaker.authoring.models.ErrorCodeType
     :param message: A human-readable representation of the error.
     :type message: str
     :param target: The target of the error.
@@ -245,11 +245,11 @@ class Error(Model):
     :param details: An array of details about specific errors that led to this
      reported error.
     :type details:
-     list[~azure.cognitiveservices.knowledge.qnamaker.models.Error]
+     list[~azure.cognitiveservices.knowledge.qnamaker.authoring.models.Error]
     :param inner_error: An object containing more specific information than
      the current object about the error.
     :type inner_error:
-     ~azure.cognitiveservices.knowledge.qnamaker.models.InnerErrorModel
+     ~azure.cognitiveservices.knowledge.qnamaker.authoring.models.InnerErrorModel
     """
 
     _validation = {
@@ -279,7 +279,7 @@ class ErrorResponse(Model):
 
     :param error: The error object.
     :type error:
-     ~azure.cognitiveservices.knowledge.qnamaker.models.ErrorResponseError
+     ~azure.cognitiveservices.knowledge.qnamaker.authoring.models.ErrorResponseError
     """
 
     _attribute_map = {
@@ -315,7 +315,7 @@ class ErrorResponseError(Error):
      'OperationNotFound', 'ServiceError', 'ValidationFailure',
      'ExtractionFailure'
     :type code: str or
-     ~azure.cognitiveservices.knowledge.qnamaker.models.ErrorCodeType
+     ~azure.cognitiveservices.knowledge.qnamaker.authoring.models.ErrorCodeType
     :param message: A human-readable representation of the error.
     :type message: str
     :param target: The target of the error.
@@ -323,11 +323,11 @@ class ErrorResponseError(Error):
     :param details: An array of details about specific errors that led to this
      reported error.
     :type details:
-     list[~azure.cognitiveservices.knowledge.qnamaker.models.Error]
+     list[~azure.cognitiveservices.knowledge.qnamaker.authoring.models.Error]
     :param inner_error: An object containing more specific information than
      the current object about the error.
     :type inner_error:
-     ~azure.cognitiveservices.knowledge.qnamaker.models.InnerErrorModel
+     ~azure.cognitiveservices.knowledge.qnamaker.authoring.models.InnerErrorModel
     """
 
     _validation = {
@@ -385,7 +385,7 @@ class InnerErrorModel(Model):
     :param inner_error: An object containing more specific information than
      the current object about the error.
     :type inner_error:
-     ~azure.cognitiveservices.knowledge.qnamaker.models.InnerErrorModel
+     ~azure.cognitiveservices.knowledge.qnamaker.authoring.models.InnerErrorModel
     """
 
     _attribute_map = {
@@ -457,7 +457,7 @@ class KnowledgebasesDTO(Model):
 
     :param knowledgebases: Collection of knowledgebase records.
     :type knowledgebases:
-     list[~azure.cognitiveservices.knowledge.qnamaker.models.KnowledgebaseDTO]
+     list[~azure.cognitiveservices.knowledge.qnamaker.authoring.models.KnowledgebaseDTO]
     """
 
     _attribute_map = {
@@ -502,7 +502,7 @@ class Operation(Model):
     :param operation_state: Operation state. Possible values include:
      'Failed', 'NotStarted', 'Running', 'Succeeded'
     :type operation_state: str or
-     ~azure.cognitiveservices.knowledge.qnamaker.models.OperationStateType
+     ~azure.cognitiveservices.knowledge.qnamaker.authoring.models.OperationStateType
     :param created_timestamp: Timestamp when the operation was created.
     :type created_timestamp: str
     :param last_action_timestamp: Timestamp when the current state was
@@ -517,7 +517,7 @@ class Operation(Model):
     :type operation_id: str
     :param error_response: Error details in case of failures.
     :type error_response:
-     ~azure.cognitiveservices.knowledge.qnamaker.models.ErrorResponse
+     ~azure.cognitiveservices.knowledge.qnamaker.authoring.models.ErrorResponse
     """
 
     _attribute_map = {
@@ -552,7 +552,8 @@ class PromptDTO(Model):
     :type qna_id: int
     :param qna: QnADTO - Either QnaId or QnADTO needs to be present in a
      PromptDTO object
-    :type qna: ~azure.cognitiveservices.knowledge.qnamaker.models.PromptDTOQna
+    :type qna:
+     ~azure.cognitiveservices.knowledge.qnamaker.authoring.models.PromptDTOQna
     :param display_text: Text displayed to represent a follow up question
      prompt
     :type display_text: str
@@ -593,10 +594,10 @@ class QnADTO(Model):
     :type questions: list[str]
     :param metadata: List of metadata associated with the answer.
     :type metadata:
-     list[~azure.cognitiveservices.knowledge.qnamaker.models.MetadataDTO]
+     list[~azure.cognitiveservices.knowledge.qnamaker.authoring.models.MetadataDTO]
     :param context: Context of a QnA
     :type context:
-     ~azure.cognitiveservices.knowledge.qnamaker.models.QnADTOContext
+     ~azure.cognitiveservices.knowledge.qnamaker.authoring.models.QnADTOContext
     """
 
     _validation = {
@@ -640,10 +641,10 @@ class PromptDTOQna(QnADTO):
     :type questions: list[str]
     :param metadata: List of metadata associated with the answer.
     :type metadata:
-     list[~azure.cognitiveservices.knowledge.qnamaker.models.MetadataDTO]
+     list[~azure.cognitiveservices.knowledge.qnamaker.authoring.models.MetadataDTO]
     :param context: Context of a QnA
     :type context:
-     ~azure.cognitiveservices.knowledge.qnamaker.models.QnADTOContext
+     ~azure.cognitiveservices.knowledge.qnamaker.authoring.models.QnADTOContext
     """
 
     _validation = {
@@ -670,7 +671,7 @@ class QnADocumentsDTO(Model):
 
     :param qna_documents: List of answers.
     :type qna_documents:
-     list[~azure.cognitiveservices.knowledge.qnamaker.models.QnADTO]
+     list[~azure.cognitiveservices.knowledge.qnamaker.authoring.models.QnADTO]
     """
 
     _attribute_map = {
@@ -693,7 +694,7 @@ class QnADTOContext(ContextDTO):
     :type is_context_only: bool
     :param prompts: List of prompts associated with the answer.
     :type prompts:
-     list[~azure.cognitiveservices.knowledge.qnamaker.models.PromptDTO]
+     list[~azure.cognitiveservices.knowledge.qnamaker.authoring.models.PromptDTO]
     """
 
     _validation = {
@@ -717,7 +718,7 @@ class ReplaceKbDTO(Model):
     :param qn_alist: Required. List of Q-A (QnADTO) to be added to the
      knowledgebase. Q-A Ids are assigned by the service and should be omitted.
     :type qn_alist:
-     list[~azure.cognitiveservices.knowledge.qnamaker.models.QnADTO]
+     list[~azure.cognitiveservices.knowledge.qnamaker.authoring.models.QnADTO]
     """
 
     _validation = {
@@ -741,7 +742,7 @@ class UpdateContextDTO(Model):
     :type prompts_to_delete: list[int]
     :param prompts_to_add: List of prompts to be added to the qna.
     :type prompts_to_add:
-     list[~azure.cognitiveservices.knowledge.qnamaker.models.PromptDTO]
+     list[~azure.cognitiveservices.knowledge.qnamaker.authoring.models.PromptDTO]
     :param is_context_only: To mark if a prompt is relevant only with a
      previous question or not.
      true - Do not include this QnA as search result for queries without
@@ -771,7 +772,7 @@ class UpdateKbContentsDTO(Model):
     :param qna_list: List of Q-A (UpdateQnaDTO) to be added to the
      knowledgebase.
     :type qna_list:
-     list[~azure.cognitiveservices.knowledge.qnamaker.models.UpdateQnaDTO]
+     list[~azure.cognitiveservices.knowledge.qnamaker.authoring.models.UpdateQnaDTO]
     :param urls: List of existing URLs to be refreshed. The content will be
      extracted again and re-indexed.
     :type urls: list[str]
@@ -795,13 +796,13 @@ class UpdateKbOperationDTO(Model):
 
     :param add: An instance of CreateKbInputDTO for add operation
     :type add:
-     ~azure.cognitiveservices.knowledge.qnamaker.models.UpdateKbOperationDTOAdd
+     ~azure.cognitiveservices.knowledge.qnamaker.authoring.models.UpdateKbOperationDTOAdd
     :param delete: An instance of DeleteKbContentsDTO for delete Operation
     :type delete:
-     ~azure.cognitiveservices.knowledge.qnamaker.models.UpdateKbOperationDTODelete
+     ~azure.cognitiveservices.knowledge.qnamaker.authoring.models.UpdateKbOperationDTODelete
     :param update: An instance of UpdateKbContentsDTO for Update Operation
     :type update:
-     ~azure.cognitiveservices.knowledge.qnamaker.models.UpdateKbOperationDTOUpdate
+     ~azure.cognitiveservices.knowledge.qnamaker.authoring.models.UpdateKbOperationDTOUpdate
     """
 
     _attribute_map = {
@@ -823,12 +824,12 @@ class UpdateKbOperationDTOAdd(CreateKbInputDTO):
     :param qna_list: List of QNA to be added to the index. Ids are generated
      by the service and should be omitted.
     :type qna_list:
-     list[~azure.cognitiveservices.knowledge.qnamaker.models.QnADTO]
+     list[~azure.cognitiveservices.knowledge.qnamaker.authoring.models.QnADTO]
     :param urls: List of URLs to be added to knowledgebase.
     :type urls: list[str]
     :param files: List of files to be added to knowledgebase.
     :type files:
-     list[~azure.cognitiveservices.knowledge.qnamaker.models.FileDTO]
+     list[~azure.cognitiveservices.knowledge.qnamaker.authoring.models.FileDTO]
     """
 
     _attribute_map = {
@@ -867,7 +868,7 @@ class UpdateKbOperationDTOUpdate(UpdateKbContentsDTO):
     :param qna_list: List of Q-A (UpdateQnaDTO) to be added to the
      knowledgebase.
     :type qna_list:
-     list[~azure.cognitiveservices.knowledge.qnamaker.models.UpdateQnaDTO]
+     list[~azure.cognitiveservices.knowledge.qnamaker.authoring.models.UpdateQnaDTO]
     :param urls: List of existing URLs to be refreshed. The content will be
      extracted again and re-indexed.
     :type urls: list[str]
@@ -888,10 +889,10 @@ class UpdateMetadataDTO(Model):
 
     :param delete: List of Metadata associated with answer to be deleted
     :type delete:
-     list[~azure.cognitiveservices.knowledge.qnamaker.models.MetadataDTO]
+     list[~azure.cognitiveservices.knowledge.qnamaker.authoring.models.MetadataDTO]
     :param add: List of metadata associated with answer to be added
     :type add:
-     list[~azure.cognitiveservices.knowledge.qnamaker.models.MetadataDTO]
+     list[~azure.cognitiveservices.knowledge.qnamaker.authoring.models.MetadataDTO]
     """
 
     _attribute_map = {
@@ -917,13 +918,13 @@ class UpdateQnaDTO(Model):
     :type source: str
     :param questions: List of questions associated with the answer.
     :type questions:
-     ~azure.cognitiveservices.knowledge.qnamaker.models.UpdateQnaDTOQuestions
+     ~azure.cognitiveservices.knowledge.qnamaker.authoring.models.UpdateQnaDTOQuestions
     :param metadata: List of metadata associated with the answer to be updated
     :type metadata:
-     ~azure.cognitiveservices.knowledge.qnamaker.models.UpdateQnaDTOMetadata
+     ~azure.cognitiveservices.knowledge.qnamaker.authoring.models.UpdateQnaDTOMetadata
     :param context: Context associated with Qna to be updated.
     :type context:
-     ~azure.cognitiveservices.knowledge.qnamaker.models.UpdateQnaDTOContext
+     ~azure.cognitiveservices.knowledge.qnamaker.authoring.models.UpdateQnaDTOContext
     """
 
     _validation = {
@@ -958,7 +959,7 @@ class UpdateQnaDTOContext(UpdateContextDTO):
     :type prompts_to_delete: list[int]
     :param prompts_to_add: List of prompts to be added to the qna.
     :type prompts_to_add:
-     list[~azure.cognitiveservices.knowledge.qnamaker.models.PromptDTO]
+     list[~azure.cognitiveservices.knowledge.qnamaker.authoring.models.PromptDTO]
     :param is_context_only: To mark if a prompt is relevant only with a
      previous question or not.
      true - Do not include this QnA as search result for queries without
@@ -982,10 +983,10 @@ class UpdateQnaDTOMetadata(UpdateMetadataDTO):
 
     :param delete: List of Metadata associated with answer to be deleted
     :type delete:
-     list[~azure.cognitiveservices.knowledge.qnamaker.models.MetadataDTO]
+     list[~azure.cognitiveservices.knowledge.qnamaker.authoring.models.MetadataDTO]
     :param add: List of metadata associated with answer to be added
     :type add:
-     list[~azure.cognitiveservices.knowledge.qnamaker.models.MetadataDTO]
+     list[~azure.cognitiveservices.knowledge.qnamaker.authoring.models.MetadataDTO]
     """
 
     _attribute_map = {
@@ -1043,7 +1044,7 @@ class WordAlterationsDTO(Model):
 
     :param word_alterations: Required. Collection of word alterations.
     :type word_alterations:
-     list[~azure.cognitiveservices.knowledge.qnamaker.models.AlterationsDTO]
+     list[~azure.cognitiveservices.knowledge.qnamaker.authoring.models.AlterationsDTO]
     """
 
     _validation = {

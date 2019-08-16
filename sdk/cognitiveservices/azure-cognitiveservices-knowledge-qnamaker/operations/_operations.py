@@ -47,10 +47,11 @@ class Operations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: Operation or ClientRawResponse if raw=true
-        :rtype: ~azure.cognitiveservices.knowledge.qnamaker.models.Operation
+        :rtype:
+         ~azure.cognitiveservices.knowledge.qnamaker.authoring.models.Operation
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.cognitiveservices.knowledge.qnamaker.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.cognitiveservices.knowledge.qnamaker.authoring.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get_details.metadata['url']

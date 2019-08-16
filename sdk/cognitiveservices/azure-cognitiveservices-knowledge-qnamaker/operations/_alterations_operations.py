@@ -46,10 +46,10 @@ class AlterationsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: WordAlterationsDTO or ClientRawResponse if raw=true
         :rtype:
-         ~azure.cognitiveservices.knowledge.qnamaker.models.WordAlterationsDTO
+         ~azure.cognitiveservices.knowledge.qnamaker.authoring.models.WordAlterationsDTO
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.cognitiveservices.knowledge.qnamaker.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.cognitiveservices.knowledge.qnamaker.authoring.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -91,7 +91,7 @@ class AlterationsOperations(object):
 
         :param word_alterations: Collection of word alterations.
         :type word_alterations:
-         list[~azure.cognitiveservices.knowledge.qnamaker.models.AlterationsDTO]
+         list[~azure.cognitiveservices.knowledge.qnamaker.authoring.models.AlterationsDTO]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -100,7 +100,7 @@ class AlterationsOperations(object):
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.cognitiveservices.knowledge.qnamaker.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.cognitiveservices.knowledge.qnamaker.authoring.models.ErrorResponseException>`
         """
         word_alterations1 = models.WordAlterationsDTO(word_alterations=word_alterations)
 
