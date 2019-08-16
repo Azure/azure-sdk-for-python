@@ -38,6 +38,12 @@ class TextRecognitionResultConfidenceClass(str, Enum):
     low = "Low"
 
 
+class DescriptionExclude(str, Enum):
+
+    celebrities = "Celebrities"
+    landmarks = "Landmarks"
+
+
 class OcrLanguages(str, Enum):
 
     unk = "unk"
