@@ -7,7 +7,7 @@ import astroid
 import pylint.testutils
 
 from azure.core import PipelineClient, Configuration
-from plugins import pylint_guidelines_checker as checker
+from pylint_custom_plugin import pylint_guidelines_checker as checker
 
 
 class TestClientMethodsHaveTracingDecorators(pylint.testutils.CheckerTestCase):

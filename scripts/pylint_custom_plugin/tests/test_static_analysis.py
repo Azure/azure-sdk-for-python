@@ -6,7 +6,7 @@ class PylintError(BaseException):
 def test_run_pylint():
     try:
         argv = [
-            'pylint', '../../sdk/core/azure-core/azure/core'
+            'pylint', '--rcfile="../../../pylintrc"', '../../../sdk/core/azure-core/azure/core'
         ]
 
         result = subprocess.check_call(argv)

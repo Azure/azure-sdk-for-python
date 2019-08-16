@@ -1,11 +1,10 @@
 [MASTER]
-ignore-patterns=test_*,conftest,setup
+ignore-patterns=test_*
 reports=no
 
 # PYLINT DIRECTORY BLACKLIST
 ignore=
     _generated,
-    _shared,
     samples,
     tests,
     azure-mgmt-advisor,
@@ -17,10 +16,36 @@ ignore=
     azure-mgmt-web,
     azure-mgmt-authorization,
     azure-mgmt-automation,
+    azure-batch,
     azure-mgmt-batch,
     azure-mgmt-billing,
     azure-mgmt-botservice,
     azure-mgmt-cdn,
+    azure-cognitiveservices-anomalydetector,
+    azure-cognitiveservices-formrecognizer,
+    azure-cognitiveservices-knowledge-nspkg,
+    azure-cognitiveservices-knowledge-qnamaker,
+    azure-cognitiveservices-language-luis,
+    azure-cognitiveservices-language-nspkg,
+    azure-cognitiveservices-language-spellcheck,
+    azure-cognitiveservices-language-textanalytics,
+    azure-cognitiveservices-nspkg,
+    azure-cognitiveservices-personalizer,
+    azure-cognitiveservices-search-autosuggest,
+    azure-cognitiveservices-search-customimagesearch,
+    azure-cognitiveservices-search-customsearch,
+    azure-cognitiveservices-search-entitysearch,
+    azure-cognitiveservices-search-imagesearch,
+    azure-cognitiveservices-search-newssearch,
+    azure-cognitiveservices-search-nspkg,
+    azure-cognitiveservices-search-videosearch,
+    azure-cognitiveservices-search-visualsearch,
+    azure-cognitiveservices-search-websearch,
+    azure-cognitiveservices-vision-computervision,
+    azure-cognitiveservices-vision-contentmoderator,
+    azure-cognitiveservices-vision-customvision,
+    azure-cognitiveservices-vision-face,
+    azure-cognitiveservices-vision-nspkg,
     azure-mgmt-cognitiveservices,
     azure-mgmt-commerce,
     azure-mgmt-compute,
@@ -29,6 +54,7 @@ ignore=
     azure-mgmt-containerinstance,
     azure-mgmt-containerregistry,
     azure-mgmt-containerservice,
+    azure-common,
     azure-mgmt,
     azure-mgmt-datalake-nspkg,
     azure-mgmt-nspkg,
@@ -45,8 +71,10 @@ ignore=
     azure-mgmt-deploymentmanager,
     azure-mgmt-devtestlabs,
     azure-mgmt-edgegateway,
+    azure-eventgrid,
     azure-mgmt-eventgrid,
     azure-mgmt-eventhub,
+    azure-graphrbac,
     azure-mgmt-hanaonazure,
     azure-mgmt-hdinsight,
     azure-mgmt-healthcareapis,
@@ -56,6 +84,7 @@ ignore=
     azure-mgmt-keyvault,
     azure-mgmt-kusto,
     azure-mgmt-labservices,
+    azure-loganalytics,
     azure-mgmt-loganalytics,
     azure-mgmt-logic,
     azure-mgmt-machinelearningcompute,
@@ -91,6 +120,7 @@ ignore=
     azure-mgmt-serialconsole,
     azure-mgmt-servermanager,
     azure-mgmt-servicebus,
+    azure-servicefabric,
     azure-mgmt-servicefabric,
     azure-mgmt-signalr,
     azure-mgmt-sql,
@@ -101,12 +131,12 @@ ignore=
     azure-template,
     azure-mgmt-trafficmanager
 
-# init-hook='import sys; sys.path = list(); sys.path.insert(0, os.path.normcase(os.getcwd().split("azure-sdk-for-python")[0] + "azure-sdk-for-python/plugins"))'
-init-hook='import sys; sys.path.insert(0, "C:\\Users\\krpratic\\azure-sdk-for-python\\plugins")'
-# init-hook='sys.path = list(); sys.path.insert(0, (os.path.join(os.getcwd(), "plugins")))'
-# init-hook='sys.path = list(); sys.path.insert(0, (os.path.join(os.path.abspath(os.path.dirname(__file__)), "plugins")))'
-load-plugins=pylint_guidelines_checker,pylint.extensions.docparams
-# load-plugins=pylint_guidelines_checker
+# init-hook='import sys; sys.path.insert(0, os.path.normcase(os.getcwd().split("azure-sdk-for-python")[0] + "azure-sdk-for-python/scripts/pylint_custom_plugin"))'
+init-hook='import sys; sys.path.insert(0, os.path.abspath(os.getcwd().split("azure-sdk-for-python")[0] + "azure-sdk-for-python/scripts/pylint_custom_plugin"))'
+# init-hook='import sys; sys.path.insert(0, "C:\\Users\\krpratic\\azure-sdk-for-python\\scripts\\pylint_custom_plugin")'
+# init-hook='import sys; sys.path.insert(0, os.path.abspath(os.path.join(os.path.normpath(__file__), '../scripts/pylint_custom_plugin')))'
+# load-plugins=pylint_guidelines_checker,pylint.extensions.docparams
+load-plugins=pylint_guidelines_checker
 
 [MESSAGES CONTROL]
 # For all codes, run 'pylint --list-msgs' or go to 'https://pylint.readthedocs.io/en/latest/reference_guide/features.html'
