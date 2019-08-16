@@ -12,6 +12,9 @@
 try:
     from ._models_py3 import AppConfigurationKeyValueDeletedEventData
     from ._models_py3 import AppConfigurationKeyValueModifiedEventData
+    from ._models_py3 import CertificateExpired
+    from ._models_py3 import CertificateNearExpiry
+    from ._models_py3 import CertificateNewVersionCreated
     from ._models_py3 import ContainerRegistryArtifactEventData
     from ._models_py3 import ContainerRegistryArtifactEventTarget
     from ._models_py3 import ContainerRegistryChartDeletedEventData
@@ -39,6 +42,9 @@ try:
     from ._models_py3 import IotHubDeviceDeletedEventData
     from ._models_py3 import IotHubDeviceDisconnectedEventData
     from ._models_py3 import IotHubDeviceTelemetryEventData
+    from ._models_py3 import KeyExpired
+    from ._models_py3 import KeyNearExpiry
+    from ._models_py3 import KeyNewVersionCreated
     from ._models_py3 import MapsGeofenceEnteredEventData
     from ._models_py3 import MapsGeofenceEventProperties
     from ._models_py3 import MapsGeofenceExitedEventData
@@ -81,6 +87,9 @@ try:
     from ._models_py3 import ResourceWriteCancelData
     from ._models_py3 import ResourceWriteFailureData
     from ._models_py3 import ResourceWriteSuccessData
+    from ._models_py3 import SecretExpired
+    from ._models_py3 import SecretNearExpiry
+    from ._models_py3 import SecretNewVersionCreated
     from ._models_py3 import ServiceBusActiveMessagesAvailableWithNoListenersEventData
     from ._models_py3 import ServiceBusDeadletterMessagesAvailableWithNoListenersEventData
     from ._models_py3 import SignalRServiceClientConnectionConnectedEventData
@@ -93,6 +102,9 @@ try:
 except (SyntaxError, ImportError):
     from ._models import AppConfigurationKeyValueDeletedEventData
     from ._models import AppConfigurationKeyValueModifiedEventData
+    from ._models import CertificateExpired
+    from ._models import CertificateNearExpiry
+    from ._models import CertificateNewVersionCreated
     from ._models import ContainerRegistryArtifactEventData
     from ._models import ContainerRegistryArtifactEventTarget
     from ._models import ContainerRegistryChartDeletedEventData
@@ -120,6 +132,9 @@ except (SyntaxError, ImportError):
     from ._models import IotHubDeviceDeletedEventData
     from ._models import IotHubDeviceDisconnectedEventData
     from ._models import IotHubDeviceTelemetryEventData
+    from ._models import KeyExpired
+    from ._models import KeyNearExpiry
+    from ._models import KeyNewVersionCreated
     from ._models import MapsGeofenceEnteredEventData
     from ._models import MapsGeofenceEventProperties
     from ._models import MapsGeofenceExitedEventData
@@ -162,6 +177,9 @@ except (SyntaxError, ImportError):
     from ._models import ResourceWriteCancelData
     from ._models import ResourceWriteFailureData
     from ._models import ResourceWriteSuccessData
+    from ._models import SecretExpired
+    from ._models import SecretNearExpiry
+    from ._models import SecretNewVersionCreated
     from ._models import ServiceBusActiveMessagesAvailableWithNoListenersEventData
     from ._models import ServiceBusDeadletterMessagesAvailableWithNoListenersEventData
     from ._models import SignalRServiceClientConnectionConnectedEventData
@@ -181,6 +199,9 @@ from ._event_grid_client_enums import (
 __all__ = [
     'AppConfigurationKeyValueDeletedEventData',
     'AppConfigurationKeyValueModifiedEventData',
+    'CertificateExpired',
+    'CertificateNearExpiry',
+    'CertificateNewVersionCreated',
     'ContainerRegistryArtifactEventData',
     'ContainerRegistryArtifactEventTarget',
     'ContainerRegistryChartDeletedEventData',
@@ -208,6 +229,9 @@ __all__ = [
     'IotHubDeviceDeletedEventData',
     'IotHubDeviceDisconnectedEventData',
     'IotHubDeviceTelemetryEventData',
+    'KeyExpired',
+    'KeyNearExpiry',
+    'KeyNewVersionCreated',
     'MapsGeofenceEnteredEventData',
     'MapsGeofenceEventProperties',
     'MapsGeofenceExitedEventData',
@@ -250,6 +274,9 @@ __all__ = [
     'ResourceWriteCancelData',
     'ResourceWriteFailureData',
     'ResourceWriteSuccessData',
+    'SecretExpired',
+    'SecretNearExpiry',
+    'SecretNewVersionCreated',
     'ServiceBusActiveMessagesAvailableWithNoListenersEventData',
     'ServiceBusDeadletterMessagesAvailableWithNoListenersEventData',
     'SignalRServiceClientConnectionConnectedEventData',
