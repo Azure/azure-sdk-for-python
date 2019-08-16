@@ -9,16 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._endpoint_settings_operations import EndpointSettingsOperations
-from ._endpoint_keys_operations import EndpointKeysOperations
-from ._alterations_operations import AlterationsOperations
-from ._knowledgebase_operations import KnowledgebaseOperations
-from ._operations import Operations
+from ._configuration import QnAMakerRuntimeClientConfiguration
+from ._qn_amaker_runtime_client import QnAMakerRuntimeClient
+__all__ = ['QnAMakerRuntimeClient', 'QnAMakerRuntimeClientConfiguration']
 
-__all__ = [
-    'EndpointSettingsOperations',
-    'EndpointKeysOperations',
-    'AlterationsOperations',
-    'KnowledgebaseOperations',
-    'Operations',
-]
+from .version import VERSION
+
+__version__ = VERSION
+
