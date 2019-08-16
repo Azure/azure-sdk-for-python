@@ -898,7 +898,7 @@ class StorageContainerTest(StorageTestCase):
             container.container_name)
 
         blobcopy = container.get_blob_client('blob1copy')
-        blobcopy.copy_blob_from_url(sourceblob, metadata={'status': 'copy'})
+        blobcopy.start_copy_from_url(sourceblob, metadata={'status': 'copy'})
 
         # Act
         blobs = list(container.list_blobs(include="copy"))

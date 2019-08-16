@@ -23,7 +23,7 @@ async def test_example_eventhub_async_send_and_receive(live_eventhub_config):
         os.environ['EVENT_HUB_HOSTNAME'],
         os.environ['EVENT_HUB_SAS_POLICY'],
         os.environ['EVENT_HUB_SAS_KEY'],
-        os.environ['EVENT_HUB_NAME'])    
+        os.environ['EVENT_HUB_NAME'])
     client = EventHubClient.from_connection_string(connection_str)
     # [END create_eventhub_client_async]
 
@@ -48,6 +48,17 @@ async def test_example_eventhub_async_send_and_receive(live_eventhub_config):
     consumer = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition('@latest'))
 
     await consumer.receive(timeout=1)
+
+    # [START eventhub_client_async_create_batch]
+    event_data_batch = await producer.create_batch(max_size=10000)
+    while True:
+        try:
+            event_data_batch.try_add(EventData('Message inside EventBatchData'))
+        except ValueError:
+            # The EventDataBatch object reaches its max_size.
+            # You can send the full EventDataBatch object and create a new one here.
+            break
+    # [END eventhub_client_async_create_batch]
 
     # [START eventhub_client_async_send]
     async with producer:

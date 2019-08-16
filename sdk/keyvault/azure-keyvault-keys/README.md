@@ -117,7 +117,6 @@ print(ec_key.key_material.kty)
 key = key_client.get_key("key-name")
 
 print(key.name)
-print(key.value)
 ```
 
 ### Update an existing Key
@@ -151,6 +150,26 @@ for key in keys:
     # the list doesn't include values or versions of the keys
     print(key.name)
 ```
+
+### Cryptographic operations
+`CryptographyClient` enables cryptographic operations (encrypt/decrypt,
+wrap/unwrap, sign/verify) using a particular key.
+
+```py
+from azure.identity import DefaultAzureCredential
+from azure.keyvault.keys import KeyClient
+from azure.keyvault.keys.crypto import EncryptionAlgorithm
+
+credential = DefaultAzureCredential()
+key_client = KeyClient(vault_url=vault_url, credential=credential)
+
+key = key_client.get_key("my-key")
+crypto_client = key_client.get_cryptography_client(key)
+
+result = crypto_client.encrypt(EncryptionAlgorithm.rsa_oaep, plaintext)
+crypto_client.decrypt(result.algorithm, result.ciphertext)
+```
+See the [reference documentation][reference_docs] for more information.
 
 ### Async operations
 This library includes a complete async API supported on Python 3.5+. To use it, you must
@@ -197,6 +216,7 @@ Key Vault clients raise exceptions defined in azure-core. For more detailed infr
 
 For example, if you try to retrieve a key after it is deleted a `404` error is returned, indicating resource not found. In the following snippet, the error is handled gracefully by catching the exception and displaying additional information about the error.
 ```python
+from azure.core.exceptions import ResourceNotFoundError
 try:
     key_client.get_key("deleted_key")
 except ResourceNotFoundError as e:

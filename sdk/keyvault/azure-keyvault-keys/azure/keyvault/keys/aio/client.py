@@ -3,13 +3,15 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from datetime import datetime
-from typing import Any, AsyncIterable, Mapping, Optional, Dict, List
+from typing import Any, AsyncIterable, Mapping, Optional, Dict, List, Union
 
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.keyvault.keys.models import DeletedKey, JsonWebKey, Key, KeyBase, KeyOperationResult
 from azure.keyvault.keys._shared import AsyncKeyVaultClientBase
+
+from ..crypto.aio import CryptographyClient
 
 
 class KeyClient(AsyncKeyVaultClientBase):
@@ -29,6 +31,12 @@ class KeyClient(AsyncKeyVaultClientBase):
     """
 
     # pylint:disable=protected-access
+
+    def get_cryptography_client(self, key: Union[Key, str], **kwargs: Any) -> CryptographyClient:
+        # the initializer requires a credential but won't actually use it in this case because we pass in this
+        # KeyClient's generated client, whose pipeline (and auth policy) is fully configured
+        credential = object()
+        return CryptographyClient(key, credential, generated_client=self._client, **kwargs)
 
     @distributed_trace_async
     async def create_key(

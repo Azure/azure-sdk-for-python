@@ -8,9 +8,7 @@
 
 from typing import List # pylint: disable=unused-import
 from azure.core.paging import PageIterator
-from ._shared.utils import (
-    return_context_and_deserialized,
-    process_storage_error)
+from ._shared.response_handlers import return_context_and_deserialized, process_storage_error
 from ._shared.models import DictMixin
 from ._generated.models import StorageErrorException
 from ._generated.models import AccessPolicy as GenAccessPolicy
@@ -248,7 +246,7 @@ class MessagesPaged(PageIterator):
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def _extract_data_cb(self, messages):
+    def _extract_data_cb(self, messages): # pylint: disable=no-self-use
         # There is no concept of continuation token, so raising on my own condition
         if not messages:
             raise StopIteration("End of paging")
@@ -329,8 +327,8 @@ class QueuePropertiesPaged(PageIterator):
         self.prefix = self._response.prefix
         self.marker = self._response.marker
         self.results_per_page = self._response.max_results
-
-        return self._response.next_marker or None, [QueueProperties._from_generated(q) for q in self._response.queue_items]  # pylint: disable=protected-access
+        props_list = [QueueProperties._from_generated(q) for q in self._response.queue_items] # pylint: disable=protected-access
+        return self._response.next_marker or None, props_list
 
 
 class QueuePermissions(object):

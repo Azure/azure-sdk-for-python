@@ -11,7 +11,7 @@ from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 from azure.core.pipeline.policies import ContentDecodePolicy, HeadersPolicy, NetworkTraceLoggingPolicy, AsyncRetryPolicy
 
 from ._authn_client import AsyncAuthnClient
-from ..constants import Endpoints, EnvironmentVariables
+from .._constants import Endpoints, EnvironmentVariables
 from .._managed_identity import _ManagedIdentityBase
 
 

@@ -1,4 +1,9 @@
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
 import os
+import uuid
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.secrets import SecretClient
 
@@ -14,33 +19,36 @@ class KeyVault:
             vault_url=os.environ["AZURE_PROJECT_URL"], credential=credential
         )
 
-    def SetSecret(self):
+        self.secret_name = "secret-name-" + uuid.uuid1().hex
+        self.secret_Value = "secret-value"
+
+    def set_secret(self):
         print("Setting a secret...")
-        self.secret_client.set_secret("secret-name", "secret-value")
+        self.secret_client.set_secret(self.secret_name, self.secret_Value)
         print("\tdone")
 
-    def GetSecret(self):
+    def get_secret(self):
         print("Getting a secret...")
-        secret = self.secret_client.get_secret("secret-name")
-        print("\tdone: " + secret.name)
+        secret = self.secret_client.get_secret(self.secret_name)
+        print("\tdone, secret: (" + secret.name + "," + secret.value + ").")
 
-    def DeleteSecret(self):
+    def delete_secret(self):
         print("Deleting a secret...")
-        deleted_secret = self.secret_client.delete_secret("secret-name")
+        deleted_secret = self.secret_client.delete_secret(self.secret_name)
         print("\tdone: " + deleted_secret.name)
 
-    def Run(self):
-        print()
+    def run(self):
+        print("")
         print("------------------------")
         print("Key Vault - Secrets\nIdentity - Credential")
         print("------------------------")
         print("1) Set a secret")
         print("2) Get that secret")
         print("3) Delete that secret (Clean up the resource)")
-        print()
+        print("")
 
         try:
-            self.SetSecret()
-            self.GetSecret()
+            self.set_secret()
+            self.get_secret()
         finally:
-            self.DeleteSecret()
+            self.delete_secret()

@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,no-self-use
 
 from io import BytesIO
 from typing import (  # pylint: disable=unused-import
@@ -17,44 +17,40 @@ except ImportError:
     from urllib2 import quote, unquote # type: ignore
 
 import six
+from azure.core.tracing.decorator import distributed_trace
 
+from ._shared import encode_base64
+from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
 from ._shared.shared_access_signature import BlobSharedAccessSignature
-from ._shared.encryption import _generate_blob_encryption_data
-from ._shared.upload_chunking import IterStreamer
-from ._shared.utils import (
-    StorageAccountHostsMixin,
-    return_response_headers,
-    add_metadata_headers,
-    encode_base64,
-    get_length,
-    read_length,
-    parse_connection_str,
-    parse_query,
-    process_storage_error,
+from ._shared.encryption import generate_blob_encryption_data
+from ._shared.uploads import IterStreamer
+from ._shared.downloads import StorageStreamDownloader
+from ._shared.request_handlers import (
+    add_metadata_headers, get_length, read_length,
     validate_and_format_range_headers)
+from ._shared.response_handlers import return_response_headers, process_storage_error
 from ._generated import AzureBlobStorage
 from ._generated.models import (
     DeleteSnapshotsOptionType,
     BlobHTTPHeaders,
     BlockLookupList,
     AppendPositionAccessConditions,
+    SourceModifiedAccessConditions,
+    ModifiedAccessConditions,
+    SequenceNumberAccessConditions,
     StorageErrorException)
-from ._blob_utils import (
-    deserialize_blob_properties,
-    get_access_conditions,
-    get_modification_conditions,
-    get_sequence_conditions,
-    StorageStreamDownloader,
+from ._deserialize import deserialize_blob_properties, deserialize_blob_stream
+from ._upload_helpers import (
     upload_block_blob,
-    upload_page_blob,
-    upload_append_blob)
+    upload_append_blob,
+    upload_page_blob)
 from .models import BlobType, BlobBlock
-from .lease import LeaseClient
-from .polling import CopyStatusPoller
+from .lease import LeaseClient, get_access_conditions
 
 if TYPE_CHECKING:
     from datetime import datetime
     from azure.core.pipeline.policies import HTTPPolicy
+    from ._generated.models import BlockList, PageList
     from .models import (  # pylint: disable=unused-import
         ContainerProperties,
         BlobProperties,
@@ -75,13 +71,13 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
     :ivar str url:
         The full endpoint URL to the Blob, including snapshot and SAS token if used. This could be
-        either the primary endpoint, or the secondard endpoint depending on the current `location_mode`.
+        either the primary endpoint, or the secondary endpoint depending on the current `location_mode`.
     :ivar str primary_endpoint:
         The full primary endpoint URL.
     :ivar str primary_hostname:
         The hostname of the primary endpoint.
     :ivar str secondary_endpoint:
-        The full secondard endpoint URL if configured. If not available
+        The full secondary endpoint URL if configured. If not available
         a ValueError will be raised. To explicitly specify a secondary hostname, use the optional
         `secondary_hostname` keyword argument on instantiation.
     :ivar str secondary_hostname:
@@ -315,8 +311,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             content_type=content_type,
         )
 
+    @distributed_trace
     def get_account_information(self, **kwargs): # type: ignore
-        # type: (Optional[int]) -> Dict[str, str]
+        # type: (**Any) -> Dict[str, str]
         """Gets information related to the storage account in which the blob resides.
 
         The information can also be retrieved if the user has a SAS to a container or blob.
@@ -330,6 +327,87 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         except StorageErrorException as error:
             process_storage_error(error)
 
+    def _upload_blob_options(
+            self, data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
+            blob_type=BlobType.BlockBlob,  # type: Union[str, BlobType]
+            overwrite=False,  # type: bool
+            length=None,  # type: Optional[int]
+            metadata=None,  # type: Optional[Dict[str, str]]
+            content_settings=None,  # type: Optional[ContentSettings]
+            validate_content=False,  # type: Optional[bool]
+            max_connections=1,  # type: int
+            **kwargs
+        ):
+        # type: (...) -> Dict[str, Any]
+        if self.require_encryption and not self.key_encryption_key:
+            raise ValueError("Encryption required but no key was provided.")
+        encryption_options = {
+            'required': self.require_encryption,
+            'key': self.key_encryption_key,
+            'resolver': self.key_resolver_function,
+        }
+        if self.key_encryption_key is not None:
+            cek, iv, encryption_data = generate_blob_encryption_data(self.key_encryption_key)
+            encryption_options['cek'] = cek
+            encryption_options['vector'] = iv
+            encryption_options['data'] = encryption_data
+
+        encoding = kwargs.pop('encoding', 'UTF-8')
+        if isinstance(data, six.text_type):
+            data = data.encode(encoding) # type: ignore
+        if length is None:
+            length = get_length(data)
+        if isinstance(data, bytes):
+            data = data[:length]
+
+        if isinstance(data, bytes):
+            stream = BytesIO(data)
+        elif hasattr(data, 'read'):
+            stream = data
+        elif hasattr(data, '__iter__'):
+            stream = IterStreamer(data, encoding=encoding)
+        else:
+            raise TypeError("Unsupported data type: {}".format(type(data)))
+
+        headers = kwargs.pop('headers', {})
+        headers.update(add_metadata_headers(metadata))
+        kwargs['lease_access_conditions'] = get_access_conditions(kwargs.pop('lease', None))
+        kwargs['modified_access_conditions'] = ModifiedAccessConditions(
+            if_modified_since=kwargs.pop('if_modified_since', None),
+            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
+            if_match=kwargs.pop('if_match', None),
+            if_none_match=kwargs.pop('if_none_match', None))
+        if content_settings:
+            kwargs['blob_headers'] = BlobHTTPHeaders(
+                blob_cache_control=content_settings.cache_control,
+                blob_content_type=content_settings.content_type,
+                blob_content_md5=bytearray(content_settings.content_md5) if content_settings.content_md5 else None,
+                blob_content_encoding=content_settings.content_encoding,
+                blob_content_language=content_settings.content_language,
+                blob_content_disposition=content_settings.content_disposition
+            )
+        kwargs['stream'] = stream
+        kwargs['length'] = length
+        kwargs['overwrite'] = overwrite
+        kwargs['headers'] = headers
+        kwargs['validate_content'] = validate_content
+        kwargs['blob_settings'] = self._config
+        kwargs['max_connections'] = max_connections
+        kwargs['encryption_options'] = encryption_options
+        if blob_type == BlobType.BlockBlob:
+            kwargs['client'] = self._client.block_blob
+            kwargs['data'] = data
+        elif blob_type == BlobType.PageBlob:
+            kwargs['client'] = self._client.page_blob
+        elif blob_type == BlobType.AppendBlob:
+            if self.require_encryption or (self.key_encryption_key is not None):
+                raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
+            kwargs['client'] = self._client.append_blob
+        else:
+            raise ValueError("Unsupported BlobType: {}".format(blob_type))
+        return kwargs
+
+    @distributed_trace
     def upload_blob(  # pylint: disable=too-many-locals
             self, data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
             blob_type=BlobType.BlockBlob,  # type: Union[str, BlobType]
@@ -338,16 +416,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             metadata=None,  # type: Optional[Dict[str, str]]
             content_settings=None,  # type: Optional[ContentSettings]
             validate_content=False,  # type: Optional[bool]
-            lease=None,  # type: Optional[Union[LeaseClient, str]]
-            if_modified_since=None,  # type: Optional[datetime]
-            if_unmodified_since=None,  # type: Optional[datetime]
-            if_match=None,  # type: Optional[str]
-            if_none_match=None,  # type: Optional[str]
-            timeout=None,  # type: Optional[int]
-            premium_page_blob_tier=None,  # type: Optional[Union[str, PremiumPageBlobTier]]
-            maxsize_condition=None,  # type: Optional[int]
             max_connections=1,  # type: int
-            encoding='UTF-8', # type: str
             **kwargs
         ):
         # type: (...) -> Any
@@ -434,114 +503,56 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 :dedent: 12
                 :caption: Upload a blob to the container.
         """
+        options = self._upload_blob_options(
+            data,
+            blob_type=blob_type,
+            overwrite=overwrite,
+            length=length,
+            metadata=metadata,
+            content_settings=content_settings,
+            validate_content=validate_content,
+            max_connections=max_connections,
+            **kwargs)
+        if blob_type == BlobType.BlockBlob:
+            return upload_block_blob(**options)
+        if blob_type == BlobType.PageBlob:
+            return upload_page_blob(**options)
+        return upload_append_blob(**options)
+
+    def _download_blob_options(self, offset=None, length=None, validate_content=False, **kwargs):
+        # type: (Optional[int], Optional[int], bool, **Any) -> Dict[str, Any]
         if self.require_encryption and not self.key_encryption_key:
             raise ValueError("Encryption required but no key was provided.")
+        if length is not None and offset is None:
+            raise ValueError("Offset value must not be None is length is set.")
 
-        cek, iv, encryption_data = None, None, None
-        if self.key_encryption_key is not None:
-            cek, iv, encryption_data = _generate_blob_encryption_data(self.key_encryption_key)
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
+        mod_conditions = ModifiedAccessConditions(
+            if_modified_since=kwargs.pop('if_modified_since', None),
+            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
+            if_match=kwargs.pop('if_match', None),
+            if_none_match=kwargs.pop('if_none_match', None))
 
-        if isinstance(data, six.text_type):
-            data = data.encode(encoding) # type: ignore
-        if length is None:
-            length = get_length(data)
-        if isinstance(data, bytes):
-            data = data[:length]
+        options = {
+            'service': self._client.blob,
+            'config': self._config,
+            'offset': offset,
+            'length': length,
+            'validate_content': validate_content,
+            'encryption_options': {
+                'required': self.require_encryption,
+                'key': self.key_encryption_key,
+                'resolver': self.key_resolver_function},
+            'lease_access_conditions': access_conditions,
+            'modified_access_conditions': mod_conditions,
+            'cls': deserialize_blob_stream,
+            'timeout': kwargs.pop('timeout', None)}
+        options.update(kwargs)
+        return options
 
-        if isinstance(data, bytes):
-            stream = BytesIO(data)
-        elif hasattr(data, 'read'):
-            stream = data
-        elif hasattr(data, '__iter__'):
-            stream = IterStreamer(data, encoding=encoding)
-        else:
-            raise TypeError("Unsupported data type: {}".format(type(data)))
-
-        headers = kwargs.pop('headers', {})
-        headers.update(add_metadata_headers(metadata))
-        blob_headers = None
-        access_conditions = get_access_conditions(lease)
-        mod_conditions = get_modification_conditions(
-            if_modified_since, if_unmodified_since, if_match, if_none_match)
-        if content_settings:
-            blob_headers = BlobHTTPHeaders(
-                blob_cache_control=content_settings.cache_control,
-                blob_content_type=content_settings.content_type,
-                blob_content_md5=bytearray(content_settings.content_md5) if content_settings.content_md5 else None,
-                blob_content_encoding=content_settings.content_encoding,
-                blob_content_language=content_settings.content_language,
-                blob_content_disposition=content_settings.content_disposition
-            )
-        if blob_type == BlobType.BlockBlob:
-            return upload_block_blob(
-                self._client.block_blob,
-                data,
-                stream,
-                length,
-                overwrite,
-                headers,
-                blob_headers,
-                access_conditions,
-                mod_conditions,
-                validate_content,
-                timeout,
-                max_connections,
-                self._config.blob_settings,
-                self.require_encryption,
-                self.key_encryption_key,
-                **kwargs)
-        if blob_type == BlobType.PageBlob:
-            return upload_page_blob(
-                self._client.page_blob,
-                stream,
-                length,
-                overwrite,
-                headers,
-                blob_headers,
-                access_conditions,
-                mod_conditions,
-                validate_content,
-                premium_page_blob_tier,
-                timeout,
-                max_connections,
-                self._config.blob_settings,
-                cek,
-                iv,
-                encryption_data,
-                **kwargs)
-        if blob_type == BlobType.AppendBlob:
-            if self.require_encryption or (self.key_encryption_key is not None):
-                raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
-            return upload_append_blob(
-                self._client.append_blob,
-                stream,
-                length,
-                overwrite,
-                headers,
-                blob_headers,
-                access_conditions,
-                mod_conditions,
-                maxsize_condition,
-                validate_content,
-                timeout,
-                max_connections,
-                self._config.blob_settings,
-                **kwargs)
-        raise ValueError("Unsupported BlobType: {}".format(blob_type))
-
-    def download_blob(
-            self, offset=None,  # type: Optional[int]
-            length=None,  # type: Optional[int]
-            validate_content=False,  # type: bool
-            lease=None,  # type: Union[LeaseClient, str]
-            if_modified_since=None,  # type: Optional[datetime]
-            if_unmodified_since=None,  # type: Optional[datetime]
-            if_match=None,  # type: Optional[str]
-            if_none_match=None,  # type: Optional[str]
-            timeout=None,  # type: Optional[int]
-            **kwargs
-        ):
-        # type: (...) -> Iterable[bytes]
+    @distributed_trace
+    def download_blob(self, offset=None, length=None, validate_content=False, **kwargs):
+        # type: (Optional[int], Optional[int], bool, **Any) -> Iterable[bytes]
         """Downloads a blob to a stream with automatic chunking.
 
         :param int offset:
@@ -599,42 +610,41 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 :dedent: 12
                 :caption: Download a blob.
         """
-        if self.require_encryption and not self.key_encryption_key:
-            raise ValueError("Encryption required but no key was provided.")
-        if length is not None and offset is None:
-            raise ValueError("Offset value must not be None is length is set.")
-
-        access_conditions = get_access_conditions(lease)
-        mod_conditions = get_modification_conditions(
-            if_modified_since, if_unmodified_since, if_match, if_none_match)
-
-        return StorageStreamDownloader(
-            name=self.blob_name,
-            container=self.container_name,
-            service=self._client.blob,
-            config=self._config.blob_settings,
+        options = self._download_blob_options(
             offset=offset,
             length=length,
             validate_content=validate_content,
-            access_conditions=access_conditions,
-            mod_conditions=mod_conditions,
-            timeout=timeout,
-            require_encryption=self.require_encryption,
-            key_encryption_key=self.key_encryption_key,
-            key_resolver_function=self.key_resolver_function,
             **kwargs)
+        extra_properties = {
+            'name': self.blob_name,
+            'container': self.container_name
+        }
+        return StorageStreamDownloader(extra_properties=extra_properties, **options)
 
-    def delete_blob(
-            self, delete_snapshots=None,  # type: Optional[str]
-            lease=None,  # type: Optional[Union[str, LeaseClient]]
-            if_modified_since=None,  # type: Optional[datetime]
-            if_unmodified_since=None,  # type: Optional[datetime]
-            if_match=None,  # type: Optional[str]
-            if_none_match=None,  # type: Optional[str]
-            timeout=None,  # type: Optional[int]
-            **kwargs
-        ):
-        # type: (...) -> None
+    def _delete_blob_options(self, delete_snapshots=False, **kwargs):
+        # type: (bool, **Any) -> Dict[str, Any]
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
+        mod_conditions = ModifiedAccessConditions(
+            if_modified_since=kwargs.pop('if_modified_since', None),
+            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
+            if_match=kwargs.pop('if_match', None),
+            if_none_match=kwargs.pop('if_none_match', None))
+        if self.snapshot and delete_snapshots:
+            raise ValueError("The delete_snapshots option cannot be used with a specific snapshot.")
+        if delete_snapshots:
+            delete_snapshots = DeleteSnapshotsOptionType(delete_snapshots)
+        options = {
+            'timeout': kwargs.pop('timeout', None),
+            'delete_snapshots': delete_snapshots or None,
+            'snapshot': self.snapshot,
+            'lease_access_conditions': access_conditions,
+            'modified_access_conditions': mod_conditions}
+        options.update(kwargs)
+        return options
+
+    @distributed_trace
+    def delete_blob(self, delete_snapshots=False, **kwargs):
+        # type: (bool, **Any) -> None
         """Marks the specified blob for deletion.
 
         The blob is later deleted during garbage collection.
@@ -689,26 +699,15 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 :dedent: 12
                 :caption: Delete a blob.
         """
-        access_conditions = get_access_conditions(lease)
-        mod_conditions = get_modification_conditions(
-            if_modified_since, if_unmodified_since, if_match, if_none_match)
-        if self.snapshot and delete_snapshots:
-            raise ValueError("The delete_snapshots option cannot be used with a specific snapshot.")
-        if delete_snapshots:
-            delete_snapshots = DeleteSnapshotsOptionType(delete_snapshots)
+        options = self._delete_blob_options(delete_snapshots=delete_snapshots, **kwargs)
         try:
-            self._client.blob.delete(
-                timeout=timeout,
-                delete_snapshots=delete_snapshots,
-                snapshot=self.snapshot,
-                lease_access_conditions=access_conditions,
-                modified_access_conditions=mod_conditions,
-                **kwargs)
+            self._client.blob.delete(**options)
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def undelete_blob(self, timeout=None, **kwargs):
-        # type: (Optional[int], **Any) -> None
+    @distributed_trace
+    def undelete_blob(self, **kwargs):
+        # type: (**Any) -> None
         """Restores soft-deleted blobs or snapshots.
 
         Operation will only be successful if used within the specified number of days
@@ -727,20 +726,13 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 :caption: Undeleting a blob.
         """
         try:
-            self._client.blob.undelete(timeout=timeout, **kwargs)
+            self._client.blob.undelete(timeout=kwargs.pop('timeout', None), **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def get_blob_properties(
-            self, lease=None,  # type: Optional[Union[LeaseClient, str]]
-            if_modified_since=None,  # type: Optional[datetime]
-            if_unmodified_since=None,  # type: Optional[datetime]
-            if_match=None,  # type: Optional[str]
-            if_none_match=None,  # type: Optional[str]
-            timeout=None,  # type: Optional[int]
-            **kwargs
-        ):
-        # type: (...) -> BlobProperties
+    @distributed_trace
+    def get_blob_properties(self, **kwargs):
+        # type: (**Any) -> BlobProperties
         """Returns all user-defined metadata, standard HTTP properties, and
         system properties for the blob. It does not return the content of the blob.
 
@@ -782,12 +774,15 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 :dedent: 8
                 :caption: Getting the properties for a blob.
         """
-        access_conditions = get_access_conditions(lease)
-        mod_conditions = get_modification_conditions(
-            if_modified_since, if_unmodified_since, if_match, if_none_match)
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
+        mod_conditions = ModifiedAccessConditions(
+            if_modified_since=kwargs.pop('if_modified_since', None),
+            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
+            if_match=kwargs.pop('if_match', None),
+            if_none_match=kwargs.pop('if_none_match', None))
         try:
             blob_props = self._client.blob.get_properties(
-                timeout=timeout,
+                timeout=kwargs.pop('timeout', None),
                 snapshot=self.snapshot,
                 lease_access_conditions=access_conditions,
                 modified_access_conditions=mod_conditions,
@@ -799,17 +794,36 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         blob_props.container = self.container_name
         return blob_props # type: ignore
 
-    def set_http_headers(
-            self, content_settings=None,  # type: Optional[ContentSettings]
-            lease=None,  # type: Optional[Union[LeaseClient, str]]
-            if_modified_since=None,  # type: Optional[datetime]
-            if_unmodified_since=None,  # type: Optional[datetime]
-            if_match=None,  # type: Optional[str]
-            if_none_match=None,  # type: Optional[str]
-            timeout=None,  # type: Optional[int]
-            **kwargs
-        ):
-        # type: (...) -> None
+    def _set_http_headers_options(self, content_settings=None, **kwargs):
+        # type: (Optional[ContentSettings], **Any) -> Dict[str, Any]
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
+        mod_conditions = ModifiedAccessConditions(
+            if_modified_since=kwargs.pop('if_modified_since', None),
+            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
+            if_match=kwargs.pop('if_match', None),
+            if_none_match=kwargs.pop('if_none_match', None))
+        blob_headers = None
+        if content_settings:
+            blob_headers = BlobHTTPHeaders(
+                blob_cache_control=content_settings.cache_control,
+                blob_content_type=content_settings.content_type,
+                blob_content_md5=bytearray(content_settings.content_md5) if content_settings.content_md5 else None,
+                blob_content_encoding=content_settings.content_encoding,
+                blob_content_language=content_settings.content_language,
+                blob_content_disposition=content_settings.content_disposition
+            )
+        options = {
+            'timeout': kwargs.pop('timeout', None),
+            'blob_http_headers': blob_headers,
+            'lease_access_conditions': access_conditions,
+            'modified_access_conditions': mod_conditions,
+            'cls': return_response_headers}
+        options.update(kwargs)
+        return options
+
+    @distributed_trace
+    def set_http_headers(self, content_settings=None, **kwargs):
+        # type: (Optional[ContentSettings], **Any) -> None
         """Sets system properties on the blob.
 
         If one property is set for the content_settings, all properties will be overriden.
@@ -846,41 +860,34 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :returns: Blob-updated property dict (Etag and last modified)
         :rtype: Dict[str, Any]
         """
-        access_conditions = get_access_conditions(lease)
-        mod_conditions = get_modification_conditions(
-            if_modified_since, if_unmodified_since, if_match, if_none_match)
-        blob_headers = None
-        if content_settings:
-            blob_headers = BlobHTTPHeaders(
-                blob_cache_control=content_settings.cache_control,
-                blob_content_type=content_settings.content_type,
-                blob_content_md5=bytearray(content_settings.content_md5) if content_settings.content_md5 else None,
-                blob_content_encoding=content_settings.content_encoding,
-                blob_content_language=content_settings.content_language,
-                blob_content_disposition=content_settings.content_disposition
-            )
+        options = self._set_http_headers_options(content_settings=content_settings, **kwargs)
         try:
-            return self._client.blob.set_http_headers( # type: ignore
-                timeout=timeout,
-                blob_http_headers=blob_headers,
-                lease_access_conditions=access_conditions,
-                modified_access_conditions=mod_conditions,
-                cls=return_response_headers,
-                **kwargs)
+            return self._client.blob.set_http_headers(**options) # type: ignore
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def set_blob_metadata( # type: ignore
-            self, metadata=None,  # type: Optional[Dict[str, str]]
-            lease=None,  # type: Optional[Union[LeaseClient, str]]
-            if_modified_since=None,  # type: Optional[datetime]
-            if_unmodified_since=None,  # type: Optional[datetime]
-            if_match=None,  # type: Optional[str]
-            if_none_match=None,  # type: Optional[str]
-            timeout=None,  # type: Optional[int]
-            **kwargs
-        ):
-        # type: (...) -> Dict[str, Union[str, datetime]]
+    def _set_blob_metadata_options(self, metadata=None, **kwargs):
+        # type: (Optional[Dict[str, str]], **Any) -> Dict[str, Any]
+        headers = kwargs.pop('headers', {})
+        headers.update(add_metadata_headers(metadata))
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
+        mod_conditions = ModifiedAccessConditions(
+            if_modified_since=kwargs.pop('if_modified_since', None),
+            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
+            if_match=kwargs.pop('if_match', None),
+            if_none_match=kwargs.pop('if_none_match', None))
+        options = {
+            'timeout': kwargs.pop('timeout', None),
+            'lease_access_conditions': access_conditions,
+            'modified_access_conditions': mod_conditions,
+            'cls': return_response_headers,
+            'headers': headers}
+        options.update(kwargs)
+        return options
+
+    @distributed_trace
+    def set_blob_metadata(self, metadata=None, **kwargs):
+        # type: (Optional[Dict[str, str]], **Any) -> Dict[str, Union[str, datetime]]
         """Sets user-defined metadata for the blob as one or more name-value pairs.
 
         :param metadata:
@@ -917,33 +924,65 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified)
         """
-        headers = kwargs.pop('headers', {})
-        headers.update(add_metadata_headers(metadata))
-        access_conditions = get_access_conditions(lease)
-        mod_conditions = get_modification_conditions(
-            if_modified_since, if_unmodified_since, if_match, if_none_match)
+        options = self._set_blob_metadata_options(metadata=metadata, **kwargs)
         try:
-            return self._client.blob.set_metadata(  # type: ignore
-                timeout=timeout,
-                lease_access_conditions=access_conditions,
-                modified_access_conditions=mod_conditions,
-                cls=return_response_headers,
-                headers=headers,
-                **kwargs)
+            return self._client.blob.set_metadata(**options)  # type: ignore
         except StorageErrorException as error:
             process_storage_error(error)
 
+    def _create_page_blob_options(  # type: ignore
+            self, size,  # type: int
+            content_settings=None,  # type: Optional[ContentSettings]
+            sequence_number=None,  # type: Optional[int]
+            metadata=None, # type: Optional[Dict[str, str]]
+            premium_page_blob_tier=None,  # type: Optional[Union[str, PremiumPageBlobTier]]
+            **kwargs
+        ):
+        # type: (...) -> Dict[str, Any]
+        if self.require_encryption or (self.key_encryption_key is not None):
+            raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
+        headers = kwargs.pop('headers', {})
+        headers.update(add_metadata_headers(metadata))
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
+        mod_conditions = ModifiedAccessConditions(
+            if_modified_since=kwargs.pop('if_modified_since', None),
+            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
+            if_match=kwargs.pop('if_match', None),
+            if_none_match=kwargs.pop('if_none_match', None))
+        blob_headers = None
+        if content_settings:
+            blob_headers = BlobHTTPHeaders(
+                blob_cache_control=content_settings.cache_control,
+                blob_content_type=content_settings.content_type,
+                blob_content_md5=bytearray(content_settings.content_md5) if content_settings.content_md5 else None,
+                blob_content_encoding=content_settings.content_encoding,
+                blob_content_language=content_settings.content_language,
+                blob_content_disposition=content_settings.content_disposition
+            )
+        if premium_page_blob_tier:
+            try:
+                headers['x-ms-access-tier'] = premium_page_blob_tier.value  # type: ignore
+            except AttributeError:
+                headers['x-ms-access-tier'] = premium_page_blob_tier  # type: ignore
+        options = {
+            'content_length': 0,
+            'blob_content_length': size,
+            'blob_sequence_number': sequence_number,
+            'blob_http_headers': blob_headers,
+            'timeout': kwargs.pop('timeout', None),
+            'lease_access_conditions': access_conditions,
+            'modified_access_conditions': mod_conditions,
+            'cls': return_response_headers,
+            'headers': headers}
+        options.update(kwargs)
+        return options
+
+    @distributed_trace
     def create_page_blob(  # type: ignore
             self, size,  # type: int
             content_settings=None,  # type: Optional[ContentSettings]
             sequence_number=None,  # type: Optional[int]
             metadata=None, # type: Optional[Dict[str, str]]
-            lease=None,  # type: Optional[Union[LeaseClient, str]]
-            if_modified_since=None,  # type: Optional[datetime]
-            if_unmodified_since=None,  # type: Optional[datetime]
-            if_match=None,  # type: Optional[str]
-            if_none_match=None,  # type: Optional[str]
-            timeout=None,  # type: Optional[int]
             premium_page_blob_tier=None,  # type: Optional[Union[str, PremiumPageBlobTier]]
             **kwargs
         ):
@@ -997,13 +1036,30 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :returns: Blob-updated property dict (Etag and last modified).
         :rtype: dict[str, Any]
         """
+        options = self._create_page_blob_options(
+            size,
+            content_settings=content_settings,
+            sequence_number=sequence_number,
+            metadata=metadata,
+            premium_page_blob_tier=premium_page_blob_tier,
+            **kwargs)
+        try:
+            return self._client.page_blob.create(**options) # type: ignore
+        except StorageErrorException as error:
+            process_storage_error(error)
+
+    def _create_append_blob_options(self, content_settings=None, metadata=None, **kwargs):
+        # type: (Optional[ContentSettings], Optional[Dict[str, str]], **Any) -> Dict[str, Any]
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
-        access_conditions = get_access_conditions(lease)
-        mod_conditions = get_modification_conditions(
-            if_modified_since, if_unmodified_since, if_match, if_none_match)
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
+        mod_conditions = ModifiedAccessConditions(
+            if_modified_since=kwargs.pop('if_modified_since', None),
+            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
+            if_match=kwargs.pop('if_match', None),
+            if_none_match=kwargs.pop('if_none_match', None))
         blob_headers = None
         if content_settings:
             blob_headers = BlobHTTPHeaders(
@@ -1014,39 +1070,20 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 blob_content_language=content_settings.content_language,
                 blob_content_disposition=content_settings.content_disposition
             )
-        try:
-            if premium_page_blob_tier:
-                try:
-                    headers['x-ms-access-tier'] = premium_page_blob_tier.value  # type: ignore
-                except AttributeError:
-                    headers['x-ms-access-tier'] = premium_page_blob_tier  # type: ignore
-            return self._client.page_blob.create( # type: ignore
-                content_length=0,
-                blob_content_length=size,
-                blob_sequence_number=sequence_number,
-                blob_http_headers=blob_headers,
-                timeout=timeout,
-                lease_access_conditions=access_conditions,
-                modified_access_conditions=mod_conditions,
-                cls=return_response_headers,
-                headers=headers,
-                **kwargs
-            )
-        except StorageErrorException as error:
-            process_storage_error(error)
+        options = {
+            'content_length': 0,
+            'blob_http_headers': blob_headers,
+            'timeout': kwargs.pop('timeout', None),
+            'lease_access_conditions': access_conditions,
+            'modified_access_conditions': mod_conditions,
+            'cls': return_response_headers,
+            'headers': headers}
+        options.update(kwargs)
+        return options
 
-    def create_append_blob( # type: ignore
-            self, content_settings=None,  # type: Optional[ContentSettings]
-            metadata=None, # type: Optional[Dict[str, str]]
-            lease=None,  # type: Optional[Union[LeaseClient, str]]
-            if_modified_since=None,  # type: Optional[datetime]
-            if_unmodified_since=None,  # type: Optional[datetime]
-            if_match=None,  # type: Optional[str]
-            if_none_match=None,  # type: Optional[str]
-            timeout=None,  # type: Optional[int]
-            **kwargs
-        ):
-        # type: (...) -> Dict[str, Union[str, datetime]]
+    @distributed_trace
+    def create_append_blob(self, content_settings=None, metadata=None, **kwargs):
+        # type: (Optional[ContentSettings], Optional[Dict[str, str]], **Any) -> Dict[str, Union[str, datetime]]
         """Creates a new Append Blob.
 
         :param ~azure.storage.blob.models.ContentSettings content_settings:
@@ -1084,48 +1121,37 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :returns: Blob-updated property dict (Etag and last modified).
         :rtype: dict[str, Any]
         """
-        if self.require_encryption or (self.key_encryption_key is not None):
-            raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
-        headers = kwargs.pop('headers', {})
-        headers.update(add_metadata_headers(metadata))
-        access_conditions = get_access_conditions(lease)
-        mod_conditions = get_modification_conditions(
-            if_modified_since, if_unmodified_since, if_match, if_none_match)
-        blob_headers = None
-        if content_settings:
-            blob_headers = BlobHTTPHeaders(
-                blob_cache_control=content_settings.cache_control,
-                blob_content_type=content_settings.content_type,
-                blob_content_md5=bytearray(content_settings.content_md5) if content_settings.content_md5 else None,
-                blob_content_encoding=content_settings.content_encoding,
-                blob_content_language=content_settings.content_language,
-                blob_content_disposition=content_settings.content_disposition
-            )
+        options = self._create_append_blob_options(
+            content_settings=content_settings,
+            metadata=metadata,
+            **kwargs)
         try:
-            return self._client.append_blob.create( # type: ignore
-                content_length=0,
-                blob_http_headers=blob_headers,
-                timeout=timeout,
-                lease_access_conditions=access_conditions,
-                modified_access_conditions=mod_conditions,
-                cls=return_response_headers,
-                headers=headers,
-                **kwargs
-            )
+            return self._client.append_blob.create(**options) # type: ignore
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def create_snapshot( # type: ignore
-            self, metadata=None,  # type: Optional[Dict[str, str]]
-            if_modified_since=None,  # type: Optional[datetime]
-            if_unmodified_since=None,  # type: Optional[datetime]
-            if_match=None,  # type: Optional[str]
-            if_none_match=None,  # type: Optional[str]
-            lease=None,  # type: Optional[Union[LeaseClient, str]]
-            timeout=None,  # type: Optional[int]
-            **kwargs
-        ):
-        # type: (...) -> Dict[str, Union[str, datetime]]
+    def _create_snapshot_options(self, metadata=None, **kwargs):
+        # type: (Optional[Dict[str, str]], **Any) -> Dict[str, Any]
+        headers = kwargs.pop('headers', {})
+        headers.update(add_metadata_headers(metadata))
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
+        mod_conditions = ModifiedAccessConditions(
+            if_modified_since=kwargs.pop('if_modified_since', None),
+            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
+            if_match=kwargs.pop('if_match', None),
+            if_none_match=kwargs.pop('if_none_match', None))
+        options = {
+            'timeout': kwargs.pop('timeout', None),
+            'lease_access_conditions': access_conditions,
+            'modified_access_conditions': mod_conditions,
+            'cls': return_response_headers,
+            'headers': headers}
+        options.update(kwargs)
+        return options
+
+    @distributed_trace
+    def create_snapshot(self, metadata=None, **kwargs):
+        # type: (Optional[Dict[str, str]], **Any) -> Dict[str, Union[str, datetime]]
         """Creates a snapshot of the blob.
 
         A snapshot is a read-only version of a blob that's taken at a point in time.
@@ -1177,43 +1203,56 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 :dedent: 8
                 :caption: Create a snapshot of the blob.
         """
-        headers = kwargs.pop('headers', {})
-        headers.update(add_metadata_headers(metadata))
-        access_conditions = get_access_conditions(lease)
-        mod_conditions = get_modification_conditions(
-            if_modified_since, if_unmodified_since, if_match, if_none_match)
+        options = self._create_snapshot_options(metadata=metadata, **kwargs)
         try:
-            return self._client.blob.create_snapshot( # type: ignore
-                timeout=timeout,
-                lease_access_conditions=access_conditions,
-                modified_access_conditions=mod_conditions,
-                cls=return_response_headers,
-                headers=headers,
-                **kwargs)
+            return self._client.blob.create_snapshot(**options) # type: ignore
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def copy_blob_from_url(  # pylint: disable=too-many-locals
-            self, source_url,  # type: str
-            metadata=None,  # type: Optional[Dict[str, str]]
-            source_if_modified_since=None,  # type: Optional[datetime]
-            source_if_unmodified_since=None,  # type: Optional[datetime]
-            source_if_match=None,  # type: Optional[str]
-            source_if_none_match=None,  # type: Optional[str]
-            destination_if_modified_since=None,  # type: Optional[datetime]
-            destination_if_unmodified_since=None,  # type: Optional[datetime]
-            destination_if_match=None,  # type: Optional[str]
-            destination_if_none_match=None,  # type: Optional[str]
-            destination_lease=None,  # type: Optional[Union[LeaseClient, str]]
-            source_lease=None,  # type: Optional[Union[LeaseClient, str]]
-            timeout=None,  # type: Optional[int]
-            incremental_copy=False, # type bool,
-            premium_page_blob_tier=None,
-            requires_sync=False,  # type: Optional[bool]
-            polling=True,  # type: bool
-            **kwargs
-        ):
-        # type: (...) -> Any
+    def _start_copy_from_url_options(self, source_url, metadata=None, incremental_copy=False, **kwargs):
+        # type: (str, Optional[Dict[str, str]], bool, **Any) -> Dict[str, Any]
+        headers = kwargs.pop('headers', {})
+        headers.update(add_metadata_headers(metadata))
+        if 'source_lease' in kwargs:
+            source_lease = kwargs.pop('source_lease')
+            try:
+                headers['x-ms-source-lease-id'] = source_lease.id # type: str
+            except AttributeError:
+                headers['x-ms-source-lease-id'] = source_lease
+        if kwargs.get('premium_page_blob_tier'):
+            premium_page_blob_tier = kwargs.pop('premium_page_blob_tier')
+            headers['x-ms-access-tier'] = premium_page_blob_tier.value
+        if kwargs.get('requires_sync'):
+            headers['x-ms-requires-sync'] = str(kwargs.pop('requires_sync'))
+
+        timeout = kwargs.pop('timeout', None)
+        dest_mod_conditions = ModifiedAccessConditions(
+            if_modified_since=kwargs.pop('destination_if_modified_since', None),
+            if_unmodified_since=kwargs.pop('destination_if_unmodified_since', None),
+            if_match=kwargs.pop('destination_if_match', None),
+            if_none_match=kwargs.pop('destination_if_none_match', None))
+        options = {
+            'copy_source': source_url,
+            'timeout': timeout,
+            'modified_access_conditions': dest_mod_conditions,
+            'headers': headers,
+            'cls': return_response_headers,
+        }
+        if not incremental_copy:
+            source_mod_conditions = SourceModifiedAccessConditions(
+                source_if_modified_since=kwargs.pop('source_if_modified_since', None),
+                source_if_unmodified_since=kwargs.pop('source_if_unmodified_since', None),
+                source_if_match=kwargs.pop('source_if_match', None),
+                source_if_none_match=kwargs.pop('source_if_none_match', None))
+            dest_access_conditions = get_access_conditions(kwargs.pop('destination_lease', None))
+            options['source_modified_access_conditions'] = source_mod_conditions
+            options['lease_access_conditions'] = dest_access_conditions
+        options.update(kwargs)
+        return options
+
+    @distributed_trace
+    def start_copy_from_url(self, source_url, metadata=None, incremental_copy=False, **kwargs):
+        # type: (str, Optional[Dict[str, str]], bool, **Any) -> Dict[str, Union[str, datetime]]
         """Copies a blob asynchronously.
 
         This operation returns a copy operation
@@ -1253,7 +1292,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             is public, no authentication is required.
             Examples:
             https://myaccount.blob.core.windows.net/mycontainer/myblob
+
             https://myaccount.blob.core.windows.net/mycontainer/myblob?snapshot=<DateTime>
+
             https://otheraccount.blob.core.windows.net/mycontainer/myblob?sastoken
         :param metadata:
             Name-value pairs associated with the blob as metadata. If no name-value
@@ -1338,74 +1379,77 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             premium storage accounts.
         :param bool requires_sync:
             Enforces that the service will not return a response until the copy is complete.
-        :param bool polling: A poller will be used for this operation. Defaults to True.
-        :returns: A pollable object to check copy operation status (and abort).
-        :rtype: :class:`~azure.storage.blob.polling.CopyStatusPoller`
-        """
-        headers = kwargs.pop('headers', {})
-        headers.update(add_metadata_headers(metadata))
-        if source_lease:
-            try:
-                headers['x-ms-source-lease-id'] = source_lease.id # type: ignore
-            except AttributeError:
-                headers['x-ms-source-lease-id'] = source_lease
-        if premium_page_blob_tier:
-            headers['x-ms-access-tier'] = premium_page_blob_tier.value
-        if requires_sync:
-            headers['x-ms-requires-sync'] = str(requires_sync)
+        :returns: A dictionary of copy properties (etag, last_modified, copy_id, copy_status).
+        :rtype: Dict[str, Union[str, datetime]]
 
-        dest_access_conditions = get_access_conditions(destination_lease)
-        dest_mod_conditions = get_modification_conditions(
-            destination_if_modified_since,
-            destination_if_unmodified_since,
-            destination_if_match,
-            destination_if_none_match)
+        Example:
+            .. literalinclude:: ../tests/test_blob_samples_common.py
+                :start-after: [START copy_blob_from_url]
+                :end-before: [END copy_blob_from_url]
+                :language: python
+                :dedent: 12
+                :caption: Copy a blob from a URL.
+        """
+        options = self._start_copy_from_url_options(
+            source_url,
+            metadata=metadata,
+            incremental_copy=incremental_copy,
+            **kwargs)
         try:
             if incremental_copy:
-                start_copy = self._client.page_blob.copy_incremental(
-                    source_url,
-                    timeout=None,
-                    modified_access_conditions=dest_mod_conditions,
-                    headers=headers,
-                    cls=return_response_headers,
-                    **kwargs)
-            else:
-                source_mod_conditions = get_modification_conditions(
-                    source_if_modified_since,
-                    source_if_unmodified_since,
-                    source_if_match,
-                    source_if_none_match)
-                start_copy = self._client.blob.start_copy_from_url(
-                    source_url,
-                    timeout=timeout,
-                    source_modified_access_conditions=source_mod_conditions,
-                    modified_access_conditions=dest_mod_conditions,
-                    lease_access_conditions=dest_access_conditions,
-                    headers=headers,
-                    cls=return_response_headers,
-                    **kwargs)
+                return self._client.page_blob.copy_incremental(**options)
+            return self._client.blob.start_copy_from_url(**options)
         except StorageErrorException as error:
             process_storage_error(error)
 
-        poller = CopyStatusPoller(
-            self, start_copy,
-            polling=polling,
-            configuration=self._config,
-            lease_access_conditions=destination_lease,
-            timeout=timeout)
-        return poller
+    def _abort_copy_options(self, copy_id, **kwargs):
+        # type: (Union[str, FileProperties], **Any) -> Dict[str, Any]
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
+        try:
+            copy_id = copy_id.copy.id
+        except AttributeError:
+            try:
+                copy_id = copy_id['copy_id']
+            except TypeError:
+                pass
+        options = {
+            'copy_id': copy_id,
+            'lease_access_conditions': access_conditions,
+            'timeout': kwargs.pop('timeout', None)}
+        options.update(kwargs)
+        return options
 
-    def acquire_lease(
-            self, lease_duration=-1,  # type: int
-            lease_id=None,  # type: Optional[str]
-            if_modified_since=None,  # type: Optional[datetime]
-            if_unmodified_since=None,  # type: Optional[datetime]
-            if_match=None,  # type: Optional[str]
-            if_none_match=None,  # type: Optional[str]
-            timeout=None,  # type: Optional[int]
-            **kwargs
-        ):
-        # type: (...) -> LeaseClient
+    @distributed_trace
+    def abort_copy(self, copy_id, **kwargs):
+        # type: (Union[str, BlobProperties], **Any) -> None
+        """Abort an ongoing copy operation.
+
+        This will leave a destination blob with zero length and full metadata.
+        This will raise an error if the copy operation has already ended.
+
+        :param copy_id:
+            The copy operation to abort. This can be either an ID, or an
+            instance of BlobProperties.
+        :type copy_id: str or ~azure.storage.blob.models.BlobProperties
+        :rtype: None
+
+        Example:
+            .. literalinclude:: ../tests/test_blob_samples_common.py
+                :start-after: [START abort_copy_blob_from_url]
+                :end-before: [END abort_copy_blob_from_url]
+                :language: python
+                :dedent: 12
+                :caption: Abort copying a blob from URL.
+        """
+        options = self._abort_copy_options(copy_id, **kwargs)
+        try:
+            self._client.blob.abort_copy_from_url(**options)
+        except StorageErrorException as error:
+            process_storage_error(error)
+
+    @distributed_trace
+    def acquire_lease(self, lease_duration=-1, lease_id=None, **kwargs):
+        # type: (int, Optional[str], **Any) -> LeaseClient
         """Requests a new lease.
 
         If the blob does not have an active lease, the Blob
@@ -1455,18 +1499,12 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 :caption: Acquiring a lease on a blob.
         """
         lease = LeaseClient(self, lease_id=lease_id) # type: ignore
-        lease.acquire(
-            lease_duration=lease_duration,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
-            if_match=if_match,
-            if_none_match=if_none_match,
-            timeout=timeout,
-            **kwargs)
+        lease.acquire(lease_duration=lease_duration, **kwargs)
         return lease
 
-    def set_standard_blob_tier(self, standard_blob_tier, timeout=None, lease=None):
-        # type: (Union[str, StandardBlobTier], Optional[int], Optional[Union[LeaseClient, str]]) -> None
+    @distributed_trace
+    def set_standard_blob_tier(self, standard_blob_tier, **kwargs):
+        # type: (Union[str, StandardBlobTier], Any) -> None
         """This operation sets the tier on a block blob.
 
         A block blob's tier determines Hot/Cool/Archive storage type.
@@ -1488,25 +1526,55 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :type lease: ~azure.storage.blob.lease.LeaseClient or str
         :rtype: None
         """
-        access_conditions = get_access_conditions(lease)
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
         if standard_blob_tier is None:
             raise ValueError("A StandardBlobTier must be specified")
         try:
             self._client.blob.set_tier(
                 tier=standard_blob_tier,
-                timeout=timeout,
-                lease_access_conditions=access_conditions)
+                timeout=kwargs.pop('timeout', None),
+                lease_access_conditions=access_conditions,
+                **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
 
+    def _stage_block_options(
+            self, block_id,  # type: str
+            data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
+            length=None,  # type: Optional[int]
+            validate_content=False,  # type: Optional[bool]
+            **kwargs
+        ):
+        # type: (...) -> Dict[str, Any]
+        if self.require_encryption or (self.key_encryption_key is not None):
+            raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
+        block_id = encode_base64(str(block_id))
+        if isinstance(data, six.text_type):
+            data = data.encode(kwargs.pop('encoding', 'UTF-8'))  # type: ignore
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
+        if length is None:
+            length = get_length(data)
+            if length is None:
+                length, data = read_length(data)
+        if isinstance(data, bytes):
+            data = data[:length]
+        options = {
+            'block_id': block_id,
+            'content_length': length,
+            'body': data,
+            'transactional_content_md5': None,
+            'timeout': kwargs.pop('timeout', None),
+            'lease_access_conditions': access_conditions,
+            'validate_content': validate_content}
+        options.update(kwargs)
+        return options
+
+    @distributed_trace
     def stage_block(
             self, block_id,  # type: str
             data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
             length=None,  # type: Optional[int]
             validate_content=False,  # type: Optional[bool]
-            lease=None,  # type: Optional[Union[LeaseClient, str]]
-            encoding='UTF-8',  # type: str
-            timeout=None,  # type: Optional[int]
             **kwargs
         ):
         # type: (...) -> None
@@ -1537,39 +1605,52 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             The timeout parameter is expressed in seconds.
         :rtype: None
         """
-        if self.require_encryption or (self.key_encryption_key is not None):
-            raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
-        block_id = encode_base64(str(block_id))
-        if isinstance(data, six.text_type):
-            data = data.encode(encoding) # type: ignore
-        access_conditions = get_access_conditions(lease)
-        if length is None:
-            length = get_length(data)
-            if length is None:
-                length, data = read_length(data)
-        if isinstance(data, bytes):
-            data = data[:length]
+        options = self._stage_block_options(
+            block_id,
+            data,
+            length=length,
+            validate_content=validate_content,
+            **kwargs)
         try:
-            self._client.block_blob.stage_block(
-                block_id,
-                length,
-                data,
-                transactional_content_md5=None,
-                timeout=timeout,
-                lease_access_conditions=access_conditions,
-                validate_content=validate_content,
-                **kwargs)
+            self._client.block_blob.stage_block(**options)
         except StorageErrorException as error:
             process_storage_error(error)
 
+    def _stage_block_from_url_options(
+            self, block_id,  # type: str
+            source_url,  # type: str
+            source_offset=None,  # type: Optional[int]
+            source_length=None,  # type: Optional[int]
+            source_content_md5=None,  # type: Optional[Union[bytes, bytearray]]
+            **kwargs
+        ):
+        # type: (...) -> Dict[str, Any]
+        if source_length is not None and source_offset is None:
+            raise ValueError("Source offset value must not be None is length is set.")
+        block_id = encode_base64(str(block_id))
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
+        range_header = None
+        if source_offset is not None:
+            range_header, _ = validate_and_format_range_headers(source_offset, source_length)
+        options = {
+            'block_id': block_id,
+            'content_length': 0,
+            'source_url': source_url,
+            'source_range': range_header,
+            'source_content_md5': bytearray(source_content_md5) if source_content_md5 else None,
+            'timeout': kwargs.pop('timeout', None),
+            'lease_access_conditions': access_conditions,
+            'cls': return_response_headers}
+        options.update(kwargs)
+        return options
+
+    @distributed_trace
     def stage_block_from_url(
             self, block_id,  # type: str
             source_url,  # type: str
             source_offset=None,  # type: Optional[int]
             source_length=None,  # type: Optional[int]
             source_content_md5=None,  # type: Optional[Union[bytes, bytearray]]
-            lease=None,  # type: Optional[Union[LeaseClient, str]]
-            timeout=None,  # type: Optional[int]
             **kwargs
         ):
         # type: (...) -> None
@@ -1596,34 +1677,31 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             The timeout parameter is expressed in seconds.
         :rtype: None
         """
-        if source_length is not None and source_offset is None:
-            raise ValueError("Source offset value must not be None is length is set.")
-        block_id = encode_base64(str(block_id))
-        access_conditions = get_access_conditions(lease)
-        range_header = None
-        if source_offset is not None:
-            range_header, _ = validate_and_format_range_headers(source_offset, source_length)
+        options = self._stage_block_from_url_options(
+            block_id,
+            source_url,
+            source_offset=source_offset,
+            source_length=source_length,
+            source_content_md5=source_content_md5,
+            **kwargs)
         try:
-            self._client.block_blob.stage_block_from_url(
-                block_id,
-                content_length=0,
-                source_url=source_url,
-                source_range=range_header,
-                source_content_md5=bytearray(source_content_md5) if source_content_md5 else None,
-                timeout=timeout,
-                lease_access_conditions=access_conditions,
-                cls=return_response_headers,
-                **kwargs)
+            self._client.block_blob.stage_block_from_url(**options)
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def get_block_list(
-            self, block_list_type="committed",  # type: Optional[str]
-            lease=None,  # type: Optional[Union[LeaseClient, str]]
-            timeout=None,  # type: int
-            **kwargs
-        ):
-        # type: (...) -> Tuple[List[BlobBlock], List[BlobBlock]]
+    def _get_block_list_result(self, blocks):
+        # type: (BlockList) -> Tuple(List[BlobBlock], List[BlobBlock])
+        committed = [] # type: List
+        uncommitted = [] # type: List
+        if blocks.committed_blocks:
+            committed = [BlobBlock._from_generated(b) for b in blocks.committed_blocks]  # pylint: disable=protected-access
+        if blocks.uncommitted_blocks:
+            uncommitted = [BlobBlock._from_generated(b) for b in blocks.uncommitted_blocks]  # pylint: disable=protected-access
+        return committed, uncommitted
+
+    @distributed_trace
+    def get_block_list(self, block_list_type="committed", **kwargs):
+        # type: (Optional[str], **Any) -> Tuple[List[BlobBlock], List[BlobBlock]]
         """The Get Block List operation retrieves the list of blocks that have
         been uploaded as part of a block blob.
 
@@ -1640,35 +1718,74 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :returns: A tuple of two lists - committed and uncommitted blocks
         :rtype: tuple(list(~azure.storage.blob.models.BlobBlock), list(~azure.storage.blob.models.BlobBlock))
         """
-        access_conditions = get_access_conditions(lease)
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
         try:
             blocks = self._client.block_blob.get_block_list(
                 list_type=block_list_type,
                 snapshot=self.snapshot,
-                timeout=timeout,
+                timeout=kwargs.pop('timeout', None),
                 lease_access_conditions=access_conditions,
                 **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
-        committed = [] # type: List
-        uncommitted = [] # type: List
-        if blocks.committed_blocks:
-            committed = [BlobBlock._from_generated(b) for b in blocks.committed_blocks]  # pylint: disable=protected-access
-        if blocks.uncommitted_blocks:
-            uncommitted = [BlobBlock._from_generated(b) for b in blocks.uncommitted_blocks]  # pylint: disable=protected-access
-        return committed, uncommitted
+        return self._get_block_list_result(blocks)
 
-    def commit_block_list( # type: ignore
+    def _commit_block_list_options( # type: ignore
             self, block_list,  # type: List[BlobBlock]
-            lease=None,  # type: Optional[Union[LeaseClient, str]]
             content_settings=None,  # type: Optional[ContentSettings]
             metadata=None,  # type: Optional[Dict[str, str]]
             validate_content=False,  # type: Optional[bool]
-            if_modified_since=None,  # type: Optional[datetime]
-            if_unmodified_since=None,  # type: Optional[datetime]
-            if_match=None,  # type: Optional[str]
-            if_none_match=None,  # type: Optional[str]
-            timeout=None,  # type: Optional[int]
+            **kwargs
+        ):
+        # type: (...) -> Dict[str, Any]
+        if self.require_encryption or (self.key_encryption_key is not None):
+            raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
+        block_lookup = BlockLookupList(committed=[], uncommitted=[], latest=[])
+        for block in block_list:
+            try:
+                if block.state.value == 'committed':
+                    block_lookup.committed.append(encode_base64(str(block.id)))
+                elif block.state.value == 'uncommitted':
+                    block_lookup.uncommitted.append(encode_base64(str(block.id)))
+                else:
+                    block_lookup.latest.append(encode_base64(str(block.id)))
+            except AttributeError:
+                block_lookup.latest.append(encode_base64(str(block)))
+        headers = kwargs.pop('headers', {})
+        headers.update(add_metadata_headers(metadata))
+        blob_headers = None
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
+        mod_conditions = ModifiedAccessConditions(
+            if_modified_since=kwargs.pop('if_modified_since', None),
+            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
+            if_match=kwargs.pop('if_match', None),
+            if_none_match=kwargs.pop('if_none_match', None))
+        if content_settings:
+            blob_headers = BlobHTTPHeaders(
+                blob_cache_control=content_settings.cache_control,
+                blob_content_type=content_settings.content_type,
+                blob_content_md5=bytearray(content_settings.content_md5) if content_settings.content_md5 else None,
+                blob_content_encoding=content_settings.content_encoding,
+                blob_content_language=content_settings.content_language,
+                blob_content_disposition=content_settings.content_disposition
+            )
+        options = {
+            'blocks': block_lookup,
+            'blob_http_headers': blob_headers,
+            'lease_access_conditions': access_conditions,
+            'timeout': kwargs.pop('timeout', None),
+            'modified_access_conditions': mod_conditions,
+            'cls': return_response_headers,
+            'validate_content': validate_content}
+        options.update(kwargs)
+        return options
+
+    @distributed_trace
+    def commit_block_list( # type: ignore
+            self, block_list,  # type: List[BlobBlock]
+            content_settings=None,  # type: Optional[ContentSettings]
+            metadata=None,  # type: Optional[Dict[str, str]]
+            validate_content=False,  # type: Optional[bool]
             **kwargs
         ):
         # type: (...) -> Dict[str, Union[str, datetime]]
@@ -1719,48 +1836,19 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :returns: Blob-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
-        if self.require_encryption or (self.key_encryption_key is not None):
-            raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
-        block_lookup = BlockLookupList(committed=[], uncommitted=[], latest=[])
-        for block in block_list:
-            try:
-                if block.state.value == 'committed':
-                    block_lookup.committed.append(encode_base64(str(block.id)))
-                elif block.state.value == 'uncommitted':
-                    block_lookup.uncommitted.append(encode_base64(str(block.id)))
-                else:
-                    block_lookup.latest.append(encode_base64(str(block.id)))
-            except AttributeError:
-                block_lookup.latest.append(encode_base64(str(block)))
-        headers = kwargs.pop('headers', {})
-        headers.update(add_metadata_headers(metadata))
-        blob_headers = None
-        access_conditions = get_access_conditions(lease)
-        mod_conditions = get_modification_conditions(
-            if_modified_since, if_unmodified_since, if_match, if_none_match)
-        if content_settings:
-            blob_headers = BlobHTTPHeaders(
-                blob_cache_control=content_settings.cache_control,
-                blob_content_type=content_settings.content_type,
-                blob_content_md5=bytearray(content_settings.content_md5) if content_settings.content_md5 else None,
-                blob_content_encoding=content_settings.content_encoding,
-                blob_content_language=content_settings.content_language,
-                blob_content_disposition=content_settings.content_disposition
-            )
+        options = self._commit_block_list_options(
+            block_list,
+            content_settings=content_settings,
+            metadata=metadata,
+            validate_content=validate_content,
+            **kwargs)
         try:
-            return self._client.block_blob.commit_block_list( # type: ignore
-                block_lookup,
-                blob_http_headers=blob_headers,
-                lease_access_conditions=access_conditions,
-                timeout=timeout,
-                modified_access_conditions=mod_conditions,
-                cls=return_response_headers,
-                validate_content=validate_content,
-                **kwargs)
+            return self._client.block_blob.commit_block_list(**options) # type: ignore
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def set_premium_page_blob_tier(self, premium_page_blob_tier, timeout=None, lease=None, **kwargs):
+    @distributed_trace
+    def set_premium_page_blob_tier(self, premium_page_blob_tier, **kwargs):
         # type: (Union[str, PremiumPageBlobTier], Optional[int], Optional[Union[LeaseClient, str]], **Any) -> None
         """Sets the page blob tiers on the blob. This API is only supported for page blobs on premium accounts.
 
@@ -1779,31 +1867,71 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :type lease: ~azure.storage.blob.lease.LeaseClient or str
         :rtype: None
         """
-        access_conditions = get_access_conditions(lease)
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
         if premium_page_blob_tier is None:
             raise ValueError("A PremiumPageBlobTiermust be specified")
         try:
             self._client.blob.set_tier(
                 tier=premium_page_blob_tier,
-                timeout=timeout,
+                timeout=kwargs.pop('timeout', None),
                 lease_access_conditions=access_conditions,
                 **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
 
+    def _get_page_ranges_options( # type: ignore
+            self, start_range=None, # type: Optional[int]
+            end_range=None, # type: Optional[int]
+            previous_snapshot_diff=None,  # type: Optional[Union[str, Dict[str, Any]]]
+            **kwargs
+        ):
+        # type: (...) -> Dict[str, Any]
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
+        mod_conditions = ModifiedAccessConditions(
+            if_modified_since=kwargs.pop('if_modified_since', None),
+            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
+            if_match=kwargs.pop('if_match', None),
+            if_none_match=kwargs.pop('if_none_match', None))
+        page_range = None # type: ignore
+        if start_range is not None and end_range is None:
+            page_range = str(start_range)
+        elif start_range is not None and end_range is not None:
+            page_range = str(end_range - start_range + 1)
+        options = {
+            'snapshot': self.snapshot,
+            'lease_access_conditions': access_conditions,
+            'modified_access_conditions': mod_conditions,
+            'timeout': kwargs.pop('timeout', None),
+            'range': page_range}
+        if previous_snapshot_diff:
+            try:
+                options['prevsnapshot'] = previous_snapshot_diff.snapshot # type: ignore
+            except AttributeError:
+                try:
+                    options['prevsnapshot'] = previous_snapshot_diff['snapshot'] # type: ignore
+                except TypeError:
+                    options['prevsnapshot'] = previous_snapshot_diff
+        options.update(kwargs)
+        return options
+
+    def _get_page_ranges_result(self, ranges):
+        # type: (PageList) -> Tuple(List[Dict[str, int]], List[Dict[str, int]])
+        page_range = [] # type: ignore
+        clear_range = [] # type: List
+        if ranges.page_range:
+            page_range = [{'start': b.start, 'end': b.end} for b in ranges.page_range] # type: ignore
+        if ranges.clear_range:
+            clear_range = [{'start': b.start, 'end': b.end} for b in ranges.clear_range]
+        return page_range, clear_range # type: ignore
+
+    @distributed_trace
     def get_page_ranges( # type: ignore
             self, start_range=None, # type: Optional[int]
             end_range=None, # type: Optional[int]
-            lease=None,  # type: Optional[Union[LeaseClient, str]]
             previous_snapshot_diff=None,  # type: Optional[Union[str, Dict[str, Any]]]
-            if_modified_since=None,  # type: Optional[datetime]
-            if_unmodified_since=None,  # type: Optional[datetime]
-            if_match=None,  # type: Optional[str]
-            if_none_match=None,  # type: Optional[str]
-            timeout=None, # type: Optional[int]
             **kwargs
         ):
-        # type: (...) -> List[dict[str, int]]
+        # type: (...) -> Tuple(List[Dict[str, int]], List[Dict[str, int]])
         """Returns the list of valid page ranges for a Page Blob or snapshot
         of a page blob.
 
@@ -1857,63 +1985,43 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             The first element are filled page ranges, the 2nd element is cleared page ranges.
         :rtype: tuple(list(dict(str, str), list(dict(str, str))
         """
-        access_conditions = get_access_conditions(lease)
-        mod_conditions = get_modification_conditions(
-            if_modified_since, if_unmodified_since, if_match, if_none_match)
-        page_range = None # type: ignore
-        if start_range is not None and end_range is None:
-            page_range = str(start_range)
-        elif start_range is not None and end_range is not None:
-            page_range = str(end_range - start_range + 1)
+        options = self._get_page_ranges_options(
+            start_range=start_range,
+            end_range=end_range,
+            previous_snapshot_diff=previous_snapshot_diff,
+            **kwargs)
         try:
             if previous_snapshot_diff:
-                try:
-                    prev_snapshot = previous_snapshot_diff.snapshot # type: ignore
-                except AttributeError:
-                    try:
-                        prev_snapshot = previous_snapshot_diff['snapshot'] # type: ignore
-                    except TypeError:
-                        prev_snapshot = previous_snapshot_diff
-                ranges = self._client.page_blob.get_page_ranges_diff(
-                    snapshot=self.snapshot,
-                    prevsnapshot=prev_snapshot,
-                    lease_access_conditions=access_conditions,
-                    modified_access_conditions=mod_conditions,
-                    timeout=timeout,
-                    range=page_range,
-                    **kwargs
-                )
+                ranges = self._client.page_blob.get_page_ranges_diff(**options)
             else:
-                ranges = self._client.page_blob.get_page_ranges(
-                    snapshot=self.snapshot,
-                    lease_access_conditions=access_conditions,
-                    modified_access_conditions=mod_conditions,
-                    timeout=timeout,
-                    range=page_range,
-                    **kwargs
-                )
+                ranges = self._client.page_blob.get_page_ranges(**options)
         except StorageErrorException as error:
             process_storage_error(error)
-        page_range = [] # type: ignore
-        clear_range = [] # type: List
-        if ranges.page_range:
-            page_range = [{'start': b.start, 'end': b.end} for b in ranges.page_range] # type: ignore
-        if ranges.clear_range:
-            clear_range = [{'start': b.start, 'end': b.end} for b in ranges.clear_range]
-        return page_range, clear_range # type: ignore
+        return self._get_page_ranges_result(ranges)
 
-    def set_sequence_number( # type: ignore
-            self, sequence_number_action,  # type: Union[str, SequenceNumberAction]
-            sequence_number=None,  # type: Optional[str]
-            lease=None,  # type: Optional[Union[LeaseClient, str]]
-            if_modified_since=None,  # type: Optional[datetime]
-            if_unmodified_since=None,  # type: Optional[datetime]
-            if_match=None,  # type: Optional[str]
-            if_none_match=None,  # type: Optional[str]
-            timeout=None, # type: Optional[int]
-            **kwargs
-        ):
-        # type: (...) -> Dict[str, Union[str, datetime]]
+    def _set_sequence_number_options(self, sequence_number_action, sequence_number=None, **kwargs):
+        # type: (Union[str, SequenceNumberAction], Optional[str], **Any) -> Dict[str, Any]
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
+        mod_conditions = ModifiedAccessConditions(
+            if_modified_since=kwargs.pop('if_modified_since', None),
+            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
+            if_match=kwargs.pop('if_match', None),
+            if_none_match=kwargs.pop('if_none_match', None))
+        if sequence_number_action is None:
+            raise ValueError("A sequence number action must be specified")
+        options = {
+            'sequence_number_action': sequence_number_action,
+            'timeout': kwargs.pop('timeout', None),
+            'blob_sequence_number': sequence_number,
+            'lease_access_conditions': access_conditions,
+            'modified_access_conditions': mod_conditions,
+            'cls': return_response_headers}
+        options.update(kwargs)
+        return options
+
+    @distributed_trace
+    def set_sequence_number(self, sequence_number_action, sequence_number=None, **kwargs):
+        # type: (Union[str, SequenceNumberAction], Optional[str], **Any) -> Dict[str, Union[str, datetime]]
         """Sets the blob sequence number.
 
         :param str sequence_number_action:
@@ -1953,34 +2061,35 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :returns: Blob-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
-        access_conditions = get_access_conditions(lease)
-        mod_conditions = get_modification_conditions(
-            if_modified_since, if_unmodified_since, if_match, if_none_match)
-        if sequence_number_action is None:
-            raise ValueError("A sequence number action must be specified")
+        options = self._set_sequence_number_options(
+            sequence_number_action, sequence_number=sequence_number, **kwargs)
         try:
-            return self._client.page_blob.update_sequence_number( # type: ignore
-                sequence_number_action=sequence_number_action,
-                timeout=timeout,
-                blob_sequence_number=sequence_number,
-                lease_access_conditions=access_conditions,
-                modified_access_conditions=mod_conditions,
-                cls=return_response_headers,
-                **kwargs)
+            return self._client.page_blob.update_sequence_number(**options) # type: ignore
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def resize_blob( # type: ignore
-            self, size,  # type: int
-            lease=None,  # type: Optional[Union[LeaseClient, str]]
-            if_modified_since=None,  # type: Optional[datetime]
-            if_unmodified_since=None,  # type: Optional[datetime]
-            if_match=None,  # type: Optional[str]
-            if_none_match=None,  # type: Optional[str]
-            timeout=None, # type: Optional[int]
-            **kwargs
-        ):
-        # type: (...) -> Dict[str, Union[str, datetime]]
+    def _resize_blob_options(self, size, **kwargs):
+        # type: (int, **Any) -> Dict[str, Any]
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
+        mod_conditions = ModifiedAccessConditions(
+            if_modified_since=kwargs.pop('if_modified_since', None),
+            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
+            if_match=kwargs.pop('if_match', None),
+            if_none_match=kwargs.pop('if_none_match', None))
+        if size is None:
+            raise ValueError("A content length must be specified for a Page Blob.")
+        options = {
+            'blob_content_length': size,
+            'timeout': kwargs.pop('timeout', None),
+            'lease_access_conditions': access_conditions,
+            'modified_access_conditions': mod_conditions,
+            'cls': return_response_headers}
+        options.update(kwargs)
+        return options
+
+    @distributed_trace
+    def resize_blob(self, size, **kwargs):
+        # type: (int, **Any) -> Dict[str, Union[str, datetime]]
         """Resizes a page blob to the specified size.
 
         If the specified value is less than the current size of the blob,
@@ -2018,38 +2127,67 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :returns: Blob-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
-        access_conditions = get_access_conditions(lease)
-        mod_conditions = get_modification_conditions(
-            if_modified_since, if_unmodified_since, if_match, if_none_match)
-        if size is None:
-            raise ValueError("A content length must be specified for a Page Blob.")
+        options = self._resize_blob_options(size, **kwargs)
         try:
-            return self._client.page_blob.resize( # type: ignore
-                blob_content_length=size,
-                timeout=timeout,
-                lease_access_conditions=access_conditions,
-                modified_access_conditions=mod_conditions,
-                cls=return_response_headers,
-                **kwargs)
+            return self._client.page_blob.resize(**options) # type: ignore
         except StorageErrorException as error:
             process_storage_error(error)
 
+    def _upload_page_options( # type: ignore
+            self, page,  # type: bytes
+            start_range,  # type: int
+            end_range,  # type: int
+            length=None,  # type: Optional[int]
+            validate_content=False,  # type: Optional[bool]
+            **kwargs
+        ):
+        # type: (...) -> Dict[str, Any]
+        if isinstance(page, six.text_type):
+            page = page.encode(kwargs.pop('encoding', 'UTF-8'))
+        if self.require_encryption or (self.key_encryption_key is not None):
+            raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
+
+        if length is None:
+            length = get_length(page)
+            if length is None:
+                raise ValueError("Please specifiy content length.")
+        if start_range is None or start_range % 512 != 0:
+            raise ValueError("start_range must be an integer that aligns with 512 page size")
+        if end_range is None or end_range % 512 != 511:
+            raise ValueError("end_range must be an integer that aligns with 512 page size")
+        content_range = 'bytes={0}-{1}'.format(start_range, end_range) # type: ignore
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
+        seq_conditions = SequenceNumberAccessConditions(
+            if_sequence_number_less_than_or_equal_to=kwargs.pop('if_sequence_number_lte', None),
+            if_sequence_number_less_than=kwargs.pop('if_sequence_number_lt', None),
+            if_sequence_number_equal_to=kwargs.pop('if_sequence_number_eq', None)
+        )
+        mod_conditions = ModifiedAccessConditions(
+            if_modified_since=kwargs.pop('if_modified_since', None),
+            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
+            if_match=kwargs.pop('if_match', None),
+            if_none_match=kwargs.pop('if_none_match', None))
+        options = {
+            'body': page[:length],
+            'content_length': length,
+            'transactional_content_md5': None,
+            'timeout': kwargs.pop('timeout', None),
+            'range': content_range,
+            'lease_access_conditions': access_conditions,
+            'sequence_number_access_conditions': seq_conditions,
+            'modified_access_conditions': mod_conditions,
+            'validate_content': validate_content,
+            'cls': return_response_headers}
+        options.update(kwargs)
+        return options
+
+    @distributed_trace
     def upload_page( # type: ignore
             self, page,  # type: bytes
             start_range,  # type: int
             end_range,  # type: int
             length=None,  # type: Optional[int]
-            lease=None,  # type: Optional[Union[LeaseClient, str]]
             validate_content=False,  # type: Optional[bool]
-            if_sequence_number_lte=None, # type: Optional[int]
-            if_sequence_number_lt=None, # type: Optional[int]
-            if_sequence_number_eq=None, # type: Optional[int]
-            if_modified_since=None,  # type: Optional[datetime]
-            if_unmodified_since=None,  # type: Optional[datetime]
-            if_match=None,  # type: Optional[str]
-            if_none_match=None,  # type: Optional[str]
-            encoding='UTF-8',  # type: str
-            timeout=None, # type: Optional[int]
             **kwargs
         ):
         # type: (...) -> Dict[str, Union[str, datetime]]
@@ -2117,59 +2255,53 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :returns: Blob-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
-        if isinstance(page, six.text_type):
-            page = page.encode(encoding)
+        options = self._upload_page_options(
+            page,
+            start_range,
+            end_range,
+            length=length,
+            validate_content=validate_content,
+            **kwargs)
+        try:
+            return self._client.page_blob.upload_pages(**options) # type: ignore
+        except StorageErrorException as error:
+            process_storage_error(error)
+
+    def _clear_page_options(self, start_range, end_range, **kwargs):
+        # type: (int, int, **Any) -> Dict[str, Any]
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
-
-        if length is None:
-            length = get_length(page)
-            if length is None:
-                raise ValueError("Please specifiy content length.")
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
+        seq_conditions = SequenceNumberAccessConditions(
+            if_sequence_number_less_than_or_equal_to=kwargs.pop('if_sequence_number_lte', None),
+            if_sequence_number_less_than=kwargs.pop('if_sequence_number_lt', None),
+            if_sequence_number_equal_to=kwargs.pop('if_sequence_number_eq', None)
+        )
+        mod_conditions = ModifiedAccessConditions(
+            if_modified_since=kwargs.pop('if_modified_since', None),
+            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
+            if_match=kwargs.pop('if_match', None),
+            if_none_match=kwargs.pop('if_none_match', None)
+        )
         if start_range is None or start_range % 512 != 0:
             raise ValueError("start_range must be an integer that aligns with 512 page size")
         if end_range is None or end_range % 512 != 511:
             raise ValueError("end_range must be an integer that aligns with 512 page size")
-        content_range = 'bytes={0}-{1}'.format(start_range, end_range) # type: ignore
-        access_conditions = get_access_conditions(lease)
-        seq_conditions = get_sequence_conditions(
-            if_sequence_number_lte=if_sequence_number_lte,
-            if_sequence_number_lt=if_sequence_number_lt,
-            if_sequence_number_eq=if_sequence_number_eq
-        )
-        mod_conditions = get_modification_conditions(
-            if_modified_since, if_unmodified_since, if_match, if_none_match)
-        try:
-            return self._client.page_blob.upload_pages( # type: ignore
-                page[:length],
-                content_length=length,
-                transactional_content_md5=None,
-                timeout=timeout,
-                range=content_range,
-                lease_access_conditions=access_conditions,
-                sequence_number_access_conditions=seq_conditions,
-                modified_access_conditions=mod_conditions,
-                validate_content=validate_content,
-                cls=return_response_headers,
-                **kwargs)
-        except StorageErrorException as error:
-            process_storage_error(error)
+        content_range = 'bytes={0}-{1}'.format(start_range, end_range)
+        options = {
+            'content_length': 0,
+            'timeout': kwargs.pop('timeout', None),
+            'range': content_range,
+            'lease_access_conditions': access_conditions,
+            'sequence_number_access_conditions': seq_conditions,
+            'modified_access_conditions': mod_conditions,
+            'cls': return_response_headers}
+        options.update(kwargs)
+        return options
 
-    def clear_page( # type: ignore
-            self, start_range,  # type: int
-            end_range,  # type: int
-            lease=None,  # type: Optional[Union[LeaseClient, str]]
-            if_sequence_number_lte=None, # type: Optional[int]
-            if_sequence_number_lt=None, # type: Optional[int]
-            if_sequence_number_eq=None, # type: Optional[int]
-            if_modified_since=None,  # type: Optional[datetime]
-            if_unmodified_since=None,  # type: Optional[datetime]
-            if_match=None,  # type: Optional[str]
-            if_none_match=None,  # type: Optional[str]
-            timeout=None,  # type: Optional[int]
-            **kwargs
-        ):
-        # type: (...) -> Dict[str, Union[str, datetime]]
+    @distributed_trace
+    def clear_page(self, start_range, end_range, **kwargs):
+        # type: (int, int, **Any) -> Dict[str, Union[str, datetime]]
         """Clears a range of pages.
 
         :param int start_range:
@@ -2221,47 +2353,67 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :returns: Blob-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
-        if self.require_encryption or (self.key_encryption_key is not None):
-            raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
-        access_conditions = get_access_conditions(lease)
-        seq_conditions = get_sequence_conditions(
-            if_sequence_number_lte=if_sequence_number_lte,
-            if_sequence_number_lt=if_sequence_number_lt,
-            if_sequence_number_eq=if_sequence_number_eq
-        )
-        mod_conditions = get_modification_conditions(
-            if_modified_since, if_unmodified_since, if_match, if_none_match)
-        if start_range is None or start_range % 512 != 0:
-            raise ValueError("start_range must be an integer that aligns with 512 page size")
-        if end_range is None or end_range % 512 != 511:
-            raise ValueError("end_range must be an integer that aligns with 512 page size")
-        content_range = 'bytes={0}-{1}'.format(start_range, end_range)
+        options = self._clear_page_options(start_range, end_range, **kwargs)
         try:
-            return self._client.page_blob.clear_pages( # type: ignore
-                content_length=0,
-                timeout=timeout,
-                range=content_range,
-                lease_access_conditions=access_conditions,
-                sequence_number_access_conditions=seq_conditions,
-                modified_access_conditions=mod_conditions,
-                cls=return_response_headers,
-                **kwargs)
+            return self._client.page_blob.clear_pages(**options)  # type: ignore
         except StorageErrorException as error:
             process_storage_error(error)
 
+    def _append_block_options( # type: ignore
+            self, data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
+            length=None,  # type: Optional[int]
+            validate_content=False,  # type: Optional[bool]
+            maxsize_condition=None,  # type: Optional[int]
+            appendpos_condition=None,  # type: Optional[int]
+            **kwargs
+        ):
+        # type: (...) -> Dict[str, Any]
+        if self.require_encryption or (self.key_encryption_key is not None):
+            raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
+
+        if isinstance(data, six.text_type):
+            data = data.encode(kwargs.pop('encoding', 'UTF-8')) # type: ignore
+        if length is None:
+            length = get_length(data)
+            if length is None:
+                length, data = read_length(data)
+        if length == 0:
+            return {}
+        if isinstance(data, bytes):
+            data = data[:length]
+
+        append_conditions = None
+        if maxsize_condition or appendpos_condition:
+            append_conditions = AppendPositionAccessConditions(
+                max_size=maxsize_condition,
+                append_position=appendpos_condition
+            )
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
+        mod_conditions = ModifiedAccessConditions(
+            if_modified_since=kwargs.pop('if_modified_since', None),
+            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
+            if_match=kwargs.pop('if_match', None),
+            if_none_match=kwargs.pop('if_none_match', None))
+        options = {
+            'body': data,
+            'content_length': length,
+            'timeout': kwargs.pop('timeout', None),
+            'transactional_content_md5': None,
+            'lease_access_conditions': access_conditions,
+            'append_position_access_conditions': append_conditions,
+            'modified_access_conditions': mod_conditions,
+            'validate_content': validate_content,
+            'cls': return_response_headers}
+        options.update(kwargs)
+        return options
+
+    @distributed_trace
     def append_block( # type: ignore
             self, data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
             length=None,  # type: Optional[int]
             validate_content=False,  # type: Optional[bool]
             maxsize_condition=None,  # type: Optional[int]
             appendpos_condition=None,  # type: Optional[int]
-            lease=None, # type: Optional[Union[LeaseClient, str]]
-            if_modified_since=None,  # type: Optional[datetime]
-            if_unmodified_since=None,  # type: Optional[datetime]
-            if_match=None,  # type: Optional[str]
-            if_none_match=None,  # type: Optional[datetime]
-            encoding='UTF-8',  # type: str
-            timeout=None,  # type: Optional[int]
             **kwargs
         ):
         # type: (...) -> Dict[str, Union[str, datetime, int]]
@@ -2322,40 +2474,15 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :returns: Blob-updated property dict (Etag, last modified, append offset, committed block count).
         :rtype: dict(str, Any)
         """
-        if self.require_encryption or (self.key_encryption_key is not None):
-            raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
-
-        if isinstance(data, six.text_type):
-            data = data.encode(encoding) # type: ignore
-        if length is None:
-            length = get_length(data)
-            if length is None:
-                length, data = read_length(data)
-        if length == 0:
-            return {}
-        if isinstance(data, bytes):
-            data = data[:length]
-
-        append_conditions = None
-        if maxsize_condition or appendpos_condition:
-            append_conditions = AppendPositionAccessConditions(
-                max_size=maxsize_condition,
-                append_position=appendpos_condition
-            )
-        access_conditions = get_access_conditions(lease)
-        mod_conditions = get_modification_conditions( # type: ignore
-            if_modified_since, if_unmodified_since, if_match, if_none_match)
+        options = self._append_block_options(
+            data,
+            length=length,
+            validate_content=validate_content,
+            maxsize_condition=maxsize_condition,
+            appendpos_condition=appendpos_condition,
+            **kwargs
+        )
         try:
-            return self._client.append_blob.append_block( # type: ignore
-                data,
-                content_length=length,
-                timeout=timeout,
-                transactional_content_md5=None,
-                lease_access_conditions=access_conditions,
-                append_position_access_conditions=append_conditions,
-                modified_access_conditions=mod_conditions,
-                validate_content=validate_content,
-                cls=return_response_headers,
-                **kwargs)
+            return self._client.append_blob.append_block(**options) # type: ignore
         except StorageErrorException as error:
             process_storage_error(error)

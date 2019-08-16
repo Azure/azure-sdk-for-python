@@ -86,6 +86,17 @@ class StoragePageBlobTest(StorageTestCase):
         blob.create_page_blob(size=length)
         return blob
 
+    def _wait_for_async_copy(self, blob):
+        count = 0
+        props = blob.get_blob_properties()
+        while props.copy.status == 'pending':
+            count = count + 1
+            if count > 10:
+                self.fail('Timed out waiting for async copy to complete.')
+            self.sleep(6)
+            props = blob.get_blob_properties()
+        return props
+
     def assertBlobEqual(self, container_name, blob_name, expected_data):
         blob = self.bs.get_blob_client(container_name, blob_name)
         actual_data = blob.download_blob()
@@ -575,8 +586,7 @@ class StoragePageBlobTest(StorageTestCase):
         self.assertBlobEqual(self.container_name, blob.blob_name, data)
         self.assertEqual(props.etag, create_resp.get('etag'))
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
-        self.assert_upload_progress(
-            LARGE_BLOB_SIZE, self.config.blob_settings.max_page_size, progress)
+        self.assert_upload_progress(LARGE_BLOB_SIZE, self.config.max_page_size, progress)
 
     def test_create_blob_from_bytes_with_index(self):
         # parallel tests introduce random order of requests, can only run live
@@ -657,7 +667,7 @@ class StoragePageBlobTest(StorageTestCase):
 
         # Assert
         self.assertBlobEqual(self.container_name, blob.blob_name, data)
-        self.assert_upload_progress(len(data), self.config.blob_settings.max_page_size, progress)
+        self.assert_upload_progress(len(data), self.config.max_page_size, progress)
 
     def test_create_blob_from_stream(self):
         # parallel tests introduce random order of requests, can only run live
@@ -763,7 +773,7 @@ class StoragePageBlobTest(StorageTestCase):
 
         # Assert
         self.assertBlobEqual(self.container_name, blob.blob_name, data[:blob_size])
-        self.assert_upload_progress(len(data), self.config.blob_settings.max_page_size, progress)
+        self.assert_upload_progress(len(data), self.config.max_page_size, progress)
 
     def test_create_blob_from_stream_truncated(self):
         # parallel tests introduce random order of requests, can only run live
@@ -810,7 +820,7 @@ class StoragePageBlobTest(StorageTestCase):
 
         # Assert
         self.assertBlobEqual(self.container_name, blob.blob_name, data[:blob_size])
-        self.assert_upload_progress(blob_size, self.config.blob_settings.max_page_size, progress)
+        self.assert_upload_progress(blob_size, self.config.max_page_size, progress)
 
     @record
     def test_create_blob_with_md5_small(self):
@@ -860,15 +870,14 @@ class StoragePageBlobTest(StorageTestCase):
 
         # Act
         dest_blob = self.bs.get_blob_client(self.container_name, 'dest_blob')
-        copy = dest_blob.copy_blob_from_url(sas_blob.url, incremental_copy=True)
+        copy = dest_blob.start_copy_from_url(sas_blob.url, incremental_copy=True)
 
         # Assert
         self.assertIsNotNone(copy)
-        self.assertIsNotNone(copy.copy_id())
-        self.assertEqual(copy.status(), 'pending')
-        copy.wait()
+        self.assertIsNotNone(copy['copy_id'])
+        self.assertEqual(copy['copy_status'], 'pending')
 
-        copy_blob = dest_blob.get_blob_properties()
+        copy_blob = self._wait_for_async_copy(dest_blob)
         self.assertEqual(copy_blob.copy.status, 'success')
         self.assertIsNotNone(copy_blob.copy.destination_snapshot)
 
@@ -1005,12 +1014,12 @@ class StoragePageBlobTest(StorageTestCase):
                 self._get_premium_account_url(), container_name, source_blob.blob_name)
 
             copy_blob = pbs.get_blob_client(container_name, 'blob1copy')
-            copy = copy_blob.copy_blob_from_url(source_blob_url, premium_page_blob_tier=PremiumPageBlobTier.P30)
+            copy = copy_blob.start_copy_from_url(source_blob_url, premium_page_blob_tier=PremiumPageBlobTier.P30)
 
             # Assert
             self.assertIsNotNone(copy)
-            self.assertEqual(copy.status(), 'success')
-            self.assertIsNotNone(copy.copy_id())
+            self.assertEqual(copy['copy_status'], 'success')
+            self.assertIsNotNone(copy['copy_id'])
 
             copy_ref = copy_blob.get_blob_properties()
             self.assertEqual(copy_ref.blob_tier, PremiumPageBlobTier.P30)
@@ -1024,20 +1033,20 @@ class StoragePageBlobTest(StorageTestCase):
                 self._get_premium_account_url(), source_blob2.container_name, source_blob2.blob_name)
 
             copy_blob2 = pbs.get_blob_client(container_name, 'blob2copy')
-            copy2 = copy_blob2.copy_blob_from_url(source_blob2_url, premium_page_blob_tier=PremiumPageBlobTier.P60)
+            copy2 = copy_blob2.start_copy_from_url(source_blob2_url, premium_page_blob_tier=PremiumPageBlobTier.P60)
             self.assertIsNotNone(copy2)
-            self.assertEqual(copy2.status(), 'success')
-            self.assertIsNotNone(copy2.copy_id())
+            self.assertEqual(copy2['copy_status'], 'success')
+            self.assertIsNotNone(copy2['copy_id'])
 
             copy_ref2 = copy_blob2.get_blob_properties()
             self.assertEqual(copy_ref2.blob_tier, PremiumPageBlobTier.P60)
             self.assertFalse(copy_ref2.blob_tier_inferred)
 
             copy_blob3 = pbs.get_blob_client(container_name, 'blob3copy')
-            copy3 = copy_blob3.copy_blob_from_url(source_blob2_url)
+            copy3 = copy_blob3.start_copy_from_url(source_blob2_url)
             self.assertIsNotNone(copy3)
-            self.assertEqual(copy3.status(), 'success')
-            self.assertIsNotNone(copy3.copy_id())
+            self.assertEqual(copy3['copy_status'], 'success')
+            self.assertIsNotNone(copy3['copy_id'])
 
             copy_ref3 = copy_blob3.get_blob_properties()
             self.assertEqual(copy_ref3.blob_tier, PremiumPageBlobTier.P10)

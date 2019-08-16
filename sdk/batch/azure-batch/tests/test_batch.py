@@ -298,6 +298,41 @@ class BatchTest(AzureMgmtTestCase):
 
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION)
+    def test_batch_create_pool_with_blobfuse_mount(self, **kwargs):
+        client = self.create_sharedkey_client(**kwargs)
+        # Test Create Iaas Pool
+        test_iaas_pool = models.PoolAddParameter(
+            id=self.get_resource_name('batch_iaas_'),
+            vm_size='Standard_A1',
+            virtual_machine_configuration=models.VirtualMachineConfiguration(
+                image_reference=models.ImageReference(
+                    publisher='MicrosoftWindowsServer',
+                    offer='WindowsServer',
+                    sku='2016-Datacenter-smalldisk'
+                ),
+                node_agent_sku_id='batch.node.windows amd64',
+                windows_configuration=models.WindowsConfiguration(enable_automatic_updates=True)),
+            task_scheduling_policy=models.TaskSchedulingPolicy(node_fill_type=models.ComputeNodeFillType.pack),
+            mount_configuration=[models.MountConfiguration(
+                azure_blob_file_system_configuration=models.AzureBlobFileSystemConfiguration(
+                    account_name='test',
+                    container_name='https://test.blob.core.windows.net:443/test-container',
+                    relative_mount_path='foo',
+                    account_key='fake_account_key'
+                )
+            )]
+        )
+        response = client.pool.add(test_iaas_pool)
+        self.assertIsNone(response)
+
+        mount_pool = client.pool.get(test_iaas_pool.id)
+        self.assertIsNotNone(mount_pool.mount_configuration)
+        self.assertEqual(len(mount_pool.mount_configuration), 1)
+        self.assertIsNotNone(mount_pool.mount_configuration[0].azure_blob_file_system_configuration)
+        self.assertIsNone(mount_pool.mount_configuration[0].nfs_mount_configuration)
+
+    @ResourceGroupPreparer(location=AZURE_LOCATION)
+    @AccountPreparer(location=AZURE_LOCATION)
     def test_batch_update_pools(self, **kwargs):
         client = self.create_sharedkey_client(**kwargs)
         # Test Create Paas Pool

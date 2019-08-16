@@ -19,8 +19,9 @@ try:
 except ImportError:
     TYPE_CHECKING = False
 if TYPE_CHECKING:
+    # pylint:disable=unused-import
     from time import struct_time
-    from typing import Any, Dict, Iterable, Mapping, Optional
+    from typing import Any, Dict, Iterable, Mapping, Optional, Union
     from azure.core.pipeline import PipelineResponse
     from azure.core.pipeline.policies import HTTPPolicy
 
@@ -60,13 +61,13 @@ class AuthnClientBase(object):
         token = payload["access_token"]
 
         # AccessToken wants expires_on as an int
-        expires_on = payload.get("expires_on") or int(payload["expires_in"]) + request_time
+        expires_on = payload.get("expires_on") or int(payload["expires_in"]) + request_time  # type: Union[str, int]
         try:
             expires_on = int(expires_on)
         except ValueError:
             # probably an App Service MSI response, convert it to epoch seconds
             try:
-                t = self._parse_app_service_expires_on(expires_on)
+                t = self._parse_app_service_expires_on(expires_on)  # type: ignore
                 expires_on = calendar.timegm(t)
             except ValueError:
                 # have a token but don't know when it expires -> treat it as single-use
@@ -120,7 +121,12 @@ class AuthnClient(AuthnClientBase):
     def __init__(self, auth_url, config=None, policies=None, transport=None, **kwargs):
         # type: (str, Optional[Configuration], Optional[Iterable[HTTPPolicy]], Optional[HttpTransport], Mapping[str, Any]) -> None
         config = config or self._create_config(**kwargs)
-        policies = policies or [ContentDecodePolicy(), config.retry_policy, config.logging_policy, DistributedTracingPolicy()]
+        policies = policies or [
+            ContentDecodePolicy(),
+            config.retry_policy,
+            config.logging_policy,
+            DistributedTracingPolicy(),
+        ]
         if not transport:
             transport = RequestsTransport(**kwargs)
         self._pipeline = Pipeline(transport=transport, policies=policies)
