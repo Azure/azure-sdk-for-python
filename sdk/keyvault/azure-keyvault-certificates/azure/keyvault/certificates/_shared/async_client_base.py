@@ -17,6 +17,7 @@ from .._user_agent import USER_AGENT
 
 if TYPE_CHECKING:
     try:
+        # pylint:disable=unused-import
         from azure.core.credentials import TokenCredential
     except ImportError:
         # TokenCredential is a typing_extensions.Protocol; we don't depend on that package

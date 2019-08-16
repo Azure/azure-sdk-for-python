@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint:disable=too-many-lines,unused-import,too-many-public-methods
 import base64
 import uuid
 from typing import Any, Dict, List, Mapping, Optional, Iterable
@@ -802,7 +803,7 @@ class CertificateClient(KeyVaultClientBase):
 
         if response.status_code not in [200]:
             self._client.map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise self._client.models.KeyVaultErrorException(response, self._deserialize)
+            raise self._client.models.KeyVaultErrorException(response, self._client._deserialize)
 
         deserialized = None
 

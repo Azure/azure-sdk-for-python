@@ -23,6 +23,7 @@ if TYPE_CHECKING:
 class ChallengeAuthPolicyBase(_BearerTokenCredentialPolicyBase):
     """Sans I/O base for challenge authentication policies"""
 
+    # pylint:disable=useless-super-delegation
     def __init__(self, credential, **kwargs):
         super(ChallengeAuthPolicyBase, self).__init__(credential, **kwargs)
 

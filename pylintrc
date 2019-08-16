@@ -1,6 +1,5 @@
 [MASTER]
 ignore-patterns=test_*
-ignore=_generated
 reports=no
 
 [MESSAGES CONTROL]

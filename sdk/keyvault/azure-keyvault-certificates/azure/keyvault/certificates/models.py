@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint:disable=too-many-lines
 
 from datetime import datetime
 from typing import Any, Dict, Mapping, Optional
@@ -241,6 +242,7 @@ class Certificate(CertificateBase):
     def _from_certificate_bundle(cls, certificate_bundle):
         # type: (models.CertificateBundle) -> Certificate
         """Construct a certificate from an autorest-generated certificateBundle"""
+        # pylint:disable=protected-access
         return cls(
             attributes=certificate_bundle.attributes,
             cert_id=certificate_bundle.id,
@@ -286,6 +288,7 @@ class Certificate(CertificateBase):
 
 
 class CertificateOperation(object):
+    # pylint:disable=too-many-instance-attributes
     """A certificate operation is returned in case of asynchronous requests. """
     def __init__(
         self,
@@ -299,8 +302,7 @@ class CertificateOperation(object):
         status_details=None,  # type: Optional[str]
         error=None,  # type: Optional[models.Error]
         target=None,  # type: Optional[str]
-        request_id=None,  # type: Optional[str]
-        **kwargs  # type: Mapping[str, Any]
+        request_id=None  # type: Optional[str]
     ):
         # type: (...) -> None
         self._id = cert_operation_id
@@ -437,6 +439,7 @@ class CertificateOperation(object):
 
 class CertificatePolicy(object):
     """Management policy for a certificate."""
+    # pylint:disable=too-many-instance-attributes
     def __init__(
         self,
         attributes=None,  # type: Optional[models.CertificateAttributes]
@@ -451,8 +454,7 @@ class CertificatePolicy(object):
         lifetime_actions=None,  # type: Optional[list[LifetimeAction]]
         issuer_name=None,  # type: Optional[str]
         certificate_type=None,  # type: Optional[str]
-        certificate_transparency=None,  # type: Optional[bool]
-        **kwargs  # type: Mapping[str, Any]
+        certificate_transparency=None  # type: Optional[bool]
     ):
         # type: (...) -> None
         self._attributes = attributes
@@ -482,6 +484,7 @@ class CertificatePolicy(object):
         else:
             issuer_parameters = None
 
+        # pylint:disable=too-many-boolean-expressions
         if (self.enabled is not None or
                 self.not_before is not None or
                 self.expires is not None or
@@ -514,6 +517,7 @@ class CertificatePolicy(object):
         else:
             lifetime_actions = None
 
+        # pylint:disable=too-many-boolean-expressions
         if(self.subject_name or
                 self.key_properties.ekus or
                 self.key_properties.key_usage or
@@ -582,6 +586,7 @@ class CertificatePolicy(object):
         else:
             lifetime_actions = None
         key_properties_bundle = certificate_policy_bundle.key_properties
+        # pylint:disable=too-many-boolean-expressions
         if (key_properties_bundle and
                 (key_properties_bundle.exportable or
                     key_properties_bundle.key_type or
@@ -894,6 +899,7 @@ class Issuer(IssuerBase):
         admin_details = []
         admin_details_service = issuer_bundle.organization_details.admin_details
         if admin_details_service:
+            # pylint:disable=protected-access
             for admin_detail in admin_details_service:
                 admin_details.append(AdministratorDetails._from_admin_details_bundle(admin_detail))
         return cls(
@@ -1133,6 +1139,7 @@ class DeletedCertificate(Certificate):
     def _from_deleted_certificate_bundle(cls, deleted_certificate_bundle):
         # type: (models.DeletedCertificateBundle) -> DeletedCertificate
         """Construct a DeletedCertificate from an autorest-generated DeletedCertificateItem"""
+        # pylint:disable=protected-access
         return cls(
             attributes=deleted_certificate_bundle.attributes,
             cert_id=deleted_certificate_bundle.id,
