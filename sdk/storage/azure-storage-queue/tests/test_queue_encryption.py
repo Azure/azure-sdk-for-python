@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import unittest
+import six
 from base64 import (
     b64decode,
 )
@@ -19,8 +20,7 @@ from cryptography.hazmat.primitives.ciphers.modes import CBC
 from cryptography.hazmat.primitives.padding import PKCS7
 
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
-
-from azure.storage.queue._shared.utils import _decode_base64_to_bytes
+from azure.storage.queue._shared import decode_base64_to_bytes
 from azure.storage.queue._shared.encryption import (
     _ERROR_OBJECT_INVALID,
     _WrappedContentKey,
@@ -54,6 +54,10 @@ TEST_QUEUE_PREFIX = 'encryptionqueue'
 
 # ------------------------------------------------------------------------------
 
+def _decode_base64_to_bytes(data):
+    if isinstance(data, six.text_type):
+        data = data.encode('utf-8')
+    return b64decode(data)
 
 class StorageQueueEncryptionTest(QueueTestCase):
     def setUp(self):
@@ -407,7 +411,7 @@ class StorageQueueEncryptionTest(QueueTestCase):
         cipher = Cipher(algorithm, mode, backend)
 
         # decode and decrypt data
-        decrypted_data = _decode_base64_to_bytes(message)
+        decrypted_data = decode_base64_to_bytes(message)
         decryptor = cipher.decryptor()
         decrypted_data = (decryptor.update(decrypted_data) + decryptor.finalize())
 

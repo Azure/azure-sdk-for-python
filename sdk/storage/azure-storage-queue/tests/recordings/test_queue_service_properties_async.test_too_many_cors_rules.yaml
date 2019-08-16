@@ -1,0 +1,53 @@
+interactions:
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <StorageServiceProperties />'
+    headers:
+      Content-Length:
+      - '67'
+      Content-Type:
+      - application/xml; charset=utf-8
+      User-Agent:
+      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-client-request-id:
+      - 9fa00e12-b575-11e9-8a2d-2816a845e8c6
+      x-ms-date:
+      - Fri, 02 Aug 2019 22:34:00 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: PUT
+    uri: https://storagename.queue.core.windows.net/?restype=service&comp=properties
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidXmlDocument</Code><Message>XML
+        specified is not syntactically valid.\nRequestId:408c5c7f-9003-0040-1782-494dee000000\nTime:2019-08-02T22:34:00.4761640Z</Message><LineNumber>2</LineNumber><LinePosition>29</LinePosition><Reason>Error
+        parsing Xml content: 'None' is an invalid XmlNodeType. Line 2, position 29.</Reason></Error>"
+    headers:
+      ? !!python/object/new:multidict._istr.istr
+      - Content-Length
+      : '383'
+      ? !!python/object/new:multidict._istr.istr
+      - Content-Type
+      : application/xml
+      ? !!python/object/new:multidict._istr.istr
+      - Date
+      : Fri, 02 Aug 2019 22:34:00 GMT
+      ? !!python/object/new:multidict._istr.istr
+      - Server
+      : Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code: InvalidXmlDocument
+      x-ms-request-id: 408c5c7f-9003-0040-1782-494dee000000
+      x-ms-version: '2018-03-28'
+    status:
+      code: 400
+      message: XML specified is not syntactically valid.
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - amqptest.queue.core.windows.net
+        - /
+        - restype=service&comp=properties
+        - ''
+version: 1

@@ -26,7 +26,7 @@ def test_client_secret_credential(aad_credential, live_eventhub):
     receiver = client.create_consumer(consumer_group="$default", partition_id='0', event_position=EventPosition("@latest"))
 
     with receiver:
-        received = receiver.receive(timeout=1)
+        received = receiver.receive(timeout=3)
         assert len(received) == 0
 
         with sender:
@@ -34,7 +34,7 @@ def test_client_secret_credential(aad_credential, live_eventhub):
             sender.send(event)
         time.sleep(1)
 
-        received = receiver.receive(timeout=1)
+        received = receiver.receive(timeout=3)
 
         assert len(received) == 1
         assert list(received[0].body)[0] == 'A single message'.encode('utf-8')

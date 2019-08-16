@@ -1,6 +1,13 @@
 azure.storage.file package
 ==========================
 
+Subpackages
+-----------
+
+.. toctree::
+
+   azure.storage.file.aio
+
 Submodules
 ----------
 
@@ -32,14 +39,6 @@ azure.storage.file.models module
 --------------------------------
 
 .. automodule:: azure.storage.file.models
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-azure.storage.file.polling module
----------------------------------
-
-.. automodule:: azure.storage.file.polling
    :members:
    :undoc-members:
    :show-inheritance:
