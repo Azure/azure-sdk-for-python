@@ -65,6 +65,15 @@ class TriggerRuntimeState(str, Enum):
     disabled = "Disabled"
 
 
+class EventSubscriptionStatus(str, Enum):
+
+    enabled = "Enabled"
+    provisioning = "Provisioning"
+    deprovisioning = "Deprovisioning"
+    disabled = "Disabled"
+    unknown = "Unknown"
+
+
 class RunQueryFilterOperand(str, Enum):
 
     pipeline_name = "PipelineName"
@@ -452,6 +461,12 @@ class PolybaseSettingsRejectType(str, Enum):
 
     value = "value"
     percentage = "percentage"
+
+
+class JsonWriteFilePattern(str, Enum):
+
+    set_of_objects = "setOfObjects"
+    array_of_objects = "arrayOfObjects"
 
 
 class SapCloudForCustomerSinkWriteBehavior(str, Enum):
