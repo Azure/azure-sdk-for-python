@@ -1,0 +1,42 @@
+trigger: none
+
+jobs:
+  - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
+    parameters:
+      Matrix:
+        Linux_Python35:
+          OSName: 'Linux'
+          OSVmImage: 'ubuntu-16.04'
+          PythonVersion: '3.5'
+        MacOs_Python37:
+          OSName: 'MacOS'
+          OSVmImage: 'macOS-10.14'
+          PythonVersion: '3.7'
+        Windows_Python27:
+          OSName: 'Windows'
+          OSVmImage: 'vs2017-win2016'
+          PythonVersion: '2.7'
+        Linux_Pypy3:
+          OSName: 'Linux'
+          OSVmImage: 'ubuntu-16.04'
+          PythonVersion: 'pypy3'
+      BuildTargetingString: $(BuildTargetingString)
+      ServiceDirectory: storage
+      EnvVars:
+        STORAGE_ACCOUNT_NAME: $(python-storage-storage-account-name)
+        STORAGE_ACCOUNT_KEY: $(python-storage-storage-account-key)
+        BLOB_STORAGE_ACCOUNT_NAME: $(python-storage-blob-storage-account-name)
+        BLOB_STORAGE_ACCOUNT_KEY: $(python-storage-blob-storage-account-key)
+        REMOTE_STORAGE_ACCOUNT_NAME: $(python-storage-remote-storage-account-name)
+        REMOTE_STORAGE_ACCOUNT_KEY: $(python-storage-remote-storage-account-key)
+        PREMIUM_STORAGE_ACCOUNT_NAME: $(python-storage-premium-storage-account-name)
+        PREMIUM_STORAGE_ACCOUNT_KEY: $(python-storage-premium-storage-account-key)
+        OAUTH_STORAGE_ACCOUNT_NAME: $(python-storage-oauth-storage-account-name)
+        OAUTH_STORAGE_ACCOUNT_KEY: $(python-storage-oauth-storage-account-key)
+        ACTIVE_DIRECTORY_APPLICATION_ID: $(aad-azure-sdk-test-client-id)
+        ACTIVE_DIRECTORY_APPLICATION_SECRET: $(aad-azure-sdk-test-client-secret)
+        ACTIVE_DIRECTORY_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
+        CONNECTION_STRING: $(python-storage-blob-connection-string)
+        BLOB_CONNECTION_STRING: $(python-storage-blob-connection-string)
+        PREMIUM_CONNECTION_STRING: $(python-storage-premium-connection-string)
+        TEST_MODE: 'RunLiveNoRecord'

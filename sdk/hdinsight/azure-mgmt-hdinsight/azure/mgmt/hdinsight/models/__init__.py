@@ -14,6 +14,15 @@ try:
     from ._models_py3 import ApplicationGetEndpoint
     from ._models_py3 import ApplicationGetHttpsEndpoint
     from ._models_py3 import ApplicationProperties
+    from ._models_py3 import Autoscale
+    from ._models_py3 import AutoscaleCapacity
+    from ._models_py3 import AutoscaleRecurrence
+    from ._models_py3 import AutoscaleSchedule
+    from ._models_py3 import AutoscaleTimeAndCapacity
+    from ._models_py3 import BillingMeters
+    from ._models_py3 import BillingResources
+    from ._models_py3 import BillingResponseListResult
+    from ._models_py3 import CapabilitiesResult
     from ._models_py3 import Cluster
     from ._models_py3 import ClusterConfigurations
     from ._models_py3 import ClusterCreateParametersExtended
@@ -32,6 +41,7 @@ try:
     from ._models_py3 import ComputeProfile
     from ._models_py3 import ConnectivityEndpoint
     from ._models_py3 import DataDisksGroups
+    from ._models_py3 import DiskBillingMeters
     from ._models_py3 import DiskEncryptionProperties
     from ._models_py3 import ErrorResponse, ErrorResponseException
     from ._models_py3 import Errors
@@ -46,7 +56,10 @@ try:
     from ._models_py3 import OperationResource
     from ._models_py3 import OsProfile
     from ._models_py3 import ProxyResource
+    from ._models_py3 import QuotaCapability
     from ._models_py3 import QuotaInfo
+    from ._models_py3 import RegionalQuotaCapability
+    from ._models_py3 import RegionsCapability
     from ._models_py3 import Resource
     from ._models_py3 import Role
     from ._models_py3 import RuntimeScriptAction
@@ -63,12 +76,26 @@ try:
     from ._models_py3 import UpdateGatewaySettingsParameters
     from ._models_py3 import Usage
     from ._models_py3 import UsagesListResult
+    from ._models_py3 import VersionsCapability
+    from ._models_py3 import VersionSpec
     from ._models_py3 import VirtualNetworkProfile
+    from ._models_py3 import VmSizeCompatibilityFilter
+    from ._models_py3 import VmSizeCompatibilityFilterV2
+    from ._models_py3 import VmSizesCapability
 except (SyntaxError, ImportError):
     from ._models import Application
     from ._models import ApplicationGetEndpoint
     from ._models import ApplicationGetHttpsEndpoint
     from ._models import ApplicationProperties
+    from ._models import Autoscale
+    from ._models import AutoscaleCapacity
+    from ._models import AutoscaleRecurrence
+    from ._models import AutoscaleSchedule
+    from ._models import AutoscaleTimeAndCapacity
+    from ._models import BillingMeters
+    from ._models import BillingResources
+    from ._models import BillingResponseListResult
+    from ._models import CapabilitiesResult
     from ._models import Cluster
     from ._models import ClusterConfigurations
     from ._models import ClusterCreateParametersExtended
@@ -87,6 +114,7 @@ except (SyntaxError, ImportError):
     from ._models import ComputeProfile
     from ._models import ConnectivityEndpoint
     from ._models import DataDisksGroups
+    from ._models import DiskBillingMeters
     from ._models import DiskEncryptionProperties
     from ._models import ErrorResponse, ErrorResponseException
     from ._models import Errors
@@ -101,7 +129,10 @@ except (SyntaxError, ImportError):
     from ._models import OperationResource
     from ._models import OsProfile
     from ._models import ProxyResource
+    from ._models import QuotaCapability
     from ._models import QuotaInfo
+    from ._models import RegionalQuotaCapability
+    from ._models import RegionsCapability
     from ._models import Resource
     from ._models import Role
     from ._models import RuntimeScriptAction
@@ -118,19 +149,26 @@ except (SyntaxError, ImportError):
     from ._models import UpdateGatewaySettingsParameters
     from ._models import Usage
     from ._models import UsagesListResult
+    from ._models import VersionsCapability
+    from ._models import VersionSpec
     from ._models import VirtualNetworkProfile
+    from ._models import VmSizeCompatibilityFilter
+    from ._models import VmSizeCompatibilityFilterV2
+    from ._models import VmSizesCapability
 from ._paged_models import ApplicationPaged
 from ._paged_models import ClusterPaged
 from ._paged_models import OperationPaged
 from ._paged_models import RuntimeScriptActionDetailPaged
 from ._hd_insight_management_client_enums import (
     DirectoryType,
+    DaysOfWeek,
     OSType,
     Tier,
     JsonWebKeyEncryptionAlgorithm,
     ResourceIdentityType,
     HDInsightClusterProvisioningState,
     AsyncOperationState,
+    FilterMode,
 )
 
 __all__ = [
@@ -138,6 +176,15 @@ __all__ = [
     'ApplicationGetEndpoint',
     'ApplicationGetHttpsEndpoint',
     'ApplicationProperties',
+    'Autoscale',
+    'AutoscaleCapacity',
+    'AutoscaleRecurrence',
+    'AutoscaleSchedule',
+    'AutoscaleTimeAndCapacity',
+    'BillingMeters',
+    'BillingResources',
+    'BillingResponseListResult',
+    'CapabilitiesResult',
     'Cluster',
     'ClusterConfigurations',
     'ClusterCreateParametersExtended',
@@ -156,6 +203,7 @@ __all__ = [
     'ComputeProfile',
     'ConnectivityEndpoint',
     'DataDisksGroups',
+    'DiskBillingMeters',
     'DiskEncryptionProperties',
     'ErrorResponse', 'ErrorResponseException',
     'Errors',
@@ -170,7 +218,10 @@ __all__ = [
     'OperationResource',
     'OsProfile',
     'ProxyResource',
+    'QuotaCapability',
     'QuotaInfo',
+    'RegionalQuotaCapability',
+    'RegionsCapability',
     'Resource',
     'Role',
     'RuntimeScriptAction',
@@ -187,16 +238,23 @@ __all__ = [
     'UpdateGatewaySettingsParameters',
     'Usage',
     'UsagesListResult',
+    'VersionsCapability',
+    'VersionSpec',
     'VirtualNetworkProfile',
+    'VmSizeCompatibilityFilter',
+    'VmSizeCompatibilityFilterV2',
+    'VmSizesCapability',
     'ClusterPaged',
     'ApplicationPaged',
     'RuntimeScriptActionDetailPaged',
     'OperationPaged',
     'DirectoryType',
+    'DaysOfWeek',
     'OSType',
     'Tier',
     'JsonWebKeyEncryptionAlgorithm',
     'ResourceIdentityType',
     'HDInsightClusterProvisioningState',
     'AsyncOperationState',
+    'FilterMode',
 ]

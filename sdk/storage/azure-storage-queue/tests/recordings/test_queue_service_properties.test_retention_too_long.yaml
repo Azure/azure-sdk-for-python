@@ -15,181 +15,33 @@ interactions:
       Content-Type:
       - application/xml; charset=utf-8
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
+      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-client-request-id:
-      - 0f9351b6-952a-11e9-9e6a-f45c89a7d159
+      - 9bdff170-b575-11e9-bf3a-2816a845e8c6
       x-ms-date:
-      - Sat, 22 Jun 2019 20:12:29 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: PUT
-    uri: https://remotestoragename.queue.core.windows.net/?restype=service&comp=properties
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidXmlDocument</Code><Message>XML\
-        \ specified is not syntactically valid.\nRequestId:8853e50d-d003-00a2-0c36-29a99c000000\n\
-        Time:2019-06-22T20:12:31.1824569Z</Message><LineNumber>2</LineNumber><LinePosition>176</LinePosition><Reason>Retention\
-        \ days must be greater than 0 and less than or equal to 365 days.</Reason></Error>"
-    headers:
-      Content-Length:
-      - '376'
-      Content-Type:
-      - application/xml
-      Date:
-      - Sat, 22 Jun 2019 20:12:30 GMT
-      Server:
-      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-error-code:
-      - InvalidXmlDocument
-      x-ms-request-id:
-      - 8853e50d-d003-00a2-0c36-29a99c000000
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 400
-      message: XML specified is not syntactically valid.
-- request:
-    body: '<?xml version=''1.0'' encoding=''utf-8''?>
-
-      <StorageServiceProperties><MinuteMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>366</Days></RetentionPolicy></MinuteMetrics></StorageServiceProperties>'
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '273'
-      Content-Type:
-      - application/xml; charset=utf-8
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - d197c51c-952a-11e9-9f29-f45c89a7d159
-      x-ms-date:
-      - Sat, 22 Jun 2019 20:17:54 GMT
+      - Fri, 02 Aug 2019 22:33:54 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
     uri: https://storagename.queue.core.windows.net/?restype=service&comp=properties
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidXmlDocument</Code><Message>XML\
-        \ specified is not syntactically valid.\nRequestId:27caead9-c003-0017-1d37-29a463000000\n\
-        Time:2019-06-22T20:17:55.5796408Z</Message><LineNumber>2</LineNumber><LinePosition>176</LinePosition><Reason>Retention\
-        \ days must be greater than 0 and less than or equal to 365 days.</Reason></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidXmlDocument</Code><Message>XML
+        specified is not syntactically valid.\nRequestId:56f39019-b003-00b9-0782-49870e000000\nTime:2019-08-02T22:33:54.2651659Z</Message><LineNumber>2</LineNumber><LinePosition>176</LinePosition><Reason>Retention
+        days must be greater than 0 and less than or equal to 365 days.</Reason></Error>"
     headers:
       Content-Length:
       - '376'
       Content-Type:
       - application/xml
       Date:
-      - Sat, 22 Jun 2019 20:17:55 GMT
+      - Fri, 02 Aug 2019 22:33:53 GMT
       Server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
       - InvalidXmlDocument
       x-ms-request-id:
-      - 27caead9-c003-0017-1d37-29a463000000
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 400
-      message: XML specified is not syntactically valid.
-- request:
-    body: '<?xml version=''1.0'' encoding=''utf-8''?>
-
-      <StorageServiceProperties><MinuteMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>366</Days></RetentionPolicy></MinuteMetrics></StorageServiceProperties>'
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '273'
-      Content-Type:
-      - application/xml; charset=utf-8
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - 663d619a-952b-11e9-9b4b-f45c89a7d159
-      x-ms-date:
-      - Sat, 22 Jun 2019 20:22:04 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: PUT
-    uri: https://storagename.queue.core.windows.net/?restype=service&comp=properties
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidXmlDocument</Code><Message>XML\
-        \ specified is not syntactically valid.\nRequestId:dc702338-5003-003b-0c38-29265e000000\n\
-        Time:2019-06-22T20:22:04.8948219Z</Message><LineNumber>2</LineNumber><LinePosition>176</LinePosition><Reason>Retention\
-        \ days must be greater than 0 and less than or equal to 365 days.</Reason></Error>"
-    headers:
-      Content-Length:
-      - '376'
-      Content-Type:
-      - application/xml
-      Date:
-      - Sat, 22 Jun 2019 20:22:04 GMT
-      Server:
-      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-error-code:
-      - InvalidXmlDocument
-      x-ms-request-id:
-      - dc702338-5003-003b-0c38-29265e000000
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 400
-      message: XML specified is not syntactically valid.
-- request:
-    body: '<?xml version=''1.0'' encoding=''utf-8''?>
-
-      <StorageServiceProperties><MinuteMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>366</Days></RetentionPolicy></MinuteMetrics></StorageServiceProperties>'
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '273'
-      Content-Type:
-      - application/xml; charset=utf-8
-      User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-client-request-id:
-      - a22462e2-952d-11e9-8b43-f45c89a7d159
-      x-ms-date:
-      - Sat, 22 Jun 2019 20:38:03 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: PUT
-    uri: https://storagename.queue.core.windows.net/?restype=service&comp=properties
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidXmlDocument</Code><Message>XML\
-        \ specified is not syntactically valid.\nRequestId:bcf6c940-6003-0055-013a-298f77000000\n\
-        Time:2019-06-22T20:38:04.1467573Z</Message><LineNumber>2</LineNumber><LinePosition>176</LinePosition><Reason>Retention\
-        \ days must be greater than 0 and less than or equal to 365 days.</Reason></Error>"
-    headers:
-      Content-Length:
-      - '376'
-      Content-Type:
-      - application/xml
-      Date:
-      - Sat, 22 Jun 2019 20:38:03 GMT
-      Server:
-      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-error-code:
-      - InvalidXmlDocument
-      x-ms-request-id:
-      - bcf6c940-6003-0055-013a-298f77000000
+      - 56f39019-b003-00b9-0782-49870e000000
       x-ms-version:
       - '2018-03-28'
     status:

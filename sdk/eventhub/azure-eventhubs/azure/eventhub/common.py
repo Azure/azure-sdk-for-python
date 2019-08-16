@@ -8,9 +8,16 @@ import datetime
 import calendar
 import json
 import six
+import logging
 
-from uamqp import BatchMessage, Message, types
+from azure.eventhub.error import EventDataError
+from uamqp import BatchMessage, Message, types, constants
 from uamqp.message import MessageHeader, MessageProperties
+
+log = logging.getLogger(__name__)
+
+# event_data.encoded_size < 255, batch encode overhead is 5, >=256, overhead is 8 each
+_BATCH_MESSAGE_OVERHEAD_COST = [5, 8]
 
 
 def parse_sas_token(sas_token):
@@ -50,39 +57,30 @@ class EventData(object):
     PROP_TIMESTAMP = b"x-opt-enqueued-time"
     PROP_DEVICE_ID = b"iothub-connection-device-id"
 
-    def __init__(self, body=None, to_device=None, message=None):
+    def __init__(self, body=None, to_device=None):
         """
         Initialize EventData.
 
         :param body: The data to send in a single message.
         :type body: str, bytes or list
-        :param batch: A data generator to send batched messages.
-        :type batch: Generator
         :param to_device: An IoT device to route to.
         :type to_device: str
-        :param message: The received message.
-        :type message: ~uamqp.message.Message
         """
+
         self._partition_key = types.AMQPSymbol(EventData.PROP_PARTITION_KEY)
         self._annotations = {}
         self._app_properties = {}
         self.msg_properties = MessageProperties()
         if to_device:
             self.msg_properties.to = '/devices/{}/messages/devicebound'.format(to_device)
-        if message:
-            self.message = message
-            self.msg_properties = message.properties
-            self._annotations = message.annotations
-            self._app_properties = message.application_properties
+        if body and isinstance(body, list):
+            self.message = Message(body[0], properties=self.msg_properties)
+            for more in body[1:]:
+                self.message._body.append(more)  # pylint: disable=protected-access
+        elif body is None:
+            raise ValueError("EventData cannot be None.")
         else:
-            if body and isinstance(body, list):
-                self.message = Message(body[0], properties=self.msg_properties)
-                for more in body[1:]:
-                    self.message._body.append(more)  # pylint: disable=protected-access
-            elif body is None:
-                raise ValueError("EventData cannot be None.")
-            else:
-                self.message = Message(body, properties=self.msg_properties)
+            self.message = Message(body, properties=self.msg_properties)
 
     def __str__(self):
         dic = {
@@ -116,6 +114,15 @@ class EventData(object):
         self.message.annotations = annotations
         self.message.header = header
         self._annotations = annotations
+
+    @staticmethod
+    def _from_message(message):
+        event_data = EventData(body='')
+        event_data.message = message
+        event_data.msg_properties = message.properties
+        event_data._annotations = message.annotations
+        event_data._app_properties = message.application_properties
+        return event_data
 
     @property
     def sequence_number(self):
@@ -244,10 +251,38 @@ class EventData(object):
         return self.message.encode_message()
 
 
-class _BatchSendEventData(EventData):
-    def __init__(self, batch_event_data, partition_key=None):
-        self.message = BatchMessage(data=batch_event_data, multi_messages=False, properties=None)
+class EventDataBatch(object):
+    """
+    The EventDataBatch class is a holder of a batch of event data within max size bytes.
+    Use ~azure.eventhub.Producer.create_batch method to create an EventDataBatch object.
+    Do not instantiate an EventDataBatch object directly.
+    """
+
+    def __init__(self, max_size=None, partition_key=None):
+        self.max_size = max_size or constants.MAX_MESSAGE_LENGTH_BYTES
+        self._partition_key = partition_key
+        self.message = BatchMessage(data=[], multi_messages=False, properties=None)
+
         self._set_partition_key(partition_key)
+        self._size = self.message.gather()[0].get_message_encoded_size()
+        self._count = 0
+
+    def __len__(self):
+        return self._count
+
+    @property
+    def size(self):
+        """The size in bytes
+
+        :return: int
+        """
+        return self._size
+
+    @staticmethod
+    def _from_batch(batch_data, partition_key=None):
+        batch_data_instance = EventDataBatch(partition_key=partition_key)
+        batch_data_instance.message._body_gen = batch_data
+        return batch_data_instance
 
     def _set_partition_key(self, value):
         if value:
@@ -259,6 +294,38 @@ class _BatchSendEventData(EventData):
             header.durable = True
             self.message.annotations = annotations
             self.message.header = header
+
+    def try_add(self, event_data):
+        """
+        The message size is a sum up of body, properties, header, etc.
+        :param event_data:
+        :return:
+        """
+        if event_data is None:
+            log.warning("event_data is None when calling EventDataBatch.try_add. Ignored")
+            return
+        if not isinstance(event_data, EventData):
+            raise TypeError('event_data should be type of EventData')
+
+        if self._partition_key:
+            if event_data.partition_key and not (event_data.partition_key == self._partition_key):
+                raise EventDataError('The partition_key of event_data does not match the one of the EventDataBatch')
+            if not event_data.partition_key:
+                event_data._set_partition_key(self._partition_key)
+
+        event_data_size = event_data.message.get_message_encoded_size()
+
+        # For a BatchMessage, if the encoded_message_size of event_data is < 256, then the overhead cost to encode that
+        #  message into the BatchMessage would be 5 bytes, if >= 256, it would be 8 bytes.
+        size_after_add = self._size + event_data_size\
+            + _BATCH_MESSAGE_OVERHEAD_COST[0 if (event_data_size < 256) else 1]
+
+        if size_after_add > self.max_size:
+            raise ValueError("EventDataBatch has reached its size limit {}".format(self.max_size))
+
+        self.message._body_gen.append(event_data)  # pylint: disable=protected-access
+        self._size = size_after_add
+        self._count += 1
 
 
 class EventPosition(object):

@@ -1,3 +1,7 @@
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
 import os
 from datetime import datetime
 from azure.eventhub import EventHubClient, EventData, EventPosition
@@ -13,13 +17,13 @@ class EventHub:
             connectionString, eventHubName
         )
 
-    def GetPartitionIds(self):
+    def get_partition_ids(self):
         print("Getting partitions id...")
         partition_ids = self.client.get_partition_ids()
         print("\tdone")
         return partition_ids
 
-    def SendAndReceiveEvents(self, partitionID):
+    def send_and_receive_events(self, partitionID):
         with self.client.create_consumer(
             consumer_group="$default",
             partition_id=partitionID,
@@ -37,7 +41,7 @@ class EventHub:
             print("\tdone")
 
             print("Receiving events...")
-            received = consumer.receive(max_batch_size=len(event_list), timeout=2)
+            received = consumer.receive(max_batch_size=len(event_list), timeout=3)
             for event_data in received:
                 print("\tEvent Received: " + event_data.body_as_str())
 
@@ -50,17 +54,17 @@ class EventHub:
                     )
                 )
 
-    def Run(self):
-        print()
+    def run(self):
+        print("")
         print("------------------------")
         print("Event Hubs")
         print("------------------------")
         print("1) Get partition ID")
         print("2) Send Events")
         print("3) Consume Events")
-        print()
+        print("")
 
-        partitionID = self.GetPartitionIds()
+        partitionID = self.get_partition_ids()
         # In this sample the same partition id is going to be used for the producer and consumer,
         # It is the first one, but it could be any (is not relevant as long as it is the same in both producer and consumer)
-        self.SendAndReceiveEvents(partitionID[0])
+        self.send_and_receive_events(partitionID[0])

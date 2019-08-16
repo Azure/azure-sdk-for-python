@@ -9,14 +9,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
-        azure-batch/7.0.0 Azure-SDK-For-Python
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.9 msrest_azure/0.4.34
+        azure-batch/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Thu, 13 Jun 2019 18:53:52 GMT
+      - Tue, 06 Aug 2019 23:42:53 GMT
     method: GET
-    uri: https://batchf06f0dd7.westcentralus.batch.azure.com/applications?api-version=2019-06-01.9.0
+    uri: https://batchf06f0dd7.westcentralus.batch.azure.com/applications?api-version=2019-08-01.10.0
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batchf06f0dd7.westcentralus.batch.azure.com/$metadata#listapplicationsummariesresponses\",\"value\":[\r\n
@@ -28,9 +28,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 13 Jun 2019 18:53:52 GMT
+      - Tue, 06 Aug 2019 23:42:54 GMT
       request-id:
-      - 9669760d-7ff7-480c-9a5a-9f5ac478f36a
+      - ce4f1b92-2d59-4854-adb0-3443bb6a8fc0
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -52,14 +52,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
-        azure-batch/7.0.0 Azure-SDK-For-Python
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.9 msrest_azure/0.4.34
+        azure-batch/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Thu, 13 Jun 2019 18:53:52 GMT
+      - Tue, 06 Aug 2019 23:42:54 GMT
     method: GET
-    uri: https://batchf06f0dd7.westcentralus.batch.azure.com/applications/application_id?api-version=2019-06-01.9.0
+    uri: https://batchf06f0dd7.westcentralus.batch.azure.com/applications/application_id?api-version=2019-08-01.10.0
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batchf06f0dd7.westcentralus.batch.azure.com/$metadata#getapplicationsummaryresponse/@Element\",\"id\":\"application_id\",\"versions\":[\r\n
@@ -70,9 +70,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 13 Jun 2019 18:53:52 GMT
+      - Tue, 06 Aug 2019 23:42:54 GMT
       request-id:
-      - e317b720-bc2c-442c-894a-0e1ea134ac22
+      - 85f5f3f6-5473-4a12-b0ff-f98bd469de4f
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -100,14 +100,14 @@ interactions:
       Content-Type:
       - application/json; odata=minimalmetadata; charset=utf-8
       User-Agent:
-      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
-        azure-batch/7.0.0 Azure-SDK-For-Python
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.9 msrest_azure/0.4.34
+        azure-batch/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Thu, 13 Jun 2019 18:53:53 GMT
+      - Tue, 06 Aug 2019 23:42:54 GMT
     method: POST
-    uri: https://batchf06f0dd7.westcentralus.batch.azure.com/jobs/batchf06f0dd7/tasks?api-version=2019-06-01.9.0
+    uri: https://batchf06f0dd7.westcentralus.batch.azure.com/jobs/batchf06f0dd7/tasks?api-version=2019-08-01.10.0
   response:
     body:
       string: ''
@@ -117,15 +117,15 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 13 Jun 2019 18:53:52 GMT
+      - Tue, 06 Aug 2019 23:42:54 GMT
       etag:
-      - '0x8D6F0307AFC8985'
+      - '0x8D71AC7CDAD3E13'
       last-modified:
-      - Thu, 13 Jun 2019 18:53:53 GMT
+      - Tue, 06 Aug 2019 23:42:54 GMT
       location:
       - https://batchf06f0dd7.westcentralus.batch.azure.com/jobs/batchf06f0dd7/tasks/python_task_with_app_package
       request-id:
-      - 105201be-1e0c-4492-b56f-2cea5de9c731
+      - aeb5ea6c-5ab3-4d76-915b-1f169ffe4fe5
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -147,20 +147,20 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
-        azure-batch/7.0.0 Azure-SDK-For-Python
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.9 msrest_azure/0.4.34
+        azure-batch/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Thu, 13 Jun 2019 18:53:53 GMT
+      - Tue, 06 Aug 2019 23:42:54 GMT
     method: GET
-    uri: https://batchf06f0dd7.westcentralus.batch.azure.com/jobs/batchf06f0dd7/tasks/python_task_with_app_package?api-version=2019-06-01.9.0
+    uri: https://batchf06f0dd7.westcentralus.batch.azure.com/jobs/batchf06f0dd7/tasks/python_task_with_app_package?api-version=2019-08-01.10.0
   response:
     body:
-      string: "{\r\n  \"odata.metadata\":\"https://batchf06f0dd7.westcentralus.batch.azure.com/$metadata#tasks/@Element\",\"id\":\"python_task_with_app_package\",\"url\":\"https://batchf06f0dd7.westcentralus.batch.azure.com/jobs/batchf06f0dd7/tasks/python_task_with_app_package\",\"eTag\":\"0x8D6F0307AFC8985\",\"creationTime\":\"2019-06-13T18:53:53.1970949Z\",\"lastModified\":\"2019-06-13T18:53:53.1970949Z\",\"state\":\"active\",\"stateTransitionTime\":\"2019-06-13T18:53:53.1970949Z\",\"commandLine\":\"cmd
+      string: "{\r\n  \"odata.metadata\":\"https://batchf06f0dd7.westcentralus.batch.azure.com/$metadata#tasks/@Element\",\"id\":\"python_task_with_app_package\",\"url\":\"https://batchf06f0dd7.westcentralus.batch.azure.com/jobs/batchf06f0dd7/tasks/python_task_with_app_package\",\"eTag\":\"0x8D71AC7CDAD3E13\",\"creationTime\":\"2019-08-06T23:42:54.7711507Z\",\"lastModified\":\"2019-08-06T23:42:54.7711507Z\",\"state\":\"active\",\"stateTransitionTime\":\"2019-08-06T23:42:54.7711507Z\",\"commandLine\":\"cmd
         /c \\\"echo hello world\\\"\",\"applicationPackageReferences\":[\r\n    {\r\n
         \     \"applicationId\":\"application_id\",\"version\":\"v1.0\"\r\n    }\r\n
-        \ ],\"userIdentity\":{\r\n    \"autoUser\":{\r\n      \"elevationLevel\":\"nonadmin\"\r\n
+        \ ],\"userIdentity\":{\r\n    \"autoUser\":{\r\n      \"scope\":\"pool\",\"elevationLevel\":\"nonadmin\"\r\n
         \   }\r\n  },\"constraints\":{\r\n    \"maxWallClockTime\":\"P10675199DT2H48M5.4775807S\",\"retentionTime\":\"P7D\",\"maxTaskRetryCount\":0\r\n
         \ },\"executionInfo\":{\r\n    \"retryCount\":0,\"requeueCount\":0\r\n  }\r\n}"
     headers:
@@ -169,13 +169,13 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 13 Jun 2019 18:53:52 GMT
+      - Tue, 06 Aug 2019 23:42:54 GMT
       etag:
-      - '0x8D6F0307AFC8985'
+      - '0x8D71AC7CDAD3E13'
       last-modified:
-      - Thu, 13 Jun 2019 18:53:53 GMT
+      - Tue, 06 Aug 2019 23:42:54 GMT
       request-id:
-      - b737a26a-146d-4255-b54a-a931f3b4e0b5
+      - 101340a2-9663-4c93-973c-026c2303cfae
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:

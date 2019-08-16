@@ -2,28 +2,32 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import functools
 import json
 import os
 import time
 import uuid
 
 try:
-    from unittest.mock import Mock
+    from unittest.mock import Mock, patch
 except ImportError:  # python < 3.3
-    from mock import Mock
+    from mock import Mock, patch
 
-import pytest
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 from azure.identity import (
+    ChainedTokenCredential,
     ClientSecretCredential,
     DefaultAzureCredential,
+    DeviceCodeCredential,
     EnvironmentCredential,
     ManagedIdentityCredential,
-    ChainedTokenCredential,
+    InteractiveBrowserCredential,
+    UsernamePasswordCredential,
 )
 from azure.identity._managed_identity import ImdsCredential
-from azure.identity.constants import EnvironmentVariables
+from azure.identity._constants import EnvironmentVariables
+import pytest
 
 from helpers import mock_response, Request, validating_transport
 
@@ -118,11 +122,6 @@ def test_client_secret_environment_credential(monkeypatch):
 
     # not validating expires_on because doing so requires monkeypatching time, and this is tested elsewhere
     assert token.token == access_token
-
-
-def test_environment_credential_error():
-    with pytest.raises(ClientAuthenticationError):
-        EnvironmentCredential().get_token("scope")
 
 
 def test_credential_chain_error_message():
@@ -223,7 +222,7 @@ def test_imds_credential_retries():
     )
     mock_send = Mock(return_value=mock_response)
 
-    total_retries = ImdsCredential.create_config().retry_policy.total_retries
+    total_retries = ImdsCredential._create_config().retry_policy.total_retries
 
     for status_code in (404, 429, 500):
         mock_send.reset_mock()
@@ -239,3 +238,159 @@ def test_imds_credential_retries():
 
 def test_default_credential():
     DefaultAzureCredential()
+
+
+def test_device_code_credential():
+    expected_token = "access-token"
+    user_code = "user-code"
+    verification_uri = "verification-uri"
+    expires_in = 42
+
+    transport = validating_transport(
+        requests=[Request()] * 3,  # not validating requests because they're formed by MSAL
+        responses=[
+            # expected requests: discover tenant, start device code flow, poll for completion
+            mock_response(json_payload={"authorization_endpoint": "https://a/b", "token_endpoint": "https://a/b"}),
+            mock_response(
+                json_payload={"device_code": "_", "user_code": user_code, "verification_uri": verification_uri, "expires_in": expires_in}
+            ),
+            mock_response(
+                json_payload={
+                    "access_token": expected_token,
+                    "expires_in": expires_in,
+                    "scope": "scope",
+                    "token_type": "Bearer",
+                    "refresh_token": "_",
+                }
+            ),
+        ],
+    )
+
+    callback = Mock()
+    credential = DeviceCodeCredential(
+        client_id="_", prompt_callback=callback, transport=transport, instance_discovery=False
+    )
+
+    token = credential.get_token("scope")
+    assert token.token == expected_token
+
+    # prompt_callback should have been called as documented
+    assert callback.call_count == 1
+    assert callback.call_args[0] == (verification_uri, user_code, expires_in)
+
+
+def test_device_code_credential_timeout():
+    transport = validating_transport(
+        requests=[Request()] * 3,  # not validating requests because they're formed by MSAL
+        responses=[
+            # expected requests: discover tenant, start device code flow, poll for completion
+            mock_response(json_payload={"authorization_endpoint": "https://a/b", "token_endpoint": "https://a/b"}),
+            mock_response(json_payload={"device_code": "_", "user_code": "_", "verification_uri": "_"}),
+            mock_response(json_payload={"error": "authorization_pending"}),
+        ],
+    )
+
+    credential = DeviceCodeCredential(
+        client_id="_", prompt_callback=Mock(), transport=transport, timeout=0.1, instance_discovery=False
+    )
+
+    with pytest.raises(ClientAuthenticationError) as ex:
+        credential.get_token("scope")
+    assert "timed out" in ex.value.message.lower()
+
+
+@patch("azure.identity._browser_auth.webbrowser.open", lambda _: None)  # prevent the credential opening a browser
+def test_interactive_credential():
+    oauth_state = "state"
+    expected_token = "access-token"
+
+    transport = validating_transport(
+        requests=[Request()] * 2,  # not validating requests because they're formed by MSAL
+        responses=[
+            # expecting tenant discovery then a token request
+            mock_response(json_payload={"authorization_endpoint": "https://a/b", "token_endpoint": "https://a/b"}),
+            mock_response(
+                json_payload={
+                    "access_token": expected_token,
+                    "expires_in": 42,
+                    "token_type": "Bearer",
+                    "ext_expires_in": 42,
+                }
+            ),
+        ],
+    )
+
+    # mock local server fakes successful authentication by immediately returning a well-formed response
+    auth_code_response = {"code": "authorization-code", "state": [oauth_state]}
+    server_class = Mock(return_value=Mock(wait_for_redirect=lambda: auth_code_response))
+
+    credential = InteractiveBrowserCredential(
+        client_id="guid",
+        client_secret="secret",
+        server_class=server_class,
+        transport=transport,
+        instance_discovery=False,  # kwargs are passed to MSAL; this one prevents an AAD verification request
+    )
+
+    # ensure the request beginning the flow has a known state value
+    with patch("azure.identity._browser_auth.uuid.uuid4", lambda: oauth_state):
+        token = credential.get_token("scope")
+    assert token.token == expected_token
+
+
+@patch("azure.identity._browser_auth.webbrowser.open", lambda _: None)  # prevent the credential opening a browser
+def test_interactive_credential_timeout():
+    # mock transport handles MSAL's tenant discovery
+    transport = Mock(
+        send=lambda _, **__: mock_response(
+            json_payload={"authorization_endpoint": "https://a/b", "token_endpoint": "https://a/b"}
+        )
+    )
+
+    # mock local server blocks long enough to exceed the timeout
+    timeout = 1
+    server_instance = Mock(wait_for_redirect=functools.partial(time.sleep, timeout + 1))
+    server_class = Mock(return_value=server_instance)
+
+    credential = InteractiveBrowserCredential(
+        client_id="guid",
+        client_secret="secret",
+        server_class=server_class,
+        timeout=timeout,
+        transport=transport,
+        instance_discovery=False,  # kwargs are passed to MSAL; this one prevents an AAD verification request
+    )
+
+    with pytest.raises(ClientAuthenticationError) as ex:
+        credential.get_token("scope")
+    assert "timed out" in ex.value.message.lower()
+
+
+def test_username_password_credential():
+    expected_token = "access-token"
+    transport = validating_transport(
+        requests=[Request()] * 2,  # not validating requests because they're formed by MSAL
+        responses=[
+            # expecting tenant discovery then a token request
+            mock_response(json_payload={"authorization_endpoint": "https://a/b", "token_endpoint": "https://a/b"}),
+            mock_response(
+                json_payload={
+                    "access_token": expected_token,
+                    "expires_in": 42,
+                    "token_type": "Bearer",
+                    "ext_expires_in": 42,
+                }
+            ),
+        ],
+    )
+
+    credential = UsernamePasswordCredential(
+        client_id="some-guid",
+        username="user@azure",
+        password="secret_password",
+        transport=transport,
+        instance_discovery=False,  # kwargs are passed to MSAL; this one prevents an AAD verification request
+    )
+
+    token = credential.get_token("scope")
+    assert token.token == expected_token
