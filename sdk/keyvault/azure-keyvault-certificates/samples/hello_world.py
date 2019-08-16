@@ -21,7 +21,8 @@ from azure.core.exceptions import HttpResponseError
 #    https://pypi.python.org/pypi/azure-identity/
 #
 # 4. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL.
-# How to do this - https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-secrets#createget-credentials)
+#    [How to do this]
+#    (https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys#createget-credentials)
 #
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates the basic CRUD operations on a vault(certificate) resource for Azure Key Vault
@@ -63,7 +64,7 @@ def run_sample():
                                         san_dns_names=['onedrive.microsoft.com', 'xbox.microsoft.com'],
                                         validity_in_months=24
                                         )
-        cert_name="HelloWorldCertificate"
+        cert_name = "HelloWorldCertificate"
         expires = datetime.datetime.utcnow() + datetime.timedelta(days=365)
         certificate_operation = client.create_certificate(name=cert_name, policy=cert_policy, expires=expires)
         print("Certificate with name '{0}' created".format(certificate_operation.name))
@@ -71,15 +72,24 @@ def run_sample():
         # Let's get the bank certificate using its name
         print("\n2. Get a Certificate by name")
         bank_certificate = client.get_certificate(name=certificate_operation.name)
-        print("Certificate with name '{0}' was found with expiration date '{1}'.".format(bank_certificate.name, bank_certificate.expires))
+        print("Certificate with name '{0}' was found with expiration date '{1}'.".format(
+            bank_certificate.name,
+            bank_certificate.expires)
+        )
 
         # After one year, the bank account is still active, we need to update the expiry time of the certificate.
         # The update method can be used to update the expiry attribute of the certificate.
         print("\n3. Update a Certificate by name")
         expires = bank_certificate.expires + datetime.timedelta(days=365)
         updated_certificate = client.update_certificate(name=bank_certificate.name, expires=expires)
-        print("Certificate with name '{0}' was updated on date '{1}'".format(bank_certificate.name, updated_certificate.updated))
-        print("Certificate with name '{0}' was updated to expire on '{1}'".format(bank_certificate.name, updated_certificate.expires))
+        print("Certificate with name '{0}' was updated on date '{1}'".format(
+            bank_certificate.name,
+            updated_certificate.updated)
+        )
+        print("Certificate with name '{0}' was updated to expire on '{1}'".format(
+            bank_certificate.name,
+            updated_certificate.expires)
+        )
 
         # The bank account was closed, need to delete its credentials from the Key Vault.
         print("\n4. Delete Certificate")

@@ -21,7 +21,8 @@ from azure.core.exceptions import HttpResponseError
 #    https://pypi.python.org/pypi/azure-identity/
 #
 # 4. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL.
-# How to do this - https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-secrets#createget-credentials)
+#    [How to do this]
+#    (https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys#createget-credentials)
 #
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates the basic backup and restore operations on a vault(certificates) resource for Azure Key Vault
@@ -93,7 +94,7 @@ def run_sample():
         # Even though the certificate is deleted, it can still be recovered so its name cannot be reused.
         # In order to be able to reuse the name during restoration, we must purge the certificate
         # after the initial deletion.
-        print ("\nPurging certificate...")
+        print("\nPurging certificate...")
         client.purge_deleted_certificate(name=certificate_operation.name)
         # To ensure certificate is purged on the server side.
         time.sleep(30)
