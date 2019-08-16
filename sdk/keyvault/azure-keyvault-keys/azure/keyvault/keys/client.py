@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+# pylint:disable=unused-import
 from datetime import datetime
 
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError

@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+# pylint:disable=wrong-import-position
 from collections import namedtuple
 
 DecryptResult = namedtuple("DecryptResult", ["decrypted_bytes"])
