@@ -258,20 +258,23 @@ class QueryTest(unittest.TestCase):
 
     def test_offset_limit(self):
         created_collection = self.config.create_multi_partition_collection_with_custom_pk_if_not_exist(self.client)
+        max_item_counts = [0, 2, 5, 10]
         values = []
         for i in range(10):
             document_definition = {'pk': i, 'id': 'myId' + str(uuid.uuid4())}
             values.append(created_collection.create_item(body=document_definition)['pk'])
 
-        self._validate_offset_limit(created_collection, 'SELECT * from c ORDER BY c.pk OFFSET 0 LIMIT 5', values[:5])
-        self._validate_offset_limit(created_collection, 'SELECT * from c ORDER BY c.pk OFFSET 5 LIMIT 10', values[5:])
-        self._validate_offset_limit(created_collection, 'SELECT * from c ORDER BY c.pk OFFSET 10 LIMIT 5', [])
-        self._validate_offset_limit(created_collection, 'SELECT * from c ORDER BY c.pk OFFSET 100 LIMIT 1', [])
+        for max_item_count in max_item_counts:
+            self._validate_offset_limit(created_collection, 'SELECT * from c ORDER BY c.pk OFFSET 0 LIMIT 5', max_item_count, values[:5])
+            self._validate_offset_limit(created_collection, 'SELECT * from c ORDER BY c.pk OFFSET 5 LIMIT 10', max_item_count, values[5:])
+            self._validate_offset_limit(created_collection, 'SELECT * from c ORDER BY c.pk OFFSET 10 LIMIT 5', max_item_count, [])
+            self._validate_offset_limit(created_collection, 'SELECT * from c ORDER BY c.pk OFFSET 100 LIMIT 1', max_item_count, [])
 
-    def _validate_offset_limit(self, created_collection, query, results):
+    def _validate_offset_limit(self, created_collection, query, max_item_count, results):
         query_iterable = created_collection.query_items(
             query=query,
-            enable_cross_partition_query=True
+            enable_cross_partition_query=True,
+            max_item_count=max_item_count
         )
         self.assertListEqual(list(map(lambda doc: doc['pk'], list(query_iterable))), results)
 
@@ -305,39 +308,59 @@ class QueryTest(unittest.TestCase):
 
         padded_docs = self._pad_with_none(documents, distinct_field)
 
-        self._validate_distinct(created_collection, 'SELECT distinct c.%s from c ORDER BY c.%s' % (distinct_field, distinct_field),
-                                self._get_distinct_docs(self._get_order_by_docs(padded_docs, distinct_field, None), distinct_field, None, True),
-                                False, [distinct_field])
+        self._validate_distinct(created_collection=created_collection,
+                                query='SELECT distinct c.%s from c ORDER BY c.%s' % (distinct_field, distinct_field),
+                                results=self._get_distinct_docs(self._get_order_by_docs(padded_docs, distinct_field, None), distinct_field, None, True),
+                                is_select=False,
+                                fields=[distinct_field])
 
-        self._validate_distinct(created_collection, 'SELECT distinct c.%s, c.%s from c ORDER BY c.%s, c.%s' % (distinct_field, pk_field, pk_field, distinct_field),
-                                self._get_distinct_docs(self._get_order_by_docs(padded_docs, pk_field, distinct_field), distinct_field, pk_field, True),
-                                False, [distinct_field, pk_field])
+        self._validate_distinct(created_collection=created_collection,
+                                query='SELECT distinct c.%s, c.%s from c ORDER BY c.%s, c.%s' % (distinct_field, pk_field, pk_field, distinct_field),
+                                results=self._get_distinct_docs(self._get_order_by_docs(padded_docs, pk_field, distinct_field), distinct_field, pk_field, True),
+                                is_select=False,
+                                fields=[distinct_field, pk_field])
 
-        self._validate_distinct(created_collection, 'SELECT distinct c.%s, c.%s from c ORDER BY c.%s, c.%s' % (distinct_field, pk_field, distinct_field, pk_field),
-                                self._get_distinct_docs(self._get_order_by_docs(padded_docs, distinct_field, pk_field), distinct_field, pk_field, True),
-                                False, [distinct_field, pk_field])
+        self._validate_distinct(created_collection=created_collection,
+                                query='SELECT distinct c.%s, c.%s from c ORDER BY c.%s, c.%s' % (distinct_field, pk_field, distinct_field, pk_field),
+                                results=self._get_distinct_docs(self._get_order_by_docs(padded_docs, distinct_field, pk_field), distinct_field, pk_field, True),
+                                is_select=False,
+                                fields=[distinct_field, pk_field])
 
-        self._validate_distinct(created_collection, 'SELECT distinct value c.%s from c ORDER BY c.%s' % (distinct_field, distinct_field),
-                                self._get_distinct_docs(self._get_order_by_docs(padded_docs, distinct_field, None), distinct_field, None, True),
-                                False, [distinct_field])
+        self._validate_distinct(created_collection=created_collection,
+                                query='SELECT distinct value c.%s from c ORDER BY c.%s' % (distinct_field, distinct_field),
+                                results=self._get_distinct_docs(self._get_order_by_docs(padded_docs, distinct_field, None), distinct_field, None, True),
+                                is_select=False,
+                                fields=[distinct_field])
 
-        self._validate_distinct(created_collection, 'SELECT distinct c.%s from c' % (distinct_field),
-                                self._get_distinct_docs(padded_docs, distinct_field, None, False),
-                                True, [distinct_field])
+        self._validate_distinct(created_collection=created_collection,
+                                query='SELECT distinct c.%s from c' % (distinct_field),
+                                results=self._get_distinct_docs(padded_docs, distinct_field, None, False),
+                                is_select=True,
+                                fields=[distinct_field])
 
-        self._validate_distinct(created_collection, 'SELECT distinct c.%s, c.%s from c' % (distinct_field, pk_field),
-                                self._get_distinct_docs(padded_docs, distinct_field, pk_field, False),
-                                True, [distinct_field, pk_field])
+        self._validate_distinct(created_collection=created_collection,
+                                query='SELECT distinct c.%s, c.%s from c' % (distinct_field, pk_field),
+                                results=self._get_distinct_docs(padded_docs, distinct_field, pk_field, False),
+                                is_select=True,
+                                fields=[distinct_field, pk_field])
 
-        self._validate_distinct(created_collection, 'SELECT distinct value c.%s from c' % (distinct_field),
-                                self._get_distinct_docs(padded_docs, distinct_field, None, True),
-                                True, [distinct_field])
+        self._validate_distinct(created_collection=created_collection,
+                                query='SELECT distinct value c.%s from c' % (distinct_field),
+                                results=self._get_distinct_docs(padded_docs, distinct_field, None, True),
+                                is_select=True,
+                                fields=[distinct_field])
 
-        self._validate_distinct(created_collection, 'SELECT distinct c.%s from c ORDER BY c.%s' % (different_field, different_field), [],
-                                True, [different_field])
+        self._validate_distinct(created_collection=created_collection,
+                                query='SELECT distinct c.%s from c ORDER BY c.%s' % (different_field, different_field),
+                                results=[],
+                                is_select=True,
+                                fields=[different_field])
 
-        self._validate_distinct(created_collection, 'SELECT distinct c.%s from c' % (different_field), ['None'],
-                                True, different_field)
+        self._validate_distinct(created_collection=created_collection,
+                                query='SELECT distinct c.%s from c' % (different_field),
+                                results=['None'],
+                                is_select=True,
+                                fields=[different_field])
 
         created_database.delete_container(created_collection.id)
 
