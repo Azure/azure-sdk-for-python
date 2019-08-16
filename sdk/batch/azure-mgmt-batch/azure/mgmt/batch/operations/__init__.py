@@ -9,13 +9,13 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .batch_account_operations import BatchAccountOperations
-from .application_package_operations import ApplicationPackageOperations
-from .application_operations import ApplicationOperations
-from .location_operations import LocationOperations
-from .operations import Operations
-from .certificate_operations import CertificateOperations
-from .pool_operations import PoolOperations
+from ._batch_account_operations import BatchAccountOperations
+from ._application_package_operations import ApplicationPackageOperations
+from ._application_operations import ApplicationOperations
+from ._location_operations import LocationOperations
+from ._operations import Operations
+from ._certificate_operations import CertificateOperations
+from ._pool_operations import PoolOperations
 
 __all__ = [
     'BatchAccountOperations',
