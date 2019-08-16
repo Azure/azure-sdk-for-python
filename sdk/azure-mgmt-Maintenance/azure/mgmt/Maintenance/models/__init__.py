@@ -29,6 +29,7 @@ except (SyntaxError, ImportError):
     from ._models import OperationInfo
     from ._models import Resource
     from ._models import Update
+from ._paged_models import ConfigurationAssignmentPaged
 from ._paged_models import MaintenanceConfigurationPaged
 from ._paged_models import OperationPaged
 from ._paged_models import UpdatePaged
@@ -48,6 +49,7 @@ __all__ = [
     'OperationInfo',
     'Resource',
     'Update',
+    'ConfigurationAssignmentPaged',
     'MaintenanceConfigurationPaged',
     'OperationPaged',
     'UpdatePaged',

@@ -354,3 +354,169 @@ class ConfigurationAssignmentsOperations(object):
 
         return deserialized
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{providerName}/{resourceType}/{resourceName}/providers/Microsoft.Maintenance/configurationAssignments/{configurationAssignmentName}'}
+
+    def list_parent(
+            self, resource_group_name, provider_name, resource_parent_type, resource_parent_name, resource_type, resource_name, custom_headers=None, raw=False, **operation_config):
+        """List configurationAssignments for resource.
+
+        List configurationAssignments for resource.
+
+        :param resource_group_name: Resource group name
+        :type resource_group_name: str
+        :param provider_name: Resource provider name
+        :type provider_name: str
+        :param resource_parent_type: Resource parent type
+        :type resource_parent_type: str
+        :param resource_parent_name: Resource parent identifier
+        :type resource_parent_name: str
+        :param resource_type: Resource type
+        :type resource_type: str
+        :param resource_name: Resource identifier
+        :type resource_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of ConfigurationAssignment
+        :rtype:
+         ~azure.mgmt.maintenance.models.ConfigurationAssignmentPaged[~azure.mgmt.maintenance.models.ConfigurationAssignment]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        def prepare_request(next_link=None):
+            if not next_link:
+                # Construct URL
+                url = self.list_parent.metadata['url']
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'providerName': self._serialize.url("provider_name", provider_name, 'str'),
+                    'resourceParentType': self._serialize.url("resource_parent_type", resource_parent_type, 'str'),
+                    'resourceParentName': self._serialize.url("resource_parent_name", resource_parent_name, 'str'),
+                    'resourceType': self._serialize.url("resource_type", resource_type, 'str'),
+                    'resourceName': self._serialize.url("resource_name", resource_name, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
+            response = self._client.send(request, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        header_dict = None
+        if raw:
+            header_dict = {}
+        deserialized = models.ConfigurationAssignmentPaged(internal_paging, self._deserialize.dependencies, header_dict)
+
+        return deserialized
+    list_parent.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{providerName}/{resourceParentType}/{resourceParentName}/{resourceType}/{resourceName}/providers/Microsoft.Maintenance/configurationAssignments'}
+
+    def list(
+            self, resource_group_name, provider_name, resource_type, resource_name, custom_headers=None, raw=False, **operation_config):
+        """List configurationAssignments for resource.
+
+        List configurationAssignments for resource.
+
+        :param resource_group_name: Resource group name
+        :type resource_group_name: str
+        :param provider_name: Resource provider name
+        :type provider_name: str
+        :param resource_type: Resource type
+        :type resource_type: str
+        :param resource_name: Resource identifier
+        :type resource_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of ConfigurationAssignment
+        :rtype:
+         ~azure.mgmt.maintenance.models.ConfigurationAssignmentPaged[~azure.mgmt.maintenance.models.ConfigurationAssignment]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        def prepare_request(next_link=None):
+            if not next_link:
+                # Construct URL
+                url = self.list.metadata['url']
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'providerName': self._serialize.url("provider_name", provider_name, 'str'),
+                    'resourceType': self._serialize.url("resource_type", resource_type, 'str'),
+                    'resourceName': self._serialize.url("resource_name", resource_name, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
+            response = self._client.send(request, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
+
+            return response
+
+        # Deserialize response
+        header_dict = None
+        if raw:
+            header_dict = {}
+        deserialized = models.ConfigurationAssignmentPaged(internal_paging, self._deserialize.dependencies, header_dict)
+
+        return deserialized
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{providerName}/{resourceType}/{resourceName}/providers/Microsoft.Maintenance/configurationAssignments'}

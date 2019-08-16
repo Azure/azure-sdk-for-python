@@ -316,6 +316,8 @@ class Update(Model):
     :param not_before: Time when Azure will start force updates if not
      self-updated by customer before this time
     :type not_before: datetime
+    :param resource_id: The resourceId
+    :type resource_id: str
     """
 
     _attribute_map = {
@@ -324,6 +326,7 @@ class Update(Model):
         'status': {'key': 'status', 'type': 'str'},
         'impact_duration_in_sec': {'key': 'impactDurationInSec', 'type': 'int'},
         'not_before': {'key': 'notBefore', 'type': 'iso-8601'},
+        'resource_id': {'key': 'properties.resourceId', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -333,3 +336,4 @@ class Update(Model):
         self.status = kwargs.get('status', None)
         self.impact_duration_in_sec = kwargs.get('impact_duration_in_sec', None)
         self.not_before = kwargs.get('not_before', None)
+        self.resource_id = kwargs.get('resource_id', None)

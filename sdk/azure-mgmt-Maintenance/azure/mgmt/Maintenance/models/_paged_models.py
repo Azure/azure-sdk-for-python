@@ -12,6 +12,19 @@
 from msrest.paging import Paged
 
 
+class ConfigurationAssignmentPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ConfigurationAssignment <azure.mgmt.maintenance.models.ConfigurationAssignment>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ConfigurationAssignment]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ConfigurationAssignmentPaged, self).__init__(*args, **kwargs)
 class MaintenanceConfigurationPaged(Paged):
     """
     A paging container for iterating over a list of :class:`MaintenanceConfiguration <azure.mgmt.maintenance.models.MaintenanceConfiguration>` object

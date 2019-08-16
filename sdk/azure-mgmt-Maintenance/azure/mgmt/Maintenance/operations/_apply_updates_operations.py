@@ -190,19 +190,19 @@ class ApplyUpdatesOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/{providerName}/{resourceType}/{resourceName}/providers/Microsoft.Maintenance/applyUpdates/{applyUpdateName}'}
 
     def create_or_update_parent(
-            self, resource_group_name, resource_parent_type, resource_parent_name, provider_name, resource_type, resource_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, provider_name, resource_parent_type, resource_parent_name, resource_type, resource_name, custom_headers=None, raw=False, **operation_config):
         """Apply Updates to resource with parent.
 
         Apply maintenance updates to resource with parent.
 
         :param resource_group_name: Resource group name
         :type resource_group_name: str
+        :param provider_name: Resource provider name
+        :type provider_name: str
         :param resource_parent_type: Resource parent type
         :type resource_parent_type: str
         :param resource_parent_name: Resource parent identifier
         :type resource_parent_name: str
-        :param provider_name: Resource provider name
-        :type provider_name: str
         :param resource_type: Resource type
         :type resource_type: str
         :param resource_name: Resource identifier
@@ -222,9 +222,9 @@ class ApplyUpdatesOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            'providerName': self._serialize.url("provider_name", provider_name, 'str'),
             'resourceParentType': self._serialize.url("resource_parent_type", resource_parent_type, 'str'),
             'resourceParentName': self._serialize.url("resource_parent_name", resource_parent_name, 'str'),
-            'providerName': self._serialize.url("provider_name", provider_name, 'str'),
             'resourceType': self._serialize.url("resource_type", resource_type, 'str'),
             'resourceName': self._serialize.url("resource_name", resource_name, 'str')
         }
