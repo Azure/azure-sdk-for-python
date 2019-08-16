@@ -24,14 +24,11 @@ class AsyncChallengeAuthPolicy(ChallengeAuthPolicyBase, AsyncHTTPPolicy):
             )
             if request.http_request.body:
                 # no_body was created with request's headers -> if request has a body, no_body's content-length is wrong
-                _LOGGER.debug("no_body was created with request's headers."
-                              "If request has a body, no_body's content length is wrong")
                 no_body.headers["Content-Length"] = "0"
 
-            _LOGGER.info("Provoking challenge with an unauthorized, bodiless {} to url {} with the following headers".
-                         format(request.http_request.method, request.http_request.url))
-            for header in request.http_request.headers:
-                _LOGGER.info("Header {}".format(header))
+            _LOGGER.info("Provoking challenge with unauthorized bodiless request to {} ".format(
+                request.http_request.url
+            ))
             challenger = await self.next.send(PipelineRequest(http_request=no_body, context=request.context))
             try:
                 challenge = self._update_challenge(request, challenger)
@@ -41,15 +38,14 @@ class AsyncChallengeAuthPolicy(ChallengeAuthPolicyBase, AsyncHTTPPolicy):
                 return challenger
 
         await self._handle_challenge(request, challenge)
-        _LOGGER.info("Sending {} request to url {} with the following headers".format(
-            request.http_request.method, request.http_request.url)
-        )
-        for header in request.http_request.headers:
-            _LOGGER.info("Header {}".format(header))
+
+        self._log_request(request)
         response = await self.next.send(request)
 
-        _LOGGER.info("Received response with status code {} {} with the following headers from request to {}".format(
-            response.http_response.status_code, response.http_response.reason, response.http_request.url
+        _LOGGER.info("Received response with status code {} {} from request to {}".format(
+            response.http_response.status_code,
+            response.http_response.reason,
+            response.http_request.url
         ))
 
         if response.http_response.status_code == 401:
@@ -63,15 +59,14 @@ class AsyncChallengeAuthPolicy(ChallengeAuthPolicyBase, AsyncHTTPPolicy):
 
             _LOGGER.info("Resending request with new challenge because old one might be outdated.")
             await self._handle_challenge(request, challenge)
-            _LOGGER.info("Sending {} request to url {} with the following headers".format(
-                request.http_request.method, request.http_request.url)
-            )
+            self._log_request(request)
             response = await self.next.send(request)
 
-            _LOGGER.info(
-                "Received response with status code {} {} with the following headers from request to {}".format(
-                    response.http_response.status_code, response.http_response.reason, response.http_request.url
-                ))
+            _LOGGER.info("Received response with status code {} {} from request to {}".format(
+                    response.http_response.status_code,
+                    response.http_response.reason,
+                    response.http_request.url
+            ))
 
         return response
 
@@ -84,3 +79,19 @@ class AsyncChallengeAuthPolicy(ChallengeAuthPolicyBase, AsyncHTTPPolicy):
 
         access_token = await self._credential.get_token(scope)
         self._update_headers(request.http_request.headers, access_token.token)
+
+    @staticmethod
+    def _log_request(request):
+        header_string = ""
+        for header in request.http_request.headers:
+            header_string += (", " + header)
+        if header_string == "":
+            _LOGGER.info("Sending {} request to url {} with no headers".format(
+                request.http_request.method, request.http_request.url
+            ))
+        else:
+            _LOGGER.info("Sending {} request to url {} with the following headers: {}".format(
+                request.http_request.method,
+                request.http_request.url,
+                header_string[2:]
+            ))
