@@ -11,11 +11,13 @@ interactions:
     method: PUT
     uri: https://vault851e11ad.vault.azure.net/certificates/contacts?api-version=7.0
   response:
-    body: {string: ''}
+    body: {string: '{"error":{"code":"Unauthorized","message":"Request is missing
+        a Bearer or PoP token."}}'}
     headers:
       cache-control: [no-cache]
-      content-length: ['0']
-      date: ['Mon, 05 Aug 2019 17:42:16 GMT']
+      content-length: ['87']
+      content-type: [application/json; charset=utf-8]
+      date: ['Fri, 16 Aug 2019 22:18:18 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-IIS/10.0]
@@ -24,9 +26,9 @@ interactions:
           resource="https://vault.azure.net"']
       x-aspnet-version: [4.0.30319]
       x-content-type-options: [nosniff]
-      x-ms-keyvault-network-info: [addr=131.107.160.200;act_addr_fam=InterNetwork;]
+      x-ms-keyvault-network-info: [addr=131.107.160.72;act_addr_fam=InterNetwork;]
       x-ms-keyvault-region: [westus]
-      x-ms-keyvault-service-version: [1.1.0.872]
+      x-ms-keyvault-service-version: [1.1.0.876]
       x-powered-by: [ASP.NET]
     status: {code: 401, message: Unauthorized}
 - request:
@@ -49,16 +51,16 @@ interactions:
       cache-control: [no-cache]
       content-length: ['221']
       content-type: [application/json; charset=utf-8]
-      date: ['Mon, 05 Aug 2019 17:42:16 GMT']
+      date: ['Fri, 16 Aug 2019 22:18:18 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-IIS/10.0]
       strict-transport-security: [max-age=31536000;includeSubDomains]
       x-aspnet-version: [4.0.30319]
       x-content-type-options: [nosniff]
-      x-ms-keyvault-network-info: [addr=131.107.160.200;act_addr_fam=InterNetwork;]
+      x-ms-keyvault-network-info: [addr=131.107.160.72;act_addr_fam=InterNetwork;]
       x-ms-keyvault-region: [westus]
-      x-ms-keyvault-service-version: [1.1.0.872]
+      x-ms-keyvault-service-version: [1.1.0.876]
       x-powered-by: [ASP.NET]
     status: {code: 200, message: OK}
 - request:
@@ -77,16 +79,16 @@ interactions:
       cache-control: [no-cache]
       content-length: ['221']
       content-type: [application/json; charset=utf-8]
-      date: ['Mon, 05 Aug 2019 17:42:16 GMT']
+      date: ['Fri, 16 Aug 2019 22:18:18 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-IIS/10.0]
       strict-transport-security: [max-age=31536000;includeSubDomains]
       x-aspnet-version: [4.0.30319]
       x-content-type-options: [nosniff]
-      x-ms-keyvault-network-info: [addr=131.107.160.200;act_addr_fam=InterNetwork;]
+      x-ms-keyvault-network-info: [addr=131.107.160.72;act_addr_fam=InterNetwork;]
       x-ms-keyvault-region: [westus]
-      x-ms-keyvault-service-version: [1.1.0.872]
+      x-ms-keyvault-service-version: [1.1.0.876]
       x-powered-by: [ASP.NET]
     status: {code: 200, message: OK}
 - request:
@@ -106,16 +108,16 @@ interactions:
       cache-control: [no-cache]
       content-length: ['221']
       content-type: [application/json; charset=utf-8]
-      date: ['Mon, 05 Aug 2019 17:42:16 GMT']
+      date: ['Fri, 16 Aug 2019 22:18:18 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-IIS/10.0]
       strict-transport-security: [max-age=31536000;includeSubDomains]
       x-aspnet-version: [4.0.30319]
       x-content-type-options: [nosniff]
-      x-ms-keyvault-network-info: [addr=131.107.160.200;act_addr_fam=InterNetwork;]
+      x-ms-keyvault-network-info: [addr=131.107.160.72;act_addr_fam=InterNetwork;]
       x-ms-keyvault-region: [westus]
-      x-ms-keyvault-service-version: [1.1.0.872]
+      x-ms-keyvault-service-version: [1.1.0.876]
       x-powered-by: [ASP.NET]
     status: {code: 200, message: OK}
 - request:
@@ -133,16 +135,16 @@ interactions:
       cache-control: [no-cache]
       content-length: ['68']
       content-type: [application/json; charset=utf-8]
-      date: ['Mon, 05 Aug 2019 17:42:16 GMT']
+      date: ['Fri, 16 Aug 2019 22:18:18 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-IIS/10.0]
       strict-transport-security: [max-age=31536000;includeSubDomains]
       x-aspnet-version: [4.0.30319]
       x-content-type-options: [nosniff]
-      x-ms-keyvault-network-info: [addr=131.107.160.200;act_addr_fam=InterNetwork;]
+      x-ms-keyvault-network-info: [addr=131.107.160.72;act_addr_fam=InterNetwork;]
       x-ms-keyvault-region: [westus]
-      x-ms-keyvault-service-version: [1.1.0.872]
+      x-ms-keyvault-service-version: [1.1.0.876]
       x-powered-by: [ASP.NET]
     status: {code: 404, message: Not Found}
 version: 1
