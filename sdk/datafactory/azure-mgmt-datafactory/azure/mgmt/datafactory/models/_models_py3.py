@@ -6967,44 +6967,27 @@ class ComponentSetup(CustomSetupBase):
     :type type: str
     :param component_name: Required. The name of the 3rd party component.
     :type component_name: str
+    :param license_key: Required. The license key to activate the component.
+    :type license_key: ~azure.mgmt.datafactory.models.SecretBase
     """
 
     _validation = {
         'type': {'required': True},
         'component_name': {'required': True},
+        'license_key': {'required': True},
     }
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str'},
         'component_name': {'key': 'typeProperties.componentName', 'type': 'str'},
+        'license_key': {'key': 'typeProperties.licenseKey', 'type': 'SecretBase'},
     }
 
-    def __init__(self, *, component_name: str, **kwargs) -> None:
+    def __init__(self, *, component_name: str, license_key, **kwargs) -> None:
         super(ComponentSetup, self).__init__(**kwargs)
         self.component_name = component_name
+        self.license_key = license_key
         self.type = 'ComponentSetup'
-
-
-class ComponentSetupTypeProperties(Model):
-    """Install 3rd party component setup type properties.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param component_name: Required. The name of the 3rd party component.
-    :type component_name: str
-    """
-
-    _validation = {
-        'component_name': {'required': True},
-    }
-
-    _attribute_map = {
-        'component_name': {'key': 'componentName', 'type': 'str'},
-    }
-
-    def __init__(self, *, component_name: str, **kwargs) -> None:
-        super(ComponentSetupTypeProperties, self).__init__(**kwargs)
-        self.component_name = component_name
 
 
 class ConcurLinkedService(LinkedService):
@@ -16097,32 +16080,6 @@ class JsonWriteSettings(FormatWriteSettings):
     def __init__(self, *, type: str, additional_properties=None, file_pattern=None, **kwargs) -> None:
         super(JsonWriteSettings, self).__init__(additional_properties=additional_properties, type=type, **kwargs)
         self.file_pattern = file_pattern
-
-
-class LicensedComponentSetupTypeProperties(ComponentSetupTypeProperties):
-    """Installation of licensed component setup type properties.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param component_name: Required. The name of the 3rd party component.
-    :type component_name: str
-    :param license_key: Required. The license key to activate the component.
-    :type license_key: ~azure.mgmt.datafactory.models.SecretBase
-    """
-
-    _validation = {
-        'component_name': {'required': True},
-        'license_key': {'required': True},
-    }
-
-    _attribute_map = {
-        'component_name': {'key': 'componentName', 'type': 'str'},
-        'license_key': {'key': 'licenseKey', 'type': 'SecretBase'},
-    }
-
-    def __init__(self, *, component_name: str, license_key, **kwargs) -> None:
-        super(LicensedComponentSetupTypeProperties, self).__init__(component_name=component_name, **kwargs)
-        self.license_key = license_key
 
 
 class LinkedIntegrationRuntime(Model):

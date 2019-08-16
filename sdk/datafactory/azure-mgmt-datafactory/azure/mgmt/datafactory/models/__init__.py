@@ -111,7 +111,6 @@ try:
     from ._models_py3 import CommonDataServiceForAppsSink
     from ._models_py3 import CommonDataServiceForAppsSource
     from ._models_py3 import ComponentSetup
-    from ._models_py3 import ComponentSetupTypeProperties
     from ._models_py3 import ConcurLinkedService
     from ._models_py3 import ConcurObjectDataset
     from ._models_py3 import ConcurSource
@@ -281,7 +280,6 @@ try:
     from ._models_py3 import JsonSink
     from ._models_py3 import JsonSource
     from ._models_py3 import JsonWriteSettings
-    from ._models_py3 import LicensedComponentSetupTypeProperties
     from ._models_py3 import LinkedIntegrationRuntime
     from ._models_py3 import LinkedIntegrationRuntimeKeyAuthorization
     from ._models_py3 import LinkedIntegrationRuntimeRbacAuthorization
@@ -633,7 +631,6 @@ except (SyntaxError, ImportError):
     from ._models import CommonDataServiceForAppsSink
     from ._models import CommonDataServiceForAppsSource
     from ._models import ComponentSetup
-    from ._models import ComponentSetupTypeProperties
     from ._models import ConcurLinkedService
     from ._models import ConcurObjectDataset
     from ._models import ConcurSource
@@ -803,7 +800,6 @@ except (SyntaxError, ImportError):
     from ._models import JsonSink
     from ._models import JsonSource
     from ._models import JsonWriteSettings
-    from ._models import LicensedComponentSetupTypeProperties
     from ._models import LinkedIntegrationRuntime
     from ._models import LinkedIntegrationRuntimeKeyAuthorization
     from ._models import LinkedIntegrationRuntimeRbacAuthorization
@@ -1238,7 +1234,6 @@ __all__ = [
     'CommonDataServiceForAppsSink',
     'CommonDataServiceForAppsSource',
     'ComponentSetup',
-    'ComponentSetupTypeProperties',
     'ConcurLinkedService',
     'ConcurObjectDataset',
     'ConcurSource',
@@ -1408,7 +1403,6 @@ __all__ = [
     'JsonSink',
     'JsonSource',
     'JsonWriteSettings',
-    'LicensedComponentSetupTypeProperties',
     'LinkedIntegrationRuntime',
     'LinkedIntegrationRuntimeKeyAuthorization',
     'LinkedIntegrationRuntimeRbacAuthorization',
