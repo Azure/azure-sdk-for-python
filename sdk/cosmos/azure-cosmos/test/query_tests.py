@@ -191,7 +191,6 @@ class QueryTest(unittest.TestCase):
             max_item_count=1,
             enable_cross_partition_query=True
         )
-        # 1 call to get query plans, 1 call to get pkr, 10 calls to one partion with the documents, 1 call each to other 4 partitions
         self.validate_query_requests_count(query_iterable, 29)
 
         query_iterable = created_collection.query_items(
@@ -200,7 +199,6 @@ class QueryTest(unittest.TestCase):
             enable_cross_partition_query=True
         )
 
-        # 1 call to get query plan 1 calls to one partition with the documents, 1 call each to other 4 partitions
         self.validate_query_requests_count(query_iterable, 11)
 
     def validate_query_requests_count(self, query_iterable, expected_count):

@@ -67,7 +67,7 @@ class _PipelineExecutionContext(_QueryExecutionContextBase):
             self._endpoint = endpoint_component._QueryExecutionTopEndpointComponent(self._endpoint, limit)
 
         distinct_type = query_execution_info.get_distinct_type()
-        if distinct_type is not None:
+        if distinct_type != 'None':
             if distinct_type == "Ordered":
                 self._endpoint = endpoint_component._QueryExecutionDistinctOrderedEndpointComponent(self._endpoint)
             else:

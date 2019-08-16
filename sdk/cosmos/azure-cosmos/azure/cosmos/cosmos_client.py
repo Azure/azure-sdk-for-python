@@ -125,11 +125,11 @@ class CosmosClient:
 
         if not request_options:
             request_options = {} # type: Dict[str, Any]
-        if session_token:
+        if session_token is not None:
             request_options["sessionToken"] = session_token
-        if initial_headers:
+        if initial_headers is not None:
             request_options["initialHeaders"] = initial_headers
-        if access_condition:
+        if access_condition is not None:
             request_options["accessCondition"] = access_condition
         if populate_query_metrics is not None:
             request_options["populateQueryMetrics"] = populate_query_metrics
@@ -191,9 +191,9 @@ class CosmosClient:
             feed_options = {} # type: Dict[str, Any]
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
-        if session_token:
+        if session_token is not None:
             feed_options["sessionToken"] = session_token
-        if initial_headers:
+        if initial_headers is not None:
             feed_options["initialHeaders"] = initial_headers
         if populate_query_metrics is not None:
             feed_options["populateQueryMetrics"] = populate_query_metrics
@@ -240,9 +240,9 @@ class CosmosClient:
             feed_options["enableCrossPartitionQuery"] = enable_cross_partition_query
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
-        if session_token:
+        if session_token is not None:
             feed_options["sessionToken"] = session_token
-        if initial_headers:
+        if initial_headers is not None:
             feed_options["initialHeaders"] = initial_headers
         if populate_query_metrics is not None:
             feed_options["populateQueryMetrics"] = populate_query_metrics
@@ -291,11 +291,11 @@ class CosmosClient:
         """
         if not request_options:
             request_options = {} # type: Dict[str, Any]
-        if session_token:
+        if session_token is not None:
             request_options["sessionToken"] = session_token
-        if initial_headers:
+        if initial_headers is not None:
             request_options["initialHeaders"] = initial_headers
-        if access_condition:
+        if access_condition is not None:
             request_options["accessCondition"] = access_condition
         if populate_query_metrics is not None:
             request_options["populateQueryMetrics"] = populate_query_metrics

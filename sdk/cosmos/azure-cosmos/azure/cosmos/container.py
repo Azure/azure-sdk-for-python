@@ -124,11 +124,11 @@ class Container:
         :returns: :class:`Container` instance representing the retrieved container.
 
         """
-        if not request_options:
+        if not request_options is not None:
             request_options = {} # type: Dict[str, Any]
-        if session_token:
+        if session_token is not None:
             request_options["sessionToken"] = session_token
-        if initial_headers:
+        if initial_headers is not None:
             request_options["initialHeaders"] = initial_headers
         if populate_query_metrics is not None:
             request_options["populateQueryMetrics"] = populate_query_metrics
@@ -186,15 +186,15 @@ class Container:
 
         if not request_options:
             request_options = {} # type: Dict[str, Any]
-        if partition_key:
+        if partition_key is not None:
             request_options["partitionKey"] = self._set_partition_key(partition_key)
-        if session_token:
+        if session_token is not None:
             request_options["sessionToken"] = session_token
-        if initial_headers:
+        if initial_headers is not None:
             request_options["initialHeaders"] = initial_headers
         if populate_query_metrics is not None:
             request_options["populateQueryMetrics"] = populate_query_metrics
-        if post_trigger_include:
+        if post_trigger_include is not None:
             request_options["postTriggerInclude"] = post_trigger_include
 
         result = self.client_connection.ReadItem(
@@ -228,9 +228,9 @@ class Container:
             feed_options = {} # type: Dict[str, Any]
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
-        if session_token:
+        if session_token is not None:
             feed_options["sessionToken"] = session_token
-        if initial_headers:
+        if initial_headers is not None:
             feed_options["initialHeaders"] = initial_headers
         if populate_query_metrics is not None:
             feed_options["populateQueryMetrics"] = populate_query_metrics
@@ -346,9 +346,9 @@ class Container:
             feed_options["enableCrossPartitionQuery"] = enable_cross_partition_query
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
-        if session_token:
+        if session_token is not None:
             feed_options["sessionToken"] = session_token
-        if initial_headers:
+        if initial_headers is not None:
             feed_options["initialHeaders"] = initial_headers
         if populate_query_metrics is not None:
             feed_options["populateQueryMetrics"] = populate_query_metrics
@@ -407,17 +407,17 @@ class Container:
         if not request_options:
             request_options = {} # type: Dict[str, Any]
         request_options["disableIdGeneration"] = True
-        if session_token:
+        if session_token is not None:
             request_options["sessionToken"] = session_token
-        if initial_headers:
+        if initial_headers is not None:
             request_options["initialHeaders"] = initial_headers
-        if access_condition:
+        if access_condition is not None:
             request_options["accessCondition"] = access_condition
         if populate_query_metrics is not None:
             request_options["populateQueryMetrics"] = populate_query_metrics
-        if pre_trigger_include:
+        if pre_trigger_include is not None:
             request_options["preTriggerInclude"] = pre_trigger_include
-        if post_trigger_include:
+        if post_trigger_include is not None:
             request_options["postTriggerInclude"] = post_trigger_include
 
         result = self.client_connection.ReplaceItem(
@@ -462,17 +462,17 @@ class Container:
         if not request_options:
             request_options = {} # type: Dict[str, Any]
         request_options["disableIdGeneration"] = True
-        if session_token:
+        if session_token is not None:
             request_options["sessionToken"] = session_token
-        if initial_headers:
+        if initial_headers is not None:
             request_options["initialHeaders"] = initial_headers
-        if access_condition:
+        if access_condition is not None:
             request_options["accessCondition"] = access_condition
         if populate_query_metrics is not None:
             request_options["populateQueryMetrics"] = populate_query_metrics
-        if pre_trigger_include:
+        if pre_trigger_include is not None:
             request_options["preTriggerInclude"] = pre_trigger_include
-        if post_trigger_include:
+        if post_trigger_include is not None:
             request_options["postTriggerInclude"] = post_trigger_include
 
         result = self.client_connection.UpsertItem(
@@ -519,19 +519,19 @@ class Container:
             request_options = {} # type: Dict[str, Any]
 
         request_options["disableAutomaticIdGeneration"] = True
-        if session_token:
+        if session_token is not None:
             request_options["sessionToken"] = session_token
-        if initial_headers:
+        if initial_headers is not None:
             request_options["initialHeaders"] = initial_headers
-        if access_condition:
+        if access_condition is not None:
             request_options["accessCondition"] = access_condition
-        if populate_query_metrics:
+        if populate_query_metrics is not None:
             request_options["populateQueryMetrics"] = populate_query_metrics
-        if pre_trigger_include:
+        if pre_trigger_include is not None:
             request_options["preTriggerInclude"] = pre_trigger_include
-        if post_trigger_include:
+        if post_trigger_include is not None:
             request_options["postTriggerInclude"] = post_trigger_include
-        if indexing_directive:
+        if indexing_directive is not None:
             request_options["indexingDirective"] = indexing_directive
 
         result = self.client_connection.CreateItem(
@@ -574,19 +574,19 @@ class Container:
         """
         if not request_options:
             request_options = {} # type: Dict[str, Any]
-        if partition_key:
+        if partition_key is not None:
             request_options["partitionKey"] = self._set_partition_key(partition_key)
-        if session_token:
+        if session_token is not None:
             request_options["sessionToken"] = session_token
-        if initial_headers:
+        if initial_headers is not None:
             request_options["initialHeaders"] = initial_headers
-        if access_condition:
+        if access_condition is not None:
             request_options["accessCondition"] = access_condition
         if populate_query_metrics is not None:
             request_options["populateQueryMetrics"] = populate_query_metrics
-        if pre_trigger_include:
+        if pre_trigger_include is not None:
             request_options["preTriggerInclude"] = pre_trigger_include
-        if post_trigger_include:
+        if post_trigger_include is not None:
             request_options["postTriggerInclude"] = post_trigger_include
 
         document_link = self._get_document_link(item)
@@ -755,7 +755,7 @@ class Container:
         """
         if not request_options:
             request_options = {} # type: Dict[str, Any]
-        if partition_key:
+        if partition_key is not None:
             request_options["partitionKey"] = self._set_partition_key(partition_key)
 
         result = self.client_connection.ReadConflict(
@@ -785,7 +785,7 @@ class Container:
         """
         if not request_options:
             request_options = {} # type: Dict[str, Any]
-        if partition_key:
+        if partition_key is not None:
             request_options["partitionKey"] = self._set_partition_key(partition_key)
 
         result = self.client_connection.DeleteConflict(

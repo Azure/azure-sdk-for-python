@@ -95,7 +95,8 @@ class QueryIterable(object):
         if self._resource_type != http_constants.ResourceType.Document or self._use_default_query_execution_context():
             return query_execution_context
 
-        query_execution_info = _PartitionedQueryExecutionInfo(self._client._GetQueryPlanThroughGateway(self._query, self._resource_link))
+        query_to_use = self._query if self._query is not None else "Select * from root r"
+        query_execution_info = _PartitionedQueryExecutionInfo(self._client._GetQueryPlanThroughGateway(query_to_use, self._resource_link))
 
         # Non value aggregates must go through DefaultDocumentQueryExecutionContext
         # Single partition query can serve queries like SELECT AVG(c.age) FROM c
