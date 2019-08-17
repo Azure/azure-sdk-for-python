@@ -21,6 +21,7 @@ import pdb
 from common_tasks import process_glob_string, run_check_call, cleanup_folder
 from ToxWorkItem import ToxWorkItem
 from simple_threadpool import execute_parallel_workload
+from subprocess import Popen, PIPE, STDOUT
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -136,50 +137,81 @@ def run_tests(targeted_packages, python_version, test_output_location, test_res)
 
 
 def prep_and_run_tox(targeted_packages, tox_env, options_array=[]):
-    execute_parallel_workload(execute_workload, targeted_packages, tox_env, options_array)
+    tox_command_tuples = []
+
+    for index, package_dir in enumerate(targeted_packages):
+        destination_tox_ini = os.path.join(package_dir, "tox.ini")
+        destination_dev_req = os.path.join(package_dir, "dev_requirements.txt")
+        tox_execution_array = ["tox"]
+        local_options_array = options_array[:]
+
+        # if we are targeting only packages that are management plane, it is a possibility
+        # that no tests running is an acceptable situation
+        # we explicitly handle this here.
+        if all(
+            map(
+                lambda x: any(
+                    [pkg_id in x for pkg_id in MANAGEMENT_PACKAGE_IDENTIFIERS]
+                ),
+                [package_dir],
+            )
+        ):
+            local_options_array.append("--suppress-no-test-exit-code")
+
+        # if not present, re-use base
+        if not os.path.exists(destination_tox_ini):
+            logging.info("No customized tox.ini present, using common eng/tox/tox.ini.")
+            tox_execution_array.extend(["-c", DEFAULT_TOX_INI_LOCATION])
+
+        # handle empty file
+        if not os.path.exists(destination_dev_req):
+            logging.info("No dev_requirements present.")
+            with open(destination_dev_req, "w+") as file:
+                file.write("-e ../../../tools/azure-sdk-tools")
+
+        if tox_env:
+            tox_execution_array.extend(["-e", tox_env])
+
+        if local_options_array:
+            tox_execution_array.extend(["--"] + local_options_array)
+
+        tox_command_tuples.append((tox_execution_array, package_dir))
+
+    procs_list = []
+
+    for cmd_tuple in tox_command_tuples:
+        package_dir = cmd_tuple[1]
+
+        logging.info(
+            "Running tox for {}. {} of {}.".format(
+                package_dir, index, len(targeted_packages)
+            )
+        )
+
+        with open(os.path.join(package_dir, 'stdout.txt'), 'w') as f_stdout, open(os.path.join(package_dir, 'stderr.txt'), 'w') as f_stderr:
+            proc = Popen(cmd_tuple[0], stdout=f_stdout, stderr=f_stderr, cwd=package_dir, env=os.environ.copy())
+            procs_list.append(proc)
+
+    failed_test_run = False
+
+    for index, proc in enumerate(procs_list):
+        proc.wait()
+
+        if proc.returncode != 0:
+            logging.error("Package returned with code {}".format(proc.returncode))
 
     # TODO: get a bit smarter here
     if not tox_env:
         collect_tox_coverage_files(targeted_packages)
 
-def execute_workload(work_item):
-    destination_tox_ini = os.path.join(work_item.target_package_path, "tox.ini")
-    destination_dev_req = os.path.join(work_item.target_package_path, "dev_requirements.txt")
-    tox_execution_array = ["tox"]
-    local_options_array = work_item.options_array[:]
-
-    # if we are targeting only packages that are management plane, it is a possibility
-    # that no tests running is an acceptable situation
-    # we explicitly handle this here.
-    if all(
-        map(
-            lambda x: any(
-                [pkg_id in x for pkg_id in MANAGEMENT_PACKAGE_IDENTIFIERS]
-            ),
-            [work_item.target_package_path],
-        )
-    ):
-        local_options_array.append("--suppress-no-test-exit-code")
-
-    # if not present, re-use base
-    if not os.path.exists(destination_tox_ini):
-        logging.info("No customized tox.ini present, using common eng/tox/tox.ini.")
-        tox_execution_array.extend(["-c", DEFAULT_TOX_INI_LOCATION])
-
-    # handle empty file
-    if not os.path.exists(destination_dev_req):
-        logging.info("No dev_requirements present.")
-        with open(destination_dev_req, "w+") as file:
-            file.write("-e ../../../tools/azure-sdk-tools")
-
-    if work_item.tox_env:
-        tox_execution_array.extend(["-e", work_item.tox_env])
-
-    if local_options_array:
-        tox_execution_array.extend(["--"] + local_options_array)
-
-    run_check_call(tox_execution_array, work_item.target_package_path)
-
+def log_file(file_location, is_error=False):
+    with open(file_location, 'r') as file:
+        for line in file:
+            print(line)
+            #if is_error:
+            #    logging.error(line)
+            #else:
+            #    logging.info(line)
 
 # TODO, dedup this function with collect_tox
 def collect_pytest_coverage_files(targeted_packages):
