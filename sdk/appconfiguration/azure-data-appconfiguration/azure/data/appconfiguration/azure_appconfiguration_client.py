@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-import re
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import UserAgentPolicy
 from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
@@ -15,55 +14,13 @@ from ._generated import ConfigurationClient
 from ._generated._configuration import ConfigurationClientConfiguration
 from ._generated.models import ConfigurationSetting
 from .azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
-from .utils import get_endpoint_from_connection_string
+from .utils import (
+    get_endpoint_from_connection_string,
+    escape_and_tolist,
+    prep_update_configuration_setting,
+    quote_etag
+)
 from ._user_agent import USER_AGENT
-
-def escape_reserved(value):
-    """
-    Reserved characters are star(*), comma(,) and backslash(\\)
-    If a reserved character is part of the value, then it must be escaped using \\{Reserved Character}.
-    Non-reserved characters can also be escaped.
-
-    """
-    if value is None:
-        return None
-    if value == "":
-        return "\0"  # '\0' will be encoded to %00 in the url.
-    if isinstance(value, list):
-        return [
-            escape_reserved(s) for s in value
-        ]
-    value = str(value)  # value is unicode for Python 2.7
-    # precede all reserved characters with a backslash.
-    # But if a * is at the beginning or the end, don't add the backslash
-    return re.sub(r"((?!^)\*(?!$)|\\|,)", r"\\\1", value)
-
-def escape_and_tolist(value):
-    if value is not None:
-        if isinstance(value, str):
-            value = [value]
-        value = escape_reserved(value)
-    return value
-
-def quote_etag(etag):
-    if etag != "*" and etag is not None:
-        return '"' + etag + '"'
-    return etag
-
-def prep_update_configuration_setting(key, etag=None, **kwargs):
-    # type: (str, str, dict) -> CaseInsensitiveDict
-    if not key:
-        raise ValueError("key is mandatory to update a ConfigurationSetting")
-
-    custom_headers = CaseInsensitiveDict(kwargs.get("headers"))
-    if etag:
-        custom_headers["if-match"] = quote_etag(
-            etag
-        )
-    elif "if-match" not in custom_headers:
-        custom_headers["if-match"] = "*"
-
-    return custom_headers
 
 class AzureAppConfigurationClient():
     """Represents an client that calls restful API of Azure App Configuration service.
@@ -105,8 +62,9 @@ class AzureAppConfigurationClient():
         policies = [
             self.config.headers_policy,
             self.config.user_agent_policy,
-            self.config.logging_policy,  # HTTP request/response log
             AppConfigRequestsCredentialsPolicy(self.config.credentials),
+            self.config.retry_policy,
+            self.config.logging_policy,  # HTTP request/response log
             DistributedTracingPolicy(),
         ]
 
@@ -189,7 +147,7 @@ class AzureAppConfigurationClient():
                 key="MyKey", label="MyLabel"
             )
         """
-        error_map = {404: ResourceNotFoundError, 412: ResourceNotFoundError}
+        error_map = {404: ResourceNotFoundError}
         return self._impl.get_configuration_setting(
             key=key,
             label=label,
