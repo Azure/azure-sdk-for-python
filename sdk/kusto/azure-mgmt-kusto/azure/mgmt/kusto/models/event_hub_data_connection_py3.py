@@ -48,6 +48,8 @@ class EventHubDataConnection(DataConnection):
      'JSON', 'CSV', 'TSV', 'SCSV', 'SOHSV', 'PSV', 'TXT', 'RAW', 'SINGLEJSON',
      'AVRO'
     :type data_format: str or ~azure.mgmt.kusto.models.DataFormat
+    :param event_system_properties: System properties of the event hub
+    :type event_system_properties: list[str]
     """
 
     _validation = {
@@ -70,13 +72,15 @@ class EventHubDataConnection(DataConnection):
         'table_name': {'key': 'properties.tableName', 'type': 'str'},
         'mapping_rule_name': {'key': 'properties.mappingRuleName', 'type': 'str'},
         'data_format': {'key': 'properties.dataFormat', 'type': 'str'},
+        'event_system_properties': {'key': 'properties.eventSystemProperties', 'type': '[str]'},
     }
 
-    def __init__(self, *, event_hub_resource_id: str, consumer_group: str, location: str=None, table_name: str=None, mapping_rule_name: str=None, data_format=None, **kwargs) -> None:
+    def __init__(self, *, event_hub_resource_id: str, consumer_group: str, location: str=None, table_name: str=None, mapping_rule_name: str=None, data_format=None, event_system_properties=None, **kwargs) -> None:
         super(EventHubDataConnection, self).__init__(location=location, **kwargs)
         self.event_hub_resource_id = event_hub_resource_id
         self.consumer_group = consumer_group
         self.table_name = table_name
         self.mapping_rule_name = mapping_rule_name
         self.data_format = data_format
+        self.event_system_properties = event_system_properties
         self.kind = 'EventHub'

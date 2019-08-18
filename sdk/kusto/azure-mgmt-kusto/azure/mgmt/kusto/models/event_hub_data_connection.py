@@ -48,6 +48,8 @@ class EventHubDataConnection(DataConnection):
      'JSON', 'CSV', 'TSV', 'SCSV', 'SOHSV', 'PSV', 'TXT', 'RAW', 'SINGLEJSON',
      'AVRO'
     :type data_format: str or ~azure.mgmt.kusto.models.DataFormat
+    :param event_system_properties: System properties of the event hub
+    :type event_system_properties: list[str]
     """
 
     _validation = {
@@ -70,6 +72,7 @@ class EventHubDataConnection(DataConnection):
         'table_name': {'key': 'properties.tableName', 'type': 'str'},
         'mapping_rule_name': {'key': 'properties.mappingRuleName', 'type': 'str'},
         'data_format': {'key': 'properties.dataFormat', 'type': 'str'},
+        'event_system_properties': {'key': 'properties.eventSystemProperties', 'type': '[str]'},
     }
 
     def __init__(self, **kwargs):
@@ -79,4 +82,5 @@ class EventHubDataConnection(DataConnection):
         self.table_name = kwargs.get('table_name', None)
         self.mapping_rule_name = kwargs.get('mapping_rule_name', None)
         self.data_format = kwargs.get('data_format', None)
+        self.event_system_properties = kwargs.get('event_system_properties', None)
         self.kind = 'EventHub'
