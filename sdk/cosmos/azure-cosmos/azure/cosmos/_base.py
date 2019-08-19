@@ -97,11 +97,10 @@ def GetHeaders(
 
     consistency_level = None
 
-    """ get default client consistency level"""
+    # get default client consistency level
     default_client_consistency_level = headers.get(http_constants.HttpHeaders.ConsistencyLevel)
 
-    """ set consistency level. check if set via options, this will
-    override the default """
+    # set consistency level. check if set via options, this will override the default
     if options.get("consistencyLevel"):
         consistency_level = options["consistencyLevel"]
         headers[http_constants.HttpHeaders.ConsistencyLevel] = consistency_level

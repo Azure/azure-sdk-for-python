@@ -89,9 +89,9 @@ class SessionContainer(object):
             - None
         """
 
-        """ there are two pieces of information that we need to update session token-
-        self link which has the rid representation of the resource, and
-        x-ms-alt-content-path which is the string representation of the resource"""
+        # there are two pieces of information that we need to update session token-
+        # self link which has the rid representation of the resource, and
+        # x-ms-alt-content-path which is the string representation of the resource
 
         with self.session_lock:
             collection_rid = ""
@@ -100,10 +100,10 @@ class SessionContainer(object):
             try:
                 self_link = response_result["_self"]
 
-                """ extract alternate content path from the response_headers
-                (only document level resource updates will have this),
-                and if not present, then we can assume that we don't have to update
-                session token for this request"""
+                # extract alternate content path from the response_headers
+                # (only document level resource updates will have this),
+                # and if not present, then we can assume that we don't have to update
+                # session token for this request
                 alt_content_path = ""
                 alt_content_path_key = http_constants.HttpHeaders.AlternateContentPath
                 response_result_id_key = u"id"
@@ -125,15 +125,13 @@ class SessionContainer(object):
                 return
 
             if collection_name in self.collection_name_to_rid:
-                """ check if the rid for the collection name has changed
-                this means that potentially, the collection was deleted
-                and recreated
-                """
+                # check if the rid for the collection name has changed
+                # this means that potentially, the collection was deleted
+                # and recreated
                 existing_rid = self.collection_name_to_rid[collection_name]
                 if collection_rid != existing_rid:
-                    """ flush the session tokens for the old rid, and
-                    update the new rid into the collection name to rid map.
-                    """
+                    # flush the session tokens for the old rid, and
+                    # update the new rid into the collection name to rid map.
                     self.rid_to_session_token[existing_rid] = {}
                     self.collection_name_to_rid[collection_name] = collection_rid
 
@@ -142,8 +140,7 @@ class SessionContainer(object):
 
             # update session token in collection rid to session token map
             if collection_rid in self.rid_to_session_token:
-                """ we need to update the session tokens for 'this' collection
-                """
+                # we need to update the session tokens for 'this' collection
                 for id in parsed_tokens:
                     old_session_token = (
                         self.rid_to_session_token[collection_rid][id]
@@ -190,8 +187,8 @@ class SessionContainer(object):
 
         id_to_sessionlsn = {}
         if session_token:
-            """ extract id, lsn from the token. For p-collection,
-            the token will be a concatenation of pairs for each collection"""
+            # extract id, lsn from the token. For p-collection,
+            # the token will be a concatenation of pairs for each collection
             token_pairs = session_token.split(",")
             for token_pair in token_pairs:
                 tokens = token_pair.split(":")

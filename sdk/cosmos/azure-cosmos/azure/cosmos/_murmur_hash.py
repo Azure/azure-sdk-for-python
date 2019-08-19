@@ -25,24 +25,22 @@
 from struct import pack
 from six.moves import xrange
 
-"""
-pymmh3 was written by Fredrik Kihlander, and is placed in the public
-domain. The author hereby disclaims copyright to this source code.
-
-pure python implementation of the murmur3 hash algorithm
-
-https://code.google.com/p/smhasher/wiki/MurmurHash3
-
-This was written for the times when you do not want to compile c-code and install modules,
-and you only want a drop-in murmur3 implementation.
-
-As this is purely python it is FAR from performant and if performance is anything that is needed
-a proper c-module is suggested!
-
-This module is written to have the same format as mmh3 python package found here for simple conversions:
-
-https://pypi.python.org/pypi/mmh3/2.0
-"""
+# pymmh3 was written by Fredrik Kihlander, and is placed in the public
+# domain. The author hereby disclaims copyright to this source code.
+#
+# pure python implementation of the murmur3 hash algorithm
+#
+# https://code.google.com/p/smhasher/wiki/MurmurHash3
+#
+# This was written for the times when you do not want to compile c-code and install modules,
+# and you only want a drop-in murmur3 implementation.
+#
+# As this is purely python it is FAR from performant and if performance is anything that is needed
+# a proper c-module is suggested!
+#
+# This module is written to have the same format as mmh3 python package found here for simple conversions:
+#
+# https://pypi.python.org/pypi/mmh3/2.0
 
 
 class MurmurHash(object):
