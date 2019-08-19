@@ -96,7 +96,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
             # If none of the retry policies applies or there is no retry needed, set the throttle related response hedaers and
             # re-throw the exception back
             # arg[0] is the request. It needs to be modified for write forbidden exception
-            if not (retry_policy.ShouldRetry(e)):
+            if not retry_policy.ShouldRetry(e):
                 if not client.last_response_headers:
                     client.last_response_headers = {}
                 client.last_response_headers[

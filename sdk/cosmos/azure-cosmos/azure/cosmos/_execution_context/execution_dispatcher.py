@@ -138,7 +138,7 @@ class _PipelineExecutionContext(_QueryExecutionContextBase):
             self._endpoint = endpoint_component._QueryExecutionOrderByEndpointComponent(self._endpoint)
 
         top = query_execution_info.get_top()
-        if not (top is None):
+        if top is not None:
             self._endpoint = endpoint_component._QueryExecutionTopEndpointComponent(self._endpoint, top)
 
         aggregates = query_execution_info.get_aggregates()
