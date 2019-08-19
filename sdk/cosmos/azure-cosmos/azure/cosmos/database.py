@@ -132,7 +132,7 @@ class Database(object):
 
         """
         # TODO this helper function should be extracted from CosmosClient
-        from .cosmos_client import CosmosClient 
+        from .cosmos_client import CosmosClient
         database_link = CosmosClient._get_database_link(self)
         if not request_options:
             request_options = {} # type: Dict[str, Any]
@@ -165,7 +165,7 @@ class Database(object):
         offer_throughput=None,
         unique_key_policy=None,
         conflict_resolution_policy=None,
-        request_options=None, 
+        request_options=None,
         response_hook=None
     ):
         # type: (str, PartitionKey, Dict[str, Any], int, str, Dict[str, str], Dict[str, str], bool, int, Dict[str, Any], Dict[str, Any], Dict[str, Any], Optional[Callable]) -> Container
@@ -251,7 +251,7 @@ class Database(object):
         initial_headers=None,
         access_condition=None,
         populate_query_metrics=None,
-        request_options=None, 
+        request_options=None,
         response_hook=None
     ):
         # type: (Union[str, Container, Dict[str, Any]], str, Dict[str, str], Dict[str, str], bool, Dict[str, Any], Optional[Callable]) -> None
@@ -320,7 +320,7 @@ class Database(object):
         session_token=None,
         initial_headers=None,
         populate_query_metrics=None,
-        feed_options=None, 
+        feed_options=None,
         response_hook=None
     ):
         # type: (int, str, Dict[str, str], bool, Dict[str, Any], Optional[Callable]) -> QueryIterable
@@ -371,7 +371,7 @@ class Database(object):
         session_token=None,
         initial_headers=None,
         populate_query_metrics=None,
-        feed_options=None, 
+        feed_options=None,
         response_hook=None
     ):
         # type: (str, List, int, str, Dict[str, str], bool, Dict[str, Any], Optional[Callable]) -> QueryIterable
@@ -421,7 +421,7 @@ class Database(object):
         initial_headers=None,
         access_condition=None,
         populate_query_metrics=None,
-        request_options=None, 
+        request_options=None,
         response_hook=None
     ):
         # type: (Union[str, Container, Dict[str, Any]], PartitionKey, Dict[str, Any], int, Dict[str, Any], str, Dict[str, str], Dict[str, str], bool, Dict[str, Any], Optional[Callable]) -> Container
@@ -494,7 +494,7 @@ class Database(object):
     def read_all_users(
             self,
             max_item_count=None,
-            feed_options=None, 
+            feed_options=None,
             response_hook=None
     ):
         # type: (int, Dict[str, Any], Optional[Callable]) -> QueryIterable
@@ -525,7 +525,7 @@ class Database(object):
             query,
             parameters=None,
             max_item_count=None,
-            feed_options=None, 
+            feed_options=None,
             response_hook=None
     ):
         # type: (str, List, int, Dict[str, Any], Optional[Callable]) -> QueryIterable
@@ -567,7 +567,7 @@ class Database(object):
         :param user: The ID (name), dict representing the properties or :class:`User` instance of the user to be retrieved.
         :returns: A :class:`User` instance representing the retrieved user.
         :raise `HTTPFailure`: If the given user couldn't be retrieved.
-        
+
         """
         if isinstance(user, User):
             id_value = user.id
@@ -585,7 +585,7 @@ class Database(object):
     def create_user(
             self,
             body,
-            request_options=None, 
+            request_options=None,
             response_hook=None
     ):
         # type: (Dict[str, Any], Dict[str, Any], Optional[Callable]) -> User
@@ -631,7 +631,7 @@ class Database(object):
     def upsert_user(
             self,
             body,
-            request_options=None, 
+            request_options=None,
             response_hook=None
     ):
         # type: (Dict[str, Any], Dict[str, Any], Optional[Callable]) -> User
@@ -669,7 +669,7 @@ class Database(object):
             self,
             user,
             body,
-            request_options=None, 
+            request_options=None,
             response_hook=None
     ):
         # type: (Union[str, User, Dict[str, Any]], Dict[str, Any], Dict[str, Any], Optional[Callable]) -> User
@@ -705,7 +705,7 @@ class Database(object):
     def delete_user(
             self,
             user,
-            request_options=None, 
+            request_options=None,
             response_hook=None
     ):
         # type: (Union[str, User, Dict[str, Any]], Dict[str, Any], Optional[Callable]) -> None
@@ -756,7 +756,7 @@ class Database(object):
 
     def replace_throughput(
             self,
-            throughput, 
+            throughput,
             response_hook=None
     ):
         # type: (int, Optional[Callable]) -> Offer

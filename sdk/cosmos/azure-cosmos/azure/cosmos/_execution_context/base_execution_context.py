@@ -38,7 +38,7 @@ class _QueryExecutionContextBase(object):
         :param CosmosClient client:
         :param dict options:
             The request options for the request.
-            
+
         """
         self._client = client
         self._options = options
@@ -52,20 +52,20 @@ class _QueryExecutionContextBase(object):
 
     def _has_more_pages(self):
         return not self._has_started or self._continuation
-    
+
     def fetch_next_block(self):
         """Returns a block of results with respecting retry policy.
-        
+
         This method only exists for backward compatibility reasons. (Because QueryIterable
         has exposed fetch_next_block api).
-        
+
         :return:
             List of results.
         :rtype: list
         """
         if not self._has_more_pages():
             return []
-        
+
         if len(self._buffer):
             # if there is anything in the buffer returns that
             res = list(self._buffer)
@@ -74,17 +74,17 @@ class _QueryExecutionContextBase(object):
         else:
             # fetches the next block
             return self._fetch_next_block()
-    
+
     def _fetch_next_block(self):
-        raise NotImplementedError    
-        
+        raise NotImplementedError
+
     def __iter__(self):
         """Returns itself as an iterator"""
         return self
-        
+
     def next(self):
         """Returns the next query result.
-        
+
         :return:
             The next query result.
         :rtype: dict
@@ -94,20 +94,20 @@ class _QueryExecutionContextBase(object):
             raise StopIteration
 
         if not len(self._buffer):
-                    
+
             results = self.fetch_next_block()
             self._buffer.extend(results)
-            
+
         if not len(self._buffer):
             raise StopIteration
-            
+
         return self._buffer.popleft()
 
     def __next__(self):
         # supports python 3 iterator
         return self.next()
-        
-    def _fetch_items_helper_no_retries(self, fetch_function): 
+
+    def _fetch_items_helper_no_retries(self, fetch_function):
         """Fetches more items and doesn't retry on failure
 
         :return:
@@ -122,7 +122,7 @@ class _QueryExecutionContextBase(object):
             self._options['continuation'] = self._continuation
             (fetched_items, response_headers) = fetch_function(self._options)
             fetched_items
-            continuation_key = http_constants.HttpHeaders.Continuation 
+            continuation_key = http_constants.HttpHeaders.Continuation
             # Use Etag as continuation token for change feed queries.
             if self._is_change_feed:
                 continuation_key = http_constants.HttpHeaders.ETag
@@ -134,14 +134,14 @@ class _QueryExecutionContextBase(object):
                 self._continuation = None
             if fetched_items:
                 break
-        return fetched_items   
-            
+        return fetched_items
+
     def _fetch_items_helper_with_retries(self, fetch_function):
         def callback():
             return self._fetch_items_helper_no_retries(fetch_function)
-                
+
         return _retry_utility.Execute(self._client, self._client._global_endpoint_manager, callback)
-    
+
 
 class _DefaultQueryExecutionContext(_QueryExecutionContextBase):
     """
@@ -154,7 +154,7 @@ class _DefaultQueryExecutionContext(_QueryExecutionContextBase):
         :param CosmosClient client:
         :param dict options:
             The request options for the request.
-        :param method fetch_function: 
+        :param method fetch_function:
             Will be invoked for retrieving each page
             Example of `fetch_function`:
             >>> def result_fn(result):
@@ -163,11 +163,11 @@ class _DefaultQueryExecutionContext(_QueryExecutionContextBase):
         """
         super(_DefaultQueryExecutionContext, self).__init__(client, options)
         self._fetch_function = fetch_function
-    
+
     def _fetch_next_block(self):
         while super(_DefaultQueryExecutionContext, self)._has_more_pages() and len(self._buffer) == 0:
             return self._fetch_items_helper_with_retries(self._fetch_function)
-        
+
 class _MultiCollectionQueryExecutionContext(_QueryExecutionContextBase):
     """
     This class is used if it is client side partitioning
@@ -181,7 +181,7 @@ class _MultiCollectionQueryExecutionContext(_QueryExecutionContextBase):
         :param str database_link: database self link or ID based link
         :param (str or dict) query:
             Partition_key (str): partition key for the query
-        
+
         """
         super(_MultiCollectionQueryExecutionContext, self).__init__(client, options)
 
@@ -193,7 +193,7 @@ class _MultiCollectionQueryExecutionContext(_QueryExecutionContextBase):
         self._client = client
 
         partition_resolver = client.GetPartitionResolver(database_link)
-        
+
         if(partition_resolver is None):
             raise ValueError(client.PartitionResolverErrorMessage)
         else:
@@ -210,7 +210,7 @@ class _MultiCollectionQueryExecutionContext(_QueryExecutionContextBase):
         # Creating the QueryFeed for the first collection
         path = _base.GetPathFromLink(self._collection_links[self._current_collection_index], 'docs')
         collection_id = _base.GetResourceIdOrFullNameFromLink(self._collection_links[self._current_collection_index])
-        
+
         self._current_collection_index += 1
 
         def fetch_fn(options):
@@ -220,13 +220,13 @@ class _MultiCollectionQueryExecutionContext(_QueryExecutionContextBase):
                                     options)
 
         self._fetch_function = fetch_fn
-    
+
     def _has_more_pages(self):
         return not self._has_started or self._continuation or (self._collection_links and self._current_collection_index < self._collection_links_length)
-        
-    def _fetch_next_block(self):    
+
+    def _fetch_next_block(self):
         """Fetches the next block of query results.
-        
+
         This iterates fetches the next block of results from the current collection link.
         Once the current collection results were exhausted. It moves to the next collection link.
 
@@ -243,7 +243,7 @@ class _MultiCollectionQueryExecutionContext(_QueryExecutionContextBase):
             if self._collection_links and self._current_collection_index < self._collection_links_length:
                 path = _base.GetPathFromLink(self._collection_links[self._current_collection_index], 'docs')
                 collection_id = _base.GetResourceIdOrFullNameFromLink(self._collection_links[self._current_collection_index])
-                
+
                 self._continuation = None
                 self._has_started = False
 

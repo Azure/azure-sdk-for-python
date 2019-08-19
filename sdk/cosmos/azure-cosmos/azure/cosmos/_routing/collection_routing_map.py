@@ -31,7 +31,7 @@ class CollectionRoutingMap(object):
     """Stores partition key ranges in an efficient way with some additional information and provides
      convenience methods for working with set of ranges.
     """
-    
+
     MinimumInclusiveEffectivePartitionKey = ""
     MaximumExclusiveEffectivePartitionKey = "FF"
 
@@ -39,7 +39,7 @@ class CollectionRoutingMap(object):
         self._rangeById = range_by_id
         self._rangeByInfo = range_by_info
         self._orderedPartitionKeyRanges = ordered_partition_key_ranges
-        
+
         self._orderedRanges = [routing_range.Range(pkr[PartitionKeyRange.MinInclusive], pkr[PartitionKeyRange.MaxExclusive], True, False) for pkr in ordered_partition_key_ranges]
         self._orderedPartitionInfo = ordered_partition_info
         self._collectionUniqueId = collection_unique_id
@@ -70,7 +70,7 @@ class CollectionRoutingMap(object):
         :rtype: list
         """
         return self._orderedPartitionKeyRanges
-    
+
     def get_range_by_effective_partition_key(self, effective_partition_key_value):
         """Gets the range containing the given partition key
 
@@ -82,10 +82,10 @@ class CollectionRoutingMap(object):
         """
         if CollectionRoutingMap.MinimumInclusiveEffectivePartitionKey == effective_partition_key_value:
             return self._orderedPartitionKeyRanges[0]
-        
+
         if CollectionRoutingMap.MaximumExclusiveEffectivePartitionKey == effective_partition_key_value:
             return None
-        
+
         sortedLow = [(r.min, not r.isMinInclusive) for r in self._orderedRanges]
 
         index = bisect.bisect_right(sortedLow, (effective_partition_key_value, True))
@@ -129,11 +129,11 @@ class CollectionRoutingMap(object):
         for providedRange in provided_partition_key_ranges:
             minIndex = bisect.bisect_right(sortedLow, (providedRange.min, not providedRange.isMinInclusive))
             if minIndex > 0: minIndex = minIndex - 1
-                
+
             maxIndex = bisect.bisect_left(sortedHigh, (providedRange.max, providedRange.isMaxInclusive))
             if maxIndex >= len(sortedHigh):
                 maxIndex = maxIndex - 1
-            
+
             for i in xrange(minIndex, maxIndex + 1):
                 if routing_range.Range.overlaps(self._orderedRanges[i], providedRange):
                     minToPartitionRange[self._orderedPartitionKeyRanges[i][PartitionKeyRange.MinInclusive]] = self._orderedPartitionKeyRanges[i]
@@ -145,7 +145,7 @@ class CollectionRoutingMap(object):
             return r[PartitionKeyRange.MinInclusive]
         overlapping_partition_key_ranges.sort(key = getKey)
         return overlapping_partition_key_ranges
-        
+
     @staticmethod
     def is_complete_set_of_range(ordered_partition_key_range_list):
         isComplete = False

@@ -59,10 +59,10 @@ class RangePartitionResolver(object):
 
         partition_key = self.partition_key_extractor(document)
         containing_range = self._GetContainingRange(partition_key)
-        
+
         if containing_range is None:
             raise ValueError("A containing range for " + str(partition_key) + " doesn't exist in the partition map.")
-        
+
         return self.partition_map.get(containing_range)
 
     def ResolveForRead(self, partition_key):

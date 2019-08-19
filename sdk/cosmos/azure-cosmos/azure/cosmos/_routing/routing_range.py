@@ -31,12 +31,12 @@ class PartitionKeyRange(object):
 
 class Range(object):
     """description of class"""
-    
+
     MinPath = 'min'
     MaxPath = 'max'
     IsMinInclusivePath = 'isMinInclusive'
     IsMaxInclusivePath = 'isMaxInclusive'
-        
+
     def __init__(self, range_min, range_max, isMinInclusive, isMaxInclusive):
         if range_min is None:
             raise ValueError("min is missing")
@@ -47,7 +47,7 @@ class Range(object):
         self.max = range_max
         self.isMinInclusive = isMinInclusive
         self.isMaxInclusive = isMaxInclusive
-        
+
     def contains(self, value):
         minToValueRelation = self.min > value
         maxToValueRelation = self.max > value
@@ -61,18 +61,18 @@ class Range(object):
         self = cls(partition_key_range[PartitionKeyRange.MinInclusive], partition_key_range[PartitionKeyRange.MaxExclusive],
                    True, False)
         return self
-    
+
     @classmethod
     def ParseFromDict(cls, range_as_dict):
         self = cls(range_as_dict[Range.MinPath], range_as_dict[Range.MaxPath], range_as_dict[Range.IsMinInclusivePath], range_as_dict[Range.IsMaxInclusivePath])
         return self
-    
+
     def isSingleValue(self):
         return self.isMinInclusive and self.isMaxInclusive and self.min == self.max
 
     def isEmpty(self):
         return (not (self.isMinInclusive and self.isMaxInclusive)) and self.min == self.max
-    
+
     def __hash__(self):
         return hash((self.min, self.max, self.isMinInclusive, self.isMaxInclusive))
 
@@ -84,19 +84,19 @@ class Range(object):
         return (self.min == other.min) and (self.max == other.max) \
                 and (self.isMinInclusive == other.isMinInclusive) \
                 and (self.isMaxInclusive == other.isMaxInclusive)
-    
-    
+
+
     @staticmethod
     def _compare_helper(a,b):
         # python 3 compatible
         return (a > b) - (a < b)
-        
+
     @staticmethod
     def overlaps(range1, range2):
 
         if range1 is None or range2 is None: return False
         if range1.isEmpty() or range2.isEmpty(): return False
-            
+
         cmp1 = Range._compare_helper(range1.min, range2.max)
         cmp2 = Range._compare_helper(range2.min, range1.max)
 

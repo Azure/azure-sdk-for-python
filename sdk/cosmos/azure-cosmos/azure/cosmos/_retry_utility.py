@@ -47,8 +47,8 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
     # instantiate all retry policies here to be applied for each request execution
     endpointDiscovery_retry_policy = _endpoint_discovery_retry_policy.EndpointDiscoveryRetryPolicy(client.connection_policy, global_endpoint_manager, *args)
 
-    resourceThrottle_retry_policy = _resource_throttle_retry_policy.ResourceThrottleRetryPolicy(client.connection_policy.RetryOptions.MaxRetryAttemptCount, 
-                                                                                                client.connection_policy.RetryOptions.FixedRetryIntervalInMilliseconds, 
+    resourceThrottle_retry_policy = _resource_throttle_retry_policy.ResourceThrottleRetryPolicy(client.connection_policy.RetryOptions.MaxRetryAttemptCount,
+                                                                                                client.connection_policy.RetryOptions.FixedRetryIntervalInMilliseconds,
                                                                                                 client.connection_policy.RetryOptions.MaxWaitTimeInSeconds)
     defaultRetry_policy = _default_retry_policy.DefaultRetryPolicy(*args)
 
@@ -61,7 +61,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
                 result = ExecuteFunction(function, *args, **kwargs)
             if not client.last_response_headers:
                 client.last_response_headers = {}
-            
+
             # setting the throttle related response headers before returning the result
             client.last_response_headers[HttpHeaders.ThrottleRetryCount] = resourceThrottle_retry_policy.current_retry_attempt_count
             client.last_response_headers[HttpHeaders.ThrottleRetryWaitTimeInMs] = resourceThrottle_retry_policy.cummulative_wait_time_in_milliseconds
@@ -79,7 +79,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
             else:
                 retry_policy = defaultRetry_policy
 
-            # If none of the retry policies applies or there is no retry needed, set the throttle related response hedaers and 
+            # If none of the retry policies applies or there is no retry needed, set the throttle related response hedaers and
             # re-throw the exception back
             # arg[0] is the request. It needs to be modified for write forbidden exception
             if not (retry_policy.ShouldRetry(e)):

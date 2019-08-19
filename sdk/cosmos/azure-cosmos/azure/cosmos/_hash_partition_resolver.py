@@ -46,7 +46,7 @@ class HashPartitionResolver(object):
             raise ValueError("collection_links is None.")
         if default_number_of_virtual_nodes_per_collection <= 0:
             raise ValueError("The number of virtual nodes per collection must greater than 0.")
-        
+
         self.partition_key_extractor = partition_key_extractor
         self.collection_links = collection_links
 
@@ -57,7 +57,7 @@ class HashPartitionResolver(object):
 
     def ResolveForCreate(self, document):
         """Resolves the collection for creating the document based on the partition key.
-        
+
         :param dict document:
             The document to be created.
 

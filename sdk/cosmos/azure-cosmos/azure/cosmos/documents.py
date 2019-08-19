@@ -41,14 +41,14 @@ class DatabaseAccount(object):
         UserConsistencyPolicy settings.
     :ivar dict ConsistencyPolicy['defaultConsistencyLevel']:
         The default consistency level.
-    :ivar int ConsistencyPolicy['maxStalenessPrefix']: 
-        In bounded staleness consistency, the maximum allowed staleness in 
+    :ivar int ConsistencyPolicy['maxStalenessPrefix']:
+        In bounded staleness consistency, the maximum allowed staleness in
         terms difference in sequence numbers (aka version).
     :ivar int ConsistencyPolicy['maxStalenessIntervalInSeconds']:
-        In bounded staleness consistency, the maximum allowed staleness in 
+        In bounded staleness consistency, the maximum allowed staleness in
         terms time interval.
     :ivar boolean EnableMultipleWritableLocations:
-        Flag on the azure Cosmos account that indicates if writes can take 
+        Flag on the azure Cosmos account that indicates if writes can take
         place in multiple locations.
     """
 
@@ -103,7 +103,7 @@ class ConsistencyLevel(object):
         Eventual Consistency guarantees that reads will return
         a subset of writes. All writes will be eventually be available for
         reads.
-    :ivar str ConsistencyLevel.ConsistentPrefix: 
+    :ivar str ConsistencyLevel.ConsistentPrefix:
         ConsistentPrefix Consistency guarantees that
         reads will return some prefix of all writes with no gaps. All writes
         will be eventually be available for reads.
@@ -321,11 +321,11 @@ class ConnectionPolicy(object):
     :ivar int RequestTimeout:
         Gets or sets the request timeout (time to wait
         for response from network peer).
-    :ivar int MediaRequestTimeout: 
+    :ivar int MediaRequestTimeout:
         Gets or sets Time to wait for response
         from network peer for attachment content (aka media) operations.
     :ivar documents.ConnectionMode ConnectionMode:
-        Gets or sets the connection mode used in the client. Currently 
+        Gets or sets the connection mode used in the client. Currently
         only Gateway is supported.
     :ivar MediaReadMode.Buffered MediaReadMode:
         Gets or sets the attachment content (aka media) download mode.
@@ -347,7 +347,7 @@ class ConnectionPolicy(object):
     :ivar RetryOptions RetryOptions:
         Gets or sets the retry options to be applied to all requests when retrying.
     :ivar boolean DisableSSLVerification:
-        Flag to disable SSL verification for the requests. SSL verification is enabled by default. 
+        Flag to disable SSL verification for the requests. SSL verification is enabled by default.
         Don't set this when targeting production endpoints.
         This is intended to be used only when targeting emulator endpoint to avoid failing your requests with SSL related error.
     :ivar boolean UseMultipleWriteLocations:

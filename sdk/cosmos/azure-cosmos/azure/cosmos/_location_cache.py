@@ -19,7 +19,7 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
-"""Implements the abstraction to resolve target location for geo-replicated DatabaseAccount 
+"""Implements the abstraction to resolve target location for geo-replicated DatabaseAccount
    with multiple writable and readable locations.
 """
 import collections
@@ -56,7 +56,7 @@ class LocationCache(object):
         self.available_read_locations = []
 
     def check_and_update_cache(self):
-        if (len(self.location_unavailability_info_by_endpoint) > 0 
+        if (len(self.location_unavailability_info_by_endpoint) > 0
             and self.current_time_millis() - self.last_cache_update_time_stamp > self.refresh_time_interval_in_ms):
             self.update_location_cache()
 
@@ -99,7 +99,7 @@ class LocationCache(object):
         if (not use_preferred_locations or (documents._OperationType.IsWriteOperation(request.operation_type)
                                             and not self.can_use_multiple_write_locations_for_request(request))):
             # For non-document resource types in case of client can use multiple write locations
-            # or when client cannot use multiple write locations, flip-flop between the 
+            # or when client cannot use multiple write locations, flip-flop between the
             # first and the second writable region in DatabaseAccount (for manual failover)
             if self.enable_endpoint_discovery and len(self.available_write_locations) > 0:
                 location_index = min(location_index % 2, len(self.available_write_locations) - 1)
@@ -131,7 +131,7 @@ class LocationCache(object):
 
             if not self.can_use_multiple_write_locations():
                 if self.is_endpoint_unavailable(self.write_endpoints[0], EndpointOperationType.WriteType):
-                    # Since most preferred write endpoint is unavailable, we can only refresh in background if 
+                    # Since most preferred write endpoint is unavailable, we can only refresh in background if
                     # we have an alternate write endpoint
                     return True
                 else:
@@ -156,7 +156,7 @@ class LocationCache(object):
                 if not (unavailability_info and
                     self.current_time_millis() - unavailability_info['lastUnavailabilityCheckTimeStamp'] > self.refresh_time_interval_in_ms):
                     new_location_unavailability_info[unavailable_endpoint] = self.location_unavailability_info_by_endpoint[unavailable_endpoint]
-                    
+
         self.location_unavailability_info_by_endpoint = new_location_unavailability_info
 
     def is_endpoint_unavailable(self, endpoint, expected_available_operations):
@@ -211,7 +211,7 @@ class LocationCache(object):
                 unavailable_endpoints = []
                 if self.preferred_locations:
                     # When client can not use multiple write locations, preferred locations list should only be used
-                    # determining read endpoints order. 
+                    # determining read endpoints order.
                     # If client can use multiple write locations, preferred locations list should be used for determining
                     # both read and write endpoints order.
                     for location in self.preferred_locations:

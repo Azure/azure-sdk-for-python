@@ -171,7 +171,7 @@ class HttpHeaders:
     PartitionKey = "x-ms-documentdb-partitionkey"
     EnableCrossPartitionQuery = "x-ms-documentdb-query-enablecrosspartition"
     PartitionKeyRangeID = 'x-ms-documentdb-partitionkeyrangeid'
-        
+
     # Upsert header
     IsUpsert = 'x-ms-documentdb-is-upsert'
 
@@ -342,16 +342,16 @@ class SubStatusCodes:
     """
     UNKNOWN = 0
 
-    # 400: Bad Request Substatus 
+    # 400: Bad Request Substatus
     PARTITION_KEY_MISMATCH = 1001
     CROSS_PARTITION_QUERY_NOT_SERVABLE = 1004
 
-    # 410: StatusCodeType_Gone: substatus 
+    # 410: StatusCodeType_Gone: substatus
     NAME_CACHE_IS_STALE = 1000
     PARTITION_KEY_RANGE_GONE = 1002
     COMPLETING_SPLIT = 1007
     COMPLETING_PARTITION_MIGRATION = 1008
-        
+
     # 403: Forbidden Substatus.
     WRITE_FORBIDDEN = 3
     PROVISION_LIMIT_REACHED = 1005

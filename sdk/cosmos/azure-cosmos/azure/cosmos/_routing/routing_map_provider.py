@@ -37,35 +37,35 @@ class PartitionKeyRangeCache(object):
         '''
         Constructor
         '''
-        
+
         self._documentClient = client
-        
+
         # keeps the cached collection routing map by collection id
         self._collection_routing_map_by_item = {}
-        
+
     def get_overlapping_ranges(self, collection_link, partition_key_ranges):
         '''
-        Given a partition key range and a collection, 
+        Given a partition key range and a collection,
         returns the list of overlapping partition key ranges
-        
+
         :param str collection_link:
             The name of the collection.
-        :param list partition_key_range: 
+        :param list partition_key_range:
             List of partition key range.
-        
+
         :return:
             List of overlapping partition key ranges.
         :rtype: list
         '''
         cl = self._documentClient
-        
+
         collection_id = _base.GetResourceIdOrFullNameFromLink(collection_link)
-        
+
         collection_routing_map = self._collection_routing_map_by_item.get(collection_id)
         if collection_routing_map is None:
             collection_pk_ranges = list(cl._ReadPartitionKeyRanges(collection_link))
-            # for large collections, a split may complete between the read partition key ranges query page responses, 
-            # causing the partitionKeyRanges to have both the children ranges and their parents. Therefore, we need 
+            # for large collections, a split may complete between the read partition key ranges query page responses,
+            # causing the partitionKeyRanges to have both the children ranges and their parents. Therefore, we need
             # to discard the parent ranges to have a valid routing map.
             collection_pk_ranges = PartitionKeyRangeCache._discard_parent_ranges(collection_pk_ranges)
             collection_routing_map = CollectionRoutingMap.CompleteRoutingMap([(r, True) for r in collection_pk_ranges], collection_id)
@@ -88,7 +88,7 @@ class SmartRoutingMapProvider(PartitionKeyRangeCache):
     def __init__(self, client):
         super(SmartRoutingMapProvider, self).__init__(client)
 
-    
+
     def _second_range_is_after_first_range(self, range1, range2):
         if range1.max > range2.min:
             ##r.min < #previous_r.max
@@ -97,8 +97,8 @@ class SmartRoutingMapProvider(PartitionKeyRangeCache):
             if (range2.min == range2.min and range1.isMaxInclusive and range2.isMinInclusive):
                 # the inclusive ending endpoint of previous_r is the same as the inclusive beginning endpoint of r
                 return False
-        
-        return True    
+
+        return True
 
     def _is_sorted_and_non_overlapping(self, ranges):
         for idx, r in list(enumerate(ranges))[1:]:
@@ -106,7 +106,7 @@ class SmartRoutingMapProvider(PartitionKeyRangeCache):
             if not self._second_range_is_after_first_range(previous_r, r):
                 return False
         return True
-            
+
     def _subtract_range(self, r, partition_key_range):
         """
         Evaluates and returns r - partition_key_range
@@ -117,7 +117,7 @@ class SmartRoutingMapProvider(PartitionKeyRangeCache):
             The subtract r - partition_key_range.
         :rtype: routing_range.Range
         """
-        
+
         left = max(partition_key_range[routing_range.PartitionKeyRange.MaxExclusive], r.min)
 
         if left == r.min:
@@ -128,12 +128,12 @@ class SmartRoutingMapProvider(PartitionKeyRangeCache):
         queryRange = routing_range.Range(left, r.max, leftInclusive,
                 r.isMaxInclusive)
         return queryRange
-            
+
     def get_overlapping_ranges(self, collection_link, sorted_ranges):
         '''
         Given the sorted ranges and a collection,
         Returns the list of overlapping partition key ranges
-        
+
         :param str collection_link:
             The collection link.
         :param (list of routing_range.Range) sorted_ranges: The sorted list of non-overlapping ranges.
@@ -142,13 +142,13 @@ class SmartRoutingMapProvider(PartitionKeyRangeCache):
         :rtype: list of dict
         :raises ValueError: If two ranges in sorted_ranges overlap or if the list is not sorted
         '''
-        
+
         # validate if the list is non-overlapping and sorted
         if not self._is_sorted_and_non_overlapping(sorted_ranges):
             raise ValueError("the list of ranges is not a non-overlapping sorted ranges")
-        
+
         target_partition_key_ranges = []
-        
+
         it = iter(sorted_ranges)
         try:
             currentProvidedRange = next(it)
@@ -157,29 +157,29 @@ class SmartRoutingMapProvider(PartitionKeyRangeCache):
                     # skip and go to the next item\
                     currentProvidedRange = next(it)
                     continue
-                
+
                 if len(target_partition_key_ranges):
                     queryRange = self._subtract_range(currentProvidedRange, target_partition_key_ranges[-1])
                 else:
                     queryRange = currentProvidedRange
-    
+
                 overlappingRanges = PartitionKeyRangeCache.get_overlapping_ranges(self, collection_link, queryRange)
                 assert len(overlappingRanges), ("code bug: returned overlapping ranges for queryRange {} is empty".format(queryRange))
                 target_partition_key_ranges.extend(overlappingRanges)
 
                 lastKnownTargetRange = routing_range.Range.PartitionKeyRangeToRange(target_partition_key_ranges[-1])
-                
+
                 # the overlapping ranges must contain the requested range
                 assert currentProvidedRange.max <= lastKnownTargetRange.max, "code bug: returned overlapping ranges {} does not contain the requested range {}".format(overlappingRanges, queryRange)
-                
+
                 # the current range is contained in target_partition_key_ranges just move forward
                 currentProvidedRange = next(it)
-                
+
                 while currentProvidedRange.max <= lastKnownTargetRange.max:
                     # the current range is covered too. just move forward
                     currentProvidedRange = next(it)
         except StopIteration:
             # when the iteration is exhausted we get here. There is nothing else to be done
             pass
-        
+
         return target_partition_key_ranges

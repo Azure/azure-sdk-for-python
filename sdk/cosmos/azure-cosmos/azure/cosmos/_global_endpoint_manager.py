@@ -103,7 +103,7 @@ class _GlobalEndpointManager(object):
 
     def _GetDatabaseAccount(self):
         """Gets the database account first by using the default endpoint, and if that doesn't returns
-           use the endpoints for the preferred locations in the order they are specified to get 
+           use the endpoints for the preferred locations in the order they are specified to get
            the database account.
         """
         try:
@@ -141,12 +141,12 @@ class _GlobalEndpointManager(object):
             if hostname_parts is not None:
                 # global_database_account_name will return 'contoso'
                 global_database_account_name = hostname_parts[0]
-            
+
                 # Prepare the locational_database_account_name as contoso-EastUS for location_name 'East US'
                 locational_database_account_name = global_database_account_name + '-' + location_name.replace(' ', '')
-            
+
                 # Replace 'contoso' with 'contoso-EastUS' and return locational_endpoint as https://contoso-EastUS.documents.azure.com:443/
-                locational_endpoint = default_endpoint.lower().replace(global_database_account_name, locational_database_account_name, 1)  
+                locational_endpoint = default_endpoint.lower().replace(global_database_account_name, locational_database_account_name, 1)
                 return locational_endpoint
-        
+
         return None

@@ -61,7 +61,7 @@ class EndpointDiscoveryRetryPolicy(object):
     def ShouldRetry(self, exception):
         """Returns true if should retry based on the passed-in exception.
 
-        :param (errors.HTTPFailure instance) exception: 
+        :param (errors.HTTPFailure instance) exception:
 
         :rtype:
             boolean
@@ -85,7 +85,7 @@ class EndpointDiscoveryRetryPolicy(object):
         # set the refresh_needed flag to ensure that endpoint list is
         # refreshed with new writable and readable locations
         self.global_endpoint_manager.refresh_needed = True
-        
+
         # clear previous location-based routing directive
         self.request.clear_route_to_location()
 
@@ -93,7 +93,7 @@ class EndpointDiscoveryRetryPolicy(object):
         # simulating single master writes by ensuring usePreferredLocations
         # is set to false
         self.request.route_to_location_with_preferred_location_flag(self.failover_retry_count, False)
-        
+
         # Resolve the endpoint for the request and pin the resolution to the resolved endpoint
         # This enables marking the endpoint unavailability on endpoint failover/unreachability
         self.location_endpoint = self.global_endpoint_manager.resolve_service_endpoint(self.request)

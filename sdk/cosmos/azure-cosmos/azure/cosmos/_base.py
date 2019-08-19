@@ -98,11 +98,11 @@ def GetHeaders(cosmos_client_connection,
             options['indexingDirective'])
 
     consistency_level = None
-    
+
     ''' get default client consistency level'''
     default_client_consistency_level = headers.get(http_constants.HttpHeaders.ConsistencyLevel)
 
-    ''' set consistency level. check if set via options, this will 
+    ''' set consistency level. check if set via options, this will
     override the default '''
     if options.get('consistencyLevel'):
         consistency_level = options['consistencyLevel']
@@ -120,13 +120,13 @@ def GetHeaders(cosmos_client_connection,
         if options.get('sessionToken'):
             headers[http_constants.HttpHeaders.SessionToken] = options['sessionToken']
         else:
-            # check if the client's default consistency is session (and request consistency level is same), 
+            # check if the client's default consistency is session (and request consistency level is same),
             # then update from session container
             if default_client_consistency_level == documents.ConsistencyLevel.Session:
                 # populate session token from the client's session container
                 headers[http_constants.HttpHeaders.SessionToken] = (
                     cosmos_client_connection.session.get_session_token(path))
-           
+
     if options.get('enableScanInQuery'):
         headers[http_constants.HttpHeaders.EnableScanInQuery] = (
             options['enableScanInQuery'])
@@ -230,7 +230,7 @@ def GetResourceIdOrFullNameFromLink(resource_link):
     # For named based, the resource link is the full name
     if IsNameBased(resource_link):
         return TrimBeginningAndEndingSlashes(resource_link)
-    
+
     # Padding the resource link with leading and trailing slashes if not already
     if resource_link[-1] != '/':
         resource_link = resource_link + '/'
@@ -238,7 +238,7 @@ def GetResourceIdOrFullNameFromLink(resource_link):
     if resource_link[0] != '/':
         resource_link = '/' + resource_link
 
-    # The path will be in the form of 
+    # The path will be in the form of
     # /[resourceType]/[resourceId]/ .... /[resourceType]/[resourceId]/ or
     # /[resourceType]/[resourceId]/ .... /[resourceType]/
     # The result of split will be in the form of
@@ -306,18 +306,18 @@ def GetPathFromLink(resource_link, resource_type=''):
     :rtype: str
     """
     resource_link = TrimBeginningAndEndingSlashes(resource_link)
-        
+
     if IsNameBased(resource_link):
         # Replace special characters in string using the %xx escape. For example, space(' ') would be replaced by %20
         # This function is intended for quoting the path section of the URL and excludes '/' to be quoted as that's the default safe char
         resource_link = urllib_quote(resource_link)
-        
+
     # Padding leading and trailing slashes to the path returned both for name based and resource id based links
     if resource_type:
         return '/' + resource_link + '/' + resource_type + '/'
     else:
         return '/' + resource_link + '/'
-    
+
 def IsNameBased(link):
     """Finds whether the link is name based or not
 
@@ -334,10 +334,10 @@ def IsNameBased(link):
     if link.startswith('/') and len(link) > 1:
         link = link[1:]
 
-    # Splitting the link(separated by "/") into parts 
+    # Splitting the link(separated by "/") into parts
     parts = link.split('/')
 
-    # First part should be "dbs" 
+    # First part should be "dbs"
     if len(parts) == 0 or not parts[0] or not parts[0].lower() == 'dbs':
         return False
 
@@ -347,7 +347,7 @@ def IsNameBased(link):
 
     # Either ResourceID or database name
     databaseID = parts[1]
-    	
+
     # Length of databaseID(in case of ResourceID) is always 8
     if len(databaseID) != 8:
         return True
@@ -380,13 +380,13 @@ def IsDatabaseLink(link):
     # trimming the leading and trailing "/" from the input string
     link = TrimBeginningAndEndingSlashes(link)
 
-    # Splitting the link(separated by "/") into parts 
+    # Splitting the link(separated by "/") into parts
     parts = link.split('/')
 
     if len(parts) != 2:
     	return False
 
-    # First part should be "dbs" 
+    # First part should be "dbs"
     if not parts[0] or not parts[0].lower() == 'dbs':
         return False
 
@@ -412,17 +412,17 @@ def IsItemContainerLink(link):
     # trimming the leading and trailing "/" from the input string
     link = TrimBeginningAndEndingSlashes(link)
 
-    # Splitting the link(separated by "/") into parts 
+    # Splitting the link(separated by "/") into parts
     parts = link.split('/')
 
     if len(parts) != 4:
     	return False
 
-    # First part should be "dbs" 
+    # First part should be "dbs"
     if not parts[0] or not parts[0].lower() == 'dbs':
         return False
 
-    # Third part should be "colls" 
+    # Third part should be "colls"
     if not parts[2] or not parts[2].lower() == 'colls':
         return False
 
@@ -435,15 +435,15 @@ def IsItemContainerLink(link):
     	return False
 
     return True
-        
+
 def GetItemContainerInfo(self_link, alt_content_path, id_from_response):
     """ Given the self link and alt_content_path from the reponse header and result
         extract the collection name and collection id
 
-        Ever response header has alt-content-path that is the 
+        Ever response header has alt-content-path that is the
         owner's path in ascii. For document create / update requests, this can be used
         to get the collection name, but for collection create response, we can't use it.
-        So we also rely on  
+        So we also rely on
 
     :param str self_link:
         Self link of the resource, as obtained from response result.
@@ -456,7 +456,7 @@ def GetItemContainerInfo(self_link, alt_content_path, id_from_response):
     :return:
         tuple of (collection rid, collection name)
     :rtype: tuple
-    """ 
+    """
 
     self_link = TrimBeginningAndEndingSlashes(self_link) + '/'
 
@@ -494,7 +494,7 @@ def GetItemContainerLink(link):
     link = TrimBeginningAndEndingSlashes(link) + '/'
 
     index = IndexOfNth(link, '/', 4)
-    
+
     if index != -1:
         return link[0:index]
     else:
@@ -570,7 +570,7 @@ def TrimBeginningAndEndingSlashes(path):
 def ParsePaths(paths):
     if len(paths) != 1:
         raise ValueError("Unsupported paths count.")
-        
+
     segmentSeparator = '/'
     path = paths[0]
     tokens = []
@@ -579,7 +579,7 @@ def ParsePaths(paths):
     while currentIndex < len(path):
         if path[currentIndex] != segmentSeparator:
             raise ValueError("Invalid path character at index " + currentIndex)
-            
+
         currentIndex += 1
         if currentIndex == len(path):
             break
@@ -588,12 +588,12 @@ def ParsePaths(paths):
         if path[currentIndex] == '\"' or path[currentIndex] == '\'':
             quote = path[currentIndex]
             newIndex = currentIndex + 1
-                
+
             while True:
                 newIndex = path.find(quote, newIndex)
                 if newIndex == -1:
                     raise ValueError("Invalid path character at index " + currentIndex)
-                
+
                 # check if the quote itself is escaped by a preceding \ in which case it's part of the token
                 if path[newIndex - 1] != '\\':
                     break
@@ -620,4 +620,4 @@ def ParsePaths(paths):
 
     return tokens
 
-    
+

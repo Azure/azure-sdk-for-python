@@ -38,10 +38,10 @@ class VectorSessionToken(object):
 
         if self.session_token == None:
             region_and_local_lsn = []
-            
+
             for key in self.local_lsn_by_region:
                 region_and_local_lsn.append(str(key) + self.region_progress_separator + str(self.local_lsn_by_region[key]))
-            
+
             region_progress = self.segment_separator.join(region_and_local_lsn)
             if not region_progress:
                 self.session_token = "%s%s%s" % (self.version, self.segment_separator, self.global_lsn)
@@ -55,7 +55,7 @@ class VectorSessionToken(object):
         :param str session_token:
 
         :return:
-            A Vector session Token 
+            A Vector session Token
         :rtype: VectorSessionToken
         """
 
@@ -67,7 +67,7 @@ class VectorSessionToken(object):
             return None
 
         segments = session_token.split(cls.segment_separator)
-        
+
         if len(segments) < 2:
             return None
 

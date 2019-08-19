@@ -23,7 +23,7 @@ from .container import Container
 from .cosmos_client import CosmosClient
 from .database import Database
 from .documents import (
-    ConsistencyLevel, DataType, IndexKind, IndexingMode, PermissionMode, ProxyConfiguration, 
+    ConsistencyLevel, DataType, IndexKind, IndexingMode, PermissionMode, ProxyConfiguration,
     SSLConfiguration, TriggerOperation, TriggerType
 )
 from .partition_key import PartitionKey
@@ -40,7 +40,7 @@ __all__ = (
     'Scripts',
     'User',
 
-    'ConsistencyLevel', 
+    'ConsistencyLevel',
     'DataType',
     'IndexKind',
     'IndexingMode',

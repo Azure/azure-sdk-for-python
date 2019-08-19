@@ -87,9 +87,9 @@ def __GetAuthorizationTokenUsingMasterKey(verb,
     """
 
 
-    # decodes the master key which is encoded in base64    
+    # decodes the master key which is encoded in base64
     key = base64.b64decode(master_key)
-    
+
     # Skipping lower casing of resource_id_or_fullname since it may now contain "ID" of the resource as part of the fullname
     text = '{verb}\n{resource_type}\n{resource_id_or_fullname}\n{x_date}\n{http_date}\n'.format(
         verb=(verb.lower() or ''),
@@ -97,7 +97,7 @@ def __GetAuthorizationTokenUsingMasterKey(verb,
         resource_id_or_fullname=(resource_id_or_fullname or ''),
         x_date=headers.get(http_constants.HttpHeaders.XDate, '').lower(),
         http_date=headers.get(http_constants.HttpHeaders.HttpDate, '').lower())
-   
+
     if six.PY2:
         body = text.decode('utf-8')
         digest = hmac.new(key, body, sha256).digest()
@@ -129,7 +129,7 @@ def __GetAuthorizationTokenUsingResourceTokens(resource_tokens,
 
     """
     if resource_tokens and len(resource_tokens) > 0:
-        # For database account access(through GetDatabaseAccount API), path and resource_id_or_fullname are '', 
+        # For database account access(through GetDatabaseAccount API), path and resource_id_or_fullname are '',
         # so in this case we return the first token to be used for creating the auth header as the service will accept any token in this case
         if not path and not resource_id_or_fullname:
             return next(six.itervalues(resource_tokens))

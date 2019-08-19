@@ -28,15 +28,15 @@ from azure.cosmos._execution_context import document_producer
 from azure.cosmos._routing import routing_range
 
 class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
-    """This class is capable of queries which requires rewriting based on 
+    """This class is capable of queries which requires rewriting based on
     backend's returned query execution info.
-    
+
     This class maintains the execution context for each partition key range
     and aggregates the corresponding results from each execution context.
-    
-    When handling an orderby query, _MultiExecutionContextAggregator instantiates one instance of 
+
+    When handling an orderby query, _MultiExecutionContextAggregator instantiates one instance of
     DocumentProducer per target partition key range and aggregates the result of each.
-    
+
     TODO improvement: this class needs to be parallelized
     """
 
@@ -44,16 +44,16 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
         """Provides a Priority Queue abstraction data structure"""
         def __init__(self):
             self._heap = []
-    
+
         def pop(self):
             return heapq.heappop(self._heap)
-    
+
         def push(self, item):
-            heapq.heappush(self._heap, item)   
-                
+            heapq.heappush(self._heap, item)
+
         def peek(self):
             return self._heap[0]
-    
+
         def size(self):
             return len(self._heap)
 
@@ -71,7 +71,7 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
         self._query = query
         self._partitioned_query_ex_info = partitioned_query_ex_info
         self._sort_orders = partitioned_query_ex_info.get_order_by()
-        
+
         if self._sort_orders:
             self._document_producer_comparator = document_producer._OrderByDocumentProducerComparator(self._sort_orders)
         else:
@@ -88,7 +88,7 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
         self._orderByPQ = _MultiExecutionContextAggregator.PriorityQueue()
 
         for targetQueryExContext in targetPartitionQueryExecutionContextList:
-            
+
             try:
                 """TODO: we can also use more_itertools.peekable to be more python friendly"""
                 targetQueryExContext.peek()
@@ -97,22 +97,22 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
                 self._orderByPQ.push(targetQueryExContext)
 
             except StopIteration:
-                continue        
-    
+                continue
+
     def next(self):
         """returns the next result
-        
+
         :return:
             The next result.
         :rtype: dict
         :raises StopIteration: If no more result is left.
-            
+
         """
         if self._orderByPQ.size() > 0:
-            
+
             targetRangeExContext = self._orderByPQ.pop()
             res = next(targetRangeExContext)
-            
+
             try:
                 """TODO: we can also use more_itertools.peekable to be more python friendly"""
                 targetRangeExContext.peek()
@@ -120,16 +120,16 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
 
             except StopIteration:
                 pass
-                
+
             return res
         raise StopIteration
 
     def fetch_next_block(self):
-        
+
         raise NotImplementedError("You should use pipeline's fetch_next_block.")
-        
+
     def _createTargetPartitionQueryExecutionContext(self, partition_key_target_range):
-        
+
         rewritten_query = self._partitioned_query_ex_info.get_rewritten_query()
         if rewritten_query:
             rewritten_query
@@ -140,10 +140,10 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
             else:
                 query = rewritten_query
         else:
-            query = self._query            
+            query = self._query
 
         return document_producer._DocumentProducer(partition_key_target_range, self._client, self._resource_link, query, self._document_producer_comparator, self._options)
-    
+
     def _get_target_parition_key_range(self):
 
         query_ranges = self._partitioned_query_ex_info.get_query_ranges()

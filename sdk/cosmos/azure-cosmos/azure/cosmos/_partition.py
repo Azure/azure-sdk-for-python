@@ -42,7 +42,7 @@ class Partition(object):
     def __lt__(self, other):
         if self == other:
             return False
-        
+
         return self.CompareTo(other.hash_value) < 0
 
     def CompareTo(self, other_hash_value):

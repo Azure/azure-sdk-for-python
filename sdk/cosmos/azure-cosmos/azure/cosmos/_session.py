@@ -40,7 +40,7 @@ class SessionContainer(object):
     def get_session_token(self, resource_path):
         """
         Get Session Token for collection_link
-        
+
         :param str resource_path:
             Self link / path to the resource
 
@@ -71,16 +71,16 @@ class SessionContainer(object):
                     session_token = ','.join(session_token_list)
                     return session_token
                 else:
-                    # return empty token if not found 
+                    # return empty token if not found
                     return ''
-            except: 
+            except:
                 return ''
 
     def set_session_token(self, response_result, response_headers):
-        """ 
-        Session token must only be updated from response of requests that successfully mutate resource on the 
-        server side (write, replace, delete etc) 
-        
+        """
+        Session token must only be updated from response of requests that successfully mutate resource on the
+        server side (write, replace, delete etc)
+
         :param dict response_result:
         :param dict response_headers:
 
@@ -88,7 +88,7 @@ class SessionContainer(object):
             - None
         """
 
-        ''' there are two pieces of information that we need to update session token- 
+        ''' there are two pieces of information that we need to update session token-
         self link which has the rid representation of the resource, and
         x-ms-alt-content-path which is the string representation of the resource'''
 
@@ -99,8 +99,8 @@ class SessionContainer(object):
             try:
                 self_link = response_result['_self']
 
-                ''' extract alternate content path from the response_headers 
-                (only document level resource updates will have this), 
+                ''' extract alternate content path from the response_headers
+                (only document level resource updates will have this),
                 and if not present, then we can assume that we don't have to update
                 session token for this request'''
                 alt_content_path = ''
@@ -113,7 +113,7 @@ class SessionContainer(object):
                 else:
                     return
                 collection_rid, collection_name = _base.GetItemContainerInfo(self_link, alt_content_path, response_result_id)
-         
+
             except ValueError:
                 return
             except:
@@ -129,7 +129,7 @@ class SessionContainer(object):
                 '''
                 existing_rid = self.collection_name_to_rid[collection_name]
                 if (collection_rid != existing_rid):
-                    ''' flush the session tokens for the old rid, and 
+                    ''' flush the session tokens for the old rid, and
                     update the new rid into the collection name to rid map.
                     '''
                     self.rid_to_session_token[existing_rid] = {}
@@ -173,8 +173,8 @@ class SessionContainer(object):
 
         :return:
             A dictionary of partition id to session lsn
-            for given collection 
-        :rtype: dict    
+            for given collection
+        :rtype: dict
         """
 
         # extract session token from response header
@@ -198,7 +198,7 @@ class SessionContainer(object):
         return id_to_sessionlsn
 
 class Session:
-    """ 
+    """
     State of a Azure Cosmos session. This session object
     can be shared across clients within the same process
     """

@@ -68,7 +68,7 @@ class CosmosClient:
             :caption: Create a new instance of the Cosmos DB client:
             :name: create_client
 
-        """ 
+        """
         self.client_connection = CosmosClientConnection(
             url,
             auth,
@@ -272,7 +272,7 @@ class CosmosClient:
         initial_headers=None,
         access_condition=None,
         populate_query_metrics=None,
-        request_options=None, 
+        request_options=None,
         response_hook=None
     ):
         # type: (Union[str, Database, Dict[str, Any]], str, Dict[str, str], Dict[str, str], bool, Dict[str, Any], Optional[Callable]) -> None

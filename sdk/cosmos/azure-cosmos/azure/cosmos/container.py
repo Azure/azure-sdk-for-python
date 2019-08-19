@@ -77,7 +77,7 @@ class Container:
     def is_system_key(self):
         if self._is_system_key is None:
             properties = self._get_properties()
-            self._is_system_key = (properties['partitionKey']['systemKey'] 
+            self._is_system_key = (properties['partitionKey']['systemKey']
                                     if 'systemKey' in properties['partitionKey'] else False)
         return self._is_system_key
 
@@ -144,7 +144,7 @@ class Container:
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, self._properties)
-        
+
         return self._properties
 
     def read_item(
@@ -155,7 +155,7 @@ class Container:
         initial_headers=None,
         populate_query_metrics=None,
         post_trigger_include=None,
-        request_options=None, 
+        request_options=None,
         response_hook=None
     ):
         # type: (Union[str, Dict[str, Any]], Any, str, Dict[str, str], bool, str, Dict[str, Any], Optional[Callable]) -> Dict[str, str]
@@ -210,7 +210,7 @@ class Container:
         session_token=None,
         initial_headers=None,
         populate_query_metrics=None,
-        feed_options=None, 
+        feed_options=None,
         response_hook=None
     ):
         # type: (int, str, Dict[str, str], bool, Dict[str, Any], Optional[Callable]) -> QueryIterable
@@ -251,8 +251,8 @@ class Container:
             is_start_from_beginning=False,
             continuation=None,
             max_item_count=None,
-            feed_options=None, 
-            response_hook=None, 
+            feed_options=None,
+            response_hook=None,
     ):
         """ Get a sorted list of items that were changed, in the order in which they were modified.
 
@@ -299,7 +299,7 @@ class Container:
         initial_headers=None,
         enable_scan_in_query=None,
         populate_query_metrics=None,
-        feed_options=None, 
+        feed_options=None,
         response_hook=None
     ):
         # type: (str, List, Any, bool, int, str, Dict[str, str], bool, bool, Dict[str, Any, Optional[Callable]) -> QueryIterable
@@ -383,7 +383,7 @@ class Container:
         populate_query_metrics=None,
         pre_trigger_include=None,
         post_trigger_include=None,
-        request_options=None, 
+        request_options=None,
         response_hook=None
     ):
         # type: (Union[str, Dict[str, Any]], Dict[str, Any], str, Dict[str, str], Dict[str, str], bool, str, str, Dict[str, Any], Optional[Callable]) -> Dict[str, str]
@@ -438,7 +438,7 @@ class Container:
         populate_query_metrics=None,
         pre_trigger_include=None,
         post_trigger_include=None,
-        request_options=None, 
+        request_options=None,
         response_hook=None
     ):
         # type: (Dict[str, Any], str, Dict[str, str], Dict[str, str], bool, str, str, Dict[str, Any], Optional[Callable]) -> Dict[str, str]
@@ -493,7 +493,7 @@ class Container:
         pre_trigger_include=None,
         post_trigger_include=None,
         indexing_directive=None,
-        request_options=None, 
+        request_options=None,
         response_hook=None
     ):
         # type: (Dict[str, Any], str, Dict[str, str], Dict[str, str], bool, str, str, Any, Dict[str, Any], Optional[Callable]) -> Dict[str, str]
@@ -553,7 +553,7 @@ class Container:
         populate_query_metrics=None,
         pre_trigger_include=None,
         post_trigger_include=None,
-        request_options=None, 
+        request_options=None,
         response_hook=None
     ):
         # type: (Union[Dict[str, Any], str], Any, str, Dict[str, str], Dict[str, str], bool, str, str, Dict[str, Any], Optional[Callable]) -> None
@@ -594,7 +594,7 @@ class Container:
             document_link=document_link, options=request_options
         )
         if response_hook:
-            response_hook(self.client_connection.last_response_headers, result) 
+            response_hook(self.client_connection.last_response_headers, result)
 
     def read_offer(self, response_hook=None):
         # type: (Optional[Callable]) -> Offer
@@ -626,7 +626,7 @@ class Container:
 
     def replace_throughput(
             self,
-            throughput, 
+            throughput,
             response_hook=None
     ):
         # type: (in, Optional[Callable]) -> Offer
@@ -666,7 +666,7 @@ class Container:
     def read_all_conflicts(
             self,
             max_item_count=None,
-            feed_options=None, 
+            feed_options=None,
             response_hook=None
     ):
         # type: (int, Dict[str, Any], Optional[Callable]) -> QueryIterable
@@ -698,7 +698,7 @@ class Container:
             enable_cross_partition_query=None,
             partition_key=None,
             max_item_count=None,
-            feed_options=None, 
+            feed_options=None,
             response_hook=None
     ):
         # type: (str, List, bool, Any, int, Dict[str, Any], Optional[Callable]) -> QueryIterable
@@ -739,7 +739,7 @@ class Container:
             self,
             conflict,
             partition_key,
-            request_options=None, 
+            request_options=None,
             response_hook=None
     ):
         # type: (Union[str, Dict[str, Any]], Any, Dict[str, Any], Optional[Callable]) -> Dict[str, str]
@@ -770,7 +770,7 @@ class Container:
             self,
             conflict,
             partition_key,
-            request_options=None, 
+            request_options=None,
             response_hook=None
     ):
         # type: (Union[str, Dict[str, Any]], Any, Dict[str, Any], Optional[Callable]) -> None

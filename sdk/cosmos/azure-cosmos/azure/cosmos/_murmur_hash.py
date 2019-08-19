@@ -41,7 +41,7 @@ a proper c-module is suggested!
 
 This module is written to have the same format as mmh3 python package found here for simple conversions:
 
-https://pypi.python.org/pypi/mmh3/2.0 
+https://pypi.python.org/pypi/mmh3/2.0
 '''
 class MurmurHash(object):
     """ The 32 bit x86 version of MurmurHash3 implementation.
@@ -89,13 +89,13 @@ class MurmurHash(object):
                  key[ block_start + 2 ] << 16 | \
                  key[ block_start + 1 ] <<  8 | \
                  key[ block_start + 0 ]
-             
+
             k1 = c1 * k1 & 0xFFFFFFFF
             k1 = ( k1 << 15 | k1 >> 17 ) & 0xFFFFFFFF # inlined ROTL32
             k1 = ( c2 * k1 ) & 0xFFFFFFFF
-        
+
             h1 ^= k1
-            h1  = ( h1 << 13 | h1 >> 19 ) & 0xFFFFFFFF # inlined _ROTL32 
+            h1  = ( h1 << 13 | h1 >> 19 ) & 0xFFFFFFFF # inlined _ROTL32
             h1  = ( h1 * 5 + 0xe6546b64 ) & 0xFFFFFFFF
 
         # tail
@@ -109,7 +109,7 @@ class MurmurHash(object):
             k1 ^= key[ tail_index + 1 ] << 8
         if tail_size >= 1:
             k1 ^= key[ tail_index + 0 ]
-    
+
         if tail_size != 0:
             k1  = ( k1 * c1 ) & 0xFFFFFFFF
             k1  = ( k1 << 15 | k1 >> 17 ) & 0xFFFFFFFF # _ROTL32

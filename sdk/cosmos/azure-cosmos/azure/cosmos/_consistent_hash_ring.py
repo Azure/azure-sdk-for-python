@@ -30,7 +30,7 @@ from . import _partition
 
 
 class ConsistentHashRing(object):
-    """The ConsistentHashRing class implements a consistent hash ring using the 
+    """The ConsistentHashRing class implements a consistent hash ring using the
     hash generator specified.
     """
     def __init__(self, collection_links, partitions_per_node, hash_generator):
@@ -39,7 +39,7 @@ class ConsistentHashRing(object):
             The links of collections participating in partitioning.
         :param int partitions_per_node:
             The partitions per node.
-        :param HashGenerator hash_generator: 
+        :param HashGenerator hash_generator:
             The hash generator to be used for hashing algorithm.
         """
         if collection_links is None:
@@ -55,7 +55,7 @@ class ConsistentHashRing(object):
         self.hash_generator = hash_generator
 
         self.partitions = self._ConstructPartitions(self.collection_links, partitions_per_node)
-        
+
     def GetCollectionNode(self, partition_key):
         """Gets the SelfLink/ID based link of the collection node that maps to the partition key
         based on the hashing algorithm used for finding the node in the ring.
@@ -99,11 +99,11 @@ class ConsistentHashRing(object):
         return self._LowerBoundSearch(self.partitions, hash_value)
 
     def _GetSerializedPartitionList(self):
-        """Gets the serialized version of the ConsistentRing. 
+        """Gets the serialized version of the ConsistentRing.
         Added this helper for the test code.
         """
         partition_list = list()
-        
+
         for part in self.partitions:
             partition_list.append((part.node, unpack("<L", part.hash_value)[0]))
 

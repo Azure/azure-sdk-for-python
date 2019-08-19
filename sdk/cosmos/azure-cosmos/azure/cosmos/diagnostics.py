@@ -19,7 +19,7 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
-"""Diagnostic tools for Cosmos 
+"""Diagnostic tools for Cosmos
 """
 
 from requests.structures import CaseInsensitiveDict
@@ -28,7 +28,7 @@ class RecordDiagnostics(object):
     """ Record Response headers from Cosmos read operations.
 
     The full response headers are stored in the ``headers`` property.
-    
+
     Examples:
 
         >>> rh = RecordDiagnostics()
@@ -63,7 +63,7 @@ class RecordDiagnostics(object):
     @property
     def headers(self):
         return CaseInsensitiveDict(self._headers)
-    
+
     @property
     def body(self):
         return self._body
@@ -74,13 +74,13 @@ class RecordDiagnostics(object):
 
     def clear(self):
         self._request_charge = 0
-    
+
     def __call__(self, headers, body):
         self._headers = headers
         self._body = body
-        
+
         self._request_charge += float(headers.get('x-ms-request-charge' , 0))
-        
+
     def __getattr__(self, name):
         key = "x-ms-" + name.replace("_", "-")
         if key in self._common:

@@ -59,7 +59,7 @@ def _RequestBodyFromData(data):
     if isinstance(data, six.string_types) or _IsReadableStream(data):
         return data
     elif isinstance(data, (dict, list, tuple)):
-        
+
         json_dumped = json.dumps(data, separators=(',',':'))
 
         if six.PY2:
@@ -113,30 +113,30 @@ def _Request(global_endpoint_manager, request, connection_policy, requests_sessi
 
     parse_result = urlparse(resource_url)
 
-    # The requests library now expects header values to be strings only starting 2.11, 
+    # The requests library now expects header values to be strings only starting 2.11,
     # and will raise an error on validation if they are not, so casting all header values to strings.
-    request_options['headers'] = { header: str(value) for header, value in request_options['headers'].items() } 
+    request_options['headers'] = { header: str(value) for header, value in request_options['headers'].items() }
 
     # We are disabling the SSL verification for local emulator(localhost/127.0.0.1) or if the user
     # has explicitly specified to disable SSL verification.
     is_ssl_enabled = (parse_result.hostname != 'localhost' and parse_result.hostname != '127.0.0.1' and not connection_policy.DisableSSLVerification)
-    
+
     if connection_policy.SSLConfiguration:
         ca_certs = connection_policy.SSLConfiguration.SSLCaCerts
         cert_files = (connection_policy.SSLConfiguration.SSLCertFile, connection_policy.SSLConfiguration.SSLKeyFile)
 
-        response = requests_session.request(request_options['method'], 
-                                resource_url, 
-                                data = request_body, 
+        response = requests_session.request(request_options['method'],
+                                resource_url,
+                                data = request_body,
                                 headers = request_options['headers'],
                                 timeout = connection_timeout / 1000.0,
                                 stream = is_media_stream,
                                 verify = ca_certs,
                                 cert = cert_files)
     else:
-        response = requests_session.request(request_options['method'], 
-                                    resource_url, 
-                                    data = request_body, 
+        response = requests_session.request(request_options['method'],
+                                    resource_url,
+                                    data = request_body,
                                     headers = request_options['headers'],
                                     timeout = connection_timeout / 1000.0,
                                     stream = is_media_stream,
@@ -185,7 +185,7 @@ def SynchronizedRequest(client,
     :param object client:
         Document client instance
     :param dict request:
-    :param _GlobalEndpointManager global_endpoint_manager: 
+    :param _GlobalEndpointManager global_endpoint_manager:
     :param  documents.ConnectionPolicy connection_policy:
     :param requests.Session requests_session:
         Session object in requests module
