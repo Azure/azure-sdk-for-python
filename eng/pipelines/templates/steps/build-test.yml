@@ -50,8 +50,9 @@ steps:
         ${{ parameters.AdditionalTestArgs }} 
         --mark_arg="${{ parameters.TestMarkArgument }}" 
         --service="${{ parameters.ServiceDirectory }}" 
-        --toxenv=""
-        --wheel_dir="$(Build.ArtifactStagingDirectory)"
+        --toxenv="" 
+        --wheel_dir="$(Build.ArtifactStagingDirectory)" 
+        --tparallel
     env: ${{ parameters.EnvVars }}
 
   - task: PythonScript@0
