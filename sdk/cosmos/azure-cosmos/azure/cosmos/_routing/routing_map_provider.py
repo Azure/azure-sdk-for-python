@@ -133,27 +133,27 @@ class SmartRoutingMapProvider(PartitionKeyRangeCache):
         queryRange = routing_range.Range(left, r.max, leftInclusive, r.isMaxInclusive)
         return queryRange
 
-    def get_overlapping_ranges(self, collection_link, sorted_ranges):
+    def get_overlapping_ranges(self, collection_link, partition_key_ranges):
         """
         Given the sorted ranges and a collection,
         Returns the list of overlapping partition key ranges
 
         :param str collection_link:
             The collection link.
-        :param (list of routing_range.Range) sorted_ranges: The sorted list of non-overlapping ranges.
+        :param (list of routing_range.Range) partition_key_ranges: The sorted list of non-overlapping ranges.
         :return:
             List of partition key ranges.
         :rtype: list of dict
-        :raises ValueError: If two ranges in sorted_ranges overlap or if the list is not sorted
+        :raises ValueError: If two ranges in partition_key_ranges overlap or if the list is not sorted
         """
 
         # validate if the list is non-overlapping and sorted
-        if not self._is_sorted_and_non_overlapping(sorted_ranges):
+        if not self._is_sorted_and_non_overlapping(partition_key_ranges):
             raise ValueError("the list of ranges is not a non-overlapping sorted ranges")
 
         target_partition_key_ranges = []
 
-        it = iter(sorted_ranges)
+        it = iter(partition_key_ranges)
         try:
             currentProvidedRange = next(it)
             while True:
