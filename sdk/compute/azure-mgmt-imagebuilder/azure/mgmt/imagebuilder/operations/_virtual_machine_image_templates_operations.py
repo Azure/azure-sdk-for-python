@@ -20,6 +20,8 @@ from .. import models
 class VirtualMachineImageTemplatesOperations(object):
     """VirtualMachineImageTemplatesOperations operations.
 
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
+
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -54,8 +56,7 @@ class VirtualMachineImageTemplatesOperations(object):
         :raises:
          :class:`ApiErrorException<azure.mgmt.imagebuilder.models.ApiErrorException>`
         """
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']
@@ -84,6 +85,11 @@ class VirtualMachineImageTemplatesOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -92,12 +98,10 @@ class VirtualMachineImageTemplatesOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.ImageTemplatePaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.ImageTemplatePaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.ImageTemplatePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.VirtualMachineImages/imageTemplates'}
@@ -120,8 +124,7 @@ class VirtualMachineImageTemplatesOperations(object):
         :raises:
          :class:`ApiErrorException<azure.mgmt.imagebuilder.models.ApiErrorException>`
         """
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list_by_resource_group.metadata['url']
@@ -151,6 +154,11 @@ class VirtualMachineImageTemplatesOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -159,12 +167,10 @@ class VirtualMachineImageTemplatesOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.ImageTemplatePaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.ImageTemplatePaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.ImageTemplatePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VirtualMachineImages/imageTemplates'}
@@ -426,7 +432,6 @@ class VirtualMachineImageTemplatesOperations(object):
             raise models.ApiErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('ImageTemplate', response)
 
@@ -612,8 +617,7 @@ class VirtualMachineImageTemplatesOperations(object):
         :raises:
          :class:`ApiErrorException<azure.mgmt.imagebuilder.models.ApiErrorException>`
         """
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list_run_outputs.metadata['url']
@@ -644,6 +648,11 @@ class VirtualMachineImageTemplatesOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -652,12 +661,10 @@ class VirtualMachineImageTemplatesOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.RunOutputPaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.RunOutputPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.RunOutputPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list_run_outputs.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.VirtualMachineImages/imageTemplates/{imageTemplateName}/runOutputs'}
@@ -715,7 +722,6 @@ class VirtualMachineImageTemplatesOperations(object):
             raise models.ApiErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('RunOutput', response)
 
