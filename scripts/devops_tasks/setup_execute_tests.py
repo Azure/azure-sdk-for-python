@@ -38,7 +38,7 @@ MANAGEMENT_PACKAGE_IDENTIFIERS = [
     "azure-nspkg",
 ]
 
-
+# helper functions
 def clean_coverage():
     try:
         os.mkdir(coverage_dir)
@@ -49,6 +49,66 @@ def clean_coverage():
         else:
             raise
 
+def log_file(file_location, is_error=False):
+    with open(file_location, 'r') as file:
+        for line in file:
+            print(line.strip())
+
+# TODO, dedup this function with collect_tox
+def collect_pytest_coverage_files(targeted_packages):
+    coverage_files = []
+    # generate coverage files
+    for package_dir in [package for package in targeted_packages]:
+        coverage_file = os.path.join(
+            coverage_dir, ".coverage_{}".format(os.path.basename(package_dir))
+        )
+        if os.path.isfile(coverage_file):
+            coverage_files.append(coverage_file)
+
+    logging.info("Visible uncombined .coverage files: {}".format(coverage_files))
+
+    if len(coverage_files):
+        cov_cmd_array = ["coverage", "combine"]
+        cov_cmd_array.extend(coverage_files)
+
+        # merge them with coverage combine and copy to root
+        run_check_call(cov_cmd_array, coverage_dir)
+
+        source = os.path.join(coverage_dir, "./.coverage")
+        dest = os.path.join(root_dir, ".coverage")
+
+        shutil.move(source, dest)
+
+# TODO, dedup this function with collect_pytest
+def collect_tox_coverage_files(targeted_packages):
+    root_coverage_dir = os.path.join(root_dir, "_coverage/")
+
+    clean_coverage()
+
+    coverage_files = []
+    # generate coverage files
+    for package_dir in [package for package in targeted_packages]:
+        coverage_file = os.path.join(package_dir, ".coverage")
+        if os.path.isfile(coverage_file):
+            destination_file = os.path.join(
+                root_coverage_dir, ".coverage_{}".format(os.path.basename(package_dir))
+            )
+            shutil.copyfile(coverage_file, destination_file)
+            coverage_files.append(destination_file)
+
+    logging.info("Visible uncombined .coverage files: {}".format(coverage_files))
+
+    if len(coverage_files):
+        cov_cmd_array = ["coverage", "combine"]
+        cov_cmd_array.extend(coverage_files)
+
+        # merge them with coverage combine and copy to root
+        run_check_call(cov_cmd_array, os.path.join(root_dir, "_coverage/"))
+
+        source = os.path.join(coverage_dir, "./.coverage")
+        dest = os.path.join(root_dir, ".coverage")
+
+        shutil.move(source, dest)
 
 def prep_tests(targeted_packages, python_version):
     logging.info("running test setup for {}".format(targeted_packages))
@@ -61,7 +121,6 @@ def prep_tests(targeted_packages, python_version):
         ],
         root_dir,
     )
-
 
 def run_tests(targeted_packages, python_version, test_output_location, test_res):
     err_results = []
@@ -135,7 +194,6 @@ def run_tests(targeted_packages, python_version, test_output_location, test_res)
     if err_results:
         exit(1)
 
-
 def prep_and_run_tox(targeted_packages, tox_env, options_array=[]):
     tox_command_tuples = []
 
@@ -204,73 +262,6 @@ def prep_and_run_tox(targeted_packages, tox_env, options_array=[]):
     if not tox_env:
         collect_tox_coverage_files(targeted_packages)
 
-def log_file(file_location, is_error=False):
-    with open(file_location, 'r') as file:
-        for line in file:
-            print(line)
-            #if is_error:
-            #    logging.error(line)
-            #else:
-            #    logging.info(line)
-
-# TODO, dedup this function with collect_tox
-def collect_pytest_coverage_files(targeted_packages):
-    coverage_files = []
-    # generate coverage files
-    for package_dir in [package for package in targeted_packages]:
-        coverage_file = os.path.join(
-            coverage_dir, ".coverage_{}".format(os.path.basename(package_dir))
-        )
-        if os.path.isfile(coverage_file):
-            coverage_files.append(coverage_file)
-
-    logging.info("Visible uncombined .coverage files: {}".format(coverage_files))
-
-    if len(coverage_files):
-        cov_cmd_array = ["coverage", "combine"]
-        cov_cmd_array.extend(coverage_files)
-
-        # merge them with coverage combine and copy to root
-        run_check_call(cov_cmd_array, coverage_dir)
-
-        source = os.path.join(coverage_dir, "./.coverage")
-        dest = os.path.join(root_dir, ".coverage")
-
-        shutil.move(source, dest)
-
-
-# TODO, dedup this function with collect_pytest
-def collect_tox_coverage_files(targeted_packages):
-    root_coverage_dir = os.path.join(root_dir, "_coverage/")
-
-    clean_coverage()
-
-    coverage_files = []
-    # generate coverage files
-    for package_dir in [package for package in targeted_packages]:
-        coverage_file = os.path.join(package_dir, ".coverage")
-        if os.path.isfile(coverage_file):
-            destination_file = os.path.join(
-                root_coverage_dir, ".coverage_{}".format(os.path.basename(package_dir))
-            )
-            shutil.copyfile(coverage_file, destination_file)
-            coverage_files.append(destination_file)
-
-    logging.info("Visible uncombined .coverage files: {}".format(coverage_files))
-
-    if len(coverage_files):
-        cov_cmd_array = ["coverage", "combine"]
-        cov_cmd_array.extend(coverage_files)
-
-        # merge them with coverage combine and copy to root
-        run_check_call(cov_cmd_array, os.path.join(root_dir, "_coverage/"))
-
-        source = os.path.join(coverage_dir, "./.coverage")
-        dest = os.path.join(root_dir, ".coverage")
-
-        shutil.move(source, dest)
-
-
 def execute_global_install_and_test(
     parsed_args, targeted_packages, extended_pytest_args
 ):
@@ -288,7 +279,6 @@ def execute_global_install_and_test(
             extended_pytest_args,
         )
 
-
 def execute_tox_harness(parsed_args, targeted_packages, extended_pytest_args):
     if args.wheel_dir:
         os.environ["PREBUILT_WHEEL_DIR"] = args.wheel_dir
@@ -297,7 +287,6 @@ def execute_tox_harness(parsed_args, targeted_packages, extended_pytest_args):
         extended_pytest_args.extend(["-m", "'{}'".format(args.mark_arg)])
 
     prep_and_run_tox(targeted_packages, args.tox_env, extended_pytest_args)
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -340,6 +329,10 @@ if __name__ == "__main__":
 
     parser.add_argument(
         "--disablecov", help=("Flag that disables code coverage."), action="store_true"
+    )
+
+    parser.add_argument(
+        "--tparallel", help=("Flag  that enables parallel tox invocation."), action="store_false"
     )
 
     parser.add_argument(
