@@ -14,40 +14,19 @@ import sys
 from pathlib import Path
 import os
 import errno
-import glob
 import shutil
+import glob
 import logging
 import pdb
-from common_tasks import process_glob_string, run_check_call, cleanup_folder
-from ToxWorkItem import ToxWorkItem
-from simple_threadpool import execute_parallel_workload
-from subprocess import Popen, PIPE, STDOUT
+from common_tasks import process_glob_string, run_check_call, cleanup_folder, clean_coverage, MANAGEMENT_PACKAGE_IDENTIFIERS
+from tox_harness import prep_and_run_tox
+
 
 logging.getLogger().setLevel(logging.INFO)
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 coverage_dir = os.path.join(root_dir, "_coverage/")
 dev_setup_script_location = os.path.join(root_dir, "scripts/dev_setup.py")
-
-DEFAULT_TOX_INI_LOCATION = os.path.join(root_dir, "eng/tox/tox.ini")
-
-MANAGEMENT_PACKAGE_IDENTIFIERS = [
-    "mgmt",
-    "azure-cognitiveservices",
-    "azure-servicefabric",
-    "azure-nspkg",
-]
-
-# helper functions
-def clean_coverage():
-    try:
-        os.mkdir(coverage_dir)
-    except OSError as e:
-        if e.errno == errno.EEXIST:
-            logging.info("Coverage dir already exists. Cleaning.")
-            cleanup_folder(coverage_dir)
-        else:
-            raise
 
 def log_file(file_location, is_error=False):
     with open(file_location, 'r') as file:
@@ -79,36 +58,6 @@ def collect_pytest_coverage_files(targeted_packages):
 
         shutil.move(source, dest)
 
-# TODO, dedup this function with collect_pytest
-def collect_tox_coverage_files(targeted_packages):
-    root_coverage_dir = os.path.join(root_dir, "_coverage/")
-
-    clean_coverage()
-
-    coverage_files = []
-    # generate coverage files
-    for package_dir in [package for package in targeted_packages]:
-        coverage_file = os.path.join(package_dir, ".coverage")
-        if os.path.isfile(coverage_file):
-            destination_file = os.path.join(
-                root_coverage_dir, ".coverage_{}".format(os.path.basename(package_dir))
-            )
-            shutil.copyfile(coverage_file, destination_file)
-            coverage_files.append(destination_file)
-
-    logging.info("Visible uncombined .coverage files: {}".format(coverage_files))
-
-    if len(coverage_files):
-        cov_cmd_array = ["coverage", "combine"]
-        cov_cmd_array.extend(coverage_files)
-
-        # merge them with coverage combine and copy to root
-        run_check_call(cov_cmd_array, os.path.join(root_dir, "_coverage/"))
-
-        source = os.path.join(coverage_dir, "./.coverage")
-        dest = os.path.join(root_dir, ".coverage")
-
-        shutil.move(source, dest)
 
 def prep_tests(targeted_packages, python_version):
     logging.info("running test setup for {}".format(targeted_packages))
@@ -125,7 +74,7 @@ def prep_tests(targeted_packages, python_version):
 def run_tests(targeted_packages, python_version, test_output_location, test_res):
     err_results = []
 
-    clean_coverage()
+    clean_coverage(coverage_dir)
 
     # base command array without a targeted package
     command_array = [python_version, "-m", "pytest"]
@@ -194,74 +143,6 @@ def run_tests(targeted_packages, python_version, test_output_location, test_res)
     if err_results:
         exit(1)
 
-def prep_and_run_tox(targeted_packages, tox_env, options_array=[]):
-    tox_command_tuples = []
-
-    for index, package_dir in enumerate(targeted_packages):
-        destination_tox_ini = os.path.join(package_dir, "tox.ini")
-        destination_dev_req = os.path.join(package_dir, "dev_requirements.txt")
-        tox_execution_array = ["tox"]
-        local_options_array = options_array[:]
-
-        # if we are targeting only packages that are management plane, it is a possibility
-        # that no tests running is an acceptable situation
-        # we explicitly handle this here.
-        if all(
-            map(
-                lambda x: any(
-                    [pkg_id in x for pkg_id in MANAGEMENT_PACKAGE_IDENTIFIERS]
-                ),
-                [package_dir],
-            )
-        ):
-            local_options_array.append("--suppress-no-test-exit-code")
-
-        # if not present, re-use base
-        if not os.path.exists(destination_tox_ini):
-            logging.info("No customized tox.ini present, using common eng/tox/tox.ini.")
-            tox_execution_array.extend(["-c", DEFAULT_TOX_INI_LOCATION])
-
-        # handle empty file
-        if not os.path.exists(destination_dev_req):
-            logging.info("No dev_requirements present.")
-            with open(destination_dev_req, "w+") as file:
-                file.write("-e ../../../tools/azure-sdk-tools")
-
-        if tox_env:
-            tox_execution_array.extend(["-e", tox_env])
-
-        if local_options_array:
-            tox_execution_array.extend(["--"] + local_options_array)
-
-        tox_command_tuples.append((tox_execution_array, package_dir))
-
-    procs_list = []
-
-    for cmd_tuple in tox_command_tuples:
-        package_dir = cmd_tuple[1]
-
-        logging.info(
-            "Running tox for {}. {} of {}.".format(
-                package_dir, index, len(targeted_packages)
-            )
-        )
-
-        with open(os.path.join(package_dir, 'stdout.txt'), 'w') as f_stdout, open(os.path.join(package_dir, 'stderr.txt'), 'w') as f_stderr:
-            proc = Popen(cmd_tuple[0], stdout=f_stdout, stderr=f_stderr, cwd=package_dir, env=os.environ.copy())
-            procs_list.append(proc)
-
-    failed_test_run = False
-
-    for index, proc in enumerate(procs_list):
-        proc.wait()
-
-        if proc.returncode != 0:
-            logging.error("Package returned with code {}".format(proc.returncode))
-
-    # TODO: get a bit smarter here
-    if not tox_env:
-        collect_tox_coverage_files(targeted_packages)
-
 def execute_global_install_and_test(
     parsed_args, targeted_packages, extended_pytest_args
 ):
@@ -286,7 +167,7 @@ def execute_tox_harness(parsed_args, targeted_packages, extended_pytest_args):
     if args.mark_arg:
         extended_pytest_args.extend(["-m", "'{}'".format(args.mark_arg)])
 
-    prep_and_run_tox(targeted_packages, args.tox_env, extended_pytest_args)
+    prep_and_run_tox(targeted_packages, args.tox_env, extended_pytest_args, parsed_args.tparallel)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(

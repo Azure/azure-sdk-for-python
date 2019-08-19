@@ -12,6 +12,8 @@ import glob
 from pathlib import Path
 from subprocess import check_call, CalledProcessError
 import os
+import errno
+import shutil
 import sys
 import logging
 
@@ -28,6 +30,12 @@ OMITTED_CI_PACKAGES = ["azure-mgmt-documentdb", "azure-servicemanagement-legacy"
                         "azure-cognitiveservices-vision-contentmoderator" # same issue with this one
 ]
 
+MANAGEMENT_PACKAGE_IDENTIFIERS = [
+    "mgmt",
+    "azure-cognitiveservices",
+    "azure-servicefabric",
+    "azure-nspkg",
+]
 
 def cleanup_folder(target_folder):
     for file in os.listdir(target_folder):
@@ -38,6 +46,16 @@ def cleanup_folder(target_folder):
         except Exception as e:
             logging.error(e)
 
+# helper functions
+def clean_coverage(coverage_dir):
+    try:
+        os.mkdir(coverage_dir)
+    except OSError as e:
+        if e.errno == errno.EEXIST:
+            logging.info("Coverage dir already exists. Cleaning.")
+            cleanup_folder(coverage_dir)
+        else:
+            raise
 
 # this function is where a glob string gets translated to a list of packages
 # It is called by both BUILD (package) and TEST. In the future, this function will be the central location
