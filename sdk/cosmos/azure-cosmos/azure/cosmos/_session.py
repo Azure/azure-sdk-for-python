@@ -188,7 +188,7 @@ class SessionContainer(object):
             session_token = response_headers[http_constants.HttpHeaders.SessionToken]
 
         id_to_sessionlsn = {}
-        if session_token is not "":
+        if session_token:
             """ extract id, lsn from the token. For p-collection,
             the token will be a concatenation of pairs for each collection"""
             token_pairs = session_token.split(",")
