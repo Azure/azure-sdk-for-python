@@ -10,21 +10,27 @@ import hmac
 from azure.core.pipeline.policies import HTTPPolicy
 from .utils import parse_connection_string, get_current_utc_time
 
+class AppConfigConnectionStringCredential():
+    """
+    Parse the app configuration service connection string and store the host, id, secret information.
+        """
+    def __init__(self, connection_string):
+        self.host, self.credential, self.secret = parse_connection_string(connection_string)
+
 
 class AppConfigRequestsCredentialsPolicy(HTTPPolicy):
     """Implementation of request-oauthlib except and retry logic.
     """
 
-    def __init__(self, config):
+    def __init__(self, credentials):
         super(AppConfigRequestsCredentialsPolicy, self).__init__()
-        self._config = config
+        self._credentials = credentials
 
     def _signed_request(self, request):
         verb = request.http_request.method.upper()
-        host, credential, secret = parse_connection_string(self._config)
 
         # Get the path and query from url, which looks like https://host/path/query
-        query_url = str(request.http_request.url[len(host) + 8 :])
+        query_url = str(request.http_request.url[len(self._credentials.host) + 8 :])
 
         signed_headers = "x-ms-date;host;x-ms-content-sha256"
 
@@ -37,12 +43,12 @@ class AppConfigRequestsCredentialsPolicy(HTTPPolicy):
         content_hash = base64.b64encode(content_digest).decode("utf-8")
 
         string_to_sign = (
-            verb + "\n" + query_url + "\n" + utc_now + ";" + host + ";" + content_hash
+            verb + "\n" + query_url + "\n" + utc_now + ";" + self._credentials.host + ";" + content_hash
         )
 
         # decode secret
         # decoded_secret = base64.b64decode(secret, validate=True)
-        decoded_secret = base64.b64decode(secret)
+        decoded_secret = base64.b64decode(self._credentials.secret)
         digest = hmac.new(
             decoded_secret, string_to_sign.encode("utf-8"), hashlib.sha256
         ).digest()
@@ -52,7 +58,7 @@ class AppConfigRequestsCredentialsPolicy(HTTPPolicy):
             "x-ms-date": utc_now,
             "x-ms-content-sha256": content_hash,
             "Authorization": "HMAC-SHA256 Credential="
-                             + credential
+                             + self._credentials.credential
                              + ", SignedHeaders="
                              + signed_headers
                              + ", Signature="
