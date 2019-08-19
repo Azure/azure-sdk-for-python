@@ -16,9 +16,9 @@ jobs:
     strategy:
       maxParallel: 1
       matrix:
-        Windows_Python34:
+        Windows_Python35:
           OSVmImage: 'vs2017-win2016'
-          PythonVersion: '3.4'
+          PythonVersion: '3.5'
         Windows_Python27:
           OSVmImage: 'vs2017-win2016'
           PythonVersion: '2.7'
@@ -79,6 +79,7 @@ jobs:
 
       - script: |
           python -m pip install --upgrade pip
+          pip install setuptools --upgrade
           python scripts/dev_setup.py --packageList azure-cosmos
         displayName: 'Set up Environment'
 
