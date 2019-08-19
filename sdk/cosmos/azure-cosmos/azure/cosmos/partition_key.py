@@ -74,6 +74,6 @@ class PartitionKey(dict):
     def version(self):
         return self["version"]
 
-    @kind.setter
+    @version.setter
     def version(self, value):
         self["version"] = value
