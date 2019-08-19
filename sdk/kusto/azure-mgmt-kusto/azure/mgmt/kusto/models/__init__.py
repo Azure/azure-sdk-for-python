@@ -30,6 +30,7 @@ try:
     from .database_principal_list_request_py3 import DatabasePrincipalListRequest
     from .data_connection_validation_py3 import DataConnectionValidation
     from .event_hub_data_connection_py3 import EventHubDataConnection
+    from .iot_hub_data_connection_py3 import IotHubDataConnection
     from .event_grid_data_connection_py3 import EventGridDataConnection
     from .data_connection_validation_list_result_py3 import DataConnectionValidationListResult
     from .cluster_check_name_request_py3 import ClusterCheckNameRequest
@@ -63,6 +64,7 @@ except (SyntaxError, ImportError):
     from .database_principal_list_request import DatabasePrincipalListRequest
     from .data_connection_validation import DataConnectionValidation
     from .event_hub_data_connection import EventHubDataConnection
+    from .iot_hub_data_connection import IotHubDataConnection
     from .event_grid_data_connection import EventGridDataConnection
     from .data_connection_validation_list_result import DataConnectionValidationListResult
     from .cluster_check_name_request import ClusterCheckNameRequest
@@ -115,6 +117,7 @@ __all__ = [
     'DatabasePrincipalListRequest',
     'DataConnectionValidation',
     'EventHubDataConnection',
+    'IotHubDataConnection',
     'EventGridDataConnection',
     'DataConnectionValidationListResult',
     'ClusterCheckNameRequest',

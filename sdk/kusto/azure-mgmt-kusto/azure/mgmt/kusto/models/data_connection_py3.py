@@ -16,7 +16,8 @@ class DataConnection(ProxyResource):
     """Class representing an data connection.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: EventHubDataConnection, EventGridDataConnection
+    sub-classes are: EventHubDataConnection, IotHubDataConnection,
+    EventGridDataConnection
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -53,7 +54,7 @@ class DataConnection(ProxyResource):
     }
 
     _subtype_map = {
-        'kind': {'EventHub': 'EventHubDataConnection', 'EventGrid': 'EventGridDataConnection'}
+        'kind': {'EventHub': 'EventHubDataConnection', 'IotHub': 'IotHubDataConnection', 'EventGrid': 'EventGridDataConnection'}
     }
 
     def __init__(self, *, location: str=None, **kwargs) -> None:

@@ -53,6 +53,9 @@ class ClusterUpdate(Resource):
     :param enable_disk_encryption: A boolean value that indicates if the
      cluster's disks are encrypted.
     :type enable_disk_encryption: bool
+    :param enable_streaming_ingest: A boolean value that indicates if the
+     streaming ingest is enabled. Default value: False .
+    :type enable_streaming_ingest: bool
     :param virtual_network_configuration: Virtual network definition.
     :type virtual_network_configuration:
      ~azure.mgmt.kusto.models.VirtualNetworkConfiguration
@@ -82,6 +85,7 @@ class ClusterUpdate(Resource):
         'trusted_external_tenants': {'key': 'properties.trustedExternalTenants', 'type': '[TrustedExternalTenant]'},
         'optimized_autoscale': {'key': 'properties.optimizedAutoscale', 'type': 'OptimizedAutoscale'},
         'enable_disk_encryption': {'key': 'properties.enableDiskEncryption', 'type': 'bool'},
+        'enable_streaming_ingest': {'key': 'properties.enableStreamingIngest', 'type': 'bool'},
         'virtual_network_configuration': {'key': 'properties.virtualNetworkConfiguration', 'type': 'VirtualNetworkConfiguration'},
     }
 
@@ -97,4 +101,5 @@ class ClusterUpdate(Resource):
         self.trusted_external_tenants = kwargs.get('trusted_external_tenants', None)
         self.optimized_autoscale = kwargs.get('optimized_autoscale', None)
         self.enable_disk_encryption = kwargs.get('enable_disk_encryption', None)
+        self.enable_streaming_ingest = kwargs.get('enable_streaming_ingest', False)
         self.virtual_network_configuration = kwargs.get('virtual_network_configuration', None)
