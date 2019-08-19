@@ -87,7 +87,7 @@ class CosmosClientConnection(object):
 
         self.master_key = None
         self.resource_tokens = None
-        if auth != None:
+        if auth is not None:
             self.master_key = auth.get("masterKey")
             self.resource_tokens = auth.get("resourceTokens")
 
@@ -113,7 +113,7 @@ class CosmosClientConnection(object):
             http_constants.HttpHeaders.IsContinuationExpected: False,
         }
 
-        if consistency_level != None:
+        if consistency_level is not None:
             self.default_headers[http_constants.HttpHeaders.ConsistencyLevel] = consistency_level
 
         # Keeps the latest response headers from server.
@@ -1037,7 +1037,7 @@ class CosmosClientConnection(object):
         if base.IsDatabaseLink(database_or_Container_link):
             partition_resolver = self.GetPartitionResolver(database_or_Container_link)
 
-            if partition_resolver != None:
+            if partition_resolver is not None:
                 collection_link = partition_resolver.ResolveForCreate(document)
             else:
                 raise ValueError(CosmosClientConnection.PartitionResolverErrorMessage)

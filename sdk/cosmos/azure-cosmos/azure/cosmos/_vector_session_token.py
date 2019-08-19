@@ -37,7 +37,7 @@ class VectorSessionToken(object):
         self.local_lsn_by_region = local_lsn_by_region
         self.session_token = session_token
 
-        if self.session_token == None:
+        if self.session_token is None:
             region_and_local_lsn = []
 
             for key in self.local_lsn_by_region:
