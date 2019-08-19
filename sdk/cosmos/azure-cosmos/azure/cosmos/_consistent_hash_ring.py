@@ -124,7 +124,7 @@ class ConsistentHashRing(object):
         """Searches the partition in the partition array using hashValue.
         """
         for i in xrange(0, len(partitions) - 1):
-            if partitions[i].CompareTo(hash_value) <= 0 and partitions[i + 1].CompareTo(hash_value) > 0:
+            if partitions[i].CompareTo(hash_value) <= 0 < partitions[i + 1].CompareTo(hash_value):
                 return i
 
         return len(partitions) - 1
