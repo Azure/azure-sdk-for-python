@@ -37,7 +37,7 @@ from . import _runtime_constants as runtime_constants
 from . import _request_object
 from . import _synchronized_request as synchronized_request
 from . import _global_endpoint_manager as global_endpoint_manager
-from ._routing import routing_map_provider as routing_map_provider
+from ._routing import routing_map_provider
 from . import _session
 from . import _utils
 from .partition_key import _Undefined, _Empty
