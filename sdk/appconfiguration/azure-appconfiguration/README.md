@@ -53,7 +53,7 @@ Alternatively, get the connection string from the Azure Portal.
 Once you have the value of the connection string, you can create the ConfigurationClient:
 
 ```python
-    from azure.data.appconfiguration import AzureAppConfigurationClient
+    from azure.appconfiguration import AzureAppConfigurationClient
 
     connection_str = "<connection_string>"
     client = AzureAppConfigurationClient.from_connection_string(connection_str)
@@ -171,9 +171,9 @@ for item in filtered_listed:
 
 ## Async Client
 Async client is supported for python 3.5+. 
-To use the async client library, import the AzureAppConfigurationClient from package azure.data.appconfiguration.aio instead of azure.data.appconfiguration
+To use the async client library, import the AzureAppConfigurationClient from package azure.appconfiguration.aio instead of azure.appconfiguration
 ```python
-from azure.data.appconfiguration.aio import AzureAppConfigurationClient
+from azure.appconfiguration.aio import AzureAppConfigurationClient
 
 connection_str = "<connection_string>"
 async_client = AzureAppConfigurationClient.from_connection_string(connection_str)
