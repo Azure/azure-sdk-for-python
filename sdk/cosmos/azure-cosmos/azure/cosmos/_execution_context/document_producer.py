@@ -22,9 +22,11 @@
 """Internal class for document producer implementation in the Azure Cosmos database service.
 """
 
-import six
-import numbers
 from collections import deque
+import numbers
+
+import six
+
 from azure.cosmos import _base
 from azure.cosmos._execution_context.base_execution_context import _DefaultQueryExecutionContext
 

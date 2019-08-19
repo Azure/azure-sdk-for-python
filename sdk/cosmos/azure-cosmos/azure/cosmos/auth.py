@@ -22,10 +22,10 @@
 """Authorization helper functions in the Azure Cosmos database service.
 """
 
+import base64
 from hashlib import sha256
 import hmac
 import six
-import base64
 
 from . import http_constants
 

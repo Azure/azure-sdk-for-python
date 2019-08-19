@@ -22,11 +22,12 @@
 """Create, read, update and delete permissions in the Azure Cosmos DB SQL API service.
 """
 
-import six
-from ._cosmos_client_connection import CosmosClientConnection
 from typing import Any, List, Dict, Union, cast
-from .permission import Permission
 
+import six
+
+from ._cosmos_client_connection import CosmosClientConnection
+from .permission import Permission
 
 class User:
     def __init__(self, client_connection, id, database_link, properties=None):

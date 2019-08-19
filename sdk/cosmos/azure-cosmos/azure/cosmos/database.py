@@ -22,7 +22,10 @@
 """Create, read, update and delete containers in the Azure Cosmos DB SQL API service.
 """
 
+from typing import Any, List, Dict, Mapping, Union, cast
+
 import six
+
 from ._cosmos_client_connection import CosmosClientConnection
 from .container import Container
 from .offer import Offer
@@ -31,8 +34,6 @@ from .errors import HTTPFailure
 from .user import User
 from ._query_iterable import QueryIterable
 from .partition_key import PartitionKey
-
-from typing import Any, List, Dict, Mapping, Union, cast
 
 __all__ = ("Database",)
 
