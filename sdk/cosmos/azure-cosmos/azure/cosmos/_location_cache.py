@@ -122,15 +122,14 @@ class LocationCache(object):
                 location_index = min(location_index % 2, len(self.available_write_locations) - 1)
                 write_location = self.available_write_locations[location_index]
                 return self.available_write_endpoint_by_locations[write_location]
-            else:
-                return self.default_endpoint
-        else:
-            endpoints = (
-                self.get_write_endpoints()
-                if documents._OperationType.IsWriteOperation(request.operation_type)
-                else self.get_read_endpoints()
-            )
-            return endpoints[location_index % len(endpoints)]
+            return self.default_endpoint
+
+        endpoints = (
+            self.get_write_endpoints()
+            if documents._OperationType.IsWriteOperation(request.operation_type)
+            else self.get_read_endpoints()
+        )
+        return endpoints[location_index % len(endpoints)]
 
     def should_refresh_endpoints(self):
         most_preferred_location = (
@@ -157,19 +156,15 @@ class LocationCache(object):
                     # Since most preferred write endpoint is unavailable, we can only refresh in background if
                     # we have an alternate write endpoint
                     return True
-                else:
-                    return should_refresh
-            elif most_preferred_location:
+                return should_refresh
+            if most_preferred_location:
                 most_preferred_write_endpoint = self.available_write_endpoint_by_locations[most_preferred_location]
                 if most_preferred_write_endpoint:
                     should_refresh |= most_preferred_write_endpoint != self.write_endpoints[0]
                     return should_refresh
-                else:
-                    return True
-            else:
-                return should_refresh
-        else:
-            return False
+                return True
+            return should_refresh
+        return False
 
     def clear_stale_endpoint_unavailability_info(self):
         new_location_unavailability_info = {}
@@ -200,15 +195,14 @@ class LocationCache(object):
             or expected_available_operations not in unavailability_info["operationType"]
         ):
             return False
-        else:
-            if (
-                self.current_time_millis() - unavailability_info["lastUnavailabilityCheckTimeStamp"]
-                > self.refresh_time_interval_in_ms
-            ):
-                return False
-            else:
-                # Unexpired entry present. Endpoint is unavailable
-                return True
+
+        if (
+            self.current_time_millis() - unavailability_info["lastUnavailabilityCheckTimeStamp"]
+            > self.refresh_time_interval_in_ms
+        ):
+            return False
+        # Unexpired entry present. Endpoint is unavailable
+        return True
 
     def mark_endpoint_unavailable(self, unavailable_endpoint, unavailable_operation_type):
         unavailablility_info = (

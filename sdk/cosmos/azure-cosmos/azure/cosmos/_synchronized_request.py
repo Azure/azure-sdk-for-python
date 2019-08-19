@@ -59,15 +59,13 @@ def _RequestBodyFromData(data):
     """
     if isinstance(data, six.string_types) or _IsReadableStream(data):
         return data
-    elif isinstance(data, (dict, list, tuple)):
+    if isinstance(data, (dict, list, tuple)):
 
         json_dumped = json.dumps(data, separators=(",", ":"))
 
         if six.PY2:
             return json_dumped.decode("utf-8")
-        else:
-            return json_dumped
-    return None
+        return json_dumped
 
 
 def _Request(

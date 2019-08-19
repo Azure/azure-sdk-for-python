@@ -93,11 +93,9 @@ class QueryIterable(object):
             return base_execution_context._MultiCollectionQueryExecutionContext(
                 self._client, self._options, self._database_link, self._query, self._partition_key
             )
-        else:
-            #
-            return execution_dispatcher._ProxyQueryExecutionContext(
-                self._client, self._collection_link, self._query, self._options, self._fetch_function
-            )
+        return execution_dispatcher._ProxyQueryExecutionContext(
+            self._client, self._collection_link, self._query, self._options, self._fetch_function
+        )
 
     def __iter__(self):
         """Makes this class iterable.

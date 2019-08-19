@@ -110,7 +110,7 @@ class RangePartitionResolver(object):
             for key in partition_key:
                 if key is None:
                     return list(self.partition_map.keys())
-                elif isinstance(key, prange.Range):
+                if isinstance(key, prange.Range):
                     partitionkey_ranges.add(key)
                 else:
                     partitionkey_ranges.add(prange.Range(key, key))

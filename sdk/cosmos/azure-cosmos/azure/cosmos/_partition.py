@@ -58,6 +58,6 @@ class Partition(object):
         for i in xrange(0, len(self.hash_value)):
             if self.hash_value[len(self.hash_value) - i - 1] < other_hash_value[len(self.hash_value) - i - 1]:
                 return -1
-            elif self.hash_value[len(self.hash_value) - i - 1] > other_hash_value[len(self.hash_value) - i - 1]:
+            if self.hash_value[len(self.hash_value) - i - 1] > other_hash_value[len(self.hash_value) - i - 1]:
                 return 1
         return 0

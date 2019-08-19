@@ -114,5 +114,4 @@ class _QueryExecutionAggregateEndpointComponent(_QueryExecutionEndpointComponent
             res = self._results[self._result_index]
             self._result_index += 1
             return res
-        else:
-            raise StopIteration
+        raise StopIteration

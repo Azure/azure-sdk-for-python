@@ -50,10 +50,7 @@ class Range(object):
     def __lt__(self, other):
         if self == other:
             return False
-        elif self.low < other.low or self.high < other.high:
-            return True
-        else:
-            return False
+        return self.low < other.low or self.high < other.high
 
     def Contains(self, other):
         """Checks if the passed parameter is in the range of this object.
@@ -62,11 +59,8 @@ class Range(object):
             raise ValueError("other is None.")
 
         if isinstance(other, Range):
-            if other.low >= self.low and other.high <= self.high:
-                return True
-            return False
-        else:
-            return self.Contains(Range(other, other))
+            return other.low >= self.low and other.high <= self.high
+        return self.Contains(Range(other, other))
 
     def Intersect(self, other):
         """Checks if the passed parameter intersects the range of this object.

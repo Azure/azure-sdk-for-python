@@ -71,9 +71,9 @@ class SessionContainer(object):
                         session_token_list.append("{0}:{1}".format(key, token_dict[key].convert_to_string()))
                     session_token = ",".join(session_token_list)
                     return session_token
-                else:
-                    # return empty token if not found
-                    return ""
+
+                # return empty token if not found
+                return ""
             except Exception:
                 return ""
 

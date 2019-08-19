@@ -73,9 +73,9 @@ class _QueryExecutionContextBase(object):
             res = list(self._buffer)
             self._buffer.clear()
             return res
-        else:
-            # fetches the next block
-            return self._fetch_next_block()
+
+        # fetches the next block
+        return self._fetch_next_block()
 
     def _fetch_next_block(self):
         raise NotImplementedError

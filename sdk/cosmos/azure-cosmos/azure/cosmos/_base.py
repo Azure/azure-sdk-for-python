@@ -311,8 +311,7 @@ def GetPathFromLink(resource_link, resource_type=""):
     # Padding leading and trailing slashes to the path returned both for name based and resource id based links
     if resource_type:
         return "/" + resource_link + "/" + resource_type + "/"
-    else:
-        return "/" + resource_link + "/"
+    return "/" + resource_link + "/"
 
 
 def IsNameBased(link):
@@ -474,15 +473,13 @@ def GetItemContainerInfo(self_link, alt_content_path, id_from_response):
             if index_second_slash == -1:
                 collection_name = alt_content_path + "/colls/" + urllib_quote(id_from_response)
                 return collection_id, collection_name
-            else:
-                collection_name = alt_content_path
-                return collection_id, collection_name
-        else:
-            raise ValueError(
-                "Response Not from Server Partition, self_link: {0}, alt_content_path: {1}, id: {2}".format(
-                    self_link, alt_content_path, id_from_response
-                )
+            collection_name = alt_content_path
+            return collection_id, collection_name
+        raise ValueError(
+            "Response Not from Server Partition, self_link: {0}, alt_content_path: {1}, id: {2}".format(
+                self_link, alt_content_path, id_from_response
             )
+        )
     else:
         raise ValueError("Unable to parse document collection link from " + self_link)
 
@@ -504,8 +501,7 @@ def GetItemContainerLink(link):
 
     if index != -1:
         return link[0:index]
-    else:
-        raise ValueError("Unable to parse document collection link from " + link)
+    raise ValueError("Unable to parse document collection link from " + link)
 
 
 def IndexOfNth(s, value, n):
@@ -552,8 +548,7 @@ def IsValidBase64String(string_to_validate):
             e = e.message
         if type(e) == binascii.Error:
             return False
-        else:
-            raise e
+        raise e
     return True
 
 

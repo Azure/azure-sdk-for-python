@@ -55,7 +55,7 @@ def GetAuthorizationHeader(
         return __GetAuthorizationTokenUsingMasterKey(
             verb, resource_id_or_fullname, resource_type, headers, cosmos_client_connection.master_key
         )
-    elif cosmos_client_connection.resource_tokens:
+    if cosmos_client_connection.resource_tokens:
         return __GetAuthorizationTokenUsingResourceTokens(
             cosmos_client_connection.resource_tokens, path, resource_id_or_fullname
         )
@@ -123,26 +123,25 @@ def __GetAuthorizationTokenUsingResourceTokens(resource_tokens, path, resource_i
 
         if resource_tokens.get(resource_id_or_fullname):
             return resource_tokens[resource_id_or_fullname]
-        else:
-            path_parts = []
-            if path:
-                path_parts = path.split("/")
-            resource_types = [
-                "dbs",
-                "colls",
-                "docs",
-                "sprocs",
-                "udfs",
-                "triggers",
-                "users",
-                "permissions",
-                "attachments",
-                "media",
-                "conflicts",
-                "offers",
-            ]
-            # Get the last resource id or resource name from the path and get it's token from resource_tokens
-            for one_part in reversed(path_parts):
-                if not one_part in resource_types and one_part in resource_tokens:
-                    return resource_tokens[one_part]
-    return None
+
+        path_parts = []
+        if path:
+            path_parts = path.split("/")
+        resource_types = [
+            "dbs",
+            "colls",
+            "docs",
+            "sprocs",
+            "udfs",
+            "triggers",
+            "users",
+            "permissions",
+            "attachments",
+            "media",
+            "conflicts",
+            "offers",
+        ]
+        # Get the last resource id or resource name from the path and get it's token from resource_tokens
+        for one_part in reversed(path_parts):
+            if not one_part in resource_types and one_part in resource_tokens:
+                return resource_tokens[one_part]

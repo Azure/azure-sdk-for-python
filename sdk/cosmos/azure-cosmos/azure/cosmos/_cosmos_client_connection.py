@@ -796,26 +796,25 @@ class CosmosClientConnection(object):
             return query_iterable.QueryIterable.PartitioningQueryIterable(
                 self, query, options, database_or_Container_link, partition_key
             )
-        else:
-            path = base.GetPathFromLink(database_or_Container_link, "docs")
-            collection_id = base.GetResourceIdOrFullNameFromLink(database_or_Container_link)
+        path = base.GetPathFromLink(database_or_Container_link, "docs")
+        collection_id = base.GetResourceIdOrFullNameFromLink(database_or_Container_link)
 
-            def fetch_fn(options):
-                return (
-                    self.__QueryFeed(
-                        path,
-                        "docs",
-                        collection_id,
-                        lambda r: r["Documents"],
-                        lambda _, b: b,
-                        query,
-                        options,
-                        response_hook=response_hook,
-                    ),
-                    self.last_response_headers,
-                )
+        def fetch_fn(options):
+            return (
+                self.__QueryFeed(
+                    path,
+                    "docs",
+                    collection_id,
+                    lambda r: r["Documents"],
+                    lambda _, b: b,
+                    query,
+                    options,
+                    response_hook=response_hook,
+                ),
+                self.last_response_headers,
+            )
 
-            return query_iterable.QueryIterable(self, query, options, fetch_fn, database_or_Container_link)
+        return query_iterable.QueryIterable(self, query, options, fetch_fn, database_or_Container_link)
 
     def QueryItemsChangeFeed(self, collection_link, options=None, response_hook=None):
         """Queries documents change feed in a collection.
@@ -2518,10 +2517,9 @@ class CosmosClientConnection(object):
             def __GetBodiesFromQueryResult(result):
                 if result is not None:
                     return [create_fn(self, body) for body in result_fn(result)]
-                else:
-                    # If there is no change feed, the result data is empty and result is None.
-                    # This case should be interpreted as an empty array.
-                    return []
+                # If there is no change feed, the result data is empty and result is None.
+                # This case should be interpreted as an empty array.
+                return []
 
         initial_headers = self.default_headers.copy()
         # Copy to make sure that default_headers won't be changed.
@@ -2533,29 +2531,29 @@ class CosmosClientConnection(object):
             if response_hook:
                 response_hook(self.last_response_headers, result)
             return __GetBodiesFromQueryResult(result)
+
+        query = self.__CheckAndUnifyQueryFormat(query)
+
+        initial_headers[http_constants.HttpHeaders.IsQuery] = "true"
+        if (
+            self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.Default
+            or self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.Query
+        ):
+            initial_headers[http_constants.HttpHeaders.ContentType] = runtime_constants.MediaTypes.QueryJson
+        elif self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.SqlQuery:
+            initial_headers[http_constants.HttpHeaders.ContentType] = runtime_constants.MediaTypes.SQL
         else:
-            query = self.__CheckAndUnifyQueryFormat(query)
+            raise SystemError("Unexpected query compatibility mode.")
 
-            initial_headers[http_constants.HttpHeaders.IsQuery] = "true"
-            if (
-                self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.Default
-                or self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.Query
-            ):
-                initial_headers[http_constants.HttpHeaders.ContentType] = runtime_constants.MediaTypes.QueryJson
-            elif self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.SqlQuery:
-                initial_headers[http_constants.HttpHeaders.ContentType] = runtime_constants.MediaTypes.SQL
-            else:
-                raise SystemError("Unexpected query compatibility mode.")
+        # Query operations will use ReadEndpoint even though it uses POST(for regular query operations)
+        request = _request_object.RequestObject(type, documents._OperationType.SqlQuery)
+        headers = base.GetHeaders(self, initial_headers, "post", path, id, type, options, partition_key_range_id)
+        result, self.last_response_headers = self.__Post(path, request, query, headers)
 
-            # Query operations will use ReadEndpoint even though it uses POST(for regular query operations)
-            request = _request_object.RequestObject(type, documents._OperationType.SqlQuery)
-            headers = base.GetHeaders(self, initial_headers, "post", path, id, type, options, partition_key_range_id)
-            result, self.last_response_headers = self.__Post(path, request, query, headers)
+        if response_hook:
+            response_hook(self.last_response_headers, result)
 
-            if response_hook:
-                response_hook(self.last_response_headers, result)
-
-            return __GetBodiesFromQueryResult(result)
+        return __GetBodiesFromQueryResult(result)
 
     def __CheckAndUnifyQueryFormat(self, query_body):
         """Checks and unifies the format of the query body.
@@ -2646,12 +2644,12 @@ class CosmosClientConnection(object):
             # At any point if we don't find the value of a sub-property in the document, we return as Undefined
             if part not in partitionKey:
                 return self._return_undefined_or_empty_partition_key(is_system_key)
-            else:
-                partitionKey = partitionKey.get(part)
-                matchCount += 1
-                # Once we reach the "leaf" value(not a dict), we break from loop
-                if not isinstance(partitionKey, dict):
-                    break
+
+            partitionKey = partitionKey.get(part)
+            matchCount += 1
+            # Once we reach the "leaf" value(not a dict), we break from loop
+            if not isinstance(partitionKey, dict):
+                break
 
         # Match the count of hops we did to get the partitionKey with the length of partition key parts and validate that it's not a dict at that level
         if (matchCount != expected_matchCount) or isinstance(partitionKey, dict):
@@ -2689,5 +2687,4 @@ class CosmosClientConnection(object):
     def _return_undefined_or_empty_partition_key(is_system_key):
         if is_system_key:
             return _Empty
-        else:
-            return _Undefined
+        return _Undefined

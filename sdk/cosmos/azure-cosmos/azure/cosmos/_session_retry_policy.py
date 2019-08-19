@@ -75,46 +75,46 @@ class _SessionRetryPolicy(object):
         if not self.endpoint_discovery_enable:
             # if endpoint discovery is disabled, the request cannot be retried anywhere else
             return False
-        else:
-            if self.can_use_multiple_write_locations:
-                if _OperationType.IsReadOnlyOperation(self.request.operation_type):
-                    endpoints = self.global_endpoint_manager.get_ordered_read_endpoints()
-                else:
-                    endpoints = self.global_endpoint_manager.get_ordered_write_endpoints()
 
-                if self.session_token_retry_count > len(endpoints):
-                    # When use multiple write locations is true and the request has been tried
-                    # on all locations, then don't retry the request
-                    return False
-                else:
-                    # set location-based routing directive based on request retry context
-                    self.request.route_to_location_with_preferred_location_flag(
-                        self.session_token_retry_count - 1,
-                        self.session_token_retry_count > self._max_retry_attempt_count,
-                    )
-                    self.request.should_clear_session_token_on_session_read_failure = (
-                        self.session_token_retry_count == len(endpoints)
-                    )  # clear on last attempt
-
-                    # Resolve the endpoint for the request and pin the resolution to the resolved endpoint
-                    # This enables marking the endpoint unavailability on endpoint failover/unreachability
-                    self.location_endpoint = self.global_endpoint_manager.resolve_service_endpoint(self.request)
-                    self.request.route_to_location(self.location_endpoint)
-                    return True
+        if self.can_use_multiple_write_locations:
+            if _OperationType.IsReadOnlyOperation(self.request.operation_type):
+                endpoints = self.global_endpoint_manager.get_ordered_read_endpoints()
             else:
-                if self.session_token_retry_count > self._max_retry_attempt_count:
-                    # When cannot use multiple write locations, then don't retry the request if
-                    # we have already tried this request on the write location
-                    return False
-                else:
-                    # set location-based routing directive based on request retry context
-                    self.request.route_to_location_with_preferred_location_flag(
-                        self.session_token_retry_count - 1, False
-                    )
-                    self.request.should_clear_session_token_on_session_read_failure = True
+                endpoints = self.global_endpoint_manager.get_ordered_write_endpoints()
 
-                    # Resolve the endpoint for the request and pin the resolution to the resolved endpoint
-                    # This enables marking the endpoint unavailability on endpoint failover/unreachability
-                    self.location_endpoint = self.global_endpoint_manager.resolve_service_endpoint(self.request)
-                    self.request.route_to_location(self.location_endpoint)
-                    return True
+            if self.session_token_retry_count > len(endpoints):
+                # When use multiple write locations is true and the request has been tried
+                # on all locations, then don't retry the request
+                return False
+
+            # set location-based routing directive based on request retry context
+            self.request.route_to_location_with_preferred_location_flag(
+                self.session_token_retry_count - 1,
+                self.session_token_retry_count > self._max_retry_attempt_count,
+            )
+            self.request.should_clear_session_token_on_session_read_failure = (
+                self.session_token_retry_count == len(endpoints)
+            )  # clear on last attempt
+
+            # Resolve the endpoint for the request and pin the resolution to the resolved endpoint
+            # This enables marking the endpoint unavailability on endpoint failover/unreachability
+            self.location_endpoint = self.global_endpoint_manager.resolve_service_endpoint(self.request)
+            self.request.route_to_location(self.location_endpoint)
+            return True
+
+        if self.session_token_retry_count > self._max_retry_attempt_count:
+            # When cannot use multiple write locations, then don't retry the request if
+            # we have already tried this request on the write location
+            return False
+
+        # set location-based routing directive based on request retry context
+        self.request.route_to_location_with_preferred_location_flag(
+            self.session_token_retry_count - 1, False
+        )
+        self.request.should_clear_session_token_on_session_read_failure = True
+
+        # Resolve the endpoint for the request and pin the resolution to the resolved endpoint
+        # This enables marking the endpoint unavailability on endpoint failover/unreachability
+        self.location_endpoint = self.global_endpoint_manager.resolve_service_endpoint(self.request)
+        self.request.route_to_location(self.location_endpoint)
+        return True

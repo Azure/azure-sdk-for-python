@@ -266,7 +266,7 @@ class _OrderByDocumentProducerComparator(_PartitionKeyRangeDocumentProduerCompar
             if res != 0:
                 if self._sort_order[i] == "Ascending":
                     return res
-                elif self._sort_order[i] == "Descending":
+                if self._sort_order[i] == "Descending":
                     return -res
 
         return _PartitionKeyRangeDocumentProduerComparator.compare(self, doc_producer1, doc_producer2)

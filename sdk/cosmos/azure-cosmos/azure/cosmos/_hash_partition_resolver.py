@@ -95,5 +95,4 @@ class HashPartitionResolver(object):
         """
         if partition_key is None:
             return self.collection_links
-        else:
-            return [self.consistent_hash_ring.GetCollectionNode(partition_key)]
+        return [self.consistent_hash_ring.GetCollectionNode(partition_key)]

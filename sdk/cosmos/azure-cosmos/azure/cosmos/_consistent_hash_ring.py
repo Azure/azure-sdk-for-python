@@ -116,8 +116,7 @@ class ConsistentHashRing(object):
         """
         if isinstance(partition_key, six.string_types):
             return bytearray(partition_key, encoding="utf-8")
-        else:
-            raise ValueError("Unsupported " + str(type(partition_key)) + " for partitionKey.")
+        raise ValueError("Unsupported " + str(type(partition_key)) + " for partitionKey.")
 
     @staticmethod
     def _LowerBoundSearch(partitions, hash_value):

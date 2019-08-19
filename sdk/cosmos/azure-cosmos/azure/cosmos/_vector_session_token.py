@@ -109,12 +109,11 @@ class VectorSessionToken(object):
     def equals(self, other):
         if other is None:
             return False
-        else:
-            return (
-                self.version == other.version
-                and self.global_lsn == other.global_lsn
-                and self.are_region_progress_equal(other.local_lsn_by_region)
-            )
+        return (
+            self.version == other.version
+            and self.global_lsn == other.global_lsn
+            and self.are_region_progress_equal(other.local_lsn_by_region)
+        )
 
     def merge(self, other):
         if other is None:
