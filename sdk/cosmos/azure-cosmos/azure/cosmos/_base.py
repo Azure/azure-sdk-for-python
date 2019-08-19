@@ -26,14 +26,12 @@ import base64
 import datetime
 import json
 import uuid
-import urllib
 import binascii
 
 from . import auth
 from . import documents
 from . import partition_key
 from . import http_constants
-from . import _constants as constants
 from . import _runtime_constants
 
 import six
