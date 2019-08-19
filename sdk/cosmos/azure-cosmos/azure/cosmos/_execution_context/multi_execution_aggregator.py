@@ -94,7 +94,7 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
         for targetQueryExContext in targetPartitionQueryExecutionContextList:
 
             try:
-                """TODO: we can also use more_itertools.peekable to be more python friendly"""
+                # TODO: we can also use more_itertools.peekable to be more python friendly
                 targetQueryExContext.peek()
                 # if there are matching results in the target ex range add it to the priority queue
 
@@ -118,7 +118,7 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
             res = next(targetRangeExContext)
 
             try:
-                """TODO: we can also use more_itertools.peekable to be more python friendly"""
+                # TODO: we can also use more_itertools.peekable to be more python friendly
                 targetRangeExContext.peek()
                 self._orderByPQ.push(targetRangeExContext)
 

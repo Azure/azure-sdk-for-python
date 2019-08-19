@@ -120,9 +120,9 @@ class CosmosClientConnection(object):
         self.last_response_headers = None
 
         if consistency_level == documents.ConsistencyLevel.Session:
-            """create a session - this is maintained only if the default consistency level
-            on the client is set to session, or if the user explicitly sets it as a property
-            via setter"""
+            # create a session - this is maintained only if the default consistency level
+            # on the client is set to session, or if the user explicitly sets it as a property
+            # via setter
             self.session = _session.Session(self.url_connection)
         else:
             self.session = None
@@ -2672,9 +2672,7 @@ class CosmosClientConnection(object):
 
         """
 
-        """if this request was made with consistency level as session, then update
-        the session"""
-
+        # if this request was made with consistency level as session, then update the session
         if response_result is None or response_headers is None:
             return
 
