@@ -136,7 +136,6 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
 
         rewritten_query = self._partitioned_query_ex_info.get_rewritten_query()
         if rewritten_query:
-            rewritten_query
             if isinstance(self._query, dict):
                 # this is a parameterized query, collect all the parameters
                 query = dict(self._query)
