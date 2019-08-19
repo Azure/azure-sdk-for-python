@@ -354,13 +354,13 @@ def IsNameBased(link):
 
 def IsMasterResource(resourceType):
     return resourceType in (
-        http_constants.ResourceType.Offer, 
-        http_constants.ResourceType.Database, 
-        http_constants.ResourceType.User, 
-        http_constants.ResourceType.Permission, 
-        http_constants.ResourceType.Topology, 
-        http_constants.ResourceType.DatabaseAccount, 
-        http_constants.ResourceType.PartitionKeyRange, 
+        http_constants.ResourceType.Offer,
+        http_constants.ResourceType.Database,
+        http_constants.ResourceType.User,
+        http_constants.ResourceType.Permission,
+        http_constants.ResourceType.Topology,
+        http_constants.ResourceType.DatabaseAccount,
+        http_constants.ResourceType.PartitionKeyRange,
         http_constants.ResourceType.Collection
     )
 

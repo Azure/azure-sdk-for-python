@@ -411,12 +411,12 @@ class _OperationType(object):
     @staticmethod
     def IsWriteOperation(operationType):
         return operationType in (
-            _OperationType.Create, 
-            _OperationType.Delete, 
-            _OperationType.Recreate, 
-            _OperationType.ExecuteJavaScript, 
-            _OperationType.Replace, 
-            _OperationType.Upsert, 
+            _OperationType.Create,
+            _OperationType.Delete,
+            _OperationType.Recreate,
+            _OperationType.ExecuteJavaScript,
+            _OperationType.Replace,
+            _OperationType.Upsert,
             _OperationType.Update
         )
 
