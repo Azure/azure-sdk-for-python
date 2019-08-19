@@ -8,7 +8,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is
 # regenerated.
 # --------------------------------------------------------------------------
-# pylint: skip-file
 
 from azure.core.exceptions import map_error
 
@@ -36,7 +35,7 @@ class ContainerOperations(object):
 
         self._config = config
 
-    def create(self, timeout=None, metadata=None, access=None, request_id=None, cls=None, **kwargs):
+    def create(self, timeout=None, metadata=None, access=None, default_encryption_scope=None, deny_encryption_scope_override=None, request_id=None, cls=None, **kwargs):
         """creates a new container under the specified account. If the container
         with the same name already exists, the operation fails.
 
@@ -58,7 +57,18 @@ class ContainerOperations(object):
         :param access: Specifies whether data in the container may be accessed
          publicly and the level of access. Possible values include:
          'container', 'blob'
-        :type access: str or ~blob.models.PublicAccessType
+        :type access: str or ~azure.storage.blob.models.PublicAccessType
+        :param default_encryption_scope: Optional. Specifies the default
+         encryption scope on the container. If not specified, encryption is
+         performed with the root account encryption key.  For more information,
+         see Encryption at Rest for Azure Storage Services.
+        :type default_encryption_scope: str
+        :param deny_encryption_scope_override: Optional. Specifies whether to
+         deny encryption scope override provided in the request or not. If
+         true, reject the request with encryption scope. If false, encryption
+         is performed using encryption scope provided in the request. For more
+         information, see Encryption at Rest for Azure Storage Services.
+        :type deny_encryption_scope_override: bool
         :param request_id: Provides a client-generated, opaque value with a 1
          KB character limit that is recorded in the analytics logs when storage
          analytics logging is enabled.
@@ -68,7 +78,7 @@ class ContainerOperations(object):
         :return: None or the result of cls(response)
         :rtype: None
         :raises:
-         :class:`StorageErrorException<blob.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.blob.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         restype = "container"
@@ -92,6 +102,10 @@ class ContainerOperations(object):
             header_parameters['x-ms-meta'] = self._serialize.header("metadata", metadata, 'str')
         if access is not None:
             header_parameters['x-ms-blob-public-access'] = self._serialize.header("access", access, 'str')
+        if default_encryption_scope is not None:
+            header_parameters['x-ms-default-encryption-scope'] = self._serialize.header("default_encryption_scope", default_encryption_scope, 'str')
+        if deny_encryption_scope_override is not None:
+            header_parameters['x-ms-deny-encryption-scope-override'] = self._serialize.header("deny_encryption_scope_override", deny_encryption_scope_override, 'bool')
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
@@ -109,6 +123,7 @@ class ContainerOperations(object):
             response_headers = {
                 'ETag': self._deserialize('str', response.headers.get('ETag')),
                 'Last-Modified': self._deserialize('rfc-1123', response.headers.get('Last-Modified')),
+                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
                 'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
@@ -117,13 +132,11 @@ class ContainerOperations(object):
             return cls(response, None, response_headers)
     create.metadata = {'url': '/{containerName}'}
 
-    def get_properties(self, comp=None, timeout=None, request_id=None, lease_access_conditions=None, cls=None, **kwargs):
+    def get_properties(self, timeout=None, request_id=None, lease_access_conditions=None, cls=None, **kwargs):
         """returns all user-defined metadata and system properties for the
         specified container. The data returned does not include the container's
         list of blobs.
 
-        :param comp: Possible values include: 'metadata'
-        :type comp: str
         :param timeout: The timeout parameter is expressed in seconds. For
          more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -135,13 +148,14 @@ class ContainerOperations(object):
         :type request_id: str
         :param lease_access_conditions: Additional parameters for the
          operation
-        :type lease_access_conditions: ~blob.models.LeaseAccessConditions
+        :type lease_access_conditions:
+         ~azure.storage.blob.models.LeaseAccessConditions
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises:
-         :class:`StorageErrorException<blob.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.blob.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         lease_id = None
@@ -159,8 +173,6 @@ class ContainerOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        if comp is not None:
-            query_parameters['comp'] = self._serialize.query("comp", comp, 'str')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
         query_parameters['restype'] = self._serialize.query("restype", restype, 'str')
@@ -190,10 +202,13 @@ class ContainerOperations(object):
                 'x-ms-lease-duration': self._deserialize(models.LeaseDurationType, response.headers.get('x-ms-lease-duration')),
                 'x-ms-lease-state': self._deserialize(models.LeaseStateType, response.headers.get('x-ms-lease-state')),
                 'x-ms-lease-status': self._deserialize(models.LeaseStatusType, response.headers.get('x-ms-lease-status')),
+                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
                 'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
                 'x-ms-blob-public-access': self._deserialize('str', response.headers.get('x-ms-blob-public-access')),
+                'x-ms-default-encryption-scope': self._deserialize('str', response.headers.get('x-ms-default-encryption-scope')),
+                'x-ms-deny-encryption-scope-override': self._deserialize('bool', response.headers.get('x-ms-deny-encryption-scope-override')),
                 'x-ms-has-immutability-policy': self._deserialize('bool', response.headers.get('x-ms-has-immutability-policy')),
                 'x-ms-has-legal-hold': self._deserialize('bool', response.headers.get('x-ms-has-legal-hold')),
                 'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
@@ -217,17 +232,18 @@ class ContainerOperations(object):
         :type request_id: str
         :param lease_access_conditions: Additional parameters for the
          operation
-        :type lease_access_conditions: ~blob.models.LeaseAccessConditions
+        :type lease_access_conditions:
+         ~azure.storage.blob.models.LeaseAccessConditions
         :param modified_access_conditions: Additional parameters for the
          operation
         :type modified_access_conditions:
-         ~blob.models.ModifiedAccessConditions
+         ~azure.storage.blob.models.ModifiedAccessConditions
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises:
-         :class:`StorageErrorException<blob.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.blob.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         lease_id = None
@@ -278,6 +294,7 @@ class ContainerOperations(object):
 
         if cls:
             response_headers = {
+                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
                 'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
@@ -311,17 +328,18 @@ class ContainerOperations(object):
         :type request_id: str
         :param lease_access_conditions: Additional parameters for the
          operation
-        :type lease_access_conditions: ~blob.models.LeaseAccessConditions
+        :type lease_access_conditions:
+         ~azure.storage.blob.models.LeaseAccessConditions
         :param modified_access_conditions: Additional parameters for the
          operation
         :type modified_access_conditions:
-         ~blob.models.ModifiedAccessConditions
+         ~azure.storage.blob.models.ModifiedAccessConditions
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises:
-         :class:`StorageErrorException<blob.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.blob.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         lease_id = None
@@ -373,6 +391,7 @@ class ContainerOperations(object):
             response_headers = {
                 'ETag': self._deserialize('str', response.headers.get('ETag')),
                 'Last-Modified': self._deserialize('rfc-1123', response.headers.get('Last-Modified')),
+                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
                 'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
@@ -396,13 +415,14 @@ class ContainerOperations(object):
         :type request_id: str
         :param lease_access_conditions: Additional parameters for the
          operation
-        :type lease_access_conditions: ~blob.models.LeaseAccessConditions
+        :type lease_access_conditions:
+         ~azure.storage.blob.models.LeaseAccessConditions
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: list or the result of cls(response)
-        :rtype: list[~blob.models.SignedIdentifier]
+        :rtype: list[~azure.storage.blob.models.SignedIdentifier]
         :raises:
-         :class:`StorageErrorException<blob.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.blob.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         lease_id = None
@@ -428,7 +448,7 @@ class ContainerOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/xml'
+        header_parameters['Accept'] = 'application/xml, application/octet-stream, text/plain'
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
@@ -452,6 +472,7 @@ class ContainerOperations(object):
                 'x-ms-blob-public-access': self._deserialize('str', response.headers.get('x-ms-blob-public-access')),
                 'ETag': self._deserialize('str', response.headers.get('ETag')),
                 'Last-Modified': self._deserialize('rfc-1123', response.headers.get('Last-Modified')),
+                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
                 'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
@@ -469,7 +490,7 @@ class ContainerOperations(object):
         indicate whether blobs in a container may be accessed publicly.
 
         :param container_acl: the acls for the container
-        :type container_acl: list[~blob.models.SignedIdentifier]
+        :type container_acl: list[~azure.storage.blob.models.SignedIdentifier]
         :param timeout: The timeout parameter is expressed in seconds. For
          more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -478,24 +499,25 @@ class ContainerOperations(object):
         :param access: Specifies whether data in the container may be accessed
          publicly and the level of access. Possible values include:
          'container', 'blob'
-        :type access: str or ~blob.models.PublicAccessType
+        :type access: str or ~azure.storage.blob.models.PublicAccessType
         :param request_id: Provides a client-generated, opaque value with a 1
          KB character limit that is recorded in the analytics logs when storage
          analytics logging is enabled.
         :type request_id: str
         :param lease_access_conditions: Additional parameters for the
          operation
-        :type lease_access_conditions: ~blob.models.LeaseAccessConditions
+        :type lease_access_conditions:
+         ~azure.storage.blob.models.LeaseAccessConditions
         :param modified_access_conditions: Additional parameters for the
          operation
         :type modified_access_conditions:
-         ~blob.models.ModifiedAccessConditions
+         ~azure.storage.blob.models.ModifiedAccessConditions
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises:
-         :class:`StorageErrorException<blob.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.blob.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         lease_id = None
@@ -541,10 +563,9 @@ class ContainerOperations(object):
             header_parameters['If-Unmodified-Since'] = self._serialize.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
 
         # Construct body
-        serialization_ctxt = {'xml': {'name': 'SignedIdentifiers', 'itemsName': 'SignedIdentifier', 'wrapped': True}}
+        serialization_ctxt = {'xml': {'name': 'SignedIdentifiers', 'itemsName': 'SignedIdentifiers', 'wrapped': True}}
         if container_acl is not None:
-            body_content = self._serialize.serialize_iter(container_acl, 'SignedIdentifier',
-                                                          serialization_ctxt=serialization_ctxt)
+            body_content = self._serialize.body(container_acl, '[SignedIdentifier]', serialization_ctxt=serialization_ctxt)
         else:
             body_content = None
 
@@ -561,6 +582,7 @@ class ContainerOperations(object):
             response_headers = {
                 'ETag': self._deserialize('str', response.headers.get('ETag')),
                 'Last-Modified': self._deserialize('rfc-1123', response.headers.get('Last-Modified')),
+                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
                 'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
@@ -596,13 +618,13 @@ class ContainerOperations(object):
         :param modified_access_conditions: Additional parameters for the
          operation
         :type modified_access_conditions:
-         ~blob.models.ModifiedAccessConditions
+         ~azure.storage.blob.models.ModifiedAccessConditions
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises:
-         :class:`StorageErrorException<blob.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.blob.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         if_modified_since = None
@@ -659,6 +681,7 @@ class ContainerOperations(object):
                 'ETag': self._deserialize('str', response.headers.get('ETag')),
                 'Last-Modified': self._deserialize('rfc-1123', response.headers.get('Last-Modified')),
                 'x-ms-lease-id': self._deserialize('str', response.headers.get('x-ms-lease-id')),
+                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
                 'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
@@ -686,13 +709,13 @@ class ContainerOperations(object):
         :param modified_access_conditions: Additional parameters for the
          operation
         :type modified_access_conditions:
-         ~blob.models.ModifiedAccessConditions
+         ~azure.storage.blob.models.ModifiedAccessConditions
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises:
-         :class:`StorageErrorException<blob.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.blob.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         if_modified_since = None
@@ -745,6 +768,7 @@ class ContainerOperations(object):
             response_headers = {
                 'ETag': self._deserialize('str', response.headers.get('ETag')),
                 'Last-Modified': self._deserialize('rfc-1123', response.headers.get('Last-Modified')),
+                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
                 'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
@@ -772,13 +796,13 @@ class ContainerOperations(object):
         :param modified_access_conditions: Additional parameters for the
          operation
         :type modified_access_conditions:
-         ~blob.models.ModifiedAccessConditions
+         ~azure.storage.blob.models.ModifiedAccessConditions
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises:
-         :class:`StorageErrorException<blob.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.blob.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         if_modified_since = None
@@ -832,6 +856,7 @@ class ContainerOperations(object):
                 'ETag': self._deserialize('str', response.headers.get('ETag')),
                 'Last-Modified': self._deserialize('rfc-1123', response.headers.get('Last-Modified')),
                 'x-ms-lease-id': self._deserialize('str', response.headers.get('x-ms-lease-id')),
+                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
                 'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
@@ -867,13 +892,13 @@ class ContainerOperations(object):
         :param modified_access_conditions: Additional parameters for the
          operation
         :type modified_access_conditions:
-         ~blob.models.ModifiedAccessConditions
+         ~azure.storage.blob.models.ModifiedAccessConditions
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises:
-         :class:`StorageErrorException<blob.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.blob.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         if_modified_since = None
@@ -928,6 +953,7 @@ class ContainerOperations(object):
                 'ETag': self._deserialize('str', response.headers.get('ETag')),
                 'Last-Modified': self._deserialize('rfc-1123', response.headers.get('Last-Modified')),
                 'x-ms-lease-time': self._deserialize('int', response.headers.get('x-ms-lease-time')),
+                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
                 'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
@@ -960,13 +986,13 @@ class ContainerOperations(object):
         :param modified_access_conditions: Additional parameters for the
          operation
         :type modified_access_conditions:
-         ~blob.models.ModifiedAccessConditions
+         ~azure.storage.blob.models.ModifiedAccessConditions
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises:
-         :class:`StorageErrorException<blob.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.blob.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         if_modified_since = None
@@ -1021,6 +1047,7 @@ class ContainerOperations(object):
                 'ETag': self._deserialize('str', response.headers.get('ETag')),
                 'Last-Modified': self._deserialize('rfc-1123', response.headers.get('Last-Modified')),
                 'x-ms-lease-id': self._deserialize('str', response.headers.get('x-ms-lease-id')),
+                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
                 'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
@@ -1055,7 +1082,8 @@ class ContainerOperations(object):
         :type maxresults: int
         :param include: Include this parameter to specify one or more datasets
          to include in the response.
-        :type include: list[str or ~blob.models.ListBlobsIncludeItem]
+        :type include: list[str or
+         ~azure.storage.blob.models.ListBlobsIncludeItem]
         :param timeout: The timeout parameter is expressed in seconds. For
          more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -1068,9 +1096,9 @@ class ContainerOperations(object):
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: ListBlobsFlatSegmentResponse or the result of cls(response)
-        :rtype: ~blob.models.ListBlobsFlatSegmentResponse
+        :rtype: ~azure.storage.blob.models.ListBlobsFlatSegmentResponse
         :raises:
-         :class:`StorageErrorException<blob.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.blob.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         restype = "container"
@@ -1100,7 +1128,7 @@ class ContainerOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/xml'
+        header_parameters['Accept'] = 'application/xml, application/octet-stream, text/plain'
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
@@ -1120,6 +1148,7 @@ class ContainerOperations(object):
             deserialized = self._deserialize('ListBlobsFlatSegmentResponse', response)
             header_dict = {
                 'Content-Type': self._deserialize('str', response.headers.get('Content-Type')),
+                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
                 'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
@@ -1164,7 +1193,8 @@ class ContainerOperations(object):
         :type maxresults: int
         :param include: Include this parameter to specify one or more datasets
          to include in the response.
-        :type include: list[str or ~blob.models.ListBlobsIncludeItem]
+        :type include: list[str or
+         ~azure.storage.blob.models.ListBlobsIncludeItem]
         :param timeout: The timeout parameter is expressed in seconds. For
          more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -1178,9 +1208,9 @@ class ContainerOperations(object):
          direct response
         :return: ListBlobsHierarchySegmentResponse or the result of
          cls(response)
-        :rtype: ~blob.models.ListBlobsHierarchySegmentResponse
+        :rtype: ~azure.storage.blob.models.ListBlobsHierarchySegmentResponse
         :raises:
-         :class:`StorageErrorException<blob.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.blob.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         restype = "container"
@@ -1211,7 +1241,7 @@ class ContainerOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/xml'
+        header_parameters['Accept'] = 'application/xml, application/octet-stream, text/plain'
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
@@ -1231,6 +1261,7 @@ class ContainerOperations(object):
             deserialized = self._deserialize('ListBlobsHierarchySegmentResponse', response)
             header_dict = {
                 'Content-Type': self._deserialize('str', response.headers.get('Content-Type')),
+                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
                 'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
@@ -1251,7 +1282,7 @@ class ContainerOperations(object):
         :return: None or the result of cls(response)
         :rtype: None
         :raises:
-         :class:`StorageErrorException<blob.models.StorageErrorException>`
+         :class:`StorageErrorException<azure.storage.blob.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
         restype = "account"
@@ -1284,6 +1315,7 @@ class ContainerOperations(object):
 
         if cls:
             response_headers = {
+                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
                 'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),

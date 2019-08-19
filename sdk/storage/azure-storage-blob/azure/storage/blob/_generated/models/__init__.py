@@ -8,7 +8,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is
 # regenerated.
 # --------------------------------------------------------------------------
-# pylint: skip-file
 
 try:
     from ._models_py3 import AccessPolicy
@@ -17,8 +16,10 @@ try:
     from ._models_py3 import BlobHierarchyListSegment
     from ._models_py3 import BlobHTTPHeaders
     from ._models_py3 import BlobItem
+    from ._models_py3 import BlobMetadata
     from ._models_py3 import BlobPrefix
     from ._models_py3 import BlobProperties
+    from ._models_py3 import BlobTags
     from ._models_py3 import Block
     from ._models_py3 import BlockList
     from ._models_py3 import BlockLookupList
@@ -26,7 +27,15 @@ try:
     from ._models_py3 import ContainerItem
     from ._models_py3 import ContainerProperties
     from ._models_py3 import CorsRule
+    from ._models_py3 import CustomerProvidedKeyInfo
+    from ._models_py3 import DataLakeStorageError, DataLakeStorageErrorException
+    from ._models_py3 import DataLakeStorageErrorError
+    from ._models_py3 import DirectoryHttpHeaders
+    from ._models_py3 import FilterBlobsItem
+    from ._models_py3 import FilterBlobsResponse
+    from ._models_py3 import FilterBlobsSegment
     from ._models_py3 import GeoReplication
+    from ._models_py3 import KeyInfo
     from ._models_py3 import LeaseAccessConditions
     from ._models_py3 import ListBlobsFlatSegmentResponse
     from ._models_py3 import ListBlobsHierarchySegmentResponse
@@ -44,6 +53,8 @@ try:
     from ._models_py3 import StorageError, StorageErrorException
     from ._models_py3 import StorageServiceProperties
     from ._models_py3 import StorageServiceStats
+    from ._models_py3 import Tag
+    from ._models_py3 import UserDelegationKey
 except (SyntaxError, ImportError):
     from ._models import AccessPolicy
     from ._models import AppendPositionAccessConditions
@@ -51,8 +62,10 @@ except (SyntaxError, ImportError):
     from ._models import BlobHierarchyListSegment
     from ._models import BlobHTTPHeaders
     from ._models import BlobItem
+    from ._models import BlobMetadata
     from ._models import BlobPrefix
     from ._models import BlobProperties
+    from ._models import BlobTags
     from ._models import Block
     from ._models import BlockList
     from ._models import BlockLookupList
@@ -60,7 +73,15 @@ except (SyntaxError, ImportError):
     from ._models import ContainerItem
     from ._models import ContainerProperties
     from ._models import CorsRule
+    from ._models import CustomerProvidedKeyInfo
+    from ._models import DataLakeStorageError, DataLakeStorageErrorException
+    from ._models import DataLakeStorageErrorError
+    from ._models import DirectoryHttpHeaders
+    from ._models import FilterBlobsItem
+    from ._models import FilterBlobsResponse
+    from ._models import FilterBlobsSegment
     from ._models import GeoReplication
+    from ._models import KeyInfo
     from ._models import LeaseAccessConditions
     from ._models import ListBlobsFlatSegmentResponse
     from ._models import ListBlobsHierarchySegmentResponse
@@ -78,24 +99,32 @@ except (SyntaxError, ImportError):
     from ._models import StorageError, StorageErrorException
     from ._models import StorageServiceProperties
     from ._models import StorageServiceStats
+    from ._models import Tag
+    from ._models import UserDelegationKey
 from ._azure_blob_storage_enums import (
     AccessTier,
+    AccessTierOptional,
+    AccessTierRequired,
     AccountKind,
     ArchiveStatus,
     BlobType,
     BlockListType,
     CopyStatusType,
     DeleteSnapshotsOptionType,
+    EncryptionAlgorithmType,
     GeoReplicationStatusType,
     LeaseDurationType,
     LeaseStateType,
     LeaseStatusType,
     ListBlobsIncludeItem,
     ListContainersIncludeType,
+    PathRenameMode,
     PublicAccessType,
+    RehydratePriority,
     SequenceNumberActionType,
     SkuName,
     StorageErrorCode,
+    SyncCopyStatusType,
 )
 
 __all__ = [
@@ -105,8 +134,10 @@ __all__ = [
     'BlobHierarchyListSegment',
     'BlobHTTPHeaders',
     'BlobItem',
+    'BlobMetadata',
     'BlobPrefix',
     'BlobProperties',
+    'BlobTags',
     'Block',
     'BlockList',
     'BlockLookupList',
@@ -114,7 +145,15 @@ __all__ = [
     'ContainerItem',
     'ContainerProperties',
     'CorsRule',
+    'CustomerProvidedKeyInfo',
+    'DataLakeStorageError', 'DataLakeStorageErrorException',
+    'DataLakeStorageErrorError',
+    'DirectoryHttpHeaders',
+    'FilterBlobsItem',
+    'FilterBlobsResponse',
+    'FilterBlobsSegment',
     'GeoReplication',
+    'KeyInfo',
     'LeaseAccessConditions',
     'ListBlobsFlatSegmentResponse',
     'ListBlobsHierarchySegmentResponse',
@@ -132,6 +171,8 @@ __all__ = [
     'StorageError', 'StorageErrorException',
     'StorageServiceProperties',
     'StorageServiceStats',
+    'Tag',
+    'UserDelegationKey',
     'PublicAccessType',
     'CopyStatusType',
     'LeaseDurationType',
@@ -142,11 +183,17 @@ __all__ = [
     'BlobType',
     'StorageErrorCode',
     'GeoReplicationStatusType',
+    'AccessTierRequired',
+    'AccessTierOptional',
+    'RehydratePriority',
     'BlockListType',
     'DeleteSnapshotsOptionType',
+    'EncryptionAlgorithmType',
     'ListBlobsIncludeItem',
     'ListContainersIncludeType',
+    'PathRenameMode',
     'SequenceNumberActionType',
     'SkuName',
     'AccountKind',
+    'SyncCopyStatusType',
 ]

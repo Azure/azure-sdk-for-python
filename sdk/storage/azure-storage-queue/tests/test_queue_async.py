@@ -944,7 +944,7 @@ class StorageQueueTestAsync(QueueTestCase):
         queue_client = await self._create_queue()
 
         # Act
-        await queue_client.set_queue_access_policy(signed_identifiers={'empty': AccessPolicy()})
+        await queue_client.set_queue_access_policy(signed_identifiers={'empty': None})
 
         # Assert
         acl = await queue_client.get_queue_access_policy()

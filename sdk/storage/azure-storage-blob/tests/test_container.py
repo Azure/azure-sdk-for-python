@@ -520,7 +520,7 @@ class StorageContainerTest(StorageTestCase):
         self.assertIsNone(acl.get('public_access'))
 
     @record
-    def test_set_container_acl_with_three_identifiers(self):
+    def test_set_container_acl_with_empty_identifiers(self):
         # Arrange
         container = self._create_container()
         identifiers = {i: None for i in range(2)}
@@ -531,17 +531,19 @@ class StorageContainerTest(StorageTestCase):
         # Assert
         acl = container.get_container_access_policy()
         self.assertIsNotNone(acl)
-        self.assertEqual(len(acl.get('signed_identifiers')), 1)
-        self.assertEqual('testid', acl.get('signed_identifiers')[0].id)
-        self.assertIsNotNone(acl.get('signed_identifiers')[0].access_policy)
+        self.assertEqual(len(acl.get('signed_identifiers')), 2)
+        self.assertEqual('0', acl.get('signed_identifiers')[0].id)
+        self.assertIsNone(acl.get('signed_identifiers')[0].access_policy)
         self.assertIsNone(acl.get('public_access'))
-
 
     @record
     def test_set_container_acl_with_three_identifiers(self):
         # Arrange
         container = self._create_container()
-        identifiers = {str(i): None for i in range(0, 3)}
+        access_policy = AccessPolicy(permission=ContainerPermissions.READ,
+                                     expiry=datetime.utcnow() + timedelta(hours=1),
+                                     start=datetime.utcnow() - timedelta(minutes=1))
+        identifiers = {str(i): access_policy for i in range(0, 3)}
 
         # Act
         container.set_container_access_policy(identifiers)
@@ -549,6 +551,9 @@ class StorageContainerTest(StorageTestCase):
         # Assert
         acl = container.get_container_access_policy()
         self.assertEqual(3, len(acl.get('signed_identifiers')))
+        self.assertEqual('0', acl.get('signed_identifiers')[0].id)
+        self.assertIsNotNone(acl.get('signed_identifiers')[0].access_policy)
+        self.assertIsNone(acl.get('public_access'))
 
 
     @record
@@ -847,6 +852,7 @@ class StorageContainerTest(StorageTestCase):
     @record
     def test_list_blobs_with_include_metadata(self):
         # Arrange
+        pytest.skip("Waiting on metadata XML fix in msrest")
         container = self._create_container()
         data = b'hello world'
         blob1 = container.get_blob_client('blob1')
@@ -974,6 +980,7 @@ class StorageContainerTest(StorageTestCase):
     @record
     def test_list_blobs_with_include_multiple(self):
         # Arrange
+        pytest.skip("Waiting on metadata XML fix in msrest")
         container = self._create_container()
         data = b'hello world'
         blob1 = container.get_blob_client('blob1')

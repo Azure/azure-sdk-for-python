@@ -1,0 +1,51 @@
+# Azure File Storage for Python
+
+> see https://aka.ms/autorest
+
+### Setup
+```ps
+cd C:\work
+git clone --recursive https://github.com/Azure/autorest.python.git
+cd autorest.python
+git checkout azure-core
+npm install
+```
+
+### Generation
+```ps
+cd <swagger-folder>
+autorest --use=C:/work/autorest.python --version=2.0.4280
+```
+
+### Settings
+``` yaml
+input-file: ./file-2018-11-09.json
+output-folder: ../azure/storage/file/_generated
+namespace: azure.storage.file
+no-namespace-folders: true
+license-header: MICROSOFT_MIT_NO_VERSION
+enable-xml: true
+vanilla: true
+clear-output-folder: true
+python: true
+```
+
+### Remove x-ms-pageable
+Currently breaking the latest version of autorest.python
+``` yaml
+directive:
+- from: swagger-document
+  where: $["x-ms-paths"]..get
+  transform: >
+    if ($["x-ms-pageable"]) { delete $["x-ms-pageable"]; }
+```
+
+### Use strings for dates when python doesn't have enough precision
+``` yaml
+directive:
+- from: swagger-document
+  where: $.definitions.AccessPolicy.properties
+  transform: >
+    $.Start.format = "str";
+    $.Expiry.format = "str";
+```

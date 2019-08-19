@@ -8,7 +8,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is
 # regenerated.
 # --------------------------------------------------------------------------
-# pylint: skip-file
 
-VERSION = "2018-03-28"
+VERSION = "2019-02-02"
 
