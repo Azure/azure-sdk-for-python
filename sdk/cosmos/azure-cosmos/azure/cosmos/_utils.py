@@ -23,7 +23,7 @@
 """
 
 import platform
-import re as re
+import re
 from . import http_constants
 
 
