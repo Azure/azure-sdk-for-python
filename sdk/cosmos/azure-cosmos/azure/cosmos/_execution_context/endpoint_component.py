@@ -53,9 +53,6 @@ class _QueryExecutionOrderByEndpointComponent(_QueryExecutionEndpointComponent):
     For each processed orderby result it returns 'payload' item of the result
     """
 
-    def __init__(self, execution_context):
-        super(_QueryExecutionOrderByEndpointComponent, self).__init__(execution_context)
-
     def next(self):
         return next(self._execution_context)["payload"]
 

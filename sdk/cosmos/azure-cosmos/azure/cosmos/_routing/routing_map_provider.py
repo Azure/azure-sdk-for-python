@@ -91,9 +91,6 @@ class SmartRoutingMapProvider(PartitionKeyRangeCache):
     Efficiently uses PartitionKeyRangeCach and minimizes the unnecessary invocation of CollectionRoutingMap.get_overlapping_ranges()
     """
 
-    def __init__(self, client):
-        super(SmartRoutingMapProvider, self).__init__(client)
-
     def _second_range_is_after_first_range(self, range1, range2):
         if range1.max > range2.min:
             ##r.min < #previous_r.max
