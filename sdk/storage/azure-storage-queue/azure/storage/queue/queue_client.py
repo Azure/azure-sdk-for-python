@@ -24,7 +24,7 @@ from ._shared.response_handlers import (
     process_storage_error,
     return_response_headers,
     return_headers_and_deserialized)
-from ._shared.shared_access_signature import SharedAccessSignature
+from .shared_access_signature import QueueSharedAccessSignature
 from ._message_encoding import TextXMLEncodePolicy, TextXMLDecodePolicy
 from ._deserialize import deserialize_queue_properties, deserialize_queue_creation
 from ._generated import AzureQueueStorage
@@ -219,7 +219,7 @@ class QueueClient(StorageAccountHostsMixin):
         """
         if not hasattr(self.credential, 'account_key') and not self.credential.account_key:
             raise ValueError("No account SAS key available.")
-        sas = SharedAccessSignature(
+        sas = QueueSharedAccessSignature(
             self.credential.account_name, self.credential.account_key)
         return sas.generate_queue(
             self.queue_name,

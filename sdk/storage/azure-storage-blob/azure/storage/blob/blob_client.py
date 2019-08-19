@@ -22,7 +22,7 @@ from azure.core.tracing.decorator import distributed_trace
 from ._shared import encode_base64
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
 from ._shared.encryption import generate_blob_encryption_data
-from ._shared.shared_access_signature import ResourceSharedAccessSignature
+from azure.storage.blob.shared_access_signature import BlobSharedAccessSignature
 from ._shared.uploads import IterStreamer
 from ._shared.downloads import StorageStreamDownloader
 from ._shared.request_handlers import (
@@ -294,10 +294,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         """
         if not hasattr(self.credential, 'account_key') or not self.credential.account_key:
             raise ValueError("No account SAS key available.")
-        sas = ResourceSharedAccessSignature(self.credential.account_name, self.credential.account_key)
+        sas = BlobSharedAccessSignature(self.credential.account_name, self.credential.account_key)
         return sas.generate_blob(
             self.container_name,
             self.blob_name,
+            snapshot=self.snapshot,
             permission=permission,
             expiry=expiry,
             start=start,

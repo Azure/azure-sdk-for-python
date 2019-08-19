@@ -32,7 +32,7 @@ from ._shared.response_handlers import return_response_headers, process_storage_
 from ._deserialize import deserialize_file_properties, deserialize_file_stream
 from ._polling import CloseHandles
 from .models import HandlesPaged
-from ._shared.shared_access_signature import SharedAccessSignature
+from azure.storage.file.shared_access_signature import FileSharedAccessSignature
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -294,7 +294,7 @@ class FileClient(StorageAccountHostsMixin):
         """
         if not hasattr(self.credential, 'account_key') or not self.credential.account_key:
             raise ValueError("No account SAS key available.")
-        sas = SharedAccessSignature(self.credential.account_name, self.credential.account_key)
+        sas = FileSharedAccessSignature(self.credential.account_name, self.credential.account_key)
         if len(self.file_path) > 1:
             file_path = '/'.join(self.file_path[:-1])
         else:

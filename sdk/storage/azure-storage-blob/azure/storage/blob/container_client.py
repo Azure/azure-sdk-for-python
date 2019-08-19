@@ -21,7 +21,7 @@ from azure.core.tracing.decorator import distributed_trace
 
 import six
 
-from ._shared.shared_access_signature import ResourceSharedAccessSignature
+from azure.storage.blob.shared_access_signature import BlobSharedAccessSignature
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
 from ._shared.request_handlers import add_metadata_headers, serialize_iso
 from ._shared.response_handlers import (
@@ -261,7 +261,7 @@ class ContainerClient(StorageAccountHostsMixin):
         """
         if not hasattr(self.credential, 'account_key') and not self.credential.account_key:
             raise ValueError("No account SAS key available.")
-        sas = ResourceSharedAccessSignature(self.credential.account_name, self.credential.account_key)
+        sas = BlobSharedAccessSignature(self.credential.account_name, self.credential.account_key)
         return sas.generate_container(
             self.container_name,
             permission=permission,
