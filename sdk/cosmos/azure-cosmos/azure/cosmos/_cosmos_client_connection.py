@@ -19,6 +19,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+# disable (too-many-lines) check
+# pylint: disable=C0302
+
 """Document client class for the Azure Cosmos database service.
 """
 import requests
