@@ -38,13 +38,13 @@ class AzureAppConfigurationClient:
             used to access the Azure App Configuration.
         :type connection_string: str
 
-    This is the async version of :class:`azure.data.appconfiguration.ConfigurationClient`
+    This is the async version of :class:`azure.appconfiguration.ConfigurationClient`
 
     Example
 
     .. code-block:: python
 
-        from azure.data.appconfiguration.aio import AzureAppConfigurationClient
+        from azure.appconfiguration.aio import AzureAppConfigurationClient
         connection_str = "<my connection string>"
         async_client = AzureAppConfigurationClient.from_connection_string(connection_str)
     """
@@ -176,7 +176,7 @@ class AzureAppConfigurationClient:
         """Add a ConfigurationSetting into the Azure App Configuration service.
 
         :param configuration_setting: the ConfigurationSetting object to be added
-        :type configuration_setting: :class:`ConfigurationSetting<azure.data.appconfiguration.ConfigurationSetting>`
+        :type configuration_setting: :class:`ConfigurationSetting<azure.appconfiguration.ConfigurationSetting>`
         :param dict kwargs: if "headers" exists, its value (a dict) will be added to the http request header
         :return: The ConfigurationSetting object returned from the App Configuration service
         :rtype: :class:`ConfigurationSetting`

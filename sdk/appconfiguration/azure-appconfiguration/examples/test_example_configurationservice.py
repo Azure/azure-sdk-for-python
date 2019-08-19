@@ -6,7 +6,7 @@
 
 from os import path
 from azure.core.exceptions import AzureError
-from azure.data.appconfiguration import ConfigurationSetting
+from azure.appconfiguration import ConfigurationSetting
 from devtools_testutils import AzureMgmtTestCase
 
 
@@ -36,7 +36,7 @@ class AppConfigurationClientExamples(AzureMgmtTestCase):
         super(AppConfigurationClientExamples, self).setUp()
         # [START create_app_configuration_client]
         import os
-        from azure.data.appconfiguration import AzureAppConfigurationClient
+        from azure.appconfiguration import AzureAppConfigurationClient
 
         connection_str = os.environ["APP_CONFIG_CONNECTION"]
         client = AzureAppConfigurationClient(connection_str)
