@@ -13,7 +13,7 @@ from io import open
 from setuptools import find_packages, setup
 
 # Change the PACKAGE_NAME only to change folder and different name
-PACKAGE_NAME = "azure-data-appconfiguration"
+PACKAGE_NAME = "azure-appconfiguration"
 PACKAGE_PPRINT_NAME = "App Configuration Data"
 
 # a-b-c => a/b/c
@@ -70,7 +70,7 @@ setup(
     license='MIT License',
     author='Microsoft Corporation',
     author_email='azpysdkhelp@microsoft.com',
-    url='https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/appconfiguration/azure-data-appconfiguration',
+    url='https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/appconfiguration/azure-appconfiguration',
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Programming Language :: Python',
