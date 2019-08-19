@@ -12,8 +12,15 @@ def _to_list(ait):
 
 
 class AzureAppConfigurationClientProxy(object):
-    def __init__(self, connection_str):
-        self.obj = AzureAppConfigurationClient(connection_str)
+    @classmethod
+    def from_connection_string(
+            cls, connection_string,  # type: str
+            **kwargs
+    ):
+        return cls(AzureAppConfigurationClient.from_connection_string(connection_string, **kwargs))
+
+    def __init__(self, obj):
+        self.obj = obj
 
     def get_configuration_setting(
             self, key, label=None, accept_date_time=None, **kwargs

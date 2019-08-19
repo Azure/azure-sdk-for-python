@@ -13,7 +13,7 @@ from requests.structures import CaseInsensitiveDict
 from ._generated import ConfigurationClient
 from ._generated._configuration import ConfigurationClientConfiguration
 from ._generated.models import ConfigurationSetting
-from .azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
+from .azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy, AppConfigConnectionStringCredential
 from .utils import (
     get_endpoint_from_connection_string,
     escape_and_tolist,
@@ -43,17 +43,18 @@ class AzureAppConfigurationClient():
             cls, connection_string,  # type: str
             **kwargs
     ):
-        return cls(connection_string, **kwargs)
-
-    def __init__(self, connection_string, **kwargs):
         base_url = "https://" + get_endpoint_from_connection_string(connection_string)
+        return cls(credentials=AppConfigConnectionStringCredential(connection_string), base_url=base_url, **kwargs)
+
+    def __init__(self, credentials, base_url, **kwargs):
+
         self.config = ConfigurationClientConfiguration(
-            connection_string, **kwargs
+            credentials, **kwargs
         )
         self.config.user_agent_policy = UserAgentPolicy(base_user_agent=USER_AGENT, **kwargs)
 
         self._impl = ConfigurationClient(
-            connection_string,
+            credentials,
             base_url,
             pipeline=self._create_appconfig_pipeline(),
         )
