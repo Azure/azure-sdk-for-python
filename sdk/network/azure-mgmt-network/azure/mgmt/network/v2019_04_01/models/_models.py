@@ -2075,6 +2075,22 @@ class ApplicationSecurityGroup(Resource):
         self.etag = None
 
 
+class AutoApprovedPrivateLinkService(Model):
+    """The information of an AutoApprovedPrivateLinkService.
+
+    :param private_link_service: The id of the private link service resource.
+    :type private_link_service: str
+    """
+
+    _attribute_map = {
+        'private_link_service': {'key': 'privateLinkService', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(AutoApprovedPrivateLinkService, self).__init__(**kwargs)
+        self.private_link_service = kwargs.get('private_link_service', None)
+
+
 class Availability(Model):
     """Availability of the metric.
 
@@ -2136,26 +2152,30 @@ class AvailableDelegation(Model):
 class AvailablePrivateEndpointType(Model):
     """The information of an AvailablePrivateEndpointType.
 
+    :param name: The name of the service and resource.
+    :type name: str
     :param id: A unique identifier of the AvailablePrivateEndpoint Type
      resource.
     :type id: str
     :param type: Resource type.
     :type type: str
-    :param service_name: The name of the service and resource
-    :type service_name: str
+    :param resource_name: The name of the service and resource.
+    :type resource_name: str
     """
 
     _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'service_name': {'key': 'serviceName', 'type': 'str'},
+        'resource_name': {'key': 'resourceName', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(AvailablePrivateEndpointType, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
         self.id = kwargs.get('id', None)
         self.type = kwargs.get('type', None)
-        self.service_name = kwargs.get('service_name', None)
+        self.resource_name = kwargs.get('resource_name', None)
 
 
 class AvailableProvidersList(Model):
@@ -3132,9 +3152,9 @@ class BastionHostIPConfiguration(SubResource):
      Possible values include: 'Static', 'Dynamic'
     :type private_ip_allocation_method: str or
      ~azure.mgmt.network.v2019_04_01.models.IPAllocationMethod
-    :ivar name: Name of the resource that is unique within a resource group.
+    :param name: Name of the resource that is unique within a resource group.
      This name can be used to access the resource.
-    :vartype name: str
+    :type name: str
     :ivar etag: A unique read-only string that changes whenever the resource
      is updated.
     :vartype etag: str
@@ -3145,7 +3165,6 @@ class BastionHostIPConfiguration(SubResource):
     _validation = {
         'subnet': {'required': True},
         'public_ip_address': {'required': True},
-        'name': {'readonly': True},
         'etag': {'readonly': True},
         'type': {'readonly': True},
     }
@@ -3167,7 +3186,7 @@ class BastionHostIPConfiguration(SubResource):
         self.public_ip_address = kwargs.get('public_ip_address', None)
         self.provisioning_state = kwargs.get('provisioning_state', None)
         self.private_ip_allocation_method = kwargs.get('private_ip_allocation_method', None)
-        self.name = None
+        self.name = kwargs.get('name', None)
         self.etag = None
         self.type = None
 
@@ -3355,6 +3374,22 @@ class BgpSettings(Model):
         self.asn = kwargs.get('asn', None)
         self.bgp_peering_address = kwargs.get('bgp_peering_address', None)
         self.peer_weight = kwargs.get('peer_weight', None)
+
+
+class CheckPrivateLinkServiceVisibilityRequest(Model):
+    """Request body of the CheckPrivateLinkServiceVisibility API service call.
+
+    :param private_link_service_alias: The alias of the private link service.
+    :type private_link_service_alias: str
+    """
+
+    _attribute_map = {
+        'private_link_service_alias': {'key': 'privateLinkServiceAlias', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(CheckPrivateLinkServiceVisibilityRequest, self).__init__(**kwargs)
+        self.private_link_service_alias = kwargs.get('private_link_service_alias', None)
 
 
 class CloudError(Model):
@@ -5673,9 +5708,9 @@ class ExpressRouteCrossConnection(Resource):
     :type location: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
-    :ivar primary_azure_port: The name of the primary  port.
+    :ivar primary_azure_port: The name of the primary port.
     :vartype primary_azure_port: str
-    :ivar secondary_azure_port: The name of the secondary  port.
+    :ivar secondary_azure_port: The name of the secondary port.
     :vartype secondary_azure_port: str
     :ivar s_tag: The identifier of the circuit traffic.
     :vartype s_tag: int
@@ -6500,6 +6535,11 @@ class FrontendIPConfiguration(SubResource):
      Possible values include: 'Static', 'Dynamic'
     :type private_ip_allocation_method: str or
      ~azure.mgmt.network.v2019_04_01.models.IPAllocationMethod
+    :param private_ip_address_version: It represents whether the specific
+     ipconfiguration is IPv4 or IPv6. Default is taken as IPv4. Possible values
+     include: 'IPv4', 'IPv6'
+    :type private_ip_address_version: str or
+     ~azure.mgmt.network.v2019_04_01.models.IPVersion
     :param subnet: The reference of the subnet resource.
     :type subnet: ~azure.mgmt.network.v2019_04_01.models.Subnet
     :param public_ip_address: The reference of the Public IP resource.
@@ -6536,6 +6576,7 @@ class FrontendIPConfiguration(SubResource):
         'load_balancing_rules': {'key': 'properties.loadBalancingRules', 'type': '[SubResource]'},
         'private_ip_address': {'key': 'properties.privateIPAddress', 'type': 'str'},
         'private_ip_allocation_method': {'key': 'properties.privateIPAllocationMethod', 'type': 'str'},
+        'private_ip_address_version': {'key': 'properties.privateIPAddressVersion', 'type': 'str'},
         'subnet': {'key': 'properties.subnet', 'type': 'Subnet'},
         'public_ip_address': {'key': 'properties.publicIPAddress', 'type': 'PublicIPAddress'},
         'public_ip_prefix': {'key': 'properties.publicIPPrefix', 'type': 'SubResource'},
@@ -6553,6 +6594,7 @@ class FrontendIPConfiguration(SubResource):
         self.load_balancing_rules = None
         self.private_ip_address = kwargs.get('private_ip_address', None)
         self.private_ip_allocation_method = kwargs.get('private_ip_allocation_method', None)
+        self.private_ip_address_version = kwargs.get('private_ip_address_version', None)
         self.subnet = kwargs.get('subnet', None)
         self.public_ip_address = kwargs.get('public_ip_address', None)
         self.public_ip_prefix = kwargs.get('public_ip_prefix', None)
@@ -7332,11 +7374,11 @@ class LoadBalancingRule(SubResource):
      ~azure.mgmt.network.v2019_04_01.models.LoadDistribution
     :param frontend_port: Required. The port for the external endpoint. Port
      numbers for each rule must be unique within the Load Balancer. Acceptable
-     values are between 0 and 65534. Note that value 0 enables "Any Port"
+     values are between 0 and 65534. Note that value 0 enables "Any Port".
     :type frontend_port: int
     :param backend_port: The port used for internal connections on the
      endpoint. Acceptable values are between 0 and 65535. Note that value 0
-     enables "Any Port"
+     enables "Any Port".
     :type backend_port: int
     :param idle_timeout_in_minutes: The timeout for the TCP idle connection.
      The value can be set between 4 and 30 minutes. The default value is 4
@@ -9704,7 +9746,7 @@ class PolicySettings(Model):
      disabled state. Possible values include: 'Disabled', 'Enabled'
     :type enabled_state: str or
      ~azure.mgmt.network.v2019_04_01.models.WebApplicationFirewallEnabledState
-    :param mode: Describes if it is in detection mode  or prevention mode at
+    :param mode: Describes if it is in detection mode or prevention mode at
      policy level. Possible values include: 'Prevention', 'Detection'
     :type mode: str or
      ~azure.mgmt.network.v2019_04_01.models.WebApplicationFirewallMode
@@ -9915,7 +9957,7 @@ class PrivateLinkService(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'load_balancer_frontend_ip_configurations': {'key': 'properties.loadBalancerFrontendIPConfigurations', 'type': '[FrontendIPConfiguration]'},
+        'load_balancer_frontend_ip_configurations': {'key': 'properties.loadBalancerFrontendIpConfigurations', 'type': '[FrontendIPConfiguration]'},
         'ip_configurations': {'key': 'properties.ipConfigurations', 'type': '[PrivateLinkServiceIpConfiguration]'},
         'network_interfaces': {'key': 'properties.networkInterfaces', 'type': '[NetworkInterface]'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
@@ -10099,6 +10141,22 @@ class PrivateLinkServicePropertiesVisibility(ResourceSet):
 
     def __init__(self, **kwargs):
         super(PrivateLinkServicePropertiesVisibility, self).__init__(**kwargs)
+
+
+class PrivateLinkServiceVisibility(Model):
+    """Response for the CheckPrivateLinkServiceVisibility API service call.
+
+    :param visible: Private Link Service Visibility (True/False).
+    :type visible: bool
+    """
+
+    _attribute_map = {
+        'visible': {'key': 'visible', 'type': 'bool'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateLinkServiceVisibility, self).__init__(**kwargs)
+        self.visible = kwargs.get('visible', None)
 
 
 class Probe(SubResource):
@@ -10554,7 +10612,7 @@ class ResourceNavigationLink(SubResource):
     :ivar etag: A unique read-only string that changes whenever the resource
      is updated.
     :vartype etag: str
-    :ivar type: Resource type
+    :ivar type: Resource type.
     :vartype type: str
     """
 
@@ -11113,7 +11171,7 @@ class ServiceAssociationLink(SubResource):
     :ivar etag: A unique read-only string that changes whenever the resource
      is updated.
     :vartype etag: str
-    :param type: Resource type
+    :param type: Resource type.
     :type type: str
     """
 
@@ -11442,7 +11500,7 @@ class Subnet(SubResource):
     :type id: str
     :param address_prefix: The address prefix for the subnet.
     :type address_prefix: str
-    :param address_prefixes: List of  address prefixes for the subnet.
+    :param address_prefixes: List of address prefixes for the subnet.
     :type address_prefixes: list[str]
     :param network_security_group: The reference of the NetworkSecurityGroup
      resource.
@@ -11458,7 +11516,7 @@ class Subnet(SubResource):
     :param service_endpoint_policies: An array of service endpoint policies.
     :type service_endpoint_policies:
      list[~azure.mgmt.network.v2019_04_01.models.ServiceEndpointPolicy]
-    :ivar private_endpoints: An array of references to private endpoints
+    :ivar private_endpoints: An array of references to private endpoints.
     :vartype private_endpoints:
      list[~azure.mgmt.network.v2019_04_01.models.PrivateEndpoint]
     :ivar ip_configurations: Gets an array of references to the network
@@ -11485,6 +11543,12 @@ class Subnet(SubResource):
     :vartype purpose: str
     :param provisioning_state: The provisioning state of the resource.
     :type provisioning_state: str
+    :param private_endpoint_network_policies: Enable or Disable private end
+     point on the subnet.
+    :type private_endpoint_network_policies: str
+    :param private_link_service_network_policies: Enable or Disable private
+     link service on the subnet.
+    :type private_link_service_network_policies: str
     :param name: The name of the resource that is unique within a resource
      group. This name can be used to access the resource.
     :type name: str
@@ -11517,6 +11581,8 @@ class Subnet(SubResource):
         'delegations': {'key': 'properties.delegations', 'type': '[Delegation]'},
         'purpose': {'key': 'properties.purpose', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'private_endpoint_network_policies': {'key': 'properties.privateEndpointNetworkPolicies', 'type': 'str'},
+        'private_link_service_network_policies': {'key': 'properties.privateLinkServiceNetworkPolicies', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
@@ -11538,6 +11604,8 @@ class Subnet(SubResource):
         self.delegations = kwargs.get('delegations', None)
         self.purpose = None
         self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.private_endpoint_network_policies = kwargs.get('private_endpoint_network_policies', None)
+        self.private_link_service_network_policies = kwargs.get('private_link_service_network_policies', None)
         self.name = kwargs.get('name', None)
         self.etag = kwargs.get('etag', None)
 
@@ -12400,8 +12468,8 @@ class VirtualNetworkGateway(Resource):
     :param bgp_settings: Virtual network gateway's BGP speaker settings.
     :type bgp_settings: ~azure.mgmt.network.v2019_04_01.models.BgpSettings
     :param custom_routes: The reference of the address space resource which
-     represents the custom routes address space specified by the the customer
-     for virtual network gateway and VpnClient.
+     represents the custom routes address space specified by the customer for
+     virtual network gateway and VpnClient.
     :type custom_routes: ~azure.mgmt.network.v2019_04_01.models.AddressSpace
     :param resource_guid: The resource GUID property of the
      VirtualNetworkGateway resource.
@@ -13982,7 +14050,7 @@ class WebApplicationFirewallPolicy(Resource):
     :type location: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
-    :param policy_settings: Describes  policySettings for policy.
+    :param policy_settings: Describes policySettings for policy.
     :type policy_settings:
      ~azure.mgmt.network.v2019_04_01.models.PolicySettings
     :param custom_rules: Describes custom rules inside the policy.

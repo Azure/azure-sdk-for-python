@@ -227,19 +227,29 @@ class TenantIdDescription(Model):
     :ivar tenant_id: The tenant ID. For example,
      00000000-0000-0000-0000-000000000000.
     :vartype tenant_id: str
+    :ivar display_name: The display name of the tenant.
+    :vartype display_name: str
+    :ivar domains: The list of domains for the tenant.
+    :vartype domains: list[str]
     """
 
     _validation = {
         'id': {'readonly': True},
         'tenant_id': {'readonly': True},
+        'display_name': {'readonly': True},
+        'domains': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'domains': {'key': 'domains', 'type': '[str]'},
     }
 
     def __init__(self, **kwargs) -> None:
         super(TenantIdDescription, self).__init__(**kwargs)
         self.id = None
         self.tenant_id = None
+        self.display_name = None
+        self.domains = None

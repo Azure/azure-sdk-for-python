@@ -86,7 +86,7 @@ class _AsyncTransportRunner(AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseTy
 
     Uses specified HTTP transport type to send request and returns response.
 
-    :param sender: The async Http Transport type.
+    :param sender: The async Http Transport instance.
     """
     def __init__(self, sender) -> None:
         super(_AsyncTransportRunner, self).__init__()
@@ -113,7 +113,7 @@ class AsyncPipeline(AbstractAsyncContextManager, Generic[HTTPRequestType, AsyncH
     This is implemented as a context manager, that will activate the context
     of the HTTP sender.
 
-    :param transport: The async Http Transport type.
+    :param transport: The async Http Transport instance.
     :param list policies: List of configured policies.
 
     Example:

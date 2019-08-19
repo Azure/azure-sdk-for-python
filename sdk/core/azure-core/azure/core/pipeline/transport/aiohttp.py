@@ -30,8 +30,8 @@ import logging
 import asyncio
 import aiohttp
 
-from azure.core.configuration import Configuration
-from azure.core.exceptions import ServiceRequestError
+from azure.core.configuration import ConnectionConfiguration
+from azure.core.exceptions import ServiceRequestError, ServiceResponseError, AzureError
 from azure.core.pipeline import Pipeline
 
 from requests.exceptions import (
@@ -54,11 +54,13 @@ class AioHttpTransport(AsyncHttpTransport):
 
     Fully asynchronous implementation using the aiohttp library.
 
-    :param configuration: The service configuration.
-    :type configuration: ~azure.core.Configuration
     :param session: The client session.
     :param loop: The event loop.
     :param bool session_owner: Session owner. Defaults True.
+
+    **Keyword argument:**
+
+    *use_env_settings (bool)* - Uses proxy settings from environment. Defaults to True.
 
     Example:
         .. literalinclude:: ../examples/test_example_async.py
@@ -68,11 +70,12 @@ class AioHttpTransport(AsyncHttpTransport):
             :dedent: 4
             :caption: Asynchronous transport with aiohttp.
     """
-    def __init__(self, configuration=None, *, session=None, loop=None, session_owner=True):
+    def __init__(self, *, session=None, loop=None, session_owner=True, **kwargs):
         self._loop = loop
         self._session_owner = session_owner
         self.session = session
-        self.config = configuration or Configuration()
+        self.connection_config = ConnectionConfiguration(**kwargs)
+        self._use_env_settings = kwargs.pop('use_env_settings', True)
 
     async def __aenter__(self):
         await self.open()
@@ -85,7 +88,10 @@ class AioHttpTransport(AsyncHttpTransport):
         """Opens the connection.
         """
         if not self.session and self._session_owner:
-            self.session = aiohttp.ClientSession(loop=self._loop)
+            self.session = aiohttp.ClientSession(
+                loop=self._loop,
+                trust_env=self._use_env_settings
+            )
         if self.session is not None:
             await self.session.__aenter__()
 
@@ -97,9 +103,7 @@ class AioHttpTransport(AsyncHttpTransport):
             self._session_owner = False
             self.session = None
 
-    def _build_ssl_config(self, **config):
-        verify = config.get('connection_verify', self.config.connection.verify)
-        cert = config.get('connection_cert', self.config.connection.cert)
+    def _build_ssl_config(self, cert, verify):
         ssl_ctx = None
 
         if cert or verify not in (True, False):
@@ -140,11 +144,27 @@ class AioHttpTransport(AsyncHttpTransport):
         **Keyword argument:**
 
         *stream (bool)* - Defaults to False.
+        *proxies* - dict of proxy to used based on protocol. Proxy is a dict (protocol, url)
+        *proxy* - will define the proxy to use all the time
         """
         await self.open()
-        error = None
+
+        proxies = config.pop('proxies', None)
+        if proxies and 'proxy' not in config:
+            # aiohttp needs a single proxy, so iterating until we found the right protocol
+
+            # Sort by longest string first, so "http" is not used for "https" ;-)
+            for protocol in sorted(proxies.keys(), reverse=True):
+                if request.url.startswith(protocol):
+                    config['proxy'] = proxies[protocol]
+                    break
+
+        error = None  # type: Optional[AzureError]
         response = None
-        config['ssl'] = self._build_ssl_config(**config)
+        config['ssl'] = self._build_ssl_config(
+            cert=config.pop('connection_cert', self.connection_config.cert),
+            verify=config.pop('connection_verify', self.connection_config.verify)
+        )
         try:
             stream_response = config.pop("stream", False)
             result = await self.session.request(
@@ -152,16 +172,17 @@ class AioHttpTransport(AsyncHttpTransport):
                 request.url,
                 headers=request.headers,
                 data=self._get_request_data(request),
-                timeout=config.get('connection_timeout', self.config.connection.timeout),
+                timeout=config.pop('connection_timeout', self.connection_config.timeout),
                 allow_redirects=False,
                 **config
             )
-            response = AioHttpTransportResponse(request, result, self.config.connection.data_block_size)
+            response = AioHttpTransportResponse(request, result, self.connection_config.data_block_size)
             if not stream_response:
                 await response.load_body()
         except aiohttp.client_exceptions.ClientConnectorError as err:
             error = ServiceRequestError(err, error=err)
-
+        except asyncio.TimeoutError as err:
+            error = ServiceResponseError(err, error=err)
         if error:
             raise error
         return response
@@ -171,19 +192,16 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
     """Streams the response body data.
 
     :param pipeline: The pipeline object
-    :param request: The request object
     :param response: The client response object.
-    :type response: aiohttp.ClientResponse
     :param block_size: block size of data sent over connection.
     :type block_size: int
     """
-    def __init__(self, pipeline: Pipeline, request: HttpRequest,
-                 response: aiohttp.ClientResponse, block_size: int) -> None:
+    def __init__(self, pipeline: Pipeline, response: AsyncHttpResponse) -> None:
         self.pipeline = pipeline
-        self.request = request
+        self.request = response.request
         self.response = response
-        self.block_size = block_size
-        self.content_length = int(response.headers.get('Content-Length', 0))
+        self.block_size = response.block_size
+        self.content_length = int(response.internal_response.headers.get('Content-Length', 0))
         self.downloaded = 0
 
     def __len__(self):
@@ -195,13 +213,13 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
         retry_interval = 1000
         while retry_active:
             try:
-                chunk = await self.response.content.read(self.block_size)
+                chunk = await self.response.internal_response.content.read(self.block_size)
                 if not chunk:
                     raise _ResponseStopIteration()
                 self.downloaded += self.block_size
                 return chunk
             except _ResponseStopIteration:
-                self.response.close()
+                self.response.internal_response.close()
                 raise StopAsyncIteration()
             except (ChunkedEncodingError, ConnectionError):
                 retry_total -= 1
@@ -213,7 +231,7 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
                     resp = self.pipeline.run(self.request, stream=True, headers=headers)
                     if resp.status_code == 416:
                         raise
-                    chunk = await self.response.content.read(self.block_size)
+                    chunk = await self.response.internal_response.content.read(self.block_size)
                     if not chunk:
                         raise StopIteration()
                     self.downloaded += chunk
@@ -223,7 +241,7 @@ class AioHttpStreamDownloadGenerator(AsyncIterator):
                 raise
             except Exception as err:
                 _LOGGER.warning("Unable to stream download: %s", err)
-                self.response.close()
+                self.response.internal_response.close()
                 raise
 
 class AioHttpTransportResponse(AsyncHttpResponse):
@@ -262,4 +280,4 @@ class AioHttpTransportResponse(AsyncHttpResponse):
         :param pipeline: The pipeline object
         :type pipeline: azure.core.pipeline
         """
-        return AioHttpStreamDownloadGenerator(pipeline, self.request, self.internal_response, self.block_size)
+        return AioHttpStreamDownloadGenerator(pipeline, self)

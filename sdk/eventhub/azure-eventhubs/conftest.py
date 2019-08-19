@@ -18,24 +18,6 @@ if sys.version_info < (3, 5):
     collect_ignore.append("tests/asynctests")
     collect_ignore.append("features")
     collect_ignore.append("examples/async_examples")
-else:
-    try:
-        from azure.eventprocessorhost import EventProcessorHost
-        from azure.eventprocessorhost import EventHubPartitionPump
-        from azure.eventprocessorhost import AzureStorageCheckpointLeaseManager
-        from azure.eventprocessorhost import AzureBlobLease
-        from azure.eventprocessorhost import EventHubConfig
-        from azure.eventprocessorhost.lease import Lease
-        from azure.eventprocessorhost.partition_pump import PartitionPump
-        from azure.eventprocessorhost.partition_manager import PartitionManager
-    except ImportError:
-        # Due to storage SDK conflict, temporarily skipping EPH tests
-        collect_ignore.append("tests/asynctests/test_checkpoint_manager.py")
-        collect_ignore.append("tests/asynctests/test_eh_partition_pump.py")
-        collect_ignore.append("tests/asynctests/test_longrunning_eph.py")
-        collect_ignore.append("tests/asynctests/test_longrunning_eph_with_context.py")
-        collect_ignore.append("tests/asynctests/test_partition_manager.py")
-        collect_ignore.append("tests/asynctests/test_partition_pump.py")
 
 from azure.eventhub import EventHubClient, EventHubConsumer, EventPosition
 

@@ -29,16 +29,35 @@
 """
 
 from collections import namedtuple
+from enum import Enum
 import logging
 import os
-from typing import Any, Union
+import six
+import sys
+
+try:
+    from typing import Type, Optional, Dict, Callable, cast, TYPE_CHECKING
+except ImportError:
+    TYPE_CHECKING = False
+
+if TYPE_CHECKING:
+    from typing import Any, Union
+    try:
+        from azure.core.tracing.ext.opencensus_span import OpenCensusSpan
+    except ImportError:
+        pass
+
+
+from azure.core.tracing import AbstractSpan
 
 
 __all__ = ("settings",)
 
 
-class _Unset(object):
-    pass
+# https://www.python.org/dev/peps/pep-0484/#support-for-singleton-types-in-unions
+class _Unset(Enum):
+    token = 0
+_unset = _Unset.token
 
 
 def convert_bool(value):
@@ -61,9 +80,9 @@ def convert_bool(value):
         return value  # type: ignore
 
     val = value.lower()  # type: ignore
-    if val in ["yes", "1", "on"]:
+    if val in ["yes", "1", "on", "true", "True"]:
         return True
-    if val in ["no", "0", "off"]:
+    if val in ["no", "0", "off", "false", "False"]:
         return False
     raise ValueError("Cannot convert {} to boolean value".format(value))
 
@@ -102,12 +121,64 @@ def convert_logging(value):
     val = value.upper()  # type: ignore
     level = _levels.get(val)
     if not level:
+        raise ValueError("Cannot convert {} to log level, valid values are: {}".format(value, ", ".join(_levels)))
+    return level
+
+
+def get_opencensus_span():
+    # type: () -> Optional[Type[AbstractSpan]]
+    """Returns the OpenCensusSpan if opencensus is installed else returns None"""
+    try:
+        from azure.core.tracing.ext.opencensus_span import OpenCensusSpan
+
+        return OpenCensusSpan
+    except ImportError:
+        return None
+
+
+def get_opencensus_span_if_opencensus_is_imported():
+    # type: () -> Optional[Type[AbstractSpan]]
+    if "opencensus" not in sys.modules:
+        return None
+    return get_opencensus_span()
+
+
+_tracing_implementation_dict = {"opencensus": get_opencensus_span}  # type: Dict[str, Callable[[], Optional[Type[AbstractSpan]]]]
+
+
+def convert_tracing_impl(value):
+    # type: (Union[str, Type[AbstractSpan]]) -> Optional[Type[AbstractSpan]]
+    """Convert a string to AbstractSpan
+
+    If a AbstractSpan is passed in, it is returned as-is. Otherwise the function
+    understands the following strings, ignoring case:
+
+    * "opencensus"
+
+    :param value: the value to convert
+    :type value: string
+    :returns: AbstractSpan
+    :raises ValueError: If conversion to AbstractSpan fails
+
+    """
+    if value is None:
+        return get_opencensus_span_if_opencensus_is_imported()
+
+    if not isinstance(value, six.string_types):
+        return value
+
+    value = cast(str, value)  # mypy clarity
+    value = value.lower()
+    get_wrapper_class = _tracing_implementation_dict.get(value, lambda: _unset)
+    wrapper_class = get_wrapper_class()  # type: Union[None, _Unset, Type[AbstractSpan]]
+    if wrapper_class is _unset:
         raise ValueError(
-            "Cannot convert {} to log level, valid values are: {}".format(
-                value, ", ".join(_levels)
+            "Cannot convert {} to AbstractSpan, valid values are: {}".format(
+                value, ", ".join(_tracing_implementation_dict)
             )
         )
-    return level
+    # type ignored until https://github.com/python/mypy/issues/7279
+    return wrapper_class  # type: ignore
 
 
 class PrioritizedSetting(object):
@@ -138,9 +209,7 @@ class PrioritizedSetting(object):
 
     """
 
-    def __init__(
-        self, name, env_var=None, system_hook=None, default=_Unset, convert=None
-    ):
+    def __init__(self, name, env_var=None, system_hook=None, default=_Unset, convert=None):
 
         self._name = name
         self._env_var = env_var
@@ -311,11 +380,7 @@ class Settings(object):
         """ Return implicit default values for all settings, ignoring environment and system.
 
         """
-        props = {
-            k: v.default
-            for (k, v) in self.__class__.__dict__.items()
-            if isinstance(v, PrioritizedSetting)
-        }
+        props = {k: v.default for (k, v) in self.__class__.__dict__.items() if isinstance(v, PrioritizedSetting)}
         return self._config(props)
 
     @property
@@ -335,11 +400,7 @@ class Settings(object):
         settings.config(log_level=logging.DEBUG)
 
         """
-        props = {
-            k: v()
-            for (k, v) in self.__class__.__dict__.items()
-            if isinstance(v, PrioritizedSetting)
-        }
+        props = {k: v() for (k, v) in self.__class__.__dict__.items() if isinstance(v, PrioritizedSetting)}
         props.update(kwargs)
         return self._config(props)
 
@@ -348,17 +409,15 @@ class Settings(object):
         return Config(**props)
 
     log_level = PrioritizedSetting(
-        "log_level",
-        env_var="AZURE_LOG_LEVEL",
-        convert=convert_logging,
-        default=logging.INFO,
+        "log_level", env_var="AZURE_LOG_LEVEL", convert=convert_logging, default=logging.INFO
     )
 
     tracing_enabled = PrioritizedSetting(
-        "tracing_enbled",
-        env_var="AZURE_TRACING_ENABLED",
-        convert=convert_bool,
-        default=False,
+        "tracing_enbled", env_var="AZURE_TRACING_ENABLED", convert=convert_bool, default=False
+    )
+
+    tracing_implementation = PrioritizedSetting(
+        "tracing_implementation", env_var="AZURE_SDK_TRACING_IMPLEMENTATION", convert=convert_tracing_impl, default=None
     )
 
 

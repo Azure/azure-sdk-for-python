@@ -25,7 +25,6 @@
 #--------------------------------------------------------------------------
 import sys
 
-from azure.core.configuration import Configuration
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import SansIOHTTPPolicy, UserAgentPolicy, AsyncRedirectPolicy
 from azure.core.pipeline.transport import (
@@ -77,13 +76,12 @@ async def test_sans_io_exception():
 @pytest.mark.asyncio
 async def test_basic_aiohttp():
 
-    conf = Configuration()
     request = HttpRequest("GET", "https://bing.com")
     policies = [
         UserAgentPolicy("myusergant"),
         AsyncRedirectPolicy()
     ]
-    async with AsyncPipeline(AioHttpTransport(conf), policies=policies) as pipeline:
+    async with AsyncPipeline(AioHttpTransport(), policies=policies) as pipeline:
         response = await pipeline.run(request)
 
     assert pipeline._transport.session is None
@@ -92,14 +90,13 @@ async def test_basic_aiohttp():
 @pytest.mark.asyncio
 async def test_basic_aiohttp_separate_session():
 
-    conf = Configuration()
     session = aiohttp.ClientSession()
     request = HttpRequest("GET", "https://bing.com")
     policies = [
         UserAgentPolicy("myusergant"),
         AsyncRedirectPolicy()
     ]
-    transport = AioHttpTransport(conf, session=session, session_owner=False)
+    transport = AioHttpTransport(session=session, session_owner=False)
     async with AsyncPipeline(transport, policies=policies) as pipeline:
         response = await pipeline.run(request)
 
@@ -123,15 +120,31 @@ async def test_basic_async_requests():
     assert response.http_response.status_code == 200
 
 @pytest.mark.asyncio
+async def test_async_transport_sleep():
+
+    async with AsyncioRequestsTransport() as transport:
+        await transport.sleep(1)
+
+    async with AioHttpTransport() as transport:
+        await transport.sleep(1)
+
+def test_async_trio_transport_sleep():
+
+    async def do():
+        async with TrioRequestsTransport() as transport:
+            await transport.sleep(1)
+
+    response = trio.run(do)
+
+@pytest.mark.asyncio
 async def test_conf_async_requests():
 
-    conf = Configuration()
     request = HttpRequest("GET", "https://bing.com/")
     policies = [
         UserAgentPolicy("myusergant"),
         AsyncRedirectPolicy()
     ]
-    async with AsyncPipeline(AsyncioRequestsTransport(conf), policies=policies) as pipeline:
+    async with AsyncPipeline(AsyncioRequestsTransport(), policies=policies) as pipeline:
         response = await pipeline.run(request)
 
     assert response.http_response.status_code == 200
@@ -139,13 +152,12 @@ async def test_conf_async_requests():
 def test_conf_async_trio_requests():
 
     async def do():
-        conf = Configuration()
         request = HttpRequest("GET", "https://bing.com/")
         policies = [
             UserAgentPolicy("myusergant"),
             AsyncRedirectPolicy()
         ]
-        async with AsyncPipeline(TrioRequestsTransport(conf), policies=policies) as pipeline:
+        async with AsyncPipeline(TrioRequestsTransport(), policies=policies) as pipeline:
             return await pipeline.run(request)
 
     response = trio.run(do)

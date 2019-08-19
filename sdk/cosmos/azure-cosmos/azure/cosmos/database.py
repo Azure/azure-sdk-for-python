@@ -25,7 +25,6 @@
 from typing import Any, List, Dict, Mapping, Union, cast
 
 import six
-
 from ._cosmos_client_connection import CosmosClientConnection
 from .container import Container
 from .offer import Offer

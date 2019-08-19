@@ -22,7 +22,7 @@ except ImportError:
     TYPE_CHECKING = False
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
-    from typing import Union
+    from typing import Union, Any
 
 from azure.eventhub import __version__
 from azure.eventhub.configuration import _Configuration
@@ -94,7 +94,7 @@ class EventHubClientAbstract(object):
     """
 
     def __init__(self, host, event_hub_path, credential, **kwargs):
-        # type:(str, str, Union[EventHubSharedKeyCredential, EventHubSASTokenCredential, TokenCredential], ...) -> None
+        # type:(str, str, Union[EventHubSharedKeyCredential, EventHubSASTokenCredential, TokenCredential], Any) -> None
         """
         Constructs a new EventHubClient.
 
@@ -118,9 +118,9 @@ class EventHubClientAbstract(object):
         :type auth_timeout: float
         :param user_agent: The user agent that needs to be appended to the built in user agent string.
         :type user_agent: str
-        :param max_retries: The max number of attempts to redo the failed operation when an error happened. Default
+        :param retry_total: The total number of attempts to redo the failed operation when an error happened. Default
          value is 3.
-        :type max_retries: int
+        :type retry_total: int
         :param transport_type: The type of transport protocol that will be used for communicating with
          the Event Hubs service. Default is ~azure.eventhub.TransportType.Amqp.
         :type transport_type: ~azure.eventhub.TransportType
@@ -219,7 +219,7 @@ class EventHubClientAbstract(object):
         self.mgmt_target = redirect_uri
 
     @classmethod
-    def from_connection_string(cls, conn_str, event_hub_path=None, **kwargs):
+    def from_connection_string(cls, conn_str, **kwargs):
         """Create an EventHubClient from an EventHub/IotHub connection string.
 
         :param conn_str: The connection string of an eventhub or IoT hub
@@ -239,9 +239,9 @@ class EventHubClientAbstract(object):
         :type auth_timeout: float
         :param user_agent: The user agent that needs to be appended to the built in user agent string.
         :type user_agent: str
-        :param max_retries: The max number of attempts to redo the failed operation when an error happened. Default
+        :param retry_total: The total number of attempts to redo the failed operation when an error happened. Default
          value is 3.
-        :type max_retries: int
+        :type retry_total: int
         :param transport_type: The type of transport protocol that will be used for communicating with
          the Event Hubs service. Default is ~azure.eventhub.TransportType.Amqp.
         :type transport_type: ~azure.eventhub.TransportType
@@ -266,6 +266,7 @@ class EventHubClientAbstract(object):
                 :caption: Create an EventHubClient from a connection string.
 
         """
+        event_hub_path = kwargs.get("event_hub_path", None)
         is_iot_conn_str = conn_str.lstrip().lower().startswith("hostname")
         if not is_iot_conn_str:
             address, policy, key, entity = _parse_conn_str(conn_str)
@@ -275,16 +276,13 @@ class EventHubClientAbstract(object):
                 host = address[left_slash_pos + 2:]
             else:
                 host = address
+            kwargs.pop("event_hub_path", None)
             return cls(host, entity, EventHubSharedKeyCredential(policy, key), **kwargs)
         else:
             return cls._from_iothub_connection_string(conn_str, **kwargs)
 
     @abstractmethod
-    def create_consumer(
-            self, consumer_group, partition_id, event_position, owner_level=None,
-            operation=None,
-            prefetch=None,
-    ):
+    def create_consumer(self, consumer_group, partition_id, event_position, **kwargs):
         pass
 
     @abstractmethod

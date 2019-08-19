@@ -64,19 +64,6 @@ class AvailableDelegationPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(AvailableDelegationPaged, self).__init__(*args, **kwargs)
-class AvailablePrivateEndpointTypePaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`AvailablePrivateEndpointType <azure.mgmt.network.v2019_04_01.models.AvailablePrivateEndpointType>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[AvailablePrivateEndpointType]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(AvailablePrivateEndpointTypePaged, self).__init__(*args, **kwargs)
 class AzureFirewallPaged(Paged):
     """
     A paging container for iterating over a list of :class:`AzureFirewall <azure.mgmt.network.v2019_04_01.models.AzureFirewall>` object
@@ -298,6 +285,19 @@ class PrivateEndpointPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(PrivateEndpointPaged, self).__init__(*args, **kwargs)
+class AvailablePrivateEndpointTypePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`AvailablePrivateEndpointType <azure.mgmt.network.v2019_04_01.models.AvailablePrivateEndpointType>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[AvailablePrivateEndpointType]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(AvailablePrivateEndpointTypePaged, self).__init__(*args, **kwargs)
 class PrivateLinkServicePaged(Paged):
     """
     A paging container for iterating over a list of :class:`PrivateLinkService <azure.mgmt.network.v2019_04_01.models.PrivateLinkService>` object
@@ -311,6 +311,19 @@ class PrivateLinkServicePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(PrivateLinkServicePaged, self).__init__(*args, **kwargs)
+class AutoApprovedPrivateLinkServicePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`AutoApprovedPrivateLinkService <azure.mgmt.network.v2019_04_01.models.AutoApprovedPrivateLinkService>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[AutoApprovedPrivateLinkService]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(AutoApprovedPrivateLinkServicePaged, self).__init__(*args, **kwargs)
 class LoadBalancerPaged(Paged):
     """
     A paging container for iterating over a list of :class:`LoadBalancer <azure.mgmt.network.v2019_04_01.models.LoadBalancer>` object

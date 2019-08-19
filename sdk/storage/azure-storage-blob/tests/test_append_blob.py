@@ -290,7 +290,7 @@ class StorageAppendBlobTest(StorageTestCase):
 
         # Assert
         self.assertBlobEqual(blob, data)
-        self.assert_upload_progress(len(data), self.config.blob_settings.max_block_size, progress)
+        self.assert_upload_progress(len(data), self.config.max_block_size, progress)
 
     @record
     def test_append_blob_from_bytes_with_index(self):
@@ -341,7 +341,7 @@ class StorageAppendBlobTest(StorageTestCase):
         progress = []
 
         def progress_gen(upload):
-            n = self.config.blob_settings.max_block_size
+            n = self.config.max_block_size
             total = len(upload)
             current = 0
             while upload:
@@ -355,7 +355,7 @@ class StorageAppendBlobTest(StorageTestCase):
 
         # Assert
         self.assertBlobEqual(blob, data)
-        self.assert_upload_progress(len(data), self.config.blob_settings.max_block_size, progress)
+        self.assert_upload_progress(len(data), self.config.max_block_size, progress)
 
     @record
     def test_append_blob_from_bytes_chunked_upload_with_index_and_count(self):
@@ -402,7 +402,7 @@ class StorageAppendBlobTest(StorageTestCase):
         progress = []
 
         def progress_gen(upload):
-            n = self.config.blob_settings.max_block_size
+            n = self.config.max_block_size
             total = LARGE_BLOB_SIZE
             current = 0
             while upload:
@@ -419,7 +419,7 @@ class StorageAppendBlobTest(StorageTestCase):
 
         # Assert
         self.assertBlobEqual(blob, data)
-        self.assert_upload_progress(len(data), self.config.blob_settings.max_block_size, progress)
+        self.assert_upload_progress(len(data), self.config.max_block_size, progress)
 
     @record
     def test_append_blob_from_stream_chunked_upload(self):
@@ -577,7 +577,7 @@ class StorageAppendBlobTest(StorageTestCase):
         blob.upload_blob(upload_data, encoding='utf-16', blob_type=BlobType.AppendBlob)
 
         # Assert
-        self.assert_upload_progress(len(data), self.config.blob_settings.max_block_size, progress)
+        self.assert_upload_progress(len(data), self.config.max_block_size, progress)
 
     @record
     def test_append_blob_from_text_chunked_upload(self):

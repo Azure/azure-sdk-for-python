@@ -76,10 +76,14 @@ class TestQueueServiceSamples(QueueTestCase):
         try:
             # [START qsc_list_queues]
             # List all the queues in the service
-            list_queues = next(queue_service.list_queues())
+            list_queues = queue_service.list_queues()
+            for queue in list_queues:
+                print(queue)
 
             # List the queues in the service that start with the name "test"
-            list_test_queues = next(queue_service.list_queues(name_starts_with="test"))
+            list_test_queues = queue_service.list_queues(name_starts_with="test")
+            for queue in list_test_queues:
+                print(queue)
             # [END qsc_list_queues]
 
         finally:

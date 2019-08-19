@@ -23,6 +23,7 @@
 # THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+import json
 import logging
 import os
 
@@ -35,8 +36,9 @@ except ImportError:
     from mock import Mock
 
 # module under test
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError, ODataV4Error
 from azure.core.pipeline.transport import RequestsTransportResponse
+from azure.core.pipeline.transport.base import _HttpResponseBase
 
 
 class FakeErrorOne(object):
@@ -57,6 +59,23 @@ class FakeHttpResponse(HttpResponseError):
         self.error = error
         super(FakeHttpResponse, self).__init__(self, *args, **kwargs)
 
+
+def _build_response(json_body):
+    class MockResponse(_HttpResponseBase):
+        def __init__(self):
+            super(MockResponse, self).__init__(
+                request=None,
+                internal_response = None,
+            )
+            self.status_code = 400
+            self.reason = "Bad Request"
+            self.content_type = "application/json"
+            self._body = json_body
+
+        def body(self):
+            return self._body
+
+    return MockResponse()
 
 class TestExceptions(object):
 
@@ -104,3 +123,54 @@ class TestExceptions(object):
         assert error.reason == 'OK'
         assert error.status_code == 200
         assert error.error is None
+
+    def test_odata_v4_exception(self):
+        message = {
+            "error": {
+                "code": "501",
+                "message": "Unsupported functionality",
+                "target": "query",
+                "details": [{
+                    "code": "301",
+                    "target": "$search",
+                    "message": "$search query option not supported",
+                }],
+                "innererror": {
+                    "trace": [],
+                    "context": {}
+                }
+            }
+        }
+        exp = ODataV4Error(_build_response(json.dumps(message).encode("utf-8")))
+
+        assert exp.code == "501"
+        assert exp.message == "Unsupported functionality"
+        assert exp.target == "query"
+        assert exp.details[0].code == "301"
+        assert exp.details[0].target == "$search"
+        assert "trace" in exp.innererror
+        assert "context" in exp.innererror
+
+        message = {}
+        exp = ODataV4Error(_build_response(json.dumps(message).encode("utf-8")))
+        assert exp.message == "Operation returned an invalid status 'Bad Request'"
+
+        exp = ODataV4Error(_build_response(b""))
+        assert exp.message == "Operation returned an invalid status 'Bad Request'"
+        assert str(exp) == "Operation returned an invalid status 'Bad Request'"
+
+    def test_odata_v4_minimal(self):
+        """Minimal valid OData v4 is code/message and nothing else.
+        """
+        message = {
+            "error": {
+                "code": "501",
+                "message": "Unsupported functionality",
+            }
+        }
+        exp = ODataV4Error(_build_response(json.dumps(message).encode("utf-8")))
+        assert exp.code == "501"
+        assert exp.message == "Unsupported functionality"
+        assert exp.target is None
+        assert exp.details == []
+        assert exp.innererror == {}

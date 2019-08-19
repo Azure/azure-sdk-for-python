@@ -18,8 +18,6 @@ from .operations import ApplicationGatewaysOperations
 from .operations import ApplicationSecurityGroupsOperations
 from .operations import AvailableDelegationsOperations
 from .operations import AvailableResourceGroupDelegationsOperations
-from .operations import AvailablePrivateEndpointTypesOperations
-from .operations import AvailableResourceGroupPrivateEndpointTypesOperations
 from .operations import AzureFirewallsOperations
 from .operations import AzureFirewallFqdnTagsOperations
 from .operations import BastionHostsOperations
@@ -40,6 +38,7 @@ from .operations import ExpressRoutePortsLocationsOperations
 from .operations import ExpressRoutePortsOperations
 from .operations import ExpressRouteLinksOperations
 from .operations import PrivateEndpointsOperations
+from .operations import AvailablePrivateEndpointTypesOperations
 from .operations import PrivateLinkServicesOperations
 from .operations import LoadBalancersOperations
 from .operations import LoadBalancerBackendAddressPoolsOperations
@@ -109,10 +108,6 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, SDKClient)
     :vartype available_delegations: azure.mgmt.network.v2019_04_01.operations.AvailableDelegationsOperations
     :ivar available_resource_group_delegations: AvailableResourceGroupDelegations operations
     :vartype available_resource_group_delegations: azure.mgmt.network.v2019_04_01.operations.AvailableResourceGroupDelegationsOperations
-    :ivar available_private_endpoint_types: AvailablePrivateEndpointTypes operations
-    :vartype available_private_endpoint_types: azure.mgmt.network.v2019_04_01.operations.AvailablePrivateEndpointTypesOperations
-    :ivar available_resource_group_private_endpoint_types: AvailableResourceGroupPrivateEndpointTypes operations
-    :vartype available_resource_group_private_endpoint_types: azure.mgmt.network.v2019_04_01.operations.AvailableResourceGroupPrivateEndpointTypesOperations
     :ivar azure_firewalls: AzureFirewalls operations
     :vartype azure_firewalls: azure.mgmt.network.v2019_04_01.operations.AzureFirewallsOperations
     :ivar azure_firewall_fqdn_tags: AzureFirewallFqdnTags operations
@@ -153,6 +148,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, SDKClient)
     :vartype express_route_links: azure.mgmt.network.v2019_04_01.operations.ExpressRouteLinksOperations
     :ivar private_endpoints: PrivateEndpoints operations
     :vartype private_endpoints: azure.mgmt.network.v2019_04_01.operations.PrivateEndpointsOperations
+    :ivar available_private_endpoint_types: AvailablePrivateEndpointTypes operations
+    :vartype available_private_endpoint_types: azure.mgmt.network.v2019_04_01.operations.AvailablePrivateEndpointTypesOperations
     :ivar private_link_services: PrivateLinkServices operations
     :vartype private_link_services: azure.mgmt.network.v2019_04_01.operations.PrivateLinkServicesOperations
     :ivar load_balancers: LoadBalancers operations
@@ -286,10 +283,6 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, SDKClient)
             self._client, self.config, self._serialize, self._deserialize)
         self.available_resource_group_delegations = AvailableResourceGroupDelegationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.available_private_endpoint_types = AvailablePrivateEndpointTypesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.available_resource_group_private_endpoint_types = AvailableResourceGroupPrivateEndpointTypesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.azure_firewalls = AzureFirewallsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.azure_firewall_fqdn_tags = AzureFirewallFqdnTagsOperations(
@@ -329,6 +322,8 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, SDKClient)
         self.express_route_links = ExpressRouteLinksOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.private_endpoints = PrivateEndpointsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.available_private_endpoint_types = AvailablePrivateEndpointTypesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.private_link_services = PrivateLinkServicesOperations(
             self._client, self.config, self._serialize, self._deserialize)

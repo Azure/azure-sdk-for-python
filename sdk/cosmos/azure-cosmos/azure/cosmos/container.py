@@ -25,7 +25,6 @@
 from typing import Any, Callable, Dict, List, Optional, Union
 
 import six
-
 from ._cosmos_client_connection import CosmosClientConnection
 from .errors import HTTPFailure
 from .http_constants import StatusCodes

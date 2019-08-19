@@ -9,7 +9,7 @@ The Azure Event Hubs client library allows for publishing and consuming of Azure
 - Observe interesting operations and interactions happening within your business or other ecosystem, allowing loosely coupled systems to interact without the need to bind them together.
 - Receive events from one or more publishers, transform them to better meet the needs of your ecosystem, then publish the transformed events to a new stream for consumers to observe.
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhubs) | [Package (PyPi)](https://pypi.org/project/azure-eventhub/) | [API reference documentation](https://azure.github.io/azure-sdk-for-python) | [Product documentation](https://docs.microsoft.com/en-ca/azure/event-hubs/)
+[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhubs) | [Package (PyPi)](https://pypi.org/project/azure-eventhub/) | [API reference documentation](https://azure.github.io/azure-sdk-for-python/ref/azure.eventhub) | [Product documentation](https://docs.microsoft.com/en-ca/azure/event-hubs/)
 
 ## Getting started
 
@@ -19,6 +19,10 @@ Install the Azure Event Hubs client library for Python with pip:
 
 ```
 $ pip install --pre azure-eventhub
+```
+For Python2.7, please install package "typing". This is a workaround for [issue 6767](https://github.com/Azure/azure-sdk-for-python/issues/6767).
+```
+$ pip install typing
 ```
 
 **Prerequisites**
@@ -90,6 +94,7 @@ The following sections provide several code snippets covering some of the most c
 - [Consume events from an Event Hub](#consume-events-from-an-event-hub)
 - [Async publish events to an Event Hub](#async-publish-events-to-an-event-hub)
 - [Async consume events from an Event Hub](#async-consume-events-from-an-event-hub)
+- [Consume events using an Event Processor](#consume-events-using-an-event-processor)
 
 ### Inspect an Event Hub
 
@@ -206,6 +211,56 @@ finally:
     pass
 ```
 
+### Consume events using an Event Processor
+
+Using an `EventHubConsumer` to consume events like in the previous examples puts the responsibility of storing the checkpoints (the last processed event) on the user. Checkpoints are important for restarting the task of processing events from the right position in a partition. Ideally, you would also want to run multiple programs targeting different partitions with some load balancing. This is where an `EventProcessor` can help.
+
+The `EventProcessor` will delegate the processing of events to a `PartitionProcessor` that you provide, allowing you to focus on business logic while the processor holds responsibility for managing the underlying consumer operations including checkpointing and load balancing.
+
+While load balancing is a feature we will be adding in the next update, you can see how to use the `EventProcessor` in the below example, where we use an in memory `PartitionManager` that does checkpointing in memory.
+
+```python
+import asyncio
+
+from azure.eventhub.aio import EventHubClient
+from azure.eventhub.eventprocessor import EventProcessor, PartitionProcessor, Sqlite3PartitionManager
+
+connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
+
+async def do_operation(event):
+    # do some sync or async operations. If the operation is i/o intensive, async will have better performance
+    print(event)
+
+class MyPartitionProcessor(PartitionProcessor):
+    def __init__(self, checkpoint_manager):
+        super(MyPartitionProcessor, self).__init__(checkpoint_manager)
+
+    async def process_events(self, events):
+        if events:
+            await asyncio.gather(*[do_operation(event) for event in events])
+            await self._checkpoint_manager.update_checkpoint(events[-1].offset, events[-1].sequence_number)
+
+def partition_processor_factory(checkpoint_manager):
+    return MyPartitionProcessor(checkpoint_manager)
+
+async def main():
+    client = EventHubClient.from_connection_string(connection_str, receive_timeout=5, retry_total=3)
+    partition_manager = Sqlite3PartitionManager()  # in-memory PartitionManager
+    try:
+        event_processor = EventProcessor(client, "$default", MyPartitionProcessor, partition_manager)
+        # You can also define a callable object for creating PartitionProcessor like below:
+        # event_processor = EventProcessor(client, "$default", partition_processor_factory, partition_manager)
+        asyncio.ensure_future(event_processor.start())
+        await asyncio.sleep(60)
+        await event_processor.stop()
+    finally:
+        await partition_manager.close()
+
+if __name__ == '__main__':
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())
+```
+
 ## Troubleshooting
 
 ### General
@@ -230,11 +285,11 @@ These are the samples in our repo demonstraing the usage of the library.
 - [./examples/recv.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhubs/examples/recv.py) - use consumer to consume events
 - [./examples/async_examples/send_async.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhubs/examples/async_examples/send_async.py) - async/await support of a producer
 - [./examples/async_examples/recv_async.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhubs/examples/async_examples/recv_async.py) - async/await support of a consumer
-- [./examples/eph.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhubs/examples/eph.py) - event processor host
+- [./examples/eventprocessor/event_processor_example.py](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/eventhub/azure-eventhubs/examples/eventprocessor/event_processor_example.py) - event processor
 
 ### Documentation
 
-Reference documentation is available at https://azure.github.io/azure-sdk-for-python.
+Reference documentation is available at https://azure.github.io/azure-sdk-for-python/ref/azure.eventhub.
 
 ### Logging
 
@@ -254,3 +309,5 @@ When you submit a pull request, a CLA-bot will automatically determine whether y
 
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+
+![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python/sdk/eventhub/azure-eventhubs/README.png)

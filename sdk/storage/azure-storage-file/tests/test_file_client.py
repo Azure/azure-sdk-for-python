@@ -7,6 +7,7 @@ import unittest
 import platform
 
 from azure.storage.file import (
+    VERSION,
     FileServiceClient,
     ShareClient,
     DirectoryClient,
@@ -134,7 +135,7 @@ class StorageFileClientTest(FileTestCase):
         for service_type in SERVICES:
             # Act
             with self.assertRaises(ValueError):
-                service = service_type(None)
+                service_type(None)
 
     def test_create_service_with_socket_timeout(self):
         # Arrange
@@ -150,8 +151,8 @@ class StorageFileClientTest(FileTestCase):
 
             # Assert
             self.validate_standard_account_endpoints(service, service_type[1])
-            self.assertEqual(service._config.connection.timeout, 22)
-            self.assertTrue(default_service._config.connection.timeout in [20, (20, 2000)])
+            assert service._client._client._pipeline._transport.connection_config.timeout == 22
+            assert default_service._client._client._pipeline._transport.connection_config.timeout in [20, (20, 2000)]
 
     # --Connection String Test Cases --------------------------------------------
 
@@ -204,11 +205,11 @@ class StorageFileClientTest(FileTestCase):
     def test_create_service_with_connection_string_emulated(self):
         # Arrange
         for service_type in SERVICES.items():
-            conn_string = 'UseDevelopmentStorage=true;'.format(self.account_name, self.account_key)
+            conn_string = 'UseDevelopmentStorage=true;'
 
             # Act
             with self.assertRaises(ValueError):
-                service = service_type[0].from_connection_string(
+                service_type[0].from_connection_string(
                     conn_string, share='foo', directory_path='bar', file_path='baz')
 
     def test_create_service_with_connection_string_fails_if_secondary_without_primary(self):
@@ -221,7 +222,7 @@ class StorageFileClientTest(FileTestCase):
 
             # Fails if primary excluded
             with self.assertRaises(ValueError):
-                service = service_type[0].from_connection_string(
+                service_type[0].from_connection_string(
                     conn_string, share='foo', directory_path='bar', file_path='baz')
 
     def test_create_service_with_connection_string_succeeds_if_secondary_with_primary(self):
@@ -251,7 +252,8 @@ class StorageFileClientTest(FileTestCase):
             self.assertTrue('User-Agent' in response.http_request.headers)
             self.assertEqual(
                 response.http_request.headers['User-Agent'],
-                "azsdk-python-storage-file/12.0.0b1 Python/{} ({})".format(
+                "azsdk-python-storage-file/{} Python/{} ({})".format(
+                    VERSION,
                     platform.python_version(),
                     platform.platform()))
 
@@ -263,25 +265,27 @@ class StorageFileClientTest(FileTestCase):
         service = FileServiceClient(
             self.get_file_url(), credential=self.account_key, user_agent=custom_app)
 
-        def callback(response):
+        def callback1(response):
             self.assertTrue('User-Agent' in response.http_request.headers)
             self.assertEqual(
                 response.http_request.headers['User-Agent'],
-                "TestApp/v1.0 azsdk-python-storage-file/12.0.0b1 Python/{} ({})".format(
+                "TestApp/v1.0 azsdk-python-storage-file/{} Python/{} ({})".format(
+                    VERSION,
                     platform.python_version(),
                     platform.platform()))
 
-        service.get_service_properties(raw_response_hook=callback)
+        service.get_service_properties(raw_response_hook=callback1)
 
-        def callback(response):
+        def callback2(response):
             self.assertTrue('User-Agent' in response.http_request.headers)
             self.assertEqual(
                 response.http_request.headers['User-Agent'],
-                "TestApp/v2.0 azsdk-python-storage-file/12.0.0b1 Python/{} ({})".format(
+                "TestApp/v2.0 azsdk-python-storage-file/{} Python/{} ({})".format(
+                    VERSION,
                     platform.python_version(),
                     platform.platform()))
 
-        service.get_service_properties(raw_response_hook=callback, user_agent="TestApp/v2.0")
+        service.get_service_properties(raw_response_hook=callback2, user_agent="TestApp/v2.0")
 
     @record
     def test_user_agent_append(self):
@@ -291,7 +295,8 @@ class StorageFileClientTest(FileTestCase):
             self.assertTrue('User-Agent' in response.http_request.headers)
             self.assertEqual(
                 response.http_request.headers['User-Agent'],
-                "azsdk-python-storage-file/12.0.0b1 Python/{} ({}) customer_user_agent".format(
+                "azsdk-python-storage-file/{} Python/{} ({}) customer_user_agent".format(
+                    VERSION,
                     platform.python_version(),
                     platform.platform()))
 

@@ -34,14 +34,21 @@ steps:
   - ${{ parameters.BeforeTestSteps }}
 
   - task: PythonScript@0
-    displayName: 'Setup and Run Tests'
+    displayName: 'Install Packages'
     inputs:
       scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
-      arguments: '"${{ parameters.BuildTargetingString }}" --junitxml="junit/test-results.xml" ${{ parameters.AdditionalTestArgs }} --mark_arg="${{ parameters.TestMarkArgument }}" --service="${{ parameters.ServiceDirectory }}"'
+      arguments: '"${{ parameters.BuildTargetingString }}" --runtype=setup --service="${{ parameters.ServiceDirectory }}"'
+    env: ${{ parameters.EnvVars }}
+
+  - task: PythonScript@0
+    displayName: 'Run Tests'
+    inputs:
+      scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+      arguments: '"${{ parameters.BuildTargetingString }}" --runtype=execute --junitxml="junit/test-results.xml" ${{ parameters.AdditionalTestArgs }} --mark_arg="${{ parameters.TestMarkArgument }}" --service="${{ parameters.ServiceDirectory }}"'
     env: ${{ parameters.EnvVars }}
 
   - task: PublishTestResults@2
     condition: succeededOrFailed()
     inputs:
-      testResultsFiles: 'junit/test-results.xml'
+      testResultsFiles: '**/junit/test-results.xml'
       testRunTitle: '${{ parameters.OSName }} Python ${{ parameters.PythonVersion }}'

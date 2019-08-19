@@ -13,13 +13,12 @@ try:
 except ImportError:
     from urlparse import urlparse # type: ignore
 
+from azure.core.paging import ItemPaged
+from azure.core.tracing.decorator import distributed_trace
 from ._shared.shared_access_signature import SharedAccessSignature
 from ._shared.models import LocationMode, Services
-from ._shared.utils import (
-    StorageAccountHostsMixin,
-    parse_query,
-    parse_connection_str,
-    process_storage_error)
+from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
+from ._shared.response_handlers import process_storage_error
 from ._generated import AzureQueueStorage
 from ._generated.models import StorageServiceProperties, StorageErrorException
 
@@ -81,6 +80,13 @@ class QueueServiceClient(StorageAccountHostsMixin):
             :language: python
             :dedent: 8
             :caption: Creating the QueueServiceClient with an account url and credential.
+
+        .. literalinclude:: ../tests/test_queue_samples_authentication.py
+            :start-after: [START create_queue_service_client_token]
+            :end-before: [END create_queue_service_client_token]
+            :language: python
+            :dedent: 8
+            :caption: Creating the QueueServiceClient with Azure Identity credentials.
     """
 
     def __init__(
@@ -192,6 +198,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
         return sas.generate_account(
             Services.QUEUE, resource_types, permission, expiry, start=start, ip=ip, protocol=protocol) # type: ignore
 
+    @distributed_trace
     def get_service_stats(self, timeout=None, **kwargs): # type: ignore
         # type: (Optional[int], Optional[Any]) -> Dict[str, Any]
         """Retrieves statistics related to replication for the Queue service.
@@ -223,6 +230,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def get_service_properties(self, timeout=None, **kwargs): # type: ignore
         # type: (Optional[int], Optional[Any]) -> Dict[str, Any]
         """Gets the properties of a storage account's Queue service, including
@@ -245,6 +253,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def set_service_properties( # type: ignore
             self, logging=None,  # type: Optional[Logging]
             hour_metrics=None,  # type: Optional[Metrics]
@@ -299,15 +308,15 @@ class QueueServiceClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def list_queues(
             self, name_starts_with=None,  # type: Optional[str]
             include_metadata=False,  # type: Optional[bool]
-            marker=None,  # type: Optional[str]
             results_per_page=None,  # type: Optional[int]
             timeout=None,  # type: Optional[int]
             **kwargs
         ):
-        # type: (...) -> QueuePropertiesPaged
+        # type: (...) -> ItemPaged[QueueProperties]
         """Returns a generator to list the queues under the specified account.
 
         The generator will lazily follow the continuation tokens returned by
@@ -318,10 +327,6 @@ class QueueServiceClient(StorageAccountHostsMixin):
             begin with the specified prefix.
         :param bool include_metadata:
             Specifies that queue metadata be returned in the response.
-        :param str marker:
-            An opaque continuation token. This value can be retrieved from the
-            next_marker field of a previous generator object. If specified,
-            this generator will begin returning results from this point.
         :param int results_per_page:
             The maximum number of queue names to retrieve per API
             call. If the request does not specify the server will return up to 5,000 items.
@@ -330,7 +335,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
             calls to the service in which case the timeout value specified will be
             applied to each individual call.
         :returns: An iterable (auto-paging) of QueueProperties.
-        :rtype: ~azure.core.queue.models.QueuePropertiesPaged
+        :rtype: ~azure.core.paging.ItemPaged[~azure.core.queue.models.QueueProperties]
 
         Example:
             .. literalinclude:: ../tests/test_queue_samples_service.py
@@ -347,9 +352,12 @@ class QueueServiceClient(StorageAccountHostsMixin):
             include=include,
             timeout=timeout,
             **kwargs)
-        return QueuePropertiesPaged(
-            command, prefix=name_starts_with, results_per_page=results_per_page, marker=marker)
+        return ItemPaged(
+            command, prefix=name_starts_with, results_per_page=results_per_page,
+            page_iterator_class=QueuePropertiesPaged
+        )
 
+    @distributed_trace
     def create_queue(
             self, name,  # type: str
             metadata=None,  # type: Optional[Dict[str, str]]
@@ -357,7 +365,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
             **kwargs
         ):
         # type: (...) -> QueueClient
-        """Creates a new queue under the specified account. 
+        """Creates a new queue under the specified account.
 
         If a queue with the same name already exists, the operation fails.
         Returns a client with which to interact with the newly created queue.
@@ -384,6 +392,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
             metadata=metadata, timeout=timeout, **kwargs)
         return queue
 
+    @distributed_trace
     def delete_queue(
             self, queue,  # type: Union[QueueProperties, str]
             timeout=None,  # type: Optional[int]

@@ -19,8 +19,8 @@ from azure.identity.aio import (
     EnvironmentCredential,
     ManagedIdentityCredential,
 )
-from azure.identity.aio._internal import ImdsCredential
-from azure.identity.constants import EnvironmentVariables
+from azure.identity.aio._managed_identity import ImdsCredential
+from azure.identity._constants import EnvironmentVariables
 
 from helpers import mock_response, Request, async_validating_transport
 
@@ -122,12 +122,6 @@ async def test_client_secret_environment_credential(monkeypatch):
 
 
 @pytest.mark.asyncio
-async def test_environment_credential_error():
-    with pytest.raises(ClientAuthenticationError):
-        await EnvironmentCredential().get_token("scope")
-
-
-@pytest.mark.asyncio
 async def test_credential_chain_error_message():
     def raise_authn_error(message):
         raise ClientAuthenticationError(message)
@@ -196,7 +190,7 @@ async def test_imds_credential_cache():
         text=lambda: json.dumps(token_payload),
         headers={"content-type": "application/json"},
         status_code=200,
-        content_type=["application/json"],
+        content_type="application/json",
     )
     mock_send = Mock(return_value=mock_response)
 
@@ -225,11 +219,11 @@ async def test_imds_credential_retries():
     mock_response = Mock(
         text=lambda: b"{}",
         headers={"content-type": "application/json", "Retry-After": "0"},
-        content_type=["application/json"],
+        content_type="application/json",
     )
     mock_send = Mock(return_value=mock_response)
 
-    total_retries = ImdsCredential.create_config().retry_policy.total_retries
+    total_retries = ImdsCredential._create_config().retry_policy.total_retries
 
     for status_code in (404, 429, 500):
         mock_send.reset_mock()

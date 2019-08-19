@@ -28,6 +28,7 @@
   ./ref/azure.cognitiveservices.vision.face.rst
   ./ref/azure.core.rst
   ./ref/azure.cosmos.rst
+  ./ref/azure.data.appconfiguration.rst
   ./ref/azure.eventgrid.rst
   ./ref/azure.eventhub.rst
   ./ref/azure.graphrbac.rst

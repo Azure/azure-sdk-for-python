@@ -9,14 +9,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
-        azure-batch/7.0.0 Azure-SDK-For-Python
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.9 msrest_azure/0.4.34
+        azure-batch/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Thu, 13 Jun 2019 20:43:12 GMT
+      - Wed, 07 Aug 2019 00:09:40 GMT
     method: GET
-    uri: https://batchf0260dd0.westcentralus.batch.azure.com/supportedimages?api-version=2019-06-01.9.0
+    uri: https://batchf0260dd0.westcentralus.batch.azure.com/supportedimages?api-version=2019-08-01.10.0
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batchf0260dd0.westcentralus.batch.azure.com/$metadata#supportedimages\",\"value\":[\r\n
@@ -26,8 +26,8 @@ interactions:
         \     },\"verificationType\":\"verified\",\"nodeAgentSKUId\":\"batch.node.windows
         amd64\",\"osType\":\"windows\"\r\n    },{\r\n      \"imageReference\":{\r\n
         \       \"publisher\":\"canonical\",\"offer\":\"ubuntuserver\",\"sku\":\"14.04.5-lts\",\"version\":\"latest\"\r\n
-        \     },\"verificationType\":\"verified\",\"nodeAgentSKUId\":\"batch.node.ubuntu
-        14.04\",\"batchSupportEndOfLife\":\"2019-05-31T00:00:00Z\",\"osType\":\"linux\"\r\n
+        \     },\"verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.ubuntu
+        14.04\",\"batchSupportEndOfLife\":\"2019-06-15T00:00:00Z\",\"osType\":\"linux\"\r\n
         \   },{\r\n      \"imageReference\":{\r\n        \"publisher\":\"canonical\",\"offer\":\"ubuntuserver\",\"sku\":\"16.04-lts\",\"version\":\"latest\"\r\n
         \     },\"verificationType\":\"verified\",\"nodeAgentSKUId\":\"batch.node.ubuntu
         16.04\",\"osType\":\"linux\"\r\n    },{\r\n      \"imageReference\":{\r\n
@@ -176,6 +176,10 @@ interactions:
         \     },\"verificationType\":\"verified\",\"nodeAgentSKUId\":\"batch.node.centos
         7\",\"capabilities\":[\r\n        \"SupportsRDMAOnly\",\"IntelMPIRuntimeInstalled\"\r\n
         \     ],\"osType\":\"linux\"\r\n    },{\r\n      \"imageReference\":{\r\n
+        \       \"publisher\":\"openlogic\",\"offer\":\"centos-hpc\",\"sku\":\"7.6\",\"version\":\"latest\"\r\n
+        \     },\"verificationType\":\"verified\",\"nodeAgentSKUId\":\"batch.node.centos
+        7\",\"capabilities\":[\r\n        \"SupportsRDMAOnly\",\"IntelMPIRuntimeInstalled\"\r\n
+        \     ],\"osType\":\"linux\"\r\n    },{\r\n      \"imageReference\":{\r\n
         \       \"publisher\":\"oracle\",\"offer\":\"oracle-linux\",\"sku\":\"7.3\",\"version\":\"latest\"\r\n
         \     },\"verificationType\":\"unverified\",\"nodeAgentSKUId\":\"batch.node.centos
         7\",\"osType\":\"linux\"\r\n    },{\r\n      \"imageReference\":{\r\n        \"publisher\":\"oracle\",\"offer\":\"oracle-linux\",\"sku\":\"7.4\",\"version\":\"latest\"\r\n
@@ -191,9 +195,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 13 Jun 2019 20:43:12 GMT
+      - Wed, 07 Aug 2019 00:09:40 GMT
       request-id:
-      - 120299a7-6713-42a2-a7cc-ecaedb6269db
+      - 68b5bf5b-63f4-4a17-90df-226d42cc826a
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -225,14 +229,14 @@ interactions:
       Content-Type:
       - application/json; odata=minimalmetadata; charset=utf-8
       User-Agent:
-      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
-        azure-batch/7.0.0 Azure-SDK-For-Python
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.9 msrest_azure/0.4.34
+        azure-batch/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Thu, 13 Jun 2019 20:43:12 GMT
+      - Wed, 07 Aug 2019 00:09:40 GMT
     method: POST
-    uri: https://batchf0260dd0.westcentralus.batch.azure.com/pools?api-version=2019-06-01.9.0
+    uri: https://batchf0260dd0.westcentralus.batch.azure.com/pools?api-version=2019-08-01.10.0
   response:
     body:
       string: ''
@@ -242,15 +246,15 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 13 Jun 2019 20:43:12 GMT
+      - Wed, 07 Aug 2019 00:09:41 GMT
       etag:
-      - '0x8D6F03FC0F1D08B'
+      - '0x8D71ACB8B2F0581'
       last-modified:
-      - Thu, 13 Jun 2019 20:43:13 GMT
+      - Wed, 07 Aug 2019 00:09:41 GMT
       location:
       - https://batchf0260dd0.westcentralus.batch.azure.com/pools/batch_iaas_f0260dd0
       request-id:
-      - 5f2c1549-3a0c-423d-bbfa-594c491f09cb
+      - 860554e4-ea37-4a51-92a1-a1c4a6bf013d
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -272,14 +276,14 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
-        azure-batch/7.0.0 Azure-SDK-For-Python
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.9 msrest_azure/0.4.34
+        azure-batch/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Thu, 13 Jun 2019 20:43:13 GMT
+      - Wed, 07 Aug 2019 00:09:41 GMT
     method: GET
-    uri: https://batchf0260dd0.westcentralus.batch.azure.com/nodecounts?api-version=2019-06-01.9.0
+    uri: https://batchf0260dd0.westcentralus.batch.azure.com/nodecounts?api-version=2019-08-01.10.0
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batchf0260dd0.westcentralus.batch.azure.com/$metadata#poolnodecounts\",\"value\":[\r\n
@@ -292,9 +296,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 13 Jun 2019 20:43:12 GMT
+      - Wed, 07 Aug 2019 00:09:41 GMT
       request-id:
-      - 78ce2a56-b22f-454e-8f56-47ee0f27d48f
+      - c8ee6ae9-67fd-4cf7-b82d-181fd65ce4a6
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -307,10 +311,10 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: 'b''b\''b\\\''{"id": "batch_network_f0260dd0", "vmSize": "Standard_A1",
-      "virtualMachineConfiguration": {"imageReference": {"publisher": "Canonical",
-      "offer": "UbuntuServer", "sku": "16.04-LTS"}, "nodeAgentSKUId": "batch.node.ubuntu
-      16.04"}, "networkConfiguration": {"subnetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test/providers/Microsoft.Network/virtualNetworks/vnet1/subnets/subnet1"}}\\\''\'''''
+    body: 'b''b\''{"id": "batch_network_f0260dd0", "vmSize": "Standard_A1", "virtualMachineConfiguration":
+      {"imageReference": {"publisher": "Canonical", "offer": "UbuntuServer", "sku":
+      "16.04-LTS"}, "nodeAgentSKUId": "batch.node.ubuntu 16.04"}, "networkConfiguration":
+      {"subnetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test/providers/Microsoft.Network/virtualNetworks/vnet1/subnets/subnet1"}}\'''''
     headers:
       Accept:
       - application/json
@@ -323,21 +327,21 @@ interactions:
       Content-Type:
       - application/json; odata=minimalmetadata; charset=utf-8
       User-Agent:
-      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
-        azure-batch/7.0.0 Azure-SDK-For-Python
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.9 msrest_azure/0.4.34
+        azure-batch/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Thu, 13 Jun 2019 20:43:13 GMT
+      - Wed, 07 Aug 2019 00:09:41 GMT
       return-client-request-id:
       - 'false'
     method: POST
-    uri: https://batchf0260dd0.westcentralus.batch.azure.com/pools?api-version=2019-06-01.9.0&timeout=45
+    uri: https://batchf0260dd0.westcentralus.batch.azure.com/pools?api-version=2019-08-01.10.0&timeout=45
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batchf0260dd0.westcentralus.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.Container.errors/@Element\",\"code\":\"InvalidPropertyValue\",\"message\":{\r\n
         \   \"lang\":\"en-US\",\"value\":\"The value provided for one of the properties
-        in the request body is invalid.\\nRequestId:72709a7b-69f0-4733-b8a1-185b67f6151a\\nTime:2019-06-13T20:43:13.8124796Z\"\r\n
+        in the request body is invalid.\\nRequestId:53978292-27ac-43c3-ba32-61dc9647b120\\nTime:2019-08-07T00:09:42.6572716Z\"\r\n
         \ },\"values\":[\r\n    {\r\n      \"key\":\"PropertyName\",\"value\":\"subnetId\"\r\n
         \   },{\r\n      \"key\":\"PropertyValue\",\"value\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test/providers/Microsoft.Network/virtualNetworks/vnet1/subnets/subnet1\"\r\n
         \   },{\r\n      \"key\":\"Reason\",\"value\":\"The specified subnetId is
@@ -351,9 +355,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 13 Jun 2019 20:43:13 GMT
+      - Wed, 07 Aug 2019 00:09:42 GMT
       request-id:
-      - 72709a7b-69f0-4733-b8a1-185b67f6151a
+      - 53978292-27ac-43c3-ba32-61dc9647b120
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -365,9 +369,9 @@ interactions:
       message: The value provided for one of the properties in the request body is
         invalid.
 - request:
-    body: 'b''b\''b\\\''{"id": "batch_image_f0260dd0", "vmSize": "Standard_A1", "virtualMachineConfiguration":
+    body: 'b''b\''{"id": "batch_image_f0260dd0", "vmSize": "Standard_A1", "virtualMachineConfiguration":
       {"imageReference": {"virtualMachineImageId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test/providers/Microsoft.Compute/images/FakeImage"},
-      "nodeAgentSKUId": "batch.node.ubuntu 16.04"}}\\\''\'''''
+      "nodeAgentSKUId": "batch.node.ubuntu 16.04"}}\'''''
     headers:
       Accept:
       - application/json
@@ -380,21 +384,21 @@ interactions:
       Content-Type:
       - application/json; odata=minimalmetadata; charset=utf-8
       User-Agent:
-      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
-        azure-batch/7.0.0 Azure-SDK-For-Python
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.9 msrest_azure/0.4.34
+        azure-batch/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Thu, 13 Jun 2019 20:43:13 GMT
+      - Wed, 07 Aug 2019 00:09:42 GMT
       return-client-request-id:
       - 'false'
     method: POST
-    uri: https://batchf0260dd0.westcentralus.batch.azure.com/pools?api-version=2019-06-01.9.0&timeout=45
+    uri: https://batchf0260dd0.westcentralus.batch.azure.com/pools?api-version=2019-08-01.10.0&timeout=45
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batchf0260dd0.westcentralus.batch.azure.com/$metadata#Microsoft.Azure.Batch.Protocol.Entities.Container.errors/@Element\",\"code\":\"InvalidPropertyValue\",\"message\":{\r\n
         \   \"lang\":\"en-US\",\"value\":\"The value provided for one of the properties
-        in the request body is invalid.\\nRequestId:b1ec82f6-f3b6-4ad4-8bb9-be27ada0830d\\nTime:2019-06-13T20:43:14.1576946Z\"\r\n
+        in the request body is invalid.\\nRequestId:5c8484ff-1860-4803-ad78-fb0522bbbf2b\\nTime:2019-08-07T00:09:42.9752978Z\"\r\n
         \ },\"values\":[\r\n    {\r\n      \"key\":\"PropertyName\",\"value\":\"virtualMachineImageId\"\r\n
         \   },{\r\n      \"key\":\"PropertyValue\",\"value\":\"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test/providers/Microsoft.Compute/images/FakeImage\"\r\n
         \   },{\r\n      \"key\":\"Reason\",\"value\":\"The specified virtualMachineImageId
@@ -408,9 +412,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 13 Jun 2019 20:43:13 GMT
+      - Wed, 07 Aug 2019 00:09:42 GMT
       request-id:
-      - b1ec82f6-f3b6-4ad4-8bb9-be27ada0830d
+      - 5c8484ff-1860-4803-ad78-fb0522bbbf2b
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -438,14 +442,14 @@ interactions:
       Content-Type:
       - application/json; odata=minimalmetadata; charset=utf-8
       User-Agent:
-      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
-        azure-batch/7.0.0 Azure-SDK-For-Python
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.9 msrest_azure/0.4.34
+        azure-batch/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Thu, 13 Jun 2019 20:43:14 GMT
+      - Wed, 07 Aug 2019 00:09:42 GMT
     method: POST
-    uri: https://batchf0260dd0.westcentralus.batch.azure.com/pools?api-version=2019-06-01.9.0
+    uri: https://batchf0260dd0.westcentralus.batch.azure.com/pools?api-version=2019-08-01.10.0
   response:
     body:
       string: ''
@@ -455,15 +459,15 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 13 Jun 2019 20:43:15 GMT
+      - Wed, 07 Aug 2019 00:09:43 GMT
       etag:
-      - '0x8D6F03FC22CB01E'
+      - '0x8D71ACB8C85C460'
       last-modified:
-      - Thu, 13 Jun 2019 20:43:15 GMT
+      - Wed, 07 Aug 2019 00:09:43 GMT
       location:
       - https://batchf0260dd0.westcentralus.batch.azure.com/pools/batch_disk_f0260dd0
       request-id:
-      - f5dc9a30-235a-4bf7-89df-ee6612b38ee1
+      - 734c1b0b-8cac-48e8-8c68-6e5b3ca46d88
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -485,17 +489,17 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
-        azure-batch/7.0.0 Azure-SDK-For-Python
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.9 msrest_azure/0.4.34
+        azure-batch/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Thu, 13 Jun 2019 20:43:15 GMT
+      - Wed, 07 Aug 2019 00:09:43 GMT
     method: GET
-    uri: https://batchf0260dd0.westcentralus.batch.azure.com/pools/batch_disk_f0260dd0?api-version=2019-06-01.9.0
+    uri: https://batchf0260dd0.westcentralus.batch.azure.com/pools/batch_disk_f0260dd0?api-version=2019-08-01.10.0
   response:
     body:
-      string: "{\r\n  \"odata.metadata\":\"https://batchf0260dd0.westcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"batch_disk_f0260dd0\",\"url\":\"https://batchf0260dd0.westcentralus.batch.azure.com/pools/batch_disk_f0260dd0\",\"eTag\":\"0x8D6F03FC22CB01E\",\"lastModified\":\"2019-06-13T20:43:15.0818334Z\",\"creationTime\":\"2019-06-13T20:43:15.0818334Z\",\"state\":\"active\",\"stateTransitionTime\":\"2019-06-13T20:43:15.0818334Z\",\"allocationState\":\"resizing\",\"allocationStateTransitionTime\":\"2019-06-13T20:43:15.0818334Z\",\"vmSize\":\"standard_a1\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"maxTasksPerNode\":1,\"taskSchedulingPolicy\":{\r\n
+      string: "{\r\n  \"odata.metadata\":\"https://batchf0260dd0.westcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"batch_disk_f0260dd0\",\"url\":\"https://batchf0260dd0.westcentralus.batch.azure.com/pools/batch_disk_f0260dd0\",\"eTag\":\"0x8D71ACB8C85C460\",\"lastModified\":\"2019-08-07T00:09:43.4474592Z\",\"creationTime\":\"2019-08-07T00:09:43.4474592Z\",\"state\":\"active\",\"stateTransitionTime\":\"2019-08-07T00:09:43.4474592Z\",\"allocationState\":\"resizing\",\"allocationStateTransitionTime\":\"2019-08-07T00:09:43.4474592Z\",\"vmSize\":\"standard_a1\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"maxTasksPerNode\":1,\"taskSchedulingPolicy\":{\r\n
         \   \"nodeFillType\":\"Spread\"\r\n  },\"virtualMachineConfiguration\":{\r\n
         \   \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"16.04-LTS\",\"version\":\"latest\"\r\n
         \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 16.04\",\"dataDisks\":[\r\n      {\r\n
@@ -507,13 +511,13 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 13 Jun 2019 20:43:15 GMT
+      - Wed, 07 Aug 2019 00:09:43 GMT
       etag:
-      - '0x8D6F03FC22CB01E'
+      - '0x8D71ACB8C85C460'
       last-modified:
-      - Thu, 13 Jun 2019 20:43:15 GMT
+      - Wed, 07 Aug 2019 00:09:43 GMT
       request-id:
-      - a161a6f1-e770-4c94-9f55-003a41fb53bc
+      - 50557fae-dd16-445e-92fa-eec56588f3e3
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -542,14 +546,14 @@ interactions:
       Content-Type:
       - application/json; odata=minimalmetadata; charset=utf-8
       User-Agent:
-      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
-        azure-batch/7.0.0 Azure-SDK-For-Python
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.9 msrest_azure/0.4.34
+        azure-batch/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Thu, 13 Jun 2019 20:43:15 GMT
+      - Wed, 07 Aug 2019 00:09:43 GMT
     method: POST
-    uri: https://batchf0260dd0.westcentralus.batch.azure.com/pools?api-version=2019-06-01.9.0
+    uri: https://batchf0260dd0.westcentralus.batch.azure.com/pools?api-version=2019-08-01.10.0
   response:
     body:
       string: ''
@@ -559,15 +563,15 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 13 Jun 2019 20:43:15 GMT
+      - Wed, 07 Aug 2019 00:09:44 GMT
       etag:
-      - '0x8D6F03FC2A27C6C'
+      - '0x8D71ACB8D1E5AE0'
       last-modified:
-      - Thu, 13 Jun 2019 20:43:15 GMT
+      - Wed, 07 Aug 2019 00:09:44 GMT
       location:
       - https://batchf0260dd0.westcentralus.batch.azure.com/pools/batch_app_f0260dd0
       request-id:
-      - d6524034-9bcc-40dd-924b-3820a8b6a9a6
+      - 29769046-ff7f-46be-89b0-bcad7609a4b3
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -589,17 +593,17 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
-        azure-batch/7.0.0 Azure-SDK-For-Python
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.9 msrest_azure/0.4.34
+        azure-batch/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Thu, 13 Jun 2019 20:43:15 GMT
+      - Wed, 07 Aug 2019 00:09:44 GMT
     method: GET
-    uri: https://batchf0260dd0.westcentralus.batch.azure.com/pools/batch_app_f0260dd0?api-version=2019-06-01.9.0
+    uri: https://batchf0260dd0.westcentralus.batch.azure.com/pools/batch_app_f0260dd0?api-version=2019-08-01.10.0
   response:
     body:
-      string: "{\r\n  \"odata.metadata\":\"https://batchf0260dd0.westcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"batch_app_f0260dd0\",\"url\":\"https://batchf0260dd0.westcentralus.batch.azure.com/pools/batch_app_f0260dd0\",\"eTag\":\"0x8D6F03FC2A27C6C\",\"lastModified\":\"2019-06-13T20:43:15.8538348Z\",\"creationTime\":\"2019-06-13T20:43:15.8538348Z\",\"state\":\"active\",\"stateTransitionTime\":\"2019-06-13T20:43:15.8538348Z\",\"allocationState\":\"resizing\",\"allocationStateTransitionTime\":\"2019-06-13T20:43:15.8538348Z\",\"vmSize\":\"standard_a1\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"maxTasksPerNode\":1,\"taskSchedulingPolicy\":{\r\n
+      string: "{\r\n  \"odata.metadata\":\"https://batchf0260dd0.westcentralus.batch.azure.com/$metadata#pools/@Element\",\"id\":\"batch_app_f0260dd0\",\"url\":\"https://batchf0260dd0.westcentralus.batch.azure.com/pools/batch_app_f0260dd0\",\"eTag\":\"0x8D71ACB8D1E5AE0\",\"lastModified\":\"2019-08-07T00:09:44.4474592Z\",\"creationTime\":\"2019-08-07T00:09:44.4474592Z\",\"state\":\"active\",\"stateTransitionTime\":\"2019-08-07T00:09:44.4474592Z\",\"allocationState\":\"resizing\",\"allocationStateTransitionTime\":\"2019-08-07T00:09:44.4474592Z\",\"vmSize\":\"standard_a1\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"maxTasksPerNode\":1,\"taskSchedulingPolicy\":{\r\n
         \   \"nodeFillType\":\"Spread\"\r\n  },\"virtualMachineConfiguration\":{\r\n
         \   \"imageReference\":{\r\n      \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"16.04-LTS\",\"version\":\"latest\"\r\n
         \   },\"nodeAgentSKUId\":\"batch.node.ubuntu 16.04\",\"dataDisks\":[\r\n      {\r\n
@@ -611,13 +615,13 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 13 Jun 2019 20:43:15 GMT
+      - Wed, 07 Aug 2019 00:09:44 GMT
       etag:
-      - '0x8D6F03FC2A27C6C'
+      - '0x8D71ACB8D1E5AE0'
       last-modified:
-      - Thu, 13 Jun 2019 20:43:15 GMT
+      - Wed, 07 Aug 2019 00:09:44 GMT
       request-id:
-      - 31816051-7920-4529-aab8-d5e7782ca314
+      - eaaac9f1-aff0-41dc-a133-329a2bf8ed59
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -639,29 +643,29 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
-        azure-batch/7.0.0 Azure-SDK-For-Python
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.9 msrest_azure/0.4.34
+        azure-batch/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Thu, 13 Jun 2019 20:43:16 GMT
+      - Wed, 07 Aug 2019 00:09:44 GMT
     method: GET
-    uri: https://batchf0260dd0.westcentralus.batch.azure.com/pools?api-version=2019-06-01.9.0
+    uri: https://batchf0260dd0.westcentralus.batch.azure.com/pools?api-version=2019-08-01.10.0
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batchf0260dd0.westcentralus.batch.azure.com/$metadata#pools\",\"value\":[\r\n
-        \   {\r\n      \"id\":\"batch_app_f0260dd0\",\"url\":\"https://batchf0260dd0.westcentralus.batch.azure.com/pools/batch_app_f0260dd0\",\"eTag\":\"0x8D6F03FC2A27C6C\",\"lastModified\":\"2019-06-13T20:43:15.8538348Z\",\"creationTime\":\"2019-06-13T20:43:15.8538348Z\",\"state\":\"active\",\"stateTransitionTime\":\"2019-06-13T20:43:15.8538348Z\",\"allocationState\":\"resizing\",\"allocationStateTransitionTime\":\"2019-06-13T20:43:15.8538348Z\",\"vmSize\":\"standard_a1\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"maxTasksPerNode\":1,\"taskSchedulingPolicy\":{\r\n
+        \   {\r\n      \"id\":\"batch_app_f0260dd0\",\"url\":\"https://batchf0260dd0.westcentralus.batch.azure.com/pools/batch_app_f0260dd0\",\"eTag\":\"0x8D71ACB8D1E5AE0\",\"lastModified\":\"2019-08-07T00:09:44.4474592Z\",\"creationTime\":\"2019-08-07T00:09:44.4474592Z\",\"state\":\"active\",\"stateTransitionTime\":\"2019-08-07T00:09:44.4474592Z\",\"allocationState\":\"resizing\",\"allocationStateTransitionTime\":\"2019-08-07T00:09:44.4474592Z\",\"vmSize\":\"standard_a1\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"maxTasksPerNode\":1,\"taskSchedulingPolicy\":{\r\n
         \       \"nodeFillType\":\"Spread\"\r\n      },\"virtualMachineConfiguration\":{\r\n
         \       \"imageReference\":{\r\n          \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"16.04-LTS\",\"version\":\"latest\"\r\n
         \       },\"nodeAgentSKUId\":\"batch.node.ubuntu 16.04\",\"dataDisks\":[\r\n
         \         {\r\n            \"lun\":1,\"caching\":\"none\",\"diskSizeGB\":50,\"storageAccountType\":\"standard_lrs\"\r\n
         \         }\r\n        ]\r\n      },\"applicationLicenses\":[\r\n        \"maya\"\r\n
-        \     ]\r\n    },{\r\n      \"id\":\"batch_disk_f0260dd0\",\"url\":\"https://batchf0260dd0.westcentralus.batch.azure.com/pools/batch_disk_f0260dd0\",\"eTag\":\"0x8D6F03FC22CB01E\",\"lastModified\":\"2019-06-13T20:43:15.0818334Z\",\"creationTime\":\"2019-06-13T20:43:15.0818334Z\",\"state\":\"active\",\"stateTransitionTime\":\"2019-06-13T20:43:15.0818334Z\",\"allocationState\":\"steady\",\"allocationStateTransitionTime\":\"2019-06-13T20:43:15.3958676Z\",\"vmSize\":\"standard_a1\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"maxTasksPerNode\":1,\"taskSchedulingPolicy\":{\r\n
+        \     ]\r\n    },{\r\n      \"id\":\"batch_disk_f0260dd0\",\"url\":\"https://batchf0260dd0.westcentralus.batch.azure.com/pools/batch_disk_f0260dd0\",\"eTag\":\"0x8D71ACB8C85C460\",\"lastModified\":\"2019-08-07T00:09:43.4474592Z\",\"creationTime\":\"2019-08-07T00:09:43.4474592Z\",\"state\":\"active\",\"stateTransitionTime\":\"2019-08-07T00:09:43.4474592Z\",\"allocationState\":\"steady\",\"allocationStateTransitionTime\":\"2019-08-07T00:09:43.7874801Z\",\"vmSize\":\"standard_a1\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"maxTasksPerNode\":1,\"taskSchedulingPolicy\":{\r\n
         \       \"nodeFillType\":\"Spread\"\r\n      },\"virtualMachineConfiguration\":{\r\n
         \       \"imageReference\":{\r\n          \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"16.04-LTS\",\"version\":\"latest\"\r\n
         \       },\"nodeAgentSKUId\":\"batch.node.ubuntu 16.04\",\"dataDisks\":[\r\n
         \         {\r\n            \"lun\":1,\"caching\":\"none\",\"diskSizeGB\":50,\"storageAccountType\":\"standard_lrs\"\r\n
-        \         }\r\n        ]\r\n      }\r\n    },{\r\n      \"id\":\"batch_iaas_f0260dd0\",\"url\":\"https://batchf0260dd0.westcentralus.batch.azure.com/pools/batch_iaas_f0260dd0\",\"eTag\":\"0x8D6F03FC0F1D08B\",\"lastModified\":\"2019-06-13T20:43:13.0182795Z\",\"creationTime\":\"2019-06-13T20:43:13.0182795Z\",\"state\":\"active\",\"stateTransitionTime\":\"2019-06-13T20:43:13.0182795Z\",\"allocationState\":\"steady\",\"allocationStateTransitionTime\":\"2019-06-13T20:43:13.4513195Z\",\"vmSize\":\"standard_a1\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
+        \         }\r\n        ]\r\n      }\r\n    },{\r\n      \"id\":\"batch_iaas_f0260dd0\",\"url\":\"https://batchf0260dd0.westcentralus.batch.azure.com/pools/batch_iaas_f0260dd0\",\"eTag\":\"0x8D71ACB8B2F0581\",\"lastModified\":\"2019-08-07T00:09:41.2012417Z\",\"creationTime\":\"2019-08-07T00:09:41.2012417Z\",\"state\":\"active\",\"stateTransitionTime\":\"2019-08-07T00:09:41.2012417Z\",\"allocationState\":\"steady\",\"allocationStateTransitionTime\":\"2019-08-07T00:09:41.6562784Z\",\"vmSize\":\"standard_a1\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"userAccounts\":[\r\n
         \       {\r\n          \"name\":\"test-user-1\",\"elevationLevel\":\"nonadmin\",\"windowsUserConfiguration\":{\r\n
         \           \"loginMode\":\"batch\"\r\n          }\r\n        },{\r\n          \"name\":\"test-user-2\",\"elevationLevel\":\"admin\",\"windowsUserConfiguration\":{\r\n
         \           \"loginMode\":\"batch\"\r\n          }\r\n        }\r\n      ],\"maxTasksPerNode\":1,\"taskSchedulingPolicy\":{\r\n
@@ -676,9 +680,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 13 Jun 2019 20:43:16 GMT
+      - Wed, 07 Aug 2019 00:09:44 GMT
       request-id:
-      - 57e2d09a-9c55-48b4-8d5b-d2398bd4ee61
+      - 1af1af38-4978-4300-abbe-8dc71acc3a42
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -700,35 +704,35 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
-        azure-batch/7.0.0 Azure-SDK-For-Python
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.9 msrest_azure/0.4.34
+        azure-batch/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Thu, 13 Jun 2019 20:43:16 GMT
+      - Wed, 07 Aug 2019 00:09:44 GMT
       return-client-request-id:
       - 'false'
     method: GET
-    uri: https://batchf0260dd0.westcentralus.batch.azure.com/pools?api-version=2019-06-01.9.0&maxresults=1&timeout=30
+    uri: https://batchf0260dd0.westcentralus.batch.azure.com/pools?api-version=2019-08-01.10.0&maxresults=1&timeout=30
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batchf0260dd0.westcentralus.batch.azure.com/$metadata#pools\",\"value\":[\r\n
-        \   {\r\n      \"id\":\"batch_app_f0260dd0\",\"url\":\"https://batchf0260dd0.westcentralus.batch.azure.com/pools/batch_app_f0260dd0\",\"eTag\":\"0x8D6F03FC2A27C6C\",\"lastModified\":\"2019-06-13T20:43:15.8538348Z\",\"creationTime\":\"2019-06-13T20:43:15.8538348Z\",\"state\":\"active\",\"stateTransitionTime\":\"2019-06-13T20:43:15.8538348Z\",\"allocationState\":\"steady\",\"allocationStateTransitionTime\":\"2019-06-13T20:43:16.1588366Z\",\"vmSize\":\"standard_a1\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"maxTasksPerNode\":1,\"taskSchedulingPolicy\":{\r\n
+        \   {\r\n      \"id\":\"batch_app_f0260dd0\",\"url\":\"https://batchf0260dd0.westcentralus.batch.azure.com/pools/batch_app_f0260dd0\",\"eTag\":\"0x8D71ACB8D1E5AE0\",\"lastModified\":\"2019-08-07T00:09:44.4474592Z\",\"creationTime\":\"2019-08-07T00:09:44.4474592Z\",\"state\":\"active\",\"stateTransitionTime\":\"2019-08-07T00:09:44.4474592Z\",\"allocationState\":\"steady\",\"allocationStateTransitionTime\":\"2019-08-07T00:09:44.8174822Z\",\"vmSize\":\"standard_a1\",\"resizeTimeout\":\"PT15M\",\"currentDedicatedNodes\":0,\"targetDedicatedNodes\":0,\"currentLowPriorityNodes\":0,\"targetLowPriorityNodes\":0,\"enableAutoScale\":false,\"enableInterNodeCommunication\":false,\"maxTasksPerNode\":1,\"taskSchedulingPolicy\":{\r\n
         \       \"nodeFillType\":\"Spread\"\r\n      },\"virtualMachineConfiguration\":{\r\n
         \       \"imageReference\":{\r\n          \"publisher\":\"Canonical\",\"offer\":\"UbuntuServer\",\"sku\":\"16.04-LTS\",\"version\":\"latest\"\r\n
         \       },\"nodeAgentSKUId\":\"batch.node.ubuntu 16.04\",\"dataDisks\":[\r\n
         \         {\r\n            \"lun\":1,\"caching\":\"none\",\"diskSizeGB\":50,\"storageAccountType\":\"standard_lrs\"\r\n
         \         }\r\n        ]\r\n      },\"applicationLicenses\":[\r\n        \"maya\"\r\n
-        \     ]\r\n    }\r\n  ],\"odata.nextLink\":\"https://batchf0260dd0.westcentralus.batch.azure.com/pools?api-version=2019-06-01.9.0&maxresults=1&timeout=30&$skiptoken=WATV2:Tj9GFfHfYGo1RbBdNEdmAwQKMnN6wO/U5cPgnhmp3LqXO8tVsFrDPvK4DaKxaArjBoebVkIjxnoxeI9%5Egizgi9yOflXmSBS06FUMqsP4cNXLEg57VLEaQLYCwKRG6Bb70XZpB7zJWxZlT2swrFQbxqYSVFyo9MrqNgQVOlKYBObToBL%5EeKlCt745lzZS6%5EeaR/Y8dPlTQskxE6HSOq/jb57NfPXz9gLRydtvDlGitElxwu%5E39WEfa8LODsSVacZTwUknKWGEbDxYSq/Ew3FKPbr%5EZePWgb36gndyV08DBNE=:1$1\"\r\n}"
+        \     ]\r\n    }\r\n  ],\"odata.nextLink\":\"https://batchf0260dd0.westcentralus.batch.azure.com/pools?api-version=2019-08-01.10.0&maxresults=1&timeout=30&$skiptoken=WATV2:Jzo2fs6dvnfNqWSH6GdUpJLD98w0VEVe1ncZFU4afkQ/wYok0WZa2cfv%5EEpH3x5X%5Exh18OMjEWoRA0M9J3Pslbv9jy9ZLrxdA7yFYbpvOiEl1fgbqnU5yJ/xjrgKiZVzJjrzKE9bsFTbMI5k6Nss8M1QPjNrAkLjRTsn1aMSS2tCS3mi8dFpRHd5E4I2hKurqekrry4cA27wMy0A%5EQUe1uBk0PqMMvetmIp3SYmj5EE8JcYHrOuuhTXWpWxPeDsQnBUOu1W4lPgJM2hPF%5EddlCOD1Tq8h3bnEZ8TVHQH9y8=:1$1\"\r\n}"
     headers:
       content-type:
       - application/json;odata=minimalmetadata
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 13 Jun 2019 20:43:16 GMT
+      - Wed, 07 Aug 2019 00:09:44 GMT
       request-id:
-      - 97c584ec-3713-4747-ac0c-ed14fabd6518
+      - 234aa3d5-ba3f-4e94-9553-683f3e72e8cc
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:
@@ -750,16 +754,16 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.7 msrest_azure/0.4.34
-        azure-batch/7.0.0 Azure-SDK-For-Python
+      - python/3.6.6 (Windows-10-10.0.14393-SP0) msrest/0.6.9 msrest_azure/0.4.34
+        azure-batch/8.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
       ocp-date:
-      - Thu, 13 Jun 2019 20:43:16 GMT
+      - Wed, 07 Aug 2019 00:09:44 GMT
       return-client-request-id:
       - 'false'
     method: GET
-    uri: https://batchf0260dd0.westcentralus.batch.azure.com/pools?api-version=2019-06-01.9.0&$filter=startswith%28id%2C%27batch_app_%27%29&$select=id%2Cstate&$expand=stats&maxresults=1000&timeout=30
+    uri: https://batchf0260dd0.westcentralus.batch.azure.com/pools?api-version=2019-08-01.10.0&$filter=startswith%28id%2C%27batch_app_%27%29&$select=id%2Cstate&$expand=stats&maxresults=1000&timeout=30
   response:
     body:
       string: "{\r\n  \"odata.metadata\":\"https://batchf0260dd0.westcentralus.batch.azure.com/$metadata#pools\",\"value\":[\r\n
@@ -771,9 +775,9 @@ interactions:
       dataserviceversion:
       - '3.0'
       date:
-      - Thu, 13 Jun 2019 20:43:16 GMT
+      - Wed, 07 Aug 2019 00:09:44 GMT
       request-id:
-      - 76dbc8ed-4adb-4267-b449-379fed5f5f55
+      - 101b964b-181c-4503-bc3c-4a669b78e923
       server:
       - Microsoft-HTTPAPI/2.0
       strict-transport-security:

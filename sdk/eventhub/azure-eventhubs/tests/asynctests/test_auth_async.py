@@ -31,7 +31,7 @@ async def test_client_secret_credential_async(aad_credential, live_eventhub):
 
     async with receiver:
 
-        received = await receiver.receive(timeout=1)
+        received = await receiver.receive(timeout=3)
         assert len(received) == 0
 
         async with sender:
@@ -40,7 +40,7 @@ async def test_client_secret_credential_async(aad_credential, live_eventhub):
 
         await asyncio.sleep(1)
 
-        received = await receiver.receive(timeout=1)
+        received = await receiver.receive(timeout=3)
 
         assert len(received) == 1
         assert list(received[0].body)[0] == 'A single message'.encode('utf-8')

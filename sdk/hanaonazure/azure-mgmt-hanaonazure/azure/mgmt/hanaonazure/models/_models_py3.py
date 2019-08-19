@@ -489,11 +489,23 @@ class SapMonitor(Resource):
     :type hana_db_username: str
     :param hana_db_password: Database password of the HANA instance.
     :type hana_db_password: str
+    :param hana_db_password_key_vault_url: KeyVault URL link to the password
+     for the HANA database.
+    :type hana_db_password_key_vault_url: str
+    :param hana_db_credentials_msi_id: MSI ID passed by customer which has
+     access to customer's KeyVault and to be assigned to the Collector VM.
+    :type hana_db_credentials_msi_id: str
     :ivar provisioning_state: State of provisioning of the HanaInstance.
      Possible values include: 'Accepted', 'Creating', 'Updating', 'Failed',
      'Succeeded', 'Deleting', 'Migrating'
     :vartype provisioning_state: str or
      ~azure.mgmt.hanaonazure.models.HanaProvisioningStatesEnum
+    :ivar managed_resource_group_name: The name of the resource group the SAP
+     Monitor resources get deployed into.
+    :vartype managed_resource_group_name: str
+    :ivar log_analytics_workspace_arm_id: The ARM ID of the Log Analytics
+     Workspace that is used for monitoring
+    :vartype log_analytics_workspace_arm_id: str
     """
 
     _validation = {
@@ -502,6 +514,8 @@ class SapMonitor(Resource):
         'type': {'readonly': True},
         'tags': {'readonly': True},
         'provisioning_state': {'readonly': True},
+        'managed_resource_group_name': {'readonly': True},
+        'log_analytics_workspace_arm_id': {'readonly': True},
     }
 
     _attribute_map = {
@@ -516,10 +530,14 @@ class SapMonitor(Resource):
         'hana_db_sql_port': {'key': 'properties.hanaDbSqlPort', 'type': 'int'},
         'hana_db_username': {'key': 'properties.hanaDbUsername', 'type': 'str'},
         'hana_db_password': {'key': 'properties.hanaDbPassword', 'type': 'str'},
+        'hana_db_password_key_vault_url': {'key': 'properties.hanaDbPasswordKeyVaultUrl', 'type': 'str'},
+        'hana_db_credentials_msi_id': {'key': 'properties.hanaDbCredentialsMsiId', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'managed_resource_group_name': {'key': 'properties.managedResourceGroupName', 'type': 'str'},
+        'log_analytics_workspace_arm_id': {'key': 'properties.logAnalyticsWorkspaceArmId', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str=None, hana_subnet: str=None, hana_hostname: str=None, hana_db_name: str=None, hana_db_sql_port: int=None, hana_db_username: str=None, hana_db_password: str=None, **kwargs) -> None:
+    def __init__(self, *, location: str=None, hana_subnet: str=None, hana_hostname: str=None, hana_db_name: str=None, hana_db_sql_port: int=None, hana_db_username: str=None, hana_db_password: str=None, hana_db_password_key_vault_url: str=None, hana_db_credentials_msi_id: str=None, **kwargs) -> None:
         super(SapMonitor, self).__init__(location=location, **kwargs)
         self.hana_subnet = hana_subnet
         self.hana_hostname = hana_hostname
@@ -527,7 +545,11 @@ class SapMonitor(Resource):
         self.hana_db_sql_port = hana_db_sql_port
         self.hana_db_username = hana_db_username
         self.hana_db_password = hana_db_password
+        self.hana_db_password_key_vault_url = hana_db_password_key_vault_url
+        self.hana_db_credentials_msi_id = hana_db_credentials_msi_id
         self.provisioning_state = None
+        self.managed_resource_group_name = None
+        self.log_analytics_workspace_arm_id = None
 
 
 class StorageProfile(Model):

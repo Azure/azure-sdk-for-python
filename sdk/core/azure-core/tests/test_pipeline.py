@@ -101,7 +101,7 @@ class TestRequestsTransport(unittest.TestCase):
             UserAgentPolicy("myusergant"),
             RedirectPolicy()
         ]
-        with Pipeline(RequestsTransport(conf), policies=policies) as pipeline:
+        with Pipeline(RequestsTransport(), policies=policies) as pipeline:
             response = pipeline.run(request)
 
         assert pipeline._transport.session is None
@@ -109,14 +109,13 @@ class TestRequestsTransport(unittest.TestCase):
 
     def test_basic_requests_separate_session(self):
 
-        conf = Configuration()
         session = requests.Session()
         request = HttpRequest("GET", "https://bing.com")
         policies = [
             UserAgentPolicy("myusergant"),
             RedirectPolicy()
         ]
-        transport = RequestsTransport(conf, session=session, session_owner=False)
+        transport = RequestsTransport(session=session, session_owner=False)
         with Pipeline(transport, policies=policies) as pipeline:
             response = pipeline.run(request)
 

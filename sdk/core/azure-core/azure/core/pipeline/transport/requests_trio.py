@@ -53,18 +53,16 @@ class TrioStreamDownloadGenerator(AsyncIterator):
     """Generator for streaming response data.
 
     :param pipeline: The pipeline object
-    :param request: The request object
     :param response: The response object.
-    :param int block_size: Number of bytes to read into memory.
     :param generator iter_content_func: Iterator for response data.
     :param int content_length: size of body in bytes.
     """
-    def __init__(self, pipeline: Pipeline, request: HttpRequest, response: requests.Response, block_size: int) -> None:
+    def __init__(self, pipeline: Pipeline, response: AsyncHttpResponse) -> None:
         self.pipeline = pipeline
-        self.request = request
+        self.request = response.request
         self.response = response
-        self.block_size = block_size
-        self.iter_content_func = self.response.iter_content(self.block_size)
+        self.block_size = response.block_size
+        self.iter_content_func = self.response.internal_response.iter_content(self.block_size)
         self.content_length = int(response.headers.get('Content-Length', 0))
         self.downloaded = 0
 
@@ -85,7 +83,7 @@ class TrioStreamDownloadGenerator(AsyncIterator):
                 self.downloaded += self.block_size
                 return chunk
             except _ResponseStopIteration:
-                self.response.close()
+                self.response.internal_response.close()
                 raise StopAsyncIteration()
             except (requests.exceptions.ChunkedEncodingError,
                     requests.exceptions.ConnectionError):
@@ -111,7 +109,7 @@ class TrioStreamDownloadGenerator(AsyncIterator):
                 raise
             except Exception as err:
                 _LOGGER.warning("Unable to stream download: %s", err)
-                self.response.close()
+                self.response.internal_response.close()
                 raise
 
 class TrioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportResponse):  # type: ignore
@@ -120,8 +118,7 @@ class TrioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportResponse
     def stream_download(self, pipeline) -> AsyncIteratorType[bytes]:  # type: ignore
         """Generator for streaming response data.
         """
-        return TrioStreamDownloadGenerator(pipeline, self.request,
-                                           self.internal_response, self.block_size) # type: ignore
+        return TrioStreamDownloadGenerator(pipeline, self) # type: ignore
 
 
 class TrioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: ignore
@@ -153,13 +150,17 @@ class TrioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: ign
         :param kwargs: Any keyword arguments
         :return: The AsyncHttpResponse
         :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
+
+        **Keyword arguments:**
+
+        *session* - will override the driver session and use yours. Should NOT be done unless really required.
+        Anything else is sent straight to requests.
+        *proxies* - will define the proxy to use. Proxy is a dict (protocol, url)
         """
         self.open()
         trio_limiter = kwargs.get("trio_limiter", None)
         response = None
         error = None # type: Optional[Union[ServiceRequestError, ServiceResponseError]]
-        if self.config.proxy_policy and 'proxies' not in kwargs:
-            kwargs['proxies'] = self.config.proxy_policy.proxies
         try:
             response = await trio.run_sync_in_worker_thread(
                 functools.partial(
@@ -169,9 +170,9 @@ class TrioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: ign
                     headers=request.headers,
                     data=request.data,
                     files=request.files,
-                    verify=kwargs.pop('connection_verify', self.config.connection.verify),
-                    timeout=kwargs.pop('connection_timeout', self.config.connection.timeout),
-                    cert=kwargs.pop('connection_cert', self.config.connection.cert),
+                    verify=kwargs.pop('connection_verify', self.connection_config.verify),
+                    timeout=kwargs.pop('connection_timeout', self.connection_config.timeout),
+                    cert=kwargs.pop('connection_cert', self.connection_config.cert),
                     allow_redirects=False,
                     **kwargs),
                 limiter=trio_limiter)
@@ -191,4 +192,4 @@ class TrioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: ign
         if error:
             raise error
 
-        return TrioRequestsTransportResponse(request, response, self.config.connection.data_block_size)
+        return TrioRequestsTransportResponse(request, response, self.connection_config.data_block_size)

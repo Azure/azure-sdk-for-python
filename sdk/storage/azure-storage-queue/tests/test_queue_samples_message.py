@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from datetime import datetime, timedelta
-
+from azure.core.exceptions import ResourceExistsError
 try:
     import settings_real as settings
 except ImportError:
@@ -39,8 +39,11 @@ class TestMessageQueueSamples(QueueTestCase):
         # [END create_queue_client_from_connection_string]
 
         # Create the queue
-        queue_client.create_queue()
-        queue_client.enqueue_message('hello world')
+        try:
+            queue_client.create_queue()
+        except ResourceExistsError:
+            pass
+        queue_client.enqueue_message(u"hello world")
 
         try:
             # [START set_access_policy]
@@ -124,15 +127,17 @@ class TestMessageQueueSamples(QueueTestCase):
             # [END enqueue_messages]
 
             # [START receive_messages]
-            # receive one message from the front of the queue
-            one_msg = queue.receive_messages()
-
-            # Receive the last 5 messages
-            messages = queue.receive_messages(messages_per_page=5)
-
-            # Print the messages
+            # Receive messages one-by-one
+            messages = queue.receive_messages()
             for msg in messages:
                 print(msg.content)
+
+            # Receive messages by batch
+            messages = queue.receive_messages(messages_per_page=5)
+            for msg_batch in messages.by_page():
+                for msg in msg_batch:
+                    print(msg.content)
+                    queue.delete_message(msg)
             # [END receive_messages]
 
             # Only prints 4 messages because message 2 is not visible yet

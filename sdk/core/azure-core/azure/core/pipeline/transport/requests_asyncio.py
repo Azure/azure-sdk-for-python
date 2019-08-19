@@ -78,6 +78,9 @@ class AsyncioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: 
     async def __aexit__(self, *exc_details):  # pylint: disable=arguments-differ
         return super(AsyncioRequestsTransport, self).__exit__()
 
+    async def sleep(self, duration):
+        await asyncio.sleep(duration)
+
     async def send(self, request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:  # type: ignore
         """Send the request using this HTTP sender.
 
@@ -86,13 +89,17 @@ class AsyncioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: 
         :param kwargs: Any keyword arguments
         :return: The AsyncHttpResponse
         :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
+
+        **Keyword arguments:**
+
+        *session* - will override the driver session and use yours. Should NOT be done unless really required.
+        Anything else is sent straight to requests.
+        *proxies* - will define the proxy to use. Proxy is a dict (protocol, url)
         """
         self.open()
         loop = kwargs.get("loop", _get_running_loop())
         response = None
         error = None # type: Optional[Union[ServiceRequestError, ServiceResponseError]]
-        if self.config.proxy_policy and 'proxies' not in kwargs:
-            kwargs['proxies'] = self.config.proxy_policy.proxies
         try:
             response = await loop.run_in_executor(
                 None,
@@ -103,9 +110,9 @@ class AsyncioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: 
                     headers=request.headers,
                     data=request.data,
                     files=request.files,
-                    verify=kwargs.pop('connection_verify', self.config.connection.verify),
-                    timeout=kwargs.pop('connection_timeout', self.config.connection.timeout),
-                    cert=kwargs.pop('connection_cert', self.config.connection.cert),
+                    verify=kwargs.pop('connection_verify', self.connection_config.verify),
+                    timeout=kwargs.pop('connection_timeout', self.connection_config.timeout),
+                    cert=kwargs.pop('connection_cert', self.connection_config.cert),
                     allow_redirects=False,
                     **kwargs))
 
@@ -124,25 +131,23 @@ class AsyncioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: 
         if error:
             raise error
 
-        return AsyncioRequestsTransportResponse(request, response, self.config.connection.data_block_size)
+        return AsyncioRequestsTransportResponse(request, response, self.connection_config.data_block_size)
 
 
 class AsyncioStreamDownloadGenerator(AsyncIterator):
     """Streams the response body data.
 
     :param pipeline: The pipeline object
-    :param request: The request object
     :param response: The response object.
-    :param int block_size: block size of data sent over connection.
     :param generator iter_content_func: Iterator for response data.
     :param int content_length: size of body in bytes.
     """
-    def __init__(self, pipeline: Pipeline, request: HttpRequest, response: requests.Response, block_size: int) -> None:
+    def __init__(self, pipeline: Pipeline, response: AsyncHttpResponse) -> None:
         self.pipeline = pipeline
-        self.request = request
+        self.request = response.request
         self.response = response
-        self.block_size = block_size
-        self.iter_content_func = self.response.iter_content(self.block_size)
+        self.block_size = response.block_size
+        self.iter_content_func = self.response.internal_response.iter_content(self.block_size)
         self.content_length = int(response.headers.get('Content-Length', 0))
         self.downloaded = 0
 
@@ -166,7 +171,7 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
                 self.downloaded += self.block_size
                 return chunk
             except _ResponseStopIteration:
-                self.response.close()
+                self.response.internal_response.close()
                 raise StopAsyncIteration()
             except (requests.exceptions.ChunkedEncodingError,
                     requests.exceptions.ConnectionError):
@@ -193,7 +198,7 @@ class AsyncioStreamDownloadGenerator(AsyncIterator):
                 raise
             except Exception as err:
                 _LOGGER.warning("Unable to stream download: %s", err)
-                self.response.close()
+                self.response.internal_response.close()
                 raise
 
 
@@ -202,5 +207,4 @@ class AsyncioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportRespo
     """
     def stream_download(self, pipeline) -> AsyncIteratorType[bytes]: # type: ignore
         """Generator for streaming request body data."""
-        return AsyncioStreamDownloadGenerator(pipeline, self.request,
-                                              self.internal_response, self.block_size) # type: ignore
+        return AsyncioStreamDownloadGenerator(pipeline, self) # type: ignore

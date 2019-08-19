@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # The MIT License (MIT)
 # Copyright (c) 2014 Microsoft Corporation
 
@@ -18,6 +19,28 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+=======
+#The MIT License (MIT)
+#Copyright (c) 2014 Microsoft Corporation
+
+#Permission is hereby granted, free of charge, to any person obtaining a copy
+#of this software and associated documentation files (the "Software"), to deal
+#in the Software without restriction, including without limitation the rights
+#to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+#copies of the Software, and to permit persons to whom the Software is
+#furnished to do so, subject to the following conditions:
+
+#The above copyright notice and this permission notice shall be included in all
+#copies or substantial portions of the Software.
+
+#THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+#IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+#AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+#OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+#SOFTWARE.
+>>>>>>> master
 
 """Internal methods for executing functions in the Azure Cosmos database service.
 """
@@ -31,7 +54,10 @@ from . import _default_retry_policy
 from . import _session_retry_policy
 from .http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
 def Execute(client, global_endpoint_manager, function, *args, **kwargs):
     """Exectutes the function with passed parameters applying all retry policies
 
@@ -46,6 +72,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
 
     """
     # instantiate all retry policies here to be applied for each request execution
+<<<<<<< HEAD
     endpointDiscovery_retry_policy = _endpoint_discovery_retry_policy.EndpointDiscoveryRetryPolicy(
         client.connection_policy, global_endpoint_manager, *args
     )
@@ -60,6 +87,16 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
     sessionRetry_policy = _session_retry_policy._SessionRetryPolicy(
         client.connection_policy.EnableEndpointDiscovery, global_endpoint_manager, *args
     )
+=======
+    endpointDiscovery_retry_policy = _endpoint_discovery_retry_policy.EndpointDiscoveryRetryPolicy(client.connection_policy, global_endpoint_manager, *args)
+
+    resourceThrottle_retry_policy = _resource_throttle_retry_policy.ResourceThrottleRetryPolicy(client.connection_policy.RetryOptions.MaxRetryAttemptCount, 
+                                                                                                client.connection_policy.RetryOptions.FixedRetryIntervalInMilliseconds, 
+                                                                                                client.connection_policy.RetryOptions.MaxWaitTimeInSeconds)
+    defaultRetry_policy = _default_retry_policy.DefaultRetryPolicy(*args)
+
+    sessionRetry_policy = _session_retry_policy._SessionRetryPolicy(client.connection_policy.EnableEndpointDiscovery, global_endpoint_manager, *args)
+>>>>>>> master
     while True:
         try:
             if args:
@@ -68,6 +105,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
                 result = ExecuteFunction(function, *args, **kwargs)
             if not client.last_response_headers:
                 client.last_response_headers = {}
+<<<<<<< HEAD
 
             # setting the throttle related response headers before returning the result
             client.last_response_headers[
@@ -76,10 +114,17 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
             client.last_response_headers[
                 HttpHeaders.ThrottleRetryWaitTimeInMs
             ] = resourceThrottle_retry_policy.cummulative_wait_time_in_milliseconds
+=======
+            
+            # setting the throttle related response headers before returning the result
+            client.last_response_headers[HttpHeaders.ThrottleRetryCount] = resourceThrottle_retry_policy.current_retry_attempt_count
+            client.last_response_headers[HttpHeaders.ThrottleRetryWaitTimeInMs] = resourceThrottle_retry_policy.cummulative_wait_time_in_milliseconds
+>>>>>>> master
 
             return result
         except errors.HTTPFailure as e:
             retry_policy = None
+<<<<<<< HEAD
             if e.status_code == StatusCodes.FORBIDDEN and e.sub_status == SubStatusCodes.WRITE_FORBIDDEN:
                 retry_policy = endpointDiscovery_retry_policy
             elif e.status_code == StatusCodes.TOO_MANY_REQUESTS:
@@ -89,10 +134,19 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
                 and e.sub_status
                 and e.sub_status == SubStatusCodes.READ_SESSION_NOTAVAILABLE
             ):
+=======
+            if (e.status_code == StatusCodes.FORBIDDEN
+                    and e.sub_status == SubStatusCodes.WRITE_FORBIDDEN):
+                retry_policy = endpointDiscovery_retry_policy
+            elif e.status_code == StatusCodes.TOO_MANY_REQUESTS:
+                retry_policy = resourceThrottle_retry_policy
+            elif e.status_code == StatusCodes.NOT_FOUND and e.sub_status and e.sub_status == SubStatusCodes.READ_SESSION_NOTAVAILABLE:
+>>>>>>> master
                 retry_policy = sessionRetry_policy
             else:
                 retry_policy = defaultRetry_policy
 
+<<<<<<< HEAD
             # If none of the retry policies applies or there is no retry needed, set the throttle related response hedaers and
             # re-throw the exception back
             # arg[0] is the request. It needs to be modified for write forbidden exception
@@ -112,8 +166,28 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
             # Wait for retry_after_in_milliseconds time before the next retry
             time.sleep(retry_policy.retry_after_in_milliseconds / 1000.0)
 
+=======
+            # If none of the retry policies applies or there is no retry needed, set the throttle related response hedaers and 
+            # re-throw the exception back
+            # arg[0] is the request. It needs to be modified for write forbidden exception
+            if not (retry_policy.ShouldRetry(e)):
+                if not client.last_response_headers:
+                    client.last_response_headers = {}
+                client.last_response_headers[HttpHeaders.ThrottleRetryCount] = resourceThrottle_retry_policy.current_retry_attempt_count
+                client.last_response_headers[HttpHeaders.ThrottleRetryWaitTimeInMs] = resourceThrottle_retry_policy.cummulative_wait_time_in_milliseconds
+                if len(args) > 0 and args[0].should_clear_session_token_on_session_read_failure:
+                    client.session.clear_session_token(client.last_response_headers)
+                raise
+            else:
+                # Wait for retry_after_in_milliseconds time before the next retry
+                time.sleep(retry_policy.retry_after_in_milliseconds / 1000.0)
+>>>>>>> master
 
 def ExecuteFunction(function, *args, **kwargs):
     """ Stub method so that it can be used for mocking purposes as well.
     """
+<<<<<<< HEAD
     return function(*args, **kwargs)
+=======
+    return function(*args, **kwargs)
+>>>>>>> master

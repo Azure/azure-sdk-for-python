@@ -24,7 +24,6 @@
 
 from . import _retry_options
 
-
 class DatabaseAccount(object):
     """Database account. A DatabaseAccount is the container for databases.
 
