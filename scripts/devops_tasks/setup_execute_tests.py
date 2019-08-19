@@ -11,7 +11,6 @@
 
 import argparse
 import sys
-from pathlib import Path
 import os
 import errno
 import shutil
@@ -27,11 +26,6 @@ logging.getLogger().setLevel(logging.INFO)
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 coverage_dir = os.path.join(root_dir, "_coverage/")
 dev_setup_script_location = os.path.join(root_dir, "scripts/dev_setup.py")
-
-def log_file(file_location, is_error=False):
-    with open(file_location, 'r') as file:
-        for line in file:
-            print(line.strip())
 
 # TODO, dedup this function with collect_tox
 def collect_pytest_coverage_files(targeted_packages):
@@ -213,7 +207,7 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        "--tparallel", help=("Flag  that enables parallel tox invocation."), action="store_false"
+        "--tparallel", default=False, help=("Flag  that enables parallel tox invocation."), action="store_true"
     )
 
     parser.add_argument(

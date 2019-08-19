@@ -11,7 +11,7 @@ from threading import Thread
 import multiprocessing
 
 from subprocess import Popen, PIPE, STDOUT
-from common_tasks import process_glob_string, run_check_call, cleanup_folder, clean_coverage, MANAGEMENT_PACKAGE_IDENTIFIERS
+from common_tasks import process_glob_string, run_check_call, cleanup_folder, clean_coverage, log_file, MANAGEMENT_PACKAGE_IDENTIFIERS
 
 import logging
 logging.getLogger().setLevel(logging.INFO)
@@ -20,6 +20,7 @@ import pdb
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 coverage_dir = os.path.join(root_dir, "_coverage/")
+pool_size = multiprocessing.cpu_count() * 2
 DEFAULT_TOX_INI_LOCATION = os.path.join(root_dir, "eng/tox/tox.ini")
 
 class ToxWorkItem:
@@ -42,7 +43,7 @@ class Worker(Thread):
             try:
                 func(*args, **kargs)
             except Exception as e:
-                print(e)
+                logging.error(e)
             finally:
                 self.tasks.task_done()
 
@@ -97,29 +98,37 @@ def collect_tox_coverage_files(targeted_packages):
 
         shutil.move(source, dest)
 
-def execute_tox_parallel(tox_command_tuples):
-    procs_list = []
+def individual_workload(tox_command_tuple):
+    stdout = os.path.join(tox_command_tuple[1], 'stdout.txt')
+    stderr = os.path.join(tox_command_tuple[1], 'stderr.txt')
+    with open(stdout, 'w') as f_stdout, open(stderr, 'w') as f_stderr:
+        proc = Popen(tox_command_tuple[0], stdout=f_stdout, stderr=f_stderr, cwd=tox_command_tuple[1], env=os.environ.copy())
 
-    for index, cmd_tuple in enumerate(tox_command_tuples):
-        package_dir = cmd_tuple[1]
-
-        logging.info(
-            "Starting tox for {}. {} of {}.".format(
-                os.path.basename(package_dir), index, len(tox_command_tuples)
-            )
-        )
-
-        with open(os.path.join(package_dir, 'stdout.txt'), 'w') as f_stdout, open(os.path.join(package_dir, 'stderr.txt'), 'w') as f_stderr:
-            proc = Popen(cmd_tuple[0], stdout=f_stdout, stderr=f_stderr, cwd=package_dir, env=os.environ.copy())
-            procs_list.append(proc)
-
-    failed_test_run = False
-
-    for index, proc in enumerate(procs_list):
+        logging.info("Opened task for {}".format(os.path.basename(tox_command_tuple[1])))
         proc.wait()
+
+        log_file(stdout)
 
         if proc.returncode != 0:
             logging.error("Package returned with code {}".format(proc.returncode))
+            log_file(stderr)
+
+            exit(1)
+
+    return proc
+
+def execute_tox_parallel(tox_command_tuples):
+    pool = ThreadPool(pool_size)
+
+    for index, cmd_tuple in enumerate(tox_command_tuples):
+        logging.info(
+            "Starting tox for {}. {} of {}.".format(
+                os.path.basename(cmd_tuple[1]), index, len(tox_command_tuples)
+            )
+        )
+        pool.add_task(individual_workload, cmd_tuple)
+
+    pool.wait_completion()
 
 def prep_and_run_tox(targeted_packages, tox_env, options_array=[], is_parallel=False):
     tox_command_tuples = []
@@ -176,34 +185,3 @@ def prep_and_run_tox(targeted_packages, tox_env, options_array=[], is_parallel=F
     # TODO: get a bit smarter here
     if not tox_env:
         collect_tox_coverage_files(targeted_packages)
-
-
-# def execute_parallel_workload(workload_callback, targeted_packages, tox_env, options_array):
-#     work_items = []
-#     pool_size = multiprocessing.cpu_count() * 2
-#     for pkg in targeted_packages:
-#         work_items.append(ToxWorkItem(pkg, tox_env, options_array))
-
-#     pool = ThreadPool(1)
-
-#     for i, d in enumerate(work_items):
-#         pool.add_task(workload_callback, d)
-#     pool.wait_completion()
-
-
-# Reference implementation
-# if __name__ == '__main__':
-#     from time import sleep
-
-#     delays = [randrange(1, 10) for i in range(100)]
-
-#     def wait_delay(d):
-#         print('sleeping for (%d)sec' % d)
-#         sleep(d)
-
-#     pool = ThreadPool(20)
-
-#     for i, d in enumerate(delays):
-#         pool.add_task(wait_delay, d)
-
-#     pool.wait_completion()

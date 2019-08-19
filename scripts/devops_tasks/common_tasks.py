@@ -37,6 +37,11 @@ MANAGEMENT_PACKAGE_IDENTIFIERS = [
     "azure-nspkg",
 ]
 
+def log_file(file_location, is_error=False):
+    with open(file_location, 'r') as file:
+        for line in file:
+            print(line.strip())
+
 def cleanup_folder(target_folder):
     for file in os.listdir(target_folder):
         file_path = os.path.join(target_folder, file)
