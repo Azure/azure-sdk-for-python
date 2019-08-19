@@ -30,7 +30,7 @@ from .offer import Offer
 from .scripts import Scripts
 from ._query_iterable import QueryIterable
 from .partition_key import NonePartitionKeyValue
-from typing import Any, Callable, Dict, List, Optional, Union, cast
+from typing import Any, Callable, Dict, List, Optional, Union
 
 __all__ = ("Container",)
 

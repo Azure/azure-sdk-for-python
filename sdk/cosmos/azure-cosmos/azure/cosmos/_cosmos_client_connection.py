@@ -27,7 +27,6 @@
 import requests
 
 import six
-from typing import cast
 from . import _base as base
 from . import documents
 from . import _constants as constants

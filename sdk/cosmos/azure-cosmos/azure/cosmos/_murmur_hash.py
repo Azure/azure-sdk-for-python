@@ -22,7 +22,7 @@
 """Internal class for Murmur hash implementation in the Azure Cosmos database service.
 """
 
-from struct import pack, unpack
+from struct import pack
 from six.moves import xrange
 
 """
