@@ -25,6 +25,7 @@ try:
     from ._models_py3 import OperationResponse
     from ._models_py3 import Patch
     from ._models_py3 import PatchPropertiesRenewProperties
+    from ._models_py3 import Properties
     from ._models_py3 import PurchaseRequest
     from ._models_py3 import PurchaseRequestPropertiesReservedResourceProperties
     from ._models_py3 import RenewPropertiesResponse
@@ -35,10 +36,12 @@ try:
     from ._models_py3 import ReservationProperties
     from ._models_py3 import ReservationResponse
     from ._models_py3 import ReservationSplitProperties
+    from ._models_py3 import ScopeProperties
     from ._models_py3 import SkuName
     from ._models_py3 import SkuProperty
     from ._models_py3 import SkuRestriction
     from ._models_py3 import SplitRequest
+    from ._models_py3 import SubscriptionScopeProperties
 except (SyntaxError, ImportError):
     from ._models import AppliedReservationList
     from ._models import AppliedReservations
@@ -55,6 +58,7 @@ except (SyntaxError, ImportError):
     from ._models import OperationResponse
     from ._models import Patch
     from ._models import PatchPropertiesRenewProperties
+    from ._models import Properties
     from ._models import PurchaseRequest
     from ._models import PurchaseRequestPropertiesReservedResourceProperties
     from ._models import RenewPropertiesResponse
@@ -65,10 +69,12 @@ except (SyntaxError, ImportError):
     from ._models import ReservationProperties
     from ._models import ReservationResponse
     from ._models import ReservationSplitProperties
+    from ._models import ScopeProperties
     from ._models import SkuName
     from ._models import SkuProperty
     from ._models import SkuRestriction
     from ._models import SplitRequest
+    from ._models import SubscriptionScopeProperties
 from ._paged_models import OperationResponsePaged
 from ._paged_models import ReservationOrderResponsePaged
 from ._paged_models import ReservationResponsePaged
@@ -97,6 +103,7 @@ __all__ = [
     'OperationResponse',
     'Patch',
     'PatchPropertiesRenewProperties',
+    'Properties',
     'PurchaseRequest',
     'PurchaseRequestPropertiesReservedResourceProperties',
     'RenewPropertiesResponse',
@@ -107,12 +114,14 @@ __all__ = [
     'ReservationProperties',
     'ReservationResponse',
     'ReservationSplitProperties',
+    'ScopeProperties',
     'SkuName',
     'SkuProperty',
     'SkuRestriction',
     'SplitRequest',
-    'ReservationOrderResponsePaged',
+    'SubscriptionScopeProperties',
     'ReservationResponsePaged',
+    'ReservationOrderResponsePaged',
     'OperationResponsePaged',
     'ReservationStatusCode',
     'ErrorResponseCode',
