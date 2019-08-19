@@ -200,8 +200,8 @@ class _MultiCollectionQueryExecutionContext(_QueryExecutionContextBase):
 
         if partition_resolver is None:
             raise ValueError(client.PartitionResolverErrorMessage)
-        else:
-            self._collection_links = partition_resolver.ResolveForRead(partition_key)
+        
+        self._collection_links = partition_resolver.ResolveForRead(partition_key)
 
         self._collection_links_length = len(self._collection_links)
 

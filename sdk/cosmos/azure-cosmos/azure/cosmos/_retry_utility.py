@@ -108,9 +108,9 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
                 if len(args) > 0 and args[0].should_clear_session_token_on_session_read_failure:
                     client.session.clear_session_token(client.last_response_headers)
                 raise
-            else:
-                # Wait for retry_after_in_milliseconds time before the next retry
-                time.sleep(retry_policy.retry_after_in_milliseconds / 1000.0)
+            
+            # Wait for retry_after_in_milliseconds time before the next retry
+            time.sleep(retry_policy.retry_after_in_milliseconds / 1000.0)
 
 
 def ExecuteFunction(function, *args, **kwargs):
