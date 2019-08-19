@@ -23,11 +23,11 @@
 """
 
 import six
+from six.moves import xrange
 import numbers
 from collections import deque
 from azure.cosmos import _base
 from azure.cosmos._execution_context.base_execution_context import _DefaultQueryExecutionContext
-from six.moves import xrange
 
 
 class _DocumentProducer(object):
