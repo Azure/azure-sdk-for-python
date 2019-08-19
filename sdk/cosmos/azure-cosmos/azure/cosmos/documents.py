@@ -410,23 +410,24 @@ class _OperationType(object):
 
     @staticmethod
     def IsWriteOperation(operationType):
-        return (
-            operationType == _OperationType.Create
-            or operationType == _OperationType.Delete
-            or operationType == _OperationType.Recreate
-            or operationType == _OperationType.ExecuteJavaScript
-            or operationType == _OperationType.Replace
-            or operationType == _OperationType.Upsert
-            or operationType == _OperationType.Update
+        return operationType in (
+            _OperationType.Create, 
+            _OperationType.Delete, 
+            _OperationType.Recreate, 
+            _OperationType.ExecuteJavaScript, 
+            _OperationType.Replace, 
+            _OperationType.Upsert, 
+            _OperationType.Update
         )
+
 
     @staticmethod
     def IsReadOnlyOperation(operationType):
-        return (
-            operationType == _OperationType.Read
-            or operationType == _OperationType.ReadFeed
-            or operationType == _OperationType.Head
-            or operationType == _OperationType.HeadFeed
-            or operationType == _OperationType.Query
-            or operationType == _OperationType.SqlQuery
+        return operationType in (
+            _OperationType.Read,
+            _OperationType.ReadFeed,
+            _OperationType.Head,
+            _OperationType.HeadFeed,
+            _OperationType.Query,
+            _OperationType.SqlQuery
         )

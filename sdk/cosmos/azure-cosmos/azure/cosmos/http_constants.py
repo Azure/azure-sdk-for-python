@@ -408,12 +408,12 @@ class ResourceType:
 
     @staticmethod
     def IsCollectionChild(resourceType):
-        return (
-            resourceType == ResourceType.Document
-            or resourceType == ResourceType.Attachment
-            or resourceType == ResourceType.Conflict
-            or resourceType == ResourceType.Schema
-            or resourceType == ResourceType.UserDefinedFunction
-            or resourceType == ResourceType.Trigger
-            or resourceType == ResourceType.StoredProcedure
+        return resourceType in (
+            ResourceType.Document,
+            ResourceType.Attachment,
+            ResourceType.Conflict,
+            ResourceType.Schema,
+            ResourceType.UserDefinedFunction,
+            ResourceType.Trigger,
+            ResourceType.StoredProcedure
         )
