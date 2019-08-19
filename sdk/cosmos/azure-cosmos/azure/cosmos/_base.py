@@ -38,7 +38,6 @@ from . import _runtime_constants
 
 import six
 from six.moves.urllib.parse import quote as urllib_quote
-from six.moves import xrange
 
 
 def GetHeaders(
@@ -527,8 +526,8 @@ def IndexOfNth(s, value, n):
 
     """
     remaining = n
-    for i in xrange(0, len(s)):
-        if s[i] == value:
+    for i, elt in enumerate(s):
+        if elt == value:
             remaining -= 1
             if remaining == 0:
                 return i
