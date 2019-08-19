@@ -8,21 +8,29 @@ from azure.core.pipeline.policies import UserAgentPolicy
 from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline.transport import RequestsTransport
-from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError, ResourceModifiedError
+from azure.core.exceptions import (
+    ResourceExistsError,
+    ResourceNotFoundError,
+    ResourceModifiedError,
+)
 from requests.structures import CaseInsensitiveDict
 from ._generated import ConfigurationClient
 from ._generated._configuration import ConfigurationClientConfiguration
 from ._generated.models import ConfigurationSetting
-from .azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy, AppConfigConnectionStringCredential
+from .azure_appconfiguration_requests import (
+    AppConfigRequestsCredentialsPolicy,
+    AppConfigConnectionStringCredential,
+)
 from .utils import (
     get_endpoint_from_connection_string,
     escape_and_tolist,
     prep_update_configuration_setting,
-    quote_etag
+    quote_etag,
 )
 from ._user_agent import USER_AGENT
 
-class AzureAppConfigurationClient():
+
+class AzureAppConfigurationClient:
     """Represents an client that calls restful API of Azure App Configuration service.
 
         :param connection_string: Connection String (one of the access keys of the Azure App Configuration resource)
@@ -40,23 +48,26 @@ class AzureAppConfigurationClient():
 
     @classmethod
     def from_connection_string(
-            cls, connection_string,  # type: str
-            **kwargs
+        cls,
+        connection_string,  # type: str
+        **kwargs
     ):
         base_url = "https://" + get_endpoint_from_connection_string(connection_string)
-        return cls(credentials=AppConfigConnectionStringCredential(connection_string), base_url=base_url, **kwargs)
+        return cls(
+            credentials=AppConfigConnectionStringCredential(connection_string),
+            base_url=base_url,
+            **kwargs
+        )
 
     def __init__(self, credentials, base_url, **kwargs):
 
-        self.config = ConfigurationClientConfiguration(
-            credentials, **kwargs
+        self.config = ConfigurationClientConfiguration(credentials, **kwargs)
+        self.config.user_agent_policy = UserAgentPolicy(
+            base_user_agent=USER_AGENT, **kwargs
         )
-        self.config.user_agent_policy = UserAgentPolicy(base_user_agent=USER_AGENT, **kwargs)
 
         self._impl = ConfigurationClient(
-            credentials,
-            base_url,
-            pipeline=self._create_appconfig_pipeline(),
+            credentials, base_url, pipeline=self._create_appconfig_pipeline()
         )
 
     def _create_appconfig_pipeline(self):
@@ -70,12 +81,13 @@ class AzureAppConfigurationClient():
         ]
 
         return Pipeline(
-            RequestsTransport(configuration=self.config), policies  # Send HTTP request using requests
+            RequestsTransport(configuration=self.config),
+            policies,  # Send HTTP request using requests
         )
 
     @distributed_trace
     def list_configuration_settings(
-            self, labels=None, keys=None, **kwargs
+        self, labels=None, keys=None, **kwargs
     ):  # type: (list, list, dict) -> azure.core.paging.ItemPaged[ConfigurationSetting]
 
         """List the configuration settings stored in the configuration service, optionally filtered by
@@ -116,15 +128,11 @@ class AzureAppConfigurationClient():
         """
         labels = escape_and_tolist(labels)
         keys = escape_and_tolist(keys)
-        return self._impl.list_configuration_settings(
-            label=labels,
-            key=keys,
-            **kwargs
-        )
+        return self._impl.list_configuration_settings(label=labels, key=keys, **kwargs)
 
     @distributed_trace
     def get_configuration_setting(
-            self, key, label=None, **kwargs
+        self, key, label=None, **kwargs
     ):  # type: (str, str, dict) -> ConfigurationSetting
 
         """Get the matched ConfigurationSetting from Azure App Configuration service
@@ -195,12 +203,7 @@ class AzureAppConfigurationClient():
 
     @distributed_trace
     def update_configuration_setting(
-            self,
-            key,
-            value=None,
-            label=None,
-            etag=None,
-            **kwargs
+        self, key, value=None, label=None, etag=None, **kwargs
     ):  # type: (str, str, str, str, dict) -> ConfigurationSetting
         """Update specified attributes of the ConfigurationSetting
 
@@ -227,9 +230,7 @@ class AzureAppConfigurationClient():
                 tags={"my updated tag": "my updated tag value"}
             )
         """
-        custom_headers = prep_update_configuration_setting(
-            key, etag, **kwargs
-        )
+        custom_headers = prep_update_configuration_setting(key, etag, **kwargs)
 
         current_configuration_setting = self.get_configuration_setting(key, label)
         if value is not None:
@@ -250,7 +251,7 @@ class AzureAppConfigurationClient():
 
     @distributed_trace
     def set_configuration_setting(
-            self, configuration_setting, **kwargs
+        self, configuration_setting, **kwargs
     ):  # type: (ConfigurationSetting, dict) -> ConfigurationSetting
 
         """Add or update a ConfigurationSetting.
@@ -282,9 +283,7 @@ class AzureAppConfigurationClient():
         custom_headers = CaseInsensitiveDict(kwargs.get("headers"))
         etag = configuration_setting.etag
         if etag:
-            custom_headers["if-match"] = quote_etag(
-                etag
-            )
+            custom_headers["if-match"] = quote_etag(etag)
         return self._impl.create_or_update_configuration_setting(
             configuration_setting=configuration_setting,
             key=configuration_setting.key,
@@ -295,7 +294,7 @@ class AzureAppConfigurationClient():
 
     @distributed_trace
     def delete_configuration_setting(
-            self, key, label=None, etag=None, **kwargs
+        self, key, label=None, etag=None, **kwargs
     ):  # type: (str, str, str, dict) -> ConfigurationSetting
 
         """Delete a ConfigurationSetting if it exists
@@ -322,9 +321,7 @@ class AzureAppConfigurationClient():
         """
         custom_headers = CaseInsensitiveDict(kwargs.get("headers"))
         if etag:
-            custom_headers["if-match"] = quote_etag(
-                etag
-            )
+            custom_headers["if-match"] = quote_etag(etag)
         return self._impl.delete_configuration_setting(
             key=key,
             label=label,
@@ -337,7 +334,7 @@ class AzureAppConfigurationClient():
 
     @distributed_trace
     def list_revisions(
-            self, labels=None, keys=None, **kwargs
+        self, labels=None, keys=None, **kwargs
     ):  # type: (list, list, dict) -> azure.core.paging.ItemPaged[ConfigurationSetting]
 
         """
@@ -378,8 +375,4 @@ class AzureAppConfigurationClient():
         """
         labels = escape_and_tolist(labels)
         keys = escape_and_tolist(keys)
-        return self._impl.list_revisions(
-            label=labels,
-            key=keys,
-            **kwargs
-        )
+        return self._impl.list_revisions(label=labels, key=keys, **kwargs)

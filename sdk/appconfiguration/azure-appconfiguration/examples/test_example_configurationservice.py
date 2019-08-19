@@ -11,16 +11,17 @@ from devtools_testutils import AzureMgmtTestCase
 
 
 class AppConfigurationClientExamples(AzureMgmtTestCase):
-
     def _add_for_test(self, key, label):
-        exist = bool(list(self.client.list_configuration_settings(keys=[key], labels=[label])))
+        exist = bool(
+            list(self.client.list_configuration_settings(keys=[key], labels=[label]))
+        )
         if not exist:
             sc = ConfigurationSetting(
                 key=key,
                 label=label,
                 value="my value",
                 content_type="my content type",
-                tags={"my tag": "my tag value"}
+                tags={"my tag": "my tag value"},
             )
             self.client.add_configuration_setting(sc)
 
@@ -56,7 +57,7 @@ class AppConfigurationClientExamples(AzureMgmtTestCase):
             label="MyLabel",
             value="my value",
             content_type="my content type",
-            tags={"my tag": "my tag value"}
+            tags={"my tag": "my tag value"},
         )
         added_config_setting = client.add_configuration_setting(config_setting)
         # [END add_configuration_setting]
@@ -127,6 +128,3 @@ class AppConfigurationClientExamples(AzureMgmtTestCase):
             key="MyKey", label="MyLabel"
         )
         # [END delete_configuration_setting]
-
-
-
