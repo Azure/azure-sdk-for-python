@@ -4,7 +4,7 @@
 # ------------------------------------
 
 """
-Pylint custom checkers for SDK guidelines: C4717 - C4737
+Pylint custom checkers for SDK guidelines: C4717 - C4738
 """
 
 import logging
@@ -1482,7 +1482,7 @@ def register(linter):
     linter.register_checker(ClientConstructorTakesCorrectParameters(linter))
     linter.register_checker(ClientMethodsUseKwargsWithMultipleParameters(linter))
     linter.register_checker(ClientMethodsHaveTypeAnnotations(linter))
-    linter.register_checker(ClientUsesCorrectNamingConventions(linter))
+    # linter.register_checker(ClientUsesCorrectNamingConventions(linter))
     linter.register_checker(ClientMethodsHaveKwargsParameter(linter))
     linter.register_checker(ClientHasKwargsInPoliciesForCreateConfigurationMethod(linter))
     linter.register_checker(AsyncClientCorrectNaming(linter))
@@ -1496,5 +1496,4 @@ def register(linter):
     linter.register_checker(ClientHasFromConnectionStringMethod(linter))
     linter.register_checker(PackageNameDoesNotUseUnderscoreOrPeriod(linter))
     linter.register_checker(ServiceClientUsesNameWithClientSuffix(linter))
-    # linter.register_checker(LibraryProvidesLogging(linter))
-    # linter.register_checker(ClientExceptionsDeriveFromCore(linter))
+

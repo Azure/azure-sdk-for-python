@@ -3,7 +3,7 @@ ignore-patterns=test_*
 reports=no
 
 # PYLINT DIRECTORY BLACKLIST
-ignore=_generated,samples,test,tests
+ignore=_generated,samples,test,tests,doc
 
 init-hook='import sys; sys.path.insert(0, os.path.abspath(os.getcwd().split("azure-sdk-for-python")[0] + "azure-sdk-for-python/scripts/pylint_custom_plugin"))'
 load-plugins=pylint_guidelines_checker
