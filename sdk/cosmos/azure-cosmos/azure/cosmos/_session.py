@@ -22,7 +22,8 @@
 """Session Consistency Tracking in the Azure Cosmos database service.
 """
 
-import sys, traceback
+import sys
+import traceback
 import threading
 
 from . import _base
