@@ -76,7 +76,6 @@ class Container:
     @property
     def scripts(self):
         if self._scripts is None:
-            properties = self._get_properties()
             self._scripts = Scripts(self.client_connection, self.container_link, self.is_system_key)
         return self._scripts
 
