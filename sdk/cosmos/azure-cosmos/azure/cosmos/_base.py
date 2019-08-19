@@ -193,7 +193,7 @@ def GetHeaders(
         if_none_match_value = None
         if options.get("continuation"):
             if_none_match_value = options["continuation"]
-        elif options.get("isStartFromBeginning") and options["isStartFromBeginning"] == False:
+        elif options.get("isStartFromBeginning") and not options["isStartFromBeginning"]:
             if_none_match_value = "*"
         if if_none_match_value:
             headers[http_constants.HttpHeaders.IfNoneMatch] = if_none_match_value
