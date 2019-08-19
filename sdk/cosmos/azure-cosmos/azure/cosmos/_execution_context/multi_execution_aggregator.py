@@ -1,23 +1,23 @@
-#The MIT License (MIT)
-#Copyright (c) 2014 Microsoft Corporation
+# The MIT License (MIT)
+# Copyright (c) 2014 Microsoft Corporation
 
-#Permission is hereby granted, free of charge, to any person obtaining a copy
-#of this software and associated documentation files (the "Software"), to deal
-#in the Software without restriction, including without limitation the rights
-#to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-#copies of the Software, and to permit persons to whom the Software is
-#furnished to do so, subject to the following conditions:
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
 
-#The above copyright notice and this permission notice shall be included in all
-#copies or substantial portions of the Software.
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
 
-#THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-#IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-#FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-#AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-#LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-#OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-#SOFTWARE.
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 
 """Internal class for multi execution context aggregator implementation in the Azure Cosmos database service.
 """
@@ -26,6 +26,7 @@ import heapq
 from azure.cosmos._execution_context.base_execution_context import _QueryExecutionContextBase
 from azure.cosmos._execution_context import document_producer
 from azure.cosmos._routing import routing_range
+
 
 class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
     """This class is capable of queries which requires rewriting based on
@@ -42,6 +43,7 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
 
     class PriorityQueue:
         """Provides a Priority Queue abstraction data structure"""
+
         def __init__(self):
             self._heap = []
 
@@ -59,9 +61,9 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
 
     def __init__(self, client, resource_link, query, options, partitioned_query_ex_info):
 
-        '''
+        """
         Constructor
-        '''
+        """
         super(_MultiExecutionContextAggregator, self).__init__(client, options)
 
         # use the routing provider in the client
@@ -83,7 +85,9 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
         targetPartitionQueryExecutionContextList = []
         for partitionTargetRange in targetPartitionRanges:
             # create and add the child execution context for the target range
-            targetPartitionQueryExecutionContextList.append(self._createTargetPartitionQueryExecutionContext(partitionTargetRange))
+            targetPartitionQueryExecutionContextList.append(
+                self._createTargetPartitionQueryExecutionContext(partitionTargetRange)
+            )
 
         self._orderByPQ = _MultiExecutionContextAggregator.PriorityQueue()
 
@@ -142,9 +146,18 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
         else:
             query = self._query
 
-        return document_producer._DocumentProducer(partition_key_target_range, self._client, self._resource_link, query, self._document_producer_comparator, self._options)
+        return document_producer._DocumentProducer(
+            partition_key_target_range,
+            self._client,
+            self._resource_link,
+            query,
+            self._document_producer_comparator,
+            self._options,
+        )
 
     def _get_target_parition_key_range(self):
 
         query_ranges = self._partitioned_query_ex_info.get_query_ranges()
-        return self._routing_provider.get_overlapping_ranges(self._resource_link, [routing_range.Range.ParseFromDict(range_as_dict) for range_as_dict in query_ranges])
+        return self._routing_provider.get_overlapping_ranges(
+            self._resource_link, [routing_range.Range.ParseFromDict(range_as_dict) for range_as_dict in query_ranges]
+        )

@@ -1,41 +1,34 @@
-#The MIT License (MIT)
-#Copyright (c) 2014 Microsoft Corporation
+# The MIT License (MIT)
+# Copyright (c) 2014 Microsoft Corporation
 
-#Permission is hereby granted, free of charge, to any person obtaining a copy
-#of this software and associated documentation files (the "Software"), to deal
-#in the Software without restriction, including without limitation the rights
-#to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-#copies of the Software, and to permit persons to whom the Software is
-#furnished to do so, subject to the following conditions:
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
 
-#The above copyright notice and this permission notice shall be included in all
-#copies or substantial portions of the Software.
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
 
-#THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-#IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-#FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-#AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-#LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-#OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-#SOFTWARE.
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 
 """Create, read, update and delete permissions in the Azure Cosmos DB SQL API service.
 """
 
 import six
 from ._cosmos_client_connection import CosmosClientConnection
-from typing import (
-    Any,
-    List,
-    Dict,
-    Union,
-    cast
-)
+from typing import Any, List, Dict, Union, cast
 from .permission import Permission
 
 
 class User:
-
     def __init__(self, client_connection, id, database_link, properties=None):
         # type: (CosmosClientConnection, str, str, Dict[str, Any]) -> None
         self.client_connection = client_connection
@@ -59,11 +52,7 @@ class User:
             self.read()
         return self._properties
 
-    def read(
-            self,
-            request_options=None,
-            response_hook=None
-    ):
+    def read(self, request_options=None, response_hook=None):
         # type: (Dict[str, Any], Optional[Callable]) -> User
         """
         Read user propertes.
@@ -75,24 +64,16 @@ class User:
 
         """
         if not request_options:
-            request_options = {} # type: Dict[str, Any]
+            request_options = {}  # type: Dict[str, Any]
 
-        self._properties = self.client_connection.ReadUser(
-            user_link=self.user_link,
-            options=request_options
-        )
+        self._properties = self.client_connection.ReadUser(user_link=self.user_link, options=request_options)
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, self._properties)
 
         return self._properties
 
-    def read_all_permissions(
-            self,
-            max_item_count=None,
-            feed_options=None,
-            response_hook=None
-    ):
+    def read_all_permissions(self, max_item_count=None, feed_options=None, response_hook=None):
         # type: (int, Dict[str, Any], Optional[Callable]) -> QueryIterable
         """ List all permission for the user.
 
@@ -103,28 +84,18 @@ class User:
 
         """
         if not feed_options:
-            feed_options = {} # type: Dict[str, Any]
+            feed_options = {}  # type: Dict[str, Any]
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
-        result = self.client_connection.ReadPermissions(
-            user_link=self.user_link,
-            options=feed_options
-        )
+        result = self.client_connection.ReadPermissions(user_link=self.user_link, options=feed_options)
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
 
         return result
 
-    def query_permissions(
-            self,
-            query,
-            parameters=None,
-            max_item_count=None,
-            feed_options=None,
-            response_hook=None
-    ):
+    def query_permissions(self, query, parameters=None, max_item_count=None, feed_options=None, response_hook=None):
         # type: (str, List, int, Dict[str, Any], Optional[Callable]) -> QueryIterable
         """Return all permissions matching the given `query`.
 
@@ -137,15 +108,13 @@ class User:
 
         """
         if not feed_options:
-            feed_options = {} # type: Dict[str, Any]
+            feed_options = {}  # type: Dict[str, Any]
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
         result = self.client_connection.QueryPermissions(
             user_link=self.user_link,
-            query=query
-            if parameters is None
-            else dict(query=query, parameters=parameters),
+            query=query if parameters is None else dict(query=query, parameters=parameters),
             options=feed_options,
         )
 
@@ -154,12 +123,7 @@ class User:
 
         return result
 
-    def get_permission(
-            self,
-            permission,
-            request_options=None,
-            response_hook=None
-    ):
+    def get_permission(self, permission, request_options=None, response_hook=None):
         # type: (str, Dict[str, Any], Optional[Callable]) -> Permission
         """
         Get the permission identified by `id`.
@@ -172,30 +136,24 @@ class User:
 
         """
         if not request_options:
-            request_options = {} # type: Dict[str, Any]
+            request_options = {}  # type: Dict[str, Any]
 
         permission = self.client_connection.ReadPermission(
-            permission_link=self._get_permission_link(permission),
-            options=request_options
+            permission_link=self._get_permission_link(permission), options=request_options
         )
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, permission)
 
         return Permission(
-            id=permission['id'],
+            id=permission["id"],
             user_link=self.user_link,
-            permission_mode=permission['permissionMode'],
-            resource_link=permission['resource'],
-            properties=permission
+            permission_mode=permission["permissionMode"],
+            resource_link=permission["resource"],
+            properties=permission,
         )
 
-    def create_permission(
-            self,
-            body,
-            request_options=None,
-            response_hook=None
-    ):
+    def create_permission(self, body, request_options=None, response_hook=None):
         # type: (Dict[str, Any], Dict[str, Any], Optional[Callable]) -> Permission
         """ Create a permission for the user.
 
@@ -209,31 +167,24 @@ class User:
 
         """
         if not request_options:
-            request_options = {} # type: Dict[str, Any]
+            request_options = {}  # type: Dict[str, Any]
 
         permission = self.client_connection.CreatePermission(
-            user_link=self.user_link,
-            permission=body,
-            options=request_options
+            user_link=self.user_link, permission=body, options=request_options
         )
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, permission)
 
         return Permission(
-            id=permission['id'],
+            id=permission["id"],
             user_link=self.user_link,
-            permission_mode=permission['permissionMode'],
-            resource_link=permission['resource'],
-            properties=permission
+            permission_mode=permission["permissionMode"],
+            resource_link=permission["resource"],
+            properties=permission,
         )
 
-    def upsert_permission(
-            self,
-            body,
-            request_options=None,
-            response_hook=None
-    ):
+    def upsert_permission(self, body, request_options=None, response_hook=None):
         # type: (Dict[str, Any], Dict[str, Any], Optional[Callable]) -> Permission
         """ Insert or update the specified permission.
 
@@ -247,32 +198,24 @@ class User:
         """
 
         if not request_options:
-            request_options = {} # type: Dict[str, Any]
+            request_options = {}  # type: Dict[str, Any]
 
         permission = self.client_connection.UpsertPermission(
-            user_link=self.user_link,
-            permission=body,
-            options=request_options
+            user_link=self.user_link, permission=body, options=request_options
         )
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, permission)
 
         return Permission(
-            id=permission['id'],
+            id=permission["id"],
             user_link=self.user_link,
-            permission_mode=permission['permissionMode'],
-            resource_link=permission['resource'],
-            properties=permission
+            permission_mode=permission["permissionMode"],
+            resource_link=permission["resource"],
+            properties=permission,
         )
 
-    def replace_permission(
-            self,
-            permission,
-            body,
-            request_options=None,
-            response_hook=None
-    ):
+    def replace_permission(self, permission, body, request_options=None, response_hook=None):
         # type: (str, Dict[str, Any], Dict[str, Any], Optional[Callable]) -> Permission
         """ Replaces the specified permission if it exists for the user.
 
@@ -285,31 +228,24 @@ class User:
 
         """
         if not request_options:
-            request_options = {} # type: Dict[str, Any]
+            request_options = {}  # type: Dict[str, Any]
 
         permission = self.client_connection.ReplacePermission(
-            permission_link=self._get_permission_link(permission),
-            permission=body,
-            options=request_options
+            permission_link=self._get_permission_link(permission), permission=body, options=request_options
         )
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, permission)
 
         return Permission(
-            id=permission['id'],
+            id=permission["id"],
             user_link=self.user_link,
-            permission_mode=permission['permissionMode'],
-            resource_link=permission['resource'],
-            properties=permission
+            permission_mode=permission["permissionMode"],
+            resource_link=permission["resource"],
+            properties=permission,
         )
 
-    def delete_permission(
-            self,
-            permission,
-            request_options=None,
-            response_hook=None
-    ):
+    def delete_permission(self, permission, request_options=None, response_hook=None):
         # type: (str, Dict[str, Any], Optional[Callable]) -> None
         """ Delete the specified permission from the user.
 
@@ -321,13 +257,11 @@ class User:
         """
 
         if not request_options:
-            request_options = {} # type: Dict[str, Any]
+            request_options = {}  # type: Dict[str, Any]
 
         result = self.client_connection.DeletePermission(
-            permission_link=self._get_permission_link(permission),
-            options=request_options
+            permission_link=self._get_permission_link(permission), options=request_options
         )
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
-

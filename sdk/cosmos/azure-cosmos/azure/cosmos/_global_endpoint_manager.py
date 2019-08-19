@@ -1,23 +1,23 @@
-#The MIT License (MIT)
-#Copyright (c) 2014 Microsoft Corporation
+# The MIT License (MIT)
+# Copyright (c) 2014 Microsoft Corporation
 
-#Permission is hereby granted, free of charge, to any person obtaining a copy
-#of this software and associated documentation files (the "Software"), to deal
-#in the Software without restriction, including without limitation the rights
-#to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-#copies of the Software, and to permit persons to whom the Software is
-#furnished to do so, subject to the following conditions:
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
 
-#The above copyright notice and this permission notice shall be included in all
-#copies or substantial portions of the Software.
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
 
-#THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-#IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-#FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-#AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-#LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-#OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-#SOFTWARE.
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 
 """Internal class for global endpoint manager implementation in the Azure Cosmos database service.
 """
@@ -28,22 +28,26 @@ from . import _constants as constants
 from . import errors
 from ._location_cache import LocationCache
 
+
 class _GlobalEndpointManager(object):
     """
     This internal class implements the logic for endpoint management for geo-replicated
     database accounts.
     """
+
     def __init__(self, client):
         self.Client = client
         self.EnableEndpointDiscovery = client.connection_policy.EnableEndpointDiscovery
         self.PreferredLocations = client.connection_policy.PreferredLocations
         self.DefaultEndpoint = client.url_connection
         self.refresh_time_interval_in_ms = self.get_refresh_time_interval_in_ms_stub()
-        self.location_cache = LocationCache(self.PreferredLocations,
-                                            self.DefaultEndpoint,
-                                            self.EnableEndpointDiscovery,
-                                            client.connection_policy.UseMultipleWriteLocations,
-                                            self.refresh_time_interval_in_ms)
+        self.location_cache = LocationCache(
+            self.PreferredLocations,
+            self.DefaultEndpoint,
+            self.EnableEndpointDiscovery,
+            client.connection_policy.UseMultipleWriteLocations,
+            self.refresh_time_interval_in_ms,
+        )
         self.refresh_needed = False
         self.refresh_lock = threading.RLock()
         self.last_refresh_time = 0
@@ -89,12 +93,15 @@ class _GlobalEndpointManager(object):
             except Exception as e:
                 raise e
 
-    def _refresh_endpoint_list_private(self, database_account = None):
-        if database_account :
+    def _refresh_endpoint_list_private(self, database_account=None):
+        if database_account:
             self.location_cache.perform_on_database_account_read(database_account)
             self.refresh_needed = False
 
-        if self.location_cache.should_refresh_endpoints() and self.location_cache.current_time_millis() - self.last_refresh_time > self.refresh_time_interval_in_ms:
+        if (
+            self.location_cache.should_refresh_endpoints()
+            and self.location_cache.current_time_millis() - self.last_refresh_time > self.refresh_time_interval_in_ms
+        ):
             if not database_account:
                 database_account = self._GetDatabaseAccount()
                 self.location_cache.perform_on_database_account_read(database_account)
@@ -137,16 +144,18 @@ class _GlobalEndpointManager(object):
 
         # hostname attribute in endpoint_url will return 'contoso.documents.azure.com'
         if endpoint_url.hostname is not None:
-            hostname_parts = str(endpoint_url.hostname).lower().split('.')
+            hostname_parts = str(endpoint_url.hostname).lower().split(".")
             if hostname_parts is not None:
                 # global_database_account_name will return 'contoso'
                 global_database_account_name = hostname_parts[0]
 
                 # Prepare the locational_database_account_name as contoso-EastUS for location_name 'East US'
-                locational_database_account_name = global_database_account_name + '-' + location_name.replace(' ', '')
+                locational_database_account_name = global_database_account_name + "-" + location_name.replace(" ", "")
 
                 # Replace 'contoso' with 'contoso-EastUS' and return locational_endpoint as https://contoso-EastUS.documents.azure.com:443/
-                locational_endpoint = default_endpoint.lower().replace(global_database_account_name, locational_database_account_name, 1)
+                locational_endpoint = default_endpoint.lower().replace(
+                    global_database_account_name, locational_database_account_name, 1
+                )
                 return locational_endpoint
 
         return None

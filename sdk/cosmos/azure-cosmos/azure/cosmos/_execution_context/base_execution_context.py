@@ -1,23 +1,23 @@
-#The MIT License (MIT)
-#Copyright (c) 2014 Microsoft Corporation
+# The MIT License (MIT)
+# Copyright (c) 2014 Microsoft Corporation
 
-#Permission is hereby granted, free of charge, to any person obtaining a copy
-#of this software and associated documentation files (the "Software"), to deal
-#in the Software without restriction, including without limitation the rights
-#to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-#copies of the Software, and to permit persons to whom the Software is
-#furnished to do so, subject to the following conditions:
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
 
-#The above copyright notice and this permission notice shall be included in all
-#copies or substantial portions of the Software.
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
 
-#THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-#IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-#FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-#AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-#LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-#OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-#SOFTWARE.
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 
 """Internal class for query execution context implementation in the Azure Cosmos database service.
 """
@@ -27,10 +27,12 @@ from .. import _retry_utility
 from .. import http_constants
 from .. import _base
 
+
 class _QueryExecutionContextBase(object):
     """
     This is the abstract base execution context class.
     """
+
     def __init__(self, client, options):
         """
         Constructor
@@ -42,10 +44,10 @@ class _QueryExecutionContextBase(object):
         """
         self._client = client
         self._options = options
-        self._is_change_feed = 'changeFeed' in options and options['changeFeed'] is True
+        self._is_change_feed = "changeFeed" in options and options["changeFeed"] is True
         self._continuation = None
-        if 'continuation' in options and self._is_change_feed:
-            self._continuation = options['continuation']
+        if "continuation" in options and self._is_change_feed:
+            self._continuation = options["continuation"]
         self._has_started = False
         self._has_finished = False
         self._buffer = deque()
@@ -119,7 +121,7 @@ class _QueryExecutionContextBase(object):
         while self._continuation or not self._has_started:
             if not self._has_started:
                 self._has_started = True
-            self._options['continuation'] = self._continuation
+            self._options["continuation"] = self._continuation
             (fetched_items, response_headers) = fetch_function(self._options)
             fetched_items
             continuation_key = http_constants.HttpHeaders.Continuation
@@ -147,6 +149,7 @@ class _DefaultQueryExecutionContext(_QueryExecutionContextBase):
     """
     This is the default execution context.
     """
+
     def __init__(self, client, options, fetch_function):
         """
         Constructor
@@ -168,10 +171,12 @@ class _DefaultQueryExecutionContext(_QueryExecutionContextBase):
         while super(_DefaultQueryExecutionContext, self)._has_more_pages() and len(self._buffer) == 0:
             return self._fetch_items_helper_with_retries(self._fetch_function)
 
+
 class _MultiCollectionQueryExecutionContext(_QueryExecutionContextBase):
     """
     This class is used if it is client side partitioning
     """
+
     def __init__(self, client, options, database_link, query, partition_key):
         """
         Constructor
@@ -194,7 +199,7 @@ class _MultiCollectionQueryExecutionContext(_QueryExecutionContextBase):
 
         partition_resolver = client.GetPartitionResolver(database_link)
 
-        if(partition_resolver is None):
+        if partition_resolver is None:
             raise ValueError(client.PartitionResolverErrorMessage)
         else:
             self._collection_links = partition_resolver.ResolveForRead(partition_key)
@@ -208,21 +213,22 @@ class _MultiCollectionQueryExecutionContext(_QueryExecutionContextBase):
             raise ValueError("_collection_links_length is not greater than 0.")
 
         # Creating the QueryFeed for the first collection
-        path = _base.GetPathFromLink(self._collection_links[self._current_collection_index], 'docs')
+        path = _base.GetPathFromLink(self._collection_links[self._current_collection_index], "docs")
         collection_id = _base.GetResourceIdOrFullNameFromLink(self._collection_links[self._current_collection_index])
 
         self._current_collection_index += 1
 
         def fetch_fn(options):
-            return client.QueryFeed(path,
-                                    collection_id,
-                                    query,
-                                    options)
+            return client.QueryFeed(path, collection_id, query, options)
 
         self._fetch_function = fetch_fn
 
     def _has_more_pages(self):
-        return not self._has_started or self._continuation or (self._collection_links and self._current_collection_index < self._collection_links_length)
+        return (
+            not self._has_started
+            or self._continuation
+            or (self._collection_links and self._current_collection_index < self._collection_links_length)
+        )
 
     def _fetch_next_block(self):
         """Fetches the next block of query results.
@@ -241,17 +247,16 @@ class _MultiCollectionQueryExecutionContext(_QueryExecutionContextBase):
         # creating separate feed queries for each collection and fetching the items
         while not fetched_items:
             if self._collection_links and self._current_collection_index < self._collection_links_length:
-                path = _base.GetPathFromLink(self._collection_links[self._current_collection_index], 'docs')
-                collection_id = _base.GetResourceIdOrFullNameFromLink(self._collection_links[self._current_collection_index])
+                path = _base.GetPathFromLink(self._collection_links[self._current_collection_index], "docs")
+                collection_id = _base.GetResourceIdOrFullNameFromLink(
+                    self._collection_links[self._current_collection_index]
+                )
 
                 self._continuation = None
                 self._has_started = False
 
                 def fetch_fn(options):
-                    return self._client.QueryFeed(path,
-                                            collection_id,
-                                            self._query,
-                                            options)
+                    return self._client.QueryFeed(path, collection_id, self._query, options)
 
                 self._fetch_function = fetch_fn
 
