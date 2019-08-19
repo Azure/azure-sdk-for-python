@@ -59,7 +59,7 @@ class _SessionRetryPolicy(object):
             self.location_endpoint = self.global_endpoint_manager.resolve_service_endpoint(self.request)
             self.request.route_to_location(self.location_endpoint)
 
-    def ShouldRetry(self, exception):
+    def ShouldRetry(self, _exception):
         """Returns true if should retry based on the passed-in exception.
 
         :param (errors.HTTPFailure instance) exception:
