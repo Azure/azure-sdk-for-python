@@ -3,6 +3,25 @@
 Release History
 ===============
 
+0.4.0 (2019-08-19)
+++++++++++++++++++
+
+**Features**
+
+- Added operation ClustersOperations.create_or_update
+- Added operation ServicesOperations.create_or_update
+- Added operation ApplicationsOperations.create_or_update
+- Added operation ApplicationTypesOperations.create_or_update
+- Added operation ApplicationTypeVersionsOperations.create_or_update
+
+**Breaking changes**
+
+- Removed operation ClustersOperations.create
+- Removed operation ServicesOperations.create
+- Removed operation ApplicationsOperations.create
+- Removed operation ApplicationTypesOperations.create
+- Removed operation ApplicationTypeVersionsOperations.create
+
 0.3.0 (2019-05-30)
 ++++++++++++++++++
 
