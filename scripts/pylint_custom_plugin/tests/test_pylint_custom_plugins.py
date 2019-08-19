@@ -2107,58 +2107,58 @@ class TestClientLROMethodsUseCorrectNaming(pylint.testutils.CheckerTestCase):
     CHECKER_CLASS = checker.ClientLROMethodsUseCorrectNaming
 
     def test_ignores_private_methods(self):
-        class_node, function_node = astroid.extract_node("""
+        class_node, return_node = astroid.extract_node("""
         from azure.core.polling import LROPoller
         
         class SomeClient(): #@
-            def _do_thing(self): #@
-                return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+            def _do_thing(self): 
+                return LROPoller(self._client, raw_result, get_long_running_output, polling_method) #@
         """)
 
         with self.assertNoMessages():
             self.checker.visit_classdef(class_node)
-            self.checker.visit_functiondef(function_node)
+            self.checker.visit_return(return_node)
 
     def test_ignores_non_client_methods(self):
-        class_node, function_node = astroid.extract_node("""
+        class_node, return_node = astroid.extract_node("""
         from azure.core.polling import LROPoller
         
         class SomethingElse(): #@
-            def begin_things(self): #@
-                return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+            def begin_things(self):
+                return LROPoller(self._client, raw_result, get_long_running_output, polling_method) #@
         """)
 
         with self.assertNoMessages():
             self.checker.visit_classdef(class_node)
-            self.checker.visit_functiondef(function_node)
+            self.checker.visit_return(return_node)
 
     def test_ignores_methods_return_LROPoller_and_correctly_named(self):
-        class_node, function_node_a, function_node_b = astroid.extract_node("""
+        class_node, return_node_a, return_node_b = astroid.extract_node("""
         from azure.core.polling import LROPoller
         
         class SomeClient(): #@
-            def begin_thing(self): #@
-                return LROPoller()
+            def begin_thing(self):
+                return LROPoller() #@
             @distributed_trace
-            def begin_thing2(self): #@
-                return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+            def begin_thing2(self):
+                return LROPoller(self._client, raw_result, get_long_running_output, polling_method) #@
         """)
 
         with self.assertNoMessages():
             self.checker.visit_classdef(class_node)
-            self.checker.visit_functiondef(function_node_a)
-            self.checker.visit_functiondef(function_node_b)
+            self.checker.visit_return(return_node_a)
+            self.checker.visit_return(return_node_b)
 
     def test_finds_incorrectly_named_method_returning_LROPoller(self):
-        class_node, function_node_a, function_node_b = astroid.extract_node("""
+        class_node, function_node_a, return_node_a, function_node_b, return_node_b = astroid.extract_node("""
         from azure.core.polling import LROPoller
         
         class SomeClient(): #@
             def poller_thing(self): #@
-                return LROPoller()
+                return LROPoller() #@
             @distributed_trace
             def start_thing2(self): #@
-                return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+                return LROPoller(self._client, raw_result, get_long_running_output, polling_method) #@
         """)
 
         with self.assertAddsMessages(
@@ -2170,8 +2170,8 @@ class TestClientLROMethodsUseCorrectNaming(pylint.testutils.CheckerTestCase):
             ),
         ):
             self.checker.visit_classdef(class_node)
-            self.checker.visit_functiondef(function_node_a)
-            self.checker.visit_functiondef(function_node_b)
+            self.checker.visit_return(return_node_a)
+            self.checker.visit_return(return_node_b)
 
     def test_guidelines_link_active(self):
         url = "https://azure.github.io/azure-sdk/python_design.html#service-operations"

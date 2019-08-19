@@ -306,7 +306,8 @@ class ClientMethodsHaveTypeAnnotations(BaseChecker):
     priority = -1
     msgs = {
         "C4722": (
-            "Client method is missing type annotations and/or return type annotations. See details:"
+            "Client method is missing type annotations/comments, return type annotations/comments, or "
+            "mixing type annotations and comments. See details: "
             " https://azure.github.io/azure-sdk/python_introduction.html#types-or-not",
             "client-method-missing-type-annotations",
             "Client method should use type annotations.",
@@ -1282,31 +1283,20 @@ class ClientLROMethodsUseCorrectNaming(BaseChecker):
         else:
             self.is_client.append(False)
 
-    def visit_functiondef(self, node):
-        """Visits every method in the client and checks that any methods that return
-        an LROPoller are named with a `begin` prefix.
-
-        :param node: function node
-        :type node: ast.FunctionDef
-        :return: None
-        """
-        try:
-            if self.is_client and self.is_client[-1] and node.is_method() and not node.name.startswith("_"):
-                try:
-                    # infer_call_result gives the method return value as a string
-                    returns = next(node.infer_call_result()).as_string()
-                    if returns.find("LROPoller") != -1 and not \
-                            isinstance(returns.find("LROPoller"), type(astroid.util.Uninferable)):
-                        if not node.name.startswith("begin"):
-                            self.add_message(
-                                msg_id="lro-methods-use-correct-naming", node=node, confidence=None
-                            )
-                except astroid.exceptions.InferenceError:  # astroid can't always infer the return result
-                    logger.debug("Pylint custom checker failed to check if client method with polling uses correct naming.")
-                    pass
-        except AttributeError:
-            logger.debug("Pylint custom checker failed to check if client method with polling uses correct naming.")
-            pass
+    def visit_return(self, node):
+        if self.is_client and self.is_client[-1]:
+            try:
+                # check for a return value of LROPoller in client class
+                if node.value.func.name == "LROPoller":
+                    # get the method in which LROPoller is returned
+                    method = node.value.func.scope()
+                    if not method.name.startswith("begin") and not method.name.startswith("_"):
+                        self.add_message(
+                            msg_id="lro-methods-use-correct-naming", node=method, confidence=None
+                        )
+            except AttributeError:
+                logger.debug("Pylint custom checker failed to check if client method with polling uses correct naming.")
+                pass
 
 
 class ClientHasFromConnectionStringMethod(BaseChecker):
@@ -1429,10 +1419,66 @@ class PackageNameDoesNotUseUnderscoreOrPeriod(BaseChecker):
             pass
 
 
+class ServiceClientUsesNameWithClientSuffix(BaseChecker):
+    __implements__ = IAstroidChecker
+
+    name = "client-name-incorrect"
+    priority = -1
+    msgs = {
+        "C4738": (
+            "Service client types should use a `Client` suffix. See details: "
+            "https://azure.github.io/azure-sdk/python_design.html#clients",
+            "client-suffix-needed",
+            "Client should use the correct suffix.",
+        ),
+    }
+    options = (
+        (
+            "ignore-client-suffix-needed",
+            {
+                "default": False,
+                "type": "yn",
+                "metavar": "<y_or_n>",
+                "help": "Allow the client to have a different suffix.",
+            },
+        ),
+    )
+
+    def __init__(self, linter=None):
+        super().__init__(linter)
+
+    def visit_module(self, node):
+        """Visits a file that has "client" in the file name and checks that the service client
+        uses a `Client` suffix.
+
+        :param node: module node
+        :type node: ast.Module
+        :return: None
+        """
+        try:
+            # ignore base clients
+            if node.file.endswith("base_client.py") or node.file.endswith("base_client_async.py"):
+                return
+            if node.file.endswith("client.py") or node.file.endswith("client_async.py"):
+                has_client_suffix = False
+                for idx in range(len(node.body)):
+                    if isinstance(node.body[idx], astroid.ClassDef):
+                        if node.body[idx].name.endswith("Client"):
+                            has_client_suffix = True
+                if has_client_suffix is False:
+                    self.add_message(
+                        msg_id="client-suffix-needed", node=node, confidence=None
+                    )
+        except Exception:
+            logger.debug("Pylint custom checker failed to check if service client has a client suffix.")
+            pass
+
+
+# if a linter is registered in this function then it will be checked with pylint
 def register(linter):
     linter.register_checker(ClientMethodsHaveTracingDecorators(linter))
     linter.register_checker(ClientsDoNotUseStaticMethods(linter))
-    linter.register_checker(ClientHasApprovedMethodNamePrefix(linter))
+    # linter.register_checker(ClientHasApprovedMethodNamePrefix(linter))
     linter.register_checker(ClientConstructorTakesCorrectParameters(linter))
     linter.register_checker(ClientMethodsUseKwargsWithMultipleParameters(linter))
     linter.register_checker(ClientMethodsHaveTypeAnnotations(linter))
@@ -1443,11 +1489,12 @@ def register(linter):
     linter.register_checker(FileHasCopyrightHeader(linter))
     linter.register_checker(ClientMethodNamesDoNotUseDoubleUnderscorePrefix(linter))
     linter.register_checker(ClientDocstringUsesLiteralIncludeForCodeExample(linter))
-    linter.register_checker(SpecifyParameterNamesInCall(linter))
+    # linter.register_checker(SpecifyParameterNamesInCall(linter))
     linter.register_checker(ClientListMethodsUseCorePaging(linter))
     linter.register_checker(ClientLROMethodsUseCorePolling(linter))
     linter.register_checker(ClientLROMethodsUseCorrectNaming(linter))
     linter.register_checker(ClientHasFromConnectionStringMethod(linter))
     linter.register_checker(PackageNameDoesNotUseUnderscoreOrPeriod(linter))
+    linter.register_checker(ServiceClientUsesNameWithClientSuffix(linter))
     # linter.register_checker(LibraryProvidesLogging(linter))
     # linter.register_checker(ClientExceptionsDeriveFromCore(linter))
