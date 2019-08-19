@@ -33,7 +33,7 @@ class AzureAppConfigurationClientTestBase(AzureMgmtTestCase):
         else:
             from . import app_config_test_settings_real as real_settings
             connection_str = real_settings.APP_CONFIG_CONNECTION
-        self.app_config_client = client_class(connection_str)
+        self.app_config_client = client_class.from_connection_string(connection_str)
 
     def setUp(self):
         super(AzureAppConfigurationClientTestBase, self).setUp()
