@@ -9,8 +9,8 @@ import logging
 import pytest
 
 from azure.core.exceptions import ResourceModifiedError, ResourceNotFoundError, ResourceExistsError, AzureError
-from azure.data.appconfiguration import AzureAppConfigurationClient
-from azure.data.appconfiguration import ConfigurationSetting
+from azure.appconfiguration import AzureAppConfigurationClient
+from azure.appconfiguration import ConfigurationSetting
 from devtools_testutils import AzureMgmtTestCase
 from . import app_config_test_settings_fake as fake_settings
 

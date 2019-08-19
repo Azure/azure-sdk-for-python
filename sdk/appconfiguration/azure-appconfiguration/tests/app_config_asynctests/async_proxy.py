@@ -1,5 +1,5 @@
 from asyncio import get_event_loop
-from azure.data.appconfiguration.aio import AzureAppConfigurationClient
+from azure.appconfiguration.aio import AzureAppConfigurationClient
 
 
 def _to_list(ait):
