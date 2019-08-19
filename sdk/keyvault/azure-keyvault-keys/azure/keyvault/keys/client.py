@@ -21,7 +21,6 @@ if TYPE_CHECKING:
     # pylint:disable=unused-import
     from typing import Any, Dict, Mapping, Optional
     from azure.core.paging import ItemPaged
-    from .models import JsonWebKey
 
 
 class KeyClient(KeyVaultClientBase):
