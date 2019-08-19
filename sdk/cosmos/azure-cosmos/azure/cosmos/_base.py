@@ -167,7 +167,7 @@ def GetHeaders(
             authorization = urllib_quote(authorization, "-_.!~*'()")
         headers[http_constants.HttpHeaders.Authorization] = authorization
 
-    if verb == "post" or verb == "put":
+    if verb in ('post', 'put'):
         if not headers.get(http_constants.HttpHeaders.ContentType):
             headers[http_constants.HttpHeaders.ContentType] = _runtime_constants.MediaTypes.Json
 
@@ -353,15 +353,15 @@ def IsNameBased(link):
 
 
 def IsMasterResource(resourceType):
-    return (
-        resourceType == http_constants.ResourceType.Offer
-        or resourceType == http_constants.ResourceType.Database
-        or resourceType == http_constants.ResourceType.User
-        or resourceType == http_constants.ResourceType.Permission
-        or resourceType == http_constants.ResourceType.Topology
-        or resourceType == http_constants.ResourceType.DatabaseAccount
-        or resourceType == http_constants.ResourceType.PartitionKeyRange
-        or resourceType == http_constants.ResourceType.Collection
+    return resourceType in (
+        http_constants.ResourceType.Offer, 
+        http_constants.ResourceType.Database, 
+        http_constants.ResourceType.User, 
+        http_constants.ResourceType.Permission, 
+        http_constants.ResourceType.Topology, 
+        http_constants.ResourceType.DatabaseAccount, 
+        http_constants.ResourceType.PartitionKeyRange, 
+        http_constants.ResourceType.Collection
     )
 
 
