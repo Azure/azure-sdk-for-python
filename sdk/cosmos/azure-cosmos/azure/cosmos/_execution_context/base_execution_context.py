@@ -123,7 +123,6 @@ class _QueryExecutionContextBase(object):
                 self._has_started = True
             self._options["continuation"] = self._continuation
             (fetched_items, response_headers) = fetch_function(self._options)
-            fetched_items
             continuation_key = http_constants.HttpHeaders.Continuation
             # Use Etag as continuation token for change feed queries.
             if self._is_change_feed:
