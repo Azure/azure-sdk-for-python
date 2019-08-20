@@ -136,7 +136,8 @@ class CosmosClient:
         """
         Retrieve an existing database with the ID (name) `id`.
 
-        :param database: The ID (name), dict representing the properties or :class:`Database` instance of the database to read.
+        :param database: The ID (name), dict representing the properties or :class:`Database`
+            instance of the database to read.
         :returns: A :class:`Database` instance representing the retrieved database.
 
         """
@@ -206,7 +207,8 @@ class CosmosClient:
 
         :param query: The Azure Cosmos DB SQL query to execute.
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
-        :param enable_cross_partition_query: Allow scan on the queries which couldn't be served as indexing was opted out on the requested paths.
+        :param enable_cross_partition_query: Allow scan on the queries which couldn't be
+            served as indexing was opted out on the requested paths.
         :param max_item_count: Max number of items to be returned in the enumeration operation.
         :param session_token: Token for use with Session consistency.
         :param initial_headers: Initial headers to be sent as part of the request.
@@ -258,7 +260,8 @@ class CosmosClient:
         """
         Delete the database with the given ID (name).
 
-        :param database: The ID (name), dict representing the properties or :class:`Database` instance of the database to delete.
+        :param database: The ID (name), dict representing the properties or :class:`Database`
+            instance of the database to delete.
         :param session_token: Token for use with Session consistency.
         :param initial_headers: Initial headers to be sent as part of the request.
         :param access_condition: Conditions Associated with the request.

@@ -149,7 +149,8 @@ class Scripts:
 
         :param sproc: The ID (name) or dict representing stored procedure to be deleted.
         :param request_options: Dictionary of additional properties to be used for the request.
-        :raises `HTTPFailure`: The sproc wasn't deleted successfully. If the sproc does not exist in the container, a `404` error is returned.
+        :raises `HTTPFailure`: The sproc wasn't deleted successfully. If the sproc does not
+            exist in the container, a `404` error is returned.
 
         """
         if not request_options:
@@ -171,7 +172,8 @@ class Scripts:
         :param partition_key: Specifies the partition key to indicate which partition the sproc should execute on.
         :param request_options: Dictionary of additional properties to be used for the request.
         :returns: result of the executed stored procedure for the given parameters.
-        :raise `HTTPFailure`: If the stored procedure execution failed or if the stored procedure with given id does not exists in the container.
+        :raise `HTTPFailure`: If the stored procedure execution failed or if the stored procedure with
+            given id does not exists in the container.
 
         """
 
@@ -291,7 +293,8 @@ class Scripts:
 
         :param trigger: The ID (name) or dict representing trigger to be deleted.
         :param request_options: Dictionary of additional properties to be used for the request.
-        :raises `HTTPFailure`: The trigger wasn't deleted successfully. If the trigger does not exist in the container, a `404` error is returned.
+        :raises `HTTPFailure`: The trigger wasn't deleted successfully. If the trigger does not
+            exist in the container, a `404` error is returned.
 
         """
         if not request_options:
@@ -402,7 +405,8 @@ class Scripts:
 
         :param udf: The ID (name) or dict representing udf to be deleted.
         :param request_options: Dictionary of additional properties to be used for the request.
-        :raises `HTTPFailure`: The udf wasn't deleted successfully. If the udf does not exist in the container, a `404` error is returned.
+        :raises `HTTPFailure`: The udf wasn't deleted successfully. If the udf does not
+            exist in the container, a `404` error is returned.
 
         """
         if not request_options:

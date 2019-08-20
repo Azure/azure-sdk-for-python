@@ -233,12 +233,12 @@ class LocationCache(object):
 
         if self.enable_endpoint_discovery:
             if read_locations:
-                self.available_read_endpoint_by_locations, self.available_read_locations = self.get_endpoint_by_location(
+                self.available_read_endpoint_by_locations, self.available_read_locations = self.get_endpoint_by_location(  # pylint: disable=line-too-long
                     read_locations
                 )
 
             if write_locations:
-                self.available_write_endpoint_by_locations, self.available_write_locations = self.get_endpoint_by_location(
+                self.available_write_endpoint_by_locations, self.available_write_locations = self.get_endpoint_by_location(  # pylint: disable=line-too-long
                     write_locations
                 )
 
@@ -260,7 +260,8 @@ class LocationCache(object):
         self, endpoints_by_location, orderedLocations, expected_available_operation, fallback_endpoint
     ):
         endpoints = []
-        # if enableEndpointDiscovery is false, we always use the defaultEndpoint that user passed in during documentClient init
+        # if enableEndpointDiscovery is false, we always use the defaultEndpoint that
+        # user passed in during documentClient init
         if self.enable_endpoint_discovery and endpoints_by_location:
             if (
                 self.can_use_multiple_write_locations()
@@ -268,10 +269,10 @@ class LocationCache(object):
             ):
                 unavailable_endpoints = []
                 if self.preferred_locations:
-                    # When client can not use multiple write locations, preferred locations list should only be used
-                    # determining read endpoints order.
-                    # If client can use multiple write locations, preferred locations list should be used for determining
-                    # both read and write endpoints order.
+                    # When client can not use multiple write locations, preferred locations
+                    # list should only be used determining read endpoints order. If client
+                    # can use multiple write locations, preferred locations list should be
+                    # used for determining both read and write endpoints order.
                     for location in self.preferred_locations:
                         endpoint = endpoints_by_location[location] if location in endpoints_by_location else None
                         if endpoint:

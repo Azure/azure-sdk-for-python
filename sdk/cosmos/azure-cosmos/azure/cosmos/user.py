@@ -130,7 +130,8 @@ class User:
         """
         Get the permission identified by `id`.
 
-        :param permission: The ID (name), dict representing the properties or :class:`Permission` instance of the permission to be retrieved.
+        :param permission: The ID (name), dict representing the properties or :class:`Permission`
+            instance of the permission to be retrieved.
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
         :returns: A dict representing the retrieved permission.
@@ -221,7 +222,8 @@ class User:
         # type: (str, Dict[str, Any], Dict[str, Any], Optional[Callable]) -> Permission
         """ Replaces the specified permission if it exists for the user.
 
-        :param permission: The ID (name), dict representing the properties or :class:`Permission` instance of the permission to be replaced.
+        :param permission: The ID (name), dict representing the properties or :class:`Permission`
+            instance of the permission to be replaced.
         :param body: A dict-like object representing the permission to replace.
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
@@ -251,10 +253,12 @@ class User:
         # type: (str, Dict[str, Any], Optional[Callable]) -> None
         """ Delete the specified permission from the user.
 
-        :param permission: The ID (name), dict representing the properties or :class:`Permission` instance of the permission to be replaced.
+        :param permission: The ID (name), dict representing the properties or :class:`Permission`
+            instance of the permission to be replaced.
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
-        :raises `HTTPFailure`: The permission wasn't deleted successfully. If the permission does not exist for the user, a `404` error is returned.
+        :raises `HTTPFailure`: The permission wasn't deleted successfully. If the permission does
+            not exist for the user, a `404` error is returned.
 
         """
 

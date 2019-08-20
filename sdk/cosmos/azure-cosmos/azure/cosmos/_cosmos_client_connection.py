@@ -792,7 +792,9 @@ class CosmosClientConnection(object):
             options = {}
 
         if base.IsDatabaseLink(database_or_Container_link):
-            # Python doesn't have a good way of specifying an overloaded constructor, and this is how it's generally overloaded constructors are specified(by calling a @classmethod) and returning the 'self' instance
+            # Python doesn't have a good way of specifying an overloaded constructor,
+            # and this is how it's generally overloaded constructors are specified (by
+            # calling a @classmethod) and returning the 'self' instance
             return query_iterable.QueryIterable.PartitioningQueryIterable(
                 self, query, options, database_or_Container_link, partition_key
             )
@@ -964,14 +966,18 @@ class CosmosClientConnection(object):
             dict
 
         """
-        # Python's default arguments are evaluated once when the function is defined, not each time the function is called (like it is in say, Ruby).
-        # This means that if you use a mutable default argument and mutate it, you will and have mutated that object for all future calls to the function as well.
-        # So, using a non-mutable deafult in this case(None) and assigning an empty dict(mutable) inside the method
-        # For more details on this gotcha, please refer http://docs.python-guide.org/en/latest/writing/gotchas/
+        # Python's default arguments are evaluated once when the function is defined,
+        # not each time the function is called (like it is in say, Ruby). This means
+        # that if you use a mutable default argument and mutate it, you will and have
+        # mutated that object for all future calls to the function as well. So, using
+        # a non-mutable deafult in this case(None) and assigning an empty dict(mutable)
+        # inside the method For more details on this gotcha, please refer
+        # http://docs.python-guide.org/en/latest/writing/gotchas/
         if options is None:
             options = {}
 
-        # We check the link to be document collection link since it can be database link in case of client side partitioning
+        # We check the link to be document collection link since it can be database
+        # link in case of client side partitioning
         if base.IsItemContainerLink(database_or_Container_link):
             options = self._AddPartitionKey(database_or_Container_link, document, options)
 
@@ -999,14 +1005,18 @@ class CosmosClientConnection(object):
             dict
 
         """
-        # Python's default arguments are evaluated once when the function is defined, not each time the function is called (like it is in say, Ruby).
-        # This means that if you use a mutable default argument and mutate it, you will and have mutated that object for all future calls to the function as well.
-        # So, using a non-mutable deafult in this case(None) and assigning an empty dict(mutable) inside the method
-        # For more details on this gotcha, please refer http://docs.python-guide.org/en/latest/writing/gotchas/
+        # Python's default arguments are evaluated once when the function is defined,
+        # not each time the function is called (like it is in say, Ruby). This means
+        # that if you use a mutable default argument and mutate it, you will and have
+        # mutated that object for all future calls to the function as well. So, using
+        # a non-mutable deafult in this case(None) and assigning an empty dict(mutable)
+        # inside the method For more details on this gotcha, please refer
+        # http://docs.python-guide.org/en/latest/writing/gotchas/
         if options is None:
             options = {}
 
-        # We check the link to be document collection link since it can be database link in case of client side partitioning
+        # We check the link to be document collection link since it can be database
+        # link in case of client side partitioning
         if base.IsItemContainerLink(database_or_Container_link):
             options = self._AddPartitionKey(database_or_Container_link, document, options)
 
@@ -1015,7 +1025,12 @@ class CosmosClientConnection(object):
         )
         return self.Upsert(document, path, "docs", collection_id, None, options)
 
-    PartitionResolverErrorMessage = "Couldn't find any partition resolvers for the database link provided. Ensure that the link you used when registering the partition resolvers matches the link provided or you need to register both types of database link(self link as well as ID based link)."
+    PartitionResolverErrorMessage = (
+        "Couldn't find any partition resolvers for the database link provided. "
+        + "Ensure that the link you used when registering the partition resolvers "
+        + "matches the link provided or you need to register both types of database "
+        + "link(self link as well as ID based link)."
+    )
 
     # Gets the collection id and path for the document
     def _GetContainerIdWithPathForItem(self, database_or_Container_link, document, options):
@@ -1549,10 +1564,13 @@ class CosmosClientConnection(object):
         path = base.GetPathFromLink(document_link)
         document_id = base.GetResourceIdOrFullNameFromLink(document_link)
 
-        # Python's default arguments are evaluated once when the function is defined, not each time the function is called (like it is in say, Ruby).
-        # This means that if you use a mutable default argument and mutate it, you will and have mutated that object for all future calls to the function as well.
-        # So, using a non-mutable deafult in this case(None) and assigning an empty dict(mutable) inside the function so that it remains local
-        # For more details on this gotcha, please refer http://docs.python-guide.org/en/latest/writing/gotchas/
+        # Python's default arguments are evaluated once when the function is defined,
+        # not each time the function is called (like it is in say, Ruby). This means
+        # that if you use a mutable default argument and mutate it, you will and have
+        # mutated that object for all future calls to the function as well. So, using
+        # a non-mutable deafult in this case(None) and assigning an empty dict(mutable)
+        # inside the function so that it remains local For more details on this gotcha,
+        # please refer http://docs.python-guide.org/en/latest/writing/gotchas/
         if options is None:
             options = {}
 
@@ -2651,7 +2669,8 @@ class CosmosClientConnection(object):
             if not isinstance(partitionKey, dict):
                 break
 
-        # Match the count of hops we did to get the partitionKey with the length of partition key parts and validate that it's not a dict at that level
+        # Match the count of hops we did to get the partitionKey with the length of
+        # partition key parts and validate that it's not a dict at that level
         if (matchCount != expected_matchCount) or isinstance(partitionKey, dict):
             return self._return_undefined_or_empty_partition_key(is_system_key)
 

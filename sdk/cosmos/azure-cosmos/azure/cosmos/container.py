@@ -40,7 +40,8 @@ __all__ = ("Container",)
 class Container:
     """ An Azure Cosmos DB container.
 
-    A container in an Azure Cosmos DB SQL API database is a collection of documents, each of which represented as an Item.
+    A container in an Azure Cosmos DB SQL API database is a collection of documents,
+    each of which represented as an Item.
 
     :ivar str id: ID (name) of the container
     :ivar str session_token: The session token for the container.
@@ -109,11 +110,13 @@ class Container:
         :param session_token: Token for use with Session consistency.
         :param initial_headers: Initial headers to be sent as part of the request.
         :param populate_query_metrics: Enable returning query metrics in response headers.
-        :param populate_partition_key_range_statistics: Enable returning partition key range statistics in response headers.
+        :param populate_partition_key_range_statistics: Enable returning partition key
+            range statistics in response headers.
         :param populate_quota_info: Enable returning collection storage quota information in response headers.
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
-        :raise `HTTPFailure`: Raised if the container couldn't be retrieved. This includes if the container does not exist.
+        :raise `HTTPFailure`: Raised if the container couldn't be retrieved. This includes
+            if the container does not exist.
         :returns: :class:`Container` instance representing the retrieved container.
 
         """
@@ -247,7 +250,8 @@ class Container:
 
         :param partition_key_range_id: ChangeFeed requests can be executed against specific partition key ranges.
         This is used to process the change feed in parallel across multiple consumers.
-        :param is_start_from_beginning: Get whether change feed should start from beginning (true) or from current (false).
+        :param is_start_from_beginning: Get whether change feed should start from
+            beginning (true) or from current (false).
         By default it's start from current (false).
         :param continuation: e_tag value to be used as continuation for reading change feed.
         :param max_item_count: Max number of items to be returned in the enumeration operation.
@@ -297,12 +301,14 @@ class Container:
         :param query: The Azure Cosmos DB SQL query to execute.
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
         :param partition_key: Specifies the partition key value for the item.
-        :param enable_cross_partition_query: Allows sending of more than one request to execute the query in the Azure Cosmos DB service.
+        :param enable_cross_partition_query: Allows sending of more than one request to
+            execute the query in the Azure Cosmos DB service.
         More than one request is necessary if the query is not scoped to single partition key value.
         :param max_item_count: Max number of items to be returned in the enumeration operation.
         :param session_token: Token for use with Session consistency.
         :param initial_headers: Initial headers to be sent as part of the request.
-        :param enable_scan_in_query: Allow scan on the queries which couldn't be served as indexing was opted out on the requested paths.
+        :param enable_scan_in_query: Allow scan on the queries which couldn't be served as
+            indexing was opted out on the requested paths.
         :param populate_query_metrics: Enable returning query metrics in response headers.
         :param feed_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
@@ -547,7 +553,8 @@ class Container:
         :param post_trigger_include: trigger id to be used as post operation trigger.
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
-        :raises `HTTPFailure`: The item wasn't deleted successfully. If the item does not exist in the container, a `404` error is returned.
+        :raises `HTTPFailure`: The item wasn't deleted successfully. If the item does not
+            exist in the container, a `404` error is returned.
 
         """
         if not request_options:
@@ -660,7 +667,8 @@ class Container:
         :param query: The Azure Cosmos DB SQL query to execute.
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
         :param partition_key: Specifies the partition key value for the item.
-        :param enable_cross_partition_query: Allows sending of more than one request to execute the query in the Azure Cosmos DB service.
+        :param enable_cross_partition_query: Allows sending of more than one request to execute
+            the query in the Azure Cosmos DB service.
         More than one request is necessary if the query is not scoped to single partition key value.
         :param max_item_count: Max number of items to be returned in the enumeration operation.
         :param feed_options: Dictionary of additional properties to be used for the request.
@@ -718,7 +726,8 @@ class Container:
         :param partition_key: Partition key for the conflict to delete.
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
-        :raises `HTTPFailure`: The conflict wasn't deleted successfully. If the conflict does not exist in the container, a `404` error is returned.
+        :raises `HTTPFailure`: The conflict wasn't deleted successfully. If the conflict
+            does not exist in the container, a `404` error is returned.
 
         """
         if not request_options:

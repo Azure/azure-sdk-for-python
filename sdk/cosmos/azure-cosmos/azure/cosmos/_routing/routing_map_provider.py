@@ -88,7 +88,8 @@ class PartitionKeyRangeCache(object):
 
 class SmartRoutingMapProvider(PartitionKeyRangeCache):
     """
-    Efficiently uses PartitionKeyRangeCach and minimizes the unnecessary invocation of CollectionRoutingMap.get_overlapping_ranges()
+    Efficiently uses PartitionKeyRangeCach and minimizes the unnecessary invocation of
+    CollectionRoutingMap.get_overlapping_ranges()
     """
 
     def _second_range_is_after_first_range(self, range1, range2):

@@ -114,7 +114,8 @@ class Database(object):
         """
         Read the database properties
 
-        :param database: The ID (name), dict representing the properties or :class:`Database` instance of the database to read.
+        :param database: The ID (name), dict representing the properties or :class:`Database`
+            instance of the database to read.
         :param session_token: Token for use with Session consistency.
         :param initial_headers: Initial headers to be sent as part of the request.
         :param populate_query_metrics: Enable returning query metrics in response headers.
@@ -247,7 +248,9 @@ class Database(object):
         # type: (Union[str, Container, Dict[str, Any]], str, Dict[str, str], Dict[str, str], bool, Dict[str, Any], Optional[Callable]) -> None
         """ Delete the container
 
-        :param container: The ID (name) of the container to delete. You can either pass in the ID of the container to delete, a :class:`Container` instance or a dict representing the properties of the container.
+        :param container: The ID (name) of the container to delete. You can either
+            pass in the ID of the container to delete, a :class:`Container` instance or
+            a dict representing the properties of the container.
         :param session_token: Token for use with Session consistency.
         :param initial_headers: Initial headers to be sent as part of the request.
         :param access_condition: Conditions Associated with the request.
@@ -277,7 +280,8 @@ class Database(object):
         # type: (Union[str, Container, Dict[str, Any]]) -> Container
         """ Get the specified `Container`, or a container with specified ID (name).
 
-        :param container: The ID (name) of the container, a :class:`Container` instance, or a dict representing the properties of the container to be retrieved.
+        :param container: The ID (name) of the container, a :class:`Container` instance,
+            or a dict representing the properties of the container to be retrieved.
 
         .. literalinclude:: ../../examples/examples.py
             :start-after: [START get_container]
@@ -406,7 +410,8 @@ class Database(object):
 
         Any properties not specified will be reset to their default values.
 
-        :param container: The ID (name), dict representing the properties or :class:`Container` instance of the container to be replaced.
+        :param container: The ID (name), dict representing the properties or
+            :class:`Container` instance of the container to be replaced.
         :param partition_key: The partition key to use for the container.
         :param indexing_policy: The indexing policy to apply to the container.
         :param default_ttl: Default time to live (TTL) for items in the container. If unspecified, items do not expire.
@@ -417,7 +422,8 @@ class Database(object):
         :param populate_query_metrics: Enable returning query metrics in response headers.
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
-        :raise `HTTPFailure`: Raised if the container couldn't be replaced. This includes if the container with given id does not exist.
+        :raise `HTTPFailure`: Raised if the container couldn't be replaced. This includes
+            if the container with given id does not exist.
         :returns: :class:`Container` instance representing the container after replace completed.
 
         .. literalinclude:: ../../examples/examples.py
@@ -516,7 +522,8 @@ class Database(object):
         """
         Get the user identified by `id`.
 
-        :param user: The ID (name), dict representing the properties or :class:`User` instance of the user to be retrieved.
+        :param user: The ID (name), dict representing the properties or :class:`User`
+            instance of the user to be retrieved.
         :returns: A :class:`User` instance representing the retrieved user.
         :raise `HTTPFailure`: If the given user couldn't be retrieved.
 
@@ -593,7 +600,8 @@ class Database(object):
         # type: (Union[str, User, Dict[str, Any]], Dict[str, Any], Dict[str, Any], Optional[Callable]) -> User
         """ Replaces the specified user if it exists in the container.
 
-        :param user: The ID (name), dict representing the properties or :class:`User` instance of the user to be replaced.
+        :param user: The ID (name), dict representing the properties or :class:`User`
+            instance of the user to be replaced.
         :param body: A dict-like object representing the user to replace.
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
@@ -619,10 +627,12 @@ class Database(object):
         # type: (Union[str, User, Dict[str, Any]], Dict[str, Any], Optional[Callable]) -> None
         """ Delete the specified user from the container.
 
-        :param user: The ID (name), dict representing the properties or :class:`User` instance of the user to be deleted.
+        :param user: The ID (name), dict representing the properties or :class:`User`
+            instance of the user to be deleted.
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
-        :raises `HTTPFailure`: The user wasn't deleted successfully. If the user does not exist in the container, a `404` error is returned.
+        :raises `HTTPFailure`: The user wasn't deleted successfully. If the user does not
+            exist in the container, a `404` error is returned.
 
         """
         if not request_options:

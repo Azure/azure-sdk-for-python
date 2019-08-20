@@ -118,9 +118,12 @@ class _GlobalEndpointManager(object):
         try:
             database_account = self._GetDatabaseAccountStub(self.DefaultEndpoint)
             return database_account
-        # If for any reason(non-globaldb related), we are not able to get the database account from the above call to GetDatabaseAccount,
-        # we would try to get this information from any of the preferred locations that the user might have specified(by creating a locational endpoint)
-        # and keeping eating the exception until we get the database account and return None at the end, if we are not able to get that info from any endpoints
+        # If for any reason(non-globaldb related), we are not able to get the database
+        # account from the above call to GetDatabaseAccount, we would try to get this
+        # information from any of the preferred locations that the user might have
+        # specified (by creating a locational endpoint) and keeping eating the exception
+        # until we get the database account and return None at the end, if we are not able
+        # to get that info from any endpoints
         except errors.HTTPFailure:
             for location_name in self.PreferredLocations:
                 locational_endpoint = _GlobalEndpointManager.GetLocationalEndpoint(self.DefaultEndpoint, location_name)
@@ -140,8 +143,9 @@ class _GlobalEndpointManager(object):
 
     @staticmethod
     def GetLocationalEndpoint(default_endpoint, location_name):
-        # For default_endpoint like 'https://contoso.documents.azure.com:443/' parse it to generate URL format
-        # This default_endpoint should be global endpoint(and cannot be a locational endpoint) and we agreed to document that
+        # For default_endpoint like 'https://contoso.documents.azure.com:443/' parse it to
+        # generate URL format. This default_endpoint should be global endpoint(and cannot
+        # be a locational endpoint) and we agreed to document that
         endpoint_url = urlparse(default_endpoint)
 
         # hostname attribute in endpoint_url will return 'contoso.documents.azure.com'
@@ -154,7 +158,8 @@ class _GlobalEndpointManager(object):
                 # Prepare the locational_database_account_name as contoso-EastUS for location_name 'East US'
                 locational_database_account_name = global_database_account_name + "-" + location_name.replace(" ", "")
 
-                # Replace 'contoso' with 'contoso-EastUS' and return locational_endpoint as https://contoso-EastUS.documents.azure.com:443/
+                # Replace 'contoso' with 'contoso-EastUS' and return locational_endpoint
+                # as https://contoso-EastUS.documents.azure.com:443/
                 locational_endpoint = default_endpoint.lower().replace(
                     global_database_account_name, locational_database_account_name, 1
                 )
