@@ -98,6 +98,71 @@ class RecipientTransfersOperations(object):
         return deserialized
     accept.metadata = {'url': '/providers/Microsoft.Billing/transfers/{transferName}/acceptTransfer'}
 
+    def validate(
+            self, transfer_name, product_details=None, custom_headers=None, raw=False, **operation_config):
+        """Validates if the products can be transferred in the context of the
+        given transfer name.
+
+        :param transfer_name: Transfer Name.
+        :type transfer_name: str
+        :param product_details: Request parameters to accept transfer.
+        :type product_details: list[~azure.mgmt.billing.models.ProductDetails]
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: ValidateTransferListResponse or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.billing.models.ValidateTransferListResponse or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
+        """
+        parameters = models.AcceptTransferRequest(product_details=product_details)
+
+        # Construct URL
+        url = self.validate.metadata['url']
+        path_format_arguments = {
+            'transferName': self._serialize.url("transfer_name", transfer_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(parameters, 'AcceptTransferRequest')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+
+        if response.status_code == 200:
+            deserialized = self._deserialize('ValidateTransferListResponse', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    validate.metadata = {'url': '/providers/Microsoft.Billing/transfers/{transferName}/validateTransfer'}
+
     def decline(
             self, transfer_name, custom_headers=None, raw=False, **operation_config):
         """Declines the transfer with given transfer Id.

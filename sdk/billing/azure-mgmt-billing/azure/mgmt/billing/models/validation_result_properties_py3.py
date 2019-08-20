@@ -12,26 +12,34 @@
 from msrest.serialization import Model
 
 
-class BillingPermissionsListResult(Model):
-    """Result of list billingPermissions a caller has on a billing account.
+class ValidationResultProperties(Model):
+    """The properties of the validation result.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar value: The list of billingPermissions a caller has on a billing
-     account.
-    :vartype value:
-     list[~azure.mgmt.billing.models.BillingPermissionsProperties]
+    :ivar level: Result Level.
+    :vartype level: str
+    :ivar code: Result Code.
+    :vartype code: str
+    :ivar message: The validation message.
+    :vartype message: str
     """
 
     _validation = {
-        'value': {'readonly': True},
+        'level': {'readonly': True},
+        'code': {'readonly': True},
+        'message': {'readonly': True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[BillingPermissionsProperties]'},
+        'level': {'key': 'level', 'type': 'str'},
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
     }
 
     def __init__(self, **kwargs) -> None:
-        super(BillingPermissionsListResult, self).__init__(**kwargs)
-        self.value = None
+        super(ValidationResultProperties, self).__init__(**kwargs)
+        self.level = None
+        self.code = None
+        self.message = None

@@ -36,7 +36,7 @@ class AgreementsOperations(object):
 
         self.config = config
 
-    def list_by_billing_account_name(
+    def list_by_billing_account(
             self, billing_account_name, expand=None, custom_headers=None, raw=False, **operation_config):
         """Lists all agreements for a billing account.
 
@@ -56,7 +56,7 @@ class AgreementsOperations(object):
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.list_by_billing_account_name.metadata['url']
+        url = self.list_by_billing_account.metadata['url']
         path_format_arguments = {
             'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str')
         }
@@ -95,7 +95,7 @@ class AgreementsOperations(object):
             return client_raw_response
 
         return deserialized
-    list_by_billing_account_name.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/agreements'}
+    list_by_billing_account.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/agreements'}
 
     def get(
             self, billing_account_name, agreement_name, expand=None, custom_headers=None, raw=False, **operation_config):

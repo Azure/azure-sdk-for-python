@@ -18,14 +18,16 @@ from .operations.payment_methods_operations import PaymentMethodsOperations
 from .operations.address_operations import AddressOperations
 from .operations.available_balances_operations import AvailableBalancesOperations
 from .operations.billing_profiles_operations import BillingProfilesOperations
+from .operations.customers_operations import CustomersOperations
 from .operations.invoice_sections_operations import InvoiceSectionsOperations
+from .operations.billing_permissions_operations import BillingPermissionsOperations
+from .operations.billing_subscriptions_operations import BillingSubscriptionsOperations
+from .operations.products_operations import ProductsOperations
+from .operations.transactions_operations import TransactionsOperations
 from .operations.departments_operations import DepartmentsOperations
 from .operations.enrollment_accounts_operations import EnrollmentAccountsOperations
 from .operations.invoices_operations import InvoicesOperations
 from .operations.price_sheet_operations import PriceSheetOperations
-from .operations.billing_subscriptions_operations import BillingSubscriptionsOperations
-from .operations.products_operations import ProductsOperations
-from .operations.transactions_operations import TransactionsOperations
 from .operations.policies_operations import PoliciesOperations
 from .operations.billing_property_operations import BillingPropertyOperations
 from .operations.transfers_operations import TransfersOperations
@@ -33,7 +35,6 @@ from .operations.partner_transfers_operations import PartnerTransfersOperations
 from .operations.partner_transfers_transfers_operations import PartnerTransfersTransfersOperations
 from .operations.recipient_transfers_operations import RecipientTransfersOperations
 from .operations.operations import Operations
-from .operations.billing_permissions_operations import BillingPermissionsOperations
 from .operations.billing_role_definitions_operations import BillingRoleDefinitionsOperations
 from .operations.billing_role_assignments_operations import BillingRoleAssignmentsOperations
 from .operations.agreements_operations import AgreementsOperations
@@ -89,8 +90,18 @@ class BillingManagementClient(SDKClient):
     :vartype available_balances: azure.mgmt.billing.operations.AvailableBalancesOperations
     :ivar billing_profiles: BillingProfiles operations
     :vartype billing_profiles: azure.mgmt.billing.operations.BillingProfilesOperations
+    :ivar customers: Customers operations
+    :vartype customers: azure.mgmt.billing.operations.CustomersOperations
     :ivar invoice_sections: InvoiceSections operations
     :vartype invoice_sections: azure.mgmt.billing.operations.InvoiceSectionsOperations
+    :ivar billing_permissions: BillingPermissions operations
+    :vartype billing_permissions: azure.mgmt.billing.operations.BillingPermissionsOperations
+    :ivar billing_subscriptions: BillingSubscriptions operations
+    :vartype billing_subscriptions: azure.mgmt.billing.operations.BillingSubscriptionsOperations
+    :ivar products: Products operations
+    :vartype products: azure.mgmt.billing.operations.ProductsOperations
+    :ivar transactions: Transactions operations
+    :vartype transactions: azure.mgmt.billing.operations.TransactionsOperations
     :ivar departments: Departments operations
     :vartype departments: azure.mgmt.billing.operations.DepartmentsOperations
     :ivar enrollment_accounts: EnrollmentAccounts operations
@@ -99,12 +110,6 @@ class BillingManagementClient(SDKClient):
     :vartype invoices: azure.mgmt.billing.operations.InvoicesOperations
     :ivar price_sheet: PriceSheet operations
     :vartype price_sheet: azure.mgmt.billing.operations.PriceSheetOperations
-    :ivar billing_subscriptions: BillingSubscriptions operations
-    :vartype billing_subscriptions: azure.mgmt.billing.operations.BillingSubscriptionsOperations
-    :ivar products: Products operations
-    :vartype products: azure.mgmt.billing.operations.ProductsOperations
-    :ivar transactions: Transactions operations
-    :vartype transactions: azure.mgmt.billing.operations.TransactionsOperations
     :ivar policies: Policies operations
     :vartype policies: azure.mgmt.billing.operations.PoliciesOperations
     :ivar billing_property: BillingProperty operations
@@ -119,8 +124,6 @@ class BillingManagementClient(SDKClient):
     :vartype recipient_transfers: azure.mgmt.billing.operations.RecipientTransfersOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.billing.operations.Operations
-    :ivar billing_permissions: BillingPermissions operations
-    :vartype billing_permissions: azure.mgmt.billing.operations.BillingPermissionsOperations
     :ivar billing_role_definitions: BillingRoleDefinitions operations
     :vartype billing_role_definitions: azure.mgmt.billing.operations.BillingRoleDefinitionsOperations
     :ivar billing_role_assignments: BillingRoleAssignments operations
@@ -159,7 +162,17 @@ class BillingManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.billing_profiles = BillingProfilesOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.customers = CustomersOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.invoice_sections = InvoiceSectionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.billing_permissions = BillingPermissionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.billing_subscriptions = BillingSubscriptionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.products = ProductsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.transactions = TransactionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.departments = DepartmentsOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -168,12 +181,6 @@ class BillingManagementClient(SDKClient):
         self.invoices = InvoicesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.price_sheet = PriceSheetOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.billing_subscriptions = BillingSubscriptionsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.products = ProductsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.transactions = TransactionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.policies = PoliciesOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -188,8 +195,6 @@ class BillingManagementClient(SDKClient):
         self.recipient_transfers = RecipientTransfersOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.billing_permissions = BillingPermissionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.billing_role_definitions = BillingRoleDefinitionsOperations(
             self._client, self.config, self._serialize, self._deserialize)

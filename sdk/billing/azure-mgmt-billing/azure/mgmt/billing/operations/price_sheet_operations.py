@@ -147,10 +147,10 @@ class PriceSheetOperations(object):
     download.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/invoices/{invoiceName}/pricesheet/default/download'}
 
 
-    def _download_by_billing_profile_name_initial(
+    def _download_by_billing_profile_initial(
             self, billing_account_name, billing_profile_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = self.download_by_billing_profile_name.metadata['url']
+        url = self.download_by_billing_profile.metadata['url']
         path_format_arguments = {
             'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
             'billingProfileName': self._serialize.url("billing_profile_name", billing_profile_name, 'str')
@@ -196,7 +196,7 @@ class PriceSheetOperations(object):
 
         return deserialized
 
-    def download_by_billing_profile_name(
+    def download_by_billing_profile(
             self, billing_account_name, billing_profile_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Download price sheet for a billing profile.
 
@@ -218,7 +218,7 @@ class PriceSheetOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
         """
-        raw_result = self._download_by_billing_profile_name_initial(
+        raw_result = self._download_by_billing_profile_initial(
             billing_account_name=billing_account_name,
             billing_profile_name=billing_profile_name,
             custom_headers=custom_headers,
@@ -248,4 +248,4 @@ class PriceSheetOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    download_by_billing_profile_name.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/pricesheet/default/download'}
+    download_by_billing_profile.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/pricesheet/default/download'}

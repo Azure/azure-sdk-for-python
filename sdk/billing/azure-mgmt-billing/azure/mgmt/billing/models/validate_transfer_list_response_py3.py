@@ -12,16 +12,14 @@
 from msrest.serialization import Model
 
 
-class BillingPermissionsListResult(Model):
-    """Result of list billingPermissions a caller has on a billing account.
+class ValidateTransferListResponse(Model):
+    """Result of transfer validation.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar value: The list of billingPermissions a caller has on a billing
-     account.
-    :vartype value:
-     list[~azure.mgmt.billing.models.BillingPermissionsProperties]
+    :ivar value: The list of transfer validation results.
+    :vartype value: list[~azure.mgmt.billing.models.ValidateTransferResponse]
     """
 
     _validation = {
@@ -29,9 +27,9 @@ class BillingPermissionsListResult(Model):
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[BillingPermissionsProperties]'},
+        'value': {'key': 'value', 'type': '[ValidateTransferResponse]'},
     }
 
     def __init__(self, **kwargs) -> None:
-        super(BillingPermissionsListResult, self).__init__(**kwargs)
+        super(ValidateTransferListResponse, self).__init__(**kwargs)
         self.value = None
