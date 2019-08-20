@@ -6,7 +6,7 @@ from azure.storage.queue._shared.shared_access_signature import SharedAccessSign
 
 class QueueSharedAccessSignature(SharedAccessSignature):
     '''
-    Provides a factory for creating file and share access
+    Provides a factory for creating queue shares access
     signature tokens with a common account name and account key.  Users can either
     use the factory or can construct the appropriate service and use the
     generate_*_shared_access_signature method directly.
