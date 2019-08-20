@@ -2200,12 +2200,12 @@ class CosmosClientConnection(object):
         )
         return database_account
 
-    def Create(self, body, path, type, id, initial_headers, options=None):
+    def Create(self, body, path, typ, id, initial_headers, options=None):
         """Creates a Azure Cosmos resource and returns it.
 
         :param dict body:
         :param str path:
-        :param str type:
+        :param str typ:
         :param str id:
         :param dict initial_headers:
         :param dict options:
@@ -2221,22 +2221,22 @@ class CosmosClientConnection(object):
             options = {}
 
         initial_headers = initial_headers or self.default_headers
-        headers = base.GetHeaders(self, initial_headers, "post", path, id, type, options)
+        headers = base.GetHeaders(self, initial_headers, "post", path, id, typ, options)
         # Create will use WriteEndpoint since it uses POST operation
 
-        request = _request_object.RequestObject(type, documents._OperationType.Create)
+        request = _request_object.RequestObject(typ, documents._OperationType.Create)
         result, self.last_response_headers = self.__Post(path, request, body, headers)
 
         # update session for write request
         self._UpdateSessionIfRequired(headers, result, self.last_response_headers)
         return result
 
-    def Upsert(self, body, path, type, id, initial_headers, options=None):
+    def Upsert(self, body, path, typ, id, initial_headers, options=None):
         """Upserts a Azure Cosmos resource and returns it.
 
         :param dict body:
         :param str path:
-        :param str type:
+        :param str typ:
         :param str id:
         :param dict initial_headers:
         :param dict options:
@@ -2252,23 +2252,23 @@ class CosmosClientConnection(object):
             options = {}
 
         initial_headers = initial_headers or self.default_headers
-        headers = base.GetHeaders(self, initial_headers, "post", path, id, type, options)
+        headers = base.GetHeaders(self, initial_headers, "post", path, id, typ, options)
 
         headers[http_constants.HttpHeaders.IsUpsert] = True
 
         # Upsert will use WriteEndpoint since it uses POST operation
-        request = _request_object.RequestObject(type, documents._OperationType.Upsert)
+        request = _request_object.RequestObject(typ, documents._OperationType.Upsert)
         result, self.last_response_headers = self.__Post(path, request, body, headers)
         # update session for write request
         self._UpdateSessionIfRequired(headers, result, self.last_response_headers)
         return result
 
-    def Replace(self, resource, path, type, id, initial_headers, options=None):
+    def Replace(self, resource, path, typ, id, initial_headers, options=None):
         """Replaces a Azure Cosmos resource and returns it.
 
         :param dict resource:
         :param str path:
-        :param str type:
+        :param str typ:
         :param str id:
         :param dict initial_headers:
         :param dict options:
@@ -2284,20 +2284,20 @@ class CosmosClientConnection(object):
             options = {}
 
         initial_headers = initial_headers or self.default_headers
-        headers = base.GetHeaders(self, initial_headers, "put", path, id, type, options)
+        headers = base.GetHeaders(self, initial_headers, "put", path, id, typ, options)
         # Replace will use WriteEndpoint since it uses PUT operation
-        request = _request_object.RequestObject(type, documents._OperationType.Replace)
+        request = _request_object.RequestObject(typ, documents._OperationType.Replace)
         result, self.last_response_headers = self.__Put(path, request, resource, headers)
 
         # update session for request mutates data on server side
         self._UpdateSessionIfRequired(headers, result, self.last_response_headers)
         return result
 
-    def Read(self, path, type, id, initial_headers, options=None):
+    def Read(self, path, typ, id, initial_headers, options=None):
         """Reads a Azure Cosmos resource and returns it.
 
         :param str path:
-        :param str type:
+        :param str typ:
         :param str id:
         :param dict initial_headers:
         :param dict options:
@@ -2313,17 +2313,17 @@ class CosmosClientConnection(object):
             options = {}
 
         initial_headers = initial_headers or self.default_headers
-        headers = base.GetHeaders(self, initial_headers, "get", path, id, type, options)
+        headers = base.GetHeaders(self, initial_headers, "get", path, id, typ, options)
         # Read will use ReadEndpoint since it uses GET operation
-        request = _request_object.RequestObject(type, documents._OperationType.Read)
+        request = _request_object.RequestObject(typ, documents._OperationType.Read)
         result, self.last_response_headers = self.__Get(path, request, headers)
         return result
 
-    def DeleteResource(self, path, type, id, initial_headers, options=None):
+    def DeleteResource(self, path, typ, id, initial_headers, options=None):
         """Deletes a Azure Cosmos resource and returns it.
 
         :param str path:
-        :param str type:
+        :param str typ:
         :param str id:
         :param dict initial_headers:
         :param dict options:
@@ -2339,9 +2339,9 @@ class CosmosClientConnection(object):
             options = {}
 
         initial_headers = initial_headers or self.default_headers
-        headers = base.GetHeaders(self, initial_headers, "delete", path, id, type, options)
+        headers = base.GetHeaders(self, initial_headers, "delete", path, id, typ, options)
         # Delete will use WriteEndpoint since it uses DELETE operation
-        request = _request_object.RequestObject(type, documents._OperationType.Delete)
+        request = _request_object.RequestObject(typ, documents._OperationType.Delete)
         result, self.last_response_headers = self.__Delete(path, request, headers)
 
         # update session for request mutates data on server side
@@ -2486,12 +2486,12 @@ class CosmosClientConnection(object):
         )
 
     def __QueryFeed(
-        self, path, type, id, result_fn, create_fn, query, options=None, partition_key_range_id=None, response_hook=None
+        self, path, typ, id, result_fn, create_fn, query, options=None, partition_key_range_id=None, response_hook=None
     ):
         """Query for more than one Azure Cosmos resources.
 
         :param str path:
-        :param str type:
+        :param str typ:
         :param str id:
         :param function result_fn:
         :param function create_fn:
@@ -2525,8 +2525,8 @@ class CosmosClientConnection(object):
         # Copy to make sure that default_headers won't be changed.
         if query is None:
             # Query operations will use ReadEndpoint even though it uses GET(for feed requests)
-            request = _request_object.RequestObject(type, documents._OperationType.ReadFeed)
-            headers = base.GetHeaders(self, initial_headers, "get", path, id, type, options, partition_key_range_id)
+            request = _request_object.RequestObject(typ, documents._OperationType.ReadFeed)
+            headers = base.GetHeaders(self, initial_headers, "get", path, id, typ, options, partition_key_range_id)
             result, self.last_response_headers = self.__Get(path, request, headers)
             if response_hook:
                 response_hook(self.last_response_headers, result)
@@ -2546,8 +2546,8 @@ class CosmosClientConnection(object):
             raise SystemError("Unexpected query compatibility mode.")
 
         # Query operations will use ReadEndpoint even though it uses POST(for regular query operations)
-        request = _request_object.RequestObject(type, documents._OperationType.SqlQuery)
-        headers = base.GetHeaders(self, initial_headers, "post", path, id, type, options, partition_key_range_id)
+        request = _request_object.RequestObject(typ, documents._OperationType.SqlQuery)
+        headers = base.GetHeaders(self, initial_headers, "post", path, id, typ, options, partition_key_range_id)
         result, self.last_response_headers = self.__Post(path, request, query, headers)
 
         if response_hook:

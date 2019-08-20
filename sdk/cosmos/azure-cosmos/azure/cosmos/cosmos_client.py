@@ -80,7 +80,7 @@ class CosmosClient:
 
     def create_database(
         self,
-        id,
+        id, # pylint: disable=redefined-builtin
         session_token=None,
         initial_headers=None,
         access_condition=None,

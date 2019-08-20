@@ -31,7 +31,7 @@ from .permission import Permission
 
 
 class User:
-    def __init__(self, client_connection, id, database_link, properties=None):
+    def __init__(self, client_connection, id, database_link, properties=None): # pylint: disable=redefined-builtin
         # type: (CosmosClientConnection, str, str, Dict[str, Any]) -> None
         self.client_connection = client_connection
         self.id = id

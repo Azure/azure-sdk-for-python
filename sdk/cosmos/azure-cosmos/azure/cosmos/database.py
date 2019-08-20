@@ -60,7 +60,7 @@ class Database(object):
     * `_users`:	The addressable path of the users resource.
     """
 
-    def __init__(self, client_connection, id, properties=None):
+    def __init__(self, client_connection, id, properties=None): # pylint: disable=redefined-builtin
         # type: (CosmosClientConnection, str, Dict[str, Any]) -> None
         """
         :param ClientSession client_connection: Client from which this database was retrieved.
@@ -146,7 +146,7 @@ class Database(object):
 
     def create_container(
         self,
-        id,
+        id, # pylint: disable=redefined-builtin
         partition_key,
         indexing_policy=None,
         default_ttl=None,

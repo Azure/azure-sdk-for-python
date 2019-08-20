@@ -44,10 +44,10 @@ class Scripts:
         self.container_link = container_link
         self.is_system_key = is_system_key
 
-    def _get_resource_link(self, script_or_id, type):
+    def _get_resource_link(self, script_or_id, typ):
         # type: (Union[Dict[str, Any], str], str) -> str
         if isinstance(script_or_id, six.string_types):
-            return u"{}/{}/{}".format(self.container_link, type, script_or_id)
+            return u"{}/{}/{}".format(self.container_link, typ, script_or_id)
         return script_or_id["_self"]
 
     def list_stored_procedures(self, max_item_count=None, feed_options=None):
