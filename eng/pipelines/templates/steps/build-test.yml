@@ -10,11 +10,6 @@ parameters:
   RunMyPy: and(ne(variables['PythonVersion'], '2.7'), ne(variables['PythonVersion'], 'pypy3'))
 
 steps:
-  - task: DownloadPipelineArtifact@0
-    inputs:
-      artifactName: 'artifacts' 
-      targetPath: $(Build.ArtifactStagingDirectory)
-
   - powershell: |
       gci -r $(Build.ArtifactStagingDirectory)
 
@@ -51,7 +46,7 @@ steps:
         --mark_arg="${{ parameters.TestMarkArgument }}" 
         --service="${{ parameters.ServiceDirectory }}" 
         --toxenv="" 
-        --wheel_dir="$(Build.ArtifactStagingDirectory)" 
+
         --tparallel
     env: ${{ parameters.EnvVars }}
 
@@ -65,7 +60,6 @@ steps:
         --mark_arg="${{ parameters.TestMarkArgument }}" 
         --service="${{ parameters.ServiceDirectory }}" 
         --toxenv="lint"
-        --wheel_dir="$(Build.ArtifactStagingDirectory)"
     env: ${{ parameters.EnvVars }}
 
   - task: PythonScript@0
@@ -78,7 +72,6 @@ steps:
         --mark_arg="${{ parameters.TestMarkArgument }}" 
         --service="${{ parameters.ServiceDirectory }}" 
         --toxenv="mypy"
-        --wheel_dir="$(Build.ArtifactStagingDirectory)"
     env: ${{ parameters.EnvVars }}
     condition: and(succeededOrFailed(), ${{ parameters.RunMyPy }})
 
