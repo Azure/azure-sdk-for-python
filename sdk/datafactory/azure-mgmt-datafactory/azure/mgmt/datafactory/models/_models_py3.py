@@ -2283,19 +2283,23 @@ class AzureBlobFSSource(CopySource):
 class StoreWriteSettings(Model):
     """Connector write settings.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: FileServerWriteSettings, AzureDataLakeStoreWriteSettings,
+    AzureBlobFSWriteSettings, AzureBlobStorageWriteSettings
+
     All required parameters must be populated in order to send to Azure.
 
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param type: Required. The write setting type.
-    :type type: str
     :param max_concurrent_connections: The maximum concurrent connection count
      for the source data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
     :param copy_behavior: The type of copy behavior for copy sink.
     :type copy_behavior: object
+    :param type: Required. Constant filled by server.
+    :type type: str
     """
 
     _validation = {
@@ -2304,17 +2308,21 @@ class StoreWriteSettings(Model):
 
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
-        'type': {'key': 'type', 'type': 'str'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'copy_behavior': {'key': 'copyBehavior', 'type': 'object'},
+        'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, *, type: str, additional_properties=None, max_concurrent_connections=None, copy_behavior=None, **kwargs) -> None:
+    _subtype_map = {
+        'type': {'FileServerWriteSettings': 'FileServerWriteSettings', 'AzureDataLakeStoreWriteSettings': 'AzureDataLakeStoreWriteSettings', 'AzureBlobFSWriteSettings': 'AzureBlobFSWriteSettings', 'AzureBlobStorageWriteSettings': 'AzureBlobStorageWriteSettings'}
+    }
+
+    def __init__(self, *, additional_properties=None, max_concurrent_connections=None, copy_behavior=None, **kwargs) -> None:
         super(StoreWriteSettings, self).__init__(**kwargs)
         self.additional_properties = additional_properties
-        self.type = type
         self.max_concurrent_connections = max_concurrent_connections
         self.copy_behavior = copy_behavior
+        self.type = None
 
 
 class AzureBlobFSWriteSettings(StoreWriteSettings):
@@ -2325,14 +2333,17 @@ class AzureBlobFSWriteSettings(StoreWriteSettings):
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param type: Required. The write setting type.
-    :type type: str
     :param max_concurrent_connections: The maximum concurrent connection count
      for the source data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
     :param copy_behavior: The type of copy behavior for copy sink.
     :type copy_behavior: object
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param block_size_in_mb: Indicates the block size(MB) when writing data to
+     blob. Type: integer (or Expression with resultType integer).
+    :type block_size_in_mb: object
     """
 
     _validation = {
@@ -2341,13 +2352,16 @@ class AzureBlobFSWriteSettings(StoreWriteSettings):
 
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
-        'type': {'key': 'type', 'type': 'str'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'copy_behavior': {'key': 'copyBehavior', 'type': 'object'},
+        'type': {'key': 'type', 'type': 'str'},
+        'block_size_in_mb': {'key': 'blockSizeInMB', 'type': 'object'},
     }
 
-    def __init__(self, *, type: str, additional_properties=None, max_concurrent_connections=None, copy_behavior=None, **kwargs) -> None:
-        super(AzureBlobFSWriteSettings, self).__init__(additional_properties=additional_properties, type=type, max_concurrent_connections=max_concurrent_connections, copy_behavior=copy_behavior, **kwargs)
+    def __init__(self, *, additional_properties=None, max_concurrent_connections=None, copy_behavior=None, block_size_in_mb=None, **kwargs) -> None:
+        super(AzureBlobFSWriteSettings, self).__init__(additional_properties=additional_properties, max_concurrent_connections=max_concurrent_connections, copy_behavior=copy_behavior, **kwargs)
+        self.block_size_in_mb = block_size_in_mb
+        self.type = 'AzureBlobFSWriteSettings'
 
 
 class AzureBlobStorageLinkedService(LinkedService):
@@ -2549,14 +2563,17 @@ class AzureBlobStorageWriteSettings(StoreWriteSettings):
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param type: Required. The write setting type.
-    :type type: str
     :param max_concurrent_connections: The maximum concurrent connection count
      for the source data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
     :param copy_behavior: The type of copy behavior for copy sink.
     :type copy_behavior: object
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param block_size_in_mb: Indicates the block size(MB) when writing data to
+     blob. Type: integer (or Expression with resultType integer).
+    :type block_size_in_mb: object
     """
 
     _validation = {
@@ -2565,13 +2582,16 @@ class AzureBlobStorageWriteSettings(StoreWriteSettings):
 
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
-        'type': {'key': 'type', 'type': 'str'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'copy_behavior': {'key': 'copyBehavior', 'type': 'object'},
+        'type': {'key': 'type', 'type': 'str'},
+        'block_size_in_mb': {'key': 'blockSizeInMB', 'type': 'object'},
     }
 
-    def __init__(self, *, type: str, additional_properties=None, max_concurrent_connections=None, copy_behavior=None, **kwargs) -> None:
-        super(AzureBlobStorageWriteSettings, self).__init__(additional_properties=additional_properties, type=type, max_concurrent_connections=max_concurrent_connections, copy_behavior=copy_behavior, **kwargs)
+    def __init__(self, *, additional_properties=None, max_concurrent_connections=None, copy_behavior=None, block_size_in_mb=None, **kwargs) -> None:
+        super(AzureBlobStorageWriteSettings, self).__init__(additional_properties=additional_properties, max_concurrent_connections=max_concurrent_connections, copy_behavior=copy_behavior, **kwargs)
+        self.block_size_in_mb = block_size_in_mb
+        self.type = 'AzureBlobStorageWriteSettings'
 
 
 class AzureDatabricksLinkedService(LinkedService):
@@ -3518,14 +3538,14 @@ class AzureDataLakeStoreWriteSettings(StoreWriteSettings):
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param type: Required. The write setting type.
-    :type type: str
     :param max_concurrent_connections: The maximum concurrent connection count
      for the source data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
     :param copy_behavior: The type of copy behavior for copy sink.
     :type copy_behavior: object
+    :param type: Required. Constant filled by server.
+    :type type: str
     """
 
     _validation = {
@@ -3534,13 +3554,14 @@ class AzureDataLakeStoreWriteSettings(StoreWriteSettings):
 
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
-        'type': {'key': 'type', 'type': 'str'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'copy_behavior': {'key': 'copyBehavior', 'type': 'object'},
+        'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, *, type: str, additional_properties=None, max_concurrent_connections=None, copy_behavior=None, **kwargs) -> None:
-        super(AzureDataLakeStoreWriteSettings, self).__init__(additional_properties=additional_properties, type=type, max_concurrent_connections=max_concurrent_connections, copy_behavior=copy_behavior, **kwargs)
+    def __init__(self, *, additional_properties=None, max_concurrent_connections=None, copy_behavior=None, **kwargs) -> None:
+        super(AzureDataLakeStoreWriteSettings, self).__init__(additional_properties=additional_properties, max_concurrent_connections=max_concurrent_connections, copy_behavior=copy_behavior, **kwargs)
+        self.type = 'AzureDataLakeStoreWriteSettings'
 
 
 class AzureFunctionActivity(ExecutionActivity):
@@ -11122,14 +11143,14 @@ class FileServerWriteSettings(StoreWriteSettings):
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param type: Required. The write setting type.
-    :type type: str
     :param max_concurrent_connections: The maximum concurrent connection count
      for the source data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
     :param copy_behavior: The type of copy behavior for copy sink.
     :type copy_behavior: object
+    :param type: Required. Constant filled by server.
+    :type type: str
     """
 
     _validation = {
@@ -11138,13 +11159,14 @@ class FileServerWriteSettings(StoreWriteSettings):
 
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
-        'type': {'key': 'type', 'type': 'str'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'copy_behavior': {'key': 'copyBehavior', 'type': 'object'},
+        'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, *, type: str, additional_properties=None, max_concurrent_connections=None, copy_behavior=None, **kwargs) -> None:
-        super(FileServerWriteSettings, self).__init__(additional_properties=additional_properties, type=type, max_concurrent_connections=max_concurrent_connections, copy_behavior=copy_behavior, **kwargs)
+    def __init__(self, *, additional_properties=None, max_concurrent_connections=None, copy_behavior=None, **kwargs) -> None:
+        super(FileServerWriteSettings, self).__init__(additional_properties=additional_properties, max_concurrent_connections=max_concurrent_connections, copy_behavior=copy_behavior, **kwargs)
+        self.type = 'FileServerWriteSettings'
 
 
 class FileShareDataset(Dataset):
@@ -27506,7 +27528,7 @@ class TriggerRun(Model):
         'properties': {'key': 'properties', 'type': '{str}'},
         'triggered_pipelines': {'key': 'triggeredPipelines', 'type': '{str}'},
         'run_dimension': {'key': 'runDimension', 'type': '{str}'},
-        'dependency_status': {'key': 'DependencyStatus', 'type': '{object}'},
+        'dependency_status': {'key': 'dependencyStatus', 'type': '{object}'},
     }
 
     def __init__(self, *, additional_properties=None, **kwargs) -> None:
