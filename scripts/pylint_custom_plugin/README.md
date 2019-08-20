@@ -33,7 +33,9 @@ It is recommended you run pylint at the library package level to be consistent w
 ```
 
 The pylint custom checkers for SDK guidelines fall into messages range C4717 - C4738.
-You will know you came across a custom checker if it contains a link to the guidelines.
+You will know you came across a custom checker if it contains a link to the guidelines.  
+
+In the case of a false positive, use the disable command to remove the pylint error.
 
 **Guidelines that are currently linted:**
 
