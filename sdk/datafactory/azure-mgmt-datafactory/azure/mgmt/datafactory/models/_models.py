@@ -5940,8 +5940,8 @@ class Trigger(Model):
     pipeline run.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: RerunTumblingWindowTrigger, TumblingWindowTrigger,
-    MultiplePipelineTrigger
+    sub-classes are: RerunTumblingWindowTrigger, ChainingTrigger,
+    TumblingWindowTrigger, MultiplePipelineTrigger
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -5979,7 +5979,7 @@ class Trigger(Model):
     }
 
     _subtype_map = {
-        'type': {'RerunTumblingWindowTrigger': 'RerunTumblingWindowTrigger', 'TumblingWindowTrigger': 'TumblingWindowTrigger', 'MultiplePipelineTrigger': 'MultiplePipelineTrigger'}
+        'type': {'RerunTumblingWindowTrigger': 'RerunTumblingWindowTrigger', 'ChainingTrigger': 'ChainingTrigger', 'TumblingWindowTrigger': 'TumblingWindowTrigger', 'MultiplePipelineTrigger': 'MultiplePipelineTrigger'}
     }
 
     def __init__(self, **kwargs):
@@ -6503,6 +6503,67 @@ class CassandraTableDataset(Dataset):
         self.table_name = kwargs.get('table_name', None)
         self.keyspace = kwargs.get('keyspace', None)
         self.type = 'CassandraTable'
+
+
+class ChainingTrigger(Trigger):
+    """Trigger that schedules pipeline runs based on dependent pipelines
+    successful completion.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param description: Trigger description.
+    :type description: str
+    :ivar runtime_state: Indicates if trigger is running or not. Updated when
+     Start/Stop APIs are called on the Trigger. Possible values include:
+     'Started', 'Stopped', 'Disabled'
+    :vartype runtime_state: str or
+     ~azure.mgmt.datafactory.models.TriggerRuntimeState
+    :param annotations: List of tags that can be used for describing the
+     trigger.
+    :type annotations: list[object]
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param pipeline: Required. Pipeline for which runs are created when all
+     dependent pipelines complete successfully.
+    :type pipeline: ~azure.mgmt.datafactory.models.TriggerPipelineReference
+    :param depends_on: Required. Dependent Pipelines.
+    :type depends_on: list[~azure.mgmt.datafactory.models.PipelineReference]
+    :param run_dimension: Required. Run Dimension property that needs to be
+     emitted by dependent pipelines.
+    :type run_dimension: str
+    """
+
+    _validation = {
+        'runtime_state': {'readonly': True},
+        'type': {'required': True},
+        'pipeline': {'required': True},
+        'depends_on': {'required': True},
+        'run_dimension': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'description': {'key': 'description', 'type': 'str'},
+        'runtime_state': {'key': 'runtimeState', 'type': 'str'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
+        'type': {'key': 'type', 'type': 'str'},
+        'pipeline': {'key': 'pipeline', 'type': 'TriggerPipelineReference'},
+        'depends_on': {'key': 'typeProperties.dependsOn', 'type': '[PipelineReference]'},
+        'run_dimension': {'key': 'typeProperties.runDimension', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ChainingTrigger, self).__init__(**kwargs)
+        self.pipeline = kwargs.get('pipeline', None)
+        self.depends_on = kwargs.get('depends_on', None)
+        self.run_dimension = kwargs.get('run_dimension', None)
+        self.type = 'ChainingTrigger'
 
 
 class CloudError(Model):
@@ -20059,6 +20120,8 @@ class PipelineResource(SubResource):
     :param annotations: List of tags that can be used for describing the
      Pipeline.
     :type annotations: list[object]
+    :param run_dimensions: Dimensions emitted by Pipeline.
+    :type run_dimensions: dict[str, object]
     :param folder: The folder that this Pipeline is in. If not specified,
      Pipeline will appear at the root level.
     :type folder: ~azure.mgmt.datafactory.models.PipelineFolder
@@ -20084,6 +20147,7 @@ class PipelineResource(SubResource):
         'variables': {'key': 'properties.variables', 'type': '{VariableSpecification}'},
         'concurrency': {'key': 'properties.concurrency', 'type': 'int'},
         'annotations': {'key': 'properties.annotations', 'type': '[object]'},
+        'run_dimensions': {'key': 'properties.runDimensions', 'type': '{object}'},
         'folder': {'key': 'properties.folder', 'type': 'PipelineFolder'},
     }
 
@@ -20096,6 +20160,7 @@ class PipelineResource(SubResource):
         self.variables = kwargs.get('variables', None)
         self.concurrency = kwargs.get('concurrency', None)
         self.annotations = kwargs.get('annotations', None)
+        self.run_dimensions = kwargs.get('run_dimensions', None)
         self.folder = kwargs.get('folder', None)
 
 
@@ -20121,6 +20186,8 @@ class PipelineRun(Model):
     :ivar parameters: The full or partial list of parameter name, value pair
      used in the pipeline run.
     :vartype parameters: dict[str, str]
+    :ivar run_dimension: Run dimension emitted by Pipeline run.
+    :vartype run_dimension: dict[str, str]
     :ivar invoked_by: Entity that started the pipeline run.
     :vartype invoked_by: ~azure.mgmt.datafactory.models.PipelineRunInvokedBy
     :ivar last_updated: The last updated timestamp for the pipeline run event
@@ -20144,6 +20211,7 @@ class PipelineRun(Model):
         'is_latest': {'readonly': True},
         'pipeline_name': {'readonly': True},
         'parameters': {'readonly': True},
+        'run_dimension': {'readonly': True},
         'invoked_by': {'readonly': True},
         'last_updated': {'readonly': True},
         'run_start': {'readonly': True},
@@ -20160,6 +20228,7 @@ class PipelineRun(Model):
         'is_latest': {'key': 'isLatest', 'type': 'bool'},
         'pipeline_name': {'key': 'pipelineName', 'type': 'str'},
         'parameters': {'key': 'parameters', 'type': '{str}'},
+        'run_dimension': {'key': 'runDimension', 'type': '{str}'},
         'invoked_by': {'key': 'invokedBy', 'type': 'PipelineRunInvokedBy'},
         'last_updated': {'key': 'lastUpdated', 'type': 'iso-8601'},
         'run_start': {'key': 'runStart', 'type': 'iso-8601'},
@@ -20177,6 +20246,7 @@ class PipelineRun(Model):
         self.is_latest = None
         self.pipeline_name = None
         self.parameters = None
+        self.run_dimension = None
         self.invoked_by = None
         self.last_updated = None
         self.run_start = None
@@ -27406,6 +27476,10 @@ class TriggerRun(Model):
     :ivar triggered_pipelines: List of pipeline name and run Id triggered by
      the trigger run.
     :vartype triggered_pipelines: dict[str, str]
+    :ivar run_dimension: Run dimension for which trigger was fired.
+    :vartype run_dimension: dict[str, str]
+    :ivar dependency_status: Status of the upstream pipelines.
+    :vartype dependency_status: dict[str, object]
     """
 
     _validation = {
@@ -27417,6 +27491,8 @@ class TriggerRun(Model):
         'message': {'readonly': True},
         'properties': {'readonly': True},
         'triggered_pipelines': {'readonly': True},
+        'run_dimension': {'readonly': True},
+        'dependency_status': {'readonly': True},
     }
 
     _attribute_map = {
@@ -27429,6 +27505,8 @@ class TriggerRun(Model):
         'message': {'key': 'message', 'type': 'str'},
         'properties': {'key': 'properties', 'type': '{str}'},
         'triggered_pipelines': {'key': 'triggeredPipelines', 'type': '{str}'},
+        'run_dimension': {'key': 'runDimension', 'type': '{str}'},
+        'dependency_status': {'key': 'DependencyStatus', 'type': '{object}'},
     }
 
     def __init__(self, **kwargs):
@@ -27442,6 +27520,8 @@ class TriggerRun(Model):
         self.message = None
         self.properties = None
         self.triggered_pipelines = None
+        self.run_dimension = None
+        self.dependency_status = None
 
 
 class TriggerRunsQueryResponse(Model):
