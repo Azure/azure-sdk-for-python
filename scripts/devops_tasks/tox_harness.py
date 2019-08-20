@@ -113,8 +113,6 @@ def individual_workload(tox_command_tuple):
             logging.error("Package returned with code {}".format(proc.returncode))
             log_file(stderr)
 
-            exit(1)
-
     return proc
 
 def execute_tox_parallel(tox_command_tuples):
@@ -129,6 +127,15 @@ def execute_tox_parallel(tox_command_tuples):
         pool.add_task(individual_workload, cmd_tuple)
 
     pool.wait_completion()
+
+def execute_tox_serial(tox_command_tuples):
+    for index, cmd_tuple in enumerate(tox_command_tuples):
+        logging.info(
+            "Running tox for {}. {} of {}.".format(
+                os.path.basename(cmd_tuple[1]), index, len(tox_command_tuples)
+            )
+        )
+        run_check_call(cmd_tuple[0], cmd_tuple[1])
 
 def prep_and_run_tox(targeted_packages, tox_env, options_array=[], is_parallel=False):
     tox_command_tuples = []
@@ -169,18 +176,13 @@ def prep_and_run_tox(targeted_packages, tox_env, options_array=[], is_parallel=F
         if local_options_array:
             tox_execution_array.extend(["--"] + local_options_array)
 
+        # 0 = command array
         tox_command_tuples.append((tox_execution_array, package_dir))
 
     if is_parallel:
         execute_tox_parallel(tox_command_tuples)
     else:
-        for index, cmd_tuple in enumerate(tox_command_tuples):
-            logging.info(
-                "Running tox for {}. {} of {}.".format(
-                    os.path.basename(cmd_tuple[1]), index, len(tox_command_tuples)
-                )
-            )
-            run_check_call(cmd_tuple[0], cmd_tuple[1])
+        execute_tox_serial(tox_command_tuples)
 
     # TODO: get a bit smarter here
     if not tox_env:
