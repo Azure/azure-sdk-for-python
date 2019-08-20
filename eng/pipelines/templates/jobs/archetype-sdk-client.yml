@@ -135,7 +135,12 @@ jobs:
           OSName: $(OSName)
           PythonVersion: $(PythonVersion)
           BuildTargetingString: ${{ parameters.BuildTargetingString }}
-
+          BeforeTestSteps: 
+              - task: DownloadPipelineArtifact@0
+                inputs:
+                  artifactName: 'artifacts' 
+                  targetPath: $(Build.ArtifactStagingDirectory)
+                  
       - template: ../steps/publish-coverage.yml
 
   # Run PyPy tests without coverage
@@ -159,9 +164,14 @@ jobs:
     steps:
       - template: ../steps/build-test.yml
         parameters:
-          AdditionalTestArgs: '--disablecov'
+          AdditionalTestArgs: '--disablecov --wheel_dir="$(Build.ArtifactStagingDirectory)"'
           ServiceDirectory: ${{ parameters.ServiceDirectory }}
           TestMarkArgument: ${{ parameters.TestMarkArgument }}
           OSName: $(OSName)
           PythonVersion: $(PythonVersion)
           BuildTargetingString: ${{ parameters.BuildTargetingString }}
+          BeforeTestSteps: 
+              - task: DownloadPipelineArtifact@0
+                inputs:
+                  artifactName: 'artifacts' 
+                  targetPath: $(Build.ArtifactStagingDirectory)

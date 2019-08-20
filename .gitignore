@@ -33,6 +33,8 @@ TestResults/
 test-junit-*.xml
 pylint-*.out.txt
 coverage-*.xml
+stderr.txt
+stdout.txt
 
 # tox environment folders
 .tox/

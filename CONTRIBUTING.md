@@ -41,7 +41,7 @@ sdist
 
 ```
 
-Unfortunately, the command `tox -l` only returns the _default_ test builds. The common `tox.ini` file also supports `pylint` and `mypy` environments.
+Unfortunately, the command `tox -l` only returns the _default_ test builds. The common `tox.ini` file also supports `lint` and `mypy` environments.
 
 ### Example Usage of the common Azure SDK For Python `tox.ini` 
 
@@ -89,11 +89,11 @@ Used for the local dev loop.
 
 ```
 
-#### `mypy` environment
+#### `lint` environment
 Pylint install and run.
 
 ```
-\> tox -e pylint -c <path to tox.ini>
+\> tox -e lint -c <path to tox.ini>
 ```
 
 
