@@ -9,13 +9,13 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .clusters_operations import ClustersOperations
-from .cluster_versions_operations import ClusterVersionsOperations
-from .operations import Operations
-from .application_types_operations import ApplicationTypesOperations
-from .application_type_versions_operations import ApplicationTypeVersionsOperations
-from .applications_operations import ApplicationsOperations
-from .services_operations import ServicesOperations
+from ._clusters_operations import ClustersOperations
+from ._cluster_versions_operations import ClusterVersionsOperations
+from ._operations import Operations
+from ._application_types_operations import ApplicationTypesOperations
+from ._application_type_versions_operations import ApplicationTypeVersionsOperations
+from ._applications_operations import ApplicationsOperations
+from ._services_operations import ServicesOperations
 
 __all__ = [
     'ClustersOperations',
