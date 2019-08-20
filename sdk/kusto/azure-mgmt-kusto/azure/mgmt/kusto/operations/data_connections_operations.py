@@ -203,7 +203,7 @@ class DataConnectionsOperations(object):
         :param database_name: The name of the database in the Kusto cluster.
         :type database_name: str
         :param name: Data Connection name.
-        :type name: str
+        :type name: object
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
