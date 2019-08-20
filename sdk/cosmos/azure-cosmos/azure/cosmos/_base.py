@@ -166,7 +166,7 @@ def GetHeaders(
             authorization = urllib_quote(authorization, "-_.!~*'()")
         headers[http_constants.HttpHeaders.Authorization] = authorization
 
-    if verb in ('post', 'put'):
+    if verb in ("post", "put"):
         if not headers.get(http_constants.HttpHeaders.ContentType):
             headers[http_constants.HttpHeaders.ContentType] = _runtime_constants.MediaTypes.Json
 
@@ -359,7 +359,7 @@ def IsMasterResource(resourceType):
         http_constants.ResourceType.Topology,
         http_constants.ResourceType.DatabaseAccount,
         http_constants.ResourceType.PartitionKeyRange,
-        http_constants.ResourceType.Collection
+        http_constants.ResourceType.Collection,
     )
 
 
@@ -542,7 +542,7 @@ def IsValidBase64String(string_to_validate):
         buffer = base64.standard_b64decode(string_to_validate.replace("-", "/"))
         if len(buffer) != 4:
             return False
-    except Exception as e: # pylint: disable=broad-except
+    except Exception as e:  # pylint: disable=broad-except
         if six.PY2:
             e = e.message
         if isinstance(e, binascii.Error):

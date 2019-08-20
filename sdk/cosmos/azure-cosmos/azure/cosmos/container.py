@@ -51,7 +51,7 @@ class Container:
 
     """
 
-    def __init__(self, client_connection, database_link, id, properties=None): # pylint: disable=redefined-builtin
+    def __init__(self, client_connection, database_link, id, properties=None):  # pylint: disable=redefined-builtin
         # type: (CosmosClientConnection, str, str, Dict[str, Any]) -> None
         self.client_connection = client_connection
         self.id = id

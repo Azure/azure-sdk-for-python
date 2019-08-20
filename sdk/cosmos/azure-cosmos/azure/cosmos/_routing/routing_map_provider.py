@@ -165,8 +165,9 @@ class SmartRoutingMapProvider(PartitionKeyRangeCache):
                     queryRange = currentProvidedRange
 
                 overlappingRanges = PartitionKeyRangeCache.get_overlapping_ranges(self, collection_link, queryRange)
-                assert overlappingRanges, \
-                    "code bug: returned overlapping ranges for queryRange {} is empty".format(queryRange)
+                assert overlappingRanges, "code bug: returned overlapping ranges for queryRange {} is empty".format(
+                    queryRange
+                )
                 target_partition_key_ranges.extend(overlappingRanges)
 
                 lastKnownTargetRange = routing_range.Range.PartitionKeyRangeToRange(target_partition_key_ranges[-1])

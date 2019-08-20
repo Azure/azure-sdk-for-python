@@ -30,6 +30,7 @@ import six
 
 from . import http_constants
 
+
 def GetAuthorizationHeader(
     cosmos_client_connection, verb, path, resource_id_or_fullname, is_name_based, resource_type, headers
 ):

@@ -132,9 +132,7 @@ class LocationCache(object):
         return endpoints[location_index % len(endpoints)]
 
     def should_refresh_endpoints(self):
-        most_preferred_location = (
-            self.preferred_locations[0] if self.preferred_locations else None
-        )
+        most_preferred_location = self.preferred_locations[0] if self.preferred_locations else None
 
         # we should schedule refresh in background if we are unable to target the user's most preferredLocation.
         if self.enable_endpoint_discovery:

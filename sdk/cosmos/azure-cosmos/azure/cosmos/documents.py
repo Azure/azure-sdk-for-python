@@ -417,9 +417,8 @@ class _OperationType(object):
             _OperationType.ExecuteJavaScript,
             _OperationType.Replace,
             _OperationType.Upsert,
-            _OperationType.Update
+            _OperationType.Update,
         )
-
 
     @staticmethod
     def IsReadOnlyOperation(operationType):
@@ -429,5 +428,5 @@ class _OperationType(object):
             _OperationType.Head,
             _OperationType.HeadFeed,
             _OperationType.Query,
-            _OperationType.SqlQuery
+            _OperationType.SqlQuery,
         )
