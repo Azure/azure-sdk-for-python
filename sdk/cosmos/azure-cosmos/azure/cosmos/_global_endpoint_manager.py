@@ -22,8 +22,10 @@
 """Internal class for global endpoint manager implementation in the Azure Cosmos database service.
 """
 
-from six.moves.urllib.parse import urlparse
 import threading
+
+from six.moves.urllib.parse import urlparse
+
 from . import _constants as constants
 from . import errors
 from ._location_cache import LocationCache

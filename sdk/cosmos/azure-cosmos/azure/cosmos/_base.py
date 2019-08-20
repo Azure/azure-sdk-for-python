@@ -28,15 +28,15 @@ import json
 import uuid
 import binascii
 
+import six
+from six.moves.urllib.parse import quote as urllib_quote
+from six.moves import xrange
+
 from . import auth
 from . import documents
 from . import partition_key
 from . import http_constants
 from . import _runtime_constants
-
-import six
-from six.moves.urllib.parse import quote as urllib_quote
-from six.moves import xrange
 
 
 def GetHeaders(

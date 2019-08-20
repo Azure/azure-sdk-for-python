@@ -22,13 +22,13 @@
 """Authorization helper functions in the Azure Cosmos database service.
 """
 
+import base64
 from hashlib import sha256
 import hmac
+
 import six
-import base64
 
 from . import http_constants
-
 
 def GetAuthorizationHeader(
     cosmos_client_connection, verb, path, resource_id_or_fullname, is_name_based, resource_type, headers

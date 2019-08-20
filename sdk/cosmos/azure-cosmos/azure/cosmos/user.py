@@ -22,9 +22,11 @@
 """Create, read, update and delete permissions in the Azure Cosmos DB SQL API service.
 """
 
-import six
-from ._cosmos_client_connection import CosmosClientConnection
 from typing import Any, List, Dict, Union, cast
+
+import six
+
+from ._cosmos_client_connection import CosmosClientConnection
 from .permission import Permission
 
 

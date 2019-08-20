@@ -22,11 +22,13 @@
 """Create, read, update and delete and execute scripts in the Azure Cosmos DB SQL API service.
 """
 
+from typing import Any, List, Dict, Union
+
 import six
+
 from azure.cosmos._cosmos_client_connection import CosmosClientConnection
 from .partition_key import NonePartitionKeyValue
 from ._query_iterable import QueryIterable
-from typing import Any, List, Dict, Union
 
 
 class ScriptType:

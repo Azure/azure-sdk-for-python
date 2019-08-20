@@ -23,9 +23,11 @@
 """
 
 import bisect
+
+from six.moves import xrange
+
 from azure.cosmos._routing import routing_range
 from azure.cosmos._routing.routing_range import PartitionKeyRange
-from six.moves import xrange
 
 
 class CollectionRoutingMap(object):

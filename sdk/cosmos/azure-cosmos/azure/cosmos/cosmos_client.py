@@ -22,12 +22,14 @@
 """Create, read, and delete databases in the Azure Cosmos DB SQL API service.
 """
 
+from typing import Any, Callable, Dict, Mapping, Optional, Union, cast
+
 import six
+
 from ._cosmos_client_connection import CosmosClientConnection
 from .database import Database
 from .documents import ConnectionPolicy, DatabaseAccount
 from ._query_iterable import QueryIterable
-from typing import Any, Callable, Dict, Mapping, Optional, Union, cast
 
 __all__ = ("CosmosClient",)
 
