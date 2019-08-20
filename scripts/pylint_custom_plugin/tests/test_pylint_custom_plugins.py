@@ -1367,7 +1367,6 @@ class TestClientUsesCorrectNamingConventions(pylint.testutils.CheckerTestCase):
 
         with self.assertNoMessages():
             self.checker.visit_classdef(class_node)
-            self.checker.visit_functiondef(function_node)
 
     def test_ignores_internal_client(self):
         class_node, function_node = astroid.extract_node("""
@@ -1390,8 +1389,6 @@ class TestClientUsesCorrectNamingConventions(pylint.testutils.CheckerTestCase):
 
         with self.assertNoMessages():
             self.checker.visit_classdef(class_node)
-            self.checker.visit_functiondef(function_node_a)
-            self.checker.visit_asyncfunctiondef(function_node_b)
 
     def test_ignores_correct_client(self):
         class_node = astroid.extract_node("""
@@ -1427,9 +1424,6 @@ class TestClientUsesCorrectNamingConventions(pylint.testutils.CheckerTestCase):
 
         with self.assertNoMessages():
             self.checker.visit_classdef(class_node)
-            self.checker.visit_functiondef(function_node_a)
-            self.checker.visit_functiondef(function_node_b)
-            self.checker.visit_functiondef(function_node_c)
 
     def test_ignores_correct_method_names_async(self):
         class_node, function_node_a, function_node_b, function_node_c = astroid.extract_node("""
@@ -1444,9 +1438,6 @@ class TestClientUsesCorrectNamingConventions(pylint.testutils.CheckerTestCase):
 
         with self.assertNoMessages():
             self.checker.visit_classdef(class_node)
-            self.checker.visit_asyncfunctiondef(function_node_a)
-            self.checker.visit_asyncfunctiondef(function_node_b)
-            self.checker.visit_asyncfunctiondef(function_node_c)
 
     def test_ignores_correct_class_constant(self):
         class_node = astroid.extract_node("""
@@ -1522,12 +1513,6 @@ class TestClientUsesCorrectNamingConventions(pylint.testutils.CheckerTestCase):
             ),
         ):
             self.checker.visit_classdef(class_node)
-            self.checker.visit_functiondef(func_node_a)
-            self.checker.visit_functiondef(func_node_b)
-            self.checker.visit_functiondef(func_node_c)
-            self.checker.visit_functiondef(func_node_d)
-            self.checker.visit_functiondef(func_node_e)
-            self.checker.visit_functiondef(func_node_f)
 
     def test_finds_incorrectly_named_methods_async(self):
         class_node, func_node_a, func_node_b, func_node_c, func_node_d, func_node_e, func_node_f \
@@ -1568,12 +1553,6 @@ class TestClientUsesCorrectNamingConventions(pylint.testutils.CheckerTestCase):
             ),
         ):
             self.checker.visit_classdef(class_node)
-            self.checker.visit_asyncfunctiondef(func_node_a)
-            self.checker.visit_asyncfunctiondef(func_node_b)
-            self.checker.visit_asyncfunctiondef(func_node_c)
-            self.checker.visit_asyncfunctiondef(func_node_d)
-            self.checker.visit_asyncfunctiondef(func_node_e)
-            self.checker.visit_asyncfunctiondef(func_node_f)
 
     def test_finds_incorrectly_named_class_constant(self):
         class_node, const_a, const_b = astroid.extract_node("""
@@ -1667,9 +1646,13 @@ class TestClientMethodsHaveKwargsParameter(pylint.testutils.CheckerTestCase):
 
     def test_finds_missing_kwargs(self):
         class_node, function_node_a, function_node_b = astroid.extract_node("""
+        from azure.core.tracing.decorator import distributed_trace
+        
         class SomeClient(): #@
+            @distributed_trace
             def get_thing(self): #@
                 pass
+            @distributed_trace
             def remove_thing(self): #@
                 pass
         """)
@@ -1702,7 +1685,10 @@ class TestClientMethodsHaveKwargsParameter(pylint.testutils.CheckerTestCase):
 
     def test_finds_missing_kwargs_async(self):
         class_node, function_node_a, function_node_b = astroid.extract_node("""
+        from azure.core.tracing.decorator_async import distributed_trace_async
+        
         class SomeClient(): #@
+            @distributed_trace_async
             async def get_thing(self): #@
                 pass
             @distributed_trace_async
@@ -2182,13 +2168,13 @@ class TestClientLROMethodsUseCorrectNaming(pylint.testutils.CheckerTestCase):
         assert response.http_response.status_code == 200
 
 
-class TestClientHasFromConnectionStringMethod(pylint.testutils.CheckerTestCase):
-    CHECKER_CLASS = checker.ClientHasFromConnectionStringMethod
+class TestClientConstructorDoesNotHaveConnectionStringParam(pylint.testutils.CheckerTestCase):
+    CHECKER_CLASS = checker.ClientConstructorDoesNotHaveConnectionStringParam
 
-    def test_ignores_client_with_conn_str_method(self):
+    def test_ignores_client_with_no_conn_str_in_constructor(self):
         class_node = astroid.extract_node("""
         class SomeClient(): #@
-            def from_connection_string(self): 
+            def __init__(self): 
                 pass
         """)
 
@@ -2198,25 +2184,37 @@ class TestClientHasFromConnectionStringMethod(pylint.testutils.CheckerTestCase):
     def test_ignores_non_client_methods(self):
         class_node, function_node = astroid.extract_node("""
         class SomethingElse(): #@
-            def list_things(self): #@
+            def __init__(self): #@
                 pass
         """)
 
         with self.assertNoMessages():
             self.checker.visit_classdef(class_node)
 
-    def test_finds_client_method_missing_conn_str_method(self):
+    def test_finds_client_method_using_conn_str_in_constructor_a(self):
         class_node = astroid.extract_node("""
         class SomeClient(): #@
-            def list_thing(self):
+            def __init__(self, connection_string):
                 return list()
-            def list_thing2(self):
-                return LROPoller()
         """)
 
         with self.assertAddsMessages(
                 pylint.testutils.Message(
-                    msg_id="missing-client-creation-from-connection-string", node=class_node
+                    msg_id="connection-string-should-not-be-constructor-param", node=class_node
+                ),
+        ):
+            self.checker.visit_classdef(class_node)
+
+    def test_finds_client_method_using_conn_str_in_constructor_b(self):
+        class_node = astroid.extract_node("""
+        class SomeClient(): #@
+            def __init__(self, conn_str):
+                return list()
+        """)
+
+        with self.assertAddsMessages(
+                pylint.testutils.Message(
+                    msg_id="connection-string-should-not-be-constructor-param", node=class_node
                 ),
         ):
             self.checker.visit_classdef(class_node)

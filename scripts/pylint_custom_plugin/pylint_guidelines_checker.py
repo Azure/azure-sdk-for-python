@@ -703,41 +703,16 @@ class ClientUsesCorrectNamingConventions(BaseChecker):
                     logger.debug("Pylint custom checker failed to check if client uses correct naming conventions.")
                     pass
 
-    def visit_functiondef(self, node):
-        """Visits every method in the client and checks for correct naming convention.
-
-        :param node: function node
-        :type node: ast.FunctionDef
-        :return: None
-        """
-        # mainly just checks that method names don't use camelcase
-        try:
-            if self.is_client and self.is_client[-1] and node.is_method():
-                if node.name != node.name.lower():
-                    self.add_message(
-                        msg_id="client-incorrect-naming-convention", node=node, confidence=None
-                    )
-        except AttributeError:
-            logger.debug("Pylint custom checker failed to check if client uses correct naming conventions.")
-            pass
-
-    def visit_asyncfunctiondef(self, node):
-        """Visits every async method in the client and checks for correct naming convention.
-
-        :param node: function node
-        :type node: ast.AsyncFunctionDef
-        :return: None
-        """
-        # mainly just checks that method names don't use camelcase
-        try:
-            if self.is_client and self.is_client[-1] and node.is_method():
-                if node.name != node.name.lower():
-                    self.add_message(
-                        msg_id="client-incorrect-naming-convention", node=node, confidence=None
-                    )
-        except AttributeError:
-            logger.debug("Pylint custom checker failed to check if client uses correct naming conventions.")
-            pass
+            # check that methods in client class do not use camelcase
+            try:
+                for func in node.body:
+                    if func.name != func.name.lower() and not func.name.startswith("_"):
+                        self.add_message(
+                            msg_id="client-incorrect-naming-convention", node=func, confidence=None
+                        )
+            except AttributeError:
+                logger.debug("Pylint custom checker failed to check if client uses correct naming conventions.")
+                pass
 
 
 class ClientMethodsHaveKwargsParameter(BaseChecker):
@@ -792,13 +767,15 @@ class ClientMethodsHaveKwargsParameter(BaseChecker):
         try:
             if self.is_client and self.is_client[-1] and node.is_method():
                 # avoid false positive with @property
-                if node.decorators is not None and "builtins.property" in node.decoratornames():
-                    return
-                if not node.name.startswith("_"):
-                    if not node.args.kwarg:
-                        self.add_message(
-                            msg_id="client-method-missing-kwargs", node=node, confidence=None
-                        )
+                if node.decorators is not None:
+                    if "builtins.property" in node.decoratornames():
+                        return
+                    if not node.name.startswith("_") and \
+                            "azure.core.tracing.decorator.distributed_trace" in node.decoratornames():
+                        if not node.args.kwarg:
+                            self.add_message(
+                                msg_id="client-method-missing-kwargs", node=node, confidence=None
+                            )
         except AttributeError:
             logger.debug("Pylint custom checker failed to check if client uses kwargs parameter in method.")
             pass
@@ -813,13 +790,15 @@ class ClientMethodsHaveKwargsParameter(BaseChecker):
         try:
             if self.is_client and self.is_client[-1] and node.is_method():
                 # avoid false positive with @property
-                if node.decorators is not None and "builtins.property" in node.decoratornames():
-                    return
-                if not node.name.startswith("_"):
-                    if not node.args.kwarg:
-                        self.add_message(
-                            msg_id="client-method-missing-kwargs", node=node, confidence=None
-                        )
+                if node.decorators is not None:
+                    if "builtins.property" in node.decoratornames():
+                        return
+                    if not node.name.startswith("_") and \
+                            "azure.core.tracing.decorator_async.distributed_trace_async" in node.decoratornames():
+                        if not node.args.kwarg:
+                            self.add_message(
+                                msg_id="client-method-missing-kwargs", node=node, confidence=None
+                            )
         except AttributeError:
             logger.debug("Pylint custom checker failed to check if client uses kwargs parameter in method.")
             pass
@@ -1096,7 +1075,7 @@ class SpecifyParameterNamesInCall(BaseChecker):
             # node.parent.parent is the method (ast.FunctionDef or ast.AsyncFunctionDef)
             if self.is_client and self.is_client[-1] and node.parent.parent.is_method():
                 # node.args represent positional arguments
-                if len(node.args) > 2:
+                if len(node.args) > 2 and node.func.attrname != "format":
                     self.add_message(
                         msg_id="specify-parameter-names-in-call", node=node, confidence=None
                     )
@@ -1299,28 +1278,27 @@ class ClientLROMethodsUseCorrectNaming(BaseChecker):
                 pass
 
 
-class ClientHasFromConnectionStringMethod(BaseChecker):
+class ClientConstructorDoesNotHaveConnectionStringParam(BaseChecker):
     __implements__ = IAstroidChecker
 
-    name = "client-has-from-connection-string-method"
+    name = "client-conn-str-not-in-constructor"
     priority = -1
     msgs = {
         "C4736": (
-            "Missing method to create the client with a connection string "
-            "(disable me if client doesn't support connection strings). See details:"
+            "The constructor must not take a connection string. See details: "
             "https://azure.github.io/azure-sdk/python_design.html#constructors-and-factory-methods",
-            "missing-client-creation-from-connection-string",
+            "connection-string-should-not-be-constructor-param",
             "Client should have a method to create the client with a connection string.",
         ),
     }
     options = (
         (
-            "ignore-missing-client-creation-from-connection-string",
+            "ignore-connection-string-should-not-be-constructor-param",
             {
                 "default": False,
                 "type": "yn",
                 "metavar": "<y_or_n>",
-                "help": "Allow client to not have from_connection_string() method.",
+                "help": "Allow client to use connection string param in constructor.",
             },
         ),
     )
@@ -1329,22 +1307,10 @@ class ClientHasFromConnectionStringMethod(BaseChecker):
     def __init__(self, linter=None):
         super().__init__(linter)
         self.is_client = []
-        self.is_async = False
-
-    def visit_module(self, node):
-        """Visits the file and checks if it is part of the async package.
-
-        :param node: module node
-        :type node: ast.Module
-        :return: None
-        """
-        self.is_async = bool(node.file.find("aio") != -1)
 
     def visit_classdef(self, node):
         """Visits every class in file and checks if it is a client.
-        If not part of the async package, checks that the client has a `from_connection_string`
-        method present. Async package is ignored to try to avoid false positives since it inherits
-        from_connection_string from sync package.
+        If it is a client, it checks that a connection string parameter is not used in the constructor.
 
         :param node: class node
         :type node: ast.ClassDef
@@ -1356,17 +1322,16 @@ class ClientHasFromConnectionStringMethod(BaseChecker):
             self.is_client.append(False)
 
         try:
-            client_methods = set()
-            if self.is_async is False:
+            if self.is_client and self.is_client[-1]:
                 for func in node.body:
-                    client_methods.add(func.name)
-
-                if self.is_client and self.is_client[-1] and "from_connection_string" not in client_methods:
-                    self.add_message(
-                        msg_id="missing-client-creation-from-connection-string", node=node, confidence=None
-                    )
+                    if func.name == "__init__":
+                        for argument in func.args.args:
+                            if argument.name == "connection_string" or argument.name == "conn_str":
+                                self.add_message(
+                                    msg_id="connection-string-should-not-be-constructor-param", node=node, confidence=None
+                                )
         except AttributeError:
-            logger.debug("Pylint custom checker failed to check if client has a from_connection_string method.")
+            logger.debug("Pylint custom checker failed to check if client uses connection string param in constructor.")
             pass
 
 
@@ -1399,21 +1364,22 @@ class PackageNameDoesNotUseUnderscoreOrPeriod(BaseChecker):
         super().__init__(linter)
 
     def visit_module(self, node):
-        """Visits a file and checks that its package name follows correct naming convention.
+        """Visits setup.py and checks that its package name follows correct naming convention.
 
         :param node: module node
         :type node: ast.Module
         :return: None
         """
         try:
-            # Get the package name
-            path = node.file.replace('\\', '/')
-            service = path.split("azure-sdk-for-python/sdk/")[1]
-            package = service.split("/")[1]
-            if package.find(".") != -1 or package.find("_") != -1:
-                self.add_message(
-                    msg_id="package-name-incorrect", node=node, confidence=None
-                )
+            if node.file.endswith("setup.py"):
+                for nod in node.body:
+                    if isinstance(nod, astroid.Assign):
+                        if nod.targets[0].name == "PACKAGE_NAME":
+                            package = nod.value
+                            if package.value.find(".") != -1 or package.value.find("_") != -1:
+                                self.add_message(
+                                    msg_id="package-name-incorrect", node=node, confidence=None
+                                )
         except Exception:
             logger.debug("Pylint custom checker failed to check if package name is correct.")
             pass
@@ -1476,24 +1442,27 @@ class ServiceClientUsesNameWithClientSuffix(BaseChecker):
 
 # if a linter is registered in this function then it will be checked with pylint
 def register(linter):
-    linter.register_checker(ClientMethodsHaveTracingDecorators(linter))
     linter.register_checker(ClientsDoNotUseStaticMethods(linter))
-    # linter.register_checker(ClientHasApprovedMethodNamePrefix(linter))
     linter.register_checker(ClientConstructorTakesCorrectParameters(linter))
     linter.register_checker(ClientMethodsUseKwargsWithMultipleParameters(linter))
     linter.register_checker(ClientMethodsHaveTypeAnnotations(linter))
-    # linter.register_checker(ClientUsesCorrectNamingConventions(linter))
+    linter.register_checker(ClientUsesCorrectNamingConventions(linter))
     linter.register_checker(ClientMethodsHaveKwargsParameter(linter))
     linter.register_checker(ClientHasKwargsInPoliciesForCreateConfigurationMethod(linter))
     linter.register_checker(AsyncClientCorrectNaming(linter))
     linter.register_checker(FileHasCopyrightHeader(linter))
     linter.register_checker(ClientMethodNamesDoNotUseDoubleUnderscorePrefix(linter))
-    linter.register_checker(ClientDocstringUsesLiteralIncludeForCodeExample(linter))
-    # linter.register_checker(SpecifyParameterNamesInCall(linter))
-    linter.register_checker(ClientListMethodsUseCorePaging(linter))
-    linter.register_checker(ClientLROMethodsUseCorePolling(linter))
-    linter.register_checker(ClientLROMethodsUseCorrectNaming(linter))
-    linter.register_checker(ClientHasFromConnectionStringMethod(linter))
+    linter.register_checker(SpecifyParameterNamesInCall(linter))
+    linter.register_checker(ClientConstructorDoesNotHaveConnectionStringParam(linter))
     linter.register_checker(PackageNameDoesNotUseUnderscoreOrPeriod(linter))
     linter.register_checker(ServiceClientUsesNameWithClientSuffix(linter))
+
+    # Rules are disabled until false positive rate improved
+    # linter.register_checker(ClientHasApprovedMethodNamePrefix(linter))
+    # linter.register_checker(ClientMethodsHaveTracingDecorators(linter))
+    # linter.register_checker(ClientDocstringUsesLiteralIncludeForCodeExample(linter))
+    # linter.register_checker(ClientListMethodsUseCorePaging(linter))
+    # linter.register_checker(ClientLROMethodsUseCorePolling(linter))
+    # linter.register_checker(ClientLROMethodsUseCorrectNaming(linter))
+    # linter.register_checker(CheckDocstringParameters(linter))
 
