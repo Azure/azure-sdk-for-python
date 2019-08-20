@@ -682,6 +682,30 @@ class SignedIdentifier(Model):
         self.access_policy = access_policy
 
 
+class SourceModifiedAccessConditions(Model):
+    """Additional parameters for upload_range_from_url operation.
+
+    :param source_if_match_crc64: Specify the crc64 value to operate only on
+     range with a matching crc64 checksum.
+    :type source_if_match_crc64: bytearray
+    :param source_if_none_match_crc64: Specify the crc64 value to operate only
+     on range without a matching crc64 checksum.
+    :type source_if_none_match_crc64: bytearray
+    """
+
+    _attribute_map = {
+        'source_if_match_crc64': {'key': '', 'type': 'bytearray', 'xml': {'name': 'source_if_match_crc64'}},
+        'source_if_none_match_crc64': {'key': '', 'type': 'bytearray', 'xml': {'name': 'source_if_none_match_crc64'}},
+    }
+    _xml_map = {
+    }
+
+    def __init__(self, *, source_if_match_crc64: bytearray=None, source_if_none_match_crc64: bytearray=None, **kwargs) -> None:
+        super(SourceModifiedAccessConditions, self).__init__(**kwargs)
+        self.source_if_match_crc64 = source_if_match_crc64
+        self.source_if_none_match_crc64 = source_if_none_match_crc64
+
+
 class StorageError(Model):
     """StorageError.
 

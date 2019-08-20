@@ -469,6 +469,8 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
                 file_content_length=file_content_length,
                 file_http_headers=file_http_headers,
                 cls=return_response_headers,
+                file_creation_time="preserve", # TODO: Verify these default values are correct
+                file_last_write_time="preserve", # TODO: Verify these default values are correct
                 **kwargs
             )
         except StorageErrorException as error:
@@ -663,7 +665,12 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         """
         try:
             return await self._client.file.set_http_headers(  # type: ignore
-                timeout=timeout, file_content_length=size, cls=return_response_headers, **kwargs
+                timeout=timeout,
+                file_content_length=size,
+                cls=return_response_headers,
+                file_creation_time="preserve", # TODO: Verify these default values are correct
+                file_last_write_time="preserve", # TODO: Verify these default values are correct
+                **kwargs
             )
         except StorageErrorException as error:
             process_storage_error(error)
