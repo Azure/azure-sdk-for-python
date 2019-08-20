@@ -224,7 +224,7 @@ def SynchronizedRequest(
         request_options["path"] += "?" + urlencode(query_params)
 
     request_options["headers"] = headers
-    if request_body and (type(request_body) is str or type(request_body) is six.text_type):
+    if request_body and isinstance(request_body, (str, six.text_type)):
         request_options["headers"][http_constants.HttpHeaders.ContentLength] = len(request_body)
     elif request_body is None:
         request_options["headers"][http_constants.HttpHeaders.ContentLength] = 0

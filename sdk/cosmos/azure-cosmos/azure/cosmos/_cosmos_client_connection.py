@@ -1997,7 +1997,7 @@ class CosmosClientConnection(object):
         initial_headers = dict(self.default_headers)
         initial_headers.update({http_constants.HttpHeaders.Accept: (runtime_constants.MediaTypes.Json)})
 
-        if params and not type(params) is list:
+        if params and not isinstance(params, list):
             params = [params]
 
         path = base.GetPathFromLink(sproc_link)
