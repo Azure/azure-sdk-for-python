@@ -22,7 +22,7 @@ class DataConnectionCheckNameRequest(Model):
     All required parameters must be populated in order to send to Azure.
 
     :param name: Required. Data Connection name.
-    :type name: object
+    :type name: str
     :ivar type: Required. The type of resource,
      Microsoft.Kusto/clusters/databases/dataConnections. Default value:
      "Microsoft.Kusto/clusters/databases/dataConnections" .
@@ -35,12 +35,12 @@ class DataConnectionCheckNameRequest(Model):
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'object'},
+        'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
     }
 
     type = "Microsoft.Kusto/clusters/databases/dataConnections"
 
-    def __init__(self, *, name, **kwargs) -> None:
+    def __init__(self, *, name: str, **kwargs) -> None:
         super(DataConnectionCheckNameRequest, self).__init__(**kwargs)
         self.name = name
