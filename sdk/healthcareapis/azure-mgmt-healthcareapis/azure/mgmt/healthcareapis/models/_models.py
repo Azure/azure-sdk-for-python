@@ -240,9 +240,8 @@ class Resource(Model):
     :vartype name: str
     :ivar type: The resource type.
     :vartype type: str
-    :param kind: Required. The kind of the service. Valid values are: fhir,
-     fhir-Stu3 and fhir-R4. Possible values include: 'fhir', 'fhir-Stu3',
-     'fhir-R4'
+    :param kind: Required. The kind of the service. Possible values include:
+     'fhir', 'fhir-Stu3', 'fhir-R4'
     :type kind: str or ~azure.mgmt.healthcareapis.models.Kind
     :param location: Required. The resource location.
     :type location: str
@@ -287,8 +286,8 @@ class ServiceAccessPolicyEntry(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param object_id: Required. An object ID that is allowed access to the
-     FHIR service.
+    :param object_id: Required. An Azure AD object ID (User or Apps) that is
+     allowed access to the FHIR service.
     :type object_id: str
     """
 
@@ -400,9 +399,8 @@ class ServicesDescription(Resource):
     :vartype name: str
     :ivar type: The resource type.
     :vartype type: str
-    :param kind: Required. The kind of the service. Valid values are: fhir,
-     fhir-Stu3 and fhir-R4. Possible values include: 'fhir', 'fhir-Stu3',
-     'fhir-R4'
+    :param kind: Required. The kind of the service. Possible values include:
+     'fhir', 'fhir-Stu3', 'fhir-R4'
     :type kind: str or ~azure.mgmt.healthcareapis.models.Kind
     :param location: Required. The resource location.
     :type location: str
