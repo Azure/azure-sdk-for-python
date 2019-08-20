@@ -34,34 +34,13 @@ from .._user_agent import USER_AGENT
 class AzureAppConfigurationClient:
     """Represents an client that calls restful API of Azure App Configuration service.
 
-        :param connection_string: Connection String (one of the access keys of the Azure App Configuration resource)
-            used to access the Azure App Configuration.
-        :type connection_string: str
+        :param credentials: An object which can provide secrets for the app configuration service
+        :type credentials: azure.AppConfigConnectionStringCredential
+        :param str base_url: base url of the service
 
     This is the async version of :class:`azure.appconfiguration.ConfigurationClient`
 
-    Example
-
-    .. code-block:: python
-
-        from azure.appconfiguration.aio import AzureAppConfigurationClient
-        connection_str = "<my connection string>"
-        async_client = AzureAppConfigurationClient.from_connection_string(connection_str)
     """
-
-    @classmethod
-    def from_connection_string(
-        cls,
-        connection_string,  # type: str
-        **kwargs
-    ):
-        base_url = "https://" + get_endpoint_from_connection_string(connection_string)
-        return cls(
-            credentials=AppConfigConnectionStringCredential(connection_string),
-            base_url=base_url,
-            **kwargs
-        )
-
     def __init__(self, credentials, base_url, **kwargs):
 
         self.config = ConfigurationClientConfiguration(credentials, **kwargs)
@@ -70,6 +49,38 @@ class AzureAppConfigurationClient:
         )
         self._impl = ConfigurationClient(
             credentials, base_url, pipeline=self._create_appconfig_pipeline()
+        )
+
+
+    @classmethod
+    def from_connection_string(
+        cls,
+        connection_string,  # type: str
+        **kwargs
+    ):
+        # type: (...) -> AzureAppConfigurationClient
+        """Create AzureAppConfigurationClient from a Connection String.
+
+                :param connection_string: Connection String
+                    (one of the access keys of the Azure App Configuration resource)
+                    used to access the Azure App Configuration.
+                :type connection_string: str
+
+            This is the async version of :class:`azure.appconfiguration.ConfigurationClient`
+
+            Example
+
+            .. code-block:: python
+
+                from azure.appconfiguration.aio import AzureAppConfigurationClient
+                connection_str = "<my connection string>"
+                async_client = AzureAppConfigurationClient.from_connection_string(connection_str)
+            """
+        base_url = "https://" + get_endpoint_from_connection_string(connection_string)
+        return cls(
+            credentials=AppConfigConnectionStringCredential(connection_string),
+            base_url=base_url,
+            **kwargs
         )
 
     def _create_appconfig_pipeline(self):
