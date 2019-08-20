@@ -479,8 +479,8 @@ def GetItemContainerInfo(self_link, alt_content_path, id_from_response):
                 self_link, alt_content_path, id_from_response
             )
         )
-    else:
-        raise ValueError("Unable to parse document collection link from " + self_link)
+
+    raise ValueError("Unable to parse document collection link from " + self_link)
 
 
 def GetItemContainerLink(link):
