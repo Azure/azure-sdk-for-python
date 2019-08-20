@@ -648,7 +648,7 @@ class Database(object):
             "parameters": [{"name": "@link", "value": link}],
         }
         offers = list(self.client_connection.QueryOffers(query_spec))
-        if len(offers) <= 0:
+        if not offers:
             raise HTTPFailure(StatusCodes.NOT_FOUND, "Could not find Offer for database " + self.database_link)
 
         if response_hook:
@@ -673,7 +673,7 @@ class Database(object):
             "parameters": [{"name": "@link", "value": link}],
         }
         offers = list(self.client_connection.QueryOffers(query_spec))
-        if len(offers) <= 0:
+        if not offers:
             raise HTTPFailure(StatusCodes.NOT_FOUND, "Could not find Offer for collection " + self.database_link)
         new_offer = offers[0].copy()
         new_offer["content"]["offerThroughput"] = throughput

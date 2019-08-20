@@ -68,7 +68,7 @@ class _QueryExecutionContextBase(object):
         if not self._has_more_pages():
             return []
 
-        if len(self._buffer):
+        if self._buffer:
             # if there is anything in the buffer returns that
             res = list(self._buffer)
             self._buffer.clear()
@@ -95,12 +95,12 @@ class _QueryExecutionContextBase(object):
         if self._has_finished:
             raise StopIteration
 
-        if not len(self._buffer):
+        if not self._buffer:
 
             results = self.fetch_next_block()
             self._buffer.extend(results)
 
-        if not len(self._buffer):
+        if not self._buffer:
             raise StopIteration
 
         return self._buffer.popleft()
@@ -129,7 +129,7 @@ class _QueryExecutionContextBase(object):
                 continuation_key = http_constants.HttpHeaders.ETag
             # In change feed queries, the continuation token is always populated. The hasNext() test is whether
             # there is any items in the response or not.
-            if not self._is_change_feed or len(fetched_items) > 0:
+            if not self._is_change_feed or fetched_items:
                 self._continuation = response_headers.get(continuation_key)
             else:
                 self._continuation = None
@@ -167,7 +167,7 @@ class _DefaultQueryExecutionContext(_QueryExecutionContextBase):
         self._fetch_function = fetch_function
 
     def _fetch_next_block(self):
-        while super(_DefaultQueryExecutionContext, self)._has_more_pages() and len(self._buffer) == 0:
+        while super(_DefaultQueryExecutionContext, self)._has_more_pages() and not self._buffer:
             return self._fetch_items_helper_with_retries(self._fetch_function)
 
 

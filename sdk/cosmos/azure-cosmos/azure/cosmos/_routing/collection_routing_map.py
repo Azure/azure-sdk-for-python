@@ -161,7 +161,7 @@ class CollectionRoutingMap(object):
     @staticmethod
     def is_complete_set_of_range(ordered_partition_key_range_list):
         isComplete = False
-        if len(ordered_partition_key_range_list):
+        if ordered_partition_key_range_list:
 
             firstRange = ordered_partition_key_range_list[0]
             lastRange = ordered_partition_key_range_list[-1]

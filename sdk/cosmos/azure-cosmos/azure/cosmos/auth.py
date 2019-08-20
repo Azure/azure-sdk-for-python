@@ -115,7 +115,7 @@ def __GetAuthorizationTokenUsingResourceTokens(resource_tokens, path, resource_i
     :rtype: dict
 
     """
-    if resource_tokens and len(resource_tokens) > 0:
+    if resource_tokens:
         # For database account access(through GetDatabaseAccount API), path and resource_id_or_fullname are '',
         # so in this case we return the first token to be used for creating the auth header as the service will accept any token in this case
         if not path and not resource_id_or_fullname:

@@ -169,7 +169,7 @@ def _Request(
     if is_media:
         result = data
     else:
-        if len(data) > 0:
+        if data:
             try:
                 result = json.loads(data)
             except:

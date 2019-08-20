@@ -334,7 +334,7 @@ def IsNameBased(link):
     parts = link.split("/")
 
     # First part should be "dbs"
-    if len(parts) == 0 or not parts[0] or not parts[0].lower() == "dbs":
+    if not (parts and parts[0].lower() == "dbs"):
         return False
 
     # The second part is the database id(ResourceID or Name) and cannot be empty
