@@ -46,13 +46,6 @@ class QueryStringConstants(object):
     END_RK = 'erk'
     SIGNED_RESOURCE_TYPES = 'srt'
     SIGNED_SERVICES = 'ss'
-    SIGNED_TIMESTAMP = 'snapshot'
-    SIGNED_OID = 'skoid'
-    SIGNED_TID = 'sktid'
-    SIGNED_KEY_START = 'skt'
-    SIGNED_KEY_EXPIRY = 'ske'
-    SIGNED_KEY_SERVICE = 'sks'
-    SIGNED_KEY_VERSION = 'skv'
 
     @staticmethod
     def to_list():
@@ -216,5 +209,3 @@ class _SharedAccessHelper(object):
 
     def get_token(self):
         return '&'.join(['{0}={1}'.format(n, url_quote(v)) for n, v in self.query_dict.items() if v is not None])
-
-

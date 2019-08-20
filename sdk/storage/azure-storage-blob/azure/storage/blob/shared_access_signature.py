@@ -4,6 +4,10 @@ from azure.storage.blob._shared.shared_access_signature import SharedAccessSigna
     QueryStringConstants
 
 
+class BlobQueryStringConstants(object):
+    SIGNED_TIMESTAMP = 'snapshot'
+
+
 class BlobSharedAccessSignature(SharedAccessSignature):
     '''
     Provides a factory for creating blob and container access
@@ -187,7 +191,7 @@ class _BlobSharedAccessHelper(_SharedAccessHelper):
         super(_BlobSharedAccessHelper, self).__init__()
 
     def add_timestamp(self, timestamp):
-        self._add_query(QueryStringConstants.SIGNED_TIMESTAMP, timestamp)
+        self._add_query(BlobQueryStringConstants.SIGNED_TIMESTAMP, timestamp)
 
     def get_value_to_append(self, query):
         return_value = self.query_dict.get(query) or ''
@@ -230,7 +234,7 @@ class _BlobSharedAccessHelper(_SharedAccessHelper):
              self.get_value_to_append(QueryStringConstants.SIGNED_PROTOCOL) +
              self.get_value_to_append(QueryStringConstants.SIGNED_VERSION) +
              self.get_value_to_append(QueryStringConstants.SIGNED_RESOURCE) +
-             self.get_value_to_append(QueryStringConstants.SIGNED_TIMESTAMP) +
+             self.get_value_to_append(BlobQueryStringConstants.SIGNED_TIMESTAMP) +
              self.get_value_to_append(QueryStringConstants.SIGNED_CACHE_CONTROL) +
              self.get_value_to_append(QueryStringConstants.SIGNED_CONTENT_DISPOSITION) +
              self.get_value_to_append(QueryStringConstants.SIGNED_CONTENT_ENCODING) +
@@ -248,6 +252,6 @@ class _BlobSharedAccessHelper(_SharedAccessHelper):
     def get_token(self):
         # a conscious decision was made to exclude the timestamp in the generated token
         # this is to avoid having two snapshot ids in the query parameters when the user appends the snapshot timestamp
-        exclude = [QueryStringConstants.SIGNED_TIMESTAMP]
+        exclude = [BlobQueryStringConstants.SIGNED_TIMESTAMP]
         return '&'.join(['{0}={1}'.format(n, url_quote(v))
                          for n, v in self.query_dict.items() if v is not None and n not in exclude])
