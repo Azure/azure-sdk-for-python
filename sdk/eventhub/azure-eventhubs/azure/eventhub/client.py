@@ -108,10 +108,15 @@ class EventHubClient(EventHubClientAbstract):
         self._conn_manager.reset_connection_if_broken()
 
     def _management_request(self, mgmt_msg, op_type):
+        alt_creds = {
+            "username": self._auth_config.get("iot_username"),
+            "password": self._auth_config.get("iot_password")
+        }
+
         max_retries = self.config.max_retries
         retry_count = 0
         while retry_count <= self.config.max_retries:
-            mgmt_auth = self._create_auth()
+            mgmt_auth = self._create_auth(**alt_creds)
             mgmt_client = uamqp.AMQPClient(self.mgmt_target)
             try:
                 conn = self._conn_manager.get_connection(self.host, mgmt_auth)
