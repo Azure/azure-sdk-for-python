@@ -56,7 +56,7 @@ async def _upload_file_helper(
         if size == 0:
             return response
 
-        return await upload_data_chunks(
+        responses = await upload_data_chunks(
             service=client,
             uploader_class=FileChunkUploader,
             total_size=size,
@@ -67,6 +67,7 @@ async def _upload_file_helper(
             timeout=timeout,
             **kwargs
         )
+        return sorted(responses, key=lambda r: r.get('last_modified'))[-1]
     except StorageErrorException as error:
         process_storage_error(error)
 

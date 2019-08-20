@@ -10,7 +10,10 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING
 )
 
+from azure.core.tracing.decorator import distributed_trace
+from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged
+
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._shared.policies_async import ExponentialRetry
 from .._shared.request_handlers import add_metadata_headers, serialize_iso
@@ -112,6 +115,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         self._client = AzureBlobStorage(url=self.url, pipeline=self._pipeline, loop=loop)
         self._loop = loop
 
+    @distributed_trace_async
     async def create_container(self, metadata=None, public_access=None, timeout=None, **kwargs):
         # type: (Optional[Dict[str, str]], Optional[Union[PublicAccess, str]], Optional[int], **Any) -> None
         """
@@ -148,6 +152,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace_async
     async def delete_container(
             self, lease=None,  # type: Optional[Union[LeaseClient, str]]
             timeout=None,  # type: Optional[int]
@@ -210,6 +215,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace_async
     async def acquire_lease(
             self, lease_duration=-1,  # type: int
             lease_id=None,  # type: Optional[str]
@@ -267,6 +273,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         await lease.acquire(lease_duration=lease_duration, timeout=timeout, **kwargs)
         return lease
 
+    @distributed_trace_async
     async def get_account_information(self, **kwargs): # type: ignore
         # type: (**Any) -> Dict[str, str]
         """Gets information related to the storage account.
@@ -282,6 +289,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace_async
     async def get_container_properties(self, lease=None, timeout=None, **kwargs):
         # type: (Optional[Union[LeaseClient, str]], Optional[int], **Any) -> ContainerProperties
         """Returns all user-defined metadata and system properties for the specified
@@ -315,6 +323,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         response.name = self.container_name
         return response # type: ignore
 
+    @distributed_trace_async
     async def set_container_metadata( # type: ignore
             self, metadata=None,  # type: Optional[Dict[str, str]]
             lease=None,  # type: Optional[Union[str, LeaseClient]]
@@ -367,6 +376,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace_async
     async def get_container_access_policy(self, lease=None, timeout=None, **kwargs):
         # type: (Optional[Union[LeaseClient, str]], Optional[int], **Any) -> Dict[str, Any]
         """Gets the permissions for the specified container.
@@ -402,6 +412,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             'signed_identifiers': identifiers or []
         }
 
+    @distributed_trace_async
     async def set_container_access_policy(
             self, signed_identifiers=None,  # type: Optional[Dict[str, Optional[AccessPolicy]]]
             public_access=None,  # type: Optional[Union[str, PublicAccess]]
@@ -477,6 +488,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def list_blobs(self, name_starts_with=None, include=None, timeout=None, **kwargs):
         # type: (Optional[str], Optional[Any], Optional[int], **Any) -> AsyncItemPaged[BlobProperties]
         """Returns a generator to list the blobs under the specified container.
@@ -518,6 +530,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             page_iterator_class=BlobPropertiesPaged
         )
 
+    @distributed_trace
     def walk_blobs(
             self, name_starts_with=None, # type: Optional[str]
             include=None, # type: Optional[Any]
@@ -563,6 +576,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             results_per_page=results_per_page,
             delimiter=delimiter)
 
+    @distributed_trace_async
     async def upload_blob(
             self, name,  # type: Union[str, BlobProperties]
             data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
@@ -681,6 +695,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         )
         return blob
 
+    @distributed_trace_async
     async def delete_blob(
             self, blob,  # type: Union[str, BlobProperties]
             delete_snapshots=None,  # type: Optional[str]
