@@ -3,7 +3,7 @@
 In order to lint for the guidelines, you must make sure you are using the pylintrc file.
 It is recommended you run pylint at the library package level to be consistent with how the CI runs pylint.
 
-How to run pylint locally using the pylintrc:
+**How to run pylint locally using the pylintrc:**
 
 1. Run pylint at the root of the repo and it will automatically find the pylintrc:
     ```bash
@@ -27,7 +27,7 @@ How to run pylint locally using the pylintrc:
     ```
 5. If you use the pylint extension for VS code or Pycharm it *should* find the pylintrc automatically.
 
-How to disable a pylint error:
+**How to disable a pylint error:**
 ```bash
 # pylint:disable=connection-string-should-not-be-constructor-param
 ```
@@ -35,7 +35,7 @@ How to disable a pylint error:
 The pylint custom checkers for SDK guidelines fall into messages range C4717 - C4738.
 You will know you came across a custom checker if it contains a link to the guidelines.
 
-Guidelines that are currently linted:
+**Guidelines that are currently linted:**
 
 | Pylint checker name                                | How to fix this                                                                                                                                                      | How to disable this rule                                                                 | Link to python guideline                                                                      |
 |----------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------|
