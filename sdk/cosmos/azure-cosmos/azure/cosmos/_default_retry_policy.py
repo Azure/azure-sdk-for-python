@@ -59,6 +59,7 @@ class DefaultRetryPolicy(object):
                     return True
                 return False
             return True
+        return False
 
     def ShouldRetry(self, exception):
         """Returns true if should retry based on the passed-in exception.

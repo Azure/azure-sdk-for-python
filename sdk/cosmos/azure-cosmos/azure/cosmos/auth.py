@@ -60,6 +60,8 @@ def GetAuthorizationHeader(
             cosmos_client_connection.resource_tokens, path, resource_id_or_fullname
         )
 
+    return None
+
 
 def __GetAuthorizationTokenUsingMasterKey(verb, resource_id_or_fullname, resource_type, headers, master_key):
     """Gets the authorization token using `master_key.
@@ -145,3 +147,5 @@ def __GetAuthorizationTokenUsingResourceTokens(resource_tokens, path, resource_i
         for one_part in reversed(path_parts):
             if not one_part in resource_types and one_part in resource_tokens:
                 return resource_tokens[one_part]
+
+    return None

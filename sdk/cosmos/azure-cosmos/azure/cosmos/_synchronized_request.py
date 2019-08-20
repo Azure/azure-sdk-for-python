@@ -67,6 +67,8 @@ def _RequestBodyFromData(data):
             return json_dumped.decode("utf-8")
         return json_dumped
 
+    return None
+
 
 def _Request(
     global_endpoint_manager, request, connection_policy, requests_session, path, request_options, request_body
