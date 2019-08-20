@@ -84,11 +84,12 @@ class IotHubOperations(object):
 
     def manual_failover(
             self, iot_hub_name, resource_group_name, failover_region, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Manual Failover Fail over.
+        """Manually initiate a failover for the IoT Hub to its secondary region.
 
-        Perform manual fail over of given hub.
+        Manually initiate a failover for the IoT Hub to its secondary region.
+        To learn more, see https://aka.ms/manualfailover.
 
-        :param iot_hub_name: IotHub to fail over
+        :param iot_hub_name: Name of the IoT hub to failover
         :type iot_hub_name: str
         :param resource_group_name: Resource group in which the IoT hub is in
         :type resource_group_name: str
