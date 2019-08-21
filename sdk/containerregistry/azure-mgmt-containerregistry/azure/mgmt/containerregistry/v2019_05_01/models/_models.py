@@ -2176,8 +2176,7 @@ class RetentionPolicy(Model):
     :param days: The number of days to retain an untagged manifest after which
      it gets purged. Default value: 7 .
     :type days: int
-    :ivar name: The name of retention policy. Default value:
-     "untaggedmanifests" .
+    :ivar name: The name of retention policy.
     :vartype name: str
     :param status: The value that indicates whether the policy is enabled or
      not. Possible values include: 'enabled', 'disabled'. Default value:
