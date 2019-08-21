@@ -38,7 +38,7 @@ from . import http_constants
 from . import _runtime_constants
 
 
-def GetHeaders(
+def GetHeaders(  # pylint: disable=too-many-statements
     cosmos_client_connection,
     default_headers,
     verb,
