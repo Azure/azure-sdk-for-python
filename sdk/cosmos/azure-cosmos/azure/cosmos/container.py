@@ -143,16 +143,16 @@ class Container:
 
     def read_item(
         self,
-        item,
-        partition_key,
-        session_token=None,
-        initial_headers=None,
-        populate_query_metrics=None,
-        post_trigger_include=None,
-        request_options=None,
-        response_hook=None,
+        item,  # type: Union[str, Dict[str, Any]]
+        partition_key,  # type: Any
+        session_token=None,  # type: str
+        initial_headers=None,  # type:   # type: Dict[str, str]
+        populate_query_metrics=None,  # type: bool
+        post_trigger_include=None,  # type: str
+        request_options=None,  # type: Dict[str, Any]
+        response_hook=None,  # type: Optional[Callable]
     ):
-        # type: (Union[str, Dict[str, Any]], Any, str, Dict[str, str], bool, str, Dict[str, Any], Optional[Callable]) -> Dict[str, str]
+        # type: (...) -> Dict[str, str]
         """
         Get the item identified by `id`.
 
@@ -283,19 +283,19 @@ class Container:
 
     def query_items(
         self,
-        query,
-        parameters=None,
-        partition_key=None,
-        enable_cross_partition_query=None,
-        max_item_count=None,
-        session_token=None,
-        initial_headers=None,
-        enable_scan_in_query=None,
-        populate_query_metrics=None,
-        feed_options=None,
-        response_hook=None,
+        query,  # type: str
+        parameters=None,  # type: List
+        partition_key=None,  # type: Any
+        enable_cross_partition_query=None,  # type: bool
+        max_item_count=None,  # type: int
+        session_token=None,  # type: str
+        initial_headers=None,  # type: Dict[str, str]
+        enable_scan_in_query=None,  # type: bool
+        populate_query_metrics=None,  # type: bool
+        feed_options=None,  # type: Dict[str, Any]
+        response_hook=None,  # type: Optional[Callable]
     ):
-        # type: (str, List, Any, bool, int, str, Dict[str, str], bool, bool, Dict[str, Any, Optional[Callable]) -> QueryIterable
+        # type: (...) -> QueryIterable
         """Return all results matching the given `query`.
 
         :param query: The Azure Cosmos DB SQL query to execute.
@@ -368,18 +368,18 @@ class Container:
 
     def replace_item(
         self,
-        item,
-        body,
-        session_token=None,
-        initial_headers=None,
-        access_condition=None,
-        populate_query_metrics=None,
-        pre_trigger_include=None,
-        post_trigger_include=None,
-        request_options=None,
-        response_hook=None,
+        item,  # type: Union[str, Dict[str, Any]]
+        body,  # type: Dict[str, Any]
+        session_token=None,  # type: str
+        initial_headers=None,  # type: Dict[str, str]
+        access_condition=None,  # type: Dict[str, str]
+        populate_query_metrics=None,  # type: bool
+        pre_trigger_include=None,  # type: str
+        post_trigger_include=None,  # type: str
+        request_options=None,  # type: Dict[str, Any]
+        response_hook=None,  # type: Optional[Callable]
     ):
-        # type: (Union[str, Dict[str, Any]], Dict[str, Any], str, Dict[str, str], Dict[str, str], bool, str, str, Dict[str, Any], Optional[Callable]) -> Dict[str, str]
+        # type: (...) -> Dict[str, str]
         """ Replaces the specified item if it exists in the container.
 
         :param item: The ID (name) or dict representing item to be replaced.
@@ -420,17 +420,17 @@ class Container:
 
     def upsert_item(
         self,
-        body,
-        session_token=None,
-        initial_headers=None,
-        access_condition=None,
-        populate_query_metrics=None,
-        pre_trigger_include=None,
-        post_trigger_include=None,
-        request_options=None,
-        response_hook=None,
+        body,  # type: Dict[str, Any]
+        session_token=None,  # type: str
+        initial_headers=None,  # type: Dict[str, str]
+        access_condition=None,  # type: Dict[str, str]
+        populate_query_metrics=None,  # type: bool
+        pre_trigger_include=None,  # type: str
+        post_trigger_include=None,  # type: str
+        request_options=None,  # type: Dict[str, Any]
+        response_hook=None,  # type: Optional[Callable]
     ):
-        # type: (Dict[str, Any], str, Dict[str, str], Dict[str, str], bool, str, str, Dict[str, Any], Optional[Callable]) -> Dict[str, str]
+        # type: (...) -> Dict[str, str]
         """ Insert or update the specified item.
 
         :param body: A dict-like object representing the item to update or insert.
@@ -471,18 +471,18 @@ class Container:
 
     def create_item(
         self,
-        body,
-        session_token=None,
-        initial_headers=None,
-        access_condition=None,
-        populate_query_metrics=None,
-        pre_trigger_include=None,
-        post_trigger_include=None,
-        indexing_directive=None,
-        request_options=None,
-        response_hook=None,
+        body,  # type: Dict[str, Any]
+        session_token=None,  # type: str
+        initial_headers=None,  # type: Dict[str, str]
+        access_condition=None,  # type: Dict[str, str]
+        populate_query_metrics=None,  # type: bool
+        pre_trigger_include=None,  # type: str
+        post_trigger_include=None,  # type: str
+        indexing_directive=None,  # type: Any
+        request_options=None,  # type: Dict[str, Any]
+        response_hook=None,  # type: Optional[Callable]
     ):
-        # type: (Dict[str, Any], str, Dict[str, str], Dict[str, str], bool, str, str, Any, Dict[str, Any], Optional[Callable]) -> Dict[str, str]
+        # type: (...) -> Dict[str, str]
         """ Create an item in the container.
 
         :param body: A dict-like object representing the item to create.
@@ -529,18 +529,18 @@ class Container:
 
     def delete_item(
         self,
-        item,
-        partition_key,
-        session_token=None,
-        initial_headers=None,
-        access_condition=None,
-        populate_query_metrics=None,
-        pre_trigger_include=None,
-        post_trigger_include=None,
-        request_options=None,
-        response_hook=None,
+        item,  # type: Union[Dict[str, Any], str]
+        partition_key,  # type: Any
+        session_token=None,  # type: str
+        initial_headers=None,  # type: Dict[str, str]
+        access_condition=None,  # type: Dict[str, str]
+        populate_query_metrics=None,  # type: bool
+        pre_trigger_include=None,  # type: str
+        post_trigger_include=None,  # type: str
+        request_options=None,  # type: Dict[str, Any]
+        response_hook=None,  # type: Optional[Callable]
     ):
-        # type: (Union[Dict[str, Any], str], Any, str, Dict[str, str], Dict[str, str], bool, str, str, Dict[str, Any], Optional[Callable]) -> None
+        # type: (...) -> None
         """ Delete the specified item from the container.
 
         :param item: The ID (name) or dict representing item to be deleted.
@@ -604,7 +604,7 @@ class Container:
         return Offer(offer_throughput=offers[0]["content"]["offerThroughput"], properties=offers[0])
 
     def replace_throughput(self, throughput, response_hook=None):
-        # type: (in, Optional[Callable]) -> Offer
+        # type: (int, Optional[Callable]) -> Offer
         """ Replace the container's throughput
 
         :param throughput: The throughput to be set (an integer).

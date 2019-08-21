@@ -147,21 +147,21 @@ class Database(object):
 
     def create_container(
         self,
-        id,  # pylint: disable=redefined-builtin
-        partition_key,
-        indexing_policy=None,
-        default_ttl=None,
-        session_token=None,
-        initial_headers=None,
-        access_condition=None,
-        populate_query_metrics=None,
-        offer_throughput=None,
-        unique_key_policy=None,
-        conflict_resolution_policy=None,
-        request_options=None,
-        response_hook=None,
+        id,  # type: str  # pylint: disable=redefined-builtin
+        partition_key,  # type: PartitionKey
+        indexing_policy=None,  # type: Dict[str, Any]
+        default_ttl=None,  # type: int
+        session_token=None,  # type: str
+        initial_headers=None,  # type:  Dict[str, str]
+        access_condition=None,  # type: Dict[str, str]
+        populate_query_metrics=None,  # type: bool
+        offer_throughput=None,  # type: int
+        unique_key_policy=None,  # type: Dict[str, Any]
+        conflict_resolution_policy=None,  # type: Dict[str, Any]
+        request_options=None,  # type: Dict[str, Any]
+        response_hook=None,  # type: Optional[Callable]
     ):
-        # type: (str, PartitionKey, Dict[str, Any], int, str, Dict[str, str], Dict[str, str], bool, int, Dict[str, Any], Dict[str, Any], Dict[str, Any], Optional[Callable]) -> Container
+        # type: (...) -> Container
         """
         Create a new container with the given ID (name).
 
@@ -237,15 +237,15 @@ class Database(object):
 
     def delete_container(
         self,
-        container,
-        session_token=None,
-        initial_headers=None,
-        access_condition=None,
-        populate_query_metrics=None,
-        request_options=None,
-        response_hook=None,
+        container,  # type: Union[str, Container, Dict[str, Any]]
+        session_token=None,  # type: str
+        initial_headers=None,  # type: Dict[str, str]
+        access_condition=None,  # type: Dict[str, str]
+        populate_query_metrics=None,  # type: bool
+        request_options=None,  # type: Dict[str, Any]
+        response_hook=None,  # type: Optional[Callable]
     ):
-        # type: (Union[str, Container, Dict[str, Any]], str, Dict[str, str], Dict[str, str], bool, Dict[str, Any], Optional[Callable]) -> None
+        # type: (...) -> None
         """ Delete the container
 
         :param container: The ID (name) of the container to delete. You can either
@@ -393,19 +393,19 @@ class Database(object):
 
     def replace_container(
         self,
-        container,
-        partition_key,
-        indexing_policy=None,
-        default_ttl=None,
-        conflict_resolution_policy=None,
-        session_token=None,
-        initial_headers=None,
-        access_condition=None,
-        populate_query_metrics=None,
-        request_options=None,
-        response_hook=None,
+        container,  # type: Union[str, Container, Dict[str, Any]]
+        partition_key,  # type: PartitionKey
+        indexing_policy=None,  # type: Dict[str, Any]
+        default_ttl=None,  # type: int
+        conflict_resolution_policy=None,  # type: Dict[str, Any]
+        session_token=None,  # type: str
+        initial_headers=None,  # type: Dict[str, str]
+        access_condition=None,  # type:  Dict[str, str]
+        populate_query_metrics=None,  # type: bool
+        request_options=None,  # type: Dict[str, Any]
+        response_hook=None,  # type: Optional[Callable]
     ):
-        # type: (Union[str, Container, Dict[str, Any]], PartitionKey, Dict[str, Any], int, Dict[str, Any], str, Dict[str, str], Dict[str, str], bool, Dict[str, Any], Optional[Callable]) -> Container
+        # type: (...) -> Container
         """ Reset the properties of the container. Property changes are persisted immediately.
 
         Any properties not specified will be reset to their default values.
@@ -518,7 +518,7 @@ class Database(object):
         return result
 
     def get_user_client(self, user):
-        # type: (Union[str, User, Dict[str, Any]], Dict[str, Any], Optional[Callable]) -> User
+        # type: (Union[str, User, Dict[str, Any]]) -> User
         """
         Get the user identified by `id`.
 
