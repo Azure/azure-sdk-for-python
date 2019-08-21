@@ -42,7 +42,7 @@ from . import _utils
 from .partition_key import _Undefined, _Empty
 
 
-class CosmosClientConnection(object):
+class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
     """Represents a document client.
 
     Provides a client-side logical representation of the Azure Cosmos

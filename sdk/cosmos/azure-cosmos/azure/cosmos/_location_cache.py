@@ -35,7 +35,7 @@ class EndpointOperationType(object):
     WriteType = "Write"
 
 
-class LocationCache(object):
+class LocationCache(object):  # pylint: disable=too-many-public-methods
     def current_time_millis(self):
         return int(round(time.time() * 1000))
 
