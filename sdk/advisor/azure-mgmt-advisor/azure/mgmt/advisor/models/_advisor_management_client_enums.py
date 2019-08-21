@@ -9,11 +9,31 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._configuration import AdvisorManagementClientConfiguration
-from ._advisor_management_client import AdvisorManagementClient
-__all__ = ['AdvisorManagementClient', 'AdvisorManagementClientConfiguration']
+from enum import Enum
 
-from .version import VERSION
 
-__version__ = VERSION
+class Scenario(str, Enum):
 
+    alerts = "Alerts"
+
+
+class Category(str, Enum):
+
+    high_availability = "HighAvailability"
+    security = "Security"
+    performance = "Performance"
+    cost = "Cost"
+
+
+class Impact(str, Enum):
+
+    high = "High"
+    medium = "Medium"
+    low = "Low"
+
+
+class Risk(str, Enum):
+
+    error = "Error"
+    warning = "Warning"
+    none = "None"

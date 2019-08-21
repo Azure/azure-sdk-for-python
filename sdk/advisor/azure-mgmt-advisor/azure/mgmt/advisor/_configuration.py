@@ -13,41 +13,36 @@ from msrestazure import AzureConfiguration
 from .version import VERSION
 
 
-class AlertsManagementClientConfiguration(AzureConfiguration):
-    """Configuration for AlertsManagementClient
+class AdvisorManagementClientConfiguration(AzureConfiguration):
+    """Configuration for AdvisorManagementClient
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: The ID of the target subscription.
+    :param subscription_id: The Azure subscription ID.
     :type subscription_id: str
-    :param subscription_id1: The ID of the target subscription.
-    :type subscription_id1: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, subscription_id1, base_url=None):
+            self, credentials, subscription_id, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
-        if subscription_id1 is None:
-            raise ValueError("Parameter 'subscription_id1' must not be None.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
-        super(AlertsManagementClientConfiguration, self).__init__(base_url)
+        super(AdvisorManagementClientConfiguration, self).__init__(base_url)
 
         # Starting Autorest.Python 4.0.64, make connection pool activated by default
         self.keep_alive = True
 
-        self.add_user_agent('azure-mgmt-alertsmanagement/{}'.format(VERSION))
+        self.add_user_agent('azure-mgmt-advisor/{}'.format(VERSION))
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
         self.subscription_id = subscription_id
-        self.subscription_id1 = subscription_id1

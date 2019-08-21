@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._configuration import AdvisorManagementClientConfiguration
-from ._advisor_management_client import AdvisorManagementClient
-__all__ = ['AdvisorManagementClient', 'AdvisorManagementClientConfiguration']
+from ._configuration import ADHybridHealthServiceConfiguration
+from ._ad_hybrid_health_service import ADHybridHealthService
+__all__ = ['ADHybridHealthService', 'ADHybridHealthServiceConfiguration']
 
 from .version import VERSION
 
