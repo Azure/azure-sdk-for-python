@@ -88,7 +88,8 @@ class PartitionKeyRangeCache(object):
 
 class SmartRoutingMapProvider(PartitionKeyRangeCache):
     """
-    Efficiently uses PartitionKeyRangeCach and minimizes the unnecessary invocation of CollectionRoutingMap.get_overlapping_ranges()
+    Efficiently uses PartitionKeyRangeCach and minimizes the unnecessary invocation of
+    CollectionRoutingMap.get_overlapping_ranges()
     """
 
     def _second_range_is_after_first_range(self, range1, range2):
@@ -159,15 +160,15 @@ class SmartRoutingMapProvider(PartitionKeyRangeCache):
                     currentProvidedRange = next(it)
                     continue
 
-                if len(target_partition_key_ranges):
+                if target_partition_key_ranges:
                     queryRange = self._subtract_range(currentProvidedRange, target_partition_key_ranges[-1])
                 else:
                     queryRange = currentProvidedRange
 
                 overlappingRanges = PartitionKeyRangeCache.get_overlapping_ranges(self, collection_link, queryRange)
-                assert len(
-                    overlappingRanges
-                ), "code bug: returned overlapping ranges for queryRange {} is empty".format(queryRange)
+                assert overlappingRanges, "code bug: returned overlapping ranges for queryRange {} is empty".format(
+                    queryRange
+                )
                 target_partition_key_ranges.extend(overlappingRanges)
 
                 lastKnownTargetRange = routing_range.Range.PartitionKeyRangeToRange(target_partition_key_ranges[-1])
