@@ -1,6 +1,12 @@
 [MASTER]
-ignore-patterns=test_*
+ignore-patterns=test_*,conftest
 reports=no
+
+# PYLINT DIRECTORY BLACKLIST
+ignore=_generated,samples,examples,test,tests,doc,.tox
+
+init-hook='import sys; sys.path.insert(0, os.path.abspath(os.getcwd().rsplit("azure-sdk-for-python", maxsplit=1)[0] + "azure-sdk-for-python/scripts/pylint_custom_plugin"))'
+load-plugins=pylint_guidelines_checker
 
 [MESSAGES CONTROL]
 # For all codes, run 'pylint --list-msgs' or go to 'https://pylint.readthedocs.io/en/latest/reference_guide/features.html'
