@@ -58,7 +58,11 @@ class SecretClient(KeyVaultClientBase):
                 :dedent: 8
         """
         bundle = self._client.get_secret(
-            self._vault_url, name, version or "", error_map={404: ResourceNotFoundError}, **kwargs
+            vault_base_url=self._vault_url,
+            secret_name=name,
+            secret_version=version or "",
+            error_map={404: ResourceNotFoundError},
+            **kwargs
         )
         return Secret._from_secret_bundle(bundle)
 
@@ -101,7 +105,13 @@ class SecretClient(KeyVaultClientBase):
         else:
             attributes = None
         bundle = self._client.set_secret(
-            self.vault_url, name, value, secret_attributes=attributes, content_type=content_type, tags=tags, **kwargs
+            vault_base_url=self.vault_url,
+            secret_name=name,
+            value=value,
+            secret_attributes=attributes,
+            content_type=content_type,
+            tags=tags,
+            **kwargs
         )
         return Secret._from_secret_bundle(bundle)
 
