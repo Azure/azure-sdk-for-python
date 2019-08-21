@@ -6,10 +6,6 @@
 # license information.
 # --------------------------------------------------------------------------
 
-try:
-    import settings_real as settings
-except ImportError:
-    import queue_settings_fake as settings
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from queuetestcase import (QueueTestCase)
 

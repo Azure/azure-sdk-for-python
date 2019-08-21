@@ -10,8 +10,7 @@ from datetime import datetime, timedelta
 from collections import namedtuple
 import pytest
 import asyncio
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
-from azure.mgmt.storage.models import Endpoints
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, mgmt_settings_fake as settings
 
 from asyncqueuetestcase import (
     AsyncQueueTestCase
@@ -19,13 +18,7 @@ from asyncqueuetestcase import (
 
 
 class TestQueueAuthSamplesAsync(AsyncQueueTestCase):
-    url = "{}://{}.queue.core.windows.net".format(
-        settings.PROTOCOL,
-        settings.STORAGE_ACCOUNT_NAME
-    )
 
-    connection_string = settings.CONNECTION_STRING
-    shared_access_key = settings.STORAGE_ACCOUNT_KEY
     active_directory_application_id = settings.ACTIVE_DIRECTORY_APPLICATION_ID
     active_directory_application_secret = settings.ACTIVE_DIRECTORY_APPLICATION_SECRET
     active_directory_tenant_id = settings.ACTIVE_DIRECTORY_TENANT_ID

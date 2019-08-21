@@ -9,10 +9,6 @@
 from datetime import datetime, timedelta
 from azure.core.exceptions import ResourceExistsError
 from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
-try:
-    import settings_real as settings
-except ImportError:
-    import queue_settings_fake as settings
 
 from queuetestcase import (
     QueueTestCase

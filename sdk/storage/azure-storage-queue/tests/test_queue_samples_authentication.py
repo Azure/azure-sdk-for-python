@@ -8,11 +8,7 @@
 
 from datetime import datetime, timedelta
 import pytest
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
-try:
-    import settings_real as settings
-except ImportError:
-    import queue_settings_fake as settings
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, mgmt_settings_fake as settings
 
 from queuetestcase import (
     QueueTestCase
@@ -20,13 +16,7 @@ from queuetestcase import (
 
 
 class TestQueueAuthSamples(QueueTestCase):
-    url = "{}://{}.queue.core.windows.net".format(
-        settings.PROTOCOL,
-        settings.STORAGE_ACCOUNT_NAME
-    )
 
-    connection_string = settings.CONNECTION_STRING
-    shared_access_key = settings.STORAGE_ACCOUNT_KEY
     active_directory_application_id = settings.ACTIVE_DIRECTORY_APPLICATION_ID
     active_directory_application_secret = settings.ACTIVE_DIRECTORY_APPLICATION_SECRET
     active_directory_tenant_id = settings.ACTIVE_DIRECTORY_TENANT_ID
@@ -62,7 +52,7 @@ class TestQueueAuthSamples(QueueTestCase):
     @ResourceGroupPreparer()          
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_auth_active_directory(self, resource_group, location, storage_account, storage_account_key):
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
         url = self._account_url(storage_account.name)
         # [START create_queue_service_client_token]
@@ -88,7 +78,7 @@ class TestQueueAuthSamples(QueueTestCase):
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_auth_shared_access_signature(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
         cs = self.connection_string(storage_account, storage_account_key)
         # Instantiate a QueueServiceClient using a connection string
