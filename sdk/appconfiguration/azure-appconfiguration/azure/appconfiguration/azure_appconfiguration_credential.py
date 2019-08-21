@@ -6,7 +6,7 @@
 
 from .utils import parse_connection_string
 
-class AppConfigConnectionStringCredential:
+class AppConfigConnectionStringCredential(object):
     """
     Parse the app configuration service connection string and store the host, id, secret information.
         """
