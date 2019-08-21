@@ -359,16 +359,19 @@ class ConnectionPolicy(object):
         Gets or sets the preferred locations for geo-replicated database accounts.
         When EnableEndpointDiscovery is true and PreferredLocations is non-empty,
         the client will use this list to evaluate the final location, taking into consideration
-        the order specified in PreferredLocations list. The locations in this list are specified as the names of
-        the azure Cosmos locations like, 'West US', 'East US', 'Central India' and so on.
+        the order specified in PreferredLocations list. The locations in this list are specified
+        as the names of the azure Cosmos locations like, 'West US', 'East US', 'Central India'
+        and so on.
     :ivar RetryOptions RetryOptions:
         Gets or sets the retry options to be applied to all requests when retrying.
     :ivar boolean DisableSSLVerification:
         Flag to disable SSL verification for the requests. SSL verification is enabled by default.
         Don't set this when targeting production endpoints.
-        This is intended to be used only when targeting emulator endpoint to avoid failing your requests with SSL related error.
+        This is intended to be used only when targeting emulator endpoint to avoid failing your
+        requests with SSL related error.
     :ivar boolean UseMultipleWriteLocations:
-        Flag to enable writes on any locations (regions) for geo-replicated database accounts in the azure Cosmos service.
+        Flag to enable writes on any locations (regions) for geo-replicated database accounts
+        in the azure Cosmos service.
     """
 
     __defaultRequestTimeout = 60000  # milliseconds
@@ -417,9 +420,8 @@ class _OperationType(object):
             _OperationType.ExecuteJavaScript,
             _OperationType.Replace,
             _OperationType.Upsert,
-            _OperationType.Update
+            _OperationType.Update,
         )
-
 
     @staticmethod
     def IsReadOnlyOperation(operationType):
@@ -429,5 +431,5 @@ class _OperationType(object):
             _OperationType.Head,
             _OperationType.HeadFeed,
             _OperationType.Query,
-            _OperationType.SqlQuery
+            _OperationType.SqlQuery,
         )
