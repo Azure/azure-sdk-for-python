@@ -36,6 +36,7 @@ from ._query_iterable import QueryIterable
 
 __all__ = ("Database",)
 
+# pylint: disable=protected-access
 
 class Database(object):
     """ Represents an Azure Cosmos DB SQL API database.

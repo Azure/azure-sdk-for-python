@@ -37,6 +37,7 @@ from . import partition_key
 from . import http_constants
 from . import _runtime_constants
 
+# pylint: disable=protected-access
 
 def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     cosmos_client_connection,

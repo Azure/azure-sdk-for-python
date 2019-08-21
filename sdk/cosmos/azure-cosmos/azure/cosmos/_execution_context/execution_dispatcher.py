@@ -32,6 +32,8 @@ from azure.cosmos._execution_context import endpoint_component
 from azure.cosmos._execution_context import multi_execution_aggregator
 from azure.cosmos.http_constants import StatusCodes, SubStatusCodes
 
+# pylint: disable=protected-access
+
 def _is_partitioned_execution_info(e):
     return (
         e.status_code == StatusCodes.BAD_REQUEST

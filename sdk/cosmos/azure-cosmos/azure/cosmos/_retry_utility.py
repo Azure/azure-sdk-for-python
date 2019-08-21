@@ -31,6 +31,7 @@ from . import _default_retry_policy
 from . import _session_retry_policy
 from .http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 
+# pylint: disable=protected-access
 
 def Execute(client, global_endpoint_manager, function, *args, **kwargs):
     """Exectutes the function with passed parameters applying all retry policies

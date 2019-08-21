@@ -28,6 +28,7 @@ import time
 from . import documents
 from . import http_constants
 
+# pylint: disable=protected-access
 
 class EndpointOperationType(object):
     NoneType = "None"

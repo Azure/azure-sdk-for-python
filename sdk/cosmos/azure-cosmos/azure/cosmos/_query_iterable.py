@@ -24,6 +24,7 @@
 from azure.cosmos._execution_context import execution_dispatcher
 from azure.cosmos._execution_context import base_execution_context
 
+# pylint: disable=protected-access
 
 class QueryIterable(object):
     """Represents an iterable object of the query results.

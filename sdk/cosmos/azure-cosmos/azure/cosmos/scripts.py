@@ -30,6 +30,7 @@ from azure.cosmos._cosmos_client_connection import CosmosClientConnection
 from .partition_key import NonePartitionKeyValue
 from ._query_iterable import QueryIterable
 
+# pylint: disable=protected-access
 
 class ScriptType:
     StoredProcedure = "sprocs"

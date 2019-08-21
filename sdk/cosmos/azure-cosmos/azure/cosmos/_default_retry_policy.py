@@ -23,6 +23,7 @@
 """
 from . import http_constants
 
+# pylint: disable=protected-access
 
 class DefaultRetryPolicy(object):
 

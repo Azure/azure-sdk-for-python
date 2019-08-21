@@ -41,6 +41,7 @@ from . import _session
 from . import _utils
 from .partition_key import _Undefined, _Empty
 
+# pylint: disable=protected-access
 
 class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods,too-many-instance-attributes
     """Represents a document client.

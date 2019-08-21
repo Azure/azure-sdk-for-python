@@ -30,6 +30,7 @@ from . import _constants as constants
 from . import errors
 from ._location_cache import LocationCache
 
+# pylint: disable=protected-access
 
 class _GlobalEndpointManager(object):
     """

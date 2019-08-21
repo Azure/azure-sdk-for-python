@@ -27,6 +27,7 @@ from .collection_routing_map import CollectionRoutingMap
 from . import routing_range
 from .routing_range import PartitionKeyRange
 
+# pylint: disable=protected-access
 
 class PartitionKeyRangeCache(object):
     """
