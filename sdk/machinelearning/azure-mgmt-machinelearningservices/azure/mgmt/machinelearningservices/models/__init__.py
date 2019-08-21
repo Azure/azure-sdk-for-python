@@ -116,7 +116,9 @@ from ._azure_machine_learning_workspaces_enums import (
     UsageUnit,
     ResourceIdentityType,
     VmPriority,
+    RemoteLoginPortPublicAccess,
     AllocationState,
+    NodeState,
     ComputeType,
     UnderlyingResourceAction,
 )
@@ -178,7 +180,9 @@ __all__ = [
     'UsageUnit',
     'ResourceIdentityType',
     'VmPriority',
+    'RemoteLoginPortPublicAccess',
     'AllocationState',
+    'NodeState',
     'ComputeType',
     'UnderlyingResourceAction',
 ]

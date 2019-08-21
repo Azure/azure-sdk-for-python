@@ -383,29 +383,50 @@ class AmlComputeNodeInformation(Model):
 
     :ivar node_id: Node ID. ID of the compute node.
     :vartype node_id: str
-    :ivar ip_address: IP address. Public IP address of the compute node.
-    :vartype ip_address: str
+    :ivar private_ip_address: Private IP address. Private IP address of the
+     compute node.
+    :vartype private_ip_address: str
+    :ivar public_ip_address: Public IP address. Public IP address of the
+     compute node.
+    :vartype public_ip_address: str
     :ivar port: Port. SSH port number of the node.
     :vartype port: float
+    :ivar node_state: State of the compute node. Values are idle, running,
+     preparing, unusable, leaving and preempted. Possible values include:
+     'idle', 'running', 'preparing', 'unusable', 'leaving', 'preempted'
+    :vartype node_state: str or
+     ~azure.mgmt.machinelearningservices.models.NodeState
+    :ivar run_id: Run ID. ID of the Experiment running on the node, if any
+     else null.
+    :vartype run_id: str
     """
 
     _validation = {
         'node_id': {'readonly': True},
-        'ip_address': {'readonly': True},
+        'private_ip_address': {'readonly': True},
+        'public_ip_address': {'readonly': True},
         'port': {'readonly': True},
+        'node_state': {'readonly': True},
+        'run_id': {'readonly': True},
     }
 
     _attribute_map = {
         'node_id': {'key': 'nodeId', 'type': 'str'},
-        'ip_address': {'key': 'ipAddress', 'type': 'str'},
+        'private_ip_address': {'key': 'privateIpAddress', 'type': 'str'},
+        'public_ip_address': {'key': 'publicIpAddress', 'type': 'str'},
         'port': {'key': 'port', 'type': 'float'},
+        'node_state': {'key': 'nodeState', 'type': 'str'},
+        'run_id': {'key': 'runId', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(AmlComputeNodeInformation, self).__init__(**kwargs)
         self.node_id = None
-        self.ip_address = None
+        self.private_ip_address = None
+        self.public_ip_address = None
         self.port = None
+        self.node_state = None
+        self.run_id = None
 
 
 class ComputeNodesInformation(Model):
@@ -503,6 +524,17 @@ class AmlComputeProperties(Model):
     :param subnet: Subnet. Virtual network subnet resource ID the compute
      nodes belong to.
     :type subnet: ~azure.mgmt.machinelearningservices.models.ResourceId
+    :param remote_login_port_public_access: Close remote Login Access Port.
+     State of the public SSH port. Possible values are: Disabled - Indicates
+     that the public ssh port is closed on all nodes of the cluster. Enabled -
+     Indicates that the public ssh port is open on all nodes of the cluster.
+     NotSpecified - Indicates that the public ssh port is closed on all nodes
+     of the cluster if VNet is defined, else is open all public nodes. It can
+     be default only during cluster creation time, after creation it will be
+     either enabled or disabled. Possible values include: 'Enabled',
+     'Disabled', 'NotSpecified'. Default value: "NotSpecified" .
+    :type remote_login_port_public_access: str or
+     ~azure.mgmt.machinelearningservices.models.RemoteLoginPortPublicAccess
     :ivar allocation_state: Allocation state. Allocation state of the compute.
      Possible values are: steady - Indicates that the compute is not resizing.
      There are no changes to the number of compute nodes in the compute in
@@ -550,6 +582,7 @@ class AmlComputeProperties(Model):
         'scale_settings': {'key': 'scaleSettings', 'type': 'ScaleSettings'},
         'user_account_credentials': {'key': 'userAccountCredentials', 'type': 'UserAccountCredentials'},
         'subnet': {'key': 'subnet', 'type': 'ResourceId'},
+        'remote_login_port_public_access': {'key': 'remoteLoginPortPublicAccess', 'type': 'str'},
         'allocation_state': {'key': 'allocationState', 'type': 'str'},
         'allocation_state_transition_time': {'key': 'allocationStateTransitionTime', 'type': 'iso-8601'},
         'errors': {'key': 'errors', 'type': '[MachineLearningServiceError]'},
@@ -565,6 +598,7 @@ class AmlComputeProperties(Model):
         self.scale_settings = kwargs.get('scale_settings', None)
         self.user_account_credentials = kwargs.get('user_account_credentials', None)
         self.subnet = kwargs.get('subnet', None)
+        self.remote_login_port_public_access = kwargs.get('remote_login_port_public_access', "NotSpecified")
         self.allocation_state = None
         self.allocation_state_transition_time = None
         self.errors = None
@@ -1755,6 +1789,9 @@ class VirtualMachineSize(Model):
     :ivar v_cp_us: Number of vPUs. The number of vCPUs supported by the
      virtual machine size.
     :vartype v_cp_us: int
+    :ivar gpus: Number of gPUs. The number of gPUs supported by the virtual
+     machine size.
+    :vartype gpus: int
     :ivar os_vhd_size_mb: OS VHD Disk size. The OS VHD disk size, in MB,
      allowed by the virtual machine size.
     :vartype os_vhd_size_mb: int
@@ -1776,6 +1813,7 @@ class VirtualMachineSize(Model):
         'name': {'readonly': True},
         'family': {'readonly': True},
         'v_cp_us': {'readonly': True},
+        'gpus': {'readonly': True},
         'os_vhd_size_mb': {'readonly': True},
         'max_resource_volume_mb': {'readonly': True},
         'memory_gb': {'readonly': True},
@@ -1787,6 +1825,7 @@ class VirtualMachineSize(Model):
         'name': {'key': 'name', 'type': 'str'},
         'family': {'key': 'family', 'type': 'str'},
         'v_cp_us': {'key': 'vCPUs', 'type': 'int'},
+        'gpus': {'key': 'gpus', 'type': 'int'},
         'os_vhd_size_mb': {'key': 'osVhdSizeMB', 'type': 'int'},
         'max_resource_volume_mb': {'key': 'maxResourceVolumeMB', 'type': 'int'},
         'memory_gb': {'key': 'memoryGB', 'type': 'float'},
@@ -1799,6 +1838,7 @@ class VirtualMachineSize(Model):
         self.name = None
         self.family = None
         self.v_cp_us = None
+        self.gpus = None
         self.os_vhd_size_mb = None
         self.max_resource_volume_mb = None
         self.memory_gb = None

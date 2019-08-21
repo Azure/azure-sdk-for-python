@@ -39,10 +39,27 @@ class VmPriority(str, Enum):
     low_priority = "LowPriority"
 
 
+class RemoteLoginPortPublicAccess(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+    not_specified = "NotSpecified"
+
+
 class AllocationState(str, Enum):
 
     steady = "Steady"
     resizing = "Resizing"
+
+
+class NodeState(str, Enum):
+
+    idle = "idle"
+    running = "running"
+    preparing = "preparing"
+    unusable = "unusable"
+    leaving = "leaving"
+    preempted = "preempted"
 
 
 class ComputeType(str, Enum):
