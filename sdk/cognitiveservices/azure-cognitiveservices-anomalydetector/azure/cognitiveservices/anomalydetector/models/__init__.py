@@ -15,45 +15,18 @@ try:
     from .request_py3 import Request
     from .entire_detect_response_py3 import EntireDetectResponse
     from .last_detect_response_py3 import LastDetectResponse
-    from .time_series_py3 import TimeSeries
-    from .time_series_create_request_py3 import TimeSeriesCreateRequest
-    from .time_series_list_py3 import TimeSeriesList
-    from .inconsistency_detect_request_py3 import InconsistencyDetectRequest
-    from .inconsistency_py3 import Inconsistency
     from .change_point_detect_request_py3 import ChangePointDetectRequest
     from .change_point_detect_response_py3 import ChangePointDetectResponse
-    from .change_point_detect_on_timestamp_request_py3 import ChangePointDetectOnTimestampRequest
-    from .change_point_detect_on_timestamp_response_py3 import ChangePointDetectOnTimestampResponse
-    from .time_series_query_request_py3 import TimeSeriesQueryRequest
-    from .time_series_query_response_py3 import TimeSeriesQueryResponse
-    from .anomaly_detect_on_timestamp_request_py3 import AnomalyDetectOnTimestampRequest
-    from .anomaly_detect_on_timestamp_response_py3 import AnomalyDetectOnTimestampResponse
-    from .label_request_py3 import LabelRequest
 except (SyntaxError, ImportError):
     from .api_error import APIError, APIErrorException
     from .point import Point
     from .request import Request
     from .entire_detect_response import EntireDetectResponse
     from .last_detect_response import LastDetectResponse
-    from .time_series import TimeSeries
-    from .time_series_create_request import TimeSeriesCreateRequest
-    from .time_series_list import TimeSeriesList
-    from .inconsistency_detect_request import InconsistencyDetectRequest
-    from .inconsistency import Inconsistency
     from .change_point_detect_request import ChangePointDetectRequest
     from .change_point_detect_response import ChangePointDetectResponse
-    from .change_point_detect_on_timestamp_request import ChangePointDetectOnTimestampRequest
-    from .change_point_detect_on_timestamp_response import ChangePointDetectOnTimestampResponse
-    from .time_series_query_request import TimeSeriesQueryRequest
-    from .time_series_query_response import TimeSeriesQueryResponse
-    from .anomaly_detect_on_timestamp_request import AnomalyDetectOnTimestampRequest
-    from .anomaly_detect_on_timestamp_response import AnomalyDetectOnTimestampResponse
-    from .label_request import LabelRequest
 from .anomaly_detector_client_enums import (
     Granularity,
-    TimeSeriesField,
-    LabelType,
-    LabelValue,
 )
 
 __all__ = [
@@ -62,22 +35,7 @@ __all__ = [
     'Request',
     'EntireDetectResponse',
     'LastDetectResponse',
-    'TimeSeries',
-    'TimeSeriesCreateRequest',
-    'TimeSeriesList',
-    'InconsistencyDetectRequest',
-    'Inconsistency',
     'ChangePointDetectRequest',
     'ChangePointDetectResponse',
-    'ChangePointDetectOnTimestampRequest',
-    'ChangePointDetectOnTimestampResponse',
-    'TimeSeriesQueryRequest',
-    'TimeSeriesQueryResponse',
-    'AnomalyDetectOnTimestampRequest',
-    'AnomalyDetectOnTimestampResponse',
-    'LabelRequest',
     'Granularity',
-    'TimeSeriesField',
-    'LabelType',
-    'LabelValue',
 ]

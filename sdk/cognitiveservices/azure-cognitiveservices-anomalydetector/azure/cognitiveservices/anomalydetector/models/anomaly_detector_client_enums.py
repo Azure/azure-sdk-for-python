@@ -20,32 +20,3 @@ class Granularity(str, Enum):
     daily = "daily"
     hourly = "hourly"
     minutely = "minutely"
-
-
-class TimeSeriesField(str, Enum):
-
-    is_anomaly = "isAnomaly"
-    change_point = "changePoint"
-    is_positive_anomaly = "isPositiveAnomaly"
-    is_negative_anomaly = "isNegativeAnomaly"
-    value = "value"
-    expected_value = "expectedValue"
-    upper_margin = "upperMargin"
-    lower_margin = "lowerMargin"
-    period = "period"
-    change_point_confidence_score = "changePointConfidenceScore"
-    anomaly_confidence_score = "anomalyConfidenceScore"
-
-
-class LabelType(str, Enum):
-
-    change_point = "changePoint"
-    anomaly = "anomaly"
-
-
-class LabelValue(str, Enum):
-
-    positive_anomaly = "positiveAnomaly"
-    negative_anomaly = "negativeAnomaly"
-    positive_change_point = "positiveChangePoint"
-    negative_change_point = "negativeChangePoint"
