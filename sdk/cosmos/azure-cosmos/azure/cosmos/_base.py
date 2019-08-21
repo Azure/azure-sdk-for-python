@@ -398,7 +398,7 @@ def IsDatabaseLink(link):
     return True
 
 
-def IsItemContainerLink(link):
+def IsItemContainerLink(link):  # pylint: disable=too-many-return-statements
     """Finds whether the link is a document colllection Self Link or a document colllection ID based link
 
     :param str link:

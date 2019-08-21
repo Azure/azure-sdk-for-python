@@ -131,7 +131,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods
         )
         return endpoints[location_index % len(endpoints)]
 
-    def should_refresh_endpoints(self):
+    def should_refresh_endpoints(self):  # pylint: disable=too-many-return-statements
         most_preferred_location = self.preferred_locations[0] if self.preferred_locations else None
 
         # we should schedule refresh in background if we are unable to target the user's most preferredLocation.
