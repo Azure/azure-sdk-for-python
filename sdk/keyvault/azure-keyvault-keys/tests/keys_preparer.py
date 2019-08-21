@@ -114,7 +114,7 @@ class VaultClientPreparer(AzureMgmtPreparer):
 
             self.management_client = self.create_mgmt_client(KeyVaultManagementClient)
             try:
-                hashed_padding = str(hash(os.environ['RUN_IDENTIFIER'])).replace("-", "")[:4]
+                hashed_padding = str(abs(hash(os.environ['RUN_IDENTIFIER'])))[:4]
             except KeyError as e:
                 hashed_padding = ""
 
