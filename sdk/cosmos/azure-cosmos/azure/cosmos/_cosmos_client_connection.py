@@ -95,8 +95,8 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
                 self.resource_tokens = {}
                 for permission_feed in auth["permissionFeed"]:
                     resource_parts = permission_feed["resource"].split("/")
-                    id = resource_parts[-1]
-                    self.resource_tokens[id] = permission_feed["_token"]
+                    id_ = resource_parts[-1]
+                    self.resource_tokens[id_] = permission_feed["_token"]
 
         self.connection_policy = connection_policy or documents.ConnectionPolicy()
 
@@ -2218,7 +2218,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         )
         return database_account
 
-    def Create(self, body, path, typ, id, initial_headers, options=None):
+    def Create(self, body, path, typ, id, initial_headers, options=None):  # pylint: disable=redefined-builtin
         """Creates a Azure Cosmos resource and returns it.
 
         :param dict body:
@@ -2249,7 +2249,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         self._UpdateSessionIfRequired(headers, result, self.last_response_headers)
         return result
 
-    def Upsert(self, body, path, typ, id, initial_headers, options=None):
+    def Upsert(self, body, path, typ, id, initial_headers, options=None):  # pylint: disable=redefined-builtin
         """Upserts a Azure Cosmos resource and returns it.
 
         :param dict body:
@@ -2281,7 +2281,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         self._UpdateSessionIfRequired(headers, result, self.last_response_headers)
         return result
 
-    def Replace(self, resource, path, typ, id, initial_headers, options=None):
+    def Replace(self, resource, path, typ, id, initial_headers, options=None):  # pylint: disable=redefined-builtin
         """Replaces a Azure Cosmos resource and returns it.
 
         :param dict resource:
@@ -2311,7 +2311,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         self._UpdateSessionIfRequired(headers, result, self.last_response_headers)
         return result
 
-    def Read(self, path, typ, id, initial_headers, options=None):
+    def Read(self, path, typ, id, initial_headers, options=None):  # pylint: disable=redefined-builtin
         """Reads a Azure Cosmos resource and returns it.
 
         :param str path:
@@ -2337,7 +2337,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         result, self.last_response_headers = self.__Get(path, request, headers)
         return result
 
-    def DeleteResource(self, path, typ, id, initial_headers, options=None):
+    def DeleteResource(self, path, typ, id, initial_headers, options=None):  # pylint: disable=redefined-builtin
         """Deletes a Azure Cosmos resource and returns it.
 
         :param str path:
@@ -2504,13 +2504,13 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         )
 
     def __QueryFeed(
-        self, path, typ, id, result_fn, create_fn, query, options=None, partition_key_range_id=None, response_hook=None
+        self, path, typ, id_, result_fn, create_fn, query, options=None, partition_key_range_id=None, response_hook=None
     ):
         """Query for more than one Azure Cosmos resources.
 
         :param str path:
         :param str typ:
-        :param str id:
+        :param str id_:
         :param function result_fn:
         :param function create_fn:
         :param (str or dict) query:
@@ -2544,7 +2544,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         if query is None:
             # Query operations will use ReadEndpoint even though it uses GET(for feed requests)
             request = _request_object.RequestObject(typ, documents._OperationType.ReadFeed)
-            headers = base.GetHeaders(self, initial_headers, "get", path, id, typ, options, partition_key_range_id)
+            headers = base.GetHeaders(self, initial_headers, "get", path, id_, typ, options, partition_key_range_id)
             result, self.last_response_headers = self.__Get(path, request, headers)
             if response_hook:
                 response_hook(self.last_response_headers, result)
@@ -2565,7 +2565,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         # Query operations will use ReadEndpoint even though it uses POST(for regular query operations)
         request = _request_object.RequestObject(typ, documents._OperationType.SqlQuery)
-        headers = base.GetHeaders(self, initial_headers, "post", path, id, typ, options, partition_key_range_id)
+        headers = base.GetHeaders(self, initial_headers, "post", path, id_, typ, options, partition_key_range_id)
         result, self.last_response_headers = self.__Post(path, request, query, headers)
 
         if response_hook:
@@ -2609,12 +2609,12 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
     @staticmethod
     def __ValidateResource(resource):
-        id = resource.get("id")
-        if id:
-            if id.find("/") != -1 or id.find("\\") != -1 or id.find("?") != -1 or id.find("#") != -1:
+        id_ = resource.get("id")
+        if id_:
+            if id_.find("/") != -1 or id_.find("\\") != -1 or id_.find("?") != -1 or id_.find("#") != -1:
                 raise ValueError("Id contains illegal chars.")
 
-            if id[-1] == " ":
+            if id_[-1] == " ":
                 raise ValueError("Id ends with a space.")
 
     # Adds the partition key to options
