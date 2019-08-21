@@ -2176,8 +2176,7 @@ class RetentionPolicy(Model):
     :param days: The number of days to retain an untagged manifest after which
      it gets purged. Default value: 7 .
     :type days: int
-    :ivar last_updated_time: The timestamp when the the policy was last
-     updated.
+    :ivar last_updated_time: The timestamp when the policy was last updated.
     :vartype last_updated_time: datetime
     :param status: The value that indicates whether the policy is enabled or
      not. Possible values include: 'enabled', 'disabled'. Default value:
