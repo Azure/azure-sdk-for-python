@@ -14,15 +14,13 @@ try:
 except ImportError:
     import queue_settings_fake as settings
 from multidict import CIMultiDict, CIMultiDictProxy
-from queuetestcase import (
-    QueueTestCase,
-    record,
-    TestMode
+from asyncqueuetestcase import (
+    AsyncQueueTestCase
 )
 
 
 
-class TestQueueHelloWorldSamplesAsync(QueueTestCase):
+class TestQueueHelloWorldSamplesAsync(AsyncQueueTestCase):
 
     connection_string = settings.CONNECTION_STRING
 

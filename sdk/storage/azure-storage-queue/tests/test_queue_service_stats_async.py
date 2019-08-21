@@ -5,21 +5,23 @@
 # --------------------------------------------------------------------------
 import unittest
 import asyncio
-
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, FakeStorageAccount
 from azure.storage.queue.aio import QueueServiceClient
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 
-from queuetestcase import (
-    QueueTestCase,
-    record,
-    TestMode
+from asyncqueuetestcase import (
+    AsyncQueueTestCase
 )
 
 SERVICE_UNAVAILABLE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageServiceStats><GeoReplication><Status' \
                                 '>unavailable</Status><LastSyncTime></LastSyncTime></GeoReplication' \
                                 '></StorageServiceStats> '
 
+FAKE_STORAGE = FakeStorageAccount(
+    name='pyacrstorage',
+    id=''
+)
 
 class AiohttpTestTransport(AioHttpTransport):
     """Workaround to vcrpy bug: https://github.com/kevin1024/vcrpy/pull/461
@@ -33,7 +35,7 @@ class AiohttpTestTransport(AioHttpTransport):
 
 
 # --Test Class -----------------------------------------------------------------
-class QueueServiceStatsTestAsync(QueueTestCase):
+class QueueServiceStatsTestAsync(AsyncQueueTestCase):
     # --Helpers-----------------------------------------------------------------
     def _assert_stats_default(self, stats):
         self.assertIsNotNone(stats)
@@ -54,29 +56,24 @@ class QueueServiceStatsTestAsync(QueueTestCase):
         response.http_response.text = lambda: SERVICE_UNAVAILABLE_RESP_BODY
 
     # --Test cases per service ---------------------------------------
-
-    async def _test_queue_service_stats_f(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @AsyncQueueTestCase.await_prepared_test
+    async def test_queue_service_stats_f(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        url = self._get_queue_url()
-        credential = self._get_shared_key_credential()
-        qsc = QueueServiceClient(url, credential=credential, transport=AiohttpTestTransport())
-
+        qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key, transport=AiohttpTestTransport())
         # Act
         stats = await qsc.get_service_stats()
 
         # Assert
         self._assert_stats_default(stats)
 
-    @record
-    def test_queue_service_stats_f(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_queue_service_stats_f())
-
-    async def _test_queue_service_stats_when_unavailable(self):
-        # Arrange
-        url = self._get_queue_url()
-        credential = self._get_shared_key_credential()
-        qsc = QueueServiceClient(url, credential=credential, transport=AiohttpTestTransport())
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @AsyncQueueTestCase.await_prepared_test
+    async def test_queue_service_stats_when_unavailable(self, resource_group, location, storage_account, storage_account_key):
+        # Arrange        
+        qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key, transport=AiohttpTestTransport())
 
         # Act
         stats = await qsc.get_service_stats(
@@ -85,10 +82,6 @@ class QueueServiceStatsTestAsync(QueueTestCase):
         # Assert
         self._assert_stats_unavailable(stats)
 
-    @record
-    def test_queue_service_stats_when_unavailable(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_queue_service_stats_when_unavailable())
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()

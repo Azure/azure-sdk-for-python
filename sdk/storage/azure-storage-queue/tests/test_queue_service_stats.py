@@ -7,10 +7,9 @@ import unittest
 import pytest
 
 from azure.storage.queue import QueueServiceClient
-
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from queuetestcase import (
-    QueueTestCase,
-    record,
+    QueueTestCase
 )
 
 SERVICE_UNAVAILABLE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageServiceStats><GeoReplication><Status' \
@@ -41,12 +40,11 @@ class QueueServiceStatsTest(QueueTestCase):
 
     # --Test cases per service ---------------------------------------
 
-    @record
-    def test_queue_service_stats_f(self):
+    @ResourceGroupPreparer(name_prefix='random')     
+    @StorageAccountPreparer(name_prefix='sandom')
+    def test_queue_service_stats_f(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        url = self._get_queue_url()
-        credential = self._get_shared_key_credential()
-        qsc = QueueServiceClient(url, credential=credential)
+        qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)
 
         # Act
         stats = qsc.get_service_stats()
@@ -54,12 +52,11 @@ class QueueServiceStatsTest(QueueTestCase):
         # Assert
         self._assert_stats_default(stats)
 
-    @record
-    def test_queue_service_stats_when_unavailable(self):
+    @ResourceGroupPreparer(name_prefix='random2')     
+    @StorageAccountPreparer(name_prefix='sandom2')
+    def test_queue_service_stats_when_unavailable(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        url = self._get_queue_url()
-        credential = self._get_shared_key_credential()
-        qsc = QueueServiceClient(url, credential=credential)
+        qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)
 
         # Act
         stats = qsc.get_service_stats(

@@ -1,0 +1,112 @@
+interactions:
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-queue/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-date:
+      - Tue, 20 Aug 2019 21:04:17 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: PUT
+    uri: https://pyacrstoragec1500c51.queue.core.windows.net/pythonqueuec1500c51
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Tue, 20 Aug 2019 21:04:16 GMT
+      server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2018-03-28'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstoragec1500c51.queue.core.windows.net
+        - /pythonqueuec1500c51
+        - ''
+        - ''
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <QueueMessage><MessageText>message1</MessageText></QueueMessage>'
+    headers:
+      Accept:
+      - application/xml
+      Content-Length:
+      - '103'
+      Content-Type:
+      - application/xml; charset=utf-8
+      User-Agent:
+      - azsdk-python-storage-queue/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Tue, 20 Aug 2019 21:04:17 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: POST
+    uri: https://pyacrstoragec1500c51.queue.core.windows.net/pythonqueuec1500c51/messages
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>7d937691-3633-44ed-83fb-66ba6d6316e1</MessageId><InsertionTime>Tue,
+        20 Aug 2019 21:04:16 GMT</InsertionTime><ExpirationTime>Tue, 27 Aug 2019 21:04:16
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAOBSH05pX1QE=</PopReceipt><TimeNextVisible>Tue,
+        20 Aug 2019 21:04:16 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
+    headers:
+      content-type: application/xml
+      date: Tue, 20 Aug 2019 21:04:16 GMT
+      server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-ms-version: '2018-03-28'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstoragec1500c51.queue.core.windows.net
+        - /pythonqueuec1500c51/messages
+        - ''
+        - ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      User-Agent:
+      - azsdk-python-storage-queue/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Tue, 20 Aug 2019 21:04:17 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: GET
+    uri: https://pyacrstoragec1500c51.queue.core.windows.net/pythonqueuec1500c51/messages?peekonly=true&st=2019-08-20T20:59:17Z&se=2019-08-20T22:04:17Z&sp=r&sv=2018-03-28&sig=zfQE%2BNjqrdfM32O6JTbA832KAvIBbFqhPpVnoPM0mHg%3D
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>7d937691-3633-44ed-83fb-66ba6d6316e1</MessageId><InsertionTime>Tue,
+        20 Aug 2019 21:04:16 GMT</InsertionTime><ExpirationTime>Tue, 27 Aug 2019 21:04:16
+        GMT</ExpirationTime><DequeueCount>0</DequeueCount><MessageText>message1</MessageText></QueueMessage></QueueMessagesList>"
+    headers:
+      cache-control: no-cache
+      content-type: application/xml
+      date: Tue, 20 Aug 2019 21:04:16 GMT
+      server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-ms-version: '2018-03-28'
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstoragec1500c51.queue.core.windows.net
+        - /pythonqueuec1500c51/messages
+        - peekonly=true&st=2019-08-20T20:59:17Z&se=2019-08-20T22:04:17Z&sp=r&sv=2018-03-28&sig=zfQE%2BNjqrdfM32O6JTbA832KAvIBbFqhPpVnoPM0mHg%3D
+        - ''
+version: 1
