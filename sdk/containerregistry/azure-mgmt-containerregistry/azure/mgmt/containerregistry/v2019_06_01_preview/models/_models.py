@@ -2251,8 +2251,9 @@ class RetentionPolicy(Model):
     :param days: The number of days to retain an untagged manifest after which
      it gets purged. Default value: 7 .
     :type days: int
-    :ivar name: The name of retention policy.
-    :vartype name: str
+    :ivar last_updated_time: The timestamp when the the policy was last
+     updated.
+    :vartype last_updated_time: datetime
     :param status: The value that indicates whether the policy is enabled or
      not. Possible values include: 'enabled', 'disabled'. Default value:
      "disabled" .
@@ -2261,19 +2262,19 @@ class RetentionPolicy(Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
+        'last_updated_time': {'readonly': True},
     }
 
     _attribute_map = {
         'days': {'key': 'days', 'type': 'int'},
-        'name': {'key': 'name', 'type': 'str'},
+        'last_updated_time': {'key': 'lastUpdatedTime', 'type': 'iso-8601'},
         'status': {'key': 'status', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(RetentionPolicy, self).__init__(**kwargs)
         self.days = kwargs.get('days', 7)
-        self.name = None
+        self.last_updated_time = None
         self.status = kwargs.get('status', "disabled")
 
 
