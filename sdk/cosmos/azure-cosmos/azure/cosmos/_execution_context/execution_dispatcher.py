@@ -33,7 +33,7 @@ from azure.cosmos._execution_context import multi_execution_aggregator
 from azure.cosmos.http_constants import StatusCodes, SubStatusCodes
 
 
-class _ProxyQueryExecutionContext(_QueryExecutionContextBase):
+class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disable=abstract-method
     """
     This class represents a proxy execution context wrapper:
         - By default uses _DefaultQueryExecutionContext
@@ -114,7 +114,7 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):
         )
 
 
-class _PipelineExecutionContext(_QueryExecutionContextBase):
+class _PipelineExecutionContext(_QueryExecutionContextBase):  # pylint: disable=abstract-method
 
     DEFAULT_PAGE_SIZE = 1000
 
