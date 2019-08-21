@@ -73,7 +73,7 @@ class ConsumerProducerMixin(object):
             else:
                 alt_creds = {}
             self._create_handler()
-            self._handler.open(connection=self.client._conn_manager.get_connection(
+            self._handler.open(connection=self.client._conn_manager.get_connection(  # pylint: disable=protected-access
                 self.client.address.hostname,
                 self.client.get_auth(**alt_creds)
             ))
@@ -82,6 +82,8 @@ class ConsumerProducerMixin(object):
             self._max_message_size_on_link = self._handler.message_handler._link.peer_max_message_size \
                                              or constants.MAX_MESSAGE_LENGTH_BYTES  # pylint: disable=protected-access
             self.running = True
+            if self.redirected and self.client._is_iothub:  # pylint: disable=protected-access
+                self.client._is_iothub_redirected = True  # pylint: disable=protected-access
 
     def _close_handler(self):
         self._handler.close()  # close the link (sharing connection) or connection (not sharing)
@@ -89,7 +91,7 @@ class ConsumerProducerMixin(object):
 
     def _close_connection(self):
         self._close_handler()
-        self.client._conn_manager.reset_connection_if_broken()
+        self.client._conn_manager.reset_connection_if_broken()  # pylint: disable=protected-access
 
     def _handle_exception(self, exception, retry_count, max_retries, timeout_time):
         if not self.running and isinstance(exception, compat.TimeoutException):

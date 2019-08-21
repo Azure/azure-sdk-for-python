@@ -157,6 +157,8 @@ class EventHubClientAbstract(object):
         self.get_auth = functools.partial(self._create_auth)
         self.config = _Configuration(**kwargs)
         self.debug = self.config.network_tracing
+        self._is_iothub = kwargs.get("is_iothub", False)
+        self._is_iothub_redirected = False
 
         log.info("%r: Created the Event Hub client", self.container_id)
 
@@ -279,6 +281,7 @@ class EventHubClientAbstract(object):
             kwargs.pop("event_hub_path", None)
             return cls(host, entity, EventHubSharedKeyCredential(policy, key), **kwargs)
         else:
+            kwargs['is_iothub'] = True
             return cls._from_iothub_connection_string(conn_str, **kwargs)
 
     @abstractmethod

@@ -134,6 +134,13 @@ class EventHubClient(EventHubClientAbstract):
             finally:
                 mgmt_client.close()
 
+    def _iothub_redirect(self):
+        with self.create_consumer(consumer_group='$default',
+                                  partition_id='0',
+                                  event_position=EventPosition('-1'),
+                                  operation='/messages/events') as redirect_consumer:
+            redirect_consumer._open_with_retry(timeout=self.config.receive_timeout)  # pylint: disable=protected-access
+
     def get_properties(self):
         # type:() -> Dict[str, Any]
         """
@@ -147,6 +154,9 @@ class EventHubClient(EventHubClientAbstract):
         :rtype: dict
         :raises: ~azure.eventhub.ConnectError
         """
+        if self._is_iothub and not self._is_iothub_redirected:
+            self._iothub_redirect()
+
         mgmt_msg = Message(application_properties={'name': self.eh_name})
         response = self._management_request(mgmt_msg, op_type=b'com.microsoft:eventhub')
         output = {}
@@ -186,6 +196,9 @@ class EventHubClient(EventHubClientAbstract):
         :rtype: dict
         :raises: ~azure.eventhub.ConnectError
         """
+        if self._is_iothub and not self._is_iothub_redirected:
+            self._iothub_redirect()
+
         mgmt_msg = Message(application_properties={'name': self.eh_name,
                                                    'partition': partition})
         response = self._management_request(mgmt_msg, op_type=b'com.microsoft:partition')
