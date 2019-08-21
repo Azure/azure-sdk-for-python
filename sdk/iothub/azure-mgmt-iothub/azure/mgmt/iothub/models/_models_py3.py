@@ -777,7 +777,7 @@ class IotHubLocationDescription(Model):
     """Public representation of one of the locations where a resource is
     provisioned.
 
-    :param location: Azure Geo Regions
+    :param location: The name of the Azure region
     :type location: str
     :param role: The role of the region, can be either primary or secondary.
      The primary region is where the IoT hub is currently provisioned. The
