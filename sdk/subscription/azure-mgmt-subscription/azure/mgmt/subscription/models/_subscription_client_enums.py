@@ -9,19 +9,26 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.paging import Paged
+from enum import Enum
 
 
-class SubscriptionPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`Subscription <azure.mgmt.subscription.models.Subscription>` object
-    """
+class OfferType(str, Enum):
 
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[Subscription]'}
-    }
+    ms_azr_0017_p = "MS-AZR-0017P"
+    ms_azr_0148_p = "MS-AZR-0148P"
 
-    def __init__(self, *args, **kwargs):
 
-        super(SubscriptionPaged, self).__init__(*args, **kwargs)
+class SubscriptionState(str, Enum):
+
+    enabled = "Enabled"
+    warned = "Warned"
+    past_due = "PastDue"
+    disabled = "Disabled"
+    deleted = "Deleted"
+
+
+class SpendingLimit(str, Enum):
+
+    on = "On"
+    off = "Off"
+    current_period_off = "CurrentPeriodOff"

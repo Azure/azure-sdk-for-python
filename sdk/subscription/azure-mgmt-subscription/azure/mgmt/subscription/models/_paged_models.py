@@ -25,3 +25,29 @@ class LocationPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(LocationPaged, self).__init__(*args, **kwargs)
+class SubscriptionPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Subscription <azure.mgmt.subscription.models.Subscription>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Subscription]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(SubscriptionPaged, self).__init__(*args, **kwargs)
+class TenantIdDescriptionPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`TenantIdDescription <azure.mgmt.subscription.models.TenantIdDescription>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[TenantIdDescription]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(TenantIdDescriptionPaged, self).__init__(*args, **kwargs)
