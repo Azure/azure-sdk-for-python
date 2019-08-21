@@ -24,6 +24,8 @@ pool_size = multiprocessing.cpu_count() * 2
 DEFAULT_TOX_INI_LOCATION = os.path.join(root_dir, "eng/tox/tox.ini")
 
 class ToxWorkItem:
+
+
     def __init__(self, target_package_path, tox_env, options_array):
         self.target_package_path = target_package_path
         self.tox_env = tox_env
@@ -98,7 +100,7 @@ def collect_tox_coverage_files(targeted_packages):
 
         shutil.move(source, dest)
 
-def individual_workload(tox_command_tuple):
+def individual_workload(tox_command_tuple, failed_workload_results):
     stdout = os.path.join(tox_command_tuple[1], 'stdout.txt')
     stderr = os.path.join(tox_command_tuple[1], 'stderr.txt')
     with open(stdout, 'w') as f_stdout, open(stderr, 'w') as f_stderr:
@@ -108,15 +110,17 @@ def individual_workload(tox_command_tuple):
         proc.wait()
 
         log_file(stdout)
+        log_file(stderr)
 
         if proc.returncode != 0:
             logging.error("Package returned with code {}".format(proc.returncode))
-            log_file(stderr)
+            failed_workload_results[os.path.basename(tox_command_tuple[1])] = proc.returncode
 
     return proc
 
 def execute_tox_parallel(tox_command_tuples):
     pool = ThreadPool(pool_size)
+    failed_workload_results = {}
 
     for index, cmd_tuple in enumerate(tox_command_tuples):
         logging.info(
@@ -124,9 +128,13 @@ def execute_tox_parallel(tox_command_tuples):
                 os.path.basename(cmd_tuple[1]), index, len(tox_command_tuples)
             )
         )
-        pool.add_task(individual_workload, cmd_tuple)
+        pool.add_task(individual_workload, cmd_tuple, failed_workload_results)
 
     pool.wait_completion()
+
+    if len(failed_workload_results):
+        for key in failed_workload_results.keys():
+            logging.error("{} tox invocation exited with returncode {}".format(key, failed_workload_results[key]))
 
 def execute_tox_serial(tox_command_tuples):
     for index, cmd_tuple in enumerate(tox_command_tuples):
