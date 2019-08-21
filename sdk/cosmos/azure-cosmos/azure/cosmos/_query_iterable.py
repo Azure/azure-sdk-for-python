@@ -80,8 +80,8 @@ class QueryIterable(object):
         # This will call the base constructor(__init__ method above)
 
         self = cls(client, query, options, None, None)
-        self._database_link = database_link
-        self._partition_key = partition_key
+        self._database_link = database_link  # pylint: disable=attribute-defined-outside-init
+        self._partition_key = partition_key  # pylint: disable=attribute-defined-outside-init
 
         return self
 

@@ -254,7 +254,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
             EndpointOperationType.ReadType,
             self.write_endpoints[0],
         )
-        self.last_cache_update_timestamp = self.current_time_millis()
+        self.last_cache_update_timestamp = self.current_time_millis()  # pylint: disable=attribute-defined-outside-init
 
     def get_preferred_available_endpoints(
         self, endpoints_by_location, orderedLocations, expected_available_operation, fallback_endpoint
