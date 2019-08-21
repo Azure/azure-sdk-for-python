@@ -188,44 +188,26 @@ class Cluster(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar cluster_id:
-    :vartype cluster_id: int
-    :param cluster_size:
-    :type cluster_size: int
-    :ivar hosts:
-    :vartype hosts: list[str]
-    :ivar provisioning_state: Possible values include: 'Succeeded', 'Failed',
-     'Cancelled', 'Updating'
-    :vartype provisioning_state: str or
-     ~azure.mgmt.vmwarevirtustream.models.ClusterProvisioningState
+    :param properties:
+    :type properties: ~azure.mgmt.vmwarevirtustream.models.ClusterProperties
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'cluster_id': {'readonly': True},
-        'cluster_size': {'maximum': 16, 'minimum': 3},
-        'hosts': {'readonly': True},
-        'provisioning_state': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'cluster_id': {'key': 'properties.clusterId', 'type': 'int'},
-        'cluster_size': {'key': 'properties.clusterSize', 'type': 'int'},
-        'hosts': {'key': 'properties.hosts', 'type': '[str]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'ClusterProperties'},
     }
 
     def __init__(self, **kwargs):
         super(Cluster, self).__init__(**kwargs)
-        self.cluster_id = None
-        self.cluster_size = kwargs.get('cluster_size', None)
-        self.hosts = None
-        self.provisioning_state = None
+        self.properties = kwargs.get('properties', None)
 
 
 class DefaultClusterProperties(Model):
@@ -244,7 +226,6 @@ class DefaultClusterProperties(Model):
 
     _validation = {
         'cluster_id': {'readonly': True},
-        'cluster_size': {'maximum': 16, 'minimum': 3},
         'hosts': {'readonly': True},
     }
 
@@ -259,6 +240,42 @@ class DefaultClusterProperties(Model):
         self.cluster_id = None
         self.cluster_size = kwargs.get('cluster_size', None)
         self.hosts = None
+
+
+class ClusterProperties(DefaultClusterProperties):
+    """ClusterProperties.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar cluster_id:
+    :vartype cluster_id: int
+    :param cluster_size:
+    :type cluster_size: int
+    :ivar hosts:
+    :vartype hosts: list[str]
+    :ivar provisioning_state: Possible values include: 'Succeeded', 'Failed',
+     'Cancelled', 'Updating'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.vmwarevirtustream.models.ClusterProvisioningState
+    """
+
+    _validation = {
+        'cluster_id': {'readonly': True},
+        'hosts': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'cluster_id': {'key': 'clusterId', 'type': 'int'},
+        'cluster_size': {'key': 'clusterSize', 'type': 'int'},
+        'hosts': {'key': 'hosts', 'type': '[str]'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ClusterProperties, self).__init__(**kwargs)
+        self.provisioning_state = None
 
 
 class Endpoints(Model):
@@ -487,6 +504,37 @@ class PrivateCloud(TrackedResource):
     :type location: str
     :param tags: Resource tags
     :type tags: dict[str, str]
+    :param properties:
+    :type properties:
+     ~azure.mgmt.vmwarevirtustream.models.PrivateCloudProperties
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'properties': {'key': 'properties', 'type': 'PrivateCloudProperties'},
+    }
+
+    def __init__(self, **kwargs):
+        super(PrivateCloud, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)
+
+
+class PrivateCloudProperties(Model):
+    """PrivateCloudProperties.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :ivar provisioning_state: Possible values include: 'Succeeded', 'Failed',
      'Cancelled', 'Pending', 'Building', 'Updating'
     :vartype provisioning_state: str or
@@ -522,9 +570,6 @@ class PrivateCloud(TrackedResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
         'provisioning_state': {'readonly': True},
         'clusters': {'readonly': True},
         'identity_sources': {'readonly': True},
@@ -534,28 +579,23 @@ class PrivateCloud(TrackedResource):
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'circuit': {'key': 'properties.circuit', 'type': 'Circuit'},
-        'cluster': {'key': 'properties.cluster', 'type': 'DefaultClusterProperties'},
-        'clusters': {'key': 'properties.clusters', 'type': '[str]'},
-        'endpoints': {'key': 'properties.endpoints', 'type': 'Endpoints'},
-        'internet': {'key': 'properties.internet', 'type': 'str'},
-        'identity_sources': {'key': 'properties.identitySources', 'type': '[IdentitySource]'},
-        'network_block': {'key': 'properties.networkBlock', 'type': 'str'},
-        'management_network': {'key': 'properties.managementNetwork', 'type': 'str'},
-        'provisioning_network': {'key': 'properties.provisioningNetwork', 'type': 'str'},
-        'vmotion_network': {'key': 'properties.vmotionNetwork', 'type': 'str'},
-        'vcenter_password': {'key': 'properties.vcenterPassword', 'type': 'str'},
-        'nsxt_password': {'key': 'properties.nsxtPassword', 'type': 'str'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'circuit': {'key': 'circuit', 'type': 'Circuit'},
+        'cluster': {'key': 'cluster', 'type': 'DefaultClusterProperties'},
+        'clusters': {'key': 'clusters', 'type': '[str]'},
+        'endpoints': {'key': 'endpoints', 'type': 'Endpoints'},
+        'internet': {'key': 'internet', 'type': 'str'},
+        'identity_sources': {'key': 'identitySources', 'type': '[IdentitySource]'},
+        'network_block': {'key': 'networkBlock', 'type': 'str'},
+        'management_network': {'key': 'managementNetwork', 'type': 'str'},
+        'provisioning_network': {'key': 'provisioningNetwork', 'type': 'str'},
+        'vmotion_network': {'key': 'vmotionNetwork', 'type': 'str'},
+        'vcenter_password': {'key': 'vcenterPassword', 'type': 'str'},
+        'nsxt_password': {'key': 'nsxtPassword', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(PrivateCloud, self).__init__(**kwargs)
+        super(PrivateCloudProperties, self).__init__(**kwargs)
         self.provisioning_state = None
         self.circuit = kwargs.get('circuit', None)
         self.cluster = kwargs.get('cluster', None)

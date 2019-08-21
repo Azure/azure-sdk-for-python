@@ -15,6 +15,7 @@ try:
     from ._models_py3 import ApiErrorBase
     from ._models_py3 import Circuit
     from ._models_py3 import Cluster
+    from ._models_py3 import ClusterProperties
     from ._models_py3 import DefaultClusterProperties
     from ._models_py3 import Endpoints
     from ._models_py3 import ExpressRouteAuthorization
@@ -22,6 +23,7 @@ try:
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import PrivateCloud
+    from ._models_py3 import PrivateCloudProperties
     from ._models_py3 import Resource
     from ._models_py3 import TrackedResource
 except (SyntaxError, ImportError):
@@ -30,6 +32,7 @@ except (SyntaxError, ImportError):
     from ._models import ApiErrorBase
     from ._models import Circuit
     from ._models import Cluster
+    from ._models import ClusterProperties
     from ._models import DefaultClusterProperties
     from ._models import Endpoints
     from ._models import ExpressRouteAuthorization
@@ -37,6 +40,7 @@ except (SyntaxError, ImportError):
     from ._models import Operation
     from ._models import OperationDisplay
     from ._models import PrivateCloud
+    from ._models import PrivateCloudProperties
     from ._models import Resource
     from ._models import TrackedResource
 from ._paged_models import ClusterPaged
@@ -55,6 +59,7 @@ __all__ = [
     'ApiErrorBase',
     'Circuit',
     'Cluster',
+    'ClusterProperties',
     'DefaultClusterProperties',
     'Endpoints',
     'ExpressRouteAuthorization',
@@ -62,6 +67,7 @@ __all__ = [
     'Operation',
     'OperationDisplay',
     'PrivateCloud',
+    'PrivateCloudProperties',
     'Resource',
     'TrackedResource',
     'OperationPaged',
