@@ -85,51 +85,50 @@ class PartitionKeyRangeCache(object):
                     parentIds.add(parentId)
         return (r for r in partitionKeyRanges if r[PartitionKeyRange.Id] not in parentIds)
 
+def _second_range_is_after_first_range(range1, range2):
+    if range1.max > range2.min:
+        ##r.min < #previous_r.max
+        return False
+
+    if range2.min == range2.min and range1.isMaxInclusive and range2.isMinInclusive:
+        # the inclusive ending endpoint of previous_r is the same as the inclusive beginning endpoint of r
+        return False
+
+    return True
+
+def _is_sorted_and_non_overlapping(ranges):
+    for idx, r in list(enumerate(ranges))[1:]:
+        previous_r = ranges[idx - 1]
+        if not _second_range_is_after_first_range(previous_r, r):
+            return False
+    return True
+
+def _subtract_range(r, partition_key_range):
+    """
+    Evaluates and returns r - partition_key_range
+    :param dict partition_key_range:
+        Partition key range.
+    :param routing_range.Range r: query range.
+    :return:
+        The subtract r - partition_key_range.
+    :rtype: routing_range.Range
+    """
+
+    left = max(partition_key_range[routing_range.PartitionKeyRange.MaxExclusive], r.min)
+
+    if left == r.min:
+        leftInclusive = r.isMinInclusive
+    else:
+        leftInclusive = False
+
+    queryRange = routing_range.Range(left, r.max, leftInclusive, r.isMaxInclusive)
+    return queryRange
 
 class SmartRoutingMapProvider(PartitionKeyRangeCache):
     """
     Efficiently uses PartitionKeyRangeCach and minimizes the unnecessary invocation of
     CollectionRoutingMap.get_overlapping_ranges()
     """
-
-    def _second_range_is_after_first_range(self, range1, range2):
-        if range1.max > range2.min:
-            ##r.min < #previous_r.max
-            return False
-
-        if range2.min == range2.min and range1.isMaxInclusive and range2.isMinInclusive:
-            # the inclusive ending endpoint of previous_r is the same as the inclusive beginning endpoint of r
-            return False
-
-        return True
-
-    def _is_sorted_and_non_overlapping(self, ranges):
-        for idx, r in list(enumerate(ranges))[1:]:
-            previous_r = ranges[idx - 1]
-            if not self._second_range_is_after_first_range(previous_r, r):
-                return False
-        return True
-
-    def _subtract_range(self, r, partition_key_range):
-        """
-        Evaluates and returns r - partition_key_range
-        :param dict partition_key_range:
-            Partition key range.
-        :param routing_range.Range r: query range.
-        :return:
-            The subtract r - partition_key_range.
-        :rtype: routing_range.Range
-        """
-
-        left = max(partition_key_range[routing_range.PartitionKeyRange.MaxExclusive], r.min)
-
-        if left == r.min:
-            leftInclusive = r.isMinInclusive
-        else:
-            leftInclusive = False
-
-        queryRange = routing_range.Range(left, r.max, leftInclusive, r.isMaxInclusive)
-        return queryRange
 
     def get_overlapping_ranges(self, collection_link, partition_key_ranges):
         """
@@ -146,7 +145,7 @@ class SmartRoutingMapProvider(PartitionKeyRangeCache):
         """
 
         # validate if the list is non-overlapping and sorted
-        if not self._is_sorted_and_non_overlapping(partition_key_ranges):
+        if not _is_sorted_and_non_overlapping(partition_key_ranges):
             raise ValueError("the list of ranges is not a non-overlapping sorted ranges")
 
         target_partition_key_ranges = []
@@ -161,7 +160,7 @@ class SmartRoutingMapProvider(PartitionKeyRangeCache):
                     continue
 
                 if target_partition_key_ranges:
-                    queryRange = self._subtract_range(currentProvidedRange, target_partition_key_ranges[-1])
+                    queryRange = _subtract_range(currentProvidedRange, target_partition_key_ranges[-1])
                 else:
                     queryRange = currentProvidedRange
 

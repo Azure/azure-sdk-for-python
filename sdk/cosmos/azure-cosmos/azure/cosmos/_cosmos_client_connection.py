@@ -445,7 +445,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         database_id, path = self._GetDatabaseIdWithPathForUser(database_link, user)
         return self.Upsert(user, path, "users", database_id, None, options)
 
-    def _GetDatabaseIdWithPathForUser(self, database_link, user):
+    def _GetDatabaseIdWithPathForUser(self, database_link, user):  # pylint: disable=no-self-use
         CosmosClientConnection.__ValidateResource(user)
         path = base.GetPathFromLink(database_link, "users")
         database_id = base.GetResourceIdOrFullNameFromLink(database_link)
@@ -584,7 +584,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         path, user_id = self._GetUserIdWithPathForPermission(permission, user_link)
         return self.Upsert(permission, path, "permissions", user_id, None, options)
 
-    def _GetUserIdWithPathForPermission(self, permission, user_link):
+    def _GetUserIdWithPathForPermission(self, permission, user_link):  # pylint: disable=no-self-use
         CosmosClientConnection.__ValidateResource(permission)
         path = base.GetPathFromLink(user_link, "permissions")
         user_id = base.GetResourceIdOrFullNameFromLink(user_link)
@@ -1173,7 +1173,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         collection_id, path, trigger = self._GetContainerIdWithPathForTrigger(collection_link, trigger)
         return self.Upsert(trigger, path, "triggers", collection_id, None, options)
 
-    def _GetContainerIdWithPathForTrigger(self, collection_link, trigger):
+    def _GetContainerIdWithPathForTrigger(self, collection_link, trigger):  # pylint: disable=no-self-use
         CosmosClientConnection.__ValidateResource(trigger)
         trigger = trigger.copy()
         if trigger.get("serverScript"):
@@ -1298,7 +1298,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         collection_id, path, udf = self._GetContainerIdWithPathForUDF(collection_link, udf)
         return self.Upsert(udf, path, "udfs", collection_id, None, options)
 
-    def _GetContainerIdWithPathForUDF(self, collection_link, udf):
+    def _GetContainerIdWithPathForUDF(self, collection_link, udf):  # pylint: disable=no-self-use
         CosmosClientConnection.__ValidateResource(udf)
         udf = udf.copy()
         if udf.get("serverScript"):
@@ -1423,7 +1423,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         collection_id, path, sproc = self._GetContainerIdWithPathForSproc(collection_link, sproc)
         return self.Upsert(sproc, path, "sprocs", collection_id, None, options)
 
-    def _GetContainerIdWithPathForSproc(self, collection_link, sproc):
+    def _GetContainerIdWithPathForSproc(self, collection_link, sproc):  # pylint: disable=no-self-use
         CosmosClientConnection.__ValidateResource(sproc)
         sproc = sproc.copy()
         if sproc.get("serverScript"):
@@ -1645,7 +1645,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         document_id, path = self._GetItemIdWithPathForAttachment(attachment, document_link)
         return self.Upsert(attachment, path, "attachments", document_id, None, options)
 
-    def _GetItemIdWithPathForAttachment(self, attachment, document_link):
+    def _GetItemIdWithPathForAttachment(self, attachment, document_link):  # pylint: disable=no-self-use
         CosmosClientConnection.__ValidateResource(attachment)
         path = base.GetPathFromLink(document_link, "attachments")
         document_id = base.GetResourceIdOrFullNameFromLink(document_link)

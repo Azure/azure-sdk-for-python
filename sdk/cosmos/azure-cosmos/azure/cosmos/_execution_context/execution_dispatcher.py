@@ -32,6 +32,15 @@ from azure.cosmos._execution_context import endpoint_component
 from azure.cosmos._execution_context import multi_execution_aggregator
 from azure.cosmos.http_constants import StatusCodes, SubStatusCodes
 
+def _is_partitioned_execution_info(e):
+    return (
+        e.status_code == StatusCodes.BAD_REQUEST
+        and e.sub_status == SubStatusCodes.CROSS_PARTITION_QUERY_NOT_SERVABLE
+    )
+
+def _get_partitioned_execution_info(e):
+    error_msg = json.loads(e._http_error_message)
+    return _PartitionedQueryExecutionInfo(json.loads(error_msg["additionalErrorInfo"]))
 
 class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disable=abstract-method
     """
@@ -64,8 +73,8 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
         try:
             return next(self._execution_context)
         except HTTPFailure as e:
-            if self._is_partitioned_execution_info(e):
-                query_execution_info = self._get_partitioned_execution_info(e)
+            if _is_partitioned_execution_info(e):
+                query_execution_info = _get_partitioned_execution_info(e)
                 self._execution_context = self._create_pipelined_execution_context(query_execution_info)
             else:
                 raise e
@@ -85,23 +94,13 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
         try:
             return self._execution_context.fetch_next_block()
         except HTTPFailure as e:
-            if self._is_partitioned_execution_info(e):
-                query_execution_info = self._get_partitioned_execution_info(e)
+            if _is_partitioned_execution_info(e):
+                query_execution_info = _get_partitioned_execution_info(e)
                 self._execution_context = self._create_pipelined_execution_context(query_execution_info)
             else:
                 raise e
 
         return self._execution_context.fetch_next_block()
-
-    def _is_partitioned_execution_info(self, e):
-        return (
-            e.status_code == StatusCodes.BAD_REQUEST
-            and e.sub_status == SubStatusCodes.CROSS_PARTITION_QUERY_NOT_SERVABLE
-        )
-
-    def _get_partitioned_execution_info(self, e):
-        error_msg = json.loads(e._http_error_message)
-        return _PartitionedQueryExecutionInfo(json.loads(error_msg["additionalErrorInfo"]))
 
     def _create_pipelined_execution_context(self, query_execution_info):
 

@@ -54,7 +54,7 @@ class _GlobalEndpointManager(object):
         self.refresh_lock = threading.RLock()
         self.last_refresh_time = 0
 
-    def get_refresh_time_interval_in_ms_stub(self):
+    def get_refresh_time_interval_in_ms_stub(self):  # pylint: disable=no-self-use
         return constants._Constants.DefaultUnavailableLocationExpirationTime
 
     def get_write_endpoint(self):

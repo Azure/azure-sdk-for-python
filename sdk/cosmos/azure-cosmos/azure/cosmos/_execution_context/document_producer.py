@@ -122,7 +122,7 @@ class _PartitionKeyRangeDocumentProduerComparator(object):
     def __init__(self):
         pass
 
-    def compare(self, doc_producer1, doc_producer2):
+    def compare(self, doc_producer1, doc_producer2):  # pylint: disable=no-self-use
         return _compare_helper(
             doc_producer1.get_target_range()["minInclusive"], doc_producer2.get_target_range()["minInclusive"]
         )
@@ -212,6 +212,8 @@ class _OrderByHelper:
 
         return _compare_helper(orderby_item1["item"], orderby_item2["item"])
 
+def _peek_order_by_items(peek_result):
+    return peek_result["orderByItems"]
 
 class _OrderByDocumentProducerComparator(_PartitionKeyRangeDocumentProduerComparator):
     """
@@ -230,9 +232,6 @@ class _OrderByDocumentProducerComparator(_PartitionKeyRangeDocumentProduerCompar
 
         """
         self._sort_order = sort_order
-
-    def _peek_order_by_items(self, peek_result):
-        return peek_result["orderByItems"]
 
     def compare(self, doc_producer1, doc_producer2):
         """Compares the given two instances of DocumentProducers.
@@ -257,8 +256,8 @@ class _OrderByDocumentProducerComparator(_PartitionKeyRangeDocumentProduerCompar
         :rtype: int
         """
 
-        res1 = self._peek_order_by_items(doc_producer1.peek())
-        res2 = self._peek_order_by_items(doc_producer2.peek())
+        res1 = _peek_order_by_items(doc_producer1.peek())
+        res2 = _peek_order_by_items(doc_producer2.peek())
 
         self._validate_orderby_items(res1, res2)
 

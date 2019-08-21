@@ -34,9 +34,26 @@ class EndpointOperationType(object):
     ReadType = "Read"
     WriteType = "Write"
 
+def get_endpoint_by_location(locations):
+    endpoints_by_location = collections.OrderedDict()
+    parsed_locations = []
+
+    for location in locations:
+        if not location["name"]:
+            # during fail-over the location name is empty
+            continue
+        try:
+            region_uri = location["databaseAccountEndpoint"]
+            parsed_locations.append(location["name"])
+            endpoints_by_location.update({location["name"]: region_uri})
+        except Exception as e:
+            raise e
+
+    return endpoints_by_location, parsed_locations
+
 
 class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many-instance-attributes
-    def current_time_millis(self):
+    def current_time_millis(self):  # pylint: disable=no-self-use
         return int(round(time.time() * 1000))
 
     def __init__(
@@ -233,12 +250,12 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
 
         if self.enable_endpoint_discovery:
             if read_locations:
-                self.available_read_endpoint_by_locations, self.available_read_locations = self.get_endpoint_by_location(  # pylint: disable=line-too-long
+                self.available_read_endpoint_by_locations, self.available_read_locations = get_endpoint_by_location(  # pylint: disable=line-too-long
                     read_locations
                 )
 
             if write_locations:
-                self.available_write_endpoint_by_locations, self.available_write_locations = self.get_endpoint_by_location(  # pylint: disable=line-too-long
+                self.available_write_endpoint_by_locations, self.available_write_locations = get_endpoint_by_location(  # pylint: disable=line-too-long
                     write_locations
                 )
 
@@ -295,23 +312,6 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
             endpoints.append(fallback_endpoint)
 
         return endpoints
-
-    def get_endpoint_by_location(self, locations):
-        endpoints_by_location = collections.OrderedDict()
-        parsed_locations = []
-
-        for location in locations:
-            if not location["name"]:
-                # during fail-over the location name is empty
-                continue
-            try:
-                region_uri = location["databaseAccountEndpoint"]
-                parsed_locations.append(location["name"])
-                endpoints_by_location.update({location["name"]: region_uri})
-            except Exception as e:
-                raise e
-
-        return endpoints_by_location, parsed_locations
 
     def can_use_multiple_write_locations(self):
         return self.use_multiple_write_locations and self.enable_multiple_writable_locations
