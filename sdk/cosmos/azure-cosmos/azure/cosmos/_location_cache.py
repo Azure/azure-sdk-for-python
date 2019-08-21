@@ -262,7 +262,7 @@ class LocationCache(object):
         endpoints = []
         # if enableEndpointDiscovery is false, we always use the defaultEndpoint that
         # user passed in during documentClient init
-        if self.enable_endpoint_discovery and endpoints_by_location:
+        if self.enable_endpoint_discovery and endpoints_by_location:  # pylint: disable=too-many-nested-blocks
             if (
                 self.can_use_multiple_write_locations()
                 or expected_available_operation == EndpointOperationType.ReadType
