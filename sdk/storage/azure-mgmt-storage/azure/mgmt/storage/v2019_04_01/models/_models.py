@@ -957,37 +957,6 @@ class FileShareItem(AzureEntityResource):
         self.share_quota = kwargs.get('share_quota', None)
 
 
-class FileShareItems(Model):
-    """Response schema. Contains list of shares returned, and if paging is
-    requested or required, a URL to next page of shares.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar value: List of file shares returned.
-    :vartype value: list[~azure.mgmt.storage.v2019_04_01.models.FileShareItem]
-    :ivar next_link: Request URL that can be used to query next page of
-     shares. Returned when total number of requested shares exceed maximum page
-     size.
-    :vartype next_link: str
-    """
-
-    _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[FileShareItem]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(FileShareItems, self).__init__(**kwargs)
-        self.value = None
-        self.next_link = None
-
-
 class GeoReplicationStats(Model):
     """Statistics related to replication for storage account's Blob, Table, Queue
     and File services. It is only available when geo-redundant replication is
