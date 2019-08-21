@@ -219,7 +219,7 @@ class _OrderByDocumentProducerComparator(_PartitionKeyRangeDocumentProduerCompar
 
     """
 
-    def __init__(self, sort_order):
+    def __init__(self, sort_order): # pylint: disable=super-init-not-called
         """Instantiates this class
 
         :param list sort_order:
