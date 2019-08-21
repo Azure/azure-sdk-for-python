@@ -40,7 +40,9 @@ class CosmosClient:
     Use this client to configure and execute requests to the Azure Cosmos DB service.
     """
 
-    def __init__(self, url, auth, consistency_level="Session", connection_policy=None):  # pylint: disable=missing-client-constructor-parameter-credentials,missing-client-constructor-parameter-kwargs,line-too-long
+    def __init__(
+        self, url, auth, consistency_level="Session", connection_policy=None
+    ):  # pylint: disable=missing-client-constructor-parameter-credentials,missing-client-constructor-parameter-kwargs,line-too-long
         # type: (str, Dict[str, str], str, ConnectionPolicy) -> None
         """ Instantiate a new CosmosClient.
 

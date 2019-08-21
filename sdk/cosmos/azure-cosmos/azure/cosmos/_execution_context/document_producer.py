@@ -212,8 +212,10 @@ class _OrderByHelper:
 
         return _compare_helper(orderby_item1["item"], orderby_item2["item"])
 
+
 def _peek_order_by_items(peek_result):
     return peek_result["orderByItems"]
+
 
 class _OrderByDocumentProducerComparator(_PartitionKeyRangeDocumentProduerComparator):
     """
@@ -221,7 +223,7 @@ class _OrderByDocumentProducerComparator(_PartitionKeyRangeDocumentProduerCompar
 
     """
 
-    def __init__(self, sort_order): # pylint: disable=super-init-not-called
+    def __init__(self, sort_order):  # pylint: disable=super-init-not-called
         """Instantiates this class
 
         :param list sort_order:

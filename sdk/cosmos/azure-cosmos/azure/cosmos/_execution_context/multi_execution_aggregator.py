@@ -29,6 +29,7 @@ from azure.cosmos._routing import routing_range
 
 # pylint: disable=protected-access
 
+
 class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
     """This class is capable of queries which requires rewriting based on
     backend's returned query execution info.

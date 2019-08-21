@@ -47,7 +47,9 @@ class ResourceThrottleRetryPolicy(object):
             self.retry_after_in_milliseconds = 0  # pylint: disable=attribute-defined-outside-init
 
             if self._fixed_retry_interval_in_milliseconds:
-                self.retry_after_in_milliseconds = self._fixed_retry_interval_in_milliseconds  # pylint: disable=attribute-defined-outside-init
+                self.retry_after_in_milliseconds = (  # pylint: disable=attribute-defined-outside-init
+                    self._fixed_retry_interval_in_milliseconds
+                )
             elif http_constants.HttpHeaders.RetryAfterInMilliseconds in exception.headers:
                 self.retry_after_in_milliseconds = int(  # pylint: disable = attribute-defined-outside-init
                     exception.headers[http_constants.HttpHeaders.RetryAfterInMilliseconds]

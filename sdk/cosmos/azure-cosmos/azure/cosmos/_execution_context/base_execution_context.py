@@ -29,6 +29,7 @@ from .. import _base
 
 # pylint: disable=protected-access
 
+
 class _QueryExecutionContextBase(object):
     """
     This is the abstract base execution context class.

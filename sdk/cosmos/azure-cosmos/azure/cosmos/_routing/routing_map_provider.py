@@ -29,6 +29,7 @@ from .routing_range import PartitionKeyRange
 
 # pylint: disable=protected-access
 
+
 class PartitionKeyRangeCache(object):
     """
     PartitionKeyRangeCache provides list of effective partition key ranges for a collection.
@@ -86,6 +87,7 @@ class PartitionKeyRangeCache(object):
                     parentIds.add(parentId)
         return (r for r in partitionKeyRanges if r[PartitionKeyRange.Id] not in parentIds)
 
+
 def _second_range_is_after_first_range(range1, range2):
     if range1.max > range2.min:
         ##r.min < #previous_r.max
@@ -97,12 +99,14 @@ def _second_range_is_after_first_range(range1, range2):
 
     return True
 
+
 def _is_sorted_and_non_overlapping(ranges):
     for idx, r in list(enumerate(ranges))[1:]:
         previous_r = ranges[idx - 1]
         if not _second_range_is_after_first_range(previous_r, r):
             return False
     return True
+
 
 def _subtract_range(r, partition_key_range):
     """
@@ -124,6 +128,7 @@ def _subtract_range(r, partition_key_range):
 
     queryRange = routing_range.Range(left, r.max, leftInclusive, r.isMaxInclusive)
     return queryRange
+
 
 class SmartRoutingMapProvider(PartitionKeyRangeCache):
     """

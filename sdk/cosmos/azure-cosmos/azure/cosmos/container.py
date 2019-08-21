@@ -38,6 +38,7 @@ __all__ = ("Container",)
 
 # pylint: disable=protected-access
 
+
 class Container:
     """ An Azure Cosmos DB container.
 

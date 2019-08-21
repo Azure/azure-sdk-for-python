@@ -30,10 +30,12 @@ from . import http_constants
 
 # pylint: disable=protected-access
 
+
 class EndpointOperationType(object):
     NoneType = "None"
     ReadType = "Read"
     WriteType = "Write"
+
 
 def get_endpoint_by_location(locations):
     endpoints_by_location = collections.OrderedDict()

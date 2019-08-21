@@ -25,6 +25,7 @@ from . import http_constants
 
 # pylint: disable=protected-access
 
+
 class DefaultRetryPolicy(object):
 
     error_codes = http_constants._ErrorCodes

@@ -32,6 +32,7 @@ from ._query_iterable import QueryIterable
 
 # pylint: disable=protected-access
 
+
 class ScriptType:
     StoredProcedure = "sprocs"
     Trigger = "triggers"

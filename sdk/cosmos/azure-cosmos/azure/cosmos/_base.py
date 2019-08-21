@@ -39,6 +39,7 @@ from . import _runtime_constants
 
 # pylint: disable=protected-access
 
+
 def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     cosmos_client_connection,
     default_headers,
@@ -549,7 +550,7 @@ def IsValidBase64String(string_to_validate):
     except Exception as e:  # pylint: disable=broad-except
         if six.PY2:
             e = e.message  # pylint: disable=no-member
-                           # (e.message does exist on py2)
+            # (e.message does exist on py2)
         if isinstance(e, binascii.Error):
             return False
         raise e

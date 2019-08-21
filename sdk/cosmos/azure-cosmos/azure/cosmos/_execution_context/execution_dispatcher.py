@@ -34,15 +34,17 @@ from azure.cosmos.http_constants import StatusCodes, SubStatusCodes
 
 # pylint: disable=protected-access
 
+
 def _is_partitioned_execution_info(e):
     return (
-        e.status_code == StatusCodes.BAD_REQUEST
-        and e.sub_status == SubStatusCodes.CROSS_PARTITION_QUERY_NOT_SERVABLE
+        e.status_code == StatusCodes.BAD_REQUEST and e.sub_status == SubStatusCodes.CROSS_PARTITION_QUERY_NOT_SERVABLE
     )
+
 
 def _get_partitioned_execution_info(e):
     error_msg = json.loads(e._http_error_message)
     return _PartitionedQueryExecutionInfo(json.loads(error_msg["additionalErrorInfo"]))
+
 
 class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disable=abstract-method
     """
