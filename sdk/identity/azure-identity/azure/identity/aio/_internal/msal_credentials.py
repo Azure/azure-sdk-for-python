@@ -119,7 +119,7 @@ class ConfidentialClientCredential(MsalCredential):
                 acquire_token = functools.partial(app.acquire_token_for_client, scopes=scopes, loop=loop)
                 result = await loop.run_in_executor(executor, acquire_token)
         except Exception as ex:
-            raise ClientAuthenticationError(message=str(ex))
+            raise ClientAuthenticationError(message=str(ex)) from ex
 
         if "access_token" not in result:
             raise ClientAuthenticationError(
