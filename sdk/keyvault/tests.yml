@@ -20,7 +20,6 @@ jobs:
           OSName: 'Linux'
           OSVmImage: 'ubuntu-16.04'
           PythonVersion: 'pypy3'
-      BuildTargetingString: $(BuildTargetingString)
       ServiceDirectory: keyvault
       EnvVars:
         TEST_MODE: 'RunLiveNoRecord'
