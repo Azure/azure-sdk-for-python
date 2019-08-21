@@ -415,5 +415,5 @@ class ResourceType:
             ResourceType.Schema,
             ResourceType.UserDefinedFunction,
             ResourceType.Trigger,
-            ResourceType.StoredProcedure
+            ResourceType.StoredProcedure,
         )

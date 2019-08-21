@@ -23,9 +23,11 @@
 """
 
 import bisect
+
+from six.moves import xrange
+
 from azure.cosmos._routing import routing_range
 from azure.cosmos._routing.routing_range import PartitionKeyRange
-from six.moves import xrange
 
 
 class CollectionRoutingMap(object):
@@ -159,7 +161,7 @@ class CollectionRoutingMap(object):
     @staticmethod
     def is_complete_set_of_range(ordered_partition_key_range_list):
         isComplete = False
-        if len(ordered_partition_key_range_list):
+        if ordered_partition_key_range_list:
 
             firstRange = ordered_partition_key_range_list[0]
             lastRange = ordered_partition_key_range_list[-1]
