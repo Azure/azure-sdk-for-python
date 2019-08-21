@@ -319,6 +319,7 @@ class StorageFileTest(FileTestCase):
     @record
     def test_resize_file(self):
         # Arrange
+        pytest.skip("TODO: Verify the x-ms-file-permission value.")
         file_client = self._create_file()
 
         # Act
@@ -330,6 +331,7 @@ class StorageFileTest(FileTestCase):
 
     @record
     def test_set_file_properties(self):
+        pytest.skip("TODO: Verify the x-ms-file-permission value.")
         # Arrange
         file_client = self._create_file()
 
