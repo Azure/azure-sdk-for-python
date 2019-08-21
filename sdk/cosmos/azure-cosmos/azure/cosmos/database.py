@@ -33,7 +33,6 @@ from .http_constants import StatusCodes
 from .errors import HTTPFailure
 from .user import User
 from ._query_iterable import QueryIterable
-from .partition_key import PartitionKey
 
 __all__ = ("Database",)
 
