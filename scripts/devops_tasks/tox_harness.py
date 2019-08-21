@@ -24,8 +24,6 @@ pool_size = multiprocessing.cpu_count() * 2
 DEFAULT_TOX_INI_LOCATION = os.path.join(root_dir, "eng/tox/tox.ini")
 
 class ToxWorkItem:
-
-
     def __init__(self, target_package_path, tox_env, options_array):
         self.target_package_path = target_package_path
         self.tox_env = tox_env
@@ -103,18 +101,23 @@ def collect_tox_coverage_files(targeted_packages):
 def individual_workload(tox_command_tuple, failed_workload_results):
     stdout = os.path.join(tox_command_tuple[1], 'stdout.txt')
     stderr = os.path.join(tox_command_tuple[1], 'stderr.txt')
+    pkg = os.path.basename(tox_command_tuple[1])
+
     with open(stdout, 'w') as f_stdout, open(stderr, 'w') as f_stderr:
         proc = Popen(tox_command_tuple[0], stdout=f_stdout, stderr=f_stderr, cwd=tox_command_tuple[1], env=os.environ.copy())
 
-        logging.info("Opened task for {}".format(os.path.basename(tox_command_tuple[1])))
+        logging.info("Opened task for {}".format(pkg))
         proc.wait()
 
         log_file(stdout)
-        log_file(stderr)
+
+        if read_file(stderr):
+            logging.error("Package {} had stderror output. Logging.".format(pkg))
+            log_file(stderr)
 
         if proc.returncode != 0:
             logging.error("Package returned with code {}".format(proc.returncode))
-            failed_workload_results[os.path.basename(tox_command_tuple[1])] = proc.returncode
+            failed_workload_results[pkg] = proc.returncode
 
     return proc
 

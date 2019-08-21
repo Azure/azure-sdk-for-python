@@ -37,6 +37,12 @@ def log_file(file_location, is_error=False):
         for line in file:
             print(line.strip())
 
+def read_file(file_location):
+    with open(file_location, 'r') as file:
+        for line in file:
+            str_buffer += line
+    return str_buffer
+
 def cleanup_folder(target_folder):
     for file in os.listdir(target_folder):
         file_path = os.path.join(target_folder, file)
