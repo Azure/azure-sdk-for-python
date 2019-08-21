@@ -18,8 +18,8 @@ if TYPE_CHECKING:
 
 KeyOperationResult = namedtuple("KeyOperationResult", ["id", "value"])
 
-# pylint:disable=too-many-instance-attributes
 class JsonWebKey(object):
+    # pylint:disable=too-many-instance-attributes
     """As of http://tools.ietf.org/html/draft-ietf-jose-json-web-key-18. All parameters are optional.
 
     :param str kid: Key identifier.
