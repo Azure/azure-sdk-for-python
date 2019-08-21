@@ -33,20 +33,20 @@ class AzureAppConfigurationClient:
     """Represents an client that calls restful API of Azure App Configuration service.
 
         :param str base_url: base url of the service
-        :param credentials: An object which can provide secrets for the app configuration service
-        :type credentials: azure.AppConfigConnectionStringCredential
+        :param credential: An object which can provide secrets for the app configuration service
+        :type credential: azure.AppConfigConnectionStringCredential
 
     This is the async version of :class:`azure.appconfiguration.ConfigurationClient`
 
     """
-    def __init__(self, base_url, credentials, **kwargs):
+    def __init__(self, base_url, credential, **kwargs):
 
-        self.config = ConfigurationClientConfiguration(credentials, **kwargs)
+        self.config = ConfigurationClientConfiguration(credential, **kwargs)
         self.config.user_agent_policy = UserAgentPolicy(
             base_user_agent=USER_AGENT, **kwargs
         )
         self._impl = ConfigurationClient(
-            credentials, base_url, pipeline=self._create_appconfig_pipeline()
+            credential, base_url, pipeline=self._create_appconfig_pipeline()
         )
 
 
@@ -76,7 +76,7 @@ class AzureAppConfigurationClient:
             """
         base_url = "https://" + get_endpoint_from_connection_string(connection_string)
         return cls(
-            credentials=AppConfigConnectionStringCredential(connection_string),
+            credential=AppConfigConnectionStringCredential(connection_string),
             base_url=base_url,
             **kwargs
         )
