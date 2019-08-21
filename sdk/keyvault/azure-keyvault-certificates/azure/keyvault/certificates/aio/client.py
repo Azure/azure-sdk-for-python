@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+# pylint:disable=too-many-lines,too-many-public-methods
 import base64
 import uuid
 from datetime import datetime
@@ -740,9 +741,9 @@ class CertificateClient(AsyncKeyVaultClientBase):
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._client._serialize.query(
-            "self.api_version",
-            self._client.api_version,
-            'str'
+            name="self.api_version",
+            data=self._client.api_version,
+            data_type='str'
         )
 
         # Construct headers
@@ -754,7 +755,11 @@ class CertificateClient(AsyncKeyVaultClientBase):
             header_parameters.update(custom_headers)
 
         # Construct and send request
-        request = self._client._client.get(url, query_parameters, header_parameters)
+        request = self._client._client.get(
+            url=url,
+            params=query_parameters,
+            headers=header_parameters
+        )
         pipeline_response = await self._client._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
