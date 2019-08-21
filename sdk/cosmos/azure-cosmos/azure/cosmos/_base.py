@@ -547,7 +547,8 @@ def IsValidBase64String(string_to_validate):
             return False
     except Exception as e:  # pylint: disable=broad-except
         if six.PY2:
-            e = e.message
+            e = e.message  # pylint: disable=no-member
+                           # (e.message does exist on py2)
         if isinstance(e, binascii.Error):
             return False
         raise e
