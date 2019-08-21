@@ -2,6 +2,7 @@ from subprocess import check_call
 import argparse
 import os
 import logging
+import sys
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -51,7 +52,7 @@ if __name__ == "__main__":
             # find the wheel in the set of prebuilt wheels
             if os.path.isfile(os.path.join(os.environ["PREBUILT_WHEEL_DIR"], wheel)):
                 check_call(
-                    ["python", "-m", "pip", "install", os.path.join(os.path.join(os.environ["PREBUILT_WHEEL_DIR"], wheel))]
+                    [sys.executable, "-m", "pip", "install", "--upgrade", os.path.join(os.path.join(os.environ["PREBUILT_WHEEL_DIR"], wheel))]
                 )
                 logging.info("Installed {w} from wheel directory".format(w=wheel))
             # it does't exist, so we need to error out
@@ -60,6 +61,6 @@ if __name__ == "__main__":
                 exit(1)
         else:
             check_call(
-                ["python", "-m", "pip", "install", os.path.join(args.distribution_directory, wheel)]
+                [sys.executable, "-m", "pip", "install",  "--upgrade", os.path.join(args.distribution_directory, wheel)]
             )
             logging.info("Installed {w} from fresh wheel.".format(w=wheel))
