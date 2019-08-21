@@ -21,11 +21,13 @@ from .. import models
 class PoolsOperations(object):
     """PoolsOperations operations.
 
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
+
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-06-01".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-07-01".
     """
 
     models = models
@@ -35,7 +37,7 @@ class PoolsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-06-01"
+        self.api_version = "2019-07-01"
 
         self.config = config
 
@@ -59,8 +61,7 @@ class PoolsOperations(object):
          ~azure.mgmt.netapp.models.CapacityPoolPaged[~azure.mgmt.netapp.models.CapacityPool]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']
@@ -91,6 +92,11 @@ class PoolsOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -101,12 +107,10 @@ class PoolsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.CapacityPoolPaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.CapacityPoolPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.CapacityPoolPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools'}
@@ -167,7 +171,6 @@ class PoolsOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('CapacityPool', response)
 
@@ -350,7 +353,6 @@ class PoolsOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('CapacityPool', response)
 

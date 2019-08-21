@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .azure_net_app_files_management_client import AzureNetAppFilesManagementClient
-from .version import VERSION
+from ._configuration import AzureNetAppFilesManagementClientConfiguration
+from ._azure_net_app_files_management_client import AzureNetAppFilesManagementClient
+__all__ = ['AzureNetAppFilesManagementClient', 'AzureNetAppFilesManagementClientConfiguration']
 
-__all__ = ['AzureNetAppFilesManagementClient']
+from .version import VERSION
 
 __version__ = VERSION
 
