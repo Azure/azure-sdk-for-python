@@ -21,7 +21,6 @@ from azure.core.tracing.decorator import distributed_trace
 
 import six
 
-from azure.storage.blob.shared_access_signature import BlobSharedAccessSignature
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
 from ._shared.request_handlers import add_metadata_headers, serialize_iso
 from ._shared.response_handlers import (
@@ -42,6 +41,7 @@ from .models import ( # pylint: disable=unused-import
     BlobPrefix)
 from .lease import LeaseClient, get_access_conditions
 from .blob_client import BlobClient
+from ._shared_access_signature import BlobSharedAccessSignature
 
 if TYPE_CHECKING:
     from azure.core.pipeline.transport import HttpTransport  # pylint: disable=ungrouped-imports

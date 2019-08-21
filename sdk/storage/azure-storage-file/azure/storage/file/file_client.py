@@ -32,7 +32,7 @@ from ._shared.response_handlers import return_response_headers, process_storage_
 from ._deserialize import deserialize_file_properties, deserialize_file_stream
 from ._polling import CloseHandles
 from .models import HandlesPaged
-from azure.storage.file.shared_access_signature import FileSharedAccessSignature
+from ._shared_access_signature import FileSharedAccessSignature
 
 if TYPE_CHECKING:
     from datetime import datetime

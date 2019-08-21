@@ -21,7 +21,6 @@ from ._shared.response_handlers import (
     return_response_headers,
     process_storage_error,
     return_headers_and_deserialized)
-from .shared_access_signature import FileSharedAccessSignature
 from ._generated import AzureFileStorage
 from ._generated.version import VERSION
 from ._generated.models import (
@@ -31,6 +30,7 @@ from ._generated.models import (
 from ._deserialize import deserialize_share_properties
 from .directory_client import DirectoryClient
 from .file_client import FileClient
+from ._shared_access_signature import FileSharedAccessSignature
 
 if TYPE_CHECKING:
     from .models import ShareProperties, AccessPolicy

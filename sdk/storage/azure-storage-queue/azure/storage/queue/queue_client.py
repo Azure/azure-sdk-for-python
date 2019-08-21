@@ -24,13 +24,13 @@ from ._shared.response_handlers import (
     process_storage_error,
     return_response_headers,
     return_headers_and_deserialized)
-from .shared_access_signature import QueueSharedAccessSignature
 from ._message_encoding import TextXMLEncodePolicy, TextXMLDecodePolicy
 from ._deserialize import deserialize_queue_properties, deserialize_queue_creation
 from ._generated import AzureQueueStorage
 from ._generated.models import StorageErrorException, SignedIdentifier
 from ._generated.models import QueueMessage as GenQueueMessage
 
+from ._shared_access_signature import QueueSharedAccessSignature
 from .models import QueueMessage, AccessPolicy, MessagesPaged
 
 if TYPE_CHECKING:

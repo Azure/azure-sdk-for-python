@@ -22,7 +22,6 @@ from azure.core.tracing.decorator import distributed_trace
 from ._shared import encode_base64
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
 from ._shared.encryption import generate_blob_encryption_data
-from azure.storage.blob.shared_access_signature import BlobSharedAccessSignature
 from ._shared.uploads import IterStreamer
 from ._shared.downloads import StorageStreamDownloader
 from ._shared.request_handlers import (
@@ -46,6 +45,7 @@ from ._upload_helpers import (
     upload_page_blob)
 from .models import BlobType, BlobBlock
 from .lease import LeaseClient, get_access_conditions
+from ._shared_access_signature import BlobSharedAccessSignature
 
 if TYPE_CHECKING:
     from datetime import datetime
