@@ -1,23 +1,23 @@
-#The MIT License (MIT)
-#Copyright (c) 2014 Microsoft Corporation
+# The MIT License (MIT)
+# Copyright (c) 2014 Microsoft Corporation
 
-#Permission is hereby granted, free of charge, to any person obtaining a copy
-#of this software and associated documentation files (the "Software"), to deal
-#in the Software without restriction, including without limitation the rights
-#to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-#copies of the Software, and to permit persons to whom the Software is
-#furnished to do so, subject to the following conditions:
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
 
-#The above copyright notice and this permission notice shall be included in all
-#copies or substantial portions of the Software.
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
 
-#THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-#IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-#FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-#AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-#LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-#OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-#SOFTWARE.
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 
 """Create, read, update and delete and execute scripts in the Azure Cosmos DB SQL API service.
 """
@@ -26,12 +26,7 @@ import six
 from azure.cosmos._cosmos_client_connection import CosmosClientConnection
 from .partition_key import NonePartitionKeyValue
 from ._query_iterable import QueryIterable
-from typing import (
-    Any,
-    List,
-    Dict,
-    Union,
-)
+from typing import Any, List, Dict, Union
 
 
 class ScriptType:
@@ -41,7 +36,6 @@ class ScriptType:
 
 
 class Scripts:
-
     def __init__(self, client_connection, container_link, is_system_key):
         # type: (CosmosClientConnection, str, bool) -> None
         self.client_connection = client_connection
@@ -54,11 +48,7 @@ class Scripts:
             return u"{}/{}/{}".format(self.container_link, type, script_or_id)
         return script_or_id["_self"]
 
-    def list_stored_procedures(
-            self,
-            max_item_count=None,
-            feed_options=None
-    ):
+    def list_stored_procedures(self, max_item_count=None, feed_options=None):
         # type: (int, Dict[str, Any]) -> QueryIterable
         """ List all stored procedures in the container.
 
@@ -68,22 +58,13 @@ class Scripts:
 
         """
         if not feed_options:
-            feed_options = {} # type: Dict[str, Any]
+            feed_options = {}  # type: Dict[str, Any]
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
-        return self.client_connection.ReadStoredProcedures(
-            collection_link=self.container_link,
-            options=feed_options
-        )
+        return self.client_connection.ReadStoredProcedures(collection_link=self.container_link, options=feed_options)
 
-    def query_stored_procedures(
-            self,
-            query,
-            parameters=None,
-            max_item_count=None,
-            feed_options=None
-    ):
+    def query_stored_procedures(self, query, parameters=None, max_item_count=None, feed_options=None):
         # type: (str, List, int, Dict[str, Any]) -> QueryIterable
         """Return all stored procedures matching the given `query`.
 
@@ -95,23 +76,17 @@ class Scripts:
 
         """
         if not feed_options:
-            feed_options = {} # type: Dict[str, Any]
+            feed_options = {}  # type: Dict[str, Any]
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
         return self.client_connection.QueryStoredProcedures(
             collection_link=self.container_link,
-            query=query
-            if parameters is None
-            else dict(query=query, parameters=parameters),
+            query=query if parameters is None else dict(query=query, parameters=parameters),
             options=feed_options,
         )
 
-    def get_stored_procedure(
-            self,
-            sproc,
-            request_options=None
-    ):
+    def get_stored_procedure(self, sproc, request_options=None):
         # type: (Union[str, Dict[str, Any]], Dict[str, Any]) -> Dict[str, Any]
         """
         Get the stored procedure identified by `id`.
@@ -123,18 +98,13 @@ class Scripts:
 
         """
         if not request_options:
-            request_options = {} # type: Dict[str, Any]
+            request_options = {}  # type: Dict[str, Any]
 
         return self.client_connection.ReadStoredProcedure(
-            sproc_link=self._get_resource_link(sproc, ScriptType.StoredProcedure),
-            options=request_options
+            sproc_link=self._get_resource_link(sproc, ScriptType.StoredProcedure), options=request_options
         )
 
-    def create_stored_procedure(
-            self,
-            body,
-            request_options=None
-    ):
+    def create_stored_procedure(self, body, request_options=None):
         # type: (Dict[str, Any], Dict[str, Any]) -> Dict[str, Any]
         """ Create a stored procedure in the container.
 
@@ -147,20 +117,13 @@ class Scripts:
 
         """
         if not request_options:
-            request_options = {} # type: Dict[str, Any]
+            request_options = {}  # type: Dict[str, Any]
 
         return self.client_connection.CreateStoredProcedure(
-            collection_link=self.container_link,
-            sproc=body,
-            options=request_options
+            collection_link=self.container_link, sproc=body, options=request_options
         )
 
-    def replace_stored_procedure(
-            self,
-            sproc,
-            body,
-            request_options=None
-    ):
+    def replace_stored_procedure(self, sproc, body, request_options=None):
         # type: (Union[str, Dict[str, Any]], Dict[str, Any], Dict[str, Any]) -> Dict[str, Any]
         """ Replaces the specified stored procedure if it exists in the container.
 
@@ -172,19 +135,13 @@ class Scripts:
 
         """
         if not request_options:
-            request_options = {} # type: Dict[str, Any]
+            request_options = {}  # type: Dict[str, Any]
 
         return self.client_connection.ReplaceStoredProcedure(
-            sproc_link=self._get_resource_link(sproc, ScriptType.StoredProcedure),
-            sproc=body,
-            options=request_options
+            sproc_link=self._get_resource_link(sproc, ScriptType.StoredProcedure), sproc=body, options=request_options
         )
 
-    def delete_stored_procedure(
-            self,
-            sproc,
-            request_options=None
-    ):
+    def delete_stored_procedure(self, sproc, request_options=None):
         # type: (Union[str, Dict[str, Any]], Dict[str, Any]) -> None
         """ Delete the specified stored procedure from the container.
 
@@ -194,20 +151,14 @@ class Scripts:
 
         """
         if not request_options:
-            request_options = {} # type: Dict[str, Any]
+            request_options = {}  # type: Dict[str, Any]
 
         self.client_connection.DeleteStoredProcedure(
-            sproc_link=self._get_resource_link(sproc, ScriptType.StoredProcedure),
-            options=request_options
+            sproc_link=self._get_resource_link(sproc, ScriptType.StoredProcedure), options=request_options
         )
 
     def execute_stored_procedure(
-            self,
-            sproc,
-            partition_key=None,
-            params=None,
-            enable_script_logging=None,
-            request_options = None
+        self, sproc, partition_key=None, params=None, enable_script_logging=None, request_options=None
     ):
         # type: (Union[str, Dict[str, Any]], str, List[Any], bool, Dict[str, Any]) -> Any
         """ execute the specified stored procedure.
@@ -223,24 +174,23 @@ class Scripts:
         """
 
         if not request_options:
-            request_options = {} # type: Dict[str, Any]
+            request_options = {}  # type: Dict[str, Any]
         if partition_key is not None:
-            request_options["partitionKey"] = (CosmosClientConnection._return_undefined_or_empty_partition_key(self.is_system_key)
-                                               if partition_key == NonePartitionKeyValue else partition_key)
+            request_options["partitionKey"] = (
+                CosmosClientConnection._return_undefined_or_empty_partition_key(self.is_system_key)
+                if partition_key == NonePartitionKeyValue
+                else partition_key
+            )
         if enable_script_logging is not None:
             request_options["enableScriptLogging"] = enable_script_logging
 
         return self.client_connection.ExecuteStoredProcedure(
             sproc_link=self._get_resource_link(sproc, ScriptType.StoredProcedure),
             params=params,
-            options=request_options
+            options=request_options,
         )
 
-    def list_triggers(
-            self,
-            max_item_count=None,
-            feed_options=None
-    ):
+    def list_triggers(self, max_item_count=None, feed_options=None):
         # type: (int, Dict[str, Any]) -> QueryIterable
         """ List all triggers in the container.
 
@@ -250,22 +200,13 @@ class Scripts:
 
         """
         if not feed_options:
-            feed_options = {} # type: Dict[str, Any]
+            feed_options = {}  # type: Dict[str, Any]
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
-        return self.client_connection.ReadTriggers(
-            collection_link=self.container_link,
-            options=feed_options
-        )
+        return self.client_connection.ReadTriggers(collection_link=self.container_link, options=feed_options)
 
-    def query_triggers(
-            self,
-            query,
-            parameters=None,
-            max_item_count=None,
-            feed_options=None
-    ):
+    def query_triggers(self, query, parameters=None, max_item_count=None, feed_options=None):
         # type: (str, List, int, Dict[str, Any]) -> QueryIterable
         """Return all triggers matching the given `query`.
 
@@ -277,23 +218,17 @@ class Scripts:
 
         """
         if not feed_options:
-            feed_options = {} # type: Dict[str, Any]
+            feed_options = {}  # type: Dict[str, Any]
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
         return self.client_connection.QueryTriggers(
             collection_link=self.container_link,
-            query=query
-            if parameters is None
-            else dict(query=query, parameters=parameters),
+            query=query if parameters is None else dict(query=query, parameters=parameters),
             options=feed_options,
         )
 
-    def get_trigger(
-            self,
-            trigger,
-            request_options=None
-    ):
+    def get_trigger(self, trigger, request_options=None):
         # type: (Union[str, Dict[str, Any]], Dict[str, Any]) -> Dict[str, Any]
         """
         Get the trigger identified by `id`.
@@ -305,18 +240,13 @@ class Scripts:
 
         """
         if not request_options:
-            request_options = {} # type: Dict[str, Any]
+            request_options = {}  # type: Dict[str, Any]
 
         return self.client_connection.ReadTrigger(
-            trigger_link=self._get_resource_link(trigger, ScriptType.Trigger),
-            options=request_options
+            trigger_link=self._get_resource_link(trigger, ScriptType.Trigger), options=request_options
         )
 
-    def create_trigger(
-            self,
-            body,
-            request_options=None
-    ):
+    def create_trigger(self, body, request_options=None):
         # type: (Dict[str, Any], Dict[str, Any]) -> Dict[str, Any]
         """ Create a trigger in the container.
 
@@ -329,20 +259,13 @@ class Scripts:
 
         """
         if not request_options:
-            request_options = {} # type: Dict[str, Any]
+            request_options = {}  # type: Dict[str, Any]
 
         return self.client_connection.CreateTrigger(
-            collection_link=self.container_link,
-            trigger=body,
-            options=request_options
+            collection_link=self.container_link, trigger=body, options=request_options
         )
 
-    def replace_trigger(
-            self,
-            trigger,
-            body,
-            request_options=None
-    ):
+    def replace_trigger(self, trigger, body, request_options=None):
         # type: (Union[str, Dict[str, Any]], Dict[str, Any], Dict[str, Any]) -> Dict[str, Any]
         """ Replaces the specified tigger if it exists in the container.
 
@@ -354,19 +277,13 @@ class Scripts:
 
         """
         if not request_options:
-            request_options = {} # type: Dict[str, Any]
+            request_options = {}  # type: Dict[str, Any]
 
         return self.client_connection.ReplaceTrigger(
-            trigger_link=self._get_resource_link(trigger, ScriptType.Trigger),
-            trigger=body,
-            options=request_options
+            trigger_link=self._get_resource_link(trigger, ScriptType.Trigger), trigger=body, options=request_options
         )
 
-    def delete_trigger(
-            self,
-            trigger,
-            request_options=None
-    ):
+    def delete_trigger(self, trigger, request_options=None):
         # type: (Union[str, Dict[str, Any]], Dict[str, Any]) -> None
         """ Delete the specified trigger from the container.
 
@@ -376,19 +293,13 @@ class Scripts:
 
         """
         if not request_options:
-            request_options = {} # type: Dict[str, Any]
+            request_options = {}  # type: Dict[str, Any]
 
         self.client_connection.DeleteTrigger(
-            trigger_link=self._get_resource_link(trigger, ScriptType.Trigger),
-            options=request_options
+            trigger_link=self._get_resource_link(trigger, ScriptType.Trigger), options=request_options
         )
 
-
-    def list_user_defined_functions(
-            self,
-            max_item_count=None,
-            feed_options=None
-    ):
+    def list_user_defined_functions(self, max_item_count=None, feed_options=None):
         # type: (int, Dict[str, Any]) -> QueryIterable
         """ List all user defined functions in the container.
 
@@ -398,22 +309,15 @@ class Scripts:
 
         """
         if not feed_options:
-            feed_options = {} # type: Dict[str, Any]
+            feed_options = {}  # type: Dict[str, Any]
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
         return self.client_connection.ReadUserDefinedFunctions(
-            collection_link=self.container_link,
-            options=feed_options,
+            collection_link=self.container_link, options=feed_options
         )
 
-    def query_user_defined_functions(
-            self,
-            query,
-            parameters=None,
-            max_item_count=None,
-            feed_options=None
-    ):
+    def query_user_defined_functions(self, query, parameters=None, max_item_count=None, feed_options=None):
         # type: (str, List, int, Dict[str, Any]) -> QueryIterable
         """Return all user defined functions matching the given `query`.
 
@@ -425,23 +329,17 @@ class Scripts:
 
         """
         if not feed_options:
-            feed_options = {} # type: Dict[str, Any]
+            feed_options = {}  # type: Dict[str, Any]
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
         return self.client_connection.QueryUserDefinedFunctions(
             collection_link=self.container_link,
-            query=query
-            if parameters is None
-            else dict(query=query, parameters=parameters),
+            query=query if parameters is None else dict(query=query, parameters=parameters),
             options=feed_options,
         )
 
-    def get_user_defined_function(
-            self,
-            udf,
-            request_options=None
-    ):
+    def get_user_defined_function(self, udf, request_options=None):
         # type: (Union[str, Dict[str, Any]], Dict[str, Any]) -> Dict[str, Any]
         """
         Get the stored procedure identified by `id`.
@@ -453,18 +351,13 @@ class Scripts:
 
         """
         if not request_options:
-            request_options = {} # type: Dict[str, Any]
+            request_options = {}  # type: Dict[str, Any]
 
         return self.client_connection.ReadUserDefinedFunction(
-            udf_link=self._get_resource_link(udf, ScriptType.UserDefinedFunction),
-            options=request_options
+            udf_link=self._get_resource_link(udf, ScriptType.UserDefinedFunction), options=request_options
         )
 
-    def create_user_defined_function(
-            self,
-            body,
-            request_options=None
-    ):
+    def create_user_defined_function(self, body, request_options=None):
         # type: (Dict[str, Any], Dict[str, Any]) -> Dict[str, Any]
         """ Create a user defined function in the container.
 
@@ -477,20 +370,13 @@ class Scripts:
 
         """
         if not request_options:
-            request_options = {} # type: Dict[str, Any]
+            request_options = {}  # type: Dict[str, Any]
 
         return self.client_connection.CreateUserDefinedFunction(
-            collection_link=self.container_link,
-            udf=body,
-            options=request_options
+            collection_link=self.container_link, udf=body, options=request_options
         )
 
-    def replace_user_defined_function(
-            self,
-            udf,
-            body,
-            request_options=None
-    ):
+    def replace_user_defined_function(self, udf, body, request_options=None):
         # type: (Union[str, Dict[str, Any]], Dict[str, Any], Dict[str, Any]) -> Dict[str, Any]
         """ Replaces the specified user defined function if it exists in the container.
 
@@ -502,19 +388,13 @@ class Scripts:
 
         """
         if not request_options:
-            request_options = {} # type: Dict[str, Any]
+            request_options = {}  # type: Dict[str, Any]
 
         return self.client_connection.ReplaceUserDefinedFunction(
-            udf_link=self._get_resource_link(udf, ScriptType.UserDefinedFunction),
-            udf=body,
-            options=request_options
+            udf_link=self._get_resource_link(udf, ScriptType.UserDefinedFunction), udf=body, options=request_options
         )
 
-    def delete_user_defined_function(
-            self,
-            udf,
-            request_options=None
-    ):
+    def delete_user_defined_function(self, udf, request_options=None):
         # type: (Union[str, Dict[str, Any]], Dict[str, Any]) -> None
         """ Delete the specified user defined function from the container.
 
@@ -524,9 +404,8 @@ class Scripts:
 
         """
         if not request_options:
-            request_options = {} # type: Dict[str, Any]
+            request_options = {}  # type: Dict[str, Any]
 
         self.client_connection.DeleteUserDefinedFunction(
-            udf_link=self._get_resource_link(udf, ScriptType.UserDefinedFunction),
-            options=request_options
+            udf_link=self._get_resource_link(udf, ScriptType.UserDefinedFunction), options=request_options
         )
