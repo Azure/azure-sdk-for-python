@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+from requests.structures import CaseInsensitiveDict
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import UserAgentPolicy
 from azure.core.tracing.decorator import distributed_trace
@@ -14,7 +15,6 @@ from azure.core.exceptions import (
     ResourceModifiedError,
     ResourceNotFoundError,
 )
-from requests.structures import CaseInsensitiveDict
 from ..utils import (
     get_endpoint_from_connection_string,
     escape_and_tolist,

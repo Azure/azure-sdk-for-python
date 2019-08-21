@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+from requests.structures import CaseInsensitiveDict
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import UserAgentPolicy
 from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
@@ -13,7 +14,6 @@ from azure.core.exceptions import (
     ResourceNotFoundError,
     ResourceModifiedError,
 )
-from requests.structures import CaseInsensitiveDict
 from ._generated import ConfigurationClient
 from ._generated._configuration import ConfigurationClientConfiguration
 from ._generated.models import ConfigurationSetting
