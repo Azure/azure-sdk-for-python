@@ -9,12 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .subscriptions_operations import SubscriptionsOperations
-from .subscription_operation_operations import SubscriptionOperationOperations
-from .subscription_factory_operations import SubscriptionFactoryOperations
-from .subscription_operations import SubscriptionOperations
-from .operations import Operations
-from .tenants_operations import TenantsOperations
+from ._subscriptions_operations import SubscriptionsOperations
+from ._subscription_operation_operations import SubscriptionOperationOperations
+from ._subscription_factory_operations import SubscriptionFactoryOperations
+from ._subscription_operations import SubscriptionOperations
+from ._operations import Operations
+from ._tenants_operations import TenantsOperations
 
 __all__ = [
     'SubscriptionsOperations',

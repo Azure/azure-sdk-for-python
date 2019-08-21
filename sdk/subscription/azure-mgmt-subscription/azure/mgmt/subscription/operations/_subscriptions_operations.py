@@ -19,6 +19,8 @@ from .. import models
 class SubscriptionsOperations(object):
     """SubscriptionsOperations operations.
 
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
+
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -83,7 +85,6 @@ class SubscriptionsOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('CanceledSubscriptionId', response)
 
@@ -150,7 +151,6 @@ class SubscriptionsOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('RenamedSubscriptionId', response)
 
@@ -209,7 +209,6 @@ class SubscriptionsOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('EnabledSubscriptionId', response)
 
@@ -242,8 +241,7 @@ class SubscriptionsOperations(object):
         """
         api_version = "2016-06-01"
 
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list_locations.metadata['url']
@@ -272,6 +270,11 @@ class SubscriptionsOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -282,12 +285,10 @@ class SubscriptionsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.LocationPaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.LocationPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.LocationPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list_locations.metadata = {'url': '/subscriptions/{subscriptionId}/locations'}
@@ -341,7 +342,6 @@ class SubscriptionsOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('Subscription', response)
 
@@ -368,8 +368,7 @@ class SubscriptionsOperations(object):
         """
         api_version = "2016-06-01"
 
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']
@@ -394,6 +393,11 @@ class SubscriptionsOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -404,12 +408,10 @@ class SubscriptionsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.SubscriptionPaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.SubscriptionPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.SubscriptionPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list.metadata = {'url': '/subscriptions'}

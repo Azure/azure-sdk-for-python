@@ -18,6 +18,8 @@ from .. import models
 class SubscriptionOperations(object):
     """SubscriptionOperations operations.
 
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
+
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
@@ -79,7 +81,6 @@ class SubscriptionOperations(object):
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('SubscriptionOperationListResult', response)
 
