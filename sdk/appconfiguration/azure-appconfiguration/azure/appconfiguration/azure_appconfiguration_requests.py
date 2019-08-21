@@ -8,18 +8,8 @@ import hashlib
 import base64
 import hmac
 from azure.core.pipeline.policies import HTTPPolicy
-from .utils import parse_connection_string, get_current_utc_time
+from .utils import get_current_utc_time
 
-
-class AppConfigConnectionStringCredential:
-    """
-    Parse the app configuration service connection string and store the host, id, secret information.
-        """
-
-    def __init__(self, connection_string):
-        self.host, self.credential, self.secret = parse_connection_string(
-            connection_string
-        )
 
 
 class AppConfigRequestsCredentialsPolicy(HTTPPolicy):

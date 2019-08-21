@@ -23,10 +23,8 @@ from ..utils import (
 )
 from .._generated.aio import ConfigurationClient
 from .._generated.aio._configuration_async import ConfigurationClientConfiguration
-from ..azure_appconfiguration_requests import (
-    AppConfigRequestsCredentialsPolicy,
-    AppConfigConnectionStringCredential,
-)
+from ..azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
+from ..azure_appconfiguration_credential import AppConfigConnectionStringCredential
 from .._generated.models import ConfigurationSetting
 from .._user_agent import USER_AGENT
 
@@ -34,14 +32,14 @@ from .._user_agent import USER_AGENT
 class AzureAppConfigurationClient:
     """Represents an client that calls restful API of Azure App Configuration service.
 
+        :param str base_url: base url of the service
         :param credentials: An object which can provide secrets for the app configuration service
         :type credentials: azure.AppConfigConnectionStringCredential
-        :param str base_url: base url of the service
 
     This is the async version of :class:`azure.appconfiguration.ConfigurationClient`
 
     """
-    def __init__(self, credentials, base_url, **kwargs):
+    def __init__(self, base_url, credentials, **kwargs):
 
         self.config = ConfigurationClientConfiguration(credentials, **kwargs)
         self.config.user_agent_policy = UserAgentPolicy(

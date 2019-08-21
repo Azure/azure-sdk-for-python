@@ -17,10 +17,8 @@ from requests.structures import CaseInsensitiveDict
 from ._generated import ConfigurationClient
 from ._generated._configuration import ConfigurationClientConfiguration
 from ._generated.models import ConfigurationSetting
-from .azure_appconfiguration_requests import (
-    AppConfigRequestsCredentialsPolicy,
-    AppConfigConnectionStringCredential,
-)
+from .azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
+from .azure_appconfiguration_credential import AppConfigConnectionStringCredential
 from .utils import (
     get_endpoint_from_connection_string,
     escape_and_tolist,
@@ -33,12 +31,12 @@ from ._user_agent import USER_AGENT
 class AzureAppConfigurationClient:
     """Represents an client that calls restful API of Azure App Configuration service.
 
+        :param str base_url: base url of the service
         :param credentials: An object which can provide secrets for the app configuration service
         :type credentials: azure.AppConfigConnectionStringCredential
-        :param str base_url: base url of the service
 
     """
-    def __init__(self, credentials, base_url, **kwargs):
+    def __init__(self, base_url, credentials, **kwargs):
 
         self.config = ConfigurationClientConfiguration(credentials, **kwargs)
         self.config.user_agent_policy = UserAgentPolicy(
