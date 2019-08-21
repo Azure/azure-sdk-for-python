@@ -106,7 +106,12 @@ class CryptographyClient(KeyVaultClientBase):
         """
 
         result = self._client.encrypt(
-            self._key_id.vault_url, self._key_id.name, self._key_id.version, algorithm, plaintext, **kwargs
+            vault_base_url=self._key_id.vault_url,
+            key_name=self._key_id.name,
+            key_version=self._key_id.version,
+            algorithm=algorithm,
+            value=plaintext,
+            **kwargs
         )
         return EncryptResult(key_id=self.key_id, algorithm=algorithm, ciphertext=result.result, authentication_tag=None)
 
@@ -139,7 +144,12 @@ class CryptographyClient(KeyVaultClientBase):
             raise ValueError("'authentication_tag' is required when 'authentication_data' is specified")
 
         result = self._client.decrypt(
-            self._key_id.vault_url, self._key_id.name, self._key_id.version, algorithm, ciphertext, **kwargs
+            vault_base_url=self._key_id.vault_url,
+            key_name=self._key_id.name,
+            key_version=self._key_id.version,
+            algorithm=algorithm,
+            value=ciphertext,
+            **kwargs
         )
         return DecryptResult(decrypted_bytes=result.result)
 
@@ -165,7 +175,12 @@ class CryptographyClient(KeyVaultClientBase):
         """
 
         result = self._client.wrap_key(
-            self._key_id.vault_url, self._key_id.name, self._key_id.version, algorithm=algorithm, value=key, **kwargs
+            vault_base_url=self._key_id.vault_url,
+            key_name=self._key_id.name,
+            key_version=self._key_id.version,
+            algorithm=algorithm,
+            value=key,
+            **kwargs
         )
         return WrapKeyResult(key_id=self.key_id, algorithm=algorithm, encrypted_key=result.result)
 
@@ -191,9 +206,9 @@ class CryptographyClient(KeyVaultClientBase):
         """
 
         result = self._client.unwrap_key(
-            self._key_id.vault_url,
-            self._key_id.name,
-            self._key_id.version,
+            vault_base_url=self._key_id.vault_url,
+            key_name=self._key_id.name,
+            key_version=self._key_id.version,
             algorithm=algorithm,
             value=encrypted_key,
             **kwargs
@@ -225,7 +240,12 @@ class CryptographyClient(KeyVaultClientBase):
         """
 
         result = self._client.sign(
-            self._key_id.vault_url, self._key_id.name, self._key_id.version, algorithm, digest, **kwargs
+            vault_base_url=self._key_id.vault_url,
+            key_name=self._key_id.name,
+            key_version=self._key_id.version,
+            algorithm=algorithm,
+            value=digest,
+            **kwargs
         )
         return SignResult(key_id=self.key_id, algorithm=algorithm, signature=result.result)
 
@@ -252,6 +272,12 @@ class CryptographyClient(KeyVaultClientBase):
         """
 
         result = self._client.verify(
-            self._key_id.vault_url, self._key_id.name, self._key_id.version, algorithm, digest, signature, **kwargs
+            vault_base_url=self._key_id.vault_url,
+            key_name=self._key_id.name,
+            key_version=self._key_id.version,
+            algorithm=algorithm,
+            digest=digest,
+            signature=signature,
+            **kwargs
         )
         return VerifyResult(result=result.value)

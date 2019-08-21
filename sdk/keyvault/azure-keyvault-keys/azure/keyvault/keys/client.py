@@ -96,10 +96,10 @@ class KeyClient(KeyVaultClientBase):
             attributes = None
 
         bundle = self._client.create_key(
-            self.vault_url,
-            name,
-            key_type,
-            size,
+            vault_base_url=self.vault_url,
+            key_name=name,
+            kty=key_type,
+            key_size=size,
             key_attributes=attributes,
             key_ops=key_operations,
             tags=tags,
@@ -373,7 +373,11 @@ class KeyClient(KeyVaultClientBase):
                 key_client.purge_deleted_key("key-name")
 
         """
-        self._client.purge_deleted_key(self.vault_url, name, kwargs)
+        self._client.purge_deleted_key(
+            vault_base_url=self.vault_url,
+            key_name=name,
+            **kwargs
+        )
 
     @distributed_trace
     def recover_deleted_key(self, name, **kwargs):
@@ -396,7 +400,11 @@ class KeyClient(KeyVaultClientBase):
                 :caption: Recover a deleted key
                 :dedent: 8
         """
-        bundle = self._client.recover_deleted_key(self.vault_url, name, kwargs)
+        bundle = self._client.recover_deleted_key(
+            vault_base_url=self.vault_url,
+            key_name=name,
+            **kwargs
+        )
         return Key._from_key_bundle(bundle)
 
     @distributed_trace
