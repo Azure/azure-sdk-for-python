@@ -11,7 +11,7 @@ from threading import Thread
 import multiprocessing
 
 from subprocess import Popen, PIPE, STDOUT
-from common_tasks import process_glob_string, run_check_call, cleanup_folder, clean_coverage, log_file, MANAGEMENT_PACKAGE_IDENTIFIERS
+from common_tasks import process_glob_string, run_check_call, cleanup_folder, clean_coverage, log_file, read_file, MANAGEMENT_PACKAGE_IDENTIFIERS
 
 import logging
 logging.getLogger().setLevel(logging.INFO)
@@ -111,13 +111,14 @@ def individual_workload(tox_command_tuple, failed_workload_results):
 
         log_file(stdout)
 
-        if read_file(stderr):
-            logging.error("Package {} had stderror output. Logging.".format(pkg))
-            log_file(stderr)
-
         if proc.returncode != 0:
             logging.error("Package returned with code {}".format(proc.returncode))
             failed_workload_results[pkg] = proc.returncode
+
+        if read_file(stderr):
+            logging.error("Package {} had stderror output. Logging.".format(pkg))
+            failed_workload_results[pkg] = "StdErr output detected"
+            log_file(stderr)
 
     return proc
 
@@ -128,22 +129,23 @@ def execute_tox_parallel(tox_command_tuples):
     for index, cmd_tuple in enumerate(tox_command_tuples):
         logging.info(
             "Starting tox for {}. {} of {}.".format(
-                os.path.basename(cmd_tuple[1]), index, len(tox_command_tuples)
+                os.path.basename(cmd_tuple[1]), index + 1, len(tox_command_tuples)
             )
         )
         pool.add_task(individual_workload, cmd_tuple, failed_workload_results)
 
     pool.wait_completion()
 
-    if len(failed_workload_results):
+    if len(failed_workload_results.keys()):
         for key in failed_workload_results.keys():
             logging.error("{} tox invocation exited with returncode {}".format(key, failed_workload_results[key]))
+        exit(1)
 
 def execute_tox_serial(tox_command_tuples):
     for index, cmd_tuple in enumerate(tox_command_tuples):
         logging.info(
             "Running tox for {}. {} of {}.".format(
-                os.path.basename(cmd_tuple[1]), index, len(tox_command_tuples)
+                os.path.basename(cmd_tuple[1]), index + 1, len(tox_command_tuples)
             )
         )
         run_check_call(cmd_tuple[0], cmd_tuple[1])

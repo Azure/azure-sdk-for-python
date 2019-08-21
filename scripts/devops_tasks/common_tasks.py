@@ -38,6 +38,7 @@ def log_file(file_location, is_error=False):
             print(line.strip())
 
 def read_file(file_location):
+    str_buffer = ""
     with open(file_location, 'r') as file:
         for line in file:
             str_buffer += line
