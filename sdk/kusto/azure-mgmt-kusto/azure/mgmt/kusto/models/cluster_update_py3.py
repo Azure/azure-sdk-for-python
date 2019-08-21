@@ -37,7 +37,8 @@ class ClusterUpdate(Resource):
      'Stopped', 'Starting', 'Updating'
     :vartype state: str or ~azure.mgmt.kusto.models.State
     :ivar provisioning_state: The provisioned state of the resource. Possible
-     values include: 'Running', 'Creating', 'Deleting', 'Succeeded', 'Failed'
+     values include: 'Running', 'Creating', 'Deleting', 'Succeeded', 'Failed',
+     'Moving'
     :vartype provisioning_state: str or
      ~azure.mgmt.kusto.models.ProvisioningState
     :ivar uri: The cluster URI.
@@ -47,6 +48,17 @@ class ClusterUpdate(Resource):
     :param trusted_external_tenants: The cluster's external tenants.
     :type trusted_external_tenants:
      list[~azure.mgmt.kusto.models.TrustedExternalTenant]
+    :param optimized_autoscale: Optimized auto scale definition.
+    :type optimized_autoscale: ~azure.mgmt.kusto.models.OptimizedAutoscale
+    :param enable_disk_encryption: A boolean value that indicates if the
+     cluster's disks are encrypted.
+    :type enable_disk_encryption: bool
+    :param enable_streaming_ingest: A boolean value that indicates if the
+     streaming ingest is enabled. Default value: False .
+    :type enable_streaming_ingest: bool
+    :param virtual_network_configuration: Virtual network definition.
+    :type virtual_network_configuration:
+     ~azure.mgmt.kusto.models.VirtualNetworkConfiguration
     """
 
     _validation = {
@@ -71,9 +83,13 @@ class ClusterUpdate(Resource):
         'uri': {'key': 'properties.uri', 'type': 'str'},
         'data_ingestion_uri': {'key': 'properties.dataIngestionUri', 'type': 'str'},
         'trusted_external_tenants': {'key': 'properties.trustedExternalTenants', 'type': '[TrustedExternalTenant]'},
+        'optimized_autoscale': {'key': 'properties.optimizedAutoscale', 'type': 'OptimizedAutoscale'},
+        'enable_disk_encryption': {'key': 'properties.enableDiskEncryption', 'type': 'bool'},
+        'enable_streaming_ingest': {'key': 'properties.enableStreamingIngest', 'type': 'bool'},
+        'virtual_network_configuration': {'key': 'properties.virtualNetworkConfiguration', 'type': 'VirtualNetworkConfiguration'},
     }
 
-    def __init__(self, *, tags=None, location: str=None, sku=None, trusted_external_tenants=None, **kwargs) -> None:
+    def __init__(self, *, tags=None, location: str=None, sku=None, trusted_external_tenants=None, optimized_autoscale=None, enable_disk_encryption: bool=None, enable_streaming_ingest: bool=False, virtual_network_configuration=None, **kwargs) -> None:
         super(ClusterUpdate, self).__init__(**kwargs)
         self.tags = tags
         self.location = location
@@ -83,3 +99,7 @@ class ClusterUpdate(Resource):
         self.uri = None
         self.data_ingestion_uri = None
         self.trusted_external_tenants = trusted_external_tenants
+        self.optimized_autoscale = optimized_autoscale
+        self.enable_disk_encryption = enable_disk_encryption
+        self.enable_streaming_ingest = enable_streaming_ingest
+        self.virtual_network_configuration = virtual_network_configuration
