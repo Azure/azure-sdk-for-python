@@ -30,7 +30,7 @@ from unittest import mock
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
-    from typing import Dict, Optional, Type, Union
+    from typing import Any, Dict, Optional, Type, Union
     from concurrent.futures import Executor
 
 from azure.core.credentials import AccessToken
@@ -103,7 +103,8 @@ class ConfidentialClientCredential(MsalCredential):
     async def get_token(self, *scopes: str, executor: "Optional[Executor]" = None):
         """Get a token from the wrapped MSAL application"""
 
-        scopes = list(scopes)
+        # MSAL requires scopes be a list
+        scopes = list(scopes)  # type: ignore
         now = int(time.time())
 
         # try to get a cached access token or if a refresh token is cached, redeem it for an access token
@@ -130,5 +131,5 @@ class ConfidentialClientCredential(MsalCredential):
     async def _get_app(self, executor: "Optional[Executor]" = None) -> msal.ConfidentialClientApplication:
         if not self._msal_app:
             async with self._lock:
-                await self._create_app(executor)
+                await self._create_app(msal.ConfidentialClientApplication, executor)
         return self._msal_app

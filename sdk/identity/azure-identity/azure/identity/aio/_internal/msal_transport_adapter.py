@@ -40,7 +40,7 @@ class AsyncMsalTransportAdapter:
         atexit.register(self._close_transport_session)  # prevent aiohttp warnings
         self._pipeline = AsyncPipeline(transport=self._transport, policies=policies)
 
-        self.loop = None  # type: asyncio.AbstractEventLoop
+        self.loop = None  # type: Optional[asyncio.AbstractEventLoop]
 
     def _close_transport_session(self) -> None:
         """If transport has a 'close' method, invoke it."""
@@ -71,7 +71,7 @@ class AsyncMsalTransportAdapter:
             request.format_parameters(params)
 
         loop = kwargs.pop("loop", None) or self.loop
-        future = asyncio.run_coroutine_threadsafe(
+        future = asyncio.run_coroutine_threadsafe(  # type: ignore
             self._pipeline.run(request, connection_timeout=timeout, connection_verify=verify, **kwargs), loop
         )
         response = future.result(timeout=timeout)
@@ -97,7 +97,7 @@ class AsyncMsalTransportAdapter:
             request.set_formdata_body(data)
 
         loop = kwargs.pop("loop", None) or self.loop
-        future = asyncio.run_coroutine_threadsafe(
+        future = asyncio.run_coroutine_threadsafe(  # type: ignore
             self._pipeline.run(request, connection_timeout=timeout, connection_verify=verify, **kwargs), loop
         )
         response = future.result(timeout=timeout)
