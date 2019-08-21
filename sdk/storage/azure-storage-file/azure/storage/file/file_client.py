@@ -26,13 +26,13 @@ from ._generated.version import VERSION
 from ._generated.models import StorageErrorException, FileHTTPHeaders
 from ._shared.uploads import IterStreamer, FileChunkUploader, upload_data_chunks
 from ._shared.downloads import StorageStreamDownloader
-from ._shared.shared_access_signature import FileSharedAccessSignature
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
 from ._shared.request_handlers import add_metadata_headers, get_length
 from ._shared.response_handlers import return_response_headers, process_storage_error
 from ._deserialize import deserialize_file_properties, deserialize_file_stream
 from ._polling import CloseHandles
 from .models import HandlesPaged
+from ._shared_access_signature import FileSharedAccessSignature
 
 if TYPE_CHECKING:
     from datetime import datetime
