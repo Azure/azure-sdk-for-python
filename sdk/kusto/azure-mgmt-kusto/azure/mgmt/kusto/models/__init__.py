@@ -11,9 +11,13 @@
 
 try:
     from .trusted_external_tenant_py3 import TrustedExternalTenant
+    from .optimized_autoscale_py3 import OptimizedAutoscale
+    from .virtual_network_configuration_py3 import VirtualNetworkConfiguration
     from .azure_sku_py3 import AzureSku
     from .azure_capacity_py3 import AzureCapacity
     from .azure_resource_sku_py3 import AzureResourceSku
+    from .sku_location_info_item_py3 import SkuLocationInfoItem
+    from .sku_description_py3 import SkuDescription
     from .database_statistics_py3 import DatabaseStatistics
     from .cluster_py3 import Cluster
     from .cluster_update_py3 import ClusterUpdate
@@ -26,6 +30,7 @@ try:
     from .database_principal_list_request_py3 import DatabasePrincipalListRequest
     from .data_connection_validation_py3 import DataConnectionValidation
     from .event_hub_data_connection_py3 import EventHubDataConnection
+    from .iot_hub_data_connection_py3 import IotHubDataConnection
     from .event_grid_data_connection_py3 import EventGridDataConnection
     from .data_connection_validation_list_result_py3 import DataConnectionValidationListResult
     from .cluster_check_name_request_py3 import ClusterCheckNameRequest
@@ -40,9 +45,13 @@ try:
     from .proxy_resource_py3 import ProxyResource
 except (SyntaxError, ImportError):
     from .trusted_external_tenant import TrustedExternalTenant
+    from .optimized_autoscale import OptimizedAutoscale
+    from .virtual_network_configuration import VirtualNetworkConfiguration
     from .azure_sku import AzureSku
     from .azure_capacity import AzureCapacity
     from .azure_resource_sku import AzureResourceSku
+    from .sku_location_info_item import SkuLocationInfoItem
+    from .sku_description import SkuDescription
     from .database_statistics import DatabaseStatistics
     from .cluster import Cluster
     from .cluster_update import ClusterUpdate
@@ -55,6 +64,7 @@ except (SyntaxError, ImportError):
     from .database_principal_list_request import DatabasePrincipalListRequest
     from .data_connection_validation import DataConnectionValidation
     from .event_hub_data_connection import EventHubDataConnection
+    from .iot_hub_data_connection import IotHubDataConnection
     from .event_grid_data_connection import EventGridDataConnection
     from .data_connection_validation_list_result import DataConnectionValidationListResult
     from .cluster_check_name_request import ClusterCheckNameRequest
@@ -68,7 +78,7 @@ except (SyntaxError, ImportError):
     from .resource import Resource
     from .proxy_resource import ProxyResource
 from .cluster_paged import ClusterPaged
-from .azure_sku_paged import AzureSkuPaged
+from .sku_description_paged import SkuDescriptionPaged
 from .azure_resource_sku_paged import AzureResourceSkuPaged
 from .database_paged import DatabasePaged
 from .database_principal_paged import DatabasePrincipalPaged
@@ -88,9 +98,13 @@ from .kusto_management_client_enums import (
 
 __all__ = [
     'TrustedExternalTenant',
+    'OptimizedAutoscale',
+    'VirtualNetworkConfiguration',
     'AzureSku',
     'AzureCapacity',
     'AzureResourceSku',
+    'SkuLocationInfoItem',
+    'SkuDescription',
     'DatabaseStatistics',
     'Cluster',
     'ClusterUpdate',
@@ -103,6 +117,7 @@ __all__ = [
     'DatabasePrincipalListRequest',
     'DataConnectionValidation',
     'EventHubDataConnection',
+    'IotHubDataConnection',
     'EventGridDataConnection',
     'DataConnectionValidationListResult',
     'ClusterCheckNameRequest',
@@ -116,7 +131,7 @@ __all__ = [
     'Resource',
     'ProxyResource',
     'ClusterPaged',
-    'AzureSkuPaged',
+    'SkuDescriptionPaged',
     'AzureResourceSkuPaged',
     'DatabasePaged',
     'DatabasePrincipalPaged',

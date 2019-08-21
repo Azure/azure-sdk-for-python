@@ -32,6 +32,7 @@ class ProvisioningState(str, Enum):
     deleting = "Deleting"
     succeeded = "Succeeded"
     failed = "Failed"
+    moving = "Moving"
 
 
 class AzureSkuName(str, Enum):

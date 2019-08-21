@@ -12,8 +12,8 @@
 from .data_connection_py3 import DataConnection
 
 
-class EventHubDataConnection(DataConnection):
-    """Class representing an event hub data connection.
+class IotHubDataConnection(DataConnection):
+    """Class representing an iot hub data connection.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -32,10 +32,10 @@ class EventHubDataConnection(DataConnection):
     :type location: str
     :param kind: Required. Constant filled by server.
     :type kind: str
-    :param event_hub_resource_id: Required. The resource ID of the event hub
-     to be used to create a data connection.
-    :type event_hub_resource_id: str
-    :param consumer_group: Required. The event hub consumer group.
+    :param iot_hub_resource_id: Required. The resource ID of the Iot hub to be
+     used to create a data connection.
+    :type iot_hub_resource_id: str
+    :param consumer_group: Required. The iot hub consumer group.
     :type consumer_group: str
     :param table_name: The table where the data should be ingested. Optionally
      the table information can be added to each message.
@@ -48,8 +48,11 @@ class EventHubDataConnection(DataConnection):
      'JSON', 'CSV', 'TSV', 'SCSV', 'SOHSV', 'PSV', 'TXT', 'RAW', 'SINGLEJSON',
      'AVRO'
     :type data_format: str or ~azure.mgmt.kusto.models.DataFormat
-    :param event_system_properties: System properties of the event hub
+    :param event_system_properties: System properties of the iot hub
     :type event_system_properties: list[str]
+    :param shared_access_policy_name: Required. The name of the share access
+     policy name
+    :type shared_access_policy_name: str
     """
 
     _validation = {
@@ -57,8 +60,9 @@ class EventHubDataConnection(DataConnection):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'kind': {'required': True},
-        'event_hub_resource_id': {'required': True},
+        'iot_hub_resource_id': {'required': True},
         'consumer_group': {'required': True},
+        'shared_access_policy_name': {'required': True},
     }
 
     _attribute_map = {
@@ -67,20 +71,22 @@ class EventHubDataConnection(DataConnection):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'event_hub_resource_id': {'key': 'properties.eventHubResourceId', 'type': 'str'},
+        'iot_hub_resource_id': {'key': 'properties.iotHubResourceId', 'type': 'str'},
         'consumer_group': {'key': 'properties.consumerGroup', 'type': 'str'},
         'table_name': {'key': 'properties.tableName', 'type': 'str'},
         'mapping_rule_name': {'key': 'properties.mappingRuleName', 'type': 'str'},
         'data_format': {'key': 'properties.dataFormat', 'type': 'str'},
         'event_system_properties': {'key': 'properties.eventSystemProperties', 'type': '[str]'},
+        'shared_access_policy_name': {'key': 'properties.sharedAccessPolicyName', 'type': 'str'},
     }
 
-    def __init__(self, *, event_hub_resource_id: str, consumer_group: str, location: str=None, table_name: str=None, mapping_rule_name: str=None, data_format=None, event_system_properties=None, **kwargs) -> None:
-        super(EventHubDataConnection, self).__init__(location=location, **kwargs)
-        self.event_hub_resource_id = event_hub_resource_id
+    def __init__(self, *, iot_hub_resource_id: str, consumer_group: str, shared_access_policy_name: str, location: str=None, table_name: str=None, mapping_rule_name: str=None, data_format=None, event_system_properties=None, **kwargs) -> None:
+        super(IotHubDataConnection, self).__init__(location=location, **kwargs)
+        self.iot_hub_resource_id = iot_hub_resource_id
         self.consumer_group = consumer_group
         self.table_name = table_name
         self.mapping_rule_name = mapping_rule_name
         self.data_format = data_format
         self.event_system_properties = event_system_properties
-        self.kind = 'EventHub'
+        self.shared_access_policy_name = shared_access_policy_name
+        self.kind = 'IotHub'

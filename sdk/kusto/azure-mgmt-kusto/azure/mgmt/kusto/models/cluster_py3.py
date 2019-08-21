@@ -34,12 +34,15 @@ class Cluster(TrackedResource):
     :type location: str
     :param sku: Required. The SKU of the cluster.
     :type sku: ~azure.mgmt.kusto.models.AzureSku
+    :param zones: The availability zones of the cluster.
+    :type zones: list[str]
     :ivar state: The state of the resource. Possible values include:
      'Creating', 'Unavailable', 'Running', 'Deleting', 'Deleted', 'Stopping',
      'Stopped', 'Starting', 'Updating'
     :vartype state: str or ~azure.mgmt.kusto.models.State
     :ivar provisioning_state: The provisioned state of the resource. Possible
-     values include: 'Running', 'Creating', 'Deleting', 'Succeeded', 'Failed'
+     values include: 'Running', 'Creating', 'Deleting', 'Succeeded', 'Failed',
+     'Moving'
     :vartype provisioning_state: str or
      ~azure.mgmt.kusto.models.ProvisioningState
     :ivar uri: The cluster URI.
@@ -49,6 +52,17 @@ class Cluster(TrackedResource):
     :param trusted_external_tenants: The cluster's external tenants.
     :type trusted_external_tenants:
      list[~azure.mgmt.kusto.models.TrustedExternalTenant]
+    :param optimized_autoscale: Optimized auto scale definition.
+    :type optimized_autoscale: ~azure.mgmt.kusto.models.OptimizedAutoscale
+    :param enable_disk_encryption: A boolean value that indicates if the
+     cluster's disks are encrypted.
+    :type enable_disk_encryption: bool
+    :param enable_streaming_ingest: A boolean value that indicates if the
+     streaming ingest is enabled. Default value: False .
+    :type enable_streaming_ingest: bool
+    :param virtual_network_configuration: Virtual network definition.
+    :type virtual_network_configuration:
+     ~azure.mgmt.kusto.models.VirtualNetworkConfiguration
     """
 
     _validation = {
@@ -70,18 +84,28 @@ class Cluster(TrackedResource):
         'tags': {'key': 'tags', 'type': '{str}'},
         'location': {'key': 'location', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'AzureSku'},
+        'zones': {'key': 'zones', 'type': '[str]'},
         'state': {'key': 'properties.state', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'uri': {'key': 'properties.uri', 'type': 'str'},
         'data_ingestion_uri': {'key': 'properties.dataIngestionUri', 'type': 'str'},
         'trusted_external_tenants': {'key': 'properties.trustedExternalTenants', 'type': '[TrustedExternalTenant]'},
+        'optimized_autoscale': {'key': 'properties.optimizedAutoscale', 'type': 'OptimizedAutoscale'},
+        'enable_disk_encryption': {'key': 'properties.enableDiskEncryption', 'type': 'bool'},
+        'enable_streaming_ingest': {'key': 'properties.enableStreamingIngest', 'type': 'bool'},
+        'virtual_network_configuration': {'key': 'properties.virtualNetworkConfiguration', 'type': 'VirtualNetworkConfiguration'},
     }
 
-    def __init__(self, *, location: str, sku, tags=None, trusted_external_tenants=None, **kwargs) -> None:
+    def __init__(self, *, location: str, sku, tags=None, zones=None, trusted_external_tenants=None, optimized_autoscale=None, enable_disk_encryption: bool=None, enable_streaming_ingest: bool=False, virtual_network_configuration=None, **kwargs) -> None:
         super(Cluster, self).__init__(tags=tags, location=location, **kwargs)
         self.sku = sku
+        self.zones = zones
         self.state = None
         self.provisioning_state = None
         self.uri = None
         self.data_ingestion_uri = None
         self.trusted_external_tenants = trusted_external_tenants
+        self.optimized_autoscale = optimized_autoscale
+        self.enable_disk_encryption = enable_disk_encryption
+        self.enable_streaming_ingest = enable_streaming_ingest
+        self.virtual_network_configuration = virtual_network_configuration
