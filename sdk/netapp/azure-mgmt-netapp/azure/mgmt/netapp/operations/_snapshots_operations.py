@@ -18,14 +18,16 @@ from msrestazure.polling.arm_polling import ARMPolling
 from .. import models
 
 
-class AccountsOperations(object):
-    """AccountsOperations operations.
+class SnapshotsOperations(object):
+    """SnapshotsOperations operations.
+
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-06-01".
+    :ivar api_version: Version of the API to be used with the client request. Constant value: "2019-07-01".
     """
 
     models = models
@@ -35,36 +37,44 @@ class AccountsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-06-01"
+        self.api_version = "2019-07-01"
 
         self.config = config
 
     def list(
-            self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Describe all NetApp Accounts in a resource group.
+            self, resource_group_name, account_name, pool_name, volume_name, custom_headers=None, raw=False, **operation_config):
+        """Describe all snapshots.
 
-        List and describe all NetApp accounts in the resource group.
+        List all snapshots associated with the volume.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
+        :param account_name: The name of the NetApp account
+        :type account_name: str
+        :param pool_name: The name of the capacity pool
+        :type pool_name: str
+        :param volume_name: The name of the volume
+        :type volume_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of NetAppAccount
+        :return: An iterator like instance of Snapshot
         :rtype:
-         ~azure.mgmt.netapp.models.NetAppAccountPaged[~azure.mgmt.netapp.models.NetAppAccount]
+         ~azure.mgmt.netapp.models.SnapshotPaged[~azure.mgmt.netapp.models.Snapshot]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$')
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+                    'accountName': self._serialize.url("account_name", account_name, 'str'),
+                    'poolName': self._serialize.url("pool_name", pool_name, 'str'),
+                    'volumeName': self._serialize.url("volume_name", volume_name, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -88,6 +98,11 @@ class AccountsOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -98,33 +113,37 @@ class AccountsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.NetAppAccountPaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.NetAppAccountPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.SnapshotPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/snapshots'}
 
     def get(
-            self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
-        """Describe a NetApp Account.
+            self, resource_group_name, account_name, pool_name, volume_name, snapshot_name, custom_headers=None, raw=False, **operation_config):
+        """Describe a snapshot.
 
-        Get the NetApp account.
+        Get details of the specified snapshot.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param account_name: The name of the NetApp account
         :type account_name: str
+        :param pool_name: The name of the capacity pool
+        :type pool_name: str
+        :param volume_name: The name of the volume
+        :type volume_name: str
+        :param snapshot_name: The name of the mount target
+        :type snapshot_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: NetAppAccount or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.netapp.models.NetAppAccount or
+        :return: Snapshot or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.netapp.models.Snapshot or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -133,7 +152,10 @@ class AccountsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str')
+            'accountName': self._serialize.url("account_name", account_name, 'str'),
+            'poolName': self._serialize.url("pool_name", pool_name, 'str'),
+            'volumeName': self._serialize.url("volume_name", volume_name, 'str'),
+            'snapshotName': self._serialize.url("snapshot_name", snapshot_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -161,26 +183,28 @@ class AccountsOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
-            deserialized = self._deserialize('NetAppAccount', response)
+            deserialized = self._deserialize('Snapshot', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/snapshots/{snapshotName}'}
 
 
-    def _create_or_update_initial(
-            self, body, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
+    def _create_initial(
+            self, body, resource_group_name, account_name, pool_name, volume_name, snapshot_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = self.create_or_update.metadata['url']
+        url = self.create.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str')
+            'accountName': self._serialize.url("account_name", account_name, 'str'),
+            'poolName': self._serialize.url("pool_name", pool_name, 'str'),
+            'volumeName': self._serialize.url("volume_name", volume_name, 'str'),
+            'snapshotName': self._serialize.url("snapshot_name", snapshot_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -200,23 +224,21 @@ class AccountsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(body, 'NetAppAccount')
+        body_content = self._serialize.body(body, 'Snapshot')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [200, 201, 202]:
+        if response.status_code not in [201, 202]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
 
         deserialized = None
 
-        if response.status_code == 200:
-            deserialized = self._deserialize('NetAppAccount', response)
         if response.status_code == 201:
-            deserialized = self._deserialize('NetAppAccount', response)
+            deserialized = self._deserialize('Snapshot', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -224,44 +246,51 @@ class AccountsOperations(object):
 
         return deserialized
 
-    def create_or_update(
-            self, body, resource_group_name, account_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Create or update a NetApp account.
+    def create(
+            self, body, resource_group_name, account_name, pool_name, volume_name, snapshot_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Create a snapshot.
 
-        Create or update the specified NetApp account within the resource
-        group.
+        Create the specified snapshot within the given volume.
 
-        :param body: NetApp Account object supplied in the body of the
-         operation.
-        :type body: ~azure.mgmt.netapp.models.NetAppAccount
+        :param body: Snapshot object supplied in the body of the operation.
+        :type body: ~azure.mgmt.netapp.models.Snapshot
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param account_name: The name of the NetApp account
         :type account_name: str
+        :param pool_name: The name of the capacity pool
+        :type pool_name: str
+        :param volume_name: The name of the volume
+        :type volume_name: str
+        :param snapshot_name: The name of the mount target
+        :type snapshot_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
         :param polling: True for ARMPolling, False for no polling, or a
          polling object for personal polling strategy
-        :return: An instance of LROPoller that returns NetAppAccount or
-         ClientRawResponse<NetAppAccount> if raw==True
+        :return: An instance of LROPoller that returns Snapshot or
+         ClientRawResponse<Snapshot> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.netapp.models.NetAppAccount]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.netapp.models.Snapshot]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.netapp.models.NetAppAccount]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.netapp.models.Snapshot]]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        raw_result = self._create_or_update_initial(
+        raw_result = self._create_initial(
             body=body,
             resource_group_name=resource_group_name,
             account_name=account_name,
+            pool_name=pool_name,
+            volume_name=volume_name,
+            snapshot_name=snapshot_name,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
         )
 
         def get_long_running_output(response):
-            deserialized = self._deserialize('NetAppAccount', response)
+            deserialized = self._deserialize('Snapshot', response)
 
             if raw:
                 client_raw_response = ClientRawResponse(deserialized, response)
@@ -276,17 +305,100 @@ class AccountsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}'}
+    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/snapshots/{snapshotName}'}
+
+    def update(
+            self, resource_group_name, account_name, pool_name, volume_name, snapshot_name, tags=None, custom_headers=None, raw=False, **operation_config):
+        """Update a snapshot.
+
+        Patch a snapshot.
+
+        :param resource_group_name: The name of the resource group.
+        :type resource_group_name: str
+        :param account_name: The name of the NetApp account
+        :type account_name: str
+        :param pool_name: The name of the capacity pool
+        :type pool_name: str
+        :param volume_name: The name of the volume
+        :type volume_name: str
+        :param snapshot_name: The name of the mount target
+        :type snapshot_name: str
+        :param tags: Resource tags
+        :type tags: object
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: Snapshot or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.netapp.models.Snapshot or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        body = models.SnapshotPatch(tags=tags)
+
+        # Construct URL
+        url = self.update.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
+            'accountName': self._serialize.url("account_name", account_name, 'str'),
+            'poolName': self._serialize.url("pool_name", pool_name, 'str'),
+            'volumeName': self._serialize.url("volume_name", volume_name, 'str'),
+            'snapshotName': self._serialize.url("snapshot_name", snapshot_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct body
+        body_content = self._serialize.body(body, 'SnapshotPatch')
+
+        # Construct and send request
+        request = self._client.patch(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200, 202]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('Snapshot', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/snapshots/{snapshotName}'}
 
 
     def _delete_initial(
-            self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, account_name, pool_name, volume_name, snapshot_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.delete.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str')
+            'accountName': self._serialize.url("account_name", account_name, 'str'),
+            'poolName': self._serialize.url("pool_name", pool_name, 'str'),
+            'volumeName': self._serialize.url("volume_name", volume_name, 'str'),
+            'snapshotName': self._serialize.url("snapshot_name", snapshot_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -307,7 +419,7 @@ class AccountsOperations(object):
         request = self._client.delete(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [202, 204]:
+        if response.status_code not in [200, 202, 204]:
             exp = CloudError(response)
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
@@ -317,15 +429,21 @@ class AccountsOperations(object):
             return client_raw_response
 
     def delete(
-            self, resource_group_name, account_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Delete a NetApp account.
+            self, resource_group_name, account_name, pool_name, volume_name, snapshot_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Delete a snapshot.
 
-        Delete the specified NetApp account.
+        Delete snapshot.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param account_name: The name of the NetApp account
         :type account_name: str
+        :param pool_name: The name of the capacity pool
+        :type pool_name: str
+        :param volume_name: The name of the volume
+        :type volume_name: str
+        :param snapshot_name: The name of the mount target
+        :type snapshot_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -340,6 +458,9 @@ class AccountsOperations(object):
         raw_result = self._delete_initial(
             resource_group_name=resource_group_name,
             account_name=account_name,
+            pool_name=pool_name,
+            volume_name=volume_name,
+            snapshot_name=snapshot_name,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
@@ -357,75 +478,4 @@ class AccountsOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}'}
-
-    def update(
-            self, body, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
-        """Update a NetApp account.
-
-        Patch the specified NetApp account.
-
-        :param body: NetApp Account object supplied in the body of the
-         operation.
-        :type body: ~azure.mgmt.netapp.models.NetAppAccountPatch
-        :param resource_group_name: The name of the resource group.
-        :type resource_group_name: str
-        :param account_name: The name of the NetApp account
-        :type account_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: NetAppAccount or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.netapp.models.NetAppAccount or
-         ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        # Construct URL
-        url = self.update.metadata['url']
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'accountName': self._serialize.url("account_name", account_name, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct body
-        body_content = self._serialize.body(body, 'NetAppAccountPatch')
-
-        # Construct and send request
-        request = self._client.patch(url, query_parameters, header_parameters, body_content)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200, 202]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-
-        if response.status_code == 200:
-            deserialized = self._deserialize('NetAppAccount', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/snapshots/{snapshotName}'}
