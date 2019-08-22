@@ -18,7 +18,7 @@ jobs:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         BeforeBuildJobPublishBuildArtifacts: ${{ parameters.BeforeBuildJobPublishBuildArtifacts }}
-        
+
   - job: 'Analyze'
     variables:
     - template: ../variables/globals.yml
@@ -106,7 +106,7 @@ jobs:
     steps:
     - template: ../steps/build-test.yml
       parameters:
-        AdditionalTestArgs: '--disablecov --wheel_dir="$(Build.ArtifactStagingDirectory)"'
+        AdditionalTestArgs: '--disablecov --wheel_dir="$(Build.ArtifactStagingDirectory)" --tparallel'
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
         OSName: $(OSName)

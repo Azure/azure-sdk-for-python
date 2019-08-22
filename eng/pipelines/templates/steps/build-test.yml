@@ -47,8 +47,7 @@ steps:
         ${{ parameters.AdditionalTestArgs }} 
         --mark_arg="${{ parameters.TestMarkArgument }}" 
         --service="${{ parameters.ServiceDirectory }}" 
-        --toxenv="${{ parameters.ToxTestEnv }}" 
-        --tparallel
+        --toxenv="${{ parameters.ToxTestEnv }}"
     env: ${{ parameters.EnvVars }}
 
   - task: PythonScript@0
