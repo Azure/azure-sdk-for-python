@@ -115,8 +115,8 @@ class PolicyAssignment(Model):
     :param metadata: The policy assignment metadata.
     :type metadata: object
     :param enforcement_mode: The policy assignment enforcement mode. Possible
-     values are NotSpecified, Default, and DoNotEnforce. Possible values
-     include: 'NotSpecified', 'Default', 'DoNotEnforce'
+     values are Default and DoNotEnforce. Possible values include: 'Default',
+     'DoNotEnforce'
     :type enforcement_mode: str or
      ~azure.mgmt.resource.policy.v2019_06_01.models.EnforcementMode
     :ivar id: The ID of the policy assignment.

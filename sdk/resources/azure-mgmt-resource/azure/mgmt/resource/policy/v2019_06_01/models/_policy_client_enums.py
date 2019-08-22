@@ -14,9 +14,8 @@ from enum import Enum
 
 class EnforcementMode(str, Enum):
 
-    not_specified = "NotSpecified"
-    default = "Default"
-    do_not_enforce = "DoNotEnforce"
+    default = "Default"  #: The policy effect is enforced during resource creation or update.
+    do_not_enforce = "DoNotEnforce"  #: The policy effect is not enforced during resource creation or update.
 
 
 class ResourceIdentityType(str, Enum):
