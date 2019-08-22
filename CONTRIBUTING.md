@@ -34,9 +34,7 @@ To see the default environments from a specific `tox.ini` file, use the command 
 
 ```
 
-linux-wheel_tests
-macos-wheel_tests
-windows-wheel_tests
+whl
 sdist
 
 ```
@@ -73,7 +71,7 @@ Used for test execution across the spectrum of all the platforms we want to supp
 * Installs the wheel, runs tests using the wheel
 
 ```
-\> tox -e linux-wheel_tests,macos-wheel_tests,windows-wheel_tests -c <path to tox.ini>
+\> tox -e whl -c <path to tox.ini>
 
 ```
 
@@ -111,7 +109,7 @@ Mypy install and run.
 [Tox Documentation on Positional Arguments](https://tox.readthedocs.io/en/latest/example/general.html#interactively-passing-positional-arguments)
 
 **Example: Invoke tox, breaking into the debugger on failure**
-`tox -e windows-wheel_tests -c ../../../eng/tox/tox.ini -- --pdb`
+`tox -e whl -c ../../../eng/tox/tox.ini -- --pdb`
 
 ## Code of Conduct
 This project's code of conduct can be found in the
