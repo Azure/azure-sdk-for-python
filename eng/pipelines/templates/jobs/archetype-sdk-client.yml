@@ -109,8 +109,8 @@ jobs:
           PythonVersion: $(PythonVersion)
           BuildTargetingString: ${{ parameters.BuildTargetingString }}
           BeforeTestSteps: 
-              - task: DownloadPipelineArtifact@0
-                inputs:
-                  artifactName: 'artifacts' 
-                  targetPath: $(Build.ArtifactStagingDirectory)
+            - task: DownloadPipelineArtifact@0
+              inputs:
+                artifactName: 'artifacts' 
+                targetPath: $(Build.ArtifactStagingDirectory)
           ToxTestEnv: 'whl,sdist'
