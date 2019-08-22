@@ -1627,7 +1627,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         ):
         # type: (...) -> Dict[str, Any]
         if source_length is not None and source_offset is None:
-            raise ValueError("Source offset value must not be None is length is set.")
+            raise ValueError("Source offset value must not be None if length is set.")
         block_id = encode_base64(str(block_id))
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         range_header = None
@@ -2384,7 +2384,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             data = data[:length]
 
         append_conditions = None
-        if maxsize_condition or appendpos_condition:
+        if maxsize_condition or appendpos_condition is not None:
             append_conditions = AppendPositionAccessConditions(
                 max_size=maxsize_condition,
                 append_position=appendpos_condition
@@ -2485,5 +2485,166 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         )
         try:
             return self._client.append_blob.append_block(**options) # type: ignore
+        except StorageErrorException as error:
+            process_storage_error(error)
+
+    def _append_block_from_url_options(  # type: ignore
+            self, copy_source_url,  # type: str
+            source_range_start=None,  # type Optional[int]
+            source_range_end=None,  # type Optional[int]
+            source_content_md5=None,  # type: Optional[bytearray]
+            maxsize_condition=None,  # type: Optional[int]
+            appendpos_condition=None,  # type: Optional[int]
+            **kwargs
+    ):
+        # type: (...) -> Dict[str, Any]
+        if self.require_encryption or (self.key_encryption_key is not None):
+            raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
+
+        # If end range is provided, start range must be provided
+        if source_range_end is not None and source_range_start is None:
+            raise ValueError("source_range_start should also be specified if source_range_end is specified")
+        # Format based on whether end_range is present
+        source_range = None
+        if source_range_end is not None:
+            source_range = 'bytes={0}-{1}'.format(source_range_start, source_range_end)
+        elif source_range_start is not None:
+            source_range = "bytes={0}-".format(source_range_start)
+
+        append_conditions = None
+        if maxsize_condition or appendpos_condition is not None:
+            append_conditions = AppendPositionAccessConditions(
+                max_size=maxsize_condition,
+                append_position=appendpos_condition
+            )
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
+        mod_conditions = ModifiedAccessConditions(
+            if_modified_since=kwargs.pop('if_modified_since', None),
+            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
+            if_match=kwargs.pop('if_match', None),
+            if_none_match=kwargs.pop('if_none_match', None))
+        source_mod_conditions = SourceModifiedAccessConditions(
+            source_if_modified_since=kwargs.pop('source_if_modified_since', None),
+            source_if_unmodified_since=kwargs.pop('source_if_unmodified_since', None),
+            source_if_match=kwargs.pop('source_if_match', None),
+            source_if_none_match=kwargs.pop('source_if_none_match', None))
+
+        options = {
+            'source_url': copy_source_url,
+            'content_length': 0,
+            'source_range': source_range,
+            'source_content_md5': source_content_md5,
+            'timeout': kwargs.pop('timeout', None),
+            'transactional_content_md5': None,
+            'lease_access_conditions': access_conditions,
+            'append_position_access_conditions': append_conditions,
+            'modified_access_conditions': mod_conditions,
+            'source_modified_access_conditions': source_mod_conditions,
+            'cls': return_response_headers}
+        options.update(kwargs)
+        return options
+
+    @distributed_trace
+    def append_block_from_url(self, copy_source_url,  # type: str
+                              source_range_start=None,  # type Optional[int]
+                              source_range_end=None,  # type Optional[int]
+                              source_content_md5=None,  # type: Optional[bytearray]
+                              maxsize_condition=None,  # type: Optional[int]
+                              appendpos_condition=None,  # type: Optional[int]
+                              lease=None, if_modified_since=None,
+                              if_unmodified_since=None, if_match=None,
+                              if_none_match=None, source_if_modified_since=None,
+                              source_if_unmodified_since=None, source_if_match=None,
+                              source_if_none_match=None, timeout=None):
+        # type: (...) -> Dict[str, Union[str, datetime, int]]
+        """
+        Creates a new block to be committed as part of a blob, where the contents are read from a source url.
+
+        :param str copy_source_url:
+            The URL of the source data. It can point to any Azure Blob or File, that is either public or has a
+            shared access signature attached.
+        :param int source_range_start:
+            This indicates the start of the range of bytes(inclusive) that has to be taken from the copy source.
+        :param int source_range_end:
+            This indicates the end of the range of bytes(inclusive) that has to be taken from the copy source.
+        :param bytearray source_content_md5:
+            If given, the service will calculate the MD5 hash of the block content and compare against this value.
+        :param int maxsize_condition:
+            Optional conditional header. The max length in bytes permitted for
+            the append blob. If the Append Block operation would cause the blob
+            to exceed that limit or if the blob size is already greater than the
+            value specified in this header, the request will fail with
+            MaxBlobSizeConditionNotMet error (HTTP status code 412 - Precondition Failed).
+        :param int appendpos_condition:
+            Optional conditional header, used only for the Append Block operation.
+            A number indicating the byte offset to compare. Append Block will
+            succeed only if the append position is equal to this number. If it
+            is not, the request will fail with the
+            AppendPositionConditionNotMet error
+            (HTTP status code 412 - Precondition Failed).
+        :param ~azure.storage.blob.lease.LeaseClient or str lease:
+            Required if the blob has an active lease. Value can be a LeaseClient object
+            or the lease ID as a string.
+        :param datetime if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only
+            if the resource has been modified since the specified time.
+        :param datetime if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the resource has not been modified since the specified date/time.
+        :param str if_match:
+            An ETag value, or the wildcard character (*). Specify this header to perform
+            the operation only if the resource's ETag matches the value specified.
+        :param str if_none_match:
+            An ETag value, or the wildcard character (*). Specify this header
+            to perform the operation only if the resource's ETag does not match
+            the value specified. Specify the wildcard character (*) to perform
+            the operation only if the resource does not exist, and fail the
+            operation if it does exist.
+        :param datetime source_if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only
+            if the source resource has been modified since the specified time.
+        :param datetime source_if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the source resource has not been modified since the specified date/time.
+        :param str source_if_match:
+            An ETag value, or the wildcard character (*). Specify this header to perform
+            the operation only if the source resource's ETag matches the value specified.
+        :param str source_if_none_match:
+            An ETag value, or the wildcard character (*). Specify this header
+            to perform the operation only if the source resource's ETag does not match
+            the value specified. Specify the wildcard character (*) to perform
+            the operation only if the source resource does not exist, and fail the
+            operation if it does exist.
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
+        """
+        options = self._append_block_from_url_options(
+            copy_source_url,
+            source_range_start=source_range_start,
+            source_range_end=source_range_end,
+            source_content_md5=source_content_md5,
+            maxsize_condition=maxsize_condition,
+            appendpos_condition=appendpos_condition,
+            lease=lease,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since, if_match=if_match,
+            if_none_match=if_none_match, source_if_modified_since=source_if_modified_since,
+            source_if_unmodified_since=source_if_unmodified_since, source_if_match=source_if_match,
+            source_if_none_match=source_if_none_match, timeout=timeout
+        )
+        try:
+            return self._client.append_blob.append_block_from_url(**options) # type: ignore
         except StorageErrorException as error:
             process_storage_error(error)
