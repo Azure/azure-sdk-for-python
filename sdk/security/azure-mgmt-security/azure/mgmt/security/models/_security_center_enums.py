@@ -12,6 +12,17 @@
 from enum import Enum
 
 
+class ConnectionTypeValues(str, Enum):
+
+    azurevm = "Azure vm"
+
+
+class TrafficDataState(str, Enum):
+
+    available = "Available"  #: The Azure monitor agent is installed on the vm
+    notavailable = "Not available"  #: the Azure monitor agent is not installed on the vm
+
+
 class ResourceStatus(str, Enum):
 
     healthy = "Healthy"  #: This assessment on the resource is healthy
@@ -154,3 +165,9 @@ class ConnectionType(str, Enum):
 
     internal = "Internal"
     external = "External"
+
+
+class ExpandValues(str, Enum):
+
+    true = "true"  #: Get the expand network data object - more information about the network data (ports and connections details)
+    false = "false"  #: Get the slim network data object

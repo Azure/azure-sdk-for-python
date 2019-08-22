@@ -43,9 +43,10 @@ class NetworkDataOperations(object):
             self, expand=None, custom_headers=None, raw=False, **operation_config):
         """Get the network data on all your scanned resources inside a scope.
 
-        :param expand: The expand expression to apply on the operation.
-         Possible values include: 'true', 'false'
-        :type expand: str
+        :param expand: expand whether you want to get more information about
+         the network data (ports and connections details). Possible values
+         include: 'true', 'false'
+        :type expand: str or ~azure.mgmt.security.models.ExpandValues
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -108,10 +109,10 @@ class NetworkDataOperations(object):
         deserialized = models.NetworkDataPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/NetworkData'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/networkData'}
 
     def get(
-            self, resource_group_name, resource_namespace, resource_type, resource_name, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, resource_namespace, resource_type, resource_name, expand=None, custom_headers=None, raw=False, **operation_config):
         """Get the network data on your scanned resource.
 
         :param resource_group_name: The name of the resource group within the
@@ -123,6 +124,10 @@ class NetworkDataOperations(object):
         :type resource_type: str
         :param resource_name: Name of the resource.
         :type resource_name: str
+        :param expand: expand whether you want to get more information about
+         the network data (ports and connections details). Possible values
+         include: 'true', 'false'
+        :type expand: str or ~azure.mgmt.security.models.ExpandValues
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -147,6 +152,8 @@ class NetworkDataOperations(object):
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        if expand is not None:
+            query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
 
         # Construct headers
         header_parameters = {}

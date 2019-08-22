@@ -13,10 +13,12 @@ try:
     from ._models_py3 import AadConnectivityState1
     from ._models_py3 import AadExternalSecuritySolution
     from ._models_py3 import AadSolutionProperties
+    from ._models_py3 import ActualTrafficConnectedResources
     from ._models_py3 import AdvancedThreatProtectionSetting
     from ._models_py3 import Alert
     from ._models_py3 import AlertConfidenceReason
     from ._models_py3 import AlertEntity
+    from ._models_py3 import AllowedConnectionsConnectedResources
     from ._models_py3 import AllowedConnectionsResource
     from ._models_py3 import AppWhitelistingGroup
     from ._models_py3 import AppWhitelistingGroups
@@ -70,14 +72,8 @@ try:
     from ._models_py3 import NetworkData
     from ._models_py3 import NetworkDataConnectableResource
     from ._models_py3 import NetworkDataConnectableResourceActualTraffic
-    from ._models_py3 import NetworkDataConnectableResourceActualTrafficInboundConnectedResources
-    from ._models_py3 import NetworkDataConnectableResourceActualTrafficOutboundConnectedResources
     from ._models_py3 import NetworkDataConnectableResourceAllowedConnections
-    from ._models_py3 import NetworkDataConnectableResourceAllowedConnectionsInboundConnectedResources
-    from ._models_py3 import NetworkDataConnectableResourceAllowedConnectionsOutboundConnectedResources
     from ._models_py3 import NetworkDataConnectableResourceUnusedPorts
-    from ._models_py3 import NetworkDataConnectableResourceUnusedPortsInboundConnectedResources
-    from ._models_py3 import NetworkDataConnectableResourceUnusedPortsOutboundConnectedResources
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import PathRecommendation
@@ -102,6 +98,7 @@ try:
     from ._models_py3 import TopologySingleResource
     from ._models_py3 import TopologySingleResourceChild
     from ._models_py3 import TopologySingleResourceParent
+    from ._models_py3 import UnusedPortsConnectedResources
     from ._models_py3 import UpdateIotSecuritySolutionData
     from ._models_py3 import UserDefinedResourcesProperties
     from ._models_py3 import UserRecommendation
@@ -111,10 +108,12 @@ except (SyntaxError, ImportError):
     from ._models import AadConnectivityState1
     from ._models import AadExternalSecuritySolution
     from ._models import AadSolutionProperties
+    from ._models import ActualTrafficConnectedResources
     from ._models import AdvancedThreatProtectionSetting
     from ._models import Alert
     from ._models import AlertConfidenceReason
     from ._models import AlertEntity
+    from ._models import AllowedConnectionsConnectedResources
     from ._models import AllowedConnectionsResource
     from ._models import AppWhitelistingGroup
     from ._models import AppWhitelistingGroups
@@ -168,14 +167,8 @@ except (SyntaxError, ImportError):
     from ._models import NetworkData
     from ._models import NetworkDataConnectableResource
     from ._models import NetworkDataConnectableResourceActualTraffic
-    from ._models import NetworkDataConnectableResourceActualTrafficInboundConnectedResources
-    from ._models import NetworkDataConnectableResourceActualTrafficOutboundConnectedResources
     from ._models import NetworkDataConnectableResourceAllowedConnections
-    from ._models import NetworkDataConnectableResourceAllowedConnectionsInboundConnectedResources
-    from ._models import NetworkDataConnectableResourceAllowedConnectionsOutboundConnectedResources
     from ._models import NetworkDataConnectableResourceUnusedPorts
-    from ._models import NetworkDataConnectableResourceUnusedPortsInboundConnectedResources
-    from ._models import NetworkDataConnectableResourceUnusedPortsOutboundConnectedResources
     from ._models import Operation
     from ._models import OperationDisplay
     from ._models import PathRecommendation
@@ -200,6 +193,7 @@ except (SyntaxError, ImportError):
     from ._models import TopologySingleResource
     from ._models import TopologySingleResourceChild
     from ._models import TopologySingleResourceParent
+    from ._models import UnusedPortsConnectedResources
     from ._models import UpdateIotSecuritySolutionData
     from ._models import UserDefinedResourcesProperties
     from ._models import UserRecommendation
@@ -229,6 +223,8 @@ from ._paged_models import SettingPaged
 from ._paged_models import TopologyResourcePaged
 from ._paged_models import WorkspaceSettingPaged
 from ._security_center_enums import (
+    ConnectionTypeValues,
+    TrafficDataState,
     ResourceStatus,
     PricingTier,
     ReportedSeverity,
@@ -249,16 +245,19 @@ from ._security_center_enums import (
     AlertsToAdmins,
     State,
     ConnectionType,
+    ExpandValues,
 )
 
 __all__ = [
     'AadConnectivityState1',
     'AadExternalSecuritySolution',
     'AadSolutionProperties',
+    'ActualTrafficConnectedResources',
     'AdvancedThreatProtectionSetting',
     'Alert',
     'AlertConfidenceReason',
     'AlertEntity',
+    'AllowedConnectionsConnectedResources',
     'AllowedConnectionsResource',
     'AppWhitelistingGroup',
     'AppWhitelistingGroups',
@@ -312,14 +311,8 @@ __all__ = [
     'NetworkData',
     'NetworkDataConnectableResource',
     'NetworkDataConnectableResourceActualTraffic',
-    'NetworkDataConnectableResourceActualTrafficInboundConnectedResources',
-    'NetworkDataConnectableResourceActualTrafficOutboundConnectedResources',
     'NetworkDataConnectableResourceAllowedConnections',
-    'NetworkDataConnectableResourceAllowedConnectionsInboundConnectedResources',
-    'NetworkDataConnectableResourceAllowedConnectionsOutboundConnectedResources',
     'NetworkDataConnectableResourceUnusedPorts',
-    'NetworkDataConnectableResourceUnusedPortsInboundConnectedResources',
-    'NetworkDataConnectableResourceUnusedPortsOutboundConnectedResources',
     'Operation',
     'OperationDisplay',
     'PathRecommendation',
@@ -344,6 +337,7 @@ __all__ = [
     'TopologySingleResource',
     'TopologySingleResourceChild',
     'TopologySingleResourceParent',
+    'UnusedPortsConnectedResources',
     'UpdateIotSecuritySolutionData',
     'UserDefinedResourcesProperties',
     'UserRecommendation',
@@ -372,6 +366,8 @@ __all__ = [
     'RegulatoryComplianceStandardPaged',
     'RegulatoryComplianceControlPaged',
     'RegulatoryComplianceAssessmentPaged',
+    'ConnectionTypeValues',
+    'TrafficDataState',
     'ResourceStatus',
     'PricingTier',
     'ReportedSeverity',
@@ -392,4 +388,5 @@ __all__ = [
     'AlertsToAdmins',
     'State',
     'ConnectionType',
+    'ExpandValues',
 ]
