@@ -98,6 +98,8 @@ class CertificateClientTests(KeyVaultTestCase):
         self.assertIsNotNone(cert_bundle_policy)
         self.assertEqual(cert_policy_x509_props.subject,
                          cert_bundle_policy.subject_name)
+        if not cert_policy_x509_props.subject_alternative_names:
+            return
         if cert_policy_x509_props.subject_alternative_names.emails:
             for (san_email, policy_email) in itertools.zip_longest(
                     cert_policy_x509_props.subject_alternative_names.emails, cert_bundle_policy.san_emails):
@@ -170,33 +172,6 @@ class CertificateClientTests(KeyVaultTestCase):
         self.assertEqual(issuer.name, expected.name)
         self.assertEqual(issuer.provider, expected.provider)
         self.assertEqual(issuer.vault_url, expected.vault_url)
-
-    def _validate_certificate(self, cert, vault, cert_name, cert_policy):
-        self.assertIsNotNone(cert)
-        self.assertEqual(cert_name, cert.name)
-        self.assertIsNotNone(cert.cer)
-        self.assertIsNotNone(cert.policy)
-        self.assertEqual(cert_policy.issuer_name, cert.policy.issuer_name)
-        self.assertEqual(cert_policy.content_type, cert.policy.content_type)
-        self.assertEqual(cert_policy.subject_name, cert.policy.subject_name)
-        if cert_policy.key_properties:
-            self._validate_key_properties(cert_policy_key_props=cert_policy.key_properties, cert_bundle_key_props=cert.policy.key_properites)
-        if cert_policy.lifetime_actions:
-            self._validate_lifetime_actions(cert_policy_lifetime_actions=cert_policy.lifetime_actions,
-                                            cert_bundle_lifetime_actions=cert.policy.lifetime_actions)
-        if cert_policy.san_emails:
-            for (san_email, policy_email) in itertools.zip_longest(
-                    cert_policy.san_emails, cert.policy.san_emails):
-                self.assertEqual(san_email, policy_email)
-        if cert_policy.san_upns:
-            for (san_upn, policy_upn) in itertools.zip_longest(
-                    cert_policy.san_upns, cert.policy.san_upns):
-                self.assertEqual(san_upn, policy_upn)
-        # commenting out for now because of server side bug
-        # if cert_policy.san_dns_names:
-        #     for (san_dns_name, policy_dns_name) in itertools.zip_longest(
-        #             cert_policy.san_dns_names, cert.policy.san_dns_names):
-        #         self.assertEqual(san_dns_name, policy_dns_name)
 
     @ResourceGroupPreparer()
     @VaultClientPreparer()
@@ -542,8 +517,7 @@ class CertificateClientTests(KeyVaultTestCase):
     def test_backup_restore(self, vault_client, **kwargs):
         self.assertIsNotNone(vault_client)
         client = vault_client.certificates
-        cert_name = "backupRestoreCertificate"
-        issuer_name = "Unknown"
+        cert_name = self.get_resource_name("cert")
         lifetime_actions = [LifetimeAction(
             trigger=Trigger(lifetime_percentage=2),
             action=Action(action_type=ActionType.email_contacts)
@@ -554,20 +528,21 @@ class CertificateClientTests(KeyVaultTestCase):
                                                                               reuse_key=False),
                                                  secret_properties=SecretProperties(
                                                      content_type='application/x-pkcs12'),
-                                                 issuer_parameters=IssuerParameters(name=issuer_name),
+                                                 issuer_parameters=IssuerParameters(name='Self'),
                                                  lifetime_actions=lifetime_actions,
                                                  x509_certificate_properties=X509CertificateProperties(
                                                      subject='CN=*.microsoft.com',
-                                                     subject_alternative_names=SubjectAlternativeNames(
-                                                         dns_names=['sdk.azure-int.net']
-                                                     ),
+                                                     # commented out for now because of server side bug not
+                                                     # restoring san dns names
+                                                     # subject_alternative_names=SubjectAlternativeNames(
+                                                     #     dns_names=['sdk.azure-int.net']
+                                                     # ),
                                                      validity_in_months=24
                                                  ))
 
         # create certificate
+        interval_time = 5 if not self.is_playback() else 0
         certificate_operation = client.create_certificate(name=cert_name, policy=CertificatePolicy._from_certificate_policy_bundle(cert_policy))
-        create_interval_time = 5 if not self.is_playback() else 0
-
         while True:
             pending_cert = client.get_certificate_operation(cert_name)
             self._validate_certificate_operation(pending_cert, client.vault_url, cert_name, cert_policy)
@@ -575,7 +550,7 @@ class CertificateClientTests(KeyVaultTestCase):
                 break
             elif pending_cert.status.lower() != 'inprogress':
                 raise Exception('Unknown status code for pending certificate: {}'.format(pending_cert))
-            time.sleep(create_interval_time)
+            time.sleep(interval_time)
 
         # create a backup
         certificate_backup = client.backup_certificate(name=certificate_operation.name)
@@ -585,10 +560,9 @@ class CertificateClientTests(KeyVaultTestCase):
 
         # restore certificate
         restored_certificate = client.restore_certificate(backup=certificate_backup)
-        self._validate_certificate(
+        self._validate_certificate_bundle(
             cert=restored_certificate,
-            vault=client.vault_url,
-            cert_name=certificate_operation.name,
+            cert_name=cert_name,
             cert_policy=cert_policy
         )
 
