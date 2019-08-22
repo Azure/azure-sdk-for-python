@@ -20,9 +20,9 @@ class AzureCapacity(Model):
     :param scale_type: Required. Scale type. Possible values include:
      'automatic', 'manual', 'none'
     :type scale_type: str or ~azure.mgmt.kusto.models.AzureScaleType
-    :param minimum: Required. Minimum allowed instances count.
+    :param minimum: Required. Minimum allowed capacity.
     :type minimum: int
-    :param maximum: Required. Maximum allowed instances count.
+    :param maximum: Required. Maximum allowed capacity.
     :type maximum: int
     :param default: Required. The default capacity that would be used.
     :type default: int
