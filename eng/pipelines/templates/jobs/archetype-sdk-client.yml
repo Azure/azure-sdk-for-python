@@ -73,12 +73,12 @@ jobs:
           OSName: $(OSName)
           PythonVersion: $(PythonVersion)
           BuildTargetingString: ${{ parameters.BuildTargetingString }}
+          ToxTestEnv: 'whl,sdist'
           BeforeTestSteps: 
             - task: DownloadPipelineArtifact@0
               inputs:
                 artifactName: 'artifacts' 
                 targetPath: $(Build.ArtifactStagingDirectory)
-          ToxTestEnv: 'whl,sdist'
       - template: ../steps/publish-coverage.yml
 
   # Run PyPy tests without coverage
@@ -108,9 +108,9 @@ jobs:
           OSName: $(OSName)
           PythonVersion: $(PythonVersion)
           BuildTargetingString: ${{ parameters.BuildTargetingString }}
+          ToxTestEnv: 'whl,sdist'
           BeforeTestSteps: 
             - task: DownloadPipelineArtifact@0
               inputs:
                 artifactName: 'artifacts' 
                 targetPath: $(Build.ArtifactStagingDirectory)
-          ToxTestEnv: 'whl,sdist'
