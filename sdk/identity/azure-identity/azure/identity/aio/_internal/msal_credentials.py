@@ -131,5 +131,6 @@ class ConfidentialClientCredential(MsalCredential):
     async def _get_app(self, executor: "Optional[Executor]" = None) -> msal.ConfidentialClientApplication:
         if not self._msal_app:
             async with self._lock:
-                self._msal_app = await self._create_app(msal.ConfidentialClientApplication, executor)
+                if not self._msal_app:
+                    self._msal_app = await self._create_app(msal.ConfidentialClientApplication, executor)
         return self._msal_app
