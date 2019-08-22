@@ -7,21 +7,21 @@ parameters:
 jobs:
   - job: 'Build'
     variables:
-      - template: ../variables/globals.yml
-        parameters: 
-          ServiceDirectory: ${{ parameters.ServiceDirectory }}
-          BuildTargetingString: ${{ parameters.BuildTargetingString }}
-          BeforeBuildJobPublishBuildArtifacts: ${{ parameters.BeforeBuildJobPublishBuildArtifacts }}
-          
+    - template: ../variables/globals.yml
+
     pool:
       vmImage: 'ubuntu-16.04'
 
     steps:
-      - template: ../steps/build-artifacts.yml
-
+    - template: ../steps/build-artifacts.yml
+      parameters: 
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        BeforeBuildJobPublishBuildArtifacts: ${{ parameters.BeforeBuildJobPublishBuildArtifacts }}
+        
   - job: 'Analyze'
     variables:
-      - template: ../variables/globals.yml
+    - template: ../variables/globals.yml
 
     dependsOn:
       - 'Build'
@@ -70,20 +70,20 @@ jobs:
       vmImage: '$(OSVmImage)'
 
     steps:
-      - template: ../steps/build-test.yml
-        parameters:
-          ServiceDirectory: ${{ parameters.ServiceDirectory }}
-          TestMarkArgument: ${{ parameters.TestMarkArgument }}
-          OSName: $(OSName)
-          PythonVersion: $(PythonVersion)
-          BuildTargetingString: ${{ parameters.BuildTargetingString }}
-          ToxTestEnv: 'whl,sdist'
-          BeforeTestSteps: 
-            - task: DownloadPipelineArtifact@0
-              inputs:
-                artifactName: 'artifacts' 
-                targetPath: $(Build.ArtifactStagingDirectory)
-      - template: ../steps/publish-coverage.yml
+    - template: ../steps/build-test.yml
+      parameters:
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        TestMarkArgument: ${{ parameters.TestMarkArgument }}
+        OSName: $(OSName)
+        PythonVersion: $(PythonVersion)
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        ToxTestEnv: 'whl,sdist'
+        BeforeTestSteps: 
+          - task: DownloadPipelineArtifact@0
+            inputs:
+              artifactName: 'artifacts' 
+              targetPath: $(Build.ArtifactStagingDirectory)
+    - template: ../steps/publish-coverage.yml
 
   # Run PyPy tests without coverage
   - job: 'Test_PyPy'
@@ -104,17 +104,17 @@ jobs:
       vmImage: $(OSVmImage)
 
     steps:
-      - template: ../steps/build-test.yml
-        parameters:
-          AdditionalTestArgs: '--disablecov --wheel_dir="$(Build.ArtifactStagingDirectory)"'
-          ServiceDirectory: ${{ parameters.ServiceDirectory }}
-          TestMarkArgument: ${{ parameters.TestMarkArgument }}
-          OSName: $(OSName)
-          PythonVersion: $(PythonVersion)
-          BuildTargetingString: ${{ parameters.BuildTargetingString }}
-          ToxTestEnv: 'whl,sdist'
-          BeforeTestSteps: 
-            - task: DownloadPipelineArtifact@0
-              inputs:
-                artifactName: 'artifacts' 
-                targetPath: $(Build.ArtifactStagingDirectory)
+    - template: ../steps/build-test.yml
+      parameters:
+        AdditionalTestArgs: '--disablecov --wheel_dir="$(Build.ArtifactStagingDirectory)"'
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        TestMarkArgument: ${{ parameters.TestMarkArgument }}
+        OSName: $(OSName)
+        PythonVersion: $(PythonVersion)
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        ToxTestEnv: 'whl,sdist'
+        BeforeTestSteps: 
+          - task: DownloadPipelineArtifact@0
+            inputs:
+              artifactName: 'artifacts' 
+              targetPath: $(Build.ArtifactStagingDirectory)
