@@ -19,10 +19,11 @@ import logging
 
 logging.getLogger().setLevel(logging.INFO)
 
-OMITTED_CI_PACKAGES = ["azure-mgmt-documentdb", "azure-servicemanagement-legacy",
-
-                        "azure-data-appconfiguration", # not certain what's going on here. Looks like it's erroring when running test.
-                                                       # a transition back to using `__init.py__` will probably fix this
+OMITTED_CI_PACKAGES = [
+    "azure-mgmt-documentdb",
+    "azure-servicemanagement-legacy",
+    "azure-data-appconfiguration",  # not certain what's going on here. Looks like it's erroring when running test.
+    # a transition back to using `__init.py__` will probably fix this
 ]
 
 MANAGEMENT_PACKAGE_IDENTIFIERS = [
@@ -32,17 +33,20 @@ MANAGEMENT_PACKAGE_IDENTIFIERS = [
     "azure-nspkg",
 ]
 
+
 def log_file(file_location, is_error=False):
-    with open(file_location, 'r') as file:
+    with open(file_location, "r") as file:
         for line in file:
             print(line.strip())
 
+
 def read_file(file_location):
     str_buffer = ""
-    with open(file_location, 'r') as file:
+    with open(file_location, "r") as file:
         for line in file:
             str_buffer += line
     return str_buffer
+
 
 def cleanup_folder(target_folder):
     for file in os.listdir(target_folder):
@@ -52,6 +56,7 @@ def cleanup_folder(target_folder):
                 os.remove(file_path)
         except Exception as e:
             logging.error(e)
+
 
 # helper functions
 def clean_coverage(coverage_dir):
@@ -63,6 +68,7 @@ def clean_coverage(coverage_dir):
             cleanup_folder(coverage_dir)
         else:
             raise
+
 
 # this function is where a glob string gets translated to a list of packages
 # It is called by both BUILD (package) and TEST. In the future, this function will be the central location

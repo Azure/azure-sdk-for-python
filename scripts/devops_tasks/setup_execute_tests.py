@@ -17,7 +17,13 @@ import shutil
 import glob
 import logging
 import pdb
-from common_tasks import process_glob_string, run_check_call, cleanup_folder, clean_coverage, MANAGEMENT_PACKAGE_IDENTIFIERS
+from common_tasks import (
+    process_glob_string,
+    run_check_call,
+    cleanup_folder,
+    clean_coverage,
+    MANAGEMENT_PACKAGE_IDENTIFIERS,
+)
 from tox_harness import prep_and_run_tox
 
 logging.getLogger().setLevel(logging.INFO)
@@ -25,6 +31,7 @@ logging.getLogger().setLevel(logging.INFO)
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 coverage_dir = os.path.join(root_dir, "_coverage/")
 dev_setup_script_location = os.path.join(root_dir, "scripts/dev_setup.py")
+
 
 def collect_pytest_coverage_files(targeted_packages):
     coverage_files = []
@@ -62,6 +69,7 @@ def prep_tests(targeted_packages, python_version):
         ],
         root_dir,
     )
+
 
 def run_tests(targeted_packages, python_version, test_output_location, test_res):
     err_results = []
@@ -135,6 +143,7 @@ def run_tests(targeted_packages, python_version, test_output_location, test_res)
     if err_results:
         exit(1)
 
+
 def execute_global_install_and_test(
     parsed_args, targeted_packages, extended_pytest_args
 ):
@@ -152,6 +161,7 @@ def execute_global_install_and_test(
             extended_pytest_args,
         )
 
+
 def execute_tox_harness(parsed_args, targeted_packages, extended_pytest_args):
     if args.wheel_dir:
         os.environ["PREBUILT_WHEEL_DIR"] = args.wheel_dir
@@ -159,7 +169,10 @@ def execute_tox_harness(parsed_args, targeted_packages, extended_pytest_args):
     if args.mark_arg:
         extended_pytest_args.extend(["-m", "'{}'".format(args.mark_arg)])
 
-    prep_and_run_tox(targeted_packages, args.tox_env, extended_pytest_args, parsed_args.tparallel)
+    prep_and_run_tox(
+        targeted_packages, args.tox_env, extended_pytest_args, parsed_args.tparallel
+    )
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -205,7 +218,10 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        "--tparallel", default=False, help=("Flag  that enables parallel tox invocation."), action="store_true"
+        "--tparallel",
+        default=False,
+        help=("Flag  that enables parallel tox invocation."),
+        action="store_true",
     )
 
     parser.add_argument(
