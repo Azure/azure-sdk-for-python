@@ -11,9 +11,18 @@ else:
 from threading import Thread
 
 from subprocess import Popen, PIPE, STDOUT
-from common_tasks import process_glob_string, run_check_call, cleanup_folder, clean_coverage, log_file, read_file, MANAGEMENT_PACKAGE_IDENTIFIERS
+from common_tasks import (
+    process_glob_string,
+    run_check_call,
+    cleanup_folder,
+    clean_coverage,
+    log_file,
+    read_file,
+    MANAGEMENT_PACKAGE_IDENTIFIERS,
+)
 
 import logging
+
 logging.getLogger().setLevel(logging.INFO)
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
@@ -28,8 +37,8 @@ class ToxWorkItem:
         self.tox_env = tox_env
         self.options_array = options_array
 
+
 class Worker(Thread):
-    """Thread executing tasks from a given tasks queue"""
     def __init__(self, tasks):
         Thread.__init__(self)
         self.tasks = tasks
@@ -46,25 +55,23 @@ class Worker(Thread):
             finally:
                 self.tasks.task_done()
 
+
 class ThreadPool:
-    """Pool of threads consuming tasks from a queue"""
     def __init__(self, num_threads):
         self.tasks = Queue(num_threads)
         for _ in range(num_threads):
             Worker(self.tasks)
 
     def add_task(self, func, *args, **kargs):
-        """Add a task to the queue"""
         self.tasks.put((func, args, kargs))
 
     def map(self, func, args_list):
-        """ Add a list of tasks to the queue """
         for args in args_list:
             self.add_task(func, args)
 
     def wait_completion(self):
-        """Wait for completion of all the tasks in the queue"""
         self.tasks.join()
+
 
 def collect_tox_coverage_files(targeted_packages):
     root_coverage_dir = os.path.join(root_dir, "_coverage/")
@@ -96,13 +103,20 @@ def collect_tox_coverage_files(targeted_packages):
 
         shutil.move(source, dest)
 
+
 def individual_workload(tox_command_tuple, failed_workload_results):
-    stdout = os.path.join(tox_command_tuple[1], 'stdout.txt')
-    stderr = os.path.join(tox_command_tuple[1], 'stderr.txt')
+    stdout = os.path.join(tox_command_tuple[1], "stdout.txt")
+    stderr = os.path.join(tox_command_tuple[1], "stderr.txt")
     pkg = os.path.basename(tox_command_tuple[1])
 
-    with open(stdout, 'w') as f_stdout, open(stderr, 'w') as f_stderr:
-        proc = Popen(tox_command_tuple[0], stdout=f_stdout, stderr=f_stderr, cwd=tox_command_tuple[1], env=os.environ.copy())
+    with open(stdout, "w") as f_stdout, open(stderr, "w") as f_stderr:
+        proc = Popen(
+            tox_command_tuple[0],
+            stdout=f_stdout,
+            stderr=f_stderr,
+            cwd=tox_command_tuple[1],
+            env=os.environ.copy(),
+        )
 
         logging.info("POpened task for for {}".format(pkg))
         proc.wait()
@@ -120,6 +134,7 @@ def individual_workload(tox_command_tuple, failed_workload_results):
 
     return proc
 
+
 def execute_tox_parallel(tox_command_tuples):
     pool = ThreadPool(pool_size)
     failed_workload_results = {}
@@ -131,8 +146,13 @@ def execute_tox_parallel(tox_command_tuples):
 
     if len(failed_workload_results.keys()):
         for key in failed_workload_results.keys():
-            logging.error("{} tox invocation exited with returncode {}".format(key, failed_workload_results[key]))
+            logging.error(
+                "{} tox invocation exited with returncode {}".format(
+                    key, failed_workload_results[key]
+                )
+            )
         exit(1)
+
 
 def execute_tox_serial(tox_command_tuples):
     for index, cmd_tuple in enumerate(tox_command_tuples):
@@ -142,6 +162,7 @@ def execute_tox_serial(tox_command_tuples):
             )
         )
         run_check_call(cmd_tuple[0], cmd_tuple[1])
+
 
 def prep_and_run_tox(targeted_packages, tox_env, options_array=[], is_parallel=False):
     tox_command_tuples = []
@@ -166,7 +187,10 @@ def prep_and_run_tox(targeted_packages, tox_env, options_array=[], is_parallel=F
             local_options_array.append("--suppress-no-test-exit-code")
 
         # if not present, re-use base
-        if not os.path.exists(destination_tox_ini) or (os.path.exists(destination_tox_ini) and os.path.basename(package_dir) in IGNORED_TOX_INIS):
+        if not os.path.exists(destination_tox_ini) or (
+            os.path.exists(destination_tox_ini)
+            and os.path.basename(package_dir) in IGNORED_TOX_INIS
+        ):
             logging.info("No customized tox.ini present, using common eng/tox/tox.ini.")
             tox_execution_array.extend(["-c", DEFAULT_TOX_INI_LOCATION])
 

@@ -8,7 +8,11 @@ jobs:
   - job: 'Build'
     variables:
       - template: ../variables/globals.yml
-
+        parameters: 
+          ServiceDirectory: ${{ parameters.ServiceDirectory }}
+          BuildTargetingString: ${{ parameters.BuildTargetingString }}
+          BeforeBuildJobPublishBuildArtifacts: ${{ parameters.BeforeBuildJobPublishBuildArtifacts }}
+          
     pool:
       vmImage: 'ubuntu-16.04'
 
@@ -67,7 +71,7 @@ jobs:
 
     steps:
       - template: ../steps/build-test.yml
-        parameters: ${{ parameters.ServiceDirectory }}
+        parameters:
           ServiceDirectory: ${{ parameters.ServiceDirectory }}
           TestMarkArgument: ${{ parameters.TestMarkArgument }}
           OSName: $(OSName)
