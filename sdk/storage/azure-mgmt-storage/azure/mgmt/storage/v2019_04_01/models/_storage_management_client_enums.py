@@ -97,6 +97,12 @@ class AccessTier(str, Enum):
     cool = "Cool"
 
 
+class IdentityType(str, Enum):
+
+    system_assigned = "SystemAssigned"
+    none = "None"
+
+
 class GeoReplicationStatus(str, Enum):
 
     live = "Live"
