@@ -7,15 +7,13 @@ from typing import Callable, Dict
 import uuid
 import asyncio
 import logging
-from enum import Enum
 
 from azure.eventhub import EventPosition, EventHubError
 from azure.eventhub.aio import EventHubClient
 from .checkpoint_manager import CheckpointManager
 from .partition_manager import PartitionManager
 from ._ownership_manager import OwnershipManager
-from .partition_processor import PartitionProcessor, CloseReason
-from .utils import get_running_loop
+from .partition_processor import CloseReason, PartitionProcessor
 
 log = logging.getLogger(__name__)
 
@@ -29,20 +27,21 @@ class EventProcessor(object):
 
     It provides the user a convenient way to receive events from multiple partitions and save checkpoints.
     If multiple EventProcessors are running for an event hub, they will automatically balance load.
-    This load balancing won't be available until preview 3.
 
     Example:
         .. code-block:: python
 
-            class MyPartitionProcessor(PartitionProcessor):
-                async def process_events(self, events):
-                    if events:
-                        # do something sync or async to process the events
-                        await self._checkpoint_manager.update_checkpoint(events[-1].offset, events[-1].sequence_number)
-
             import asyncio
             from azure.eventhub.aio import EventHubClient
             from azure.eventhub.eventprocessor import EventProcessor, PartitionProcessor, Sqlite3PartitionManager
+
+            class MyPartitionProcessor(object):
+                async def process_events(self, events, checkpoint_manager):
+                    if events:
+                        # do something sync or async to process the events
+                        await checkpoint_manager.update_checkpoint(events[-1].offset, events[-1].sequence_number)
+
+
             client = EventHubClient.from_connection_string("<your connection string>", receive_timeout=5, retry_total=3)
             partition_manager = Sqlite3PartitionManager()
             try:
@@ -55,7 +54,7 @@ class EventProcessor(object):
 
     """
     def __init__(self, eventhub_client: EventHubClient, consumer_group_name: str,
-                 partition_processor_factory,
+                 partition_processor_factory: Callable[..., PartitionProcessor],
                  partition_manager: PartitionManager, **kwargs):
         """
         Instantiate an EventProcessor.
@@ -73,6 +72,8 @@ class EventProcessor(object):
         :type partition_manager: Class implementing the ~azure.eventhub.eventprocessor.PartitionManager.
         :param initial_event_position: The offset to start a partition consumer if the partition has no checkpoint yet.
         :type initial_event_position: int or str
+        :param polling_interval: The interval between any two pollings of balancing and claiming
+        :type float
 
         """
 
@@ -98,9 +99,12 @@ class EventProcessor(object):
     async def start(self):
         """Start the EventProcessor.
 
-        1. retrieve the partition ids from eventhubs.
-        2. claim partition ownership of these partitions.
-        3. repeatedly call EvenHubConsumer.receive() to retrieve events and call user defined PartitionProcessor.process_events().
+        1. Calls the OwnershipManager to keep claiming and balancing ownership of partitions in an
+        infinitely loop until self.stop() is called.
+        2. Cancels tasks for partitions that are no longer owned by this EventProcessor
+        3. Creates tasks for partitions that are newly claimed by this EventProcessor
+        4. Keeps tasks running for partitions that haven't changed ownership
+        5. Each task repeatedly calls EvenHubConsumer.receive() to retrieve events and call user defined partition processor
 
         :return: None
 
@@ -111,22 +115,23 @@ class EventProcessor(object):
             self._running = True
             while self._running:
                 claimed_ownership_list = await ownership_manager.claim_ownership()
-                claimed_partition_ids = [x["partition_id"] for x in claimed_ownership_list]
-                to_cancel_list = self._tasks.keys() - claimed_partition_ids
-                if to_cancel_list:
-                    self._cancel_tasks_for_partitions(to_cancel_list)
-                    log.info("EventProcesor %r has cancelled partitions %r", self._id, to_cancel_list)
-
-                if claimed_partition_ids:
+                if claimed_ownership_list:
+                    claimed_partition_ids = [x["partition_id"] for x in claimed_ownership_list]
+                    to_cancel_list = self._tasks.keys() - claimed_partition_ids
                     self._create_tasks_for_claimed_ownership(claimed_ownership_list)
                 else:
                     log.warning("EventProcessor %r hasn't claimed an ownership. It keeps claiming.", self._id)
+                    to_cancel_list = self._tasks.keys()
+                if to_cancel_list:
+                    self._cancel_tasks_for_partitions(to_cancel_list)
+                    log.info("EventProcesor %r has cancelled partitions %r", self._id, to_cancel_list)
                 await asyncio.sleep(self._polling_interval)
 
     async def stop(self):
-        """Stop all the partition consumer
+        """Stop claiming ownership and all the partition consumers owned by this EventProcessor
 
-        This method cancels tasks that are running EventHubConsumer.receive() for the partitions owned by this EventProcessor.
+        This method stops claiming ownership of owned partitions and cancels tasks that are running
+        EventHubConsumer.receive() for the partitions owned by this EventProcessor.
 
         :return: None
 
@@ -152,6 +157,13 @@ class EventProcessor(object):
 
     async def _receive(self, ownership):
         log.info("start ownership, %r", ownership)
+        partition_processor = self._partition_processor_factory()
+        if not hasattr(partition_processor, "process_events"):
+            log.error(
+                "Fatal error: a partition processor should at least have method process_events(events, checkpoint_manager). EventProcessor will stop.")
+            await self.stop()
+            raise TypeError("Partition processor must has method process_events(events, checkpoint_manager")
+
         partition_consumer = self._eventhub_client.create_consumer(ownership["consumer_group_name"],
                                                                    ownership["partition_id"],
                                                                    EventPosition(ownership.get("offset", self._initial_event_position))
@@ -161,8 +173,6 @@ class EventProcessor(object):
                                                ownership["consumer_group_name"],
                                                ownership["owner_id"],
                                                self._partition_manager)
-        partition_processor = self._partition_processor_factory()
-
         async def initialize():
             if hasattr(partition_processor, "initialize"):
                 await partition_processor.initialize(checkpoint_manager)
@@ -192,6 +202,7 @@ class EventProcessor(object):
                     )
                     await process_error(cancelled_error)
                     await close(CloseReason.SHUTDOWN)
+                    # TODO: release the ownership immediately via partition manager
                     break
                 except EventHubError as eh_err:
                     reason = CloseReason.LEASE_LOST if eh_err.error == "link:stolen" else CloseReason.EVENTHUB_EXCEPTION
@@ -205,11 +216,10 @@ class EventProcessor(object):
                         eh_err
                     )
                     await process_error(eh_err)
-                    await close(reason)
+                    await close(reason)  # An EventProcessor will pick up this partition again after the ownership is released
+                    # TODO: release the ownership immediately via partition manager
                     break
                 except Exception as exp:
                     log.warning(exp)
-                    # TODO: will review whether to break and close partition processor after user's code has an exception
-            # TODO: try to inform other EventProcessors to take the partition when this partition is closed in preview 3?
         finally:
             await partition_consumer.close()

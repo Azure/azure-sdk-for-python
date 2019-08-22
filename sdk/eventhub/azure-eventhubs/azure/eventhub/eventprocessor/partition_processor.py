@@ -23,7 +23,7 @@ class PartitionProcessor(Protocol):
     implementing this abstract class will be created for every partition the associated ~azure.eventhub.eventprocessor.EventProcessor owns.
 
     """
-    async def initialize(self, checkpoint_manager: CheckpointManager):
+    async def initialize(self):
         pass
 
     async def close(self, reason, checkpoint_manager: CheckpointManager):
@@ -45,7 +45,7 @@ class PartitionProcessor(Protocol):
         :type events: list[~azure.eventhub.common.EventData]
 
         """
-        pass
+        raise NotImplementedError
 
     async def process_error(self, error, checkpoint_manager: CheckpointManager):
         """Called when an error happens
