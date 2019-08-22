@@ -1,3 +1,8 @@
+parameters:
+  BeforeBuildJobPublishBuildArtifacts: []
+  BuildTargetingString: 'azure-*'
+  ServiceDirectory: ''
+
 steps:
   - script: |
       echo "##vso[build.addbuildtag]Scheduled"
