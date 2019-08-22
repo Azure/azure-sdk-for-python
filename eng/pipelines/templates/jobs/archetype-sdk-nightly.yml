@@ -79,7 +79,7 @@ jobs:
         OSName: $(OSName)
         PythonVersion: $(PythonVersion)
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
-        AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)" --tparallel'
+        AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
         BeforeTestSteps: 
             - task: DownloadPipelineArtifact@0
               inputs:
