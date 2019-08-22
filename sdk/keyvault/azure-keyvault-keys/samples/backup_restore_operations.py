@@ -56,7 +56,6 @@ def run_sample():
 
         # To ensure key is deleted on the server side.
         print("\nDeleting key...")
-        time.sleep(20)
         print("Deleted Key with name '{0}'".format(key.name))
 
         # In future, if the key is required again, we can use the backup value to restore it in the Key Vault.
