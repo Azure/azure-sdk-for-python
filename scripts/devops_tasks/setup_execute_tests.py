@@ -20,14 +20,12 @@ import pdb
 from common_tasks import process_glob_string, run_check_call, cleanup_folder, clean_coverage, MANAGEMENT_PACKAGE_IDENTIFIERS
 from tox_harness import prep_and_run_tox
 
-
 logging.getLogger().setLevel(logging.INFO)
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 coverage_dir = os.path.join(root_dir, "_coverage/")
 dev_setup_script_location = os.path.join(root_dir, "scripts/dev_setup.py")
 
-# TODO, dedup this function with collect_tox
 def collect_pytest_coverage_files(targeted_packages):
     coverage_files = []
     # generate coverage files

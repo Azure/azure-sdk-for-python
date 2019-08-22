@@ -6,7 +6,9 @@ parameters:
   PythonVersion: ''
   OSName: ''
   BeforeTestSteps: []
+  AdditionalTestSteps: []
   BuildTargetingString: 'azure-*'
+  ToxTestEnv: ""
   RunMyPy: and(ne(variables['PythonVersion'], '2.7'), ne(variables['PythonVersion'], 'pypy3'))
 
 steps:
@@ -45,8 +47,7 @@ steps:
         ${{ parameters.AdditionalTestArgs }} 
         --mark_arg="${{ parameters.TestMarkArgument }}" 
         --service="${{ parameters.ServiceDirectory }}" 
-        --toxenv="" 
-
+        --toxenv="${{ parameters.ToxTestEnv }}" 
         --tparallel
     env: ${{ parameters.EnvVars }}
 
@@ -62,6 +63,12 @@ steps:
         --toxenv="lint"
     env: ${{ parameters.EnvVars }}
 
+  - task: PublishTestResults@2
+    condition: succeededOrFailed()
+    inputs:
+      testResultsFiles: '**/*test*.xml'
+      testRunTitle: '${{ parameters.OSName }} Python ${{ parameters.PythonVersion }}'
+
   - task: PythonScript@0
     displayName: 'Run MyPy'
     inputs:
@@ -74,30 +81,5 @@ steps:
         --toxenv="mypy"
     env: ${{ parameters.EnvVars }}
     condition: and(succeededOrFailed(), ${{ parameters.RunMyPy }})
-
-  - task: PythonScript@0
-    displayName: 'Install Packages (Global)'
-    inputs:
-      scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
-      arguments: '"${{ parameters.BuildTargetingString }}" --runtype=setup --disablecov --service="${{ parameters.ServiceDirectory }}"'
-    env: ${{ parameters.EnvVars }}
-    condition: and(succeededOrFailed(), ne(variables['Build.Reason'], 'PullRequest'))
-
-  - task: PythonScript@0
-    displayName: 'Run Tests (Global)'
-    inputs:
-      scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
-      arguments: >-
-        "${{ parameters.BuildTargetingString }}" 
-        --runtype=execute 
-        --disablecov 
-        --mark_arg="${{ parameters.TestMarkArgument }}" 
-        --service="${{ parameters.ServiceDirectory }}"
-    env: ${{ parameters.EnvVars }}
-    condition: and(succeededOrFailed(), ne(variables['Build.Reason'], 'PullRequest'))
-
-  - task: PublishTestResults@2
-    condition: succeededOrFailed()
-    inputs:
-      testResultsFiles: '**/*test*.xml'
-      testRunTitle: '${{ parameters.OSName }} Python ${{ parameters.PythonVersion }}'
+  
+  - ${{ parameters.AdditionalTestSteps }}

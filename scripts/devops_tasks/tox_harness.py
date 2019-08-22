@@ -66,7 +66,6 @@ class ThreadPool:
         """Wait for completion of all the tasks in the queue"""
         self.tasks.join()
 
-# TODO, dedup this function with collect_pytest
 def collect_tox_coverage_files(targeted_packages):
     root_coverage_dir = os.path.join(root_dir, "_coverage/")
 
