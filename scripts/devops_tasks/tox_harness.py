@@ -107,13 +107,13 @@ def individual_workload(tox_command_tuple, failed_workload_results):
     with open(stdout, 'w') as f_stdout, open(stderr, 'w') as f_stderr:
         proc = Popen(tox_command_tuple[0], stdout=f_stdout, stderr=f_stderr, cwd=tox_command_tuple[1], env=os.environ.copy())
 
-        logging.info("Opened task for {}".format(pkg))
+        logging.info("POpened task for for {}".format(pkg))
         proc.wait()
 
         log_file(stdout)
 
         if proc.returncode != 0:
-            logging.error("Package returned with code {}".format(proc.returncode))
+            logging.error("{} returned with code {}".format(pkg, proc.returncode))
             failed_workload_results[pkg] = proc.returncode
 
         if read_file(stderr):
@@ -128,11 +128,6 @@ def execute_tox_parallel(tox_command_tuples):
     failed_workload_results = {}
 
     for index, cmd_tuple in enumerate(tox_command_tuples):
-        logging.info(
-            "Starting tox for {}. {} of {}.".format(
-                os.path.basename(cmd_tuple[1]), index + 1, len(tox_command_tuples)
-            )
-        )
         pool.add_task(individual_workload, cmd_tuple, failed_workload_results)
 
     pool.wait_completion()
