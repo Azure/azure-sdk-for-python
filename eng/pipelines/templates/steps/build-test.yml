@@ -55,8 +55,7 @@ steps:
     inputs:
       scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
       arguments: >-
-        "${{ parameters.BuildTargetingString }}" 
-        ${{ parameters.AdditionalTestArgs }} 
+        "${{ parameters.BuildTargetingString }}"
         --mark_arg="${{ parameters.TestMarkArgument }}" 
         --service="${{ parameters.ServiceDirectory }}" 
         --toxenv="lint"
@@ -74,7 +73,6 @@ steps:
       scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
       arguments: >-
         "${{ parameters.BuildTargetingString }}" 
-        ${{ parameters.AdditionalTestArgs }} 
         --mark_arg="${{ parameters.TestMarkArgument }}" 
         --service="${{ parameters.ServiceDirectory }}" 
         --toxenv="mypy"
