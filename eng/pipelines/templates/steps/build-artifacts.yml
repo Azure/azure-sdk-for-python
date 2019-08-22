@@ -1,5 +1,5 @@
 parameters:
-  BeforeBuildJobPublishBuildArtifacts: []
+  BeforePublishSteps: []
   BuildTargetingString: 'azure-*'
   ServiceDirectory: ''
 
@@ -28,7 +28,7 @@ steps:
       twine check $(Build.ArtifactStagingDirectory)/*
     displayName: 'Verify Readme'
 
-  - ${{ parameters.BeforeBuildJobPublishBuildArtifacts }}
+  - ${{ parameters.BeforePublishSteps }}
 
   - task: PublishPipelineArtifact@0
     inputs:
