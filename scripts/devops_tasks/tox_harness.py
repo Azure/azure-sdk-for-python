@@ -106,10 +106,10 @@ def collect_tox_coverage_files(targeted_packages):
         shutil.move(source, dest)
 
 
-def individual_workload(tox_command_tuple, failed_workload_results):
+def individual_workload(tox_command_tuple, workload_results):
+    pkg = os.path.basename(tox_command_tuple[1])
     stdout = os.path.join(tox_command_tuple[1], "stdout.txt")
     stderr = os.path.join(tox_command_tuple[1], "stderr.txt")
-    pkg = os.path.basename(tox_command_tuple[1])
     tox_dir = os.path.join(tox_command_tuple[1], './.tox/')
 
     with open(stdout, "w") as f_stdout, open(stderr, "w") as f_stderr:
@@ -124,16 +124,18 @@ def individual_workload(tox_command_tuple, failed_workload_results):
         logging.info("POpened task for for {}".format(pkg))
         proc.wait()
 
-        log_file(stdout)
-
+        return_code = proc.returncode
+        
         if proc.returncode != 0:
             logging.error("{} returned with code {}".format(pkg, proc.returncode))
-            failed_workload_results[pkg] = proc.returncode
+        else:
+            logging.info("{} returned with code 0, output will be printed after the test run completes.".format(pkg))
 
         if read_file(stderr):
             logging.error("Package {} had stderror output. Logging.".format(pkg))
-            failed_workload_results[pkg] = "StdErr output detected"
-            log_file(stderr)
+            return_code = "StdErr output detected"
+            
+        workload_results[tox_command_tuple[1]] = (return_code, stdout, stderr)
 
         if in_ci():
             shutil.rmtree(tox_dir)
@@ -143,22 +145,27 @@ def individual_workload(tox_command_tuple, failed_workload_results):
 
 def execute_tox_parallel(tox_command_tuples):
     pool = ThreadPool(pool_size)
-    failed_workload_results = {}
+    workload_results = {}
 
     for index, cmd_tuple in enumerate(tox_command_tuples):
-        pool.add_task(individual_workload, cmd_tuple, failed_workload_results)
+        pool.add_task(individual_workload, cmd_tuple, workload_results)
 
     pool.wait_completion()
 
-    if len(failed_workload_results.keys()):
-        for key in failed_workload_results.keys():
+    failed_run = False
+
+    for key in workload_results.keys():
+        log_file(workload_results[key][1])
+
+        if workload_results[key][0] != 0:
             logging.error(
                 "{} tox invocation exited with returncode {}".format(
-                    key, failed_workload_results[key]
+                    os.path.basename(key), workload_results[key]
                 )
             )
-        exit(1)
 
+    if failed_run:
+        exit(1)
 
 def execute_tox_serial(tox_command_tuples):
     for index, cmd_tuple in enumerate(tox_command_tuples):
@@ -218,7 +225,6 @@ def prep_and_run_tox(targeted_packages, parsed_args, options_array=[]):
         if local_options_array:
             tox_execution_array.extend(["--"] + local_options_array)
 
-        # 0 = command array
         tox_command_tuples.append((tox_execution_array, package_dir))
 
     if parsed_args.tparallel:
