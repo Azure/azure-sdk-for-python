@@ -10,18 +10,20 @@ import asyncio
 
 from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError
 from azure.core.pipeline.transport import AioHttpTransport
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, FakeStorageAccount
 from multidict import CIMultiDict, CIMultiDictProxy
 from azure.storage.file.aio import (
     FileServiceClient,
     StorageErrorCode,
 )
-from filetestcase import (
-    FileTestCase,
-    record,
-    LogCaptured,
-    TestMode
+from asyncfiletestcase import (
+    AsyncFileTestCase
 )
 
+
+FAKE_STORAGE = FakeStorageAccount(
+    name='pyacrstorage',
+    id='')
 
 # ------------------------------------------------------------------------------
 
@@ -36,38 +38,28 @@ class AiohttpTestTransport(AioHttpTransport):
         return response
 
 
-class StorageDirectoryTest(FileTestCase):
+class StorageDirectoryTest(AsyncFileTestCase):
     def setUp(self):
         super(StorageDirectoryTest, self).setUp()
-
-        url = self.get_file_url()
-        credential = self.get_shared_key_credential()
-        self.fsc = FileServiceClient(url, credential=credential, transport=AiohttpTestTransport())
         self.share_name = self.get_resource_name('utshare')
 
-    def tearDown(self):
-        if not self.is_playback():
-            loop = asyncio.get_event_loop()
-            try:
-                loop.run_until_complete(self.fsc.delete_share(self.share_name, delete_snapshots=True))
-            except:
-                pass
-
-        return super(StorageDirectoryTest, self).tearDown()
-
     # --Helpers-----------------------------------------------------------------
-    async def _setup(self):
-        if not self.is_playback():
+    async def _setup(self, fsc):
+        if self.is_live:
             try:
-                await self.fsc.create_share(self.share_name)
+                await fsc.create_share(self.share_name)
             except:
                 pass
 
     # --Test cases for directories ----------------------------------------------
-    async def _test_create_directories_async(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @AsyncFileTestCase.await_prepared_test
+    async def test_create_directories_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        await self._setup()
-        share_client = self.fsc.get_share_client(self.share_name)
+        fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
+        await self._setup(fsc)
+        share_client = fsc.get_share_client(self.share_name)
 
         # Act
         created = await share_client.create_directory('dir1')
@@ -75,15 +67,14 @@ class StorageDirectoryTest(FileTestCase):
         # Assert
         self.assertTrue(created)
 
-    @record
-    def test_create_directories_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_create_directories_async())
-
-    async def _test_create_directories_with_metadata_async(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @AsyncFileTestCase.await_prepared_test
+    async def test_create_directories_with_metadata_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        await self._setup()
-        share_client = self.fsc.get_share_client(self.share_name)
+        fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
+        await self._setup(fsc)
+        share_client = fsc.get_share_client(self.share_name)
         metadata = {'hello': 'world', 'number': '42'}
 
         # Act
@@ -93,15 +84,14 @@ class StorageDirectoryTest(FileTestCase):
         props = await directory.get_directory_properties()
         self.assertDictEqual(props.metadata, metadata)
 
-    @record
-    def test_create_directories_with_metadata_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_create_directories_with_metadata_async())
-
-    async def _test_create_directories_fail_on_exist_async(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @AsyncFileTestCase.await_prepared_test
+    async def test_create_directories_fail_on_exist_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        await self._setup()
-        share_client = self.fsc.get_share_client(self.share_name)
+        fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
+        await self._setup(fsc)
+        share_client = fsc.get_share_client(self.share_name)
 
         # Act
         created = await share_client.create_directory('dir1')
@@ -111,15 +101,14 @@ class StorageDirectoryTest(FileTestCase):
         # Assert
         self.assertTrue(created)
 
-    @record
-    def test_create_directories_fail_on_exist_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_create_directories_fail_on_exist_async())
-
-    async def _test_create_subdirectories_async(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @AsyncFileTestCase.await_prepared_test
+    async def test_create_subdirectories_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        await self._setup()
-        share_client = self.fsc.get_share_client(self.share_name)
+        fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
+        await self._setup(fsc)
+        share_client = fsc.get_share_client(self.share_name)
         directory = await share_client.create_directory('dir1')
 
         # Act
@@ -129,15 +118,15 @@ class StorageDirectoryTest(FileTestCase):
         self.assertTrue(created)
         self.assertEqual(created.directory_path, 'dir1/dir2')
 
-    @record
-    def test_create_subdirectories_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_create_subdirectories_async())
 
-    async def _test_create_subdirectories_with_metadata_async(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @AsyncFileTestCase.await_prepared_test
+    async def test_create_subdirectories_with_metadata_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        await self._setup()
-        share_client = self.fsc.get_share_client(self.share_name)
+        fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
+        await self._setup(fsc)
+        share_client = fsc.get_share_client(self.share_name)
         directory = await share_client.create_directory('dir1')
         metadata = {'hello': 'world', 'number': '42'}
 
@@ -150,17 +139,16 @@ class StorageDirectoryTest(FileTestCase):
         properties = await created.get_directory_properties()
         self.assertEqual(properties.metadata, metadata)
 
-    @record
-    def test_create_subdirectories_with_metadata_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_create_subdirectories_with_metadata_async())
-
-    async def _test_create_file_in_directory_async(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @AsyncFileTestCase.await_prepared_test
+    async def test_create_file_in_directory_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        await self._setup()
+        fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
+        await self._setup(fsc)
         file_data = b'12345678' * 1024
         file_name = self.get_resource_name('file')
-        share_client = self.fsc.get_share_client(self.share_name)
+        share_client = fsc.get_share_client(self.share_name)
         directory = await share_client.create_directory('dir1')
 
         # Act
@@ -171,17 +159,15 @@ class StorageDirectoryTest(FileTestCase):
         file_content = await file_content.content_as_bytes()
         self.assertEqual(file_content, file_data)
 
-    def test_create_file_in_directory_async(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_create_file_in_directory_async())
-
-    async def _test_delete_file_in_directory_async(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @AsyncFileTestCase.await_prepared_test
+    async def test_delete_file_in_directory_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        await self._setup()
+        fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
+        await self._setup(fsc)
         file_name = self.get_resource_name('file')
-        share_client = self.fsc.get_share_client(self.share_name)
+        share_client = fsc.get_share_client(self.share_name)
         directory = await share_client.create_directory('dir1')
         new_file = await directory.upload_file(file_name, "hello world")
 
@@ -193,15 +179,14 @@ class StorageDirectoryTest(FileTestCase):
         with self.assertRaises(ResourceNotFoundError):
             await new_file.get_file_properties()
 
-    @record
-    def test_delete_file_in_directory_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_delete_file_in_directory_async())
-
-    async def _test_delete_subdirectories_async(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @AsyncFileTestCase.await_prepared_test
+    async def test_delete_subdirectories_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        await self._setup()
-        share_client = self.fsc.get_share_client(self.share_name)
+        fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
+        await self._setup(fsc)
+        share_client = fsc.get_share_client(self.share_name)
         directory = await share_client.create_directory('dir1')
         await directory.create_subdirectory('dir2')
 
@@ -214,15 +199,14 @@ class StorageDirectoryTest(FileTestCase):
         with self.assertRaises(ResourceNotFoundError):
             await subdir.get_directory_properties()
 
-    @record
-    def test_delete_subdirectories_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_delete_subdirectories_async())
-
-    async def _test_get_directory_properties_async(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @AsyncFileTestCase.await_prepared_test
+    async def test_get_directory_properties_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        await self._setup()
-        share_client = self.fsc.get_share_client(self.share_name)
+        fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
+        await self._setup(fsc)
+        share_client = fsc.get_share_client(self.share_name)
         directory = await share_client.create_directory('dir1')
 
         # Act
@@ -233,15 +217,14 @@ class StorageDirectoryTest(FileTestCase):
         self.assertIsNotNone(props.etag)
         self.assertIsNotNone(props.last_modified)
 
-    @record
-    def test_get_directory_properties_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_get_directory_properties_async())
-
-    async def _test_get_directory_properties_with_snapshot_async(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @AsyncFileTestCase.await_prepared_test
+    async def test_get_directory_properties_with_snapshot_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        await self._setup()
-        share_client = self.fsc.get_share_client(self.share_name)
+        fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
+        await self._setup(fsc)
+        share_client = fsc.get_share_client(self.share_name)
         metadata = {"test1": "foo", "test2": "bar"}
         directory = await share_client.create_directory('dir1', metadata=metadata)
         snapshot1 = await share_client.create_snapshot()
@@ -249,7 +232,7 @@ class StorageDirectoryTest(FileTestCase):
         await directory.set_directory_metadata(metadata2)
 
         # Act
-        share_client = self.fsc.get_share_client(self.share_name, snapshot=snapshot1)
+        share_client = fsc.get_share_client(self.share_name, snapshot=snapshot1)
         snap_dir = share_client.get_directory_client('dir1')
         props = await snap_dir.get_directory_properties()
 
@@ -259,15 +242,14 @@ class StorageDirectoryTest(FileTestCase):
         self.assertIsNotNone(props.last_modified)
         self.assertDictEqual(metadata, props.metadata)
 
-    @record
-    def test_get_directory_properties_with_snapshot_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_get_directory_properties_with_snapshot_async())
-
-    async def _test_get_directory_metadata_with_snapshot_async(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @AsyncFileTestCase.await_prepared_test
+    async def test_get_directory_metadata_with_snapshot_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        await self._setup()
-        share_client = self.fsc.get_share_client(self.share_name)
+        fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
+        await self._setup(fsc)
+        share_client = fsc.get_share_client(self.share_name)
         metadata = {"test1": "foo", "test2": "bar"}
         directory = await share_client.create_directory('dir1', metadata=metadata)
         snapshot1 = await share_client.create_snapshot()
@@ -275,7 +257,7 @@ class StorageDirectoryTest(FileTestCase):
         await directory.set_directory_metadata(metadata2)
 
         # Act
-        share_client = self.fsc.get_share_client(self.share_name, snapshot=snapshot1)
+        share_client = fsc.get_share_client(self.share_name, snapshot=snapshot1)
         snap_dir = share_client.get_directory_client('dir1')
         snapshot_props = await snap_dir.get_directory_properties()
 
@@ -283,15 +265,14 @@ class StorageDirectoryTest(FileTestCase):
         self.assertIsNotNone(snapshot_props.metadata)
         self.assertDictEqual(metadata, snapshot_props.metadata)
 
-    @record
-    def test_get_directory_metadata_with_snapshot_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_get_directory_metadata_with_snapshot_async())
-
-    async def _test_get_directory_properties_with_non_existing_directory_async(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @AsyncFileTestCase.await_prepared_test
+    async def test_get_dir_proos_with_non_existing_dir_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        await self._setup()
-        share_client = self.fsc.get_share_client(self.share_name)
+        fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
+        await self._setup(fsc)
+        share_client = fsc.get_share_client(self.share_name)
         directory = share_client.get_directory_client('dir1')
 
         # Act
@@ -300,15 +281,14 @@ class StorageDirectoryTest(FileTestCase):
 
             # Assert
 
-    @record
-    def test_get_directory_properties_with_non_existing_directory_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_get_directory_properties_with_non_existing_directory_async())
-
-    async def _test_directory_exists_async(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @AsyncFileTestCase.await_prepared_test
+    async def test_directory_exists_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        await self._setup()
-        share_client = self.fsc.get_share_client(self.share_name)
+        fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
+        await self._setup(fsc)
+        share_client = fsc.get_share_client(self.share_name)
         directory = await share_client.create_directory('dir1')
 
         # Act
@@ -317,15 +297,14 @@ class StorageDirectoryTest(FileTestCase):
         # Assert
         self.assertTrue(exists)
 
-    @record
-    def test_directory_exists_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_directory_exists_async())
-
-    async def _test_directory_not_exists_async(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @AsyncFileTestCase.await_prepared_test
+    async def test_directory_not_exists_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        await self._setup()
-        share_client = self.fsc.get_share_client(self.share_name)
+        fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
+        await self._setup(fsc)
+        share_client = fsc.get_share_client(self.share_name)
         directory = share_client.get_directory_client('dir1')
 
         # Act
@@ -334,15 +313,14 @@ class StorageDirectoryTest(FileTestCase):
 
         # Assert
 
-    @record
-    def test_directory_not_exists_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_directory_not_exists_async())
-
-    async def _test_directory_parent_not_exists_async(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @AsyncFileTestCase.await_prepared_test
+    async def test_directory_parent_not_exists_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        await self._setup()
-        share_client = self.fsc.get_share_client(self.share_name)
+        fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
+        await self._setup(fsc)
+        share_client = fsc.get_share_client(self.share_name)
         directory = share_client.get_directory_client('missing1/missing2')
 
         # Act
@@ -352,57 +330,52 @@ class StorageDirectoryTest(FileTestCase):
         # Assert
         self.assertEqual(e.exception.error_code, StorageErrorCode.parent_not_found)
 
-    @record
-    def test_directory_parent_not_exists_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_directory_parent_not_exists_async())
-
-    async def _test_directory_exists_with_snapshot_async(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @AsyncFileTestCase.await_prepared_test
+    async def test_directory_exists_with_snapshot_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        await self._setup()
-        share_client = self.fsc.get_share_client(self.share_name)
+        fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
+        await self._setup(fsc)
+        share_client = fsc.get_share_client(self.share_name)
         directory = await share_client.create_directory('dir1')
         snapshot = await share_client.create_snapshot()
         await directory.delete_directory()
 
         # Act
-        share_client = self.fsc.get_share_client(self.share_name, snapshot=snapshot)
+        share_client = fsc.get_share_client(self.share_name, snapshot=snapshot)
         snap_dir = share_client.get_directory_client('dir1')
         exists = await snap_dir.get_directory_properties()
 
         # Assert
         self.assertTrue(exists)
 
-    @record
-    def test_directory_exists_with_snapshot_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_directory_exists_with_snapshot_async())
-
-    async def _test_directory_not_exists_with_snapshot_async(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @AsyncFileTestCase.await_prepared_test
+    async def test_directory_not_exists_with_snapshot_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        await self._setup()
-        share_client = self.fsc.get_share_client(self.share_name)
+        fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
+        await self._setup(fsc)
+        share_client = fsc.get_share_client(self.share_name)
         snapshot = await share_client.create_snapshot()
         directory = await share_client.create_directory('dir1')
 
         # Act
-        share_client = self.fsc.get_share_client(self.share_name, snapshot=snapshot)
+        share_client = fsc.get_share_client(self.share_name, snapshot=snapshot)
         snap_dir = share_client.get_directory_client('dir1')
 
         with self.assertRaises(ResourceNotFoundError):
             await snap_dir.get_directory_properties()
 
-        # Assert
-
-    @record
-    def test_directory_not_exists_with_snapshot_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_directory_not_exists_with_snapshot_async())
-
-    async def _test_get_set_directory_metadata_async(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @AsyncFileTestCase.await_prepared_test
+    async def test_get_set_directory_metadata_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        await self._setup()
-        share_client = self.fsc.get_share_client(self.share_name)
+        fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
+        await self._setup(fsc)
+        share_client = fsc.get_share_client(self.share_name)
         directory = await share_client.create_directory('dir1')
         metadata = {'hello': 'world', 'number': '43'}
 
@@ -413,15 +386,14 @@ class StorageDirectoryTest(FileTestCase):
         # Assert
         self.assertDictEqual(props.metadata, metadata)
 
-    @record
-    def test_get_set_directory_metadata_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_get_set_directory_metadata_async())
-
-    async def _test_list_subdirectories_and_files_async(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @AsyncFileTestCase.await_prepared_test
+    async def test_list_subdirectories_and_files_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        await self._setup()
-        share_client = self.fsc.get_share_client(self.share_name)
+        fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
+        await self._setup(fsc)
+        share_client = fsc.get_share_client(self.share_name)
         directory = await share_client.create_directory('dir1')
         await asyncio.gather(
             directory.create_subdirectory("subdir1"),
@@ -448,15 +420,14 @@ class StorageDirectoryTest(FileTestCase):
         self.assertEqual(len(list_dir), 6)
         self.assertEqual(list_dir, expected)
 
-    @record
-    def test_list_subdirectories_and_files_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_list_subdirectories_and_files_async())
-
-    async def _test_list_subdirectories_and_files_with_prefix_async(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @AsyncFileTestCase.await_prepared_test
+    async def test_list_subdirectories_and_files_with_prefix_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        await self._setup()
-        share_client = self.fsc.get_share_client(self.share_name)
+        fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
+        await self._setup(fsc)
+        share_client = fsc.get_share_client(self.share_name)
         directory = await share_client.create_directory('dir1')
         await asyncio.gather(
             directory.create_subdirectory("subdir1"),
@@ -480,15 +451,14 @@ class StorageDirectoryTest(FileTestCase):
         self.assertEqual(len(list_dir), 3)
         self.assertEqual(list_dir, expected)
 
-    @record
-    def test_list_subdirectories_and_files_with_prefix_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_list_subdirectories_and_files_with_prefix_async())
-
-    async def _test_list_subdirectories_and_files_with_snapshot_async(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @AsyncFileTestCase.await_prepared_test
+    async def test_list_subdirectories_and_files_with_snapshot_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        await self._setup()
-        share_client = self.fsc.get_share_client(self.share_name)
+        fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
+        await self._setup(fsc)
+        share_client = fsc.get_share_client(self.share_name)
         directory = await share_client.create_directory('dir1')
         await asyncio.gather(
             directory.create_subdirectory("subdir1"),
@@ -501,7 +471,7 @@ class StorageDirectoryTest(FileTestCase):
             directory.upload_file("file2", "data2"),
             directory.upload_file("file3", "data3"))
 
-        share_client = self.fsc.get_share_client(self.share_name, snapshot=snapshot)
+        share_client = fsc.get_share_client(self.share_name, snapshot=snapshot)
         snapshot_dir = share_client.get_directory_client('dir1')
 
         # Act
@@ -518,15 +488,15 @@ class StorageDirectoryTest(FileTestCase):
         self.assertEqual(len(list_dir), 3)
         self.assertEqual(list_dir, expected)
 
-    @record
-    def test_list_subdirectories_and_files_with_snapshot_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_list_subdirectories_and_files_with_snapshot_async())
 
-    async def _test_list_nested_subdirectories_and_files_async(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @AsyncFileTestCase.await_prepared_test
+    async def test_list_nested_subdirectories_and_files_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        await self._setup()
-        share_client = self.fsc.get_share_client(self.share_name)
+        fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
+        await self._setup(fsc)
+        share_client = fsc.get_share_client(self.share_name)
         directory = await share_client.create_directory('dir1')
         subdir = await directory.create_subdirectory("subdir1")
         await subdir.create_subdirectory("subdir2")
@@ -549,15 +519,15 @@ class StorageDirectoryTest(FileTestCase):
         self.assertEqual(len(list_dir), 2)
         self.assertEqual(list_dir, expected)
 
-    @record
-    def test_list_nested_subdirectories_and_files_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_list_nested_subdirectories_and_files_async())
 
-    async def _test_delete_directory_with_existing_share_async(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @AsyncFileTestCase.await_prepared_test
+    async def test_delete_directory_with_existing_share_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        await self._setup()
-        share_client = self.fsc.get_share_client(self.share_name)
+        fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
+        await self._setup(fsc)
+        share_client = fsc.get_share_client(self.share_name)
         directory = await share_client.create_directory('dir1')
 
         # Act
@@ -568,15 +538,15 @@ class StorageDirectoryTest(FileTestCase):
         with self.assertRaises(ResourceNotFoundError):
             await directory.get_directory_properties()
 
-    @record
-    def test_delete_directory_with_existing_share_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_delete_directory_with_existing_share_async())
 
-    async def _test_delete_directory_with_non_existing_directory_async(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @AsyncFileTestCase.await_prepared_test
+    async def test_delete_directory_with_non_existing_directory_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        await self._setup()
-        share_client = self.fsc.get_share_client(self.share_name)
+        fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
+        await self._setup(fsc)
+        share_client = fsc.get_share_client(self.share_name)
         directory = share_client.get_directory_client('dir1')
 
         # Act
@@ -585,15 +555,15 @@ class StorageDirectoryTest(FileTestCase):
 
         # Assert
 
-    @record
-    def test_delete_directory_with_non_existing_directory_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_delete_directory_with_non_existing_directory_async())
 
-    async def _test_get_directory_properties_server_encryption_async(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @AsyncFileTestCase.await_prepared_test
+    async def test_get_directory_properties_server_encryption_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        await self._setup()
-        share_client = self.fsc.get_share_client(self.share_name)
+        fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
+        await self._setup(fsc)
+        share_client = fsc.get_share_client(self.share_name)
         directory = await share_client.create_directory('dir1')
 
         # Act
@@ -608,11 +578,6 @@ class StorageDirectoryTest(FileTestCase):
             self.assertTrue(props.server_encrypted)
         else:
             self.assertFalse(props.server_encrypted)
-
-    @record
-    def test_get_directory_properties_server_encryption_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_get_directory_properties_server_encryption_async())
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':

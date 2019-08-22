@@ -8,37 +8,71 @@ interactions:
       - gzip, deflate
       Connection:
       - keep-alive
+      Content-Length:
+      - '0'
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       content-type:
       - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - 333981b0-b636-11e9-bd9c-2816a845e8c6
       x-ms-date:
-      - Sat, 03 Aug 2019 21:32:31 GMT
+      - Thu, 22 Aug 2019 18:46:25 GMT
+      x-ms-version:
+      - '2018-11-09'
+    method: PUT
+    uri: https://pyacrstorage47651e25.file.core.windows.net/utshare47651e25?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Thu, 22 Aug 2019 18:46:22 GMT
+      etag:
+      - '"0x8D72731079AC630"'
+      last-modified:
+      - Thu, 22 Aug 2019 18:46:23 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version:
+      - '2018-11-09'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-date:
+      - Thu, 22 Aug 2019 18:46:25 GMT
       x-ms-version:
       - '2018-11-09'
     method: GET
-    uri: https://storagename.file.core.windows.net/utshare47651e25/dir1?restype=directory
+    uri: https://pyacrstorage47651e25.file.core.windows.net/utshare47651e25/dir1?restype=directory
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ResourceNotFound</Code><Message>The
-        specified resource does not exist.\nRequestId:5c6b0253-901a-00c8-7542-4af537000000\nTime:2019-08-03T21:32:30.8023210Z</Message></Error>"
+        specified resource does not exist.\nRequestId:445f3f3d-001a-002c-7319-597392000000\nTime:2019-08-22T18:46:23.3000738Z</Message></Error>"
     headers:
-      Content-Length:
+      content-length:
       - '223'
-      Content-Type:
+      content-type:
       - application/xml
-      Date:
-      - Sat, 03 Aug 2019 21:32:30 GMT
-      Server:
+      date:
+      - Thu, 22 Aug 2019 18:46:22 GMT
+      server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
       x-ms-error-code:
       - ResourceNotFound
-      x-ms-request-id:
-      - 5c6b0253-901a-00c8-7542-4af537000000
       x-ms-version:
       - '2018-11-09'
     status:

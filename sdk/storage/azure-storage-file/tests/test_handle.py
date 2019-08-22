@@ -12,47 +12,33 @@ from azure.core.exceptions import (
     HttpResponseError,
     ResourceNotFoundError,
     ResourceExistsError)
-
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, FakeStorageAccount
 from azure.storage.file.file_service_client import FileServiceClient
 from azure.storage.file.directory_client import DirectoryClient
 from azure.storage.file.file_client import FileClient
 from azure.storage.file.share_client import ShareClient
 from filetestcase import (
     FileTestCase,
-    record,
-    TestMode,
 )
 
 # ------------------------------------------------------------------------------
 TEST_SHARE_NAME = 'test'
 TEST_SHARE_PREFIX = 'share'
-
+FAKE_STORAGE = FakeStorageAccount(
+    name='pyacrstorage',
+    id='')
 
 # ------------------------------------------------------------------------------
 
 class StorageHandleTest(FileTestCase):
-    def setUp(self):
-        super(StorageHandleTest, self).setUp()
-        file_url = self.get_file_url()
-        credentials = self.get_shared_key_credential()
-        self.fsc = FileServiceClient(account_url=file_url, credential=credentials)
-        self.test_shares = []
-
-    def tearDown(self):
-        if not self.is_playback():
-            for share in self.test_shares:
-                self.fsc.delete_share(share.share_name, delete_snapshots=True)
-        return super(StorageHandleTest, self).tearDown()
-
     # --Helpers-----------------------------------------------------------------
-    def _get_share_reference(self, prefix=TEST_SHARE_PREFIX):
+    def _get_share_reference(self, fsc, prefix=TEST_SHARE_PREFIX):
         share_name = self.get_resource_name(prefix)
-        share = self.fsc.get_share_client(share_name)
-        self.test_shares.append(share)
+        share = fsc.get_share_client(share_name)
         return share
 
-    def _create_share(self, prefix=TEST_SHARE_PREFIX):
-        share_client = self._get_share_reference(prefix)
+    def _create_share(self, fsc, prefix=TEST_SHARE_PREFIX):
+        share_client = self._get_share_reference(fsc, prefix)
         share = share_client.create_share()
         return share_client
 
@@ -72,13 +58,15 @@ class StorageHandleTest(FileTestCase):
         self.assertIsNotNone(handles[0].client_ip)
         self.assertIsNotNone(handles[0].open_time)
 
-    @record
-    def test_list_handles_on_share(self):
+    @ResourceGroupPreparer()               
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    def test_list_handles_on_share(self, resource_group, location, storage_account, storage_account_key):
         #pytest.skip("")
         # don't run live, since the test set up was highly manual
         # only run when recording, or playing back in CI
-        if not TestMode.need_recording_file(self.test_mode):
+        if self.is_live:
             return
+        fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
         share = self.fsc.get_share_client(TEST_SHARE_NAME)
         root = share.get_directory_client()
 
@@ -89,12 +77,14 @@ class StorageHandleTest(FileTestCase):
         self._validate_handles(handles)
 
 #
-    @record
-    def test_list_handles_on_share_snapshot(self):
+    @ResourceGroupPreparer()               
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    def test_list_handles_on_share_snapshot(self, resource_group, location, storage_account, storage_account_key):
         # don't run live, since the test set up was highly manual
         # only run when recording, or playing back in CI
-        if not TestMode.need_recording_file(self.test_mode):
+        if self.is_live:
             return
+        fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
         share = self.fsc.get_share_client(TEST_SHARE_NAME, snapshot="2019-05-08T23:27:24.0000000Z")
         root = share.get_directory_client()
 
@@ -104,12 +94,14 @@ class StorageHandleTest(FileTestCase):
         # Assert
         self._validate_handles(handles)
 
-    @record
-    def test_list_handles_with_marker(self):
+    @ResourceGroupPreparer()               
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    def test_list_handles_with_marker(self, resource_group, location, storage_account, storage_account_key):
         # don't run live, since the test set up was highly manual
         # only run when recording, or playing back in CI
-        if not TestMode.need_recording_file(self.test_mode):
+        if self.is_live:
             return
+        fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
         share = self.fsc.get_share_client(TEST_SHARE_NAME)
         root = share.get_directory_client()
 
@@ -136,12 +128,14 @@ class StorageHandleTest(FileTestCase):
         old_handle_not_present = all([old_handle.id != handle.id for handle in remaining_handles])
         self.assertTrue(old_handle_not_present)
 
-    @record
-    def test_list_handles_on_directory(self):
+    @ResourceGroupPreparer()               
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    def test_list_handles_on_directory(self, resource_group, location, storage_account, storage_account_key):
         # don't run live, since the test set up was highly manual
         # only run when recording, or playing back in CI
-        if not TestMode.need_recording_file(self.test_mode):
+        if self.is_live:
             return
+        fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
         share = self.fsc.get_share_client(TEST_SHARE_NAME)
         dir = share.get_directory_client('wut')
 
@@ -157,12 +151,14 @@ class StorageHandleTest(FileTestCase):
         # Assert recursive option is functioning when disabled
         self.assertTrue(len(handles) == 0)
 
-    @record
-    def test_list_handles_on_file(self):
+    @ResourceGroupPreparer()               
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    def test_list_handles_on_file(self, resource_group, location, storage_account, storage_account_key):
         # don't run live, since the test set up was highly manual
         # only run when recording, or playing back in CI
-        if not TestMode.need_recording_file(self.test_mode):
+        if self.is_live:
             return
+        fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
         share = self.fsc.get_share_client(TEST_SHARE_NAME)
         client = share.get_file_client('wut/bla.txt')
 
@@ -172,14 +168,17 @@ class StorageHandleTest(FileTestCase):
         # Assert
         self._validate_handles(handles)
 
-    @record
-    def test_close_single_handle(self):
+    @ResourceGroupPreparer()               
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    def test_close_single_handle(self, resource_group, location, storage_account, storage_account_key):
         # don't run live, since the test set up was highly manual
         # only run when recording, or playing back in CI
-        if not TestMode.need_recording_file(self.test_mode):
+        if self.is_live:
             return
 
         # Arrange
+
+        fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
         share = self.fsc.get_share_client(TEST_SHARE_NAME)
         root = share.get_directory_client()
         handles = list(root.list_handles(recursive=True))
@@ -191,14 +190,16 @@ class StorageHandleTest(FileTestCase):
         # Assert 1 handle has been closed
         self.assertEqual(1, num_closed.result())
 
-    @record
-    def test_close_all_handle(self):
+    @ResourceGroupPreparer()               
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    def test_close_all_handle(self, resource_group, location, storage_account, storage_account_key):
         # don't run live, since the test set up was highly manual
         # only run when recording, or playing back in CI
-        if not TestMode.need_recording_file(self.test_mode):
+        if self.is_live:
             return
 
         # Arrange
+        fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
         share = self.fsc.get_share_client(TEST_SHARE_NAME)
         root = share.get_directory_client()
         handles = list(root.list_handles(recursive=True))
