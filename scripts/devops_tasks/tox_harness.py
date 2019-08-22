@@ -55,6 +55,8 @@ class Worker(Thread):
             finally:
                 self.tasks.task_done()
 
+def in_ci():
+    return os.getenv('TF_BUILD', False)
 
 class ThreadPool:
     def __init__(self, num_threads):
@@ -92,7 +94,7 @@ def collect_tox_coverage_files(targeted_packages):
     logging.info("Visible uncombined .coverage files: {}".format(coverage_files))
 
     if len(coverage_files):
-        cov_cmd_array = ["coverage", "combine"]
+        cov_cmd_array = [sys.executable, "-m", "coverage", "combine"]
         cov_cmd_array.extend(coverage_files)
 
         # merge them with coverage combine and copy to root
@@ -108,6 +110,7 @@ def individual_workload(tox_command_tuple, failed_workload_results):
     stdout = os.path.join(tox_command_tuple[1], "stdout.txt")
     stderr = os.path.join(tox_command_tuple[1], "stderr.txt")
     pkg = os.path.basename(tox_command_tuple[1])
+    tox_dir = os.path.join(tox_command_tuple[1], './.tox/')
 
     with open(stdout, "w") as f_stdout, open(stderr, "w") as f_stderr:
         proc = Popen(
@@ -120,6 +123,9 @@ def individual_workload(tox_command_tuple, failed_workload_results):
 
         logging.info("POpened task for for {}".format(pkg))
         proc.wait()
+
+        if in_ci:
+            shutil.rmtree(tox_dir)
 
         log_file(stdout)
 
@@ -164,7 +170,13 @@ def execute_tox_serial(tox_command_tuples):
         run_check_call(cmd_tuple[0], cmd_tuple[1])
 
 
-def prep_and_run_tox(targeted_packages, tox_env, options_array=[], is_parallel=False):
+def prep_and_run_tox(targeted_packages, parsed_args, options_array=[]):
+    if parsed_args.wheel_dir:
+        os.environ["PREBUILT_WHEEL_DIR"] = parsed_args.wheel_dir
+
+    if parsed_args.mark_arg:
+        options_array.extend(["-m", "'{}'".format(parsed_args.mark_arg)])
+
     tox_command_tuples = []
 
     for index, package_dir in enumerate(targeted_packages):
@@ -200,8 +212,8 @@ def prep_and_run_tox(targeted_packages, tox_env, options_array=[], is_parallel=F
             with open(destination_dev_req, "w+") as file:
                 file.write("-e ../../../tools/azure-sdk-tools")
 
-        if tox_env:
-            tox_execution_array.extend(["-e", tox_env])
+        if parsed_args.tox_env:
+            tox_execution_array.extend(["-e", parsed_args.tox_env])
 
         if local_options_array:
             tox_execution_array.extend(["--"] + local_options_array)
@@ -209,11 +221,10 @@ def prep_and_run_tox(targeted_packages, tox_env, options_array=[], is_parallel=F
         # 0 = command array
         tox_command_tuples.append((tox_execution_array, package_dir))
 
-    if is_parallel:
+    if parsed_args.tparallel:
         execute_tox_parallel(tox_command_tuples)
     else:
         execute_tox_serial(tox_command_tuples)
 
-    # TODO: get a bit smarter here
-    if not tox_env:
+    if not parsed_args.disablecov:
         collect_tox_coverage_files(targeted_packages)

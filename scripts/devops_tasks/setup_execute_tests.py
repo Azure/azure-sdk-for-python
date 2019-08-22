@@ -162,18 +162,6 @@ def execute_global_install_and_test(
         )
 
 
-def execute_tox_harness(parsed_args, targeted_packages, extended_pytest_args):
-    if args.wheel_dir:
-        os.environ["PREBUILT_WHEEL_DIR"] = args.wheel_dir
-
-    if args.mark_arg:
-        extended_pytest_args.extend(["-m", "'{}'".format(args.mark_arg)])
-
-    prep_and_run_tox(
-        targeted_packages, args.tox_env, extended_pytest_args, parsed_args.tparallel
-    )
-
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Install Dependencies, Install Packages, Test Azure Packages, Called from DevOps YAML Pipeline"
@@ -272,4 +260,4 @@ if __name__ == "__main__":
     if args.runtype != "none":
         execute_global_install_and_test(args, targeted_packages, extended_pytest_args)
     else:
-        execute_tox_harness(args, targeted_packages, extended_pytest_args)
+        prep_and_run_tox(targeted_packages, args, extended_pytest_args)

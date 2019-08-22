@@ -19,12 +19,7 @@ import logging
 
 logging.getLogger().setLevel(logging.INFO)
 
-OMITTED_CI_PACKAGES = [
-    "azure-mgmt-documentdb",
-    "azure-servicemanagement-legacy",
-    "azure-data-appconfiguration",  # not certain what's going on here. Looks like it's erroring when running test.
-    # a transition back to using `__init.py__` will probably fix this
-]
+OMITTED_CI_PACKAGES = ["azure-mgmt-documentdb", "azure-servicemanagement-legacy"]
 
 MANAGEMENT_PACKAGE_IDENTIFIERS = [
     "mgmt",
