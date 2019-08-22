@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .azure_reservation_api import AzureReservationAPI
-from .version import VERSION
+from ._configuration import AzureReservationAPIConfiguration
+from ._azure_reservation_api import AzureReservationAPI
+__all__ = ['AzureReservationAPI', 'AzureReservationAPIConfiguration']
 
-__all__ = ['AzureReservationAPI']
+from .version import VERSION
 
 __version__ = VERSION
 

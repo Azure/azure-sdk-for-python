@@ -9,83 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import SDKClient
-from msrest import Serializer, Deserializer
-from msrestazure import AzureConfiguration
-from .version import VERSION
 from msrest.pipeline import ClientRawResponse
 from msrest.polling import LROPoller, NoPolling
 from msrestazure.polling.arm_polling import ARMPolling
+from .. import models
 import uuid
-from .operations.reservation_order_operations import ReservationOrderOperations
-from .operations.reservation_operations import ReservationOperations
-from .operations.operation_operations import OperationOperations
-from . import models
 
 
-class AzureReservationAPIConfiguration(AzureConfiguration):
-    """Configuration for AzureReservationAPI
-    Note that all parameters used to create this instance are saved as instance
-    attributes.
-
-    :param credentials: Credentials needed for the client to connect to Azure.
-    :type credentials: :mod:`A msrestazure Credentials
-     object<msrestazure.azure_active_directory>`
-    :param str base_url: Service URL
-    """
-
-    def __init__(
-            self, credentials, base_url=None):
-
-        if credentials is None:
-            raise ValueError("Parameter 'credentials' must not be None.")
-        if not base_url:
-            base_url = 'https://management.azure.com'
-
-        super(AzureReservationAPIConfiguration, self).__init__(base_url)
-
-        self.add_user_agent('azure-mgmt-reservations/{}'.format(VERSION))
-        self.add_user_agent('Azure-SDK-For-Python')
-
-        self.credentials = credentials
-
-
-class AzureReservationAPI(SDKClient):
-    """This API describe Azure Reservation
-
-    :ivar config: Configuration for client.
-    :vartype config: AzureReservationAPIConfiguration
-
-    :ivar reservation_order: ReservationOrder operations
-    :vartype reservation_order: azure.mgmt.reservations.operations.ReservationOrderOperations
-    :ivar reservation: Reservation operations
-    :vartype reservation: azure.mgmt.reservations.operations.ReservationOperations
-    :ivar operation: Operation operations
-    :vartype operation: azure.mgmt.reservations.operations.OperationOperations
-
-    :param credentials: Credentials needed for the client to connect to Azure.
-    :type credentials: :mod:`A msrestazure Credentials
-     object<msrestazure.azure_active_directory>`
-    :param str base_url: Service URL
-    """
-
-    def __init__(
-            self, credentials, base_url=None):
-
-        self.config = AzureReservationAPIConfiguration(credentials, base_url)
-        super(AzureReservationAPI, self).__init__(self.config.credentials, self.config)
-
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2019-04-01'
-        self._serialize = Serializer(client_models)
-        self._deserialize = Deserializer(client_models)
-
-        self.reservation_order = ReservationOrderOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.reservation = ReservationOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.operation = OperationOperations(
-            self._client, self.config, self._serialize, self._deserialize)
+class AzureReservationAPIOperationsMixin(object):
 
     def get_catalog(
             self, subscription_id, reserved_resource_type, location=None, custom_headers=None, raw=False, **operation_config):
@@ -143,7 +74,6 @@ class AzureReservationAPI(SDKClient):
             raise models.ErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('[Catalog]', response)
 
@@ -202,7 +132,6 @@ class AzureReservationAPI(SDKClient):
             raise models.ErrorException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('AppliedReservations', response)
 
