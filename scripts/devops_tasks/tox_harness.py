@@ -94,7 +94,7 @@ def collect_tox_coverage_files(targeted_packages):
     logging.info("Visible uncombined .coverage files: {}".format(coverage_files))
 
     if len(coverage_files):
-        cov_cmd_array = [sys.executable, "-m", "coverage", "-i", "combine"]
+        cov_cmd_array = [sys.executable, "-m", "coverage", "combine"]
         cov_cmd_array.extend(coverage_files)
 
         # merge them with coverage combine and copy to root
@@ -124,9 +124,6 @@ def individual_workload(tox_command_tuple, failed_workload_results):
         logging.info("POpened task for for {}".format(pkg))
         proc.wait()
 
-        if in_ci:
-            shutil.rmtree(tox_dir)
-
         log_file(stdout)
 
         if proc.returncode != 0:
@@ -137,6 +134,9 @@ def individual_workload(tox_command_tuple, failed_workload_results):
             logging.error("Package {} had stderror output. Logging.".format(pkg))
             failed_workload_results[pkg] = "StdErr output detected"
             log_file(stderr)
+
+        if in_ci():
+            shutil.rmtree(tox_dir)
 
     return proc
 

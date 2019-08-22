@@ -50,6 +50,12 @@ steps:
         --toxenv="${{ parameters.ToxTestEnv }}"
     env: ${{ parameters.EnvVars }}
 
+  - task: PublishTestResults@2
+    condition: succeededOrFailed()
+    inputs:
+      testResultsFiles: '**/*test*.xml'
+      testRunTitle: '${{ parameters.OSName }} Python ${{ parameters.PythonVersion }}'
+
   - task: PythonScript@0
     displayName: 'Run Pylint'
     inputs:
@@ -59,13 +65,8 @@ steps:
         --mark_arg="${{ parameters.TestMarkArgument }}" 
         --service="${{ parameters.ServiceDirectory }}" 
         --toxenv="lint"
+        --disablecov
     env: ${{ parameters.EnvVars }}
-
-  - task: PublishTestResults@2
-    condition: succeededOrFailed()
-    inputs:
-      testResultsFiles: '**/*test*.xml'
-      testRunTitle: '${{ parameters.OSName }} Python ${{ parameters.PythonVersion }}'
 
   - task: PythonScript@0
     displayName: 'Run MyPy'
@@ -76,6 +77,7 @@ steps:
         --mark_arg="${{ parameters.TestMarkArgument }}" 
         --service="${{ parameters.ServiceDirectory }}" 
         --toxenv="mypy"
+        --disablecov
     env: ${{ parameters.EnvVars }}
     condition: and(succeededOrFailed(), ${{ parameters.RunMyPy }})
   

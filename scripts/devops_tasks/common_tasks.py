@@ -33,6 +33,7 @@ def log_file(file_location, is_error=False):
     with open(file_location, "r") as file:
         for line in file:
             print(line.strip())
+        print()
 
 
 def read_file(file_location):
