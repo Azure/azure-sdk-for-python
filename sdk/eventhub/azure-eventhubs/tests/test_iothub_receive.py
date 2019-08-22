@@ -11,7 +11,6 @@ from azure.eventhub import EventPosition, EventHubClient
 
 @pytest.mark.liveTest
 def test_iothub_receive_sync(iot_connection_str, device_id):
-    print("!!", iot_connection_str)
     client = EventHubClient.from_connection_string(iot_connection_str, network_tracing=False)
     receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition("-1"), operation='/messages/events')
     try:
