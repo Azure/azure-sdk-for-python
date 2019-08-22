@@ -49,24 +49,10 @@ FAKE_STORAGE = FakeStorageAccount(
 
 
 class StorageQueueTest(QueueTestCase):
-    def setUp(self):
-        super(StorageQueueTest, self).setUp()
-        self.test_queues = []
-
-    def tearDown(self):
-        if not self.is_playback():
-            for queue in self.test_queues:
-                try:
-                    queue.delete_queue()
-                except:
-                    pass
-        return super(StorageQueueTest, self).tearDown()
-
     # --Helpers-----------------------------------------------------------------
     def _get_queue_reference(self, qsc, prefix=TEST_QUEUE_PREFIX):
         queue_name = self.get_resource_name(prefix)
         queue = qsc.get_queue_client(queue_name)
-        self.test_queues.append(queue)
         return queue
 
     def _create_queue(self, qsc, prefix=TEST_QUEUE_PREFIX):
@@ -588,18 +574,18 @@ class StorageQueueTest(QueueTestCase):
         token_credential = self.generate_oauth_token()
 
         # Action 1: make sure token works
-        service = QueueServiceClient(self._get_oauth_queue_url(storage_account.name), credential=token_credential)
+        service = QueueServiceClient(self._account_url(storage_account.name), credential=token_credential)
         queues = service.get_service_properties()
         self.assertIsNotNone(queues)
 
         # Action 2: change token value to make request fail
         fake_credential = self.generate_fake_token()
-        service = QueueServiceClient(self._get_oauth_queue_url(storage_account.name), credential=fake_credential)
+        service = QueueServiceClient(self._account_url(storage_account.name), credential=fake_credential)
         with self.assertRaises(ClientAuthenticationError):
             list(service.list_queues())
 
         # Action 3: update token to make it working again
-        service = QueueServiceClient(self._get_oauth_queue_url(storage_account.name), credential=token_credential)
+        service = QueueServiceClient(self._account_url(storage_account.name), credential=token_credential)
         queues = list(service.list_queues())
         self.assertIsNotNone(queues)
 

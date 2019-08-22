@@ -8,7 +8,12 @@
 
 from datetime import datetime, timedelta
 import pytest
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, mgmt_settings_fake as settings
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
+
+try:
+    from devtools_testutils import mgmt_settings_real as settings
+except ImportError:
+    from devtools_testutils import mgmt_settings_fake as settings
 
 from queuetestcase import (
     QueueTestCase

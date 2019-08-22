@@ -15,7 +15,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Tue, 20 Aug 2019 21:09:28 GMT
+      - Wed, 21 Aug 2019 22:47:17 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
@@ -27,7 +27,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 20 Aug 2019 21:09:27 GMT
+      - Wed, 21 Aug 2019 22:47:15 GMT
       server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -38,10 +38,10 @@ interactions:
 - request:
     body: '<?xml version=''1.0'' encoding=''utf-8''?>
 
-      <QueueMessage><MessageText>{"EncryptedMessageContents": "KqmFiW9vrzODFe82zNGsXg237Y33GuiWD+H5MaeTzws=",
-      "EncryptionData": {"WrappedContentKey": {"KeyId": "key1", "EncryptedKey": "a46AEFuOLT3IQ1F/1vs7QZDun7MbPsviUTCtPZcurblHsY3G/G8Eww==",
+      <QueueMessage><MessageText>{"EncryptedMessageContents": "OzvosYRKrTcZKzyBjVcG14H4Hz4MCczXzlfXJPB9058=",
+      "EncryptionData": {"WrappedContentKey": {"KeyId": "key1", "EncryptedKey": "0EEQcsYgYUcKraGvX0hrD+YpXx5POyTzbAcUwvYIqZo931eqxMlLzA==",
       "Algorithm": "A256KW"}, "EncryptionAgent": {"Protocol": "1.0", "EncryptionAlgorithm":
-      "AES_CBC_256"}, "ContentEncryptionIV": "1Tb3lc9xV/G+Ss2QW41NOA==", "KeyWrappingMetadata":
+      "AES_CBC_256"}, "ContentEncryptionIV": "Xk+cYsaxi18FMvdr6UD5zw==", "KeyWrappingMetadata":
       {"EncryptionLibrary": "Python 12.0.0b2"}}}</MessageText></QueueMessage>'
     headers:
       Accept:
@@ -57,22 +57,22 @@ interactions:
       User-Agent:
       - azsdk-python-storage-queue/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Tue, 20 Aug 2019 21:09:28 GMT
+      - Wed, 21 Aug 2019 22:47:17 GMT
       x-ms-version:
       - '2018-03-28'
     method: POST
     uri: https://pyacrstoragee12a1896.queue.core.windows.net/encryptionqueuee12a1896/messages
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>2574f96e-57f9-45de-89cc-ae59f7d38f34</MessageId><InsertionTime>Tue,
-        20 Aug 2019 21:09:27 GMT</InsertionTime><ExpirationTime>Tue, 27 Aug 2019 21:09:27
-        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAns1TjZtX1QE=</PopReceipt><TimeNextVisible>Tue,
-        20 Aug 2019 21:09:27 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>b2dcdd9b-337e-4135-b604-4ef40b074e27</MessageId><InsertionTime>Wed,
+        21 Aug 2019 22:47:16 GMT</InsertionTime><ExpirationTime>Wed, 28 Aug 2019 22:47:16
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAACWlkYXJY1QE=</PopReceipt><TimeNextVisible>Wed,
+        21 Aug 2019 22:47:16 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
     headers:
       content-type:
       - application/xml
       date:
-      - Tue, 20 Aug 2019 21:09:27 GMT
+      - Wed, 21 Aug 2019 22:47:15 GMT
       server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -96,20 +96,20 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Tue, 20 Aug 2019 21:09:29 GMT
+      - Wed, 21 Aug 2019 22:47:17 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
     uri: https://pyacrstoragee12a1896.queue.core.windows.net/encryptionqueuee12a1896/messages?peekonly=true
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>2574f96e-57f9-45de-89cc-ae59f7d38f34</MessageId><InsertionTime>Tue,
-        20 Aug 2019 21:09:27 GMT</InsertionTime><ExpirationTime>Tue, 27 Aug 2019 21:09:27
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>b2dcdd9b-337e-4135-b604-4ef40b074e27</MessageId><InsertionTime>Wed,
+        21 Aug 2019 22:47:16 GMT</InsertionTime><ExpirationTime>Wed, 28 Aug 2019 22:47:16
         GMT</ExpirationTime><DequeueCount>0</DequeueCount><MessageText>{\"EncryptedMessageContents\":
-        \"KqmFiW9vrzODFe82zNGsXg237Y33GuiWD+H5MaeTzws=\", \"EncryptionData\": {\"WrappedContentKey\":
-        {\"KeyId\": \"key1\", \"EncryptedKey\": \"a46AEFuOLT3IQ1F/1vs7QZDun7MbPsviUTCtPZcurblHsY3G/G8Eww==\",
+        \"OzvosYRKrTcZKzyBjVcG14H4Hz4MCczXzlfXJPB9058=\", \"EncryptionData\": {\"WrappedContentKey\":
+        {\"KeyId\": \"key1\", \"EncryptedKey\": \"0EEQcsYgYUcKraGvX0hrD+YpXx5POyTzbAcUwvYIqZo931eqxMlLzA==\",
         \"Algorithm\": \"A256KW\"}, \"EncryptionAgent\": {\"Protocol\": \"1.0\", \"EncryptionAlgorithm\":
-        \"AES_CBC_256\"}, \"ContentEncryptionIV\": \"1Tb3lc9xV/G+Ss2QW41NOA==\", \"KeyWrappingMetadata\":
+        \"AES_CBC_256\"}, \"ContentEncryptionIV\": \"Xk+cYsaxi18FMvdr6UD5zw==\", \"KeyWrappingMetadata\":
         {\"EncryptionLibrary\": \"Python 12.0.0b2\"}}}</MessageText></QueueMessage></QueueMessagesList>"
     headers:
       cache-control:
@@ -117,7 +117,7 @@ interactions:
       content-type:
       - application/xml
       date:
-      - Tue, 20 Aug 2019 21:09:27 GMT
+      - Wed, 21 Aug 2019 22:47:15 GMT
       server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:

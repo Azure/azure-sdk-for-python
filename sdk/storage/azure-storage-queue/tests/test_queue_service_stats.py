@@ -40,20 +40,20 @@ class QueueServiceStatsTest(QueueTestCase):
 
     # --Test cases per service ---------------------------------------
 
-    @ResourceGroupPreparer(name_prefix='random')     
-    @StorageAccountPreparer(name_prefix='sandom')
+    @ResourceGroupPreparer()     
+    @StorageAccountPreparer(name_prefix='pyacrstorage', sku='Standard_RAGRS')
     def test_queue_service_stats_f(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)
 
         # Act
         stats = qsc.get_service_stats()
-
+        print(stats.geo_replication)
         # Assert
         self._assert_stats_default(stats)
 
-    @ResourceGroupPreparer(name_prefix='random2')     
-    @StorageAccountPreparer(name_prefix='sandom2')
+    @ResourceGroupPreparer()     
+    @StorageAccountPreparer(name_prefix='pyacrstorage', sku='Standard_RAGRS')
     def test_queue_service_stats_when_unavailable(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)

@@ -13,7 +13,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Tue, 20 Aug 2019 21:36:23 GMT
+      - Wed, 21 Aug 2019 22:44:15 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
@@ -28,7 +28,7 @@ interactions:
       content-type:
       - application/xml
       date:
-      - Tue, 20 Aug 2019 21:36:22 GMT
+      - Wed, 21 Aug 2019 22:44:13 GMT
       server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:

@@ -52,25 +52,10 @@ class AiohttpTestTransport(AioHttpTransport):
 
 
 class StorageQueueEncodingTestAsync(AsyncQueueTestCase):
-    def setUp(self):
-        super(StorageQueueEncodingTestAsync, self).setUp()
-        self.test_queues = []
-
-    def tearDown(self):
-        if not self.is_playback():
-            loop = asyncio.get_event_loop()
-            for queue in self.test_queues:
-                try:
-                    loop.run_until_complete(qsc.delete_queue(queue.queue_name))
-                except:
-                    pass
-        return super(StorageQueueEncodingTestAsync, self).tearDown()
-
     # --Helpers-----------------------------------------------------------------
     def _get_queue_reference(self, qsc, prefix=TEST_QUEUE_PREFIX):
         queue_name = self.get_resource_name(prefix)
         queue = qsc.get_queue_client(queue_name)
-        self.test_queues.append(queue)
         return queue
 
     async def _create_queue(self, qsc, prefix=TEST_QUEUE_PREFIX):

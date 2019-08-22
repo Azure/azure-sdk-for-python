@@ -15,7 +15,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Tue, 20 Aug 2019 21:01:54 GMT
+      - Wed, 21 Aug 2019 22:39:08 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
@@ -27,7 +27,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 20 Aug 2019 21:01:55 GMT
+      - Wed, 21 Aug 2019 22:39:05 GMT
       server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -49,7 +49,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Tue, 20 Aug 2019 21:01:57 GMT
+      - Wed, 21 Aug 2019 22:39:08 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
@@ -64,7 +64,7 @@ interactions:
       content-type:
       - application/xml
       date:
-      - Tue, 20 Aug 2019 21:01:56 GMT
+      - Wed, 21 Aug 2019 22:39:06 GMT
       server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -74,45 +74,4 @@ interactions:
     status:
       code: 200
       message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - azsdk-python-storage-queue/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-date:
-      - Tue, 20 Aug 2019 21:02:00 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: DELETE
-    uri: https://pyacrstoragef55d0df8.queue.core.windows.net/pythonqueuef55d0df8
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>AccountNotFound</Code><Message>The
-        specified account does not exist.\nRequestId:dde0c9b1-b003-0103-0b9a-571186000000\nTime:2019-08-20T21:02:00.1540061Z</Message></Error>"
-    headers:
-      content-length:
-      - '221'
-      content-type:
-      - application/xml
-      date:
-      - Tue, 20 Aug 2019 21:01:59 GMT
-      server:
-      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-error-code:
-      - AccountNotFound
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 404
-      message: The specified account does not exist.
 version: 1

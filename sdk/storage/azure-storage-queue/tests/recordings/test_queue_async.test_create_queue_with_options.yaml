@@ -7,7 +7,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Tue, 20 Aug 2019 21:03:16 GMT
+      - Wed, 21 Aug 2019 22:40:28 GMT
       x-ms-meta:
       - '{''val1'': ''test'', ''val2'': ''blah''}'
       x-ms-meta-val1:
@@ -23,7 +23,7 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Tue, 20 Aug 2019 21:03:14 GMT
+      date: Wed, 21 Aug 2019 22:40:25 GMT
       server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2018-03-28'
     status:
@@ -45,7 +45,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Tue, 20 Aug 2019 21:03:16 GMT
+      - Wed, 21 Aug 2019 22:40:28 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
@@ -56,7 +56,7 @@ interactions:
     headers:
       cache-control: no-cache
       content-length: '0'
-      date: Tue, 20 Aug 2019 21:03:14 GMT
+      date: Wed, 21 Aug 2019 22:40:25 GMT
       server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-approximate-messages-count: '0'
       x-ms-meta-val1: test

@@ -75,12 +75,6 @@ class AiohttpTestTransport(AioHttpTransport):
 
 
 class StorageQueueEncryptionTestAsync(AsyncQueueTestCase):
-    def setUp(self):
-        super(StorageQueueEncryptionTestAsync, self).setUp()
-
-    def tearDown(self):
-        return super(StorageQueueEncryptionTestAsync, self).tearDown()
-
     # --Helpers-----------------------------------------------------------------
     def _get_queue_reference(self, qsc, prefix=TEST_QUEUE_PREFIX):
         queue_name = self.get_resource_name(prefix)

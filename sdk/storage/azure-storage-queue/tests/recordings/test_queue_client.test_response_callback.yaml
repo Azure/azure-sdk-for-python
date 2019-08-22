@@ -13,7 +13,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Tue, 20 Aug 2019 21:36:21 GMT
+      - Wed, 21 Aug 2019 22:42:41 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
@@ -21,14 +21,14 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>QueueNotFound</Code><Message>The
-        specified queue does not exist.\nRequestId:fb6ff513-b003-003b-279f-574854000000\nTime:2019-08-20T21:36:20.4716520Z</Message></Error>"
+        specified queue does not exist.\nRequestId:f88024c5-a003-002e-2271-58280c000000\nTime:2019-08-21T22:42:40.1065706Z</Message></Error>"
     headers:
       content-length:
       - '217'
       content-type:
       - application/xml
       date:
-      - Tue, 20 Aug 2019 21:36:20 GMT
+      - Wed, 21 Aug 2019 22:42:39 GMT
       server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:

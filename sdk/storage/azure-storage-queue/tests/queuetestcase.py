@@ -5,6 +5,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from __future__ import division
+import pytest
 from contextlib import contextmanager
 import copy
 import inspect
@@ -47,9 +48,6 @@ class FakeTokenCredential(object):
 class QueueTestCase(AzureMgmtTestCase):
     def connection_string(self, account, key):
         return "DefaultEndpointsProtocol=https;AccountName=" + account.name + ";AccountKey=" + str(key) + ";EndpointSuffix=core.windows.net"
-
-    def _get_oauth_queue_url(self, name):
-        return "https://{}.queue.core.windows.net".format(name)
     
     def _account_url (self, name):
         return 'https://{}.queue.core.windows.net'.format(name)
@@ -105,21 +103,7 @@ class QueueTestCase(AzureMgmtTestCase):
                 settings.PROXY_PASSWORD,
             )
 
-    def _create_storage_service(self, service_class, settings):
-        if settings.CONNECTION_STRING:
-            service = service_class(connection_string=settings.CONNECTION_STRING)
-        elif settings.IS_EMULATED:
-            service = service_class(is_emulated=True)
-        else:
-            service = service_class(
-                settings.STORAGE_ACCOUNT_NAME,
-                settings.STORAGE_ACCOUNT_KEY,
-                protocol=settings.PROTOCOL,
-            )
-        self._set_test_proxy(service, settings)
-        return service
-
-    def assertNamedItemInContainer(self, container, item_name, msg=None):
+    def assert_named_item_in_container(self, container, item_name, msg=None):
         def _is_string(obj):
             if sys.version_info >= (3,):
                 return isinstance(obj, str)
@@ -137,14 +121,14 @@ class QueueTestCase(AzureMgmtTestCase):
 
         standardMsg = '{0} not found in {1}'.format(
             repr(item_name), [str(c) for c in container])
-        self.fail(self._formatMessage(msg, standardMsg))
+        pytest.fail(self._formatMessage(msg, standardMsg))
 
-    def assertNamedItemNotInContainer(self, container, item_name, msg=None):
+    def assert_named_item_not_in_container(self, container, item_name, msg=None):
         for item in container:
             if item.name == item_name:
                 standardMsg = '{0} unexpectedly found in {1}'.format(
                     repr(item_name), repr(container))
-                self.fail(self._formatMessage(msg, standardMsg))
+            pytest.fail(self._formatMessage(msg, standardMsg))
 
     def assert_upload_progress(self, size, max_chunk_size, progress, unknown_size=False):
         '''Validates that the progress chunks align with our chunking procedure.'''

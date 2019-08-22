@@ -29,9 +29,6 @@ from queuetestcase import (
 
 
 class QueueServicePropertiesTest(QueueTestCase):
-    def setUp(self):
-        super(QueueServicePropertiesTest, self).setUp()
-
     # --Helpers-----------------------------------------------------------------
     def _assert_properties_default(self, prop):
         self.assertIsNotNone(prop)

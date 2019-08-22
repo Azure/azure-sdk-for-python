@@ -32,9 +32,6 @@ TEST_QUEUE_PREFIX = 'mytestqueue'
 # ------------------------------------------------------------------------------
 
 class StorageQueueEncodingTest(QueueTestCase):
-    def setUp(self):
-        super(StorageQueueEncodingTest, self).setUp()
-
     # --Helpers-----------------------------------------------------------------
     def _get_queue_reference(self, qsc, prefix=TEST_QUEUE_PREFIX):
         queue_name = self.get_resource_name(prefix)

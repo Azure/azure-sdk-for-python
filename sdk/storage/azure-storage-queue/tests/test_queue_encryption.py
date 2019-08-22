@@ -58,24 +58,10 @@ def _decode_base64_to_bytes(data):
     return b64decode(data)
 
 class StorageQueueEncryptionTest(QueueTestCase):
-    def setUp(self):
-        super(StorageQueueEncryptionTest, self).setUp()
-        self.test_queues = []
-
-    def tearDown(self):
-        if not self.is_playback():
-            for queue in self.test_queues:
-                try:
-                    self.qsc.delete_queue(queue.queue_name)
-                except:
-                    pass
-        return super(StorageQueueEncryptionTest, self).tearDown()
-
     # --Helpers-----------------------------------------------------------------
     def _get_queue_reference(self, qsc, prefix=TEST_QUEUE_PREFIX):
         queue_name = self.get_resource_name(prefix)
         queue = qsc.get_queue_client(queue_name)
-        self.test_queues.append(queue)
         return queue
 
     def _create_queue(self, qsc, prefix=TEST_QUEUE_PREFIX):

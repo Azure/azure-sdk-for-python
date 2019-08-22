@@ -15,7 +15,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Tue, 20 Aug 2019 21:36:27 GMT
+      - Wed, 21 Aug 2019 22:42:18 GMT
       x-ms-meta-hello:
       - world
       x-ms-version:
@@ -29,7 +29,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 20 Aug 2019 21:36:26 GMT
+      - Wed, 21 Aug 2019 22:42:16 GMT
       server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -51,7 +51,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Tue, 20 Aug 2019 21:36:28 GMT
+      - Wed, 21 Aug 2019 22:42:18 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
@@ -65,7 +65,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 20 Aug 2019 21:36:26 GMT
+      - Wed, 21 Aug 2019 22:42:16 GMT
       server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-approximate-messages-count:
@@ -93,7 +93,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Tue, 20 Aug 2019 21:36:28 GMT
+      - Wed, 21 Aug 2019 22:42:18 GMT
       x-ms-version:
       - '2018-03-28'
     method: DELETE
@@ -105,7 +105,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 20 Aug 2019 21:36:26 GMT
+      - Wed, 21 Aug 2019 22:42:16 GMT
       server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:

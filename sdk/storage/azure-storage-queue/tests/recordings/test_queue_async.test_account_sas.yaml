@@ -7,7 +7,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Tue, 20 Aug 2019 21:03:20 GMT
+      - Wed, 21 Aug 2019 22:40:42 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
@@ -17,7 +17,7 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Tue, 20 Aug 2019 21:03:19 GMT
+      date: Wed, 21 Aug 2019 22:40:40 GMT
       server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2018-03-28'
     status:
@@ -45,20 +45,20 @@ interactions:
       User-Agent:
       - azsdk-python-storage-queue/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Tue, 20 Aug 2019 21:03:21 GMT
+      - Wed, 21 Aug 2019 22:40:42 GMT
       x-ms-version:
       - '2018-03-28'
     method: POST
     uri: https://pyacrstoragee8a50da2.queue.core.windows.net/pythonqueuee8a50da2/messages
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>88f4513b-6d8d-4db5-b26c-e0ffd372eb38</MessageId><InsertionTime>Tue,
-        20 Aug 2019 21:03:20 GMT</InsertionTime><ExpirationTime>Tue, 27 Aug 2019 21:03:20
-        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAXDkIsppX1QE=</PopReceipt><TimeNextVisible>Tue,
-        20 Aug 2019 21:03:20 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>8d400b85-e6be-42a0-9296-4e29e20c328c</MessageId><InsertionTime>Wed,
+        21 Aug 2019 22:40:41 GMT</InsertionTime><ExpirationTime>Wed, 28 Aug 2019 22:40:41
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAATq78dXFY1QE=</PopReceipt><TimeNextVisible>Wed,
+        21 Aug 2019 22:40:41 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
     headers:
       content-type: application/xml
-      date: Tue, 20 Aug 2019 21:03:19 GMT
+      date: Wed, 21 Aug 2019 22:40:41 GMT
       server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-ms-version: '2018-03-28'
@@ -81,20 +81,20 @@ interactions:
       User-Agent:
       - azsdk-python-storage-queue/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Tue, 20 Aug 2019 21:03:21 GMT
+      - Wed, 21 Aug 2019 22:40:43 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
-    uri: https://pyacrstoragee8a50da2.queue.core.windows.net/pythonqueuee8a50da2/messages?peekonly=true&st=2019-08-20T20:58:21Z&se=2019-08-20T22:03:21Z&sp=r&sv=2018-03-28&ss=q&srt=o&sig=4%2BqKLML45/NIIlxqoTtuSrS/7ZLq9nrZqv4GgMjex2Y%3D
+    uri: https://pyacrstoragee8a50da2.queue.core.windows.net/pythonqueuee8a50da2/messages?peekonly=true&st=2019-08-21T22:35:43Z&se=2019-08-21T23:40:43Z&sp=r&sv=2018-03-28&ss=q&srt=o&sig=7SSOEu5fmkBkmAnYFP5lsop1h9nED%2ByB%2BWntDEw0I2o%3D
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>88f4513b-6d8d-4db5-b26c-e0ffd372eb38</MessageId><InsertionTime>Tue,
-        20 Aug 2019 21:03:20 GMT</InsertionTime><ExpirationTime>Tue, 27 Aug 2019 21:03:20
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>8d400b85-e6be-42a0-9296-4e29e20c328c</MessageId><InsertionTime>Wed,
+        21 Aug 2019 22:40:41 GMT</InsertionTime><ExpirationTime>Wed, 28 Aug 2019 22:40:41
         GMT</ExpirationTime><DequeueCount>0</DequeueCount><MessageText>message1</MessageText></QueueMessage></QueueMessagesList>"
     headers:
       cache-control: no-cache
       content-type: application/xml
-      date: Tue, 20 Aug 2019 21:03:19 GMT
+      date: Wed, 21 Aug 2019 22:40:41 GMT
       server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-ms-version: '2018-03-28'
@@ -107,6 +107,6 @@ interactions:
         - https
         - pyacrstoragee8a50da2.queue.core.windows.net
         - /pythonqueuee8a50da2/messages
-        - peekonly=true&st=2019-08-20T20:58:21Z&se=2019-08-20T22:03:21Z&sp=r&sv=2018-03-28&ss=q&srt=o&sig=4%2BqKLML45/NIIlxqoTtuSrS/7ZLq9nrZqv4GgMjex2Y%3D
+        - peekonly=true&st=2019-08-21T22:35:43Z&se=2019-08-21T23:40:43Z&sp=r&sv=2018-03-28&ss=q&srt=o&sig=7SSOEu5fmkBkmAnYFP5lsop1h9nED%2ByB%2BWntDEw0I2o%3D
         - ''
 version: 1

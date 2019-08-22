@@ -11,7 +11,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-queue/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Tue, 20 Aug 2019 21:11:28 GMT
+      - Wed, 21 Aug 2019 22:50:42 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
@@ -19,12 +19,12 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidXmlDocument</Code><Message>XML
-        specified is not syntactically valid.\nRequestId:de1750fa-a003-004a-159b-57dd65000000\nTime:2019-08-20T21:11:29.2297950Z</Message><LineNumber>2</LineNumber><LinePosition>29</LinePosition><Reason>Error
+        specified is not syntactically valid.\nRequestId:6d691386-3003-00da-0172-58f1ff000000\nTime:2019-08-21T22:50:42.8520545Z</Message><LineNumber>2</LineNumber><LinePosition>29</LinePosition><Reason>Error
         parsing Xml content: 'None' is an invalid XmlNodeType. Line 2, position 29.</Reason></Error>"
     headers:
       content-length: '383'
       content-type: application/xml
-      date: Tue, 20 Aug 2019 21:11:29 GMT
+      date: Wed, 21 Aug 2019 22:50:42 GMT
       server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: InvalidXmlDocument
       x-ms-version: '2018-03-28'

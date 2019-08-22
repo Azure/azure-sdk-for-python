@@ -19,11 +19,7 @@ class AsyncQueueTestCase(QueueTestCase):
 
         @functools.wraps(test_fn)
         def run(test_class_instance, *args, **kwargs):
-            resource_group = kwargs.get("resource_group")
-            location = kwargs.get("location")
-            storage_account = kwargs.get("storage_account")
-            storage_account_key = kwargs.get("storage_account_key")
             loop = asyncio.get_event_loop()
-            return loop.run_until_complete(test_fn(test_class_instance, resource_group, location, storage_account, storage_account_key))
+            return loop.run_until_complete(test_fn(test_class_instance, **kwargs))
 
         return run

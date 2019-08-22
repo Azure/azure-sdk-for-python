@@ -44,9 +44,6 @@ class AiohttpTestTransport(AioHttpTransport):
         return response
 
 class QueueServicePropertiesTest(AsyncQueueTestCase):
-    def setUp(self):
-        super(QueueServicePropertiesTest, self).setUp()
-
     # --Helpers-----------------------------------------------------------------
     def _assert_properties_default(self, prop):
         self.assertIsNotNone(prop)

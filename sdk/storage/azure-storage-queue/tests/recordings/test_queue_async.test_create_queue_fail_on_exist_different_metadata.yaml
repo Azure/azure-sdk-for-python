@@ -7,7 +7,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Tue, 20 Aug 2019 21:03:22 GMT
+      - Wed, 21 Aug 2019 22:40:59 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
@@ -17,7 +17,7 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Tue, 20 Aug 2019 21:03:20 GMT
+      date: Wed, 21 Aug 2019 22:40:56 GMT
       server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2018-03-28'
     status:
@@ -39,7 +39,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Tue, 20 Aug 2019 21:03:22 GMT
+      - Wed, 21 Aug 2019 22:40:59 GMT
       x-ms-meta:
       - '{''val'': ''value''}'
       x-ms-meta-val:
@@ -51,11 +51,11 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>QueueAlreadyExists</Code><Message>The
-        specified queue already exists.\nRequestId:3eddeefa-6003-000b-519a-5799cb000000\nTime:2019-08-20T21:03:21.6313887Z</Message></Error>"
+        specified queue already exists.\nRequestId:52edb19a-2003-007a-0c71-588e45000000\nTime:2019-08-21T22:40:57.4092513Z</Message></Error>"
     headers:
       content-length: '222'
       content-type: application/xml
-      date: Tue, 20 Aug 2019 21:03:20 GMT
+      date: Wed, 21 Aug 2019 22:40:56 GMT
       server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: QueueAlreadyExists
       x-ms-version: '2018-03-28'

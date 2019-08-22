@@ -615,19 +615,19 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
         token_credential = self.generate_oauth_token()
 
         # Action 1: make sure token works
-        service = QueueServiceClient(self._get_oauth_queue_url(storage_account.name), credential=token_credential)
+        service = QueueServiceClient(self._account_url(storage_account.name), credential=token_credential)
         queues = await service.get_service_properties()
         self.assertIsNotNone(queues)
 
         # Action 2: change token value to make request fail
         fake_credential = self.generate_fake_token()
-        service = QueueServiceClient(self._get_oauth_queue_url(storage_account.name), credential=fake_credential)
+        service = QueueServiceClient(self._account_url(storage_account.name), credential=fake_credential)
         with self.assertRaises(ClientAuthenticationError):
             queue_li = await service.list_queues()
             list(queue_li)
 
         # Action 3: update token to make it working again
-        service = QueueServiceClient(self._get_oauth_queue_url(storage_account.name), credential=token_credential)
+        service = QueueServiceClient(self._account_url(storage_account.name), credential=token_credential)
         queue_li = await service.list_queues()
         queues = list(queue_li)
         self.assertIsNotNone(queues)

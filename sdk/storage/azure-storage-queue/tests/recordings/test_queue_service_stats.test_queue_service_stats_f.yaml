@@ -13,29 +13,28 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Wed, 21 Aug 2019 22:39:20 GMT
+      - Thu, 22 Aug 2019 17:12:01 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
-    uri: https://pyacrstorage4ef515f8.queue.core.windows.net/pythonqueue4ef515f8?comp=acl
+    uri: https://pyacrstorage2a011538-secondary.queue.core.windows.net/?restype=service&comp=stats
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>QueueNotFound</Code><Message>The
-        specified queue does not exist.\nRequestId:774ca4eb-1003-00d6-2171-587ab9000000\nTime:2019-08-21T22:39:18.7161686Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceStats><GeoReplication><Status>unavailable</Status><LastSyncTime></LastSyncTime></GeoReplication></StorageServiceStats>"
     headers:
-      content-length:
-      - '217'
+      cache-control:
+      - no-cache
       content-type:
       - application/xml
       date:
-      - Wed, 21 Aug 2019 22:39:18 GMT
+      - Thu, 22 Aug 2019 17:11:58 GMT
       server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-error-code:
-      - QueueNotFound
+      transfer-encoding:
+      - chunked
       x-ms-version:
       - '2018-03-28'
     status:
-      code: 404
-      message: The specified queue does not exist.
+      code: 200
+      message: OK
 version: 1

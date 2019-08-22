@@ -15,7 +15,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Tue, 20 Aug 2019 21:02:25 GMT
+      - Wed, 21 Aug 2019 22:39:45 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
@@ -27,7 +27,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 20 Aug 2019 21:02:23 GMT
+      - Wed, 21 Aug 2019 22:39:42 GMT
       server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -53,22 +53,22 @@ interactions:
       User-Agent:
       - azsdk-python-storage-queue/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Tue, 20 Aug 2019 21:02:25 GMT
+      - Wed, 21 Aug 2019 22:39:45 GMT
       x-ms-version:
       - '2018-03-28'
     method: POST
     uri: https://pyacrstorage91880abb.queue.core.windows.net/pythonqueue91880abb/messages
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>a17e1e9e-2ee2-44ca-9598-d8a6a884ae2a</MessageId><InsertionTime>Tue,
-        20 Aug 2019 21:02:24 GMT</InsertionTime><ExpirationTime>Tue, 27 Aug 2019 21:02:24
-        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAlzgDkZpX1QE=</PopReceipt><TimeNextVisible>Tue,
-        20 Aug 2019 21:02:24 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>8b5cbe25-3280-4d6f-b56b-1bfa8e0dab01</MessageId><InsertionTime>Wed,
+        21 Aug 2019 22:39:43 GMT</InsertionTime><ExpirationTime>Wed, 28 Aug 2019 22:39:43
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAqdWyU3FY1QE=</PopReceipt><TimeNextVisible>Wed,
+        21 Aug 2019 22:39:43 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
     headers:
       content-type:
       - application/xml
       date:
-      - Tue, 20 Aug 2019 21:02:23 GMT
+      - Wed, 21 Aug 2019 22:39:42 GMT
       server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -92,24 +92,24 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Tue, 20 Aug 2019 21:02:25 GMT
+      - Wed, 21 Aug 2019 22:39:45 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
     uri: https://pyacrstorage91880abb.queue.core.windows.net/pythonqueue91880abb/messages
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>a17e1e9e-2ee2-44ca-9598-d8a6a884ae2a</MessageId><InsertionTime>Tue,
-        20 Aug 2019 21:02:24 GMT</InsertionTime><ExpirationTime>Tue, 27 Aug 2019 21:02:24
-        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAbsjuoppX1QE=</PopReceipt><TimeNextVisible>Tue,
-        20 Aug 2019 21:02:54 GMT</TimeNextVisible><DequeueCount>1</DequeueCount><MessageText>message1</MessageText></QueueMessage></QueueMessagesList>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>8b5cbe25-3280-4d6f-b56b-1bfa8e0dab01</MessageId><InsertionTime>Wed,
+        21 Aug 2019 22:39:43 GMT</InsertionTime><ExpirationTime>Wed, 28 Aug 2019 22:39:43
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAGyWhZXFY1QE=</PopReceipt><TimeNextVisible>Wed,
+        21 Aug 2019 22:40:13 GMT</TimeNextVisible><DequeueCount>1</DequeueCount><MessageText>message1</MessageText></QueueMessage></QueueMessagesList>"
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/xml
       date:
-      - Tue, 20 Aug 2019 21:02:23 GMT
+      - Wed, 21 Aug 2019 22:39:42 GMT
       server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -137,11 +137,11 @@ interactions:
       User-Agent:
       - azsdk-python-storage-queue/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Tue, 20 Aug 2019 21:02:25 GMT
+      - Wed, 21 Aug 2019 22:39:45 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
-    uri: https://pyacrstorage91880abb.queue.core.windows.net/pythonqueue91880abb/messages/a17e1e9e-2ee2-44ca-9598-d8a6a884ae2a?popreceipt=AgAAAAMAAAAAAAAAbsjuoppX1QE%3D&visibilitytimeout=0&se=2019-08-20T22%3A02%3A25Z&sp=u&sv=2018-03-28&sig=aA8lUSFSrcXxySI9LBR4K437A4nCryxCqLfdprY6tEM%3D
+    uri: https://pyacrstorage91880abb.queue.core.windows.net/pythonqueue91880abb/messages/8b5cbe25-3280-4d6f-b56b-1bfa8e0dab01?popreceipt=AgAAAAMAAAAAAAAAGyWhZXFY1QE%3D&visibilitytimeout=0&se=2019-08-21T23%3A39%3A45Z&sp=u&sv=2018-03-28&sig=IEGHX0WWESxBMlwft9lR1iSahZQCw/TknI7V8p6ZAuE%3D
   response:
     body:
       string: ''
@@ -149,13 +149,13 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 20 Aug 2019 21:02:24 GMT
+      - Wed, 21 Aug 2019 22:39:43 GMT
       server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-popreceipt:
-      - AwAAAAMAAAAAAAAADCc1kZpX1QEBAAAA
+      - AwAAAAMAAAAAAAAATNr3U3FY1QEBAAAA
       x-ms-time-next-visible:
-      - Tue, 20 Aug 2019 21:02:25 GMT
+      - Wed, 21 Aug 2019 22:39:44 GMT
       x-ms-version:
       - '2018-03-28'
     status:
@@ -175,24 +175,24 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Tue, 20 Aug 2019 21:02:26 GMT
+      - Wed, 21 Aug 2019 22:39:45 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
     uri: https://pyacrstorage91880abb.queue.core.windows.net/pythonqueue91880abb/messages
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>a17e1e9e-2ee2-44ca-9598-d8a6a884ae2a</MessageId><InsertionTime>Tue,
-        20 Aug 2019 21:02:24 GMT</InsertionTime><ExpirationTime>Tue, 27 Aug 2019 21:02:24
-        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAPQEjo5pX1QE=</PopReceipt><TimeNextVisible>Tue,
-        20 Aug 2019 21:02:55 GMT</TimeNextVisible><DequeueCount>2</DequeueCount><MessageText>updatedmessage1</MessageText></QueueMessage></QueueMessagesList>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>8b5cbe25-3280-4d6f-b56b-1bfa8e0dab01</MessageId><InsertionTime>Wed,
+        21 Aug 2019 22:39:43 GMT</InsertionTime><ExpirationTime>Wed, 28 Aug 2019 22:39:43
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAw1rrZXFY1QE=</PopReceipt><TimeNextVisible>Wed,
+        21 Aug 2019 22:40:14 GMT</TimeNextVisible><DequeueCount>2</DequeueCount><MessageText>updatedmessage1</MessageText></QueueMessage></QueueMessagesList>"
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/xml
       date:
-      - Tue, 20 Aug 2019 21:02:24 GMT
+      - Wed, 21 Aug 2019 22:39:43 GMT
       server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -202,45 +202,4 @@ interactions:
     status:
       code: 200
       message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - azsdk-python-storage-queue/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-date:
-      - Tue, 20 Aug 2019 21:02:27 GMT
-      x-ms-version:
-      - '2018-03-28'
-    method: DELETE
-    uri: https://pyacrstorage91880abb.queue.core.windows.net/pythonqueue91880abb
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>AccountNotFound</Code><Message>The
-        specified account does not exist.\nRequestId:00933f3f-b003-00d4-389a-57e1eb000000\nTime:2019-08-20T21:02:26.4938250Z</Message></Error>"
-    headers:
-      content-length:
-      - '221'
-      content-type:
-      - application/xml
-      date:
-      - Tue, 20 Aug 2019 21:02:25 GMT
-      server:
-      - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-error-code:
-      - AccountNotFound
-      x-ms-version:
-      - '2018-03-28'
-    status:
-      code: 404
-      message: The specified account does not exist.
 version: 1
