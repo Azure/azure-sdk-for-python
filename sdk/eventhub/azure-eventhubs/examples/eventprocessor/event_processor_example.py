@@ -3,7 +3,6 @@ import logging
 import os
 from azure.eventhub.aio import EventHubClient
 from azure.eventhub.eventprocessor import EventProcessor
-from azure.eventhub.eventprocessor import PartitionProcessor
 from azure.eventhub.eventprocessor import Sqlite3PartitionManager
 
 RECEIVE_TIMEOUT = 5  # timeout in seconds for a receiving operation. 0 or None means no timeout
@@ -18,33 +17,23 @@ async def do_operation(event):
     print(event)
 
 
-class MyPartitionProcessor(PartitionProcessor):
-    def __init__(self, checkpoint_manager):
-        super(MyPartitionProcessor, self).__init__(checkpoint_manager)
-
-    async def process_events(self, events):
+class MyPartitionProcessor(object):
+    async def process_events(self, events, checkpoint_manager):
         if events:
             await asyncio.gather(*[do_operation(event) for event in events])
-            await self._checkpoint_manager.update_checkpoint(events[-1].offset, events[-1].sequence_number)
-
-
-def partition_processor_factory(checkpoint_manager):
-    return MyPartitionProcessor(checkpoint_manager)
-
-
-async def run_awhile(duration):
-    client = EventHubClient.from_connection_string(CONNECTION_STR, receive_timeout=RECEIVE_TIMEOUT,
-                                                   retry_total=RETRY_TOTAL)
-    partition_manager = Sqlite3PartitionManager()
-    event_processor = EventProcessor(client, "$default", MyPartitionProcessor, partition_manager)
-    try:
-        asyncio.ensure_future(event_processor.start())
-        await asyncio.sleep(duration)
-        await event_processor.stop()
-    finally:
-        await partition_manager.close()
+            await checkpoint_manager.update_checkpoint(events[-1].offset, events[-1].sequence_number)
+        else:
+            print("empty events received", "partition:", checkpoint_manager.partition_id)
 
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
-    loop.run_until_complete(run_awhile(60))
+    client = EventHubClient.from_connection_string(CONNECTION_STR, receive_timeout=RECEIVE_TIMEOUT, retry_total=RETRY_TOTAL)
+    partition_manager = Sqlite3PartitionManager(db_filename="eventprocessor_test_db")
+    event_processor = EventProcessor(client, "$default", MyPartitionProcessor, partition_manager, polling_interval=1)
+    try:
+        loop.run_until_complete(event_processor.start())
+    except KeyboardInterrupt:
+        loop.run_until_complete(event_processor.stop())
+    finally:
+        loop.stop()

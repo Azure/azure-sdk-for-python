@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # -----------------------------------------------------------------------------------
 
-from typing import List, Iterable, Any, Dict
 import time
 import random
 import math
@@ -34,8 +33,8 @@ class OwnershipManager(object):
         """Claims ownership for this EventProcessor
         1. Retrieves all partition ids of an event hub from azure event hub service
         2. Retrieves current ownership list via this EventProcessor's PartitionManager.
-        3. Searches claimable partitions for this EventProcessor. Refer to claim_ownership() for details.
-        4. Claims the ownership for the claimable partitions
+        3. Balances number of ownership. Refer to _balance_ownership() for details.
+        4. Claims the ownership for the balanced number of partitions.
 
         :return: List[Dict[Any]]
         """
@@ -53,19 +52,35 @@ class OwnershipManager(object):
         self.all_parition_ids = await self.eventhub_client.get_partition_ids()
 
     async def _balance_ownership(self):
+        """Balances and claims ownership of partitions for this EventProcessor.
+        The balancing algorithm is:
+        1. Find partitions with inactive ownership and partitions that haven never been claimed before
+        2. Find the number of active owners, including this EventProcessor, for all partitions.
+        3. Calculate the average count of partitions that an owner should own.
+        (number of partitions // number of active owners)
+        4. Calculate the largest allowed count of partitions that an owner can own.
+        math.ceil(number of partitions / number of active owners). This should be equal or 1 greater than the average count
+        5. Adjust the number of partitions owned by this EventProcessor (owner)
+            a. if this EventProcessor owns more than largest allowed count, abandon one partition
+            b. if this EventProcessor owns less than average count, add one from the inactive or unclaimed partitions,
+                or steal one from another owner that has the largest number of ownership among all owners (EventProcessors)
+            c. Otherwise, no change to the ownership
+
+        The balancing algorithm adjust one partition at a time to gradually build the balanced ownership.
+        Ownership must be renewed to keep it active. So the returned result includes both existing ownership and
+        the newly adjusted ownership.
+        This method balances but doesn't claim ownership. The caller of this method tries to claim the result ownership
+        list. But it may not successfully claim all of them because of concurrency. Other EventProcessors may happen to
+        claim a partition at that time. Since balancing and claiming are run in infinite repeatedly,
+        it achieves balancing among all EventProcessors after some time of running.
+
+        :return: List[Dict[str, Any]], A list of ownership.
+        """
         ownership_list = await self.partition_manager.list_ownership(self.eventhub_client.eh_name, self.consumer_group_name)
         ownership_dict = dict((x["partition_id"], x) for x in ownership_list)  # put the list to dict for fast lookup
-        '''
-        now = time.time()
-        partition_ids_no_ownership = list(filter(lambda x: x not in ownership_dict, self.all_parition_ids))
-        inactive_ownership = filter(lambda x: x["last_modified_time"] + self.ownership_timeout < now, ownership_list)
-        claimable_partition_ids = partition_ids_no_ownership + [x["partition_id"] for x in inactive_ownership]
-        active_ownership = list(filter(lambda x: x["last_modified_time"] + self.ownership_timeout >= now, ownership_list))
-        active_ownership_count_group_by_owner = Counter([x["owner_id"] for x in active_ownership])
-        active_ownership_self = list(filter(lambda x: x["owner_id"] == self.owner_id, active_ownership))
-        '''
-        claimable_partition_ids = []
-        active_ownership_self = []
+
+        claimable_partition_ids = []  # partitions with inactive ownership and partitions that have never been claimed yet
+        active_ownership_self = []  # active ownership of this EventProcessor
         active_ownership_count_group_by_owner = Counter()
         for partition_id in self.all_parition_ids:
             ownership = ownership_dict.get(partition_id)
@@ -100,7 +115,7 @@ class OwnershipManager(object):
                                                             {"partition_id": random_partition_id,
                                                              "eventhub_name": self.eventhub_client.eh_name,
                                                              "consumer_group_name": self.consumer_group_name,
-                                                             "owner_level": 0})
+                                                             "owner_level": 0})  # TODO: consider removing owner_level
                 random_chosen_to_claim["owner_id"] = self.owner_id
                 to_claim.append(random_chosen_to_claim)
             else:  # steal from another owner that has the most count

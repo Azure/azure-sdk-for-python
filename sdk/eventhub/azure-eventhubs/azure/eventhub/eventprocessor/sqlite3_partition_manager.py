@@ -121,9 +121,16 @@ class Sqlite3PartitionManager(PartitionManager):
             offset, sequence_number):
         cursor = self.conn.cursor()
         try:
-            cursor.execute("update " + _check_table_name(self.ownership_table) + " set offset=?, sequence_number=? where eventhub_name=? and consumer_group_name=? and partition_id=?",
-                           (offset, sequence_number, eventhub_name, consumer_group_name, partition_id))
-            self.conn.commit()
+            cursor.execute("select owner_id from " + _check_table_name(self.ownership_table) + " where eventhub_name=? and consumer_group_name=? and partition_id=?",
+                           (eventhub_name, consumer_group_name, partition_id))
+            cursor_fetch = cursor.fetchall()
+            if cursor_fetch and owner_id == cursor_fetch[0][0]:
+                cursor.execute("update " + _check_table_name(self.ownership_table) + " set offset=?, sequence_number=? where eventhub_name=? and consumer_group_name=? and partition_id=?",
+                               (offset, sequence_number, eventhub_name, consumer_group_name, partition_id))
+                self.conn.commit()
+            else:
+                logger.info("EventProcessor couldn't checkpoint to partition %r because it no longer has the ownership", partition_id)
+
         finally:
             cursor.close()
 
