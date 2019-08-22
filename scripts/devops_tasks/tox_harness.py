@@ -2,21 +2,19 @@ import sys
 import os
 import errno
 import shutil
+import multiprocessing
 
 if sys.version_info < (3, 0):
     from Queue import Queue
 else:
     from queue import Queue
 from threading import Thread
-import multiprocessing
 
 from subprocess import Popen, PIPE, STDOUT
 from common_tasks import process_glob_string, run_check_call, cleanup_folder, clean_coverage, log_file, read_file, MANAGEMENT_PACKAGE_IDENTIFIERS
 
 import logging
 logging.getLogger().setLevel(logging.INFO)
-
-import pdb
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 coverage_dir = os.path.join(root_dir, "_coverage/")
