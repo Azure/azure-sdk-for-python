@@ -56,7 +56,7 @@ class Worker(Thread):
                 self.tasks.task_done()
 
 def in_ci():
-    return True
+    return os.getenv('TF_BUILD', False)
 
 class ThreadPool:
     def __init__(self, num_threads):
