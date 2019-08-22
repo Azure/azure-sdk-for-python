@@ -79,6 +79,7 @@ jobs:
         OSName: $(OSName)
         PythonVersion: $(PythonVersion)
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)" --tparallel'
         BeforeTestSteps: 
             - task: DownloadPipelineArtifact@0
               inputs:
@@ -129,7 +130,7 @@ jobs:
     steps:
       - template: ../steps/build-test.yml
         parameters:
-          AdditionalTestArgs: '--disablecov --wheel_dir="$(Build.ArtifactStagingDirectory)"'
+          AdditionalTestArgs: '--disablecov --wheel_dir="$(Build.ArtifactStagingDirectory)" --tparallel'
           ServiceDirectory: ${{ parameters.ServiceDirectory }}
           TestMarkArgument: ${{ parameters.TestMarkArgument }}
           OSName: $(OSName)

@@ -74,6 +74,7 @@ jobs:
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
+        AdditionalTestArgs: '--disablecov --wheel_dir="$(Build.ArtifactStagingDirectory)" --tparallel'
         OSName: $(OSName)
         PythonVersion: $(PythonVersion)
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
@@ -89,13 +90,13 @@ jobs:
   - job: 'Test_PyPy'
 
     variables:
-      - template: ../variables/globals.yml
-      - name: OSName
-        value: 'Linux'
-      - name: PythonVersion
-        value: 'pypy3'
-      - name: OSVmImage
-        value: ubuntu-16.04
+    - template: ../variables/globals.yml
+    - name: OSName
+      value: 'Linux'
+    - name: PythonVersion
+      value: 'pypy3'
+    - name: OSVmImage
+      value: ubuntu-16.04
 
     dependsOn:
       - 'Build'

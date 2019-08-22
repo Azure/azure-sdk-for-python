@@ -94,7 +94,7 @@ def collect_tox_coverage_files(targeted_packages):
     logging.info("Visible uncombined .coverage files: {}".format(coverage_files))
 
     if len(coverage_files):
-        cov_cmd_array = [sys.executable, "-m", "coverage", "combine"]
+        cov_cmd_array = [sys.executable, "-m", "coverage", "combine", "-i"]
         cov_cmd_array.extend(coverage_files)
 
         # merge them with coverage combine and copy to root
