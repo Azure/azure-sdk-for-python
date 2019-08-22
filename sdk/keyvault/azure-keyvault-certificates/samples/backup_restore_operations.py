@@ -84,21 +84,9 @@ def run_sample():
         print("Backup created for certificate with name '{0}'.".format(certificate_operation.name))
 
         # The storage account certificate is no longer in use, so you can delete it.
-        print("\nDeleting certificate...")
         client.delete_certificate(name=certificate_operation.name)
-
-        # To ensure certificate is deleted on the server side.
-        time.sleep(20)
+        print("\nDeleting certificate...")
         print("Deleted Certificate with name '{0}'".format(certificate_operation.name))
-
-        # Even though the certificate is deleted, it can still be recovered so its name cannot be reused.
-        # In order to be able to reuse the name during restoration, we must purge the certificate
-        # after the initial deletion.
-        print("\nPurging certificate...")
-        client.purge_deleted_certificate(name=certificate_operation.name)
-        # To ensure certificate is purged on the server side.
-        time.sleep(30)
-        print("Purged Certificate with name '{0}'".format(certificate_operation.name))
 
         # In future, if the certificate is required again, we can use the backup value to restore it in the Key Vault.
         print("\n3. Restore the certificate using the backed up certificate bytes")

@@ -141,16 +141,16 @@ class SessionContainer(object):
             # update session token in collection rid to session token map
             if collection_rid in self.rid_to_session_token:
                 # we need to update the session tokens for 'this' collection
-                for id in parsed_tokens:
+                for id_ in parsed_tokens:
                     old_session_token = (
-                        self.rid_to_session_token[collection_rid][id]
-                        if id in self.rid_to_session_token[collection_rid]
+                        self.rid_to_session_token[collection_rid][id_]
+                        if id_ in self.rid_to_session_token[collection_rid]
                         else None
                     )
                     if not old_session_token:
-                        self.rid_to_session_token[collection_rid][id] = parsed_tokens[id]
+                        self.rid_to_session_token[collection_rid][id_] = parsed_tokens[id_]
                     else:
-                        self.rid_to_session_token[collection_rid][id] = parsed_tokens[id].merge(old_session_token)
+                        self.rid_to_session_token[collection_rid][id_] = parsed_tokens[id_].merge(old_session_token)
                     self.collection_name_to_rid[collection_name] = collection_rid
             else:
                 self.rid_to_session_token[collection_rid] = parsed_tokens
@@ -193,14 +193,14 @@ class SessionContainer(object):
             for token_pair in token_pairs:
                 tokens = token_pair.split(":")
                 if len(tokens) == 2:
-                    id = tokens[0]
+                    id_ = tokens[0]
                     sessionToken = VectorSessionToken.create(tokens[1])
                     if sessionToken is None:
                         raise HTTPFailure(
                             http_constants.StatusCodes.INTERNAL_SERVER_ERROR,
                             "Could not parse the received session token: %s" % tokens[1],
                         )
-                    id_to_sessionlsn[id] = sessionToken
+                    id_to_sessionlsn[id_] = sessionToken
         return id_to_sessionlsn
 
 
