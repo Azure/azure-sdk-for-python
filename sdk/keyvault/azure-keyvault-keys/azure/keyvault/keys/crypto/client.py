@@ -107,6 +107,7 @@ class CryptographyClient(KeyVaultClientBase):
 
     def encrypt(self, algorithm, plaintext, **kwargs):
         # type: (EncryptionAlgorithm, bytes, **Any) -> EncryptResult
+        # pylint:disable=line-too-long
         """
         Encrypt bytes using the client's key. Requires the keys/encrypt permission.
 
@@ -307,6 +308,7 @@ class CryptographyClient(KeyVaultClientBase):
             assert verified.result is True
 
         """
+        #    def verify(self, vault_base_url, key_name, key_version, algorithm, digest, signature, cls=None, **kwargs):
 
         local_key = self._get_local_key()
         if local_key:

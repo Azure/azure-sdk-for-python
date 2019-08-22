@@ -10,7 +10,7 @@ from .symmetric_key import SymmetricKey
 from .key import Key
 
 
-def protect(plaintext, kek=None, alg=None, cek=None, enc=None):
+def protect(plaintext, kek=None, alg=None, cek=None, enc=None):  # pylint:disable=unused-argument
     # if neither the kek or the cek is specified raise an error
     if not kek and not cek:
         raise ValueError(
@@ -52,7 +52,7 @@ def protect(plaintext, kek=None, alg=None, cek=None, enc=None):
 class JoseObject(object):
     def deserialize(self, s):
         d = json.loads(s)
-        self.__dict__ = d
+        self.__dict__ = d  # pylint:disable=attribute-defined-outside-init
         return self
 
     def deserialize_b64(self, s):
@@ -80,7 +80,7 @@ class JweHeader(JoseHeader):
     @staticmethod
     def from_compact_header(compact):
         header = JweHeader()
-        header.__dict__ = json.loads(_b64_to_str(compact))
+        header.__dict__ = json.loads(_b64_to_str(compact))  # pylint:disable=attribute-defined-outside-init
         return header
 
 
@@ -112,7 +112,7 @@ class JwsHeader(JoseHeader):
     @staticmethod
     def from_compact_header(compact):
         header = JwsHeader()
-        header.__dict__ = json.loads(_b64_to_str(compact))
+        header.__dict__ = json.loads(_b64_to_str(compact))  # pylint:disable=attribute-defined-outside-init
         return header
 
 

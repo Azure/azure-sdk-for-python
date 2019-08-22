@@ -2,11 +2,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from ..algorithm import Algorithm, SignatureAlgorithm
-from ..transform import SignatureTransform
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography.hazmat.primitives.asymmetric import utils
+
+from ..algorithm import SignatureAlgorithm
+from ..transform import SignatureTransform
 
 
 class _EcdsaSignatureTransform(SignatureTransform):

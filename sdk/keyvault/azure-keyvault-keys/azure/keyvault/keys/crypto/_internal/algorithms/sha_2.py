@@ -2,11 +2,11 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import hashes
 
 from ..algorithm import HashAlgorithm
 from ..transform import DigestTransform
-from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives import hashes
 
 
 class _Sha2DigestTransform(DigestTransform):
@@ -17,7 +17,7 @@ class _Sha2DigestTransform(DigestTransform):
         return self._digest.update(data)
 
     def finalize(self, data):
-        return self._digest.finalize(data)
+        return self._digest.finalize()
 
 
 class _Sha2HashAlgorithm(HashAlgorithm):
@@ -25,7 +25,7 @@ class _Sha2HashAlgorithm(HashAlgorithm):
     _algorithm_cls = None
 
     def create_digest(self):
-        return _Sha2DigestTransform(self._algorithm_cls())
+        return _Sha2DigestTransform(self._algorithm_cls())  # pylint:disable=not-callable
 
 
 class Sha256(_Sha2HashAlgorithm):

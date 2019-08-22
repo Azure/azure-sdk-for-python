@@ -39,6 +39,8 @@ class EllipticCurveKey(Key):
     _supported_signature_algorithms = _curve_to_default_algo.values()
 
     def __init__(self, x, y, kid=None, curve=None):
+        super(EllipticCurveKey, self).__init__()
+
         self._kid = kid or str(uuid.uuid4())
         self._default_algo = _curve_to_default_algo[curve]
         curve_cls = _kv_crv_to_crypto_cls[curve]

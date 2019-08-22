@@ -5,21 +5,21 @@
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import padding
 
-from ..algorithm import EncryptionAlgorithm
+from ..algorithm import AsymmetricEncryptionAlgorithm
 from ..transform import CryptoTransform
 
 
 class _Rsa1_5Encryptor(CryptoTransform):
-    def transform(self, data, **kwargs):
+    def transform(self, data):
         return self._key.encrypt(data, padding.PKCS1v15())
 
 
 class _Rsa1_5Decryptor(CryptoTransform):
-    def transform(self, data, **kwargs):
+    def transform(self, data):
         return self._key.decrypt(data, padding.PKCS1v15())
 
 
-class Rsa1_5(EncryptionAlgorithm):
+class Rsa1_5(AsymmetricEncryptionAlgorithm):  # pylint:disable=client-incorrect-naming-convention
     _name = "RSA1_5"
 
     def create_encryptor(self, key):
@@ -34,7 +34,7 @@ class _RsaOaepDecryptor(CryptoTransform):
         self._hash_cls = hash_cls
         super(_RsaOaepDecryptor, self).__init__(key)
 
-    def transform(self, data, **kwargs):
+    def transform(self, data):
         oaep_padding = padding.OAEP(
             mgf=padding.MGF1(algorithm=self._hash_cls()), algorithm=self._hash_cls(), label=None
         )
@@ -46,14 +46,14 @@ class _RsaOaepEncryptor(CryptoTransform):
         self._hash_cls = hash_cls
         super(_RsaOaepEncryptor, self).__init__(key)
 
-    def transform(self, data, **kwargs):
+    def transform(self, data):
         oaep_padding = padding.OAEP(
             mgf=padding.MGF1(algorithm=self._hash_cls()), algorithm=self._hash_cls(), label=None
         )
         return self._key.encrypt(data, oaep_padding)
 
 
-class RsaOaep(EncryptionAlgorithm):
+class RsaOaep(AsymmetricEncryptionAlgorithm):
     _name = "RSA-OAEP"
 
     def create_encryptor(self, key):
@@ -63,7 +63,7 @@ class RsaOaep(EncryptionAlgorithm):
         return _RsaOaepDecryptor(key, hashes.SHA1)
 
 
-class RsaOaep256(EncryptionAlgorithm):
+class RsaOaep256(AsymmetricEncryptionAlgorithm):
     _name = "RSA-OAEP-256"
 
     def create_encryptor(self, key):

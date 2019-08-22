@@ -2,14 +2,15 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from ..algorithm import Algorithm, AuthenticatedSymmetricEncryptionAlgorithm
-from ..transform import AuthenticatedCryptoTransform
-from .._internal import _int_to_bigendian_8_bytes
 from abc import abstractmethod
-import codecs
+
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import padding, hashes, hmac
+
+from ..algorithm import AuthenticatedSymmetricEncryptionAlgorithm
+from ..transform import AuthenticatedCryptoTransform
+from .._internal import _int_to_bigendian_8_bytes
 
 
 class _AesCbcHmacCryptoTransform(AuthenticatedCryptoTransform):
@@ -31,7 +32,8 @@ class _AesCbcHmacCryptoTransform(AuthenticatedCryptoTransform):
         return self._tag
 
     def block_size(self):
-        return self._cipher.block_size
+        # return self._cipher.block_size
+        raise NotImplementedError()
 
     @abstractmethod
     def update(self, data):
@@ -63,8 +65,11 @@ class _AesCbcHmacEncryptor(_AesCbcHmacCryptoTransform):
         cipher_text = self._ctx.update(padded) + self._ctx.finalize()
         self._hmac.update(cipher_text)
         self._hmac.update(self._auth_data_length)
-        self._tag.extend(hmac.finalize()[: len(self._hmac_key)])
+        self._tag.extend(self._hmac.finalize()[: len(self._hmac_key)])
         return cipher_text
+
+    def block_size(self):
+        raise NotImplementedError()
 
 
 class _AesCbcHmacDecryptor(_AesCbcHmacCryptoTransform):
@@ -91,6 +96,9 @@ class _AesCbcHmacDecryptor(_AesCbcHmacCryptoTransform):
         self._hmac.verify(self.tag)
         padded = self._ctx.update(data) + self._ctx.finalize()
         return self._padder.update(padded) + self._padder.finalize()
+
+    def block_size(self):
+        raise NotImplementedError()
 
 
 class _AesCbcHmac(AuthenticatedSymmetricEncryptionAlgorithm):

@@ -2,24 +2,27 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from ..algorithm import SymmetricEncryptionAlgorithm, Algorithm
-from ..transform import BlockCryptoTransform
+from abc import abstractmethod
+
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import padding
 
+from ..algorithm import SymmetricEncryptionAlgorithm
+from ..transform import BlockCryptoTransform
+
 
 class _AesCbcCryptoTransform(BlockCryptoTransform):
     def __init__(self, key, iv):
+        super(_AesCbcCryptoTransform, self).__init__(key)
         self._cipher = Cipher(algorithms.AES(key), modes.CBC(iv), backend=default_backend())
 
-    @property
-    def block_size(self):
-        return self._cipher.block_size
-
     def transform(self, data):
-        return self.update(data) + self.finalize()
+        return self.update(data) + self.finalize(data)
 
+    @abstractmethod
+    def block_size(self):
+        pass
 
 class _AesCbcDecryptor(_AesCbcCryptoTransform):
     def __init__(self, key, iv):
@@ -35,6 +38,11 @@ class _AesCbcDecryptor(_AesCbcCryptoTransform):
         padded = self._ctx.finalize()
         return self._padder.update(padded) + self._padder.finalize()
 
+    @property
+    def block_size(self):
+        # return self._cipher.block_size
+        raise NotImplementedError()
+
 
 class _AesCbcEncryptor(_AesCbcCryptoTransform):
     def __init__(self, key, iv):
@@ -49,6 +57,11 @@ class _AesCbcEncryptor(_AesCbcCryptoTransform):
     def finalize(self, data):
         padded = self._padder.finalize()
         return self._ctx.update(padded) + self._ctx.finalize()
+
+    @property
+    def block_size(self):
+        # return self._cipher.block_size
+        raise NotImplementedError()
 
 
 class _AesCbc(SymmetricEncryptionAlgorithm):
@@ -85,7 +98,7 @@ class _AesCbc(SymmetricEncryptionAlgorithm):
 
         if not iv:
             raise ValueError("iv")
-        if not len(iv) == self.block_size_in_bytes:
+        if not len(iv) == self.block_size_in_bytes():
             raise ValueError("iv must be %d bits" % self.block_size)
 
         return key[: self.key_size_in_bytes], iv

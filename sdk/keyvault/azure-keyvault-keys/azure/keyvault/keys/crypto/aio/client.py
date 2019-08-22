@@ -100,6 +100,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         return self._internal_key
 
     async def encrypt(self, algorithm: "EncryptionAlgorithm", plaintext: bytes, **kwargs: "Any") -> EncryptResult:
+        # pylint:disable=line-too-long
         """
         Encrypt bytes using the client's key. Requires the keys/encrypt permission.
 
@@ -161,7 +162,12 @@ class CryptographyClient(AsyncKeyVaultClientBase):
             raise ValueError("'authentication_tag' is required when 'authentication_data' is specified")
 
         result = await self._client.decrypt(
-            self._key_id.vault_url, self._key_id.name, self._key_id.version, algorithm, ciphertext, **kwargs
+            vault_base_url=self._key_id.vault_url,
+            key_name=self._key_id.name,
+            key_version=self._key_id.version,
+            algorithm=algorithm,
+            value=ciphertext,
+            **kwargs
         )
         return DecryptResult(decrypted_bytes=result.result)
 
@@ -255,7 +261,12 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         """
 
         result = await self._client.sign(
-            self._key_id.vault_url, self._key_id.name, self._key_id.version, algorithm, digest, **kwargs
+            vault_base_url=self._key_id.vault_url,
+            key_name=self._key_id.name,
+            key_version=self._key_id.version,
+            algorithm=algorithm,
+            value=digest,
+            **kwargs
         )
         return SignResult(key_id=self.key_id, algorithm=algorithm, signature=result.result)
 

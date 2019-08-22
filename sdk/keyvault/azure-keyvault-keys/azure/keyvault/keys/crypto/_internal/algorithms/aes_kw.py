@@ -2,29 +2,24 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from ..algorithm import EncryptionAlgorithm, Algorithm
-from ..transform import CryptoTransform
 from cryptography.hazmat.primitives.keywrap import aes_key_wrap, aes_key_unwrap
 from cryptography.hazmat.backends import default_backend
 
+from ..algorithm import AsymmetricEncryptionAlgorithm
+from ..transform import CryptoTransform
+
 
 class _AesKeyWrapTransform(CryptoTransform):
-    def __init__(self, key):
-        self._key = key
-
     def transform(self, data):
         return aes_key_wrap(self._key, data, default_backend())
 
 
 class _AesKeyUnwrapTransform(CryptoTransform):
-    def __init__(self, key):
-        self._key = key
-
     def transform(self, data):
         return aes_key_unwrap(self._key, data, default_backend())
 
 
-class _AesKeyWrap(EncryptionAlgorithm):
+class _AesKeyWrap(AsymmetricEncryptionAlgorithm):
     _key_size = 256
 
     @property

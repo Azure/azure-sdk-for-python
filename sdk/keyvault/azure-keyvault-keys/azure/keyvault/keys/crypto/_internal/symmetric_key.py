@@ -39,6 +39,8 @@ _default_kw_alg_by_size = {
 
 class SymmetricKey(Key):
     def __init__(self, kid=None, key_bytes=None, key_size=None):
+        super(SymmetricKey, self).__init__()
+
         self._kid = kid or str(uuid.uuid4())
 
         if not key_bytes:
@@ -99,12 +101,12 @@ class SymmetricKey(Key):
 
         return supported
 
-    def encrypt(self, plain_text, iv, **kwargs):
+    def encrypt(self, plain_text, iv, **kwargs):  # pylint:disable=arguments-differ
         algorithm = self._get_algorithm("encrypt", **kwargs)
         encryptor = algorithm.create_encryptor(key=self._key, iv=iv)
         return encryptor.transform(plain_text, **kwargs)
 
-    def decrypt(self, cipher_text, iv, **kwargs):
+    def decrypt(self, cipher_text, iv, **kwargs):  # pylint:disable=arguments-differ
         algorithm = self._get_algorithm("decrypt", **kwargs)
         decryptor = algorithm.create_decryptor(key=self._key, iv=iv)
         return decryptor.transform(cipher_text, **kwargs)

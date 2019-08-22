@@ -4,7 +4,7 @@
 # ------------------------------------
 from .algorithm import (
     Algorithm,
-    EncryptionAlgorithm,
+    AsymmetricEncryptionAlgorithm,
     SymmetricEncryptionAlgorithm,
     AuthenticatedSymmetricEncryptionAlgorithm,
     SignatureAlgorithm,
@@ -19,7 +19,7 @@ __all__ = {
     "EllipticCurveKey",
     "RsaKey",
     "Algorithm",
-    "EncryptionAlgorithm",
+    "AsymmetricEncryptionAlgorithm",
     "SymmetricEncryptionAlgorithm",
     "AuthenticatedCryptoTransform",
     "SignatureAlgorithm",

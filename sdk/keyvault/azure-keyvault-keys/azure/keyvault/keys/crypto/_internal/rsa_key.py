@@ -2,10 +2,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-
-import uuid
 import codecs
-import json
+import uuid
+
 from cryptography.exceptions import InvalidSignature
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.asymmetric.rsa import (
@@ -17,6 +16,7 @@ from cryptography.hazmat.primitives.asymmetric.rsa import (
     rsa_crt_iqmp,
     RSAPrivateKey,
 )
+
 from azure.keyvault.keys.models import JsonWebKey
 from ._internal import _bytes_to_int, _int_to_bytes
 from .key import Key
@@ -95,6 +95,7 @@ class RsaKey(Key):
         key.kid = kid or str(uuid.uuid4())
         key.kty = kty
         key.key_ops = RsaKey.PRIVATE_KEY_DEFAULT_OPS
+        # pylint:disable=protected-access
         key._rsa_impl = generate_private_key(public_exponent=e, key_size=size, backend=default_backend())
         return key
 
@@ -133,7 +134,7 @@ class RsaKey(Key):
         else:
             key_impl = pub.public_key(default_backend())
 
-        rsa_key._rsa_impl = key_impl
+        rsa_key._rsa_impl = key_impl  # pylint:disable=protected-access
 
         return rsa_key
 
@@ -216,10 +217,10 @@ class RsaKey(Key):
         return isinstance(self._rsa_impl, RSAPrivateKey)
 
     def _public_key_material(self):
-        self.public_key.public_numbers()
+        return self.public_key.public_numbers()
 
     def _private_key_material(self):
-        self.private_key.private_numbers() if self.private_key else None
+        return self.private_key.private_numbers() if self.private_key else None
 
 
 def _bytes_to_int(b):

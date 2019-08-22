@@ -29,7 +29,7 @@ def _int_to_bytes(i):
     return codecs.decode(h, "hex")
 
 
-def _bstr_to_b64url(bstr, **kwargs):
+def _bstr_to_b64url(bstr):
     """Serialize bytes into base-64 string.
     :param str: Object to be serialized.
     :rtype: str
@@ -38,7 +38,7 @@ def _bstr_to_b64url(bstr, **kwargs):
     return encoded.strip("=").replace("+", "-").replace("/", "_")
 
 
-def _str_to_b64url(s, **kwargs):
+def _str_to_b64url(s):
     """Serialize str into base-64 string.
     :param str: Object to be serialized.
     :rtype: str

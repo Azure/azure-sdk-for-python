@@ -2,10 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-
-from abc import ABCMeta, abstractmethod
-from six import with_metaclass
-
+from abc import abstractmethod
 
 _alg_registry = {}
 
@@ -28,7 +25,7 @@ class Algorithm(object):
         return _alg_registry[name]()
 
 
-class EncryptionAlgorithm(with_metaclass(ABCMeta, Algorithm)):
+class AsymmetricEncryptionAlgorithm(Algorithm):
     @abstractmethod
     def create_encryptor(self, key):
         raise NotImplementedError()
@@ -38,7 +35,7 @@ class EncryptionAlgorithm(with_metaclass(ABCMeta, Algorithm)):
         raise NotImplementedError()
 
 
-class SymmetricEncryptionAlgorithm(EncryptionAlgorithm):
+class SymmetricEncryptionAlgorithm(Algorithm):
     @abstractmethod
     def create_encryptor(self, key, iv):
         raise NotImplementedError()
@@ -48,7 +45,7 @@ class SymmetricEncryptionAlgorithm(EncryptionAlgorithm):
         raise NotImplementedError()
 
 
-class AuthenticatedSymmetricEncryptionAlgorithm(EncryptionAlgorithm):
+class AuthenticatedSymmetricEncryptionAlgorithm(Algorithm):
     @abstractmethod
     def create_encryptor(self, key, iv, auth_data, auth_tag):
         raise NotImplementedError()
