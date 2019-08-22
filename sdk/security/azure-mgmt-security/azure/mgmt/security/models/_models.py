@@ -2563,7 +2563,7 @@ class NetworkDataConnectableResource(Model):
 
     :ivar connectable_resource_id: The connectable resource id
     :vartype connectable_resource_id: str
-    :param connection_type: The connection type between the extention resoure
+    :param connection_type: The connection type between the extension resource
      to the connectable resource Id. Possible values include: 'Azure vm'
     :type connection_type: str or
      ~azure.mgmt.security.models.ConnectionTypeValues
