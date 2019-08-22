@@ -64,7 +64,7 @@ class LocationCache(object):
 
     def check_and_update_cache(self):
         if (
-            len(self.location_unavailability_info_by_endpoint) > 0
+            self.location_unavailability_info_by_endpoint
             and self.current_time_millis() - self.last_cache_update_time_stamp > self.refresh_time_interval_in_ms
         ):
             self.update_location_cache()
@@ -118,7 +118,7 @@ class LocationCache(object):
             # For non-document resource types in case of client can use multiple write locations
             # or when client cannot use multiple write locations, flip-flop between the
             # first and the second writable region in DatabaseAccount (for manual failover)
-            if self.enable_endpoint_discovery and len(self.available_write_locations) > 0:
+            if self.enable_endpoint_discovery and self.available_write_locations:
                 location_index = min(location_index % 2, len(self.available_write_locations) - 1)
                 write_location = self.available_write_locations[location_index]
                 return self.available_write_endpoint_by_locations[write_location]
@@ -132,9 +132,7 @@ class LocationCache(object):
         return endpoints[location_index % len(endpoints)]
 
     def should_refresh_endpoints(self):
-        most_preferred_location = (
-            self.preferred_locations[0] if (self.preferred_locations and len(self.preferred_locations) > 0) else None
-        )
+        most_preferred_location = self.preferred_locations[0] if self.preferred_locations else None
 
         # we should schedule refresh in background if we are unable to target the user's most preferredLocation.
         if self.enable_endpoint_discovery:
@@ -168,7 +166,7 @@ class LocationCache(object):
 
     def clear_stale_endpoint_unavailability_info(self):
         new_location_unavailability_info = {}
-        if len(self.location_unavailability_info_by_endpoint) > 0:
+        if self.location_unavailability_info_by_endpoint:
             for unavailable_endpoint in self.location_unavailability_info_by_endpoint:
                 unavailability_info = self.location_unavailability_info_by_endpoint[unavailable_endpoint]
                 if not (
@@ -235,12 +233,12 @@ class LocationCache(object):
 
         if self.enable_endpoint_discovery:
             if read_locations:
-                self.available_read_endpoint_by_locations, self.available_read_locations = self.get_endpoint_by_location(
+                self.available_read_endpoint_by_locations, self.available_read_locations = self.get_endpoint_by_location(  # pylint: disable=line-too-long
                     read_locations
                 )
 
             if write_locations:
-                self.available_write_endpoint_by_locations, self.available_write_locations = self.get_endpoint_by_location(
+                self.available_write_endpoint_by_locations, self.available_write_locations = self.get_endpoint_by_location(  # pylint: disable=line-too-long
                     write_locations
                 )
 
@@ -262,7 +260,8 @@ class LocationCache(object):
         self, endpoints_by_location, orderedLocations, expected_available_operation, fallback_endpoint
     ):
         endpoints = []
-        # if enableEndpointDiscovery is false, we always use the defaultEndpoint that user passed in during documentClient init
+        # if enableEndpointDiscovery is false, we always use the defaultEndpoint that
+        # user passed in during documentClient init
         if self.enable_endpoint_discovery and endpoints_by_location:
             if (
                 self.can_use_multiple_write_locations()
@@ -270,10 +269,10 @@ class LocationCache(object):
             ):
                 unavailable_endpoints = []
                 if self.preferred_locations:
-                    # When client can not use multiple write locations, preferred locations list should only be used
-                    # determining read endpoints order.
-                    # If client can use multiple write locations, preferred locations list should be used for determining
-                    # both read and write endpoints order.
+                    # When client can not use multiple write locations, preferred locations
+                    # list should only be used determining read endpoints order. If client
+                    # can use multiple write locations, preferred locations list should be
+                    # used for determining both read and write endpoints order.
                     for location in self.preferred_locations:
                         endpoint = endpoints_by_location[location] if location in endpoints_by_location else None
                         if endpoint:
@@ -282,7 +281,7 @@ class LocationCache(object):
                             else:
                                 endpoints.append(endpoint)
 
-                if len(endpoints) == 0:
+                if not endpoints:
                     endpoints.append(fallback_endpoint)
 
                 endpoints.extend(unavailable_endpoints)
@@ -292,7 +291,7 @@ class LocationCache(object):
                         # location is empty during manual failover
                         endpoints.append(endpoints_by_location[location])
 
-        if len(endpoints) == 0:
+        if not endpoints:
             endpoints.append(fallback_endpoint)
 
         return endpoints

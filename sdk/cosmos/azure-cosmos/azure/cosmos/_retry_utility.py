@@ -93,9 +93,9 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
             else:
                 retry_policy = defaultRetry_policy
 
-            # If none of the retry policies applies or there is no retry needed, set the throttle related response hedaers and
-            # re-throw the exception back
-            # arg[0] is the request. It needs to be modified for write forbidden exception
+            # If none of the retry policies applies or there is no retry needed, set the
+            # throttle related response hedaers and re-throw the exception back arg[0]
+            # is the request. It needs to be modified for write forbidden exception
             if not retry_policy.ShouldRetry(e):
                 if not client.last_response_headers:
                     client.last_response_headers = {}
@@ -105,7 +105,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
                 client.last_response_headers[
                     HttpHeaders.ThrottleRetryWaitTimeInMs
                 ] = resourceThrottle_retry_policy.cummulative_wait_time_in_milliseconds
-                if len(args) > 0 and args[0].should_clear_session_token_on_session_read_failure:
+                if args and args[0].should_clear_session_token_on_session_read_failure:
                     client.session.clear_session_token(client.last_response_headers)
                 raise
 

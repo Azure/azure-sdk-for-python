@@ -21,10 +21,10 @@ class ClientConstructorTakesCorrectParameters(BaseChecker):
     priority = -1
     msgs = {
         "C4717": (
-            "Client constructor is missing a credentials parameter. See details:"
+            "Client constructor is missing a credential parameter. See details:"
             " https://azure.github.io/azure-sdk/python_design.html#constructors-and-factory-methods",
-            "missing-client-constructor-parameter-credentials",
-            "All client types should accept a credentials parameter.",
+            "missing-client-constructor-parameter-credential",
+            "All client types should accept a credential parameter.",
         ),
         "C4718": (
             "Client constructor is missing a **kwargs parameter. See details:"
@@ -35,12 +35,12 @@ class ClientConstructorTakesCorrectParameters(BaseChecker):
     }
     options = (
         (
-            "ignore-missing-client-constructor-parameter-credentials",
+            "ignore-missing-client-constructor-parameter-credential",
             {
                 "default": False,
                 "type": "yn",
                 "metavar": "<y_or_n>",
-                "help": "Allow client constructors without a credentials parameter",
+                "help": "Allow client constructors without a credential parameter",
             },
         ),
         (
@@ -73,7 +73,7 @@ class ClientConstructorTakesCorrectParameters(BaseChecker):
 
     def visit_functiondef(self, node):
         """Visits the constructor within a client class and checks that it has
-        credentials and kwargs parameters.
+        credential and kwargs parameters.
 
         :param node: function node
         :type node: ast.FunctionDef
@@ -85,9 +85,9 @@ class ClientConstructorTakesCorrectParameters(BaseChecker):
                     (child for child in node.get_children() if child.is_argument)
                 )
                 arg_names = [argument.name for argument in arguments_node.args]
-                if "credential" not in arg_names and "credentials" not in arg_names:
+                if "credential" not in arg_names:
                     self.add_message(
-                        msg_id="missing-client-constructor-parameter-credentials", node=node, confidence=None
+                        msg_id="missing-client-constructor-parameter-credential", node=node, confidence=None
                     )
                 if not arguments_node.kwarg:
                     self.add_message(

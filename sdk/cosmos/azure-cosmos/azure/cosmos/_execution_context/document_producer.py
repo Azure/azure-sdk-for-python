@@ -22,10 +22,11 @@
 """Internal class for document producer implementation in the Azure Cosmos database service.
 """
 
-import six
-from six.moves import xrange
 import numbers
 from collections import deque
+
+import six
+
 from azure.cosmos import _base
 from azure.cosmos._execution_context.base_execution_context import _DefaultQueryExecutionContext
 
@@ -261,8 +262,8 @@ class _OrderByDocumentProducerComparator(_PartitionKeyRangeDocumentProduerCompar
 
         self._validate_orderby_items(res1, res2)
 
-        for i in xrange(len(res1)):
-            res = _OrderByHelper.compare(res1[i], res2[i])
+        for i, (elt1, elt2) in enumerate(zip(res1, res2)):
+            res = _OrderByHelper.compare(elt1, elt2)
             if res != 0:
                 if self._sort_order[i] == "Ascending":
                     return res
@@ -280,8 +281,8 @@ class _OrderByDocumentProducerComparator(_PartitionKeyRangeDocumentProduerCompar
             # error
             raise ValueError("orderByItems cannot have a different size than sort orders.")
 
-        for i in xrange(len(res1)):
-            type1 = _OrderByHelper.getTypeStr(res1[i])
-            type2 = _OrderByHelper.getTypeStr(res2[i])
+        for elt1, elt2 in zip(res1, res2):
+            type1 = _OrderByHelper.getTypeStr(elt1)
+            type2 = _OrderByHelper.getTypeStr(elt2)
             if type1 != type2:
                 raise ValueError("Expected {}, but got {}.".format(type1, type2))

@@ -3,6 +3,28 @@
 Release History
 ===============
 
+0.8.0 (2019-08-15)
+++++++++++++++++++
+
+**Features**
+
+- Model DatabaseAccount has a new parameter enable_cassandra_connector
+- Model DatabaseAccount has a new parameter connector_offer
+- Model DatabaseAccountCreateUpdateParameters has a new parameter enable_cassandra_connector
+- Model DatabaseAccountCreateUpdateParameters has a new parameter connector_offer
+
+**General breaking changes**  
+
+This version uses a next-generation code generator that *might* introduce breaking changes if from some import.
+In summary, some modules were incorrectly visible/importable and have been renamed. This fixed several issues caused by usage of classes that were not supposed to be used in the first place.
+
+- CosmosDB cannot be imported from `azure.mgmt.cosmosdb.cosmos_db` anymore (import from `azure.mgmt.cosmosdb` works like before)
+- CosmosDBConfiguration import has been moved from `azure.mgmt.cosmosdb.cosmos_db` to `azure.mgmt.cosmosdb`
+- A model `MyClass` from a "models" sub-module cannot be imported anymore using `azure.mgmt.cosmosdb.models.my_class` (import from `azure.mgmt.cosmosdb.models` works like before)
+- An operation class `MyClassOperations` from an `operations` sub-module cannot be imported anymore using `azure.mgmt.cosmosdb.operations.my_class_operations` (import from `azure.mgmt.cosmosdb.operations` works like before)
+        
+Last but not least, HTTP connection pooling is now enabled by default. You should always use a client as a context manager, or call close(), or use no more than one client per process.
+
 0.7.0 (2019-06-07)
 ++++++++++++++++++
 
