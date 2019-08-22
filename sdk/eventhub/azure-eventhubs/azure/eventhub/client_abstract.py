@@ -158,7 +158,7 @@ class EventHubClientAbstract(object):
         self.config = _Configuration(**kwargs)
         self.debug = self.config.network_tracing
         self._is_iothub = kwargs.get("is_iothub", False)
-        self._is_iothub_redirected = False
+        self._iothub_redirected = None
 
         log.info("%r: Created the Event Hub client", self.container_id)
 
@@ -210,15 +210,6 @@ class EventHubClientAbstract(object):
 
         properties["user-agent"] = final_user_agent
         return properties
-
-    def _process_redirect_uri(self, redirect):
-        redirect_uri = redirect.address.decode('utf-8')
-        auth_uri, _, _ = redirect_uri.partition("/ConsumerGroups")
-        self.address = urlparse(auth_uri)
-        self.host = self.address.hostname
-        self.auth_uri = "sb://{}{}".format(self.address.hostname, self.address.path)
-        self.eh_name = self.address.path.lstrip('/')
-        self.mgmt_target = redirect_uri
 
     @classmethod
     def from_connection_string(cls, conn_str, **kwargs):

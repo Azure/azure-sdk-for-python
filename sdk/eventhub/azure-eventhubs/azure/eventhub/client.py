@@ -7,6 +7,7 @@ from __future__ import unicode_literals
 import logging
 import datetime
 import functools
+import threading
 try:
     from urlparse import urlparse
     from urllib import unquote_plus, urlencode, quote_plus
@@ -48,6 +49,7 @@ class EventHubClient(EventHubClientAbstract):
 
     def __init__(self, host, event_hub_path, credential, **kwargs):
         super(EventHubClient, self).__init__(host, event_hub_path, credential, **kwargs)
+        self._lock = threading.Lock()
         self._conn_manager = get_connection_manager(**kwargs)
 
     def __enter__(self):
@@ -141,6 +143,18 @@ class EventHubClient(EventHubClientAbstract):
                                   operation='/messages/events') as redirect_consumer:
             redirect_consumer._open_with_retry(timeout=self.config.receive_timeout)  # pylint: disable=protected-access
 
+    def _process_redirect_uri(self, redirect):
+        with self._lock:
+            redirect_uri = redirect.address.decode('utf-8')
+            auth_uri, _, _ = redirect_uri.partition("/ConsumerGroups")
+            self.address = urlparse(auth_uri)
+            self.host = self.address.hostname
+            self.auth_uri = "sb://{}{}".format(self.address.hostname, self.address.path)
+            self.eh_name = self.address.path.lstrip('/')
+            self.mgmt_target = redirect_uri
+            if self._is_iothub:
+                self._iothub_redirected = redirect
+
     def get_properties(self):
         # type:() -> Dict[str, Any]
         """
@@ -154,7 +168,7 @@ class EventHubClient(EventHubClientAbstract):
         :rtype: dict
         :raises: ~azure.eventhub.ConnectError
         """
-        if self._is_iothub and not self._is_iothub_redirected:
+        if self._is_iothub and not self._iothub_redirected:
             self._iothub_redirect()
 
         mgmt_msg = Message(application_properties={'name': self.eh_name})
@@ -196,7 +210,7 @@ class EventHubClient(EventHubClientAbstract):
         :rtype: dict
         :raises: ~azure.eventhub.ConnectError
         """
-        if self._is_iothub and not self._is_iothub_redirected:
+        if self._is_iothub and not self._iothub_redirected:
             self._iothub_redirect()
 
         mgmt_msg = Message(application_properties={'name': self.eh_name,

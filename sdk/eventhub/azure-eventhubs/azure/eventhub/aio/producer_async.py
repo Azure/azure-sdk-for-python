@@ -106,7 +106,7 @@ class EventHubProducer(ConsumerProducerMixin):
 
         """
         if not self.running and self.redirected:
-            self.client._process_redirect_uri(self.redirected)
+            await self.client._process_redirect_uri(self.redirected)
             self.target = self.redirected.address
         await super(EventHubProducer, self)._open(timeout_time)
 

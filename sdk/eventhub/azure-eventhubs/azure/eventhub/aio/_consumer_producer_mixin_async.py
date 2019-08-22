@@ -83,8 +83,6 @@ class ConsumerProducerMixin(object):
             self._max_message_size_on_link = self._handler.message_handler._link.peer_max_message_size \
                                              or constants.MAX_MESSAGE_LENGTH_BYTES  # pylint: disable=protected-access
             self.running = True
-            if self.redirected and self.client._is_iothub:  # pylint: disable=protected-access
-                self.client._is_iothub_redirected = True  # pylint: disable=protected-access
 
     async def _close_handler(self):
         await self._handler.close_async()  # close the link (sharing connection) or connection (not sharing)

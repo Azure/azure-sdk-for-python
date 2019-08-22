@@ -143,8 +143,11 @@ class EventHubConsumer(ConsumerProducerMixin):
 
         """
         # pylint: disable=protected-access
+        if self.client._iothub_redirected:
+            self.redirected = self.client._iothub_redirected
+
         if not self.running and self.redirected:
-            self.client._process_redirect_uri(self.redirected)
+            await self.client._process_redirect_uri(self.redirected)
             self.source = self.redirected.address
         await super(EventHubConsumer, self)._open(timeout_time)
 
@@ -259,4 +262,5 @@ class EventHubConsumer(ConsumerProducerMixin):
             self.error = EventHubError(str(exception))
         else:
             self.error = EventHubError("This receive handler is now closed.")
-        await self._handler.close_async()
+        if self._handler:
+            await self._handler.close_async()

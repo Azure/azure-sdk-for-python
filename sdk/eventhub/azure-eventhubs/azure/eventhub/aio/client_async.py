@@ -6,6 +6,11 @@ import logging
 import datetime
 import functools
 import asyncio
+try:
+    from urlparse import urlparse
+    from urllib import unquote_plus, urlencode, quote_plus
+except ImportError:
+    from urllib.parse import urlparse, unquote_plus, urlencode, quote_plus
 from typing import Any, List, Dict
 
 from uamqp import authentication, constants
@@ -43,6 +48,7 @@ class EventHubClient(EventHubClientAbstract):
 
     def __init__(self, host, event_hub_path, credential, **kwargs):
         super(EventHubClient, self).__init__(host, event_hub_path, credential, **kwargs)
+        self._lock = asyncio.Lock()
         self._conn_manager = get_connection_manager(**kwargs)
 
     async def __aenter__(self):
@@ -133,6 +139,18 @@ class EventHubClient(EventHubClientAbstract):
                                         operation='/messages/events') as redirect_consumer:
             await redirect_consumer._open_with_retry(timeout=self.config.receive_timeout)  # pylint: disable=protected-access
 
+    async def _process_redirect_uri(self, redirect):
+        async with self._lock:
+            redirect_uri = redirect.address.decode('utf-8')
+            auth_uri, _, _ = redirect_uri.partition("/ConsumerGroups")
+            self.address = urlparse(auth_uri)
+            self.host = self.address.hostname
+            self.auth_uri = "sb://{}{}".format(self.address.hostname, self.address.path)
+            self.eh_name = self.address.path.lstrip('/')
+            self.mgmt_target = redirect_uri
+            if self._is_iothub:
+                self._iothub_redirected = redirect
+
     async def get_properties(self):
         # type:() -> Dict[str, Any]
         """
@@ -146,7 +164,7 @@ class EventHubClient(EventHubClientAbstract):
         :rtype: dict
         :raises: ~azure.eventhub.ConnectError
         """
-        if self._is_iothub and not self._is_iothub_redirected:
+        if self._is_iothub and not self._iothub_redirected:
             await self._iothub_redirect()
 
         mgmt_msg = Message(application_properties={'name': self.eh_name})
@@ -188,7 +206,7 @@ class EventHubClient(EventHubClientAbstract):
         :rtype: dict
         :raises: ~azure.eventhub.ConnectError
         """
-        if self._is_iothub and not self._is_iothub_redirected:
+        if self._is_iothub and not self._iothub_redirected:
             await self._iothub_redirect()
 
         mgmt_msg = Message(application_properties={'name': self.eh_name,
