@@ -9,7 +9,7 @@ Check that you are running pylint version >=2.31 and astroid version >=2.25.
 
 1. Run pylint at the root of the repo and it will automatically find the pylintrc:
     ```bash
-    C:\azure-sdk-for-python>pylint sdk/storage/azure-storage-blob
+    C:\azure-sdk-for-python>pylint sdk/storage/azure-storage-blob/azure
     ```
 2. Add the --rcfile command line argument with a relative path to the pylintrc from your current directory:
     ```bash

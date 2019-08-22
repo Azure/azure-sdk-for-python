@@ -633,7 +633,7 @@ class TestClientConstructorTakesCorrectParameters(pylint.testutils.CheckerTestCa
     def test_finds_correct_params(self):
         class_node, function_node = astroid.extract_node("""
         class SomeClient(): #@
-            def __init__(self, thing_url, credentials, **kwargs): #@
+            def __init__(self, thing_url, credential, **kwargs): #@
                 pass
         """)
 
@@ -666,7 +666,7 @@ class TestClientConstructorTakesCorrectParameters(pylint.testutils.CheckerTestCa
     def test_finds_constructor_without_kwargs(self):
         class_node, function_node = astroid.extract_node("""
         class SomeClient(): #@
-            def __init__(self, thing_url, credentials=None): #@
+            def __init__(self, thing_url, credential=None): #@
                 pass
         """)
 
@@ -687,7 +687,7 @@ class TestClientConstructorTakesCorrectParameters(pylint.testutils.CheckerTestCa
 
         with self.assertAddsMessages(
             pylint.testutils.Message(
-                msg_id="missing-client-constructor-parameter-credentials", node=function_node
+                msg_id="missing-client-constructor-parameter-credential", node=function_node
             )
         ):
             self.checker.visit_classdef(class_node)
@@ -702,7 +702,7 @@ class TestClientConstructorTakesCorrectParameters(pylint.testutils.CheckerTestCa
 
         with self.assertAddsMessages(
             pylint.testutils.Message(
-                msg_id="missing-client-constructor-parameter-credentials", node=function_node
+                msg_id="missing-client-constructor-parameter-credential", node=function_node
             ),
             pylint.testutils.Message(
                 msg_id="missing-client-constructor-parameter-kwargs", node=function_node

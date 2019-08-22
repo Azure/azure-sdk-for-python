@@ -21,10 +21,10 @@ class ClientConstructorTakesCorrectParameters(BaseChecker):
     priority = -1
     msgs = {
         "C4717": (
-            "Client constructor is missing a credentials parameter. See details:"
+            "Client constructor is missing a credential parameter. See details:"
             " https://azure.github.io/azure-sdk/python_design.html#constructors-and-factory-methods",
-            "missing-client-constructor-parameter-credentials",
-            "All client types should accept a credentials parameter.",
+            "missing-client-constructor-parameter-credential",
+            "All client types should accept a credential parameter.",
         ),
         "C4718": (
             "Client constructor is missing a **kwargs parameter. See details:"
@@ -35,12 +35,12 @@ class ClientConstructorTakesCorrectParameters(BaseChecker):
     }
     options = (
         (
-            "ignore-missing-client-constructor-parameter-credentials",
+            "ignore-missing-client-constructor-parameter-credential",
             {
                 "default": False,
                 "type": "yn",
                 "metavar": "<y_or_n>",
-                "help": "Allow client constructors without a credentials parameter",
+                "help": "Allow client constructors without a credential parameter",
             },
         ),
         (
@@ -73,7 +73,7 @@ class ClientConstructorTakesCorrectParameters(BaseChecker):
 
     def visit_functiondef(self, node):
         """Visits the constructor within a client class and checks that it has
-        credentials and kwargs parameters.
+        credential and kwargs parameters.
 
         :param node: function node
         :type node: ast.FunctionDef
@@ -85,9 +85,9 @@ class ClientConstructorTakesCorrectParameters(BaseChecker):
                     (child for child in node.get_children() if child.is_argument)
                 )
                 arg_names = [argument.name for argument in arguments_node.args]
-                if "credential" not in arg_names and "credentials" not in arg_names:
+                if "credential" not in arg_names:
                     self.add_message(
-                        msg_id="missing-client-constructor-parameter-credentials", node=node, confidence=None
+                        msg_id="missing-client-constructor-parameter-credential", node=node, confidence=None
                     )
                 if not arguments_node.kwarg:
                     self.add_message(
@@ -1440,6 +1440,215 @@ class ServiceClientUsesNameWithClientSuffix(BaseChecker):
             pass
 
 
+class CheckForPolicyUse(BaseChecker):
+    __implements__ = IAstroidChecker
+
+    name = "check-for-policies"
+    priority = -1
+    msgs = {
+        "C4739": (
+            "You should include a UserAgentPolicy in your HTTP pipeline. See details: "
+            "https://azure.github.io/azure-sdk/python_implementation.html#network-operations",
+            "missing-user-agent-policy",
+            "You should include a UserAgentPolicy in the HTTP Pipeline.",
+        ),
+        "C4740": (
+            "You should include a LoggingPolicy in your HTTP pipeline. See details: "
+            "https://azure.github.io/azure-sdk/python_implementation.html#network-operations",
+            "missing-logging-policy",
+            "You should include a LoggingPolicy in the HTTP Pipeline.",
+        ),
+        "C4741": (
+            "You should include a RetryPolicy in your HTTP pipeline. See details: "
+            "https://azure.github.io/azure-sdk/python_implementation.html#network-operations",
+            "missing-retry-policy",
+            "You should include a RetryPolicy in the HTTP Pipeline.",
+        ),
+        "C4742": (
+            "You should include a DistributedTracingPolicy in your HTTP pipeline. See details: "
+            "https://azure.github.io/azure-sdk/python_implementation.html#network-operations",
+            "missing-distributed-tracing-policy",
+            "You should include a DistributedTracingPolicy in the HTTP Pipeline.",
+        ),
+    }
+    options = (
+        (
+            "ignore-missing-user-agent-policy",
+            {
+                "default": False,
+                "type": "yn",
+                "metavar": "<y_or_n>",
+                "help": "Allow the client to not have a UserAgentPolicy",
+            },
+        ),
+        (
+            "ignore-missing-logging-policy",
+            {
+                "default": False,
+                "type": "yn",
+                "metavar": "<y_or_n>",
+                "help": "Allow the client to not have a LoggingPolicy",
+            },
+        ),
+        (
+            "ignore-missing-retry-policy",
+            {
+                "default": False,
+                "type": "yn",
+                "metavar": "<y_or_n>",
+                "help": "Allow the client to not have a RetryPolicy",
+            },
+        ),
+        (
+            "ignore-missing-distributed-tracing-policy",
+            {
+                "default": False,
+                "type": "yn",
+                "metavar": "<y_or_n>",
+                "help": "Allow the client to not have a DistributedTracingPolicy",
+            },
+        ),
+    )
+
+    def __init__(self, linter=None):
+        super().__init__(linter)
+        self.node_to_use = None
+        self.has_policies = set()
+        self.ran_at_package_level = False
+        self.disable_logging_error = False
+        self.disable_user_agent_error = False
+        self.disable_tracing_error = False
+        self.disable_retry_error = False
+
+    def visit_function(self, node, policy):
+        """Visits the function and searches line by line for the policy being used.
+        Also searches for if the policy came from the azure.core.configuration object.
+
+        :param node: ast.FunctionDef
+        :param policy: The policy imported in the file.
+        :return: None
+        """
+        for func in node.body:
+            if isinstance(func, astroid.FunctionDef):
+                for idx, item in enumerate(func.body):
+                    try:
+                        line = list(node.get_children())[idx].as_string()
+                        if line.find(policy) != -1:
+                            self.has_policies.add(policy)
+                        if line.find("config.logging_policy") != -1:
+                            self.has_policies.add("NetworkTraceLoggingPolicy")
+                        if line.find("config.retry_policy") != -1:
+                            self.has_policies.add("RetryPolicy")
+                        if line.find("config.user_agent_policy") != -1:
+                            self.has_policies.add("UserAgentPolicy")
+                    except IndexError:
+                        pass
+
+    def visit_class(self, klass, policy):
+        """Visits any classes in the file and then makes a call
+        to search its methods for the policy being used.
+
+        :param klass: A class within the file
+        :param policy: The policy imported in the file.
+        :return: None
+        """
+        for idx, node in enumerate(klass):
+            if isinstance(node, astroid.ClassDef):
+                self.visit_function(node, policy)
+
+    def visit_module(self, node):
+        """Visits every file in the package and searches for policies as base classes
+        or custom policies. If a core policy is imported in a file in calls helper
+        methods to check that the policy was used in the code.
+
+        This pylint checker is different from the others as it collects information across
+        many files and then reports any errors. Due to this difference, disable commands
+        must be searched for and honored manually.
+
+        :param node: ast.Module
+        :return: None
+        """
+        # only throw the error if pylint was run at package level since it needs to check all the files
+        # infer run location based on the location of the init file highest in dir hierarchy
+        if node.package:
+            count = node.file.split("azure-sdk-for-python")[1].count("-")
+            if node.file.split("azure-sdk-for-python")[1].count("\\") <= (5 + count) and \
+                    node.file.split("azure-sdk-for-python")[1].count("/") <= (5 + count):
+                self.ran_at_package_level = True
+
+        # not really a good place to throw the pylint error, so we'll do it on the init file.
+        # By running this checker on all the files first and then reporting errors, pylint disables need to be
+        # done manually
+        if node.file.endswith("__init__.py") and self.node_to_use is None:
+            header = node.stream().read(200).lower()
+            if header.find(b'disable') != -1:
+                if header.find(b'missing-logging-policy') != -1:
+                    self.disable_logging_error = True
+                if header.find(b'missing-user-agent-policy') != -1:
+                    self.disable_user_agent_error = True
+                if header.find(b'missing-distributed-tracing-policy') != -1:
+                    self.disable_tracing_error = True
+                if header.find(b'missing-retry-policy') != -1:
+                    self.disable_retry_error = True
+            self.node_to_use = node
+
+        for idx in range(len(node.body)):
+            # The core policy is the base class for some custom policy, or a custom policy is being used
+            # and we try our best to find it based on common naming conventions.
+            if isinstance(node.body[idx], astroid.ClassDef):
+                if "NetworkTraceLoggingPolicy" in node.body[idx].basenames:
+                    self.has_policies.add("NetworkTraceLoggingPolicy")
+                if node.body[idx].name.find("LoggingPolicy") != -1:
+                    self.has_policies.add("NetworkTraceLoggingPolicy")
+                if "RetryPolicy" in node.body[idx].basenames or "AsyncRetryPolicy" in node.body[idx].basenames:
+                    self.has_policies.add("RetryPolicy")
+                if node.body[idx].name.find("RetryPolicy") != -1:
+                    self.has_policies.add("RetryPolicy")
+                if "UserAgentPolicy" in node.body[idx].basenames:
+                    self.has_policies.add("UserAgentPolicy")
+                if node.body[idx].name.find("UserAgentPolicy") != -1:
+                    self.has_policies.add("UserAgentPolicy")
+                if "DistributedTracingPolicy" in node.body[idx].basenames:
+                    self.has_policies.add("DistributedTracingPolicy")
+                if node.body[idx].name.find("TracingPolicy") != -1:
+                    self.has_policies.add("DistributedTracingPolicy")
+
+            # policy is imported in this file, let's check that it gets used in the code
+            if isinstance(node.body[idx], astroid.ImportFrom):
+                for imp, pol in enumerate(node.body[idx].names):
+                    if node.body[idx].names[imp][0].endswith("Policy") and \
+                            node.body[idx].names[imp][0] not in self.has_policies:
+                        self.visit_class(node.body, node.body[idx].names[imp][0])
+
+    def close(self):
+        """This method is inherited from BaseChecker and called at the very end of linting a module.
+        It reports any errors and honors any pylint disable statements.
+
+        :return: None
+        """
+        if self.ran_at_package_level:
+            if self.disable_logging_error is False:
+                if "NetworkTraceLoggingPolicy" not in self.has_policies:
+                    self.add_message(
+                        msg_id="missing-logging-policy", node=self.node_to_use, confidence=None
+                    )
+            if self.disable_retry_error is False:
+                if "RetryPolicy" not in self.has_policies:
+                    self.add_message(
+                        msg_id="missing-retry-policy", node=self.node_to_use, confidence=None
+                    )
+            if self.disable_user_agent_error is False:
+                if "UserAgentPolicy" not in self.has_policies:
+                    self.add_message(
+                        msg_id="missing-user-agent-policy", node=self.node_to_use, confidence=None
+                    )
+            if self.disable_tracing_error is False:
+                if "DistributedTracingPolicy" not in self.has_policies:
+                    self.add_message(
+                        msg_id="missing-distributed-tracing-policy", node=self.node_to_use, confidence=None
+                    )
+
+
 # if a linter is registered in this function then it will be checked with pylint
 def register(linter):
     linter.register_checker(ClientsDoNotUseStaticMethods(linter))
@@ -1458,6 +1667,7 @@ def register(linter):
     linter.register_checker(ServiceClientUsesNameWithClientSuffix(linter))
 
     # Rules are disabled until false positive rate improved
+    # linter.register_checker(CheckForPolicyUse(linter))
     # linter.register_checker(ClientHasApprovedMethodNamePrefix(linter))
     # linter.register_checker(ClientMethodsHaveTracingDecorators(linter))
     # linter.register_checker(ClientDocstringUsesLiteralIncludeForCodeExample(linter))
