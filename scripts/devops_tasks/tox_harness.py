@@ -22,6 +22,7 @@ root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "
 coverage_dir = os.path.join(root_dir, "_coverage/")
 pool_size = multiprocessing.cpu_count() * 2
 DEFAULT_TOX_INI_LOCATION = os.path.join(root_dir, "eng/tox/tox.ini")
+IGNORED_TOX_INIS = ["azure-cosmos"]
 
 class ToxWorkItem:
     def __init__(self, target_package_path, tox_env, options_array):
@@ -173,7 +174,7 @@ def prep_and_run_tox(targeted_packages, tox_env, options_array=[], is_parallel=F
             local_options_array.append("--suppress-no-test-exit-code")
 
         # if not present, re-use base
-        if not os.path.exists(destination_tox_ini):
+        if not os.path.exists(destination_tox_ini) or (os.path.exists(destination_tox_ini) and os.path.basename(package_dir) in IGNORED_TOX_INIS):
             logging.info("No customized tox.ini present, using common eng/tox/tox.ini.")
             tox_execution_array.extend(["-c", DEFAULT_TOX_INI_LOCATION])
 

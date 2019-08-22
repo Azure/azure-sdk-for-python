@@ -3,8 +3,21 @@ import argparse
 import os
 import logging
 import sys
+import glob
+import shutil
 
 logging.getLogger().setLevel(logging.INFO)
+
+def cleanup_build_artifacts(build_folder):
+    # clean up egginfo
+    results = glob.glob(os.path.join(build_folder, "*.egg-info"))
+
+    if results:
+        print(results[0])
+        shutil.rmtree(results[0])
+
+    # clean up build results
+    shutil.rmtree(os.path.join(build_folder, "build"))
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -45,6 +58,8 @@ if __name__ == "__main__":
         if f.endswith(".whl")
     ]
 
+    cleanup_build_artifacts(args.target_setup)
+
     for wheel in discovered_wheels:
         # if the environment variable is set, that means that this is running where we
         # want to use the pre-built wheels
@@ -52,7 +67,7 @@ if __name__ == "__main__":
             # find the wheel in the set of prebuilt wheels
             if os.path.isfile(os.path.join(os.environ["PREBUILT_WHEEL_DIR"], wheel)):
                 check_call(
-                    [sys.executable, "-m", "pip", "install", "--upgrade", os.path.join(os.path.join(os.environ["PREBUILT_WHEEL_DIR"], wheel))]
+                    [sys.executable, "-m", "pip", "install", os.path.join(os.path.join(os.environ["PREBUILT_WHEEL_DIR"], wheel))]
                 )
                 logging.info("Installed {w} from wheel directory".format(w=wheel))
             # it does't exist, so we need to error out
@@ -61,6 +76,6 @@ if __name__ == "__main__":
                 exit(1)
         else:
             check_call(
-                [sys.executable, "-m", "pip", "install",  "--upgrade", os.path.join(args.distribution_directory, wheel)]
+                [sys.executable, "-m", "pip", "install", os.path.join(args.distribution_directory, wheel)]
             )
             logging.info("Installed {w} from fresh wheel.".format(w=wheel))
