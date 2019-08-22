@@ -2,11 +2,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import AzureError, HttpResponseError
 from azure.keyvault.keys.models import Key
 from azure.keyvault.keys._shared import AsyncKeyVaultClientBase, parse_vault_id
 
 from .. import DecryptResult, EncryptResult, SignResult, VerifyResult, UnwrapKeyResult, WrapKeyResult
+from .._internal import EllipticCurveKey, RsaKey
 
 try:
     from typing import TYPE_CHECKING
@@ -15,9 +16,10 @@ except ImportError:
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
-    from typing import Any, Optional, Union
+    from typing import Any, FrozenSet, Optional, Union
     from azure.core.credentials import TokenCredential
     from .. import EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
+    from .._internal import Key as _Key
 
 
 class CryptographyClient(AsyncKeyVaultClientBase):
@@ -40,15 +42,19 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         if isinstance(key, Key):
             self._key = key
             self._key_id = parse_vault_id(key.id)
+            self._allowed_ops = frozenset(self._key.key_material.key_ops)
         elif isinstance(key, str):
             self._key = None
             self._key_id = parse_vault_id(key)
+            self._allowed_ops = None  # type: Optional[FrozenSet]
             self._get_key_forbidden = None  # type: Optional[bool]
         else:
             raise ValueError("'key' must be a Key instance or a key ID string including a version")
 
         if not self._key_id.version:
             raise ValueError("'key' must include a version")
+
+        self._internal_key = None  # type: Optional[_Key]
 
         super(CryptographyClient, self).__init__(vault_url=self._key_id.vault_url, credential=credential, **kwargs)
 
@@ -72,11 +78,28 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         if not (self._key or self._get_key_forbidden):
             try:
                 self._key = await self._client.get_key(self._key_id.vault_url, self._key_id.name, self._key_id.version)
+                self._allowed_ops = frozenset(self._key.key_material.key_ops)
             except HttpResponseError as ex:
                 self._get_key_forbidden = ex.status_code == 403
         return self._key
 
-    async def encrypt(self, algorithm: "EncryptionAlgorithm", plaintext: bytes, **kwargs: "**Any") -> EncryptResult:
+    async def _get_local_key(self) -> "Optional[_Key]":
+        """Gets an object implementing local operations. Will be ``None``, if the client was instantiated with a key
+        id and lacks keys/get permission."""
+
+        if not self._internal_key:
+            key = await self.get_key()
+            if not key:
+                return None
+
+            if key.key_material.kty.lower().startswith("ec"):
+                self._internal_key = EllipticCurveKey.from_jwk(key.key_material)
+            else:
+                self._internal_key = RsaKey.from_jwk(key.key_material)
+
+        return self._internal_key
+
+    async def encrypt(self, algorithm: "EncryptionAlgorithm", plaintext: bytes, **kwargs: "Any") -> EncryptResult:
         """
         Encrypt bytes using the client's key. Requires the keys/encrypt permission.
 
@@ -99,10 +122,16 @@ class CryptographyClient(AsyncKeyVaultClientBase):
 
         """
 
-        result = await self._client.encrypt(
-            self._key_id.vault_url, self._key_id.name, self._key_id.version, algorithm, plaintext, **kwargs
-        )
-        return EncryptResult(key_id=self.key_id, algorithm=algorithm, ciphertext=result.result, authentication_tag=None)
+        local_key = await self._get_local_key()
+        if local_key:
+            if "encrypt" not in self._allowed_ops:
+                raise AzureError("This client doesn't have 'keys/encrypt' permission")
+            result = local_key.encrypt(plaintext, algorithm=algorithm.value)
+        else:
+            result = await self._client.encrypt(
+                self._key_id.vault_url, self._key_id.name, self._key_id.version, algorithm, plaintext, **kwargs
+            ).result
+        return EncryptResult(key_id=self.key_id, algorithm=algorithm, ciphertext=result, authentication_tag=None)
 
     async def decrypt(self, algorithm: "EncryptionAlgorithm", ciphertext: bytes, **kwargs: "**Any") -> DecryptResult:
         """
@@ -156,10 +185,21 @@ class CryptographyClient(AsyncKeyVaultClientBase):
 
         """
 
-        result = await self._client.wrap_key(
-            self._key_id.vault_url, self._key_id.name, self._key_id.version, algorithm=algorithm, value=key, **kwargs
-        )
-        return WrapKeyResult(key_id=self.key_id, algorithm=algorithm, encrypted_key=result.result)
+        local_key = await self._get_local_key()
+        if local_key:
+            if "wrapKey" not in self._allowed_ops:
+                raise AzureError("This client doesn't have 'keys/wrapKey' permission")
+            result = local_key.wrap_key(key, algorithm=algorithm.value)
+        else:
+            result = await self._client.wrap_key(
+                self._key_id.vault_url,
+                self._key_id.name,
+                self._key_id.version,
+                algorithm=algorithm,
+                value=key,
+                **kwargs
+            ).result
+        return WrapKeyResult(key_id=self.key_id, algorithm=algorithm, encrypted_key=result)
 
     async def unwrap(self, algorithm: "KeyWrapAlgorithm", encrypted_key: bytes, **kwargs: "**Any") -> UnwrapKeyResult:
         """
@@ -246,7 +286,19 @@ class CryptographyClient(AsyncKeyVaultClientBase):
 
         """
 
-        result = await self._client.verify(
-            self._key_id.vault_url, self._key_id.name, self._key_id.version, algorithm, digest, signature, **kwargs
-        )
-        return VerifyResult(result=result.value)
+        local_key = await self._get_local_key()
+        if local_key:
+            if "verify" not in self._allowed_ops:
+                raise AzureError("This client doesn't have 'keys/verify' permission")
+            result = local_key.verify(digest, signature, algorithm=algorithm.value)
+        else:
+            result = await self._client.verify(
+                vault_base_url=self._key_id.vault_url,
+                key_name=self._key_id.name,
+                key_version=self._key_id.version,
+                algorithm=algorithm,
+                digest=digest,
+                signature=signature,
+                **kwargs
+            ).value
+        return VerifyResult(result=result)
