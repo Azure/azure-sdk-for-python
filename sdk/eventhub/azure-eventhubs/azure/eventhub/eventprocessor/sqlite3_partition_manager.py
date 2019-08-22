@@ -6,7 +6,10 @@
 import time
 import uuid
 import sqlite3
+import logging
 from .partition_manager import PartitionManager
+
+logger = logging.getLogger(__name__)
 
 
 def _check_table_name(table_name: str):
@@ -22,6 +25,15 @@ class Sqlite3PartitionManager(PartitionManager):
 
 
     """
+    primary_keys_dict = {"eventhub_name": "text", "consumer_group_name": "text", "partition_id": "text"}
+    other_fields_dict = {"owner_id": "text", "owner_level": "integer", "sequence_number": "integer", "offset": "text",
+                         "last_modified_time": "real", "etag": "text"}
+    checkpoint_fields = ["sequence_number", "offset"]
+    fields_dict = {**primary_keys_dict, **other_fields_dict}
+    primary_keys = list(primary_keys_dict.keys())
+    other_fields = list(other_fields_dict.keys())
+    fields = primary_keys + other_fields
+
     def __init__(self, db_filename: str = ":memory:", ownership_table: str = "ownership"):
         """
 
@@ -34,17 +46,15 @@ class Sqlite3PartitionManager(PartitionManager):
         conn = sqlite3.connect(db_filename)
         c = conn.cursor()
         try:
-            c.execute("create table " + ownership_table +
-                      "(eventhub_name text,"
-                      "consumer_group_name text,"
-                      "owner_id text,"
-                      "partition_id text,"
-                      "owner_level integer,"
-                      "sequence_number integer,"
-                      "offset text,"
-                      "last_modified_time integer,"
-                      "etag text)")
+            sql = "create table if not exists " + _check_table_name(ownership_table)\
+                  + "("\
+                  + ",".join([x[0]+" "+x[1] for x in self.fields_dict.items()])\
+                  + ", constraint pk_ownership PRIMARY KEY ("\
+                  + ",".join(self.primary_keys)\
+                  + "))"
+            c.execute(sql)
         except sqlite3.OperationalError:
+            raise
             pass
         finally:
             c.close()
@@ -53,44 +63,55 @@ class Sqlite3PartitionManager(PartitionManager):
     async def list_ownership(self, eventhub_name, consumer_group_name):
         cursor = self.conn.cursor()
         try:
-            fields = ["eventhub_name", "consumer_group_name", "owner_id", "partition_id", "owner_level",
-                      "sequence_number",
-                      "offset", "last_modified_time", "etag"]
-            cursor.execute("select " + ",".join(fields) +
+            cursor.execute("select " + ",".join(self.fields) +
                                 " from "+_check_table_name(self.ownership_table)+" where eventhub_name=? "
                                 "and consumer_group_name=?",
                                 (eventhub_name, consumer_group_name))
-            result_list = []
-
-            for row in cursor.fetchall():
-                d = dict(zip(fields, row))
-                result_list.append(d)
-            return result_list
+            return [dict(zip(self.fields, row)) for row in cursor.fetchall()]
         finally:
             cursor.close()
 
     async def claim_ownership(self, partitions):
+        result = []
         cursor = self.conn.cursor()
         try:
             for p in partitions:
-                cursor.execute("select * from " + _check_table_name(self.ownership_table) +
-                                    " where eventhub_name=? "
-                                    "and consumer_group_name=? "
-                                    "and partition_id =?",
-                                    (p["eventhub_name"], p["consumer_group_name"],
-                                     p["partition_id"]))
-                if not cursor.fetchall():
-                    cursor.execute("insert into " + _check_table_name(self.ownership_table) +
-                                   " (eventhub_name,consumer_group_name,partition_id,owner_id,owner_level,last_modified_time,etag) "
-                                   "values (?,?,?,?,?,?,?)",
-                                   (p["eventhub_name"], p["consumer_group_name"], p["partition_id"], p["owner_id"], p["owner_level"],
-                                    time.time(), str(uuid.uuid4())
-                                    ))
+                cursor.execute("select etag from " + _check_table_name(self.ownership_table) +
+                                    " where "+ " and ".join([field+"=?" for field in self.primary_keys]),
+                                    tuple(p.get(field) for field in self.primary_keys))
+                cursor_fetch = cursor.fetchall()
+                if not cursor_fetch:
+                    p["last_modified_time"] = time.time()
+                    p["etag"] = str(uuid.uuid4())
+                    try:
+                        fields_without_checkpoint = list(filter(lambda x: x not in self.checkpoint_fields, self.fields))
+                        sql = "insert into " + _check_table_name(self.ownership_table) + " (" \
+                              + ",".join(fields_without_checkpoint) \
+                              + ") values (?,?,?,?,?,?,?)"
+                        cursor.execute(sql, tuple(p.get(field) for field in fields_without_checkpoint))
+                    except sqlite3.OperationalError as op_err:
+                        logger.info("EventProcessor %r failed to claim partition %r "
+                                    "because it was claimed by another EventProcessor at the same time. "
+                                    "The Sqlite3 exception is %r", p["owner_id"], p["partition_id"], op_err)
+                        break
+                    else:
+                        result.append(p)
                 else:
-                    cursor.execute("update " + _check_table_name(self.ownership_table) + " set owner_id=?, owner_level=?, last_modified_time=?, etag=? "
-                                   "where eventhub_name=? and consumer_group_name=? and partition_id=?",
-                                   (p["owner_id"], p["owner_level"], time.time(), str(uuid.uuid4()),
-                                    p["eventhub_name"], p["consumer_group_name"], p["partition_id"]))
+                    if p.get("etag") == cursor_fetch[0][0]:
+                        p["last_modified_time"] = time.time()
+                        p["etag"] = str(uuid.uuid4())
+                        other_fields_without_checkpoint = list(filter(lambda x: x not in self.checkpoint_fields, self.other_fields))
+                        sql = "update " + _check_table_name(self.ownership_table) + " set "\
+                                       + ','.join([field+"=?" for field in other_fields_without_checkpoint])\
+                                       + " where "\
+                                       + " and ".join([field+"=?" for field in self.primary_keys])
+
+                        cursor.execute(sql, tuple(p.get(field) for field in other_fields_without_checkpoint) + tuple(p.get(field) for field in self.primary_keys))
+                        result.append(p)
+                    else:
+                        logger.info("EventProcessor %r failed to claim partition %r "
+                                    "because it was claimed by another EventProcessor at the same time", p["owner_id"],
+                                    p["partition_id"])
             self.conn.commit()
             return partitions
         finally:
