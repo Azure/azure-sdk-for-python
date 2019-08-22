@@ -1631,3 +1631,108 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             return await self._client.append_blob.append_block(**options)  # type: ignore
         except StorageErrorException as error:
             process_storage_error(error)
+
+    @distributed_trace_async()
+    async def append_block_from_url(self, copy_source_url,  # type: str
+                                    source_range_start=None,  # type Optional[int]
+                                    source_range_end=None,  # type Optional[int]
+                                    source_content_md5=None,  # type: Optional[bytearray]
+                                    maxsize_condition=None,  # type: Optional[int]
+                                    appendpos_condition=None,  # type: Optional[int]
+                                    lease=None, if_modified_since=None,
+                                    if_unmodified_since=None, if_match=None,
+                                    if_none_match=None, source_if_modified_since=None,
+                                    source_if_unmodified_since=None, source_if_match=None,
+                                    source_if_none_match=None, timeout=None):
+        # type: (...) -> Dict[str, Union[str, datetime, int]]
+        """
+        Creates a new block to be committed as part of a blob, where the contents are read from a source url.
+
+        :param str copy_source_url:
+            The URL of the source data. It can point to any Azure Blob or File, that is either public or has a
+            shared access signature attached.
+        :param int source_range_start:
+            This indicates the start of the range of bytes(inclusive) that has to be taken from the copy source.
+        :param int source_range_end:
+            This indicates the end of the range of bytes(inclusive) that has to be taken from the copy source.
+        :param bytearray source_content_md5:
+            If given, the service will calculate the MD5 hash of the block content and compare against this value.
+        :param int maxsize_condition:
+            Optional conditional header. The max length in bytes permitted for
+            the append blob. If the Append Block operation would cause the blob
+            to exceed that limit or if the blob size is already greater than the
+            value specified in this header, the request will fail with
+            MaxBlobSizeConditionNotMet error (HTTP status code 412 - Precondition Failed).
+        :param int appendpos_condition:
+            Optional conditional header, used only for the Append Block operation.
+            A number indicating the byte offset to compare. Append Block will
+            succeed only if the append position is equal to this number. If it
+            is not, the request will fail with the
+            AppendPositionConditionNotMet error
+            (HTTP status code 412 - Precondition Failed).
+        :param ~azure.storage.blob.lease.LeaseClient or str lease:
+            Required if the blob has an active lease. Value can be a LeaseClient object
+            or the lease ID as a string.
+        :param datetime if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only
+            if the resource has been modified since the specified time.
+        :param datetime if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the resource has not been modified since the specified date/time.
+        :param str if_match:
+            An ETag value, or the wildcard character (*). Specify this header to perform
+            the operation only if the resource's ETag matches the value specified.
+        :param str if_none_match:
+            An ETag value, or the wildcard character (*). Specify this header
+            to perform the operation only if the resource's ETag does not match
+            the value specified. Specify the wildcard character (*) to perform
+            the operation only if the resource does not exist, and fail the
+            operation if it does exist.
+        :param datetime source_if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only
+            if the source resource has been modified since the specified time.
+        :param datetime source_if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the source resource has not been modified since the specified date/time.
+        :param str source_if_match:
+            An ETag value, or the wildcard character (*). Specify this header to perform
+            the operation only if the source resource's ETag matches the value specified.
+        :param str source_if_none_match:
+            An ETag value, or the wildcard character (*). Specify this header
+            to perform the operation only if the source resource's ETag does not match
+            the value specified. Specify the wildcard character (*) to perform
+            the operation only if the source resource does not exist, and fail the
+            operation if it does exist.
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
+        """
+        options = self._append_block_from_url_options(
+            copy_source_url,
+            source_range_start=source_range_start,
+            source_range_end=source_range_end,
+            source_content_md5=source_content_md5,
+            maxsize_condition=maxsize_condition,
+            appendpos_condition=appendpos_condition,
+            lease=lease,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since, if_match=if_match,
+            if_none_match=if_none_match, source_if_modified_since=source_if_modified_since,
+            source_if_unmodified_since=source_if_unmodified_since, source_if_match=source_if_match,
+            source_if_none_match=source_if_none_match, timeout=timeout
+        )
+        try:
+            return await self._client.append_blob.append_block_from_url(**options)  # type: ignore
+        except StorageErrorException as error:
+            process_storage_error(error)
