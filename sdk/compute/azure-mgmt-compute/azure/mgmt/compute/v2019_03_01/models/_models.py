@@ -4290,8 +4290,20 @@ class VirtualMachine(Resource):
      maintenance for virtual machines in
      Azure](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-planned-maintenance?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json)
      <br><br> Currently, a VM can only be added to availability set at creation
-     time. An existing VM cannot be added to an availability set.
+     time. An existing VM cannot be added to an availability set. <br><br>This
+     property cannot exist along with a non-null
+     properties.virtualMachineScaleSet reference.
     :type availability_set: ~azure.mgmt.compute.v2019_03_01.models.SubResource
+    :param virtual_machine_scale_set: Specifies information about the virtual
+     machine scale set that the virtual machine should be assigned to. Virtual
+     machines specified in the same virtual machine scale set are allocated to
+     different nodes to maximize availability. Currently, a VM can only be
+     added to virtual machine scale set at creation time. An existing VM cannot
+     be added to a virtual machine scale set. <br><br>This property cannot
+     exist along with a non-null properties.availabilitySet reference.
+     <br><br>Minimum api‐version: 2019‐03‐01
+    :type virtual_machine_scale_set:
+     ~azure.mgmt.compute.v2019_03_01.models.SubResource
     :param proximity_placement_group: Specifies information about the
      proximity placement group that the virtual machine should be assigned to.
      <br><br>Minimum api-version: 2018-04-01.
@@ -4369,6 +4381,7 @@ class VirtualMachine(Resource):
         'network_profile': {'key': 'properties.networkProfile', 'type': 'NetworkProfile'},
         'diagnostics_profile': {'key': 'properties.diagnosticsProfile', 'type': 'DiagnosticsProfile'},
         'availability_set': {'key': 'properties.availabilitySet', 'type': 'SubResource'},
+        'virtual_machine_scale_set': {'key': 'properties.virtualMachineScaleSet', 'type': 'SubResource'},
         'proximity_placement_group': {'key': 'properties.proximityPlacementGroup', 'type': 'SubResource'},
         'priority': {'key': 'properties.priority', 'type': 'str'},
         'eviction_policy': {'key': 'properties.evictionPolicy', 'type': 'str'},
@@ -4393,6 +4406,7 @@ class VirtualMachine(Resource):
         self.network_profile = kwargs.get('network_profile', None)
         self.diagnostics_profile = kwargs.get('diagnostics_profile', None)
         self.availability_set = kwargs.get('availability_set', None)
+        self.virtual_machine_scale_set = kwargs.get('virtual_machine_scale_set', None)
         self.proximity_placement_group = kwargs.get('proximity_placement_group', None)
         self.priority = kwargs.get('priority', None)
         self.eviction_policy = kwargs.get('eviction_policy', None)
@@ -7026,8 +7040,20 @@ class VirtualMachineUpdate(UpdateResource):
      maintenance for virtual machines in
      Azure](https://docs.microsoft.com/azure/virtual-machines/virtual-machines-windows-planned-maintenance?toc=%2fazure%2fvirtual-machines%2fwindows%2ftoc.json)
      <br><br> Currently, a VM can only be added to availability set at creation
-     time. An existing VM cannot be added to an availability set.
+     time. An existing VM cannot be added to an availability set. <br><br>This
+     property cannot exist along with a non-null
+     properties.virtualMachineScaleSet reference.
     :type availability_set: ~azure.mgmt.compute.v2019_03_01.models.SubResource
+    :param virtual_machine_scale_set: Specifies information about the virtual
+     machine scale set that the virtual machine should be assigned to. Virtual
+     machines specified in the same virtual machine scale set are allocated to
+     different nodes to maximize availability. Currently, a VM can only be
+     added to virtual machine scale set at creation time. An existing VM cannot
+     be added to a virtual machine scale set. <br><br>This property cannot
+     exist along with a non-null properties.availabilitySet reference.
+     <br><br>Minimum api‐version: 2019‐03‐01
+    :type virtual_machine_scale_set:
+     ~azure.mgmt.compute.v2019_03_01.models.SubResource
     :param proximity_placement_group: Specifies information about the
      proximity placement group that the virtual machine should be assigned to.
      <br><br>Minimum api-version: 2018-04-01.
@@ -7093,6 +7119,7 @@ class VirtualMachineUpdate(UpdateResource):
         'network_profile': {'key': 'properties.networkProfile', 'type': 'NetworkProfile'},
         'diagnostics_profile': {'key': 'properties.diagnosticsProfile', 'type': 'DiagnosticsProfile'},
         'availability_set': {'key': 'properties.availabilitySet', 'type': 'SubResource'},
+        'virtual_machine_scale_set': {'key': 'properties.virtualMachineScaleSet', 'type': 'SubResource'},
         'proximity_placement_group': {'key': 'properties.proximityPlacementGroup', 'type': 'SubResource'},
         'priority': {'key': 'properties.priority', 'type': 'str'},
         'eviction_policy': {'key': 'properties.evictionPolicy', 'type': 'str'},
@@ -7116,6 +7143,7 @@ class VirtualMachineUpdate(UpdateResource):
         self.network_profile = kwargs.get('network_profile', None)
         self.diagnostics_profile = kwargs.get('diagnostics_profile', None)
         self.availability_set = kwargs.get('availability_set', None)
+        self.virtual_machine_scale_set = kwargs.get('virtual_machine_scale_set', None)
         self.proximity_placement_group = kwargs.get('proximity_placement_group', None)
         self.priority = kwargs.get('priority', None)
         self.eviction_policy = kwargs.get('eviction_policy', None)
