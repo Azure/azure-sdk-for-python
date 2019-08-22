@@ -3,15 +3,17 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # -----------------------------------------------------------------------------------
 
-from typing import Callable, List
+from typing import Callable, Dict
 import uuid
 import asyncio
 import logging
+from enum import Enum
 
 from azure.eventhub import EventPosition, EventHubError
 from azure.eventhub.aio import EventHubClient
 from .checkpoint_manager import CheckpointManager
 from .partition_manager import PartitionManager
+from ._ownership_manager import OwnershipManager
 from .partition_processor import PartitionProcessor, CloseReason
 from .utils import get_running_loop
 
@@ -53,7 +55,7 @@ class EventProcessor(object):
 
     """
     def __init__(self, eventhub_client: EventHubClient, consumer_group_name: str,
-                 partition_processor_factory: Callable[[CheckpointManager], PartitionProcessor],
+                 partition_processor_factory,
                  partition_manager: PartitionManager, **kwargs):
         """
         Instantiate an EventProcessor.
@@ -73,16 +75,22 @@ class EventProcessor(object):
         :type initial_event_position: int or str
 
         """
+
         self._consumer_group_name = consumer_group_name
         self._eventhub_client = eventhub_client
         self._eventhub_name = eventhub_client.eh_name
         self._partition_processor_factory = partition_processor_factory
         self._partition_manager = partition_manager
         self._initial_event_position = kwargs.get("initial_event_position", "-1")
+        # TODO: initial position provider will be a callable
+        #  so users can create initial event position for every partition
         self._max_batch_size = eventhub_client.config.max_batch_size
         self._receive_timeout = eventhub_client.config.receive_timeout
-        self._tasks = []  # type: List[asyncio.Task]
+        self._polling_interval = kwargs.get("polling_interval", 10)
+        self._ownership_timeout = self._polling_interval * 2  # TODO: Team haven't decided if this is a separate argument
+        self._tasks = {}  # type: Dict[str, asyncio.Task]
         self._id = str(uuid.uuid4())
+        self._running = False
 
     def __repr__(self):
         return 'EventProcessor: id {}'.format(self._id)
@@ -98,9 +106,22 @@ class EventProcessor(object):
 
         """
         log.info("EventProcessor %r is being started", self._id)
-        partition_ids = await self._eventhub_client.get_partition_ids()
-        claimed_list = await self._claim_partitions(partition_ids)
-        await self._start_claimed_partitions(claimed_list)
+        ownership_manager = OwnershipManager(self, self._eventhub_client, self._ownership_timeout)
+        if not self._running:
+            self._running = True
+            while self._running:
+                claimed_ownership_list = await ownership_manager.claim_ownership()
+                claimed_partition_ids = [x["partition_id"] for x in claimed_ownership_list]
+                to_cancel_list = self._tasks.keys() - claimed_partition_ids
+                if to_cancel_list:
+                    self._cancel_tasks_for_partitions(to_cancel_list)
+                    log.info("EventProcesor %r has cancelled partitions %r", self._id, to_cancel_list)
+
+                if claimed_partition_ids:
+                    self._create_tasks_for_claimed_ownership(claimed_ownership_list)
+                else:
+                    log.warning("EventProcessor %r hasn't claimed an ownership. It keeps claiming.", self._id)
+                await asyncio.sleep(self._polling_interval)
 
     async def stop(self):
         """Stop all the partition consumer
@@ -110,109 +131,85 @@ class EventProcessor(object):
         :return: None
 
         """
+        self._running = False
         for i in range(len(self._tasks)):
-            task = self._tasks.pop()
+            task = self._tasks.popitem()[1]
             task.cancel()
         log.info("EventProcessor %r has been cancelled", self._id)
         await asyncio.sleep(2)  # give some time to finish after cancelled
 
-    async def _claim_partitions(self, partition_ids):
-        partitions_ownership = await self._partition_manager.list_ownership(self._eventhub_name, self._consumer_group_name)
-        partitions_ownership_dict = dict()
-        for ownership in partitions_ownership:
-            partitions_ownership_dict[ownership["partition_id"]] = ownership
+    def _cancel_tasks_for_partitions(self, to_cancel_partitions):
+        for partition_id in to_cancel_partitions:
+            if partition_id in self._tasks:
+                task = self._tasks.pop(partition_id)
+                task.cancel()
 
-        to_claim_list = []
-        for pid in partition_ids:
-            p_ownership = partitions_ownership_dict.get(pid)
-            if p_ownership:
-                to_claim_list.append(p_ownership)
-            else:
-                new_ownership = {"eventhub_name": self._eventhub_name, "consumer_group_name": self._consumer_group_name,
-                                 "owner_id": self._id, "partition_id": pid, "owner_level": OWNER_LEVEL}
-                to_claim_list.append(new_ownership)
-        claimed_list = await self._partition_manager.claim_ownership(to_claim_list)
-        return claimed_list
+    def _create_tasks_for_claimed_ownership(self, to_claim_ownership_list):
+        for ownership in to_claim_ownership_list:
+            partition_id = ownership["partition_id"]
+            if partition_id not in self._tasks:
+                self._tasks[partition_id] = asyncio.create_task(self._receive(ownership))
 
-    async def _start_claimed_partitions(self, claimed_partitions):
-        for partition in claimed_partitions:
-            partition_id = partition["partition_id"]
-            offset = partition.get("offset", self._initial_event_position)
-            consumer = self._eventhub_client.create_consumer(self._consumer_group_name, partition_id,
-                                                            EventPosition(str(offset)))
-            partition_processor = self._partition_processor_factory(
-                checkpoint_manager=CheckpointManager(partition_id, self._eventhub_name, self._consumer_group_name,
-                                                     self._id, self._partition_manager)
-            )
-            loop = get_running_loop()
-            task = loop.create_task(
-                _receive(consumer, partition_processor, self._receive_timeout))
-            self._tasks.append(task)
+    async def _receive(self, ownership):
+        log.info("start ownership, %r", ownership)
+        partition_consumer = self._eventhub_client.create_consumer(ownership["consumer_group_name"],
+                                                                   ownership["partition_id"],
+                                                                   EventPosition(ownership.get("offset", self._initial_event_position))
+                                                                   )
+        checkpoint_manager = CheckpointManager(ownership["partition_id"],
+                                               ownership["eventhub_name"],
+                                               ownership["consumer_group_name"],
+                                               ownership["owner_id"],
+                                               self._partition_manager)
+        partition_processor = self._partition_processor_factory()
+
+        async def initialize():
+            if hasattr(partition_processor, "initialize"):
+                await partition_processor.initialize(checkpoint_manager)
+
+        async def process_error(err):
+            if hasattr(partition_processor, "process_error"):
+                await partition_processor.process_error(err, checkpoint_manager)
+
+        async def close(close_reason):
+            if hasattr(partition_processor, "close"):
+                await partition_processor.close(close_reason, checkpoint_manager)
+
         try:
-            await asyncio.gather(*self._tasks)
+            while True:
+                try:
+                    await initialize()
+                    events = await partition_consumer.receive(timeout=self._receive_timeout)
+                    await partition_processor.process_events(events, checkpoint_manager)
+                except asyncio.CancelledError as cancelled_error:
+                    log.info(
+                        "PartitionProcessor of EventProcessor instance %r of eventhub %r partition %r consumer group %r "
+                        "is cancelled",
+                        ownership["owner_id"],
+                        ownership["eventhub_name"],
+                        ownership["partition_id"],
+                        ownership["consumer_group_name"]
+                    )
+                    await process_error(cancelled_error)
+                    await close(CloseReason.SHUTDOWN)
+                    break
+                except EventHubError as eh_err:
+                    reason = CloseReason.LEASE_LOST if eh_err.error == "link:stolen" else CloseReason.EVENTHUB_EXCEPTION
+                    log.warning(
+                        "PartitionProcessor of EventProcessor instance %r of eventhub %r partition %r consumer group %r "
+                        "has met an exception receiving events. It's being closed. The exception is %r.",
+                        ownership["owner_id"],
+                        ownership["eventhub_name"],
+                        ownership["partition_id"],
+                        ownership["consumer_group_name"],
+                        eh_err
+                    )
+                    await process_error(eh_err)
+                    await close(reason)
+                    break
+                except Exception as exp:
+                    log.warning(exp)
+                    # TODO: will review whether to break and close partition processor after user's code has an exception
+            # TODO: try to inform other EventProcessors to take the partition when this partition is closed in preview 3?
         finally:
-            log.info("EventProcessor %r has stopped", self._id)
-
-
-async def _receive(partition_consumer, partition_processor, receive_timeout):
-    try:
-        while True:
-            try:
-                events = await partition_consumer.receive(timeout=receive_timeout)
-            except asyncio.CancelledError as cancelled_error:
-                log.info(
-                    "PartitionProcessor of EventProcessor instance %r of eventhub %r partition %r consumer group %r "
-                    "is cancelled",
-                    partition_processor._checkpoint_manager.owner_id,
-                    partition_processor._checkpoint_manager.eventhub_name,
-                    partition_processor._checkpoint_manager.partition_id,
-                    partition_processor._checkpoint_manager.consumer_group_name
-                )
-                await partition_processor.process_error(cancelled_error)
-                await partition_processor.close(reason=CloseReason.SHUTDOWN)
-                break
-            except EventHubError as eh_err:
-                reason = CloseReason.LEASE_LOST if eh_err.error == "link:stolen" else CloseReason.EVENTHUB_EXCEPTION
-                log.warning(
-                    "PartitionProcessor of EventProcessor instance %r of eventhub %r partition %r consumer group %r "
-                    "has met an exception receiving events. It's being closed. The exception is %r.",
-                    partition_processor._checkpoint_manager.owner_id,
-                    partition_processor._checkpoint_manager.eventhub_name,
-                    partition_processor._checkpoint_manager.partition_id,
-                    partition_processor._checkpoint_manager.consumer_group_name,
-                    eh_err
-                )
-                await partition_processor.process_error(eh_err)
-                await partition_processor.close(reason=reason)
-                break
-            try:
-                await partition_processor.process_events(events)
-            except asyncio.CancelledError as cancelled_error:
-                log.info(
-                    "PartitionProcessor of EventProcessor instance %r of eventhub %r partition %r consumer group %r "
-                    "is cancelled.",
-                    partition_processor._checkpoint_manager.owner_id,
-                    partition_processor._checkpoint_manager.eventhub_name,
-                    partition_processor._checkpoint_manager.partition_id,
-                    partition_processor._checkpoint_manager.consumer_group_name
-                )
-                await partition_processor.process_error(cancelled_error)
-                await partition_processor.close(reason=CloseReason.SHUTDOWN)
-                break
-            except Exception as exp:  # user code has caused an error
-                log.warning(
-                    "PartitionProcessor of EventProcessor instance %r of eventhub %r partition %r consumer group %r "
-                    "has met an exception from user code process_events. It's being closed. The exception is %r.",
-                    partition_processor._checkpoint_manager.owner_id,
-                    partition_processor._checkpoint_manager.eventhub_name,
-                    partition_processor._checkpoint_manager.partition_id,
-                    partition_processor._checkpoint_manager.consumer_group_name,
-                    exp
-                )
-                await partition_processor.process_error(exp)
-                await partition_processor.close(reason=CloseReason.EVENTHUB_EXCEPTION)
-                break
-                # TODO: will review whether to break and close partition processor after user's code has an exception
-        # TODO: try to inform other EventProcessors to take the partition when this partition is closed in preview 3?
-    finally:
-        await partition_consumer.close()
+            await partition_consumer.close()

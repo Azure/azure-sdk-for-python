@@ -4,7 +4,7 @@
 # -----------------------------------------------------------------------------------
 
 from typing import List
-from abc import ABC, abstractmethod
+from typing_extensions import Protocol
 from enum import Enum
 from .checkpoint_manager import CheckpointManager
 
@@ -17,16 +17,16 @@ class CloseReason(Enum):
     EVENTHUB_EXCEPTION = 2  # Exception happens during receiving events
 
 
-class PartitionProcessor(ABC):
+class PartitionProcessor(Protocol):
     """
     PartitionProcessor processes events received from the Azure Event Hubs service. A single instance of a class
     implementing this abstract class will be created for every partition the associated ~azure.eventhub.eventprocessor.EventProcessor owns.
 
     """
-    def __init__(self, checkpoint_manager: CheckpointManager):
-        self._checkpoint_manager = checkpoint_manager
+    async def initialize(self, checkpoint_manager: CheckpointManager):
+        pass
 
-    async def close(self, reason):
+    async def close(self, reason, checkpoint_manager: CheckpointManager):
         """Called when EventProcessor stops processing this PartitionProcessor.
 
         There are different reasons to trigger the PartitionProcessor to close.
@@ -38,8 +38,7 @@ class PartitionProcessor(ABC):
         """
         pass
 
-    @abstractmethod
-    async def process_events(self, events: List[EventData]):
+    async def process_events(self, events: List[EventData], checkpoint_manager: CheckpointManager):
         """Called when a batch of events have been received.
 
         :param events: Received events.
@@ -48,7 +47,7 @@ class PartitionProcessor(ABC):
         """
         pass
 
-    async def process_error(self, error):
+    async def process_error(self, error, checkpoint_manager: CheckpointManager):
         """Called when an error happens
 
         :param error: The error that happens.
