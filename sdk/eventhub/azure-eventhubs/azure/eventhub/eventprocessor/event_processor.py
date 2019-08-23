@@ -137,8 +137,8 @@ class EventProcessor(object):
 
         """
         self._running = False
-        for i in range(len(self._tasks)):
-            task = self._tasks.popitem()[1]
+        for _ in range(len(self._tasks)):
+            _, task = self._tasks.popitem()
             task.cancel()
         log.info("EventProcessor %r has been cancelled", self._id)
         await asyncio.sleep(2)  # give some time to finish after cancelled
@@ -205,7 +205,7 @@ class EventProcessor(object):
                     # TODO: release the ownership immediately via partition manager
                     break
                 except EventHubError as eh_err:
-                    reason = CloseReason.LEASE_LOST if eh_err.error == "link:stolen" else CloseReason.EVENTHUB_EXCEPTION
+                    reason = CloseReason.OWNERSHIP_LOST if eh_err.error == "link:stolen" else CloseReason.EVENTHUB_EXCEPTION
                     log.warning(
                         "PartitionProcessor of EventProcessor instance %r of eventhub %r partition %r consumer group %r "
                         "has met an exception receiving events. It's being closed. The exception is %r.",
