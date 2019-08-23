@@ -210,7 +210,7 @@ def prep_and_run_tox(targeted_packages, parsed_args, options_array=[]):
             os.path.exists(destination_tox_ini)
             and os.path.basename(package_dir) in IGNORED_TOX_INIS
         ):
-            logging.info("No customized tox.ini present, using common eng/tox/tox.ini.")
+            logging.info("No customized tox.ini present, using common eng/tox/tox.ini for {}".format(os.path.basename(package_dir)))
             tox_execution_array.extend(["-c", DEFAULT_TOX_INI_LOCATION])
 
         # handle empty file
