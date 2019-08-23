@@ -22,11 +22,13 @@
 """Create, read, update and delete and execute scripts in the Azure Cosmos DB SQL API service.
 """
 
+from typing import Any, List, Dict, Union
+
 import six
+
 from azure.cosmos._cosmos_client_connection import CosmosClientConnection
 from .partition_key import NonePartitionKeyValue
 from ._query_iterable import QueryIterable
-from typing import Any, List, Dict, Union
 
 
 class ScriptType:
@@ -42,10 +44,10 @@ class Scripts:
         self.container_link = container_link
         self.is_system_key = is_system_key
 
-    def _get_resource_link(self, script_or_id, type):
+    def _get_resource_link(self, script_or_id, typ):
         # type: (Union[Dict[str, Any], str], str) -> str
         if isinstance(script_or_id, six.string_types):
-            return u"{}/{}/{}".format(self.container_link, type, script_or_id)
+            return u"{}/{}/{}".format(self.container_link, typ, script_or_id)
         return script_or_id["_self"]
 
     def list_stored_procedures(self, max_item_count=None, feed_options=None):
@@ -147,7 +149,8 @@ class Scripts:
 
         :param sproc: The ID (name) or dict representing stored procedure to be deleted.
         :param request_options: Dictionary of additional properties to be used for the request.
-        :raises `HTTPFailure`: The sproc wasn't deleted successfully. If the sproc does not exist in the container, a `404` error is returned.
+        :raises `HTTPFailure`: The sproc wasn't deleted successfully. If the sproc does not
+            exist in the container, a `404` error is returned.
 
         """
         if not request_options:
@@ -169,7 +172,8 @@ class Scripts:
         :param partition_key: Specifies the partition key to indicate which partition the sproc should execute on.
         :param request_options: Dictionary of additional properties to be used for the request.
         :returns: result of the executed stored procedure for the given parameters.
-        :raise `HTTPFailure`: If the stored procedure execution failed or if the stored procedure with given id does not exists in the container.
+        :raise `HTTPFailure`: If the stored procedure execution failed or if the stored procedure with
+            given id does not exists in the container.
 
         """
 
@@ -289,7 +293,8 @@ class Scripts:
 
         :param trigger: The ID (name) or dict representing trigger to be deleted.
         :param request_options: Dictionary of additional properties to be used for the request.
-        :raises `HTTPFailure`: The trigger wasn't deleted successfully. If the trigger does not exist in the container, a `404` error is returned.
+        :raises `HTTPFailure`: The trigger wasn't deleted successfully. If the trigger does not
+            exist in the container, a `404` error is returned.
 
         """
         if not request_options:
@@ -400,7 +405,8 @@ class Scripts:
 
         :param udf: The ID (name) or dict representing udf to be deleted.
         :param request_options: Dictionary of additional properties to be used for the request.
-        :raises `HTTPFailure`: The udf wasn't deleted successfully. If the udf does not exist in the container, a `404` error is returned.
+        :raises `HTTPFailure`: The udf wasn't deleted successfully. If the udf does not
+            exist in the container, a `404` error is returned.
 
         """
         if not request_options:

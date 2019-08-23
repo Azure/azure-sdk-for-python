@@ -792,7 +792,9 @@ class CosmosClientConnection(object):
             options = {}
 
         if base.IsDatabaseLink(database_or_Container_link):
-            # Python doesn't have a good way of specifying an overloaded constructor, and this is how it's generally overloaded constructors are specified(by calling a @classmethod) and returning the 'self' instance
+            # Python doesn't have a good way of specifying an overloaded constructor,
+            # and this is how it's generally overloaded constructors are specified (by
+            # calling a @classmethod) and returning the 'self' instance
             return query_iterable.QueryIterable.PartitioningQueryIterable(
                 self, query, options, database_or_Container_link, partition_key
             )
@@ -964,14 +966,18 @@ class CosmosClientConnection(object):
             dict
 
         """
-        # Python's default arguments are evaluated once when the function is defined, not each time the function is called (like it is in say, Ruby).
-        # This means that if you use a mutable default argument and mutate it, you will and have mutated that object for all future calls to the function as well.
-        # So, using a non-mutable deafult in this case(None) and assigning an empty dict(mutable) inside the method
-        # For more details on this gotcha, please refer http://docs.python-guide.org/en/latest/writing/gotchas/
+        # Python's default arguments are evaluated once when the function is defined,
+        # not each time the function is called (like it is in say, Ruby). This means
+        # that if you use a mutable default argument and mutate it, you will and have
+        # mutated that object for all future calls to the function as well. So, using
+        # a non-mutable deafult in this case(None) and assigning an empty dict(mutable)
+        # inside the method For more details on this gotcha, please refer
+        # http://docs.python-guide.org/en/latest/writing/gotchas/
         if options is None:
             options = {}
 
-        # We check the link to be document collection link since it can be database link in case of client side partitioning
+        # We check the link to be document collection link since it can be database
+        # link in case of client side partitioning
         if base.IsItemContainerLink(database_or_Container_link):
             options = self._AddPartitionKey(database_or_Container_link, document, options)
 
@@ -999,14 +1005,18 @@ class CosmosClientConnection(object):
             dict
 
         """
-        # Python's default arguments are evaluated once when the function is defined, not each time the function is called (like it is in say, Ruby).
-        # This means that if you use a mutable default argument and mutate it, you will and have mutated that object for all future calls to the function as well.
-        # So, using a non-mutable deafult in this case(None) and assigning an empty dict(mutable) inside the method
-        # For more details on this gotcha, please refer http://docs.python-guide.org/en/latest/writing/gotchas/
+        # Python's default arguments are evaluated once when the function is defined,
+        # not each time the function is called (like it is in say, Ruby). This means
+        # that if you use a mutable default argument and mutate it, you will and have
+        # mutated that object for all future calls to the function as well. So, using
+        # a non-mutable deafult in this case(None) and assigning an empty dict(mutable)
+        # inside the method For more details on this gotcha, please refer
+        # http://docs.python-guide.org/en/latest/writing/gotchas/
         if options is None:
             options = {}
 
-        # We check the link to be document collection link since it can be database link in case of client side partitioning
+        # We check the link to be document collection link since it can be database
+        # link in case of client side partitioning
         if base.IsItemContainerLink(database_or_Container_link):
             options = self._AddPartitionKey(database_or_Container_link, document, options)
 
@@ -1015,7 +1025,12 @@ class CosmosClientConnection(object):
         )
         return self.Upsert(document, path, "docs", collection_id, None, options)
 
-    PartitionResolverErrorMessage = "Couldn't find any partition resolvers for the database link provided. Ensure that the link you used when registering the partition resolvers matches the link provided or you need to register both types of database link(self link as well as ID based link)."
+    PartitionResolverErrorMessage = (
+        "Couldn't find any partition resolvers for the database link provided. "
+        + "Ensure that the link you used when registering the partition resolvers "
+        + "matches the link provided or you need to register both types of database "
+        + "link(self link as well as ID based link)."
+    )
 
     # Gets the collection id and path for the document
     def _GetContainerIdWithPathForItem(self, database_or_Container_link, document, options):
@@ -1549,10 +1564,13 @@ class CosmosClientConnection(object):
         path = base.GetPathFromLink(document_link)
         document_id = base.GetResourceIdOrFullNameFromLink(document_link)
 
-        # Python's default arguments are evaluated once when the function is defined, not each time the function is called (like it is in say, Ruby).
-        # This means that if you use a mutable default argument and mutate it, you will and have mutated that object for all future calls to the function as well.
-        # So, using a non-mutable deafult in this case(None) and assigning an empty dict(mutable) inside the function so that it remains local
-        # For more details on this gotcha, please refer http://docs.python-guide.org/en/latest/writing/gotchas/
+        # Python's default arguments are evaluated once when the function is defined,
+        # not each time the function is called (like it is in say, Ruby). This means
+        # that if you use a mutable default argument and mutate it, you will and have
+        # mutated that object for all future calls to the function as well. So, using
+        # a non-mutable deafult in this case(None) and assigning an empty dict(mutable)
+        # inside the function so that it remains local For more details on this gotcha,
+        # please refer http://docs.python-guide.org/en/latest/writing/gotchas/
         if options is None:
             options = {}
 
@@ -1997,7 +2015,7 @@ class CosmosClientConnection(object):
         initial_headers = dict(self.default_headers)
         initial_headers.update({http_constants.HttpHeaders.Accept: (runtime_constants.MediaTypes.Json)})
 
-        if params and not type(params) is list:
+        if params and not isinstance(params, list):
             params = [params]
 
         path = base.GetPathFromLink(sproc_link)
@@ -2200,12 +2218,12 @@ class CosmosClientConnection(object):
         )
         return database_account
 
-    def Create(self, body, path, type, id, initial_headers, options=None):
+    def Create(self, body, path, typ, id, initial_headers, options=None):
         """Creates a Azure Cosmos resource and returns it.
 
         :param dict body:
         :param str path:
-        :param str type:
+        :param str typ:
         :param str id:
         :param dict initial_headers:
         :param dict options:
@@ -2221,22 +2239,22 @@ class CosmosClientConnection(object):
             options = {}
 
         initial_headers = initial_headers or self.default_headers
-        headers = base.GetHeaders(self, initial_headers, "post", path, id, type, options)
+        headers = base.GetHeaders(self, initial_headers, "post", path, id, typ, options)
         # Create will use WriteEndpoint since it uses POST operation
 
-        request = _request_object.RequestObject(type, documents._OperationType.Create)
+        request = _request_object.RequestObject(typ, documents._OperationType.Create)
         result, self.last_response_headers = self.__Post(path, request, body, headers)
 
         # update session for write request
         self._UpdateSessionIfRequired(headers, result, self.last_response_headers)
         return result
 
-    def Upsert(self, body, path, type, id, initial_headers, options=None):
+    def Upsert(self, body, path, typ, id, initial_headers, options=None):
         """Upserts a Azure Cosmos resource and returns it.
 
         :param dict body:
         :param str path:
-        :param str type:
+        :param str typ:
         :param str id:
         :param dict initial_headers:
         :param dict options:
@@ -2252,23 +2270,23 @@ class CosmosClientConnection(object):
             options = {}
 
         initial_headers = initial_headers or self.default_headers
-        headers = base.GetHeaders(self, initial_headers, "post", path, id, type, options)
+        headers = base.GetHeaders(self, initial_headers, "post", path, id, typ, options)
 
         headers[http_constants.HttpHeaders.IsUpsert] = True
 
         # Upsert will use WriteEndpoint since it uses POST operation
-        request = _request_object.RequestObject(type, documents._OperationType.Upsert)
+        request = _request_object.RequestObject(typ, documents._OperationType.Upsert)
         result, self.last_response_headers = self.__Post(path, request, body, headers)
         # update session for write request
         self._UpdateSessionIfRequired(headers, result, self.last_response_headers)
         return result
 
-    def Replace(self, resource, path, type, id, initial_headers, options=None):
+    def Replace(self, resource, path, typ, id, initial_headers, options=None):
         """Replaces a Azure Cosmos resource and returns it.
 
         :param dict resource:
         :param str path:
-        :param str type:
+        :param str typ:
         :param str id:
         :param dict initial_headers:
         :param dict options:
@@ -2284,20 +2302,20 @@ class CosmosClientConnection(object):
             options = {}
 
         initial_headers = initial_headers or self.default_headers
-        headers = base.GetHeaders(self, initial_headers, "put", path, id, type, options)
+        headers = base.GetHeaders(self, initial_headers, "put", path, id, typ, options)
         # Replace will use WriteEndpoint since it uses PUT operation
-        request = _request_object.RequestObject(type, documents._OperationType.Replace)
+        request = _request_object.RequestObject(typ, documents._OperationType.Replace)
         result, self.last_response_headers = self.__Put(path, request, resource, headers)
 
         # update session for request mutates data on server side
         self._UpdateSessionIfRequired(headers, result, self.last_response_headers)
         return result
 
-    def Read(self, path, type, id, initial_headers, options=None):
+    def Read(self, path, typ, id, initial_headers, options=None):
         """Reads a Azure Cosmos resource and returns it.
 
         :param str path:
-        :param str type:
+        :param str typ:
         :param str id:
         :param dict initial_headers:
         :param dict options:
@@ -2313,17 +2331,17 @@ class CosmosClientConnection(object):
             options = {}
 
         initial_headers = initial_headers or self.default_headers
-        headers = base.GetHeaders(self, initial_headers, "get", path, id, type, options)
+        headers = base.GetHeaders(self, initial_headers, "get", path, id, typ, options)
         # Read will use ReadEndpoint since it uses GET operation
-        request = _request_object.RequestObject(type, documents._OperationType.Read)
+        request = _request_object.RequestObject(typ, documents._OperationType.Read)
         result, self.last_response_headers = self.__Get(path, request, headers)
         return result
 
-    def DeleteResource(self, path, type, id, initial_headers, options=None):
+    def DeleteResource(self, path, typ, id, initial_headers, options=None):
         """Deletes a Azure Cosmos resource and returns it.
 
         :param str path:
-        :param str type:
+        :param str typ:
         :param str id:
         :param dict initial_headers:
         :param dict options:
@@ -2339,9 +2357,9 @@ class CosmosClientConnection(object):
             options = {}
 
         initial_headers = initial_headers or self.default_headers
-        headers = base.GetHeaders(self, initial_headers, "delete", path, id, type, options)
+        headers = base.GetHeaders(self, initial_headers, "delete", path, id, typ, options)
         # Delete will use WriteEndpoint since it uses DELETE operation
-        request = _request_object.RequestObject(type, documents._OperationType.Delete)
+        request = _request_object.RequestObject(typ, documents._OperationType.Delete)
         result, self.last_response_headers = self.__Delete(path, request, headers)
 
         # update session for request mutates data on server side
@@ -2486,12 +2504,12 @@ class CosmosClientConnection(object):
         )
 
     def __QueryFeed(
-        self, path, type, id, result_fn, create_fn, query, options=None, partition_key_range_id=None, response_hook=None
+        self, path, typ, id, result_fn, create_fn, query, options=None, partition_key_range_id=None, response_hook=None
     ):
         """Query for more than one Azure Cosmos resources.
 
         :param str path:
-        :param str type:
+        :param str typ:
         :param str id:
         :param function result_fn:
         :param function create_fn:
@@ -2525,8 +2543,8 @@ class CosmosClientConnection(object):
         # Copy to make sure that default_headers won't be changed.
         if query is None:
             # Query operations will use ReadEndpoint even though it uses GET(for feed requests)
-            request = _request_object.RequestObject(type, documents._OperationType.ReadFeed)
-            headers = base.GetHeaders(self, initial_headers, "get", path, id, type, options, partition_key_range_id)
+            request = _request_object.RequestObject(typ, documents._OperationType.ReadFeed)
+            headers = base.GetHeaders(self, initial_headers, "get", path, id, typ, options, partition_key_range_id)
             result, self.last_response_headers = self.__Get(path, request, headers)
             if response_hook:
                 response_hook(self.last_response_headers, result)
@@ -2546,8 +2564,8 @@ class CosmosClientConnection(object):
             raise SystemError("Unexpected query compatibility mode.")
 
         # Query operations will use ReadEndpoint even though it uses POST(for regular query operations)
-        request = _request_object.RequestObject(type, documents._OperationType.SqlQuery)
-        headers = base.GetHeaders(self, initial_headers, "post", path, id, type, options, partition_key_range_id)
+        request = _request_object.RequestObject(typ, documents._OperationType.SqlQuery)
+        headers = base.GetHeaders(self, initial_headers, "post", path, id, typ, options, partition_key_range_id)
         result, self.last_response_headers = self.__Post(path, request, query, headers)
 
         if response_hook:
@@ -2651,7 +2669,8 @@ class CosmosClientConnection(object):
             if not isinstance(partitionKey, dict):
                 break
 
-        # Match the count of hops we did to get the partitionKey with the length of partition key parts and validate that it's not a dict at that level
+        # Match the count of hops we did to get the partitionKey with the length of
+        # partition key parts and validate that it's not a dict at that level
         if (matchCount != expected_matchCount) or isinstance(partitionKey, dict):
             return self._return_undefined_or_empty_partition_key(is_system_key)
 
