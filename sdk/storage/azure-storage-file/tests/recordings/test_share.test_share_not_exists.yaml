@@ -13,7 +13,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 21:52:58 GMT
+      - Fri, 23 Aug 2019 03:04:35 GMT
       x-ms-version:
       - '2018-11-09'
     method: GET
@@ -21,14 +21,14 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareNotFound</Code><Message>The
-        specified share does not exist.\nRequestId:fcdc8cf3-501a-00f7-0133-598e20000000\nTime:2019-08-22T21:52:58.5264522Z</Message></Error>"
+        specified share does not exist.\nRequestId:6713ab32-301a-00ed-765f-59ed8c000000\nTime:2019-08-23T03:04:36.2392435Z</Message></Error>"
     headers:
       content-length:
       - '217'
       content-type:
       - application/xml
       date:
-      - Thu, 22 Aug 2019 21:52:58 GMT
+      - Fri, 23 Aug 2019 03:04:35 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:

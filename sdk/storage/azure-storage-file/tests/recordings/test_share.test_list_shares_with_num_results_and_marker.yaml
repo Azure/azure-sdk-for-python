@@ -15,7 +15,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 21:52:29 GMT
+      - Fri, 23 Aug 2019 03:04:07 GMT
       x-ms-version:
       - '2018-11-09'
     method: PUT
@@ -27,11 +27,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 22 Aug 2019 21:52:29 GMT
+      - Fri, 23 Aug 2019 03:04:07 GMT
       etag:
-      - '"0x8D7274B07BBB7EE"'
+      - '"0x8D72776908179A2"'
       last-modified:
-      - Thu, 22 Aug 2019 21:52:30 GMT
+      - Fri, 23 Aug 2019 03:04:08 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -55,7 +55,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 21:52:30 GMT
+      - Fri, 23 Aug 2019 03:04:08 GMT
       x-ms-version:
       - '2018-11-09'
     method: PUT
@@ -67,11 +67,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 22 Aug 2019 21:52:29 GMT
+      - Fri, 23 Aug 2019 03:04:08 GMT
       etag:
-      - '"0x8D7274B07C83D55"'
+      - '"0x8D72776909776B8"'
       last-modified:
-      - Thu, 22 Aug 2019 21:52:30 GMT
+      - Fri, 23 Aug 2019 03:04:08 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -95,7 +95,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 21:52:30 GMT
+      - Fri, 23 Aug 2019 03:04:08 GMT
       x-ms-version:
       - '2018-11-09'
     method: PUT
@@ -107,11 +107,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 22 Aug 2019 21:52:29 GMT
+      - Fri, 23 Aug 2019 03:04:08 GMT
       etag:
-      - '"0x8D7274B07D389FA"'
+      - '"0x8D7277690A5AA25"'
       last-modified:
-      - Thu, 22 Aug 2019 21:52:30 GMT
+      - Fri, 23 Aug 2019 03:04:08 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -135,7 +135,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 21:52:30 GMT
+      - Fri, 23 Aug 2019 03:04:08 GMT
       x-ms-version:
       - '2018-11-09'
     method: PUT
@@ -147,11 +147,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 22 Aug 2019 21:52:29 GMT
+      - Fri, 23 Aug 2019 03:04:08 GMT
       etag:
-      - '"0x8D7274B07DE8877"'
+      - '"0x8D7277690B404B1"'
       last-modified:
-      - Thu, 22 Aug 2019 21:52:30 GMT
+      - Fri, 23 Aug 2019 03:04:08 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -173,7 +173,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 21:52:30 GMT
+      - Fri, 23 Aug 2019 03:04:08 GMT
       x-ms-version:
       - '2018-11-09'
     method: GET
@@ -181,14 +181,14 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://pyacrstorage7d2b16cf.file.core.windows.net/\"><Prefix>listshare</Prefix><MaxResults>2</MaxResults><Shares><Share><Name>listshare07d2b16cf</Name><Properties><Last-Modified>Thu,
-        22 Aug 2019 21:52:30 GMT</Last-Modified><Etag>\"0x8D7274B07BBB7EE\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>listshare17d2b16cf</Name><Properties><Last-Modified>Thu,
-        22 Aug 2019 21:52:30 GMT</Last-Modified><Etag>\"0x8D7274B07C83D55\"</Etag><Quota>5120</Quota></Properties></Share></Shares><NextMarker>/pyacrstorage7d2b16cf/listshare27d2b16cf</NextMarker></EnumerationResults>"
+        ServiceEndpoint=\"https://pyacrstorage7d2b16cf.file.core.windows.net/\"><Prefix>listshare</Prefix><MaxResults>2</MaxResults><Shares><Share><Name>listshare07d2b16cf</Name><Properties><Last-Modified>Fri,
+        23 Aug 2019 03:04:08 GMT</Last-Modified><Etag>\"0x8D72776908179A2\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>listshare17d2b16cf</Name><Properties><Last-Modified>Fri,
+        23 Aug 2019 03:04:08 GMT</Last-Modified><Etag>\"0x8D72776909776B8\"</Etag><Quota>5120</Quota></Properties></Share></Shares><NextMarker>/pyacrstorage7d2b16cf/listshare27d2b16cf</NextMarker></EnumerationResults>"
     headers:
       content-type:
       - application/xml
       date:
-      - Thu, 22 Aug 2019 21:52:29 GMT
+      - Fri, 23 Aug 2019 03:04:08 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -212,7 +212,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 21:52:30 GMT
+      - Fri, 23 Aug 2019 03:04:08 GMT
       x-ms-version:
       - '2018-11-09'
     method: GET
@@ -220,15 +220,15 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://pyacrstorage7d2b16cf.file.core.windows.net/\"><Prefix>listshare</Prefix><Marker>/pyacrstorage7d2b16cf/listshare27d2b16cf</Marker><MaxResults>2</MaxResults><Shares><Share><Name>listshare27d2b16cf</Name><Properties><Last-Modified>Thu,
-        22 Aug 2019 21:52:30 GMT</Last-Modified><Etag>\"0x8D7274B07D389FA\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>listshare37d2b16cf</Name><Properties><Last-Modified>Thu,
-        22 Aug 2019 21:52:30 GMT</Last-Modified><Etag>\"0x8D7274B07DE8877\"</Etag><Quota>5120</Quota></Properties></Share></Shares><NextMarker
+        ServiceEndpoint=\"https://pyacrstorage7d2b16cf.file.core.windows.net/\"><Prefix>listshare</Prefix><Marker>/pyacrstorage7d2b16cf/listshare27d2b16cf</Marker><MaxResults>2</MaxResults><Shares><Share><Name>listshare27d2b16cf</Name><Properties><Last-Modified>Fri,
+        23 Aug 2019 03:04:08 GMT</Last-Modified><Etag>\"0x8D7277690A5AA25\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>listshare37d2b16cf</Name><Properties><Last-Modified>Fri,
+        23 Aug 2019 03:04:08 GMT</Last-Modified><Etag>\"0x8D7277690B404B1\"</Etag><Quota>5120</Quota></Properties></Share></Shares><NextMarker
         /></EnumerationResults>"
     headers:
       content-type:
       - application/xml
       date:
-      - Thu, 22 Aug 2019 21:52:29 GMT
+      - Fri, 23 Aug 2019 03:04:08 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:

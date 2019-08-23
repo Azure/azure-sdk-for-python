@@ -15,7 +15,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 21:52:48 GMT
+      - Fri, 23 Aug 2019 03:04:12 GMT
       x-ms-meta:
       - '{''hello'': ''world'', ''number'': ''42''}'
       x-ms-meta-hello:
@@ -33,11 +33,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 22 Aug 2019 21:52:47 GMT
+      - Fri, 23 Aug 2019 03:04:12 GMT
       etag:
-      - '"0x8D7274B12AA1AA1"'
+      - '"0x8D72776931E0457"'
       last-modified:
-      - Thu, 22 Aug 2019 21:52:48 GMT
+      - Fri, 23 Aug 2019 03:04:12 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -59,7 +59,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 21:52:48 GMT
+      - Fri, 23 Aug 2019 03:04:12 GMT
       x-ms-version:
       - '2018-11-09'
     method: GET
@@ -67,14 +67,14 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://pyacrstoragef877141f.file.core.windows.net/\"><Prefix>sharef877141f</Prefix><Shares><Share><Name>sharef877141f</Name><Properties><Last-Modified>Thu,
-        22 Aug 2019 21:52:48 GMT</Last-Modified><Etag>\"0x8D7274B12AA1AA1\"</Etag><Quota>5120</Quota></Properties><Metadata><hello>world</hello><number>42</number></Metadata></Share></Shares><NextMarker
+        ServiceEndpoint=\"https://pyacrstoragef877141f.file.core.windows.net/\"><Prefix>sharef877141f</Prefix><Shares><Share><Name>sharef877141f</Name><Properties><Last-Modified>Fri,
+        23 Aug 2019 03:04:12 GMT</Last-Modified><Etag>\"0x8D72776931E0457\"</Etag><Quota>5120</Quota></Properties><Metadata><hello>world</hello><number>42</number></Metadata></Share></Shares><NextMarker
         /></EnumerationResults>"
     headers:
       content-type:
       - application/xml
       date:
-      - Thu, 22 Aug 2019 21:52:47 GMT
+      - Fri, 23 Aug 2019 03:04:12 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:

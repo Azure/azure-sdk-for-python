@@ -8,26 +8,18 @@
 
 import os
 import asyncio
-try:
-    import settings_real as settings
-except ImportError:
-    import file_settings_fake as settings
 
-from filetestcase import (
-    FileTestCase,
-    TestMode,
-    record
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, FakeStorageAccount
+from asyncfiletestcase import (
+    AsyncFileTestCase
 )
-
+FAKE_STORAGE = FakeStorageAccount(
+    name='pyacrstorage',
+    id='')
 SOURCE_FILE = 'SampleSource.txt'
 
 
-class TestShareSamples(FileTestCase):
-    url = "{}://{}.file.core.windows.net".format(
-        settings.PROTOCOL,
-        settings.STORAGE_ACCOUNT_NAME
-    )
-    connection_string = settings.CONNECTION_STRING
+class TestShareSamples(AsyncFileTestCase):
 
     def setUp(self):
         data = b"Lorem ipsum dolor sit amet, consectetur adipiscing elit"
@@ -47,10 +39,13 @@ class TestShareSamples(FileTestCase):
 
     #--Begin File Samples-----------------------------------------------------------------
 
-    async def _test_create_share_snapshot(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @AsyncFileTestCase.await_prepared_test
+    async def test_create_share_snapshot(self, resource_group, location, storage_account, storage_account_key):
         # Instantiate the ShareClient from a connection string
         from azure.storage.file.aio import ShareClient
-        share = ShareClient.from_connection_string(self.connection_string, "sharesnapshot")
+        share = ShareClient.from_connection_string(self.connection_string(storage_account, storage_account_key), "sharesnapshot")
 
         # [START create_share]
         await share.create_share()
@@ -64,16 +59,13 @@ class TestShareSamples(FileTestCase):
             await share.delete_share(delete_snapshots=True)
             # [END delete_share]
 
-    def test_create_share_snapshot(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_create_share_snapshot())
-
-    async def _test_set_share_quota_and_metadata(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @AsyncFileTestCase.await_prepared_test
+    async def test_set_share_quota_and_metadata(self, resource_group, location, storage_account, storage_account_key):
         # [START create_share_client_from_conn_string]
         from azure.storage.file.aio import ShareClient
-        share = ShareClient.from_connection_string(self.connection_string, "fileshare")
+        share = ShareClient.from_connection_string(self.connection_string(storage_account, storage_account_key), "fileshare")
         # [END create_share_client_from_conn_string]
 
         # Create the share
@@ -91,23 +83,21 @@ class TestShareSamples(FileTestCase):
             # [END set_share_metadata]
 
             # Get the metadata for the share
-            props = await share.get_share_properties().metadata
-            assert props == data
+            props = await share.get_share_properties()
+            md = props.metadata
+            assert md == data
 
         finally:
             # Delete the share
             await share.delete_share()
 
-    def test_set_share_quota_and_metadata(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_set_share_quota_and_metadata())
-
-    async def _test_list_directories_and_files(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @AsyncFileTestCase.await_prepared_test
+    async def test_list_directories_and_files(self, resource_group, location, storage_account, storage_account_key):
         # Instantiate the ShareClient from a connection string
         from azure.storage.file.aio import ShareClient
-        share = ShareClient.from_connection_string(self.connection_string, "listshare")
+        share = ShareClient.from_connection_string(self.connection_string(storage_account, storage_account_key), "listshare")
 
         # Create the share
         await share.create_share()
@@ -131,16 +121,13 @@ class TestShareSamples(FileTestCase):
             # Delete the share
             await share.delete_share()
 
-    def test_list_directories_and_files(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_list_directories_and_files())
-
-    async def _test_get_directory_or_file_client(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @AsyncFileTestCase.await_prepared_test
+    async def test_get_directory_or_file_client(self, resource_group, location, storage_account, storage_account_key):
         # Instantiate the ShareClient from a connection string
         from azure.storage.file.aio import ShareClient
-        share = ShareClient.from_connection_string(self.connection_string, "testfiles")
+        share = ShareClient.from_connection_string(self.connection_string(storage_account, storage_account_key), "testfiles")
 
         # Get the directory client to interact with a specific directory
         my_dir = share.get_directory_client("dir1")
@@ -148,8 +135,3 @@ class TestShareSamples(FileTestCase):
         # Get the file client to interact with a specific file
         my_file = share.get_file_client("dir1/myfile")
 
-    def test_get_directory_or_file_client(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_get_directory_or_file_client())

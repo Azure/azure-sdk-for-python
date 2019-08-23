@@ -8,24 +8,18 @@
 
 import os
 import asyncio
-try:
-    import settings_real as settings
-except ImportError:
-    import file_settings_fake as settings
-
-from filetestcase import (
-    FileTestCase,
-    TestMode,
-    record
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, FakeStorageAccount
+from asyncfiletestcase import (
+    AsyncFileTestCase,
 )
 
 SOURCE_FILE = 'SampleSource.txt'
 DEST_FILE = 'SampleDestination.txt'
+FAKE_STORAGE = FakeStorageAccount(
+    name='pyacrstorage',
+    id='')
 
-
-class TestFileSamples(FileTestCase):
-
-    connection_string = settings.CONNECTION_STRING
+class TestFileSamples(AsyncFileTestCase):
 
     def setUp(self):
         data = b"Lorem ipsum dolor sit amet, consectetur adipiscing elit"
@@ -50,10 +44,13 @@ class TestFileSamples(FileTestCase):
 
     #--Begin File Samples-----------------------------------------------------------------
 
-    async def _test_file_operations(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @AsyncFileTestCase.await_prepared_test
+    async def test_file_operations(self, resource_group, location, storage_account, storage_account_key):
         # Instantiate the ShareClient from a connection string
         from azure.storage.file.aio import ShareClient
-        share = ShareClient.from_connection_string(self.connection_string, "filesshare")
+        share = ShareClient.from_connection_string(self.connection_string(storage_account, storage_account_key), "filesshare")
 
         # Create the share
         await share.create_share()
@@ -90,16 +87,13 @@ class TestFileSamples(FileTestCase):
             # Delete the share
             await share.delete_share()
 
-    def test_file_operations(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_file_operations())
-
-    async def _test_copy_from_url(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @AsyncFileTestCase.await_prepared_test
+    async def test_copy_from_url(self, resource_group, location, storage_account, storage_account_key):
         # Instantiate the ShareClient from a connection string
         from azure.storage.file.aio import ShareClient
-        share = ShareClient.from_connection_string(self.connection_string, "filesfromurl")
+        share = ShareClient.from_connection_string(self.connection_string(storage_account, storage_account_key), "filesfromurl")
 
         # Create the share
         await share.create_share()
@@ -114,9 +108,8 @@ class TestFileSamples(FileTestCase):
             destination_file = share.get_file_client("destfile")
 
             # Build the url from which to copy the file
-            source_url = "{}://{}.file.core.windows.net/{}/{}".format(
-                settings.PROTOCOL,
-                settings.STORAGE_ACCOUNT_NAME,
+            source_url = "https://{}.file.core.windows.net/{}/{}".format(
+                storage_account.name,
                 "filesfromurl",
                 "sourcefile"
             )
@@ -127,10 +120,4 @@ class TestFileSamples(FileTestCase):
             # [END copy_file_from_url]
         finally:
             # Delete the share
-            await share.delete_share()
-
-    def test_copy_from_url(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_copy_from_url())
+            await share.delete_share() 

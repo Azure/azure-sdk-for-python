@@ -7,7 +7,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 18:21:09 GMT
+      - Fri, 23 Aug 2019 02:49:21 GMT
       x-ms-version:
       - '2018-11-09'
     method: PUT
@@ -17,9 +17,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 22 Aug 2019 18:21:08 GMT
-      etag: '"0x8D7272D80834D1C"'
-      last-modified: Thu, 22 Aug 2019 18:21:07 GMT
+      date: Fri, 23 Aug 2019 02:49:21 GMT
+      etag: '"0x8D727748007C5C2"'
+      last-modified: Fri, 23 Aug 2019 02:49:21 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2018-11-09'
     status:
@@ -41,7 +41,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 18:21:11 GMT
+      - Fri, 23 Aug 2019 02:49:21 GMT
       x-ms-meta-hello:
       - world
       x-ms-meta-number:
@@ -55,9 +55,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 22 Aug 2019 18:21:08 GMT
-      etag: '"0x8D7272D8114DFD8"'
-      last-modified: Thu, 22 Aug 2019 18:21:08 GMT
+      date: Fri, 23 Aug 2019 02:49:21 GMT
+      etag: '"0x8D7277480440A64"'
+      last-modified: Fri, 23 Aug 2019 02:49:21 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2018-11-09'
@@ -80,7 +80,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 18:21:11 GMT
+      - Fri, 23 Aug 2019 02:49:21 GMT
       x-ms-version:
       - '2018-11-09'
     method: GET
@@ -90,9 +90,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 22 Aug 2019 18:21:08 GMT
-      etag: '"0x8D7272D8114DFD8"'
-      last-modified: Thu, 22 Aug 2019 18:21:08 GMT
+      date: Fri, 23 Aug 2019 02:49:21 GMT
+      etag: '"0x8D7277480440A64"'
+      last-modified: Fri, 23 Aug 2019 02:49:21 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-meta-hello: world
       x-ms-meta-number: '42'

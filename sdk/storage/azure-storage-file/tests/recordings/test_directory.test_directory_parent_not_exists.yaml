@@ -15,7 +15,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 18:27:07 GMT
+      - Fri, 23 Aug 2019 02:48:49 GMT
       x-ms-version:
       - '2018-11-09'
     method: PUT
@@ -27,11 +27,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 22 Aug 2019 18:27:04 GMT
+      - Fri, 23 Aug 2019 02:48:49 GMT
       etag:
-      - '"0x8D7272E556EE2E9"'
+      - '"0x8D727746D446287"'
       last-modified:
-      - Thu, 22 Aug 2019 18:27:05 GMT
+      - Fri, 23 Aug 2019 02:48:49 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -53,7 +53,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 18:27:07 GMT
+      - Fri, 23 Aug 2019 02:48:50 GMT
       x-ms-version:
       - '2018-11-09'
     method: GET
@@ -61,14 +61,14 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ParentNotFound</Code><Message>The
-        specified parent path does not exist.\nRequestId:61a25868-201a-0043-7717-59ab56000000\nTime:2019-08-22T18:27:05.2314398Z</Message></Error>"
+        specified parent path does not exist.\nRequestId:f60e5058-b01a-0034-0b5d-59fa69000000\nTime:2019-08-23T02:48:50.0553338Z</Message></Error>"
     headers:
       content-length:
       - '224'
       content-type:
       - application/xml
       date:
-      - Thu, 22 Aug 2019 18:27:05 GMT
+      - Fri, 23 Aug 2019 02:48:49 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:

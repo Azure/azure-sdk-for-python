@@ -7,7 +7,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 21:53:28 GMT
+      - Fri, 23 Aug 2019 03:05:01 GMT
       x-ms-meta:
       - '{''hello'': ''world'', ''number'': ''42''}'
       x-ms-meta-hello:
@@ -23,9 +23,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 22 Aug 2019 21:53:28 GMT
-      etag: '"0x8D7274B2A70F33D"'
-      last-modified: Thu, 22 Aug 2019 21:53:28 GMT
+      date: Fri, 23 Aug 2019 03:05:01 GMT
+      etag: '"0x8D72776B062C236"'
+      last-modified: Fri, 23 Aug 2019 03:05:01 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2018-11-09'
     status:
@@ -47,7 +47,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 21:53:28 GMT
+      - Fri, 23 Aug 2019 03:05:01 GMT
       x-ms-version:
       - '2018-11-09'
     method: GET
@@ -57,9 +57,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 22 Aug 2019 21:53:28 GMT
-      etag: '"0x8D7274B2A70F33D"'
-      last-modified: Thu, 22 Aug 2019 21:53:28 GMT
+      date: Fri, 23 Aug 2019 03:05:01 GMT
+      etag: '"0x8D72776B062C236"'
+      last-modified: Fri, 23 Aug 2019 03:05:01 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-has-immutability-policy: 'false'
       x-ms-has-legal-hold: 'false'

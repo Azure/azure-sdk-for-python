@@ -8,23 +8,18 @@
 
 import os
 import asyncio
-try:
-    import settings_real as settings
-except ImportError:
-    import file_settings_fake as settings
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, FakeStorageAccount
 
-from filetestcase import (
-    FileTestCase,
-    TestMode,
-    record
+from asyncfiletestcase import (
+    AsyncFileTestCase,
 )
 
 SOURCE_FILE = 'SampleSource.txt'
+FAKE_STORAGE = FakeStorageAccount(
+    name='pyacrstorage',
+    id='')
 
-
-class TestDirectorySamples(FileTestCase):
-
-    connection_string = settings.CONNECTION_STRING
+class TestDirectorySamples(AsyncFileTestCase):
 
     def setUp(self):
         data = b"Lorem ipsum dolor sit amet, consectetur adipiscing elit"
@@ -43,11 +38,13 @@ class TestDirectorySamples(FileTestCase):
         return super(TestDirectorySamples, self).tearDown()
 
     #--Begin File Samples-----------------------------------------------------------------
-
-    async def _test_create_directory(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @AsyncFileTestCase.await_prepared_test
+    async def test_create_directory(self, resource_group, location, storage_account, storage_account_key):
         # Instantiate the ShareClient from a connection string
         from azure.storage.file.aio import ShareClient
-        share = ShareClient.from_connection_string(self.connection_string, "dirshare")
+        share = ShareClient.from_connection_string(self.connection_string(storage_account, storage_account_key), "dirshare")
 
         # Create the share
         await share.create_share()
@@ -79,16 +76,13 @@ class TestDirectorySamples(FileTestCase):
             # Delete the share
             await share.delete_share()
 
-    def test_create_directory(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_create_directory())
-
-    async def _test_create_subdirectories(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @AsyncFileTestCase.await_prepared_test
+    async def test_create_subdirectories(self, resource_group, location, storage_account, storage_account_key):
         # Instantiate the ShareClient from a connection string
         from azure.storage.file.aio import ShareClient
-        share = ShareClient.from_connection_string(self.connection_string, "subdirshare")
+        share = ShareClient.from_connection_string(self.connection_string(storage_account, storage_account_key), "subdirshare")
 
         # Create the share
         await share.create_share()
@@ -131,16 +125,13 @@ class TestDirectorySamples(FileTestCase):
             # Delete the share
             await share.delete_share()
 
-    def test_create_subdirectories(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_create_subdirectories())
-
-    async def _test_get_subdirectory_client(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @AsyncFileTestCase.await_prepared_test
+    async def test_get_subdirectory_client(self, resource_group, location, storage_account, storage_account_key):
         # Instantiate the ShareClient from a connection string
         from azure.storage.file.aio import ShareClient
-        share = ShareClient.from_connection_string(self.connection_string, "dirtest")
+        share = ShareClient.from_connection_string(self.connection_string(storage_account, storage_account_key), "dirtest")
 
         # Create the share
         await share.create_share()
@@ -158,9 +149,3 @@ class TestDirectorySamples(FileTestCase):
         finally:
             # Delete the share
             await share.delete_share()
-
-    def test_get_subdirectory_client(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_get_subdirectory_client())

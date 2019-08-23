@@ -7,7 +7,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 20:27:33 GMT
+      - Fri, 23 Aug 2019 02:58:37 GMT
       x-ms-version:
       - '2018-11-09'
     method: PUT
@@ -17,9 +17,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 22 Aug 2019 20:27:33 GMT
-      etag: '"0x8D7273F29F5F7B9"'
-      last-modified: Thu, 22 Aug 2019 20:27:33 GMT
+      date: Fri, 23 Aug 2019 02:58:36 GMT
+      etag: '"0x8D72775CB75D2F4"'
+      last-modified: Fri, 23 Aug 2019 02:58:37 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2018-11-09'
     status:
@@ -43,7 +43,7 @@ interactions:
       x-ms-content-length:
       - '36'
       x-ms-date:
-      - Thu, 22 Aug 2019 20:27:33 GMT
+      - Fri, 23 Aug 2019 02:58:38 GMT
       x-ms-type:
       - file
       x-ms-version:
@@ -55,9 +55,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 22 Aug 2019 20:27:33 GMT
-      etag: '"0x8D7273F2A0B0853"'
-      last-modified: Thu, 22 Aug 2019 20:27:33 GMT
+      date: Fri, 23 Aug 2019 02:58:37 GMT
+      etag: '"0x8D72775CBCC161D"'
+      last-modified: Fri, 23 Aug 2019 02:58:38 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2018-11-09'
@@ -83,7 +83,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 22 Aug 2019 20:27:33 GMT
+      - Fri, 23 Aug 2019 02:58:38 GMT
       x-ms-range:
       - bytes=0-35
       x-ms-version:
@@ -98,9 +98,9 @@ interactions:
     headers:
       content-length: '0'
       content-md5: O7c5HRnUhbM5yD4T1wnm/w==
-      date: Thu, 22 Aug 2019 20:27:33 GMT
-      etag: '"0x8D7273F2A108793"'
-      last-modified: Thu, 22 Aug 2019 20:27:33 GMT
+      date: Fri, 23 Aug 2019 02:58:37 GMT
+      etag: '"0x8D72775CBD4A330"'
+      last-modified: Fri, 23 Aug 2019 02:58:38 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2018-11-09'

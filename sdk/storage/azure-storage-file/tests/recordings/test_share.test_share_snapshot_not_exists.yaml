@@ -15,7 +15,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 21:52:53 GMT
+      - Fri, 23 Aug 2019 03:04:42 GMT
       x-ms-version:
       - '2018-11-09'
     method: PUT
@@ -27,11 +27,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 22 Aug 2019 21:52:52 GMT
+      - Fri, 23 Aug 2019 03:04:42 GMT
       etag:
-      - '"0x8D7274B159732BD"'
+      - '"0x8D72776A5447235"'
       last-modified:
-      - Thu, 22 Aug 2019 21:52:53 GMT
+      - Fri, 23 Aug 2019 03:04:42 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -53,7 +53,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 21:52:53 GMT
+      - Fri, 23 Aug 2019 03:04:43 GMT
       x-ms-version:
       - '2018-11-09'
     method: GET
@@ -61,14 +61,14 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareNotFound</Code><Message>The
-        specified share does not exist.\nRequestId:cb9aedaa-101a-0033-0233-59a882000000\nTime:2019-08-22T21:52:53.5215978Z</Message></Error>"
+        specified share does not exist.\nRequestId:7150ecc8-801a-007d-525f-593403000000\nTime:2019-08-23T03:04:43.0106135Z</Message></Error>"
     headers:
       content-length:
       - '217'
       content-type:
       - application/xml
       date:
-      - Thu, 22 Aug 2019 21:52:52 GMT
+      - Fri, 23 Aug 2019 03:04:42 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:

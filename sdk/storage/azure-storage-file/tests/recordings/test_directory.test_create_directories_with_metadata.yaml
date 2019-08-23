@@ -15,7 +15,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 18:35:54 GMT
+      - Fri, 23 Aug 2019 02:48:25 GMT
       x-ms-version:
       - '2018-11-09'
     method: PUT
@@ -27,11 +27,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 22 Aug 2019 18:35:52 GMT
+      - Fri, 23 Aug 2019 02:48:25 GMT
       etag:
-      - '"0x8D7272F8FD300D3"'
+      - '"0x8D727745EE22D99"'
       last-modified:
-      - Thu, 22 Aug 2019 18:35:52 GMT
+      - Fri, 23 Aug 2019 02:48:25 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -55,7 +55,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 18:35:55 GMT
+      - Fri, 23 Aug 2019 02:48:25 GMT
       x-ms-meta-hello:
       - world
       x-ms-meta-number:
@@ -71,11 +71,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 22 Aug 2019 18:35:52 GMT
+      - Fri, 23 Aug 2019 02:48:25 GMT
       etag:
-      - '"0x8D7272F8FE8B126"'
+      - '"0x8D727745EF5BEB7"'
       last-modified:
-      - Thu, 22 Aug 2019 18:35:52 GMT
+      - Fri, 23 Aug 2019 02:48:25 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted:
@@ -99,7 +99,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 18:35:55 GMT
+      - Fri, 23 Aug 2019 02:48:26 GMT
       x-ms-version:
       - '2018-11-09'
     method: GET
@@ -111,11 +111,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 22 Aug 2019 18:35:52 GMT
+      - Fri, 23 Aug 2019 02:48:25 GMT
       etag:
-      - '"0x8D7272F8FE8B126"'
+      - '"0x8D727745EF5BEB7"'
       last-modified:
-      - Thu, 22 Aug 2019 18:35:52 GMT
+      - Fri, 23 Aug 2019 02:48:25 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-meta-hello:

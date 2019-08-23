@@ -7,7 +7,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 18:21:32 GMT
+      - Fri, 23 Aug 2019 02:49:40 GMT
       x-ms-version:
       - '2018-11-09'
     method: PUT
@@ -17,9 +17,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 22 Aug 2019 18:21:29 GMT
-      etag: '"0x8D7272D8D8BAF63"'
-      last-modified: Thu, 22 Aug 2019 18:21:29 GMT
+      date: Fri, 23 Aug 2019 02:49:40 GMT
+      etag: '"0x8D727748B8DE47C"'
+      last-modified: Fri, 23 Aug 2019 02:49:40 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2018-11-09'
     status:
@@ -41,7 +41,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 18:21:32 GMT
+      - Fri, 23 Aug 2019 02:49:40 GMT
       x-ms-version:
       - '2018-11-09'
     method: DELETE
@@ -49,11 +49,11 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ResourceNotFound</Code><Message>The
-        specified resource does not exist.\nRequestId:6e068b99-701a-0067-6216-594208000000\nTime:2019-08-22T18:21:29.8948630Z</Message></Error>"
+        specified resource does not exist.\nRequestId:67e57ced-101a-0006-765d-59714f000000\nTime:2019-08-23T02:49:40.8337005Z</Message></Error>"
     headers:
       content-length: '223'
       content-type: application/xml
-      date: Thu, 22 Aug 2019 18:21:29 GMT
+      date: Fri, 23 Aug 2019 02:49:40 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: ResourceNotFound
       x-ms-version: '2018-11-09'

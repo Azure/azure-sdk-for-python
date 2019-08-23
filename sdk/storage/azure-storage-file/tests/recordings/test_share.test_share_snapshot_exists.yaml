@@ -15,7 +15,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 21:52:52 GMT
+      - Fri, 23 Aug 2019 03:04:37 GMT
       x-ms-version:
       - '2018-11-09'
     method: PUT
@@ -27,11 +27,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 22 Aug 2019 21:52:52 GMT
+      - Fri, 23 Aug 2019 03:04:36 GMT
       etag:
-      - '"0x8D7274B153B0ED9"'
+      - '"0x8D72776A2162FBB"'
       last-modified:
-      - Thu, 22 Aug 2019 21:52:52 GMT
+      - Fri, 23 Aug 2019 03:04:37 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -55,7 +55,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 21:52:52 GMT
+      - Fri, 23 Aug 2019 03:04:37 GMT
       x-ms-version:
       - '2018-11-09'
     method: PUT
@@ -67,15 +67,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 22 Aug 2019 21:52:52 GMT
+      - Fri, 23 Aug 2019 03:04:36 GMT
       etag:
-      - '"0x8D7274B153B0ED9"'
+      - '"0x8D72776A2162FBB"'
       last-modified:
-      - Thu, 22 Aug 2019 21:52:52 GMT
+      - Fri, 23 Aug 2019 03:04:37 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-snapshot:
-      - '2019-08-22T21:52:52.0000000Z'
+      - '2019-08-23T03:04:37.0000000Z'
       x-ms-version:
       - '2018-11-09'
     status:
@@ -95,11 +95,11 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 21:52:53 GMT
+      - Fri, 23 Aug 2019 03:04:37 GMT
       x-ms-version:
       - '2018-11-09'
     method: GET
-    uri: https://pyacrstorage213d0f61.file.core.windows.net/share213d0f61?sharesnapshot=2019-08-22T21:52:52.0000000Z&restype=share
+    uri: https://pyacrstorage213d0f61.file.core.windows.net/share213d0f61?sharesnapshot=2019-08-23T03:04:37.0000000Z&restype=share
   response:
     body:
       string: ''
@@ -107,11 +107,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 22 Aug 2019 21:52:52 GMT
+      - Fri, 23 Aug 2019 03:04:36 GMT
       etag:
-      - '"0x8D7274B153B0ED9"'
+      - '"0x8D72776A2162FBB"'
       last-modified:
-      - Thu, 22 Aug 2019 21:52:52 GMT
+      - Fri, 23 Aug 2019 03:04:37 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-has-immutability-policy:

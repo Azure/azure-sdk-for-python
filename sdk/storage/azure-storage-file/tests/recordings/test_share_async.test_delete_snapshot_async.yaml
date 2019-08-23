@@ -7,7 +7,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 21:53:56 GMT
+      - Fri, 23 Aug 2019 03:05:23 GMT
       x-ms-version:
       - '2018-11-09'
     method: PUT
@@ -17,9 +17,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 22 Aug 2019 21:53:56 GMT
-      etag: '"0x8D7274B3B264D4A"'
-      last-modified: Thu, 22 Aug 2019 21:53:56 GMT
+      date: Fri, 23 Aug 2019 03:05:23 GMT
+      etag: '"0x8D72776BDC99171"'
+      last-modified: Fri, 23 Aug 2019 03:05:23 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2018-11-09'
     status:
@@ -41,7 +41,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 21:53:56 GMT
+      - Fri, 23 Aug 2019 03:05:24 GMT
       x-ms-version:
       - '2018-11-09'
     method: PUT
@@ -51,11 +51,11 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 22 Aug 2019 21:53:56 GMT
-      etag: '"0x8D7274B3B264D4A"'
-      last-modified: Thu, 22 Aug 2019 21:53:56 GMT
+      date: Fri, 23 Aug 2019 03:05:23 GMT
+      etag: '"0x8D72776BDC99171"'
+      last-modified: Fri, 23 Aug 2019 03:05:23 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-snapshot: '2019-08-22T21:53:56.0000000Z'
+      x-ms-snapshot: '2019-08-23T03:05:24.0000000Z'
       x-ms-version: '2018-11-09'
     status:
       code: 201
@@ -76,7 +76,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 21:53:56 GMT
+      - Fri, 23 Aug 2019 03:05:24 GMT
       x-ms-version:
       - '2018-11-09'
     method: DELETE
@@ -84,11 +84,11 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareHasSnapshots</Code><Message>The
-        share has snapshots and the operation requires no snapshots.\nRequestId:61d3830e-e01a-005c-2534-5977ce000000\nTime:2019-08-22T21:53:56.5941826Z</Message></Error>"
+        share has snapshots and the operation requires no snapshots.\nRequestId:4bb19e97-201a-002c-285f-59040a000000\nTime:2019-08-23T03:05:24.1353524Z</Message></Error>"
     headers:
       content-length: '250'
       content-type: application/xml
-      date: Thu, 22 Aug 2019 21:53:56 GMT
+      date: Fri, 23 Aug 2019 03:05:23 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: ShareHasSnapshots
       x-ms-version: '2018-11-09'
@@ -111,17 +111,17 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 21:53:56 GMT
+      - Fri, 23 Aug 2019 03:05:24 GMT
       x-ms-version:
       - '2018-11-09'
     method: DELETE
-    uri: https://pyacrstorage851111bc.file.core.windows.net/share851111bc?sharesnapshot=2019-08-22T21:53:56.0000000Z&restype=share
+    uri: https://pyacrstorage851111bc.file.core.windows.net/share851111bc?sharesnapshot=2019-08-23T03:05:24.0000000Z&restype=share
   response:
     body:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 22 Aug 2019 21:53:56 GMT
+      date: Fri, 23 Aug 2019 03:05:23 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2018-11-09'
     status:
@@ -133,6 +133,6 @@ interactions:
         - https
         - pyacrstorage851111bc.file.core.windows.net
         - /share851111bc
-        - sharesnapshot=2019-08-22T21:53:56.0000000Z&restype=share
+        - sharesnapshot=2019-08-23T03:05:24.0000000Z&restype=share
         - ''
 version: 1

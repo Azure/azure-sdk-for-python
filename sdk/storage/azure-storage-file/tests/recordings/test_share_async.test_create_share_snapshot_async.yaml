@@ -7,7 +7,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 21:53:23 GMT
+      - Fri, 23 Aug 2019 03:04:43 GMT
       x-ms-version:
       - '2018-11-09'
     method: PUT
@@ -17,9 +17,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 22 Aug 2019 21:53:27 GMT
-      etag: '"0x8D7274B28D75DAB"'
-      last-modified: Thu, 22 Aug 2019 21:53:25 GMT
+      date: Fri, 23 Aug 2019 03:04:45 GMT
+      etag: '"0x8D72776A6B601C4"'
+      last-modified: Fri, 23 Aug 2019 03:04:45 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2018-11-09'
     status:
@@ -41,7 +41,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 21:53:28 GMT
+      - Fri, 23 Aug 2019 03:04:45 GMT
       x-ms-version:
       - '2018-11-09'
     method: PUT
@@ -51,11 +51,11 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 22 Aug 2019 21:53:30 GMT
-      etag: '"0x8D7274B28D75DAB"'
-      last-modified: Thu, 22 Aug 2019 21:53:25 GMT
+      date: Fri, 23 Aug 2019 03:04:45 GMT
+      etag: '"0x8D72776A6B601C4"'
+      last-modified: Fri, 23 Aug 2019 03:04:45 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-snapshot: '2019-08-22T21:53:30.0000000Z'
+      x-ms-snapshot: '2019-08-23T03:04:45.0000000Z'
       x-ms-version: '2018-11-09'
     status:
       code: 201

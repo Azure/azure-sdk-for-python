@@ -15,7 +15,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 21:51:40 GMT
+      - Fri, 23 Aug 2019 03:03:07 GMT
       x-ms-version:
       - '2018-11-09'
     method: PUT
@@ -27,11 +27,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 22 Aug 2019 21:51:39 GMT
+      - Fri, 23 Aug 2019 03:03:07 GMT
       etag:
-      - '"0x8D7274AEA569FA3"'
+      - '"0x8D727766CB9121B"'
       last-modified:
-      - Thu, 22 Aug 2019 21:51:40 GMT
+      - Fri, 23 Aug 2019 03:03:07 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -55,7 +55,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 21:51:40 GMT
+      - Fri, 23 Aug 2019 03:03:08 GMT
       x-ms-version:
       - '2018-11-09'
     method: PUT
@@ -63,14 +63,14 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareAlreadyExists</Code><Message>The
-        specified share already exists.\nRequestId:a38f6fb3-101a-00dc-4033-590792000000\nTime:2019-08-22T21:51:40.9523709Z</Message></Error>"
+        specified share already exists.\nRequestId:30760c16-601a-003d-665f-59e0e7000000\nTime:2019-08-23T03:03:08.0867528Z</Message></Error>"
     headers:
       content-length:
       - '222'
       content-type:
       - application/xml
       date:
-      - Thu, 22 Aug 2019 21:51:39 GMT
+      - Fri, 23 Aug 2019 03:03:07 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:

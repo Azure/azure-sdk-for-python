@@ -15,7 +15,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 21:52:04 GMT
+      - Fri, 23 Aug 2019 03:03:26 GMT
       x-ms-meta:
       - '{''hello'': ''world'', ''number'': ''42''}'
       x-ms-meta-hello:
@@ -33,11 +33,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 22 Aug 2019 21:52:05 GMT
+      - Fri, 23 Aug 2019 03:03:27 GMT
       etag:
-      - '"0x8D7274AF874E0B6"'
+      - '"0x8D72776781F0801"'
       last-modified:
-      - Thu, 22 Aug 2019 21:52:04 GMT
+      - Fri, 23 Aug 2019 03:03:27 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -61,7 +61,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 21:52:05 GMT
+      - Fri, 23 Aug 2019 03:03:27 GMT
       x-ms-version:
       - '2018-11-09'
     method: PUT
@@ -73,15 +73,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 22 Aug 2019 21:52:06 GMT
+      - Fri, 23 Aug 2019 03:03:27 GMT
       etag:
-      - '"0x8D7274AF874E0B6"'
+      - '"0x8D72776781F0801"'
       last-modified:
-      - Thu, 22 Aug 2019 21:52:04 GMT
+      - Fri, 23 Aug 2019 03:03:27 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-snapshot:
-      - '2019-08-22T21:52:05.0000000Z'
+      - '2019-08-23T03:03:27.0000000Z'
       x-ms-version:
       - '2018-11-09'
     status:
@@ -101,11 +101,11 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 21:52:06 GMT
+      - Fri, 23 Aug 2019 03:03:27 GMT
       x-ms-version:
       - '2018-11-09'
     method: GET
-    uri: https://pyacrstoragee07813bc.file.core.windows.net/sharee07813bc?sharesnapshot=2019-08-22T21:52:05.0000000Z&restype=share
+    uri: https://pyacrstoragee07813bc.file.core.windows.net/sharee07813bc?sharesnapshot=2019-08-23T03:03:27.0000000Z&restype=share
   response:
     body:
       string: ''
@@ -113,11 +113,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 22 Aug 2019 21:52:06 GMT
+      - Fri, 23 Aug 2019 03:03:27 GMT
       etag:
-      - '"0x8D7274AF874E0B6"'
+      - '"0x8D72776781F0801"'
       last-modified:
-      - Thu, 22 Aug 2019 21:52:04 GMT
+      - Fri, 23 Aug 2019 03:03:27 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-has-immutability-policy:

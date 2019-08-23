@@ -15,7 +15,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 20:08:39 GMT
+      - Fri, 23 Aug 2019 02:50:42 GMT
       x-ms-version:
       - '2018-11-09'
     method: PUT
@@ -27,11 +27,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 22 Aug 2019 20:08:48 GMT
+      - Fri, 23 Aug 2019 02:50:42 GMT
       etag:
-      - '"0x8D7273C89CEE4C4"'
+      - '"0x8D72774B07AE983"'
       last-modified:
-      - Thu, 22 Aug 2019 20:08:45 GMT
+      - Fri, 23 Aug 2019 02:50:42 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -57,7 +57,7 @@ interactions:
       x-ms-content-length:
       - '1024'
       x-ms-date:
-      - Thu, 22 Aug 2019 20:08:49 GMT
+      - Fri, 23 Aug 2019 02:50:42 GMT
       x-ms-type:
       - file
       x-ms-version:
@@ -71,11 +71,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 22 Aug 2019 20:08:48 GMT
+      - Fri, 23 Aug 2019 02:50:42 GMT
       etag:
-      - '"0x8D7273C8BD6123A"'
+      - '"0x8D72774B09447DB"'
       last-modified:
-      - Thu, 22 Aug 2019 20:08:49 GMT
+      - Fri, 23 Aug 2019 02:50:42 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted:
@@ -87,24 +87,24 @@ interactions:
       message: Created
 - request:
     body: !!binary |
-      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
+      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
     headers:
       Accept:
       - '*/*'
@@ -119,7 +119,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 22 Aug 2019 20:08:49 GMT
+      - Fri, 23 Aug 2019 02:50:43 GMT
       x-ms-range:
       - bytes=0-1023
       x-ms-version:
@@ -135,13 +135,13 @@ interactions:
       content-length:
       - '0'
       content-md5:
-      - 1RNRmE9xb9f1hxoqEfjZyg==
+      - xP9jDuy0nxp07xA2jhnCtg==
       date:
-      - Thu, 22 Aug 2019 20:08:48 GMT
+      - Fri, 23 Aug 2019 02:50:42 GMT
       etag:
-      - '"0x8D7273C8BE493D4"'
+      - '"0x8D72774B0A4C597"'
       last-modified:
-      - Thu, 22 Aug 2019 20:08:49 GMT
+      - Fri, 23 Aug 2019 02:50:42 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted:
@@ -169,7 +169,7 @@ interactions:
       x-ms-copy-source:
       - https://pyacrstorage838911ab.file.core.windows.net/utshare838911ab/file838911ab
       x-ms-date:
-      - Thu, 22 Aug 2019 20:08:49 GMT
+      - Fri, 23 Aug 2019 02:50:43 GMT
       x-ms-version:
       - '2018-11-09'
     method: PUT
@@ -181,15 +181,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 22 Aug 2019 20:08:51 GMT
+      - Fri, 23 Aug 2019 02:50:46 GMT
       etag:
-      - '"0x8D7273C8D16BC29"'
+      - '"0x8D72774B2A9F3E1"'
       last-modified:
-      - Thu, 22 Aug 2019 20:08:51 GMT
+      - Fri, 23 Aug 2019 02:50:46 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-copy-id:
-      - e4186afd-f0a2-48d9-9c6a-f93e72a55464
+      - bee57c95-38a5-420d-a76f-fbcf605e5d1f
       x-ms-copy-status:
       - success
       x-ms-version:

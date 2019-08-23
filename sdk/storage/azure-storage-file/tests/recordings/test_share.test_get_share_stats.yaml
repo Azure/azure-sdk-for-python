@@ -15,7 +15,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 21:52:10 GMT
+      - Fri, 23 Aug 2019 03:03:53 GMT
       x-ms-version:
       - '2018-11-09'
     method: PUT
@@ -27,11 +27,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 22 Aug 2019 21:52:10 GMT
+      - Fri, 23 Aug 2019 03:03:53 GMT
       etag:
-      - '"0x8D7274AFBF07F62"'
+      - '"0x8D72776881EC9B1"'
       last-modified:
-      - Thu, 22 Aug 2019 21:52:10 GMT
+      - Fri, 23 Aug 2019 03:03:53 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -53,7 +53,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 21:52:10 GMT
+      - Fri, 23 Aug 2019 03:03:54 GMT
       x-ms-version:
       - '2018-11-09'
     method: GET
@@ -65,7 +65,7 @@ interactions:
       content-type:
       - application/xml
       date:
-      - Thu, 22 Aug 2019 21:52:10 GMT
+      - Fri, 23 Aug 2019 03:03:53 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:

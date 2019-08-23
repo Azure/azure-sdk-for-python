@@ -7,7 +7,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 18:21:09 GMT
+      - Fri, 23 Aug 2019 02:49:20 GMT
       x-ms-version:
       - '2018-11-09'
     method: PUT
@@ -17,9 +17,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 22 Aug 2019 18:21:06 GMT
-      etag: '"0x8D7272D7FC76DF5"'
-      last-modified: Thu, 22 Aug 2019 18:21:06 GMT
+      date: Fri, 23 Aug 2019 02:49:19 GMT
+      etag: '"0x8D727747F927736"'
+      last-modified: Fri, 23 Aug 2019 02:49:20 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2018-11-09'
     status:
@@ -41,7 +41,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 18:21:09 GMT
+      - Fri, 23 Aug 2019 02:49:20 GMT
       x-ms-version:
       - '2018-11-09'
     method: PUT
@@ -51,9 +51,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 22 Aug 2019 18:21:06 GMT
-      etag: '"0x8D7272D80057474"'
-      last-modified: Thu, 22 Aug 2019 18:21:07 GMT
+      date: Fri, 23 Aug 2019 02:49:20 GMT
+      etag: '"0x8D727747FA1727A"'
+      last-modified: Fri, 23 Aug 2019 02:49:20 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2018-11-09'
@@ -78,7 +78,7 @@ interactions:
       x-ms-content-length:
       - '8192'
       x-ms-date:
-      - Thu, 22 Aug 2019 18:21:09 GMT
+      - Fri, 23 Aug 2019 02:49:20 GMT
       x-ms-type:
       - file
       x-ms-version:
@@ -90,9 +90,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 22 Aug 2019 18:21:07 GMT
-      etag: '"0x8D7272D802B7C5C"'
-      last-modified: Thu, 22 Aug 2019 18:21:07 GMT
+      date: Fri, 23 Aug 2019 02:49:20 GMT
+      etag: '"0x8D727747FAE6D28"'
+      last-modified: Fri, 23 Aug 2019 02:49:20 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2018-11-09'
@@ -117,7 +117,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 22 Aug 2019 18:21:09 GMT
+      - Fri, 23 Aug 2019 02:49:21 GMT
       x-ms-range:
       - bytes=0-8191
       x-ms-version:
@@ -132,9 +132,9 @@ interactions:
     headers:
       content-length: '0'
       content-md5: L8MEum9/C3zMQV5vDJbgTA==
-      date: Thu, 22 Aug 2019 18:21:07 GMT
-      etag: '"0x8D7272D80320DAB"'
-      last-modified: Thu, 22 Aug 2019 18:21:07 GMT
+      date: Fri, 23 Aug 2019 02:49:20 GMT
+      etag: '"0x8D727747FBC0429"'
+      last-modified: Fri, 23 Aug 2019 02:49:20 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2018-11-09'
@@ -159,7 +159,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 18:21:09 GMT
+      - Fri, 23 Aug 2019 02:49:21 GMT
       x-ms-range:
       - bytes=0-33554431
       x-ms-version:
@@ -174,9 +174,9 @@ interactions:
       content-length: '8192'
       content-range: bytes 0-8191/8192
       content-type: application/xml; charset=utf-8
-      date: Thu, 22 Aug 2019 18:21:07 GMT
-      etag: '"0x8D7272D80320DAB"'
-      last-modified: Thu, 22 Aug 2019 18:21:07 GMT
+      date: Fri, 23 Aug 2019 02:49:20 GMT
+      etag: '"0x8D727747FBC0429"'
+      last-modified: Fri, 23 Aug 2019 02:49:20 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-server-encrypted: 'true'
       x-ms-type: File

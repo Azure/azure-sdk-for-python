@@ -7,7 +7,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 18:22:20 GMT
+      - Fri, 23 Aug 2019 02:50:11 GMT
       x-ms-version:
       - '2018-11-09'
     method: PUT
@@ -17,9 +17,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 22 Aug 2019 18:22:17 GMT
-      etag: '"0x8D7272DAA8636C3"'
-      last-modified: Thu, 22 Aug 2019 18:22:18 GMT
+      date: Fri, 23 Aug 2019 02:50:11 GMT
+      etag: '"0x8D727749DC85BF2"'
+      last-modified: Fri, 23 Aug 2019 02:50:11 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2018-11-09'
     status:
@@ -41,7 +41,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 18:22:21 GMT
+      - Fri, 23 Aug 2019 02:50:11 GMT
       x-ms-meta-test1:
       - foo
       x-ms-meta-test2:
@@ -55,9 +55,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 22 Aug 2019 18:22:18 GMT
-      etag: '"0x8D7272DAAC2218D"'
-      last-modified: Thu, 22 Aug 2019 18:22:18 GMT
+      date: Fri, 23 Aug 2019 02:50:11 GMT
+      etag: '"0x8D727749E0F9AC1"'
+      last-modified: Fri, 23 Aug 2019 02:50:11 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2018-11-09'
@@ -80,7 +80,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 18:22:21 GMT
+      - Fri, 23 Aug 2019 02:50:11 GMT
       x-ms-version:
       - '2018-11-09'
     method: PUT
@@ -90,11 +90,11 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 22 Aug 2019 18:22:23 GMT
-      etag: '"0x8D7272DAA8636C3"'
-      last-modified: Thu, 22 Aug 2019 18:22:18 GMT
+      date: Fri, 23 Aug 2019 02:50:11 GMT
+      etag: '"0x8D727749DC85BF2"'
+      last-modified: Fri, 23 Aug 2019 02:50:11 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-snapshot: '2019-08-22T18:22:23.0000000Z'
+      x-ms-snapshot: '2019-08-23T02:50:12.0000000Z'
       x-ms-version: '2018-11-09'
     status:
       code: 201
@@ -115,7 +115,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 18:22:26 GMT
+      - Fri, 23 Aug 2019 02:50:12 GMT
       x-ms-meta-test100:
       - foo100
       x-ms-meta-test200:
@@ -129,9 +129,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 22 Aug 2019 18:22:23 GMT
-      etag: '"0x8D7272DADD4416E"'
-      last-modified: Thu, 22 Aug 2019 18:22:23 GMT
+      date: Fri, 23 Aug 2019 02:50:11 GMT
+      etag: '"0x8D727749E776FF9"'
+      last-modified: Fri, 23 Aug 2019 02:50:12 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2018-11-09'
@@ -154,19 +154,19 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 18:22:26 GMT
+      - Fri, 23 Aug 2019 02:50:12 GMT
       x-ms-version:
       - '2018-11-09'
     method: GET
-    uri: https://pyacrstorageba11d46.file.core.windows.net/utshareba11d46/dir1?restype=directory&sharesnapshot=2019-08-22T18:22:23.0000000Z
+    uri: https://pyacrstorageba11d46.file.core.windows.net/utshareba11d46/dir1?restype=directory&sharesnapshot=2019-08-23T02:50:12.0000000Z
   response:
     body:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 22 Aug 2019 18:22:23 GMT
-      etag: '"0x8D7272DAAC2218D"'
-      last-modified: Thu, 22 Aug 2019 18:22:18 GMT
+      date: Fri, 23 Aug 2019 02:50:11 GMT
+      etag: '"0x8D727749E0F9AC1"'
+      last-modified: Fri, 23 Aug 2019 02:50:11 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-meta-test1: foo
       x-ms-meta-test2: bar
@@ -181,6 +181,6 @@ interactions:
         - https
         - pyacrstorageba11d46.file.core.windows.net
         - /utshareba11d46/dir1
-        - restype=directory&sharesnapshot=2019-08-22T18:22:23.0000000Z
+        - restype=directory&sharesnapshot=2019-08-23T02:50:12.0000000Z
         - ''
 version: 1

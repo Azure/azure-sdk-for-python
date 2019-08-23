@@ -15,7 +15,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 20:09:12 GMT
+      - Fri, 23 Aug 2019 02:51:26 GMT
       x-ms-version:
       - '2018-11-09'
     method: PUT
@@ -27,11 +27,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 22 Aug 2019 20:09:11 GMT
+      - Fri, 23 Aug 2019 02:51:26 GMT
       etag:
-      - '"0x8D7273C99B91EFD"'
+      - '"0x8D72774CAE66603"'
       last-modified:
-      - Thu, 22 Aug 2019 20:09:12 GMT
+      - Fri, 23 Aug 2019 02:51:27 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -57,7 +57,7 @@ interactions:
       x-ms-content-length:
       - '36'
       x-ms-date:
-      - Thu, 22 Aug 2019 20:09:12 GMT
+      - Fri, 23 Aug 2019 02:51:27 GMT
       x-ms-type:
       - file
       x-ms-version:
@@ -71,11 +71,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 22 Aug 2019 20:09:12 GMT
+      - Fri, 23 Aug 2019 02:51:26 GMT
       etag:
-      - '"0x8D7273C99E77912"'
+      - '"0x8D72774CB193854"'
       last-modified:
-      - Thu, 22 Aug 2019 20:09:12 GMT
+      - Fri, 23 Aug 2019 02:51:27 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted:
@@ -102,7 +102,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 22 Aug 2019 20:09:13 GMT
+      - Fri, 23 Aug 2019 02:51:27 GMT
       x-ms-range:
       - bytes=0-35
       x-ms-version:
@@ -120,11 +120,11 @@ interactions:
       content-md5:
       - O7c5HRnUhbM5yD4T1wnm/w==
       date:
-      - Thu, 22 Aug 2019 20:09:12 GMT
+      - Fri, 23 Aug 2019 02:51:26 GMT
       etag:
-      - '"0x8D7273C99F2507A"'
+      - '"0x8D72774CB26F679"'
       last-modified:
-      - Thu, 22 Aug 2019 20:09:13 GMT
+      - Fri, 23 Aug 2019 02:51:27 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted:

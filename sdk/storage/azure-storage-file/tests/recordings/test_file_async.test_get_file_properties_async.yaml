@@ -7,7 +7,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 20:27:56 GMT
+      - Fri, 23 Aug 2019 02:58:05 GMT
       x-ms-version:
       - '2018-11-09'
     method: PUT
@@ -17,9 +17,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 22 Aug 2019 20:27:56 GMT
-      etag: '"0x8D7273F37E45D3E"'
-      last-modified: Thu, 22 Aug 2019 20:27:57 GMT
+      date: Fri, 23 Aug 2019 02:58:04 GMT
+      etag: '"0x8D72775B87E17E0"'
+      last-modified: Fri, 23 Aug 2019 02:58:05 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2018-11-09'
     status:

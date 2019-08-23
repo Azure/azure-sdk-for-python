@@ -15,7 +15,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 18:26:43 GMT
+      - Fri, 23 Aug 2019 02:48:49 GMT
       x-ms-version:
       - '2018-11-09'
     method: PUT
@@ -27,11 +27,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 22 Aug 2019 18:26:41 GMT
+      - Fri, 23 Aug 2019 02:48:50 GMT
       etag:
-      - '"0x8D7272E476F180C"'
+      - '"0x8D727746D67AC55"'
       last-modified:
-      - Thu, 22 Aug 2019 18:26:41 GMT
+      - Fri, 23 Aug 2019 02:48:50 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -55,7 +55,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 18:26:44 GMT
+      - Fri, 23 Aug 2019 02:48:50 GMT
       x-ms-version:
       - '2018-11-09'
     method: PUT
@@ -67,11 +67,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 22 Aug 2019 18:26:41 GMT
+      - Fri, 23 Aug 2019 02:48:50 GMT
       etag:
-      - '"0x8D7272E478A8B47"'
+      - '"0x8D727746D845D20"'
       last-modified:
-      - Thu, 22 Aug 2019 18:26:41 GMT
+      - Fri, 23 Aug 2019 02:48:50 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted:
@@ -95,7 +95,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 18:26:44 GMT
+      - Fri, 23 Aug 2019 02:48:50 GMT
       x-ms-version:
       - '2018-11-09'
     method: GET
@@ -107,11 +107,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 22 Aug 2019 18:26:41 GMT
+      - Fri, 23 Aug 2019 02:48:50 GMT
       etag:
-      - '"0x8D7272E478A8B47"'
+      - '"0x8D727746D845D20"'
       last-modified:
-      - Thu, 22 Aug 2019 18:26:41 GMT
+      - Fri, 23 Aug 2019 02:48:50 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-server-encrypted:

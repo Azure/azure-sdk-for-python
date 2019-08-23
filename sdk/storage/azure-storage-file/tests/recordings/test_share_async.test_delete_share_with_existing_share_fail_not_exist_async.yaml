@@ -7,7 +7,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 21:53:30 GMT
+      - Fri, 23 Aug 2019 03:05:07 GMT
       x-ms-version:
       - '2018-11-09'
     method: DELETE
@@ -15,11 +15,11 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareNotFound</Code><Message>The
-        specified share does not exist.\nRequestId:4d01b92b-b01a-000b-4b34-599e43000000\nTime:2019-08-22T21:53:30.4943094Z</Message></Error>"
+        specified share does not exist.\nRequestId:91ec30c1-e01a-00c7-425f-59d40a000000\nTime:2019-08-23T03:05:08.7319759Z</Message></Error>"
     headers:
       content-length: '217'
       content-type: application/xml
-      date: Thu, 22 Aug 2019 21:53:30 GMT
+      date: Fri, 23 Aug 2019 03:05:08 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: ShareNotFound
       x-ms-version: '2018-11-09'

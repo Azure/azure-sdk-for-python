@@ -7,7 +7,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 21:54:29 GMT
+      - Fri, 23 Aug 2019 03:05:56 GMT
       x-ms-version:
       - '2018-11-09'
     method: PUT
@@ -17,9 +17,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 22 Aug 2019 21:54:29 GMT
-      etag: '"0x8D7274B4F12EFA8"'
-      last-modified: Thu, 22 Aug 2019 21:54:29 GMT
+      date: Fri, 23 Aug 2019 03:05:56 GMT
+      etag: '"0x8D72776D157BDEF"'
+      last-modified: Fri, 23 Aug 2019 03:05:56 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2018-11-09'
     status:
@@ -41,7 +41,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 21:54:30 GMT
+      - Fri, 23 Aug 2019 03:05:56 GMT
       x-ms-meta-hello:
       - world
       x-ms-meta-number:
@@ -55,9 +55,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 22 Aug 2019 21:54:31 GMT
-      etag: '"0x8D7274B504DC263"'
-      last-modified: Thu, 22 Aug 2019 21:54:31 GMT
+      date: Fri, 23 Aug 2019 03:05:56 GMT
+      etag: '"0x8D72776D16B595D"'
+      last-modified: Fri, 23 Aug 2019 03:05:56 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2018-11-09'
     status:
@@ -79,7 +79,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 21:54:32 GMT
+      - Fri, 23 Aug 2019 03:05:57 GMT
       x-ms-version:
       - '2018-11-09'
     method: GET
@@ -89,9 +89,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 22 Aug 2019 21:54:31 GMT
-      etag: '"0x8D7274B504DC263"'
-      last-modified: Thu, 22 Aug 2019 21:54:31 GMT
+      date: Fri, 23 Aug 2019 03:05:56 GMT
+      etag: '"0x8D72776D16B595D"'
+      last-modified: Fri, 23 Aug 2019 03:05:56 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-has-immutability-policy: 'false'
       x-ms-has-legal-hold: 'false'

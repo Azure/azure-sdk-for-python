@@ -8,24 +8,19 @@
 
 import os
 
-try:
-    import settings_real as settings
-except ImportError:
-    import file_settings_fake as settings
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, FakeStorageAccount
 
 from filetestcase import (
-    FileTestCase,
-    TestMode,
-    record
+    FileTestCase
 )
 
 SOURCE_FILE = 'SampleSource.txt'
 DEST_FILE = 'SampleDestination.txt'
-
+FAKE_STORAGE = FakeStorageAccount(
+    name='pyacrstorage',
+    id='')
 
 class TestFileSamples(FileTestCase):
-
-    connection_string = settings.CONNECTION_STRING
 
     def setUp(self):
         data = b"Lorem ipsum dolor sit amet, consectetur adipiscing elit"
@@ -50,11 +45,12 @@ class TestFileSamples(FileTestCase):
 
     #--Begin File Samples-----------------------------------------------------------------
 
-    @record
-    def test_file_operations(self):
+    @ResourceGroupPreparer()               
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    def test_file_operations(self, resource_group, location, storage_account, storage_account_key):
         # Instantiate the ShareClient from a connection string
         from azure.storage.file import ShareClient
-        share = ShareClient.from_connection_string(self.connection_string, "filesshare")
+        share = ShareClient.from_connection_string(self.connection_string(storage_account, storage_account_key), "filesshare")
 
         # Create the share
         share.create_share()
@@ -91,11 +87,12 @@ class TestFileSamples(FileTestCase):
             # Delete the share
             share.delete_share()
 
-    @record
-    def test_copy_from_url(self):
+    @ResourceGroupPreparer()               
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    def test_copy_from_url(self, resource_group, location, storage_account, storage_account_key):
         # Instantiate the ShareClient from a connection string
         from azure.storage.file import ShareClient
-        share = ShareClient.from_connection_string(self.connection_string, "filesfromurl")
+        share = ShareClient.from_connection_string(self.connection_string(storage_account, storage_account_key), "filesfromurl")
 
         # Create the share
         share.create_share()
@@ -110,9 +107,8 @@ class TestFileSamples(FileTestCase):
             destination_file = share.get_file_client("destfile")
 
             # Build the url from which to copy the file
-            source_url = "{}://{}.file.core.windows.net/{}/{}".format(
-                settings.PROTOCOL,
-                settings.STORAGE_ACCOUNT_NAME,
+            source_url = "https://{}.file.core.windows.net/{}/{}".format(
+                storage_account.name,
                 "filesfromurl",
                 "sourcefile"
             )

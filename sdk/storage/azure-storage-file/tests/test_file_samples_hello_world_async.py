@@ -8,23 +8,18 @@
 
 import os
 import asyncio
-try:
-    import settings_real as settings
-except ImportError:
-    import file_settings_fake as settings
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, FakeStorageAccount
 
-from filetestcase import (
-    FileTestCase,
-    TestMode,
-    record
+from asyncfiletestcase import (
+    AsyncFileTestCase
 )
+FAKE_STORAGE = FakeStorageAccount(
+    name='pyacrstorage',
+    id='')
+SOURCE_FILE = 'SampleSourceAsync.txt'
 
-SOURCE_FILE = 'SampleSource.txt'
 
-
-class TestHelloWorldSamples(FileTestCase):
-
-    connection_string = settings.CONNECTION_STRING
+class TestHelloWorldSamples(AsyncFileTestCase):
 
     def setUp(self):
         data = b"Lorem ipsum dolor sit amet, consectetur adipiscing elit"
@@ -44,25 +39,25 @@ class TestHelloWorldSamples(FileTestCase):
 
     #--Begin File Samples-----------------------------------------------------------------
 
-    async def _test_create_client_with_connection_string(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @AsyncFileTestCase.await_prepared_test
+    async def test_create_client_with_connection_string(self, resource_group, location, storage_account, storage_account_key):
         # Instantiate the FileServiceClient from a connection string
         from azure.storage.file.aio import FileServiceClient
-        file_service = FileServiceClient.from_connection_string(self.connection_string)
+        file_service = FileServiceClient.from_connection_string(self.connection_string(storage_account, storage_account_key))
 
         # Get queue service properties
         properties = await file_service.get_service_properties()
         assert properties is not None
 
-    def test_create_client_with_connection_string(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_create_client_with_connection_string())
-
-    async def _test_create_file_share(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @AsyncFileTestCase.await_prepared_test
+    async def test_create_file_share(self, resource_group, location, storage_account, storage_account_key):
         # Instantiate the ShareClient from a connection string
         from azure.storage.file.aio import ShareClient
-        share = ShareClient.from_connection_string(self.connection_string, share="myshare")
+        share = ShareClient.from_connection_string(self.connection_string(storage_account, storage_account_key), share="myshare")
 
         # Create the share
         await share.create_share()
@@ -77,16 +72,13 @@ class TestHelloWorldSamples(FileTestCase):
             # Delete the share
             await share.delete_share()
 
-    def test_create_file_share(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_create_file_share())
-
-    async def _test_upload_file_to_share(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @AsyncFileTestCase.await_prepared_test
+    async def test_upload_file_to_share(self, resource_group, location, storage_account, storage_account_key):
         # Instantiate the ShareClient from a connection string
         from azure.storage.file.aio import ShareClient
-        share = ShareClient.from_connection_string(self.connection_string, share="share")
+        share = ShareClient.from_connection_string(self.connection_string(storage_account, storage_account_key), share="share")
 
         # Create the share
         await share.create_share()
@@ -95,7 +87,7 @@ class TestHelloWorldSamples(FileTestCase):
             # Instantiate the FileClient from a connection string
             # [START create_file_client]
             from azure.storage.file.aio import FileClient
-            file = FileClient.from_connection_string(self.connection_string, share="share", file_path="myfile")
+            file = FileClient.from_connection_string(self.connection_string(storage_account, storage_account_key), share="share", file_path="myfile")
             # [END create_file_client]
 
             # Upload a file
@@ -105,9 +97,3 @@ class TestHelloWorldSamples(FileTestCase):
         finally:
             # Delete the share
             await share.delete_share()
-
-    def test_upload_file_to_share(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_upload_file_to_share())

@@ -15,7 +15,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 21:52:34 GMT
+      - Fri, 23 Aug 2019 03:04:17 GMT
       x-ms-version:
       - '2018-11-09'
     method: PUT
@@ -27,11 +27,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 22 Aug 2019 21:52:34 GMT
+      - Fri, 23 Aug 2019 03:04:17 GMT
       etag:
-      - '"0x8D7274B0AB3CA49"'
+      - '"0x8D727769680C5FC"'
       last-modified:
-      - Thu, 22 Aug 2019 21:52:35 GMT
+      - Fri, 23 Aug 2019 03:04:18 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -55,7 +55,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 22 Aug 2019 21:52:35 GMT
+      - Fri, 23 Aug 2019 03:04:18 GMT
       x-ms-version:
       - '2018-11-09'
     method: PUT
@@ -67,11 +67,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 22 Aug 2019 21:52:34 GMT
+      - Fri, 23 Aug 2019 03:04:18 GMT
       etag:
-      - '"0x8D7274B0AECA51E"'
+      - '"0x8D72776968E4687"'
       last-modified:
-      - Thu, 22 Aug 2019 21:52:35 GMT
+      - Fri, 23 Aug 2019 03:04:18 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -93,7 +93,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 21:52:35 GMT
+      - Fri, 23 Aug 2019 03:04:18 GMT
       x-ms-version:
       - '2018-11-09'
     method: GET
@@ -106,11 +106,11 @@ interactions:
       content-type:
       - application/xml
       date:
-      - Thu, 22 Aug 2019 21:52:34 GMT
+      - Fri, 23 Aug 2019 03:04:18 GMT
       etag:
-      - '"0x8D7274B0AECA51E"'
+      - '"0x8D72776968E4687"'
       last-modified:
-      - Thu, 22 Aug 2019 21:52:35 GMT
+      - Fri, 23 Aug 2019 03:04:18 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:

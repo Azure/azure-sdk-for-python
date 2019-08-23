@@ -8,27 +8,18 @@
 
 import os
 
-try:
-    import settings_real as settings
-except ImportError:
-    import file_settings_fake as settings
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, FakeStorageAccount
 
 from filetestcase import (
-    FileTestCase,
-    TestMode,
-    record
+    FileTestCase
 )
 
 SOURCE_FILE = 'SampleSource.txt'
-
+FAKE_STORAGE = FakeStorageAccount(
+    name='pyacrstorage',
+    id='')
 
 class TestShareSamples(FileTestCase):
-    url = "{}://{}.file.core.windows.net".format(
-        settings.PROTOCOL,
-        settings.STORAGE_ACCOUNT_NAME
-    )
-    connection_string = settings.CONNECTION_STRING
-
     def setUp(self):
         data = b"Lorem ipsum dolor sit amet, consectetur adipiscing elit"
         with open(SOURCE_FILE, 'wb') as stream:
@@ -47,11 +38,12 @@ class TestShareSamples(FileTestCase):
 
     #--Begin File Samples-----------------------------------------------------------------
 
-    @record
-    def test_create_share_snapshot(self):
+    @ResourceGroupPreparer()               
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    def test_create_share_snapshot(self, resource_group, location, storage_account, storage_account_key):
         # Instantiate the ShareClient from a connection string
         from azure.storage.file import ShareClient
-        share = ShareClient.from_connection_string(self.connection_string, "sharesnapshot")
+        share = ShareClient.from_connection_string(self.connection_string(storage_account, storage_account_key), "sharesnapshot")
 
         # [START create_share]
         share.create_share()
@@ -65,11 +57,12 @@ class TestShareSamples(FileTestCase):
             share.delete_share(delete_snapshots=True)
             # [END delete_share]
 
-    @record
-    def test_set_share_quota_and_metadata(self):
+    @ResourceGroupPreparer()               
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    def test_set_share_quota_and_metadata(self, resource_group, location, storage_account, storage_account_key):
         # [START create_share_client_from_conn_string]
         from azure.storage.file import ShareClient
-        share = ShareClient.from_connection_string(self.connection_string, "fileshare")
+        share = ShareClient.from_connection_string(self.connection_string(storage_account, storage_account_key), "fileshare")
         # [END create_share_client_from_conn_string]
 
         # Create the share
@@ -94,11 +87,12 @@ class TestShareSamples(FileTestCase):
             # Delete the share
             share.delete_share()
 
-    @record
-    def test_list_directories_and_files(self):
+    @ResourceGroupPreparer()               
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    def test_list_directories_and_files(self, resource_group, location, storage_account, storage_account_key):
         # Instantiate the ShareClient from a connection string
         from azure.storage.file import ShareClient
-        share = ShareClient.from_connection_string(self.connection_string, "listshare")
+        share = ShareClient.from_connection_string(self.connection_string(storage_account, storage_account_key), "listshare")
 
         # Create the share
         share.create_share()
@@ -120,11 +114,12 @@ class TestShareSamples(FileTestCase):
             # Delete the share
             share.delete_share()
 
-    @record
-    def test_get_directory_or_file_client(self):
+    @ResourceGroupPreparer()               
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    def test_get_directory_or_file_client(self, resource_group, location, storage_account, storage_account_key):
         # Instantiate the ShareClient from a connection string
         from azure.storage.file import ShareClient
-        share = ShareClient.from_connection_string(self.connection_string, "testfiles")
+        share = ShareClient.from_connection_string(self.connection_string(storage_account, storage_account_key), "testfiles")
 
         # Get the directory client to interact with a specific directory
         my_dir = share.get_directory_client("dir1")

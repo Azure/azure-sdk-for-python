@@ -15,7 +15,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 21:51:41 GMT
+      - Fri, 23 Aug 2019 03:03:14 GMT
       x-ms-meta:
       - '{''test1'': ''foo'', ''test2'': ''bar''}'
       x-ms-meta-test1:
@@ -33,11 +33,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 22 Aug 2019 21:51:41 GMT
+      - Fri, 23 Aug 2019 03:03:13 GMT
       etag:
-      - '"0x8D7274AEAA14124"'
+      - '"0x8D7277670875D6A"'
       last-modified:
-      - Thu, 22 Aug 2019 21:51:41 GMT
+      - Fri, 23 Aug 2019 03:03:14 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -61,7 +61,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 21:51:41 GMT
+      - Fri, 23 Aug 2019 03:03:14 GMT
       x-ms-meta-test100:
       - foo100
       x-ms-meta-test200:
@@ -77,15 +77,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 22 Aug 2019 21:51:41 GMT
+      - Fri, 23 Aug 2019 03:03:13 GMT
       etag:
-      - '"0x8D7274AEA689480"'
+      - '"0x8D72776704E0500"'
       last-modified:
-      - Thu, 22 Aug 2019 21:51:41 GMT
+      - Fri, 23 Aug 2019 03:03:14 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-snapshot:
-      - '2019-08-22T21:51:41.0000000Z'
+      - '2019-08-23T03:03:14.0000000Z'
       x-ms-version:
       - '2018-11-09'
     status:
@@ -105,7 +105,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 21:51:41 GMT
+      - Fri, 23 Aug 2019 03:03:14 GMT
       x-ms-version:
       - '2018-11-09'
     method: GET
@@ -117,11 +117,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 22 Aug 2019 21:51:41 GMT
+      - Fri, 23 Aug 2019 03:03:13 GMT
       etag:
-      - '"0x8D7274AEAA14124"'
+      - '"0x8D7277670875D6A"'
       last-modified:
-      - Thu, 22 Aug 2019 21:51:41 GMT
+      - Fri, 23 Aug 2019 03:03:14 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-has-immutability-policy:
@@ -153,11 +153,11 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 22 Aug 2019 21:51:41 GMT
+      - Fri, 23 Aug 2019 03:03:14 GMT
       x-ms-version:
       - '2018-11-09'
     method: GET
-    uri: https://pyacrstoragea910127e.file.core.windows.net/sharea910127e?sharesnapshot=2019-08-22T21:51:41.0000000Z&restype=share
+    uri: https://pyacrstoragea910127e.file.core.windows.net/sharea910127e?sharesnapshot=2019-08-23T03:03:14.0000000Z&restype=share
   response:
     body:
       string: ''
@@ -165,11 +165,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 22 Aug 2019 21:51:41 GMT
+      - Fri, 23 Aug 2019 03:03:14 GMT
       etag:
-      - '"0x8D7274AEA689480"'
+      - '"0x8D72776704E0500"'
       last-modified:
-      - Thu, 22 Aug 2019 21:51:41 GMT
+      - Fri, 23 Aug 2019 03:03:14 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-has-immutability-policy:
