@@ -19,7 +19,7 @@ autorest --use=C:/work/autorest.python --version=2.0.4280
 
 ### Settings
 ``` yaml
-input-file: ./file-2018-11-09.json
+input-file: ./file-2019-02-02.json
 output-folder: ../azure/storage/file/_generated
 namespace: azure.storage.file
 no-namespace-folders: true
@@ -48,4 +48,51 @@ directive:
   transform: >
     $.Start.format = "str";
     $.Expiry.format = "str";
+- from: swagger-document
+  where: $["x-ms-paths"]..responses..headers["x-ms-file-last-write-time"]
+  transform: >
+    $.format = "str";
+- from: swagger-document
+  where: $["x-ms-paths"]..responses..headers["x-ms-file-change-time"]
+  transform: >
+    $.format = "str";
+- from: swagger-document
+  where: $["x-ms-paths"]..responses..headers["x-ms-file-creation-time"]
+  transform: >
+    $.format = "str";
+```
+
+### Change new SMB file parameters to use default values
+TODO: Verify these default values are correct
+``` yaml
+directive:
+- from: swagger-document
+  where: $.parameters.FileCreationTime
+  transform: >
+    $.format = "str";
+    $.default = "now";
+- from: swagger-document
+  where: $.parameters.FileLastWriteTime
+  transform: >
+    $.format = "str";
+    $.default = "now";
+- from: swagger-document
+  where: $.parameters.FileAttributes
+  transform: >
+    $.default = "none";
+- from: swagger-document
+  where: $.parameters.FilePermission
+  transform: >
+    $.default = "inherit";
+```
+
+### FileRangeWriteFromUrl Constant
+``` yaml
+directive:
+- from: swagger-document
+  where: $.parameters.FileRangeWriteFromUrl
+  transform: >
+    delete $.default;
+    delete $["x-ms-enum"];
+    $["x-ms-parameter-location"] = "method";
 ```

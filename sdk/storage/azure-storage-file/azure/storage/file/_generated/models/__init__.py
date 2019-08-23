@@ -28,6 +28,7 @@ try:
     from ._models_py3 import ShareProperties
     from ._models_py3 import ShareStats
     from ._models_py3 import SignedIdentifier
+    from ._models_py3 import SourceModifiedAccessConditions
     from ._models_py3 import StorageError, StorageErrorException
     from ._models_py3 import StorageServiceProperties
 except (SyntaxError, ImportError):
@@ -49,6 +50,7 @@ except (SyntaxError, ImportError):
     from ._models import ShareProperties
     from ._models import ShareStats
     from ._models import SignedIdentifier
+    from ._models import SourceModifiedAccessConditions
     from ._models import StorageError, StorageErrorException
     from ._models import StorageServiceProperties
 from ._azure_file_storage_enums import (
@@ -78,6 +80,7 @@ __all__ = [
     'ShareProperties',
     'ShareStats',
     'SignedIdentifier',
+    'SourceModifiedAccessConditions',
     'StorageError', 'StorageErrorException',
     'StorageServiceProperties',
     'StorageErrorCode',

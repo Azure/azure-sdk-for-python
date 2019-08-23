@@ -37,9 +37,19 @@ class DirectoryOperations(object):
         self._config = config
         self.restype = "directory"
 
-    def create(self, timeout=None, metadata=None, cls=None, **kwargs):
+    def create(self, file_attributes="none", file_creation_time="now", file_last_write_time="now", timeout=None, metadata=None, file_permission="inherit", file_permission_key=None, cls=None, **kwargs):
         """Creates a new directory under the specified share or parent directory.
 
+        :param file_attributes: If specified, the provided file attributes
+         shall be set. Default value: ‘Archive’ for file and ‘Directory’ for
+         directory. ‘None’ can also be specified as default.
+        :type file_attributes: str
+        :param file_creation_time: Creation time for the file/directory.
+         Default value: Now.
+        :type file_creation_time: str
+        :param file_last_write_time: Last write time for the file/directory.
+         Default value: Now.
+        :type file_last_write_time: str
         :param timeout: The timeout parameter is expressed in seconds. For
          more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
@@ -48,6 +58,17 @@ class DirectoryOperations(object):
         :param metadata: A name-value pair to associate with a file storage
          object.
         :type metadata: str
+        :param file_permission: If specified the permission (security
+         descriptor) shall be set for the directory/file. This header can be
+         used if Permission size is <= 8KB, else x-ms-file-permission-key
+         header shall be used. Default value: Inherit. If SDDL is specified as
+         input, it must have owner, group and dacl. Note: Only one of the
+         x-ms-file-permission or x-ms-file-permission-key should be specified.
+        :type file_permission: str
+        :param file_permission_key: Key of the permission to be set for the
+         directory/file. Note: Only one of the x-ms-file-permission or
+         x-ms-file-permission-key should be specified.
+        :type file_permission_key: str
         :param callable cls: A custom type or function that will be passed the
          direct response
         :return: None or the result of cls(response)
@@ -74,6 +95,13 @@ class DirectoryOperations(object):
         if metadata is not None:
             header_parameters['x-ms-meta'] = self._serialize.header("metadata", metadata, 'str')
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
+        if file_permission is not None:
+            header_parameters['x-ms-file-permission'] = self._serialize.header("file_permission", file_permission, 'str')
+        if file_permission_key is not None:
+            header_parameters['x-ms-file-permission-key'] = self._serialize.header("file_permission_key", file_permission_key, 'str')
+        header_parameters['x-ms-file-attributes'] = self._serialize.header("file_attributes", file_attributes, 'str')
+        header_parameters['x-ms-file-creation-time'] = self._serialize.header("file_creation_time", file_creation_time, 'str')
+        header_parameters['x-ms-file-last-write-time'] = self._serialize.header("file_last_write_time", file_last_write_time, 'str')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters)
@@ -92,6 +120,13 @@ class DirectoryOperations(object):
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
                 'x-ms-request-server-encrypted': self._deserialize('bool', response.headers.get('x-ms-request-server-encrypted')),
+                'x-ms-file-permission-key': self._deserialize('str', response.headers.get('x-ms-file-permission-key')),
+                'x-ms-file-attributes': self._deserialize('str', response.headers.get('x-ms-file-attributes')),
+                'x-ms-file-creation-time': self._deserialize('str', response.headers.get('x-ms-file-creation-time')),
+                'x-ms-file-last-write-time': self._deserialize('str', response.headers.get('x-ms-file-last-write-time')),
+                'x-ms-file-change-time': self._deserialize('str', response.headers.get('x-ms-file-change-time')),
+                'x-ms-file-id': self._deserialize('str', response.headers.get('x-ms-file-id')),
+                'x-ms-file-parent-id': self._deserialize('str', response.headers.get('x-ms-file-parent-id')),
                 'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
             }
             return cls(response, None, response_headers)
@@ -155,6 +190,13 @@ class DirectoryOperations(object):
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
                 'x-ms-server-encrypted': self._deserialize('bool', response.headers.get('x-ms-server-encrypted')),
+                'x-ms-file-attributes': self._deserialize('str', response.headers.get('x-ms-file-attributes')),
+                'x-ms-file-creation-time': self._deserialize('str', response.headers.get('x-ms-file-creation-time')),
+                'x-ms-file-last-write-time': self._deserialize('str', response.headers.get('x-ms-file-last-write-time')),
+                'x-ms-file-change-time': self._deserialize('str', response.headers.get('x-ms-file-change-time')),
+                'x-ms-file-permission-key': self._deserialize('str', response.headers.get('x-ms-file-permission-key')),
+                'x-ms-file-id': self._deserialize('str', response.headers.get('x-ms-file-id')),
+                'x-ms-file-parent-id': self._deserialize('str', response.headers.get('x-ms-file-parent-id')),
                 'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
             }
             return cls(response, None, response_headers)
@@ -212,6 +254,98 @@ class DirectoryOperations(object):
             }
             return cls(response, None, response_headers)
     delete.metadata = {'url': '/{shareName}/{directory}'}
+
+    def set_properties(self, file_attributes="none", file_creation_time="now", file_last_write_time="now", timeout=None, file_permission="inherit", file_permission_key=None, cls=None, **kwargs):
+        """Sets properties on the directory.
+
+        :param file_attributes: If specified, the provided file attributes
+         shall be set. Default value: ‘Archive’ for file and ‘Directory’ for
+         directory. ‘None’ can also be specified as default.
+        :type file_attributes: str
+        :param file_creation_time: Creation time for the file/directory.
+         Default value: Now.
+        :type file_creation_time: str
+        :param file_last_write_time: Last write time for the file/directory.
+         Default value: Now.
+        :type file_last_write_time: str
+        :param timeout: The timeout parameter is expressed in seconds. For
+         more information, see <a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
+         Timeouts for File Service Operations.</a>
+        :type timeout: int
+        :param file_permission: If specified the permission (security
+         descriptor) shall be set for the directory/file. This header can be
+         used if Permission size is <= 8KB, else x-ms-file-permission-key
+         header shall be used. Default value: Inherit. If SDDL is specified as
+         input, it must have owner, group and dacl. Note: Only one of the
+         x-ms-file-permission or x-ms-file-permission-key should be specified.
+        :type file_permission: str
+        :param file_permission_key: Key of the permission to be set for the
+         directory/file. Note: Only one of the x-ms-file-permission or
+         x-ms-file-permission-key should be specified.
+        :type file_permission_key: str
+        :param callable cls: A custom type or function that will be passed the
+         direct response
+        :return: None or the result of cls(response)
+        :rtype: None
+        :raises:
+         :class:`StorageErrorException<azure.storage.file.models.StorageErrorException>`
+        """
+        error_map = kwargs.pop('error_map', None)
+        comp = "properties"
+
+        # Construct URL
+        url = self.set_properties.metadata['url']
+        path_format_arguments = {
+            'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
+        query_parameters['comp'] = self._serialize.query("comp", comp, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
+        if file_permission is not None:
+            header_parameters['x-ms-file-permission'] = self._serialize.header("file_permission", file_permission, 'str')
+        if file_permission_key is not None:
+            header_parameters['x-ms-file-permission-key'] = self._serialize.header("file_permission_key", file_permission_key, 'str')
+        header_parameters['x-ms-file-attributes'] = self._serialize.header("file_attributes", file_attributes, 'str')
+        header_parameters['x-ms-file-creation-time'] = self._serialize.header("file_creation_time", file_creation_time, 'str')
+        header_parameters['x-ms-file-last-write-time'] = self._serialize.header("file_last_write_time", file_last_write_time, 'str')
+
+        # Construct and send request
+        request = self._client.put(url, query_parameters, header_parameters)
+        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise models.StorageErrorException(response, self._deserialize)
+
+        if cls:
+            response_headers = {
+                'ETag': self._deserialize('str', response.headers.get('ETag')),
+                'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
+                'Last-Modified': self._deserialize('rfc-1123', response.headers.get('Last-Modified')),
+                'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
+                'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
+                'x-ms-request-server-encrypted': self._deserialize('bool', response.headers.get('x-ms-request-server-encrypted')),
+                'x-ms-file-permission-key': self._deserialize('str', response.headers.get('x-ms-file-permission-key')),
+                'x-ms-file-attributes': self._deserialize('str', response.headers.get('x-ms-file-attributes')),
+                'x-ms-file-creation-time': self._deserialize('str', response.headers.get('x-ms-file-creation-time')),
+                'x-ms-file-last-write-time': self._deserialize('str', response.headers.get('x-ms-file-last-write-time')),
+                'x-ms-file-change-time': self._deserialize('str', response.headers.get('x-ms-file-change-time')),
+                'x-ms-file-id': self._deserialize('str', response.headers.get('x-ms-file-id')),
+                'x-ms-file-parent-id': self._deserialize('str', response.headers.get('x-ms-file-parent-id')),
+                'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
+            }
+            return cls(response, None, response_headers)
+    set_properties.metadata = {'url': '/{shareName}/{directory}'}
 
     def set_metadata(self, timeout=None, metadata=None, cls=None, **kwargs):
         """Updates user defined metadata for the specified directory.
