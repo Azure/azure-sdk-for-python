@@ -57,19 +57,6 @@ class ClientConstructorTakesCorrectParameters(BaseChecker):
 
     def __init__(self, linter=None):
         super().__init__(linter)
-        self.is_client = []
-
-    def visit_classdef(self, node):
-        """Visits every class in file and checks if it is a client.
-
-        :param node: class node
-        :type node: ast.ClassDef
-        :return: None
-        """
-        if node.name.endswith("Client") and node.name not in self.ignore_clients:
-            self.is_client.append(True)
-        else:
-            self.is_client.append(False)
 
     def visit_functiondef(self, node):
         """Visits the constructor within a client class and checks that it has
@@ -80,16 +67,14 @@ class ClientConstructorTakesCorrectParameters(BaseChecker):
         :return: None
         """
         try:
-            if node.name == "__init__" and self.is_client and self.is_client[-1]:
-                arguments_node = next(
-                    (child for child in node.get_children() if child.is_argument)
-                )
-                arg_names = [argument.name for argument in arguments_node.args]
+            if node.name == "__init__" and node.parent.name.endswith("Client") and \
+                    node.parent.name not in self.ignore_clients:
+                arg_names = [argument.name for argument in node.args.args]
                 if "credential" not in arg_names:
                     self.add_message(
                         msg_id="missing-client-constructor-parameter-credential", node=node, confidence=None
                     )
-                if not arguments_node.kwarg:
+                if not node.args.kwarg:
                     self.add_message(
                         msg_id="missing-client-constructor-parameter-kwargs", node=node, confidence=None
                     )
@@ -181,7 +166,6 @@ class ClientHasApprovedMethodNamePrefix(BaseChecker):
 
     def __init__(self, linter=None):
         super().__init__(linter)
-        self.is_client = []
 
     def visit_classdef(self, node):
         """Visits every class in file and checks if it is a client. If it is a client, checks
@@ -242,19 +226,6 @@ class ClientMethodsUseKwargsWithMultipleParameters(BaseChecker):
 
     def __init__(self, linter=None):
         super().__init__(linter)
-        self.is_client = []
-
-    def visit_classdef(self, node):
-        """Visits every class in file and checks if it is a client.
-
-        :param node: class node
-        :type node: ast.ClassDef
-        :return: None
-        """
-        if node.name.endswith("Client") and node.name not in self.ignore_clients:
-            self.is_client.append(True)
-        else:
-            self.is_client.append(False)
 
     def visit_functiondef(self, node):
         """Visits every method in the client and checks that it doesn't have more than 5
@@ -265,7 +236,7 @@ class ClientMethodsUseKwargsWithMultipleParameters(BaseChecker):
         :return: None
         """
         try:
-            if self.is_client and self.is_client[-1] and node.is_method():
+            if node.parent.name.endswith("Client") and node.is_method() and node.parent.name not in self.ignore_clients:
                 # Only bother checking method signatures with > 6 parameters (don't include self/cls/etc)
                 if len(node.args.args) > 6:
                     positional_args = len(node.args.args) - len(node.args.defaults)
@@ -277,26 +248,7 @@ class ClientMethodsUseKwargsWithMultipleParameters(BaseChecker):
             logger.debug("Pylint custom checker failed to check if kwargs is used for multiple parameters.")
             pass
 
-    def visit_asyncfunctiondef(self, node):
-        """Visits every async method in the client and checks that it doesn't have more than 5
-        positional arguments.
-
-        :param node: function node
-        :type node: ast.AsyncFunctionDef
-        :return: None
-        """
-        try:
-            if self.is_client and self.is_client[-1] and node.is_method():
-                # Only bother checking method signatures with > 6 parameters (don't include self/cls/etc)
-                if len(node.args.args) > 6:
-                    positional_args = len(node.args.args) - len(node.args.defaults)
-                    if positional_args > 6:
-                        self.add_message(
-                            msg_id="client-method-has-more-than-5-positional-arguments", node=node, confidence=None
-                        )
-        except AttributeError:
-            logger.debug("Pylint custom checker failed to check if kwargs is used for multiple parameters.")
-            pass
+    visit_asyncfunctiondef = visit_functiondef
 
 
 class ClientMethodsHaveTypeAnnotations(BaseChecker):
@@ -328,19 +280,6 @@ class ClientMethodsHaveTypeAnnotations(BaseChecker):
 
     def __init__(self, linter=None):
         super().__init__(linter)
-        self.is_client = []
-
-    def visit_classdef(self, node):
-        """Visits every class in file and checks if it is a client.
-
-        :param node: class node
-        :type node: ast.ClassDef
-        :return: None
-        """
-        if node.name.endswith("Client") and node.name not in self.ignore_clients:
-            self.is_client.append(True)
-        else:
-            self.is_client.append(False)
 
     def visit_functiondef(self, node):
         """Visits every method in the client and checks that all type comments/annotations
@@ -351,7 +290,7 @@ class ClientMethodsHaveTypeAnnotations(BaseChecker):
         :return: None
         """
         try:
-            if self.is_client and self.is_client[-1] and node.is_method():
+            if node.parent.name.endswith("Client") and node.is_method() and node.parent.name not in self.ignore_clients:
                 if not node.name.startswith("_") or node.name == "__init__":
                     # Checks that method has python 2/3 type comments or annotations as shown here:
                     # https://www.python.org/dev/peps/pep-0484/#suggested-syntax-for-python-2-7-and-straddling-code
@@ -375,39 +314,7 @@ class ClientMethodsHaveTypeAnnotations(BaseChecker):
             logger.debug("Pylint custom checker failed to check if client methods missing type annotations.")
             pass
 
-    def visit_asyncfunctiondef(self, node):
-        """Visits every async method in the client and checks that all type comments/annotations
-        and type returns are present.
-
-        :param node: function node
-        :type node: ast.AsyncFunctionDef
-        :return: None
-        """
-        try:
-            if self.is_client and self.is_client[-1] and node.is_method():
-                if not node.name.startswith("_") or node.name == "__init__":
-                    # Checks that method has python 2/3 type comments or annotations as shown here:
-                    # https://www.python.org/dev/peps/pep-0484/#suggested-syntax-for-python-2-7-and-straddling-code
-
-                    # check for type comments
-                    if node.type_comment_args is None or node.type_comment_returns is None:
-
-                        # type annotations default to a list of None when not present,
-                        # so need extra logic here to check for any hints that may be present
-                        type_annotations = \
-                            [type_hint for type_hint in node.args.annotations if type_hint is not None]
-
-                        # check for type annotations
-                        # node.args.args is a list of ast.AssignName arguments
-                        # node.returns is the type annotation return
-                        # Note that if the method returns nothing it will be of type ast.Const.NoneType
-                        if (type_annotations == [] and len(node.args.args) > 1) or node.returns is None:
-                            self.add_message(
-                                msg_id="client-method-missing-type-annotations", node=node, confidence=None
-                            )
-        except AttributeError:
-            logger.debug("Pylint custom checker failed to check if client methods missing type annotations.")
-            pass
+    visit_asyncfunctiondef = visit_functiondef
 
 
 class ClientMethodsHaveTracingDecorators(BaseChecker):
@@ -453,19 +360,6 @@ class ClientMethodsHaveTracingDecorators(BaseChecker):
 
     def __init__(self, linter=None):
         super().__init__(linter)
-        self.is_client = []
-
-    def visit_classdef(self, node):
-        """Visits every class in file and checks if it is a client.
-
-        :param node: class node
-        :type node: ast.ClassDef
-        :return: None
-        """
-        if node.name.endswith("Client") and node.name not in self.ignore_clients:
-            self.is_client.append(True)
-        else:
-            self.is_client.append(False)
 
     def visit_functiondef(self, node):
         """Visits every method in the client and checks that a distributed tracing decorator is present.
@@ -478,39 +372,35 @@ class ClientMethodsHaveTracingDecorators(BaseChecker):
         :return: None
         """
         try:
-            if self.is_client and self.is_client[-1] and node.is_method():
-                # ignore private methods, client creation from connection string, and methods to retrieve child client
-                if not node.name.startswith("_") and not node.name.startswith("from") \
-                        and not node.name.endswith("_client"):
-                    if "azure.core.tracing.decorator.distributed_trace" not in node.decoratornames():
-                        self.add_message(
-                            msg_id="client-method-missing-tracing-decorator", node=node, confidence=None
-                        )
+            if node.parent.name.endswith("Client") and node.is_method() and not node.name.startswith("_") and \
+                    node.parent.name not in self.ignore_clients:
+                if node.args.kwarg and "azure.core.tracing.decorator.distributed_trace" not in node.decoratornames() \
+                        and "builtins.classmethod" not in node.decoratornames():
+                    self.add_message(
+                        msg_id="client-method-missing-tracing-decorator", node=node, confidence=None
+                    )
         except AttributeError:
-            logger.debug("Pylint custom checker failed to check if client methods have tracing decorators.")
             pass
 
     def visit_asyncfunctiondef(self, node):
-        """Visits every async method in the client and checks that a distributed tracing decorator is present.
+        """Visits every method in the client and checks that a distributed tracing decorator is present.
         Ignores private methods, from_connection_string, and methods that retrieve child clients.
 
         node.decoratornames() returns a set of the method's decorator names.
 
         :param node: function node
-        :type node: ast.AsyncFunctionDef
+        :type node: ast.FunctionDef
         :return: None
         """
         try:
-            if self.is_client and self.is_client[-1] and node.is_method():
-                # ignore private methods, client creation from connection string, and methods to retrieve child client
-                if not node.name.startswith("_") and not node.name.startswith("from") \
-                        and not node.name.endswith("_client"):
-                    if "azure.core.tracing.decorator_async.distributed_trace_async" not in node.decoratornames():
-                        self.add_message(
-                            msg_id="client-method-missing-tracing-decorator-async", node=node, confidence=None
-                        )
+            if node.parent.name.endswith("Client") and node.is_method() and not node.name.startswith("_") and \
+                    node.parent.name not in self.ignore_clients:
+                if node.args.kwarg and "azure.core.tracing.decorator_async.distributed_trace_async" not in \
+                        node.decoratornames() and "builtins.classmethod" not in node.decoratornames():
+                    self.add_message(
+                        msg_id="client-method-missing-tracing-decorator-async", node=node, confidence=None
+                    )
         except AttributeError:
-            logger.debug("Pylint custom checker failed to check if client methods have tracing decorators.")
             pass
 
 
@@ -542,19 +432,6 @@ class ClientsDoNotUseStaticMethods(BaseChecker):
 
     def __init__(self, linter=None):
         super().__init__(linter)
-        self.is_client = []
-
-    def visit_classdef(self, node):
-        """Visits every class in file and checks if it is a client.
-
-        :param node: class node
-        :type node: ast.ClassDef
-        :return: None
-        """
-        if node.name.endswith("Client") and node.name not in self.ignore_clients:
-            self.is_client.append(True)
-        else:
-            self.is_client.append(False)
 
     def visit_functiondef(self, node):
         """Visits every method in the client and checks that it does not use staticmethod.
@@ -564,7 +441,7 @@ class ClientsDoNotUseStaticMethods(BaseChecker):
         :return: None
         """
         try:
-            if self.is_client and self.is_client[-1] and node.is_method():
+            if node.parent.name.endswith("Client") and node.is_method() and node.parent.name not in self.ignore_clients:
                 # ignores private methods or methods that don't have any decorators
                 if not node.name.startswith("_") and node.decorators is not None:
                     if "builtins.staticmethod" in node.decoratornames():
@@ -575,24 +452,7 @@ class ClientsDoNotUseStaticMethods(BaseChecker):
             logger.debug("Pylint custom checker failed to check if client methods do not use staticmethods.")
             pass
 
-    def visit_asyncfunctiondef(self, node):
-        """Visits every async method in the client and checks that it does not use staticmethod.
-
-        :param node: function node
-        :type node: ast.AsyncFunctionDef
-        :return: None
-        """
-        try:
-            if self.is_client and self.is_client[-1] and node.is_method():
-                # ignores private methods or methods that don't have any decorators
-                if not node.name.startswith("_") and node.decorators is not None:
-                    if "builtins.staticmethod" in node.decoratornames():
-                        self.add_message(
-                            msg_id="client-method-should-not-use-static-method", node=node, confidence=None
-                        )
-        except AttributeError:
-            logger.debug("Pylint custom checker failed to check if client methods do not use staticmethods.")
-            pass
+    visit_asyncfunctiondef = visit_functiondef
 
 
 class FileHasCopyrightHeader(BaseChecker):
@@ -670,7 +530,6 @@ class ClientUsesCorrectNamingConventions(BaseChecker):
 
     def __init__(self, linter=None):
         super().__init__(linter)
-        self.is_client = []
 
     def visit_classdef(self, node):
         """Visits every class in file and checks if it is a client.
@@ -687,8 +546,6 @@ class ClientUsesCorrectNamingConventions(BaseChecker):
                 self.add_message(
                     msg_id="client-incorrect-naming-convention", node=node, confidence=None
                 )
-        else:
-            self.is_client.append(True)
 
         # check for correct naming convention in any class constants
         if node.name.endswith("Client"):
@@ -743,19 +600,6 @@ class ClientMethodsHaveKwargsParameter(BaseChecker):
 
     def __init__(self, linter=None):
         super().__init__(linter)
-        self.is_client = []
-
-    def visit_classdef(self, node):
-        """Visits every class in file and checks if it is a client.
-
-        :param node: class node
-        :type node: ast.ClassDef
-        :return: None
-        """
-        if node.name.endswith("Client") and node.name not in self.ignore_clients:
-            self.is_client.append(True)
-        else:
-            self.is_client.append(False)
 
     def visit_functiondef(self, node):
         """Visits every method in the client and checks that it has a kwargs parameter.
@@ -765,13 +609,14 @@ class ClientMethodsHaveKwargsParameter(BaseChecker):
         :return: None
         """
         try:
-            if self.is_client and self.is_client[-1] and node.is_method():
+            if node.parent.name.endswith("Client") and node.is_method() and node.parent.name not in self.ignore_clients:
                 # avoid false positive with @property
                 if node.decorators is not None:
                     if "builtins.property" in node.decoratornames():
                         return
                     if not node.name.startswith("_") and \
-                            "azure.core.tracing.decorator.distributed_trace" in node.decoratornames():
+                            ("azure.core.tracing.decorator.distributed_trace" in node.decoratornames() or
+                             "azure.core.tracing.decorator_async.distributed_trace_async" in node.decoratornames()):
                         if not node.args.kwarg:
                             self.add_message(
                                 msg_id="client-method-missing-kwargs", node=node, confidence=None
@@ -780,28 +625,7 @@ class ClientMethodsHaveKwargsParameter(BaseChecker):
             logger.debug("Pylint custom checker failed to check if client uses kwargs parameter in method.")
             pass
 
-    def visit_asyncfunctiondef(self, node):
-        """Visits every async method in the client and checks that it has a kwargs parameter.
-
-        :param node: function node
-        :type node: ast.AsyncFunctionDef
-        :return: None
-        """
-        try:
-            if self.is_client and self.is_client[-1] and node.is_method():
-                # avoid false positive with @property
-                if node.decorators is not None:
-                    if "builtins.property" in node.decoratornames():
-                        return
-                    if not node.name.startswith("_") and \
-                            "azure.core.tracing.decorator_async.distributed_trace_async" in node.decoratornames():
-                        if not node.args.kwarg:
-                            self.add_message(
-                                msg_id="client-method-missing-kwargs", node=node, confidence=None
-                            )
-        except AttributeError:
-            logger.debug("Pylint custom checker failed to check if client uses kwargs parameter in method.")
-            pass
+    visit_asyncfunctiondef = visit_functiondef
 
 
 class ClientMethodNamesDoNotUseDoubleUnderscorePrefix(BaseChecker):
@@ -833,19 +657,6 @@ class ClientMethodNamesDoNotUseDoubleUnderscorePrefix(BaseChecker):
 
     def __init__(self, linter=None):
         super().__init__(linter)
-        self.is_client = []
-
-    def visit_classdef(self, node):
-        """Visits every class in file and checks if it is a client.
-
-        :param node: class node
-        :type node: ast.ClassDef
-        :return: None
-        """
-        if node.name.endswith("Client") and node.name not in self.ignore_clients:
-            self.is_client.append(True)
-        else:
-            self.is_client.append(False)
 
     def visit_functiondef(self, node):
         """Visits every method in the client and checks that no name begins with a double underscore.
@@ -855,7 +666,7 @@ class ClientMethodNamesDoNotUseDoubleUnderscorePrefix(BaseChecker):
         :return: None
         """
         try:
-            if self.is_client and self.is_client[-1] and node.is_method():
+            if node.parent.name.endswith("Client") and node.is_method() and node.parent.name not in self.ignore_clients:
                 if node.name.startswith("__") and node.name not in self.acceptable_names:
                     self.add_message(
                         msg_id="client-method-name-no-double-underscore", node=node, confidence=None
@@ -864,22 +675,7 @@ class ClientMethodNamesDoNotUseDoubleUnderscorePrefix(BaseChecker):
             logger.debug("Pylint custom checker failed to check if client method name does not use double underscore prefix.")
             pass
 
-    def visit_asyncfunctiondef(self, node):
-        """Visits every async method in the client and checks that no name begins with a double underscore.
-
-        :param node: function node
-        :type node: ast.AsyncFunctionDef
-        :return: None
-        """
-        try:
-            if self.is_client and self.is_client[-1] and node.is_method():
-                if node.name.startswith("__") and node.name not in self.acceptable_names:
-                    self.add_message(
-                        msg_id="client-method-name-no-double-underscore", node=node, confidence=None
-                    )
-        except AttributeError:
-            logger.debug("Pylint custom checker failed to check if client method name does not use double underscore prefix.")
-            pass
+    visit_asyncfunctiondef = visit_functiondef
 
 
 class ClientDocstringUsesLiteralIncludeForCodeExample(BaseChecker):
@@ -911,7 +707,6 @@ class ClientDocstringUsesLiteralIncludeForCodeExample(BaseChecker):
 
     def __init__(self, linter=None):
         super().__init__(linter)
-        self.is_client = []
 
     def visit_classdef(self, node):
         """Visits every class in file and checks if it is a client.
@@ -921,16 +716,12 @@ class ClientDocstringUsesLiteralIncludeForCodeExample(BaseChecker):
         :type node: ast.ClassDef
         :return: None
         """
-        if node.name.endswith("Client") and node.name not in self.ignore_clients:
-            self.is_client.append(True)
-        else:
-            self.is_client.append(False)
-
         try:
-            if node.doc.find("code-block") != -1:
-                self.add_message(
-                    msg_id="client-docstring-use-literal-include", node=node, confidence=None
-                )
+            if node.name.endswith("Client") and node.name not in self.ignore_clients:
+                if node.doc.find("code-block") != -1:
+                    self.add_message(
+                        msg_id="client-docstring-use-literal-include", node=node, confidence=None
+                    )
         except AttributeError:
             logger.debug("Pylint custom checker failed to check if client uses literalinclude over code-block.")
             pass
@@ -944,7 +735,7 @@ class ClientDocstringUsesLiteralIncludeForCodeExample(BaseChecker):
         :return: None
         """
         try:
-            if self.is_client and self.is_client[-1] and node.is_method():
+            if node.parent.name.endswith("Client") and node.parent.name not in self.ignore_clients and node.is_method():
                 if node.doc.find("code-block") != -1:
                     self.add_message(
                         msg_id="client-docstring-use-literal-include", node=node, confidence=None
@@ -953,23 +744,7 @@ class ClientDocstringUsesLiteralIncludeForCodeExample(BaseChecker):
             logger.debug("Pylint custom checker failed to check if client uses literalinclude over code-block.")
             pass
 
-    def visit_asyncfunctiondef(self, node):
-        """Visits every async method in the client class and checks that it uses literalinclude
-         over a code-block for the code example.
-
-        :param node: function node
-        :type node: ast.AsyncFunctionDef
-        :return: None
-        """
-        try:
-            if self.is_client and self.is_client[-1] and node.is_method():
-                if node.doc.find("code-block") != -1:
-                    self.add_message(
-                        msg_id="client-docstring-use-literal-include", node=node, confidence=None
-                    )
-        except AttributeError:
-            logger.debug("Pylint custom checker failed to check if client uses literalinclude over code-block.")
-            pass
+    visit_asyncfunctiondef = visit_functiondef
 
 
 class AsyncClientCorrectNaming(BaseChecker):
@@ -1049,19 +824,6 @@ class SpecifyParameterNamesInCall(BaseChecker):
 
     def __init__(self, linter=None):
         super().__init__(linter)
-        self.is_client = []
-
-    def visit_classdef(self, node):
-        """Visits every class in file and checks if it is a client.
-
-        :param node: class node
-        :type node: ast.ClassDef
-        :return: None
-        """
-        if node.name.endswith("Client") and node.name not in self.ignore_clients:
-            self.is_client.append(True)
-        else:
-            self.is_client.append(False)
 
     def visit_call(self, node):
         """Visits every call in the client and checks that it specifies the parameter name in
@@ -1072,8 +834,9 @@ class SpecifyParameterNamesInCall(BaseChecker):
         :return: None
         """
         try:
-            # node.parent.parent is the method (ast.FunctionDef or ast.AsyncFunctionDef)
-            if self.is_client and self.is_client[-1] and node.parent.parent.is_method():
+            klass = node.parent.parent.parent
+            function = node.parent.parent
+            if klass.name.endswith("Client") and klass.name not in self.ignore_clients and function.is_method():
                 # node.args represent positional arguments
                 if len(node.args) > 2 and node.func.attrname != "format":
                     self.add_message(
@@ -1112,19 +875,6 @@ class ClientListMethodsUseCorePaging(BaseChecker):
 
     def __init__(self, linter=None):
         super().__init__(linter)
-        self.is_client = []
-
-    def visit_classdef(self, node):
-        """Visits every class in file and checks if it is a client.
-
-        :param node: class node
-        :type node: ast.ClassDef
-        :return: None
-        """
-        if node.name.endswith("Client") and node.name not in self.ignore_clients:
-            self.is_client.append(True)
-        else:
-            self.is_client.append(False)
 
     def visit_functiondef(self, node):
         """Visits every method in the client and checks that any list_ methods return
@@ -1135,7 +885,7 @@ class ClientListMethodsUseCorePaging(BaseChecker):
         :return: None
         """
         try:
-            if self.is_client and self.is_client[-1] and node.is_method():
+            if node.parent.name.endswith("Client") and node.parent.name not in self.ignore_clients and node.is_method():
                 if node.name.startswith("list"):
                     try:
                         # infer_call_result gives the method return value as a string
@@ -1180,19 +930,6 @@ class ClientLROMethodsUseCorePolling(BaseChecker):
 
     def __init__(self, linter=None):
         super().__init__(linter)
-        self.is_client = []
-
-    def visit_classdef(self, node):
-        """Visits every class in file and checks if it is a client.
-
-        :param node: class node
-        :type node: ast.ClassDef
-        :return: None
-        """
-        if node.name.endswith("Client") and node.name not in self.ignore_clients:
-            self.is_client.append(True)
-        else:
-            self.is_client.append(False)
 
     def visit_functiondef(self, node):
         """Visits every method in the client and checks that any begin_ methods return
@@ -1203,7 +940,7 @@ class ClientLROMethodsUseCorePolling(BaseChecker):
         :return: None
         """
         try:
-            if self.is_client and self.is_client[-1] and node.is_method():
+            if node.parent.name.endswith("Client") and node.parent.name not in self.ignore_clients and node.is_method():
                 if node.name.startswith("begin"):
                     try:
                         # infer_call_result gives the method return value as a string
@@ -1306,7 +1043,6 @@ class ClientConstructorDoesNotHaveConnectionStringParam(BaseChecker):
 
     def __init__(self, linter=None):
         super().__init__(linter)
-        self.is_client = []
 
     def visit_classdef(self, node):
         """Visits every class in file and checks if it is a client.
@@ -1316,13 +1052,8 @@ class ClientConstructorDoesNotHaveConnectionStringParam(BaseChecker):
         :type node: ast.ClassDef
         :return: None
         """
-        if node.name.endswith("Client") and node.name not in self.ignore_clients:
-            self.is_client.append(True)
-        else:
-            self.is_client.append(False)
-
         try:
-            if self.is_client and self.is_client[-1]:
+            if node.name.endswith("Client") and node.name not in self.ignore_clients:
                 for func in node.body:
                     if func.name == "__init__":
                         for argument in func.args.args:
@@ -1438,6 +1169,165 @@ class ServiceClientUsesNameWithClientSuffix(BaseChecker):
         except Exception:
             logger.debug("Pylint custom checker failed to check if service client has a client suffix.")
             pass
+
+
+class CheckDocstringParameters(BaseChecker):
+    __implements__ = IAstroidChecker
+
+    name = "bad-docstrings"
+    priority = -1
+    msgs = {
+        "C4739": (
+            'Params missing in docstring: "%s". See details: '
+            'https://azure.github.io/azure-sdk/python_documentation.html#docstrings',
+            "client-docstring-mismatch-param",
+            "Docstring mismatch for param.",
+        ),
+        "C4740": (
+            'Param types missing in docstring: "%s". See details: '
+            'https://azure.github.io/azure-sdk/python_documentation.html#docstrings',
+            "client-docstring-mismatch-type",
+            "Docstring mismatch for param type.",
+        ),
+        "C4741": (
+            "A return doc is missing in the docstring. See details: "
+            "https://azure.github.io/azure-sdk/python_documentation.html#docstrings",
+            "client-docstring-mismatch-return",
+            "Docstring mismatch for return statement doc.",
+        ),
+        "C4742": (
+            "A return type is missing in the docstring. See details: "
+            "https://azure.github.io/azure-sdk/python_documentation.html#docstrings",
+            "client-docstring-mismatch-rtype",
+            "Docstring mismatch for return type.",
+        ),
+        "C4743": (
+            '"%s" not found as a method parameter. Use :keyword myparam: for keyword arguments. See details: '
+            'https://azure.github.io/azure-sdk/python_documentation.html#docstrings',
+            "client-docstring-mismatch-keyword",
+            "Docstring mismatch for keywords.",
+        ),
+    }
+    options = (
+        (
+            "ignore-client-docstring-mismatch",
+            {
+                "default": False,
+                "type": "yn",
+                "metavar": "<y_or_n>",
+                "help": "Allow the client to have a docstring mismatch",
+            },
+        ),
+    )
+
+    def __init__(self, linter=None):
+        super().__init__(linter)
+
+    def check_parameters(self, node):
+        arg_names = []
+        if isinstance(node, astroid.ClassDef):
+            arg_names = [ag.name for ag in node.body[0].args.args]
+        if isinstance(node, astroid.FunctionDef):
+            arg_names = [ag.name for ag in node.args.args]
+
+        try:
+            # not every method will have a docstring so don't crash here, just return
+            docstring = node.doc.split(":")
+        except AttributeError:
+            return
+
+        docparams = {}
+        for idx, line in enumerate(docstring):
+            # this param has its type on a separate line
+            if line.startswith("param") and line.count(" ") == 1:
+                param = line.split("param ")[1]
+                docparams[param] = None
+            # this param has its type on the same line
+            if line.startswith("param") and line.count(" ") == 2:
+                _, param_type, param = line.split(" ")
+                docparams[param] = param_type
+            if line.startswith("type"):
+                param = line.split("type ")[1]
+                if param in docparams:
+                    docparams[param] = docstring[idx + 1]
+
+        # check that all params are documented
+        missing_params = []
+        for param in arg_names:
+            if param == "self" or param == "cls":
+                continue
+            if param not in docparams:
+                missing_params.append(param)
+
+        if missing_params:
+            self.add_message(
+                msg_id="client-docstring-mismatch-param", args=(", ".join(missing_params)), node=node, confidence=None
+            )
+
+        # check if we have a type for each param
+        missing_types = []
+        should_be_keywords = []
+        for param in docparams:
+            if docparams[param] is None:
+                missing_types.append(param)
+            if param not in arg_names:
+                should_be_keywords.append(param)
+
+        if missing_types:
+            self.add_message(
+                msg_id="client-docstring-mismatch-type", args=(", ".join(missing_types)), node=node, confidence=None
+            )
+
+        if should_be_keywords:
+            self.add_message(
+                msg_id="client-docstring-mismatch-keyword",
+                args=(", ".join(should_be_keywords)),
+                node=node,
+                confidence=None
+            )
+
+    def check_return(self, node):
+        try:
+            returns = next(node.infer_call_result()).as_string()
+        except astroid.exceptions.InferenceError:
+            # this function doesn't return anything, just return
+            return
+
+        try:
+            # not every method will have a docstring so don't crash here, just return
+            docstring = node.doc.split(":")
+        except AttributeError:
+            return
+
+        has_return, has_rtype = False, False
+        for line in docstring:
+            if line.startswith("return"):
+                has_return = True
+            if line.startswith("rtype"):
+                has_rtype = True
+
+        if has_return is False:
+            self.add_message(
+                msg_id="client-docstring-mismatch-return", node=node, confidence=None
+            )
+        if has_rtype is False:
+            self.add_message(
+                msg_id="client-docstring-mismatch-rtype", node=node, confidence=None
+            )
+
+    def visit_classdef(self, node):
+        if node.name.endswith("Client"):
+            for func in node.body:
+                if func.name == "__init__":
+                    self.check_parameters(node)
+
+    def visit_functiondef(self, node):
+        if node.name == "__init__":
+            return
+        self.check_parameters(node)
+        self.check_return(node)
+
+    visit_asyncfunctiondef = visit_functiondef
 
 
 class CheckForPolicyUse(BaseChecker):
@@ -1563,14 +1453,14 @@ class CheckForPolicyUse(BaseChecker):
 
         This pylint checker is different from the others as it collects information across
         many files and then reports any errors. Due to this difference, disable commands
-        must be searched for and honored manually.
+        must be searched for manually.
 
         :param node: ast.Module
         :return: None
         """
         # only throw the error if pylint was run at package level since it needs to check all the files
         # infer run location based on the location of the init file highest in dir hierarchy
-        if node.package:
+        if node.package: # the init file
             count = node.file.split("azure-sdk-for-python")[1].count("-")
             if node.file.split("azure-sdk-for-python")[1].count("\\") <= (5 + count) and \
                     node.file.split("azure-sdk-for-python")[1].count("/") <= (5 + count):
@@ -1622,7 +1512,7 @@ class CheckForPolicyUse(BaseChecker):
 
     def close(self):
         """This method is inherited from BaseChecker and called at the very end of linting a module.
-        It reports any errors and honors any pylint disable statements.
+        It reports any errors and does a final check for any pylint disable statements.
 
         :return: None
         """
@@ -1651,28 +1541,30 @@ class CheckForPolicyUse(BaseChecker):
 
 # if a linter is registered in this function then it will be checked with pylint
 def register(linter):
-    linter.register_checker(ClientsDoNotUseStaticMethods(linter))
-    linter.register_checker(ClientConstructorTakesCorrectParameters(linter))
-    linter.register_checker(ClientMethodsUseKwargsWithMultipleParameters(linter))
-    linter.register_checker(ClientMethodsHaveTypeAnnotations(linter))
-    linter.register_checker(ClientUsesCorrectNamingConventions(linter))
-    linter.register_checker(ClientMethodsHaveKwargsParameter(linter))
-    linter.register_checker(ClientHasKwargsInPoliciesForCreateConfigurationMethod(linter))
-    linter.register_checker(AsyncClientCorrectNaming(linter))
-    linter.register_checker(FileHasCopyrightHeader(linter))
-    linter.register_checker(ClientMethodNamesDoNotUseDoubleUnderscorePrefix(linter))
-    linter.register_checker(SpecifyParameterNamesInCall(linter))
-    linter.register_checker(ClientConstructorDoesNotHaveConnectionStringParam(linter))
-    linter.register_checker(PackageNameDoesNotUseUnderscoreOrPeriod(linter))
-    linter.register_checker(ServiceClientUsesNameWithClientSuffix(linter))
+    # linter.register_checker(ClientsDoNotUseStaticMethods(linter))
+    # linter.register_checker(ClientConstructorTakesCorrectParameters(linter))
+    # linter.register_checker(ClientMethodsUseKwargsWithMultipleParameters(linter))
+    # linter.register_checker(ClientMethodsHaveTypeAnnotations(linter))
+    # linter.register_checker(ClientUsesCorrectNamingConventions(linter))
+    # linter.register_checker(ClientMethodsHaveKwargsParameter(linter))
+    # linter.register_checker(ClientHasKwargsInPoliciesForCreateConfigurationMethod(linter))
+    # linter.register_checker(AsyncClientCorrectNaming(linter))
+    # linter.register_checker(FileHasCopyrightHeader(linter))
+    # linter.register_checker(ClientMethodNamesDoNotUseDoubleUnderscorePrefix(linter))
+    # linter.register_checker(SpecifyParameterNamesInCall(linter))
+    # linter.register_checker(ClientConstructorDoesNotHaveConnectionStringParam(linter))
+    # linter.register_checker(PackageNameDoesNotUseUnderscoreOrPeriod(linter))
+    # linter.register_checker(ServiceClientUsesNameWithClientSuffix(linter))
+
+    # linter.register_checker(CheckForPolicyUse(linter))
+    linter.register_checker(CheckDocstringParameters(linter))
 
     # Rules are disabled until false positive rate improved
-    # linter.register_checker(CheckForPolicyUse(linter))
     # linter.register_checker(ClientHasApprovedMethodNamePrefix(linter))
     # linter.register_checker(ClientMethodsHaveTracingDecorators(linter))
     # linter.register_checker(ClientDocstringUsesLiteralIncludeForCodeExample(linter))
     # linter.register_checker(ClientListMethodsUseCorePaging(linter))
     # linter.register_checker(ClientLROMethodsUseCorePolling(linter))
     # linter.register_checker(ClientLROMethodsUseCorrectNaming(linter))
-    # linter.register_checker(CheckDocstringParameters(linter))
+
 
