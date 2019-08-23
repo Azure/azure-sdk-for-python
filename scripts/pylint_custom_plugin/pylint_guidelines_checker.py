@@ -1180,37 +1180,37 @@ class CheckDocstringParameters(BaseChecker):
         "C4739": (
             'Params missing in docstring: "%s". See details: '
             'https://azure.github.io/azure-sdk/python_documentation.html#docstrings',
-            "docstring-mismatch-param",
-            "Docstring mismatch for param.",
+            "docstring-missing-param",
+            "Docstring missing for param.",
         ),
         "C4740": (
             'Param types missing in docstring: "%s". See details: '
             'https://azure.github.io/azure-sdk/python_documentation.html#docstrings',
-            "docstring-mismatch-type",
-            "Docstring mismatch for param type.",
+            "docstring-missing-type",
+            "Docstring missing for param type.",
         ),
         "C4741": (
             "A return doc is missing in the docstring. See details: "
             "https://azure.github.io/azure-sdk/python_documentation.html#docstrings",
-            "docstring-mismatch-return",
-            "Docstring mismatch for return doc.",
+            "docstring-missing-return",
+            "Docstring missing for return doc.",
         ),
         "C4742": (
             "A return type is missing in the docstring. See details: "
             "https://azure.github.io/azure-sdk/python_documentation.html#docstrings",
-            "docstring-mismatch-rtype",
-            "Docstring mismatch for return type.",
+            "docstring-missing-rtype",
+            "Docstring missing for return type.",
         ),
         "C4743": (
             '"%s" not found as a parameter. Use :keyword type myarg: if a keyword argument. See details: '
             'https://azure.github.io/azure-sdk/python_documentation.html#docstrings',
-            "docstring-mismatch-keyword",
-            "Docstring mismatch for keywords.",
+            "docstring-should-be-keyword",
+            "Docstring should use keywords.",
         ),
     }
     options = (
         (
-            "ignore-docstring-mismatch-param",
+            "ignore-docstring-missing-param",
             {
                 "default": False,
                 "type": "yn",
@@ -1219,7 +1219,7 @@ class CheckDocstringParameters(BaseChecker):
             },
         ),
         (
-            "ignore-docstring-mismatch-type",
+            "ignore-docstring-missing-type",
             {
                 "default": False,
                 "type": "yn",
@@ -1228,7 +1228,7 @@ class CheckDocstringParameters(BaseChecker):
             },
         ),
         (
-            "ignore-docstring-mismatch-return",
+            "ignore-docstring-missing-return",
             {
                 "default": False,
                 "type": "yn",
@@ -1237,7 +1237,7 @@ class CheckDocstringParameters(BaseChecker):
             },
         ),
         (
-            "ignore-docstring-mismatch-rtype",
+            "ignore-docstring-missing-rtype",
             {
                 "default": False,
                 "type": "yn",
@@ -1246,7 +1246,7 @@ class CheckDocstringParameters(BaseChecker):
             },
         ),
         (
-            "ignore-docstring-mismatch-keyword",
+            "ignore-docstring-should-be-keyword",
             {
                 "default": False,
                 "type": "yn",
@@ -1315,7 +1315,7 @@ class CheckDocstringParameters(BaseChecker):
 
         if missing_params:
             self.add_message(
-                msg_id="docstring-mismatch-param", args=(", ".join(missing_params)), node=node, confidence=None
+                msg_id="docstring-missing-param", args=(", ".join(missing_params)), node=node, confidence=None
             )
 
         # check if we have a type for each param and check if documented params that should be keywords
@@ -1329,12 +1329,12 @@ class CheckDocstringParameters(BaseChecker):
 
         if missing_types:
             self.add_message(
-                msg_id="docstring-mismatch-type", args=(", ".join(missing_types)), node=node, confidence=None
+                msg_id="docstring-missing-type", args=(", ".join(missing_types)), node=node, confidence=None
             )
 
         if should_be_keywords:
             self.add_message(
-                msg_id="docstring-mismatch-keyword",
+                msg_id="docstring-should-be-keyword",
                 args=(", ".join(should_be_keywords)),
                 node=node,
                 confidence=None
@@ -1370,11 +1370,11 @@ class CheckDocstringParameters(BaseChecker):
 
         if has_return is False:
             self.add_message(
-                msg_id="docstring-mismatch-return", node=node, confidence=None
+                msg_id="docstring-missing-return", node=node, confidence=None
             )
         if has_rtype is False:
             self.add_message(
-                msg_id="docstring-mismatch-rtype", node=node, confidence=None
+                msg_id="docstring-missing-rtype", node=node, confidence=None
             )
 
     def visit_classdef(self, node):
@@ -1550,7 +1550,7 @@ class CheckForPolicyUse(BaseChecker):
 
         # not really a good place to throw the pylint error, so we'll do it on the init file.
         # By running this checker on all the files first and then reporting errors, pylint disables need to be
-        # done manually
+        # done manually for some reason
         if node.file.endswith("__init__.py") and self.node_to_use is None:
             header = node.stream().read(200).lower()
             if header.find(b'disable') != -1:
@@ -1565,7 +1565,7 @@ class CheckForPolicyUse(BaseChecker):
             self.node_to_use = node
 
         for idx in range(len(node.body)):
-            # The core policy is the base class for some custom policy, or a custom policy is being used
+            # Check if the core policy is the base class for some custom policy, or a custom policy is being used
             # and we try our best to find it based on common naming conventions.
             if isinstance(node.body[idx], astroid.ClassDef):
                 if "NetworkTraceLoggingPolicy" in node.body[idx].basenames:
@@ -1638,10 +1638,11 @@ def register(linter):
     linter.register_checker(PackageNameDoesNotUseUnderscoreOrPeriod(linter))
     linter.register_checker(ServiceClientUsesNameWithClientSuffix(linter))
 
-    # linter.register_checker(CheckForPolicyUse(linter))
-    # linter.register_checker(CheckDocstringParameters(linter))
+    # disabled by default, use pylint --enable=check-docstrings if you want to use it
+    linter.register_checker(CheckDocstringParameters(linter))
 
     # Rules are disabled until false positive rate improved
+    # linter.register_checker(CheckForPolicyUse(linter))
     # linter.register_checker(ClientHasApprovedMethodNamePrefix(linter))
     # linter.register_checker(ClientMethodsHaveTracingDecorators(linter))
     # linter.register_checker(ClientDocstringUsesLiteralIncludeForCodeExample(linter))
