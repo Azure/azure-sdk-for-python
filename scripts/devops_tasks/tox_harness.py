@@ -191,7 +191,6 @@ def prep_and_run_tox(targeted_packages, parsed_args, options_array=[]):
         destination_dev_req = os.path.join(package_dir, "dev_requirements.txt")
 
         tox_execution_array = ["tox"]
-        tox_execution_array.extend([] if parsed_args.tparallel else ["--parallel", "auto"])
 
         local_options_array = options_array[:]
 
