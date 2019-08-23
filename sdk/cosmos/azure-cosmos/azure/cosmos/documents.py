@@ -1,28 +1,29 @@
-﻿#The MIT License (MIT)
-#Copyright (c) 2014 Microsoft Corporation
+﻿# The MIT License (MIT)
+# Copyright (c) 2014 Microsoft Corporation
 
-#Permission is hereby granted, free of charge, to any person obtaining a copy
-#of this software and associated documentation files (the "Software"), to deal
-#in the Software without restriction, including without limitation the rights
-#to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-#copies of the Software, and to permit persons to whom the Software is
-#furnished to do so, subject to the following conditions:
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
 
-#The above copyright notice and this permission notice shall be included in all
-#copies or substantial portions of the Software.
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
 
-#THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-#IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-#FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-#AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-#LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-#OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-#SOFTWARE.
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 
 """AzureDocument classes and enums for the Azure Cosmos database service.
 """
 
 from . import _retry_options
+
 
 class DatabaseAccount(object):
     """Database account. A DatabaseAccount is the container for databases.
@@ -41,20 +42,20 @@ class DatabaseAccount(object):
         UserConsistencyPolicy settings.
     :ivar dict ConsistencyPolicy['defaultConsistencyLevel']:
         The default consistency level.
-    :ivar int ConsistencyPolicy['maxStalenessPrefix']: 
-        In bounded staleness consistency, the maximum allowed staleness in 
+    :ivar int ConsistencyPolicy['maxStalenessPrefix']:
+        In bounded staleness consistency, the maximum allowed staleness in
         terms difference in sequence numbers (aka version).
     :ivar int ConsistencyPolicy['maxStalenessIntervalInSeconds']:
-        In bounded staleness consistency, the maximum allowed staleness in 
+        In bounded staleness consistency, the maximum allowed staleness in
         terms time interval.
     :ivar boolean EnableMultipleWritableLocations:
-        Flag on the azure Cosmos account that indicates if writes can take 
+        Flag on the azure Cosmos account that indicates if writes can take
         place in multiple locations.
     """
 
     def __init__(self):
-        self.DatabasesLink = ''
-        self.MediaLink = ''
+        self.DatabasesLink = ""
+        self.MediaLink = ""
         self.MaxMediaStorageUsageInMB = 0
         self.CurrentMediaStorageUsageInMB = 0
         self.ConsumedDocumentStorageInMB = 0
@@ -76,6 +77,7 @@ class DatabaseAccount(object):
         """Gets the list of readable locations for a geo-replicated database account.
         """
         return self._ReadableLocations
+
 
 class ConsistencyLevel(object):
     """Represents the consistency levels supported for Azure Cosmos client
@@ -103,16 +105,17 @@ class ConsistencyLevel(object):
         Eventual Consistency guarantees that reads will return
         a subset of writes. All writes will be eventually be available for
         reads.
-    :ivar str ConsistencyLevel.ConsistentPrefix: 
+    :ivar str ConsistencyLevel.ConsistentPrefix:
         ConsistentPrefix Consistency guarantees that
         reads will return some prefix of all writes with no gaps. All writes
         will be eventually be available for reads.
     """
-    Strong = 'Strong'
-    BoundedStaleness = 'BoundedStaleness'
-    Session = 'Session'
-    Eventual = 'Eventual'
-    ConsistentPrefix = 'ConsistentPrefix'
+
+    Strong = "Strong"
+    BoundedStaleness = "BoundedStaleness"
+    Session = "Session"
+    Eventual = "Eventual"
+    ConsistentPrefix = "ConsistentPrefix"
 
 
 class IndexingMode(object):
@@ -139,9 +142,10 @@ class IndexingMode(object):
         storage cost or improve the write throughput. Your queries will
         degenerate to scans of the entire collection.
     """
-    Consistent = 'consistent'
-    Lazy = 'lazy'
-    NoIndex = 'none'
+
+    Consistent = "consistent"
+    Lazy = "lazy"
+    NoIndex = "none"
 
 
 class IndexKind(object):
@@ -156,8 +160,10 @@ class IndexKind(object):
         inequality predicate queries with efficient range scans.
         Can be used to serve queries like: SELECT * FROM docs d WHERE d.prop > 5
     """
-    Hash = 'Hash'
-    Range = 'Range'
+
+    Hash = "Hash"
+    Range = "Range"
+
 
 class PartitionKind(object):
     """Specifies the kind of partitioning to be applied.
@@ -165,7 +171,9 @@ class PartitionKind(object):
     :ivar str PartitionKind.Hash:
         The partition key definition path is hashed.
     """
-    Hash = 'Hash'
+
+    Hash = "Hash"
+
 
 class DataType(object):
     """Specifies the data type of index specs.
@@ -183,12 +191,13 @@ class DataType(object):
     :ivar str MultiPolygon:
         Represents a multi-polygon data type.
     """
-    Number = 'Number'
-    String = 'String'
-    Point = 'Point'
-    LineString = 'LineString'
-    Polygon = 'Polygon'
-    MultiPolygon = 'MultiPolygon'
+
+    Number = "Number"
+    String = "String"
+    Point = "Point"
+    LineString = "LineString"
+    Polygon = "Polygon"
+    MultiPolygon = "MultiPolygon"
 
 
 class IndexingDirective(object):
@@ -201,6 +210,7 @@ class IndexingDirective(object):
     :ivar int Include:
         Do not index the resource.
     """
+
     Default = 0
     Exclude = 1
     Include = 2
@@ -213,6 +223,7 @@ class ConnectionMode(object):
         Use the Azure Cosmos gateway to route all requests. The
         gateway proxies requests to the right data partition.
     """
+
     Gateway = 0
 
 
@@ -232,8 +243,9 @@ class MediaReadMode(object):
         Use Streamed to reduce the client memory overhead of reading and
         writing media files.
     """
-    Buffered = 'Buffered'
-    Streamed = 'Streamed'
+
+    Buffered = "Buffered"
+    Streamed = "Streamed"
 
 
 class PermissionMode(object):
@@ -246,9 +258,10 @@ class PermissionMode(object):
     :ivar str PermissionMode.All:
         Permission applicable for all operations.
     """
-    NoneMode = 'none'  # None is python's key word.
-    Read = 'read'
-    All = 'all'
+
+    NoneMode = "none"  # None is python's key word.
+    Read = "read"
+    All = "all"
 
 
 class TriggerType(object):
@@ -259,8 +272,9 @@ class TriggerType(object):
     :ivar str TriggerType.Post:
         Trigger should be executed after the associated operation(s).
     """
-    Pre = 'pre'
-    Post = 'post'
+
+    Pre = "pre"
+    Post = "post"
 
 
 class TriggerOperation(object):
@@ -277,11 +291,12 @@ class TriggerOperation(object):
     :ivar str TriggerOperation.Replace:
         Replace operations only.
     """
-    All = 'all'
-    Create = 'create'
-    Update = 'update'
-    Delete = 'delete'
-    Replace = 'replace'
+
+    All = "all"
+    Create = "create"
+    Update = "update"
+    Delete = "delete"
+    Replace = "replace"
 
 
 class SSLConfiguration(object):
@@ -296,6 +311,7 @@ class SSLConfiguration(object):
     :ivar str SSLCaCerts:
         The path of the CA_BUNDLE file with certificates of trusted CAs.
     """
+
     def __init__(self):
         self.SSLKeyFile = None
         self.SSLCertFile = None
@@ -310,6 +326,7 @@ class ProxyConfiguration(object):
     :ivar int Port:
         The port number of the proxy.
     """
+
     def __init__(self):
         self.Host = None
         self.Port = None
@@ -321,11 +338,11 @@ class ConnectionPolicy(object):
     :ivar int RequestTimeout:
         Gets or sets the request timeout (time to wait
         for response from network peer).
-    :ivar int MediaRequestTimeout: 
+    :ivar int MediaRequestTimeout:
         Gets or sets Time to wait for response
         from network peer for attachment content (aka media) operations.
     :ivar documents.ConnectionMode ConnectionMode:
-        Gets or sets the connection mode used in the client. Currently 
+        Gets or sets the connection mode used in the client. Currently
         only Gateway is supported.
     :ivar MediaReadMode.Buffered MediaReadMode:
         Gets or sets the attachment content (aka media) download mode.
@@ -342,16 +359,19 @@ class ConnectionPolicy(object):
         Gets or sets the preferred locations for geo-replicated database accounts.
         When EnableEndpointDiscovery is true and PreferredLocations is non-empty,
         the client will use this list to evaluate the final location, taking into consideration
-        the order specified in PreferredLocations list. The locations in this list are specified as the names of
-        the azure Cosmos locations like, 'West US', 'East US', 'Central India' and so on.
+        the order specified in PreferredLocations list. The locations in this list are specified
+        as the names of the azure Cosmos locations like, 'West US', 'East US', 'Central India'
+        and so on.
     :ivar RetryOptions RetryOptions:
         Gets or sets the retry options to be applied to all requests when retrying.
     :ivar boolean DisableSSLVerification:
-        Flag to disable SSL verification for the requests. SSL verification is enabled by default. 
+        Flag to disable SSL verification for the requests. SSL verification is enabled by default.
         Don't set this when targeting production endpoints.
-        This is intended to be used only when targeting emulator endpoint to avoid failing your requests with SSL related error.
+        This is intended to be used only when targeting emulator endpoint to avoid failing your
+        requests with SSL related error.
     :ivar boolean UseMultipleWriteLocations:
-        Flag to enable writes on any locations (regions) for geo-replicated database accounts in the azure Cosmos service.
+        Flag to enable writes on any locations (regions) for geo-replicated database accounts
+        in the azure Cosmos service.
     """
 
     __defaultRequestTimeout = 60000  # milliseconds
@@ -372,39 +392,44 @@ class ConnectionPolicy(object):
         self.DisableSSLVerification = False
         self.UseMultipleWriteLocations = False
 
+
 class _OperationType(object):
     """Represents the type of the operation
     """
-    Create = 'Create'
-    Delete = 'Delete'
-    ExecuteJavaScript = 'ExecuteJavaScript'
-    Head = 'Head'
-    HeadFeed = 'HeadFeed'
-    Query = 'Query'
-    Read = 'Read'
-    ReadFeed = 'ReadFeed'
-    Recreate = 'Recreate'
-    Replace = 'Replace'
-    SqlQuery = 'SqlQuery'
-    Update = 'Update'
-    Upsert = 'Upsert'
+
+    Create = "Create"
+    Delete = "Delete"
+    ExecuteJavaScript = "ExecuteJavaScript"
+    Head = "Head"
+    HeadFeed = "HeadFeed"
+    Query = "Query"
+    Read = "Read"
+    ReadFeed = "ReadFeed"
+    Recreate = "Recreate"
+    Replace = "Replace"
+    SqlQuery = "SqlQuery"
+    Update = "Update"
+    Upsert = "Upsert"
 
     @staticmethod
     def IsWriteOperation(operationType):
-        return (operationType == _OperationType.Create or
-               operationType == _OperationType.Delete or
-               operationType == _OperationType.Recreate or
-               operationType == _OperationType.ExecuteJavaScript or
-               operationType == _OperationType.Replace or
-               operationType == _OperationType.Upsert or
-               operationType == _OperationType.Update)
+        return operationType in (
+            _OperationType.Create,
+            _OperationType.Delete,
+            _OperationType.Recreate,
+            _OperationType.ExecuteJavaScript,
+            _OperationType.Replace,
+            _OperationType.Upsert,
+            _OperationType.Update,
+        )
 
     @staticmethod
     def IsReadOnlyOperation(operationType):
-        return (operationType == _OperationType.Read or
-               operationType == _OperationType.ReadFeed or
-               operationType == _OperationType.Head or
-               operationType == _OperationType.HeadFeed or
-               operationType == _OperationType.Query or
-               operationType == _OperationType.SqlQuery)
-
+        return operationType in (
+            _OperationType.Read,
+            _OperationType.ReadFeed,
+            _OperationType.Head,
+            _OperationType.HeadFeed,
+            _OperationType.Query,
+            _OperationType.SqlQuery,
+        )
