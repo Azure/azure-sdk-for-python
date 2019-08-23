@@ -189,7 +189,10 @@ def prep_and_run_tox(targeted_packages, parsed_args, options_array=[]):
     for index, package_dir in enumerate(targeted_packages):
         destination_tox_ini = os.path.join(package_dir, "tox.ini")
         destination_dev_req = os.path.join(package_dir, "dev_requirements.txt")
+
         tox_execution_array = ["tox"]
+        tox_execution_array.extend([] if parsed_args.tparallel else ["--parallel", "auto"])
+
         local_options_array = options_array[:]
 
         # if we are targeting only packages that are management plane, it is a possibility
