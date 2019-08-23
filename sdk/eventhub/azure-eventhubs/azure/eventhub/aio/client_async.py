@@ -221,12 +221,11 @@ class EventHubClient(EventHubClientAbstract):
                 :caption: Add an async consumer to the client for a particular consumer group and partition.
 
         """
-        owner_level = kwargs.get("owner_level", None)
-        operation = kwargs.get("operation", None)
-        prefetch = kwargs.get("prefetch", None)
-        loop = kwargs.get("loop", None)
+        owner_level = kwargs.get("owner_level")
+        operation = kwargs.get("operation")
+        prefetch = kwargs.get("prefetch") or self.config.prefetch
+        loop = kwargs.get("loop")
 
-        prefetch = prefetch or self.config.prefetch
         path = self.address.path + operation if operation else self.address.path
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
             self.address.hostname, path, consumer_group, partition_id)
