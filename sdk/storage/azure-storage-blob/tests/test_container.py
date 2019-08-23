@@ -6,6 +6,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import pytest
+import unittest
 from dateutil.tz import tzutc
 
 import requests

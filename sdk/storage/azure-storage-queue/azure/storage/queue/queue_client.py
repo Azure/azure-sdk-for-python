@@ -18,7 +18,6 @@ import six
 
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
-from ._shared.shared_access_signature import QueueSharedAccessSignature
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
 from ._shared.request_handlers import add_metadata_headers, serialize_iso
 from ._shared.response_handlers import (
@@ -31,6 +30,7 @@ from ._generated import AzureQueueStorage
 from ._generated.models import StorageErrorException, SignedIdentifier
 from ._generated.models import QueueMessage as GenQueueMessage
 
+from ._shared_access_signature import QueueSharedAccessSignature
 from .models import QueueMessage, AccessPolicy, MessagesPaged
 
 if TYPE_CHECKING:

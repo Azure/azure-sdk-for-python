@@ -15,7 +15,6 @@ except ImportError:
 
 import six
 from azure.core.tracing.decorator import distributed_trace
-from ._shared.shared_access_signature import FileSharedAccessSignature
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
 from ._shared.request_handlers import add_metadata_headers, serialize_iso
 from ._shared.response_handlers import (
@@ -31,6 +30,7 @@ from ._generated.models import (
 from ._deserialize import deserialize_share_properties
 from .directory_client import DirectoryClient
 from .file_client import FileClient
+from ._shared_access_signature import FileSharedAccessSignature
 
 if TYPE_CHECKING:
     from .models import ShareProperties, AccessPolicy
