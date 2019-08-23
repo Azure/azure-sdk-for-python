@@ -22,7 +22,10 @@
 """Create, read, update and delete items in the Azure Cosmos DB SQL API service.
 """
 
+from typing import Any, Callable, Dict, List, Optional, Union
+
 import six
+
 from ._cosmos_client_connection import CosmosClientConnection
 from .errors import HTTPFailure
 from .http_constants import StatusCodes
@@ -30,15 +33,17 @@ from .offer import Offer
 from .scripts import Scripts
 from ._query_iterable import QueryIterable
 from .partition_key import NonePartitionKeyValue
-from typing import Any, Callable, Dict, List, Optional, Union
 
 __all__ = ("Container",)
+
+# pylint: disable=protected-access
 
 
 class Container:
     """ An Azure Cosmos DB container.
 
-    A container in an Azure Cosmos DB SQL API database is a collection of documents, each of which represented as an Item.
+    A container in an Azure Cosmos DB SQL API database is a collection of documents,
+    each of which represented as an Item.
 
     :ivar str id: ID (name) of the container
     :ivar str session_token: The session token for the container.
@@ -49,7 +54,7 @@ class Container:
 
     """
 
-    def __init__(self, client_connection, database_link, id, properties=None):
+    def __init__(self, client_connection, database_link, id, properties=None):  # pylint: disable=redefined-builtin
         # type: (CosmosClientConnection, str, str, Dict[str, Any]) -> None
         self.client_connection = client_connection
         self.id = id
@@ -107,11 +112,13 @@ class Container:
         :param session_token: Token for use with Session consistency.
         :param initial_headers: Initial headers to be sent as part of the request.
         :param populate_query_metrics: Enable returning query metrics in response headers.
-        :param populate_partition_key_range_statistics: Enable returning partition key range statistics in response headers.
+        :param populate_partition_key_range_statistics: Enable returning partition key
+            range statistics in response headers.
         :param populate_quota_info: Enable returning collection storage quota information in response headers.
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
-        :raise `HTTPFailure`: Raised if the container couldn't be retrieved. This includes if the container does not exist.
+        :raise `HTTPFailure`: Raised if the container couldn't be retrieved. This includes
+            if the container does not exist.
         :returns: :class:`Container` instance representing the retrieved container.
 
         """
@@ -138,16 +145,16 @@ class Container:
 
     def read_item(
         self,
-        item,
-        partition_key,
-        session_token=None,
-        initial_headers=None,
-        populate_query_metrics=None,
-        post_trigger_include=None,
-        request_options=None,
-        response_hook=None,
+        item,  # type: Union[str, Dict[str, Any]]
+        partition_key,  # type: Any
+        session_token=None,  # type: str
+        initial_headers=None,  # type:   # type: Dict[str, str]
+        populate_query_metrics=None,  # type: bool
+        post_trigger_include=None,  # type: str
+        request_options=None,  # type: Dict[str, Any]
+        response_hook=None,  # type: Optional[Callable]
     ):
-        # type: (Union[str, Dict[str, Any]], Any, str, Dict[str, str], bool, str, Dict[str, Any], Optional[Callable]) -> Dict[str, str]
+        # type: (...) -> Dict[str, str]
         """
         Get the item identified by `id`.
 
@@ -245,7 +252,8 @@ class Container:
 
         :param partition_key_range_id: ChangeFeed requests can be executed against specific partition key ranges.
         This is used to process the change feed in parallel across multiple consumers.
-        :param is_start_from_beginning: Get whether change feed should start from beginning (true) or from current (false).
+        :param is_start_from_beginning: Get whether change feed should start from
+            beginning (true) or from current (false).
         By default it's start from current (false).
         :param continuation: e_tag value to be used as continuation for reading change feed.
         :param max_item_count: Max number of items to be returned in the enumeration operation.
@@ -277,30 +285,32 @@ class Container:
 
     def query_items(
         self,
-        query,
-        parameters=None,
-        partition_key=None,
-        enable_cross_partition_query=None,
-        max_item_count=None,
-        session_token=None,
-        initial_headers=None,
-        enable_scan_in_query=None,
-        populate_query_metrics=None,
-        feed_options=None,
-        response_hook=None,
+        query,  # type: str
+        parameters=None,  # type: List
+        partition_key=None,  # type: Any
+        enable_cross_partition_query=None,  # type: bool
+        max_item_count=None,  # type: int
+        session_token=None,  # type: str
+        initial_headers=None,  # type: Dict[str, str]
+        enable_scan_in_query=None,  # type: bool
+        populate_query_metrics=None,  # type: bool
+        feed_options=None,  # type: Dict[str, Any]
+        response_hook=None,  # type: Optional[Callable]
     ):
-        # type: (str, List, Any, bool, int, str, Dict[str, str], bool, bool, Dict[str, Any, Optional[Callable]) -> QueryIterable
+        # type: (...) -> QueryIterable
         """Return all results matching the given `query`.
 
         :param query: The Azure Cosmos DB SQL query to execute.
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
         :param partition_key: Specifies the partition key value for the item.
-        :param enable_cross_partition_query: Allows sending of more than one request to execute the query in the Azure Cosmos DB service.
+        :param enable_cross_partition_query: Allows sending of more than one request to
+            execute the query in the Azure Cosmos DB service.
         More than one request is necessary if the query is not scoped to single partition key value.
         :param max_item_count: Max number of items to be returned in the enumeration operation.
         :param session_token: Token for use with Session consistency.
         :param initial_headers: Initial headers to be sent as part of the request.
-        :param enable_scan_in_query: Allow scan on the queries which couldn't be served as indexing was opted out on the requested paths.
+        :param enable_scan_in_query: Allow scan on the queries which couldn't be served as
+            indexing was opted out on the requested paths.
         :param populate_query_metrics: Enable returning query metrics in response headers.
         :param feed_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
@@ -360,18 +370,18 @@ class Container:
 
     def replace_item(
         self,
-        item,
-        body,
-        session_token=None,
-        initial_headers=None,
-        access_condition=None,
-        populate_query_metrics=None,
-        pre_trigger_include=None,
-        post_trigger_include=None,
-        request_options=None,
-        response_hook=None,
+        item,  # type: Union[str, Dict[str, Any]]
+        body,  # type: Dict[str, Any]
+        session_token=None,  # type: str
+        initial_headers=None,  # type: Dict[str, str]
+        access_condition=None,  # type: Dict[str, str]
+        populate_query_metrics=None,  # type: bool
+        pre_trigger_include=None,  # type: str
+        post_trigger_include=None,  # type: str
+        request_options=None,  # type: Dict[str, Any]
+        response_hook=None,  # type: Optional[Callable]
     ):
-        # type: (Union[str, Dict[str, Any]], Dict[str, Any], str, Dict[str, str], Dict[str, str], bool, str, str, Dict[str, Any], Optional[Callable]) -> Dict[str, str]
+        # type: (...) -> Dict[str, str]
         """ Replaces the specified item if it exists in the container.
 
         :param item: The ID (name) or dict representing item to be replaced.
@@ -412,17 +422,17 @@ class Container:
 
     def upsert_item(
         self,
-        body,
-        session_token=None,
-        initial_headers=None,
-        access_condition=None,
-        populate_query_metrics=None,
-        pre_trigger_include=None,
-        post_trigger_include=None,
-        request_options=None,
-        response_hook=None,
+        body,  # type: Dict[str, Any]
+        session_token=None,  # type: str
+        initial_headers=None,  # type: Dict[str, str]
+        access_condition=None,  # type: Dict[str, str]
+        populate_query_metrics=None,  # type: bool
+        pre_trigger_include=None,  # type: str
+        post_trigger_include=None,  # type: str
+        request_options=None,  # type: Dict[str, Any]
+        response_hook=None,  # type: Optional[Callable]
     ):
-        # type: (Dict[str, Any], str, Dict[str, str], Dict[str, str], bool, str, str, Dict[str, Any], Optional[Callable]) -> Dict[str, str]
+        # type: (...) -> Dict[str, str]
         """ Insert or update the specified item.
 
         :param body: A dict-like object representing the item to update or insert.
@@ -463,18 +473,18 @@ class Container:
 
     def create_item(
         self,
-        body,
-        session_token=None,
-        initial_headers=None,
-        access_condition=None,
-        populate_query_metrics=None,
-        pre_trigger_include=None,
-        post_trigger_include=None,
-        indexing_directive=None,
-        request_options=None,
-        response_hook=None,
+        body,  # type: Dict[str, Any]
+        session_token=None,  # type: str
+        initial_headers=None,  # type: Dict[str, str]
+        access_condition=None,  # type: Dict[str, str]
+        populate_query_metrics=None,  # type: bool
+        pre_trigger_include=None,  # type: str
+        post_trigger_include=None,  # type: str
+        indexing_directive=None,  # type: Any
+        request_options=None,  # type: Dict[str, Any]
+        response_hook=None,  # type: Optional[Callable]
     ):
-        # type: (Dict[str, Any], str, Dict[str, str], Dict[str, str], bool, str, str, Any, Dict[str, Any], Optional[Callable]) -> Dict[str, str]
+        # type: (...) -> Dict[str, str]
         """ Create an item in the container.
 
         :param body: A dict-like object representing the item to create.
@@ -521,18 +531,18 @@ class Container:
 
     def delete_item(
         self,
-        item,
-        partition_key,
-        session_token=None,
-        initial_headers=None,
-        access_condition=None,
-        populate_query_metrics=None,
-        pre_trigger_include=None,
-        post_trigger_include=None,
-        request_options=None,
-        response_hook=None,
+        item,  # type: Union[Dict[str, Any], str]
+        partition_key,  # type: Any
+        session_token=None,  # type: str
+        initial_headers=None,  # type: Dict[str, str]
+        access_condition=None,  # type: Dict[str, str]
+        populate_query_metrics=None,  # type: bool
+        pre_trigger_include=None,  # type: str
+        post_trigger_include=None,  # type: str
+        request_options=None,  # type: Dict[str, Any]
+        response_hook=None,  # type: Optional[Callable]
     ):
-        # type: (Union[Dict[str, Any], str], Any, str, Dict[str, str], Dict[str, str], bool, str, str, Dict[str, Any], Optional[Callable]) -> None
+        # type: (...) -> None
         """ Delete the specified item from the container.
 
         :param item: The ID (name) or dict representing item to be deleted.
@@ -545,7 +555,8 @@ class Container:
         :param post_trigger_include: trigger id to be used as post operation trigger.
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
-        :raises `HTTPFailure`: The item wasn't deleted successfully. If the item does not exist in the container, a `404` error is returned.
+        :raises `HTTPFailure`: The item wasn't deleted successfully. If the item does not
+            exist in the container, a `404` error is returned.
 
         """
         if not request_options:
@@ -586,7 +597,7 @@ class Container:
             "parameters": [{"name": "@link", "value": link}],
         }
         offers = list(self.client_connection.QueryOffers(query_spec))
-        if len(offers) <= 0:
+        if not offers:
             raise HTTPFailure(StatusCodes.NOT_FOUND, "Could not find Offer for container " + self.container_link)
 
         if response_hook:
@@ -595,7 +606,7 @@ class Container:
         return Offer(offer_throughput=offers[0]["content"]["offerThroughput"], properties=offers[0])
 
     def replace_throughput(self, throughput, response_hook=None):
-        # type: (in, Optional[Callable]) -> Offer
+        # type: (int, Optional[Callable]) -> Offer
         """ Replace the container's throughput
 
         :param throughput: The throughput to be set (an integer).
@@ -611,7 +622,7 @@ class Container:
             "parameters": [{"name": "@link", "value": link}],
         }
         offers = list(self.client_connection.QueryOffers(query_spec))
-        if len(offers) <= 0:
+        if not offers:
             raise HTTPFailure(StatusCodes.NOT_FOUND, "Could not find Offer for container " + self.container_link)
         new_offer = offers[0].copy()
         new_offer["content"]["offerThroughput"] = throughput
@@ -658,7 +669,8 @@ class Container:
         :param query: The Azure Cosmos DB SQL query to execute.
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
         :param partition_key: Specifies the partition key value for the item.
-        :param enable_cross_partition_query: Allows sending of more than one request to execute the query in the Azure Cosmos DB service.
+        :param enable_cross_partition_query: Allows sending of more than one request to execute
+            the query in the Azure Cosmos DB service.
         More than one request is necessary if the query is not scoped to single partition key value.
         :param max_item_count: Max number of items to be returned in the enumeration operation.
         :param feed_options: Dictionary of additional properties to be used for the request.
@@ -716,7 +728,8 @@ class Container:
         :param partition_key: Partition key for the conflict to delete.
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
-        :raises `HTTPFailure`: The conflict wasn't deleted successfully. If the conflict does not exist in the container, a `404` error is returned.
+        :raises `HTTPFailure`: The conflict wasn't deleted successfully. If the conflict
+            does not exist in the container, a `404` error is returned.
 
         """
         if not request_options:

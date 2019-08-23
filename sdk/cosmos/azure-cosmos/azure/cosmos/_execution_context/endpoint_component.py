@@ -102,7 +102,7 @@ class _QueryExecutionAggregateEndpointComponent(_QueryExecutionEndpointComponent
         for res in self._execution_context:
             for item in res:
                 for operator in self._local_aggregators:
-                    if isinstance(item, dict) and len(item.keys()) > 0:
+                    if isinstance(item, dict) and item:
                         operator.aggregate(item["item"])
                     elif isinstance(item, numbers.Number):
                         operator.aggregate(item)

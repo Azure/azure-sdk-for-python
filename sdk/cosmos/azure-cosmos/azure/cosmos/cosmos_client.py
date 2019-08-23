@@ -22,12 +22,14 @@
 """Create, read, and delete databases in the Azure Cosmos DB SQL API service.
 """
 
+from typing import Any, Callable, Dict, Mapping, Optional, Union, cast
+
 import six
+
 from ._cosmos_client_connection import CosmosClientConnection
 from .database import Database
 from .documents import ConnectionPolicy, DatabaseAccount
 from ._query_iterable import QueryIterable
-from typing import Any, Callable, Dict, Mapping, Optional, Union, cast
 
 __all__ = ("CosmosClient",)
 
@@ -38,7 +40,9 @@ class CosmosClient:
     Use this client to configure and execute requests to the Azure Cosmos DB service.
     """
 
-    def __init__(self, url, auth, consistency_level="Session", connection_policy=None):
+    def __init__(
+        self, url, auth, consistency_level="Session", connection_policy=None
+    ):  # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs,line-too-long
         # type: (str, Dict[str, str], str, ConnectionPolicy) -> None
         """ Instantiate a new CosmosClient.
 
@@ -78,7 +82,7 @@ class CosmosClient:
 
     def create_database(
         self,
-        id,
+        id,  # pylint: disable=redefined-builtin
         session_token=None,
         initial_headers=None,
         access_condition=None,
@@ -134,7 +138,8 @@ class CosmosClient:
         """
         Retrieve an existing database with the ID (name) `id`.
 
-        :param database: The ID (name), dict representing the properties or :class:`Database` instance of the database to read.
+        :param database: The ID (name), dict representing the properties or :class:`Database`
+            instance of the database to read.
         :returns: A :class:`Database` instance representing the retrieved database.
 
         """
@@ -187,24 +192,25 @@ class CosmosClient:
 
     def query_databases(
         self,
-        query=None,
-        parameters=None,
-        enable_cross_partition_query=None,
-        max_item_count=None,
-        session_token=None,
-        initial_headers=None,
-        populate_query_metrics=None,
-        feed_options=None,
-        response_hook=None,
+        query=None,  # type: str
+        parameters=None,  # type: List[str]
+        enable_cross_partition_query=None,  # type: bool
+        max_item_count=None,  # type:  int
+        session_token=None,  # type: str
+        initial_headers=None,  # type: Dict[str,str]
+        populate_query_metrics=None,  # type: bool
+        feed_options=None,  # type: Dict[str, Any]
+        response_hook=None,  # type: Optional[Callable]
     ):
-        # type: (str, List[str], bool, int, str, Dict[str,str], bool, Dict[str, Any], Optional[Callable]) -> QueryIterable
+        # type: (...) -> QueryIterable
 
         """
         Query the databases in a Cosmos DB SQL database account.
 
         :param query: The Azure Cosmos DB SQL query to execute.
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
-        :param enable_cross_partition_query: Allow scan on the queries which couldn't be served as indexing was opted out on the requested paths.
+        :param enable_cross_partition_query: Allow scan on the queries which couldn't be
+            served as indexing was opted out on the requested paths.
         :param max_item_count: Max number of items to be returned in the enumeration operation.
         :param session_token: Token for use with Session consistency.
         :param initial_headers: Initial headers to be sent as part of the request.
@@ -244,19 +250,20 @@ class CosmosClient:
 
     def delete_database(
         self,
-        database,
-        session_token=None,
-        initial_headers=None,
-        access_condition=None,
-        populate_query_metrics=None,
-        request_options=None,
-        response_hook=None,
+        database,  # type: Union[str, Database, Dict[str, Any]]
+        session_token=None,  # type: str
+        initial_headers=None,  # type: Dict[str, str]
+        access_condition=None,  # type:  Dict[str, str]
+        populate_query_metrics=None,  # type: bool
+        request_options=None,  # type: Dict[str, Any]
+        response_hook=None,  # type: Optional[Callable]
     ):
-        # type: (Union[str, Database, Dict[str, Any]], str, Dict[str, str], Dict[str, str], bool, Dict[str, Any], Optional[Callable]) -> None
+        # type: (...) -> None
         """
         Delete the database with the given ID (name).
 
-        :param database: The ID (name), dict representing the properties or :class:`Database` instance of the database to delete.
+        :param database: The ID (name), dict representing the properties or :class:`Database`
+            instance of the database to delete.
         :param session_token: Token for use with Session consistency.
         :param initial_headers: Initial headers to be sent as part of the request.
         :param access_condition: Conditions Associated with the request.
