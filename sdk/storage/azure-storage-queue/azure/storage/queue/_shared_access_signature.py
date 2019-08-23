@@ -79,8 +79,6 @@ class QueueSharedAccessSignature(SharedAccessSignature):
 
 
 class _QueueSharedAccessHelper(_SharedAccessHelper):
-    def __init__(self):  # pylint: disable=useless-super-delegation
-        super(_QueueSharedAccessHelper, self).__init__()
 
     def add_resource_signature(self, account_name, account_key, path):  # pylint: disable=arguments-differ
         def get_value_to_append(query):

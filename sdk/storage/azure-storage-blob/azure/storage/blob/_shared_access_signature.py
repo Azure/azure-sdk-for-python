@@ -193,8 +193,6 @@ class BlobSharedAccessSignature(SharedAccessSignature):
 
 
 class _BlobSharedAccessHelper(_SharedAccessHelper):
-    def __init__(self):  # pylint: disable=useless-super-delegation
-        super(_BlobSharedAccessHelper, self).__init__()
 
     def add_timestamp(self, timestamp):
         self._add_query(BlobQueryStringConstants.SIGNED_TIMESTAMP, timestamp)

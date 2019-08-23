@@ -185,8 +185,6 @@ class FileSharedAccessSignature(SharedAccessSignature):
 
 
 class _FileSharedAccessHelper(_SharedAccessHelper):
-    def __init__(self):  # pylint: disable=useless-super-delegation
-        super(_FileSharedAccessHelper, self).__init__()
 
     def add_resource_signature(self, account_name, account_key, path):
         def get_value_to_append(query):
