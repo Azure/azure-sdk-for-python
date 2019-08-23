@@ -12,7 +12,7 @@ except ImportError:
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
-    from typing import Any, Dict, Mapping, Optional
+    from typing import Any, Dict, Optional
     from datetime import datetime
     from ._shared._generated.v7_0 import models as _models
 
@@ -68,7 +68,7 @@ class KeyBase(object):
     """A key's id and attributes."""
 
     def __init__(self, attributes, vault_id, **kwargs):
-        # type: (_models.KeyAttributes, str, Mapping[str, Any]) -> None
+        # type: (_models.KeyAttributes, str, Any) -> None
         self._attributes = attributes
         self._id = vault_id
         self._vault_id = parse_vault_id(vault_id)
@@ -186,7 +186,7 @@ class Key(KeyBase):
     """A key's attributes and cryptographic material"""
 
     def __init__(self, attributes, vault_id, key_material, **kwargs):
-        # type: (_models.KeyAttributes, str, _models.JsonWebKey, Mapping[str, Any]) -> None
+        # type: (_models.KeyAttributes, str, _models.JsonWebKey, Any) -> None
         super(Key, self).__init__(attributes, vault_id, **kwargs)
         self._key_material = key_material
 
@@ -214,13 +214,13 @@ class DeletedKey(Key):
 
     def __init__(
         self,
-        attributes,  # type: models.KeyAttributes
+        attributes,  # type: _models.KeyAttributes
         vault_id,  # type: str
-        key_material=None,  # type: models.JsonWebKey
+        key_material=None,  # type: _models.JsonWebKey
         deleted_date=None,  # type: Optional[datetime]
         recovery_id=None,  # type: Optional[str]
         scheduled_purge_date=None,  # type: Optional[datetime]
-        **kwargs  # type: Mapping[str, Any]
+        **kwargs  # type: Any
     ):
         # type: (...) -> None
         super(DeletedKey, self).__init__(attributes, vault_id, key_material, **kwargs)
