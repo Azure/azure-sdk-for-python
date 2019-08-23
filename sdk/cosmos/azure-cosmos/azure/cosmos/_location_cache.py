@@ -28,6 +28,8 @@ import time
 from . import documents
 from . import http_constants
 
+# pylint: disable=protected-access
+
 
 class EndpointOperationType(object):
     NoneType = "None"
@@ -35,8 +37,26 @@ class EndpointOperationType(object):
     WriteType = "Write"
 
 
-class LocationCache(object):
-    def current_time_millis(self):
+def get_endpoint_by_location(locations):
+    endpoints_by_location = collections.OrderedDict()
+    parsed_locations = []
+
+    for location in locations:
+        if not location["name"]:
+            # during fail-over the location name is empty
+            continue
+        try:
+            region_uri = location["databaseAccountEndpoint"]
+            parsed_locations.append(location["name"])
+            endpoints_by_location.update({location["name"]: region_uri})
+        except Exception as e:
+            raise e
+
+    return endpoints_by_location, parsed_locations
+
+
+class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many-instance-attributes
+    def current_time_millis(self):  # pylint: disable=no-self-use
         return int(round(time.time() * 1000))
 
     def __init__(
@@ -131,7 +151,7 @@ class LocationCache(object):
         )
         return endpoints[location_index % len(endpoints)]
 
-    def should_refresh_endpoints(self):
+    def should_refresh_endpoints(self):  # pylint: disable=too-many-return-statements
         most_preferred_location = self.preferred_locations[0] if self.preferred_locations else None
 
         # we should schedule refresh in background if we are unable to target the user's most preferredLocation.
@@ -233,12 +253,12 @@ class LocationCache(object):
 
         if self.enable_endpoint_discovery:
             if read_locations:
-                self.available_read_endpoint_by_locations, self.available_read_locations = self.get_endpoint_by_location(  # pylint: disable=line-too-long
+                self.available_read_endpoint_by_locations, self.available_read_locations = get_endpoint_by_location(  # pylint: disable=line-too-long
                     read_locations
                 )
 
             if write_locations:
-                self.available_write_endpoint_by_locations, self.available_write_locations = self.get_endpoint_by_location(  # pylint: disable=line-too-long
+                self.available_write_endpoint_by_locations, self.available_write_locations = get_endpoint_by_location(  # pylint: disable=line-too-long
                     write_locations
                 )
 
@@ -254,7 +274,7 @@ class LocationCache(object):
             EndpointOperationType.ReadType,
             self.write_endpoints[0],
         )
-        self.last_cache_update_timestamp = self.current_time_millis()
+        self.last_cache_update_timestamp = self.current_time_millis()  # pylint: disable=attribute-defined-outside-init
 
     def get_preferred_available_endpoints(
         self, endpoints_by_location, orderedLocations, expected_available_operation, fallback_endpoint
@@ -262,7 +282,7 @@ class LocationCache(object):
         endpoints = []
         # if enableEndpointDiscovery is false, we always use the defaultEndpoint that
         # user passed in during documentClient init
-        if self.enable_endpoint_discovery and endpoints_by_location:
+        if self.enable_endpoint_discovery and endpoints_by_location:  # pylint: disable=too-many-nested-blocks
             if (
                 self.can_use_multiple_write_locations()
                 or expected_available_operation == EndpointOperationType.ReadType
@@ -295,23 +315,6 @@ class LocationCache(object):
             endpoints.append(fallback_endpoint)
 
         return endpoints
-
-    def get_endpoint_by_location(self, locations):
-        endpoints_by_location = collections.OrderedDict()
-        parsed_locations = []
-
-        for location in locations:
-            if not location["name"]:
-                # during fail-over the location name is empty
-                continue
-            try:
-                region_uri = location["databaseAccountEndpoint"]
-                parsed_locations.append(location["name"])
-                endpoints_by_location.update({location["name"]: region_uri})
-            except Exception as e:
-                raise e
-
-        return endpoints_by_location, parsed_locations
 
     def can_use_multiple_write_locations(self):
         return self.use_multiple_write_locations and self.enable_multiple_writable_locations

@@ -74,7 +74,7 @@ class SessionContainer(object):
 
                 # return empty token if not found
                 return ""
-            except Exception:
+            except Exception:  # pylint: disable=broad-except
                 return ""
 
     def set_session_token(self, response_result, response_headers):
@@ -119,7 +119,7 @@ class SessionContainer(object):
 
             except ValueError:
                 return
-            except Exception:
+            except Exception:  # pylint: disable=broad-except
                 exc_type, exc_value, exc_traceback = sys.exc_info()
                 traceback.print_exception(exc_type, exc_value, exc_traceback, limit=2, file=sys.stdout)
                 return
