@@ -25,7 +25,7 @@
 from . import _retry_options
 
 
-class DatabaseAccount(object):
+class DatabaseAccount(object):  # pylint: disable=too-many-instance-attributes
     """Database account. A DatabaseAccount is the container for databases.
 
     :ivar str DatabaseLink:
@@ -332,7 +332,7 @@ class ProxyConfiguration(object):
         self.Port = None
 
 
-class ConnectionPolicy(object):
+class ConnectionPolicy(object):  # pylint: disable=too-many-instance-attributes
     """Represents the Connection policy assocated with a CosmosClientConnection.
 
     :ivar int RequestTimeout:
