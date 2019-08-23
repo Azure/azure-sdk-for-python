@@ -37,6 +37,521 @@ class AgreementContent(Model):
         self.edifact = kwargs.get('edifact', None)
 
 
+class ApiDeploymentParameterMetadata(Model):
+    """The API deployment parameter metadata.
+
+    :param type: The type.
+    :type type: str
+    :param is_required: Indicates whether its required.
+    :type is_required: bool
+    :param display_name: The display name.
+    :type display_name: str
+    :param description: The description.
+    :type description: str
+    :param visibility: The visibility. Possible values include:
+     'NotSpecified', 'Default', 'Internal'
+    :type visibility: str or
+     ~azure.mgmt.logic.models.ApiDeploymentParameterVisibility
+    """
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'is_required': {'key': 'isRequired', 'type': 'bool'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'visibility': {'key': 'visibility', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ApiDeploymentParameterMetadata, self).__init__(**kwargs)
+        self.type = kwargs.get('type', None)
+        self.is_required = kwargs.get('is_required', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.description = kwargs.get('description', None)
+        self.visibility = kwargs.get('visibility', None)
+
+
+class ApiDeploymentParameterMetadataSet(Model):
+    """The API deployment parameters metadata.
+
+    :param package_content_link: The package content link parameter.
+    :type package_content_link:
+     ~azure.mgmt.logic.models.ApiDeploymentParameterMetadata
+    :param redis_cache_connection_string: The package content link parameter.
+    :type redis_cache_connection_string:
+     ~azure.mgmt.logic.models.ApiDeploymentParameterMetadata
+    """
+
+    _attribute_map = {
+        'package_content_link': {'key': 'PackageContentLink', 'type': 'ApiDeploymentParameterMetadata'},
+        'redis_cache_connection_string': {'key': 'RedisCacheConnectionString', 'type': 'ApiDeploymentParameterMetadata'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ApiDeploymentParameterMetadataSet, self).__init__(**kwargs)
+        self.package_content_link = kwargs.get('package_content_link', None)
+        self.redis_cache_connection_string = kwargs.get('redis_cache_connection_string', None)
+
+
+class Resource(Model):
+    """The base resource type.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The resource id.
+    :vartype id: str
+    :ivar name: Gets the resource name.
+    :vartype name: str
+    :ivar type: Gets the resource type.
+    :vartype type: str
+    :param location: The resource location.
+    :type location: str
+    :param tags: The resource tags.
+    :type tags: dict[str, str]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+    }
+
+    def __init__(self, **kwargs):
+        super(Resource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.location = kwargs.get('location', None)
+        self.tags = kwargs.get('tags', None)
+
+
+class ApiOperation(Resource):
+    """The api operation.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The resource id.
+    :vartype id: str
+    :ivar name: Gets the resource name.
+    :vartype name: str
+    :ivar type: Gets the resource type.
+    :vartype type: str
+    :param location: The resource location.
+    :type location: str
+    :param tags: The resource tags.
+    :type tags: dict[str, str]
+    :param properties:
+    :type properties:
+     ~azure.mgmt.logic.models.ApiOperationPropertiesDefinition
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'properties': {'key': 'properties', 'type': 'ApiOperationPropertiesDefinition'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ApiOperation, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)
+
+
+class ApiOperationAnnotation(Model):
+    """ApiOperationAnnotation.
+
+    :param status: Possible values include: 'NotSpecified', 'Preview',
+     'Production'
+    :type status: str or ~azure.mgmt.logic.models.StatusAnnotation
+    :param family: The family.
+    :type family: str
+    :param revision: The revision.
+    :type revision: int
+    """
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'family': {'key': 'family', 'type': 'str'},
+        'revision': {'key': 'revision', 'type': 'int'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ApiOperationAnnotation, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)
+        self.family = kwargs.get('family', None)
+        self.revision = kwargs.get('revision', None)
+
+
+class ApiOperationListResult(Model):
+    """The list of managed API operations.
+
+    :param value: The api operation definitions for an API.
+    :type value: list[~azure.mgmt.logic.models.ApiOperation]
+    :param next_link: The URL to get the next set of results.
+    :type next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[ApiOperation]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ApiOperationListResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get('next_link', None)
+
+
+class ApiOperationPropertiesDefinition(Model):
+    """The api operations properties.
+
+    :param summary: The summary of the api operation.
+    :type summary: str
+    :param description: The description of the api operation.
+    :type description: str
+    :param visibility: The visibility of the api operation.
+    :type visibility: str
+    :param trigger: The trigger type of api operation.
+    :type trigger: str
+    :param trigger_hint: The trigger hint for the api operation.
+    :type trigger_hint: str
+    :param pageable: Indicates whether the api operation is pageable.
+    :type pageable: bool
+    :param annotation: The annotation of api operation.
+    :type annotation: ~azure.mgmt.logic.models.ApiOperationAnnotation
+    :param api: The api reference.
+    :type api: ~azure.mgmt.logic.models.ApiReference
+    :param inputs_definition: The operation inputs definition schema.
+    :type inputs_definition: ~azure.mgmt.logic.models.SwaggerSchema
+    :param responses_definition: The operation responses definition schemas.
+    :type responses_definition: dict[str,
+     ~azure.mgmt.logic.models.SwaggerSchema]
+    :param is_web_hook: Indicates whether the API operation is webhook or not.
+    :type is_web_hook: bool
+    :param is_notification: Indicates whether the API operation is
+     notification or not.
+    :type is_notification: bool
+    """
+
+    _attribute_map = {
+        'summary': {'key': 'summary', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'visibility': {'key': 'visibility', 'type': 'str'},
+        'trigger': {'key': 'trigger', 'type': 'str'},
+        'trigger_hint': {'key': 'triggerHint', 'type': 'str'},
+        'pageable': {'key': 'pageable', 'type': 'bool'},
+        'annotation': {'key': 'annotation', 'type': 'ApiOperationAnnotation'},
+        'api': {'key': 'api', 'type': 'ApiReference'},
+        'inputs_definition': {'key': 'inputsDefinition', 'type': 'SwaggerSchema'},
+        'responses_definition': {'key': 'responsesDefinition', 'type': '{SwaggerSchema}'},
+        'is_web_hook': {'key': 'isWebHook', 'type': 'bool'},
+        'is_notification': {'key': 'isNotification', 'type': 'bool'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ApiOperationPropertiesDefinition, self).__init__(**kwargs)
+        self.summary = kwargs.get('summary', None)
+        self.description = kwargs.get('description', None)
+        self.visibility = kwargs.get('visibility', None)
+        self.trigger = kwargs.get('trigger', None)
+        self.trigger_hint = kwargs.get('trigger_hint', None)
+        self.pageable = kwargs.get('pageable', None)
+        self.annotation = kwargs.get('annotation', None)
+        self.api = kwargs.get('api', None)
+        self.inputs_definition = kwargs.get('inputs_definition', None)
+        self.responses_definition = kwargs.get('responses_definition', None)
+        self.is_web_hook = kwargs.get('is_web_hook', None)
+        self.is_notification = kwargs.get('is_notification', None)
+
+
+class ApiReference(Model):
+    """ApiReference.
+
+    :param display_name: The display name of the api.
+    :type display_name: str
+    :param description: The description of the api.
+    :type description: str
+    :param icon_uri: The icon uri of the api.
+    :type icon_uri: str
+    :param swagger: The swagger of the api.
+    :type swagger: object
+    :param brand_color: The brand color of the api.
+    :type brand_color: str
+    :param category: The tier. Possible values include: 'NotSpecified',
+     'Enterprise', 'Standard', 'Premium'
+    :type category: str or ~azure.mgmt.logic.models.ApiTier
+    :param integration_service_environment: The integration service
+     environment reference.
+    :type integration_service_environment:
+     ~azure.mgmt.logic.models.ResourceReference
+    """
+
+    _attribute_map = {
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'icon_uri': {'key': 'iconUri', 'type': 'str'},
+        'swagger': {'key': 'swagger', 'type': 'object'},
+        'brand_color': {'key': 'brandColor', 'type': 'str'},
+        'category': {'key': 'category', 'type': 'str'},
+        'integration_service_environment': {'key': 'integrationServiceEnvironment', 'type': 'ResourceReference'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ApiReference, self).__init__(**kwargs)
+        self.display_name = kwargs.get('display_name', None)
+        self.description = kwargs.get('description', None)
+        self.icon_uri = kwargs.get('icon_uri', None)
+        self.swagger = kwargs.get('swagger', None)
+        self.brand_color = kwargs.get('brand_color', None)
+        self.category = kwargs.get('category', None)
+        self.integration_service_environment = kwargs.get('integration_service_environment', None)
+
+
+class ApiResourceBackendService(Model):
+    """The API backend service.
+
+    :param service_url: The service URL.
+    :type service_url: str
+    """
+
+    _attribute_map = {
+        'service_url': {'key': 'serviceUrl', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ApiResourceBackendService, self).__init__(**kwargs)
+        self.service_url = kwargs.get('service_url', None)
+
+
+class ApiResourceDefinitions(Model):
+    """The Api resource definition.
+
+    :param original_swagger_url: The original swagger url.
+    :type original_swagger_url: str
+    :param modified_swagger_url: The modified swagger url.
+    :type modified_swagger_url: str
+    """
+
+    _attribute_map = {
+        'original_swagger_url': {'key': 'originalSwaggerUrl', 'type': 'str'},
+        'modified_swagger_url': {'key': 'modifiedSwaggerUrl', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ApiResourceDefinitions, self).__init__(**kwargs)
+        self.original_swagger_url = kwargs.get('original_swagger_url', None)
+        self.modified_swagger_url = kwargs.get('modified_swagger_url', None)
+
+
+class ApiResourceGeneralInformation(Model):
+    """The API general information.
+
+    :param icon_url: The icon url.
+    :type icon_url: str
+    :param display_name: The display name.
+    :type display_name: str
+    :param description: The description.
+    :type description: str
+    :param terms_of_use_url: The terms of use url.
+    :type terms_of_use_url: str
+    :param release_tag: The release tag.
+    :type release_tag: str
+    :param tier: The tier. Possible values include: 'NotSpecified',
+     'Enterprise', 'Standard', 'Premium'
+    :type tier: str or ~azure.mgmt.logic.models.ApiTier
+    """
+
+    _attribute_map = {
+        'icon_url': {'key': 'iconUrl', 'type': 'str'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'terms_of_use_url': {'key': 'termsOfUseUrl', 'type': 'str'},
+        'release_tag': {'key': 'releaseTag', 'type': 'str'},
+        'tier': {'key': 'tier', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ApiResourceGeneralInformation, self).__init__(**kwargs)
+        self.icon_url = kwargs.get('icon_url', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.description = kwargs.get('description', None)
+        self.terms_of_use_url = kwargs.get('terms_of_use_url', None)
+        self.release_tag = kwargs.get('release_tag', None)
+        self.tier = kwargs.get('tier', None)
+
+
+class ApiResourceMetadata(Model):
+    """The api resource metadata.
+
+    :param source: The source.
+    :type source: str
+    :param brand_color: The brand color.
+    :type brand_color: str
+    :param hide_key: The hide key.
+    :type hide_key: str
+    :param tags: The tags.
+    :type tags: dict[str, str]
+    :param api_type: The api type. Possible values include: 'NotSpecified',
+     'Rest', 'Soap'
+    :type api_type: str or ~azure.mgmt.logic.models.ApiType
+    :param wsdl_service: The WSDL service.
+    :type wsdl_service: ~azure.mgmt.logic.models.WsdlService
+    :param wsdl_import_method: The WSDL import method. Possible values
+     include: 'NotSpecified', 'SoapToRest', 'SoapPassThrough'
+    :type wsdl_import_method: str or ~azure.mgmt.logic.models.WsdlImportMethod
+    :param connection_type: The connection type.
+    :type connection_type: str
+    :param provisioning_state: The provisioning state. Possible values
+     include: 'NotSpecified', 'Accepted', 'Running', 'Ready', 'Creating',
+     'Created', 'Deleting', 'Deleted', 'Canceled', 'Failed', 'Succeeded',
+     'Moving', 'Updating', 'Registering', 'Registered', 'Unregistering',
+     'Unregistered', 'Completed'
+    :type provisioning_state: str or
+     ~azure.mgmt.logic.models.WorkflowProvisioningState
+    :param deployment_parameters: The connector deployment parameters
+     metadata.
+    :type deployment_parameters:
+     ~azure.mgmt.logic.models.ApiDeploymentParameterMetadataSet
+    """
+
+    _attribute_map = {
+        'source': {'key': 'source', 'type': 'str'},
+        'brand_color': {'key': 'brandColor', 'type': 'str'},
+        'hide_key': {'key': 'hideKey', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'api_type': {'key': 'ApiType', 'type': 'str'},
+        'wsdl_service': {'key': 'wsdlService', 'type': 'WsdlService'},
+        'wsdl_import_method': {'key': 'wsdlImportMethod', 'type': 'str'},
+        'connection_type': {'key': 'connectionType', 'type': 'str'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'deployment_parameters': {'key': 'deploymentParameters', 'type': 'ApiDeploymentParameterMetadataSet'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ApiResourceMetadata, self).__init__(**kwargs)
+        self.source = kwargs.get('source', None)
+        self.brand_color = kwargs.get('brand_color', None)
+        self.hide_key = kwargs.get('hide_key', None)
+        self.tags = kwargs.get('tags', None)
+        self.api_type = kwargs.get('api_type', None)
+        self.wsdl_service = kwargs.get('wsdl_service', None)
+        self.wsdl_import_method = kwargs.get('wsdl_import_method', None)
+        self.connection_type = kwargs.get('connection_type', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.deployment_parameters = kwargs.get('deployment_parameters', None)
+
+
+class ApiResourcePolicies(Model):
+    """The API resource policies.
+
+    :param content: The API level only policies XML as embedded content.
+    :type content: str
+    :param content_link: The content link to the policies.
+    :type content_link: str
+    """
+
+    _attribute_map = {
+        'content': {'key': 'content', 'type': 'str'},
+        'content_link': {'key': 'contentLink', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ApiResourcePolicies, self).__init__(**kwargs)
+        self.content = kwargs.get('content', None)
+        self.content_link = kwargs.get('content_link', None)
+
+
+class ApiResourceProperties(Model):
+    """The API resource properties.
+
+    :param name: The name
+    :type name: str
+    :param connection_parameters: The connection parameters.
+    :type connection_parameters: dict[str, object]
+    :param metadata: The metadata.
+    :type metadata: ~azure.mgmt.logic.models.ApiResourceMetadata
+    :param runtime_urls: The runtime urls.
+    :type runtime_urls: list[str]
+    :param general_information: The api general information.
+    :type general_information:
+     ~azure.mgmt.logic.models.ApiResourceGeneralInformation
+    :param capabilities: The capabilities.
+    :type capabilities: list[str]
+    :param backend_service: The backend service.
+    :type backend_service: ~azure.mgmt.logic.models.ApiResourceBackendService
+    :param policies: The policies for the API.
+    :type policies: ~azure.mgmt.logic.models.ApiResourcePolicies
+    :param api_definition_url: The API definition.
+    :type api_definition_url: str
+    :param api_definitions: The api definitions.
+    :type api_definitions: ~azure.mgmt.logic.models.ApiResourceDefinitions
+    :param integration_service_environment: The integration service
+     environment reference.
+    :type integration_service_environment:
+     ~azure.mgmt.logic.models.ResourceReference
+    :param provisioning_state: The provisioning state. Possible values
+     include: 'NotSpecified', 'Accepted', 'Running', 'Ready', 'Creating',
+     'Created', 'Deleting', 'Deleted', 'Canceled', 'Failed', 'Succeeded',
+     'Moving', 'Updating', 'Registering', 'Registered', 'Unregistering',
+     'Unregistered', 'Completed'
+    :type provisioning_state: str or
+     ~azure.mgmt.logic.models.WorkflowProvisioningState
+    :param category: The category. Possible values include: 'NotSpecified',
+     'Enterprise', 'Standard', 'Premium'
+    :type category: str or ~azure.mgmt.logic.models.ApiTier
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'connection_parameters': {'key': 'connectionParameters', 'type': '{object}'},
+        'metadata': {'key': 'metadata', 'type': 'ApiResourceMetadata'},
+        'runtime_urls': {'key': 'runtimeUrls', 'type': '[str]'},
+        'general_information': {'key': 'generalInformation', 'type': 'ApiResourceGeneralInformation'},
+        'capabilities': {'key': 'capabilities', 'type': '[str]'},
+        'backend_service': {'key': 'backendService', 'type': 'ApiResourceBackendService'},
+        'policies': {'key': 'policies', 'type': 'ApiResourcePolicies'},
+        'api_definition_url': {'key': 'apiDefinitionUrl', 'type': 'str'},
+        'api_definitions': {'key': 'apiDefinitions', 'type': 'ApiResourceDefinitions'},
+        'integration_service_environment': {'key': 'integrationServiceEnvironment', 'type': 'ResourceReference'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'category': {'key': 'category', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ApiResourceProperties, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.connection_parameters = kwargs.get('connection_parameters', None)
+        self.metadata = kwargs.get('metadata', None)
+        self.runtime_urls = kwargs.get('runtime_urls', None)
+        self.general_information = kwargs.get('general_information', None)
+        self.capabilities = kwargs.get('capabilities', None)
+        self.backend_service = kwargs.get('backend_service', None)
+        self.policies = kwargs.get('policies', None)
+        self.api_definition_url = kwargs.get('api_definition_url', None)
+        self.api_definitions = kwargs.get('api_definitions', None)
+        self.integration_service_environment = kwargs.get('integration_service_environment', None)
+        self.provisioning_state = kwargs.get('provisioning_state', None)
+        self.category = kwargs.get('category', None)
+
+
 class ArtifactProperties(Model):
     """The artifact properties definition.
 
@@ -584,47 +1099,6 @@ class AS2ValidationSettings(Model):
         self.check_certificate_revocation_list_on_receive = kwargs.get('check_certificate_revocation_list_on_receive', None)
         self.encryption_algorithm = kwargs.get('encryption_algorithm', None)
         self.signing_algorithm = kwargs.get('signing_algorithm', None)
-
-
-class Resource(Model):
-    """The base resource type.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: The resource id.
-    :vartype id: str
-    :ivar name: Gets the resource name.
-    :vartype name: str
-    :ivar type: Gets the resource type.
-    :vartype type: str
-    :param location: The resource location.
-    :type location: str
-    :param tags: The resource tags.
-    :type tags: dict[str, str]
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-    }
-
-    def __init__(self, **kwargs):
-        super(Resource, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.location = kwargs.get('location', None)
-        self.tags = kwargs.get('tags', None)
 
 
 class AssemblyDefinition(Resource):
@@ -2080,6 +2554,84 @@ class ExpressionRoot(Expression):
         self.path = kwargs.get('path', None)
 
 
+class ExtendedErrorInfo(Model):
+    """The extended error info.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param code: Required. The error code. Possible values include:
+     'NotSpecified', 'IntegrationServiceEnvironmentNotFound',
+     'InternalServerError', 'InvalidOperationId'
+    :type code: str or ~azure.mgmt.logic.models.ErrorResponseCode
+    :param message: Required. The error message.
+    :type message: str
+    :param details: The error message details.
+    :type details: list[~azure.mgmt.logic.models.ExtendedErrorInfo]
+    :param inner_error: The inner error.
+    :type inner_error: object
+    """
+
+    _validation = {
+        'code': {'required': True},
+        'message': {'required': True},
+    }
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'details': {'key': 'details', 'type': '[ExtendedErrorInfo]'},
+        'inner_error': {'key': 'innerError', 'type': 'object'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ExtendedErrorInfo, self).__init__(**kwargs)
+        self.code = kwargs.get('code', None)
+        self.message = kwargs.get('message', None)
+        self.details = kwargs.get('details', None)
+        self.inner_error = kwargs.get('inner_error', None)
+
+
+class FlowEndpoints(Model):
+    """The flow endpoints configuration.
+
+    :param outgoing_ip_addresses: The outgoing ip address.
+    :type outgoing_ip_addresses: list[~azure.mgmt.logic.models.IpAddress]
+    :param access_endpoint_ip_addresses: The access endpoint ip address.
+    :type access_endpoint_ip_addresses:
+     list[~azure.mgmt.logic.models.IpAddress]
+    """
+
+    _attribute_map = {
+        'outgoing_ip_addresses': {'key': 'outgoingIpAddresses', 'type': '[IpAddress]'},
+        'access_endpoint_ip_addresses': {'key': 'accessEndpointIpAddresses', 'type': '[IpAddress]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(FlowEndpoints, self).__init__(**kwargs)
+        self.outgoing_ip_addresses = kwargs.get('outgoing_ip_addresses', None)
+        self.access_endpoint_ip_addresses = kwargs.get('access_endpoint_ip_addresses', None)
+
+
+class FlowEndpointsConfiguration(Model):
+    """The endpoints configuration.
+
+    :param workflow: The workflow endpoints.
+    :type workflow: ~azure.mgmt.logic.models.FlowEndpoints
+    :param connector: The connector endpoints.
+    :type connector: ~azure.mgmt.logic.models.FlowEndpoints
+    """
+
+    _attribute_map = {
+        'workflow': {'key': 'workflow', 'type': 'FlowEndpoints'},
+        'connector': {'key': 'connector', 'type': 'FlowEndpoints'},
+    }
+
+    def __init__(self, **kwargs):
+        super(FlowEndpointsConfiguration, self).__init__(**kwargs)
+        self.workflow = kwargs.get('workflow', None)
+        self.connector = kwargs.get('connector', None)
+
+
 class GenerateUpgradedDefinitionParameters(Model):
     """The parameters to generate upgraded definition.
 
@@ -2133,8 +2685,13 @@ class IntegrationAccount(Resource):
     :type location: str
     :param tags: The resource tags.
     :type tags: dict[str, str]
-    :param properties: The integration account properties.
-    :type properties: object
+    :param integration_service_environment: The integration service
+     environment.
+    :type integration_service_environment:
+     ~azure.mgmt.logic.models.IntegrationServiceEnvironment
+    :param state: The workflow state. Possible values include: 'NotSpecified',
+     'Completed', 'Enabled', 'Disabled', 'Deleted', 'Suspended'
+    :type state: str or ~azure.mgmt.logic.models.WorkflowState
     :param sku: The sku.
     :type sku: ~azure.mgmt.logic.models.IntegrationAccountSku
     """
@@ -2151,13 +2708,15 @@ class IntegrationAccount(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'properties': {'key': 'properties', 'type': 'object'},
+        'integration_service_environment': {'key': 'properties.integrationServiceEnvironment', 'type': 'IntegrationServiceEnvironment'},
+        'state': {'key': 'properties.state', 'type': 'str'},
         'sku': {'key': 'sku', 'type': 'IntegrationAccountSku'},
     }
 
     def __init__(self, **kwargs):
         super(IntegrationAccount, self).__init__(**kwargs)
-        self.properties = kwargs.get('properties', None)
+        self.integration_service_environment = kwargs.get('integration_service_environment', None)
+        self.state = kwargs.get('state', None)
         self.sku = kwargs.get('sku', None)
 
 
@@ -2734,6 +3293,372 @@ class IntegrationAccountSku(Model):
         self.name = kwargs.get('name', None)
 
 
+class IntegrationServiceEnvironment(Resource):
+    """The integration service environment.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The resource id.
+    :vartype id: str
+    :ivar name: Gets the resource name.
+    :vartype name: str
+    :ivar type: Gets the resource type.
+    :vartype type: str
+    :param location: The resource location.
+    :type location: str
+    :param tags: The resource tags.
+    :type tags: dict[str, str]
+    :param properties: The integration service environment properties.
+    :type properties:
+     ~azure.mgmt.logic.models.IntegrationServiceEnvironmentProperties
+    :param sku: The sku.
+    :type sku: ~azure.mgmt.logic.models.IntegrationServiceEnvironmentSku
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'properties': {'key': 'properties', 'type': 'IntegrationServiceEnvironmentProperties'},
+        'sku': {'key': 'sku', 'type': 'IntegrationServiceEnvironmentSku'},
+    }
+
+    def __init__(self, **kwargs):
+        super(IntegrationServiceEnvironment, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)
+        self.sku = kwargs.get('sku', None)
+
+
+class IntegrationServiceEnvironmentAccessEndpoint(Model):
+    """The integration service environment access endpoint.
+
+    :param type: The access endpoint type. Possible values include:
+     'NotSpecified', 'External', 'Internal'
+    :type type: str or
+     ~azure.mgmt.logic.models.IntegrationServiceEnvironmentAccessEndpointType
+    """
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(IntegrationServiceEnvironmentAccessEndpoint, self).__init__(**kwargs)
+        self.type = kwargs.get('type', None)
+
+
+class IntegrationServiceEnvironmentNetworkDependency(Model):
+    """The azure async operation resource.
+
+    :param category: The network dependency category type. Possible values
+     include: 'NotSpecified', 'AzureStorage', 'AzureManagement',
+     'AzureActiveDirectory', 'SSLCertificateVerification',
+     'DiagnosticLogsAndMetrics', 'IntegrationServiceEnvironmentConnectors',
+     'RedisCache', 'AccessEndpoints', 'RecoveryService', 'SQL',
+     'RegionalService'
+    :type category: str or
+     ~azure.mgmt.logic.models.IntegrationServiceEnvironmentNetworkDependencyCategoryType
+    :param display_name: The display name.
+    :type display_name: str
+    :param endpoints: The endpoints.
+    :type endpoints:
+     list[~azure.mgmt.logic.models.IntegrationServiceEnvironmentNetworkEndpoint]
+    """
+
+    _attribute_map = {
+        'category': {'key': 'category', 'type': 'str'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'endpoints': {'key': 'endpoints', 'type': '[IntegrationServiceEnvironmentNetworkEndpoint]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(IntegrationServiceEnvironmentNetworkDependency, self).__init__(**kwargs)
+        self.category = kwargs.get('category', None)
+        self.display_name = kwargs.get('display_name', None)
+        self.endpoints = kwargs.get('endpoints', None)
+
+
+class IntegrationServiceEnvironmentNetworkDependencyHealth(Model):
+    """The integration service environment subnet network health.
+
+    :param error: The error if any occurred during the operation.
+    :type error: ~azure.mgmt.logic.models.ExtendedErrorInfo
+    :param state: The network dependency health state. Possible values
+     include: 'NotSpecified', 'Healthy', 'Unhealthy', 'Unknown'
+    :type state: str or
+     ~azure.mgmt.logic.models.IntegrationServiceEnvironmentNetworkDependencyHealthState
+    """
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'ExtendedErrorInfo'},
+        'state': {'key': 'state', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(IntegrationServiceEnvironmentNetworkDependencyHealth, self).__init__(**kwargs)
+        self.error = kwargs.get('error', None)
+        self.state = kwargs.get('state', None)
+
+
+class IntegrationServiceEnvironmentNetworkEndpoint(Model):
+    """The network endpoint.
+
+    :param accessibility: The accessibility state. Possible values include:
+     'NotSpecified', 'Unknown', 'Available', 'NotAvailable'
+    :type accessibility: str or
+     ~azure.mgmt.logic.models.IntegrationServiceEnvironmentNetworkEndPointAccessibilityState
+    :param domain_name: The domain name.
+    :type domain_name: str
+    :param ports: The ports.
+    :type ports: list[str]
+    """
+
+    _attribute_map = {
+        'accessibility': {'key': 'accessibility', 'type': 'str'},
+        'domain_name': {'key': 'domainName', 'type': 'str'},
+        'ports': {'key': 'ports', 'type': '[str]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(IntegrationServiceEnvironmentNetworkEndpoint, self).__init__(**kwargs)
+        self.accessibility = kwargs.get('accessibility', None)
+        self.domain_name = kwargs.get('domain_name', None)
+        self.ports = kwargs.get('ports', None)
+
+
+class IntegrationServiceEnvironmentProperties(Model):
+    """IntegrationServiceEnvironmentProperties.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar provisioning_state: The provisioning state. Possible values include:
+     'NotSpecified', 'Accepted', 'Running', 'Ready', 'Creating', 'Created',
+     'Deleting', 'Deleted', 'Canceled', 'Failed', 'Succeeded', 'Moving',
+     'Updating', 'Registering', 'Registered', 'Unregistering', 'Unregistered',
+     'Completed'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.logic.models.WorkflowProvisioningState
+    :param state: The integration service environment state. Possible values
+     include: 'NotSpecified', 'Completed', 'Enabled', 'Disabled', 'Deleted',
+     'Suspended'
+    :type state: str or ~azure.mgmt.logic.models.WorkflowState
+    :ivar integration_service_environment_id: Gets the tracking id.
+    :vartype integration_service_environment_id: str
+    :ivar endpoints_configuration: The endpoints configuration.
+    :vartype endpoints_configuration:
+     ~azure.mgmt.logic.models.FlowEndpointsConfiguration
+    :ivar network_configuration: The network configuration.
+    :vartype network_configuration:
+     ~azure.mgmt.logic.models.NetworkConfiguration
+    """
+
+    _validation = {
+        'provisioning_state': {'readonly': True},
+        'integration_service_environment_id': {'readonly': True},
+        'endpoints_configuration': {'readonly': True},
+        'network_configuration': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'state': {'key': 'state', 'type': 'str'},
+        'integration_service_environment_id': {'key': 'integrationServiceEnvironmentId', 'type': 'str'},
+        'endpoints_configuration': {'key': 'endpointsConfiguration', 'type': 'FlowEndpointsConfiguration'},
+        'network_configuration': {'key': 'networkConfiguration', 'type': 'NetworkConfiguration'},
+    }
+
+    def __init__(self, **kwargs):
+        super(IntegrationServiceEnvironmentProperties, self).__init__(**kwargs)
+        self.provisioning_state = None
+        self.state = kwargs.get('state', None)
+        self.integration_service_environment_id = None
+        self.endpoints_configuration = None
+        self.network_configuration = None
+
+
+class IntegrationServiceEnvironmentSku(Model):
+    """The integration service environment sku.
+
+    :param name: The sku name. Possible values include: 'NotSpecified',
+     'Premium', 'Developer'
+    :type name: str or
+     ~azure.mgmt.logic.models.IntegrationServiceEnvironmentSkuName
+    :param capacity: The sku capacity.
+    :type capacity: int
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'capacity': {'key': 'capacity', 'type': 'int'},
+    }
+
+    def __init__(self, **kwargs):
+        super(IntegrationServiceEnvironmentSku, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.capacity = kwargs.get('capacity', None)
+
+
+class IntegrationServiceEnvironmentSkuCapacity(Model):
+    """The integration service environment sku capacity.
+
+    :param minimum: The minimum capacity.
+    :type minimum: int
+    :param maximum: The maximum capacity.
+    :type maximum: int
+    :param default: The default capacity.
+    :type default: int
+    :param scale_type: The sku scale type. Possible values include: 'Manual',
+     'Automatic', 'None'
+    :type scale_type: str or
+     ~azure.mgmt.logic.models.IntegrationServiceEnvironmentSkuScaleType
+    """
+
+    _attribute_map = {
+        'minimum': {'key': 'minimum', 'type': 'int'},
+        'maximum': {'key': 'maximum', 'type': 'int'},
+        'default': {'key': 'default', 'type': 'int'},
+        'scale_type': {'key': 'scaleType', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(IntegrationServiceEnvironmentSkuCapacity, self).__init__(**kwargs)
+        self.minimum = kwargs.get('minimum', None)
+        self.maximum = kwargs.get('maximum', None)
+        self.default = kwargs.get('default', None)
+        self.scale_type = kwargs.get('scale_type', None)
+
+
+class IntegrationServiceEnvironmentSkuDefinition(Model):
+    """IntegrationServiceEnvironmentSkuDefinition.
+
+    :param resource_type:
+    :type resource_type: str
+    :param sku:
+    :type sku:
+     ~azure.mgmt.logic.models.IntegrationServiceEnvironmentSkuDefinitionSku
+    :param capacity: The sku capacity.
+    :type capacity:
+     ~azure.mgmt.logic.models.IntegrationServiceEnvironmentSkuCapacity
+    """
+
+    _attribute_map = {
+        'resource_type': {'key': 'resourceType', 'type': 'str'},
+        'sku': {'key': 'sku', 'type': 'IntegrationServiceEnvironmentSkuDefinitionSku'},
+        'capacity': {'key': 'capacity', 'type': 'IntegrationServiceEnvironmentSkuCapacity'},
+    }
+
+    def __init__(self, **kwargs):
+        super(IntegrationServiceEnvironmentSkuDefinition, self).__init__(**kwargs)
+        self.resource_type = kwargs.get('resource_type', None)
+        self.sku = kwargs.get('sku', None)
+        self.capacity = kwargs.get('capacity', None)
+
+
+class IntegrationServiceEnvironmentSkuDefinitionSku(Model):
+    """IntegrationServiceEnvironmentSkuDefinitionSku.
+
+    :param name: The sku name. Possible values include: 'NotSpecified',
+     'Premium', 'Developer'
+    :type name: str or
+     ~azure.mgmt.logic.models.IntegrationServiceEnvironmentSkuName
+    :param tier: The sku tier.
+    :type tier: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'tier': {'key': 'tier', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(IntegrationServiceEnvironmentSkuDefinitionSku, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.tier = kwargs.get('tier', None)
+
+
+class IntegrationServiceEnvironmentSkuList(Model):
+    """The list of integration service environment skus.
+
+    :param value: The list of integration service environment skus.
+    :type value:
+     list[~azure.mgmt.logic.models.IntegrationServiceEnvironmentSkuDefinition]
+    :param next_link: The URL to get the next set of results.
+    :type next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[IntegrationServiceEnvironmentSkuDefinition]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(IntegrationServiceEnvironmentSkuList, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get('next_link', None)
+
+
+class IntegrationServiceEnvironmentSubnetNetworkHealth(Model):
+    """The integration service environment subnet network health.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param outbound_network_dependencies:
+    :type outbound_network_dependencies:
+     list[~azure.mgmt.logic.models.IntegrationServiceEnvironmentNetworkDependency]
+    :param outbound_network_health: The integration service environment
+     network health.
+    :type outbound_network_health:
+     ~azure.mgmt.logic.models.IntegrationServiceEnvironmentNetworkDependencyHealth
+    :param network_dependency_health_state: Required. The integration service
+     environment network health state. Possible values include: 'NotSpecified',
+     'Unknown', 'Available', 'NotAvailable'
+    :type network_dependency_health_state: str or
+     ~azure.mgmt.logic.models.IntegrationServiceEnvironmentNetworkEndPointAccessibilityState
+    """
+
+    _validation = {
+        'network_dependency_health_state': {'required': True},
+    }
+
+    _attribute_map = {
+        'outbound_network_dependencies': {'key': 'outboundNetworkDependencies', 'type': '[IntegrationServiceEnvironmentNetworkDependency]'},
+        'outbound_network_health': {'key': 'outboundNetworkHealth', 'type': 'IntegrationServiceEnvironmentNetworkDependencyHealth'},
+        'network_dependency_health_state': {'key': 'networkDependencyHealthState', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(IntegrationServiceEnvironmentSubnetNetworkHealth, self).__init__(**kwargs)
+        self.outbound_network_dependencies = kwargs.get('outbound_network_dependencies', None)
+        self.outbound_network_health = kwargs.get('outbound_network_health', None)
+        self.network_dependency_health_state = kwargs.get('network_dependency_health_state', None)
+
+
+class IpAddress(Model):
+    """IpAddress.
+
+    :param address: The address.
+    :type address: str
+    """
+
+    _attribute_map = {
+        'address': {'key': 'address', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(IpAddress, self).__init__(**kwargs)
+        self.address = kwargs.get('address', None)
+
+
 class JsonSchema(Model):
     """The JSON schema.
 
@@ -2946,6 +3871,92 @@ class ListKeyVaultKeysDefinition(Model):
         super(ListKeyVaultKeysDefinition, self).__init__(**kwargs)
         self.key_vault = kwargs.get('key_vault', None)
         self.skip_token = kwargs.get('skip_token', None)
+
+
+class ManagedApi(Resource):
+    """The managed api definition.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The resource id.
+    :vartype id: str
+    :ivar name: Gets the resource name.
+    :vartype name: str
+    :ivar type: Gets the resource type.
+    :vartype type: str
+    :param location: The resource location.
+    :type location: str
+    :param tags: The resource tags.
+    :type tags: dict[str, str]
+    :param properties: The api resource properties.
+    :type properties: ~azure.mgmt.logic.models.ApiResourceProperties
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'properties': {'key': 'properties', 'type': 'ApiResourceProperties'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ManagedApi, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)
+
+
+class ManagedApiListResult(Model):
+    """The list of managed APIs.
+
+    :param value: The managed APIs.
+    :type value: list[~azure.mgmt.logic.models.ManagedApi]
+    :param next_link: The URL to get the next set of results.
+    :type next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[ManagedApi]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ManagedApiListResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get('next_link', None)
+
+
+class NetworkConfiguration(Model):
+    """The network configuration.
+
+    :param virtual_network_address_space: Gets the virtual network address
+     space.
+    :type virtual_network_address_space: str
+    :param access_endpoint: The access endpoint.
+    :type access_endpoint:
+     ~azure.mgmt.logic.models.IntegrationServiceEnvironmentAccessEndpoint
+    :param subnets:
+    :type subnets: list[~azure.mgmt.logic.models.ResourceReference]
+    """
+
+    _attribute_map = {
+        'virtual_network_address_space': {'key': 'virtualNetworkAddressSpace', 'type': 'str'},
+        'access_endpoint': {'key': 'accessEndpoint', 'type': 'IntegrationServiceEnvironmentAccessEndpoint'},
+        'subnets': {'key': 'subnets', 'type': '[ResourceReference]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(NetworkConfiguration, self).__init__(**kwargs)
+        self.virtual_network_address_space = kwargs.get('virtual_network_address_space', None)
+        self.access_endpoint = kwargs.get('access_endpoint', None)
+        self.subnets = kwargs.get('subnets', None)
 
 
 class Operation(Model):
@@ -3488,6 +4499,388 @@ class SubResource(Model):
         self.id = None
 
 
+class SwaggerCustomDynamicList(Model):
+    """The swagger custom dynamic list.
+
+    :param operation_id: The operation id to fetch dynamic schema.
+    :type operation_id: str
+    :param built_in_operation: The built in operation.
+    :type built_in_operation: str
+    :param items_path: The path to a response property (relative to the
+     response object, not the response body) which contains an array of dynamic
+     value items.
+    :type items_path: str
+    :param item_value_path: The path to a property which defines the value
+     which should be used.
+    :type item_value_path: str
+    :param item_title_path: The path to an item property which defines the
+     display name of the item.
+    :type item_title_path: str
+    :param parameters:
+    :type parameters: dict[str,
+     ~azure.mgmt.logic.models.SwaggerCustomDynamicProperties]
+    """
+
+    _attribute_map = {
+        'operation_id': {'key': 'operationId', 'type': 'str'},
+        'built_in_operation': {'key': 'builtInOperation', 'type': 'str'},
+        'items_path': {'key': 'itemsPath', 'type': 'str'},
+        'item_value_path': {'key': 'itemValuePath', 'type': 'str'},
+        'item_title_path': {'key': 'itemTitlePath', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': '{SwaggerCustomDynamicProperties}'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SwaggerCustomDynamicList, self).__init__(**kwargs)
+        self.operation_id = kwargs.get('operation_id', None)
+        self.built_in_operation = kwargs.get('built_in_operation', None)
+        self.items_path = kwargs.get('items_path', None)
+        self.item_value_path = kwargs.get('item_value_path', None)
+        self.item_title_path = kwargs.get('item_title_path', None)
+        self.parameters = kwargs.get('parameters', None)
+
+
+class SwaggerCustomDynamicProperties(Model):
+    """The swagger custom dynamic properties.
+
+    :param operation_id: The operation id to fetch dynamic schema.
+    :type operation_id: str
+    :param value_path: Json pointer to the dynamic schema on the response
+     body.
+    :type value_path: str
+    :param parameters: The operation parameters.
+    :type parameters: dict[str,
+     ~azure.mgmt.logic.models.SwaggerCustomDynamicProperties]
+    """
+
+    _attribute_map = {
+        'operation_id': {'key': 'operationId', 'type': 'str'},
+        'value_path': {'key': 'valuePath', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': '{SwaggerCustomDynamicProperties}'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SwaggerCustomDynamicProperties, self).__init__(**kwargs)
+        self.operation_id = kwargs.get('operation_id', None)
+        self.value_path = kwargs.get('value_path', None)
+        self.parameters = kwargs.get('parameters', None)
+
+
+class SwaggerCustomDynamicSchema(Model):
+    """The swagger custom dynamic schema.
+
+    :param operation_id: The operation id to fetch dynamic schema.
+    :type operation_id: str
+    :param value_path: Json pointer to the dynamic schema on the response
+     body.
+    :type value_path: str
+    :param parameters: The operation parameters.
+    :type parameters: dict[str, object]
+    """
+
+    _attribute_map = {
+        'operation_id': {'key': 'operationId', 'type': 'str'},
+        'value_path': {'key': 'valuePath', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': '{object}'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SwaggerCustomDynamicSchema, self).__init__(**kwargs)
+        self.operation_id = kwargs.get('operation_id', None)
+        self.value_path = kwargs.get('value_path', None)
+        self.parameters = kwargs.get('parameters', None)
+
+
+class SwaggerCustomDynamicTree(Model):
+    """The swagger custom dynamic tree.
+
+    :param settings: The tree settings
+    :type settings: ~azure.mgmt.logic.models.SwaggerCustomDynamicTreeSettings
+    :param open: The tree on-open configuration
+    :type open: ~azure.mgmt.logic.models.SwaggerCustomDynamicTreeCommand
+    :param browse: The tree on-browse configuration
+    :type browse: ~azure.mgmt.logic.models.SwaggerCustomDynamicTreeCommand
+    """
+
+    _attribute_map = {
+        'settings': {'key': 'settings', 'type': 'SwaggerCustomDynamicTreeSettings'},
+        'open': {'key': 'open', 'type': 'SwaggerCustomDynamicTreeCommand'},
+        'browse': {'key': 'browse', 'type': 'SwaggerCustomDynamicTreeCommand'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SwaggerCustomDynamicTree, self).__init__(**kwargs)
+        self.settings = kwargs.get('settings', None)
+        self.open = kwargs.get('open', None)
+        self.browse = kwargs.get('browse', None)
+
+
+class SwaggerCustomDynamicTreeCommand(Model):
+    """The swagger tree command.
+
+    :param operation_id: The path to an item property which defines the
+     display name of the item.
+    :type operation_id: str
+    :param items_path: The path to an item property which defines the display
+     name of the item.
+    :type items_path: str
+    :param item_value_path: The path to an item property which defines the
+     display name of the item.
+    :type item_value_path: str
+    :param item_title_path: The path to an item property which defines the
+     display name of the item.
+    :type item_title_path: str
+    :param item_full_title_path: The path to an item property which defines
+     the display name of the item.
+    :type item_full_title_path: str
+    :param item_is_parent: The path to an item property which defines the
+     display name of the item.
+    :type item_is_parent: str
+    :param selectable_filter: The path to an item property which defines the
+     display name of the item.
+    :type selectable_filter: str
+    :param parameters:
+    :type parameters: dict[str,
+     ~azure.mgmt.logic.models.SwaggerCustomDynamicTreeParameter]
+    """
+
+    _attribute_map = {
+        'operation_id': {'key': 'operationId', 'type': 'str'},
+        'items_path': {'key': 'itemsPath', 'type': 'str'},
+        'item_value_path': {'key': 'itemValuePath', 'type': 'str'},
+        'item_title_path': {'key': 'itemTitlePath', 'type': 'str'},
+        'item_full_title_path': {'key': 'itemFullTitlePath', 'type': 'str'},
+        'item_is_parent': {'key': 'itemIsParent', 'type': 'str'},
+        'selectable_filter': {'key': 'selectableFilter', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': '{SwaggerCustomDynamicTreeParameter}'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SwaggerCustomDynamicTreeCommand, self).__init__(**kwargs)
+        self.operation_id = kwargs.get('operation_id', None)
+        self.items_path = kwargs.get('items_path', None)
+        self.item_value_path = kwargs.get('item_value_path', None)
+        self.item_title_path = kwargs.get('item_title_path', None)
+        self.item_full_title_path = kwargs.get('item_full_title_path', None)
+        self.item_is_parent = kwargs.get('item_is_parent', None)
+        self.selectable_filter = kwargs.get('selectable_filter', None)
+        self.parameters = kwargs.get('parameters', None)
+
+
+class SwaggerCustomDynamicTreeParameter(Model):
+    """The swagger custom dynamic tree parameter.
+
+    :param selected_item_value_path: Gets or sets a path to a property in the
+     currently selected item to pass as a value to a parameter for the given
+     operation.
+    :type selected_item_value_path: str
+    :param value: The parameter value.
+    :type value: object
+    :param parameter_reference: The parameter reference.
+    :type parameter_reference: str
+    :param required: Gets or sets a value indicating whether the parameter is
+     required.
+    :type required: bool
+    """
+
+    _attribute_map = {
+        'selected_item_value_path': {'key': 'selectedItemValuePath', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'object'},
+        'parameter_reference': {'key': 'parameterReference', 'type': 'str'},
+        'required': {'key': 'required', 'type': 'bool'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SwaggerCustomDynamicTreeParameter, self).__init__(**kwargs)
+        self.selected_item_value_path = kwargs.get('selected_item_value_path', None)
+        self.value = kwargs.get('value', None)
+        self.parameter_reference = kwargs.get('parameter_reference', None)
+        self.required = kwargs.get('required', None)
+
+
+class SwaggerCustomDynamicTreeSettings(Model):
+    """The swagger custom dynamic tree settings.
+
+    :param can_select_parent_nodes: Gets or sets a value indicating whether
+     parent nodes can be selected.
+    :type can_select_parent_nodes: bool
+    :param can_select_leaf_nodes: Gets or sets a value indicating whether leaf
+     nodes can be selected.
+    :type can_select_leaf_nodes: bool
+    """
+
+    _attribute_map = {
+        'can_select_parent_nodes': {'key': 'CanSelectParentNodes', 'type': 'bool'},
+        'can_select_leaf_nodes': {'key': 'CanSelectLeafNodes', 'type': 'bool'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SwaggerCustomDynamicTreeSettings, self).__init__(**kwargs)
+        self.can_select_parent_nodes = kwargs.get('can_select_parent_nodes', None)
+        self.can_select_leaf_nodes = kwargs.get('can_select_leaf_nodes', None)
+
+
+class SwaggerExternalDocumentation(Model):
+    """The swagger external documentation.
+
+    :param description: The document description.
+    :type description: str
+    :param uri: The documentation Uri.
+    :type uri: str
+    :param extensions: The vendor extensions.
+    :type extensions: dict[str, object]
+    """
+
+    _attribute_map = {
+        'description': {'key': 'description', 'type': 'str'},
+        'uri': {'key': 'uri', 'type': 'str'},
+        'extensions': {'key': 'extensions', 'type': '{object}'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SwaggerExternalDocumentation, self).__init__(**kwargs)
+        self.description = kwargs.get('description', None)
+        self.uri = kwargs.get('uri', None)
+        self.extensions = kwargs.get('extensions', None)
+
+
+class SwaggerSchema(Model):
+    """The swagger schema.
+
+    :param ref: The reference.
+    :type ref: str
+    :param type: The type. Possible values include: 'String', 'Number',
+     'Integer', 'Boolean', 'Array', 'File', 'Object', 'Null'
+    :type type: str or ~azure.mgmt.logic.models.SwaggerSchemaType
+    :param title: The title.
+    :type title: str
+    :param items: The items schema.
+    :type items: ~azure.mgmt.logic.models.SwaggerSchema
+    :param properties: The object properties
+    :type properties: dict[str, ~azure.mgmt.logic.models.SwaggerSchema]
+    :param additional_properties: The additional properties.
+    :type additional_properties: object
+    :param required: The object required properties.
+    :type required: list[str]
+    :param max_properties: The maximum number of allowed properties.
+    :type max_properties: int
+    :param min_properties: The minimum number of allowed properties.
+    :type min_properties: int
+    :param all_of: The schemas which must pass validation when this schema is
+     used.
+    :type all_of: list[~azure.mgmt.logic.models.SwaggerSchema]
+    :param discriminator: The discriminator.
+    :type discriminator: str
+    :param read_only: Gets or sets whether this property must be present in
+     the a request.
+    :type read_only: bool
+    :param xml: The xml representation format for a property.
+    :type xml: ~azure.mgmt.logic.models.SwaggerXml
+    :param external_docs: The external documentation.
+    :type external_docs: ~azure.mgmt.logic.models.SwaggerExternalDocumentation
+    :param example: The example value.
+    :type example: object
+    :param notification_url_extension: Gets or sets the notification url
+     extension. If this is set, the property's value should be a callback url
+     for a webhook.
+    :type notification_url_extension: bool
+    :param dynamic_schema_old: The dynamic schema configuration.
+    :type dynamic_schema_old:
+     ~azure.mgmt.logic.models.SwaggerCustomDynamicSchema
+    :param dynamic_schema_new: The dynamic schema configuration.
+    :type dynamic_schema_new:
+     ~azure.mgmt.logic.models.SwaggerCustomDynamicProperties
+    :param dynamic_list_new: The dynamic list.
+    :type dynamic_list_new: ~azure.mgmt.logic.models.SwaggerCustomDynamicList
+    :param dynamic_tree: The dynamic values tree configuration.
+    :type dynamic_tree: ~azure.mgmt.logic.models.SwaggerCustomDynamicTree
+    """
+
+    _attribute_map = {
+        'ref': {'key': 'ref', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'title': {'key': 'title', 'type': 'str'},
+        'items': {'key': 'items', 'type': 'SwaggerSchema'},
+        'properties': {'key': 'properties', 'type': '{SwaggerSchema}'},
+        'additional_properties': {'key': 'additionalProperties', 'type': 'object'},
+        'required': {'key': 'required', 'type': '[str]'},
+        'max_properties': {'key': 'maxProperties', 'type': 'int'},
+        'min_properties': {'key': 'minProperties', 'type': 'int'},
+        'all_of': {'key': 'allOf', 'type': '[SwaggerSchema]'},
+        'discriminator': {'key': 'discriminator', 'type': 'str'},
+        'read_only': {'key': 'readOnly', 'type': 'bool'},
+        'xml': {'key': 'xml', 'type': 'SwaggerXml'},
+        'external_docs': {'key': 'externalDocs', 'type': 'SwaggerExternalDocumentation'},
+        'example': {'key': 'example', 'type': 'object'},
+        'notification_url_extension': {'key': 'notificationUrlExtension', 'type': 'bool'},
+        'dynamic_schema_old': {'key': 'dynamicSchemaOld', 'type': 'SwaggerCustomDynamicSchema'},
+        'dynamic_schema_new': {'key': 'dynamicSchemaNew', 'type': 'SwaggerCustomDynamicProperties'},
+        'dynamic_list_new': {'key': 'dynamicListNew', 'type': 'SwaggerCustomDynamicList'},
+        'dynamic_tree': {'key': 'dynamicTree', 'type': 'SwaggerCustomDynamicTree'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SwaggerSchema, self).__init__(**kwargs)
+        self.ref = kwargs.get('ref', None)
+        self.type = kwargs.get('type', None)
+        self.title = kwargs.get('title', None)
+        self.items = kwargs.get('items', None)
+        self.properties = kwargs.get('properties', None)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.required = kwargs.get('required', None)
+        self.max_properties = kwargs.get('max_properties', None)
+        self.min_properties = kwargs.get('min_properties', None)
+        self.all_of = kwargs.get('all_of', None)
+        self.discriminator = kwargs.get('discriminator', None)
+        self.read_only = kwargs.get('read_only', None)
+        self.xml = kwargs.get('xml', None)
+        self.external_docs = kwargs.get('external_docs', None)
+        self.example = kwargs.get('example', None)
+        self.notification_url_extension = kwargs.get('notification_url_extension', None)
+        self.dynamic_schema_old = kwargs.get('dynamic_schema_old', None)
+        self.dynamic_schema_new = kwargs.get('dynamic_schema_new', None)
+        self.dynamic_list_new = kwargs.get('dynamic_list_new', None)
+        self.dynamic_tree = kwargs.get('dynamic_tree', None)
+
+
+class SwaggerXml(Model):
+    """SwaggerXml.
+
+    :param name: The xml element or attribute name.
+    :type name: str
+    :param namespace: The xml namespace.
+    :type namespace: str
+    :param prefix: The name prefix.
+    :type prefix: str
+    :param attribute: Gets or sets a value indicating whether the property
+     should be an attribute instead of an element.
+    :type attribute: bool
+    :param wrapped: Gets or sets a value indicating whether the array elements
+     are wrapped in a container element.
+    :type wrapped: bool
+    :param extensions: The vendor extensions.
+    :type extensions: dict[str, object]
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'namespace': {'key': 'namespace', 'type': 'str'},
+        'prefix': {'key': 'prefix', 'type': 'str'},
+        'attribute': {'key': 'attribute', 'type': 'bool'},
+        'wrapped': {'key': 'wrapped', 'type': 'bool'},
+        'extensions': {'key': 'extensions', 'type': '{object}'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SwaggerXml, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.namespace = kwargs.get('namespace', None)
+        self.prefix = kwargs.get('prefix', None)
+        self.attribute = kwargs.get('attribute', None)
+        self.wrapped = kwargs.get('wrapped', None)
+        self.extensions = kwargs.get('extensions', None)
+
+
 class TrackingEvent(Model):
     """TrackingEvent.
 
@@ -3623,6 +5016,10 @@ class Workflow(Resource):
     :type sku: ~azure.mgmt.logic.models.Sku
     :param integration_account: The integration account.
     :type integration_account: ~azure.mgmt.logic.models.ResourceReference
+    :param integration_service_environment: The integration service
+     environment.
+    :type integration_service_environment:
+     ~azure.mgmt.logic.models.ResourceReference
     :param definition: The definition.
     :type definition: object
     :param parameters: The parameters.
@@ -3654,6 +5051,7 @@ class Workflow(Resource):
         'access_endpoint': {'key': 'properties.accessEndpoint', 'type': 'str'},
         'sku': {'key': 'properties.sku', 'type': 'Sku'},
         'integration_account': {'key': 'properties.integrationAccount', 'type': 'ResourceReference'},
+        'integration_service_environment': {'key': 'properties.integrationServiceEnvironment', 'type': 'ResourceReference'},
         'definition': {'key': 'properties.definition', 'type': 'object'},
         'parameters': {'key': 'properties.parameters', 'type': '{WorkflowParameter}'},
     }
@@ -3668,6 +5066,7 @@ class Workflow(Resource):
         self.access_endpoint = None
         self.sku = kwargs.get('sku', None)
         self.integration_account = kwargs.get('integration_account', None)
+        self.integration_service_environment = kwargs.get('integration_service_environment', None)
         self.definition = kwargs.get('definition', None)
         self.parameters = kwargs.get('parameters', None)
 
@@ -4585,6 +5984,26 @@ class WorkflowVersion(Resource):
         self.integration_account = kwargs.get('integration_account', None)
         self.definition = kwargs.get('definition', None)
         self.parameters = kwargs.get('parameters', None)
+
+
+class WsdlService(Model):
+    """WsdlService.
+
+    :param qualified_name: The qualified name.
+    :type qualified_name: str
+    :param endpoint_qualified_names: The list of endpoints' qualified names.
+    :type endpoint_qualified_names: list[str]
+    """
+
+    _attribute_map = {
+        'qualified_name': {'key': 'qualifiedName', 'type': 'str'},
+        'endpoint_qualified_names': {'key': 'EndpointQualifiedNames', 'type': '[str]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(WsdlService, self).__init__(**kwargs)
+        self.qualified_name = kwargs.get('qualified_name', None)
+        self.endpoint_qualified_names = kwargs.get('endpoint_qualified_names', None)
 
 
 class X12AcknowledgementSettings(Model):

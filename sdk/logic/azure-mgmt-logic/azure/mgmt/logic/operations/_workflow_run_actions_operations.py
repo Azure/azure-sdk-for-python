@@ -11,7 +11,6 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
@@ -62,7 +61,8 @@ class WorkflowRunActionsOperations(object):
         :return: An iterator like instance of WorkflowRunAction
         :rtype:
          ~azure.mgmt.logic.models.WorkflowRunActionPaged[~azure.mgmt.logic.models.WorkflowRunAction]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.logic.models.ErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -108,9 +108,7 @@ class WorkflowRunActionsOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -143,7 +141,8 @@ class WorkflowRunActionsOperations(object):
         :return: WorkflowRunAction or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.logic.models.WorkflowRunAction or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.logic.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -175,9 +174,7 @@ class WorkflowRunActionsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -210,7 +207,8 @@ class WorkflowRunActionsOperations(object):
         :return: An iterator like instance of ExpressionRoot
         :rtype:
          ~azure.mgmt.logic.models.ExpressionRootPaged[~azure.mgmt.logic.models.ExpressionRoot]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.logic.models.ErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -253,9 +251,7 @@ class WorkflowRunActionsOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorResponseException(self._deserialize, response)
 
             return response
 

@@ -30,6 +30,8 @@ from ._integration_account_partners_operations import IntegrationAccountPartners
 from ._integration_account_agreements_operations import IntegrationAccountAgreementsOperations
 from ._integration_account_certificates_operations import IntegrationAccountCertificatesOperations
 from ._integration_account_sessions_operations import IntegrationAccountSessionsOperations
+from ._integration_service_environments_operations import IntegrationServiceEnvironmentsOperations
+from ._integration_service_environment_operations import IntegrationServiceEnvironmentOperations
 from ._operations import Operations
 
 __all__ = [
@@ -54,5 +56,7 @@ __all__ = [
     'IntegrationAccountAgreementsOperations',
     'IntegrationAccountCertificatesOperations',
     'IntegrationAccountSessionsOperations',
+    'IntegrationServiceEnvironmentsOperations',
+    'IntegrationServiceEnvironmentOperations',
     'Operations',
 ]

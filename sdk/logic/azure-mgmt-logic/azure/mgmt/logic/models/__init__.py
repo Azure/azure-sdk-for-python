@@ -11,6 +11,19 @@
 
 try:
     from ._models_py3 import AgreementContent
+    from ._models_py3 import ApiDeploymentParameterMetadata
+    from ._models_py3 import ApiDeploymentParameterMetadataSet
+    from ._models_py3 import ApiOperation
+    from ._models_py3 import ApiOperationAnnotation
+    from ._models_py3 import ApiOperationListResult
+    from ._models_py3 import ApiOperationPropertiesDefinition
+    from ._models_py3 import ApiReference
+    from ._models_py3 import ApiResourceBackendService
+    from ._models_py3 import ApiResourceDefinitions
+    from ._models_py3 import ApiResourceGeneralInformation
+    from ._models_py3 import ApiResourceMetadata
+    from ._models_py3 import ApiResourcePolicies
+    from ._models_py3 import ApiResourceProperties
     from ._models_py3 import ArtifactContentPropertiesDefinition
     from ._models_py3 import ArtifactProperties
     from ._models_py3 import AS2AcknowledgementConnectionSettings
@@ -54,6 +67,9 @@ try:
     from ._models_py3 import ErrorResponse, ErrorResponseException
     from ._models_py3 import Expression
     from ._models_py3 import ExpressionRoot
+    from ._models_py3 import ExtendedErrorInfo
+    from ._models_py3 import FlowEndpoints
+    from ._models_py3 import FlowEndpointsConfiguration
     from ._models_py3 import GenerateUpgradedDefinitionParameters
     from ._models_py3 import GetCallbackUrlParameters
     from ._models_py3 import IntegrationAccount
@@ -70,6 +86,19 @@ try:
     from ._models_py3 import IntegrationAccountSession
     from ._models_py3 import IntegrationAccountSessionFilter
     from ._models_py3 import IntegrationAccountSku
+    from ._models_py3 import IntegrationServiceEnvironment
+    from ._models_py3 import IntegrationServiceEnvironmentAccessEndpoint
+    from ._models_py3 import IntegrationServiceEnvironmentNetworkDependency
+    from ._models_py3 import IntegrationServiceEnvironmentNetworkDependencyHealth
+    from ._models_py3 import IntegrationServiceEnvironmentNetworkEndpoint
+    from ._models_py3 import IntegrationServiceEnvironmentProperties
+    from ._models_py3 import IntegrationServiceEnvironmentSku
+    from ._models_py3 import IntegrationServiceEnvironmentSkuCapacity
+    from ._models_py3 import IntegrationServiceEnvironmentSkuDefinition
+    from ._models_py3 import IntegrationServiceEnvironmentSkuDefinitionSku
+    from ._models_py3 import IntegrationServiceEnvironmentSkuList
+    from ._models_py3 import IntegrationServiceEnvironmentSubnetNetworkHealth
+    from ._models_py3 import IpAddress
     from ._models_py3 import JsonSchema
     from ._models_py3 import KeyVaultKey
     from ._models_py3 import KeyVaultKeyAttributes
@@ -77,6 +106,9 @@ try:
     from ._models_py3 import KeyVaultKeyReferenceKeyVault
     from ._models_py3 import KeyVaultReference
     from ._models_py3 import ListKeyVaultKeysDefinition
+    from ._models_py3 import ManagedApi
+    from ._models_py3 import ManagedApiListResult
+    from ._models_py3 import NetworkConfiguration
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import OperationResult
@@ -98,6 +130,16 @@ try:
     from ._models_py3 import SetTriggerStateActionDefinition
     from ._models_py3 import Sku
     from ._models_py3 import SubResource
+    from ._models_py3 import SwaggerCustomDynamicList
+    from ._models_py3 import SwaggerCustomDynamicProperties
+    from ._models_py3 import SwaggerCustomDynamicSchema
+    from ._models_py3 import SwaggerCustomDynamicTree
+    from ._models_py3 import SwaggerCustomDynamicTreeCommand
+    from ._models_py3 import SwaggerCustomDynamicTreeParameter
+    from ._models_py3 import SwaggerCustomDynamicTreeSettings
+    from ._models_py3 import SwaggerExternalDocumentation
+    from ._models_py3 import SwaggerSchema
+    from ._models_py3 import SwaggerXml
     from ._models_py3 import TrackingEvent
     from ._models_py3 import TrackingEventErrorInfo
     from ._models_py3 import TrackingEventsDefinition
@@ -120,6 +162,7 @@ try:
     from ._models_py3 import WorkflowTriggerListCallbackUrlQueries
     from ._models_py3 import WorkflowTriggerRecurrence
     from ._models_py3 import WorkflowVersion
+    from ._models_py3 import WsdlService
     from ._models_py3 import X12AcknowledgementSettings
     from ._models_py3 import X12AgreementContent
     from ._models_py3 import X12DelimiterOverrides
@@ -137,6 +180,19 @@ try:
     from ._models_py3 import X12ValidationSettings
 except (SyntaxError, ImportError):
     from ._models import AgreementContent
+    from ._models import ApiDeploymentParameterMetadata
+    from ._models import ApiDeploymentParameterMetadataSet
+    from ._models import ApiOperation
+    from ._models import ApiOperationAnnotation
+    from ._models import ApiOperationListResult
+    from ._models import ApiOperationPropertiesDefinition
+    from ._models import ApiReference
+    from ._models import ApiResourceBackendService
+    from ._models import ApiResourceDefinitions
+    from ._models import ApiResourceGeneralInformation
+    from ._models import ApiResourceMetadata
+    from ._models import ApiResourcePolicies
+    from ._models import ApiResourceProperties
     from ._models import ArtifactContentPropertiesDefinition
     from ._models import ArtifactProperties
     from ._models import AS2AcknowledgementConnectionSettings
@@ -180,6 +236,9 @@ except (SyntaxError, ImportError):
     from ._models import ErrorResponse, ErrorResponseException
     from ._models import Expression
     from ._models import ExpressionRoot
+    from ._models import ExtendedErrorInfo
+    from ._models import FlowEndpoints
+    from ._models import FlowEndpointsConfiguration
     from ._models import GenerateUpgradedDefinitionParameters
     from ._models import GetCallbackUrlParameters
     from ._models import IntegrationAccount
@@ -196,6 +255,19 @@ except (SyntaxError, ImportError):
     from ._models import IntegrationAccountSession
     from ._models import IntegrationAccountSessionFilter
     from ._models import IntegrationAccountSku
+    from ._models import IntegrationServiceEnvironment
+    from ._models import IntegrationServiceEnvironmentAccessEndpoint
+    from ._models import IntegrationServiceEnvironmentNetworkDependency
+    from ._models import IntegrationServiceEnvironmentNetworkDependencyHealth
+    from ._models import IntegrationServiceEnvironmentNetworkEndpoint
+    from ._models import IntegrationServiceEnvironmentProperties
+    from ._models import IntegrationServiceEnvironmentSku
+    from ._models import IntegrationServiceEnvironmentSkuCapacity
+    from ._models import IntegrationServiceEnvironmentSkuDefinition
+    from ._models import IntegrationServiceEnvironmentSkuDefinitionSku
+    from ._models import IntegrationServiceEnvironmentSkuList
+    from ._models import IntegrationServiceEnvironmentSubnetNetworkHealth
+    from ._models import IpAddress
     from ._models import JsonSchema
     from ._models import KeyVaultKey
     from ._models import KeyVaultKeyAttributes
@@ -203,6 +275,9 @@ except (SyntaxError, ImportError):
     from ._models import KeyVaultKeyReferenceKeyVault
     from ._models import KeyVaultReference
     from ._models import ListKeyVaultKeysDefinition
+    from ._models import ManagedApi
+    from ._models import ManagedApiListResult
+    from ._models import NetworkConfiguration
     from ._models import Operation
     from ._models import OperationDisplay
     from ._models import OperationResult
@@ -224,6 +299,16 @@ except (SyntaxError, ImportError):
     from ._models import SetTriggerStateActionDefinition
     from ._models import Sku
     from ._models import SubResource
+    from ._models import SwaggerCustomDynamicList
+    from ._models import SwaggerCustomDynamicProperties
+    from ._models import SwaggerCustomDynamicSchema
+    from ._models import SwaggerCustomDynamicTree
+    from ._models import SwaggerCustomDynamicTreeCommand
+    from ._models import SwaggerCustomDynamicTreeParameter
+    from ._models import SwaggerCustomDynamicTreeSettings
+    from ._models import SwaggerExternalDocumentation
+    from ._models import SwaggerSchema
+    from ._models import SwaggerXml
     from ._models import TrackingEvent
     from ._models import TrackingEventErrorInfo
     from ._models import TrackingEventsDefinition
@@ -246,6 +331,7 @@ except (SyntaxError, ImportError):
     from ._models import WorkflowTriggerListCallbackUrlQueries
     from ._models import WorkflowTriggerRecurrence
     from ._models import WorkflowVersion
+    from ._models import WsdlService
     from ._models import X12AcknowledgementSettings
     from ._models import X12AgreementContent
     from ._models import X12DelimiterOverrides
@@ -271,6 +357,7 @@ from ._paged_models import IntegrationAccountPaged
 from ._paged_models import IntegrationAccountPartnerPaged
 from ._paged_models import IntegrationAccountSchemaPaged
 from ._paged_models import IntegrationAccountSessionPaged
+from ._paged_models import IntegrationServiceEnvironmentPaged
 from ._paged_models import KeyVaultKeyPaged
 from ._paged_models import OperationPaged
 from ._paged_models import RequestHistoryPaged
@@ -292,6 +379,20 @@ from ._logic_management_client_enums import (
     DaysOfWeek,
     DayOfWeek,
     KeyType,
+    ApiTier,
+    StatusAnnotation,
+    SwaggerSchemaType,
+    ApiType,
+    WsdlImportMethod,
+    ApiDeploymentParameterVisibility,
+    IntegrationServiceEnvironmentNetworkEndPointAccessibilityState,
+    IntegrationServiceEnvironmentNetworkDependencyCategoryType,
+    IntegrationServiceEnvironmentNetworkDependencyHealthState,
+    ErrorResponseCode,
+    AzureAsyncOperationState,
+    IntegrationServiceEnvironmentAccessEndpointType,
+    IntegrationServiceEnvironmentSkuName,
+    IntegrationServiceEnvironmentSkuScaleType,
     IntegrationAccountSkuName,
     SchemaType,
     MapType,
@@ -316,6 +417,19 @@ from ._logic_management_client_enums import (
 
 __all__ = [
     'AgreementContent',
+    'ApiDeploymentParameterMetadata',
+    'ApiDeploymentParameterMetadataSet',
+    'ApiOperation',
+    'ApiOperationAnnotation',
+    'ApiOperationListResult',
+    'ApiOperationPropertiesDefinition',
+    'ApiReference',
+    'ApiResourceBackendService',
+    'ApiResourceDefinitions',
+    'ApiResourceGeneralInformation',
+    'ApiResourceMetadata',
+    'ApiResourcePolicies',
+    'ApiResourceProperties',
     'ArtifactContentPropertiesDefinition',
     'ArtifactProperties',
     'AS2AcknowledgementConnectionSettings',
@@ -359,6 +473,9 @@ __all__ = [
     'ErrorResponse', 'ErrorResponseException',
     'Expression',
     'ExpressionRoot',
+    'ExtendedErrorInfo',
+    'FlowEndpoints',
+    'FlowEndpointsConfiguration',
     'GenerateUpgradedDefinitionParameters',
     'GetCallbackUrlParameters',
     'IntegrationAccount',
@@ -375,6 +492,19 @@ __all__ = [
     'IntegrationAccountSession',
     'IntegrationAccountSessionFilter',
     'IntegrationAccountSku',
+    'IntegrationServiceEnvironment',
+    'IntegrationServiceEnvironmentAccessEndpoint',
+    'IntegrationServiceEnvironmentNetworkDependency',
+    'IntegrationServiceEnvironmentNetworkDependencyHealth',
+    'IntegrationServiceEnvironmentNetworkEndpoint',
+    'IntegrationServiceEnvironmentProperties',
+    'IntegrationServiceEnvironmentSku',
+    'IntegrationServiceEnvironmentSkuCapacity',
+    'IntegrationServiceEnvironmentSkuDefinition',
+    'IntegrationServiceEnvironmentSkuDefinitionSku',
+    'IntegrationServiceEnvironmentSkuList',
+    'IntegrationServiceEnvironmentSubnetNetworkHealth',
+    'IpAddress',
     'JsonSchema',
     'KeyVaultKey',
     'KeyVaultKeyAttributes',
@@ -382,6 +512,9 @@ __all__ = [
     'KeyVaultKeyReferenceKeyVault',
     'KeyVaultReference',
     'ListKeyVaultKeysDefinition',
+    'ManagedApi',
+    'ManagedApiListResult',
+    'NetworkConfiguration',
     'Operation',
     'OperationDisplay',
     'OperationResult',
@@ -403,6 +536,16 @@ __all__ = [
     'SetTriggerStateActionDefinition',
     'Sku',
     'SubResource',
+    'SwaggerCustomDynamicList',
+    'SwaggerCustomDynamicProperties',
+    'SwaggerCustomDynamicSchema',
+    'SwaggerCustomDynamicTree',
+    'SwaggerCustomDynamicTreeCommand',
+    'SwaggerCustomDynamicTreeParameter',
+    'SwaggerCustomDynamicTreeSettings',
+    'SwaggerExternalDocumentation',
+    'SwaggerSchema',
+    'SwaggerXml',
     'TrackingEvent',
     'TrackingEventErrorInfo',
     'TrackingEventsDefinition',
@@ -425,6 +568,7 @@ __all__ = [
     'WorkflowTriggerListCallbackUrlQueries',
     'WorkflowTriggerRecurrence',
     'WorkflowVersion',
+    'WsdlService',
     'X12AcknowledgementSettings',
     'X12AgreementContent',
     'X12DelimiterOverrides',
@@ -459,6 +603,7 @@ __all__ = [
     'IntegrationAccountAgreementPaged',
     'IntegrationAccountCertificatePaged',
     'IntegrationAccountSessionPaged',
+    'IntegrationServiceEnvironmentPaged',
     'OperationPaged',
     'WorkflowProvisioningState',
     'WorkflowState',
@@ -470,6 +615,20 @@ __all__ = [
     'DaysOfWeek',
     'DayOfWeek',
     'KeyType',
+    'ApiTier',
+    'StatusAnnotation',
+    'SwaggerSchemaType',
+    'ApiType',
+    'WsdlImportMethod',
+    'ApiDeploymentParameterVisibility',
+    'IntegrationServiceEnvironmentNetworkEndPointAccessibilityState',
+    'IntegrationServiceEnvironmentNetworkDependencyCategoryType',
+    'IntegrationServiceEnvironmentNetworkDependencyHealthState',
+    'ErrorResponseCode',
+    'AzureAsyncOperationState',
+    'IntegrationServiceEnvironmentAccessEndpointType',
+    'IntegrationServiceEnvironmentSkuName',
+    'IntegrationServiceEnvironmentSkuScaleType',
     'IntegrationAccountSkuName',
     'SchemaType',
     'MapType',

@@ -147,6 +147,123 @@ class KeyType(str, Enum):
     secondary = "Secondary"
 
 
+class ApiTier(str, Enum):
+
+    not_specified = "NotSpecified"
+    enterprise = "Enterprise"
+    standard = "Standard"
+    premium = "Premium"
+
+
+class StatusAnnotation(str, Enum):
+
+    not_specified = "NotSpecified"
+    preview = "Preview"
+    production = "Production"
+
+
+class SwaggerSchemaType(str, Enum):
+
+    string = "String"
+    number = "Number"
+    integer = "Integer"
+    boolean = "Boolean"
+    array = "Array"
+    file = "File"
+    object_enum = "Object"
+    null = "Null"
+
+
+class ApiType(str, Enum):
+
+    not_specified = "NotSpecified"
+    rest = "Rest"
+    soap = "Soap"
+
+
+class WsdlImportMethod(str, Enum):
+
+    not_specified = "NotSpecified"
+    soap_to_rest = "SoapToRest"
+    soap_pass_through = "SoapPassThrough"
+
+
+class ApiDeploymentParameterVisibility(str, Enum):
+
+    not_specified = "NotSpecified"
+    default = "Default"
+    internal = "Internal"
+
+
+class IntegrationServiceEnvironmentNetworkEndPointAccessibilityState(str, Enum):
+
+    not_specified = "NotSpecified"
+    unknown = "Unknown"
+    available = "Available"
+    not_available = "NotAvailable"
+
+
+class IntegrationServiceEnvironmentNetworkDependencyCategoryType(str, Enum):
+
+    not_specified = "NotSpecified"
+    azure_storage = "AzureStorage"
+    azure_management = "AzureManagement"
+    azure_active_directory = "AzureActiveDirectory"
+    ssl_certificate_verification = "SSLCertificateVerification"
+    diagnostic_logs_and_metrics = "DiagnosticLogsAndMetrics"
+    integration_service_environment_connectors = "IntegrationServiceEnvironmentConnectors"
+    redis_cache = "RedisCache"
+    access_endpoints = "AccessEndpoints"
+    recovery_service = "RecoveryService"
+    sql = "SQL"
+    regional_service = "RegionalService"
+
+
+class IntegrationServiceEnvironmentNetworkDependencyHealthState(str, Enum):
+
+    not_specified = "NotSpecified"
+    healthy = "Healthy"
+    unhealthy = "Unhealthy"
+    unknown = "Unknown"
+
+
+class ErrorResponseCode(str, Enum):
+
+    not_specified = "NotSpecified"
+    integration_service_environment_not_found = "IntegrationServiceEnvironmentNotFound"
+    internal_server_error = "InternalServerError"
+    invalid_operation_id = "InvalidOperationId"
+
+
+class AzureAsyncOperationState(str, Enum):
+
+    failed = "Failed"
+    succeeded = "Succeeded"
+    pending = "Pending"
+    canceled = "Canceled"
+
+
+class IntegrationServiceEnvironmentAccessEndpointType(str, Enum):
+
+    not_specified = "NotSpecified"
+    external = "External"
+    internal = "Internal"
+
+
+class IntegrationServiceEnvironmentSkuName(str, Enum):
+
+    not_specified = "NotSpecified"
+    premium = "Premium"
+    developer = "Developer"
+
+
+class IntegrationServiceEnvironmentSkuScaleType(str, Enum):
+
+    manual = "Manual"
+    automatic = "Automatic"
+    none = "None"
+
+
 class IntegrationAccountSkuName(str, Enum):
 
     not_specified = "NotSpecified"

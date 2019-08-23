@@ -34,6 +34,8 @@ from .operations import IntegrationAccountPartnersOperations
 from .operations import IntegrationAccountAgreementsOperations
 from .operations import IntegrationAccountCertificatesOperations
 from .operations import IntegrationAccountSessionsOperations
+from .operations import IntegrationServiceEnvironmentsOperations
+from .operations import IntegrationServiceEnvironmentOperations
 from .operations import Operations
 from . import models
 
@@ -86,6 +88,10 @@ class LogicManagementClient(SDKClient):
     :vartype integration_account_certificates: azure.mgmt.logic.operations.IntegrationAccountCertificatesOperations
     :ivar integration_account_sessions: IntegrationAccountSessions operations
     :vartype integration_account_sessions: azure.mgmt.logic.operations.IntegrationAccountSessionsOperations
+    :ivar integration_service_environments: IntegrationServiceEnvironments operations
+    :vartype integration_service_environments: azure.mgmt.logic.operations.IntegrationServiceEnvironmentsOperations
+    :ivar integration_service_environment: IntegrationServiceEnvironment operations
+    :vartype integration_service_environment: azure.mgmt.logic.operations.IntegrationServiceEnvironmentOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.logic.operations.Operations
 
@@ -149,6 +155,10 @@ class LogicManagementClient(SDKClient):
         self.integration_account_certificates = IntegrationAccountCertificatesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.integration_account_sessions = IntegrationAccountSessionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.integration_service_environments = IntegrationServiceEnvironmentsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.integration_service_environment = IntegrationServiceEnvironmentOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
