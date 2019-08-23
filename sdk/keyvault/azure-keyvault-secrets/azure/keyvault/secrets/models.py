@@ -10,7 +10,7 @@ except ImportError:
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
-    from typing import Any, Dict, Mapping, Optional
+    from typing import Any, Dict, Optional
     from datetime import datetime
     from ._shared._generated.v7_0 import models as _models
 
@@ -19,7 +19,7 @@ class SecretAttributes(object):
     """A secret's id and attributes."""
 
     def __init__(self, attributes, vault_id, **kwargs):
-        # type: (_models.SecretAttributes, str, Mapping[str, Any]) -> None
+        # type: (_models.SecretAttributes, str, Any) -> None
         self._attributes = attributes
         self._id = vault_id
         self._vault_id = parse_vault_id(vault_id)
@@ -200,12 +200,12 @@ class DeletedSecret(SecretAttributes):
 
     def __init__(
         self,
-        attributes,  # type: models.SecretAttributes
+        attributes,  # type: _models.SecretAttributes
         vault_id,  # type: str
         deleted_date=None,  # type: Optional[datetime]
         recovery_id=None,  # type: Optional[str]
         scheduled_purge_date=None,  # type: Optional[datetime]
-        **kwargs  # type: Mapping[str, Any]
+        **kwargs  # type: Any
     ):
         # type: (...) -> None
         super(DeletedSecret, self).__init__(attributes, vault_id, **kwargs)
@@ -246,7 +246,7 @@ class DeletedSecret(SecretAttributes):
 
     @property
     def deleted_date(self):
-        # type: () -> datetime
+        # type: () -> Optional[datetime]
         """
         When the secret was deleted, in UTC
 
@@ -256,7 +256,7 @@ class DeletedSecret(SecretAttributes):
 
     @property
     def recovery_id(self):
-        # type: () -> str
+        # type: () -> Optional[str]
         """
         An identifier used to recover the deleted secret
 
@@ -266,7 +266,7 @@ class DeletedSecret(SecretAttributes):
 
     @property
     def scheduled_purge_date(self):
-        # type: () -> datetime
+        # type: () -> Optional[datetime]
         """
         When the secret is scheduled to be purged, in UTC
 
