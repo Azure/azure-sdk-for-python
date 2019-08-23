@@ -3664,6 +3664,39 @@ class RunCommandResult(Model):
         self.value = value
 
 
+class ScaleInPolicy(Model):
+    """Describes a scale-in policy for a virtual machine scale set.
+
+    :param rules: The rules to be followed when scaling-in a virtual machine
+     scale set. <br><br> Possible values are: <br><br> **Default** When a
+     virtual machine scale set is scaled in, the scale set will first be
+     balanced across zones if it is a zonal scale set. Then, it will be
+     balanced across Fault Domains as far as possible. Within each Fault
+     Domain, the virtual machines chosen for removal will be the newest ones
+     that are not protected from scale-in. <br><br> **OldestVM** When a virtual
+     machine scale set is being scaled-in, the oldest virtual machines that are
+     not protected from scale-in will be chosen for removal. For zonal virtual
+     machine scale sets, the scale set will first be balanced across zones.
+     Within each zone, the oldest virtual machines that are not protected will
+     be chosen for removal. <br><br> **NewestVM** When a virtual machine scale
+     set is being scaled-in, the newest virtual machines that are not protected
+     from scale-in will be chosen for removal. For zonal virtual machine scale
+     sets, the scale set will first be balanced across zones. Within each zone,
+     the newest virtual machines that are not protected will be chosen for
+     removal. <br><br>
+    :type rules: list[str or
+     ~azure.mgmt.compute.v2019_03_01.models.VirtualMachineScaleSetScaleInRules]
+    """
+
+    _attribute_map = {
+        'rules': {'key': 'rules', 'type': '[str]'},
+    }
+
+    def __init__(self, *, rules=None, **kwargs) -> None:
+        super(ScaleInPolicy, self).__init__(**kwargs)
+        self.rules = rules
+
+
 class ScheduledEventsProfile(Model):
     """ScheduledEventsProfile.
 
@@ -5160,6 +5193,11 @@ class VirtualMachineScaleSet(Resource):
      attaching managed data disks with UltraSSD_LRS storage account type.
     :type additional_capabilities:
      ~azure.mgmt.compute.v2019_03_01.models.AdditionalCapabilities
+    :param scale_in_policy: Specifies the scale-in policy that decides which
+     virtual machines are chosen for removal when a Virtual Machine Scale Set
+     is scaled-in.
+    :type scale_in_policy:
+     ~azure.mgmt.compute.v2019_03_01.models.ScaleInPolicy
     :param identity: The identity of the virtual machine scale set, if
      configured.
     :type identity:
@@ -5196,11 +5234,12 @@ class VirtualMachineScaleSet(Resource):
         'platform_fault_domain_count': {'key': 'properties.platformFaultDomainCount', 'type': 'int'},
         'proximity_placement_group': {'key': 'properties.proximityPlacementGroup', 'type': 'SubResource'},
         'additional_capabilities': {'key': 'properties.additionalCapabilities', 'type': 'AdditionalCapabilities'},
+        'scale_in_policy': {'key': 'properties.scaleInPolicy', 'type': 'ScaleInPolicy'},
         'identity': {'key': 'identity', 'type': 'VirtualMachineScaleSetIdentity'},
         'zones': {'key': 'zones', 'type': '[str]'},
     }
 
-    def __init__(self, *, location: str, tags=None, sku=None, plan=None, upgrade_policy=None, virtual_machine_profile=None, overprovision: bool=None, do_not_run_extensions_on_overprovisioned_vms: bool=None, single_placement_group: bool=None, zone_balance: bool=None, platform_fault_domain_count: int=None, proximity_placement_group=None, additional_capabilities=None, identity=None, zones=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, sku=None, plan=None, upgrade_policy=None, virtual_machine_profile=None, overprovision: bool=None, do_not_run_extensions_on_overprovisioned_vms: bool=None, single_placement_group: bool=None, zone_balance: bool=None, platform_fault_domain_count: int=None, proximity_placement_group=None, additional_capabilities=None, scale_in_policy=None, identity=None, zones=None, **kwargs) -> None:
         super(VirtualMachineScaleSet, self).__init__(location=location, tags=tags, **kwargs)
         self.sku = sku
         self.plan = plan
@@ -5215,6 +5254,7 @@ class VirtualMachineScaleSet(Resource):
         self.platform_fault_domain_count = platform_fault_domain_count
         self.proximity_placement_group = proximity_placement_group
         self.additional_capabilities = additional_capabilities
+        self.scale_in_policy = scale_in_policy
         self.identity = identity
         self.zones = zones
 
@@ -6136,6 +6176,11 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
      attaching managed data disks with UltraSSD_LRS storage account type.
     :type additional_capabilities:
      ~azure.mgmt.compute.v2019_03_01.models.AdditionalCapabilities
+    :param scale_in_policy: Specifies the scale-in policy that decides which
+     virtual machines are chosen for removal when a Virtual Machine Scale Set
+     is scaled-in.
+    :type scale_in_policy:
+     ~azure.mgmt.compute.v2019_03_01.models.ScaleInPolicy
     :param identity: The identity of the virtual machine scale set, if
      configured.
     :type identity:
@@ -6151,10 +6196,11 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
         'overprovision': {'key': 'properties.overprovision', 'type': 'bool'},
         'single_placement_group': {'key': 'properties.singlePlacementGroup', 'type': 'bool'},
         'additional_capabilities': {'key': 'properties.additionalCapabilities', 'type': 'AdditionalCapabilities'},
+        'scale_in_policy': {'key': 'properties.scaleInPolicy', 'type': 'ScaleInPolicy'},
         'identity': {'key': 'identity', 'type': 'VirtualMachineScaleSetIdentity'},
     }
 
-    def __init__(self, *, tags=None, sku=None, plan=None, upgrade_policy=None, virtual_machine_profile=None, overprovision: bool=None, single_placement_group: bool=None, additional_capabilities=None, identity=None, **kwargs) -> None:
+    def __init__(self, *, tags=None, sku=None, plan=None, upgrade_policy=None, virtual_machine_profile=None, overprovision: bool=None, single_placement_group: bool=None, additional_capabilities=None, scale_in_policy=None, identity=None, **kwargs) -> None:
         super(VirtualMachineScaleSetUpdate, self).__init__(tags=tags, **kwargs)
         self.sku = sku
         self.plan = plan
@@ -6163,6 +6209,7 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
         self.overprovision = overprovision
         self.single_placement_group = single_placement_group
         self.additional_capabilities = additional_capabilities
+        self.scale_in_policy = scale_in_policy
         self.identity = identity
 
 
