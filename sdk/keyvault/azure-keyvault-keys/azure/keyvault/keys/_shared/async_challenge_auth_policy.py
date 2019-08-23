@@ -26,15 +26,11 @@ class AsyncChallengeAuthPolicy(ChallengeAuthPolicyBase, AsyncHTTPPolicy):
                 # no_body was created with request's headers -> if request has a body, no_body's content-length is wrong
                 no_body.headers["Content-Length"] = "0"
 
-            _LOGGER.info("Provoking challenge with unauthorized bodiless request to {} ".format(
-                request.http_request.url
-            ))
             challenger = await self.next.send(PipelineRequest(http_request=no_body, context=request.context))
             try:
                 challenge = self._update_challenge(request, challenger)
             except ValueError:
                 # didn't receive the expected challenge -> nothing more this policy can do
-                _LOGGER.debug("Did not receive the expected challenge.")
                 return challenger
 
         await self._handle_challenge(request, challenge)
@@ -54,7 +50,6 @@ class AsyncChallengeAuthPolicy(ChallengeAuthPolicyBase, AsyncHTTPPolicy):
                 challenge = self._update_challenge(request, response)
             except ValueError:
                 # 401 with no legible challenge -> nothing more this policy can do
-                _LOGGER.debug("Received a 401 with no legible challenge.")
                 return response
 
             _LOGGER.info("Resending request with new challenge because old one might be outdated.")
@@ -82,10 +77,8 @@ class AsyncChallengeAuthPolicy(ChallengeAuthPolicyBase, AsyncHTTPPolicy):
 
     @staticmethod
     def _log_request(request):
-        header_string = ""
-        for header in request.http_request.headers:
-            header_string += (", " + header)
-        if header_string == "":
+        header_string = ", ".join(request.http_request.headers)
+        if not header_string:
             _LOGGER.info("Sending {} request to url {} with no headers".format(
                 request.http_request.method, request.http_request.url
             ))
@@ -93,5 +86,5 @@ class AsyncChallengeAuthPolicy(ChallengeAuthPolicyBase, AsyncHTTPPolicy):
             _LOGGER.info("Sending {} request to url {} with the following headers: {}".format(
                 request.http_request.method,
                 request.http_request.url,
-                header_string[2:]
+                header_string
             ))
