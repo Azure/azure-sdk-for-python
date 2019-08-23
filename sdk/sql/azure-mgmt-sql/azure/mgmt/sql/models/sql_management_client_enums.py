@@ -612,6 +612,7 @@ class DatabaseStatus(str, Enum):
     scaling = "Scaling"
     offline_changing_dw_performance_tiers = "OfflineChangingDwPerformanceTiers"
     online_changing_dw_performance_tiers = "OnlineChangingDwPerformanceTiers"
+    disabled = "Disabled"
 
 
 class DatabaseLicenseType(str, Enum):

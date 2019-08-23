@@ -69,7 +69,7 @@ class DatabaseUpdate(Model):
      'Offline', 'Standby', 'Shutdown', 'EmergencyMode', 'AutoClosed',
      'Copying', 'Creating', 'Inaccessible', 'OfflineSecondary', 'Pausing',
      'Paused', 'Resuming', 'Scaling', 'OfflineChangingDwPerformanceTiers',
-     'OnlineChangingDwPerformanceTiers'
+     'OnlineChangingDwPerformanceTiers', 'Disabled'
     :vartype status: str or ~azure.mgmt.sql.models.DatabaseStatus
     :ivar database_id: The ID of the database.
     :vartype database_id: str
@@ -123,13 +123,15 @@ class DatabaseUpdate(Model):
     :ivar earliest_restore_date: This records the earliest start date and time
      that restore is available for this database (ISO8601 format).
     :vartype earliest_restore_date: datetime
-    :param read_scale: The state of read-only routing. If enabled, connections
-     that have application intent set to readonly in their connection string
-     may be routed to a readonly secondary replica in the same region. Possible
-     values include: 'Enabled', 'Disabled'
+    :param read_scale: If enabled, connections that have application intent
+     set to readonly in their connection string may be routed to a readonly
+     secondary replica. This property is only settable for Premium and Business
+     Critical databases. Possible values include: 'Enabled', 'Disabled'
     :type read_scale: str or ~azure.mgmt.sql.models.DatabaseReadScale
     :param read_replica_count: The number of readonly secondary replicas
-     associated with the database.
+     associated with the database to which readonly application intent
+     connections may be routed. This property is only settable for Hyperscale
+     edition databases.
     :type read_replica_count: int
     :ivar current_sku: The name and tier of the SKU.
     :vartype current_sku: ~azure.mgmt.sql.models.Sku
