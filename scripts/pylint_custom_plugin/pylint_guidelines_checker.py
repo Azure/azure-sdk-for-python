@@ -894,7 +894,7 @@ class ClientListMethodsUseCorePaging(BaseChecker):
                             self.add_message(
                                 msg_id="client-list-methods-use-paging", node=node, confidence=None
                             )
-                    except astroid.exceptions.InferenceError:  # astroid can't always infer the return result
+                    except (astroid.exceptions.InferenceError, AttributeError): # astroid can't always infer the return
                         logger.debug("Pylint custom checker failed to check if client list method uses core paging.")
                         pass
         except AttributeError:
@@ -949,7 +949,7 @@ class ClientLROMethodsUseCorePolling(BaseChecker):
                             self.add_message(
                                 msg_id="client-lro-methods-use-polling", node=node, confidence=None
                             )
-                    except astroid.exceptions.InferenceError:  # astroid can't always infer the return result
+                    except (astroid.exceptions.InferenceError, AttributeError): # astroid can't always infer the return
                         logger.debug("Pylint custom checker failed to check if client begin method uses core polling.")
                         pass
         except AttributeError:
@@ -1174,48 +1174,84 @@ class ServiceClientUsesNameWithClientSuffix(BaseChecker):
 class CheckDocstringParameters(BaseChecker):
     __implements__ = IAstroidChecker
 
-    name = "bad-docstrings"
+    name = "check-docstrings"
     priority = -1
     msgs = {
         "C4739": (
             'Params missing in docstring: "%s". See details: '
             'https://azure.github.io/azure-sdk/python_documentation.html#docstrings',
-            "client-docstring-mismatch-param",
+            "docstring-mismatch-param",
             "Docstring mismatch for param.",
         ),
         "C4740": (
             'Param types missing in docstring: "%s". See details: '
             'https://azure.github.io/azure-sdk/python_documentation.html#docstrings',
-            "client-docstring-mismatch-type",
+            "docstring-mismatch-type",
             "Docstring mismatch for param type.",
         ),
         "C4741": (
             "A return doc is missing in the docstring. See details: "
             "https://azure.github.io/azure-sdk/python_documentation.html#docstrings",
-            "client-docstring-mismatch-return",
-            "Docstring mismatch for return statement doc.",
+            "docstring-mismatch-return",
+            "Docstring mismatch for return doc.",
         ),
         "C4742": (
             "A return type is missing in the docstring. See details: "
             "https://azure.github.io/azure-sdk/python_documentation.html#docstrings",
-            "client-docstring-mismatch-rtype",
+            "docstring-mismatch-rtype",
             "Docstring mismatch for return type.",
         ),
         "C4743": (
-            '"%s" not found as a method parameter. Use :keyword myparam: for keyword arguments. See details: '
+            '"%s" not found as a parameter. Use :keyword type myarg: if a keyword argument. See details: '
             'https://azure.github.io/azure-sdk/python_documentation.html#docstrings',
-            "client-docstring-mismatch-keyword",
+            "docstring-mismatch-keyword",
             "Docstring mismatch for keywords.",
         ),
     }
     options = (
         (
-            "ignore-client-docstring-mismatch",
+            "ignore-docstring-mismatch-param",
             {
                 "default": False,
                 "type": "yn",
                 "metavar": "<y_or_n>",
-                "help": "Allow the client to have a docstring mismatch",
+                "help": "Allow a docstring param mismatch.",
+            },
+        ),
+        (
+            "ignore-docstring-mismatch-type",
+            {
+                "default": False,
+                "type": "yn",
+                "metavar": "<y_or_n>",
+                "help": "Allow a docstring param type mismatch.",
+            },
+        ),
+        (
+            "ignore-docstring-mismatch-return",
+            {
+                "default": False,
+                "type": "yn",
+                "metavar": "<y_or_n>",
+                "help": "Allow a docstring return doc mismatch",
+            },
+        ),
+        (
+            "ignore-docstring-mismatch-rtype",
+            {
+                "default": False,
+                "type": "yn",
+                "metavar": "<y_or_n>",
+                "help": "Allow a docstring rtype mismatch",
+            },
+        ),
+        (
+            "ignore-docstring-mismatch-keyword",
+            {
+                "default": False,
+                "type": "yn",
+                "metavar": "<y_or_n>",
+                "help": "Allow a docstring to not use keyword for documentation.",
             },
         ),
     )
@@ -1224,11 +1260,29 @@ class CheckDocstringParameters(BaseChecker):
         super().__init__(linter)
 
     def check_parameters(self, node):
+        """Parse the docstring for any params and types
+        and compares it to the function's parameters.
+
+        Throws a pylint error if...
+        1. Missing param in docstring.
+        2. Missing a param type in the docstring.
+        3. Missing a return doc in the docstring when a function returns something.
+        4. Missing an rtype in the docstring when a function returns something.
+        5. Extra params in docstring that aren't function parameters. Change to keywords.
+
+        :param node: ast.ClassDef or ast.FunctionDef
+        :return: None
+        """
         arg_names = []
+        # specific case for constructor where docstring found in class def
         if isinstance(node, astroid.ClassDef):
-            arg_names = [ag.name for ag in node.body[0].args.args]
+            for constructor in node.body:
+                if isinstance(constructor, astroid.FunctionDef) and constructor.name == "__init__":
+                    arg_names = [arg.name for arg in constructor.args.args]
+                    break
+
         if isinstance(node, astroid.FunctionDef):
-            arg_names = [ag.name for ag in node.args.args]
+            arg_names = [arg.name for arg in node.args.args]
 
         try:
             # not every method will have a docstring so don't crash here, just return
@@ -1249,7 +1303,7 @@ class CheckDocstringParameters(BaseChecker):
             if line.startswith("type"):
                 param = line.split("type ")[1]
                 if param in docparams:
-                    docparams[param] = docstring[idx + 1]
+                    docparams[param] = docstring[idx+1]
 
         # check that all params are documented
         missing_params = []
@@ -1261,10 +1315,10 @@ class CheckDocstringParameters(BaseChecker):
 
         if missing_params:
             self.add_message(
-                msg_id="client-docstring-mismatch-param", args=(", ".join(missing_params)), node=node, confidence=None
+                msg_id="docstring-mismatch-param", args=(", ".join(missing_params)), node=node, confidence=None
             )
 
-        # check if we have a type for each param
+        # check if we have a type for each param and check if documented params that should be keywords
         missing_types = []
         should_be_keywords = []
         for param in docparams:
@@ -1275,21 +1329,29 @@ class CheckDocstringParameters(BaseChecker):
 
         if missing_types:
             self.add_message(
-                msg_id="client-docstring-mismatch-type", args=(", ".join(missing_types)), node=node, confidence=None
+                msg_id="docstring-mismatch-type", args=(", ".join(missing_types)), node=node, confidence=None
             )
 
         if should_be_keywords:
             self.add_message(
-                msg_id="client-docstring-mismatch-keyword",
+                msg_id="docstring-mismatch-keyword",
                 args=(", ".join(should_be_keywords)),
                 node=node,
                 confidence=None
             )
 
     def check_return(self, node):
+        """Checks if function returns anything.
+        If return found, checks that the docstring contains a return doc and rtype.
+
+        :param node: ast.FunctionDef
+        :return: None
+        """
         try:
             returns = next(node.infer_call_result()).as_string()
-        except astroid.exceptions.InferenceError:
+            if returns == "None":
+                return
+        except (astroid.exceptions.InferenceError, AttributeError):
             # this function doesn't return anything, just return
             return
 
@@ -1308,25 +1370,45 @@ class CheckDocstringParameters(BaseChecker):
 
         if has_return is False:
             self.add_message(
-                msg_id="client-docstring-mismatch-return", node=node, confidence=None
+                msg_id="docstring-mismatch-return", node=node, confidence=None
             )
         if has_rtype is False:
             self.add_message(
-                msg_id="client-docstring-mismatch-rtype", node=node, confidence=None
+                msg_id="docstring-mismatch-rtype", node=node, confidence=None
             )
 
     def visit_classdef(self, node):
-        if node.name.endswith("Client"):
+        """Visits every class in the file and finds the constructor.
+        Makes a call to compare class docstring with constructor params.
+
+        :param node: ast.ClassDef
+        :return: None
+        """
+        try:
             for func in node.body:
-                if func.name == "__init__":
+                if isinstance(func, astroid.FunctionDef) and func.name == "__init__":
                     self.check_parameters(node)
+        except Exception:
+            logger.debug("Pylint custom checker failed to check docstrings.")
+            pass
 
     def visit_functiondef(self, node):
-        if node.name == "__init__":
-            return
-        self.check_parameters(node)
-        self.check_return(node)
+        """Visits every function in the file and makes calls
+        to check docstring parameters and return statements.
 
+        :param node: ast.FunctionDef
+        :return: None
+        """
+        try:
+            if node.name == "__init__":
+                return
+            self.check_parameters(node)
+            self.check_return(node)
+        except Exception:
+            logger.debug("Pylint custom checker failed to check docstrings.")
+            pass
+
+    # this line makes it work for async functions
     visit_asyncfunctiondef = visit_functiondef
 
 
@@ -1541,23 +1623,23 @@ class CheckForPolicyUse(BaseChecker):
 
 # if a linter is registered in this function then it will be checked with pylint
 def register(linter):
-    # linter.register_checker(ClientsDoNotUseStaticMethods(linter))
-    # linter.register_checker(ClientConstructorTakesCorrectParameters(linter))
-    # linter.register_checker(ClientMethodsUseKwargsWithMultipleParameters(linter))
-    # linter.register_checker(ClientMethodsHaveTypeAnnotations(linter))
-    # linter.register_checker(ClientUsesCorrectNamingConventions(linter))
-    # linter.register_checker(ClientMethodsHaveKwargsParameter(linter))
-    # linter.register_checker(ClientHasKwargsInPoliciesForCreateConfigurationMethod(linter))
-    # linter.register_checker(AsyncClientCorrectNaming(linter))
-    # linter.register_checker(FileHasCopyrightHeader(linter))
-    # linter.register_checker(ClientMethodNamesDoNotUseDoubleUnderscorePrefix(linter))
-    # linter.register_checker(SpecifyParameterNamesInCall(linter))
-    # linter.register_checker(ClientConstructorDoesNotHaveConnectionStringParam(linter))
-    # linter.register_checker(PackageNameDoesNotUseUnderscoreOrPeriod(linter))
-    # linter.register_checker(ServiceClientUsesNameWithClientSuffix(linter))
+    linter.register_checker(ClientsDoNotUseStaticMethods(linter))
+    linter.register_checker(ClientConstructorTakesCorrectParameters(linter))
+    linter.register_checker(ClientMethodsUseKwargsWithMultipleParameters(linter))
+    linter.register_checker(ClientMethodsHaveTypeAnnotations(linter))
+    linter.register_checker(ClientUsesCorrectNamingConventions(linter))
+    linter.register_checker(ClientMethodsHaveKwargsParameter(linter))
+    linter.register_checker(ClientHasKwargsInPoliciesForCreateConfigurationMethod(linter))
+    linter.register_checker(AsyncClientCorrectNaming(linter))
+    linter.register_checker(FileHasCopyrightHeader(linter))
+    linter.register_checker(ClientMethodNamesDoNotUseDoubleUnderscorePrefix(linter))
+    linter.register_checker(SpecifyParameterNamesInCall(linter))
+    linter.register_checker(ClientConstructorDoesNotHaveConnectionStringParam(linter))
+    linter.register_checker(PackageNameDoesNotUseUnderscoreOrPeriod(linter))
+    linter.register_checker(ServiceClientUsesNameWithClientSuffix(linter))
 
     # linter.register_checker(CheckForPolicyUse(linter))
-    linter.register_checker(CheckDocstringParameters(linter))
+    # linter.register_checker(CheckDocstringParameters(linter))
 
     # Rules are disabled until false positive rate improved
     # linter.register_checker(ClientHasApprovedMethodNamePrefix(linter))
