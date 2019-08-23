@@ -19,6 +19,7 @@ try:
     from ._models_py3 import AutomaticOSUpgradeProperties
     from ._models_py3 import AvailabilitySet
     from ._models_py3 import AvailabilitySetUpdate
+    from ._models_py3 import BillingProfile
     from ._models_py3 import BootDiagnostics
     from ._models_py3 import BootDiagnosticsInstanceView
     from ._models_py3 import ComputeOperationValue
@@ -192,6 +193,7 @@ except (SyntaxError, ImportError):
     from ._models import AutomaticOSUpgradeProperties
     from ._models import AvailabilitySet
     from ._models import AvailabilitySetUpdate
+    from ._models import BillingProfile
     from ._models import BootDiagnostics
     from ._models import BootDiagnosticsInstanceView
     from ._models import ComputeOperationValue
@@ -394,11 +396,11 @@ from ._compute_management_client_enums import (
     ResourceIdentityType,
     MaintenanceOperationResultCodeTypes,
     HyperVGenerationType,
+    VirtualMachinePriorityTypes,
+    VirtualMachineEvictionPolicyTypes,
     UpgradeMode,
     OperatingSystemStateTypes,
     IPVersion,
-    VirtualMachinePriorityTypes,
-    VirtualMachineEvictionPolicyTypes,
     VirtualMachineScaleSetSkuScaleType,
     UpgradeState,
     UpgradeOperationInvoker,
@@ -423,6 +425,7 @@ __all__ = [
     'AutomaticOSUpgradeProperties',
     'AvailabilitySet',
     'AvailabilitySetUpdate',
+    'BillingProfile',
     'BootDiagnostics',
     'BootDiagnosticsInstanceView',
     'ComputeOperationValue',
@@ -624,11 +627,11 @@ __all__ = [
     'ResourceIdentityType',
     'MaintenanceOperationResultCodeTypes',
     'HyperVGenerationType',
+    'VirtualMachinePriorityTypes',
+    'VirtualMachineEvictionPolicyTypes',
     'UpgradeMode',
     'OperatingSystemStateTypes',
     'IPVersion',
-    'VirtualMachinePriorityTypes',
-    'VirtualMachineEvictionPolicyTypes',
     'VirtualMachineScaleSetSkuScaleType',
     'UpgradeState',
     'UpgradeOperationInvoker',
