@@ -21,8 +21,7 @@ from azure.core.exceptions import HttpResponseError
 #    https://pypi.python.org/pypi/azure-identity/
 #
 # 4. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL.
-#    [How to do this]
-#    (https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys#createget-credentials)
+# How to do this - https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-secrets#createget-credentials)
 #
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates the basic recover and purge operations on a vault(certificate) resource for Azure Key Vault
