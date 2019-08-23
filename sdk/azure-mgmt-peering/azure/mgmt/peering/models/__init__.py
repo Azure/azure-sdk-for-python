@@ -10,6 +10,7 @@
 # --------------------------------------------------------------------------
 
 try:
+    from .check_service_provider_availability_input_py3 import CheckServiceProviderAvailabilityInput
     from .peering_sku_py3 import PeeringSku
     from .bgp_session_py3 import BgpSession
     from .direct_connection_py3 import DirectConnection
@@ -18,8 +19,6 @@ try:
     from .exchange_connection_py3 import ExchangeConnection
     from .peering_properties_exchange_py3 import PeeringPropertiesExchange
     from .peering_py3 import Peering
-    from .error_response_py3 import ErrorResponse, ErrorResponseException
-    from .resource_py3 import Resource
     from .operation_display_info_py3 import OperationDisplayInfo
     from .operation_py3 import Operation
     from .contact_info_py3 import ContactInfo
@@ -31,7 +30,14 @@ try:
     from .peering_location_properties_exchange_py3 import PeeringLocationPropertiesExchange
     from .peering_location_py3 import PeeringLocation
     from .resource_tags_py3 import ResourceTags
+    from .peering_service_location_py3 import PeeringServiceLocation
+    from .peering_service_prefix_py3 import PeeringServicePrefix
+    from .peering_service_provider_py3 import PeeringServiceProvider
+    from .peering_service_py3 import PeeringService
+    from .error_response_py3 import ErrorResponse, ErrorResponseException
+    from .resource_py3 import Resource
 except (SyntaxError, ImportError):
+    from .check_service_provider_availability_input import CheckServiceProviderAvailabilityInput
     from .peering_sku import PeeringSku
     from .bgp_session import BgpSession
     from .direct_connection import DirectConnection
@@ -40,8 +46,6 @@ except (SyntaxError, ImportError):
     from .exchange_connection import ExchangeConnection
     from .peering_properties_exchange import PeeringPropertiesExchange
     from .peering import Peering
-    from .error_response import ErrorResponse, ErrorResponseException
-    from .resource import Resource
     from .operation_display_info import OperationDisplayInfo
     from .operation import Operation
     from .contact_info import ContactInfo
@@ -53,24 +57,39 @@ except (SyntaxError, ImportError):
     from .peering_location_properties_exchange import PeeringLocationPropertiesExchange
     from .peering_location import PeeringLocation
     from .resource_tags import ResourceTags
+    from .peering_service_location import PeeringServiceLocation
+    from .peering_service_prefix import PeeringServicePrefix
+    from .peering_service_provider import PeeringServiceProvider
+    from .peering_service import PeeringService
+    from .error_response import ErrorResponse, ErrorResponseException
+    from .resource import Resource
 from .peering_paged import PeeringPaged
 from .operation_paged import OperationPaged
 from .peer_asn_paged import PeerAsnPaged
 from .peering_location_paged import PeeringLocationPaged
+from .peering_service_location_paged import PeeringServiceLocationPaged
+from .peering_service_prefix_paged import PeeringServicePrefixPaged
+from .peering_service_provider_paged import PeeringServiceProviderPaged
+from .peering_service_paged import PeeringServicePaged
 from .peering_management_client_enums import (
     Name,
     Tier,
     Family,
     Size,
     Kind,
+    SessionAddressProvider,
     ConnectionState,
     SessionStateV4,
     SessionStateV6,
+    DirectPeeringType,
     ProvisioningState,
     ValidationState,
+    PrefixValidationState,
+    LearnedType,
 )
 
 __all__ = [
+    'CheckServiceProviderAvailabilityInput',
     'PeeringSku',
     'BgpSession',
     'DirectConnection',
@@ -79,8 +98,6 @@ __all__ = [
     'ExchangeConnection',
     'PeeringPropertiesExchange',
     'Peering',
-    'ErrorResponse', 'ErrorResponseException',
-    'Resource',
     'OperationDisplayInfo',
     'Operation',
     'ContactInfo',
@@ -92,18 +109,32 @@ __all__ = [
     'PeeringLocationPropertiesExchange',
     'PeeringLocation',
     'ResourceTags',
+    'PeeringServiceLocation',
+    'PeeringServicePrefix',
+    'PeeringServiceProvider',
+    'PeeringService',
+    'ErrorResponse', 'ErrorResponseException',
+    'Resource',
     'PeeringPaged',
     'OperationPaged',
     'PeerAsnPaged',
     'PeeringLocationPaged',
+    'PeeringServiceLocationPaged',
+    'PeeringServicePrefixPaged',
+    'PeeringServiceProviderPaged',
+    'PeeringServicePaged',
     'Name',
     'Tier',
     'Family',
     'Size',
     'Kind',
+    'SessionAddressProvider',
     'ConnectionState',
     'SessionStateV4',
     'SessionStateV6',
+    'DirectPeeringType',
     'ProvisioningState',
     'ValidationState',
+    'PrefixValidationState',
+    'LearnedType',
 ]

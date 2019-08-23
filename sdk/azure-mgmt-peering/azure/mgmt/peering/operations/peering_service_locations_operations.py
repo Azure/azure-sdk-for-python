@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class LegacyPeeringsOperations(object):
-    """LegacyPeeringsOperations operations.
+class PeeringServiceLocationsOperations(object):
+    """PeeringServiceLocationsOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -37,23 +37,18 @@ class LegacyPeeringsOperations(object):
         self.config = config
 
     def list(
-            self, peering_location, kind, custom_headers=None, raw=False, **operation_config):
-        """Lists all of the legacy peerings under the given subscription matching
-        the specified kind and location.
+            self, custom_headers=None, raw=False, **operation_config):
+        """Lists all of the available peering service locations for the specified
+        kind of peering.
 
-        :param peering_location: The location of the peering.
-        :type peering_location: str
-        :param kind: The kind of the peering. Possible values include:
-         'Direct', 'Exchange'
-        :type kind: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Peering
+        :return: An iterator like instance of PeeringServiceLocation
         :rtype:
-         ~azure.mgmt.peering.models.PeeringPaged[~azure.mgmt.peering.models.Peering]
+         ~azure.mgmt.peering.models.PeeringServiceLocationPaged[~azure.mgmt.peering.models.PeeringServiceLocation]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.peering.models.ErrorResponseException>`
         """
@@ -69,8 +64,6 @@ class LegacyPeeringsOperations(object):
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['peeringLocation'] = self._serialize.query("peering_location", peering_location, 'str')
-                query_parameters['kind'] = self._serialize.query("kind", kind, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
@@ -97,12 +90,12 @@ class LegacyPeeringsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.PeeringPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.PeeringServiceLocationPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.PeeringPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.PeeringServiceLocationPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Peering/legacyPeerings'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Peering/peeringServiceLocations'}

@@ -18,6 +18,8 @@ class Name(str, Enum):
     basic_direct_free = "Basic_Direct_Free"
     premium_direct_free = "Premium_Direct_Free"
     premium_exchange_metered = "Premium_Exchange_Metered"
+    premium_direct_metered = "Premium_Direct_Metered"
+    premium_direct_unlimited = "Premium_Direct_Unlimited"
 
 
 class Tier(str, Enum):
@@ -45,6 +47,12 @@ class Kind(str, Enum):
     exchange = "Exchange"
 
 
+class SessionAddressProvider(str, Enum):
+
+    microsoft = "Microsoft"
+    peer = "Peer"
+
+
 class ConnectionState(str, Enum):
 
     none = "None"
@@ -65,6 +73,7 @@ class SessionStateV4(str, Enum):
     active = "Active"
     open_sent = "OpenSent"
     open_confirm = "OpenConfirm"
+    open_received = "OpenReceived"
     established = "Established"
     pending_add = "PendingAdd"
     pending_update = "PendingUpdate"
@@ -79,10 +88,19 @@ class SessionStateV6(str, Enum):
     active = "Active"
     open_sent = "OpenSent"
     open_confirm = "OpenConfirm"
+    open_received = "OpenReceived"
     established = "Established"
     pending_add = "PendingAdd"
     pending_update = "PendingUpdate"
     pending_remove = "PendingRemove"
+
+
+class DirectPeeringType(str, Enum):
+
+    edge = "Edge"
+    transit = "Transit"
+    cdn = "Cdn"
+    internal = "Internal"
 
 
 class ProvisioningState(str, Enum):
@@ -99,3 +117,20 @@ class ValidationState(str, Enum):
     pending = "Pending"
     approved = "Approved"
     failed = "Failed"
+
+
+class PrefixValidationState(str, Enum):
+
+    none = "None"
+    invalid = "Invalid"
+    verified = "Verified"
+    failed = "Failed"
+    pending = "Pending"
+    unknown = "Unknown"
+
+
+class LearnedType(str, Enum):
+
+    none = "None"
+    via_partner = "ViaPartner"
+    via_session = "ViaSession"

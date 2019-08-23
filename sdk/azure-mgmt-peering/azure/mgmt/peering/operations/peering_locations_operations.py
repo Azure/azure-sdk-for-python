@@ -22,7 +22,7 @@ class PeeringLocationsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The client API version. Constant value: "2019-03-01-preview".
+    :ivar api_version: The client API version. Constant value: "2019-08-01-preview".
     """
 
     models = models
@@ -32,18 +32,21 @@ class PeeringLocationsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-03-01-preview"
+        self.api_version = "2019-08-01-preview"
 
         self.config = config
 
     def list(
-            self, kind, custom_headers=None, raw=False, **operation_config):
+            self, kind, direct_peering_type=None, custom_headers=None, raw=False, **operation_config):
         """Lists all of the available peering locations for the specified kind of
         peering.
 
         :param kind: The kind of the peering. Possible values include:
          'Direct', 'Exchange'
         :type kind: str
+        :param direct_peering_type: The type of direct peering. Possible
+         values include: 'Edge', 'Transit', 'Cdn', 'Internal'
+        :type direct_peering_type: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -68,6 +71,8 @@ class PeeringLocationsOperations(object):
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['kind'] = self._serialize.query("kind", kind, 'str')
+                if direct_peering_type is not None:
+                    query_parameters['directPeeringType'] = self._serialize.query("direct_peering_type", direct_peering_type, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:

@@ -17,7 +17,8 @@ class PeeringSku(Model):
 
     :param name: The name of the peering SKU. Possible values include:
      'Basic_Exchange_Free', 'Basic_Direct_Free', 'Premium_Direct_Free',
-     'Premium_Exchange_Metered'
+     'Premium_Exchange_Metered', 'Premium_Direct_Metered',
+     'Premium_Direct_Unlimited'
     :type name: str or ~azure.mgmt.peering.models.Name
     :param tier: The tier of the peering SKU. Possible values include:
      'Basic', 'Premium'

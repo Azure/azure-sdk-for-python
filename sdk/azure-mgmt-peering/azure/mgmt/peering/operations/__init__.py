@@ -14,6 +14,11 @@ from .operations import Operations
 from .peer_asns_operations import PeerAsnsOperations
 from .peering_locations_operations import PeeringLocationsOperations
 from .peerings_operations import PeeringsOperations
+from .peering_service_locations_operations import PeeringServiceLocationsOperations
+from .peering_service_prefixes_operations import PeeringServicePrefixesOperations
+from .prefixes_operations import PrefixesOperations
+from .peering_service_providers_operations import PeeringServiceProvidersOperations
+from .peering_services_operations import PeeringServicesOperations
 
 __all__ = [
     'LegacyPeeringsOperations',
@@ -21,4 +26,9 @@ __all__ = [
     'PeerAsnsOperations',
     'PeeringLocationsOperations',
     'PeeringsOperations',
+    'PeeringServiceLocationsOperations',
+    'PeeringServicePrefixesOperations',
+    'PrefixesOperations',
+    'PeeringServiceProvidersOperations',
+    'PeeringServicesOperations',
 ]

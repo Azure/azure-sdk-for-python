@@ -23,12 +23,17 @@ class PeeringPropertiesDirect(Model):
     :type use_for_peering_service: bool
     :param peer_asn: The reference of the peer ASN.
     :type peer_asn: ~azure.mgmt.peering.models.SubResource
+    :param direct_peering_type: The type of direct peering. Possible values
+     include: 'Edge', 'Transit', 'Cdn', 'Internal'
+    :type direct_peering_type: str or
+     ~azure.mgmt.peering.models.DirectPeeringType
     """
 
     _attribute_map = {
         'connections': {'key': 'connections', 'type': '[DirectConnection]'},
         'use_for_peering_service': {'key': 'useForPeeringService', 'type': 'bool'},
         'peer_asn': {'key': 'peerAsn', 'type': 'SubResource'},
+        'direct_peering_type': {'key': 'directPeeringType', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -36,3 +41,4 @@ class PeeringPropertiesDirect(Model):
         self.connections = kwargs.get('connections', None)
         self.use_for_peering_service = kwargs.get('use_for_peering_service', None)
         self.peer_asn = kwargs.get('peer_asn', None)
+        self.direct_peering_type = kwargs.get('direct_peering_type', None)
