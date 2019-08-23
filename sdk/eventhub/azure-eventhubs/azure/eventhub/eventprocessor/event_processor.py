@@ -175,7 +175,7 @@ class EventProcessor(object):
                                                self._partition_manager)
         async def initialize():
             if hasattr(partition_processor, "initialize"):
-                await partition_processor.initialize(checkpoint_manager)
+                await partition_processor.initialize()
 
         async def process_error(err):
             if hasattr(partition_processor, "process_error"):
