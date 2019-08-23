@@ -120,10 +120,10 @@ class CryptoClientTests(AsyncKeyVaultTestCase):
 
         # Wrap a key with the created key, then unwrap it. The wrapped key's bytes should round-trip.
         key_bytes = self.plaintext
-        key_id, wrap_algorithm, wrapped_bytes = await crypto_client.wrap(KeyWrapAlgorithm.rsa_oaep, key_bytes)
+        key_id, wrap_algorithm, wrapped_bytes = await crypto_client.wrap_key(KeyWrapAlgorithm.rsa_oaep, key_bytes)
         self.assertEqual(key_id, created_key.id)
 
-        result = await crypto_client.unwrap(wrap_algorithm, wrapped_bytes)
+        result = await crypto_client.unwrap_key(wrap_algorithm, wrapped_bytes)
         self.assertEqual(key_bytes, result.unwrapped_bytes)
 
     @ResourceGroupPreparer()
@@ -154,10 +154,10 @@ class CryptoClientTests(AsyncKeyVaultTestCase):
         crypto_client = key_client.get_cryptography_client(key)
 
         for wrap_algorithm in KeyWrapAlgorithm:
-            key_id, algorithm, encrypted_key = await crypto_client.wrap(wrap_algorithm, self.plaintext)
+            key_id, algorithm, encrypted_key = await crypto_client.wrap_key(wrap_algorithm, self.plaintext)
             self.assertEqual(key_id, key.id)
 
-            result = await crypto_client.unwrap(algorithm, encrypted_key)
+            result = await crypto_client.unwrap_key(algorithm, encrypted_key)
             self.assertEqual(result.unwrapped_bytes, self.plaintext)
 
     @ResourceGroupPreparer()

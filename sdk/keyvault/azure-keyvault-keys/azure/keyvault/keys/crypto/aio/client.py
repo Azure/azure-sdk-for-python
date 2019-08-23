@@ -171,7 +171,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         )
         return DecryptResult(decrypted_bytes=result.result)
 
-    async def wrap(self, algorithm: "KeyWrapAlgorithm", key: bytes, **kwargs: "**Any") -> WrapKeyResult:
+    async def wrap_key(self, algorithm: "KeyWrapAlgorithm", key: bytes, **kwargs: "Any") -> WrapKeyResult:
         """
         Wrap a key with the client's key. Requires the keys/wrapKey permission.
 
@@ -187,7 +187,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
             from azure.keyvault.keys.crypto import KeyWrapAlgorithm
 
             # wrap returns a tuple with the wrapped bytes and the metadata required to unwrap the key
-            key_id, wrap_algorithm, wrapped_bytes = await client.wrap(KeyWrapAlgorithm.rsa_oaep, key_bytes)
+            key_id, wrap_algorithm, wrapped_bytes = await client.wrap_key(KeyWrapAlgorithm.rsa_oaep, key_bytes)
 
         """
 
@@ -207,7 +207,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
             ).result
         return WrapKeyResult(key_id=self.key_id, algorithm=algorithm, encrypted_key=result)
 
-    async def unwrap(self, algorithm: "KeyWrapAlgorithm", encrypted_key: bytes, **kwargs: "**Any") -> UnwrapKeyResult:
+    async def unwrap_key(self, algorithm: "KeyWrapAlgorithm", encrypted_key: bytes, **kwargs: "Any") -> UnwrapKeyResult:
         """
         Unwrap a key previously wrapped with the client's key. Requires the keys/unwrapKey permission.
 
@@ -222,7 +222,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
 
             from azure.keyvault.keys.crypto import KeyWrapAlgorithm
 
-            result = await client.unwrap(KeyWrapAlgorithm.rsa_oaep, wrapped_bytes)
+            result = await client.unwrap_key(KeyWrapAlgorithm.rsa_oaep, wrapped_bytes)
             unwrapped_bytes = result.unwrapped_bytes
 
         """
