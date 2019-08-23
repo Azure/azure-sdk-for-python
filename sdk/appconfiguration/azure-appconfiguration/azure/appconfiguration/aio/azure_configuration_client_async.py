@@ -45,8 +45,14 @@ class AzureAppConfigurationClient:
         self.config.user_agent_policy = UserAgentPolicy(
             base_user_agent=USER_AGENT, **kwargs
         )
+
+        pipeline = kwargs.get("pipeline")
+
+        if pipeline is None:
+            pipeline = self._create_appconfig_pipeline(**kwargs)
+
         self._impl = ConfigurationClient(
-            credential, base_url, pipeline=self._create_appconfig_pipeline()
+            credential, base_url, pipeline=pipeline
         )
 
 
@@ -81,20 +87,25 @@ class AzureAppConfigurationClient:
             **kwargs
         )
 
-    def _create_appconfig_pipeline(self):
-        policies = [
-            self.config.headers_policy,
-            self.config.user_agent_policy,
-            AppConfigRequestsCredentialsPolicy(self.config.credentials),
-            self.config.retry_policy,
-            self.config.logging_policy,  # HTTP request/response log
-            DistributedTracingPolicy(),
-        ]
+    def _create_appconfig_pipeline(self, **kwargs):
+        transport = kwargs.get('transport')
+        policies = kwargs.get('policies')
+
+        if policies is None:  # [] is a valid policy list
+            policies = [
+                self.config.headers_policy,
+                self.config.user_agent_policy,
+                AppConfigRequestsCredentialsPolicy(self.config.credentials),
+                self.config.retry_policy,
+                self.config.logging_policy,  # HTTP request/response log
+                DistributedTracingPolicy(),
+            ]
+
+        if not transport:
+            transport = AsyncioRequestsTransport(**kwargs)
 
         return AsyncPipeline(
-            AsyncioRequestsTransport(
-                configuration=self.config
-            ),  # Send HTTP request using requests
+            transport,
             policies,
         )
 
