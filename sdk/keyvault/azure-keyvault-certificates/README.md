@@ -1,5 +1,5 @@
 # Azure Key Vault Certificates client library for Python
-Azure Key Vault is a cloud service that provides a secure management of certificates, which are built on top of keys and secrets and adds an automated renewal feature. The certificate client library allows you securely store and manage the life-cycle of your certificate, be notified about certificate life-cycle events, and supports automatic renewal with selected issuers. This library offers operations to create, retrieve, update, delete, purge, backup, restore and list the certificates and its versions, and offers CRUD operations for the certificate issuers, contacts, and management policies of the certificates..
+Azure Key Vault is a cloud service that provides a secure management of certificates, which are built on top of keys and secrets and adds an automated renewal feature. The certificate client library allows you securely store and manage the life-cycle of your certificate, be notified about certificate life-cycle events, and supports automatic renewal with selected issuers. This library offers operations to create, retrieve, update, delete, purge, backup, restore, and list the certificates and its versions, and offers CRUD operations for the certificate issuers, contacts, and management policies of the certificates..
 
 [Source code][certificates_client_src] | [Package (PyPI)](TODO) | [API reference documentation](TODO) | [Product documentation][keyvault_docs] | [Samples][certificates_samples]
 ## Getting started
@@ -12,8 +12,8 @@ pip install azure-keyvault-certificates
 
 ### Prerequisites
 * An [Azure subscription][azure_sub].
-* Python 2.7, 3.5.3 or later to use this package.
-* An existing Key Vault. If you need to create a Key Vault, you can use the [Azure Cloud Shell][azure_cloud_shell] to create one with this Azure CLI command. Replace `<your-resource-group-name>` and `<your-key-vault-name>` with your own, unique names:
+* Python 2.7, 3.5.3, or later to use this package.
+* An existing Key Vault. If you need to create a Key Vault, you can use the [Azure Cloud Shell][azure_cloud_shell] to create one with this Azure CLI command. Replace `<your-resource-group-name>` and `<your-key-vault-name>` with your own unique names:
 
     ```Bash
     az keyvault create --resource-group <your-resource-group-name> --name <your-key-vault-name>
@@ -162,12 +162,13 @@ Key Vault clients raise exceptions defined in azure-core. For more detailed info
 
 For example, if you try to retrieve a certificate after it is deleted a `404` error is returned, indicating resource not found. In the following snippet, the error is handled gracefully by catching the exception and displaying additional information about the error.
 ```python
+from azure.core.exceptions import ResourceNotFoundError
 try:
     certificate_client.get_certificate(name="deleted_certificate")
 except ResourceNotFoundError as e:
     print(e.message)
 
-Output: "certificatenot found:deleted_certificate"
+Output: "certificate not found:deleted_certificate"
 ```
 ### Logging
 Network trace logging is disabled by default for this library. When enabled, this will be logged at DEBUG level. The logging policy is used to output the HTTP network trace to the configured logger. You can configure logging to print out debugging information to the stdout or write it to a file using the following example:
