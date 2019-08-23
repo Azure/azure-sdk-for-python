@@ -164,15 +164,19 @@ class EventProcessor(object):
             await self.stop()
             raise TypeError("Partition processor must has method process_events(events, checkpoint_manager")
 
-        partition_consumer = self._eventhub_client.create_consumer(ownership["consumer_group_name"],
-                                                                   ownership["partition_id"],
-                                                                   EventPosition(ownership.get("offset", self._initial_event_position))
-                                                                   )
-        checkpoint_manager = CheckpointManager(ownership["partition_id"],
-                                               ownership["eventhub_name"],
-                                               ownership["consumer_group_name"],
-                                               ownership["owner_id"],
-                                               self._partition_manager)
+        partition_consumer = self._eventhub_client.create_consumer(
+            ownership["consumer_group_name"],
+            ownership["partition_id"],
+            EventPosition(ownership.get("offset", self._initial_event_position))
+        )
+        checkpoint_manager = CheckpointManager(
+            ownership["partition_id"],
+            ownership["eventhub_name"],
+            ownership["consumer_group_name"],
+            ownership["owner_id"],
+            self._partition_manager
+        )
+
         async def initialize():
             if hasattr(partition_processor, "initialize"):
                 await partition_processor.initialize()
