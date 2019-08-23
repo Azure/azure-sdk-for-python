@@ -96,6 +96,7 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
         self._loop = loop
 
     def get_file_client(self, file_name, **kwargs):
+        # type: (str, Any) -> FileClient
         """Get a client to interact with a specific file.
 
         The file need not already exist.
@@ -113,6 +114,7 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
             _location_mode=self._location_mode, loop=self._loop, **kwargs)
 
     def get_subdirectory_client(self, directory_name, **kwargs):
+        # type: (str, Any) -> DirectoryClient
         """Get a client to interact with a specific subdirectory.
 
         The subdirectory need not already exist.
@@ -227,7 +229,8 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
             page_iterator_class=DirectoryPropertiesPaged)
 
     @distributed_trace
-    def list_handles(self, recursive=False, timeout=None, **kwargs) -> AsyncItemPaged:
+    def list_handles(self, recursive=False, timeout=None, **kwargs):
+        # type: (bool, Optional[int], Any) -> AsyncItemPaged
         """Lists opened handles on a directory or a file under the directory.
 
         :param bool recursive:

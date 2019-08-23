@@ -1,3 +1,9 @@
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
+
 from azure.storage.queue._shared import sign_string
 from azure.storage.queue._shared.constants import X_MS_VERSION
 from azure.storage.queue._shared.shared_access_signature import SharedAccessSignature, _SharedAccessHelper, \
@@ -73,8 +79,6 @@ class QueueSharedAccessSignature(SharedAccessSignature):
 
 
 class _QueueSharedAccessHelper(_SharedAccessHelper):
-    def __init__(self):
-        super(_QueueSharedAccessHelper, self).__init__()
 
     def add_resource_signature(self, account_name, account_key, path):  # pylint: disable=arguments-differ
         def get_value_to_append(query):

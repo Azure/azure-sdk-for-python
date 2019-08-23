@@ -365,7 +365,9 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
                 :caption: Enqueue messages.
         """
         self._config.message_encode_policy.configure(
-            self.require_encryption, self.key_encryption_key, self.key_resolver_function
+            require_encryption=self.require_encryption,
+            key_encryption_key=self.key_encryption_key,
+            resolver=self.key_resolver_function
         )
         content = self._config.message_encode_policy(content)
         new_message = GenQueueMessage(message_text=content)
@@ -429,7 +431,9 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
                 :caption: Receive messages from the queue.
         """
         self._config.message_decode_policy.configure(
-            self.require_encryption, self.key_encryption_key, self.key_resolver_function
+            require_encryption=self.require_encryption,
+            key_encryption_key=self.key_encryption_key,
+            resolver=self.key_resolver_function
         )
         try:
             command = functools.partial(
@@ -584,7 +588,9 @@ class QueueClient(AsyncStorageAccountHostsMixin, QueueClientBase):
         if max_messages and not 1 <= max_messages <= 32:
             raise ValueError("Number of messages to peek should be between 1 and 32")
         self._config.message_decode_policy.configure(
-            self.require_encryption, self.key_encryption_key, self.key_resolver_function
+            require_encryption=self.require_encryption,
+            key_encryption_key=self.key_encryption_key,
+            resolver=self.key_resolver_function
         )
         try:
             messages = await self._client.messages.peek(

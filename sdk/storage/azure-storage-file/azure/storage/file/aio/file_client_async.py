@@ -677,7 +677,8 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             process_storage_error(error)
 
     @distributed_trace
-    def list_handles(self, timeout=None, **kwargs) -> AsyncItemPaged:
+    def list_handles(self, timeout=None, **kwargs):
+        # type: (Optional[int], Any) -> AsyncItemPaged
         """Lists handles for file.
 
         :param int timeout:

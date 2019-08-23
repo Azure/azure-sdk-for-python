@@ -113,7 +113,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
 
         _, sas_token = parse_query(parsed_url.query)
         self._query_str, credential = self._format_query_string(sas_token, credential)
-        super(BlobServiceClient, self).__init__(parsed_url, 'blob', credential, **kwargs)
+        super(BlobServiceClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
         self._client = AzureBlobStorage(self.url, pipeline=self._pipeline)
 
     def _format_url(self, hostname):
@@ -127,7 +127,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
             cls, conn_str,  # type: str
             credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
-        ):
+        ):  # type: (...) -> BlobServiceClient
         """Create BlobServiceClient from a Connection String.
 
         :param str conn_str:
@@ -159,7 +159,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
             start=None,  # type: Optional[Union[datetime, str]]
             ip=None,  # type: Optional[str]
             protocol=None  # type: Optional[str]
-        ):
+        ):  # type: (...) -> str
         """Generates a shared access signature for the blob service.
 
         Use the returned signature with the credential parameter of any BlobServiceClient,
@@ -214,7 +214,14 @@ class BlobServiceClient(StorageAccountHostsMixin):
 
         sas = SharedAccessSignature(self.credential.account_name, self.credential.account_key)
         return sas.generate_account(
-            Services.BLOB, resource_types, permission, expiry, start=start, ip=ip, protocol=protocol) # type: ignore
+            services=Services.BLOB,
+            resource_types=resource_types,
+            permission=permission,
+            expiry=expiry,
+            start=start,
+            ip=ip,
+            protocol=protocol
+        ) # type: ignore
 
     @distributed_trace
     def get_account_information(self, **kwargs): # type: ignore
@@ -282,7 +289,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def get_service_properties(self, timeout=None, **kwargs):
-        # type(Optional[int]) -> Dict[str, Any]
+        # type: (Optional[int], Any) -> Dict[str, Any]
         """Gets the properties of a storage account's Blob service, including
         Azure Storage Analytics.
 
