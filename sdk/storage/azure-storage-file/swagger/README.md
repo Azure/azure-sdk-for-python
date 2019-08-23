@@ -87,6 +87,7 @@ directive:
 ```
 
 ### FileRangeWriteFromUrl Constant
+This value is supposed to be the constant value update and these changes turn it from a parameter into a constant.
 ``` yaml
 directive:
 - from: swagger-document

@@ -305,6 +305,7 @@ class DirectoryOperations:
         query_parameters = {}
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
+        query_parameters['restype'] = self._serialize.query("self.restype", self.restype, 'str')
         query_parameters['comp'] = self._serialize.query("comp", comp, 'str')
 
         # Construct headers
