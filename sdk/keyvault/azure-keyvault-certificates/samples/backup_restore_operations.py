@@ -85,7 +85,6 @@ def run_sample():
 
         # The storage account certificate is no longer in use, so you can delete it.
         client.delete_certificate(name=certificate_operation.name)
-        print("\nDeleting certificate...")
         print("Deleted Certificate with name '{0}'".format(certificate_operation.name))
 
         # In future, if the certificate is required again, we can use the backup value to restore it in the Key Vault.

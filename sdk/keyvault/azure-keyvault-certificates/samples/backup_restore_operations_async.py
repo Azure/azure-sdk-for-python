@@ -85,11 +85,7 @@ async def run_sample():
         print("Backup created for certificate with name '{0}'.".format(certificate_operation.name))
 
         # The storage account certificate is no longer in use, so you can delete it.
-        print("\nDeleting certificate...")
         await client.delete_certificate(name=certificate_operation.name)
-
-        # To ensure certificate is deleted on the server side.
-        time.sleep(20)
         print("Deleted Certificate with name '{0}'".format(certificate_operation.name))
 
         # Even though the certificate is deleted, it can still be recovered so its name cannot be reused.
