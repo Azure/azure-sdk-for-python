@@ -81,10 +81,10 @@ jobs:
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
         BeforeTestSteps: 
-            - task: DownloadPipelineArtifact@0
-              inputs:
-                artifactName: 'artifacts' 
-                targetPath: $(Build.ArtifactStagingDirectory)
+          - task: DownloadPipelineArtifact@0
+            inputs:
+              artifactName: 'artifacts' 
+              targetPath: $(Build.ArtifactStagingDirectory)
         ToxTestEnv: "whl,sdist"  
         AdditionalTestSteps:
           - task: PythonScript@0
