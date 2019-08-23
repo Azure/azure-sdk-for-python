@@ -53,9 +53,6 @@ def run_sample():
 
         # The rsa key is no longer in use, so you delete it.
         client.delete_key(key.name)
-
-        # To ensure key is deleted on the server side.
-        print("\nDeleting key...")
         print("Deleted Key with name '{0}'".format(key.name))
 
         # In future, if the key is required again, we can use the backup value to restore it in the Key Vault.
