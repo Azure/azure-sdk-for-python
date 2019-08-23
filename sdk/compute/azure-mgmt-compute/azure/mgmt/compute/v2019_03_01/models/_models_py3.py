@@ -392,6 +392,36 @@ class AvailabilitySetUpdate(UpdateResource):
         self.sku = sku
 
 
+class BillingProfile(Model):
+    """Specifies the billing related details of a low priority VM or VMSS.
+    <br><br>Minimum api-version: 2019-03-01.
+
+    :param max_price: Specifies the maximum price you are willing to pay for a
+     low priority VM/VMSS. This price is in US Dollars. <br><br> This price
+     will be compared with the current low priority price for the VM size.
+     Also, the prices are compared at the time of create/update of low priority
+     VM/VMSS and the operation will only succeed if  the maxPrice is greater
+     than the current low priority price. <br><br> The maxPrice will also be
+     used for evicting a low priority VM/VMSS if the current low priority price
+     goes beyond the maxPrice after creation of VM/VMSS. <br><br> Possible
+     values are: <br><br> - Any decimal value greater than zero. Example:
+     $0.01538 <br><br> -1 – indicates default price to be up-to on-demand.
+     <br><br> You can set the maxPrice to -1 to indicate that the low priority
+     VM/VMSS should not be evicted for price reasons. Also, the default max
+     price is -1 if it is not provided by you. <br><br>Minimum api-version:
+     2019-03-01.
+    :type max_price: float
+    """
+
+    _attribute_map = {
+        'max_price': {'key': 'maxPrice', 'type': 'float'},
+    }
+
+    def __init__(self, *, max_price: float=None, **kwargs) -> None:
+        super(BillingProfile, self).__init__(**kwargs)
+        self.max_price = max_price
+
+
 class BootDiagnostics(Model):
     """Boot Diagnostics is a debugging feature which allows you to view Console
     Output and Screenshot to diagnose VM status. <br><br> You can easily view
@@ -4279,6 +4309,20 @@ class VirtualMachine(Resource):
      <br><br>Minimum api-version: 2018-04-01.
     :type proximity_placement_group:
      ~azure.mgmt.compute.v2019_03_01.models.SubResource
+    :param priority: Specifies the priority for the virtual machine.
+     <br><br>Minimum api-version: 2019-03-01. Possible values include:
+     'Regular', 'Low'
+    :type priority: str or
+     ~azure.mgmt.compute.v2019_03_01.models.VirtualMachinePriorityTypes
+    :param eviction_policy: Specifies the eviction policy for the low priority
+     virtual machine. Only supported value is 'Deallocate'. <br><br>Minimum
+     api-version: 2019-03-01. Possible values include: 'Deallocate', 'Delete'
+    :type eviction_policy: str or
+     ~azure.mgmt.compute.v2019_03_01.models.VirtualMachineEvictionPolicyTypes
+    :param billing_profile: Specifies the billing related details of a low
+     priority virtual machine. <br><br>Minimum api-version: 2019-03-01.
+    :type billing_profile:
+     ~azure.mgmt.compute.v2019_03_01.models.BillingProfile
     :param host: Specifies information about the dedicated host that the
      virtual machine resides in. <br><br>Minimum api-version: 2018-10-01.
     :type host: ~azure.mgmt.compute.v2019_03_01.models.SubResource
@@ -4339,6 +4383,9 @@ class VirtualMachine(Resource):
         'availability_set': {'key': 'properties.availabilitySet', 'type': 'SubResource'},
         'virtual_machine_scale_set': {'key': 'properties.virtualMachineScaleSet', 'type': 'SubResource'},
         'proximity_placement_group': {'key': 'properties.proximityPlacementGroup', 'type': 'SubResource'},
+        'priority': {'key': 'properties.priority', 'type': 'str'},
+        'eviction_policy': {'key': 'properties.evictionPolicy', 'type': 'str'},
+        'billing_profile': {'key': 'properties.billingProfile', 'type': 'BillingProfile'},
         'host': {'key': 'properties.host', 'type': 'SubResource'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'instance_view': {'key': 'properties.instanceView', 'type': 'VirtualMachineInstanceView'},
@@ -4349,7 +4396,7 @@ class VirtualMachine(Resource):
         'zones': {'key': 'zones', 'type': '[str]'},
     }
 
-    def __init__(self, *, location: str, tags=None, plan=None, hardware_profile=None, storage_profile=None, additional_capabilities=None, os_profile=None, network_profile=None, diagnostics_profile=None, availability_set=None, virtual_machine_scale_set=None, proximity_placement_group=None, host=None, license_type: str=None, identity=None, zones=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, plan=None, hardware_profile=None, storage_profile=None, additional_capabilities=None, os_profile=None, network_profile=None, diagnostics_profile=None, availability_set=None, virtual_machine_scale_set=None, proximity_placement_group=None, priority=None, eviction_policy=None, billing_profile=None, host=None, license_type: str=None, identity=None, zones=None, **kwargs) -> None:
         super(VirtualMachine, self).__init__(location=location, tags=tags, **kwargs)
         self.plan = plan
         self.hardware_profile = hardware_profile
@@ -4361,6 +4408,9 @@ class VirtualMachine(Resource):
         self.availability_set = availability_set
         self.virtual_machine_scale_set = virtual_machine_scale_set
         self.proximity_placement_group = proximity_placement_group
+        self.priority = priority
+        self.eviction_policy = eviction_policy
+        self.billing_profile = billing_profile
         self.host = host
         self.provisioning_state = None
         self.instance_view = None
@@ -6399,6 +6449,10 @@ class VirtualMachineScaleSetUpdateVMProfile(Model):
     :param license_type: The license type, which is for bring your own license
      scenario.
     :type license_type: str
+    :param billing_profile: Specifies the billing related details of a low
+     priority VMSS. <br><br>Minimum api-version: 2019-03-01.
+    :type billing_profile:
+     ~azure.mgmt.compute.v2019_03_01.models.BillingProfile
     :param scheduled_events_profile: Specifies Scheduled Event related
      configurations.
     :type scheduled_events_profile:
@@ -6412,10 +6466,11 @@ class VirtualMachineScaleSetUpdateVMProfile(Model):
         'diagnostics_profile': {'key': 'diagnosticsProfile', 'type': 'DiagnosticsProfile'},
         'extension_profile': {'key': 'extensionProfile', 'type': 'VirtualMachineScaleSetExtensionProfile'},
         'license_type': {'key': 'licenseType', 'type': 'str'},
+        'billing_profile': {'key': 'billingProfile', 'type': 'BillingProfile'},
         'scheduled_events_profile': {'key': 'scheduledEventsProfile', 'type': 'ScheduledEventsProfile'},
     }
 
-    def __init__(self, *, os_profile=None, storage_profile=None, network_profile=None, diagnostics_profile=None, extension_profile=None, license_type: str=None, scheduled_events_profile=None, **kwargs) -> None:
+    def __init__(self, *, os_profile=None, storage_profile=None, network_profile=None, diagnostics_profile=None, extension_profile=None, license_type: str=None, billing_profile=None, scheduled_events_profile=None, **kwargs) -> None:
         super(VirtualMachineScaleSetUpdateVMProfile, self).__init__(**kwargs)
         self.os_profile = os_profile
         self.storage_profile = storage_profile
@@ -6423,6 +6478,7 @@ class VirtualMachineScaleSetUpdateVMProfile(Model):
         self.diagnostics_profile = diagnostics_profile
         self.extension_profile = extension_profile
         self.license_type = license_type
+        self.billing_profile = billing_profile
         self.scheduled_events_profile = scheduled_events_profile
 
 
@@ -6805,6 +6861,10 @@ class VirtualMachineScaleSetVMProfile(Model):
      2017-10-30-preview. Possible values include: 'Deallocate', 'Delete'
     :type eviction_policy: str or
      ~azure.mgmt.compute.v2019_03_01.models.VirtualMachineEvictionPolicyTypes
+    :param billing_profile: Specifies the billing related details of a low
+     priority VMSS. <br><br>Minimum api-version: 2019-03-01.
+    :type billing_profile:
+     ~azure.mgmt.compute.v2019_03_01.models.BillingProfile
     :param scheduled_events_profile: Specifies Scheduled Event related
      configurations.
     :type scheduled_events_profile:
@@ -6820,10 +6880,11 @@ class VirtualMachineScaleSetVMProfile(Model):
         'license_type': {'key': 'licenseType', 'type': 'str'},
         'priority': {'key': 'priority', 'type': 'str'},
         'eviction_policy': {'key': 'evictionPolicy', 'type': 'str'},
+        'billing_profile': {'key': 'billingProfile', 'type': 'BillingProfile'},
         'scheduled_events_profile': {'key': 'scheduledEventsProfile', 'type': 'ScheduledEventsProfile'},
     }
 
-    def __init__(self, *, os_profile=None, storage_profile=None, network_profile=None, diagnostics_profile=None, extension_profile=None, license_type: str=None, priority=None, eviction_policy=None, scheduled_events_profile=None, **kwargs) -> None:
+    def __init__(self, *, os_profile=None, storage_profile=None, network_profile=None, diagnostics_profile=None, extension_profile=None, license_type: str=None, priority=None, eviction_policy=None, billing_profile=None, scheduled_events_profile=None, **kwargs) -> None:
         super(VirtualMachineScaleSetVMProfile, self).__init__(**kwargs)
         self.os_profile = os_profile
         self.storage_profile = storage_profile
@@ -6833,6 +6894,7 @@ class VirtualMachineScaleSetVMProfile(Model):
         self.license_type = license_type
         self.priority = priority
         self.eviction_policy = eviction_policy
+        self.billing_profile = billing_profile
         self.scheduled_events_profile = scheduled_events_profile
 
 
@@ -6997,6 +7059,20 @@ class VirtualMachineUpdate(UpdateResource):
      <br><br>Minimum api-version: 2018-04-01.
     :type proximity_placement_group:
      ~azure.mgmt.compute.v2019_03_01.models.SubResource
+    :param priority: Specifies the priority for the virtual machine.
+     <br><br>Minimum api-version: 2019-03-01. Possible values include:
+     'Regular', 'Low'
+    :type priority: str or
+     ~azure.mgmt.compute.v2019_03_01.models.VirtualMachinePriorityTypes
+    :param eviction_policy: Specifies the eviction policy for the low priority
+     virtual machine. Only supported value is 'Deallocate'. <br><br>Minimum
+     api-version: 2019-03-01. Possible values include: 'Deallocate', 'Delete'
+    :type eviction_policy: str or
+     ~azure.mgmt.compute.v2019_03_01.models.VirtualMachineEvictionPolicyTypes
+    :param billing_profile: Specifies the billing related details of a low
+     priority virtual machine. <br><br>Minimum api-version: 2019-03-01.
+    :type billing_profile:
+     ~azure.mgmt.compute.v2019_03_01.models.BillingProfile
     :param host: Specifies information about the dedicated host that the
      virtual machine resides in. <br><br>Minimum api-version: 2018-10-01.
     :type host: ~azure.mgmt.compute.v2019_03_01.models.SubResource
@@ -7045,6 +7121,9 @@ class VirtualMachineUpdate(UpdateResource):
         'availability_set': {'key': 'properties.availabilitySet', 'type': 'SubResource'},
         'virtual_machine_scale_set': {'key': 'properties.virtualMachineScaleSet', 'type': 'SubResource'},
         'proximity_placement_group': {'key': 'properties.proximityPlacementGroup', 'type': 'SubResource'},
+        'priority': {'key': 'properties.priority', 'type': 'str'},
+        'eviction_policy': {'key': 'properties.evictionPolicy', 'type': 'str'},
+        'billing_profile': {'key': 'properties.billingProfile', 'type': 'BillingProfile'},
         'host': {'key': 'properties.host', 'type': 'SubResource'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'instance_view': {'key': 'properties.instanceView', 'type': 'VirtualMachineInstanceView'},
@@ -7054,7 +7133,7 @@ class VirtualMachineUpdate(UpdateResource):
         'zones': {'key': 'zones', 'type': '[str]'},
     }
 
-    def __init__(self, *, tags=None, plan=None, hardware_profile=None, storage_profile=None, additional_capabilities=None, os_profile=None, network_profile=None, diagnostics_profile=None, availability_set=None, virtual_machine_scale_set=None, proximity_placement_group=None, host=None, license_type: str=None, identity=None, zones=None, **kwargs) -> None:
+    def __init__(self, *, tags=None, plan=None, hardware_profile=None, storage_profile=None, additional_capabilities=None, os_profile=None, network_profile=None, diagnostics_profile=None, availability_set=None, virtual_machine_scale_set=None, proximity_placement_group=None, priority=None, eviction_policy=None, billing_profile=None, host=None, license_type: str=None, identity=None, zones=None, **kwargs) -> None:
         super(VirtualMachineUpdate, self).__init__(tags=tags, **kwargs)
         self.plan = plan
         self.hardware_profile = hardware_profile
@@ -7066,6 +7145,9 @@ class VirtualMachineUpdate(UpdateResource):
         self.availability_set = availability_set
         self.virtual_machine_scale_set = virtual_machine_scale_set
         self.proximity_placement_group = proximity_placement_group
+        self.priority = priority
+        self.eviction_policy = eviction_policy
+        self.billing_profile = billing_profile
         self.host = host
         self.provisioning_state = None
         self.instance_view = None
