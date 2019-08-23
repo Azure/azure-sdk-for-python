@@ -33,7 +33,7 @@ from .file_client import FileClient
 from ._shared_access_signature import FileSharedAccessSignature
 
 if TYPE_CHECKING:
-    from .models import ShareProperties, AccessPolicy
+    from .models import ShareProperties, AccessPolicy, SharePermissions
 
 
 class ShareClient(StorageAccountHostsMixin):
@@ -113,7 +113,7 @@ class ShareClient(StorageAccountHostsMixin):
             self.share_name = share or unquote(path_share)
         self._query_str, credential = self._format_query_string(
             sas_token, credential, share_snapshot=self.snapshot)
-        super(ShareClient, self).__init__(parsed_url, 'file', credential, **kwargs)
+        super(ShareClient, self).__init__(parsed_url, service='file', credential=credential, **kwargs)
         self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline)
 
     def _format_url(self, hostname):
@@ -167,17 +167,18 @@ class ShareClient(StorageAccountHostsMixin):
             account_url, share=share, snapshot=snapshot, credential=credential, **kwargs)
 
     def generate_shared_access_signature(
-            self, permission=None,
-            expiry=None,
-            start=None,
-            policy_id=None,
-            ip=None,
-            protocol=None,
-            cache_control=None,
-            content_disposition=None,
-            content_encoding=None,
-            content_language=None,
-            content_type=None):
+            self, permission=None,  # type: Optional[Union[SharePermissions, str]]
+            expiry=None,  # type: Optional[Union[datetime, str]]
+            start=None,  # type: Optional[Union[datetime, str]]
+            policy_id=None,  # type: Optional[str]
+            ip=None,  # type: Optional[str]
+            protocol=None,  # type: Optional[str]
+            cache_control=None,  # type: Optional[str]
+            content_disposition=None,  # type: Optional[str]
+            content_encoding=None,  # type: Optional[str]
+            content_language=None,  # type: Optional[str]
+            content_type=None
+        ):  # type: (...) -> str
         """Generates a shared access signature for the share.
         Use the returned signature with the credential parameter of any FileServiceClient,
         ShareClient, DirectoryClient, or FileClient.
@@ -239,9 +240,9 @@ class ShareClient(StorageAccountHostsMixin):
             raise ValueError("No account SAS key available.")
         sas = FileSharedAccessSignature(self.credential.account_name, self.credential.account_key)
         return sas.generate_share(
-            self.share_name,
-            permission,
-            expiry,
+            share_name=self.share_name,
+            permission=permission,
+            expiry=expiry,
             start=start,
             policy_id=policy_id,
             ip=ip,
@@ -254,6 +255,7 @@ class ShareClient(StorageAccountHostsMixin):
         )
 
     def get_directory_client(self, directory_path=None):
+        # type: (Optional[str]) -> DirectoryClient
         """Get a client to interact with the specified directory.
         The directory need not already exist.
 
@@ -268,6 +270,7 @@ class ShareClient(StorageAccountHostsMixin):
             _location_mode=self._location_mode)
 
     def get_file_client(self, file_path):
+        # type: (str) -> FileClient
         """Get a client to interact with the specified file.
         The file need not already exist.
 

@@ -162,8 +162,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 self.snapshot = blob.snapshot # type: ignore
         except AttributeError:
             self.blob_name = blob or unquote(path_blob)
-        self._query_str, credential = self._format_query_string(sas_token, credential, self.snapshot)
-        super(BlobClient, self).__init__(parsed_url, 'blob', credential, **kwargs)
+        self._query_str, credential = self._format_query_string(sas_token, credential, snapshot=self.snapshot)
+        super(BlobClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
         self._client = AzureBlobStorage(self.url, pipeline=self._pipeline)
 
     def _format_url(self, hostname):
@@ -185,7 +185,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             snapshot=None,  # type: Optional[str]
             credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
-        ):
+        ):  # type: (...) -> BlobClient
         """
         Create BlobClient from a Connection String.
 
@@ -2257,9 +2257,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :rtype: dict(str, Any)
         """
         options = self._upload_page_options(
-            page,
-            start_range,
-            end_range,
+            page=page,
+            start_range=start_range,
+            end_range=end_range,
             length=length,
             validate_content=validate_content,
             **kwargs)

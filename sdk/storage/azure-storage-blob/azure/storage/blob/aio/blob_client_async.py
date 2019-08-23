@@ -1481,9 +1481,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :rtype: dict(str, Any)
         """
         options = self._upload_page_options(
-            page,
-            start_range,
-            end_range,
+            page=page,
+            start_range=start_range,
+            end_range=end_range,
             length=length,
             validate_content=validate_content,
             **kwargs)

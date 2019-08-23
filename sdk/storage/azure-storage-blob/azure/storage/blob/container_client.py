@@ -16,10 +16,10 @@ except ImportError:
     from urlparse import urlparse # type: ignore
     from urllib2 import quote, unquote # type: ignore
 
+import six
+
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
-
-import six
 
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
 from ._shared.request_handlers import add_metadata_headers, serialize_iso
@@ -133,7 +133,7 @@ class ContainerClient(StorageAccountHostsMixin):
         except AttributeError:
             self.container_name = container or unquote(path_container) # type: ignore
         self._query_str, credential = self._format_query_string(sas_token, credential)
-        super(ContainerClient, self).__init__(parsed_url, 'blob', credential, **kwargs)
+        super(ContainerClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
         self._client = AzureBlobStorage(self.url, pipeline=self._pipeline)
 
     def _format_url(self, hostname):
@@ -152,7 +152,7 @@ class ContainerClient(StorageAccountHostsMixin):
             container,  # type: Union[str, ContainerProperties]
             credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
-        ):
+        ):  # type: (...) -> ContainerClient
         """Create ContainerClient from a Connection String.
 
         :param str conn_str:
@@ -581,7 +581,7 @@ class ContainerClient(StorageAccountHostsMixin):
             lease=None,  # type: Optional[Union[str, LeaseClient]]
             timeout=None,  # type: Optional[int]
             **kwargs
-        ):
+        ):  # type: (...) -> Dict[str, Union[str, datetime]]
         """Sets the permissions for the specified container or stored access
         policies that may be used with Shared Access Signatures. The permissions
         indicate whether blobs in a container may be accessed publicly.

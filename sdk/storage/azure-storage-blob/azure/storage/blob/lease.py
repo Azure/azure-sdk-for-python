@@ -58,7 +58,9 @@ class LeaseClient(object):
         A string representing the lease ID of an existing lease. This value does not
         need to be specified in order to acquire a new lease, or break one.
     """
-    def __init__(self, client, lease_id=None):
+    def __init__(
+            self, client, lease_id=None
+    ):  # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
         # type: (Union[BlobClient, ContainerClient], Optional[str]) -> None
         self.id = lease_id or str(uuid.uuid4())
         self.last_modified = None

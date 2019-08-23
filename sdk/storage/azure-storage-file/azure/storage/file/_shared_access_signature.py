@@ -1,3 +1,9 @@
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
+
 from azure.storage.file._shared import sign_string
 from azure.storage.file._shared.constants import X_MS_VERSION
 from azure.storage.file._shared.shared_access_signature import SharedAccessSignature, _str, _SharedAccessHelper, \
@@ -179,7 +185,7 @@ class FileSharedAccessSignature(SharedAccessSignature):
 
 
 class _FileSharedAccessHelper(_SharedAccessHelper):
-    def __init__(self):
+    def __init__(self):  # pylint: disable=useless-super-delegation
         super(_FileSharedAccessHelper, self).__init__()
 
     def add_resource_signature(self, account_name, account_key, path):

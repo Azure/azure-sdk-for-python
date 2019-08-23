@@ -167,7 +167,7 @@ class FileClient(StorageAccountHostsMixin):
         self.directory_path = "/".join(self.file_path[:-1])
         self._query_str, credential = self._format_query_string(
             sas_token, credential, share_snapshot=self.snapshot)
-        super(FileClient, self).__init__(parsed_url, 'file', credential, **kwargs)
+        super(FileClient, self).__init__(parsed_url, service='file', credential=credential, **kwargs)
         self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline)
 
     def _format_url(self, hostname):
@@ -302,11 +302,11 @@ class FileClient(StorageAccountHostsMixin):
         else:
             file_path = None # type: ignore
         return sas.generate_file( # type: ignore
-            self.share_name,
-            file_path,
-            self.file_name,
-            permission,
-            expiry,
+            share_name=self.share_name,
+            directory_name=file_path,
+            file_name=self.file_name,
+            permission=permission,
+            expiry=expiry,
             start=start,
             policy_id=policy_id,
             ip=ip,

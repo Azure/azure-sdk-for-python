@@ -418,8 +418,8 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             public_access=None,  # type: Optional[Union[str, PublicAccess]]
             lease=None,  # type: Optional[Union[str, LeaseClient]]
             timeout=None,  # type: Optional[int]
-            **kwargs
-        ):
+            **kwargs  # type: Any
+        ):  # type: (...) -> Dict[str, Union[str, datetime]]
         """Sets the permissions for the specified container or stored access
         policies that may be used with Shared Access Signatures. The permissions
         indicate whether blobs in a container may be accessed publicly.

@@ -176,7 +176,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
 
     @distributed_trace_async
     async def get_service_properties(self, timeout=None, **kwargs):
-        # type(Optional[int]) -> Dict[str, Any]
+        # type: (Optional[int], Any) -> Dict[str, Any]
         """Gets the properties of a storage account's Blob service, including
         Azure Storage Analytics.
 
@@ -472,7 +472,8 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         :type blob: str or ~azure.storage.blob.models.BlobProperties
         :param snapshot:
             The optional blob snapshot on which to operate. This can either be the ID of the snapshot,
-            or a dictionary output returned by :func:`~azure.storage.blob.aio.blob_client_async.BlobClient.create_snapshot()`.
+            or a dictionary output returned by
+            :func:`~azure.storage.blob.aio.blob_client_async.BlobClient.create_snapshot()`.
         :type snapshot: str or dict(str, Any)
         :returns: A BlobClient.
         :rtype: ~azure.storage.blob.aio.blob_client_async.BlobClient

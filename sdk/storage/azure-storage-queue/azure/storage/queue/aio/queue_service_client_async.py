@@ -223,7 +223,7 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase):
             results_per_page=None,  # type: Optional[int]
             timeout=None,  # type: Optional[int]
             **kwargs
-        ) -> AsyncItemPaged:
+        ):  # type: (...) -> AsyncItemPaged
         """Returns a generator to list the queues under the specified account.
 
         The generator will lazily follow the continuation tokens returned by
