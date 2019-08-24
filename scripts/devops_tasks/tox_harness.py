@@ -160,7 +160,7 @@ def execute_tox_parallel(tox_command_tuples):
         if workload_results[key][0] != 0:
             logging.error(
                 "{} tox invocation exited with returncode {}".format(
-                    os.path.basename(key), workload_results[key]
+                    os.path.basename(key), workload_results[key][0]
                 )
             )
 
