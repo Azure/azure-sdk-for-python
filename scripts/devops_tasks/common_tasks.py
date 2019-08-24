@@ -34,6 +34,9 @@ def log_file(file_location, is_error=False):
         for line in file:
             sys.stdout.write(line)
         sys.stdout.write("\n")
+        # CI consistently sees outputs in the wrong location. Trying this to see if it helps
+        sys.stdout.flush()
+
 
 
 def read_file(file_location):
