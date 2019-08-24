@@ -1,5 +1,3 @@
-
-
 # This script is used to create and install the appropriate wheel for a tox environment.
 # it should be executed from tox with `{toxenvdir}/python` to ensure that the wheel
 # can be successfully tested from within a tox environment.
@@ -14,6 +12,7 @@ import shutil
 
 logging.getLogger().setLevel(logging.INFO)
 
+
 def cleanup_build_artifacts(build_folder):
     # clean up egginfo
     results = glob.glob(os.path.join(build_folder, "*.egg-info"))
@@ -24,6 +23,7 @@ def cleanup_build_artifacts(build_folder):
 
     # clean up build results
     shutil.rmtree(os.path.join(build_folder, "build"))
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -59,9 +59,7 @@ if __name__ == "__main__":
     )
 
     discovered_wheels = [
-        f
-        for f in os.listdir(args.distribution_directory)
-        if f.endswith(".whl")
+        f for f in os.listdir(args.distribution_directory) if f.endswith(".whl")
     ]
 
     cleanup_build_artifacts(args.target_setup)
@@ -73,15 +71,31 @@ if __name__ == "__main__":
             # find the wheel in the set of prebuilt wheels
             if os.path.isfile(os.path.join(os.environ["PREBUILT_WHEEL_DIR"], wheel)):
                 check_call(
-                    [sys.executable, "-m", "pip", "install", os.path.join(os.path.join(os.environ["PREBUILT_WHEEL_DIR"], wheel))]
+                    [
+                        sys.executable,
+                        "-m",
+                        "pip",
+                        "install",
+                        os.path.join(
+                            os.path.join(os.environ["PREBUILT_WHEEL_DIR"], wheel)
+                        ),
+                    ]
                 )
                 logging.info("Installed {w} from wheel directory".format(w=wheel))
             # it does't exist, so we need to error out
             else:
-                logging.error("{w} not present in the prebuilt wheels directory. Exiting.")
+                logging.error(
+                    "{w} not present in the prebuilt wheels directory. Exiting."
+                )
                 exit(1)
         else:
             check_call(
-                [sys.executable, "-m", "pip", "install", os.path.join(args.distribution_directory, wheel)]
+                [
+                    sys.executable,
+                    "-m",
+                    "pip",
+                    "install",
+                    os.path.join(args.distribution_directory, wheel),
+                ]
             )
             logging.info("Installed {w} from fresh wheel.".format(w=wheel))
