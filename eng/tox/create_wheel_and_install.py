@@ -1,3 +1,10 @@
+#!/usr/bin/env python
+
+# --------------------------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------------------------
+
 # This script is used to create and install the appropriate wheel for a tox environment.
 # it should be executed from tox with `{toxenvdir}/python` to ensure that the wheel
 # can be successfully tested from within a tox environment.

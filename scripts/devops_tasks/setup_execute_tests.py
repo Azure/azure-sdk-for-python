@@ -5,8 +5,9 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-# Normally, this module will be executed as referenced as part of the devops build definitions.
-# An enterprising user can easily glance over this and leverage for their own purposes.
+# This script is the primary entry point for the azure-sdk-for-python Devops CI commands
+# Primarily, it figures out which packages need to be built by combining the targeting string with the servicedir argument.
+# After this, it either executes a global install of all packages followed by a test, or a tox invocation per package collected.
 
 
 import argparse

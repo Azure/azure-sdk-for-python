@@ -1,3 +1,13 @@
+#!/usr/bin/env python
+
+# --------------------------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------------------------
+
+# This script is used to execute pylint within a tox environment. Depending on which package is being executed against,
+# a failure may be suppressed.
+
 from subprocess import check_call, CalledProcessError
 import argparse
 import os
