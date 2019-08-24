@@ -25,13 +25,6 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    # sys.path.insert(0, os.path.abspath(lint_plugin_path))
-
-
-    # logging.info(os.path.abspath(lint_plugin_path))
-    # logging.info(sys.path)
-    # exit(1)
-
     check_call(
         [sys.executable, "-m", "pylint", "--rcfile={}".format(rcFileLocation), "--output-format=parseable", os.path.join(args.target_module, "azure")]
     )
