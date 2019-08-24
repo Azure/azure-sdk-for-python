@@ -1,3 +1,9 @@
+
+
+# This script is used to create and install the appropriate wheel for a tox environment.
+# it should be executed from tox with `{toxenvdir}/python` to ensure that the wheel
+# can be successfully tested from within a tox environment.
+
 from subprocess import check_call
 import argparse
 import os
