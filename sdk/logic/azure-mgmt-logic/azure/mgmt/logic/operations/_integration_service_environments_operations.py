@@ -452,14 +452,14 @@ class IntegrationServiceEnvironmentsOperations(object):
     update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Logic/integrationServiceEnvironments/{integrationServiceEnvironmentName}'}
 
     def delete(
-            self, resource_group, integration_service_environment, custom_headers=None, raw=False, **operation_config):
+            self, resource_group, integration_service_environment_name, custom_headers=None, raw=False, **operation_config):
         """Deletes an integration service environment.
 
         :param resource_group: The resource group.
         :type resource_group: str
-        :param integration_service_environment: The integration service
-         environment.
-        :type integration_service_environment: str
+        :param integration_service_environment_name: The integration service
+         environment name.
+        :type integration_service_environment_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -475,7 +475,7 @@ class IntegrationServiceEnvironmentsOperations(object):
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroup': self._serialize.url("resource_group", resource_group, 'str'),
-            'integrationServiceEnvironment': self._serialize.url("integration_service_environment", integration_service_environment, 'str')
+            'integrationServiceEnvironmentName': self._serialize.url("integration_service_environment_name", integration_service_environment_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 

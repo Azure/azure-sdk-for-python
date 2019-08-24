@@ -278,7 +278,7 @@ class IntegrationServiceEnvironmentOperations(object):
         return deserialized
     managed_apis.metadata = {'url': '/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Logic/integrationServiceEnvironments/{integrationServiceEnvironmentName}/managedApis'}
 
-    def managed_api_method(
+    def get(
             self, resource_group, integration_service_environment_name, api_name, custom_headers=None, raw=False, **operation_config):
         """Gets the integration service environment managed Api.
 
@@ -301,7 +301,7 @@ class IntegrationServiceEnvironmentOperations(object):
          :class:`ErrorResponseException<azure.mgmt.logic.models.ErrorResponseException>`
         """
         # Construct URL
-        url = self.managed_api_method.metadata['url']
+        url = self.get.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroup': self._serialize.url("resource_group", resource_group, 'str'),
@@ -340,13 +340,13 @@ class IntegrationServiceEnvironmentOperations(object):
             return client_raw_response
 
         return deserialized
-    managed_api_method.metadata = {'url': '/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Logic/integrationServiceEnvironments/{integrationServiceEnvironmentName}/managedApis/{apiName}'}
+    get.metadata = {'url': '/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Logic/integrationServiceEnvironments/{integrationServiceEnvironmentName}/managedApis/{apiName}'}
 
 
-    def _managed_api_method1_initial(
+    def _put_initial(
             self, resource_group, integration_service_environment_name, api_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = self.managed_api_method1.metadata['url']
+        url = self.put.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroup': self._serialize.url("resource_group", resource_group, 'str'),
@@ -389,7 +389,7 @@ class IntegrationServiceEnvironmentOperations(object):
 
         return deserialized
 
-    def managed_api_method1(
+    def put(
             self, resource_group, integration_service_environment_name, api_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Puts the integration service environment managed Api.
 
@@ -414,7 +414,7 @@ class IntegrationServiceEnvironmentOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.logic.models.ErrorResponseException>`
         """
-        raw_result = self._managed_api_method1_initial(
+        raw_result = self._put_initial(
             resource_group=resource_group,
             integration_service_environment_name=integration_service_environment_name,
             api_name=api_name,
@@ -439,13 +439,13 @@ class IntegrationServiceEnvironmentOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    managed_api_method1.metadata = {'url': '/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Logic/integrationServiceEnvironments/{integrationServiceEnvironmentName}/managedApis/{apiName}'}
+    put.metadata = {'url': '/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Logic/integrationServiceEnvironments/{integrationServiceEnvironmentName}/managedApis/{apiName}'}
 
 
-    def _managed_api_method2_initial(
+    def _delete_initial(
             self, resource_group, integration_service_environment_name, api_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
-        url = self.managed_api_method2.metadata['url']
+        url = self.delete.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroup': self._serialize.url("resource_group", resource_group, 'str'),
@@ -486,7 +486,7 @@ class IntegrationServiceEnvironmentOperations(object):
 
         return deserialized
 
-    def managed_api_method2(
+    def delete(
             self, resource_group, integration_service_environment_name, api_name, custom_headers=None, raw=False, polling=True, **operation_config):
         """Deletes the integration service environment managed Api.
 
@@ -511,7 +511,7 @@ class IntegrationServiceEnvironmentOperations(object):
         :raises:
          :class:`ErrorResponseException<azure.mgmt.logic.models.ErrorResponseException>`
         """
-        raw_result = self._managed_api_method2_initial(
+        raw_result = self._delete_initial(
             resource_group=resource_group,
             integration_service_environment_name=integration_service_environment_name,
             api_name=api_name,
@@ -536,7 +536,7 @@ class IntegrationServiceEnvironmentOperations(object):
         elif polling is False: polling_method = NoPolling()
         else: polling_method = polling
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
-    managed_api_method2.metadata = {'url': '/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Logic/integrationServiceEnvironments/{integrationServiceEnvironmentName}/managedApis/{apiName}'}
+    delete.metadata = {'url': '/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Logic/integrationServiceEnvironments/{integrationServiceEnvironmentName}/managedApis/{apiName}'}
 
     def managed_api_operations(
             self, resource_group, integration_service_environment_name, api_name, custom_headers=None, raw=False, **operation_config):
