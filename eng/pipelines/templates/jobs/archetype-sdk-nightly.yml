@@ -130,7 +130,7 @@ jobs:
     steps:
       - template: ../steps/build-test.yml
         parameters:
-          AdditionalTestArgs: '--disablecov --wheel_dir="$(Build.ArtifactStagingDirectory)" --tparallel'
+          AdditionalTestArgs: '--disablecov --wheel_dir="$(Build.ArtifactStagingDirectory)"'
           ServiceDirectory: ${{ parameters.ServiceDirectory }}
           TestMarkArgument: ${{ parameters.TestMarkArgument }}
           OSName: $(OSName)
