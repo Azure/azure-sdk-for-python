@@ -74,7 +74,7 @@ jobs:
       parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
-        AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)" --tparallel'
+        AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
         OSName: $(OSName)
         PythonVersion: $(PythonVersion)
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
@@ -107,7 +107,7 @@ jobs:
     steps:
     - template: ../steps/build-test.yml
       parameters:
-        AdditionalTestArgs: '--disablecov --wheel_dir="$(Build.ArtifactStagingDirectory)" --tparallel'
+        AdditionalTestArgs: '--disablecov --wheel_dir="$(Build.ArtifactStagingDirectory)"'
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
         OSName: $(OSName)
