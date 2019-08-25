@@ -14,8 +14,8 @@ from msrest import Serializer, Deserializer
 
 from ._configuration import AzureReservationAPIConfiguration
 from .operations import AzureReservationAPIOperationsMixin
-from .operations import ReservationOrderOperations
 from .operations import ReservationOperations
+from .operations import ReservationOrderOperations
 from .operations import OperationOperations
 from . import models
 
@@ -26,10 +26,10 @@ class AzureReservationAPI(AzureReservationAPIOperationsMixin, SDKClient):
     :ivar config: Configuration for client.
     :vartype config: AzureReservationAPIConfiguration
 
-    :ivar reservation_order: ReservationOrder operations
-    :vartype reservation_order: azure.mgmt.reservations.operations.ReservationOrderOperations
     :ivar reservation: Reservation operations
     :vartype reservation: azure.mgmt.reservations.operations.ReservationOperations
+    :ivar reservation_order: ReservationOrder operations
+    :vartype reservation_order: azure.mgmt.reservations.operations.ReservationOrderOperations
     :ivar operation: Operation operations
     :vartype operation: azure.mgmt.reservations.operations.OperationOperations
 
@@ -50,9 +50,9 @@ class AzureReservationAPI(AzureReservationAPIOperationsMixin, SDKClient):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
-        self.reservation_order = ReservationOrderOperations(
-            self._client, self.config, self._serialize, self._deserialize)
         self.reservation = ReservationOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.reservation_order = ReservationOrderOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operation = OperationOperations(
             self._client, self.config, self._serialize, self._deserialize)
