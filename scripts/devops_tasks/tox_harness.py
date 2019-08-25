@@ -140,9 +140,6 @@ def individual_workload(tox_command_tuple, workload_results):
         if in_ci():
             shutil.rmtree(tox_dir)
 
-    return proc
-
-
 def execute_tox_parallel(tox_command_tuples):
     pool = ThreadPool(pool_size)
     workload_results = {}
