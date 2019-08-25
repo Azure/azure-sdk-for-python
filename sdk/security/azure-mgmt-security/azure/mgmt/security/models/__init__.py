@@ -18,6 +18,10 @@ try:
     from ._models_py3 import AlertConfidenceReason
     from ._models_py3 import AlertEntity
     from ._models_py3 import AllowedConnectionsResource
+    from ._models_py3 import AppWhitelistingGroup
+    from ._models_py3 import AppWhitelistingGroups
+    from ._models_py3 import AppWhitelistingIssueSummary
+    from ._models_py3 import AppWhitelistingPutGroupData
     from ._models_py3 import AscLocation
     from ._models_py3 import AtaExternalSecuritySolution
     from ._models_py3 import AtaSolutionProperties
@@ -39,6 +43,19 @@ try:
     from ._models_py3 import InformationProtectionKeyword
     from ._models_py3 import InformationProtectionPolicy
     from ._models_py3 import InformationType
+    from ._models_py3 import IoTSecurityAggregatedAlert
+    from ._models_py3 import IoTSecurityAggregatedRecommendation
+    from ._models_py3 import IoTSecurityAlertedDevice
+    from ._models_py3 import IoTSecurityAlertedDevicesList
+    from ._models_py3 import IoTSecurityDeviceAlert
+    from ._models_py3 import IoTSecurityDeviceAlertsList
+    from ._models_py3 import IoTSecurityDeviceRecommendation
+    from ._models_py3 import IoTSecurityDeviceRecommendationsList
+    from ._models_py3 import IoTSecuritySolutionAnalyticsModel
+    from ._models_py3 import IoTSecuritySolutionAnalyticsModelList
+    from ._models_py3 import IoTSecuritySolutionAnalyticsModelPropertiesDevicesMetricsItem
+    from ._models_py3 import IoTSecuritySolutionModel
+    from ._models_py3 import IoTSeverityMetrics
     from ._models_py3 import JitNetworkAccessPolicy
     from ._models_py3 import JitNetworkAccessPolicyInitiatePort
     from ._models_py3 import JitNetworkAccessPolicyInitiateRequest
@@ -52,8 +69,11 @@ try:
     from ._models_py3 import Location
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
+    from ._models_py3 import PathRecommendation
     from ._models_py3 import Pricing
     from ._models_py3 import PricingList
+    from ._models_py3 import PublisherInfo
+    from ._models_py3 import RecommendationConfigurationProperties
     from ._models_py3 import RegulatoryComplianceAssessment
     from ._models_py3 import RegulatoryComplianceControl
     from ._models_py3 import RegulatoryComplianceStandard
@@ -62,14 +82,21 @@ try:
     from ._models_py3 import SecurityTask
     from ._models_py3 import SecurityTaskParameters
     from ._models_py3 import SensitivityLabel
+    from ._models_py3 import ServerVulnerabilityAssessment
+    from ._models_py3 import ServerVulnerabilityAssessmentsList
     from ._models_py3 import Setting
     from ._models_py3 import SettingResource
     from ._models_py3 import Tags
+    from ._models_py3 import TagsResource
     from ._models_py3 import TopologyResource
     from ._models_py3 import TopologySingleResource
     from ._models_py3 import TopologySingleResourceChild
     from ._models_py3 import TopologySingleResourceParent
     from ._models_py3 import TrackedResource
+    from ._models_py3 import UpdateIotSecuritySolutionData
+    from ._models_py3 import UserDefinedResourcesProperties
+    from ._models_py3 import UserRecommendation
+    from ._models_py3 import VmRecommendation
     from ._models_py3 import WorkspaceSetting
 except (SyntaxError, ImportError):
     from ._models import AadConnectivityState1
@@ -80,6 +107,10 @@ except (SyntaxError, ImportError):
     from ._models import AlertConfidenceReason
     from ._models import AlertEntity
     from ._models import AllowedConnectionsResource
+    from ._models import AppWhitelistingGroup
+    from ._models import AppWhitelistingGroups
+    from ._models import AppWhitelistingIssueSummary
+    from ._models import AppWhitelistingPutGroupData
     from ._models import AscLocation
     from ._models import AtaExternalSecuritySolution
     from ._models import AtaSolutionProperties
@@ -101,6 +132,19 @@ except (SyntaxError, ImportError):
     from ._models import InformationProtectionKeyword
     from ._models import InformationProtectionPolicy
     from ._models import InformationType
+    from ._models import IoTSecurityAggregatedAlert
+    from ._models import IoTSecurityAggregatedRecommendation
+    from ._models import IoTSecurityAlertedDevice
+    from ._models import IoTSecurityAlertedDevicesList
+    from ._models import IoTSecurityDeviceAlert
+    from ._models import IoTSecurityDeviceAlertsList
+    from ._models import IoTSecurityDeviceRecommendation
+    from ._models import IoTSecurityDeviceRecommendationsList
+    from ._models import IoTSecuritySolutionAnalyticsModel
+    from ._models import IoTSecuritySolutionAnalyticsModelList
+    from ._models import IoTSecuritySolutionAnalyticsModelPropertiesDevicesMetricsItem
+    from ._models import IoTSecuritySolutionModel
+    from ._models import IoTSeverityMetrics
     from ._models import JitNetworkAccessPolicy
     from ._models import JitNetworkAccessPolicyInitiatePort
     from ._models import JitNetworkAccessPolicyInitiateRequest
@@ -114,8 +158,11 @@ except (SyntaxError, ImportError):
     from ._models import Location
     from ._models import Operation
     from ._models import OperationDisplay
+    from ._models import PathRecommendation
     from ._models import Pricing
     from ._models import PricingList
+    from ._models import PublisherInfo
+    from ._models import RecommendationConfigurationProperties
     from ._models import RegulatoryComplianceAssessment
     from ._models import RegulatoryComplianceControl
     from ._models import RegulatoryComplianceStandard
@@ -124,14 +171,21 @@ except (SyntaxError, ImportError):
     from ._models import SecurityTask
     from ._models import SecurityTaskParameters
     from ._models import SensitivityLabel
+    from ._models import ServerVulnerabilityAssessment
+    from ._models import ServerVulnerabilityAssessmentsList
     from ._models import Setting
     from ._models import SettingResource
     from ._models import Tags
+    from ._models import TagsResource
     from ._models import TopologyResource
     from ._models import TopologySingleResource
     from ._models import TopologySingleResourceChild
     from ._models import TopologySingleResourceParent
     from ._models import TrackedResource
+    from ._models import UpdateIotSecuritySolutionData
+    from ._models import UserDefinedResourcesProperties
+    from ._models import UserRecommendation
+    from ._models import VmRecommendation
     from ._models import WorkspaceSetting
 from ._paged_models import AlertPaged
 from ._paged_models import AllowedConnectionsResourcePaged
@@ -142,6 +196,9 @@ from ._paged_models import ComplianceResultPaged
 from ._paged_models import DiscoveredSecuritySolutionPaged
 from ._paged_models import ExternalSecuritySolutionPaged
 from ._paged_models import InformationProtectionPolicyPaged
+from ._paged_models import IoTSecurityAggregatedAlertPaged
+from ._paged_models import IoTSecurityAggregatedRecommendationPaged
+from ._paged_models import IoTSecuritySolutionModelPaged
 from ._paged_models import JitNetworkAccessPolicyPaged
 from ._paged_models import OperationPaged
 from ._paged_models import RegulatoryComplianceAssessmentPaged
@@ -157,6 +214,11 @@ from ._security_center_enums import (
     PricingTier,
     ReportedSeverity,
     SettingKind,
+    SecuritySolutionStatus,
+    ExportData,
+    DataSource,
+    RecommendationType,
+    RecommendationConfigStatus,
     SecurityFamily,
     AadConnectivityState,
     ExternalSecuritySolutionKind,
@@ -179,6 +241,10 @@ __all__ = [
     'AlertConfidenceReason',
     'AlertEntity',
     'AllowedConnectionsResource',
+    'AppWhitelistingGroup',
+    'AppWhitelistingGroups',
+    'AppWhitelistingIssueSummary',
+    'AppWhitelistingPutGroupData',
     'AscLocation',
     'AtaExternalSecuritySolution',
     'AtaSolutionProperties',
@@ -200,6 +266,19 @@ __all__ = [
     'InformationProtectionKeyword',
     'InformationProtectionPolicy',
     'InformationType',
+    'IoTSecurityAggregatedAlert',
+    'IoTSecurityAggregatedRecommendation',
+    'IoTSecurityAlertedDevice',
+    'IoTSecurityAlertedDevicesList',
+    'IoTSecurityDeviceAlert',
+    'IoTSecurityDeviceAlertsList',
+    'IoTSecurityDeviceRecommendation',
+    'IoTSecurityDeviceRecommendationsList',
+    'IoTSecuritySolutionAnalyticsModel',
+    'IoTSecuritySolutionAnalyticsModelList',
+    'IoTSecuritySolutionAnalyticsModelPropertiesDevicesMetricsItem',
+    'IoTSecuritySolutionModel',
+    'IoTSeverityMetrics',
     'JitNetworkAccessPolicy',
     'JitNetworkAccessPolicyInitiatePort',
     'JitNetworkAccessPolicyInitiateRequest',
@@ -213,8 +292,11 @@ __all__ = [
     'Location',
     'Operation',
     'OperationDisplay',
+    'PathRecommendation',
     'Pricing',
     'PricingList',
+    'PublisherInfo',
+    'RecommendationConfigurationProperties',
     'RegulatoryComplianceAssessment',
     'RegulatoryComplianceControl',
     'RegulatoryComplianceStandard',
@@ -223,18 +305,28 @@ __all__ = [
     'SecurityTask',
     'SecurityTaskParameters',
     'SensitivityLabel',
+    'ServerVulnerabilityAssessment',
+    'ServerVulnerabilityAssessmentsList',
     'Setting',
     'SettingResource',
     'Tags',
+    'TagsResource',
     'TopologyResource',
     'TopologySingleResource',
     'TopologySingleResourceChild',
     'TopologySingleResourceParent',
     'TrackedResource',
+    'UpdateIotSecuritySolutionData',
+    'UserDefinedResourcesProperties',
+    'UserRecommendation',
+    'VmRecommendation',
     'WorkspaceSetting',
     'ComplianceResultPaged',
     'AlertPaged',
     'SettingPaged',
+    'IoTSecuritySolutionModelPaged',
+    'IoTSecurityAggregatedAlertPaged',
+    'IoTSecurityAggregatedRecommendationPaged',
     'AllowedConnectionsResourcePaged',
     'DiscoveredSecuritySolutionPaged',
     'ExternalSecuritySolutionPaged',
@@ -255,6 +347,11 @@ __all__ = [
     'PricingTier',
     'ReportedSeverity',
     'SettingKind',
+    'SecuritySolutionStatus',
+    'ExportData',
+    'DataSource',
+    'RecommendationType',
+    'RecommendationConfigStatus',
     'SecurityFamily',
     'AadConnectivityState',
     'ExternalSecuritySolutionKind',
