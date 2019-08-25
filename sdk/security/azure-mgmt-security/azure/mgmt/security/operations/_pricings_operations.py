@@ -41,10 +41,7 @@ class PricingsOperations(object):
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
-        """A given security pricing configuration in the subscription. Azure
-        Security Center is available in two pricing tiers: Free and Standard,
-        on multiple resource types, including Virtual machines, SQL Servers,
-        App service plans and Storage accounts.
+        """Security pricing configurations in the subscription.
 
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -99,10 +96,7 @@ class PricingsOperations(object):
 
     def get(
             self, pricing_name, custom_headers=None, raw=False, **operation_config):
-        """A given security pricing configuration in the subscription. Azure
-        Security Center is available in two pricing tiers: Free and Standard,
-        on multiple resource types, including Virtual machines, SQL Servers,
-        App service plans and Storage accounts.
+        """Security pricing configuration in the subscription.
 
         :param pricing_name: name of the pricing configuration
         :type pricing_name: str
@@ -160,18 +154,12 @@ class PricingsOperations(object):
 
     def update(
             self, pricing_name, pricing_tier, custom_headers=None, raw=False, **operation_config):
-        """A given security pricing configuration in the subscription. Azure
-        Security Center is available in two pricing tiers: Free and Standard,
-        on multiple resource types, including Virtual machines, SQL Servers,
-        App service plans and Storage accounts.
+        """Security pricing configuration in the subscription.
 
         :param pricing_name: name of the pricing configuration
         :type pricing_name: str
-        :param pricing_tier: The pricing tier value. Azure Security Center is
-         provided in two pricing tiers: free and standard, with the standard
-         tier available with a trial period. The standard tier offers advanced
-         security capabilities, while the free tier offers basic security
-         features. Possible values include: 'Free', 'Standard'
+        :param pricing_tier: The pricing tier value. Possible values include:
+         'Free', 'Standard'
         :type pricing_tier: str or ~azure.mgmt.security.models.PricingTier
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
