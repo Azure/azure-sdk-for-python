@@ -166,7 +166,7 @@ def execute_tox_parallel(tox_command_tuples):
 
 def execute_tox_serial(tox_command_tuples):
     for index, cmd_tuple in enumerate(tox_command_tuples):
-        tox_dir = os.path.join(tox_command_tuple[1], './.tox/')
+        tox_dir = os.path.join(cmd_tuple[1], './.tox/')
         
         logging.info(
             "Running tox for {}. {} of {}.".format(
