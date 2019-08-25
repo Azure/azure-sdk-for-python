@@ -451,6 +451,23 @@ class PatchPropertiesRenewProperties(Model):
         self.purchase_properties = purchase_properties
 
 
+class Properties(Model):
+    """Properties.
+
+    :param properties:
+    :type properties:
+     ~azure.mgmt.reservations.models.SubscriptionScopeProperties
+    """
+
+    _attribute_map = {
+        'properties': {'key': 'properties', 'type': 'SubscriptionScopeProperties'},
+    }
+
+    def __init__(self, *, properties=None, **kwargs) -> None:
+        super(Properties, self).__init__(**kwargs)
+        self.properties = properties
+
+
 class PurchaseRequest(Model):
     """PurchaseRequest.
 
@@ -891,6 +908,26 @@ class ReservationSplitProperties(Model):
         self.split_source = split_source
 
 
+class ScopeProperties(Model):
+    """ScopeProperties.
+
+    :param scope:
+    :type scope: str
+    :param valid:
+    :type valid: bool
+    """
+
+    _attribute_map = {
+        'scope': {'key': 'scope', 'type': 'str'},
+        'valid': {'key': 'valid', 'type': 'bool'},
+    }
+
+    def __init__(self, *, scope: str=None, valid: bool=None, **kwargs) -> None:
+        super(ScopeProperties, self).__init__(**kwargs)
+        self.scope = scope
+        self.valid = valid
+
+
 class SkuName(Model):
     """SkuName.
 
@@ -974,3 +1011,19 @@ class SplitRequest(Model):
         super(SplitRequest, self).__init__(**kwargs)
         self.quantities = quantities
         self.reservation_id = reservation_id
+
+
+class SubscriptionScopeProperties(Model):
+    """SubscriptionScopeProperties.
+
+    :param scopes:
+    :type scopes: list[~azure.mgmt.reservations.models.ScopeProperties]
+    """
+
+    _attribute_map = {
+        'scopes': {'key': 'scopes', 'type': '[ScopeProperties]'},
+    }
+
+    def __init__(self, *, scopes=None, **kwargs) -> None:
+        super(SubscriptionScopeProperties, self).__init__(**kwargs)
+        self.scopes = scopes
