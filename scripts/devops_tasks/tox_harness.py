@@ -179,7 +179,7 @@ def prep_and_run_tox(targeted_packages, parsed_args, options_array=[]):
         os.environ["PREBUILT_WHEEL_DIR"] = parsed_args.wheel_dir
 
     if parsed_args.mark_arg:
-        options_array.extend(["-m", "'{}'".format(parsed_args.mark_arg)])
+        options_array.extend(["-m", "{}".format(parsed_args.mark_arg)])
 
     tox_command_tuples = []
 
