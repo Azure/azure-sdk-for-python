@@ -54,6 +54,7 @@ class EventData(object):
     PROP_SEQ_NUMBER = b"x-opt-sequence-number"
     PROP_OFFSET = b"x-opt-offset"
     PROP_PARTITION_KEY = b"x-opt-partition-key"
+    PROP_PARTITION_KEY_AMQP_SYMBOL = types.AMQPSymbol(PROP_PARTITION_KEY)
     PROP_TIMESTAMP = b"x-opt-enqueued-time"
     PROP_DEVICE_ID = b"iothub-connection-device-id"
 
@@ -67,20 +68,19 @@ class EventData(object):
         :type to_device: str
         """
 
-        self._partition_key = types.AMQPSymbol(EventData.PROP_PARTITION_KEY)
         self._annotations = {}
         self._app_properties = {}
-        self.msg_properties = MessageProperties()
+        self._msg_properties = MessageProperties()
         if to_device:
-            self.msg_properties.to = '/devices/{}/messages/devicebound'.format(to_device)
+            self._msg_properties.to = '/devices/{}/messages/devicebound'.format(to_device)
         if body and isinstance(body, list):
-            self.message = Message(body[0], properties=self.msg_properties)
+            self.message = Message(body[0], properties=self._msg_properties)
             for more in body[1:]:
                 self.message._body.append(more)  # pylint: disable=protected-access
         elif body is None:
             raise ValueError("EventData cannot be None.")
         else:
-            self.message = Message(body, properties=self.msg_properties)
+            self.message = Message(body, properties=self._msg_properties)
 
     def __str__(self):
         dic = {
@@ -108,7 +108,7 @@ class EventData(object):
         :type value: str or bytes
         """
         annotations = dict(self._annotations)
-        annotations[self._partition_key] = value
+        annotations[EventData.PROP_PARTITION_KEY_AMQP_SYMBOL] = value
         header = MessageHeader()
         header.durable = True
         self.message.annotations = annotations
@@ -119,7 +119,7 @@ class EventData(object):
     def _from_message(message):
         event_data = EventData(body='')
         event_data.message = message
-        event_data.msg_properties = message.properties
+        event_data._msg_properties = message.properties
         event_data._annotations = message.annotations
         event_data._app_properties = message.application_properties
         return event_data
@@ -175,7 +175,7 @@ class EventData(object):
         :rtype: bytes
         """
         try:
-            return self._annotations[self._partition_key]
+            return self._annotations[EventData.PROP_PARTITION_KEY_AMQP_SYMBOL]
         except KeyError:
             return self._annotations.get(EventData.PROP_PARTITION_KEY, None)
 
