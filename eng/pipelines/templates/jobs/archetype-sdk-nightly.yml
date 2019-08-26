@@ -13,7 +13,7 @@ jobs:
       vmImage: 'ubuntu-16.04'
 
     steps:
-    - template: ../steps/test-nightly.yml
+    - template: ../steps/build-artifacts.yml
       parameters: 
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
