@@ -40,16 +40,17 @@ if __name__ == "__main__":
     package_name = os.path.basename(args.target_package)
 
     try:
-        check_call(
-            [
-                sys.executable,
-                "-m",
-                "pylint",
-                "--rcfile={}".format(rcFileLocation),
-                "--output-format=parseable",
-                os.path.join(args.target_package, "azure"),
-            ]
-        )
+        if "mgmt" not in package_name:
+            check_call(
+                [
+                    sys.executable,
+                    "-m",
+                    "pylint",
+                    "--rcfile={}".format(rcFileLocation),
+                    "--output-format=parseable",
+                    os.path.join(args.target_package, "azure"),
+                ]
+            )
     except CalledProcessError as e:
         logging.error(
             "{} exited with linting error {}".format(package_name, e.returncode)

@@ -124,6 +124,8 @@ jobs:
     dependsOn:
       - 'Build'
 
+    timeoutInMinutes: 180
+    
     pool:
       vmImage: $(OSVmImage)
 
