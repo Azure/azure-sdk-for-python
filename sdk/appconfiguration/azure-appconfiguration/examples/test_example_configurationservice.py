@@ -6,21 +6,22 @@
 
 from os import path
 from azure.core.exceptions import AzureError
-from azure.data.appconfiguration import ConfigurationSetting
+from azure.appconfiguration import ConfigurationSetting
 from devtools_testutils import AzureMgmtTestCase
 
 
 class AppConfigurationClientExamples(AzureMgmtTestCase):
-
     def _add_for_test(self, key, label):
-        exist = bool(list(self.client.list_configuration_settings(keys=[key], labels=[label])))
+        exist = bool(
+            list(self.client.list_configuration_settings(keys=[key], labels=[label]))
+        )
         if not exist:
             sc = ConfigurationSetting(
                 key=key,
                 label=label,
                 value="my value",
                 content_type="my content type",
-                tags={"my tag": "my tag value"}
+                tags={"my tag": "my tag value"},
             )
             self.client.add_configuration_setting(sc)
 
@@ -35,7 +36,7 @@ class AppConfigurationClientExamples(AzureMgmtTestCase):
         super(AppConfigurationClientExamples, self).setUp()
         # [START create_app_configuration_client]
         import os
-        from azure.data.appconfiguration import AzureAppConfigurationClient
+        from azure.appconfiguration import AzureAppConfigurationClient
 
         connection_str = os.environ["APP_CONFIG_CONNECTION"]
         client = AzureAppConfigurationClient(connection_str)
@@ -56,7 +57,7 @@ class AppConfigurationClientExamples(AzureMgmtTestCase):
             label="MyLabel",
             value="my value",
             content_type="my content type",
-            tags={"my tag": "my tag value"}
+            tags={"my tag": "my tag value"},
         )
         added_config_setting = client.add_configuration_setting(config_setting)
         # [END add_configuration_setting]
@@ -127,6 +128,3 @@ class AppConfigurationClientExamples(AzureMgmtTestCase):
             key="MyKey", label="MyLabel"
         )
         # [END delete_configuration_setting]
-
-
-
