@@ -39,7 +39,7 @@ jobs:
     dependsOn:
        - 'Build'
 
-    timeoutInMinutes: 180
+    timeoutInMinutes: 240
 
     strategy:
       matrix:
@@ -103,7 +103,7 @@ jobs:
     dependsOn:
       - 'Build'
 
-    timeoutInMinutes: 180
+    timeoutInMinutes: 240
     
     pool:
       vmImage: $(OSVmImage)

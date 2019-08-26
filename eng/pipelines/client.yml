@@ -1,3 +1,5 @@
+trigger: none
+
 variables:
   - template: templates/variables/globals.yml
   - name: ReleaseTag
