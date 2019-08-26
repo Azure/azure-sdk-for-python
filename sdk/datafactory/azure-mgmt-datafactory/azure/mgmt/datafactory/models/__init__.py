@@ -344,7 +344,10 @@ try:
     from ._models_py3 import OracleSink
     from ._models_py3 import OracleSource
     from ._models_py3 import OracleTableDataset
+    from ._models_py3 import OrcDataset
     from ._models_py3 import OrcFormat
+    from ._models_py3 import OrcSink
+    from ._models_py3 import OrcSource
     from ._models_py3 import ParameterSpecification
     from ._models_py3 import ParquetDataset
     from ._models_py3 import ParquetFormat
@@ -860,7 +863,10 @@ except (SyntaxError, ImportError):
     from ._models import OracleSink
     from ._models import OracleSource
     from ._models import OracleTableDataset
+    from ._models import OrcDataset
     from ._models import OrcFormat
+    from ._models import OrcSink
+    from ._models import OrcSource
     from ._models import ParameterSpecification
     from ._models import ParquetDataset
     from ._models import ParquetFormat
@@ -1459,7 +1465,10 @@ __all__ = [
     'OracleSink',
     'OracleSource',
     'OracleTableDataset',
+    'OrcDataset',
     'OrcFormat',
+    'OrcSink',
+    'OrcSource',
     'ParameterSpecification',
     'ParquetDataset',
     'ParquetFormat',
