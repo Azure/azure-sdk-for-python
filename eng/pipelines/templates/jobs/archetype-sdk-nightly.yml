@@ -13,7 +13,7 @@ jobs:
       vmImage: 'ubuntu-16.04'
 
     steps:
-    - template: ../steps/build-artifacts.yml
+    - template: ../steps/test-nightly.yml
       parameters: 
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
@@ -72,7 +72,7 @@ jobs:
       vmImage: '$(OSVmImage)'
 
     steps:
-    - template: ../steps/build-test.yml
+    - template: ../steps/test-nightly.yml
       parameters: 
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
@@ -86,27 +86,6 @@ jobs:
               artifactName: 'artifacts' 
               targetPath: $(Build.ArtifactStagingDirectory)
         ToxTestEnv: "whl,sdist"  
-        # AdditionalTestSteps:
-        #   - task: PythonScript@0
-        #     displayName: 'Install Packages (Global)'
-        #     inputs:
-        #       scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
-        #       arguments: '"${{ parameters.BuildTargetingString }}" --runtype=setup --disablecov --service="${{ parameters.ServiceDirectory }}"'
-        #     env: ${{ parameters.EnvVars }}
-        #     condition: and(succeededOrFailed(), ne(variables['Build.Reason'], 'PullRequest'))
-
-        #   - task: PythonScript@0
-        #     displayName: 'Run Tests (Global)'
-        #     inputs:
-        #       scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
-        #       arguments: >-
-        #         "${{ parameters.BuildTargetingString }}" 
-        #         --runtype=execute 
-        #         --disablecov 
-        #         --mark_arg="${{ parameters.TestMarkArgument }}" 
-        #         --service="${{ parameters.ServiceDirectory }}"
-        #     env: ${{ parameters.EnvVars }}
-        #     condition: and(succeededOrFailed(), ne(variables['Build.Reason'], 'PullRequest'))
     - template: ../steps/publish-coverage.yml
 
   # Run PyPy tests without coverage
