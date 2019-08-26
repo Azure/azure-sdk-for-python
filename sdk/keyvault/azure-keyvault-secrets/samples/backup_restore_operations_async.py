@@ -53,10 +53,6 @@ async def run_sample():
 
         # The storage account secret is no longer in use, so you delete it.
         await client.delete_secret(secret.name)
-
-        # To ensure secret is deleted on the server side.
-        print("\nDeleting secret...")
-        await asyncio.sleep(20)
         print("Deleted Secret with name '{0}'".format(secret.name))
 
         # In future, if the secret is required again, we can use the backup value to restore it in the Key Vault.

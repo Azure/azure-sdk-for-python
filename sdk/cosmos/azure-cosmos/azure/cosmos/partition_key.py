@@ -48,7 +48,7 @@ class PartitionKey(dict):
     :ivar version: The version of the partition key
     """
 
-    def __init__(self, path, kind="Hash", version=2):
+    def __init__(self, path, kind="Hash", version=2):  # pylint: disable=super-init-not-called
         # (str, str) -> None
         self.path = path
         self.kind = kind
