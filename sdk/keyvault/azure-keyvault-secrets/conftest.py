@@ -19,11 +19,20 @@ print(seed_filename)
 
 run_identifier_set = False
 
-with open(seed_filename, "r") as f:
-    if os.path.getsize(seed_filename):
-        os.environ['RUN_IDENTIFIER'] = f.readline().strip()
-        run_identifier_set = True
+try:
+    with open(seed_filename, "r") as f:
+        if os.path.getsize(seed_filename):
+            os.environ['RUN_IDENTIFIER'] = f.readline().strip()
+            run_identifier_set = True
+except FileNotFoundError:
+    # if file has not yet been created
+    if "RUN_IDENTIFIER" not in os.environ:
+        print("Please set your RUN_IDENTIFIER environment variable in seed.txt")
+        raise NameError
+    with open(seed_filename, "w") as f:
+        f.write(os.environ["RUN_IDENTIFIER"])
 
+# if file is created but empty
 if not run_identifier_set:
     if "RUN_IDENTIFIER" not in os.environ:
         print("Please set your RUN_IDENTIFIER environment variable in seed.txt")
