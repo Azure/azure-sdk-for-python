@@ -2268,6 +2268,177 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         except StorageErrorException as error:
             process_storage_error(error)
 
+    def _upload_pages_from_url_options(  # type: ignore
+            self, source_url,  # type: str
+            range_start,
+            range_end,
+            source_range_start,
+            source_content_md5=None,
+            **kwargs
+    ):
+        # type: (...) -> Dict[str, Any]
+        if self.require_encryption or (self.key_encryption_key is not None):
+            raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
+
+        # TODO: extract the code to a method format_range
+        if range_start is None or range_start % 512 != 0:
+            raise ValueError("start_range must be an integer that aligns with 512 page size")
+        if range_end is None or range_end % 512 != 511:
+            raise ValueError("end_range must be an integer that aligns with 512 page size")
+        if source_range_start is None or range_start % 512 != 0:
+            raise ValueError("start_range must be an integer that aligns with 512 page size")
+
+        # Format range
+        destination_range = 'bytes={0}-{1}'.format(range_start, range_end)
+        source_range = 'bytes={0}-{1}'.format(source_range_start, source_range_start+(range_end-range_start))
+
+        seq_conditions = SequenceNumberAccessConditions(
+            if_sequence_number_less_than_or_equal_to=kwargs.pop('if_sequence_number_lte', None),
+            if_sequence_number_less_than=kwargs.pop('if_sequence_number_lt', None),
+            if_sequence_number_equal_to=kwargs.pop('if_sequence_number_eq', None)
+        )
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
+        mod_conditions = ModifiedAccessConditions(
+            if_modified_since=kwargs.pop('if_modified_since', None),
+            if_unmodified_since=kwargs.pop('if_unmodified_since', None),
+            if_match=kwargs.pop('if_match', None),
+            if_none_match=kwargs.pop('if_none_match', None))
+        source_mod_conditions = SourceModifiedAccessConditions(
+            source_if_modified_since=kwargs.pop('source_if_modified_since', None),
+            source_if_unmodified_since=kwargs.pop('source_if_unmodified_since', None),
+            source_if_match=kwargs.pop('source_if_match', None),
+            source_if_none_match=kwargs.pop('source_if_none_match', None))
+
+        options = {
+            'source_url': source_url,
+            'content_length': 0,
+            'source_range': source_range,
+            'range': destination_range,
+            'source_content_md5': source_content_md5,
+            'timeout': kwargs.pop('timeout', None),
+            'lease_access_conditions': access_conditions,
+            'sequence_number_access_conditions': seq_conditions,
+            'modified_access_conditions': mod_conditions,
+            'source_modified_access_conditions': source_mod_conditions,
+            'cls': return_response_headers}
+        options.update(kwargs)
+        return options
+
+    @distributed_trace
+    def upload_pages_from_url(self, source_url,  # type: str
+                              range_start,
+                              range_end,
+                              source_range_start,
+                              source_content_md5=None,
+                              source_if_modified_since=None,
+                              source_if_unmodified_since=None, source_if_match=None, source_if_none_match=None,
+                              lease=None, if_sequence_number_lte=None, if_sequence_number_lt=None,
+                              if_sequence_number_eq=None, if_modified_since=None, if_unmodified_since=None,
+                              if_match=None, if_none_match=None, timeout=None
+                              ):
+        """
+        Updates a range of pages to a page blob where the contents are read from a URL.
+
+        :param str source_url:
+            The URL of the source data. It can point to any Azure Blob or File, that is either public or has a
+            shared access signature attached.
+        :param int range_start:
+            Start of byte range to use for writing to a section of the blob.
+            Pages must be aligned with 512-byte boundaries, the start offset
+            must be a modulus of 512 and the end offset must be a modulus of
+            512-1. Examples of valid byte ranges are 0-511, 512-1023, etc.
+        :param int range_end:
+            End of byte range to use for writing to a section of the blob.
+            Pages must be aligned with 512-byte boundaries, the start offset
+            must be a modulus of 512 and the end offset must be a modulus of
+            512-1. Examples of valid byte ranges are 0-511, 512-1023, etc.
+        :param int source_range_start:
+            This indicates the start of the range of bytes(inclusive) that has to be taken from the copy source.
+            The service will read the same number of bytes as the destination range (end_range-start_range).
+        :param str source_content_md5:
+            If given, the service will calculate the MD5 hash of the block content and compare against this value.
+        :param datetime source_if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only
+            if the source resource has been modified since the specified time.
+        :param datetime source_if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the source resource has not been modified since the specified date/time.
+        :param str source_if_match:
+            An ETag value, or the wildcard character (*). Specify this header to perform
+            the operation only if the source resource's ETag matches the value specified.
+        :param str source_if_none_match:
+            An ETag value, or the wildcard character (*). Specify this header
+            to perform the operation only if the source resource's ETag does not match
+            the value specified. Specify the wildcard character (*) to perform
+            the operation only if the source resource does not exist, and fail the
+            operation if it does exist.
+        :param str lease:
+            Required if the blob has an active lease.
+        :param int if_sequence_number_lte:
+            If the blob's sequence number is less than or equal to
+            the specified value, the request proceeds; otherwise it fails.
+        :param int if_sequence_number_lt:
+            If the blob's sequence number is less than the specified
+            value, the request proceeds; otherwise it fails.
+        :param int if_sequence_number_eq:
+            If the blob's sequence number is equal to the specified
+            value, the request proceeds; otherwise it fails.
+        :param datetime if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only
+            if the resource has been modified since the specified time.
+        :param datetime if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the resource has not been modified since the specified date/time.
+        :param str if_match:
+            An ETag value, or the wildcard character (*). Specify this header to perform
+            the operation only if the resource's ETag matches the value specified.
+        :param str if_none_match:
+            An ETag value, or the wildcard character (*). Specify this header
+            to perform the operation only if the resource's ETag does not match
+            the value specified. Specify the wildcard character (*) to perform
+            the operation only if the resource does not exist, and fail the
+            operation if it does exist.
+        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
+            As the encryption key itself is provided in the request,
+            a secure connection must be established to transfer the key.
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
+        """
+
+        options = self._upload_pages_from_url_options(
+            source_url,
+            range_start,
+            range_end,
+            source_range_start,
+            source_content_md5=source_content_md5,
+            lease=lease,
+            if_sequence_number_lte=if_sequence_number_lte, if_sequence_number_lt=if_sequence_number_lt,
+            if_sequence_number_eq=if_sequence_number_eq,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since, if_match=if_match,
+            if_none_match=if_none_match, source_if_modified_since=source_if_modified_since,
+            source_if_unmodified_since=source_if_unmodified_since, source_if_match=source_if_match,
+            source_if_none_match=source_if_none_match, timeout=timeout
+        )
+        try:
+            return self._client.page_blob.upload_pages_from_url(**options)  # type: ignore
+        except StorageErrorException as error:
+            process_storage_error(error)
+
     def _clear_page_options(self, start_range, end_range, **kwargs):
         # type: (int, int, **Any) -> Dict[str, Any]
         if self.require_encryption or (self.key_encryption_key is not None):
