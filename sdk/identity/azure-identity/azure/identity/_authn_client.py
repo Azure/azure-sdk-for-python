@@ -38,11 +38,11 @@ class AuthnClientBase(object):
             raise ValueError("auth_url should be the URL of an OAuth endpoint")
         super(AuthnClientBase, self).__init__()
         self._auth_url = auth_url
-        self._cache = TokenCache()
+        self._cache = kwargs.pop("cache", None) or TokenCache()  # type: TokenCache
 
     def get_cached_token(self, scopes):
         # type: (Iterable[str]) -> Optional[AccessToken]
-        tokens = self._cache.find(TokenCache.CredentialType.ACCESS_TOKEN, list(scopes))
+        tokens = self._cache.find(TokenCache.CredentialType.ACCESS_TOKEN, target=list(scopes))
         for token in tokens:
             if all((scope in token["target"] for scope in scopes)):
                 expires_on = int(token["expires_on"])
