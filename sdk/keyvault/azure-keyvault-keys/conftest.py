@@ -12,14 +12,20 @@ if sys.version_info < (3, 5):
     collect_ignore_glob.append("tests/*_async.py")
 
 os.environ['PYTHONHASHSEED'] = '0'
-dirname = os.path.dirname(__file__)
-seed_filename = os.path.join(dirname, "seed.txt")
+dirname = os.path.dirname(os.path.abspath(__file__))
+seed_filename = os.path.abspath(os.path.join(dirname, "seed.txt"))
+print(seed_filename)
 
-with open(seed_filename, "w+") as f:
-    if f.readline():
+run_identifier_set = False
+
+with open(seed_filename, "r") as f:
+    if os.path.getsize(seed_filename):
         os.environ['RUN_IDENTIFIER'] = f.readline().strip()
-    else:
-        if "RUN_IDENTIFIER" not in os.environ:
-            print("Please set your RUN_IDENTIFIER environment variable in seed.txt")
-            raise NameError
+        run_identifier_set = True
+
+if not run_identifier_set:
+    if "RUN_IDENTIFIER" not in os.environ:
+        print("Please set your RUN_IDENTIFIER environment variable in seed.txt")
+        raise NameError
+    with open(seed_filename, "w") as f:
         f.write(os.environ["RUN_IDENTIFIER"])
