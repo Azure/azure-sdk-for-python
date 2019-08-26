@@ -21,11 +21,13 @@ from .. import models
 class DatabasesOperations(object):
     """DatabasesOperations operations.
 
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
+
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client API Version. Constant value: "2019-01-21".
+    :ivar api_version: Client API Version. Constant value: "2019-05-15".
     """
 
     models = models
@@ -35,7 +37,7 @@ class DatabasesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-01-21"
+        self.api_version = "2019-05-15"
 
         self.config = config
 
@@ -99,7 +101,6 @@ class DatabasesOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('CheckNameResult', response)
 
@@ -129,8 +130,7 @@ class DatabasesOperations(object):
          ~azure.mgmt.kusto.models.DatabasePaged[~azure.mgmt.kusto.models.Database]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list_by_cluster.metadata['url']
@@ -161,6 +161,11 @@ class DatabasesOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -171,12 +176,10 @@ class DatabasesOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.DatabasePaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.DatabasePaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.DatabasePaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list_by_cluster.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Kusto/clusters/{clusterName}/databases'}
@@ -236,7 +239,6 @@ class DatabasesOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('Database', response)
 
@@ -569,8 +571,7 @@ class DatabasesOperations(object):
          ~azure.mgmt.kusto.models.DatabasePrincipalPaged[~azure.mgmt.kusto.models.DatabasePrincipal]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list_principals.metadata['url']
@@ -602,6 +603,11 @@ class DatabasesOperations(object):
 
             # Construct and send request
             request = self._client.post(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -612,12 +618,10 @@ class DatabasesOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.DatabasePrincipalPaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.DatabasePrincipalPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.DatabasePrincipalPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list_principals.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Kusto/clusters/{clusterName}/databases/{databaseName}/listPrincipals'}
@@ -685,7 +689,6 @@ class DatabasesOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('DatabasePrincipalListResult', response)
 
@@ -759,7 +762,6 @@ class DatabasesOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('DatabasePrincipalListResult', response)
 

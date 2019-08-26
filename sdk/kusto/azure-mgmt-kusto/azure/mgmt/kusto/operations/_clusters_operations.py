@@ -21,11 +21,13 @@ from .. import models
 class ClustersOperations(object):
     """ClustersOperations operations.
 
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
+
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Client API Version. Constant value: "2019-01-21".
+    :ivar api_version: Client API Version. Constant value: "2019-05-15".
     """
 
     models = models
@@ -35,7 +37,7 @@ class ClustersOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-01-21"
+        self.api_version = "2019-05-15"
 
         self.config = config
 
@@ -91,7 +93,6 @@ class ClustersOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('Cluster', response)
 
@@ -567,8 +568,7 @@ class ClustersOperations(object):
          ~azure.mgmt.kusto.models.ClusterPaged[~azure.mgmt.kusto.models.Cluster]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list_by_resource_group.metadata['url']
@@ -598,6 +598,11 @@ class ClustersOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -608,12 +613,10 @@ class ClustersOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.ClusterPaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.ClusterPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.ClusterPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Kusto/clusters'}
@@ -632,8 +635,7 @@ class ClustersOperations(object):
          ~azure.mgmt.kusto.models.ClusterPaged[~azure.mgmt.kusto.models.Cluster]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']
@@ -662,6 +664,11 @@ class ClustersOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -672,12 +679,10 @@ class ClustersOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.ClusterPaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.ClusterPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.ClusterPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Kusto/clusters'}
@@ -691,13 +696,12 @@ class ClustersOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of AzureSku
+        :return: An iterator like instance of SkuDescription
         :rtype:
-         ~azure.mgmt.kusto.models.AzureSkuPaged[~azure.mgmt.kusto.models.AzureSku]
+         ~azure.mgmt.kusto.models.SkuDescriptionPaged[~azure.mgmt.kusto.models.SkuDescription]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list_skus.metadata['url']
@@ -726,6 +730,11 @@ class ClustersOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -736,12 +745,10 @@ class ClustersOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.AzureSkuPaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.AzureSkuPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.SkuDescriptionPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list_skus.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Kusto/skus'}
@@ -802,7 +809,6 @@ class ClustersOperations(object):
             raise exp
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('CheckNameResult', response)
 
@@ -832,8 +838,7 @@ class ClustersOperations(object):
          ~azure.mgmt.kusto.models.AzureResourceSkuPaged[~azure.mgmt.kusto.models.AzureResourceSku]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list_skus_by_resource.metadata['url']
@@ -864,6 +869,11 @@ class ClustersOperations(object):
 
             # Construct and send request
             request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
@@ -874,12 +884,10 @@ class ClustersOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.AzureResourceSkuPaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.AzureResourceSkuPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.AzureResourceSkuPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
     list_skus_by_resource.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Kusto/clusters/{clusterName}/skus'}
