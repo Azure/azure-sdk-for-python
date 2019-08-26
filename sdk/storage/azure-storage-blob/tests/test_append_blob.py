@@ -16,10 +16,9 @@ from azure.storage.blob import (
     BlobClient,
     BlobType
 )
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from testcase import (
-    StorageTestCase,
-    TestMode,
-    record,
+    StorageTestCase
 )
 
 #------------------------------------------------------------------------------
@@ -29,43 +28,18 @@ LARGE_BLOB_SIZE = 64 * 1024
 #------------------------------------------------------------------------------
 
 class StorageAppendBlobTest(StorageTestCase):
-
-    def setUp(self):
-        super(StorageAppendBlobTest, self).setUp()
-
-        url = self._get_account_url()
-        credential = self._get_shared_key_credential()
-
-        self.bsc = BlobServiceClient(url, credential=credential, max_block_size=4 * 1024)
-        self.config = self.bsc._config
-        self.container_name = self.get_resource_name('utcontainer')
-
-        if not self.is_playback():
-            self.bsc.create_container(self.container_name)
-
-
-    def tearDown(self):
-        if not self.is_playback():
-            try:
-                self.bsc.delete_container(self.container_name)
-            except:
-                pass
-
-        if os.path.isfile(FILE_PATH):
-            try:
-                os.remove(FILE_PATH)
-            except:
-                pass
-
-        return super(StorageAppendBlobTest, self).tearDown()
-
     #--Helpers-----------------------------------------------------------------
+    def _setup(self, bsc):
+        self.container_name = self.get_resource_name('utcontainer')
+        if self.is_live:
+            bsc.create_container(self.container_name)
+
     def _get_blob_reference(self):
         return self.get_resource_name(TEST_BLOB_PREFIX)
 
-    def _create_blob(self):
+    def _create_blob(self, bsc):
         blob_name = self._get_blob_reference()
-        blob = self.bsc.get_blob_client(
+        blob = bsc.get_blob_client(
             self.container_name,
             blob_name)
         blob.create_append_blob()
@@ -88,13 +62,16 @@ class StorageAppendBlobTest(StorageTestCase):
 
     #--Test cases for block blobs --------------------------------------------
 
-    @record
-    def test_create_blob(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_create_blob(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, max_block_size=4 * 1024)
+        self._setup(bsc)
         blob_name = self._get_blob_reference()
 
         # Act
-        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob = bsc.get_blob_client(self.container_name, blob_name)
         create_resp = blob.create_append_blob()
 
         # Assert
@@ -103,10 +80,12 @@ class StorageAppendBlobTest(StorageTestCase):
         self.assertEqual(blob_properties.etag, create_resp.get('etag'))
         self.assertEqual(blob_properties.last_modified, create_resp.get('last_modified'))
 
-    @record
-    def test_create_blob_with_lease_id(self):
-        # Arrange
-        blob = self._create_blob()
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_create_blob_with_lease_id(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, max_block_size=4 * 1024)
+        self._setup(bsc)
+        blob = self._create_blob(bsc)
 
         # Act
         lease = blob.acquire_lease()
@@ -118,12 +97,14 @@ class StorageAppendBlobTest(StorageTestCase):
         self.assertEqual(blob_properties.etag, create_resp.get('etag'))
         self.assertEqual(blob_properties.last_modified, create_resp.get('last_modified'))
 
-    @record
-    def test_create_blob_with_metadata(self):
-        # Arrange
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_create_blob_with_metadata(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, max_block_size=4 * 1024)
+        self._setup(bsc)
         metadata = {'hello': 'world', 'number': '42'}
         blob_name = self._get_blob_reference()
-        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob = bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
         blob.create_append_blob(metadata=metadata)
@@ -132,10 +113,12 @@ class StorageAppendBlobTest(StorageTestCase):
         md = blob.get_blob_properties().metadata
         self.assertDictEqual(md, metadata)
 
-    @record
-    def test_append_block(self):
-        # Arrange
-        blob = self._create_blob()
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_append_block(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, max_block_size=4 * 1024)
+        self._setup(bsc)
+        blob = self._create_blob(bsc)
 
         # Act
         for i in range(5):
@@ -148,10 +131,12 @@ class StorageAppendBlobTest(StorageTestCase):
         # Assert
         self.assertBlobEqual(blob, b'block 0block 1block 2block 3block 4')
 
-    @record
-    def test_append_block_unicode(self):
-        # Arrange
-        blob = self._create_blob()
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_append_block_unicode(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, max_block_size=4 * 1024)
+        self._setup(bsc)
+        blob = self._create_blob(bsc)
 
         # Act
         resp = blob.append_block(u'啊齄丂狛狜', encoding='utf-16')
@@ -162,10 +147,12 @@ class StorageAppendBlobTest(StorageTestCase):
 
         # Assert
 
-    @record
-    def test_append_block_with_md5(self):
-        # Arrange
-        blob = self._create_blob()
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_append_block_with_md5(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, max_block_size=4 * 1024)
+        self._setup(bsc)
+        blob = self._create_blob(bsc)
 
         # Act
         resp = blob.append_block(b'block', validate_content=True)
@@ -176,11 +163,13 @@ class StorageAppendBlobTest(StorageTestCase):
 
         # Assert
 
-    @record
-    def test_create_append_blob_with_no_overwrite(self):
-        # Arrange
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_create_append_blob_with_no_overwrite(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, max_block_size=4 * 1024)
+        self._setup(bsc)
         blob_name = self._get_blob_reference()
-        blob = self.bsc.get_blob_client(
+        blob = bsc.get_blob_client(
             self.container_name,
             blob_name)
         data1 = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -210,11 +199,13 @@ class StorageAppendBlobTest(StorageTestCase):
         self.assertEqual(props.metadata, {'BlobData': 'Data1'})
         self.assertEqual(props.size, LARGE_BLOB_SIZE + LARGE_BLOB_SIZE + 512)
 
-    @record
-    def test_create_append_blob_with_overwrite(self):
-        # Arrange
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_create_append_blob_with_overwrite(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, max_block_size=4 * 1024)
+        self._setup(bsc)
         blob_name = self._get_blob_reference()
-        blob = self.bsc.get_blob_client(
+        blob = bsc.get_blob_client(
             self.container_name,
             blob_name)
         data1 = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -242,10 +233,12 @@ class StorageAppendBlobTest(StorageTestCase):
         self.assertEqual(props.blob_type, BlobType.AppendBlob)
         self.assertEqual(props.size, LARGE_BLOB_SIZE + 512)
 
-    @record
-    def test_append_blob_from_bytes(self):
-        # Arrange
-        blob = self._create_blob()
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_append_blob_from_bytes(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, max_block_size=4 * 1024)
+        self._setup(bsc)
+        blob = self._create_blob(bsc)
 
         # Act
         data = b'abcdefghijklmnopqrstuvwxyz'
@@ -257,10 +250,12 @@ class StorageAppendBlobTest(StorageTestCase):
         self.assertEqual(blob_properties.etag, append_resp['etag'])
         self.assertEqual(blob_properties.last_modified, append_resp['last_modified'])
 
-    @record
-    def test_append_blob_from_0_bytes(self):
-        # Arrange
-        blob = self._create_blob()
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_append_blob_from_0_bytes(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, max_block_size=4 * 1024)
+        self._setup(bsc)
+        blob = self._create_blob(bsc)
 
         # Act
         data = b''
@@ -272,10 +267,12 @@ class StorageAppendBlobTest(StorageTestCase):
         self.assertIsNone(append_resp.get('etag'))
         self.assertIsNone(append_resp.get('last_modified'))
 
-    @record
-    def test_append_blob_from_bytes_with_progress(self):
-        # Arrange
-        blob = self._create_blob()
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_append_blob_from_bytes_with_progress(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, max_block_size=4 * 1024)
+        self._setup(bsc)
+        blob = self._create_blob(bsc)
         data = b'abcdefghijklmnopqrstuvwxyz'
 
         # Act
@@ -290,12 +287,14 @@ class StorageAppendBlobTest(StorageTestCase):
 
         # Assert
         self.assertBlobEqual(blob, data)
-        self.assert_upload_progress(len(data), self.config.max_block_size, progress)
+        self.assert_upload_progress(len(data), bsc._config.max_block_size, progress)
 
-    @record
-    def test_append_blob_from_bytes_with_index(self):
-        # Arrange
-        blob = self._create_blob()
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_append_blob_from_bytes_with_index(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, max_block_size=4 * 1024)
+        self._setup(bsc)
+        blob = self._create_blob(bsc)
 
         # Act
         data = b'abcdefghijklmnopqrstuvwxyz'
@@ -304,10 +303,12 @@ class StorageAppendBlobTest(StorageTestCase):
         # Assert
         self.assertBlobEqual(blob, data[3:])
 
-    @record
-    def test_append_blob_from_bytes_with_index_and_count(self):
-        # Arrange
-        blob = self._create_blob()
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_append_blob_from_bytes_with_index_and_count(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, max_block_size=4 * 1024)
+        self._setup(bsc)
+        blob = self._create_blob(bsc)
 
         # Act
         data = b'abcdefghijklmnopqrstuvwxyz'
@@ -316,10 +317,12 @@ class StorageAppendBlobTest(StorageTestCase):
         # Assert
         self.assertBlobEqual(blob, data[3:8])
 
-    @record
-    def test_append_blob_from_bytes_chunked_upload(self):
-        # Arrange
-        blob = self._create_blob()
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_append_blob_from_bytes_chunked_upload(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, max_block_size=4 * 1024)
+        self._setup(bsc)
+        blob = self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
 
         # Act
@@ -331,17 +334,19 @@ class StorageAppendBlobTest(StorageTestCase):
         self.assertEqual(blob_properties.etag, append_resp['etag'])
         self.assertEqual(blob_properties.last_modified, append_resp.get('last_modified'))
 
-    @record
-    def test_append_blob_from_bytes_with_progress_chunked_upload(self):
-        # Arrange
-        blob = self._create_blob()
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_append_blob_from_bytes_with_progress_chunked_upload(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, max_block_size=4 * 1024)
+        self._setup(bsc)
+        blob = self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
 
         # Act
         progress = []
 
         def progress_gen(upload):
-            n = self.config.max_block_size
+            n = bsc._config.max_block_size
             total = len(upload)
             current = 0
             while upload:
@@ -355,12 +360,14 @@ class StorageAppendBlobTest(StorageTestCase):
 
         # Assert
         self.assertBlobEqual(blob, data)
-        self.assert_upload_progress(len(data), self.config.max_block_size, progress)
+        self.assert_upload_progress(len(data), bsc._config.max_block_size, progress)
 
-    @record
-    def test_append_blob_from_bytes_chunked_upload_with_index_and_count(self):
-        # Arrange
-        blob = self._create_blob()
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_append_blob_from_bytes_chunked_upload_with_index_and_count(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, max_block_size=4 * 1024)
+        self._setup(bsc)
+        blob = self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
         index = 33
         blob_size = len(data) - 66
@@ -371,10 +378,12 @@ class StorageAppendBlobTest(StorageTestCase):
         # Assert
         self.assertBlobEqual(blob, data[index:index + blob_size])
 
-    @record
-    def test_append_blob_from_path_chunked_upload(self):
-        # Arrange
-        blob = self._create_blob()
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_append_blob_from_path_chunked_upload(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, max_block_size=4 * 1024)
+        self._setup(bsc)
+        blob = self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
@@ -390,10 +399,12 @@ class StorageAppendBlobTest(StorageTestCase):
         self.assertEqual(blob_properties.etag, append_resp.get('etag'))
         self.assertEqual(blob_properties.last_modified, append_resp.get('last_modified'))
 
-    @record
-    def test_append_blob_from_path_with_progress_chunked_upload(self):
-        # Arrange
-        blob = self._create_blob()
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_append_blob_from_path_with_progress_chunked_upload(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, max_block_size=4 * 1024)
+        self._setup(bsc)
+        blob = self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
@@ -402,7 +413,7 @@ class StorageAppendBlobTest(StorageTestCase):
         progress = []
 
         def progress_gen(upload):
-            n = self.config.max_block_size
+            n = bsc._config.max_block_size
             total = LARGE_BLOB_SIZE
             current = 0
             while upload:
@@ -419,12 +430,14 @@ class StorageAppendBlobTest(StorageTestCase):
 
         # Assert
         self.assertBlobEqual(blob, data)
-        self.assert_upload_progress(len(data), self.config.max_block_size, progress)
+        self.assert_upload_progress(len(data), bsc._config.max_block_size, progress)
 
-    @record
-    def test_append_blob_from_stream_chunked_upload(self):
-        # Arrange
-        blob = self._create_blob()
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_append_blob_from_stream_chunked_upload(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, max_block_size=4 * 1024)
+        self._setup(bsc)
+        blob = self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
@@ -439,10 +452,12 @@ class StorageAppendBlobTest(StorageTestCase):
         self.assertEqual(blob_properties.etag, append_resp.get('etag'))
         self.assertEqual(blob_properties.last_modified, append_resp.get('last_modified'))
 
-    @record
-    def test_append_blob_from_stream_non_seekable_chunked_upload_known_size(self):
-        # Arrange
-        blob = self._create_blob()
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_append_blob_from_stream_non_seekable_chunked_upload_known_size(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, max_block_size=4 * 1024)
+        self._setup(bsc)
+        blob = self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
@@ -456,10 +471,12 @@ class StorageAppendBlobTest(StorageTestCase):
         # Assert
         self.assertBlobEqual(blob, data[:blob_size])
 
-    @record
-    def test_append_blob_from_stream_non_seekable_chunked_upload_unknown_size(self):
-        # Arrange
-        blob = self._create_blob()
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_append_blob_from_stream_non_seekable_chunked_upload_unknown_size(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, max_block_size=4 * 1024)
+        self._setup(bsc)
+        blob = self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
@@ -472,10 +489,12 @@ class StorageAppendBlobTest(StorageTestCase):
         # Assert
         self.assertBlobEqual(blob, data)
 
-    @record
-    def test_append_blob_from_stream_with_multiple_appends(self):
-        # Arrange
-        blob = self._create_blob()
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_append_blob_from_stream_with_multiple_appends(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, max_block_size=4 * 1024)
+        self._setup(bsc)
+        blob = self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
         with open(FILE_PATH, 'wb') as stream1:
             stream1.write(data)
@@ -492,10 +511,12 @@ class StorageAppendBlobTest(StorageTestCase):
         data = data * 2
         self.assertBlobEqual(blob, data)
 
-    @record
-    def test_append_blob_from_stream_chunked_upload_with_count(self):
-        # Arrange
-        blob = self._create_blob()
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_append_blob_from_stream_chunked_upload_with_count(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, max_block_size=4 * 1024)
+        self._setup(bsc)
+        blob = self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
@@ -508,13 +529,16 @@ class StorageAppendBlobTest(StorageTestCase):
         # Assert
         self.assertBlobEqual(blob, data[:blob_size])
 
-    def test_append_blob_from_stream_chunked_upload_with_count_parallel(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_append_blob_from_stream_chunked_upload_with_count_parallel(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
-        # Arrange
-        blob = self._create_blob()
+        bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, max_block_size=4 * 1024)
+        self._setup(bsc)
+        blob = self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
         with open(FILE_PATH, 'wb') as stream:
             stream.write(data)
@@ -530,10 +554,12 @@ class StorageAppendBlobTest(StorageTestCase):
         self.assertEqual(blob_properties.etag, append_resp.get('etag'))
         self.assertEqual(blob_properties.last_modified, append_resp.get('last_modified'))
 
-    @record
-    def test_append_blob_from_text(self):
-        # Arrange
-        blob = self._create_blob()
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_append_blob_from_text(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, max_block_size=4 * 1024)
+        self._setup(bsc)
+        blob = self._create_blob(bsc)
         text = u'hello 啊齄丂狛狜 world'
         data = text.encode('utf-8')
 
@@ -546,10 +572,12 @@ class StorageAppendBlobTest(StorageTestCase):
         self.assertEqual(blob_properties.etag, append_resp.get('etag'))
         self.assertEqual(blob_properties.last_modified, append_resp.get('last_modified'))
 
-    @record
-    def test_append_blob_from_text_with_encoding(self):
-        # Arrange
-        blob = self._create_blob()
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_append_blob_from_text_with_encoding(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, max_block_size=4 * 1024)
+        self._setup(bsc)
+        blob = self._create_blob(bsc)
         text = u'hello 啊齄丂狛狜 world'
         data = text.encode('utf-16')
 
@@ -559,10 +587,12 @@ class StorageAppendBlobTest(StorageTestCase):
         # Assert
         self.assertBlobEqual(blob, data)
 
-    @record
-    def test_append_blob_from_text_with_encoding_and_progress(self):
-        # Arrange
-        blob = self._create_blob()
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_append_blob_from_text_with_encoding_and_progress(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, max_block_size=4 * 1024)
+        self._setup(bsc)
+        blob = self._create_blob(bsc)
         text = u'hello 啊齄丂狛狜 world'
         data = text.encode('utf-16')
 
@@ -577,12 +607,14 @@ class StorageAppendBlobTest(StorageTestCase):
         blob.upload_blob(upload_data, encoding='utf-16', blob_type=BlobType.AppendBlob)
 
         # Assert
-        self.assert_upload_progress(len(data), self.config.max_block_size, progress)
+        self.assert_upload_progress(len(data), bsc._config.max_block_size, progress)
 
-    @record
-    def test_append_blob_from_text_chunked_upload(self):
-        # Arrange
-        blob = self._create_blob()
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_append_blob_from_text_chunked_upload(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, max_block_size=4 * 1024)
+        self._setup(bsc)
+        blob = self._create_blob(bsc)
         data = self.get_random_text_data(LARGE_BLOB_SIZE)
         encoded_data = data.encode('utf-8')
 
@@ -592,10 +624,12 @@ class StorageAppendBlobTest(StorageTestCase):
         # Assert
         self.assertBlobEqual(blob, encoded_data)
 
-    @record
-    def test_append_blob_with_md5(self):
-        # Arrange
-        blob = self._create_blob()
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_append_blob_with_md5(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, max_block_size=4 * 1024)
+        self._setup(bsc)
+        blob = self._create_blob(bsc)
         data = b'hello world'
 
         # Act
