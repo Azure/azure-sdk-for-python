@@ -22,6 +22,7 @@
 """Internal class for query execution endpoint component implementation in the Azure Cosmos database service.
 """
 import numbers
+import copy
 
 from azure.cosmos._execution_context.aggregators import _AverageAggregator, _CountAggregator, _MaxAggregator, \
     _MinAggregator, _SumAggregator
@@ -95,11 +96,23 @@ class _QueryExecutionDistinctUnorderedEndpointComponent(_QueryExecutionEndpointC
         super(_QueryExecutionDistinctUnorderedEndpointComponent, self).__init__(execution_context)
         self.last_result = set()
 
+    def make_hash(self, value):
+        if isinstance(value, (set, tuple, list)):
+            return tuple([self.make_hash(v) for v in value])
+        elif not isinstance(value, dict):
+            return hash(value)
+        new_value = copy.deepcopy(value)
+        for k, v in new_value.items():
+            new_value[k] = self.make_hash(v)
+
+        return hash(tuple(frozenset(sorted(new_value.items()))))
+
     def next(self):
         res = next(self._execution_context)
-        while str(res) in self.last_result:
+        hashed_result = self.make_hash(res)
+        while hashed_result in self.last_result:
             res = next(self._execution_context)
-        self.last_result.add(str(res))
+        self.last_result.add(self.make_hash(res))
         return res
 
 

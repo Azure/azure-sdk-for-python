@@ -5,6 +5,7 @@ import azure.cosmos._retry_utility as retry_utility
 from azure.cosmos._execution_context.query_execution_info import _PartitionedQueryExecutionInfo
 import azure.cosmos.errors as errors
 from azure.cosmos.partition_key import PartitionKey
+from azure.cosmos._execution_context.base_execution_context import _QueryExecutionContextBase
 import pytest
 import collections
 import test_config
@@ -410,6 +411,101 @@ class QueryTest(unittest.TestCase):
             res = res + "," + str(query_result[fields[1]] if fields[1] in query_result else None)
 
         return res
+
+    def test_distinct_on_different_types_and_field_orders(self):
+        created_collection = self.config.create_multi_partition_collection_with_custom_pk_if_not_exist(self.client)
+        self.payloads = [
+            {'f1': 1, 'f2': 'value', 'f3': 100000000000000000, 'f4': [1, 2, '3'], 'f5': {'f6': {'f7': 2}}},
+            {'f2': '\'value', 'f4': [1.0, 2, '3'], 'f5': {'f6': {'f7': 2.0}}, 'f1': 1.0, 'f3': 100000000000000000.00},
+            {'f3': 100000000000000000.0, 'f5': {'f6': {'f7': 2}}, 'f2': '\'value', 'f1': 1, 'f4': [1, 2.0, '3']}
+        ]
+        self.OriginalExecuteFunction = _QueryExecutionContextBase.next
+        _QueryExecutionContextBase.next = self._MockNextFunction
+
+        self._validate_distinct_on_different_types_and_field_orders(
+            collection=created_collection,
+            query="Select distinct value c.f1 from c",
+            expected_results=[1],
+            get_mock_result=lambda x, i: (None, x[i]["f1"])
+        )
+
+        self._validate_distinct_on_different_types_and_field_orders(
+            collection=created_collection,
+            query="Select distinct value c.f2 from c",
+            expected_results=['value', '\'value'],
+            get_mock_result=lambda x, i: (None, x[i]["f2"])
+        )
+
+        self._validate_distinct_on_different_types_and_field_orders(
+            collection=created_collection,
+            query="Select distinct value c.f2 from c order by c.f2",
+            expected_results=['\'value', 'value'],
+            get_mock_result=lambda x, i: (x[i]["f2"], x[i]["f2"])
+        )
+
+        self._validate_distinct_on_different_types_and_field_orders(
+            collection=created_collection,
+            query="Select distinct value c.f3 from c",
+            expected_results=[100000000000000000],
+            get_mock_result=lambda x, i: (None, x[i]["f3"])
+        )
+
+        self._validate_distinct_on_different_types_and_field_orders(
+            collection=created_collection,
+            query="Select distinct value c.f4 from c",
+            expected_results=[[1, 2, '3']],
+            get_mock_result=lambda x, i: (None, x[i]["f4"])
+        )
+
+        self._validate_distinct_on_different_types_and_field_orders(
+            collection=created_collection,
+            query="Select distinct value c.f5.f6 from c",
+            expected_results=[{'f7': 2}],
+            get_mock_result=lambda x, i: (None, x[i]["f5"]["f6"])
+        )
+
+        self._validate_distinct_on_different_types_and_field_orders(
+            collection=created_collection,
+            query="Select distinct c.f1, c.f2, c.f3 from c",
+            expected_results=[self.payloads[0], self.payloads[1]],
+            get_mock_result=lambda x, i: (None, x[i])
+        )
+
+        self._validate_distinct_on_different_types_and_field_orders(
+            collection=created_collection,
+            query="Select distinct c.f1, c.f2, c.f3 from c order by c.f1",
+            expected_results=[self.payloads[0], self.payloads[1]],
+            get_mock_result=lambda x, i: (i, x[i])
+        )
+
+        _QueryExecutionContextBase.next = self.OriginalExecuteFunction
+
+    def _validate_distinct_on_different_types_and_field_orders(self, collection, query, expected_results, get_mock_result):
+        self.count = 0
+        self.get_mock_result = get_mock_result
+        query_iterable = collection.query_items(query, enable_cross_partition_query=True)
+        results = list(query_iterable)
+        for i in range(len(expected_results)):
+            if isinstance(results[i], dict):
+                self.assertDictEqual(results[i], expected_results[i])
+            elif isinstance(results[i], list):
+                self.assertListEqual(results[i], expected_results[i])
+            else:
+                self.assertEquals(results[i], expected_results[i])
+        self.count = 0
+
+    def _MockNextFunction(self):
+        if self.count < len(self.payloads):
+            item, result = self.get_mock_result(self.payloads, self.count)
+            self.count += 1
+            if item is not None:
+                return {'orderByItems': [{'item': item}], '_rid': 'fake_rid', 'payload': result}
+            else:
+                return result
+            return result
+        else:
+            raise StopIteration
+
 
 if __name__ == "__main__":
     unittest.main()
