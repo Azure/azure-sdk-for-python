@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .clusters_operations import ClustersOperations
-from .databases_operations import DatabasesOperations
-from .data_connections_operations import DataConnectionsOperations
-from .operations import Operations
+from ._clusters_operations import ClustersOperations
+from ._databases_operations import DatabasesOperations
+from ._data_connections_operations import DataConnectionsOperations
+from ._operations import Operations
 
 __all__ = [
     'ClustersOperations',
