@@ -35,7 +35,7 @@ class ContainerOperations(object):
 
         self._config = config
 
-    def create(self, timeout=None, metadata=None, access=None, default_encryption_scope=None, deny_encryption_scope_override=None, request_id=None, cls=None, **kwargs):
+    def create(self, timeout=None, metadata=None, access=None, request_id=None, cls=None, **kwargs):
         """creates a new container under the specified account. If the container
         with the same name already exists, the operation fails.
 
@@ -58,17 +58,6 @@ class ContainerOperations(object):
          publicly and the level of access. Possible values include:
          'container', 'blob'
         :type access: str or ~azure.storage.blob.models.PublicAccessType
-        :param default_encryption_scope: Optional. Specifies the default
-         encryption scope on the container. If not specified, encryption is
-         performed with the root account encryption key.  For more information,
-         see Encryption at Rest for Azure Storage Services.
-        :type default_encryption_scope: str
-        :param deny_encryption_scope_override: Optional. Specifies whether to
-         deny encryption scope override provided in the request or not. If
-         true, reject the request with encryption scope. If false, encryption
-         is performed using encryption scope provided in the request. For more
-         information, see Encryption at Rest for Azure Storage Services.
-        :type deny_encryption_scope_override: bool
         :param request_id: Provides a client-generated, opaque value with a 1
          KB character limit that is recorded in the analytics logs when storage
          analytics logging is enabled.
@@ -102,10 +91,6 @@ class ContainerOperations(object):
             header_parameters['x-ms-meta'] = self._serialize.header("metadata", metadata, 'str')
         if access is not None:
             header_parameters['x-ms-blob-public-access'] = self._serialize.header("access", access, 'str')
-        if default_encryption_scope is not None:
-            header_parameters['x-ms-default-encryption-scope'] = self._serialize.header("default_encryption_scope", default_encryption_scope, 'str')
-        if deny_encryption_scope_override is not None:
-            header_parameters['x-ms-deny-encryption-scope-override'] = self._serialize.header("deny_encryption_scope_override", deny_encryption_scope_override, 'bool')
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
@@ -207,8 +192,6 @@ class ContainerOperations(object):
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
                 'x-ms-blob-public-access': self._deserialize('str', response.headers.get('x-ms-blob-public-access')),
-                'x-ms-default-encryption-scope': self._deserialize('str', response.headers.get('x-ms-default-encryption-scope')),
-                'x-ms-deny-encryption-scope-override': self._deserialize('bool', response.headers.get('x-ms-deny-encryption-scope-override')),
                 'x-ms-has-immutability-policy': self._deserialize('bool', response.headers.get('x-ms-has-immutability-policy')),
                 'x-ms-has-legal-hold': self._deserialize('bool', response.headers.get('x-ms-has-legal-hold')),
                 'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
@@ -448,7 +431,7 @@ class ContainerOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/xml, application/octet-stream, text/plain'
+        header_parameters['Accept'] = 'application/xml'
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
@@ -1128,7 +1111,7 @@ class ContainerOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/xml, application/octet-stream, text/plain'
+        header_parameters['Accept'] = 'application/xml'
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
@@ -1241,7 +1224,7 @@ class ContainerOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/xml, application/octet-stream, text/plain'
+        header_parameters['Accept'] = 'application/xml'
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')

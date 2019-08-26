@@ -194,21 +194,16 @@ class BlobItem(Model):
     :type deleted: bool
     :param snapshot: Required.
     :type snapshot: str
-    :param version_id: Required.
-    :type version_id: str
     :param properties: Required.
     :type properties: ~azure.storage.blob.models.BlobProperties
     :param metadata:
     :type metadata: ~azure.storage.blob.models.BlobMetadata
-    :param tags:
-    :type tags: ~azure.storage.blob.models.BlobTags
     """
 
     _validation = {
         'name': {'required': True},
         'deleted': {'required': True},
         'snapshot': {'required': True},
-        'version_id': {'required': True},
         'properties': {'required': True},
     }
 
@@ -216,10 +211,8 @@ class BlobItem(Model):
         'name': {'key': 'Name', 'type': 'str', 'xml': {'name': 'Name'}},
         'deleted': {'key': 'Deleted', 'type': 'bool', 'xml': {'name': 'Deleted'}},
         'snapshot': {'key': 'Snapshot', 'type': 'str', 'xml': {'name': 'Snapshot'}},
-        'version_id': {'key': 'VersionId', 'type': 'str', 'xml': {'name': 'VersionId'}},
         'properties': {'key': 'Properties', 'type': 'BlobProperties', 'xml': {'name': 'Properties'}},
         'metadata': {'key': 'Metadata', 'type': 'BlobMetadata', 'xml': {'name': 'Metadata'}},
-        'tags': {'key': 'Tags', 'type': 'BlobTags', 'xml': {'name': 'Tags'}},
     }
     _xml_map = {
         'name': 'Blob'
@@ -230,10 +223,8 @@ class BlobItem(Model):
         self.name = kwargs.get('name', None)
         self.deleted = kwargs.get('deleted', None)
         self.snapshot = kwargs.get('snapshot', None)
-        self.version_id = kwargs.get('version_id', None)
         self.properties = kwargs.get('properties', None)
         self.metadata = kwargs.get('metadata', None)
-        self.tags = kwargs.get('tags', None)
 
 
 class BlobMetadata(Model):
@@ -344,8 +335,8 @@ class BlobProperties(Model):
     :type deleted_time: datetime
     :param remaining_retention_days:
     :type remaining_retention_days: int
-    :param access_tier: Possible values include: 'P4', 'P6', 'P10', 'P20',
-     'P30', 'P40', 'P50', 'Hot', 'Cool', 'Archive'
+    :param access_tier: Possible values include: 'P4', 'P6', 'P10', 'P15',
+     'P20', 'P30', 'P40', 'P50', 'P60', 'P70', 'P80', 'Hot', 'Cool', 'Archive'
     :type access_tier: str or ~azure.storage.blob.models.AccessTier
     :param access_tier_inferred:
     :type access_tier_inferred: bool
@@ -354,18 +345,13 @@ class BlobProperties(Model):
     :type archive_status: str or ~azure.storage.blob.models.ArchiveStatus
     :param customer_provided_key_sha256:
     :type customer_provided_key_sha256: str
-    :param encryption_scope:
-    :type encryption_scope: str
     :param access_tier_change_time:
     :type access_tier_change_time: datetime
-    :param tag_count: Required. The number of tags corresponding to the blob.
-    :type tag_count: int
     """
 
     _validation = {
         'last_modified': {'required': True},
         'etag': {'required': True},
-        'tag_count': {'required': True},
     }
 
     _attribute_map = {
@@ -399,9 +385,7 @@ class BlobProperties(Model):
         'access_tier_inferred': {'key': 'AccessTierInferred', 'type': 'bool', 'xml': {'name': 'AccessTierInferred'}},
         'archive_status': {'key': 'ArchiveStatus', 'type': 'str', 'xml': {'name': 'ArchiveStatus'}},
         'customer_provided_key_sha256': {'key': 'CustomerProvidedKeySha256', 'type': 'str', 'xml': {'name': 'CustomerProvidedKeySha256'}},
-        'encryption_scope': {'key': 'EncryptionScope', 'type': 'str', 'xml': {'name': 'EncryptionScope'}},
         'access_tier_change_time': {'key': 'AccessTierChangeTime', 'type': 'rfc-1123', 'xml': {'name': 'AccessTierChangeTime'}},
-        'tag_count': {'key': 'TagCount', 'type': 'int', 'xml': {'name': 'TagCount'}},
     }
     _xml_map = {
         'name': 'Properties'
@@ -439,28 +423,7 @@ class BlobProperties(Model):
         self.access_tier_inferred = kwargs.get('access_tier_inferred', None)
         self.archive_status = kwargs.get('archive_status', None)
         self.customer_provided_key_sha256 = kwargs.get('customer_provided_key_sha256', None)
-        self.encryption_scope = kwargs.get('encryption_scope', None)
         self.access_tier_change_time = kwargs.get('access_tier_change_time', None)
-        self.tag_count = kwargs.get('tag_count', None)
-
-
-class BlobTags(Model):
-    """XML containing key/value pairs representing the tags for the blob.
-
-    :param tag_set:
-    :type tag_set: list[~azure.storage.blob.models.Tag]
-    """
-
-    _attribute_map = {
-        'tag_set': {'key': 'TagSet', 'type': '[Tag]', 'xml': {'name': 'TagSet', 'itemsName': 'Tag', 'wrapped': True}},
-    }
-    _xml_map = {
-        'name': 'Tags'
-    }
-
-    def __init__(self, **kwargs):
-        super(BlobTags, self).__init__(**kwargs)
-        self.tag_set = kwargs.get('tag_set', None)
 
 
 class Block(Model):
@@ -718,25 +681,39 @@ class CorsRule(Model):
         self.max_age_in_seconds = kwargs.get('max_age_in_seconds', None)
 
 
-class CustomerProvidedKeyInfo(Model):
+class CpkInfo(Model):
     """Additional parameters for a set of operations.
 
-    :param encryption_scope: Optional. Specifies the encryption scope to use
+    :param x_ms_encryption_key: Optional. Specifies the encryption key to use
      to encrypt the data provided in the request. If not specified, encryption
      is performed with the root account encryption key.  For more information,
      see Encryption at Rest for Azure Storage Services.
-    :type encryption_scope: str
+    :type x_ms_encryption_key: str
+    :param x_ms_encryption_key_sha256: The SHA-256 hash of the provided
+     encryption key. Must be provided if the x-ms-encryption-key header is
+     provided.
+    :type x_ms_encryption_key_sha256: str
+    :param x_ms_encryption_algorithm: The algorithm used to produce the
+     encryption key hash. Currently, the only accepted value is "AES256". Must
+     be provided if the x-ms-encryption-key header is provided. Possible values
+     include: 'AES256'
+    :type x_ms_encryption_algorithm: str or
+     ~azure.storage.blob.models.EncryptionAlgorithmType
     """
 
     _attribute_map = {
-        'encryption_scope': {'key': '', 'type': 'str', 'xml': {'name': 'encryption_scope'}},
+        'x_ms_encryption_key': {'key': '', 'type': 'str', 'xml': {'name': 'x_ms_encryption_key'}},
+        'x_ms_encryption_key_sha256': {'key': '', 'type': 'str', 'xml': {'name': 'x_ms_encryption_key_sha256'}},
+        'x_ms_encryption_algorithm': {'key': '', 'type': 'EncryptionAlgorithmType', 'xml': {'name': 'x_ms_encryption_algorithm'}},
     }
     _xml_map = {
     }
 
     def __init__(self, **kwargs):
-        super(CustomerProvidedKeyInfo, self).__init__(**kwargs)
-        self.encryption_scope = kwargs.get('encryption_scope', None)
+        super(CpkInfo, self).__init__(**kwargs)
+        self.x_ms_encryption_key = kwargs.get('x_ms_encryption_key', None)
+        self.x_ms_encryption_key_sha256 = kwargs.get('x_ms_encryption_key_sha256', None)
+        self.x_ms_encryption_algorithm = kwargs.get('x_ms_encryption_algorithm', None)
 
 
 class DataLakeStorageError(Model):
@@ -783,8 +760,8 @@ class DataLakeStorageErrorError(Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str', 'xml': {'name': 'code'}},
-        'message': {'key': 'message', 'type': 'str', 'xml': {'name': 'message'}},
+        'code': {'key': 'Code', 'type': 'str', 'xml': {'name': 'Code'}},
+        'message': {'key': 'Message', 'type': 'str', 'xml': {'name': 'Message'}},
     }
     _xml_map = {
     }
@@ -828,100 +805,6 @@ class DirectoryHttpHeaders(Model):
         self.content_encoding = kwargs.get('content_encoding', None)
         self.content_language = kwargs.get('content_language', None)
         self.content_disposition = kwargs.get('content_disposition', None)
-
-
-class FilterBlobsItem(Model):
-    """FilterBlobsItem.
-
-    :param name:
-    :type name: str
-    :param container_name:
-    :type container_name: str
-    :param tag_value:
-    :type tag_value: str
-    """
-
-    _attribute_map = {
-        'name': {'key': 'Name', 'type': 'str', 'xml': {'name': 'Name'}},
-        'container_name': {'key': 'ContainerName', 'type': 'str', 'xml': {'name': 'ContainerName'}},
-        'tag_value': {'key': 'TagValue', 'type': 'str', 'xml': {'name': 'TagValue'}},
-    }
-    _xml_map = {
-        'name': 'Blob'
-    }
-
-    def __init__(self, **kwargs):
-        super(FilterBlobsItem, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.container_name = kwargs.get('container_name', None)
-        self.tag_value = kwargs.get('tag_value', None)
-
-
-class FilterBlobsResponse(Model):
-    """An enumeration of blobs which matched the filter.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param service_endpoint: Required.
-    :type service_endpoint: str
-    :param filter: Required.
-    :type filter: str
-    :param marker:
-    :type marker: str
-    :param max_results:
-    :type max_results: int
-    :param segment: Required.
-    :type segment: ~azure.storage.blob.models.FilterBlobsSegment
-    :param next_marker: Required.
-    :type next_marker: str
-    """
-
-    _validation = {
-        'service_endpoint': {'required': True},
-        'filter': {'required': True},
-        'segment': {'required': True},
-        'next_marker': {'required': True},
-    }
-
-    _attribute_map = {
-        'service_endpoint': {'key': 'ServiceEndpoint', 'type': 'str', 'xml': {'name': 'ServiceEndpoint', 'attr': True}},
-        'filter': {'key': 'Filter', 'type': 'str', 'xml': {'name': 'Filter'}},
-        'marker': {'key': 'Marker', 'type': 'str', 'xml': {'name': 'Marker'}},
-        'max_results': {'key': 'MaxResults', 'type': 'int', 'xml': {'name': 'MaxResults'}},
-        'segment': {'key': 'Segment', 'type': 'FilterBlobsSegment', 'xml': {'name': 'Segment'}},
-        'next_marker': {'key': 'NextMarker', 'type': 'str', 'xml': {'name': 'NextMarker'}},
-    }
-    _xml_map = {
-        'name': 'EnumerationResults'
-    }
-
-    def __init__(self, **kwargs):
-        super(FilterBlobsResponse, self).__init__(**kwargs)
-        self.service_endpoint = kwargs.get('service_endpoint', None)
-        self.filter = kwargs.get('filter', None)
-        self.marker = kwargs.get('marker', None)
-        self.max_results = kwargs.get('max_results', None)
-        self.segment = kwargs.get('segment', None)
-        self.next_marker = kwargs.get('next_marker', None)
-
-
-class FilterBlobsSegment(Model):
-    """FilterBlobsSegment.
-
-    :param blob_items:
-    :type blob_items: list[~azure.storage.blob.models.FilterBlobsItem]
-    """
-
-    _attribute_map = {
-        'blob_items': {'key': 'BlobItems', 'type': '[FilterBlobsItem]', 'xml': {'name': 'BlobItems', 'itemsName': 'Blob'}},
-    }
-    _xml_map = {
-        'name': 'Blobs'
-    }
-
-    def __init__(self, **kwargs):
-        super(FilterBlobsSegment, self).__init__(**kwargs)
-        self.blob_items = kwargs.get('blob_items', None)
 
 
 class GeoReplication(Model):
@@ -1591,35 +1474,6 @@ class StorageServiceStats(Model):
     def __init__(self, **kwargs):
         super(StorageServiceStats, self).__init__(**kwargs)
         self.geo_replication = kwargs.get('geo_replication', None)
-
-
-class Tag(Model):
-    """Represents a single user-provided tag.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param key: Required. The tag name.
-    :type key: str
-    :param value: Required. The tag value.
-    :type value: str
-    """
-
-    _validation = {
-        'key': {'required': True},
-        'value': {'required': True},
-    }
-
-    _attribute_map = {
-        'key': {'key': 'Key', 'type': 'str', 'xml': {'name': 'Key'}},
-        'value': {'key': 'Value', 'type': 'str', 'xml': {'name': 'Value'}},
-    }
-    _xml_map = {
-    }
-
-    def __init__(self, **kwargs):
-        super(Tag, self).__init__(**kwargs)
-        self.key = kwargs.get('key', None)
-        self.value = kwargs.get('value', None)
 
 
 class UserDelegationKey(Model):

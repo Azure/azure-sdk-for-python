@@ -506,3 +506,235 @@ class DirectoryOperations:
             }
             return cls(response, None, response_headers)
     delete.metadata = {'url': '/{filesystem}/{path}'}
+
+    async def set_access_control(self, timeout=None, owner=None, group=None, posix_permissions=None, posix_acl=None, request_id=None, lease_access_conditions=None, modified_access_conditions=None, *, cls=None, **kwargs):
+        """Set the owner, group, permissions, or access control list for a
+        directory.
+
+        :param timeout: The timeout parameter is expressed in seconds. For
+         more information, see <a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>
+        :type timeout: int
+        :param owner: Optional. The owner of the blob or directory.
+        :type owner: str
+        :param group: Optional. The owning group of the blob or directory.
+        :type group: str
+        :param posix_permissions: Optional and only valid if Hierarchical
+         Namespace is enabled for the account. Sets POSIX access permissions
+         for the file owner, the file owning group, and others. Each class may
+         be granted read, write, or execute permission.  The sticky bit is also
+         supported.  Both symbolic (rwxrw-rw-) and 4-digit octal notation (e.g.
+         0766) are supported.
+        :type posix_permissions: str
+        :param posix_acl: Sets POSIX access control rights on files and
+         directories. The value is a comma-separated list of access control
+         entries. Each access control entry (ACE) consists of a scope, a type,
+         a user or group identifier, and permissions in the format
+         "[scope:][type]:[id]:[permissions]".
+        :type posix_acl: str
+        :param request_id: Provides a client-generated, opaque value with a 1
+         KB character limit that is recorded in the analytics logs when storage
+         analytics logging is enabled.
+        :type request_id: str
+        :param lease_access_conditions: Additional parameters for the
+         operation
+        :type lease_access_conditions:
+         ~azure.storage.blob.models.LeaseAccessConditions
+        :param modified_access_conditions: Additional parameters for the
+         operation
+        :type modified_access_conditions:
+         ~azure.storage.blob.models.ModifiedAccessConditions
+        :param callable cls: A custom type or function that will be passed the
+         direct response
+        :return: None or the result of cls(response)
+        :rtype: None
+        :raises:
+         :class:`DataLakeStorageErrorException<azure.storage.blob.models.DataLakeStorageErrorException>`
+        """
+        error_map = kwargs.pop('error_map', None)
+        lease_id = None
+        if lease_access_conditions is not None:
+            lease_id = lease_access_conditions.lease_id
+        if_match = None
+        if modified_access_conditions is not None:
+            if_match = modified_access_conditions.if_match
+        if_none_match = None
+        if modified_access_conditions is not None:
+            if_none_match = modified_access_conditions.if_none_match
+        if_modified_since = None
+        if modified_access_conditions is not None:
+            if_modified_since = modified_access_conditions.if_modified_since
+        if_unmodified_since = None
+        if modified_access_conditions is not None:
+            if_unmodified_since = modified_access_conditions.if_unmodified_since
+
+        action = "setAccessControl"
+
+        # Construct URL
+        url = self.set_access_control.metadata['url']
+        path_format_arguments = {
+            'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
+        query_parameters['action'] = self._serialize.query("action", action, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        if owner is not None:
+            header_parameters['x-ms-owner'] = self._serialize.header("owner", owner, 'str')
+        if group is not None:
+            header_parameters['x-ms-group'] = self._serialize.header("group", group, 'str')
+        if posix_permissions is not None:
+            header_parameters['x-ms-permissions'] = self._serialize.header("posix_permissions", posix_permissions, 'str')
+        if posix_acl is not None:
+            header_parameters['x-ms-acl'] = self._serialize.header("posix_acl", posix_acl, 'str')
+        if request_id is not None:
+            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
+        header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
+        if lease_id is not None:
+            header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", lease_id, 'str')
+        if if_match is not None:
+            header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
+        if if_none_match is not None:
+            header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
+        if if_modified_since is not None:
+            header_parameters['If-Modified-Since'] = self._serialize.header("if_modified_since", if_modified_since, 'rfc-1123')
+        if if_unmodified_since is not None:
+            header_parameters['If-Unmodified-Since'] = self._serialize.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
+
+        # Construct and send request
+        request = self._client.patch(url, query_parameters, header_parameters)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise models.DataLakeStorageErrorException(response, self._deserialize)
+
+        if cls:
+            response_headers = {
+                'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
+                'ETag': self._deserialize('str', response.headers.get('ETag')),
+                'Last-Modified': self._deserialize('rfc-1123', response.headers.get('Last-Modified')),
+                'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
+                'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
+                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
+            }
+            return cls(response, None, response_headers)
+    set_access_control.metadata = {'url': '/{filesystem}/{path}'}
+
+    async def get_access_control(self, timeout=None, upn=None, request_id=None, lease_access_conditions=None, modified_access_conditions=None, *, cls=None, **kwargs):
+        """Get the owner, group, permissions, or access control list for a
+        directory.
+
+        :param timeout: The timeout parameter is expressed in seconds. For
+         more information, see <a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>
+        :type timeout: int
+        :param upn: Optional. Valid only when Hierarchical Namespace is
+         enabled for the account. If "true", the identity values returned in
+         the x-ms-owner, x-ms-group, and x-ms-acl response headers will be
+         transformed from Azure Active Directory Object IDs to User Principal
+         Names.  If "false", the values will be returned as Azure Active
+         Directory Object IDs. The default value is false.
+        :type upn: bool
+        :param request_id: Provides a client-generated, opaque value with a 1
+         KB character limit that is recorded in the analytics logs when storage
+         analytics logging is enabled.
+        :type request_id: str
+        :param lease_access_conditions: Additional parameters for the
+         operation
+        :type lease_access_conditions:
+         ~azure.storage.blob.models.LeaseAccessConditions
+        :param modified_access_conditions: Additional parameters for the
+         operation
+        :type modified_access_conditions:
+         ~azure.storage.blob.models.ModifiedAccessConditions
+        :param callable cls: A custom type or function that will be passed the
+         direct response
+        :return: None or the result of cls(response)
+        :rtype: None
+        :raises:
+         :class:`DataLakeStorageErrorException<azure.storage.blob.models.DataLakeStorageErrorException>`
+        """
+        error_map = kwargs.pop('error_map', None)
+        lease_id = None
+        if lease_access_conditions is not None:
+            lease_id = lease_access_conditions.lease_id
+        if_match = None
+        if modified_access_conditions is not None:
+            if_match = modified_access_conditions.if_match
+        if_none_match = None
+        if modified_access_conditions is not None:
+            if_none_match = modified_access_conditions.if_none_match
+        if_modified_since = None
+        if modified_access_conditions is not None:
+            if_modified_since = modified_access_conditions.if_modified_since
+        if_unmodified_since = None
+        if modified_access_conditions is not None:
+            if_unmodified_since = modified_access_conditions.if_unmodified_since
+
+        action = "getAccessControl"
+
+        # Construct URL
+        url = self.get_access_control.metadata['url']
+        path_format_arguments = {
+            'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        if timeout is not None:
+            query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
+        if upn is not None:
+            query_parameters['upn'] = self._serialize.query("upn", upn, 'bool')
+        query_parameters['action'] = self._serialize.query("action", action, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        if request_id is not None:
+            header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
+        header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
+        if lease_id is not None:
+            header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", lease_id, 'str')
+        if if_match is not None:
+            header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
+        if if_none_match is not None:
+            header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
+        if if_modified_since is not None:
+            header_parameters['If-Modified-Since'] = self._serialize.header("if_modified_since", if_modified_since, 'rfc-1123')
+        if if_unmodified_since is not None:
+            header_parameters['If-Unmodified-Since'] = self._serialize.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
+
+        # Construct and send request
+        request = self._client.patch(url, query_parameters, header_parameters)
+        pipeline_response = await self._client._pipeline.run(request, stream=False, **kwargs)
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise models.DataLakeStorageErrorException(response, self._deserialize)
+
+        if cls:
+            response_headers = {
+                'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
+                'ETag': self._deserialize('str', response.headers.get('ETag')),
+                'Last-Modified': self._deserialize('rfc-1123', response.headers.get('Last-Modified')),
+                'x-ms-owner': self._deserialize('str', response.headers.get('x-ms-owner')),
+                'x-ms-group': self._deserialize('str', response.headers.get('x-ms-group')),
+                'x-ms-permissions': self._deserialize('str', response.headers.get('x-ms-permissions')),
+                'x-ms-acl': self._deserialize('str', response.headers.get('x-ms-acl')),
+                'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
+                'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
+                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
+            }
+            return cls(response, None, response_headers)
+    get_access_control.metadata = {'url': '/{filesystem}/{path}'}
