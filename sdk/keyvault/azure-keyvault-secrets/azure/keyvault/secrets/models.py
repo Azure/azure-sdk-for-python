@@ -246,7 +246,7 @@ class DeletedSecret(SecretAttributes):
 
     @property
     def deleted_date(self):
-        # type: () -> Optional[datetime]
+        # type: () -> datetime
         """
         When the secret was deleted, in UTC
 
@@ -256,7 +256,7 @@ class DeletedSecret(SecretAttributes):
 
     @property
     def recovery_id(self):
-        # type: () -> Optional[str]
+        # type: () -> str
         """
         An identifier used to recover the deleted secret
 
@@ -266,7 +266,7 @@ class DeletedSecret(SecretAttributes):
 
     @property
     def scheduled_purge_date(self):
-        # type: () -> Optional[datetime]
+        # type: () -> datetime
         """
         When the secret is scheduled to be purged, in UTC
 
