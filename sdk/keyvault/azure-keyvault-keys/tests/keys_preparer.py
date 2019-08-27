@@ -4,6 +4,8 @@
 # ------------------------------------
 import time
 import os
+import pytest
+from random import seed, randint
 
 try:
     from unittest.mock import Mock
@@ -44,6 +46,7 @@ DEFAULT_SKU = SkuName.premium.value
 
 
 class VaultClientPreparer(AzureMgmtPreparer):
+    @pytest.mark.usefixtures("get_run_identifier")
     def __init__(
         self,
         sku=None,
@@ -60,8 +63,9 @@ class VaultClientPreparer(AzureMgmtPreparer):
         playback_fake_resource=None,
         client_kwargs=None,
     ):
-        # incorporate a hash into key vault name for uniqueness
-        name_prefix += str(abs(hash(os.environ['RUN_IDENTIFIER'])))[:4]
+        # incorporate a seeded random number into key vault name for uniqueness
+        seed(os.environ['RUN_IDENTIFIER'])
+        name_prefix += str(randint(1000, 9999))
 
         super(VaultClientPreparer, self).__init__(
             name_prefix,

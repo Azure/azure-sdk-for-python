@@ -10,6 +10,7 @@ try:
 except ImportError:  # python < 3.3
     from mock import Mock
 
+from random import seed, randint
 from azure.core.credentials import AccessToken
 from azure.identity import EnvironmentCredential
 
@@ -60,8 +61,9 @@ class VaultClientPreparer(AzureMgmtPreparer):
         playback_fake_resource=None,
         client_kwargs=None,
     ):
-        # incorporate a hash into key vault name for uniqueness
-        name_prefix += str(abs(hash(os.environ['RUN_IDENTIFIER'])))[:4]
+        # incorporate a seeded random number into key vault name for uniqueness
+        seed(os.environ['RUN_IDENTIFIER'])
+        name_prefix += str(randint(1000, 9999))
 
         super(VaultClientPreparer, self).__init__(
             name_prefix,
