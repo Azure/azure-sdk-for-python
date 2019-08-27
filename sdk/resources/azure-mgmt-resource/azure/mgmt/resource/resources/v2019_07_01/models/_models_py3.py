@@ -1470,7 +1470,7 @@ class TemplateHashResult(Model):
     """Result of the request to calculate template hash. It contains a string of
     minified template and its hash.
 
-    :param minified_template: The template string after minification.
+    :param minified_template: The minified template string.
     :type minified_template: str
     :param template_hash: The template hash.
     :type template_hash: str
