@@ -10,6 +10,7 @@ from .credentials import (
     DeviceCodeCredential,
     EnvironmentCredential,
     ManagedIdentityCredential,
+    SharedTokenCacheCredential,
     UsernamePasswordCredential,
 )
 
@@ -26,9 +27,11 @@ class DefaultAzureCredential(ChainedTokenCredential):
     """
 
     def __init__(self, **kwargs):
-        super(DefaultAzureCredential, self).__init__(
-            EnvironmentCredential(**kwargs), ManagedIdentityCredential(**kwargs)
-        )
+        credentials = [EnvironmentCredential(**kwargs), ManagedIdentityCredential(**kwargs)]
+        if SharedTokenCacheCredential.supported():
+            credentials.append(SharedTokenCacheCredential(**kwargs))
+
+        super(DefaultAzureCredential, self).__init__(*credentials)
 
 
 __all__ = [
@@ -40,5 +43,6 @@ __all__ = [
     "EnvironmentCredential",
     "InteractiveBrowserCredential",
     "ManagedIdentityCredential",
+    "SharedTokenCacheCredential",
     "UsernamePasswordCredential",
 ]

@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import abc
 import calendar
 import time
 
@@ -14,6 +15,12 @@ from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import ContentDecodePolicy, NetworkTraceLoggingPolicy, ProxyPolicy, RetryPolicy
 from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
 from azure.core.pipeline.transport import RequestsTransport
+from azure.identity._constants import AZURE_CLI_CLIENT_ID
+
+try:
+    ABC = abc.ABC
+except AttributeError:  # Python 2.7, abc exists, but not ABC
+    ABC = abc.ABCMeta("ABC", (object,), {"__slots__": ()})  # type: ignore
 
 try:
     from typing import TYPE_CHECKING
@@ -29,7 +36,7 @@ if TYPE_CHECKING:
     from azure.core.pipeline.policies import HTTPPolicy
 
 
-class AuthnClientBase(object):
+class AuthnClientBase(ABC):
     """Sans I/O authentication client methods"""
 
     def __init__(self, auth_url, **kwargs):  # pylint:disable=unused-argument
@@ -38,7 +45,7 @@ class AuthnClientBase(object):
             raise ValueError("auth_url should be the URL of an OAuth endpoint")
         super(AuthnClientBase, self).__init__()
         self._auth_url = auth_url
-        self._cache = kwargs.pop("cache", None) or TokenCache()  # type: TokenCache
+        self._cache = kwargs.get("cache") or TokenCache()  # type: TokenCache
 
     def get_cached_token(self, scopes):
         # type: (Iterable[str]) -> Optional[AccessToken]
@@ -49,8 +56,36 @@ class AuthnClientBase(object):
                 return AccessToken(token["secret"], expires_on)
         return None
 
+    def get_refresh_tokens(self, scopes):
+        """Yields all refresh tokens in the cache except those which have a scope (which is unexpected) that isn't a
+        superset of ``scopes``. This is only used by SharedTokenCredential, which explains why there's no validation of
+        the token's owner--all tokens come from the current user's cache."""
+
+        for token in self._cache.find(TokenCache.CredentialType.REFRESH_TOKEN):
+            if "target" in token and not all((scope in token["target"] for scope in scopes)):
+                continue
+            yield token
+
+    def get_refresh_token_grant_request(self, refresh_token, scopes):
+        data = {
+            "grant_type": "refresh_token",
+            "refresh_token": refresh_token["secret"],
+            "scope": " ".join(scopes),
+            "client_id": AZURE_CLI_CLIENT_ID,  # TODO: first-party app for SDK?
+        }
+        return self._prepare_request(form_data=data)
+
+    @abc.abstractmethod
+    def request_token(self, scopes, method, headers, form_data, params, **kwargs):
+        pass
+
+    @abc.abstractmethod
+    def obtain_token_by_refresh_token(self, scopes):
+        pass
+
     def _deserialize_and_cache_token(self, response, scopes, request_time):
         # type: (PipelineResponse, Iterable[str], int) -> AccessToken
+        """Deserialize and cache an access token from an AAD response"""
 
         # ContentDecodePolicy sets this, and should have raised if it couldn't deserialize the response
         payload = response.context[ContentDecodePolicy.CONTEXT_NAME]
@@ -163,6 +198,24 @@ class AuthnClient(AuthnClientBase):
         response = self._pipeline.run(request, stream=False, **kwargs)
         token = self._deserialize_and_cache_token(response=response, scopes=scopes, request_time=request_time)
         return token
+
+    def obtain_token_by_refresh_token(self, scopes):
+        # type: (Iterable[str]) -> Optional[AccessToken]
+        """Acquire an access token using a cached refresh token. Returns ``None`` when that fails, or the cache has no
+        refresh token. This is only used by SharedTokenCacheCredential and isn't robust enough for anything else."""
+
+        # these tokens come from the user-specific shared token cache, so all belong to the current user
+        for token in self.get_refresh_tokens(scopes):
+            # TODO: lacking a good way to know a priori that a given token will work, we try them all
+            request = self.get_refresh_token_grant_request(token, scopes)
+            request_time = int(time.time())
+            response = self._pipeline.run(request, stream=False)
+            try:
+                return self._deserialize_and_cache_token(response=response, scopes=scopes, request_time=request_time)
+            except ClientAuthenticationError:
+                continue
+
+        return None
 
     @staticmethod
     def _create_config(**kwargs):

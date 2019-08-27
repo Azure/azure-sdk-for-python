@@ -6,6 +6,7 @@
 Credentials for Azure SDK authentication.
 """
 import os
+import sys
 import time
 
 from azure.core.credentials import AccessToken
@@ -23,9 +24,11 @@ except ImportError:
     TYPE_CHECKING = False
 
 if TYPE_CHECKING:
-    # pylint:disable=unused-import
+    # pylint:disable=unused-import,ungrouped-imports
     from typing import Any, Callable, Dict, Mapping, Optional, Union
     from azure.core.credentials import TokenCredential
+    import msal_extensions
+    from ._authn_client import AuthnClientBase
 
     EnvironmentCredentialTypes = Union["CertificateCredential", "ClientSecretCredential", "UsernamePasswordCredential"]
 
@@ -311,6 +314,54 @@ class DeviceCodeCredential(PublicClientCredential):
 
         token = AccessToken(result["access_token"], now + int(result["expires_in"]))
         return token
+
+
+class SharedTokenCacheCredential(object):
+    """Authenticates using tokens in the local cache shared between Microsoft applications."""
+
+    def __init__(self, **kwargs):  # pylint:disable=unused-argument
+        # type: (**Any) -> None
+        cache = None
+
+        if sys.platform.startswith("win") and "LOCALAPPDATA" in os.environ:
+            from msal_extensions.token_cache import WindowsTokenCache
+
+            cache = WindowsTokenCache(cache_location=os.environ["LOCALAPPDATA"] + "/.IdentityService/msal.cache")
+
+        self._client = self._get_auth_client(cache)
+
+    @wrap_exceptions
+    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
+        # type (*str, **Any) -> AccessToken
+        """
+        Get an access token for `scopes` from the shared cache. If no access token is cached, attempt to acquire one
+        using a cached refresh token.
+
+        :param str scopes: desired scopes for the token
+        :rtype: :class:`azure.core.credentials.AccessToken`
+        :raises:
+            :class:`azure.core.exceptions.ClientAuthenticationError` when the cache is unavailable or no access token
+            can be acquired from it
+        """
+
+        if not self._client:
+            raise ClientAuthenticationError(message="Shared token cache unavailable")
+
+        token = self._client.get_cached_token(scopes) or self._client.obtain_token_by_refresh_token(scopes)
+        if not token:
+            raise ClientAuthenticationError(message="No cached token found for '{}'".format(scopes))
+
+        return token
+
+    @staticmethod
+    def supported():
+        # type: () -> bool
+        return sys.platform.startswith("win")
+
+    @staticmethod
+    def _get_auth_client(cache):
+        # type: (Optional[msal_extensions.FileTokenCache]) -> Optional[AuthnClientBase]
+        return AuthnClient(Endpoints.AAD_OAUTH2_V2_FORMAT.format("common"), cache=cache) if cache else None
 
 
 class UsernamePasswordCredential(PublicClientCredential):

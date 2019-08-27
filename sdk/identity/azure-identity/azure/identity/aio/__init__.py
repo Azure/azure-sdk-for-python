@@ -8,6 +8,7 @@ from .credentials import (
     ClientSecretCredential,
     EnvironmentCredential,
     ManagedIdentityCredential,
+    SharedTokenCacheCredential,
 )
 
 
@@ -23,7 +24,11 @@ class DefaultAzureCredential(ChainedTokenCredential):
     """
 
     def __init__(self, **kwargs):
-        super().__init__(EnvironmentCredential(**kwargs), ManagedIdentityCredential(**kwargs))
+        credentials = [EnvironmentCredential(**kwargs), ManagedIdentityCredential(**kwargs)]
+        if SharedTokenCacheCredential.supported():
+            credentials.append(SharedTokenCacheCredential(**kwargs))
+
+        super().__init__(*credentials)
 
 
 __all__ = [
@@ -33,4 +38,5 @@ __all__ = [
     "EnvironmentCredential",
     "ManagedIdentityCredential",
     "ChainedTokenCredential",
+    "SharedTokenCacheCredential",
 ]
