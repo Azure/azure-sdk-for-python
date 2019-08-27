@@ -40,7 +40,7 @@ class KeyClient(KeyVaultClientBase):
     # pylint:disable=protected-access
 
     def get_cryptography_client(self, key, **kwargs):
-        # type: (Union[Key, str], Any) -> CryptographyClient
+        # type: (Union[Key, str], **Any) -> CryptographyClient
 
         # the initializer requires a credential but won't actually use it in this case because we pass in this
         # KeyClient's generated client, whose pipeline (and auth policy) is fully configured
@@ -59,7 +59,7 @@ class KeyClient(KeyVaultClientBase):
         not_before=None,  # type: Optional[datetime]
         tags=None,  # type: Optional[Dict[str, str]]
         curve=None,  # type: Optional[str]
-        **kwargs  # type: Mapping[str, Any]
+        **kwargs  # type: **Any
     ):
         # type: (...) -> Key
         """Create a key. If ``name`` is already in use, create a new version of the key. Requires the keys/create
@@ -117,7 +117,7 @@ class KeyClient(KeyVaultClientBase):
         expires=None,  # type: Optional[datetime]
         not_before=None,  # type: Optional[datetime]
         tags=None,  # type: Optional[Dict[str, str]]
-        **kwargs  # type: Mapping[str, Any]
+        **kwargs  # type: **Any
     ):
         # type: (...) -> Key
         """Create a new RSA key. If ``name`` is already in use, create a new version of the key. Requires the
@@ -168,7 +168,7 @@ class KeyClient(KeyVaultClientBase):
         expires=None,  # type: Optional[datetime]
         not_before=None,  # type: Optional[datetime]
         tags=None,  # type: Optional[Dict[str, str]]
-        **kwargs  # type: Mapping[str, Any]
+        **kwargs  # type: **Any
     ):
         # type: (...) -> Key
         """Create a new elliptic curve key. If ``name`` is already in use, create a new version of the key. Requires
@@ -212,7 +212,7 @@ class KeyClient(KeyVaultClientBase):
 
     @distributed_trace
     def delete_key(self, name, **kwargs):
-        # type: (str, Mapping[str, Any]) -> DeletedKey
+        # type: (str, **Any) -> DeletedKey
         """Delete all versions of a key and its cryptographic material. Requires the keys/delete permission.
 
         :param str name: The name of the key to delete.
@@ -233,7 +233,7 @@ class KeyClient(KeyVaultClientBase):
 
     @distributed_trace
     def get_key(self, name, version=None, **kwargs):
-        # type: (str, Optional[str], Mapping[str, Any]) -> Key
+        # type: (str, Optional[str], **Any) -> Key
         """Get a key's attributes and, if it's an asymmetric key, its public material. Requires the keys/get permission.
 
         :param str name: The name of the key to get.
@@ -257,7 +257,7 @@ class KeyClient(KeyVaultClientBase):
 
     @distributed_trace
     def get_deleted_key(self, name, **kwargs):
-        # type: (str, Mapping[str, Any]) -> DeletedKey
+        # type: (str, **Any) -> DeletedKey
         """Get a deleted key. This is only possible in a vault with soft-delete enabled. Requires the keys/get
         permission.
 
@@ -279,7 +279,7 @@ class KeyClient(KeyVaultClientBase):
 
     @distributed_trace
     def list_deleted_keys(self, **kwargs):
-        # type: (Mapping[str, Any]) -> ItemPaged[DeletedKey]
+        # type: (**Any) -> ItemPaged[DeletedKey]
         """List all deleted keys, including the public part of each. This is only possible in a vault with soft-delete
         enabled. Requires the keys/list permission.
 
@@ -304,7 +304,7 @@ class KeyClient(KeyVaultClientBase):
 
     @distributed_trace
     def list_keys(self, **kwargs):
-        # type: (Mapping[str, Any]) -> ItemPaged[KeyBase]
+        # type: (**Any) -> ItemPaged[KeyBase]
         """List identifiers, attributes, and tags of all keys in the vault. Requires the keys/list permission.
 
         :returns: An iterator of keys without their cryptographic material or version information
@@ -328,7 +328,7 @@ class KeyClient(KeyVaultClientBase):
 
     @distributed_trace
     def list_key_versions(self, name, **kwargs):
-        # type: (str, Mapping[str, Any]) -> ItemPaged[KeyBase]
+        # type: (str, **Any) -> ItemPaged[KeyBase]
         """List the identifiers, attributes, and tags of a key's versions. Requires the keys/list permission.
 
         :param str name: The name of the key
@@ -354,7 +354,7 @@ class KeyClient(KeyVaultClientBase):
 
     @distributed_trace
     def purge_deleted_key(self, name, **kwargs):
-        # type: (str, Mapping[str, Any]) -> None
+        # type: (str, **Any) -> None
         """Permanently delete the specified key. This is only possible in vaults with soft-delete enabled. If a vault
         does not have soft-delete enabled, :func:`delete_key` is permanent, and this method will return an error.
 
@@ -379,7 +379,7 @@ class KeyClient(KeyVaultClientBase):
 
     @distributed_trace
     def recover_deleted_key(self, name, **kwargs):
-        # type: (str, Mapping[str, Any]) -> Key
+        # type: (str, **Any) -> Key
         """Recover a deleted key to its latest version. This is only possible in vaults with soft-delete enabled. If a
         vault does not have soft-delete enabled, :func:`delete_key` is permanent, and this method will return an error.
         Attempting to recover an non-deleted key will also return an error.
@@ -415,7 +415,7 @@ class KeyClient(KeyVaultClientBase):
         expires=None,  # type: Optional[datetime]
         not_before=None,  # type: Optional[datetime]
         tags=None,  # type: Optional[Dict[str, str]]
-        **kwargs  # type: Mapping[str, Any]
+        **kwargs  # type: **Any
     ):
         # type: (...) -> Key
         """Change attributes of a key. Cannot change a key's cryptographic material. Requires the keys/update
@@ -459,7 +459,7 @@ class KeyClient(KeyVaultClientBase):
 
     @distributed_trace
     def backup_key(self, name, **kwargs):
-        # type: (str, Mapping[str, Any]) -> bytes
+        # type: (str, **Any) -> bytes
         """Back up a key in a protected form that can't be used outside Azure Key Vault. This is intended to allow
         copying a key from one vault to another. Requires the key/backup permission.
 
@@ -484,7 +484,7 @@ class KeyClient(KeyVaultClientBase):
 
     @distributed_trace
     def restore_key(self, backup, **kwargs):
-        # type: (bytes, Mapping[str, Any]) -> Key
+        # type: (bytes, **Any) -> Key
         """Restore a key backup to the vault. This imports all versions of the key, with its name, attributes, and
         access control policies. Requires the keys/restore permission.
 
@@ -517,7 +517,7 @@ class KeyClient(KeyVaultClientBase):
         not_before=None,  # type: Optional[datetime]
         expires=None,  # type: Optional[datetime]
         tags=None,  # type: Optional[Dict[str, str]]
-        **kwargs  # type: Mapping[str, Any]
+        **kwargs  # type: **Any
     ):
         # type: (...) -> Key
         """Import an externally created key. If ``name`` is already in use, import the key as a new version. Requires

@@ -40,7 +40,7 @@ class SecretClient(KeyVaultClientBase):
 
     @distributed_trace
     def get_secret(self, name, version=None, **kwargs):
-        # type: (str, str, Mapping[str, Any]) -> Secret
+        # type: (str, str, **Any) -> Secret
         """Get a secret. Requires the secrets/get permission.
 
         :param str name: The name of the secret
@@ -75,7 +75,7 @@ class SecretClient(KeyVaultClientBase):
         not_before=None,  # type: Optional[datetime]
         expires=None,  # type: Optional[datetime]
         tags=None,  # type: Optional[Dict[str, str]]
-        **kwargs  # type:  Mapping[str, Any]
+        **kwargs  # type:  **Any
     ):
         # type: (...) -> Secret
         """Set a secret value. Create a new secret if ``name`` is not in use. If it is, create a new version of the
@@ -124,7 +124,7 @@ class SecretClient(KeyVaultClientBase):
         not_before=None,  # type: Optional[datetime]
         expires=None,  # type: Optional[datetime]
         tags=None,  # type: Optional[Dict[str, str]]
-        **kwargs  # type: Mapping[str, Any]
+        **kwargs  # type: **Any
     ):
         # type: (...) -> SecretAttributes
         """Update a secret's attributes, such as its tags or whether it's enabled. Requires the secrets/set permission.
@@ -168,7 +168,7 @@ class SecretClient(KeyVaultClientBase):
 
     @distributed_trace
     def list_secrets(self, **kwargs):
-        # type: (Mapping[str, Any]) -> ItemPaged[SecretAttributes]
+        # type: (**Any) -> ItemPaged[SecretAttributes]
         """List the latest identifier and attributes of all secrets in the vault, not including their values. Requires
         the secrets/list permission.
 
@@ -194,7 +194,7 @@ class SecretClient(KeyVaultClientBase):
 
     @distributed_trace
     def list_secret_versions(self, name, **kwargs):
-        # type: (str, Mapping[str, Any]) -> ItemPaged[SecretAttributes]
+        # type: (str, **Any) -> ItemPaged[SecretAttributes]
         """List all versions of a secret, including their identifiers and attributes but not their values. Requires the
         secrets/list permission.
 
@@ -222,7 +222,7 @@ class SecretClient(KeyVaultClientBase):
 
     @distributed_trace
     def backup_secret(self, name, **kwargs):
-        # type: (str, Mapping[str, Any]) -> bytes
+        # type: (str, **Any) -> bytes
         """Get a backup of all versions of a secret. Requires the secrets/backup permission.
 
         :param str name: Name of the secret
@@ -246,7 +246,7 @@ class SecretClient(KeyVaultClientBase):
 
     @distributed_trace
     def restore_secret(self, backup, **kwargs):
-        # type: (bytes, Mapping[str, Any]) -> SecretAttributes
+        # type: (bytes, **Any) -> SecretAttributes
         """Restore a backed up secret. Requires the secrets/restore permission.
 
         :param bytes backup: The raw bytes of the secret backup
@@ -268,7 +268,7 @@ class SecretClient(KeyVaultClientBase):
 
     @distributed_trace
     def delete_secret(self, name, **kwargs):
-        # type: (str, Mapping[str, Any]) -> DeletedSecret
+        # type: (str, **Any) -> DeletedSecret
         """Delete all versions of a secret. Requires the secrets/delete permission.
 
         :param str name: Name of the secret
@@ -289,7 +289,7 @@ class SecretClient(KeyVaultClientBase):
 
     @distributed_trace
     def get_deleted_secret(self, name, **kwargs):
-        # type: (str, Mapping[str, Any]) -> DeletedSecret
+        # type: (str, **Any) -> DeletedSecret
         """Get a deleted secret. This is only possible in vaults with soft-delete enabled. Requires the secrets/get
         permission.
 
@@ -311,7 +311,7 @@ class SecretClient(KeyVaultClientBase):
 
     @distributed_trace
     def list_deleted_secrets(self, **kwargs):
-        # type: (Mapping[str, Any]) -> ItemPaged[DeletedSecret]
+        # type: (**Any) -> ItemPaged[DeletedSecret]
         """Lists all deleted secrets. This is only possible in vaults with soft-delete enabled. Requires the
         secrets/list permission.
 
@@ -337,7 +337,7 @@ class SecretClient(KeyVaultClientBase):
 
     @distributed_trace
     def purge_deleted_secret(self, name, **kwargs):
-        # type: (str, Mapping[str, Any]) -> None
+        # type: (str, **Any) -> None
         """Permanently delete a secret. This is only possible in vaults with soft-delete enabled. If a vault
         doesn't have soft-delete enabled, :func:`delete_secret` is permanent, and this method will return an error.
 
@@ -358,7 +358,7 @@ class SecretClient(KeyVaultClientBase):
 
     @distributed_trace
     def recover_deleted_secret(self, name, **kwargs):
-        # type: (str, Mapping[str, Any]) -> SecretAttributes
+        # type: (str, **Any) -> SecretAttributes
         """Recover a deleted secret to its latest version. This is only possible in vaults with soft-delete enabled.
         Requires the secrets/recover permission.
 

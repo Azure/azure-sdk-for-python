@@ -27,7 +27,7 @@ class KeyVaultClientBase(object):
 
     @staticmethod
     def _create_config(credential, api_version=None, **kwargs):
-        # type: (TokenCredential, Optional[str], Mapping[str, Any]) -> Configuration
+        # type: (TokenCredential, Optional[str], Mapping[str, **Any]) -> Configuration
         if api_version is None:
             api_version = KeyVaultClient.DEFAULT_API_VERSION
         config = KeyVaultClient.get_configuration_class(api_version, aio=False)(credential, **kwargs)

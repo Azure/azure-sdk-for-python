@@ -36,7 +36,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         - *api_version* - version of the Key Vault API to use. Defaults to the most recent.
     """
 
-    def __init__(self, key: "Union[Key, str]", credential: "TokenCredential", **kwargs: "Any") -> None:
+    def __init__(self, key: "Union[Key, str]", credential: "TokenCredential", **kwargs: "**Any") -> None:
         if isinstance(key, Key):
             self._key = key
             self._key_id = parse_vault_id(key.id)
@@ -76,7 +76,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
                 self._get_key_forbidden = ex.status_code == 403
         return self._key
 
-    async def encrypt(self, algorithm: "EncryptionAlgorithm", plaintext: bytes, **kwargs: "Any") -> EncryptResult:
+    async def encrypt(self, algorithm: "EncryptionAlgorithm", plaintext: bytes, **kwargs: "**Any") -> EncryptResult:
         """
         Encrypt bytes using the client's key. Requires the keys/encrypt permission.
 
@@ -104,7 +104,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         )
         return EncryptResult(key_id=self.key_id, algorithm=algorithm, ciphertext=result.result, authentication_tag=None)
 
-    async def decrypt(self, algorithm: "EncryptionAlgorithm", ciphertext: bytes, **kwargs: "Any") -> DecryptResult:
+    async def decrypt(self, algorithm: "EncryptionAlgorithm", ciphertext: bytes, **kwargs: "**Any") -> DecryptResult:
         """
         Decrypt a single block of encrypted data using the client's key. Requires the keys/decrypt permission.
 
@@ -136,7 +136,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         )
         return DecryptResult(decrypted_bytes=result.result)
 
-    async def wrap(self, algorithm: "KeyWrapAlgorithm", key: bytes, **kwargs: "Any") -> WrapKeyResult:
+    async def wrap(self, algorithm: "KeyWrapAlgorithm", key: bytes, **kwargs: "**Any") -> WrapKeyResult:
         """
         Wrap a key with the client's key. Requires the keys/wrapKey permission.
 
@@ -161,7 +161,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         )
         return WrapKeyResult(key_id=self.key_id, algorithm=algorithm, encrypted_key=result.result)
 
-    async def unwrap(self, algorithm: "KeyWrapAlgorithm", encrypted_key: bytes, **kwargs: "Any") -> UnwrapKeyResult:
+    async def unwrap(self, algorithm: "KeyWrapAlgorithm", encrypted_key: bytes, **kwargs: "**Any") -> UnwrapKeyResult:
         """
         Unwrap a key previously wrapped with the client's key. Requires the keys/unwrapKey permission.
 
@@ -191,7 +191,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         )
         return UnwrapKeyResult(unwrapped_bytes=result.result)
 
-    async def sign(self, algorithm: "SignatureAlgorithm", digest: bytes, **kwargs: "Any") -> SignResult:
+    async def sign(self, algorithm: "SignatureAlgorithm", digest: bytes, **kwargs: "**Any") -> SignResult:
         """
         Create a signature from a digest using the client's key. Requires the keys/sign permission.
 
@@ -224,7 +224,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         algorithm: "SignatureAlgorithm",
         digest: bytes,
         signature: bytes,
-        **kwargs: "Any"
+        **kwargs: "**Any"
     ) -> VerifyResult:
         """
         Verify a signature using the client's key. Requires the keys/verify permission.

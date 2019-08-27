@@ -44,7 +44,7 @@ class JsonWebKey(object):
     """
 
     def __init__(self, **kwargs):
-        # type: (Any) -> None
+        # type: (**Any) -> None
         super(JsonWebKey, self).__init__(**kwargs)
         self.kid = kwargs.get("kid", None)
         self.kty = kwargs.get("kty", None)
@@ -68,7 +68,7 @@ class KeyBase(object):
     """A key's id and attributes."""
 
     def __init__(self, attributes, vault_id, **kwargs):
-        # type: (_models.KeyAttributes, str, Any) -> None
+        # type: (_models.KeyAttributes, str, **Any) -> None
         self._attributes = attributes
         self._id = vault_id
         self._vault_id = parse_vault_id(vault_id)
@@ -186,7 +186,7 @@ class Key(KeyBase):
     """A key's attributes and cryptographic material"""
 
     def __init__(self, attributes, vault_id, key_material, **kwargs):
-        # type: (_models.KeyAttributes, str, _models.JsonWebKey, Any) -> None
+        # type: (_models.KeyAttributes, str, _models.JsonWebKey, **Any) -> None
         super(Key, self).__init__(attributes, vault_id, **kwargs)
         self._key_material = key_material
 
@@ -220,7 +220,7 @@ class DeletedKey(Key):
         deleted_date=None,  # type: Optional[datetime]
         recovery_id=None,  # type: Optional[str]
         scheduled_purge_date=None,  # type: Optional[datetime]
-        **kwargs  # type: Any
+        **kwargs  # type: **Any
     ):
         # type: (...) -> None
         super(DeletedKey, self).__init__(attributes, vault_id, key_material, **kwargs)

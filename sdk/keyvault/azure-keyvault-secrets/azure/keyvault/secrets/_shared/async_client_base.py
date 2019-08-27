@@ -29,7 +29,7 @@ class AsyncKeyVaultClientBase:
 
     @staticmethod
     def _create_config(
-        credential: "TokenCredential", api_version: str = None, **kwargs: Mapping[str, Any]
+        credential: "TokenCredential", api_version: str = None, **kwargs: "**Any"
     ) -> Configuration:
         if api_version is None:
             api_version = KeyVaultClient.DEFAULT_API_VERSION
@@ -65,7 +65,7 @@ class AsyncKeyVaultClientBase:
         credential: "TokenCredential",
         transport: AsyncHttpTransport = None,
         api_version: str = None,
-        **kwargs: Any
+        **kwargs: "**Any"
     ) -> None:
         if not credential:
             raise ValueError(
@@ -91,7 +91,7 @@ class AsyncKeyVaultClientBase:
         self._client = KeyVaultClient(credential, api_version=api_version, pipeline=pipeline, aio=True)
 
     @staticmethod
-    def _build_pipeline(config: Configuration, transport: AsyncHttpTransport, **kwargs: Any) -> AsyncPipeline:
+    def _build_pipeline(config: Configuration, transport: AsyncHttpTransport, **kwargs: "**Any") -> AsyncPipeline:
         policies = [
             config.headers_policy,
             config.user_agent_policy,

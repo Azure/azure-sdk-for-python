@@ -19,7 +19,7 @@ class SecretAttributes(object):
     """A secret's id and attributes."""
 
     def __init__(self, attributes, vault_id, **kwargs):
-        # type: (_models.SecretAttributes, str, Any) -> None
+        # type: (_models.SecretAttributes, str, **Any) -> None
         self._attributes = attributes
         self._id = vault_id
         self._vault_id = parse_vault_id(vault_id)
@@ -205,7 +205,7 @@ class DeletedSecret(SecretAttributes):
         deleted_date=None,  # type: Optional[datetime]
         recovery_id=None,  # type: Optional[str]
         scheduled_purge_date=None,  # type: Optional[datetime]
-        **kwargs  # type: Any
+        **kwargs  # type: **Any
     ):
         # type: (...) -> None
         super(DeletedSecret, self).__init__(attributes, vault_id, **kwargs)
