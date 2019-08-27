@@ -3,6 +3,9 @@ parameters:
   ServiceDirectory: ''
 
 steps:
+  - checkout: self
+    path: AzureSDKEngrSystem/Python/SourcesDirectory
+
   - task: UsePythonVersion@0
     displayName: 'Use Python $(PythonVersion)'
     inputs:
@@ -34,6 +37,10 @@ steps:
       pip install -r requirements.txt
       python find_invalid_versions.py --always-succeed --service ${{parameters.ServiceDirectory}}
     displayName: Find Invalid Versions
+
+  - template: eng/pipelines/templates/scripts/verify-path-length.yml@azure-sdk-tools
+      parameters:
+        SourceDirectory: $(Build.SourcesDirectory)
 
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
     # ComponentGovernance is currently unable to run on pull requests of public projects. Running on non-PR
