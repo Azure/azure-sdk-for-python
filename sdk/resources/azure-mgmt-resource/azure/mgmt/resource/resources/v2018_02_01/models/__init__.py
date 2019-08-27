@@ -50,6 +50,7 @@ try:
     from ._models_py3 import TagDetails
     from ._models_py3 import TagValue
     from ._models_py3 import TargetResource
+    from ._models_py3 import TemplateHashResult
     from ._models_py3 import TemplateLink
 except (SyntaxError, ImportError):
     from ._models import AliasPathType
@@ -92,6 +93,7 @@ except (SyntaxError, ImportError):
     from ._models import TagDetails
     from ._models import TagValue
     from ._models import TargetResource
+    from ._models import TemplateHashResult
     from ._models import TemplateLink
 from ._paged_models import DeploymentExtendedPaged
 from ._paged_models import DeploymentOperationPaged
@@ -146,6 +148,7 @@ __all__ = [
     'TagDetails',
     'TagValue',
     'TargetResource',
+    'TemplateHashResult',
     'TemplateLink',
     'DeploymentExtendedPaged',
     'ProviderPaged',

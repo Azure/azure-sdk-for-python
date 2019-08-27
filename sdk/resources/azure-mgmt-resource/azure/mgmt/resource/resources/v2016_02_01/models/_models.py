@@ -1108,6 +1108,27 @@ class TargetResource(Model):
         self.resource_type = kwargs.get('resource_type', None)
 
 
+class TemplateHashResult(Model):
+    """Result of the request to calculate template hash. It contains a string of
+    minified template and its hash.
+
+    :param minified_template: The template string after minification.
+    :type minified_template: str
+    :param template_hash: The template hash.
+    :type template_hash: str
+    """
+
+    _attribute_map = {
+        'minified_template': {'key': 'minifiedTemplate', 'type': 'str'},
+        'template_hash': {'key': 'templateHash', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(TemplateHashResult, self).__init__(**kwargs)
+        self.minified_template = kwargs.get('minified_template', None)
+        self.template_hash = kwargs.get('template_hash', None)
+
+
 class TemplateLink(Model):
     """Entity representing the reference to the template.
 
