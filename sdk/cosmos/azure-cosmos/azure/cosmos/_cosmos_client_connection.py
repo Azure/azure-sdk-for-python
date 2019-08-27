@@ -25,6 +25,16 @@ import requests
 
 import six
 from typing import cast
+from azure.core import PipelineClient
+from azure.core.pipeline.policies import (
+    ContentDecodePolicy,
+    HeadersPolicy,
+    UserAgentPolicy,
+    NetworkTraceLoggingPolicy,
+    CustomHookPolicy,
+    ProxyPolicy)
+from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
+
 from . import _base as base
 from . import documents
 from . import _constants as constants
@@ -68,7 +78,8 @@ class CosmosClientConnection(object):
                  url_connection,
                  auth,
                  connection_policy=None,
-                 consistency_level=documents.ConsistencyLevel.Session):
+                 consistency_level=documents.ConsistencyLevel.Session,
+                 **kwargs):
         """
         :param str url_connection:
             The URL for connecting to the DB server.
@@ -134,15 +145,24 @@ class CosmosClientConnection(object):
         self._useMultipleWriteLocations = False
         self._global_endpoint_manager = global_endpoint_manager._GlobalEndpointManager(self)
 
-        # creating a requests session used for connection pooling and re-used by all requests
-        self._requests_session = requests.Session()
-
+        proxies = {}
         if self.connection_policy.ProxyConfiguration and self.connection_policy.ProxyConfiguration.Host:
             host = connection_policy.ProxyConfiguration.Host
             url = six.moves.urllib.parse.urlparse(host)
             proxy = host if url.port else host + ":" + str(connection_policy.ProxyConfiguration.Port)
-            proxyDict = {url.scheme : proxy}
-            self._requests_session.proxies.update(proxyDict)
+            proxies = {url.scheme : proxy}
+
+        policies = [
+            HeadersPolicy(),
+            ProxyPolicy(proxies=proxies),
+            UserAgentPolicy(),
+            ContentDecodePolicy(),
+            CustomHookPolicy(),
+            NetworkTraceLoggingPolicy(),
+            DistributedTracingPolicy()
+            ]
+
+        self.pipeline_client = PipelineClient(url_connection, "empty-config", policies=policies)
 
         # Query compatibility mode.
         # Allows to specify compatibility mode used by client when making query requests. Should be removed when
@@ -2629,7 +2649,7 @@ class CosmosClientConnection(object):
                                                         request,
                                                         self._global_endpoint_manager,
                                                         self.connection_policy,
-                                                        self._requests_session,
+                                                        self.pipeline_client,
                                                         'GET',
                                                         path,
                                                         None,
@@ -2654,7 +2674,7 @@ class CosmosClientConnection(object):
                                                         request,
                                                         self._global_endpoint_manager,
                                                         self.connection_policy,
-                                                        self._requests_session,
+                                                        self.pipeline_client,
                                                         'POST',
                                                         path,
                                                         body,
@@ -2679,7 +2699,7 @@ class CosmosClientConnection(object):
                                                         request,
                                                         self._global_endpoint_manager,
                                                         self.connection_policy,
-                                                        self._requests_session,
+                                                        self.pipeline_client,
                                                         'PUT',
                                                         path,
                                                         body,
@@ -2703,7 +2723,7 @@ class CosmosClientConnection(object):
                                                         request,
                                                         self._global_endpoint_manager,
                                                         self.connection_policy,
-                                                        self._requests_session,
+                                                        self.pipeline_client,
                                                         'DELETE',
                                                         path,
                                                         request_data=None,

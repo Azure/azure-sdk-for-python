@@ -54,7 +54,7 @@ class DefaultRetryPolicy(object):
     def needsRetry(self, error_code):
         if error_code in DefaultRetryPolicy.CONNECTION_ERROR_CODES:
             if (len(self.args) > 0):
-                if (self.args[4]['method'] == 'GET') or (http_constants.HttpHeaders.IsQuery in self.args[4]['headers']):
+                if (self.args[3].method == 'GET') or (http_constants.HttpHeaders.IsQuery in self.args[3].headers):
                     return True
                 return False
             return True

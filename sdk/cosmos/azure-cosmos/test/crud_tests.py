@@ -2566,8 +2566,8 @@ class CRUDTests(unittest.TestCase):
         self.assertEquals(read_permission.id, created_permission.id)
 
     def _MockExecuteFunction(self, function, *args, **kwargs):
-        self.last_headers.append(args[5]['headers'][HttpHeaders.PartitionKey]
-                                    if HttpHeaders.PartitionKey in args[5]['headers'] else '')
+        self.last_headers.append(args[4].headers[HttpHeaders.PartitionKey]
+                                    if HttpHeaders.PartitionKey in args[4].headers else '')
         return self.OriginalExecuteFunction(function, *args, **kwargs)
 
 if __name__ == '__main__':

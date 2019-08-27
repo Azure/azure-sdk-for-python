@@ -32,58 +32,28 @@ from . import errors
 from . import http_constants
 from . import _retry_utility
 
-def _IsReadableStream(obj):
+def _is_readable_stream(obj):
     """Checks whether obj is a file-like readable stream.
 
-    :rtype:
-        boolean
-
+    :rtype: boolean
     """
     if (hasattr(obj, 'read') and callable(getattr(obj, 'read'))):
         return True
     return False
 
 
-def _RequestBodyFromData(data):
-    """Gets request body from data.
-
-    When `data` is dict and list into unicode string; otherwise return `data`
-    without making any change.
-
-    :param (str, unicode, file-like stream object, dict, list or None) data:
-
-    :rtype:
-        str, unicode, file-like stream object, or None
-
-    """
-    if isinstance(data, six.string_types) or _IsReadableStream(data):
-        return data
-    elif isinstance(data, (dict, list, tuple)):
-        
-        json_dumped = json.dumps(data, separators=(',',':'))
-
-        if six.PY2:
-            return json_dumped.decode('utf-8')
-        else:
-            return json_dumped
-    return None
-
-
-def _Request(global_endpoint_manager, request, connection_policy, requests_session, path, request_options, request_body):
+def _Request(global_endpoint_manager, request_options, connection_policy, pipeline_client, request):
     """Makes one http request using the requests module.
 
     :param _GlobalEndpointManager global_endpoint_manager:
-    :param dict request:
+    :param dict request_options:
         contains the resourceType, operationType, endpointOverride,
         useWriteEndpoint, useAlternateWriteEndpoint information
     :param documents.ConnectionPolicy connection_policy:
-    :param requests.Session requests_session:
-        Session object in requests module
-    :param str resource_url:
-        The url for the resource
-    :param dict request_options:
-    :param str request_body:
-        Unicode or None
+    :param azure.core.PipelineClient pipeline_client:
+        Pipeline client to process the resquest
+    :param azure.core.HttpRequest request:
+        The request object to send through the pipeline
 
     :return:
         tuple of (result, headers)
@@ -91,7 +61,7 @@ def _Request(global_endpoint_manager, request, connection_policy, requests_sessi
         tuple of (dict, dict)
 
     """
-    is_media = request_options['path'].find('media') > -1
+    is_media = request.url.find('media') > -1
     is_media_stream = is_media and connection_policy.MediaReadMode == documents.MediaReadMode.Streamed
 
     connection_timeout = (connection_policy.MediaRequestTimeout
@@ -101,21 +71,18 @@ def _Request(global_endpoint_manager, request, connection_policy, requests_sessi
     # Every request tries to perform a refresh
     global_endpoint_manager.refresh_endpoint_list(None)
 
-    if (request.endpoint_override):
-        base_url = request.endpoint_override
+    if (request_options.endpoint_override):
+        base_url = request_options.endpoint_override
     else:
-        base_url = global_endpoint_manager.resolve_service_endpoint(request)
+        base_url = global_endpoint_manager.resolve_service_endpoint(request_options)
+    if base_url != pipeline_client._base_url:
+        request.url = request.url.replace(pipeline_client._base_url, base_url)
 
-    if path:
-        resource_url = base_url + path
-    else:
-        resource_url = base_url
-
-    parse_result = urlparse(resource_url)
+    parse_result = urlparse(request.url)
 
     # The requests library now expects header values to be strings only starting 2.11, 
     # and will raise an error on validation if they are not, so casting all header values to strings.
-    request_options['headers'] = { header: str(value) for header, value in request_options['headers'].items() } 
+    request.headers.update({ header: str(value) for header, value in request.headers.items() })
 
     # We are disabling the SSL verification for local emulator(localhost/127.0.0.1) or if the user
     # has explicitly specified to disable SSL verification.
@@ -124,33 +91,30 @@ def _Request(global_endpoint_manager, request, connection_policy, requests_sessi
     if connection_policy.SSLConfiguration:
         ca_certs = connection_policy.SSLConfiguration.SSLCaCerts
         cert_files = (connection_policy.SSLConfiguration.SSLCertFile, connection_policy.SSLConfiguration.SSLKeyFile)
+        response = pipeline_client._pipeline.run(
+            request,
+            stream=is_media_stream,
+            connection_timeout=connection_timeout / 1000.0,
+            connection_verify=ca_certs,
+            connection_cert=cert_files)
 
-        response = requests_session.request(request_options['method'], 
-                                resource_url, 
-                                data = request_body, 
-                                headers = request_options['headers'],
-                                timeout = connection_timeout / 1000.0,
-                                stream = is_media_stream,
-                                verify = ca_certs,
-                                cert = cert_files)
     else:
-        response = requests_session.request(request_options['method'], 
-                                    resource_url, 
-                                    data = request_body, 
-                                    headers = request_options['headers'],
-                                    timeout = connection_timeout / 1000.0,
-                                    stream = is_media_stream,
-                                    # If SSL is disabled, verify = false
-                                    verify = is_ssl_enabled)
+        response = pipeline_client._pipeline.run(
+            request,
+            stream=is_media_stream,
+            connection_timeout=connection_timeout / 1000.0,
+            # If SSL is disabled, verify = false
+            connection_verify=is_ssl_enabled)
 
+    response = response.http_response
     headers = dict(response.headers)
 
     # In case of media stream response, return the response to the user and the user
     # will need to handle reading the response.
     if is_media_stream:
-        return (response.raw, headers)
+        return (response.stream_download(pipeline_client._pipeline), headers)
 
-    data = response.content
+    data = response.body()
     if not six.PY2:
         # python 3 compatible: convert data from byte to unicode string
         data = data.decode('utf-8')
@@ -171,10 +135,10 @@ def _Request(global_endpoint_manager, request, connection_policy, requests_sessi
     return (result, headers)
 
 def SynchronizedRequest(client,
-                        request,
+                        request_options,
                         global_endpoint_manager,
                         connection_policy,
-                        requests_session,
+                        pipeline_client,
                         method,
                         path,
                         request_data,
@@ -184,11 +148,11 @@ def SynchronizedRequest(client,
 
     :param object client:
         Document client instance
-    :param dict request:
+    :param dict request_options:
     :param _GlobalEndpointManager global_endpoint_manager: 
     :param  documents.ConnectionPolicy connection_policy:
-    :param requests.Session requests_session:
-        Session object in requests module
+    :param azure.core.PipelineClient pipeline_client:
+        PipelineClient to process the request.
     :param str method:
     :param str path:
     :param (str, unicode, file-like stream object, dict, list or None) request_data:
@@ -201,28 +165,22 @@ def SynchronizedRequest(client,
         tuple of (dict dict)
 
     """
-    request_body = None
-    if request_data:
-        request_body = _RequestBodyFromData(request_data)
-        if not request_body:
-           raise errors.UnexpectedDataType(
-               'parameter data must be a JSON object, string or' +
-               ' readable stream.')
+    is_stream = _is_readable_stream(request_data)
 
-    request_options = {}
-    request_options['path'] = path
-    request_options['method'] = method
-    if query_params:
-        request_options['path'] += '?' + urlencode(query_params)
+    request = pipeline_client._request(
+        method=method,
+        url=path + '?' + urlencode(query_params) if query_params else path,
+        params=None,
+        headers=headers,
+        content=request_data if not is_stream else None,
+        form_content=None,
+        stream_content=request_data if is_stream else None)
 
-    request_options['headers'] = headers
-    if request_body and (type(request_body) is str or
-                         type(request_body) is six.text_type):
-        request_options['headers'][http_constants.HttpHeaders.ContentLength] = (
-            len(request_body))
-    elif request_body is None:
-        request_options['headers'][http_constants.HttpHeaders.ContentLength] = 0
+    if request.data and isinstance(request.data, six.string_types):
+        request.headers[http_constants.HttpHeaders.ContentLength] = len(request.data)
+    elif request.data is None:
+        request.headers[http_constants.HttpHeaders.ContentLength] = 0
 
     # Pass _Request function with it's parameters to retry_utility's Execute method that wraps the call with retries
-    return _retry_utility.Execute(client, global_endpoint_manager, _Request, request, connection_policy, requests_session, path, request_options, request_body)
+    return _retry_utility.Execute(client, global_endpoint_manager, _Request, request_options, connection_policy, pipeline_client, request)
 
