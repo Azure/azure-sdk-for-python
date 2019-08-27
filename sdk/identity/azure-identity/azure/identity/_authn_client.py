@@ -44,10 +44,9 @@ class AuthnClientBase(object):
         # type: (Iterable[str]) -> Optional[AccessToken]
         tokens = self._cache.find(TokenCache.CredentialType.ACCESS_TOKEN, target=list(scopes))
         for token in tokens:
-            if all((scope in token["target"] for scope in scopes)):
-                expires_on = int(token["expires_on"])
-                if expires_on - 300 > int(time.time()):
-                    return AccessToken(token["secret"], expires_on)
+            expires_on = int(token["expires_on"])
+            if expires_on - 300 > int(time.time()):
+                return AccessToken(token["secret"], expires_on)
         return None
 
     def _deserialize_and_cache_token(self, response, scopes, request_time):
