@@ -15,6 +15,7 @@ try:
     from ._models_py3 import AzureFilesIdentityBasedAuthentication
     from ._models_py3 import BlobContainer
     from ._models_py3 import BlobServiceProperties
+    from ._models_py3 import ChangeFeed
     from ._models_py3 import CheckNameAvailabilityResult
     from ._models_py3 import CorsRule
     from ._models_py3 import CorsRules
@@ -83,6 +84,7 @@ except (SyntaxError, ImportError):
     from ._models import AzureFilesIdentityBasedAuthentication
     from ._models import BlobContainer
     from ._models import BlobServiceProperties
+    from ._models import ChangeFeed
     from ._models import CheckNameAvailabilityResult
     from ._models import CorsRule
     from ._models import CorsRules
@@ -189,6 +191,7 @@ __all__ = [
     'AzureFilesIdentityBasedAuthentication',
     'BlobContainer',
     'BlobServiceProperties',
+    'ChangeFeed',
     'CheckNameAvailabilityResult',
     'CorsRule',
     'CorsRules',

@@ -316,6 +316,8 @@ class BlobServiceProperties(Resource):
     :param automatic_snapshot_policy_enabled: Automatic Snapshot is enabled if
      set to true.
     :type automatic_snapshot_policy_enabled: bool
+    :param change_feed: The blob service properties for change feed events.
+    :type change_feed: ~azure.mgmt.storage.v2019_04_01.models.ChangeFeed
     """
 
     _validation = {
@@ -332,14 +334,33 @@ class BlobServiceProperties(Resource):
         'default_service_version': {'key': 'properties.defaultServiceVersion', 'type': 'str'},
         'delete_retention_policy': {'key': 'properties.deleteRetentionPolicy', 'type': 'DeleteRetentionPolicy'},
         'automatic_snapshot_policy_enabled': {'key': 'properties.automaticSnapshotPolicyEnabled', 'type': 'bool'},
+        'change_feed': {'key': 'properties.changeFeed', 'type': 'ChangeFeed'},
     }
 
-    def __init__(self, *, cors=None, default_service_version: str=None, delete_retention_policy=None, automatic_snapshot_policy_enabled: bool=None, **kwargs) -> None:
+    def __init__(self, *, cors=None, default_service_version: str=None, delete_retention_policy=None, automatic_snapshot_policy_enabled: bool=None, change_feed=None, **kwargs) -> None:
         super(BlobServiceProperties, self).__init__(**kwargs)
         self.cors = cors
         self.default_service_version = default_service_version
         self.delete_retention_policy = delete_retention_policy
         self.automatic_snapshot_policy_enabled = automatic_snapshot_policy_enabled
+        self.change_feed = change_feed
+
+
+class ChangeFeed(Model):
+    """The blob service properties for change feed events.
+
+    :param enabled: Indicates whether change feed event logging is enabled for
+     the Blob service.
+    :type enabled: bool
+    """
+
+    _attribute_map = {
+        'enabled': {'key': 'enabled', 'type': 'bool'},
+    }
+
+    def __init__(self, *, enabled: bool=None, **kwargs) -> None:
+        super(ChangeFeed, self).__init__(**kwargs)
+        self.enabled = enabled
 
 
 class CheckNameAvailabilityResult(Model):
