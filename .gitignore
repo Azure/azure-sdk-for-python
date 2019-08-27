@@ -29,6 +29,16 @@ build/
 # Test results
 TestResults/
 
+# tox generated artifacts
+test-junit-*.xml
+pylint-*.out.txt
+coverage-*.xml
+stderr.txt
+stdout.txt
+
+# tox environment folders
+.tox/
+
 # Credentials
 credentials_real.json
 testsettings_local.json

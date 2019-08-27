@@ -3,7 +3,7 @@ Microsoft Azure SDK for Python
 
 This is the Microsoft Azure Cognitive Services LUIS Client Library.
 
-This package has been tested with Python 2.7, 3.4, 3.5, 3.6 and 3.7.
+This package has been tested with Python 2.7, 3.5, 3.6 and 3.7.
 
 For a more complete set of Azure libraries, see the `azure <https://pypi.python.org/pypi/azure>`__ bundle package.
 

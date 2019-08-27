@@ -1946,8 +1946,7 @@ class CRUDTests(unittest.TestCase):
 
         root_included_path = __get_first([included_path for included_path in indexing_policy['includedPaths']
                                           if included_path['path'] == '/*'])
-        self.assertEqual(0, len(root_included_path['indexes']))
-        print(root_included_path['indexes'])
+        self.assertFalse('indexes' in root_included_path)
 
     def test_client_request_timeout(self):
         connection_policy = documents.ConnectionPolicy()
