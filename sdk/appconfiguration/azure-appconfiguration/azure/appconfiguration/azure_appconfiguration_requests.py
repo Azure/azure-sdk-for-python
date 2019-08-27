@@ -8,14 +8,8 @@ import hashlib
 import base64
 import hmac
 from azure.core.pipeline.policies import HTTPPolicy
-from .utils import parse_connection_string, get_current_utc_time
+from .utils import get_current_utc_time
 
-class AppConfigConnectionStringCredential():
-    """
-    Parse the app configuration service connection string and store the host, id, secret information.
-        """
-    def __init__(self, connection_string):
-        self.host, self.credential, self.secret = parse_connection_string(connection_string)
 
 
 class AppConfigRequestsCredentialsPolicy(HTTPPolicy):
@@ -43,7 +37,15 @@ class AppConfigRequestsCredentialsPolicy(HTTPPolicy):
         content_hash = base64.b64encode(content_digest).decode("utf-8")
 
         string_to_sign = (
-            verb + "\n" + query_url + "\n" + utc_now + ";" + self._credentials.host + ";" + content_hash
+            verb
+            + "\n"
+            + query_url
+            + "\n"
+            + utc_now
+            + ";"
+            + self._credentials.host
+            + ";"
+            + content_hash
         )
 
         # decode secret
@@ -58,11 +60,11 @@ class AppConfigRequestsCredentialsPolicy(HTTPPolicy):
             "x-ms-date": utc_now,
             "x-ms-content-sha256": content_hash,
             "Authorization": "HMAC-SHA256 Credential="
-                             + self._credentials.credential
-                             + ", SignedHeaders="
-                             + signed_headers
-                             + ", Signature="
-                             + signature,
+            + self._credentials.credential
+            + ", SignedHeaders="
+            + signed_headers
+            + ", Signature="
+            + signature,
         }
 
         request.http_request.headers.update(signature_header)

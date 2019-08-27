@@ -5,17 +5,27 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-# Normally, this module will be executed as referenced as part of the devops build definitions.
-# An enterprising user can easily glance over this and leverage for their own purposes.
+# This script is the primary entry point for the azure-sdk-for-python Devops CI commands
+# Primarily, it figures out which packages need to be built by combining the targeting string with the servicedir argument.
+# After this, it either executes a global install of all packages followed by a test, or a tox invocation per package collected.
+
 
 import argparse
 import sys
-from pathlib import Path
 import os
-import logging
+import errno
 import shutil
-
-from common_tasks import process_glob_string, run_check_call, cleanup_folder
+import glob
+import logging
+import pdb
+from common_tasks import (
+    process_glob_string,
+    run_check_call,
+    cleanup_folder,
+    clean_coverage,
+    MANAGEMENT_PACKAGE_IDENTIFIERS,
+)
+from tox_harness import prep_and_run_tox
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -23,12 +33,30 @@ root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "
 coverage_dir = os.path.join(root_dir, "_coverage/")
 dev_setup_script_location = os.path.join(root_dir, "scripts/dev_setup.py")
 
-MANAGEMENT_PACKAGE_IDENTIFIERS = [
-    "mgmt",
-    "azure-cognitiveservices",
-    "azure-servicefabric",
-    "azure-nspkg",
-]
+
+def collect_pytest_coverage_files(targeted_packages):
+    coverage_files = []
+    # generate coverage files
+    for package_dir in [package for package in targeted_packages]:
+        coverage_file = os.path.join(
+            coverage_dir, ".coverage_{}".format(os.path.basename(package_dir))
+        )
+        if os.path.isfile(coverage_file):
+            coverage_files.append(coverage_file)
+
+    logging.info("Visible uncombined .coverage files: {}".format(coverage_files))
+
+    if len(coverage_files):
+        cov_cmd_array = ["coverage", "combine"]
+        cov_cmd_array.extend(coverage_files)
+
+        # merge them with coverage combine and copy to root
+        run_check_call(cov_cmd_array, coverage_dir)
+
+        source = os.path.join(coverage_dir, "./.coverage")
+        dest = os.path.join(root_dir, ".coverage")
+
+        shutil.move(source, dest)
 
 
 def prep_tests(targeted_packages, python_version):
@@ -44,18 +72,10 @@ def prep_tests(targeted_packages, python_version):
     )
 
 
-def clean_coverage():
-    try:
-        os.mkdir(coverage_dir)
-    except FileExistsError:
-        logging.info("Coverage dir already exists. Cleaning.")
-        cleanup_folder(coverage_dir)
-
-
 def run_tests(targeted_packages, python_version, test_output_location, test_res):
     err_results = []
 
-    clean_coverage()
+    clean_coverage(coverage_dir)
 
     # base command array without a targeted package
     command_array = [python_version, "-m", "pytest"]
@@ -118,36 +138,29 @@ def run_tests(targeted_packages, python_version, test_output_location, test_res)
         if os.path.isfile(source_coverage_file):
             shutil.move(source_coverage_file, target_coverage_file)
 
-    collect_coverage_files(targeted_packages)
+    collect_pytest_coverage_files(targeted_packages)
 
     # if any of the packages failed, we should get exit with errors
     if err_results:
         exit(1)
 
 
-def collect_coverage_files(targeted_packages):
-    coverage_files = []
-    # generate coverage files
-    for package_dir in [package for package in targeted_packages]:
-        coverage_file = os.path.join(
-            coverage_dir, ".coverage_{}".format(os.path.basename(package_dir))
+def execute_global_install_and_test(
+    parsed_args, targeted_packages, extended_pytest_args
+):
+    if args.mark_arg:
+        extended_pytest_args.extend(["-m", '"{}"'.format(args.mark_arg)])
+
+    if args.runtype == "setup" or args.runtype == "all":
+        prep_tests(targeted_packages, args.python_version)
+
+    if args.runtype == "execute" or args.runtype == "all":
+        run_tests(
+            targeted_packages,
+            args.python_version,
+            args.test_results,
+            extended_pytest_args,
         )
-        if os.path.isfile(coverage_file):
-            coverage_files.append(coverage_file)
-
-    logging.info("Visible uncombined .coverage files: {}".format(coverage_files))
-
-    if len(coverage_files):
-        cov_cmd_array = ["coverage", "combine"]
-        cov_cmd_array.extend(coverage_files)
-
-        # merge them with coverage combine and copy to root
-        run_check_call(cov_cmd_array, coverage_dir)
-
-        source = os.path.join(coverage_dir, "./.coverage")
-        dest = os.path.join(root_dir, ".coverage")
-
-        shutil.move(source, dest)
 
 
 if __name__ == "__main__":
@@ -194,6 +207,13 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
+        "--tparallel",
+        default=False,
+        help=("Flag  that enables parallel tox invocation."),
+        action="store_true",
+    )
+
+    parser.add_argument(
         "--service",
         help=(
             "Name of service directory (under sdk/) to test."
@@ -202,7 +222,21 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        "-r", "--runtype", choices=["setup", "execute", "all"], default="all"
+        "-r", "--runtype", choices=["setup", "execute", "all", "none"], default="none"
+    )
+
+    parser.add_argument(
+        "-t",
+        "--toxenv",
+        dest="tox_env",
+        help="Specific set of named environments to execute",
+    )
+
+    parser.add_argument(
+        "-w",
+        "--wheel_dir",
+        dest="wheel_dir",
+        help="Location for prebuilt artifacts (if any)",
     )
 
     args = parser.parse_args()
@@ -216,22 +250,15 @@ if __name__ == "__main__":
         target_dir = root_dir
 
     targeted_packages = process_glob_string(args.glob_string, target_dir)
-    test_results_arg = []
+    extended_pytest_args = []
 
-    if args.mark_arg:
-        test_results_arg.extend(["-m", '"{}"'.format(args.mark_arg)])
-
+    # common argument handling
     if args.disablecov:
-        test_results_arg.append("--no-cov")
+        extended_pytest_args.append("--no-cov")
     else:
-        test_results_arg.extend(["--durations=10", "--cov", "--cov-report="])
+        extended_pytest_args.extend(["--durations=10", "--cov", "--cov-report="])
 
-    logging.info(targeted_packages)
-
-    if args.runtype == "setup" or args.runtype == "all":
-        prep_tests(targeted_packages, args.python_version)
-
-    if args.runtype == "execute" or args.runtype == "all":
-        run_tests(
-            targeted_packages, args.python_version, args.test_results, test_results_arg
-        )
+    if args.runtype != "none":
+        execute_global_install_and_test(args, targeted_packages, extended_pytest_args)
+    else:
+        prep_and_run_tox(targeted_packages, args, extended_pytest_args)

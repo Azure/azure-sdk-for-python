@@ -9,9 +9,11 @@ from .async_proxy import AzureAppConfigurationClientProxy
 
 class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
     def __init__(self, method_name):
-        super(AppConfigurationClientTest, self).__init__(method_name, AzureAppConfigurationClientProxy)
+        super(AppConfigurationClientTest, self).__init__(
+            method_name, AzureAppConfigurationClientProxy
+        )
 
-# method: add_configuration_setting
+    # method: add_configuration_setting
     def test_add_configuration_setting(self):
         kv = ConfigurationSetting(
             key=KEY + "_ADD",
@@ -23,15 +25,15 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
         created_kv = self.get_config_client().add_configuration_setting(kv)
         self.to_delete.append(created_kv)
         assert (
-                created_kv.label == kv.label
-                and kv.value == kv.value
-                and created_kv.content_type == kv.content_type
-                and created_kv.tags == kv.tags
+            created_kv.label == kv.label
+            and kv.value == kv.value
+            and created_kv.content_type == kv.content_type
+            and created_kv.tags == kv.tags
         )
         assert (
-                created_kv.etag is not None
-                and created_kv.last_modified is not None
-                and created_kv.locked is False
+            created_kv.etag is not None
+            and created_kv.last_modified is not None
+            and created_kv.locked is False
         )
 
     def test_add_existing_configuration_setting(self):
@@ -39,7 +41,7 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
             self.get_config_client().add_configuration_setting(
                 ConfigurationSetting(
                     key=self.test_config_setting.key,
-                    lable=self.test_config_setting.label
+                    lable=self.test_config_setting.label,
                 )
             )
 
@@ -50,12 +52,12 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
         to_set_kv.tags = {"a": "b", "c": "d"}
         set_kv = self.get_config_client().set_configuration_setting(to_set_kv)
         assert (
-                to_set_kv.key == set_kv.key
-                and to_set_kv.label == to_set_kv.label
-                and to_set_kv.value == set_kv.value
-                and to_set_kv.content_type == set_kv.content_type
-                and to_set_kv.tags == set_kv.tags
-                and to_set_kv.etag != set_kv.etag
+            to_set_kv.key == set_kv.key
+            and to_set_kv.label == to_set_kv.label
+            and to_set_kv.value == set_kv.value
+            and to_set_kv.content_type == set_kv.content_type
+            and to_set_kv.tags == set_kv.tags
+            and to_set_kv.etag != set_kv.etag
         )
 
     def test_set_existing_configuration_setting_label_wrong_etag(self):
@@ -89,12 +91,12 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
         set_kv = self.get_config_client().set_configuration_setting(to_set_kv)
         self.to_delete.append(to_set_kv)
         assert (
-                to_set_kv.key == set_kv.key
-                and to_set_kv.label == set_kv.label
-                and to_set_kv.value == set_kv.value
-                and to_set_kv.content_type == set_kv.content_type
-                and to_set_kv.tags == set_kv.tags
-                and to_set_kv.etag != set_kv.etag
+            to_set_kv.key == set_kv.key
+            and to_set_kv.label == set_kv.label
+            and to_set_kv.value == set_kv.value
+            and to_set_kv.content_type == set_kv.content_type
+            and to_set_kv.tags == set_kv.tags
+            and to_set_kv.etag != set_kv.etag
         )
 
     # method: update_configuration_setting
@@ -109,30 +111,27 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
             etag=to_update_kv.etag,
         )
         assert (
-                to_update_kv.key == updated_kv.key
-                and to_update_kv.label == updated_kv.label
-                and "updated_value" == updated_kv.value
-                and to_update_kv.content_type == updated_kv.content_type
-                and tags == updated_kv.tags
-                and to_update_kv.etag != updated_kv.etag
+            to_update_kv.key == updated_kv.key
+            and to_update_kv.label == updated_kv.label
+            and "updated_value" == updated_kv.value
+            and to_update_kv.content_type == updated_kv.content_type
+            and tags == updated_kv.tags
+            and to_update_kv.etag != updated_kv.etag
         )
 
     def test_update_existing_configuration_setting_label_noetag(self):
         to_update_kv = self.test_config_setting
         tags = {"a": "b", "c": "d"}
         updated_kv = self.get_config_client().update_configuration_setting(
-            to_update_kv.key,
-            label=to_update_kv.label,
-            value="updated_value",
-            tags=tags,
+            to_update_kv.key, label=to_update_kv.label, value="updated_value", tags=tags
         )
         assert (
-                to_update_kv.key == updated_kv.key
-                and to_update_kv.label == updated_kv.label
-                and "updated_value" == updated_kv.value
-                and to_update_kv.content_type == updated_kv.content_type
-                and tags == updated_kv.tags
-                and to_update_kv.etag != updated_kv.etag
+            to_update_kv.key == updated_kv.key
+            and to_update_kv.label == updated_kv.label
+            and "updated_value" == updated_kv.value
+            and to_update_kv.content_type == updated_kv.content_type
+            and tags == updated_kv.tags
+            and to_update_kv.etag != updated_kv.etag
         )
 
     def test_update_existing_configuration_setting_label_wrong_etag(self):
@@ -161,10 +160,10 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
         compare_kv = self.test_config_setting_no_label
         fetched_kv = self.get_config_client().get_configuration_setting(compare_kv.key)
         assert (
-                fetched_kv.key == compare_kv.key
-                and fetched_kv.value == compare_kv.value
-                and fetched_kv.content_type == compare_kv.content_type
-                and fetched_kv.tags == compare_kv.tags
+            fetched_kv.key == compare_kv.key
+            and fetched_kv.value == compare_kv.value
+            and fetched_kv.content_type == compare_kv.content_type
+            and fetched_kv.tags == compare_kv.tags
         )
         assert fetched_kv.label is None
 
@@ -174,10 +173,10 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
             compare_kv.key, compare_kv.label
         )
         assert (
-                fetched_kv.key == compare_kv.key
-                and fetched_kv.value == compare_kv.value
-                and fetched_kv.content_type == compare_kv.content_type
-                and fetched_kv.tags == compare_kv.tags
+            fetched_kv.key == compare_kv.key
+            and fetched_kv.value == compare_kv.value
+            and fetched_kv.content_type == compare_kv.content_type
+            and fetched_kv.tags == compare_kv.tags
         )
         assert fetched_kv.label is not None
 
@@ -242,9 +241,7 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
         assert cnt == 1
 
     def test_list_configuration_settings_only_label(self):
-        items = self.get_config_client().list_configuration_settings(
-            labels=[LABEL]
-        )
+        items = self.get_config_client().list_configuration_settings(labels=[LABEL])
         cnt = 0
         for kv in items:
             assert kv.label == LABEL
@@ -266,18 +263,18 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
         cnt = 0
         for kv in items:
             assert (
-                    kv.key is not None and kv.label is None and kv.content_type is not None
+                kv.key is not None and kv.label is None and kv.content_type is not None
             )
             cnt += 1
         assert cnt == 1
 
     def test_list_configuration_settings_reserved_chars(self):
         resered_char_kv = ConfigurationSetting(
-            key=KEY,
-            label=LABEL_RESERVED_CHARS,
-            value=TEST_VALUE
+            key=KEY, label=LABEL_RESERVED_CHARS, value=TEST_VALUE
         )
-        resered_char_kv = self.get_config_client().add_configuration_setting(resered_char_kv)
+        resered_char_kv = self.get_config_client().add_configuration_setting(
+            resered_char_kv
+        )
         self.to_delete.append(resered_char_kv)
         items = self.get_config_client().list_configuration_settings(
             labels=[LABEL_RESERVED_CHARS]
@@ -332,8 +329,7 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
         try:
             [
                 self.get_config_client().delete_configuration_setting(
-                    key="multi_" + str(i) + KEY_UUID,
-                    label="multi_label_" + str(i)
+                    key="multi_" + str(i) + KEY_UUID, label="multi_label_" + str(i)
                 )
                 for i in range(PAGE_SIZE + 1)
             ]
@@ -341,9 +337,7 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
             pass
 
     def test_list_configuration_settings_null_label(self):
-        items = self.get_config_client().list_configuration_settings(
-            labels=[""]
-        )
+        items = self.get_config_client().list_configuration_settings(labels=[""])
         assert len(list(items)) > 0
 
     def test_list_configuration_settings_only_accept_time(self):
@@ -387,11 +381,11 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
         )
         for kv in items:
             assert (
-                    kv.key is not None
-                    and kv.label is None
-                    and kv.content_type is not None
-                    and not kv.tags
-                    and not kv.etag
+                kv.key is not None
+                and kv.label is None
+                and kv.content_type is not None
+                and not kv.tags
+                and not kv.etag
             )
 
     def test_list_revisions_correct_etag(self):

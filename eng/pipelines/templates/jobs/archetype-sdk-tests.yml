@@ -42,3 +42,4 @@ jobs:
           BeforeTestSteps: ${{ parameters.BeforeTestSteps }}
           PythonVersion: $(PythonVersion)
           OSName: $(OSName)
+          ToxTestEnv: "whl"

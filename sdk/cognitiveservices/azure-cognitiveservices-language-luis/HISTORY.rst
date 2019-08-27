@@ -3,6 +3,18 @@
 Release History
 ===============
 
+0.3.0 (2019-08-27)
+++++++++++++++++++
+
+*Authoring*
+
+**Features**
+
+- Model EntityLabelObject has a new parameter role
+- Model JSONEntity has a new parameter role
+- Model EntityLabel has a new parameter role
+- Model EntityLabel has a new parameter role_id
+
 0.2.0 (2019-04-26)
 ++++++++++++++++++
 
