@@ -119,6 +119,7 @@ try:
     from .managed_database_security_alert_policy_py3 import ManagedDatabaseSecurityAlertPolicy
     from .managed_server_security_alert_policy_py3 import ManagedServerSecurityAlertPolicy
     from .sensitivity_label_py3 import SensitivityLabel
+    from .managed_instance_administrator_py3 import ManagedInstanceAdministrator
     from .database_operation_py3 import DatabaseOperation
     from .elastic_pool_operation_py3 import ElasticPoolOperation
     from .max_size_capability_py3 import MaxSizeCapability
@@ -277,6 +278,7 @@ except (SyntaxError, ImportError):
     from .managed_database_security_alert_policy import ManagedDatabaseSecurityAlertPolicy
     from .managed_server_security_alert_policy import ManagedServerSecurityAlertPolicy
     from .sensitivity_label import SensitivityLabel
+    from .managed_instance_administrator import ManagedInstanceAdministrator
     from .database_operation import DatabaseOperation
     from .elastic_pool_operation import ElasticPoolOperation
     from .max_size_capability import MaxSizeCapability
@@ -379,6 +381,7 @@ from .restore_point_paged import RestorePointPaged
 from .managed_database_security_alert_policy_paged import ManagedDatabaseSecurityAlertPolicyPaged
 from .managed_server_security_alert_policy_paged import ManagedServerSecurityAlertPolicyPaged
 from .sensitivity_label_paged import SensitivityLabelPaged
+from .managed_instance_administrator_paged import ManagedInstanceAdministratorPaged
 from .database_operation_paged import DatabaseOperationPaged
 from .elastic_pool_operation_paged import ElasticPoolOperationPaged
 from .vulnerability_assessment_scan_record_paged import VulnerabilityAssessmentScanRecordPaged
@@ -587,6 +590,7 @@ __all__ = [
     'ManagedDatabaseSecurityAlertPolicy',
     'ManagedServerSecurityAlertPolicy',
     'SensitivityLabel',
+    'ManagedInstanceAdministrator',
     'DatabaseOperation',
     'ElasticPoolOperation',
     'MaxSizeCapability',
@@ -689,6 +693,7 @@ __all__ = [
     'ManagedDatabaseSecurityAlertPolicyPaged',
     'ManagedServerSecurityAlertPolicyPaged',
     'SensitivityLabelPaged',
+    'ManagedInstanceAdministratorPaged',
     'DatabaseOperationPaged',
     'ElasticPoolOperationPaged',
     'VulnerabilityAssessmentScanRecordPaged',
