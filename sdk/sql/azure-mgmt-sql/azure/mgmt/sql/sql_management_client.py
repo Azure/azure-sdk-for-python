@@ -75,6 +75,7 @@ from .operations.restore_points_operations import RestorePointsOperations
 from .operations.managed_database_security_alert_policies_operations import ManagedDatabaseSecurityAlertPoliciesOperations
 from .operations.managed_server_security_alert_policies_operations import ManagedServerSecurityAlertPoliciesOperations
 from .operations.sensitivity_labels_operations import SensitivityLabelsOperations
+from .operations.managed_instance_administrators_operations import ManagedInstanceAdministratorsOperations
 from .operations.database_operations import DatabaseOperations
 from .operations.elastic_pool_operations import ElasticPoolOperations
 from .operations.capabilities_operations import CapabilitiesOperations
@@ -96,6 +97,7 @@ from .operations.instance_pools_operations import InstancePoolsOperations
 from .operations.usages_operations import UsagesOperations
 from .operations.managed_instances_operations import ManagedInstancesOperations
 from .operations.private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
+from .operations.private_link_resources_operations import PrivateLinkResourcesOperations
 from . import models
 
 
@@ -262,6 +264,8 @@ class SqlManagementClient(SDKClient):
     :vartype managed_server_security_alert_policies: azure.mgmt.sql.operations.ManagedServerSecurityAlertPoliciesOperations
     :ivar sensitivity_labels: SensitivityLabels operations
     :vartype sensitivity_labels: azure.mgmt.sql.operations.SensitivityLabelsOperations
+    :ivar managed_instance_administrators: ManagedInstanceAdministrators operations
+    :vartype managed_instance_administrators: azure.mgmt.sql.operations.ManagedInstanceAdministratorsOperations
     :ivar database_operations: DatabaseOperations operations
     :vartype database_operations: azure.mgmt.sql.operations.DatabaseOperations
     :ivar elastic_pool_operations: ElasticPoolOperations operations
@@ -304,6 +308,8 @@ class SqlManagementClient(SDKClient):
     :vartype managed_instances: azure.mgmt.sql.operations.ManagedInstancesOperations
     :ivar private_endpoint_connections: PrivateEndpointConnections operations
     :vartype private_endpoint_connections: azure.mgmt.sql.operations.PrivateEndpointConnectionsOperations
+    :ivar private_link_resources: PrivateLinkResources operations
+    :vartype private_link_resources: azure.mgmt.sql.operations.PrivateLinkResourcesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -448,6 +454,8 @@ class SqlManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.sensitivity_labels = SensitivityLabelsOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.managed_instance_administrators = ManagedInstanceAdministratorsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.database_operations = DatabaseOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.elastic_pool_operations = ElasticPoolOperations(
@@ -489,4 +497,6 @@ class SqlManagementClient(SDKClient):
         self.managed_instances = ManagedInstancesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.private_link_resources = PrivateLinkResourcesOperations(
             self._client, self.config, self._serialize, self._deserialize)
