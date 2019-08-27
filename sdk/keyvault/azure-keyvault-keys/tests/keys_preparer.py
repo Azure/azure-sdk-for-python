@@ -5,8 +5,6 @@
 import time
 import os
 import pytest
-import re
-from base64 import urlsafe_b64encode
 
 try:
     from unittest.mock import Mock
@@ -64,9 +62,8 @@ class VaultClientPreparer(AzureMgmtPreparer):
         playback_fake_resource=None,
         client_kwargs=None,
     ):
-        # incorporate a urlsafe 64 encoded identifier into key vault name for uniqueness
-        b64_encoded = urlsafe_b64encode(os.environ['RUN_IDENTIFIER'].encode()).decode().lower()
-        name_prefix += re.sub(r'[^A-Za-z]+', '', b64_encoded)[:10]
+        # incorporate a unicode integer representation of run identifier into key vault name for uniqueness
+        name_prefix += ''.join(str(ord(c)) for c in os.environ['RUN_IDENTIFIER'])[:10]
 
         super(VaultClientPreparer, self).__init__(
             name_prefix,
