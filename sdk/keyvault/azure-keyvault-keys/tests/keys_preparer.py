@@ -5,7 +5,8 @@
 import time
 import os
 import pytest
-from random import seed, randint
+import re
+from base64 import urlsafe_b64encode
 
 try:
     from unittest.mock import Mock
@@ -63,9 +64,9 @@ class VaultClientPreparer(AzureMgmtPreparer):
         playback_fake_resource=None,
         client_kwargs=None,
     ):
-        # incorporate a seeded random number into key vault name for uniqueness
-        seed(os.environ['RUN_IDENTIFIER'])
-        name_prefix += str(randint(1000, 9999))
+        # incorporate a urlsafe 64 encoded identifier into key vault name for uniqueness
+        b64_encoded = urlsafe_b64encode(os.environ['RUN_IDENTIFIER'].encode()).decode().lower()
+        name_prefix += re.sub(r'[^A-Za-z]+', '', b64_encoded)[:10]
 
         super(VaultClientPreparer, self).__init__(
             name_prefix,
