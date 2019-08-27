@@ -266,7 +266,7 @@ class EventHubClientAbstract(object):
                 :caption: Create an EventHubClient from a connection string.
 
         """
-        event_hub_path = kwargs.pop("event_hub_path")
+        event_hub_path = kwargs.pop("event_hub_path", None)
         is_iot_conn_str = conn_str.lstrip().lower().startswith("hostname")
         if not is_iot_conn_str:
             address, policy, key, entity = _parse_conn_str(conn_str)
@@ -279,11 +279,3 @@ class EventHubClientAbstract(object):
             return cls(host, entity, EventHubSharedKeyCredential(policy, key), **kwargs)
         else:
             return cls._from_iothub_connection_string(conn_str, **kwargs)
-
-    @abstractmethod
-    def create_consumer(self, consumer_group, partition_id, event_position, **kwargs):
-        pass
-
-    @abstractmethod
-    def create_producer(self, partition_id=None, operation=None, send_timeout=None):
-        pass
