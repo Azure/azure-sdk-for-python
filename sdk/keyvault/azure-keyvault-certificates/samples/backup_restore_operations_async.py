@@ -6,7 +6,7 @@ import asyncio
 import time
 import os
 from azure.keyvault.certificates.aio import CertificateClient
-from azure.keyvault.certificates import CertificatePolicy, KeyProperties, LifetimeAction
+from azure.keyvault.certificates import CertificatePolicy, KeyProperties, LifetimeAction, SecretContentType
 from azure.identity.aio import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 
@@ -64,7 +64,7 @@ async def run_sample():
                                                                      key_type='RSA',
                                                                      key_size=2048,
                                                                      reuse_key=False),
-                                        content_type='application/x-pkcs12',
+                                        content_type=SecretContentType.PFX,
                                         issuer_name='Self',
                                         subject_name='CN=*.microsoft.com',
                                         san_dns_names=['sdk.azure-int.net'],

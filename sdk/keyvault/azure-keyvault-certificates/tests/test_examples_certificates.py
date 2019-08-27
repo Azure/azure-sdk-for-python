@@ -37,14 +37,14 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         certificate_client = vault_client.certificates
         # [START create_certificate]
-        from azure.keyvault.certificates import CertificatePolicy, KeyProperties
+        from azure.keyvault.certificates import CertificatePolicy, KeyProperties, SecretContentType
         import time
         # specify the certificate policy
         cert_policy = CertificatePolicy(key_properties=KeyProperties(exportable=True,
                                                                      key_type='RSA',
                                                                      key_size=2048,
                                                                      reuse_key=False),
-                                        content_type='application/x-pkcs12',
+                                        content_type=SecretContentType.PFX,
                                         issuer_name='Self',
                                         subject_name='CN=*.microsoft.com',
                                         san_dns_names=['onedrive.microsoft.com', 'xbox.microsoft.com'],
@@ -117,7 +117,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @ResourceGroupPreparer()
     @VaultClientPreparer(enable_soft_delete=True)
     def test_example_certificate_list_operations(self, vault_client, **kwargs):
-        from azure.keyvault.certificates import CertificatePolicy, KeyProperties
+        from azure.keyvault.certificates import CertificatePolicy, KeyProperties, SecretContentType
         certificate_client = vault_client.certificates
 
         # specify the certificate policy
@@ -125,7 +125,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
                                                                      key_type='RSA',
                                                                      key_size=2048,
                                                                      reuse_key=False),
-                                        content_type='application/x-pkcs12',
+                                        content_type=SecretContentType.PFX,
                                         issuer_name='Self',
                                         subject_name='CN=*.microsoft.com',
                                         san_dns_names=['onedrive.microsoft.com', 'xbox.microsoft.com'],
@@ -172,7 +172,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @ResourceGroupPreparer()
     @VaultClientPreparer()
     def test_example_certificate_backup_restore(self, vault_client, **kwargs):
-        from azure.keyvault.certificates import CertificatePolicy, KeyProperties
+        from azure.keyvault.certificates import CertificatePolicy, KeyProperties, SecretContentType
         import time
         certificate_client = vault_client.certificates
 
@@ -181,7 +181,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
                                                                      key_type='RSA',
                                                                      key_size=2048,
                                                                      reuse_key=False),
-                                        content_type='application/x-pkcs12',
+                                        content_type=SecretContentType.PFX,
                                         issuer_name='Self',
                                         subject_name='CN=*.microsoft.com',
                                         san_dns_names=['onedrive.microsoft.com', 'xbox.microsoft.com'],
@@ -227,7 +227,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @ResourceGroupPreparer()
     @VaultClientPreparer(enable_soft_delete=True)
     def test_example_certificate_recover(self, vault_client, **kwargs):
-        from azure.keyvault.certificates import CertificatePolicy, KeyProperties
+        from azure.keyvault.certificates import CertificatePolicy, KeyProperties, SecretContentType
         certificate_client = vault_client.certificates
 
         # specify the certificate policy
@@ -235,7 +235,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
                                                                      key_type='RSA',
                                                                      key_size=2048,
                                                                      reuse_key=False),
-                                        content_type='application/x-pkcs12',
+                                        content_type=SecretContentType.PFX,
                                         issuer_name='Self',
                                         subject_name='CN=*.microsoft.com',
                                         san_dns_names=['onedrive.microsoft.com', 'xbox.microsoft.com'],

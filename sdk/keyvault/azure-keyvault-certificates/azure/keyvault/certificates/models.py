@@ -6,10 +6,18 @@
 # pylint:disable=too-many-lines
 
 from datetime import datetime
+from enum import Enum
 from typing import Any, Dict, Optional
 
 from ._shared import parse_vault_id
 from ._shared._generated.v7_0 import models
+
+
+class SecretContentType(str, Enum):
+    """Content type of the secrets as specified in Certificate Policy"""
+
+    PFX = 'application/x-pkcs12'
+    PEM = 'application/x-pem-file'
 
 
 class AdministratorDetails(object):
@@ -445,7 +453,7 @@ class CertificatePolicy(object):
         attributes=None,  # type: Optional[models.CertificateAttributes]
         cert_policy_id=None,  # type: Optional[str]
         key_properties=None,  # type: Optional[KeyProperties]
-        content_type=None,  # type: Optional[str]
+        content_type=None,  # type: Optional[models.SecretContentType]
         subject_name=None,  # type: Optional[str]
         san_emails=None,  # type: Optional[list[str]]
         san_dns_names=None,  # type: Optional[list[str]]
@@ -555,7 +563,7 @@ class CertificatePolicy(object):
             key_properties = None
 
         if self.content_type:
-            secret_properties = models.SecretProperties(content_type=self.content_type)
+            secret_properties = models.SecretProperties(content_type=self.content_type.value)
         else:
             secret_properties = None
 
@@ -632,7 +640,7 @@ class CertificatePolicy(object):
             validity_in_months=(certificate_policy_bundle.x509_certificate_properties.validity_in_months
                                 if certificate_policy_bundle.x509_certificate_properties else None),
             key_properties=key_properties,
-            content_type=(certificate_policy_bundle.secret_properties.content_type
+            content_type=(SecretContentType(certificate_policy_bundle.secret_properties.content_type)
                           if certificate_policy_bundle.secret_properties else None),
         )
 
@@ -654,7 +662,7 @@ class CertificatePolicy(object):
 
     @property
     def content_type(self):
-        # type: () -> str
+        # type: () -> models.SecretContentType
         """The media type (MIME type).
         :rtype: str
         """

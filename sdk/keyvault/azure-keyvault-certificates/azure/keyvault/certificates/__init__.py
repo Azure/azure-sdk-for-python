@@ -16,7 +16,8 @@ from .models import (
     Issuer,
     IssuerBase,
     KeyProperties,
-    LifetimeAction
+    LifetimeAction,
+    SecretContentType
 )
 
 __all__ = [
@@ -32,5 +33,6 @@ __all__ = [
     "Issuer",
     "IssuerBase",
     "KeyProperties",
-    "LifetimeAction"
+    "LifetimeAction",
+    "SecretContentType"
 ]

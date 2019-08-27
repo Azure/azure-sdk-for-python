@@ -35,13 +35,13 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         import asyncio
         certificate_client = vault_client.certificates
         # [START create_certificate]
-        from azure.keyvault.certificates import CertificatePolicy, KeyProperties
+        from azure.keyvault.certificates import CertificatePolicy, KeyProperties, SecretContentType
         # specify the certificate policy
         cert_policy = CertificatePolicy(key_properties=KeyProperties(exportable=True,
                                                                      key_type='RSA',
                                                                      key_size=2048,
                                                                      reuse_key=False),
-                                        content_type='application/x-pkcs12',
+                                        content_type=SecretContentType.PFX,
                                         issuer_name='Self',
                                         subject_name='CN=*.microsoft.com',
                                         san_dns_names=['onedrive.microsoft.com', 'xbox.microsoft.com'],
@@ -116,7 +116,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
     @AsyncVaultClientPreparer(enable_soft_delete=True)
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_certificate_list_operations(self, vault_client, **kwargs):
-        from azure.keyvault.certificates import CertificatePolicy, KeyProperties
+        from azure.keyvault.certificates import CertificatePolicy, KeyProperties, SecretContentType
         certificate_client = vault_client.certificates
 
         # specify the certificate policy
@@ -124,7 +124,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
                                                                      key_type='RSA',
                                                                      key_size=2048,
                                                                      reuse_key=False),
-                                        content_type='application/x-pkcs12',
+                                        content_type=SecretContentType.PFX,
                                         issuer_name='Self',
                                         subject_name='CN=*.microsoft.com',
                                         san_dns_names=['onedrive.microsoft.com', 'xbox.microsoft.com'],
@@ -176,7 +176,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
     @AsyncVaultClientPreparer()
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_certificate_backup_restore(self, vault_client, **kwargs):
-        from azure.keyvault.certificates import CertificatePolicy, KeyProperties
+        from azure.keyvault.certificates import CertificatePolicy, KeyProperties, SecretContentType
         import asyncio
         certificate_client = vault_client.certificates
 
@@ -185,7 +185,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
                                                                      key_type='RSA',
                                                                      key_size=2048,
                                                                      reuse_key=False),
-                                        content_type='application/x-pkcs12',
+                                        content_type=SecretContentType.PFX,
                                         issuer_name='Self',
                                         subject_name='CN=*.microsoft.com',
                                         san_dns_names=['onedrive.microsoft.com', 'xbox.microsoft.com'],
@@ -230,7 +230,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
     @AsyncVaultClientPreparer(enable_soft_delete=True)
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_certificate_recover(self, vault_client, **kwargs):
-        from azure.keyvault.certificates import CertificatePolicy, KeyProperties
+        from azure.keyvault.certificates import CertificatePolicy, KeyProperties, SecretContentType
         certificate_client = vault_client.certificates
 
         # specify the certificate policy
@@ -238,7 +238,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
                                                                      key_type='RSA',
                                                                      key_size=2048,
                                                                      reuse_key=False),
-                                        content_type='application/x-pkcs12',
+                                        content_type=SecretContentType.PFX,
                                         issuer_name='Self',
                                         subject_name='CN=*.microsoft.com',
                                         san_dns_names=['onedrive.microsoft.com', 'xbox.microsoft.com'],

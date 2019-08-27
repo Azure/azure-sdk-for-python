@@ -5,7 +5,7 @@
 import datetime
 import os
 from azure.identity import DefaultAzureCredential
-from azure.keyvault.certificates import CertificateClient, CertificatePolicy, KeyProperties
+from azure.keyvault.certificates import CertificateClient, CertificatePolicy, KeyProperties, SecretContentType
 from azure.core.exceptions import HttpResponseError
 
 # ----------------------------------------------------------------------------------------------------------
@@ -57,7 +57,7 @@ def run_sample():
                                                                      key_type='RSA',
                                                                      key_size=2048,
                                                                      reuse_key=False),
-                                        content_type='application/x-pkcs12',
+                                        content_type=SecretContentType.PFX,
                                         issuer_name='Self',
                                         subject_name='CN=*.microsoft.com',
                                         san_dns_names=['sdk.azure-int.net'],
