@@ -363,4 +363,202 @@ interactions:
     status:
       code: 200
       message: OK
+- request:
+    body: !!binary |
+      m3fOba2j4hUqcRotVncPSusxO+zhhN+wNh5qnEeFf0Z2XJWnV367yTS8keFCMIRFioas3A7f4r67
+      voUotnVVhtxK+iSabtVI9Bapvgi+bc3rtuip+vRgHYDxznrUww1IvGgz6CRcQz8l4VfT6jGDNEWe
+      dL2zIRNH3cE/OagpnacnUy8FAAfQ9FROK4/MBpHyEbAdEyveOgb7Grmva4IoqQO4XF4Yts+rEDfO
+      HVE5FoOfMklvK/LdLvp4b64Kj0TY0tAIP73KTx+GbMzmtpjUGVxDQXp3liVKxH/6K4BEOKElw1ay
+      m6m1VAn5nk9Fuy9k0ehwNB3wlfnPz2uXf2tD+nAAoOwXzopoVHxkQKhHbsuNUw/LZgU6RgtorapR
+      dxmcjcZuCU7I8pkkviWUkZCDKMA6GD6zO2HjWUZkOpfmOn4eziCl3XvNo1rd8qdv7dJDKDelpVbu
+      BkkTCFjZC44attxMd0qgGCl3DNKAtDsb+SKPaAgDOLuS6kAoR26htlnA04I1qrSxApijquMkk+nW
+      gcCvxeLyZrd6i7se9F/+WuZ7mJt/6kmxQz6BhQ6tNVxG0i9jtc2vmzpJr9s7KXAmWdyxFmAiD6Vi
+      7KD2TdAT6DQr043vfWccRRQO9tHjSUzMFeclAWq7GzUR8uM0XHz9i3G5lsMFxRa5q7GX6tRypENo
+      8jxKANCWLUhopQhpKzC6FVbdf4Wipd8VYOj2dQixOsV+0hEzj6hJO6G3pWjLJoNRvIOZAq/RzZNH
+      AJdtxYMr0i4DG73QmpKn3ztkGrsHic8E3i9LVw+WPXdPnzae60femnlIpQULPSBNRl3klADqKRIB
+      3ENK2cRORdKd8EZQpRTGKpl8AwBmDtg5cty8Sz/DImWqatY5HeBk8j+JjTeSYbUIaM8PhdJm8+kN
+      tR0HrymTFzl6x1hf4bHK/bx7kaaWkxV8jbYrw3UjPEs+LejB4Vxa/LO1niRI4izvoSibW9HbaPqf
+      EFhOa7xPRZoWqbG7lp19NlPfost0HeWs4NDOGr3GCaXFj+G+vQL4gFoHv9XsuQVBbwpSBlTrDPLL
+      ndyusxmD1y/iARVL+cDF46oyR1aci1gNPKcjbIMwr/dh6lYaXJ73mD1IsGQc0GJ4qa+6Ym7zFbad
+      22/BGrPCIdVS8SbIFnv2Dz7xQTbBE49aPJq75X2SPLmDNdXaS1SqGTfix4mEzF469MzN3QanZgYu
+      MXLwv7t94zsfDrMlIV3RJtWwO8BiEJmLYnMCkST+Jyx+5iV/25zNJCAGgoxx5ngctv7uHL2VVeMd
+      m70sLsUBvcD1DCbVeuQA7YtC40tN3PipCETlQAnajVHah7f+szZc1zNkLbIzRqpyG+y+nMS0KQ==
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '1024'
+      Content-Type:
+      - application/octet-stream
+      If-None-Match:
+      - '*'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-client-request-id:
+      - c1946394-c861-11e9-96a2-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:29:39 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/utcontainerbe5917c4/blobbe5917c4
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Content-MD5:
+      - CUAHGri433sB5ScgI7RJsg==
+      Date:
+      - Tue, 27 Aug 2019 00:29:37 GMT
+      ETag:
+      - '"0x8D72A85A4EFD417"'
+      Last-Modified:
+      - Tue, 27 Aug 2019 00:29:38 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - c1946394-c861-11e9-96a2-2816a845e8c6
+      x-ms-content-crc64:
+      - yXqNl939i5Q=
+      x-ms-request-id:
+      - 9b82e8e1-401e-00a7-4b6e-5c5de3000000
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - c1bd2c50-c861-11e9-987c-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:29:39 GMT
+      x-ms-lease-action:
+      - acquire
+      x-ms-lease-duration:
+      - '-1'
+      x-ms-proposed-lease-id:
+      - 6033194f-47a0-46f1-957b-5f7becbced9d
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/utcontainerbe5917c4/blobbe5917c4?comp=lease
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Tue, 27 Aug 2019 00:29:37 GMT
+      ETag:
+      - '"0x8D72A85A4EFD417"'
+      Last-Modified:
+      - Tue, 27 Aug 2019 00:29:38 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - c1bd2c50-c861-11e9-987c-2816a845e8c6
+      x-ms-lease-id:
+      - 6033194f-47a0-46f1-957b-5f7becbced9d
+      x-ms-request-id:
+      - 9b82e8f4-401e-00a7-5b6e-5c5de3000000
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - c1c89682-c861-11e9-9bef-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:29:40 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: HEAD
+    uri: https://blobstoragename.blob.core.windows.net/utcontainerbe5917c4/blobbe5917c4
+  response:
+    body:
+      string: ''
+    headers:
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '1024'
+      Content-MD5:
+      - CUAHGri433sB5ScgI7RJsg==
+      Content-Type:
+      - application/octet-stream
+      Date:
+      - Tue, 27 Aug 2019 00:29:37 GMT
+      ETag:
+      - '"0x8D72A85A4EFD417"'
+      Last-Modified:
+      - Tue, 27 Aug 2019 00:29:38 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Vary:
+      - Origin
+      x-ms-access-tier:
+      - Hot
+      x-ms-access-tier-inferred:
+      - 'true'
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-client-request-id:
+      - c1c89682-c861-11e9-9bef-2816a845e8c6
+      x-ms-creation-time:
+      - Tue, 27 Aug 2019 00:29:38 GMT
+      x-ms-lease-duration:
+      - infinite
+      x-ms-lease-state:
+      - leased
+      x-ms-lease-status:
+      - locked
+      x-ms-request-id:
+      - 9b82e90f-401e-00a7-6f6e-5c5de3000000
+      x-ms-server-encrypted:
+      - 'true'
+      x-ms-tag-count:
+      - '0'
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 200
+      message: OK
 version: 1

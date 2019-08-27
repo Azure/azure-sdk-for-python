@@ -167,4 +167,173 @@ interactions:
         - /utcontainer6f9a10ff/blob6f9a10ff
         - comp=page
         - ''
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 65f95c80-c863-11e9-9fb7-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:41:24 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer6f9a10ff?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      ? !!python/object/new:multidict._istr.istr
+      - Content-Length
+      : '0'
+      ? !!python/object/new:multidict._istr.istr
+      - Date
+      : Tue, 27 Aug 2019 00:41:23 GMT
+      ? !!python/object/new:multidict._istr.istr
+      - Etag
+      : '"0x8D72A87494290D6"'
+      ? !!python/object/new:multidict._istr.istr
+      - Last-Modified
+      : Tue, 27 Aug 2019 00:41:23 GMT
+      ? !!python/object/new:multidict._istr.istr
+      - Server
+      : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id: 65f95c80-c863-11e9-9fb7-2816a845e8c6
+      x-ms-request-id: 565edb18-a01e-0007-3970-5c9285000000
+      x-ms-version: '2019-02-02'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - amqptest.blob.core.windows.net
+        - /utcontainer6f9a10ff
+        - restype=container
+        - ''
+- request:
+    body: null
+    headers:
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-blob-content-length:
+      - '2048'
+      x-ms-blob-type:
+      - PageBlob
+      x-ms-client-request-id:
+      - 6611dba2-c863-11e9-b149-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:41:25 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer6f9a10ff/blob6f9a10ff
+  response:
+    body:
+      string: ''
+    headers:
+      ? !!python/object/new:multidict._istr.istr
+      - Content-Length
+      : '0'
+      ? !!python/object/new:multidict._istr.istr
+      - Date
+      : Tue, 27 Aug 2019 00:41:23 GMT
+      ? !!python/object/new:multidict._istr.istr
+      - Etag
+      : '"0x8D72A87494B3DEC"'
+      ? !!python/object/new:multidict._istr.istr
+      - Last-Modified
+      : Tue, 27 Aug 2019 00:41:23 GMT
+      ? !!python/object/new:multidict._istr.istr
+      - Server
+      : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id: 6611dba2-c863-11e9-b149-2816a845e8c6
+      x-ms-request-id: 565edb49-a01e-0007-6570-5c9285000000
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2019-02-02'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - amqptest.blob.core.windows.net
+        - /utcontainer6f9a10ff/blob6f9a10ff
+        - ''
+        - ''
+- request:
+    body: !!binary |
+      vzmdn7TKLRhkqNMdx9WoUFZDMjGXxM0mTXufucxL80jcZj4RcYjLQZRxyTa5Ibs92vFbxOHsT848
+      24v1PAGGPB8T38g83iONvOqIhhhhhOqFZn/0+ZgjcA17ApPiJz9Xxnshz34TodjFPFK/dt8QysvM
+      KQNZLi4rYkff49t9Qgh89Eh3Fp/K5AA9vS3EPtOOrvoA/Kux5QMYd7ZDYTVxAsVKKpoTS49ws9oK
+      r8v8bAUwjkKj/dXVGHYRUOITaiMi0VfeseepkY4+JIdCzndL2AJoufg1MBKzksmL21sFkgc/QnGR
+      VKzUVfpJL6EdA7sGEoh5sMZr6Rj9RLw5EgUuLh43E/ZFiczw0iCQsFFJHaCCOkYeHewv2Xo9Pp7J
+      vNsSGhkG5eOP5hHO8dcXbMxytxeyDjiHMUF/lynuz+RaiuyZi/vWGJ/tHipV8tBMLhxdxZtjDUjy
+      1yzQeASIAF8oIXwiaVVNfsKsh+OaIKK3BWiSpCNi7t6OEf6XzLhlNpMIX5KDy4Q+77UnoaDKorMn
+      e6DZm1jbRpvg12Tts20ytWYvAWY3BncGgC1aXLEsFazc+agCl+kMaZ7LkoaV0mzvVaedEbxS5iI3
+      dqCDIlIQ8w5OQKCPksVLkdoZ0GcW34vB/ixkkhBDBpcBs+sN7xLmTjjYYUXWYnveYfRm/tcQPsE=
+    headers:
+      Content-Length:
+      - '512'
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-client-request-id:
+      - 6617f202-c863-11e9-9e36-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:41:25 GMT
+      x-ms-page-write:
+      - update
+      x-ms-range:
+      - bytes=0-511
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer6f9a10ff/blob6f9a10ff?comp=page
+  response:
+    body:
+      string: ''
+    headers:
+      ? !!python/object/new:multidict._istr.istr
+      - Content-Length
+      : '0'
+      ? !!python/object/new:multidict._istr.istr
+      - Date
+      : Tue, 27 Aug 2019 00:41:23 GMT
+      ? !!python/object/new:multidict._istr.istr
+      - Etag
+      : '"0x8D72A87495180A3"'
+      ? !!python/object/new:multidict._istr.istr
+      - Last-Modified
+      : Tue, 27 Aug 2019 00:41:23 GMT
+      ? !!python/object/new:multidict._istr.istr
+      - Server
+      : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-blob-sequence-number: '0'
+      x-ms-client-request-id: 6617f202-c863-11e9-9e36-2816a845e8c6
+      x-ms-content-crc64: Fve0tGsrYA8=
+      x-ms-request-id: 565edb62-a01e-0007-7e70-5c9285000000
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2019-02-02'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - amqptest.blob.core.windows.net
+        - /utcontainer6f9a10ff/blob6f9a10ff
+        - comp=page
+        - ''
 version: 1

@@ -146,9 +146,8 @@ interactions:
     uri: https://remotestoragename.blob.core.windows.net/utcontainer3206152e/blob3206152e?comp=lease
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseAlreadyPresent</Code><Message>There\
-        \ is already a lease present.\nRequestId:68ea19bc-201e-009e-5ed7-221d47000000\n\
-        Time:2019-06-14T17:38:29.1062327Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseAlreadyPresent</Code><Message>There
+        is already a lease present.\nRequestId:68ea19bc-201e-009e-5ed7-221d47000000\nTime:2019-06-14T17:38:29.1062327Z</Message></Error>"
     headers:
       Content-Length:
       - '221'
@@ -314,9 +313,8 @@ interactions:
     uri: https://storagename.blob.core.windows.net/utcontainer3206152e/blob3206152e?comp=lease
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseAlreadyPresent</Code><Message>There\
-        \ is already a lease present.\nRequestId:589060d7-501e-0074-40e1-22e246000000\n\
-        Time:2019-06-14T18:45:13.4394027Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseAlreadyPresent</Code><Message>There
+        is already a lease present.\nRequestId:589060d7-501e-0074-40e1-22e246000000\nTime:2019-06-14T18:45:13.4394027Z</Message></Error>"
     headers:
       Content-Length:
       - '221'
@@ -332,6 +330,187 @@ interactions:
       - 589060d7-501e-0074-40e1-22e246000000
       x-ms-version:
       - '2018-03-28'
+    status:
+      code: 409
+      message: There is already a lease present.
+- request:
+    body: !!binary |
+      e04kVFeJMUostzd6JsS6BEtaQcR8dQouF12G6U2myUSUGUV4/s3wTpGgTvg9MRU+GL4rp/pHuDCF
+      35LdBHiZi+aXdsFNkBEPCrzcFANkM+R/mBXIvno3eOJTcXA8iM6VmpVpjW31EqgjAaF+mkjlXFpQ
+      hpjoy/BbWdm02w5+i0eyr1pTvdm0rHIt0f628Y+0NFJFQyhjn1nWQD2XAHSIRWxYr/e/+omH9nRn
+      6M12gUrkqvtnuBdmkrVHaAkvKMxX1pzwXkOT8b3r9/ureiow+ibcIKHtjJ/+wa84w2zcjWj6lI5B
+      HyQHjshya3u6oVrhrUeqIjz8nOE0x01N35WC+OW632f0gY7t3jNioTh3b4JvTFytFlzSgncCyHse
+      gS64kntkOnw2XMxyQ9SxSFPDyvrIteEiEWV/bGR0Mz3N2N6TNNpOT9eoQJkNnfsB9k5wZPYJ48xa
+      r7wU0Z/6wL5koOnqJrB7hyYMh41fj0bFrrTVwzveBXR8OiAA+Sdo6UxNJbGjulubAwXkP+cwHVkZ
+      DbVNbe/jU0iVQ0Cllcy6ZGisA1hroBqflJ5wHSJipcveoWz9PSxJh1DIeuHrguTWNF05bC5p0zcv
+      UC+C/kuGxp+nRmi3toal+BSfyNZvgU78wFM9hMkPjllN6sQj4RyMtKcoGhXTmtLsvfuEKEJzdaIS
+      3y+yZu4jCgpJ33EuWdGiD5c3Zo1KMv5kXWAZko3KIj9RxiPGdJzLbcd3kkNAZSRq+u7Im7iTB6T4
+      w/4cgg0abHLl5MkrNNqshwt6y4hgX9dVoMgJgoOr/orUUJhHeqllgiTdM8YZrsFQeaxWRkC7VdrG
+      FcQOCOJeBkq1lhf+JIlzoTUg4wb+85QLwiAAb1GqPlGG3qhlmofT/cE/ow5azZit0xFryHg9KiMV
+      5ZR6gWRS6ilsDtU6lE8/UuHruEpfFwcOMAXfvEsryBKe0nE8FPDDwaVDs4rpT5Wt2B1wNrR0QjR3
+      MKql0Ml81/crUdZmm+XMEGKtyLoBZ6kj9qdHt2MNxUNBQsCNHax3Hgye6LpWT/zSYg9z3lpv3kpo
+      rXsdkWpaEJ3qaOj32eVo3aBz1xDtxOU/tZuVXAtZ48eHlC9TmaQGY3OP0A8p2BlW+M53vpOFRpv9
+      ZeRPCMTT+gR8TduaWqjlYdyFYdv9WZC/WzLFE7MJzDdmOuBtO1N+7Z4wbtJvksJUJzAyv50168+n
+      fyRS49VGOlQ/dkm7qf1Nfp8JBSmUEPzDoJwD63yIHr5N78vBEZ6vYNIxlYbCnipLF9qnQfRmBXdK
+      g3DVEQ/uAamkPbzBs+wT/WEjrDaCqiSYDAX25pFHQ8ybdr9yyDJEHmHgmXBx7uzIk5T6VMoY+w==
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '1024'
+      Content-Type:
+      - application/octet-stream
+      If-None-Match:
+      - '*'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-client-request-id:
+      - c791055a-c861-11e9-9ed1-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:29:49 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer3206152e/blob3206152e
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Content-MD5:
+      - aUUu6KKsZzVp+9eTXGLcWQ==
+      Date:
+      - Tue, 27 Aug 2019 00:29:48 GMT
+      ETag:
+      - '"0x8D72A85AAF34F2C"'
+      Last-Modified:
+      - Tue, 27 Aug 2019 00:29:48 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - c791055a-c861-11e9-9ed1-2816a845e8c6
+      x-ms-content-crc64:
+      - OUP7woYSmaY=
+      x-ms-request-id:
+      - 32a3c207-201e-0070-026e-5c17c4000000
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - c7c0ce46-c861-11e9-926d-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:29:50 GMT
+      x-ms-lease-action:
+      - acquire
+      x-ms-lease-duration:
+      - '-1'
+      x-ms-proposed-lease-id:
+      - 032228df-ab15-4b42-9289-32c514f2d10d
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer3206152e/blob3206152e?comp=lease
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Tue, 27 Aug 2019 00:29:48 GMT
+      ETag:
+      - '"0x8D72A85AAF34F2C"'
+      Last-Modified:
+      - Tue, 27 Aug 2019 00:29:48 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - c7c0ce46-c861-11e9-926d-2816a845e8c6
+      x-ms-lease-id:
+      - 032228df-ab15-4b42-9289-32c514f2d10d
+      x-ms-request-id:
+      - 32a3c229-201e-0070-206e-5c17c4000000
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - c7ccacee-c861-11e9-961f-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:29:50 GMT
+      x-ms-lease-action:
+      - acquire
+      x-ms-lease-duration:
+      - '-1'
+      x-ms-proposed-lease-id:
+      - 1db0ddd8-f481-4bc8-8159-dd64bc643f96
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer3206152e/blob3206152e?comp=lease
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseAlreadyPresent</Code><Message>There
+        is already a lease present.\nRequestId:32a3c241-201e-0070-376e-5c17c4000000\nTime:2019-08-27T00:29:48.5045595Z</Message></Error>"
+    headers:
+      Content-Length:
+      - '221'
+      Content-Type:
+      - application/xml
+      Date:
+      - Tue, 27 Aug 2019 00:29:48 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - c7ccacee-c861-11e9-961f-2816a845e8c6
+      x-ms-error-code:
+      - LeaseAlreadyPresent
+      x-ms-request-id:
+      - 32a3c241-201e-0070-376e-5c17c4000000
+      x-ms-version:
+      - '2019-02-02'
     status:
       code: 409
       message: There is already a lease present.

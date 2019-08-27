@@ -158,9 +158,8 @@ interactions:
     uri: https://remotestoragename.blob.core.windows.net/utcontainer32b01530/blob32b01530?comp=blocklist
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidBlockList</Code><Message>The\
-        \ specified block list is invalid.\nRequestId:7d42f597-801e-005f-28d7-2296fe000000\n\
-        Time:2019-06-14T17:34:30.3407775Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidBlockList</Code><Message>The
+        specified block list is invalid.\nRequestId:7d42f597-801e-005f-28d7-2296fe000000\nTime:2019-06-14T17:34:30.3407775Z</Message></Error>"
     headers:
       Content-Length:
       - '221'
@@ -338,9 +337,8 @@ interactions:
     uri: https://storagename.blob.core.windows.net/utcontainer32b01530/blob32b01530?comp=blocklist
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidBlockList</Code><Message>The\
-        \ specified block list is invalid.\nRequestId:3f814d01-401e-0024-6ee0-22fd4e000000\n\
-        Time:2019-06-14T18:37:08.6180976Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidBlockList</Code><Message>The
+        specified block list is invalid.\nRequestId:3f814d01-401e-0024-6ee0-22fd4e000000\nTime:2019-06-14T18:37:08.6180976Z</Message></Error>"
     headers:
       Content-Length:
       - '221'
@@ -356,6 +354,193 @@ interactions:
       - 3f814d01-401e-0024-6ee0-22fd4e000000
       x-ms-version:
       - '2018-03-28'
+    status:
+      code: 400
+      message: The specified block list is invalid.
+- request:
+    body: AAA
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '3'
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-client-request-id:
+      - 88c50734-c861-11e9-b322-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:28:04 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer32b01530/blob32b01530?blockid=MQ%3D%3D&comp=block
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Tue, 27 Aug 2019 00:28:02 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - 88c50734-c861-11e9-b322-2816a845e8c6
+      x-ms-content-crc64:
+      - Cc/2Kr4DuKg=
+      x-ms-request-id:
+      - e6788d8e-201e-0052-626e-5c79f2000000
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: BBB
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '3'
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-client-request-id:
+      - 88eee22c-c861-11e9-9c2f-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:28:04 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer32b01530/blob32b01530?blockid=Mg%3D%3D&comp=block
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Tue, 27 Aug 2019 00:28:02 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - 88eee22c-c861-11e9-9c2f-2816a845e8c6
+      x-ms-content-crc64:
+      - +3yuPEA7IqE=
+      x-ms-request-id:
+      - e6788db0-201e-0052-7f6e-5c79f2000000
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: CCC
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '3'
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-client-request-id:
+      - 88fa3794-c861-11e9-a67a-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:28:04 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer32b01530/blob32b01530?blockid=Mw%3D%3D&comp=block
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Tue, 27 Aug 2019 00:28:02 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - 88fa3794-c861-11e9-a67a-2816a845e8c6
+      x-ms-content-crc64:
+      - VRJmMeosVKY=
+      x-ms-request-id:
+      - e6788de6-201e-0052-306e-5c79f2000000
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <BlockList><Latest>MQ==</Latest><Latest>Mg==</Latest><Latest>NA==</Latest></BlockList>'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '125'
+      Content-Type:
+      - application/xml; charset=utf-8
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-client-request-id:
+      - 89057a8a-c861-11e9-b0c2-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:28:04 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer32b01530/blob32b01530?comp=blocklist
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidBlockList</Code><Message>The
+        specified block list is invalid.\nRequestId:e6788df8-201e-0052-3f6e-5c79f2000000\nTime:2019-08-27T00:28:03.2259302Z</Message></Error>"
+    headers:
+      Content-Length:
+      - '221'
+      Content-Type:
+      - application/xml
+      Date:
+      - Tue, 27 Aug 2019 00:28:02 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - 89057a8a-c861-11e9-b0c2-2816a845e8c6
+      x-ms-error-code:
+      - InvalidBlockList
+      x-ms-request-id:
+      - e6788df8-201e-0052-3f6e-5c79f2000000
+      x-ms-version:
+      - '2019-02-02'
     status:
       code: 400
       message: The specified block list is invalid.

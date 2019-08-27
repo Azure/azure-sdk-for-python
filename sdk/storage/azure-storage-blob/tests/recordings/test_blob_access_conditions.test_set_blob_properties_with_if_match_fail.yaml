@@ -120,9 +120,8 @@ interactions:
     uri: https://remotestoragename.blob.core.windows.net/utcontainer19431d1c/blob1?comp=properties
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The\
-        \ condition specified using HTTP conditional header(s) is not met.\nRequestId:23a89673-e01e-0029-1bd7-221242000000\n\
-        Time:2019-06-14T17:33:27.9085408Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The
+        condition specified using HTTP conditional header(s) is not met.\nRequestId:23a89673-e01e-0029-1bd7-221242000000\nTime:2019-06-14T17:33:27.9085408Z</Message></Error>"
     headers:
       Content-Length:
       - '252'
@@ -262,9 +261,8 @@ interactions:
     uri: https://storagename.blob.core.windows.net/utcontainer19431d1c/blob1?comp=properties
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The\
-        \ condition specified using HTTP conditional header(s) is not met.\nRequestId:d27322c5-b01e-009b-4ee0-22e938000000\n\
-        Time:2019-06-14T18:35:56.0224496Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The
+        condition specified using HTTP conditional header(s) is not met.\nRequestId:d27322c5-b01e-009b-4ee0-22e938000000\nTime:2019-06-14T18:35:56.0224496Z</Message></Error>"
     headers:
       Content-Length:
       - '252'
@@ -280,6 +278,161 @@ interactions:
       - d27322c5-b01e-009b-4ee0-22e938000000
       x-ms-version:
       - '2018-03-28'
+    status:
+      code: 412
+      message: The condition specified using HTTP conditional header(s) is not met.
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 0d92f882-c861-11e9-8f05-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:24:37 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer19431d1c?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Tue, 27 Aug 2019 00:24:35 GMT
+      ETag:
+      - '"0x8D72A84F0F2C514"'
+      Last-Modified:
+      - Tue, 27 Aug 2019 00:24:36 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - 0d92f882-c861-11e9-8f05-2816a845e8c6
+      x-ms-request-id:
+      - 9f78ccae-001e-006c-2c6d-5ccfd3000000
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: hello world
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '11'
+      Content-Type:
+      - application/octet-stream
+      If-None-Match:
+      - '*'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-client-request-id:
+      - 0dc5a6ba-c861-11e9-a650-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:24:37 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer19431d1c/blob1
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Content-MD5:
+      - XrY7u+Ae7tCTyyK7j1rNww==
+      Date:
+      - Tue, 27 Aug 2019 00:24:36 GMT
+      ETag:
+      - '"0x8D72A84F105D592"'
+      Last-Modified:
+      - Tue, 27 Aug 2019 00:24:36 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - 0dc5a6ba-c861-11e9-a650-2816a845e8c6
+      x-ms-content-crc64:
+      - vo7q9sPVKY0=
+      x-ms-request-id:
+      - 9f78ccdd-001e-006c-566d-5ccfd3000000
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      If-Match:
+      - '0x111111111111111'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-blob-content-disposition:
+      - inline
+      x-ms-blob-content-language:
+      - spanish
+      x-ms-client-request-id:
+      - 0dd2c2dc-c861-11e9-8b92-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:24:38 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer19431d1c/blob1?comp=properties
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The
+        condition specified using HTTP conditional header(s) is not met.\nRequestId:9f78cd01-001e-006c-786d-5ccfd3000000\nTime:2019-08-27T00:24:36.4777665Z</Message></Error>"
+    headers:
+      Content-Length:
+      - '252'
+      Content-Type:
+      - application/xml
+      Date:
+      - Tue, 27 Aug 2019 00:24:36 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - 0dd2c2dc-c861-11e9-8b92-2816a845e8c6
+      x-ms-error-code:
+      - ConditionNotMet
+      x-ms-request-id:
+      - 9f78cd01-001e-006c-786d-5ccfd3000000
+      x-ms-version:
+      - '2019-02-02'
     status:
       code: 412
       message: The condition specified using HTTP conditional header(s) is not met.

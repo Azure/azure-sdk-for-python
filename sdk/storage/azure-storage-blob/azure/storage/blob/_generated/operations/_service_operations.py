@@ -147,7 +147,7 @@ class ServiceOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/xml, application/octet-stream, text/plain'
+        header_parameters['Accept'] = 'application/xml'
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
@@ -219,7 +219,7 @@ class ServiceOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/xml, application/octet-stream, text/plain'
+        header_parameters['Accept'] = 'application/xml'
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
@@ -322,7 +322,7 @@ class ServiceOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/xml, application/octet-stream, text/plain'
+        header_parameters['Accept'] = 'application/xml'
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
@@ -395,7 +395,7 @@ class ServiceOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/xml, application/octet-stream, text/plain'
+        header_parameters['Accept'] = 'application/xml'
         header_parameters['Content-Type'] = 'application/xml; charset=utf-8'
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id is not None:
@@ -483,31 +483,18 @@ class ServiceOperations(object):
             return cls(response, None, response_headers)
     get_account_info.metadata = {'url': '/'}
 
-    def filter_blobs(self, filter, marker=None, maxresults=None, timeout=None, request_id=None, cls=None, **kwargs):
-        """The Filter Blobs operation enables callers to list blobs in an account
-        whose tags match a given search expression.
+    def submit_batch(self, body, content_length, multipart_content_type, timeout=None, request_id=None, cls=None, **kwargs):
+        """The Batch operation allows multiple API calls to be embedded into a
+        single HTTP request.
 
-        :param filter: The filter parameter enables the caller to query blobs
-         whose tags match a given expression. The given expression must
-         evaluate to true for a blob to be returned in the results.
-        :type filter: str
-        :param marker: A string value that identifies the portion of the list
-         of containers to be returned with the next listing operation. The
-         operation returns the NextMarker value within the response body if the
-         listing operation did not return all containers remaining to be listed
-         with the current page. The NextMarker value can be used as the value
-         for the marker parameter in a subsequent call to request the next page
-         of list items. The marker value is opaque to the client.
-        :type marker: str
-        :param maxresults: Specifies the maximum number of containers to
-         return. If the request does not specify maxresults, or specifies a
-         value greater than 5000, the server will return up to 5000 items. Note
-         that if the listing operation crosses a partition boundary, then the
-         service will return a continuation token for retrieving the remainder
-         of the results. For this reason, it is possible that the service will
-         return fewer results than specified by maxresults, or than the default
-         of 5000.
-        :type maxresults: int
+        :param body: Initial data
+        :type body: Generator
+        :param content_length: The length of the request.
+        :type content_length: long
+        :param multipart_content_type: Required. The value of this header must
+         be multipart/mixed with a batch boundary. Example header value:
+         multipart/mixed; boundary=batch_<GUID>
+        :type multipart_content_type: str
         :param timeout: The timeout parameter is expressed in seconds. For
          more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -519,16 +506,16 @@ class ServiceOperations(object):
         :type request_id: str
         :param callable cls: A custom type or function that will be passed the
          direct response
-        :return: FilterBlobsResponse or the result of cls(response)
-        :rtype: ~azure.storage.blob.models.FilterBlobsResponse
+        :return: object or the result of cls(response)
+        :rtype: Generator
         :raises:
          :class:`StorageErrorException<azure.storage.blob.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
-        comp = "blobs"
+        comp = "batch"
 
         # Construct URL
-        url = self.filter_blobs.metadata['url']
+        url = self.submit_batch.metadata['url']
         path_format_arguments = {
             'url': self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True)
         }
@@ -536,25 +523,25 @@ class ServiceOperations(object):
 
         # Construct parameters
         query_parameters = {}
-        if marker is not None:
-            query_parameters['marker'] = self._serialize.query("marker", marker, 'str')
-        if maxresults is not None:
-            query_parameters['maxresults'] = self._serialize.query("maxresults", maxresults, 'int', minimum=1)
-        query_parameters['filter'] = self._serialize.query("filter", filter, 'str')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
         query_parameters['comp'] = self._serialize.query("comp", comp, 'str')
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/xml, application/octet-stream, text/plain'
+        header_parameters['Accept'] = 'application/xml'
+        header_parameters['Content-Type'] = 'application/xml; charset=utf-8'
+        header_parameters['Content-Length'] = self._serialize.header("content_length", content_length, 'long')
+        header_parameters['Content-Type'] = self._serialize.header("multipart_content_type", multipart_content_type, 'str')
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
 
+        # Construct body
+
         # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        request = self._client.post(url, query_parameters, header_parameters, stream_content=body)
+        pipeline_response = self._client._pipeline.run(request, stream=True, **kwargs)
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -564,13 +551,11 @@ class ServiceOperations(object):
         header_dict = {}
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('FilterBlobsResponse', response)
+            deserialized = response.stream_download(self._client._pipeline)
             header_dict = {
                 'Content-Type': self._deserialize('str', response.headers.get('Content-Type')),
-                'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
                 'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
-                'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
                 'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
             }
 
@@ -578,4 +563,4 @@ class ServiceOperations(object):
             return cls(response, deserialized, header_dict)
 
         return deserialized
-    filter_blobs.metadata = {'url': '/'}
+    submit_batch.metadata = {'url': '/'}

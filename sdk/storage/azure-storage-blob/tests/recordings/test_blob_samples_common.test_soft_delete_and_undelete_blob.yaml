@@ -323,4 +323,241 @@ interactions:
     status:
       code: 202
       message: Accepted
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <StorageServiceProperties><DeleteRetentionPolicy><Enabled>true</Enabled><Days>1</Days></DeleteRetentionPolicy></StorageServiceProperties>'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '176'
+      Content-Type:
+      - application/xml; charset=utf-8
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-client-request-id:
+      - 5d24ed1e-c861-11e9-8f58-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:26:51 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/?restype=service&comp=properties
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Tue, 27 Aug 2019 00:26:49 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - 5d24ed1e-c861-11e9-8f58-2816a845e8c6
+      x-ms-request-id:
+      - 07633b94-701e-008d-256e-5c28a6000000
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 5d5aa562-c861-11e9-9bb8-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:26:51 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/containerfordeletedblobs?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Tue, 27 Aug 2019 00:26:49 GMT
+      ETag:
+      - '"0x8D72A85409D7A19"'
+      Last-Modified:
+      - Tue, 27 Aug 2019 00:26:49 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - 5d5aa562-c861-11e9-9bb8-2816a845e8c6
+      x-ms-request-id:
+      - 07633bb5-701e-008d-3d6e-5c28a6000000
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: Lorem ipsum dolor sit amet, consectetur adipiscing elit
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '55'
+      Content-Type:
+      - application/octet-stream
+      If-None-Match:
+      - '*'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-client-request-id:
+      - 5d6b4fd8-c861-11e9-b106-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:26:51 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/containerfordeletedblobs/my_blob
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Content-MD5:
+      - /BCgjff6+jhxFmZGYJ4clQ==
+      Date:
+      - Tue, 27 Aug 2019 00:26:49 GMT
+      ETag:
+      - '"0x8D72A8540ADC5A2"'
+      Last-Modified:
+      - Tue, 27 Aug 2019 00:26:50 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - 5d6b4fd8-c861-11e9-b106-2816a845e8c6
+      x-ms-content-crc64:
+      - 69CZwUFtgrU=
+      x-ms-request-id:
+      - 07633bdd-701e-008d-616e-5c28a6000000
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 5d79c5fa-c861-11e9-b341-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:26:51 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: DELETE
+    uri: https://blobstoragename.blob.core.windows.net/containerfordeletedblobs/my_blob
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Tue, 27 Aug 2019 00:26:49 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - 5d79c5fa-c861-11e9-b341-2816a845e8c6
+      x-ms-delete-type-permanent:
+      - 'true'
+      x-ms-request-id:
+      - 07633c10-701e-008d-0c6e-5c28a6000000
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 5d883b00-c861-11e9-9b8f-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:26:51 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/containerfordeletedblobs/my_blob?comp=undelete
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>BlobNotFound</Code><Message>The
+        specified blob does not exist.\nRequestId:07633c37-701e-008d-2d6e-5c28a6000000\nTime:2019-08-27T00:26:50.2696104Z</Message></Error>"
+    headers:
+      Content-Length:
+      - '215'
+      Content-Type:
+      - application/xml
+      Date:
+      - Tue, 27 Aug 2019 00:26:50 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - 5d883b00-c861-11e9-9b8f-2816a845e8c6
+      x-ms-error-code:
+      - BlobNotFound
+      x-ms-request-id:
+      - 07633c37-701e-008d-2d6e-5c28a6000000
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 404
+      message: The specified blob does not exist.
 version: 1

@@ -201,4 +201,113 @@ interactions:
       code: 400
       message: Value for one of the query parameters specified in the request URI
         is invalid.
+- request:
+    body: !!binary |
+      AwpxUBP6zYXcmAUCXrBB8Ru2ppqxxXfecSifEFzeeGqricWyyi0zzEql0xrEm5xNPwANV2qai6qs
+      BaFG4Zu31a3Ez1rdVty/lKNa+RuQqC5vNsrb8YlyepLsiHHE7LJsw0H0XfZSvVLYQx3LasLXyqE2
+      6YvLE6Uro2A+7ttqE6Ixhjtt4cqV7LyOGhgJR+wvyiXaB6lpq33nYW6rR0uVts0+hhrrp5aaBIlt
+      nsW8CuW562L8S9icMMZeZQlomqfCEthrrnfOEdl4Xeaysm21hHDNWUtlREc2bZftrEcQiI2SaC/a
+      mG7Hl2fPTv2MRdEqkWJJrUNuu9P+in2x5EEUSVTlk4wEMQeEFli9+eWphRrhLIUZCS8p7XY8c3vS
+      7955s2Dk3k02IAGz68cjS18Odh3Shbmd1HtyzT2f2sxJx08Tt2BDHg0Q1qLRbgIEGxq0OP30UbeB
+      o9d8mMejP0keegQREKL8/HXH9myfnStYWZQtba3YAeeAjlPRdklU3GtpTNcIvrFzgMIhPyMxOnwr
+      jwfqwMnQHO+m67n2XWwzf0RuWcOL3Cvl2MoaN0T8nrMZoi9PhM8lc72opt/589Tje78ARQ9yPeny
+      6giHpFePxQPUDOHwNxD6o2lUEdjFUcHOGl+64rcO73EjTUe4/dY/9DlzHfY2AE3jZqFuwXQWCvY+
+      mdnaCel53VPNgw3yxU0oOF17JvW2/ZKvZmoh7VLuNhNKTGs0JkIhakWeE6ePjBmtMAynQ4Pedx2q
+      UX0D1jbbXn2j4bT7uaecpef0prDBOXRmHJh9kahx7DI41ifAwpfVH6QoxFHmJOB64dfoYl/fz2uo
+      ivkoktFDPUS/U7QQ8/l9nY+V2KYGoLE65KCcqe3P4X0kpxSt2jxIQUItHGuFWlIoGew8PmCR+2E8
+      QbCSUGafr8vvLhyrcxgPVqPNUYd1MIld60eqLaVyl/eMAcApjuhUIOs3VeS1HVbpIrkEsTV8v0f9
+      wYIWoZTPCw7YcT6/vPEJrODeOvA0l1ARNa/noV3uTyLgLTaCklzzjfM/b7+1FJGprtKtZsiEhShk
+      z1sTluO07jpJpmCfHSBSe3Y97VKP4rnoJu0LJBC4maXsiLtoCdBzGArpXvi1tqSa2DXMiZ8zLsno
+      UtkmY/uMc9V97+BQzyfsNr24n+x9r2nT5ZlQ9tkm1CHep2lXXFfUH7uCMR9DA0vnS9LCBwStgD9T
+      IhDT6Nrb2u5hmIw0cvGq3YUQaMD065I54YVyjNsyalBVv6spjg94Y855BAeDSm3IBypZGVEaY/LI
+      GfT7yvMbdO2dNU3lyuashcR7Aa+nO7OScNrC5bKFIkBikjuCX0VTl5UkwIPAz8K3hTXsO5mssA==
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '1024'
+      Content-Type:
+      - application/octet-stream
+      If-None-Match:
+      - '*'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-client-request-id:
+      - c082004a-c861-11e9-994b-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:29:37 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/utcontainerbb2312d9/blobbb2312d9
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Content-MD5:
+      - rr2MyoxD0qRXsPiAw8/AKg==
+      Date:
+      - Tue, 27 Aug 2019 00:29:36 GMT
+      ETag:
+      - '"0x8D72A85A3E426EF"'
+      Last-Modified:
+      - Tue, 27 Aug 2019 00:29:36 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - c082004a-c861-11e9-994b-2816a845e8c6
+      x-ms-content-crc64:
+      - gV7iIB9U+UE=
+      x-ms-request-id:
+      - 00cb70fc-701e-0068-4e6e-5c3a51000000
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - c0b21466-c861-11e9-9778-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:29:38 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: HEAD
+    uri: https://blobstoragename.blob.core.windows.net/utcontainerbb2312d9/blobbb2312d9?snapshot=1
+  response:
+    body:
+      string: ''
+    headers:
+      Date:
+      - Tue, 27 Aug 2019 00:29:36 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id:
+      - 00cb7129-701e-0068-776e-5c3a51000000
+    status:
+      code: 400
+      message: Value for one of the query parameters specified in the request URI
+        is invalid.
 version: 1

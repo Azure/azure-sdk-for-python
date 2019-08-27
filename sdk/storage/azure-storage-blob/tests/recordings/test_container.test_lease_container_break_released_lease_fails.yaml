@@ -162,9 +162,8 @@ interactions:
     uri: https://remotestoragename.blob.core.windows.net/container1e4e193b?comp=lease&restype=container
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseNotPresentWithLeaseOperation</Code><Message>There\
-        \ is currently no lease on the container.\nRequestId:7a0c180b-701e-00e0-7fd8-228288000000\n\
-        Time:2019-06-14T17:41:54.5793409Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseNotPresentWithLeaseOperation</Code><Message>There
+        is currently no lease on the container.\nRequestId:7a0c180b-701e-00e0-7fd8-228288000000\nTime:2019-06-14T17:41:54.5793409Z</Message></Error>"
     headers:
       Content-Length:
       - '247'
@@ -346,9 +345,8 @@ interactions:
     uri: https://storagename.blob.core.windows.net/container1e4e193b?comp=lease&restype=container
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseNotPresentWithLeaseOperation</Code><Message>There\
-        \ is currently no lease on the container.\nRequestId:c67b561a-801e-0054-77e1-228e8a000000\n\
-        Time:2019-06-14T18:48:44.3030095Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseNotPresentWithLeaseOperation</Code><Message>There
+        is currently no lease on the container.\nRequestId:c67b561a-801e-0054-77e1-228e8a000000\nTime:2019-06-14T18:48:44.3030095Z</Message></Error>"
     headers:
       Content-Length:
       - '247'
@@ -530,9 +528,8 @@ interactions:
     uri: https://storagename.blob.core.windows.net/container1e4e193b?comp=lease&restype=container
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseNotPresentWithLeaseOperation</Code><Message>There\
-        \ is currently no lease on the container.\nRequestId:228f25ce-401e-0006-2de6-229378000000\n\
-        Time:2019-06-14T19:24:20.0018059Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseNotPresentWithLeaseOperation</Code><Message>There
+        is currently no lease on the container.\nRequestId:228f25ce-401e-0006-2de6-229378000000\nTime:2019-06-14T19:24:20.0018059Z</Message></Error>"
     headers:
       Content-Length:
       - '247'
@@ -548,6 +545,205 @@ interactions:
       - 228f25ce-401e-0006-2de6-229378000000
       x-ms-version:
       - '2018-03-28'
+    status:
+      code: 409
+      message: There is currently no lease on the container.
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - d36d96f6-c862-11e9-a7e9-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:37:19 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/container1e4e193b?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Tue, 27 Aug 2019 00:37:16 GMT
+      ETag:
+      - '"0x8D72A86B6CC453E"'
+      Last-Modified:
+      - Tue, 27 Aug 2019 00:37:17 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - d36d96f6-c862-11e9-a7e9-2816a845e8c6
+      x-ms-request-id:
+      - 95a8caa7-c01e-0035-0e6f-5cca55000000
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - d398f64c-c862-11e9-8a4c-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:37:19 GMT
+      x-ms-lease-action:
+      - acquire
+      x-ms-lease-duration:
+      - '-1'
+      x-ms-proposed-lease-id:
+      - c5c7f36a-1863-4420-b5a6-c31980139fdd
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/container1e4e193b?comp=lease&restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Tue, 27 Aug 2019 00:37:16 GMT
+      ETag:
+      - '"0x8D72A86B6CC453E"'
+      Last-Modified:
+      - Tue, 27 Aug 2019 00:37:17 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - d398f64c-c862-11e9-8a4c-2816a845e8c6
+      x-ms-lease-id:
+      - c5c7f36a-1863-4420-b5a6-c31980139fdd
+      x-ms-request-id:
+      - 95a8cabc-c01e-0035-1f6f-5cca55000000
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - d3a4d692-c862-11e9-abfb-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:37:19 GMT
+      x-ms-lease-action:
+      - release
+      x-ms-lease-id:
+      - c5c7f36a-1863-4420-b5a6-c31980139fdd
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/container1e4e193b?comp=lease&restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Tue, 27 Aug 2019 00:37:16 GMT
+      ETag:
+      - '"0x8D72A86B6CC453E"'
+      Last-Modified:
+      - Tue, 27 Aug 2019 00:37:17 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - d3a4d692-c862-11e9-abfb-2816a845e8c6
+      x-ms-request-id:
+      - 95a8cac7-c01e-0035-2a6f-5cca55000000
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - d3b03eec-c862-11e9-b957-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:37:19 GMT
+      x-ms-lease-action:
+      - break
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/container1e4e193b?comp=lease&restype=container
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseNotPresentWithLeaseOperation</Code><Message>There
+        is currently no lease on the container.\nRequestId:95a8cae1-c01e-0035-406f-5cca55000000\nTime:2019-08-27T00:37:17.9340759Z</Message></Error>"
+    headers:
+      Content-Length:
+      - '247'
+      Content-Type:
+      - application/xml
+      Date:
+      - Tue, 27 Aug 2019 00:37:16 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - d3b03eec-c862-11e9-b957-2816a845e8c6
+      x-ms-error-code:
+      - LeaseNotPresentWithLeaseOperation
+      x-ms-request-id:
+      - 95a8cae1-c01e-0035-406f-5cca55000000
+      x-ms-version:
+      - '2019-02-02'
     status:
       code: 409
       message: There is currently no lease on the container.

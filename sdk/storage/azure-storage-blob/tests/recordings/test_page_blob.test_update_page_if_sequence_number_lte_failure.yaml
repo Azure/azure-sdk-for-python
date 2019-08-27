@@ -89,9 +89,8 @@ interactions:
     uri: https://remotestoragename.blob.core.windows.net/utcontainer189a1940/blob189a1940?comp=page
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>SequenceNumberConditionNotMet</Code><Message>The\
-        \ sequence number condition specified was not met.\nRequestId:c2ce085f-301e-0064-6fd8-22d4a0000000\n\
-        Time:2019-06-14T17:43:53.0913701Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>SequenceNumberConditionNotMet</Code><Message>The
+        sequence number condition specified was not met.\nRequestId:c2ce085f-301e-0064-6fd8-22d4a0000000\nTime:2019-06-14T17:43:53.0913701Z</Message></Error>"
     headers:
       Content-Length:
       - '250'
@@ -200,9 +199,8 @@ interactions:
     uri: https://storagename.blob.core.windows.net/utcontainer189a1940/blob189a1940?comp=page
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>SequenceNumberConditionNotMet</Code><Message>The\
-        \ sequence number condition specified was not met.\nRequestId:f2ef791c-601e-00d6-0ce2-222fda000000\n\
-        Time:2019-06-14T18:50:45.2954089Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>SequenceNumberConditionNotMet</Code><Message>The
+        sequence number condition specified was not met.\nRequestId:f2ef791c-601e-00d6-0ce2-222fda000000\nTime:2019-06-14T18:50:45.2954089Z</Message></Error>"
     headers:
       Content-Length:
       - '250'
@@ -218,6 +216,122 @@ interactions:
       - f2ef791c-601e-00d6-0ce2-222fda000000
       x-ms-version:
       - '2018-03-28'
+    status:
+      code: 412
+      message: The sequence number condition specified was not met.
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-blob-content-length:
+      - '512'
+      x-ms-blob-sequence-number:
+      - '10'
+      x-ms-blob-type:
+      - PageBlob
+      x-ms-client-request-id:
+      - 57f2899e-c863-11e9-9db9-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:41:01 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer189a1940/blob189a1940
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Tue, 27 Aug 2019 00:40:59 GMT
+      ETag:
+      - '"0x8D72A873B4E103C"'
+      Last-Modified:
+      - Tue, 27 Aug 2019 00:41:00 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - 57f2899e-c863-11e9-9db9-2816a845e8c6
+      x-ms-request-id:
+      - e8449e0e-401e-00e3-3a70-5c818f000000
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: !!binary |
+      7QFDCpfysR2Ez/4J50AuwosqREQmQP0tDCyRSr4Lh43ZHq5ZRY3lyhfY06ux3+48oHeBJqjACV/u
+      WU/6xJTu9dj5Wjrbj3OGBJfYkHRT4+PrMUZZIPgnS+h8whQeRluDnl/i0unBOzHbA7Zx4WA2d5iO
+      ZxuyZFMk/n+WGkhayLhOAOW2mlGdjfAJg9Pu+QfFkgeioxyqTmRiZKUyNvPw5oeW1wcdPSWdGutU
+      hOrRCRLcC37lSRdH7RWpGh09FqAYNGr8vnsd7XZX6Db9w2LxkbAkOIjMZEz5AcWcPJtMG4KpO9XC
+      rvLXw5rLPxyaPvaegdrxi6ZgKRworNbY/rGQrIF/ve/2oK4YJegvaLL9mC9jqXlU6vwpsFhedqPA
+      rgGLNZc8ZzmQ7/P739GuGE+Icb7WLom/UxsVjrmGmIJcMQ1xt1p3N1SYeeHPFtBqCsmjBoC8+aRg
+      xEuxo5LTF9JsjJEKzsiCFt90HKDGCzDWL3b9ew0AZLYIHIgs6WGvLq2Fs1kG0ScudffBBpHNaVtP
+      gpVj1uYksSmewDPFOsZAxFbYvoLjAzo3EF+ae+HLxlIg+4umbZC8sbcNvW1PoZ5cQvnorWBJXHA4
+      NpWcakNUUElJOhgVS6HbH3lRrepal9uOJuLBq95DnCn8XYKTcpk1GSGZnmnzWh0kTes2Z+SoWHc=
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '512'
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-client-request-id:
+      - 581b031e-c863-11e9-b9dd-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:41:01 GMT
+      x-ms-if-sequence-number-le:
+      - '9'
+      x-ms-page-write:
+      - update
+      x-ms-range:
+      - bytes=0-511
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer189a1940/blob189a1940?comp=page
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>SequenceNumberConditionNotMet</Code><Message>The
+        sequence number condition specified was not met.\nRequestId:e8449e45-401e-00e3-6870-5c818f000000\nTime:2019-08-27T00:41:00.1007749Z</Message></Error>"
+    headers:
+      Content-Length:
+      - '250'
+      Content-Type:
+      - application/xml
+      Date:
+      - Tue, 27 Aug 2019 00:40:59 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - 581b031e-c863-11e9-b9dd-2816a845e8c6
+      x-ms-error-code:
+      - SequenceNumberConditionNotMet
+      x-ms-request-id:
+      - e8449e45-401e-00e3-6870-5c818f000000
+      x-ms-version:
+      - '2019-02-02'
     status:
       code: 412
       message: The sequence number condition specified was not met.

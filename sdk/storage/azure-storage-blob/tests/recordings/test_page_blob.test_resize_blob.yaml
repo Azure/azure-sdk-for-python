@@ -311,4 +311,174 @@ interactions:
     status:
       code: 200
       message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-blob-content-length:
+      - '1024'
+      x-ms-blob-type:
+      - PageBlob
+      x-ms-client-request-id:
+      - 53d2fe94-c863-11e9-83ac-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:40:54 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/utcontainerc9b70c98/blobc9b70c98
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Tue, 27 Aug 2019 00:40:52 GMT
+      ETag:
+      - '"0x8D72A87372E52BA"'
+      Last-Modified:
+      - Tue, 27 Aug 2019 00:40:53 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - 53d2fe94-c863-11e9-83ac-2816a845e8c6
+      x-ms-request-id:
+      - d8034f5c-801e-0093-4670-5cf24b000000
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-blob-content-length:
+      - '512'
+      x-ms-client-request-id:
+      - 53fe365e-c863-11e9-b87d-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:40:54 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/utcontainerc9b70c98/blobc9b70c98?comp=properties
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Tue, 27 Aug 2019 00:40:52 GMT
+      ETag:
+      - '"0x8D72A87373CD44A"'
+      Last-Modified:
+      - Tue, 27 Aug 2019 00:40:53 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-blob-sequence-number:
+      - '0'
+      x-ms-client-request-id:
+      - 53fe365e-c863-11e9-b87d-2816a845e8c6
+      x-ms-request-id:
+      - d8034f8b-801e-0093-7070-5cf24b000000
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 5409795c-c863-11e9-a720-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:40:54 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: HEAD
+    uri: https://blobstoragename.blob.core.windows.net/utcontainerc9b70c98/blobc9b70c98
+  response:
+    body:
+      string: ''
+    headers:
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '512'
+      Content-Type:
+      - application/xml; charset=utf-8
+      Date:
+      - Tue, 27 Aug 2019 00:40:52 GMT
+      ETag:
+      - '"0x8D72A87373CD44A"'
+      Last-Modified:
+      - Tue, 27 Aug 2019 00:40:53 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Vary:
+      - Origin
+      x-ms-access-tier:
+      - Hot
+      x-ms-access-tier-inferred:
+      - 'true'
+      x-ms-blob-sequence-number:
+      - '0'
+      x-ms-blob-type:
+      - PageBlob
+      x-ms-client-request-id:
+      - 5409795c-c863-11e9-a720-2816a845e8c6
+      x-ms-creation-time:
+      - Tue, 27 Aug 2019 00:40:53 GMT
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-request-id:
+      - d8034fa3-801e-0093-0770-5cf24b000000
+      x-ms-server-encrypted:
+      - 'true'
+      x-ms-tag-count:
+      - '0'
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 200
+      message: OK
 version: 1

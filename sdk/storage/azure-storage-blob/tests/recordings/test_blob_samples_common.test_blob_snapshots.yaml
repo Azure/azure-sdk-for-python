@@ -217,4 +217,244 @@ interactions:
     status:
       code: 202
       message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 5c68dba4-c861-11e9-8550-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:26:49 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/containerformyblobs?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Tue, 27 Aug 2019 00:26:48 GMT
+      ETag:
+      - '"0x8D72A853FD4FEAA"'
+      Last-Modified:
+      - Tue, 27 Aug 2019 00:26:48 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - 5c68dba4-c861-11e9-8550-2816a845e8c6
+      x-ms-request-id:
+      - f24e93cc-601e-0099-4c6e-5cebc2000000
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: Lorem ipsum dolor sit amet, consectetur adipiscing elit
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '55'
+      Content-Type:
+      - application/octet-stream
+      If-None-Match:
+      - '*'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-client-request-id:
+      - 5ca43808-c861-11e9-9308-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:26:50 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/containerformyblobs/my_blob
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Content-MD5:
+      - /BCgjff6+jhxFmZGYJ4clQ==
+      Date:
+      - Tue, 27 Aug 2019 00:26:48 GMT
+      ETag:
+      - '"0x8D72A853FE8A436"'
+      Last-Modified:
+      - Tue, 27 Aug 2019 00:26:48 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - 5ca43808-c861-11e9-9308-2816a845e8c6
+      x-ms-content-crc64:
+      - 69CZwUFtgrU=
+      x-ms-request-id:
+      - f24e93f0-601e-0099-696e-5cebc2000000
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 5cb9be40-c861-11e9-a586-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:26:50 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/containerformyblobs/my_blob?comp=snapshot
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Tue, 27 Aug 2019 00:26:48 GMT
+      ETag:
+      - '"0x8D72A853FE8A436"'
+      Last-Modified:
+      - Tue, 27 Aug 2019 00:26:48 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - 5cb9be40-c861-11e9-a586-2816a845e8c6
+      x-ms-request-id:
+      - f24e9413-601e-0099-056e-5cebc2000000
+      x-ms-request-server-encrypted:
+      - 'false'
+      x-ms-snapshot:
+      - '2019-08-27T00:26:48.8763428Z'
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 5cc9dff8-c861-11e9-b754-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:26:50 GMT
+      x-ms-delete-snapshots:
+      - only
+      x-ms-version:
+      - '2019-02-02'
+    method: DELETE
+    uri: https://blobstoragename.blob.core.windows.net/containerformyblobs/my_blob
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Tue, 27 Aug 2019 00:26:48 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - 5cc9dff8-c861-11e9-b754-2816a845e8c6
+      x-ms-delete-type-permanent:
+      - 'true'
+      x-ms-request-id:
+      - f24e942d-601e-0099-1c6e-5cebc2000000
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 5cda7662-c861-11e9-8c30-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:26:50 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: DELETE
+    uri: https://blobstoragename.blob.core.windows.net/containerformyblobs?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Tue, 27 Aug 2019 00:26:48 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - 5cda7662-c861-11e9-8c30-2816a845e8c6
+      x-ms-request-id:
+      - f24e9462-601e-0099-466e-5cebc2000000
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 202
+      message: Accepted
 version: 1

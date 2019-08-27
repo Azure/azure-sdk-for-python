@@ -166,9 +166,8 @@ interactions:
     uri: https://storagename.blob.core.windows.net/container508f1053?restype=container
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerAlreadyExists</Code><Message>The\
-        \ specified container already exists.\nRequestId:87240bc6-901e-008c-45e1-22295b000000\n\
-        Time:2019-06-14T18:45:39.5824382Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerAlreadyExists</Code><Message>The
+        specified container already exists.\nRequestId:87240bc6-901e-008c-45e1-22295b000000\nTime:2019-06-14T18:45:39.5824382Z</Message></Error>"
     headers:
       Content-Length:
       - '230'
@@ -329,4 +328,104 @@ interactions:
     status:
       code: 200
       message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-blob-public-access:
+      - blob
+      x-ms-client-request-id:
+      - d7614576-c861-11e9-bad1-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:30:16 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/container508f1053?restype=container
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerAlreadyExists</Code><Message>The
+        specified container already exists.\nRequestId:dba2294a-b01e-00b9-6a6e-5c870e000000\nTime:2019-08-27T00:30:14.8548372Z</Message></Error>"
+    headers:
+      Content-Length:
+      - '230'
+      Content-Type:
+      - application/xml
+      Date:
+      - Tue, 27 Aug 2019 00:30:14 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - d7614576-c861-11e9-bad1-2816a845e8c6
+      x-ms-error-code:
+      - ContainerAlreadyExists
+      x-ms-request-id:
+      - dba2294a-b01e-00b9-6a6e-5c870e000000
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 409
+      message: The specified container already exists.
+- request:
+    body: a public blob can be read without a shared access signature
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '59'
+      Content-Type:
+      - application/octet-stream
+      If-None-Match:
+      - '*'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-client-request-id:
+      - d79024ae-c861-11e9-a570-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:30:16 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/container508f1053/blob1.txt
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>BlobAlreadyExists</Code><Message>The
+        specified blob already exists.\nRequestId:dba22978-b01e-00b9-106e-5c870e000000\nTime:2019-08-27T00:30:14.9539071Z</Message></Error>"
+    headers:
+      Content-Length:
+      - '220'
+      Content-Type:
+      - application/xml
+      Date:
+      - Tue, 27 Aug 2019 00:30:14 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - d79024ae-c861-11e9-a570-2816a845e8c6
+      x-ms-error-code:
+      - BlobAlreadyExists
+      x-ms-request-id:
+      - dba22978-b01e-00b9-106e-5c870e000000
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 409
+      message: The specified blob already exists.
 version: 1

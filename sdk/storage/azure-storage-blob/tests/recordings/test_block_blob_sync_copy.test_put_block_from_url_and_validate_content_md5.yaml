@@ -68,8 +68,8 @@ interactions:
     uri: https://remotestoragename.blob.core.windows.net/utcontainer740d1e2e/destblob740d1e2e?blocklisttype=all&comp=blocklist
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><BlockList><CommittedBlocks\
-        \ /><UncommittedBlocks><Block><Name>MQ==</Name><Size>8192</Size></Block></UncommittedBlocks></BlockList>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><BlockList><CommittedBlocks
+        /><UncommittedBlocks><Block><Name>MQ==</Name><Size>8192</Size></Block></UncommittedBlocks></BlockList>"
     headers:
       Content-Type:
       - application/xml
@@ -117,9 +117,9 @@ interactions:
     uri: https://remotestoragename.blob.core.windows.net/utcontainer740d1e2e/destblob740d1e2e?blockid=Mg%3D%3D&comp=block
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>Md5Mismatch</Code><Message>The\
-        \ MD5 value specified in the request did not match with the MD5 value calculated\
-        \ by the server.\nRequestId:0d9fb9d5-401e-00a7-38d7-225de3000000\nTime:2019-06-14T17:34:35.7932719Z</Message><UserSpecifiedMd5>isbyeiguSTgSVIJgfM+1Xw==</UserSpecifiedMd5><ServerCalculatedMd5>QBqKsd3fVdDzKdmcTQsCyA==</ServerCalculatedMd5></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>Md5Mismatch</Code><Message>The
+        MD5 value specified in the request did not match with the MD5 value calculated
+        by the server.\nRequestId:0d9fb9d5-401e-00a7-38d7-225de3000000\nTime:2019-06-14T17:34:35.7932719Z</Message><UserSpecifiedMd5>isbyeiguSTgSVIJgfM+1Xw==</UserSpecifiedMd5><ServerCalculatedMd5>QBqKsd3fVdDzKdmcTQsCyA==</ServerCalculatedMd5></Error>"
     headers:
       Content-Length:
       - '405'
@@ -160,8 +160,8 @@ interactions:
     uri: https://remotestoragename.blob.core.windows.net/utcontainer740d1e2e/destblob740d1e2e?blocklisttype=all&comp=blocklist
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><BlockList><CommittedBlocks\
-        \ /><UncommittedBlocks><Block><Name>MQ==</Name><Size>8192</Size></Block></UncommittedBlocks></BlockList>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><BlockList><CommittedBlocks
+        /><UncommittedBlocks><Block><Name>MQ==</Name><Size>8192</Size></Block></UncommittedBlocks></BlockList>"
     headers:
       Content-Type:
       - application/xml
@@ -249,8 +249,8 @@ interactions:
     uri: https://storagename.blob.core.windows.net/utcontainer740d1e2e/destblob740d1e2e?blocklisttype=all&comp=blocklist
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><BlockList><CommittedBlocks\
-        \ /><UncommittedBlocks><Block><Name>MQ==</Name><Size>8192</Size></Block></UncommittedBlocks></BlockList>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><BlockList><CommittedBlocks
+        /><UncommittedBlocks><Block><Name>MQ==</Name><Size>8192</Size></Block></UncommittedBlocks></BlockList>"
     headers:
       Content-Type:
       - application/xml
@@ -298,9 +298,9 @@ interactions:
     uri: https://storagename.blob.core.windows.net/utcontainer740d1e2e/destblob740d1e2e?blockid=Mg%3D%3D&comp=block
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>Md5Mismatch</Code><Message>The\
-        \ MD5 value specified in the request did not match with the MD5 value calculated\
-        \ by the server.\nRequestId:f3c39194-901e-002d-35e0-22e7c0000000\nTime:2019-06-14T18:37:14.9507624Z</Message><UserSpecifiedMd5>isbyeiguSTgSVIJgfM+1Xw==</UserSpecifiedMd5><ServerCalculatedMd5>QBqKsd3fVdDzKdmcTQsCyA==</ServerCalculatedMd5></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>Md5Mismatch</Code><Message>The
+        MD5 value specified in the request did not match with the MD5 value calculated
+        by the server.\nRequestId:f3c39194-901e-002d-35e0-22e7c0000000\nTime:2019-06-14T18:37:14.9507624Z</Message><UserSpecifiedMd5>isbyeiguSTgSVIJgfM+1Xw==</UserSpecifiedMd5><ServerCalculatedMd5>QBqKsd3fVdDzKdmcTQsCyA==</ServerCalculatedMd5></Error>"
     headers:
       Content-Length:
       - '405'
@@ -341,8 +341,8 @@ interactions:
     uri: https://storagename.blob.core.windows.net/utcontainer740d1e2e/destblob740d1e2e?blocklisttype=all&comp=blocklist
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><BlockList><CommittedBlocks\
-        \ /><UncommittedBlocks><Block><Name>MQ==</Name><Size>8192</Size></Block></UncommittedBlocks></BlockList>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><BlockList><CommittedBlocks
+        /><UncommittedBlocks><Block><Name>MQ==</Name><Size>8192</Size></Block></UncommittedBlocks></BlockList>"
     headers:
       Content-Type:
       - application/xml
@@ -358,6 +358,203 @@ interactions:
       - f3c391aa-901e-002d-49e0-22e7c0000000
       x-ms-version:
       - '2018-03-28'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 9c1ae6f6-c861-11e9-9887-2816a845e8c6
+      x-ms-copy-source:
+      - https://amqptest.blob.core.windows.net/utcontainer740d1e2e/srcblob740d1e2e?se=2019-08-27T01%3A28%3A36Z&sp=r&sv=2018-06-17&sr=b&sig=FE3tLM4mIF9xrTVpTJPI%2BtugfWkzq4g%2B3wTI0/lGqI4%3D
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:28:36 GMT
+      x-ms-source-content-md5:
+      - QBqKsd3fVdDzKdmcTQsCyA==
+      x-ms-source-range:
+      - bytes=0-8192
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer740d1e2e/destblob740d1e2e?blockid=MQ%3D%3D&comp=block
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Content-MD5:
+      - QBqKsd3fVdDzKdmcTQsCyA==
+      Date:
+      - Tue, 27 Aug 2019 00:28:35 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - 9c1ae6f6-c861-11e9-9887-2816a845e8c6
+      x-ms-request-id:
+      - e840271f-401e-00e3-236e-5c818f000000
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 9c4e2fe4-c861-11e9-957c-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:28:37 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer740d1e2e/destblob740d1e2e?blocklisttype=all&comp=blocklist
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><BlockList><CommittedBlocks
+        /><UncommittedBlocks><Block><Name>MQ==</Name><Size>8192</Size></Block></UncommittedBlocks></BlockList>"
+    headers:
+      Content-Type:
+      - application/xml
+      Date:
+      - Tue, 27 Aug 2019 00:28:35 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Origin
+      x-ms-client-request-id:
+      - 9c4e2fe4-c861-11e9-957c-2816a845e8c6
+      x-ms-request-id:
+      - e8402740-401e-00e3-426e-5c818f000000
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 9c597436-c861-11e9-a101-2816a845e8c6
+      x-ms-copy-source:
+      - https://amqptest.blob.core.windows.net/utcontainer740d1e2e/srcblob740d1e2e?se=2019-08-27T01%3A28%3A36Z&sp=r&sv=2018-06-17&sr=b&sig=FE3tLM4mIF9xrTVpTJPI%2BtugfWkzq4g%2B3wTI0/lGqI4%3D
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:28:37 GMT
+      x-ms-source-content-md5:
+      - isbyeiguSTgSVIJgfM+1Xw==
+      x-ms-source-range:
+      - bytes=0-8192
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer740d1e2e/destblob740d1e2e?blockid=Mg%3D%3D&comp=block
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>Md5Mismatch</Code><Message>The
+        MD5 value specified in the request did not match with the MD5 value calculated
+        by the server.\nRequestId:e8402761-401e-00e3-5c6e-5c818f000000\nTime:2019-08-27T00:28:35.5935439Z</Message><UserSpecifiedMd5>isbyeiguSTgSVIJgfM+1Xw==</UserSpecifiedMd5><ServerCalculatedMd5>QBqKsd3fVdDzKdmcTQsCyA==</ServerCalculatedMd5></Error>"
+    headers:
+      Content-Length:
+      - '405'
+      Content-Type:
+      - application/xml
+      Date:
+      - Tue, 27 Aug 2019 00:28:35 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - 9c597436-c861-11e9-a101-2816a845e8c6
+      x-ms-error-code:
+      - Md5Mismatch
+      x-ms-request-id:
+      - e8402761-401e-00e3-5c6e-5c818f000000
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 400
+      message: The MD5 value specified in the request did not match with the MD5 value
+        calculated by the server.
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 9c64b5ba-c861-11e9-a358-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:28:37 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer740d1e2e/destblob740d1e2e?blocklisttype=all&comp=blocklist
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><BlockList><CommittedBlocks
+        /><UncommittedBlocks><Block><Name>MQ==</Name><Size>8192</Size></Block></UncommittedBlocks></BlockList>"
+    headers:
+      Content-Type:
+      - application/xml
+      Date:
+      - Tue, 27 Aug 2019 00:28:35 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Origin
+      x-ms-client-request-id:
+      - 9c64b5ba-c861-11e9-a358-2816a845e8c6
+      x-ms-request-id:
+      - e8402778-401e-00e3-716e-5c818f000000
+      x-ms-version:
+      - '2019-02-02'
     status:
       code: 200
       message: OK

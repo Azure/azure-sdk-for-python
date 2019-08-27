@@ -260,26 +260,25 @@ interactions:
     uri: https://remotestoragename.blob.core.windows.net/utcontainer1f1d1976?include=snapshots%2Cdeleted&restype=container&comp=list
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults\
-        \ ServiceEndpoint=\"https://remotestoragename.blob.core.windows.net/\" ContainerName=\"\
-        utcontainer1f1d1976\"><Blobs><Blob><Name>blob1f1d1976</Name><Snapshot>2019-06-14T17:39:31.9066181Z</Snapshot><Deleted>true</Deleted><Properties><Creation-Time>Fri,\
-        \ 14 Jun 2019 17:39:31 GMT</Creation-Time><Last-Modified>Fri, 14 Jun 2019\
-        \ 17:39:31 GMT</Last-Modified><Etag>0x8D6F0EF4239EAAF</Etag><Content-Length>1024</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding\
-        \ /><Content-Language /><Content-MD5>nV2357PaumyUK6hucoKXkQ==</Content-MD5><Cache-Control\
-        \ /><Content-Disposition /><BlobType>BlockBlob</BlobType><ServerEncrypted>true</ServerEncrypted><DeletedTime>Fri,\
-        \ 14 Jun 2019 17:39:32 GMT</DeletedTime><RemainingRetentionDays>1</RemainingRetentionDays></Properties></Blob><Blob><Name>blob1f1d1976</Name><Snapshot>2019-06-14T17:39:31.9766671Z</Snapshot><Deleted>true</Deleted><Properties><Creation-Time>Fri,\
-        \ 14 Jun 2019 17:39:31 GMT</Creation-Time><Last-Modified>Fri, 14 Jun 2019\
-        \ 17:39:31 GMT</Last-Modified><Etag>0x8D6F0EF4239EAAF</Etag><Content-Length>1024</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding\
-        \ /><Content-Language /><Content-MD5>nV2357PaumyUK6hucoKXkQ==</Content-MD5><Cache-Control\
-        \ /><Content-Disposition /><BlobType>BlockBlob</BlobType><ServerEncrypted>true</ServerEncrypted><DeletedTime>Fri,\
-        \ 14 Jun 2019 17:39:32 GMT</DeletedTime><RemainingRetentionDays>1</RemainingRetentionDays></Properties></Blob><Blob><Name>blob1f1d1976</Name><Deleted>true</Deleted><Properties><Creation-Time>Fri,\
-        \ 14 Jun 2019 17:39:31 GMT</Creation-Time><Last-Modified>Fri, 14 Jun 2019\
-        \ 17:39:31 GMT</Last-Modified><Etag>0x8D6F0EF4239EAAF</Etag><Content-Length>1024</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding\
-        \ /><Content-Language /><Content-MD5>nV2357PaumyUK6hucoKXkQ==</Content-MD5><Cache-Control\
-        \ /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus\
-        \ /><ServerEncrypted>true</ServerEncrypted><DeletedTime>Fri, 14 Jun 2019 17:39:32\
-        \ GMT</DeletedTime><RemainingRetentionDays>1</RemainingRetentionDays></Properties></Blob></Blobs><NextMarker\
-        \ /></EnumerationResults>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
+        ServiceEndpoint=\"https://remotestoragename.blob.core.windows.net/\" ContainerName=\"utcontainer1f1d1976\"><Blobs><Blob><Name>blob1f1d1976</Name><Snapshot>2019-06-14T17:39:31.9066181Z</Snapshot><Deleted>true</Deleted><Properties><Creation-Time>Fri,
+        14 Jun 2019 17:39:31 GMT</Creation-Time><Last-Modified>Fri, 14 Jun 2019 17:39:31
+        GMT</Last-Modified><Etag>0x8D6F0EF4239EAAF</Etag><Content-Length>1024</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        /><Content-Language /><Content-MD5>nV2357PaumyUK6hucoKXkQ==</Content-MD5><Cache-Control
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><ServerEncrypted>true</ServerEncrypted><DeletedTime>Fri,
+        14 Jun 2019 17:39:32 GMT</DeletedTime><RemainingRetentionDays>1</RemainingRetentionDays></Properties></Blob><Blob><Name>blob1f1d1976</Name><Snapshot>2019-06-14T17:39:31.9766671Z</Snapshot><Deleted>true</Deleted><Properties><Creation-Time>Fri,
+        14 Jun 2019 17:39:31 GMT</Creation-Time><Last-Modified>Fri, 14 Jun 2019 17:39:31
+        GMT</Last-Modified><Etag>0x8D6F0EF4239EAAF</Etag><Content-Length>1024</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        /><Content-Language /><Content-MD5>nV2357PaumyUK6hucoKXkQ==</Content-MD5><Cache-Control
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><ServerEncrypted>true</ServerEncrypted><DeletedTime>Fri,
+        14 Jun 2019 17:39:32 GMT</DeletedTime><RemainingRetentionDays>1</RemainingRetentionDays></Properties></Blob><Blob><Name>blob1f1d1976</Name><Deleted>true</Deleted><Properties><Creation-Time>Fri,
+        14 Jun 2019 17:39:31 GMT</Creation-Time><Last-Modified>Fri, 14 Jun 2019 17:39:31
+        GMT</Last-Modified><Etag>0x8D6F0EF4239EAAF</Etag><Content-Length>1024</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        /><Content-Language /><Content-MD5>nV2357PaumyUK6hucoKXkQ==</Content-MD5><Cache-Control
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus
+        /><ServerEncrypted>true</ServerEncrypted><DeletedTime>Fri, 14 Jun 2019 17:39:32
+        GMT</DeletedTime><RemainingRetentionDays>1</RemainingRetentionDays></Properties></Blob></Blobs><NextMarker
+        /></EnumerationResults>"
     headers:
       Content-Type:
       - application/xml
@@ -319,9 +318,9 @@ interactions:
     uri: https://remotestoragename.blob.core.windows.net/utcontainer1f1d1976?include=snapshots&restype=container&comp=list
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults\
-        \ ServiceEndpoint=\"https://remotestoragename.blob.core.windows.net/\" ContainerName=\"\
-        utcontainer1f1d1976\"><Blobs /><NextMarker /></EnumerationResults>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
+        ServiceEndpoint=\"https://remotestoragename.blob.core.windows.net/\" ContainerName=\"utcontainer1f1d1976\"><Blobs
+        /><NextMarker /></EnumerationResults>"
     headers:
       Content-Type:
       - application/xml
@@ -399,22 +398,21 @@ interactions:
     uri: https://remotestoragename.blob.core.windows.net/utcontainer1f1d1976?include=snapshots%2Cdeleted&restype=container&comp=list
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults\
-        \ ServiceEndpoint=\"https://remotestoragename.blob.core.windows.net/\" ContainerName=\"\
-        utcontainer1f1d1976\"><Blobs><Blob><Name>blob1f1d1976</Name><Snapshot>2019-06-14T17:39:31.9066181Z</Snapshot><Properties><Creation-Time>Fri,\
-        \ 14 Jun 2019 17:39:31 GMT</Creation-Time><Last-Modified>Fri, 14 Jun 2019\
-        \ 17:39:31 GMT</Last-Modified><Etag>0x8D6F0EF4239EAAF</Etag><Content-Length>1024</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding\
-        \ /><Content-Language /><Content-MD5>nV2357PaumyUK6hucoKXkQ==</Content-MD5><Cache-Control\
-        \ /><Content-Disposition /><BlobType>BlockBlob</BlobType><ServerEncrypted>true</ServerEncrypted></Properties></Blob><Blob><Name>blob1f1d1976</Name><Snapshot>2019-06-14T17:39:31.9766671Z</Snapshot><Properties><Creation-Time>Fri,\
-        \ 14 Jun 2019 17:39:31 GMT</Creation-Time><Last-Modified>Fri, 14 Jun 2019\
-        \ 17:39:31 GMT</Last-Modified><Etag>0x8D6F0EF4239EAAF</Etag><Content-Length>1024</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding\
-        \ /><Content-Language /><Content-MD5>nV2357PaumyUK6hucoKXkQ==</Content-MD5><Cache-Control\
-        \ /><Content-Disposition /><BlobType>BlockBlob</BlobType><ServerEncrypted>true</ServerEncrypted></Properties></Blob><Blob><Name>blob1f1d1976</Name><Properties><Creation-Time>Fri,\
-        \ 14 Jun 2019 17:39:31 GMT</Creation-Time><Last-Modified>Fri, 14 Jun 2019\
-        \ 17:39:31 GMT</Last-Modified><Etag>0x8D6F0EF4239EAAF</Etag><Content-Length>1024</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding\
-        \ /><Content-Language /><Content-MD5>nV2357PaumyUK6hucoKXkQ==</Content-MD5><Cache-Control\
-        \ /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties></Blob></Blobs><NextMarker\
-        \ /></EnumerationResults>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
+        ServiceEndpoint=\"https://remotestoragename.blob.core.windows.net/\" ContainerName=\"utcontainer1f1d1976\"><Blobs><Blob><Name>blob1f1d1976</Name><Snapshot>2019-06-14T17:39:31.9066181Z</Snapshot><Properties><Creation-Time>Fri,
+        14 Jun 2019 17:39:31 GMT</Creation-Time><Last-Modified>Fri, 14 Jun 2019 17:39:31
+        GMT</Last-Modified><Etag>0x8D6F0EF4239EAAF</Etag><Content-Length>1024</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        /><Content-Language /><Content-MD5>nV2357PaumyUK6hucoKXkQ==</Content-MD5><Cache-Control
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><ServerEncrypted>true</ServerEncrypted></Properties></Blob><Blob><Name>blob1f1d1976</Name><Snapshot>2019-06-14T17:39:31.9766671Z</Snapshot><Properties><Creation-Time>Fri,
+        14 Jun 2019 17:39:31 GMT</Creation-Time><Last-Modified>Fri, 14 Jun 2019 17:39:31
+        GMT</Last-Modified><Etag>0x8D6F0EF4239EAAF</Etag><Content-Length>1024</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        /><Content-Language /><Content-MD5>nV2357PaumyUK6hucoKXkQ==</Content-MD5><Cache-Control
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><ServerEncrypted>true</ServerEncrypted></Properties></Blob><Blob><Name>blob1f1d1976</Name><Properties><Creation-Time>Fri,
+        14 Jun 2019 17:39:31 GMT</Creation-Time><Last-Modified>Fri, 14 Jun 2019 17:39:31
+        GMT</Last-Modified><Etag>0x8D6F0EF4239EAAF</Etag><Content-Length>1024</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        /><Content-Language /><Content-MD5>nV2357PaumyUK6hucoKXkQ==</Content-MD5><Cache-Control
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties></Blob></Blobs><NextMarker
+        /></EnumerationResults>"
     headers:
       Content-Type:
       - application/xml
@@ -736,26 +734,25 @@ interactions:
     uri: https://storagename.blob.core.windows.net/utcontainer1f1d1976?include=snapshots%2Cdeleted&restype=container&comp=list
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults\
-        \ ServiceEndpoint=\"https://storagename.blob.core.windows.net/\" ContainerName=\"\
-        utcontainer1f1d1976\"><Blobs><Blob><Name>blob1f1d1976</Name><Snapshot>2019-06-14T18:46:18.7319226Z</Snapshot><Deleted>true</Deleted><Properties><Creation-Time>Fri,\
-        \ 14 Jun 2019 18:46:18 GMT</Creation-Time><Last-Modified>Fri, 14 Jun 2019\
-        \ 18:46:18 GMT</Last-Modified><Etag>0x8D6F0F89679B768</Etag><Content-Length>1024</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding\
-        \ /><Content-Language /><Content-MD5>nV2357PaumyUK6hucoKXkQ==</Content-MD5><Cache-Control\
-        \ /><Content-Disposition /><BlobType>BlockBlob</BlobType><ServerEncrypted>true</ServerEncrypted><DeletedTime>Fri,\
-        \ 14 Jun 2019 18:46:18 GMT</DeletedTime><RemainingRetentionDays>1</RemainingRetentionDays></Properties></Blob><Blob><Name>blob1f1d1976</Name><Snapshot>2019-06-14T18:46:18.7919646Z</Snapshot><Deleted>true</Deleted><Properties><Creation-Time>Fri,\
-        \ 14 Jun 2019 18:46:18 GMT</Creation-Time><Last-Modified>Fri, 14 Jun 2019\
-        \ 18:46:18 GMT</Last-Modified><Etag>0x8D6F0F89679B768</Etag><Content-Length>1024</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding\
-        \ /><Content-Language /><Content-MD5>nV2357PaumyUK6hucoKXkQ==</Content-MD5><Cache-Control\
-        \ /><Content-Disposition /><BlobType>BlockBlob</BlobType><ServerEncrypted>true</ServerEncrypted><DeletedTime>Fri,\
-        \ 14 Jun 2019 18:46:18 GMT</DeletedTime><RemainingRetentionDays>1</RemainingRetentionDays></Properties></Blob><Blob><Name>blob1f1d1976</Name><Deleted>true</Deleted><Properties><Creation-Time>Fri,\
-        \ 14 Jun 2019 18:46:18 GMT</Creation-Time><Last-Modified>Fri, 14 Jun 2019\
-        \ 18:46:18 GMT</Last-Modified><Etag>0x8D6F0F89679B768</Etag><Content-Length>1024</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding\
-        \ /><Content-Language /><Content-MD5>nV2357PaumyUK6hucoKXkQ==</Content-MD5><Cache-Control\
-        \ /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus\
-        \ /><ServerEncrypted>true</ServerEncrypted><DeletedTime>Fri, 14 Jun 2019 18:46:18\
-        \ GMT</DeletedTime><RemainingRetentionDays>1</RemainingRetentionDays></Properties></Blob></Blobs><NextMarker\
-        \ /></EnumerationResults>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
+        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\" ContainerName=\"utcontainer1f1d1976\"><Blobs><Blob><Name>blob1f1d1976</Name><Snapshot>2019-06-14T18:46:18.7319226Z</Snapshot><Deleted>true</Deleted><Properties><Creation-Time>Fri,
+        14 Jun 2019 18:46:18 GMT</Creation-Time><Last-Modified>Fri, 14 Jun 2019 18:46:18
+        GMT</Last-Modified><Etag>0x8D6F0F89679B768</Etag><Content-Length>1024</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        /><Content-Language /><Content-MD5>nV2357PaumyUK6hucoKXkQ==</Content-MD5><Cache-Control
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><ServerEncrypted>true</ServerEncrypted><DeletedTime>Fri,
+        14 Jun 2019 18:46:18 GMT</DeletedTime><RemainingRetentionDays>1</RemainingRetentionDays></Properties></Blob><Blob><Name>blob1f1d1976</Name><Snapshot>2019-06-14T18:46:18.7919646Z</Snapshot><Deleted>true</Deleted><Properties><Creation-Time>Fri,
+        14 Jun 2019 18:46:18 GMT</Creation-Time><Last-Modified>Fri, 14 Jun 2019 18:46:18
+        GMT</Last-Modified><Etag>0x8D6F0F89679B768</Etag><Content-Length>1024</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        /><Content-Language /><Content-MD5>nV2357PaumyUK6hucoKXkQ==</Content-MD5><Cache-Control
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><ServerEncrypted>true</ServerEncrypted><DeletedTime>Fri,
+        14 Jun 2019 18:46:18 GMT</DeletedTime><RemainingRetentionDays>1</RemainingRetentionDays></Properties></Blob><Blob><Name>blob1f1d1976</Name><Deleted>true</Deleted><Properties><Creation-Time>Fri,
+        14 Jun 2019 18:46:18 GMT</Creation-Time><Last-Modified>Fri, 14 Jun 2019 18:46:18
+        GMT</Last-Modified><Etag>0x8D6F0F89679B768</Etag><Content-Length>1024</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        /><Content-Language /><Content-MD5>nV2357PaumyUK6hucoKXkQ==</Content-MD5><Cache-Control
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus
+        /><ServerEncrypted>true</ServerEncrypted><DeletedTime>Fri, 14 Jun 2019 18:46:18
+        GMT</DeletedTime><RemainingRetentionDays>1</RemainingRetentionDays></Properties></Blob></Blobs><NextMarker
+        /></EnumerationResults>"
     headers:
       Content-Type:
       - application/xml
@@ -795,9 +792,9 @@ interactions:
     uri: https://storagename.blob.core.windows.net/utcontainer1f1d1976?include=snapshots&restype=container&comp=list
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults\
-        \ ServiceEndpoint=\"https://storagename.blob.core.windows.net/\" ContainerName=\"\
-        utcontainer1f1d1976\"><Blobs /><NextMarker /></EnumerationResults>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
+        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\" ContainerName=\"utcontainer1f1d1976\"><Blobs
+        /><NextMarker /></EnumerationResults>"
     headers:
       Content-Type:
       - application/xml
@@ -875,22 +872,21 @@ interactions:
     uri: https://storagename.blob.core.windows.net/utcontainer1f1d1976?include=snapshots%2Cdeleted&restype=container&comp=list
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults\
-        \ ServiceEndpoint=\"https://storagename.blob.core.windows.net/\" ContainerName=\"\
-        utcontainer1f1d1976\"><Blobs><Blob><Name>blob1f1d1976</Name><Snapshot>2019-06-14T18:46:18.7319226Z</Snapshot><Properties><Creation-Time>Fri,\
-        \ 14 Jun 2019 18:46:18 GMT</Creation-Time><Last-Modified>Fri, 14 Jun 2019\
-        \ 18:46:18 GMT</Last-Modified><Etag>0x8D6F0F89679B768</Etag><Content-Length>1024</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding\
-        \ /><Content-Language /><Content-MD5>nV2357PaumyUK6hucoKXkQ==</Content-MD5><Cache-Control\
-        \ /><Content-Disposition /><BlobType>BlockBlob</BlobType><ServerEncrypted>true</ServerEncrypted></Properties></Blob><Blob><Name>blob1f1d1976</Name><Snapshot>2019-06-14T18:46:18.7919646Z</Snapshot><Properties><Creation-Time>Fri,\
-        \ 14 Jun 2019 18:46:18 GMT</Creation-Time><Last-Modified>Fri, 14 Jun 2019\
-        \ 18:46:18 GMT</Last-Modified><Etag>0x8D6F0F89679B768</Etag><Content-Length>1024</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding\
-        \ /><Content-Language /><Content-MD5>nV2357PaumyUK6hucoKXkQ==</Content-MD5><Cache-Control\
-        \ /><Content-Disposition /><BlobType>BlockBlob</BlobType><ServerEncrypted>true</ServerEncrypted></Properties></Blob><Blob><Name>blob1f1d1976</Name><Properties><Creation-Time>Fri,\
-        \ 14 Jun 2019 18:46:18 GMT</Creation-Time><Last-Modified>Fri, 14 Jun 2019\
-        \ 18:46:18 GMT</Last-Modified><Etag>0x8D6F0F89679B768</Etag><Content-Length>1024</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding\
-        \ /><Content-Language /><Content-MD5>nV2357PaumyUK6hucoKXkQ==</Content-MD5><Cache-Control\
-        \ /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties></Blob></Blobs><NextMarker\
-        \ /></EnumerationResults>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
+        ServiceEndpoint=\"https://storagename.blob.core.windows.net/\" ContainerName=\"utcontainer1f1d1976\"><Blobs><Blob><Name>blob1f1d1976</Name><Snapshot>2019-06-14T18:46:18.7319226Z</Snapshot><Properties><Creation-Time>Fri,
+        14 Jun 2019 18:46:18 GMT</Creation-Time><Last-Modified>Fri, 14 Jun 2019 18:46:18
+        GMT</Last-Modified><Etag>0x8D6F0F89679B768</Etag><Content-Length>1024</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        /><Content-Language /><Content-MD5>nV2357PaumyUK6hucoKXkQ==</Content-MD5><Cache-Control
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><ServerEncrypted>true</ServerEncrypted></Properties></Blob><Blob><Name>blob1f1d1976</Name><Snapshot>2019-06-14T18:46:18.7919646Z</Snapshot><Properties><Creation-Time>Fri,
+        14 Jun 2019 18:46:18 GMT</Creation-Time><Last-Modified>Fri, 14 Jun 2019 18:46:18
+        GMT</Last-Modified><Etag>0x8D6F0F89679B768</Etag><Content-Length>1024</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        /><Content-Language /><Content-MD5>nV2357PaumyUK6hucoKXkQ==</Content-MD5><Cache-Control
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><ServerEncrypted>true</ServerEncrypted></Properties></Blob><Blob><Name>blob1f1d1976</Name><Properties><Creation-Time>Fri,
+        14 Jun 2019 18:46:18 GMT</Creation-Time><Last-Modified>Fri, 14 Jun 2019 18:46:18
+        GMT</Last-Modified><Etag>0x8D6F0F89679B768</Etag><Content-Length>1024</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        /><Content-Language /><Content-MD5>nV2357PaumyUK6hucoKXkQ==</Content-MD5><Cache-Control
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted></Properties></Blob></Blobs><NextMarker
+        /></EnumerationResults>"
     headers:
       Content-Type:
       - application/xml
@@ -948,6 +944,522 @@ interactions:
       - 76c61a56-101e-0073-10e1-2214c3000000
       x-ms-version:
       - '2018-03-28'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <StorageServiceProperties><DeleteRetentionPolicy><Enabled>true</Enabled><Days>2</Days></DeleteRetentionPolicy></StorageServiceProperties>'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '176'
+      Content-Type:
+      - application/xml; charset=utf-8
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-client-request-id:
+      - dc38a0ba-c861-11e9-81db-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:30:24 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/?restype=service&comp=properties
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Tue, 27 Aug 2019 00:30:22 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - dc38a0ba-c861-11e9-81db-2816a845e8c6
+      x-ms-request-id:
+      - 5ff4117a-701e-00c2-6f6e-5cecbe000000
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: !!binary |
+      jWAFfwRSQO+WP8pJ/bX0JkQzTGBncNJA8FiS+qMCh+Kdt2AbHGN2BHjDW4sBcEfdDg0QOTGBoj4A
+      G0YVr64fbqLpMwNlScII2kwKMM/38jxOddWCMDK55xbY2aQVuTyR6Vy1oR0sN5UoVc8NBh3ZTZz2
+      u1Qdh0a/vqpaATSv72XtsWAm63kCl4t7onio1hObIXuudxvuXJYUal8Sg/ytRycmo03EnwoVj9fP
+      EcxVOmkOdGwUEl52hqzyW3MEiv6NMGmSCAbgoTCJnMzUzpg+HsU5Ac6CS0zccsBalnqKPsINdMk6
+      w/BhA3Ra2ZHQVp27yuAHiqLqZMhm9NJLIXOCxI1dpE+4XVQvYOPALMQ6Y2aanYa+VZjrkf1CsLk9
+      UXdoj9VcXNL38HAhEfpgVJ8Fv4xVuvL5QtW6n7TVZF8NdWboDdu83RISAjEOiZZQ6oQoEX3JKxFH
+      8FsPbS/jZtMFbWhExu/c4bOat499tl0l4rerYzl8h4DcyCCI177Whzkzmazo6e5gYEJUEbM80zAI
+      LB455IlmOGMosQb0rRxMO8PI7mCH5oNBmFHdA2FNifSw5hCNdlml4+ovdtpceJwFLHThY99hfpeS
+      HMFwXxVvDT3Ia2J3tCrD4mnd7gXFdZ+pIeVRTGyFAMWRaN5BLYdMNTwF+SDhQYQsieTqnchuzebX
+      fMzQBds6YLKa9n9MFMhIsqA7MsktJk/JBqIlDMpcp1TPij8146YAwQ5sfRTUvZXuPK4cyWfjRZas
+      31J7S9OvP7VDqfmWW68FFWu7MzJl9ix9rympVbQLOV1QNvv2l585u4vVXNPU2UkaFqtcGxcFeOnZ
+      UlFSzD3m34DKldO/LM6B47P6GVJmGBAuqfL0ZUThiB+3HJHidQqjZnLv0WxScpXoIfOoyXDwRDma
+      vqZ91UNGmleGfEGWx03L4j/MgO30YbJpKECDOptpSg3vPZpxp1jeLuPBIpMtQZF0+p1aktpinah6
+      5uWNMOfw+RWHLlIfqr2jgsbOA1mc+8AbTenJ8rj4DFl7P6k8chxQv8X2d/Weh11vmwRv9QKpzcvz
+      OBC5VR2bSJrFTwC3jb5R9lgk3tioSw+eXOZuN8qUQzp907eL3lVIoxOXFcViDccLLoTm4DEGU4oa
+      fiZzF8NQ+YO8f4oycXwXFxvfBcCljsqomQ9W2boG42BILh4cl+WVP0jN/NfTcboYRNHPPTM5yEvR
+      aVVi8TLva5E4Jcr8RFJIGizIegDxRFwiECaV2VIm5QyBvdVXSyHKx2xiSVhrHYF0XAX4OUgg8vJN
+      a0XAP1TGYhCQBM2L2GN4aWHOOzM5xnOJr6CrIhKJVaFQC8DG2RZLaPE22doVBRwj2tJCnokgtw==
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '1024'
+      Content-Type:
+      - application/octet-stream
+      If-None-Match:
+      - '*'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-client-request-id:
+      - ee449fda-c861-11e9-a801-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:30:54 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer1f1d1976/blob1f1d1976
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Content-MD5:
+      - nV2357PaumyUK6hucoKXkQ==
+      Date:
+      - Tue, 27 Aug 2019 00:30:52 GMT
+      ETag:
+      - '"0x8D72A85D184534E"'
+      Last-Modified:
+      - Tue, 27 Aug 2019 00:30:53 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - ee449fda-c861-11e9-a801-2816a845e8c6
+      x-ms-content-crc64:
+      - BjSlpiLcRfQ=
+      x-ms-request-id:
+      - 5ff447b4-701e-00c2-1d6e-5cecbe000000
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - ee516974-c861-11e9-9419-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:30:54 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer1f1d1976/blob1f1d1976?comp=snapshot
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Tue, 27 Aug 2019 00:30:53 GMT
+      ETag:
+      - '"0x8D72A85D184534E"'
+      Last-Modified:
+      - Tue, 27 Aug 2019 00:30:53 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - ee516974-c861-11e9-9419-2816a845e8c6
+      x-ms-request-id:
+      - 5ff447ed-701e-00c2-506e-5cecbe000000
+      x-ms-request-server-encrypted:
+      - 'false'
+      x-ms-snapshot:
+      - '2019-08-27T00:30:53.1142276Z'
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - ee5cf942-c861-11e9-94c7-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:30:54 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer1f1d1976/blob1f1d1976?comp=snapshot
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Tue, 27 Aug 2019 00:30:53 GMT
+      ETag:
+      - '"0x8D72A85D184534E"'
+      Last-Modified:
+      - Tue, 27 Aug 2019 00:30:53 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - ee5cf942-c861-11e9-94c7-2816a845e8c6
+      x-ms-request-id:
+      - 5ff447ff-701e-00c2-616e-5cecbe000000
+      x-ms-request-server-encrypted:
+      - 'false'
+      x-ms-snapshot:
+      - '2019-08-27T00:30:53.1912821Z'
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - ee688a08-c861-11e9-af6a-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:30:54 GMT
+      x-ms-delete-snapshots:
+      - include
+      x-ms-version:
+      - '2019-02-02'
+    method: DELETE
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer1f1d1976/blob1f1d1976
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Tue, 27 Aug 2019 00:30:53 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - ee688a08-c861-11e9-af6a-2816a845e8c6
+      x-ms-delete-type-permanent:
+      - 'false'
+      x-ms-request-id:
+      - 5ff44817-701e-00c2-776e-5cecbe000000
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - ee74b7c0-c861-11e9-bdf0-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:30:54 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer1f1d1976?include=snapshots%2Cdeleted&restype=container&comp=list
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
+        ServiceEndpoint=\"https://blobstoragename.blob.core.windows.net/\" ContainerName=\"utcontainer1f1d1976\"><Blobs><Blob><Name>blob1f1d1976</Name><Snapshot>2019-08-27T00:30:53.1142276Z</Snapshot><Deleted>true</Deleted><Properties><Creation-Time>Tue,
+        27 Aug 2019 00:30:53 GMT</Creation-Time><Last-Modified>Tue, 27 Aug 2019 00:30:53
+        GMT</Last-Modified><Etag>0x8D72A85D184534E</Etag><Content-Length>1024</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        /><Content-Language /><Content-CRC64>BjSlpiLcRfQ=</Content-CRC64><Content-MD5>nV2357PaumyUK6hucoKXkQ==</Content-MD5><Cache-Control
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><ServerEncrypted>true</ServerEncrypted><DeletedTime>Tue,
+        27 Aug 2019 00:30:53 GMT</DeletedTime><RemainingRetentionDays>1</RemainingRetentionDays><TagCount>0</TagCount></Properties></Blob><Blob><Name>blob1f1d1976</Name><Snapshot>2019-08-27T00:30:53.1912821Z</Snapshot><Deleted>true</Deleted><Properties><Creation-Time>Tue,
+        27 Aug 2019 00:30:53 GMT</Creation-Time><Last-Modified>Tue, 27 Aug 2019 00:30:53
+        GMT</Last-Modified><Etag>0x8D72A85D184534E</Etag><Content-Length>1024</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        /><Content-Language /><Content-CRC64>BjSlpiLcRfQ=</Content-CRC64><Content-MD5>nV2357PaumyUK6hucoKXkQ==</Content-MD5><Cache-Control
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><ServerEncrypted>true</ServerEncrypted><DeletedTime>Tue,
+        27 Aug 2019 00:30:53 GMT</DeletedTime><RemainingRetentionDays>1</RemainingRetentionDays><TagCount>0</TagCount></Properties></Blob><Blob><Name>blob1f1d1976</Name><Deleted>true</Deleted><Properties><Creation-Time>Tue,
+        27 Aug 2019 00:30:53 GMT</Creation-Time><Last-Modified>Tue, 27 Aug 2019 00:30:53
+        GMT</Last-Modified><Etag>0x8D72A85D184534E</Etag><Content-Length>1024</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        /><Content-Language /><Content-CRC64>BjSlpiLcRfQ=</Content-CRC64><Content-MD5>nV2357PaumyUK6hucoKXkQ==</Content-MD5><Cache-Control
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus
+        /><ServerEncrypted>true</ServerEncrypted><DeletedTime>Tue, 27 Aug 2019 00:30:53
+        GMT</DeletedTime><RemainingRetentionDays>1</RemainingRetentionDays><TagCount>0</TagCount></Properties></Blob></Blobs><NextMarker
+        /></EnumerationResults>"
+    headers:
+      Content-Type:
+      - application/xml
+      Date:
+      - Tue, 27 Aug 2019 00:30:53 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Origin
+      x-ms-client-request-id:
+      - ee74b7c0-c861-11e9-bdf0-2816a845e8c6
+      x-ms-request-id:
+      - 5ff4482f-701e-00c2-0d6e-5cecbe000000
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - ee8aa1c0-c861-11e9-80f2-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:30:55 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer1f1d1976?include=snapshots&restype=container&comp=list
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
+        ServiceEndpoint=\"https://blobstoragename.blob.core.windows.net/\" ContainerName=\"utcontainer1f1d1976\"><Blobs
+        /><NextMarker /></EnumerationResults>"
+    headers:
+      Content-Type:
+      - application/xml
+      Date:
+      - Tue, 27 Aug 2019 00:30:53 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Origin
+      x-ms-client-request-id:
+      - ee8aa1c0-c861-11e9-80f2-2816a845e8c6
+      x-ms-request-id:
+      - 5ff4485c-701e-00c2-346e-5cecbe000000
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - ee9596be-c861-11e9-9636-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:30:55 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer1f1d1976/blob1f1d1976?comp=undelete
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Tue, 27 Aug 2019 00:30:53 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - ee9596be-c861-11e9-9636-2816a845e8c6
+      x-ms-request-id:
+      - 5ff44877-701e-00c2-4c6e-5cecbe000000
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - eea3bcca-c861-11e9-a205-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:30:55 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer1f1d1976?include=snapshots%2Cdeleted&restype=container&comp=list
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
+        ServiceEndpoint=\"https://blobstoragename.blob.core.windows.net/\" ContainerName=\"utcontainer1f1d1976\"><Blobs><Blob><Name>blob1f1d1976</Name><Snapshot>2019-08-27T00:30:53.1142276Z</Snapshot><Properties><Creation-Time>Tue,
+        27 Aug 2019 00:30:53 GMT</Creation-Time><Last-Modified>Tue, 27 Aug 2019 00:30:53
+        GMT</Last-Modified><Etag>0x8D72A85D184534E</Etag><Content-Length>1024</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        /><Content-Language /><Content-CRC64>BjSlpiLcRfQ=</Content-CRC64><Content-MD5>nV2357PaumyUK6hucoKXkQ==</Content-MD5><Cache-Control
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><ServerEncrypted>true</ServerEncrypted><TagCount>0</TagCount></Properties></Blob><Blob><Name>blob1f1d1976</Name><Snapshot>2019-08-27T00:30:53.1912821Z</Snapshot><Properties><Creation-Time>Tue,
+        27 Aug 2019 00:30:53 GMT</Creation-Time><Last-Modified>Tue, 27 Aug 2019 00:30:53
+        GMT</Last-Modified><Etag>0x8D72A85D184534E</Etag><Content-Length>1024</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        /><Content-Language /><Content-CRC64>BjSlpiLcRfQ=</Content-CRC64><Content-MD5>nV2357PaumyUK6hucoKXkQ==</Content-MD5><Cache-Control
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><ServerEncrypted>true</ServerEncrypted><TagCount>0</TagCount></Properties></Blob><Blob><Name>blob1f1d1976</Name><Properties><Creation-Time>Tue,
+        27 Aug 2019 00:30:53 GMT</Creation-Time><Last-Modified>Tue, 27 Aug 2019 00:30:53
+        GMT</Last-Modified><Etag>0x8D72A85D184534E</Etag><Content-Length>1024</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        /><Content-Language /><Content-CRC64>BjSlpiLcRfQ=</Content-CRC64><Content-MD5>nV2357PaumyUK6hucoKXkQ==</Content-MD5><Cache-Control
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><AccessTier>Hot</AccessTier><AccessTierInferred>true</AccessTierInferred><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted><TagCount>0</TagCount></Properties></Blob></Blobs><NextMarker
+        /></EnumerationResults>"
+    headers:
+      Content-Type:
+      - application/xml
+      Date:
+      - Tue, 27 Aug 2019 00:30:53 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Origin
+      x-ms-client-request-id:
+      - eea3bcca-c861-11e9-a205-2816a845e8c6
+      x-ms-request-id:
+      - 5ff44897-701e-00c2-686e-5cecbe000000
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <StorageServiceProperties><DeleteRetentionPolicy><Enabled>false</Enabled></DeleteRetentionPolicy></StorageServiceProperties>'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '163'
+      Content-Type:
+      - application/xml; charset=utf-8
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-client-request-id:
+      - eeb3b8e8-c861-11e9-9a53-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:30:55 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/?restype=service&comp=properties
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Tue, 27 Aug 2019 00:30:53 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - eeb3b8e8-c861-11e9-9a53-2816a845e8c6
+      x-ms-request-id:
+      - 5ff448b0-701e-00c2-7e6e-5cecbe000000
+      x-ms-version:
+      - '2019-02-02'
     status:
       code: 202
       message: Accepted

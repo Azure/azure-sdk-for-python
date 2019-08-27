@@ -259,4 +259,146 @@ interactions:
     status:
       code: 200
       message: OK
+- request:
+    body: !!binary |
+      raM0H4MoXIbECMS0xzg71jpDVOVWvC15aPcNMvYyyUhnGdP2pUisEMps7fV/WL9vWJ2SJ0VGQO6n
+      1olBrK6PSjdboJeC1GU0hINxFdn+wF6sXrd+7UAgQpB3oF3blhapOwqw9HpfATf0nDIw1DlscfmC
+      j6fxvHVx6HjXm5cK2bxJ6MMYx9TJ8afl5hJ2oorst30UCxmBTnERcrSxwWjOi8ntG6bA5hqa7MyE
+      Md+5sB8FWmLeKyAqkokpr9juSg0vQKWCow1cxJp08hDBSVJgl5QegJQfNgBtMh/7/DuE3JWDXd3M
+      YIPTmxB5HXW0pKxgHS50h/nfKqXyfmevDNjCutMGXgjXktM9rR0kgna3Y9o6P3qZk5WDtB2Di8Ja
+      woQ38gCRVWajNECV26+SgIo+bGLCIMJ2E+I5fpY0n4JB+EAsTRS2FDTHgZ46zjxYWQPxS8GTpo5y
+      VO5mOq8bDbQ3EgULbj2rBDOLP6janJznClibN2AzqhvWks+7uUYkShHm/iMfde1A7vj1uNOoF+dQ
+      NQzFlM3Z+zXmDX8y99BauBLDWVKzPZzxpIT4wpHAOSzrUx0rTnhwh9qP6mCQ33f4q22kN7yfmwA9
+      k+xLHLZKRbG5wqaL8Q+bX+mCLeGXeP6PAn4kvZSAzz1JwZpgD/Mo/IRpFIMd7A0keTOBNIPLvvq8
+      MbMNeb+jRh+b8yArFPcmjGld+SDgUjJaqH7admglAPryMsaPQFHFAyBmKCVl6xsemgoJmKZOBdCQ
+      AuaMOUUIWUaW2xlFiDrxBItQCCmAFZwlvREcp3ykY4+gDk9n5Bu879nwiIF4f1OiPo6d6Ki/+/vm
+      gz64SSTYW7HLbI5khRMfIAnlKNfKzlgDCQJQXMTdW6K+uQtMS0pWICv44BGUcv70VwceTbVcr2/m
+      Zj5+4kwSXY8QdyNzRPDO5yTOOs9cp32wruGNdyBa6qw0C44LEesPV21CLQOzTcYDjrk8yMugQjtR
+      hDxpoyo12W71sZC6qGrtNoOxRug6nSSaeOVpetZUfSyNpjugGeQVtNb4s/YbNKII0qxbeEK0dgeu
+      R5P8CkLUsm6KMWS+LVQXA4AQjdLXt0mTloAubzMEGcV8Osgd8X9DUV582IomxRkzLFlzmvzxXCMg
+      dnFNchsVzQZFTU8KK7Lao3xNYG/9YyuLc25AEWu8rRIsByYydUU6dVnr4KsUUuFguCMlWLT1umQ2
+      hIMBEPASeqFd6u3XPV4FRmyVU9gEyBh/BBQSc9v9x3fpOeGeE8h35/zmPMj9dKsJaSxWAIKfWHBK
+      l9t5L6zXVM7YLB69STumnM5bzigoSRCXA5/spMDHD26mgGNnag3yQphW/r1g41SLPF5a8PAauA==
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '1024'
+      Content-Type:
+      - application/octet-stream
+      If-None-Match:
+      - '*'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-client-request-id:
+      - bf18c40c-c861-11e9-9280-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:29:35 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer3ed10fd2/blob3ed10fd2
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Content-MD5:
+      - vEYGonbbIfj+IgKpTckqpA==
+      Date:
+      - Tue, 27 Aug 2019 00:29:33 GMT
+      ETag:
+      - '"0x8D72A85A274EB06"'
+      Last-Modified:
+      - Tue, 27 Aug 2019 00:29:34 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - bf18c40c-c861-11e9-9280-2816a845e8c6
+      x-ms-content-crc64:
+      - q/BqMlXtQP8=
+      x-ms-request-id:
+      - 00cb6ce0-701e-0068-146e-5c3a51000000
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - bf420268-c861-11e9-a32d-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:29:35 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: HEAD
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer3ed10fd2/blob3ed10fd2
+  response:
+    body:
+      string: ''
+    headers:
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '1024'
+      Content-MD5:
+      - vEYGonbbIfj+IgKpTckqpA==
+      Content-Type:
+      - application/octet-stream
+      Date:
+      - Tue, 27 Aug 2019 00:29:33 GMT
+      ETag:
+      - '"0x8D72A85A274EB06"'
+      Last-Modified:
+      - Tue, 27 Aug 2019 00:29:34 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Vary:
+      - Origin
+      x-ms-access-tier:
+      - Hot
+      x-ms-access-tier-inferred:
+      - 'true'
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-client-request-id:
+      - bf420268-c861-11e9-a32d-2816a845e8c6
+      x-ms-creation-time:
+      - Tue, 27 Aug 2019 00:29:34 GMT
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-request-id:
+      - 00cb6d00-701e-0068-306e-5c3a51000000
+      x-ms-server-encrypted:
+      - 'true'
+      x-ms-tag-count:
+      - '0'
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 200
+      message: OK
 version: 1

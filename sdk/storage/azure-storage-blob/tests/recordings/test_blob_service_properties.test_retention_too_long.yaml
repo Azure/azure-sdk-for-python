@@ -26,10 +26,9 @@ interactions:
     uri: https://remotestoragename.blob.core.windows.net/?restype=service&comp=properties
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidXmlDocument</Code><Message>XML\
-        \ specified is not syntactically valid.\nRequestId:7d4790a3-801e-005f-40d9-2296fe000000\n\
-        Time:2019-06-14T17:46:08.0692443Z</Message><LineNumber>2</LineNumber><LinePosition>176</LinePosition><Reason>Retention\
-        \ days must be greater than 0 and less than or equal to 365 days.</Reason></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidXmlDocument</Code><Message>XML
+        specified is not syntactically valid.\nRequestId:7d4790a3-801e-005f-40d9-2296fe000000\nTime:2019-06-14T17:46:08.0692443Z</Message><LineNumber>2</LineNumber><LinePosition>176</LinePosition><Reason>Retention
+        days must be greater than 0 and less than or equal to 365 days.</Reason></Error>"
     headers:
       Content-Length:
       - '376'
@@ -75,10 +74,9 @@ interactions:
     uri: https://storagename.blob.core.windows.net/?restype=service&comp=properties
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidXmlDocument</Code><Message>XML\
-        \ specified is not syntactically valid.\nRequestId:66b50046-901e-004b-3de2-22559a000000\n\
-        Time:2019-06-14T18:52:31.9539748Z</Message><LineNumber>2</LineNumber><LinePosition>176</LinePosition><Reason>Retention\
-        \ days must be greater than 0 and less than or equal to 365 days.</Reason></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidXmlDocument</Code><Message>XML
+        specified is not syntactically valid.\nRequestId:66b50046-901e-004b-3de2-22559a000000\nTime:2019-06-14T18:52:31.9539748Z</Message><LineNumber>2</LineNumber><LinePosition>176</LinePosition><Reason>Retention
+        days must be greater than 0 and less than or equal to 365 days.</Reason></Error>"
     headers:
       Content-Length:
       - '376'
@@ -94,6 +92,56 @@ interactions:
       - 66b50046-901e-004b-3de2-22559a000000
       x-ms-version:
       - '2018-03-28'
+    status:
+      code: 400
+      message: XML specified is not syntactically valid.
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <StorageServiceProperties><MinuteMetrics><Version>1.0</Version><Enabled>true</Enabled><IncludeAPIs>true</IncludeAPIs><RetentionPolicy><Enabled>true</Enabled><Days>366</Days></RetentionPolicy></MinuteMetrics></StorageServiceProperties>'
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '273'
+      Content-Type:
+      - application/xml; charset=utf-8
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-client-request-id:
+      - 669dcb30-c861-11e9-b402-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:27:07 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/?restype=service&comp=properties
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidXmlDocument</Code><Message>XML
+        specified is not syntactically valid.\nRequestId:7f0b0e82-101e-0078-5f6e-5c0cb7000000\nTime:2019-08-27T00:27:05.7329476Z</Message><LineNumber>2</LineNumber><LinePosition>176</LinePosition><Reason>Retention
+        days must be greater than 0 and less than or equal to 365 days.</Reason></Error>"
+    headers:
+      Content-Length:
+      - '376'
+      Content-Type:
+      - application/xml
+      Date:
+      - Tue, 27 Aug 2019 00:27:05 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - 669dcb30-c861-11e9-b402-2816a845e8c6
+      x-ms-error-code:
+      - InvalidXmlDocument
+      x-ms-request-id:
+      - 7f0b0e82-101e-0078-5f6e-5c0cb7000000
+      x-ms-version:
+      - '2019-02-02'
     status:
       code: 400
       message: XML specified is not syntactically valid.

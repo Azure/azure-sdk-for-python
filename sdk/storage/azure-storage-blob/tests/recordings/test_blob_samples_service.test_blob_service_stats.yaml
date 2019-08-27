@@ -20,8 +20,8 @@ interactions:
     uri: https://storagename-secondary.blob.core.windows.net/?restype=service&comp=stats
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceStats><GeoReplication><Status>live</Status><LastSyncTime>Mon,\
-        \ 01 Jul 2019 15:37:43 GMT</LastSyncTime></GeoReplication></StorageServiceStats>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceStats><GeoReplication><Status>live</Status><LastSyncTime>Mon,
+        01 Jul 2019 15:37:43 GMT</LastSyncTime></GeoReplication></StorageServiceStats>"
     headers:
       Content-Type:
       - application/xml
@@ -37,6 +37,51 @@ interactions:
       - 18b4911d-701e-005c-4d23-30b796000000
       x-ms-version:
       - '2018-03-28'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 63d2e4b6-c861-11e9-8fcb-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:27:02 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://blobstoragename-secondary.blob.core.windows.net/?restype=service&comp=stats
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><StorageServiceStats><GeoReplication><Status>live</Status><LastSyncTime>Tue,
+        27 Aug 2019 00:25:32 GMT</LastSyncTime></GeoReplication></StorageServiceStats>"
+    headers:
+      Content-Type:
+      - application/xml
+      Date:
+      - Tue, 27 Aug 2019 00:27:00 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Transfer-Encoding:
+      - chunked
+      Vary:
+      - Origin
+      x-ms-client-request-id:
+      - 63d2e4b6-c861-11e9-8fcb-2816a845e8c6
+      x-ms-request-id:
+      - 7dc4f39a-d01e-0008-386e-5cf8c1000000
+      x-ms-version:
+      - '2019-02-02'
     status:
       code: 200
       message: OK

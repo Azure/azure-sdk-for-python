@@ -235,4 +235,132 @@ interactions:
     status:
       code: 201
       message: Created
+- request:
+    body: !!binary |
+      N6JF+kk29QRPRkgsZSMcqihC5EMGbWaFejeDZeXfe+F+7EFwKq+pC59cES/JuUXlnZFwfiIj4d20
+      3dXlFSPaTvf64y5DXSMog7TDh+ez5Bh5nD7YFrGLmyRaRJ5btV6LFeCquIwCZxWCl6grSgfls9v3
+      NFIGwBe4m7j6uMuDPS365ffwGniAwM4fwS4QxVvV4L0o+YpEj8idj6XxggJxQy5tQPN3+iitGIat
+      1mi1cStJD+sFjhzGepcMbXxeK2UM1mrJKzmShJGA/t+XpxZXNkgbmo6LVEXZSDmMbO0YQjn80Y9V
+      nob9rLA/SvVIugFVZfdHAWJ2wkNXCrG8N6/04yocsrFxkSDOn/iYrjAFNxiH8DboyY8jmfbO+UjT
+      w1tU9LV/xwjSRpxCnrK7OErrLjNrRCqJPtNbyJZR1LlNuJgWpC/WWCDJ4s7ztpId08THhx6SBYwP
+      G3Iznza+X6bK5L+64cPq88R6wYRdP3ZAt/l/DseqOb9u8XI0aZz81SpALaHWJI0pJ0sKwgvhDrMg
+      a4M3Na0l1M6KflkMVoWpugyGUgfCpIQ4hbbvnytEcNC767h7t5Q04O+2aJ7wr7de9h7WDfwLbubl
+      t+8gLzS8LjU0lVvkyUwZ8QpyY0g+xaDN8PpBJzBeGOk5t8o9qGjyMH9/jE9E/W2xxUW43MakRkLy
+      Oo8l5TinzOj7wMVqNgVvR3SlvJTtWUs3raCw2yqD8zK3hrdUr4QF0RxQZW7Ej9dPJ6fwMdipLqkV
+      f9Y8ykUldh5cAk10gF53qiIkpwRPNCORucZ+GWsG7RrukFtM6hM2fFBNDpLjANC58sfRDOVwT0au
+      kfwH7Zl34Avxa24G1DniVjPVRZZ5/M8UZlTOBuXQ2tRsNBkPHy/e4R0wsMtGibuf0Xo5ed9p0NxR
+      Z0XRzffhEWFV1z3ZyR3WHlDs6g7dWoeNahRtSCtUD1IFaC727GFk2mTGvIbVFp2BTEhlusAaFl7J
+      6oV3tmn94zQ3YZWvuRMva6S3dwnrlg+2QNJYg4q7PUxBWfaFeyHAoHl5sRdVTjPblliHk7K1zgQ/
+      DhbgGY7uGKmue2NWcErhlRF+Ibm5XsaDdff4s5ViCRhldbCtgMMwoZccp9MUb9TKP54dKqq2P2JJ
+      cykNOTnSR/T5wmPvLYzlhDje8X9dcV9rGDSgyBzLbb343ELYbknP1omf61F/nSdpBNGuLQy91Jsw
+      VoVznOq3LLlh3x9yiAg9wJBodJ4knq/EVF4CbJCNIY7eXVzJfBPlrcrwryNh7vp61qZq3qm0gzGr
+      nF/tEI7ifR9CYGyxZjxzreRw10mZ9KLkQnDAP8VKbg65Gvw4sRMdiz8HbhFnuF4I3AyDIWblDg==
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '1024'
+      Content-Type:
+      - application/octet-stream
+      If-None-Match:
+      - '*'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-client-request-id:
+      - d5ca8eae-c861-11e9-ad32-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:30:13 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer765f1677/blob765f1677
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Content-MD5:
+      - SdXn7rSEd/ovS79MaWZngQ==
+      Date:
+      - Tue, 27 Aug 2019 00:30:11 GMT
+      ETag:
+      - '"0x8D72A85B926157C"'
+      Last-Modified:
+      - Tue, 27 Aug 2019 00:30:12 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - d5ca8eae-c861-11e9-ad32-2816a845e8c6
+      x-ms-content-crc64:
+      - 5BWLA8gEug0=
+      x-ms-request-id:
+      - 8a1fd765-201e-0059-196e-5c6186000000
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - d5f3a518-c861-11e9-b28f-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:30:13 GMT
+      x-ms-lease-action:
+      - acquire
+      x-ms-lease-duration:
+      - '-1'
+      x-ms-proposed-lease-id:
+      - a0e6c241-96ea-45a3-a44b-6ae868bc14d0
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer765f1677/blob765f1677?comp=lease
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Tue, 27 Aug 2019 00:30:11 GMT
+      ETag:
+      - '"0x8D72A85B926157C"'
+      Last-Modified:
+      - Tue, 27 Aug 2019 00:30:12 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - d5f3a518-c861-11e9-b28f-2816a845e8c6
+      x-ms-lease-id:
+      - a0e6c241-96ea-45a3-a44b-6ae868bc14d0
+      x-ms-request-id:
+      - 8a1fd789-201e-0059-346e-5c6186000000
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 201
+      message: Created
 version: 1

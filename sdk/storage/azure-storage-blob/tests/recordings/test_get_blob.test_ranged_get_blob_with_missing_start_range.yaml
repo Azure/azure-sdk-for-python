@@ -99,4 +99,60 @@ interactions:
     status:
       code: 201
       message: Created
+- request:
+    body: foobar
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '6'
+      Content-Type:
+      - application/octet-stream
+      If-None-Match:
+      - '*'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-client-request-id:
+      - 32f4124a-c863-11e9-8d15-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:39:59 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/utcontainerd0a41826/blobd0a41826
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Content-MD5:
+      - OFj2IjCsPJFfMAxmQxLGPw==
+      Date:
+      - Tue, 27 Aug 2019 00:39:57 GMT
+      ETag:
+      - '"0x8D72A871656BAF7"'
+      Last-Modified:
+      - Tue, 27 Aug 2019 00:39:57 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - 32f4124a-c863-11e9-8d15-2816a845e8c6
+      x-ms-content-crc64:
+      - W6ZwNuZBhqE=
+      x-ms-request-id:
+      - 88e5ddc5-c01e-00db-276f-5cc0d6000000
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 201
+      message: Created
 version: 1

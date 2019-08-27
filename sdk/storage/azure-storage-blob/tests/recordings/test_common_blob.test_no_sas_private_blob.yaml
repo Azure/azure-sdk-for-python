@@ -82,9 +82,8 @@ interactions:
     uri: https://remotestoragename.blob.core.windows.net/utcontainer61f810cf/blob61f810cf
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ResourceNotFound</Code><Message>The\
-        \ specified resource does not exist.\nRequestId:33d54af8-001e-0028-55d8-2213bf000000\n\
-        Time:2019-06-14T17:38:54.0956424Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ResourceNotFound</Code><Message>The
+        specified resource does not exist.\nRequestId:33d54af8-001e-0028-55d8-2213bf000000\nTime:2019-06-14T17:38:54.0956424Z</Message></Error>"
     headers:
       Content-Length:
       - '223'
@@ -186,9 +185,8 @@ interactions:
     uri: https://storagename.blob.core.windows.net/utcontainer61f810cf/blob61f810cf
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ResourceNotFound</Code><Message>The\
-        \ specified resource does not exist.\nRequestId:68474b2c-101e-00d9-37e1-22c22c000000\n\
-        Time:2019-06-14T18:45:38.8843515Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ResourceNotFound</Code><Message>The
+        specified resource does not exist.\nRequestId:68474b2c-101e-00d9-37e1-22c22c000000\nTime:2019-06-14T18:45:38.8843515Z</Message></Error>"
     headers:
       Content-Length:
       - '223'
@@ -202,6 +200,115 @@ interactions:
       - Origin
       x-ms-request-id:
       - 68474b2c-101e-00d9-37e1-22c22c000000
+      x-ms-version:
+      - '2014-02-14'
+    status:
+      code: 404
+      message: The specified resource does not exist.
+- request:
+    body: !!binary |
+      AwEs07sBOW22nIfjgUWDPysBMbX9SYxPMn90QBtwxeJ5KlEZdV9nuErSM79d+QtcJGkCy54njHXY
+      72zQEkJdDmbHLXW/Fd7UI7DB6UQoOFrgCuTtL9I0e8ACBfEoEY7rkI8tMm+yWeX4VTUOdbGezdlq
+      xfN2j4oV8N/6TM8fjMuXC1sPwGziLwwy9U2d1CVtqrwpgIHvlHA/FhUJcki3u9W+Y4I9jEeA64Rd
+      fRxyO/X1JT/WJKvRhtE6xuaZyxysle/2WwjjHC/KFV7O9ZsM+meSex1kSw27YjU2yJZsEBn1xJBI
+      vLxa+6ZmvcrK775cFXNU34KQiBlNrB5Fd2rG6S9jS3fMEJlpaxVrduK5e9fX+jLWx3cX6w+I5HLI
+      dhkhDddXx1UeqAEfDqpg1rCdSEV0DBGrCeEWCxu4G7z7RRSudO+6CVZ1zhbi9xZD6oaG4og1lZfE
+      IZ+WXX0xxmo9G63UPb3fD583CLqcqptud+a9Dw9pemzmGs+Ktfc6coxfOwQAzeN/QA+Abh4yjhgT
+      T3ME0Sfeh99BF6F1/PXYz7m7JaHhXHTs778O+tYcP5NS3StrLrckDxU1OQ4OGb25z8gAt0SuUQuL
+      lSyYBJoahsfA0JfjmtLxU5+gNw18gUfGMOylU/XIFoYM7OZGBK1IK1HDDGCiFjsF5TVqWNlEmY26
+      PrInjrDXpWQerQpeXJfehsWGb5Rd80U4Zv74CSoducJzrMlf7iBSrXWMMxB241Gyt3ONMRUYipvM
+      CiFeCyMCVn0MnaoXsg5y/dVACVm0SnazjaXPPAez+BgUNLKwfR+TkTUpLwGhotUElBR7h7u4A1YR
+      mkfu9fu2juadgJ3BIHM2Vo+XEqCe8cXWWMjwora9RmB59VuLqVM/jgwHIJCq+vaxd+dea9782mOT
+      mQLVWpHTGAIxqPklb3C5SW8jmCauNZyngotZxOVtTbNk0yOuOV4cUVIpCSVHH/o5a+HAbDTnvTBT
+      Zs7h0DGfkiLROZiyFmRJQALjaREtMvxibFC2jOTDGOlqweZJ88fc8zvFGox1e7e6HyQGkgTGsigZ
+      GWdqyk+6yRNEB+VL4N+1JMot9gtZN+XOM8XCsMCeUMTncRWiCOfhd66oyCc5bkrv4Evw1cTpk0wX
+      t2k5jDBAa6doxPT+4YpnzwvhMxGlNzcc9o0VO5AbynkTeJnD3uq/7fOGEklYZe3iNUEQ3LDZOcoC
+      Dj9Xr75nNJNuUarC53atkl7PmKtpp9ycNmQbExAPGU/NtK2akfe8pHyT2V32jCEG4RGSAUilxikB
+      NU3sdYbBwQ+zi+MNmiVlTEbwVrHtcFZUFn1lDviDXeQuc4o628Z+MrloBibqh5yJdNR0fGDYCA==
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '1024'
+      Content-Type:
+      - application/octet-stream
+      If-None-Match:
+      - '*'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-client-request-id:
+      - d6c71b90-c861-11e9-bb19-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:30:15 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer61f810cf/blob61f810cf
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Content-MD5:
+      - oCH+lQmNcNij0X2pgU0v3A==
+      Date:
+      - Tue, 27 Aug 2019 00:30:12 GMT
+      ETag:
+      - '"0x8D72A85BA2627AD"'
+      Last-Modified:
+      - Tue, 27 Aug 2019 00:30:13 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - d6c71b90-c861-11e9-bb19-2816a845e8c6
+      x-ms-content-crc64:
+      - XA1cx8Nkcm8=
+      x-ms-request-id:
+      - 7df7e7ed-501e-007f-6e6e-5cfa32000000
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.21.0
+    method: GET
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer61f810cf/blob61f810cf
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ResourceNotFound</Code><Message>The
+        specified resource does not exist.\nRequestId:00562361-d01e-00a9-3d6e-5cb1e8000000\nTime:2019-08-27T00:30:14.0905040Z</Message></Error>"
+    headers:
+      Content-Length:
+      - '223'
+      Content-Type:
+      - application/xml
+      Date:
+      - Tue, 27 Aug 2019 00:30:13 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Vary:
+      - Origin
+      x-ms-request-id:
+      - 00562361-d01e-00a9-3d6e-5cb1e8000000
       x-ms-version:
       - '2014-02-14'
     status:

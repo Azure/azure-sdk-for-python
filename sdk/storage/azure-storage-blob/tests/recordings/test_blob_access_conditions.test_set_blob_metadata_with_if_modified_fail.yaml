@@ -120,9 +120,8 @@ interactions:
     uri: https://remotestoragename.blob.core.windows.net/utcontainer30df1d44/blob1?comp=metadata
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The\
-        \ condition specified using HTTP conditional header(s) is not met.\nRequestId:bec3c4b4-a01e-0025-50d7-22fcb3000000\n\
-        Time:2019-06-14T17:33:24.2613225Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The
+        condition specified using HTTP conditional header(s) is not met.\nRequestId:bec3c4b4-a01e-0025-50d7-22fcb3000000\nTime:2019-06-14T17:33:24.2613225Z</Message></Error>"
     headers:
       Content-Length:
       - '252'
@@ -262,9 +261,8 @@ interactions:
     uri: https://storagename.blob.core.windows.net/utcontainer30df1d44/blob1?comp=metadata
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The\
-        \ condition specified using HTTP conditional header(s) is not met.\nRequestId:7513f1c3-f01e-00b5-06df-2269ff000000\n\
-        Time:2019-06-14T18:35:51.2981525Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The
+        condition specified using HTTP conditional header(s) is not met.\nRequestId:7513f1c3-f01e-00b5-06df-2269ff000000\nTime:2019-06-14T18:35:51.2981525Z</Message></Error>"
     headers:
       Content-Length:
       - '252'
@@ -280,6 +278,161 @@ interactions:
       - 7513f1c3-f01e-00b5-06df-2269ff000000
       x-ms-version:
       - '2018-03-28'
+    status:
+      code: 412
+      message: The condition specified using HTTP conditional header(s) is not met.
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 0ab33158-c861-11e9-8d6e-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:24:32 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer30df1d44?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Tue, 27 Aug 2019 00:24:31 GMT
+      ETag:
+      - '"0x8D72A84EE130639"'
+      Last-Modified:
+      - Tue, 27 Aug 2019 00:24:31 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - 0ab33158-c861-11e9-8d6e-2816a845e8c6
+      x-ms-request-id:
+      - 69fcc21f-d01e-0021-7a6d-5c0931000000
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: hello world
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '11'
+      Content-Type:
+      - application/octet-stream
+      If-None-Match:
+      - '*'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-client-request-id:
+      - 0ae01694-c861-11e9-b958-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:24:33 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer30df1d44/blob1
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Content-MD5:
+      - XrY7u+Ae7tCTyyK7j1rNww==
+      Date:
+      - Tue, 27 Aug 2019 00:24:31 GMT
+      ETag:
+      - '"0x8D72A84EE1FE288"'
+      Last-Modified:
+      - Tue, 27 Aug 2019 00:24:31 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - 0ae01694-c861-11e9-b958-2816a845e8c6
+      x-ms-content-crc64:
+      - vo7q9sPVKY0=
+      x-ms-request-id:
+      - 69fcc237-d01e-0021-0d6d-5c0931000000
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      If-Modified-Since:
+      - Tue, 27 Aug 2019 00:39:33 GMT
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 0aecdf2c-c861-11e9-94e5-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:24:33 GMT
+      x-ms-meta-hello:
+      - world
+      x-ms-meta-number:
+      - '42'
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer30df1d44/blob1?comp=metadata
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The
+        condition specified using HTTP conditional header(s) is not met.\nRequestId:69fcc255-d01e-0021-266d-5c0931000000\nTime:2019-08-27T00:24:31.6159556Z</Message></Error>"
+    headers:
+      Content-Length:
+      - '252'
+      Content-Type:
+      - application/xml
+      Date:
+      - Tue, 27 Aug 2019 00:24:31 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - 0aecdf2c-c861-11e9-94e5-2816a845e8c6
+      x-ms-error-code:
+      - ConditionNotMet
+      x-ms-request-id:
+      - 69fcc255-d01e-0021-266d-5c0931000000
+      x-ms-version:
+      - '2019-02-02'
     status:
       code: 412
       message: The condition specified using HTTP conditional header(s) is not met.

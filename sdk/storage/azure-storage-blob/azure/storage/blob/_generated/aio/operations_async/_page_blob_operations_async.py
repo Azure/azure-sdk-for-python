@@ -37,7 +37,7 @@ class PageBlobOperations:
         self._config = config
         self.x_ms_blob_type = "PageBlob"
 
-    async def create(self, content_length, blob_content_length, timeout=None, metadata=None, tags=None, x_ms_encryption_key=None, x_ms_encryption_key_sha256=None, x_ms_encryption_algorithm=None, blob_sequence_number=0, request_id=None, blob_http_headers=None, lease_access_conditions=None, customer_provided_key_info=None, modified_access_conditions=None, *, cls=None, **kwargs):
+    async def create(self, content_length, blob_content_length, timeout=None, metadata=None, blob_sequence_number=0, request_id=None, blob_http_headers=None, lease_access_conditions=None, cpk_info=None, modified_access_conditions=None, *, cls=None, **kwargs):
         """The Create operation creates a new page blob.
 
         :param content_length: The length of the request.
@@ -61,26 +61,6 @@ class PageBlobOperations:
          C# identifiers. See Naming and Referencing Containers, Blobs, and
          Metadata for more information.
         :type metadata: str
-        :param tags: Optional. A URL encoded query param string which
-         specifies the tags to be created with the Blob object. e.g.
-         TagName1=TagValue1&TagName2=TagValue2. The x-ms-tags header may
-         contain up to 2kb of tags.
-        :type tags: str
-        :param x_ms_encryption_key: Optional. Specifies the encryption key to
-         use to encrypt the data provided in the request. If not specified,
-         encryption is performed with the root account encryption key.  For
-         more information, see Encryption at Rest for Azure Storage Services.
-        :type x_ms_encryption_key: str
-        :param x_ms_encryption_key_sha256: The SHA-256 hash of the provided
-         encryption key. Must be provided if the x-ms-encryption-key header is
-         provided.
-        :type x_ms_encryption_key_sha256: str
-        :param x_ms_encryption_algorithm: The algorithm used to produce the
-         encryption key hash. Currently, the only accepted value is "AES256".
-         Must be provided if the x-ms-encryption-key header is provided.
-         Possible values include: 'AES256'
-        :type x_ms_encryption_algorithm: str or
-         ~azure.storage.blob.models.EncryptionAlgorithmType
         :param blob_sequence_number: Set for page blobs only. The sequence
          number is a user-controlled value that you can use to track requests.
          The value of the sequence number must be between 0 and 2^63 - 1.
@@ -95,10 +75,8 @@ class PageBlobOperations:
          operation
         :type lease_access_conditions:
          ~azure.storage.blob.models.LeaseAccessConditions
-        :param customer_provided_key_info: Additional parameters for the
-         operation
-        :type customer_provided_key_info:
-         ~azure.storage.blob.models.CustomerProvidedKeyInfo
+        :param cpk_info: Additional parameters for the operation
+        :type cpk_info: ~azure.storage.blob.models.CpkInfo
         :param modified_access_conditions: Additional parameters for the
          operation
         :type modified_access_conditions:
@@ -132,9 +110,15 @@ class PageBlobOperations:
         lease_id = None
         if lease_access_conditions is not None:
             lease_id = lease_access_conditions.lease_id
-        encryption_scope = None
-        if customer_provided_key_info is not None:
-            encryption_scope = customer_provided_key_info.encryption_scope
+        x_ms_encryption_key = None
+        if cpk_info is not None:
+            x_ms_encryption_key = cpk_info.x_ms_encryption_key
+        x_ms_encryption_key_sha256 = None
+        if cpk_info is not None:
+            x_ms_encryption_key_sha256 = cpk_info.x_ms_encryption_key_sha256
+        x_ms_encryption_algorithm = None
+        if cpk_info is not None:
+            x_ms_encryption_algorithm = cpk_info.x_ms_encryption_algorithm
         if_modified_since = None
         if modified_access_conditions is not None:
             if_modified_since = modified_access_conditions.if_modified_since
@@ -165,16 +149,12 @@ class PageBlobOperations:
             query_parameters['x-ms-encryption-key-sha256'] = self._serialize.query("x_ms_encryption_key_sha256", x_ms_encryption_key_sha256, 'str')
         if x_ms_encryption_algorithm is not None:
             query_parameters['x-ms-encryption-algorithm'] = self._serialize.query("x_ms_encryption_algorithm", x_ms_encryption_algorithm, 'EncryptionAlgorithmType')
-        if encryption_scope is not None:
-            query_parameters['x-ms-encryption-scope'] = self._serialize.query("encryption_scope", encryption_scope, 'str')
 
         # Construct headers
         header_parameters = {}
         header_parameters['Content-Length'] = self._serialize.header("content_length", content_length, 'long')
         if metadata is not None:
             header_parameters['x-ms-meta'] = self._serialize.header("metadata", metadata, 'str')
-        if tags is not None:
-            header_parameters['x-ms-tags'] = self._serialize.header("tags", tags, 'str')
         header_parameters['x-ms-blob-content-length'] = self._serialize.header("blob_content_length", blob_content_length, 'long')
         if blob_sequence_number is not None:
             header_parameters['x-ms-blob-sequence-number'] = self._serialize.header("blob_sequence_number", blob_sequence_number, 'long')
@@ -222,17 +202,15 @@ class PageBlobOperations:
                 'x-ms-client-request-id': self._deserialize('str', response.headers.get('x-ms-client-request-id')),
                 'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
-                'x-ms-version-id': self._deserialize('str', response.headers.get('x-ms-version-id')),
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
                 'x-ms-request-server-encrypted': self._deserialize('bool', response.headers.get('x-ms-request-server-encrypted')),
                 'x-ms-encryption-key-sha256': self._deserialize('str', response.headers.get('x-ms-encryption-key-sha256')),
-                'x-ms-encryption-scope': self._deserialize('str', response.headers.get('x-ms-encryption-scope')),
                 'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
             }
             return cls(response, None, response_headers)
     create.metadata = {'url': '/{containerName}/{blob}'}
 
-    async def upload_pages(self, body, content_length, transactional_content_md5=None, transactional_content_crc64=None, timeout=None, range=None, x_ms_encryption_key=None, x_ms_encryption_key_sha256=None, x_ms_encryption_algorithm=None, request_id=None, lease_access_conditions=None, customer_provided_key_info=None, sequence_number_access_conditions=None, modified_access_conditions=None, *, cls=None, **kwargs):
+    async def upload_pages(self, body, content_length, transactional_content_md5=None, transactional_content_crc64=None, timeout=None, range=None, request_id=None, lease_access_conditions=None, cpk_info=None, sequence_number_access_conditions=None, modified_access_conditions=None, *, cls=None, **kwargs):
         """The Upload Pages operation writes a range of pages to a page blob.
 
         :param body: Initial data
@@ -253,21 +231,6 @@ class PageBlobOperations:
         :param range: Return only the bytes of the blob in the specified
          range.
         :type range: str
-        :param x_ms_encryption_key: Optional. Specifies the encryption key to
-         use to encrypt the data provided in the request. If not specified,
-         encryption is performed with the root account encryption key.  For
-         more information, see Encryption at Rest for Azure Storage Services.
-        :type x_ms_encryption_key: str
-        :param x_ms_encryption_key_sha256: The SHA-256 hash of the provided
-         encryption key. Must be provided if the x-ms-encryption-key header is
-         provided.
-        :type x_ms_encryption_key_sha256: str
-        :param x_ms_encryption_algorithm: The algorithm used to produce the
-         encryption key hash. Currently, the only accepted value is "AES256".
-         Must be provided if the x-ms-encryption-key header is provided.
-         Possible values include: 'AES256'
-        :type x_ms_encryption_algorithm: str or
-         ~azure.storage.blob.models.EncryptionAlgorithmType
         :param request_id: Provides a client-generated, opaque value with a 1
          KB character limit that is recorded in the analytics logs when storage
          analytics logging is enabled.
@@ -276,10 +239,8 @@ class PageBlobOperations:
          operation
         :type lease_access_conditions:
          ~azure.storage.blob.models.LeaseAccessConditions
-        :param customer_provided_key_info: Additional parameters for the
-         operation
-        :type customer_provided_key_info:
-         ~azure.storage.blob.models.CustomerProvidedKeyInfo
+        :param cpk_info: Additional parameters for the operation
+        :type cpk_info: ~azure.storage.blob.models.CpkInfo
         :param sequence_number_access_conditions: Additional parameters for
          the operation
         :type sequence_number_access_conditions:
@@ -299,9 +260,15 @@ class PageBlobOperations:
         lease_id = None
         if lease_access_conditions is not None:
             lease_id = lease_access_conditions.lease_id
-        encryption_scope = None
-        if customer_provided_key_info is not None:
-            encryption_scope = customer_provided_key_info.encryption_scope
+        x_ms_encryption_key = None
+        if cpk_info is not None:
+            x_ms_encryption_key = cpk_info.x_ms_encryption_key
+        x_ms_encryption_key_sha256 = None
+        if cpk_info is not None:
+            x_ms_encryption_key_sha256 = cpk_info.x_ms_encryption_key_sha256
+        x_ms_encryption_algorithm = None
+        if cpk_info is not None:
+            x_ms_encryption_algorithm = cpk_info.x_ms_encryption_algorithm
         if_sequence_number_less_than_or_equal_to = None
         if sequence_number_access_conditions is not None:
             if_sequence_number_less_than_or_equal_to = sequence_number_access_conditions.if_sequence_number_less_than_or_equal_to
@@ -338,15 +305,13 @@ class PageBlobOperations:
         query_parameters = {}
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
+        query_parameters['comp'] = self._serialize.query("comp", comp, 'str')
         if x_ms_encryption_key is not None:
             query_parameters['x-ms-encryption-key'] = self._serialize.query("x_ms_encryption_key", x_ms_encryption_key, 'str')
         if x_ms_encryption_key_sha256 is not None:
             query_parameters['x-ms-encryption-key-sha256'] = self._serialize.query("x_ms_encryption_key_sha256", x_ms_encryption_key_sha256, 'str')
         if x_ms_encryption_algorithm is not None:
             query_parameters['x-ms-encryption-algorithm'] = self._serialize.query("x_ms_encryption_algorithm", x_ms_encryption_algorithm, 'EncryptionAlgorithmType')
-        query_parameters['comp'] = self._serialize.query("comp", comp, 'str')
-        if encryption_scope is not None:
-            query_parameters['x-ms-encryption-scope'] = self._serialize.query("encryption_scope", encryption_scope, 'str')
 
         # Construct headers
         header_parameters = {}
@@ -403,7 +368,6 @@ class PageBlobOperations:
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
                 'x-ms-request-server-encrypted': self._deserialize('bool', response.headers.get('x-ms-request-server-encrypted')),
                 'x-ms-encryption-key-sha256': self._deserialize('str', response.headers.get('x-ms-encryption-key-sha256')),
-                'x-ms-encryption-scope': self._deserialize('str', response.headers.get('x-ms-encryption-scope')),
                 'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
             }
             return cls(response, None, response_headers)
@@ -538,7 +502,7 @@ class PageBlobOperations:
             return cls(response, None, response_headers)
     clear_pages.metadata = {'url': '/{containerName}/{blob}'}
 
-    async def upload_pages_from_url(self, source_url, source_range, content_length, range, source_content_md5=None, source_contentcrc64=None, timeout=None, request_id=None, lease_access_conditions=None, sequence_number_access_conditions=None, modified_access_conditions=None, source_modified_access_conditions=None, *, cls=None, **kwargs):
+    async def upload_pages_from_url(self, source_url, source_range, content_length, range, source_content_md5=None, source_contentcrc64=None, timeout=None, request_id=None, cpk_info=None, lease_access_conditions=None, sequence_number_access_conditions=None, modified_access_conditions=None, source_modified_access_conditions=None, *, cls=None, **kwargs):
         """The Upload Pages operation writes a range of pages to a page blob where
         the contents are read from a URL.
 
@@ -568,6 +532,8 @@ class PageBlobOperations:
          KB character limit that is recorded in the analytics logs when storage
          analytics logging is enabled.
         :type request_id: str
+        :param cpk_info: Additional parameters for the operation
+        :type cpk_info: ~azure.storage.blob.models.CpkInfo
         :param lease_access_conditions: Additional parameters for the
          operation
         :type lease_access_conditions:
@@ -592,6 +558,15 @@ class PageBlobOperations:
          :class:`StorageErrorException<azure.storage.blob.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
+        x_ms_encryption_key = None
+        if cpk_info is not None:
+            x_ms_encryption_key = cpk_info.x_ms_encryption_key
+        x_ms_encryption_key_sha256 = None
+        if cpk_info is not None:
+            x_ms_encryption_key_sha256 = cpk_info.x_ms_encryption_key_sha256
+        x_ms_encryption_algorithm = None
+        if cpk_info is not None:
+            x_ms_encryption_algorithm = cpk_info.x_ms_encryption_algorithm
         lease_id = None
         if lease_access_conditions is not None:
             lease_id = lease_access_conditions.lease_id
@@ -644,6 +619,12 @@ class PageBlobOperations:
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
         query_parameters['comp'] = self._serialize.query("comp", comp, 'str')
+        if x_ms_encryption_key is not None:
+            query_parameters['x-ms-encryption-key'] = self._serialize.query("x_ms_encryption_key", x_ms_encryption_key, 'str')
+        if x_ms_encryption_key_sha256 is not None:
+            query_parameters['x-ms-encryption-key-sha256'] = self._serialize.query("x_ms_encryption_key_sha256", x_ms_encryption_key_sha256, 'str')
+        if x_ms_encryption_algorithm is not None:
+            query_parameters['x-ms-encryption-algorithm'] = self._serialize.query("x_ms_encryption_algorithm", x_ms_encryption_algorithm, 'EncryptionAlgorithmType')
 
         # Construct headers
         header_parameters = {}
@@ -709,9 +690,9 @@ class PageBlobOperations:
             return cls(response, None, response_headers)
     upload_pages_from_url.metadata = {'url': '/{containerName}/{blob}'}
 
-    async def get_page_ranges(self, snapshot=None, version_id=None, timeout=None, range=None, request_id=None, lease_access_conditions=None, modified_access_conditions=None, *, cls=None, **kwargs):
+    async def get_page_ranges(self, snapshot=None, timeout=None, range=None, request_id=None, lease_access_conditions=None, modified_access_conditions=None, *, cls=None, **kwargs):
         """The Get Page Ranges operation returns the list of valid page ranges for
-        a page blob, version or snapshot of a page blob.
+        a page blob or snapshot of a page blob.
 
         :param snapshot: The snapshot parameter is an opaque DateTime value
          that, when present, specifies the blob snapshot to retrieve. For more
@@ -719,9 +700,6 @@ class PageBlobOperations:
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating
          a Snapshot of a Blob.</a>
         :type snapshot: str
-        :param version_id: The version ID parameter is an opaque DateTime
-         value that, when present, specifies the blob version to retrieve.
-        :type version_id: str
         :param timeout: The timeout parameter is expressed in seconds. For
          more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -779,15 +757,13 @@ class PageBlobOperations:
         query_parameters = {}
         if snapshot is not None:
             query_parameters['snapshot'] = self._serialize.query("snapshot", snapshot, 'str')
-        if version_id is not None:
-            query_parameters['versionid'] = self._serialize.query("version_id", version_id, 'str')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
         query_parameters['comp'] = self._serialize.query("comp", comp, 'str')
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/xml, application/octet-stream, text/plain'
+        header_parameters['Accept'] = 'application/xml'
         if range is not None:
             header_parameters['x-ms-range'] = self._serialize.header("range", range, 'str')
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
@@ -834,10 +810,10 @@ class PageBlobOperations:
         return deserialized
     get_page_ranges.metadata = {'url': '/{containerName}/{blob}'}
 
-    async def get_page_ranges_diff(self, snapshot=None, version_id=None, timeout=None, prevsnapshot=None, range=None, request_id=None, lease_access_conditions=None, modified_access_conditions=None, *, cls=None, **kwargs):
-        """[Update] The Get Page Ranges Diff operation returns the list of valid
-        page ranges for a page blob that were changed between target blob and
-        previous snapshot or version.
+    async def get_page_ranges_diff(self, snapshot=None, timeout=None, prevsnapshot=None, range=None, request_id=None, lease_access_conditions=None, modified_access_conditions=None, *, cls=None, **kwargs):
+        """The Get Page Ranges Diff operation returns the list of valid page
+        ranges for a page blob that were changed between target blob and
+        previous snapshot.
 
         :param snapshot: The snapshot parameter is an opaque DateTime value
          that, when present, specifies the blob snapshot to retrieve. For more
@@ -845,9 +821,6 @@ class PageBlobOperations:
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating
          a Snapshot of a Blob.</a>
         :type snapshot: str
-        :param version_id: The version ID parameter is an opaque DateTime
-         value that, when present, specifies the blob version to retrieve.
-        :type version_id: str
         :param timeout: The timeout parameter is expressed in seconds. For
          more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -914,8 +887,6 @@ class PageBlobOperations:
         query_parameters = {}
         if snapshot is not None:
             query_parameters['snapshot'] = self._serialize.query("snapshot", snapshot, 'str')
-        if version_id is not None:
-            query_parameters['versionid'] = self._serialize.query("version_id", version_id, 'str')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
         if prevsnapshot is not None:
@@ -924,7 +895,7 @@ class PageBlobOperations:
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/xml, application/octet-stream, text/plain'
+        header_parameters['Accept'] = 'application/xml'
         if range is not None:
             header_parameters['x-ms-range'] = self._serialize.header("range", range, 'str')
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')

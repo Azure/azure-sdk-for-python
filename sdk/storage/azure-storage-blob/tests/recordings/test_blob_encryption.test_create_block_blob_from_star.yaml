@@ -991,4 +991,197 @@ interactions:
     status:
       code: 206
       message: Partial Content
+- request:
+    body: !!binary |
+      S6kYge92S6jl1K4juq6JrA==
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '16'
+      Content-Type:
+      - application/octet-stream
+      If-None-Match:
+      - '*'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-client-request-id:
+      - 440f0bb4-c861-11e9-84df-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:26:09 GMT
+      x-ms-meta-encryptiondata:
+      - '{"WrappedContentKey": {"KeyId": "key1", "EncryptedKey": "u+wilax+inwz/Rn8lGzutKWHJKKhJF11Sm0hRlQy3c0XZLZkZsIwDw==",
+        "Algorithm": "A256KW"}, "EncryptionAgent": {"Protocol": "1.0", "EncryptionAlgorithm":
+        "AES_CBC_256"}, "ContentEncryptionIV": "YWw9DWApOsPOPBpyBovnWQ==", "KeyWrappingMetadata":
+        {"EncryptionLibrary": "Python 12.0.0b2"}, "EncryptionMode": "FullBlob"}'
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer4c2115be/encryption_block_blob4c2115be
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Content-MD5:
+      - vFiq7p72wBKrciPUUQTt2A==
+      Date:
+      - Tue, 27 Aug 2019 00:26:07 GMT
+      ETag:
+      - '"0x8D72A85276CC6B5"'
+      Last-Modified:
+      - Tue, 27 Aug 2019 00:26:07 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - 440f0bb4-c861-11e9-84df-2816a845e8c6
+      x-ms-content-crc64:
+      - WclL0CVizUo=
+      x-ms-request-id:
+      - f7be05a0-101e-009d-096e-5c1e40000000
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 4438fe0a-c861-11e9-ab2e-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:26:09 GMT
+      x-ms-range:
+      - bytes=0-33554431
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer4c2115be/encryption_block_blob4c2115be
+  response:
+    body:
+      string: !!binary |
+        S6kYge92S6jl1K4juq6JrA==
+    headers:
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '16'
+      Content-Range:
+      - bytes 0-15/16
+      Content-Type:
+      - application/octet-stream
+      Date:
+      - Tue, 27 Aug 2019 00:26:07 GMT
+      ETag:
+      - '"0x8D72A85276CC6B5"'
+      Last-Modified:
+      - Tue, 27 Aug 2019 00:26:07 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Vary:
+      - Origin
+      x-ms-blob-content-md5:
+      - vFiq7p72wBKrciPUUQTt2A==
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-client-request-id:
+      - 4438fe0a-c861-11e9-ab2e-2816a845e8c6
+      x-ms-creation-time:
+      - Tue, 27 Aug 2019 00:26:07 GMT
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-meta-encryptiondata:
+      - '{"WrappedContentKey": {"KeyId": "key1", "EncryptedKey": "u+wilax+inwz/Rn8lGzutKWHJKKhJF11Sm0hRlQy3c0XZLZkZsIwDw==",
+        "Algorithm": "A256KW"}, "EncryptionAgent": {"Protocol": "1.0", "EncryptionAlgorithm":
+        "AES_CBC_256"}, "ContentEncryptionIV": "YWw9DWApOsPOPBpyBovnWQ==", "KeyWrappingMetadata":
+        {"EncryptionLibrary": "Python 12.0.0b2"}, "EncryptionMode": "FullBlob"}'
+      x-ms-request-id:
+      - f7be05d4-101e-009d-3a6e-5c1e40000000
+      x-ms-server-encrypted:
+      - 'true'
+      x-ms-tag-count:
+      - '0'
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 206
+      message: Partial Content
+- request:
+    body: !!binary |
+      /sovLIHK3Y4YMxcoBKsVPQ==
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '16'
+      Content-Type:
+      - application/octet-stream
+      If-None-Match:
+      - '*'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-client-request-id:
+      - 44463c3e-c861-11e9-98b5-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:26:09 GMT
+      x-ms-meta-encryptiondata:
+      - '{"WrappedContentKey": {"KeyId": "key1", "EncryptedKey": "GZKu5ev0cvtd89GG7y+3E4BKkV7EM0YOkESTCmirDqobrJLCrpEzEQ==",
+        "Algorithm": "A256KW"}, "EncryptionAgent": {"Protocol": "1.0", "EncryptionAlgorithm":
+        "AES_CBC_256"}, "ContentEncryptionIV": "ze9d54UNUPfQKaW8y3rgiQ==", "KeyWrappingMetadata":
+        {"EncryptionLibrary": "Python 12.0.0b2"}, "EncryptionMode": "FullBlob"}'
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer4c2115be/encryption_block_blob4c2115be
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>BlobAlreadyExists</Code><Message>The
+        specified blob already exists.\nRequestId:f7be0618-101e-009d-796e-5c1e40000000\nTime:2019-08-27T00:26:07.8301933Z</Message></Error>"
+    headers:
+      Content-Length:
+      - '220'
+      Content-Type:
+      - application/xml
+      Date:
+      - Tue, 27 Aug 2019 00:26:07 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - 44463c3e-c861-11e9-98b5-2816a845e8c6
+      x-ms-error-code:
+      - BlobAlreadyExists
+      x-ms-request-id:
+      - f7be0618-101e-009d-796e-5c1e40000000
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 409
+      message: The specified blob already exists.
 version: 1

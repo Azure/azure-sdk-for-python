@@ -317,4 +317,338 @@ interactions:
     status:
       code: 202
       message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 5e0ad870-c861-11e9-a13f-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:26:52 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/copyblobcontainer?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Tue, 27 Aug 2019 00:26:50 GMT
+      ETag:
+      - '"0x8D72A85416E96FA"'
+      Last-Modified:
+      - Tue, 27 Aug 2019 00:26:51 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - 5e0ad870-c861-11e9-a13f-2816a845e8c6
+      x-ms-request-id:
+      - 7eb0848c-e01e-0029-6a6e-5c1242000000
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 5e3b3d46-c861-11e9-9300-2816a845e8c6
+      x-ms-copy-source:
+      - http://www.gutenberg.org/files/59466/59466-0.txt
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:26:52 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/copyblobcontainer/59466-0.txt
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Tue, 27 Aug 2019 00:26:51 GMT
+      ETag:
+      - '"0x8D72A854199FE17"'
+      Last-Modified:
+      - Tue, 27 Aug 2019 00:26:51 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - 5e3b3d46-c861-11e9-9300-2816a845e8c6
+      x-ms-copy-id:
+      - b31b1df7-d878-4302-b9f1-e9f980c53dfa
+      x-ms-copy-status:
+      - pending
+      x-ms-request-id:
+      - 7eb084de-e01e-0029-2c6e-5c1242000000
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 5e65dac0-c861-11e9-a059-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:26:53 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: HEAD
+    uri: https://blobstoragename.blob.core.windows.net/copyblobcontainer/59466-0.txt
+  response:
+    body:
+      string: ''
+    headers:
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '0'
+      Content-Type:
+      - text/plain; charset=UTF-8
+      Date:
+      - Tue, 27 Aug 2019 00:26:51 GMT
+      ETag:
+      - '"0x8D72A854199FE17"'
+      Last-Modified:
+      - Tue, 27 Aug 2019 00:26:51 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Vary:
+      - Origin
+      x-ms-access-tier:
+      - Hot
+      x-ms-access-tier-inferred:
+      - 'true'
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-client-request-id:
+      - 5e65dac0-c861-11e9-a059-2816a845e8c6
+      x-ms-copy-id:
+      - b31b1df7-d878-4302-b9f1-e9f980c53dfa
+      x-ms-copy-progress:
+      - 0/439274
+      x-ms-copy-source:
+      - http://www.gutenberg.org/files/59466/59466-0.txt
+      x-ms-copy-status:
+      - pending
+      x-ms-creation-time:
+      - Tue, 27 Aug 2019 00:26:51 GMT
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-request-id:
+      - 7eb08568-e01e-0029-276e-5c1242000000
+      x-ms-server-encrypted:
+      - 'true'
+      x-ms-tag-count:
+      - '0'
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 5e711db8-c861-11e9-85de-2816a845e8c6
+      x-ms-copy-action:
+      - abort
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:26:53 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/copyblobcontainer/59466-0.txt?copyid=b31b1df7-d878-4302-b9f1-e9f980c53dfa&comp=copy
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Tue, 27 Aug 2019 00:26:51 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - 5e711db8-c861-11e9-85de-2816a845e8c6
+      x-ms-request-id:
+      - 7eb0858c-e01e-0029-456e-5c1242000000
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 204
+      message: No Content
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 5e80f178-c861-11e9-89ef-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:26:53 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: HEAD
+    uri: https://blobstoragename.blob.core.windows.net/copyblobcontainer/59466-0.txt
+  response:
+    body:
+      string: ''
+    headers:
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '0'
+      Content-Type:
+      - text/plain; charset=UTF-8
+      Date:
+      - Tue, 27 Aug 2019 00:26:51 GMT
+      ETag:
+      - '"0x8D72A8541B44194"'
+      Last-Modified:
+      - Tue, 27 Aug 2019 00:26:51 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Vary:
+      - Origin
+      x-ms-access-tier:
+      - Hot
+      x-ms-access-tier-inferred:
+      - 'true'
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-client-request-id:
+      - 5e80f178-c861-11e9-89ef-2816a845e8c6
+      x-ms-copy-completion-time:
+      - Tue, 27 Aug 2019 00:26:51 GMT
+      x-ms-copy-id:
+      - b31b1df7-d878-4302-b9f1-e9f980c53dfa
+      x-ms-copy-progress:
+      - 0/439274
+      x-ms-copy-source:
+      - http://www.gutenberg.org/files/59466/59466-0.txt
+      x-ms-copy-status:
+      - aborted
+      x-ms-creation-time:
+      - Tue, 27 Aug 2019 00:26:51 GMT
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-request-id:
+      - 7eb085af-e01e-0029-676e-5c1242000000
+      x-ms-server-encrypted:
+      - 'true'
+      x-ms-tag-count:
+      - '0'
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 5e8ea286-c861-11e9-9386-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:26:53 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: DELETE
+    uri: https://blobstoragename.blob.core.windows.net/copyblobcontainer?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Tue, 27 Aug 2019 00:26:51 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - 5e8ea286-c861-11e9-9386-2816a845e8c6
+      x-ms-request-id:
+      - 7eb085d3-e01e-0029-066e-5c1242000000
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 202
+      message: Accepted
 version: 1

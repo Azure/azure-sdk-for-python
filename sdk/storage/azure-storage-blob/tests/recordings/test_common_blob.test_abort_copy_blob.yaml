@@ -208,9 +208,8 @@ interactions:
     uri: https://remotestoragename.blob.core.windows.net/utcontainer207e0f24/59466-0.txt
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The\
-        \ range specified is invalid for the current size of the resource.\nRequestId:38a3c49b-a01e-002e-7fd7-22e4c7000000\n\
-        Time:2019-06-14T17:34:42.8835983Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The
+        range specified is invalid for the current size of the resource.\nRequestId:38a3c49b-a01e-002e-7fd7-22e4c7000000\nTime:2019-06-14T17:34:42.8835983Z</Message></Error>"
     headers:
       Content-Length:
       - '249'
@@ -410,9 +409,8 @@ interactions:
     uri: https://storagename.blob.core.windows.net/utcontainer207e0f24/59466-0.txt
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The\
-        \ range specified is invalid for the current size of the resource.\nRequestId:c003fef3-701e-00c9-7ee0-22f4ca000000\n\
-        Time:2019-06-14T18:37:18.7571278Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The
+        range specified is invalid for the current size of the resource.\nRequestId:c003fef3-701e-00c9-7ee0-22f4ca000000\nTime:2019-06-14T18:37:18.7571278Z</Message></Error>"
     headers:
       Content-Length:
       - '249'
@@ -710,9 +708,8 @@ interactions:
     uri: https://storagename.blob.core.windows.net/utcontainer207e0f24/59466-0.txt
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The\
-        \ range specified is invalid for the current size of the resource.\nRequestId:896f4831-301e-004d-6fe7-22a2e2000000\n\
-        Time:2019-06-14T19:28:30.3052442Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The
+        range specified is invalid for the current size of the resource.\nRequestId:896f4831-301e-004d-6fe7-22a2e2000000\nTime:2019-06-14T19:28:30.3052442Z</Message></Error>"
     headers:
       Content-Length:
       - '249'
@@ -1010,9 +1007,8 @@ interactions:
     uri: https://storagename.blob.core.windows.net/utcontainer207e0f24/59466-0.txt
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The\
-        \ range specified is invalid for the current size of the resource.\nRequestId:f35f0b80-d01e-00a9-69e8-22b1e8000000\n\
-        Time:2019-06-14T19:38:58.5989232Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The
+        range specified is invalid for the current size of the resource.\nRequestId:f35f0b80-d01e-00a9-69e8-22b1e8000000\nTime:2019-06-14T19:38:58.5989232Z</Message></Error>"
     headers:
       Content-Length:
       - '249'
@@ -1212,9 +1208,8 @@ interactions:
     uri: https://storagename.blob.core.windows.net/utcontainer207e0f24/59466-0.txt
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The\
-        \ range specified is invalid for the current size of the resource.\nRequestId:9618973e-b01e-00d4-6fe8-222d20000000\n\
-        Time:2019-06-14T19:40:04.1938409Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The
+        range specified is invalid for the current size of the resource.\nRequestId:9618973e-b01e-00d4-6fe8-222d20000000\nTime:2019-06-14T19:40:04.1938409Z</Message></Error>"
     headers:
       Content-Length:
       - '249'
@@ -1300,6 +1295,301 @@ interactions:
       - 'true'
       x-ms-version:
       - '2018-03-28'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 9e1615d2-c861-11e9-b62f-2816a845e8c6
+      x-ms-copy-source:
+      - http://www.gutenberg.org/files/59466/59466-0.txt
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:28:40 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer207e0f24/59466-0.txt
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Tue, 27 Aug 2019 00:28:38 GMT
+      ETag:
+      - '"0x8D72A85819450EA"'
+      Last-Modified:
+      - Tue, 27 Aug 2019 00:28:38 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - 9e1615d2-c861-11e9-b62f-2816a845e8c6
+      x-ms-copy-id:
+      - 778a2696-15d4-4aa2-be84-2c9739f2cee8
+      x-ms-copy-status:
+      - pending
+      x-ms-request-id:
+      - d1e4ff88-601e-0055-316e-5c8f77000000
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 9e607ec2-c861-11e9-aae3-2816a845e8c6
+      x-ms-copy-action:
+      - abort
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:28:40 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer207e0f24/59466-0.txt?copyid=778a2696-15d4-4aa2-be84-2c9739f2cee8&comp=copy
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Date:
+      - Tue, 27 Aug 2019 00:28:38 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - 9e607ec2-c861-11e9-aae3-2816a845e8c6
+      x-ms-request-id:
+      - d1e4ffde-601e-0055-016e-5c8f77000000
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 204
+      message: No Content
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 9e733762-c861-11e9-968d-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:28:40 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: HEAD
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer207e0f24/59466-0.txt
+  response:
+    body:
+      string: ''
+    headers:
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '0'
+      Content-Type:
+      - text/plain; charset=UTF-8
+      Date:
+      - Tue, 27 Aug 2019 00:28:38 GMT
+      ETag:
+      - '"0x8D72A8581A347BF"'
+      Last-Modified:
+      - Tue, 27 Aug 2019 00:28:39 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Vary:
+      - Origin
+      x-ms-access-tier:
+      - Hot
+      x-ms-access-tier-inferred:
+      - 'true'
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-client-request-id:
+      - 9e733762-c861-11e9-968d-2816a845e8c6
+      x-ms-copy-completion-time:
+      - Tue, 27 Aug 2019 00:28:39 GMT
+      x-ms-copy-id:
+      - 778a2696-15d4-4aa2-be84-2c9739f2cee8
+      x-ms-copy-progress:
+      - 0/439274
+      x-ms-copy-source:
+      - http://www.gutenberg.org/files/59466/59466-0.txt
+      x-ms-copy-status:
+      - aborted
+      x-ms-creation-time:
+      - Tue, 27 Aug 2019 00:28:38 GMT
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-request-id:
+      - d1e50041-601e-0055-5a6e-5c8f77000000
+      x-ms-server-encrypted:
+      - 'true'
+      x-ms-tag-count:
+      - '0'
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 9e7e2d66-c861-11e9-a351-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:28:40 GMT
+      x-ms-range:
+      - bytes=0-33554431
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer207e0f24/59466-0.txt
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The
+        range specified is invalid for the current size of the resource.\nRequestId:d1e50060-601e-0055-776e-5c8f77000000\nTime:2019-08-27T00:28:39.1906801Z</Message></Error>"
+    headers:
+      Content-Length:
+      - '249'
+      Content-Range:
+      - bytes */0
+      Content-Type:
+      - application/xml
+      Date:
+      - Tue, 27 Aug 2019 00:28:38 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Vary:
+      - Origin
+      x-ms-client-request-id:
+      - 9e7e2d66-c861-11e9-a351-2816a845e8c6
+      x-ms-error-code:
+      - InvalidRange
+      x-ms-request-id:
+      - d1e50060-601e-0055-776e-5c8f77000000
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 416
+      message: The range specified is invalid for the current size of the resource.
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 9e88fb68-c861-11e9-b6fb-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:28:40 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer207e0f24/59466-0.txt
+  response:
+    body:
+      string: ''
+    headers:
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '0'
+      Content-Type:
+      - text/plain; charset=UTF-8
+      Date:
+      - Tue, 27 Aug 2019 00:28:38 GMT
+      ETag:
+      - '"0x8D72A8581A347BF"'
+      Last-Modified:
+      - Tue, 27 Aug 2019 00:28:39 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Vary:
+      - Origin
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-client-request-id:
+      - 9e88fb68-c861-11e9-b6fb-2816a845e8c6
+      x-ms-copy-completion-time:
+      - Tue, 27 Aug 2019 00:28:39 GMT
+      x-ms-copy-id:
+      - 778a2696-15d4-4aa2-be84-2c9739f2cee8
+      x-ms-copy-progress:
+      - 0/439274
+      x-ms-copy-source:
+      - http://www.gutenberg.org/files/59466/59466-0.txt
+      x-ms-copy-status:
+      - aborted
+      x-ms-creation-time:
+      - Tue, 27 Aug 2019 00:28:38 GMT
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-request-id:
+      - d1e5007d-601e-0055-126e-5c8f77000000
+      x-ms-server-encrypted:
+      - 'true'
+      x-ms-tag-count:
+      - '0'
+      x-ms-version:
+      - '2019-02-02'
     status:
       code: 200
       message: OK

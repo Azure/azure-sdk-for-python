@@ -22,9 +22,8 @@ interactions:
     uri: https://remotestoragename.blob.core.windows.net/%E5%95%8A%E9%BD%84%E4%B8%82%E7%8B%9B%E7%8B%9C?restype=container
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidResourceName</Code><Message>The\
-        \ specifed resource name contains invalid characters.\nRequestId:d82f948a-301e-006f-61d8-22ccd4000000\n\
-        Time:2019-06-14T17:42:57.1140459Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidResourceName</Code><Message>The
+        specifed resource name contains invalid characters.\nRequestId:d82f948a-301e-006f-61d8-22ccd4000000\nTime:2019-06-14T17:42:57.1140459Z</Message></Error>"
     headers:
       Content-Length:
       - '243'
@@ -66,9 +65,8 @@ interactions:
     uri: https://storagename.blob.core.windows.net/%E5%95%8A%E9%BD%84%E4%B8%82%E7%8B%9B%E7%8B%9C?restype=container
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidResourceName</Code><Message>The\
-        \ specifed resource name contains invalid characters.\nRequestId:e82053de-001e-006c-53e1-22cfd3000000\n\
-        Time:2019-06-14T18:49:36.9122160Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidResourceName</Code><Message>The
+        specifed resource name contains invalid characters.\nRequestId:e82053de-001e-006c-53e1-22cfd3000000\nTime:2019-06-14T18:49:36.9122160Z</Message></Error>"
     headers:
       Content-Length:
       - '243'
@@ -110,9 +108,8 @@ interactions:
     uri: https://storagename.blob.core.windows.net/%E5%95%8A%E9%BD%84%E4%B8%82%E7%8B%9B%E7%8B%9C?restype=container
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidResourceName</Code><Message>The\
-        \ specifed resource name contains invalid characters.\nRequestId:b66fe11e-101e-001e-11e6-22beed000000\n\
-        Time:2019-06-14T19:25:30.6927881Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidResourceName</Code><Message>The
+        specifed resource name contains invalid characters.\nRequestId:b66fe11e-101e-001e-11e6-22beed000000\nTime:2019-06-14T19:25:30.6927881Z</Message></Error>"
     headers:
       Content-Length:
       - '243'
@@ -128,6 +125,53 @@ interactions:
       - b66fe11e-101e-001e-11e6-22beed000000
       x-ms-version:
       - '2018-03-28'
+    status:
+      code: 400
+      message: The specifed resource name contains invalid characters.
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - faaa38ca-c862-11e9-8163-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:38:24 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/%E5%95%8A%E9%BD%84%E4%B8%82%E7%8B%9B%E7%8B%9C?restype=container
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidResourceName</Code><Message>The
+        specifed resource name contains invalid characters.\nRequestId:536e05c2-101e-0051-176f-5c7af5000000\nTime:2019-08-27T00:38:23.5251017Z</Message></Error>"
+    headers:
+      Content-Length:
+      - '243'
+      Content-Type:
+      - application/xml
+      Date:
+      - Tue, 27 Aug 2019 00:38:23 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - faaa38ca-c862-11e9-8163-2816a845e8c6
+      x-ms-error-code:
+      - InvalidResourceName
+      x-ms-request-id:
+      - 536e05c2-101e-0051-176f-5c7af5000000
+      x-ms-version:
+      - '2019-02-02'
     status:
       code: 400
       message: The specifed resource name contains invalid characters.

@@ -295,4 +295,164 @@ interactions:
     status:
       code: 206
       message: Partial Content
+- request:
+    body: !!binary |
+      F1BCEoqTlXKFZV9FHafha+pQFpfYJG2Z3Vpki3PZ9JlcasN4YrJY1u9LCSuu++NLc2mtvEPGvRnw
+      qFrX2VA0onr2M9DU2vztIiA/dkAKN1as7KMfti0wVcPd1CGgaPLzKURtWlgSIURv48x1eUDmq+Yb
+      VgLj2YLaozyvFtHZQzOWn43aXAcR8/Kbw6sgvHjT3yqJv8h7jZwvD2rfsI7GYhec8wAhPCFMtmZA
+      Xcpc7ByfqXPe4LadAY2/5uxIaxWaCdxuU8skx0RqXsWGhyDfoYSHRf25PHMQB3hG82MPZkkGeINZ
+      AFBDkeVGk0SBBziO/unKCnlCkOwkRKqocdryRvMoe39hxbJQEfMGxEMNd8j8ZpODfRZHSRbqKuQz
+      Rscx7sEjhT506c5DMPn96+8TIDIiQ6vvzYdm/k544nC4XBqf/ZU35e7KJa8/UOUS96oZlRZB8tqz
+      3c2bBfsdyxw7mc49Nt8dIOrt+610I5KvQet3qAWwkx448lrrGaOKEylRyvKDzB+BWF56kar5aWwv
+      iaQVffuzA2NC4JPEFZyRgXePkZ3GOUtVNsozlF8Sc95chk0eiesD9u5eGQvlsFoK+NisPXamgt8x
+      lh7+1braWJgJQJaSB6EQ72WlnwSX2KD4X667JjMsoI4LALMf8aVc+xqbWgBr75k4QWnsWclke7/I
+      hvu9LXHBrVELqbfHG3rVDEjx5qUFEUFZLnzDkc0b2antDbFFILS+JLAY5xGBXXyI7EPz2x/LmKou
+      WuF6FiZEB50b52GQBX+n8ISrCdSMfJo/gq/x+DDvw/N9y7EHNGMbW4KVmo/ZQ44e8dfy7oB4+xWd
+      9Mqh6ZyWvHty8nm7cQwbt8on1iFM0RZ9scRr7MLRgmMch+G3fVc4uZlQFfiZ02qH68BbzkmxNnhO
+      pa22upYMyT1jUh+cpijuyVdA+CSLOTgDeCSNZzR6SATPKDsRae8o7kHQE5e3fJ0z7pK1tBiYC5Vq
+      tfiw3205ZRdw6RT+BcvLCu5Tcvxejg3aX9Nj73Ns7ki2bDuyi2dfYqmdayMhZjwjFEZGVZKBs4bM
+      HRtwe7rgOFS/ERVXitfcleWPGgJXLHo4fPG64QTqj0iJHLduqZ7o3XlqkptDZKakB7Rg5CZfsO30
+      olIWoUIMAZb2KhIvqmB2EqFyjNT53x6SQUsuuAJMQbvoDBFde16PgsVYN79QxWA+IihMP8sO+MLu
+      5qXVTm00/vHs5++nAkvSaHFx1+xm8zX7Ww8ME8SQVaBgVWaGT17xlfqFKTf2TvPOCpvfLKBfmnGU
+      AgxlPhXClsjw8knZxUgf8i/tQ8s1B1ef9xehgOeojfwRudBqh7JHvw2q2PwlaRFi9adpTAMwXg==
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '1024'
+      Content-Type:
+      - application/octet-stream
+      If-None-Match:
+      - '*'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-client-request-id:
+      - c2ac825c-c861-11e9-a054-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:29:41 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/utcontainere22c13d2/blobe22c13d2
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Content-MD5:
+      - rbk/0S3YkBdEvc3gL6wgww==
+      Date:
+      - Tue, 27 Aug 2019 00:29:39 GMT
+      ETag:
+      - '"0x8D72A85A608A2DB"'
+      Last-Modified:
+      - Tue, 27 Aug 2019 00:29:40 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - c2ac825c-c861-11e9-a054-2816a845e8c6
+      x-ms-content-crc64:
+      - xSqnvmwlg7Y=
+      x-ms-request-id:
+      - 37523258-c01e-009f-716e-5c1cba000000
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - c2d5e6d2-c861-11e9-991c-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:29:41 GMT
+      x-ms-range:
+      - bytes=0-33554431
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://blobstoragename.blob.core.windows.net/utcontainere22c13d2/blobe22c13d2
+  response:
+    body:
+      string: !!binary |
+        F1BCEoqTlXKFZV9FHafha+pQFpfYJG2Z3Vpki3PZ9JlcasN4YrJY1u9LCSuu++NLc2mtvEPGvRnw
+        qFrX2VA0onr2M9DU2vztIiA/dkAKN1as7KMfti0wVcPd1CGgaPLzKURtWlgSIURv48x1eUDmq+Yb
+        VgLj2YLaozyvFtHZQzOWn43aXAcR8/Kbw6sgvHjT3yqJv8h7jZwvD2rfsI7GYhec8wAhPCFMtmZA
+        Xcpc7ByfqXPe4LadAY2/5uxIaxWaCdxuU8skx0RqXsWGhyDfoYSHRf25PHMQB3hG82MPZkkGeINZ
+        AFBDkeVGk0SBBziO/unKCnlCkOwkRKqocdryRvMoe39hxbJQEfMGxEMNd8j8ZpODfRZHSRbqKuQz
+        Rscx7sEjhT506c5DMPn96+8TIDIiQ6vvzYdm/k544nC4XBqf/ZU35e7KJa8/UOUS96oZlRZB8tqz
+        3c2bBfsdyxw7mc49Nt8dIOrt+610I5KvQet3qAWwkx448lrrGaOKEylRyvKDzB+BWF56kar5aWwv
+        iaQVffuzA2NC4JPEFZyRgXePkZ3GOUtVNsozlF8Sc95chk0eiesD9u5eGQvlsFoK+NisPXamgt8x
+        lh7+1braWJgJQJaSB6EQ72WlnwSX2KD4X667JjMsoI4LALMf8aVc+xqbWgBr75k4QWnsWclke7/I
+        hvu9LXHBrVELqbfHG3rVDEjx5qUFEUFZLnzDkc0b2antDbFFILS+JLAY5xGBXXyI7EPz2x/LmKou
+        WuF6FiZEB50b52GQBX+n8ISrCdSMfJo/gq/x+DDvw/N9y7EHNGMbW4KVmo/ZQ44e8dfy7oB4+xWd
+        9Mqh6ZyWvHty8nm7cQwbt8on1iFM0RZ9scRr7MLRgmMch+G3fVc4uZlQFfiZ02qH68BbzkmxNnhO
+        pa22upYMyT1jUh+cpijuyVdA+CSLOTgDeCSNZzR6SATPKDsRae8o7kHQE5e3fJ0z7pK1tBiYC5Vq
+        tfiw3205ZRdw6RT+BcvLCu5Tcvxejg3aX9Nj73Ns7ki2bDuyi2dfYqmdayMhZjwjFEZGVZKBs4bM
+        HRtwe7rgOFS/ERVXitfcleWPGgJXLHo4fPG64QTqj0iJHLduqZ7o3XlqkptDZKakB7Rg5CZfsO30
+        olIWoUIMAZb2KhIvqmB2EqFyjNT53x6SQUsuuAJMQbvoDBFde16PgsVYN79QxWA+IihMP8sO+MLu
+        5qXVTm00/vHs5++nAkvSaHFx1+xm8zX7Ww8ME8SQVaBgVWaGT17xlfqFKTf2TvPOCpvfLKBfmnGU
+        AgxlPhXClsjw8knZxUgf8i/tQ8s1B1ef9xehgOeojfwRudBqh7JHvw2q2PwlaRFi9adpTAMwXg==
+    headers:
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '1024'
+      Content-Range:
+      - bytes 0-1023/1024
+      Content-Type:
+      - application/octet-stream
+      Date:
+      - Tue, 27 Aug 2019 00:29:39 GMT
+      ETag:
+      - '"0x8D72A85A608A2DB"'
+      Last-Modified:
+      - Tue, 27 Aug 2019 00:29:40 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Vary:
+      - Origin
+      x-ms-blob-content-md5:
+      - rbk/0S3YkBdEvc3gL6wgww==
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-client-request-id:
+      - c2d5e6d2-c861-11e9-991c-2816a845e8c6
+      x-ms-creation-time:
+      - Tue, 27 Aug 2019 00:29:40 GMT
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-request-id:
+      - 3752327e-c01e-009f-126e-5c1cba000000
+      x-ms-server-encrypted:
+      - 'true'
+      x-ms-tag-count:
+      - '0'
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 206
+      message: Partial Content
 version: 1

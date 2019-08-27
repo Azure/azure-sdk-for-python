@@ -72,9 +72,8 @@ interactions:
     uri: https://remotestoragename.blob.core.windows.net/utcontainerb88c17ce/blobb88c17ce
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The\
-        \ range specified is invalid for the current size of the resource.\nRequestId:42814499-701e-00af-04d8-224690000000\n\
-        Time:2019-06-14T17:43:21.3805962Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The
+        range specified is invalid for the current size of the resource.\nRequestId:42814499-701e-00af-04d8-224690000000\nTime:2019-06-14T17:43:21.3805962Z</Message></Error>"
     headers:
       Content-Length:
       - '249'
@@ -120,9 +119,8 @@ interactions:
     uri: https://remotestoragename.blob.core.windows.net/utcontainerb88c17ce/blobb88c17ce
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The\
-        \ range specified is invalid for the current size of the resource.\nRequestId:428144a5-701e-00af-0ad8-224690000000\n\
-        Time:2019-06-14T17:43:21.4396379Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The
+        range specified is invalid for the current size of the resource.\nRequestId:428144a5-701e-00af-0ad8-224690000000\nTime:2019-06-14T17:43:21.4396379Z</Message></Error>"
     headers:
       Content-Length:
       - '249'
@@ -218,9 +216,8 @@ interactions:
     uri: https://storagename.blob.core.windows.net/utcontainerb88c17ce/blobb88c17ce
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The\
-        \ range specified is invalid for the current size of the resource.\nRequestId:6bbbffbe-d01e-00e6-04e1-2275f0000000\n\
-        Time:2019-06-14T18:50:09.4062691Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The
+        range specified is invalid for the current size of the resource.\nRequestId:6bbbffbe-d01e-00e6-04e1-2275f0000000\nTime:2019-06-14T18:50:09.4062691Z</Message></Error>"
     headers:
       Content-Length:
       - '249'
@@ -266,9 +263,8 @@ interactions:
     uri: https://storagename.blob.core.windows.net/utcontainerb88c17ce/blobb88c17ce
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The\
-        \ range specified is invalid for the current size of the resource.\nRequestId:6bbbffe7-d01e-00e6-2ce1-2275f0000000\n\
-        Time:2019-06-14T18:50:09.4633104Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The
+        range specified is invalid for the current size of the resource.\nRequestId:6bbbffe7-d01e-00e6-2ce1-2275f0000000\nTime:2019-06-14T18:50:09.4633104Z</Message></Error>"
     headers:
       Content-Length:
       - '249'
@@ -288,6 +284,164 @@ interactions:
       - 6bbbffe7-d01e-00e6-2ce1-2275f0000000
       x-ms-version:
       - '2018-03-28'
+    status:
+      code: 416
+      message: The range specified is invalid for the current size of the resource.
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Content-Type:
+      - application/octet-stream
+      If-None-Match:
+      - '*'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-client-request-id:
+      - 305a22ba-c863-11e9-9369-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:39:55 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/utcontainerb88c17ce/blobb88c17ce
+  response:
+    body:
+      string: ''
+    headers:
+      Content-Length:
+      - '0'
+      Content-MD5:
+      - 1B2M2Y8AsgTpgAmY7PhCfg==
+      Date:
+      - Tue, 27 Aug 2019 00:39:53 GMT
+      ETag:
+      - '"0x8D72A8713B9C4FF"'
+      Last-Modified:
+      - Tue, 27 Aug 2019 00:39:53 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - 305a22ba-c863-11e9-9369-2816a845e8c6
+      x-ms-content-crc64:
+      - AAAAAAAAAAA=
+      x-ms-request-id:
+      - 7035da4b-701e-00c9-2c6f-5cf4ca000000
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 3086b84c-c863-11e9-ac7d-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:39:55 GMT
+      x-ms-range:
+      - bytes=0-5
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://blobstoragename.blob.core.windows.net/utcontainerb88c17ce/blobb88c17ce
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The
+        range specified is invalid for the current size of the resource.\nRequestId:7035da74-701e-00c9-506f-5cf4ca000000\nTime:2019-08-27T00:39:53.6959829Z</Message></Error>"
+    headers:
+      Content-Length:
+      - '249'
+      Content-Range:
+      - bytes */0
+      Content-Type:
+      - application/xml
+      Date:
+      - Tue, 27 Aug 2019 00:39:53 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Vary:
+      - Origin
+      x-ms-client-request-id:
+      - 3086b84c-c863-11e9-ac7d-2816a845e8c6
+      x-ms-error-code:
+      - InvalidRange
+      x-ms-request-id:
+      - 7035da74-701e-00c9-506f-5cf4ca000000
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 416
+      message: The range specified is invalid for the current size of the resource.
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 309333f0-c863-11e9-8b91-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:39:55 GMT
+      x-ms-range:
+      - bytes=3-5
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://blobstoragename.blob.core.windows.net/utcontainerb88c17ce/blobb88c17ce
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The
+        range specified is invalid for the current size of the resource.\nRequestId:7035dab5-701e-00c9-0b6f-5cf4ca000000\nTime:2019-08-27T00:39:53.7700354Z</Message></Error>"
+    headers:
+      Content-Length:
+      - '249'
+      Content-Range:
+      - bytes */0
+      Content-Type:
+      - application/xml
+      Date:
+      - Tue, 27 Aug 2019 00:39:53 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      Vary:
+      - Origin
+      x-ms-client-request-id:
+      - 309333f0-c863-11e9-8b91-2816a845e8c6
+      x-ms-error-code:
+      - InvalidRange
+      x-ms-request-id:
+      - 7035dab5-701e-00c9-0b6f-5cf4ca000000
+      x-ms-version:
+      - '2019-02-02'
     status:
       code: 416
       message: The range specified is invalid for the current size of the resource.

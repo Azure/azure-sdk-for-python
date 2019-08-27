@@ -49,4 +49,55 @@ interactions:
         - /containerb8131f6c
         - restype=container&comp=metadata
         - ''
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - 23d44998-c863-11e9-9e56-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:39:33 GMT
+      x-ms-meta-hello:
+      - world
+      x-ms-meta-number:
+      - '43'
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/containerb8131f6c?restype=container&comp=metadata
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
+        specified container does not exist.\nRequestId:111ebc46-001e-0082-506f-5cc550000000\nTime:2019-08-27T00:39:32.4486656Z</Message></Error>"
+    headers:
+      ? !!python/object/new:multidict._istr.istr
+      - Content-Length
+      : '225'
+      ? !!python/object/new:multidict._istr.istr
+      - Content-Type
+      : application/xml
+      ? !!python/object/new:multidict._istr.istr
+      - Date
+      : Tue, 27 Aug 2019 00:39:32 GMT
+      ? !!python/object/new:multidict._istr.istr
+      - Server
+      : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id: 23d44998-c863-11e9-9e56-2816a845e8c6
+      x-ms-error-code: ContainerNotFound
+      x-ms-request-id: 111ebc46-001e-0082-506f-5cc550000000
+      x-ms-version: '2019-02-02'
+    status:
+      code: 404
+      message: The specified container does not exist.
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - amqptest.blob.core.windows.net
+        - /containerb8131f6c
+        - restype=container&comp=metadata
+        - ''
 version: 1

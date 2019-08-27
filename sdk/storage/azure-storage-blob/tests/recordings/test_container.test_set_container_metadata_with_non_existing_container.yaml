@@ -26,9 +26,8 @@ interactions:
     uri: https://remotestoragename.blob.core.windows.net/containerd41cef?restype=container&comp=metadata
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The\
-        \ specified container does not exist.\nRequestId:af850ae0-901e-00e1-62d8-228375000000\n\
-        Time:2019-06-14T17:42:56.6601840Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
+        specified container does not exist.\nRequestId:af850ae0-901e-00e1-62d8-228375000000\nTime:2019-06-14T17:42:56.6601840Z</Message></Error>"
     headers:
       Content-Length:
       - '225'
@@ -74,9 +73,8 @@ interactions:
     uri: https://storagename.blob.core.windows.net/containerd41cef?restype=container&comp=metadata
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The\
-        \ specified container does not exist.\nRequestId:0e7ae8a8-901e-0040-27e1-224dee000000\n\
-        Time:2019-06-14T18:49:36.4565604Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
+        specified container does not exist.\nRequestId:0e7ae8a8-901e-0040-27e1-224dee000000\nTime:2019-06-14T18:49:36.4565604Z</Message></Error>"
     headers:
       Content-Length:
       - '225'
@@ -122,9 +120,8 @@ interactions:
     uri: https://storagename.blob.core.windows.net/containerd41cef?restype=container&comp=metadata
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The\
-        \ specified container does not exist.\nRequestId:07adc4c5-c01e-003e-42e6-22d221000000\n\
-        Time:2019-06-14T19:25:30.1669939Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
+        specified container does not exist.\nRequestId:07adc4c5-c01e-003e-42e6-22d221000000\nTime:2019-06-14T19:25:30.1669939Z</Message></Error>"
     headers:
       Content-Length:
       - '225'
@@ -140,6 +137,57 @@ interactions:
       - 07adc4c5-c01e-003e-42e6-22d221000000
       x-ms-version:
       - '2018-03-28'
+    status:
+      code: 404
+      message: The specified container does not exist.
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - fa4cc998-c862-11e9-8e14-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:38:24 GMT
+      x-ms-meta-hello:
+      - world
+      x-ms-meta-number:
+      - '43'
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/containerd41cef?restype=container&comp=metadata
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
+        specified container does not exist.\nRequestId:020929f6-201e-0034-2c6f-5ccba8000000\nTime:2019-08-27T00:38:22.9077523Z</Message></Error>"
+    headers:
+      Content-Length:
+      - '225'
+      Content-Type:
+      - application/xml
+      Date:
+      - Tue, 27 Aug 2019 00:38:22 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - fa4cc998-c862-11e9-8e14-2816a845e8c6
+      x-ms-error-code:
+      - ContainerNotFound
+      x-ms-request-id:
+      - 020929f6-201e-0034-2c6f-5ccba8000000
+      x-ms-version:
+      - '2019-02-02'
     status:
       code: 404
       message: The specified container does not exist.

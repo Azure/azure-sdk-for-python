@@ -26,9 +26,8 @@ interactions:
     uri: https://remotestoragename.blob.core.windows.net/utcontainer2aa214c8/blob2aa214c8
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidHeaderValue</Code><Message>The\
-        \ value for one of the HTTP headers is not in the correct format.\nRequestId:d1fa71c9-801e-0032-2ad8-223cd0000000\n\
-        Time:2019-06-14T17:43:42.2642316Z</Message><HeaderName>x-ms-blob-content-length</HeaderName><HeaderValue>8796093022209</HeaderValue></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidHeaderValue</Code><Message>The
+        value for one of the HTTP headers is not in the correct format.\nRequestId:d1fa71c9-801e-0032-2ad8-223cd0000000\nTime:2019-06-14T17:43:42.2642316Z</Message><HeaderName>x-ms-blob-content-length</HeaderName><HeaderValue>8796093022209</HeaderValue></Error>"
     headers:
       Content-Length:
       - '343'
@@ -74,9 +73,8 @@ interactions:
     uri: https://storagename.blob.core.windows.net/utcontainer2aa214c8/blob2aa214c8
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidHeaderValue</Code><Message>The\
-        \ value for one of the HTTP headers is not in the correct format.\nRequestId:58920d10-501e-0074-54e2-22e246000000\n\
-        Time:2019-06-14T18:50:31.8469247Z</Message><HeaderName>x-ms-blob-content-length</HeaderName><HeaderValue>8796093022209</HeaderValue></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidHeaderValue</Code><Message>The
+        value for one of the HTTP headers is not in the correct format.\nRequestId:58920d10-501e-0074-54e2-22e246000000\nTime:2019-06-14T18:50:31.8469247Z</Message><HeaderName>x-ms-blob-content-length</HeaderName><HeaderValue>8796093022209</HeaderValue></Error>"
     headers:
       Content-Length:
       - '343'
@@ -92,6 +90,57 @@ interactions:
       - 58920d10-501e-0074-54e2-22e246000000
       x-ms-version:
       - '2018-03-28'
+    status:
+      code: 400
+      message: The value for one of the HTTP headers is not in the correct format.
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-blob-content-length:
+      - '8796093022209'
+      x-ms-blob-type:
+      - PageBlob
+      x-ms-client-request-id:
+      - 4b91bc8c-c863-11e9-824f-2816a845e8c6
+      x-ms-date:
+      - Tue, 27 Aug 2019 00:40:40 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://blobstoragename.blob.core.windows.net/utcontainer2aa214c8/blob2aa214c8
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidHeaderValue</Code><Message>The
+        value for one of the HTTP headers is not in the correct format.\nRequestId:76d47814-101e-0015-1670-5ca699000000\nTime:2019-08-27T00:40:39.2775188Z</Message><HeaderName>x-ms-blob-content-length</HeaderName><HeaderValue>8796093022209</HeaderValue></Error>"
+    headers:
+      Content-Length:
+      - '343'
+      Content-Type:
+      - application/xml
+      Date:
+      - Tue, 27 Aug 2019 00:40:38 GMT
+      Server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - 4b91bc8c-c863-11e9-824f-2816a845e8c6
+      x-ms-error-code:
+      - InvalidHeaderValue
+      x-ms-request-id:
+      - 76d47814-101e-0015-1670-5ca699000000
+      x-ms-version:
+      - '2019-02-02'
     status:
       code: 400
       message: The value for one of the HTTP headers is not in the correct format.
