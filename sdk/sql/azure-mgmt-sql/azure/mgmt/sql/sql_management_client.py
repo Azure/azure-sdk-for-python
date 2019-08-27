@@ -96,6 +96,7 @@ from .operations.managed_database_sensitivity_labels_operations import ManagedDa
 from .operations.instance_pools_operations import InstancePoolsOperations
 from .operations.usages_operations import UsagesOperations
 from .operations.managed_instances_operations import ManagedInstancesOperations
+from .operations.private_link_resources_operations import PrivateLinkResourcesOperations
 from . import models
 
 
@@ -304,6 +305,8 @@ class SqlManagementClient(SDKClient):
     :vartype usages: azure.mgmt.sql.operations.UsagesOperations
     :ivar managed_instances: ManagedInstances operations
     :vartype managed_instances: azure.mgmt.sql.operations.ManagedInstancesOperations
+    :ivar private_link_resources: PrivateLinkResources operations
+    :vartype private_link_resources: azure.mgmt.sql.operations.PrivateLinkResourcesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -489,4 +492,6 @@ class SqlManagementClient(SDKClient):
         self.usages = UsagesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.managed_instances = ManagedInstancesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.private_link_resources = PrivateLinkResourcesOperations(
             self._client, self.config, self._serialize, self._deserialize)

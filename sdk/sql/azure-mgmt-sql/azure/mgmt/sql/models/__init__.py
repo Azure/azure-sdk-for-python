@@ -166,6 +166,8 @@ try:
     from .usage_py3 import Usage
     from .managed_instance_py3 import ManagedInstance
     from .managed_instance_update_py3 import ManagedInstanceUpdate
+    from .private_link_resource_properties_py3 import PrivateLinkResourceProperties
+    from .private_link_resource_py3 import PrivateLinkResource
 except (SyntaxError, ImportError):
     from .recoverable_database import RecoverableDatabase
     from .restorable_dropped_database import RestorableDroppedDatabase
@@ -323,6 +325,8 @@ except (SyntaxError, ImportError):
     from .usage import Usage
     from .managed_instance import ManagedInstance
     from .managed_instance_update import ManagedInstanceUpdate
+    from .private_link_resource_properties import PrivateLinkResourceProperties
+    from .private_link_resource import PrivateLinkResource
 from .recoverable_database_paged import RecoverableDatabasePaged
 from .restorable_dropped_database_paged import RestorableDroppedDatabasePaged
 from .server_paged import ServerPaged
@@ -391,6 +395,7 @@ from .server_vulnerability_assessment_paged import ServerVulnerabilityAssessment
 from .instance_pool_paged import InstancePoolPaged
 from .usage_paged import UsagePaged
 from .managed_instance_paged import ManagedInstancePaged
+from .private_link_resource_paged import PrivateLinkResourcePaged
 from .sql_management_client_enums import (
     CheckNameAvailabilityReason,
     ServerConnectionType,
@@ -632,6 +637,8 @@ __all__ = [
     'Usage',
     'ManagedInstance',
     'ManagedInstanceUpdate',
+    'PrivateLinkResourceProperties',
+    'PrivateLinkResource',
     'RecoverableDatabasePaged',
     'RestorableDroppedDatabasePaged',
     'ServerPaged',
@@ -700,6 +707,7 @@ __all__ = [
     'InstancePoolPaged',
     'UsagePaged',
     'ManagedInstancePaged',
+    'PrivateLinkResourcePaged',
     'CheckNameAvailabilityReason',
     'ServerConnectionType',
     'SecurityAlertPolicyState',
