@@ -41,7 +41,7 @@ class ImdsCredential(_AsyncManagedIdentityBase):
         super().__init__(endpoint=Endpoints.IMDS, config=config, **kwargs)
         self._endpoint_available = None  # type: Optional[bool]
 
-    async def get_token(self, *scopes: str) -> AccessToken:
+    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:  # pylint:disable=unused-argument
         """
         Asynchronously request an access token for `scopes`.
 
@@ -96,7 +96,7 @@ class MsiCredential(_AsyncManagedIdentityBase):
         if self._endpoint_available:
             super().__init__(endpoint=endpoint, config=config, **kwargs)  # type: ignore
 
-    async def get_token(self, *scopes: str) -> AccessToken:
+    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:  # pylint:disable=unused-argument
         """
         Asynchronously request an access token for `scopes`.
 

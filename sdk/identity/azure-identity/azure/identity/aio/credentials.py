@@ -33,7 +33,7 @@ class ClientSecretCredential(ClientSecretCredentialBase):
         super(ClientSecretCredential, self).__init__(client_id, secret, tenant_id, **kwargs)
         self._client = AsyncAuthnClient(Endpoints.AAD_OAUTH2_V2_FORMAT.format(tenant_id), **kwargs)
 
-    async def get_token(self, *scopes: str) -> AccessToken:
+    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:  # pylint:disable=unused-argument
         """
         Asynchronously request an access token for `scopes`.
 
@@ -61,7 +61,7 @@ class CertificateCredential(CertificateCredentialBase):
         super(CertificateCredential, self).__init__(client_id, tenant_id, certificate_path, **kwargs)
         self._client = AsyncAuthnClient(Endpoints.AAD_OAUTH2_V2_FORMAT.format(tenant_id), **kwargs)
 
-    async def get_token(self, *scopes: str) -> AccessToken:
+    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:  # pylint:disable=unused-argument
         """
         Asynchronously request an access token for `scopes`.
 
@@ -116,7 +116,7 @@ class EnvironmentCredential:
                 **kwargs
             )
 
-    async def get_token(self, *scopes: str) -> AccessToken:
+    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:  # pylint:disable=unused-argument
         """
         Asynchronously request an access token for `scopes`.
 
@@ -147,7 +147,7 @@ class ManagedIdentityCredential(object):
     def __init__(self, client_id: Optional[str] = None, **kwargs: Any) -> None:
         pass
 
-    async def get_token(self, *scopes: str) -> AccessToken:  # pylint:disable=unused-argument,no-self-use
+    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:  # pylint:disable=unused-argument,no-self-use
         """
         Asynchronously request an access token for `scopes`.
 
@@ -167,7 +167,7 @@ class ChainedTokenCredential(SyncChainedTokenCredential):
     :type credentials: :class:`azure.core.credentials.TokenCredential`
     """
 
-    async def get_token(self, *scopes: str) -> AccessToken:
+    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:  # pylint:disable=unused-argument
         """
         Asynchronously request a token from each credential, in order, returning the first token
         received. If none provides a token, raises :class:`azure.core.exceptions.ClientAuthenticationError`

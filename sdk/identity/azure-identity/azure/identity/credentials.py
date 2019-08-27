@@ -46,8 +46,8 @@ class ClientSecretCredential(ClientSecretCredentialBase):
         super(ClientSecretCredential, self).__init__(client_id, secret, tenant_id, **kwargs)
         self._client = AuthnClient(Endpoints.AAD_OAUTH2_V2_FORMAT.format(tenant_id), **kwargs)
 
-    def get_token(self, *scopes):
-        # type (*str) -> AccessToken
+    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
+        # type: (*str, **Any) -> AccessToken
         """
         Request an access token for `scopes`.
 
@@ -76,8 +76,8 @@ class CertificateCredential(CertificateCredentialBase):
         self._client = AuthnClient(Endpoints.AAD_OAUTH2_V2_FORMAT.format(tenant_id), **kwargs)
         super(CertificateCredential, self).__init__(client_id, tenant_id, certificate_path, **kwargs)
 
-    def get_token(self, *scopes):
-        # type (*str) -> AccessToken
+    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
+        # type: (*str, **Any) -> AccessToken
         """
         Request an access token for `scopes`.
 
@@ -141,8 +141,8 @@ class EnvironmentCredential:
                 **kwargs
             )
 
-    def get_token(self, *scopes):
-        # type (*str) -> AccessToken
+    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
+        # type: (*str, **Any) -> AccessToken
         """
         Request an access token for `scopes`.
 
@@ -174,8 +174,8 @@ class ManagedIdentityCredential(object):
         # type: (Optional[str], Any) -> None
         pass
 
-    def get_token(self, *scopes):  # pylint:disable=unused-argument,no-self-use
-        # type (*str) -> AccessToken
+    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument,no-self-use
+        # type: (*str, **Any) -> AccessToken
         """
         Request an access token for `scopes`.
 
@@ -201,8 +201,8 @@ class ChainedTokenCredential(object):
             raise ValueError("at least one credential is required")
         self.credentials = credentials
 
-    def get_token(self, *scopes):
-        # type (*str) -> AccessToken
+    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
+        # type: (*str, **Any) -> AccessToken
         """
         Request a token from each chained credential, in order, returning the first token received.
         If none provides a token, raises :class:`azure.core.exceptions.ClientAuthenticationError` with an
@@ -269,8 +269,8 @@ class DeviceCodeCredential(PublicClientCredential):
         super(DeviceCodeCredential, self).__init__(client_id=client_id, **kwargs)
 
     @wrap_exceptions
-    def get_token(self, *scopes):
-        # type (*str) -> AccessToken
+    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
+        # type: (*str, **Any) -> AccessToken
         """
         Request an access token for `scopes`. This credential won't cache the token. Each call begins a new
         authentication flow.
@@ -342,8 +342,8 @@ class UsernamePasswordCredential(PublicClientCredential):
         self._password = password
 
     @wrap_exceptions
-    def get_token(self, *scopes):
-        # type (*str) -> AccessToken
+    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
+        # type: (*str, **Any) -> AccessToken
         """
         Request an access token for `scopes`.
 

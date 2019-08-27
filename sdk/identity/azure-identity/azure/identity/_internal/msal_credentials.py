@@ -50,8 +50,8 @@ class MsalCredential(ABC):
         self._msal_app = None  # type: Optional[msal.ClientApplication]
 
     @abc.abstractmethod
-    def get_token(self, *scopes):
-        # type: (str) -> AccessToken
+    def get_token(self, *scopes, **kwargs):
+        # type: (*str, **Any) -> AccessToken
         pass
 
     @abc.abstractmethod
@@ -77,8 +77,8 @@ class ConfidentialClientCredential(MsalCredential):
     """Wraps an MSAL ConfidentialClientApplication with the TokenCredential API"""
 
     @wrap_exceptions
-    def get_token(self, *scopes):
-        # type: (str) -> AccessToken
+    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
+        # type: (*str, **Any) -> AccessToken
 
         # MSAL requires scopes be a list
         scopes = list(scopes)  # type: ignore
@@ -111,8 +111,8 @@ class PublicClientCredential(MsalCredential):
         )
 
     @abc.abstractmethod
-    def get_token(self, *scopes):
-        # type: (str) -> AccessToken
+    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
+        # type: (*str, **Any) -> AccessToken
         pass
 
     def _get_app(self):
