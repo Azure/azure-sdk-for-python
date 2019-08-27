@@ -15,7 +15,7 @@ from .._user_agent import USER_AGENT
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
-    from typing import Any, Mapping, Optional
+    from typing import Any, Optional
     from azure.core.credentials import TokenCredential
     from azure.core.pipeline.transport import HttpTransport
 
@@ -27,7 +27,7 @@ class KeyVaultClientBase(object):
 
     @staticmethod
     def _create_config(credential, api_version=None, **kwargs):
-        # type: (TokenCredential, Optional[str], Mapping[str, **Any]) -> Configuration
+        # type: (TokenCredential, Optional[str], **Any) -> Configuration
         if api_version is None:
             api_version = KeyVaultClient.DEFAULT_API_VERSION
         config = KeyVaultClient.get_configuration_class(api_version, aio=False)(credential, **kwargs)

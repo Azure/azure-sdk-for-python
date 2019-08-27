@@ -16,7 +16,7 @@ except ImportError:
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
-    from typing import Any, Dict, List, Mapping, Optional, Union
+    from typing import Any, Dict, List, Optional, Union
     from datetime import datetime
     from azure.core.paging import ItemPaged
 

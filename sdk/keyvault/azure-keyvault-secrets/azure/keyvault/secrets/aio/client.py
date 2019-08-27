@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from datetime import datetime
-from typing import Any, AsyncIterable, Mapping, Optional, Dict
+from typing import Any, AsyncIterable, Optional, Dict
 
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.tracing.decorator import distributed_trace
