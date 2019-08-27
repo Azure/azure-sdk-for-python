@@ -20,7 +20,9 @@ from azure.core.exceptions import HttpResponseError
 # How to do this - https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys#createget-credentials)
 #
 # ----------------------------------------------------------------------------------------------------------
-# Sample - demonstrates the basic recover and purge operations on a vault(secret) resource for Azure Key Vault
+# Sample - demonstrates the basic recover and purge operations on a vault(secret) resource for Azure Key Vault. The vault
+# has to be soft-delete enabled to perform the following operations. See for more information about soft delete:
+# # https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete
 #
 # 1. Create a secret (set_secret)
 #
