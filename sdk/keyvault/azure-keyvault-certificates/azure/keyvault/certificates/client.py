@@ -7,7 +7,6 @@
 import base64
 import uuid
 from typing import Any, Dict, List, Mapping, Optional, Iterable
-from datetime import datetime
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.tracing.decorator import distributed_trace
 
@@ -45,8 +44,6 @@ class CertificateClient(KeyVaultClientBase):
             name,  # type: str
             policy,  # type: CertificatePolicy
             enabled=None,  # type: Optional[bool]
-            not_before=None,  # type: Optional[datetime]
-            expires=None, # type: Optional[datetime]
             tags=None,  # type: Optional[Dict[str, str]]
             **kwargs  # type: Mapping[str, Any]
     ):
@@ -62,10 +59,6 @@ class CertificateClient(KeyVaultClientBase):
         :type policy:
          ~azure.security.keyvault.certificates._models.CertificatePolicy
         :param bool enabled: Determines whether the object is enabled.
-        :param not_before: Not before date of the secret in UTC
-        :type not_before: datetime.datetime
-        :param expires: Expiry date of the secret  in UTC.
-        :type expires: datetime.datetime
         :param tags: Application specific metadata in the form of key-value pairs.
         :type tags: dict(str, str)
         :returns: The created CertificateOperation
@@ -82,11 +75,9 @@ class CertificateClient(KeyVaultClientBase):
                 :dedent: 8
         """
 
-        if enabled is not None or not_before is not None or expires is not None:
+        if enabled is not None:
             attributes = self._client.models.CertificateAttributes(
-                enabled=enabled,
-                not_before=not_before,
-                expires=expires
+                enabled=enabled
             )
         else:
             attributes = None
@@ -260,8 +251,6 @@ class CertificateClient(KeyVaultClientBase):
             password=None,  # type: Optional[str]
             policy=None,  # type: Optional[CertificatePolicy]
             enabled=None,  # type: Optional[bool]
-            not_before=None,  # type: Optional[datetime]
-            expires=None,  # type: Optional[datetime]
             tags=None,  # type: Optional[Dict[str, str]]
             **kwargs  # type: Mapping[str, Any]
     ):
@@ -287,19 +276,15 @@ class CertificateClient(KeyVaultClientBase):
          ~azure.security.keyvault.v7_0.models.CertificatePolicy
         :param enabled: Determines whether the object is enabled.
         :type enabled: bool
-        :param not_before: Not before date of the secret in UTC
-        :type not_before: datetime.datetime
-        :param expires: Expiry date of the secret  in UTC.
-        :type expires: datetime.datetime
         :param tags: Application specific metadata in the form of key-value
          pairs.
         :type tags: dict[str, str]
         :returns: The imported Certificate
         :rtype: ~azure.security.keyvault.certificates._models.Certificate
         """
-        if enabled is not None or not_before is not None or expires is not None:
+        if enabled is not None:
             attributes = self._client.models.CertificateAttributes(
-                enabled=enabled, not_before=not_before, expires=expires
+                enabled=enabled
             )
         else:
             attributes = None
@@ -364,8 +349,6 @@ class CertificateClient(KeyVaultClientBase):
             self,
             name,  # type: str
             version=None,   # type: Optional[str]
-            not_before=None,  # type: Optional[datetime]
-            expires=None,  # type: Optional[datetime]
             enabled=None,  # type: Optional[bool]
             tags=None,  # type: Optional[Dict[str, str]]
             **kwargs  # type: Mapping[str, Any]
@@ -382,10 +365,6 @@ class CertificateClient(KeyVaultClientBase):
         :type name: str
         :param version: The version of the certificate.
         :type version: str
-        :param not_before: Not before date of the secret in UTC
-        :type not_before: datetime.datetime
-        :param expires: Expiry date of the secret  in UTC.
-        :type expires: datetime.datetime
         :param enabled: Determines whether the object is enabled.
         :type enabled: bool
         :param tags: Application specific metadata in the form of key-value pairs.
@@ -403,9 +382,9 @@ class CertificateClient(KeyVaultClientBase):
                 :caption: Update a certificate's attributes
                 :dedent: 8
         """
-        if enabled is not None or not_before is not None or expires is not None:
+        if enabled is not None :
             attributes = self._client.models.CertificateAttributes(
-                enabled=enabled, not_before=not_before, expires=expires
+                enabled=enabled
             )
         else:
             attributes = None
@@ -711,8 +690,6 @@ class CertificateClient(KeyVaultClientBase):
         name,  # type: str
         x509_certificates,  # type: List[bytearray]
         enabled=None,  # type: Optional[bool]
-        not_before=None,  # type: Optional[datetime]
-        expires=None,  # type: Optional[datetime]
         tags=None,  # type: Optional[Dict[str, str]]
         **kwargs  # type: Mapping[str, Any]
     ):
@@ -728,10 +705,6 @@ class CertificateClient(KeyVaultClientBase):
         :type x509_certificates: list[bytearray]
         :param enabled: Determines whether the object is enabled.
         :type enabled: bool
-        :param not_before: Not before date of the secret in UTC
-        :type not_before: datetime.datetime
-        :param expires: Expiry date of the secret  in UTC.
-        :type expires: datetime.datetime
         :param tags: Application specific metadata in the form of key-value pairs.
         :type tags: dict[str, str]
         :return: The merged certificate
@@ -739,9 +712,9 @@ class CertificateClient(KeyVaultClientBase):
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
-        if enabled is not None or not_before is not None or expires is not None:
+        if enabled is not None:
             attributes = self._client.models.CertificateAttributes(
-                enabled=enabled, not_before=not_before, expires=expires
+                enabled=enabled
             )
         else:
             attributes = None
