@@ -9,16 +9,16 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .features_operations import FeaturesOperations
-from .examples_operations import ExamplesOperations
-from .model_operations import ModelOperations
-from .apps_operations import AppsOperations
-from .versions_operations import VersionsOperations
-from .train_operations import TrainOperations
-from .permissions_operations import PermissionsOperations
-from .pattern_operations import PatternOperations
-from .settings_operations import SettingsOperations
-from .azure_accounts_operations import AzureAccountsOperations
+from ._features_operations import FeaturesOperations
+from ._examples_operations import ExamplesOperations
+from ._model_operations import ModelOperations
+from ._apps_operations import AppsOperations
+from ._versions_operations import VersionsOperations
+from ._train_operations import TrainOperations
+from ._permissions_operations import PermissionsOperations
+from ._pattern_operations import PatternOperations
+from ._settings_operations import SettingsOperations
+from ._azure_accounts_operations import AzureAccountsOperations
 
 __all__ = [
     'FeaturesOperations',
