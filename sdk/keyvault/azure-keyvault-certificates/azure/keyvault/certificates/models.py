@@ -6,7 +6,7 @@
 # pylint:disable=too-many-lines
 
 from datetime import datetime
-from typing import Any, Dict, Mapping, Optional
+from typing import Any, Dict, Optional
 
 from ._shared import parse_vault_id
 from ._shared._generated.v7_0 import models
@@ -70,7 +70,7 @@ class Error(object):
     """The key vault server error."""
 
     def __init__(self, code, message, inner_error):
-        # type: (str, str, models.Error, Mapping[str, Any]) -> None
+        # type: (str, str, models.Error, **Any) -> None
         self._code = code
         self._message = message
         self._inner_error = inner_error
@@ -103,7 +103,7 @@ class Error(object):
 class CertificateBase(object):
     """Certificate base consists of a certificates metadata."""
     def __init__(self, attributes=None, cert_id=None, thumbprint=None, **kwargs):
-        # type: (Optional[models.CertificateAttributes], Optional[str], Optional[bytes], Mapping[str, Any]) -> None
+        # type: (Optional[models.CertificateAttributes], Optional[str], Optional[bytes], **Any) -> None
         self._attributes = attributes
         self._id = cert_id
         self._vault_id = parse_vault_id(cert_id)
@@ -229,7 +229,7 @@ class Certificate(CertificateBase):
         secret_id=None,  # type: Optional[str]
         attributes=None,  # type: Optional[CertificateAttributes]
         cer=None,  # type: Optional[bytes]
-        **kwargs  # type: Mapping[str, Any]
+        **kwargs  # type: **Any
     ):
         # type: (...) -> None
         super(Certificate, self).__init__(attributes=attributes, cert_id=cert_id, thumbprint=thumbprint, **kwargs)
@@ -882,7 +882,7 @@ class Issuer(IssuerBase):
         password=None,  # type: Optional[str]
         organization_id=None,  # type: Optional[str]
         admin_details=None,  # type: Optional[List[AdministratorDetails]]
-        **kwargs  # type: Mapping[str, Any]
+        **kwargs  # type: **Any
     ):
         # type: (...) -> None
         super(Issuer, self).__init__(issuer_id=issuer_id, provider=provider, **kwargs)
@@ -1100,7 +1100,7 @@ class DeletedCertificate(Certificate):
         deleted_date=None,  # type: Optional[datetime]
         recovery_id=None,  # type: Optional[str]
         scheduled_purge_date=None,  # type: Optional[datetime]
-        **kwargs  # type: Mapping[str, Any]
+        **kwargs  # type: **Any
     ):
         # type: (...) -> None
         super(DeletedCertificate, self).__init__(

@@ -5,8 +5,7 @@
 # pylint:disable=too-many-lines,too-many-public-methods
 import base64
 import uuid
-from datetime import datetime
-from typing import Any, AsyncIterable, Mapping, Optional, Iterable, List, Dict
+from typing import Any, AsyncIterable, Optional, Iterable, List, Dict
 
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.tracing.decorator import distributed_trace
@@ -46,7 +45,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         policy: CertificatePolicy,
         enabled: Optional[bool] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs: Mapping[str, Any]
+        **kwargs: "**Any"
     ) -> CertificateOperation:
         """Creates a new certificate.
 
@@ -98,7 +97,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         self,
         name: str,
         version: Optional[str] = None,
-        **kwargs: Mapping[str, Any]
+        **kwargs: "**Any"
     ) -> Certificate:
         """Gets information about a certificate.
 
@@ -135,7 +134,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         return Certificate._from_certificate_bundle(certificate_bundle=bundle)
 
     @distributed_trace_async
-    async def delete_certificate(self, name: str, **kwargs: Mapping[str, Any]) -> DeletedCertificate:
+    async def delete_certificate(self, name: str, **kwargs: "**Any") -> DeletedCertificate:
         """Deletes a certificate from the key vault.
 
         Deletes all versions of a certificate object along with its associated
@@ -162,7 +161,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         return DeletedCertificate._from_deleted_certificate_bundle(deleted_certificate_bundle=bundle)
 
     @distributed_trace_async
-    async def get_deleted_certificate(self, name: str, **kwargs: Mapping[str, Any]) -> DeletedCertificate:
+    async def get_deleted_certificate(self, name: str, **kwargs: "**Any") -> DeletedCertificate:
         """Retrieves information about the specified deleted certificate.
 
         Retrieves the deleted certificate information plus its attributes,
@@ -194,7 +193,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         return DeletedCertificate._from_deleted_certificate_bundle(deleted_certificate_bundle=bundle)
 
     @distributed_trace_async
-    async def purge_deleted_certificate(self, name: str, **kwargs: Mapping[str, Any]) -> None:
+    async def purge_deleted_certificate(self, name: str, **kwargs: "**Any") -> None:
         """Permanently deletes the specified deleted certificate.
 
         Performs an irreversible deletion of the specified certificate, without
@@ -212,7 +211,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         await self._client.purge_deleted_certificate(vault_base_url=self.vault_url, certificate_name=name, **kwargs)
 
     @distributed_trace_async
-    async def recover_deleted_certificate(self, name: str, **kwargs: Mapping[str, Any]) -> Certificate:
+    async def recover_deleted_certificate(self, name: str, **kwargs: "**Any") -> Certificate:
         """Recovers the deleted certificate back to its current version under
         /certificates.
 
@@ -252,7 +251,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         policy: Optional[CertificatePolicy] = None,
         enabled: Optional[bool] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs: Mapping[str, Any]
+        **kwargs: "**Any"
         ) -> Certificate:
         """Imports a certificate into a specified key vault.
 
@@ -301,7 +300,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         return Certificate._from_certificate_bundle(certificate_bundle=bundle)
 
     @distributed_trace_async
-    async def get_policy(self, name: str, **kwargs: Mapping[str, Any]) -> CertificatePolicy:
+    async def get_policy(self, name: str, **kwargs: "**Any") -> CertificatePolicy:
         """Gets the policy for a certificate.
 
         Returns the specified certificate policy resources in the key
@@ -326,7 +325,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         self,
         name: str,
         policy: CertificatePolicy,
-        **kwargs: Mapping[str, Any]
+        **kwargs: "**Any"
     ) -> CertificatePolicy:
         """Updates the policy for a certificate.
 
@@ -357,7 +356,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         version: Optional[str] = None,
         enabled: Optional[bool] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs: Mapping[str, Any]
+        **kwargs: "**Any"
     ) -> Certificate:
         """Updates the specified attributes associated with the given certificate.
 
@@ -405,7 +404,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         return Certificate._from_certificate_bundle(certificate_bundle=bundle)
 
     @distributed_trace_async
-    async def backup_certificate(self, name: str, **kwargs: Mapping[str, Any]) -> bytes:
+    async def backup_certificate(self, name: str, **kwargs: "**Any") -> bytes:
         """Backs up the specified certificate.
 
         Requests that a backup of the specified certificate be downloaded
@@ -436,7 +435,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         return backup_result.value
 
     @distributed_trace_async
-    async def restore_certificate(self, backup: bytes, **kwargs: Mapping[str, Any]) -> Certificate:
+    async def restore_certificate(self, backup: bytes, **kwargs: "**Any") -> Certificate:
         """Restores a backed up certificate to a vault.
 
         Restores a backed up certificate, and all its versions, to a vault.
@@ -469,7 +468,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
     def list_deleted_certificates(
         self,
         include_pending: Optional[bool] = None,
-        **kwargs: Mapping[str, Any]
+        **kwargs: "**Any"
     ) -> AsyncIterable[DeletedCertificate]:
         """Lists the deleted certificates in the specified vault currently
         available for recovery.
@@ -509,7 +508,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
     def list_certificates(
         self,
         include_pending: Optional[bool] = None,
-        **kwargs: Mapping[str, Any]
+        **kwargs: "**Any"
     ) -> AsyncIterable[CertificateBase]:
         """List certificates in the key vault.
 
@@ -544,7 +543,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         )
 
     @distributed_trace
-    def list_certificate_versions(self, name: str, **kwargs: Mapping[str, Any]) -> AsyncIterable[CertificateBase]:
+    def list_certificate_versions(self, name: str, **kwargs: "**Any") -> AsyncIterable[CertificateBase]:
         """List the versions of a certificate.
 
         The GetCertificateVersions operation returns the versions of a
@@ -576,7 +575,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
             **kwargs)
 
     @distributed_trace_async
-    async def create_contacts(self, contacts: Iterable[Contact], **kwargs: Mapping[str, Any]) -> Iterable[Contact]:
+    async def create_contacts(self, contacts: Iterable[Contact], **kwargs: "**Any") -> Iterable[Contact]:
         """Sets the certificate contacts for the key vault.
 
         Sets the certificate contacts for the key vault. This
@@ -597,7 +596,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         return (Contact._from_certificate_contacts_item(contact_item=item) for item in contacts.contact_list)
 
     @distributed_trace_async
-    async def get_contacts(self, **kwargs: Mapping[str, Any]) -> AsyncIterable[Contact]:
+    async def get_contacts(self, **kwargs: "**Any") -> AsyncIterable[Contact]:
         """Gets the certificate contacts for the key vault.
 
         Returns the set of certificate contact resources in the specified
@@ -611,7 +610,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         return (Contact._from_certificate_contacts_item(contact_item=item) for item in contacts.contact_list)
 
     @distributed_trace_async
-    async def delete_contacts(self, **kwargs: Mapping[str, Any]) -> AsyncIterable[Contact]:
+    async def delete_contacts(self, **kwargs: "**Any") -> AsyncIterable[Contact]:
         """Deletes the certificate contacts for the key vault.
 
         Deletes the certificate contacts for the key vault certificate.
@@ -626,7 +625,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         return (Contact._from_certificate_contacts_item(contact_item=item) for item in contacts.contact_list)
 
     @distributed_trace_async
-    async def get_certificate_operation(self, name: str, **kwargs: Mapping[str, Any]) -> CertificateOperation:
+    async def get_certificate_operation(self, name: str, **kwargs: "**Any") -> CertificateOperation:
         """Gets the creation operation of a certificate.
 
         Gets the creation operation associated with a specified certificate.
@@ -648,7 +647,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         return CertificateOperation._from_certificate_operation_bundle(certificate_operation_bundle=bundle)
 
     @distributed_trace_async
-    async def delete_certificate_operation(self, name: str, **kwargs: Mapping[str, Any]) -> CertificateOperation:
+    async def delete_certificate_operation(self, name: str, **kwargs: "**Any") -> CertificateOperation:
         """Deletes the creation operation for a specific certificate.
 
         Deletes the creation operation for a specified certificate that is in
@@ -670,7 +669,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         return CertificateOperation._from_certificate_operation_bundle(certificate_operation_bundle=bundle)
 
     @distributed_trace_async
-    async def cancel_certificate_operation(self, name: str, **kwargs: Mapping[str, Any]) -> CertificateOperation:
+    async def cancel_certificate_operation(self, name: str, **kwargs: "**Any") -> CertificateOperation:
         """Updates a certificate operation.
 
         Updates a certificate creation operation that is already in progress.
@@ -696,7 +695,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
             self,
             name: str,
             custom_headers: Optional[Dict[str, str]] = None,
-            **kwargs: Mapping[str, Any]) -> str:
+            **kwargs: "**Any") -> str:
         """Gets the Base64 pending certificate signing request (PKCS-10).
         :param name: The name of the certificate
         :type name: str
@@ -761,7 +760,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         x509_certificates: List[bytearray],
         enabled: Optional[bool] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs: Mapping[str, Any]
+        **kwargs: "**Any"
     ) -> Certificate:
         """Merges a certificate or a certificate chain with a key pair existing on the server.
 
@@ -798,7 +797,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         return CertificateOperation._from_certificate_operation_bundle(certificate_operation_bundle=bundle)
 
     @distributed_trace_async
-    async def get_issuer(self, name: str, **kwargs: Mapping[str, Any]) -> Issuer:
+    async def get_issuer(self, name: str, **kwargs: "**Any") -> Issuer:
         """Gets the specified certificate issuer.
 
         Returns the specified certificate issuer resources in the key vault.
@@ -828,7 +827,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         organization_id: Optional[str] = None,
         admin_details: Optional[List[AdministratorDetails]] = None,
         enabled: Optional[bool] = None,
-        **kwargs: Mapping[str, Any]
+        **kwargs: "**Any"
     ) -> Issuer:
         """Sets the specified certificate issuer.
 
@@ -900,7 +899,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         organization_id: Optional[str] = None,
         admin_details: Optional[List[AdministratorDetails]] = None,
         enabled: Optional[bool] = None,
-        **kwargs: Mapping[str, Any]
+        **kwargs: "**Any"
     ) -> Issuer:
         """Updates the specified certificate issuer.
 
@@ -962,7 +961,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         return Issuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
 
     @distributed_trace_async
-    async def delete_issuer(self, name: str, **kwargs: Mapping[str, Any]) -> Issuer:
+    async def delete_issuer(self, name: str, **kwargs: "**Any") -> Issuer:
         """Deletes the specified certificate issuer.
 
         Permanently removes the specified certificate issuer from the vault.
@@ -983,7 +982,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         return Issuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
 
     @distributed_trace
-    def list_issuers(self, **kwargs: Mapping[str, Any]) -> AsyncIterable[IssuerBase]:
+    def list_issuers(self, **kwargs: "**Any") -> AsyncIterable[IssuerBase]:
         """List certificate issuers for the key vault.
 
         Returns the set of certificate issuer resources in the key
