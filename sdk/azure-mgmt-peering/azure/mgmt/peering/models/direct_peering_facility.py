@@ -17,6 +17,10 @@ class DirectPeeringFacility(Model):
 
     :param address: The address of the direct peering facility.
     :type address: str
+    :param direct_peering_type: The type of the direct peering. Possible
+     values include: 'Edge', 'Transit', 'Cdn', 'Internal'
+    :type direct_peering_type: str or
+     ~azure.mgmt.peering.models.DirectPeeringType
     :param peering_db_facility_id: The PeeringDB.com ID of the facility.
     :type peering_db_facility_id: int
     :param peering_db_facility_link: The PeeringDB.com URL of the facility.
@@ -25,6 +29,7 @@ class DirectPeeringFacility(Model):
 
     _attribute_map = {
         'address': {'key': 'address', 'type': 'str'},
+        'direct_peering_type': {'key': 'directPeeringType', 'type': 'str'},
         'peering_db_facility_id': {'key': 'peeringDBFacilityId', 'type': 'int'},
         'peering_db_facility_link': {'key': 'peeringDBFacilityLink', 'type': 'str'},
     }
@@ -32,5 +37,6 @@ class DirectPeeringFacility(Model):
     def __init__(self, **kwargs):
         super(DirectPeeringFacility, self).__init__(**kwargs)
         self.address = kwargs.get('address', None)
+        self.direct_peering_type = kwargs.get('direct_peering_type', None)
         self.peering_db_facility_id = kwargs.get('peering_db_facility_id', None)
         self.peering_db_facility_link = kwargs.get('peering_db_facility_link', None)

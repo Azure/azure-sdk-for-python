@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class PeeringsOperations(object):
-    """PeeringsOperations operations.
+class PeeringServicesOperations(object):
+    """PeeringServicesOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -37,21 +37,21 @@ class PeeringsOperations(object):
         self.config = config
 
     def get(
-            self, resource_group_name, peering_name, custom_headers=None, raw=False, **operation_config):
-        """Gets an existing peering with the specified name under the given
-        subscription and resource group.
+            self, resource_group_name, peering_service_name, custom_headers=None, raw=False, **operation_config):
+        """Gets an existing peering service with the specified name under the
+        given subscription and resource group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param peering_name: The name of the peering.
-        :type peering_name: str
+        :param peering_service_name: The name of the peering.
+        :type peering_service_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: Peering or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.peering.models.Peering or
+        :return: PeeringService or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.peering.models.PeeringService or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.peering.models.ErrorResponseException>`
@@ -60,7 +60,7 @@ class PeeringsOperations(object):
         url = self.get.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'peeringName': self._serialize.url("peering_name", peering_name, 'str'),
+            'peeringServiceName': self._serialize.url("peering_service_name", peering_service_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -89,33 +89,34 @@ class PeeringsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Peering', response)
+            deserialized = self._deserialize('PeeringService', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Peering/peerings/{peeringName}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Peering/peeringServices/{peeringServiceName}'}
 
     def create_or_update(
-            self, resource_group_name, peering_name, peering, custom_headers=None, raw=False, **operation_config):
-        """Creates a new peering or updates an existing peering with the specified
-        name under the given subscription and resource group.
+            self, resource_group_name, peering_service_name, peering_service, custom_headers=None, raw=False, **operation_config):
+        """Creates a new peering service or updates an existing peering with the
+        specified name under the given subscription and resource group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param peering_name: The name of the peering.
-        :type peering_name: str
-        :param peering: The properties needed to create or update a peering.
-        :type peering: ~azure.mgmt.peering.models.Peering
+        :param peering_service_name: The name of the peering service.
+        :type peering_service_name: str
+        :param peering_service: The properties needed to create or update a
+         peering service.
+        :type peering_service: ~azure.mgmt.peering.models.PeeringService
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: Peering or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.peering.models.Peering or
+        :return: PeeringService or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.peering.models.PeeringService or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.peering.models.ErrorResponseException>`
@@ -124,7 +125,7 @@ class PeeringsOperations(object):
         url = self.create_or_update.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'peeringName': self._serialize.url("peering_name", peering_name, 'str'),
+            'peeringServiceName': self._serialize.url("peering_service_name", peering_service_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -145,7 +146,7 @@ class PeeringsOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(peering, 'Peering')
+        body_content = self._serialize.body(peering_service, 'PeeringService')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -157,26 +158,26 @@ class PeeringsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Peering', response)
+            deserialized = self._deserialize('PeeringService', response)
         if response.status_code == 201:
-            deserialized = self._deserialize('Peering', response)
+            deserialized = self._deserialize('PeeringService', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Peering/peerings/{peeringName}'}
+    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Peering/peeringServices/{peeringServiceName}'}
 
     def delete(
-            self, resource_group_name, peering_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes an existing peering with the specified name under the given
-        subscription and resource group.
+            self, resource_group_name, peering_service_name, custom_headers=None, raw=False, **operation_config):
+        """Deletes an existing peering service with the specified name under the
+        given subscription and resource group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param peering_name: The name of the peering.
-        :type peering_name: str
+        :param peering_service_name: The name of the peering service.
+        :type peering_service_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -191,7 +192,7 @@ class PeeringsOperations(object):
         url = self.delete.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'peeringName': self._serialize.url("peering_name", peering_name, 'str'),
+            'peeringServiceName': self._serialize.url("peering_service_name", peering_service_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -219,17 +220,17 @@ class PeeringsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Peering/peerings/{peeringName}'}
+    delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Peering/peeringServices/{peeringServiceName}'}
 
     def update(
-            self, resource_group_name, peering_name, tags=None, custom_headers=None, raw=False, **operation_config):
-        """Updates tags for a peering with the specified name under the given
-        subscription and resource group.
+            self, resource_group_name, peering_service_name, tags=None, custom_headers=None, raw=False, **operation_config):
+        """Updates tags for a peering service with the specified name under the
+        given subscription and resource group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
-        :param peering_name: The name of the peering.
-        :type peering_name: str
+        :param peering_service_name: The name of the peering service.
+        :type peering_service_name: str
         :param tags: Gets or sets the tags, a dictionary of descriptors arm
          object
         :type tags: dict[str, str]
@@ -238,8 +239,8 @@ class PeeringsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: Peering or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.peering.models.Peering or
+        :return: PeeringService or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.peering.models.PeeringService or
          ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.peering.models.ErrorResponseException>`
@@ -250,7 +251,7 @@ class PeeringsOperations(object):
         url = self.update.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'peeringName': self._serialize.url("peering_name", peering_name, 'str'),
+            'peeringServiceName': self._serialize.url("peering_service_name", peering_service_name, 'str'),
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
@@ -283,19 +284,19 @@ class PeeringsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Peering', response)
+            deserialized = self._deserialize('PeeringService', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Peering/peerings/{peeringName}'}
+    update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Peering/peeringServices/{peeringServiceName}'}
 
     def list_by_resource_group(
             self, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Lists all of the peerings under the given subscription and resource
-        group.
+        """Lists all of the peering services under the given subscription and
+        resource group.
 
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
@@ -304,9 +305,9 @@ class PeeringsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Peering
+        :return: An iterator like instance of PeeringService
         :rtype:
-         ~azure.mgmt.peering.models.PeeringPaged[~azure.mgmt.peering.models.Peering]
+         ~azure.mgmt.peering.models.PeeringServicePaged[~azure.mgmt.peering.models.PeeringService]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.peering.models.ErrorResponseException>`
         """
@@ -349,15 +350,15 @@ class PeeringsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.PeeringPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.PeeringServicePaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.PeeringPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.PeeringServicePaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Peering/peerings'}
+    list_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Peering/peeringServices'}
 
     def list_by_subscription(
             self, custom_headers=None, raw=False, **operation_config):
@@ -368,9 +369,9 @@ class PeeringsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Peering
+        :return: An iterator like instance of PeeringService
         :rtype:
-         ~azure.mgmt.peering.models.PeeringPaged[~azure.mgmt.peering.models.Peering]
+         ~azure.mgmt.peering.models.PeeringServicePaged[~azure.mgmt.peering.models.PeeringService]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.peering.models.ErrorResponseException>`
         """
@@ -412,12 +413,12 @@ class PeeringsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.PeeringPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.PeeringServicePaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.PeeringPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.PeeringServicePaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Peering/peerings'}
+    list_by_subscription.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Peering/peeringServices'}

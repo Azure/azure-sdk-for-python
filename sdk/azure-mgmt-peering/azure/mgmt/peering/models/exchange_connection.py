@@ -28,6 +28,9 @@ class ExchangeConnection(Model):
      ~azure.mgmt.peering.models.ConnectionState
     :param bgp_session: The BGP session associated with the connection.
     :type bgp_session: ~azure.mgmt.peering.models.BgpSession
+    :param connection_identifier: The unique identifier (GUID) for the
+     connection.
+    :type connection_identifier: str
     """
 
     _validation = {
@@ -38,6 +41,7 @@ class ExchangeConnection(Model):
         'peering_db_facility_id': {'key': 'peeringDBFacilityId', 'type': 'int'},
         'connection_state': {'key': 'connectionState', 'type': 'str'},
         'bgp_session': {'key': 'bgpSession', 'type': 'BgpSession'},
+        'connection_identifier': {'key': 'connectionIdentifier', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -45,3 +49,4 @@ class ExchangeConnection(Model):
         self.peering_db_facility_id = kwargs.get('peering_db_facility_id', None)
         self.connection_state = None
         self.bgp_session = kwargs.get('bgp_session', None)
+        self.connection_identifier = kwargs.get('connection_identifier', None)

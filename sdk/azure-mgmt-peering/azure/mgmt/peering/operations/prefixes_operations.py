@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class LegacyPeeringsOperations(object):
-    """LegacyPeeringsOperations operations.
+class PrefixesOperations(object):
+    """PrefixesOperations operations.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
@@ -36,24 +36,22 @@ class LegacyPeeringsOperations(object):
 
         self.config = config
 
-    def list(
-            self, peering_location, kind, custom_headers=None, raw=False, **operation_config):
-        """Lists all of the legacy peerings under the given subscription matching
-        the specified kind and location.
+    def list_by_peering_service(
+            self, resource_group_name, peering_service_name, custom_headers=None, raw=False, **operation_config):
+        """Lists the peerings prefix in the resource group.
 
-        :param peering_location: The location of the peering.
-        :type peering_location: str
-        :param kind: The kind of the peering. Possible values include:
-         'Direct', 'Exchange'
-        :type kind: str
+        :param resource_group_name: The resource group name.
+        :type resource_group_name: str
+        :param peering_service_name: The peering service name.
+        :type peering_service_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Peering
+        :return: An iterator like instance of PeeringServicePrefix
         :rtype:
-         ~azure.mgmt.peering.models.PeeringPaged[~azure.mgmt.peering.models.Peering]
+         ~azure.mgmt.peering.models.PeeringServicePrefixPaged[~azure.mgmt.peering.models.PeeringServicePrefix]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.peering.models.ErrorResponseException>`
         """
@@ -61,16 +59,16 @@ class LegacyPeeringsOperations(object):
 
             if not next_link:
                 # Construct URL
-                url = self.list.metadata['url']
+                url = self.list_by_peering_service.metadata['url']
                 path_format_arguments = {
+                    'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    'peeringServiceName': self._serialize.url("peering_service_name", peering_service_name, 'str'),
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['peeringLocation'] = self._serialize.query("peering_location", peering_location, 'str')
-                query_parameters['kind'] = self._serialize.query("kind", kind, 'str')
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
@@ -97,12 +95,12 @@ class LegacyPeeringsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.PeeringPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.PeeringServicePrefixPaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.PeeringPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.PeeringServicePrefixPaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Peering/legacyPeerings'}
+    list_by_peering_service.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Peering/peeringServices/{peeringServiceName}/prefixes'}

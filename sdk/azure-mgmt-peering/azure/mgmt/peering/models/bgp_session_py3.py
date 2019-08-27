@@ -36,12 +36,14 @@ class BgpSession(Model):
     :type peer_session_ipv6_address: str
     :ivar session_state_v4: The state of the IPv4 session. Possible values
      include: 'None', 'Idle', 'Connect', 'Active', 'OpenSent', 'OpenConfirm',
-     'Established', 'PendingAdd', 'PendingUpdate', 'PendingRemove'
+     'OpenReceived', 'Established', 'PendingAdd', 'PendingUpdate',
+     'PendingRemove'
     :vartype session_state_v4: str or
      ~azure.mgmt.peering.models.SessionStateV4
     :ivar session_state_v6: The state of the IPv6 session. Possible values
      include: 'None', 'Idle', 'Connect', 'Active', 'OpenSent', 'OpenConfirm',
-     'Established', 'PendingAdd', 'PendingUpdate', 'PendingRemove'
+     'OpenReceived', 'Established', 'PendingAdd', 'PendingUpdate',
+     'PendingRemove'
     :vartype session_state_v6: str or
      ~azure.mgmt.peering.models.SessionStateV6
     :param max_prefixes_advertised_v4: The maximum number of prefixes
