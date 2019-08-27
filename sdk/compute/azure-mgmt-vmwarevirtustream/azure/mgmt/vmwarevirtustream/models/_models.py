@@ -102,21 +102,31 @@ class ApiErrorBase(Model):
 class Circuit(Model):
     """Circuit.
 
-    :param primary_subnet: CIDR of primary subnet
-    :type primary_subnet: str
-    :param secondary_subnet: CIDR of secondary subnet
-    :type secondary_subnet: str
-    :param express_route_id: Identifier of the ExpressRoute (Microsoft Colo
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar primary_subnet: CIDR of primary subnet
+    :vartype primary_subnet: str
+    :ivar secondary_subnet: CIDR of secondary subnet
+    :vartype secondary_subnet: str
+    :ivar express_route_id: Identifier of the ExpressRoute (Microsoft Colo
      only)
-    :type express_route_id: str
+    :vartype express_route_id: str
     :param authorizations: Authorizations for the ExpressRoute (Microsoft Colo
      only)
     :type authorizations:
      list[~azure.mgmt.vmwarevirtustream.models.ExpressRouteAuthorization]
-    :param express_route_private_peering_id: ExpressRoute private peering
+    :ivar express_route_private_peering_id: ExpressRoute private peering
      identifier
-    :type express_route_private_peering_id: str
+    :vartype express_route_private_peering_id: str
     """
+
+    _validation = {
+        'primary_subnet': {'readonly': True},
+        'secondary_subnet': {'readonly': True},
+        'express_route_id': {'readonly': True},
+        'express_route_private_peering_id': {'readonly': True},
+    }
 
     _attribute_map = {
         'primary_subnet': {'key': 'primarySubnet', 'type': 'str'},
@@ -128,11 +138,11 @@ class Circuit(Model):
 
     def __init__(self, **kwargs):
         super(Circuit, self).__init__(**kwargs)
-        self.primary_subnet = kwargs.get('primary_subnet', None)
-        self.secondary_subnet = kwargs.get('secondary_subnet', None)
-        self.express_route_id = kwargs.get('express_route_id', None)
+        self.primary_subnet = None
+        self.secondary_subnet = None
+        self.express_route_id = None
         self.authorizations = kwargs.get('authorizations', None)
-        self.express_route_private_peering_id = kwargs.get('express_route_private_peering_id', None)
+        self.express_route_private_peering_id = None
 
 
 class CloudError(Model):
@@ -281,11 +291,19 @@ class ClusterProperties(DefaultClusterProperties):
 class Endpoints(Model):
     """Endpoints.
 
-    :param nsxt_manager:
-    :type nsxt_manager: str
-    :param vcsa:
-    :type vcsa: str
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar nsxt_manager:
+    :vartype nsxt_manager: str
+    :ivar vcsa:
+    :vartype vcsa: str
     """
+
+    _validation = {
+        'nsxt_manager': {'readonly': True},
+        'vcsa': {'readonly': True},
+    }
 
     _attribute_map = {
         'nsxt_manager': {'key': 'nsxtManager', 'type': 'str'},
@@ -294,8 +312,8 @@ class Endpoints(Model):
 
     def __init__(self, **kwargs):
         super(Endpoints, self).__init__(**kwargs)
-        self.nsxt_manager = kwargs.get('nsxt_manager', None)
-        self.vcsa = kwargs.get('vcsa', None)
+        self.nsxt_manager = None
+        self.vcsa = None
 
 
 class ExpressRouteAuthorization(Model):
@@ -546,12 +564,12 @@ class PrivateCloudProperties(Model):
      ~azure.mgmt.vmwarevirtustream.models.DefaultClusterProperties
     :ivar clusters:
     :vartype clusters: list[str]
-    :param endpoints:
-    :type endpoints: ~azure.mgmt.vmwarevirtustream.models.Endpoints
+    :ivar endpoints:
+    :vartype endpoints: ~azure.mgmt.vmwarevirtustream.models.Endpoints
     :param internet: Possible values include: 'Enabled', 'Disabled'
     :type internet: str or ~azure.mgmt.vmwarevirtustream.models.InternetEnum
-    :ivar identity_sources:
-    :vartype identity_sources:
+    :param identity_sources:
+    :type identity_sources:
      list[~azure.mgmt.vmwarevirtustream.models.IdentitySource]
     :param network_block:
     :type network_block: str
@@ -572,7 +590,7 @@ class PrivateCloudProperties(Model):
     _validation = {
         'provisioning_state': {'readonly': True},
         'clusters': {'readonly': True},
-        'identity_sources': {'readonly': True},
+        'endpoints': {'readonly': True},
         'management_network': {'readonly': True},
         'provisioning_network': {'readonly': True},
         'vmotion_network': {'readonly': True},
@@ -600,9 +618,9 @@ class PrivateCloudProperties(Model):
         self.circuit = kwargs.get('circuit', None)
         self.cluster = kwargs.get('cluster', None)
         self.clusters = None
-        self.endpoints = kwargs.get('endpoints', None)
+        self.endpoints = None
         self.internet = kwargs.get('internet', None)
-        self.identity_sources = None
+        self.identity_sources = kwargs.get('identity_sources', None)
         self.network_block = kwargs.get('network_block', None)
         self.management_network = None
         self.provisioning_network = None
