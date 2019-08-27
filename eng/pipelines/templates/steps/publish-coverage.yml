@@ -1,6 +1,6 @@
 steps:
   - script: |
-      coverage xml
+      coverage xml -i
     displayName: 'Generate Coverage XML'
     continueOnError: true
 

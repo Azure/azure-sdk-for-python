@@ -18,7 +18,7 @@ jobs:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
-
+          
   - job: 'Analyze'
     variables:
     - template: ../variables/globals.yml
@@ -38,6 +38,8 @@ jobs:
 
     dependsOn:
        - 'Build'
+
+    timeoutInMinutes: 240
 
     strategy:
       matrix:
@@ -70,20 +72,20 @@ jobs:
       vmImage: '$(OSVmImage)'
 
     steps:
-    - template: ../steps/build-test.yml
-      parameters:
+    - template: ../steps/test-nightly.yml
+      parameters: 
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
-        AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
         OSName: $(OSName)
         PythonVersion: $(PythonVersion)
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
-        ToxTestEnv: 'whl,sdist'
+        AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
         BeforeTestSteps: 
           - task: DownloadPipelineArtifact@0
             inputs:
               artifactName: 'artifacts' 
               targetPath: $(Build.ArtifactStagingDirectory)
+        ToxTestEnv: "whl,sdist"  
     - template: ../steps/publish-coverage.yml
 
   # Run PyPy tests without coverage
@@ -101,21 +103,23 @@ jobs:
     dependsOn:
       - 'Build'
 
+    timeoutInMinutes: 240
+    
     pool:
       vmImage: $(OSVmImage)
 
     steps:
-    - template: ../steps/build-test.yml
-      parameters:
-        AdditionalTestArgs: '--disablecov --wheel_dir="$(Build.ArtifactStagingDirectory)"'
-        ServiceDirectory: ${{ parameters.ServiceDirectory }}
-        TestMarkArgument: ${{ parameters.TestMarkArgument }}
-        OSName: $(OSName)
-        PythonVersion: $(PythonVersion)
-        BuildTargetingString: ${{ parameters.BuildTargetingString }}
-        ToxTestEnv: 'whl,sdist'
-        BeforeTestSteps: 
-          - task: DownloadPipelineArtifact@0
-            inputs:
-              artifactName: 'artifacts' 
-              targetPath: $(Build.ArtifactStagingDirectory)
+      - template: ../steps/test-nightly.yml
+        parameters:
+          AdditionalTestArgs: '--disablecov --wheel_dir="$(Build.ArtifactStagingDirectory)"'
+          ServiceDirectory: ${{ parameters.ServiceDirectory }}
+          TestMarkArgument: ${{ parameters.TestMarkArgument }}
+          OSName: $(OSName)
+          PythonVersion: $(PythonVersion)
+          BuildTargetingString: ${{ parameters.BuildTargetingString }}
+          BeforeTestSteps: 
+            - task: DownloadPipelineArtifact@0
+              inputs:
+                artifactName: 'artifacts' 
+                targetPath: $(Build.ArtifactStagingDirectory)
+          ToxTestEnv: "whl,sdist"
