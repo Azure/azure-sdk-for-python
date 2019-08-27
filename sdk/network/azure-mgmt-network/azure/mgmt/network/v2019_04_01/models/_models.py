@@ -1204,12 +1204,14 @@ class ApplicationGatewayOnDemandProbe(Model):
     :param match: Criterion for classifying a healthy probe response.
     :type match:
      ~azure.mgmt.network.v2019_04_01.models.ApplicationGatewayProbeHealthResponseMatch
-    :param backend_pool_name: Name of backend pool of application gateway to
-     which probe request will be sent.
-    :type backend_pool_name: str
-    :param backend_http_setting_name: Name of backend http setting of
+    :param backend_address_pool: Reference of backend pool of application
+     gateway to which probe request will be sent.
+    :type backend_address_pool:
+     ~azure.mgmt.network.v2019_04_01.models.SubResource
+    :param backend_http_settings: Reference of backend http setting of
      application gateway to be used for test probe.
-    :type backend_http_setting_name: str
+    :type backend_http_settings:
+     ~azure.mgmt.network.v2019_04_01.models.SubResource
     """
 
     _attribute_map = {
@@ -1219,8 +1221,8 @@ class ApplicationGatewayOnDemandProbe(Model):
         'timeout': {'key': 'timeout', 'type': 'int'},
         'pick_host_name_from_backend_http_settings': {'key': 'pickHostNameFromBackendHttpSettings', 'type': 'bool'},
         'match': {'key': 'match', 'type': 'ApplicationGatewayProbeHealthResponseMatch'},
-        'backend_pool_name': {'key': 'backendPoolName', 'type': 'str'},
-        'backend_http_setting_name': {'key': 'backendHttpSettingName', 'type': 'str'},
+        'backend_address_pool': {'key': 'backendAddressPool', 'type': 'SubResource'},
+        'backend_http_settings': {'key': 'backendHttpSettings', 'type': 'SubResource'},
     }
 
     def __init__(self, **kwargs):
@@ -1231,8 +1233,8 @@ class ApplicationGatewayOnDemandProbe(Model):
         self.timeout = kwargs.get('timeout', None)
         self.pick_host_name_from_backend_http_settings = kwargs.get('pick_host_name_from_backend_http_settings', None)
         self.match = kwargs.get('match', None)
-        self.backend_pool_name = kwargs.get('backend_pool_name', None)
-        self.backend_http_setting_name = kwargs.get('backend_http_setting_name', None)
+        self.backend_address_pool = kwargs.get('backend_address_pool', None)
+        self.backend_http_settings = kwargs.get('backend_http_settings', None)
 
 
 class ApplicationGatewayPathRule(SubResource):
@@ -10483,6 +10485,10 @@ class PublicIPPrefix(Resource):
     :param public_ip_addresses: The list of all referenced PublicIPAddresses.
     :type public_ip_addresses:
      list[~azure.mgmt.network.v2019_04_01.models.ReferencedPublicIpAddress]
+    :ivar load_balancer_frontend_ip_configuration: The reference to load
+     balancer frontend IP configuration associated with the public IP prefix.
+    :vartype load_balancer_frontend_ip_configuration:
+     ~azure.mgmt.network.v2019_04_01.models.SubResource
     :param resource_guid: The resource GUID property of the public IP prefix
      resource.
     :type resource_guid: str
@@ -10500,6 +10506,7 @@ class PublicIPPrefix(Resource):
     _validation = {
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'load_balancer_frontend_ip_configuration': {'readonly': True},
     }
 
     _attribute_map = {
@@ -10514,6 +10521,7 @@ class PublicIPPrefix(Resource):
         'prefix_length': {'key': 'properties.prefixLength', 'type': 'int'},
         'ip_prefix': {'key': 'properties.ipPrefix', 'type': 'str'},
         'public_ip_addresses': {'key': 'properties.publicIPAddresses', 'type': '[ReferencedPublicIpAddress]'},
+        'load_balancer_frontend_ip_configuration': {'key': 'properties.loadBalancerFrontendIpConfiguration', 'type': 'SubResource'},
         'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
@@ -10528,6 +10536,7 @@ class PublicIPPrefix(Resource):
         self.prefix_length = kwargs.get('prefix_length', None)
         self.ip_prefix = kwargs.get('ip_prefix', None)
         self.public_ip_addresses = kwargs.get('public_ip_addresses', None)
+        self.load_balancer_frontend_ip_configuration = None
         self.resource_guid = kwargs.get('resource_guid', None)
         self.provisioning_state = kwargs.get('provisioning_state', None)
         self.etag = kwargs.get('etag', None)
