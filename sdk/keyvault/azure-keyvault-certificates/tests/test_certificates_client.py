@@ -582,7 +582,7 @@ class CertificateClientTests(KeyVaultTestCase):
                                                                      key_type='RSA',
                                                                      key_size=2048,
                                                                      reuse_key=False),
-                                        secret_properties=SecretProperties(content_type='application/x-pkcs12'),
+                                        secret_properties=SecretProperties(content_type='application/x-pem-file'),
                                         issuer_parameters=IssuerParameters(name=issuer_name),
                                         lifetime_actions=lifetime_actions,
                                         x509_certificate_properties=X509CertificateProperties(
@@ -593,20 +593,23 @@ class CertificateClientTests(KeyVaultTestCase):
                                             validity_in_months=24
                                         ))
         pkey = crypto.PKey()
-        pkey.generate_key(crypto.TYPE_RSA, 512)
+        pkey.generate_key(crypto.TYPE_RSA, 2048)
 
         create_certificate_operation = client.create_certificate(name=cert_name, policy=CertificatePolicy._from_certificate_policy_bundle(cert_policy))
         csr = "-----BEGIN NEW CERTIFICATE REQUEST-----" + os.linesep + base64.b64encode(create_certificate_operation.csr).decode() + os.linesep + "-----END NEW CERTIFICATE REQUEST-----"
         req = crypto.load_certificate_request(crypto.FILETYPE_PEM, csr)
         req.set_pubkey(pkey)
-        req.sign(pkey, 'sha1')
+        req.sign(pkey, 'sha256')
 
 
         cert = crypto.X509()
         cert.set_issuer(req.get_subject())
         cert.set_subject(req.get_subject())
         cert.set_pubkey(req.get_pubkey())
-        signed_certificate_bytes = crypto.dump_certificate(crypto.FILETYPE_PEM, cert)
+        signed_certificate_bytes = crypto.dump_certificate(crypto.FILETYPE_PEM, cert).decode('utf-8').replace("\n", "")
+        signed_certificate_bytes = signed_certificate_bytes.lstrip("-----BEGIN CERTIFICATE-----")
+        signed_certificate_bytes = signed_certificate_bytes.rstrip("-----END CERTIFICATE-----")
+        signed_certificate_bytes = base64.b64decode(signed_certificate_bytes)
 
         client.merge_certificate(name=cert_name, x509_certificates=[signed_certificate_bytes])
 

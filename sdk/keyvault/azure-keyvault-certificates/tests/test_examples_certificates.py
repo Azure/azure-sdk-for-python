@@ -37,7 +37,6 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         certificate_client = vault_client.certificates
         # [START create_certificate]
-        from dateutil import parser as date_parse
         from azure.keyvault.certificates import CertificatePolicy, KeyProperties
         import time
         # specify the certificate policy
@@ -52,11 +51,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
                                         validity_in_months=24
                                         )
 
-        expires = date_parse.parse("2050-02-02T08:00:00.000Z")
-
         # create a certificate with optional arguments, returns a certificate operation that is creating the certificate
-        certificate_operation = certificate_client.create_certificate(name="cert-name", policy=cert_policy,
-                                                                      expires=expires)
+        certificate_operation = certificate_client.create_certificate(name="cert-name", policy=cert_policy)
 
         print(certificate_operation.name)
         print(certificate_operation.id)
@@ -81,7 +77,6 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         print(certificate.id)
         print(certificate.name)
-        print(certificate.expires)
         print(certificate.policy.key_properties.exportable)
         print(certificate.policy.key_properties.key_type)
         print(certificate.policy.key_properties.key_size)
@@ -96,13 +91,11 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [START update_certificate]
 
         # update attributes of an existing certificate
-        expires = date_parse.parse("2050-01-02T08:00:00.000Z")
         tags = {"foo": "updated tag"}
-        updated_certificate = certificate_client.update_certificate(name=certificate.name, expires=expires, tags=tags)
+        updated_certificate = certificate_client.update_certificate(name=certificate.name, tags=tags)
 
         print(updated_certificate.version)
         print(updated_certificate.updated)
-        print(updated_certificate.expires)
         print(updated_certificate.tags)
 
         # [END update_certificate]

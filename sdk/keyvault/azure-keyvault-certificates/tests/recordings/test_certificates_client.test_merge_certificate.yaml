@@ -17,7 +17,7 @@ interactions:
       cache-control: [no-cache]
       content-length: ['87']
       content-type: [application/json; charset=utf-8]
-      date: ['Tue, 27 Aug 2019 00:05:03 GMT']
+      date: ['Tue, 27 Aug 2019 20:24:21 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-IIS/10.0]
@@ -33,7 +33,7 @@ interactions:
     status: {code: 401, message: Unauthorized}
 - request:
     body: '{"policy": {"key_props": {"exportable": true, "kty": "RSA", "key_size":
-      2048, "reuse_key": false}, "secret_props": {"contentType": "application/x-pkcs12"},
+      2048, "reuse_key": false}, "secret_props": {"contentType": "application/x-pem-file"},
       "x509_props": {"subject": "CN=*.microsoft.com", "sans": {"dns_names": ["sdk.azure-int.net"]},
       "validity_months": 24}, "lifetime_actions": [{"trigger": {"lifetime_percentage":
       2}, "action": {"action_type": "EmailContacts"}}], "issuer": {"name": "Unknown"}}}'
@@ -41,21 +41,21 @@ interactions:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Length: ['412']
+      Content-Length: ['414']
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [azsdk-python-keyvault-certificates/4.0.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: POST
     uri: https://vaultcf0f1333.vault.azure.net/certificates/mergeCertificate/create?api-version=7.0
   response:
-    body: {string: '{"id":"https://vaultcf0f1333.vault.azure.net/certificates/mergeCertificate/pending","issuer":{"name":"Unknown"},"csr":"MIICyDCCAbACAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA8g5jPnrODAKZ4uzmsV5lCKZDNySRXFeb/1rmnQV4k0hdMMFZoaxCH7B50s0l03Wqj2Jp93i/dEIiT7AccxQIgvPTGmwdThOSZeMYtSM19a03cfQsib/0UT8B+1A1CiN2dEIqQ6Gm0BqOtla5iguWbehMvDVwHzT7Cy17R7ipC/9oEBoZsCf3ORQGMIkJ5wKOXbZGtCXntMeC7f5pJ2PV+nDNGmXG40+VlibzZ0mlVJ67lMrfC7BL2GkPCGqkWpsXxW80xNn/NBhXBRg7P9HUeQdzpPo1fmoyvOM3GF9DARvTmVbhYuWFikIXvq0DOvNRy+ZpnUDC0Bq5ctUxAT7nFQIDAQABoGkwZwYJKoZIhvcNAQkOMVowWDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAANb1di+B1aNIzzDf3tsWMRuanir3qkx5veSHyw0GIYy2GOfPME5J3ViwMgTOrDYSM2kBCNK66MblBIdzzWl32ugaR/Xozm1kiES6SVjH+QfVOn3WSwIyJh8xKpM2cvLojahMwPazyYaqfj8/UeO4S8Gtpr3Y+8Lf/4aANeUGE6rjVK/f/MxvaZoumOgm1TflHUeLgz7BaPaXbO7OXLDksbwQCQFHCEhl1F20YfLsB+JrPCyM3dwiZYulcdfRnfubeHe4WGWO1ECnSZ59hKMZ8bJNIo6HO5/jds4NbkUWJ2UZRlVgtINVA/JgiAA9X3ZXBwxLIHXZnphvkuW36dNm1I=","cancellation_requested":false,"status":"inProgress","status_details":"Pending
-        certificate created. Please Perform Merge to complete the request.","request_id":"34a1f2e53d174607bb9f54088958314a"}'}
+    body: {string: '{"id":"https://vaultcf0f1333.vault.azure.net/certificates/mergeCertificate/pending","issuer":{"name":"Unknown"},"csr":"MIICyDCCAbACAQAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAt7pMq0it3/F8aLJuhrep25fF4n0mC7hkeoAsxnL/RvMdHf6Ru82y5ybZWiCuEqsvIm+uBwDG7QP2vB5eFoP3xNYuAXZ9XCwBDemqmllaH+j2oTBE4OO/fuo4+i+pnKs4pJnyhE2GXQAI4erkazcLh3pM1HQNiuBU2EZlGwzKmsxxyEfebCsbP2aCS9izpjj8Zigd700h8lnSMWG7xy0m3jN0LrEKKMNV9G9g3bqEWsJmgD3rtSfhyICoFrF316+I5rhEb5PpU55IXkPkRs4on4w60LVyi7hZnexNJCJmJh4eSmBgGTHHBsH/kW9zzv6BGeIjp9jtZJ69epYdb7zbSwIDAQABoGkwZwYJKoZIhvcNAQkOMVowWDAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBwGA1UdEQQVMBOCEXNkay5henVyZS1pbnQubmV0MAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAA6N1HMZJHFnXHrHT130jOXVukTVyeehm89S4D4tMsaAHrRwDUJIhcm2xRYNLPukffPq7iwG8nTk1/sik7ZwjUbrYRy4udTzvmthjbfBfqBnk3gzQeqbQjMWvyDGVBUkfUzYqDUoHQf0V23CjM/k85tue6cABRjwBszOEtHuenr+Fy1dlRaR3eX8u/vglgKfGvxftB50g19xlMy+mUK3n9f17BmcKtXe/It4MC3PS8zBW7nQc1rIdZDaTgjrwy5wz2RshF7h+cLU6OvUKTTB9W5vqAuKddFc2NqFV2Gogh1uHJVjYYaLRBuRqxy4x6Zz3dHWwDWMPDOGQgdzT/1+zeE=","cancellation_requested":false,"status":"inProgress","status_details":"Pending
+        certificate created. Please Perform Merge to complete the request.","request_id":"27d598addb714cd699e7c729f60313d6"}'}
     headers:
       cache-control: [no-cache]
       content-length: ['1272']
       content-type: [application/json; charset=utf-8]
-      date: ['Tue, 27 Aug 2019 00:05:04 GMT']
+      date: ['Tue, 27 Aug 2019 20:24:22 GMT']
       expires: ['-1']
-      location: ['https://vaultcf0f1333.vault.azure.net/certificates/mergeCertificate/pending?api-version=7.0&request_id=34a1f2e53d174607bb9f54088958314a']
+      location: ['https://vaultcf0f1333.vault.azure.net/certificates/mergeCertificate/pending?api-version=7.0&request_id=27d598addb714cd699e7c729f60313d6']
       pragma: [no-cache]
       retry-after: ['10']
       server: [Microsoft-IIS/10.0]
@@ -68,12 +68,12 @@ interactions:
       x-powered-by: [ASP.NET]
     status: {code: 202, message: Accepted}
 - request:
-    body: '{"x5c": ["LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JR3BNSUdoQWdFQU1BQXdHakVZTUJZR0ExVUVBd3dQS2k1dGFXTnliM052Wm5RdVkyOXRNQVFmQUI4QU1Cb3gKR0RBV0JnTlZCQU1NRHlvdWJXbGpjbTl6YjJaMExtTnZiVEJjTUEwR0NTcUdTSWIzRFFFQkFRVUFBMHNBTUVnQwpRUUM1TlNMYXNkcVEzaTZEeXdZbVJzbHNSN1RtMkRoUytZbDFEQ1Q4cE5WVy9wdzhXUnhmaXJwWEZiV3N6c0lxCnV1c3g0SVZRdE1uTG1QQ1N6anZtY3d3OUFnTUJBQUV3QUFNQkFBPT0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo="]}'
+    body: '{"x5c": ["MIIBcjCCAWkCAQAwADAaMRgwFgYDVQQDDA8qLm1pY3Jvc29mdC5jb20wBB8AHwAwGjEYMBYGA1UEAwwPKi5taWNyb3NvZnQuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAr3GUMM/i6oORVnKYU3c2JpIhyvZWhbCC79r2q44L/HbNhCs/J7uRL1AH8RkNqwq0u2HvZWXPZUKce/QwMhVOFec33cO9d6xvM+3rN2Dm2Yupsob7Jag456zClJWi13d7faPHkR2pORwPk95/2u7hgxmLopdn6EmYFblEh0lk4DP+QauOnQXC2JchyshnPlAc2iV5xhoXWG1o1KcoyKfBH6VJ1dzV0lFbIK5trvldJOWnHeF5r1t8MHCZznHbj/nV/jcWrc0mqVtaSHFo4rgjyJh8KTFdAiSLiFjuZQZxWeeNt4i4p+kglnB0Tm7ZXpKPXrdeGMP/vcpFv56zxA/YIQIDAQABMAADAQA="]}'
     headers:
       Accept: [application/json]
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
-      Content-Length: ['401']
+      Content-Length: ['513']
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [azsdk-python-keyvault-certificates/4.0.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: POST
@@ -85,7 +85,7 @@ interactions:
       cache-control: [no-cache]
       content-length: ['112']
       content-type: [application/json; charset=utf-8]
-      date: ['Tue, 27 Aug 2019 00:05:04 GMT']
+      date: ['Tue, 27 Aug 2019 20:24:22 GMT']
       expires: ['-1']
       pragma: [no-cache]
       server: [Microsoft-IIS/10.0]

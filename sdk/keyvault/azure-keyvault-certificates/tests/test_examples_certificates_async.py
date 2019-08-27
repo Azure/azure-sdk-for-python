@@ -35,7 +35,6 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         import asyncio
         certificate_client = vault_client.certificates
         # [START create_certificate]
-        from dateutil import parser as date_parse
         from azure.keyvault.certificates import CertificatePolicy, KeyProperties
         # specify the certificate policy
         cert_policy = CertificatePolicy(key_properties=KeyProperties(exportable=True,
@@ -49,10 +48,8 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
                                         validity_in_months=24
                                         )
 
-        expires = date_parse.parse("2050-02-02T08:00:00.000Z")
-
         # create a certificate with optional arguments, returns a certificate operation that is creating the certificate
-        certificate_operation = await certificate_client.create_certificate(name="cert-name", policy=cert_policy, expires=expires)
+        certificate_operation = await certificate_client.create_certificate(name="cert-name", policy=cert_policy)
 
         print(certificate_operation.name)
         print(certificate_operation.id)
@@ -78,7 +75,6 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         print(certificate.id)
         print(certificate.name)
-        print(certificate.expires)
         print(certificate.policy.key_properties.exportable)
         print(certificate.policy.key_properties.key_type)
         print(certificate.policy.key_properties.key_size)
@@ -93,13 +89,11 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         # [START update_certificate]
 
         # update attributes of an existing certificate
-        expires = date_parse.parse("2050-01-02T08:00:00.000Z")
         tags = {"foo": "updated tag"}
-        updated_certificate = await certificate_client.update_certificate(certificate.name, expires=expires, tags=tags)
+        updated_certificate = await certificate_client.update_certificate(certificate.name, tags=tags)
 
         print(updated_certificate.version)
         print(updated_certificate.updated)
-        print(updated_certificate.expires)
         print(updated_certificate.tags)
 
         # [END update_certificate]
@@ -162,7 +156,6 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
             print(certificate.id)
             print(certificate.updated)
             print(certificate.version)
-            print(certificate.expires)
 
         # [END list_certificate_versions]
         # [START list_deleted_certificates]
