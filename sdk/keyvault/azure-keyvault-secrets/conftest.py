@@ -14,7 +14,7 @@ if sys.version_info < (3, 5):
 
 os.environ['PYTHONHASHSEED'] = '0'
 dirname = os.path.dirname(os.path.abspath(__file__))
-seed_filename = os.path.abspath(os.path.join(dirname, "seed.txt"))
+seed_filename = os.path.abspath(os.path.join(dirname, "tests", "seed.txt"))
 print(seed_filename)
 
 run_identifier_set = False
