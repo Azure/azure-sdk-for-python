@@ -11,42 +11,34 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
-      x-ms-blob-content-length:
-      - '8796093022209'
-      x-ms-blob-type:
-      - PageBlob
-      x-ms-client-request-id:
-      - f2b81f40-8ecb-11e9-8cd8-f45c89a7d159
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
       x-ms-date:
-      - Fri, 14 Jun 2019 17:43:41 GMT
+      - Tue, 27 Aug 2019 17:32:00 GMT
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: PUT
-    uri: https://remotestoragename.blob.core.windows.net/utcontainer2aa214c8/blob2aa214c8
+    uri: https://pyacrstorage2aa214c8.blob.core.windows.net/utcontainer2aa214c8?restype=container
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidHeaderValue</Code><Message>The\
-        \ value for one of the HTTP headers is not in the correct format.\nRequestId:d1fa71c9-801e-0032-2ad8-223cd0000000\n\
-        Time:2019-06-14T17:43:42.2642316Z</Message><HeaderName>x-ms-blob-content-length</HeaderName><HeaderValue>8796093022209</HeaderValue></Error>"
+      string: ''
     headers:
-      Content-Length:
-      - '343'
-      Content-Type:
-      - application/xml
-      Date:
-      - Fri, 14 Jun 2019 17:43:42 GMT
-      Server:
+      content-length:
+      - '0'
+      date:
+      - Tue, 27 Aug 2019 17:31:58 GMT
+      etag:
+      - '"0x8D72B14770A35FE"'
+      last-modified:
+      - Tue, 27 Aug 2019 17:31:59 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-error-code:
-      - InvalidHeaderValue
-      x-ms-request-id:
-      - d1fa71c9-801e-0032-2ad8-223cd0000000
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     status:
-      code: 400
-      message: The value for one of the HTTP headers is not in the correct format.
+      code: 201
+      message: Created
 - request:
     body: null
     headers:
@@ -59,39 +51,36 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit) azure-core/0.0.1
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
       x-ms-blob-content-length:
       - '8796093022209'
       x-ms-blob-type:
       - PageBlob
-      x-ms-client-request-id:
-      - 48fc9454-8ed5-11e9-b04f-f45c89a7d159
       x-ms-date:
-      - Fri, 14 Jun 2019 18:50:31 GMT
+      - Tue, 27 Aug 2019 17:32:01 GMT
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainer2aa214c8/blob2aa214c8
+    uri: https://pyacrstorage2aa214c8.blob.core.windows.net/utcontainer2aa214c8/blob2aa214c8
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidHeaderValue</Code><Message>The\
-        \ value for one of the HTTP headers is not in the correct format.\nRequestId:58920d10-501e-0074-54e2-22e246000000\n\
-        Time:2019-06-14T18:50:31.8469247Z</Message><HeaderName>x-ms-blob-content-length</HeaderName><HeaderValue>8796093022209</HeaderValue></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidHeaderValue</Code><Message>The
+        value for one of the HTTP headers is not in the correct format.\nRequestId:7ee1add0-901e-00ab-5ffd-5c82d3000000\nTime:2019-08-27T17:31:59.3593331Z</Message><HeaderName>x-ms-blob-content-length</HeaderName><HeaderValue>8796093022209</HeaderValue></Error>"
     headers:
-      Content-Length:
+      content-length:
       - '343'
-      Content-Type:
+      content-type:
       - application/xml
-      Date:
-      - Fri, 14 Jun 2019 18:50:31 GMT
-      Server:
+      date:
+      - Tue, 27 Aug 2019 17:31:58 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
       - InvalidHeaderValue
-      x-ms-request-id:
-      - 58920d10-501e-0074-54e2-22e246000000
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     status:
       code: 400
       message: The value for one of the HTTP headers is not in the correct format.

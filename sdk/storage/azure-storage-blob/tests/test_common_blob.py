@@ -35,9 +35,7 @@ from azure.storage.blob import (
     AccountPermissions,
 )
 from testcase import (
-    StorageTestCase,
-    TestMode,
-    record,
+    StorageTestCase
 )
 
 #------------------------------------------------------------------------------
@@ -57,7 +55,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
         self.container_name = self.get_resource_name('utcontainer')
 
-        if not self.is_playback():
+        if self.is_live:
             container = self.bsc.get_container_client(self.container_name)
             try:
                 container.create_container(timeout=5)
@@ -72,7 +70,7 @@ class StorageCommonBlobTest(StorageTestCase):
         self.remote_container_name = None
 
     def tearDown(self):
-        if not self.is_playback():
+        if self.is_live:
             try:
                 self.bsc.delete_container(self.container_name, timeout=5)
             except:
@@ -136,7 +134,7 @@ class StorageCommonBlobTest(StorageTestCase):
         self.bsc.set_service_properties(delete_retention_policy=delete_retention_policy)
 
         # wait until the policy has gone into effect
-        if not self.is_playback():
+        if self.is_live:
             time.sleep(30)
 
     def _disable_soft_delete(self):
@@ -1155,7 +1153,7 @@ class StorageCommonBlobTest(StorageTestCase):
     @record
     def test_sas_access_blob(self):
         # SAS URL is calculated from storage key, so this test runs live only
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -1177,7 +1175,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     def test_sas_access_blob_snapshot(self):
         # SAS URL is calculated from storage key, so this test runs live only
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -1209,7 +1207,7 @@ class StorageCommonBlobTest(StorageTestCase):
     @record
     def test_sas_signed_identifier(self):
         # SAS URL is calculated from storage key, so this test runs live only
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -1238,7 +1236,7 @@ class StorageCommonBlobTest(StorageTestCase):
     @record
     def test_account_sas(self):
         # SAS URL is calculated from storage key, so this test runs live only
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -1288,7 +1286,7 @@ class StorageCommonBlobTest(StorageTestCase):
     @record
     def test_shared_read_access_blob(self):
         # SAS URL is calculated from storage key, so this test runs live only
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -1312,7 +1310,7 @@ class StorageCommonBlobTest(StorageTestCase):
     @record
     def test_shared_read_access_blob_with_content_query_params(self):
         # SAS URL is calculated from storage key, so this test runs live only
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -1345,7 +1343,7 @@ class StorageCommonBlobTest(StorageTestCase):
     @record
     def test_shared_write_access_blob(self):
         # SAS URL is calculated from storage key, so this test runs live only
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -1372,7 +1370,7 @@ class StorageCommonBlobTest(StorageTestCase):
     @record
     def test_shared_delete_access_blob(self):
         # SAS URL is calculated from storage key, so this test runs live only
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -1428,7 +1426,7 @@ class StorageCommonBlobTest(StorageTestCase):
     @record
     def test_get_account_information_with_container_sas(self):
         # SAS URL is calculated from storage key, so this test runs live only
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -1449,7 +1447,7 @@ class StorageCommonBlobTest(StorageTestCase):
     @record
     def test_get_account_information_with_blob_sas(self):
         # SAS URL is calculated from storage key, so this test runs live only
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -1471,7 +1469,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @record
     def test_download_to_file_with_sas(self):
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
         # Arrange
         data = b'12345678' * 1024 * 1024
@@ -1494,7 +1492,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @record
     def test_download_to_file_with_credential(self):
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
         # Arrange
         data = b'12345678' * 1024 * 1024
@@ -1514,7 +1512,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @record
     def test_download_to_stream_with_credential(self):
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
         # Arrange
         data = b'12345678' * 1024 * 1024
@@ -1535,7 +1533,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @record
     def test_download_to_file_with_existing_file(self):
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
         # Arrange
         data = b'12345678' * 1024 * 1024
@@ -1557,7 +1555,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @record
     def test_download_to_file_with_existing_file_overwrite(self):
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
         # Arrange
         data = b'12345678' * 1024 * 1024
@@ -1583,7 +1581,7 @@ class StorageCommonBlobTest(StorageTestCase):
     @record
     def test_upload_to_url_bytes_with_sas(self):
         # SAS URL is calculated from storage key, so this test runs live only
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -1608,7 +1606,7 @@ class StorageCommonBlobTest(StorageTestCase):
     @record
     def test_upload_to_url_bytes_with_credential(self):
         # SAS URL is calculated from storage key, so this test runs live only
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -1628,7 +1626,7 @@ class StorageCommonBlobTest(StorageTestCase):
     @record
     def test_upload_to_url_bytes_with_existing_blob(self):
         # SAS URL is calculated from storage key, so this test runs live only
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -1649,7 +1647,7 @@ class StorageCommonBlobTest(StorageTestCase):
     @record
     def test_upload_to_url_bytes_with_existing_blob_overwrite(self):
         # SAS URL is calculated from storage key, so this test runs live only
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -1672,7 +1670,7 @@ class StorageCommonBlobTest(StorageTestCase):
     @record
     def test_upload_to_url_text_with_credential(self):
         # SAS URL is calculated from storage key, so this test runs live only
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -1692,7 +1690,7 @@ class StorageCommonBlobTest(StorageTestCase):
     @record
     def test_upload_to_url_file_with_credential(self):
         # SAS URL is calculated from storage key, so this test runs live only
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange

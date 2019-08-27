@@ -575,7 +575,7 @@ class StorageAppendBlobTestAsync(AsyncBlobTestCase):
     @AsyncBlobTestCase.await_prepared_test
     async def test_append_blob_from_stream_chunked_upload_with_count_parallel_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         bsc = BlobServiceClient(self._account_url(storage_account.name), storage_account_key, max_block_size=4 * 1024, transport=AiohttpTestTransport())

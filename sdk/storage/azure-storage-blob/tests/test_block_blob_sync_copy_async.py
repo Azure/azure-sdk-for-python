@@ -18,6 +18,8 @@ from azure.storage.blob.aio import (
     StorageErrorCode,
     BlobPermissions
 )
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
+
 from azure.storage.blob._shared.policies import StorageContentValidation
 from testcase import (
     StorageTestCase,
@@ -75,7 +77,7 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         self.source_blob_url = BlobClient(blob.url, credential=sas_token).url
 
     def tearDown(self):
-        if not self.is_playback():
+        if self.is_live:
             loop = asyncio.get_event_loop()
             try:
                 loop.run_until_complete(self.bsc.delete_container(self.container_name))
@@ -86,7 +88,7 @@ class StorageBlockBlobTestAsync(StorageTestCase):
 
     async def _setup(self):
         blob = self.bsc.get_blob_client(self.container_name, self.source_blob_name)
-        if not self.is_playback():
+        if self.is_live:
             try:
                 await self.bsc.create_container(self.container_name)
             except:
@@ -100,7 +102,7 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         )
         self.source_blob_url = BlobClient(blob.url, credential=sas_token).url
 
-    async def _test_put_block_from_url_and_commit_async(self):
+    async def test_put_block_from_url_and_commit_async(self):
         # Arrange
         await self._setup()
         dest_blob_name = self.get_resource_name('destblob')
@@ -137,7 +139,7 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_put_block_from_url_and_commit_async())
 
-    async def _test_put_block_from_url_and_validate_content_md5_async(self):
+    async def test_put_block_from_url_and_validate_content_md5_async(self):
         # Arrange
         await self._setup()
         dest_blob_name = self.get_resource_name('destblob')
@@ -178,7 +180,7 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_put_block_from_url_and_validate_content_md5_async())
 
-    async def _test_copy_blob_sync_async(self):
+    async def test_copy_blob_sync_async(self):
         # Arrange
         await self._setup()
         dest_blob_name = self.get_resource_name('destblob')

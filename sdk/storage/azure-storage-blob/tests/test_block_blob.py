@@ -19,10 +19,10 @@ from azure.storage.blob import (
     BlobBlock,
     StandardBlobTier
 )
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
+
 from testcase import (
-    StorageTestCase,
-    TestMode,
-    record,
+    StorageTestCase
 )
 
 #------------------------------------------------------------------------------
@@ -49,11 +49,11 @@ class StorageBlockBlobTest(StorageTestCase):
         self.config = self.bsc._config
         self.container_name = self.get_resource_name('utcontainer')
 
-        if not self.is_playback():
+        if self.is_live:
             self.bsc.create_container(self.container_name)
 
     def tearDown(self):
-        if not self.is_playback():
+        if self.is_live:
             try:
                 self.bsc.delete_container(self.container_name)
             except:
@@ -398,7 +398,7 @@ class StorageBlockBlobTest(StorageTestCase):
 
     def test_create_from_bytes_blob_with_lease_id(self):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -417,7 +417,7 @@ class StorageBlockBlobTest(StorageTestCase):
 
     def test_create_blob_from_bytes_with_metadata(self):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -436,7 +436,7 @@ class StorageBlockBlobTest(StorageTestCase):
 
     def test_create_blob_from_bytes_with_properties(self):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -458,7 +458,7 @@ class StorageBlockBlobTest(StorageTestCase):
 
     def test_create_blob_from_bytes_with_progress(self):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -485,7 +485,7 @@ class StorageBlockBlobTest(StorageTestCase):
 
     def test_create_blob_from_bytes_with_index(self):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -546,7 +546,7 @@ class StorageBlockBlobTest(StorageTestCase):
 
     def test_create_blob_from_path(self):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -587,7 +587,7 @@ class StorageBlockBlobTest(StorageTestCase):
 
     def test_create_blob_from_path_with_progress(self):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -614,7 +614,7 @@ class StorageBlockBlobTest(StorageTestCase):
 
     def test_create_blob_from_path_with_properties(self):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -639,7 +639,7 @@ class StorageBlockBlobTest(StorageTestCase):
 
     def test_create_blob_from_stream_chunked_upload(self):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -661,7 +661,7 @@ class StorageBlockBlobTest(StorageTestCase):
 
     def test_create_blob_from_stream_non_seekable_chunked_upload_known_size(self):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -682,7 +682,7 @@ class StorageBlockBlobTest(StorageTestCase):
 
     def test_create_blob_from_stream_non_seekable_chunked_upload_unknown_size(self):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -702,7 +702,7 @@ class StorageBlockBlobTest(StorageTestCase):
 
     def test_create_blob_from_stream_with_progress_chunked_upload(self):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -729,7 +729,7 @@ class StorageBlockBlobTest(StorageTestCase):
 
     def test_create_blob_from_stream_chunked_upload_with_count(self):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -749,7 +749,7 @@ class StorageBlockBlobTest(StorageTestCase):
 
     def test_create_blob_from_stream_chunked_upload_with_count_and_properties(self):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -775,7 +775,7 @@ class StorageBlockBlobTest(StorageTestCase):
 
     def test_create_blob_from_stream_chunked_upload_with_properties(self):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -853,7 +853,7 @@ class StorageBlockBlobTest(StorageTestCase):
 
     def test_create_blob_from_text_chunked_upload(self):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -885,7 +885,7 @@ class StorageBlockBlobTest(StorageTestCase):
 
     def test_create_blob_with_md5_chunked(self):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange

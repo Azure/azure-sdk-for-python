@@ -44,7 +44,7 @@ class TestContainerSamplesAsync(StorageTestCase):
 
     # --Begin Blob Samples-----------------------------------------------------------------
 
-    async def _test_container_sample_async(self):
+    async def test_container_sample_async(self):
 
         # [START create_container_client_from_service]
         # Instantiate a BlobServiceClient using a connection string
@@ -79,12 +79,12 @@ class TestContainerSamplesAsync(StorageTestCase):
 
     @record
     def test_container_sample_async(self):
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_container_sample_async())
 
-    async def _test_acquire_lease_on_container_async(self):
+    async def test_acquire_lease_on_container_async(self):
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
@@ -106,12 +106,12 @@ class TestContainerSamplesAsync(StorageTestCase):
 
     @record
     def test_acquire_lease_on_container_async(self):
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_acquire_lease_on_container_async())
 
-    async def _test_set_metadata_on_container_async(self):
+    async def test_set_metadata_on_container_async(self):
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
@@ -143,14 +143,14 @@ class TestContainerSamplesAsync(StorageTestCase):
 
     @record
     def test_set_metadata_on_container_async(self):
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_metadata_on_container_async())
 
-    async def _test_container_access_policy_async(self):
+    async def test_container_access_policy_async(self):
         # SAS URL is calculated from storage key, so this test runs live only
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Instantiate a BlobServiceClient using a connection string
@@ -203,12 +203,12 @@ class TestContainerSamplesAsync(StorageTestCase):
 
     @record
     def test_container_access_policy_async(self):
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_container_access_policy_async())
 
-    async def _test_list_blobs_in_container_async(self):
+    async def test_list_blobs_in_container_async(self):
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
@@ -240,12 +240,12 @@ class TestContainerSamplesAsync(StorageTestCase):
 
     @record
     def test_list_blobs_in_container_async(self):
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_blobs_in_container_async())
 
-    async def _test_get_blob_client_from_container_async(self):
+    async def test_get_blob_client_from_container_async(self):
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
@@ -267,7 +267,7 @@ class TestContainerSamplesAsync(StorageTestCase):
 
     @record
     def test_get_blob_client_from_container_async(self):
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_client_from_container_async())

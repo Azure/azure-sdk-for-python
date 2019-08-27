@@ -22,7 +22,7 @@ from os import (
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
-
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.storage.blob._shared.encryption import (
     _dict_to_encryption_data,
     _validate_and_unwrap_cek,
@@ -43,10 +43,8 @@ from encryption_test_helper import (
     KeyResolver,
     RSAKeyWrapper,
 )
-from testcase import (
-    StorageTestCase,
-    TestMode,
-    record,
+from asyncblobtestcase import (
+    AsyncBlobTestCase,
 )
 
 #------------------------------------------------------------------------------
@@ -71,51 +69,18 @@ class AiohttpTestTransport(AioHttpTransport):
         return response
 
 
-class StorageBlobEncryptionTestAsync(StorageTestCase):
+class StorageBlobEncryptionTestAsync(AsyncBlobTestCase):
+    #--Helpers-----------------------------------------------------------------
 
-    def setUp(self):
-        super(StorageBlobEncryptionTestAsync, self).setUp()
-
-        url = self._get_account_url()
-        credential = self._get_shared_key_credential()
-
-        # test chunking functionality by reducing the threshold
-        # for chunking and the size of each chunk, otherwise
-        # the tests would take too long to execute
-        self.bsc = BlobServiceClient(
-            url,
-            credential=credential,
-            max_single_put_size=32 * 1024,
-            max_block_size=4 * 1024,
-            max_page_size=4 * 1024,
-            transport=AiohttpTestTransport())
-        self.config = self.bsc._config
+    async def _setup(self, bsc):
+        self.config = bsc._config
         self.container_name = self.get_resource_name('utcontainer')
         self.blob_types = (BlobType.BlockBlob, BlobType.PageBlob, BlobType.AppendBlob)
 
         self.container_name = self.get_resource_name('utcontainer')
         self.bytes = b'Foo'
-
-    def tearDown(self):
-        if not self.is_playback():
-            loop = asyncio.get_event_loop()
-            try:
-                loop.run_until_complete(self.bsc.delete_container(self.container_name))
-            except:
-                pass
-        if path.isfile(FILE_PATH):
-            try:
-                remove(FILE_PATH)
-            except:
-                pass
-
-        return super(StorageBlobEncryptionTestAsync, self).tearDown()
-
-    #--Helpers-----------------------------------------------------------------
-
-    async def _setup(self):
-        if not self.is_playback():
-            container = self.bsc.get_container_client(self.container_name)
+        if self.is_live:
+            container = bsc.get_container_client(self.container_name)
             try:
                 await container.create_container()
             except:
@@ -127,20 +92,22 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
     def _get_blob_reference(self, blob_type):
         return self.get_resource_name(TEST_BLOB_PREFIXES[blob_type.value])
 
-    async def _create_small_blob(self, blob_type):
+    async def _create_small_blob(self, blob_type, bsc):
         blob_name = self._get_blob_reference(blob_type)
-        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob = bsc.get_blob_client(self.container_name, blob_name)
         await blob.upload_blob(self.bytes, blob_type=blob_type)
         return blob
         
     #--Test cases for blob encryption ----------------------------------------
 
-
-    async def _test_missing_attribute_kek_wrap_async(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_missing_attribute_kek_wrap_async(self, resource_group, location, storage_account, storage_account_key):
         # In the shared method _generate_blob_encryption_key
-        # Arrange
-        await self._setup()
-        self.bsc.require_encryption = True
+        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, max_single_put_size=32 * 1024, max_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        await self._setup(bsc)
+        bsc.require_encryption = True
         valid_key = KeyWrapper('key1')
 
         # Act
@@ -148,67 +115,63 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
         invalid_key_1.get_key_wrap_algorithm = valid_key.get_key_wrap_algorithm
         invalid_key_1.get_kid = valid_key.get_kid
         # No attribute wrap_key
-        self.bsc.key_encryption_key = invalid_key_1
+        bsc.key_encryption_key = invalid_key_1
         with self.assertRaises(AttributeError):
-            await self._create_small_blob(BlobType.BlockBlob)
+            await self._create_small_blob(BlobType.BlockBlob, bsc)
 
         invalid_key_2 = lambda: None #functions are objects, so this effectively creates an empty object
         invalid_key_2.wrap_key = valid_key.wrap_key
         invalid_key_2.get_kid = valid_key.get_kid
         # No attribute get_key_wrap_algorithm
-        self.bsc.key_encryption_key = invalid_key_2
+        bsc.key_encryption_key = invalid_key_2
         with self.assertRaises(AttributeError):
-            await self._create_small_blob(BlobType.BlockBlob)
+            await self._create_small_blob(BlobType.BlockBlob, bsc)
         
         invalid_key_3 = lambda: None #functions are objects, so this effectively creates an empty object
         invalid_key_3.get_key_wrap_algorithm = valid_key.get_key_wrap_algorithm
         invalid_key_3.wrap_key = valid_key.wrap_key
         # No attribute get_kid
-        self.bsc.key_encryption_key = invalid_key_2
+        bsc.key_encryption_key = invalid_key_2
         with self.assertRaises(AttributeError):
-            await self._create_small_blob(BlobType.BlockBlob)
+            await self._create_small_blob(BlobType.BlockBlob, bsc)
 
-    @record
-    def test_missing_attribute_kek_wrap_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_missing_attribute_kek_wrap_async())
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_invalid_value_kek_wrap_async(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, max_single_put_size=32 * 1024, max_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        await self._setup(bsc)
+        bsc.require_encryption = True
+        bsc.key_encryption_key = KeyWrapper('key1')
 
-    async def _test_invalid_value_kek_wrap_async(self):
-        # Arrange
-        await self._setup()
-        self.bsc.require_encryption = True
-        self.bsc.key_encryption_key = KeyWrapper('key1')
-
-        self.bsc.key_encryption_key.get_key_wrap_algorithm = None
+        bsc.key_encryption_key.get_key_wrap_algorithm = None
         try:
-            await self._create_small_blob(BlobType.BlockBlob)
+            await self._create_small_blob(BlobType.BlockBlob, bsc)
             self.fail()
         except AttributeError as e:
             self.assertEqual(str(e), _ERROR_OBJECT_INVALID.format('key encryption key', 'get_key_wrap_algorithm'))
 
-        self.bsc.key_encryption_key = KeyWrapper('key1')
-        self.bsc.key_encryption_key.get_kid = None
+        bsc.key_encryption_key = KeyWrapper('key1')
+        bsc.key_encryption_key.get_kid = None
         with self.assertRaises(AttributeError):
-            await self._create_small_blob(BlobType.BlockBlob)
+            await self._create_small_blob(BlobType.BlockBlob, bsc)
 
-        self.bsc.key_encryption_key = KeyWrapper('key1')
-        self.bsc.key_encryption_key.wrap_key = None
+        bsc.key_encryption_key = KeyWrapper('key1')
+        bsc.key_encryption_key.wrap_key = None
         with self.assertRaises(AttributeError):
-            await self._create_small_blob(BlobType.BlockBlob)
+            await self._create_small_blob(BlobType.BlockBlob, bsc)
 
-    @record
-    def test_invalid_value_kek_wrap_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_invalid_value_kek_wrap_async())
-
-    async def _test_missing_attribute_kek_unwrap_async(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_missing_attribute_kek_unwrap_async(self, resource_group, location, storage_account, storage_account_key):
         # Shared between all services in decrypt_blob
-        # Arrange
-        await self._setup()
-        self.bsc.require_encryption = True
+        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, max_single_put_size=32 * 1024, max_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        await self._setup(bsc)
+        bsc.require_encryption = True
         valid_key = KeyWrapper('key1')
-        self.bsc.key_encryption_key = valid_key
-        blob = await self._create_small_blob(BlobType.BlockBlob)
+        bsc.key_encryption_key = valid_key
+        blob = await self._create_small_blob(BlobType.BlockBlob, bsc)
 
         # Act
         # Note that KeyWrapper has a default value for key_id, so these Exceptions
@@ -227,19 +190,17 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
         with self.assertRaises(HttpResponseError):
             await (await blob.download_blob()).content_as_bytes()
 
-    @record
-    def test_missing_attribute_kek_unwrap_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_missing_attribute_kek_unwrap_async())
-
-    async def _test_invalid_value_kek_unwrap_async(self):
-        if TestMode.need_recording_file(self.test_mode):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_invalid_value_kek_unwrap_async(self, resource_group, location, storage_account, storage_account_key):
+        if not self.is_live:
             return 
-        # Arrange
-        await self._setup()
-        self.bsc.require_encryption = True
-        self.bsc.key_encryption_key = KeyWrapper('key1')
-        blob = await self._create_small_blob(BlobType.BlockBlob)
+        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, max_single_put_size=32 * 1024, max_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        await self._setup(bsc)
+        bsc.require_encryption = True
+        bsc.key_encryption_key = KeyWrapper('key1')
+        blob = await self._create_small_blob(BlobType.BlockBlob, bsc)
 
         # Act
         blob.key_encryption_key = KeyWrapper('key1')
@@ -249,17 +210,15 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
             await (await blob.download_blob()).content_as_bytes()
         self.assertEqual(str(e.exception), 'Decryption failed.')
 
-    @record
-    def test_invalid_value_kek_unwrap_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_invalid_value_kek_unwrap_async())
-
-    async def _test_get_blob_kek_async(self):
-        # Arrange
-        await self._setup()
-        self.bsc.require_encryption = True
-        self.bsc.key_encryption_key = KeyWrapper('key1')
-        blob = await self._create_small_blob(BlobType.BlockBlob)
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_get_blob_kek_async(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, max_single_put_size=32 * 1024, max_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        await self._setup(bsc)
+        bsc.require_encryption = True
+        bsc.key_encryption_key = KeyWrapper('key1')
+        blob = await self._create_small_blob(BlobType.BlockBlob, bsc)
 
         # Act
         content = await (await blob.download_blob()).content_as_bytes()
@@ -267,44 +226,40 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(content, self.bytes)
 
-    @record
-    def test_get_blob_kek_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_get_blob_kek_async())
-
-    async def _test_get_blob_resolver_async(self):
-        # Arrange
-        await self._setup()
-        self.bsc.require_encryption = True
-        self.bsc.key_encryption_key = KeyWrapper('key1')
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_get_blob_resolver_async(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, max_single_put_size=32 * 1024, max_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        await self._setup(bsc)
+        bsc.require_encryption = True
+        bsc.key_encryption_key = KeyWrapper('key1')
         key_resolver = KeyResolver()
-        key_resolver.put_key(self.bsc.key_encryption_key)
-        self.bsc.key_resolver_function = key_resolver.resolve_key
-        blob = await self._create_small_blob(BlobType.BlockBlob)
+        key_resolver.put_key(bsc.key_encryption_key)
+        bsc.key_resolver_function = key_resolver.resolve_key
+        blob = await self._create_small_blob(BlobType.BlockBlob, bsc)
 
         # Act
-        self.bsc.key_encryption_key = None
+        bsc.key_encryption_key = None
         content = await (await blob.download_blob()).content_as_bytes()
 
         # Assert
         self.assertEqual(content, self.bytes)
 
-    @record
-    def test_get_blob_resolver_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_get_blob_resolver_async())
-
-    async def _test_get_blob_kek_RSA_async(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_get_blob_kek_RSA_async(self, resource_group, location, storage_account, storage_account_key):
         # We can only generate random RSA keys, so this must be run live or 
         # the playback test will fail due to a change in kek values.
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return 
 
-        # Arrange
-        await self._setup()
-        self.bsc.require_encryption = True
-        self.bsc.key_encryption_key = RSAKeyWrapper('key2')
-        blob = await self._create_small_blob(BlobType.BlockBlob)
+        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, max_single_put_size=32 * 1024, max_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        await self._setup(bsc)
+        bsc.require_encryption = True
+        bsc.key_encryption_key = RSAKeyWrapper('key2')
+        blob = await self._create_small_blob(BlobType.BlockBlob, bsc)
 
         # Act
         content = await blob.download_blob()
@@ -315,42 +270,38 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(data, self.bytes)
 
-    @record
-    def test_get_blob_kek_RSA_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_get_blob_kek_RSA_async())
-
-    async def _test_get_blob_nonmatching_kid_async(self):
-        if TestMode.need_recording_file(self.test_mode):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_get_blob_nonmatching_kid_async(self, resource_group, location, storage_account, storage_account_key):
+        if not self.is_live:
             return 
-        # Arrange
-        await self._setup()
-        self.bsc.require_encryption = True
-        self.bsc.key_encryption_key = KeyWrapper('key1')
-        blob = await self._create_small_blob(BlobType.BlockBlob)
+        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, max_single_put_size=32 * 1024, max_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        await self._setup(bsc)
+        bsc.require_encryption = True
+        bsc.key_encryption_key = KeyWrapper('key1')
+        blob = await self._create_small_blob(BlobType.BlockBlob, bsc)
 
         # Act
-        self.bsc.key_encryption_key.kid = 'Invalid'
+        bsc.key_encryption_key.kid = 'Invalid'
 
         # Assert
         with self.assertRaises(HttpResponseError) as e:
             await (await blob.download_blob()).content_as_bytes()
         self.assertEqual(str(e.exception), 'Decryption failed.')
 
-    @record
-    def test_get_blob_nonmatching_kid_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_get_blob_nonmatching_kid_async())
-
-    async def _test_put_blob_invalid_stream_type_async(self):
-        # Arrange
-        await self._setup()
-        self.bsc.require_encryption = True
-        self.bsc.key_encryption_key = KeyWrapper('key1')
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_put_blob_invalid_stream_type_async(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, max_single_put_size=32 * 1024, max_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        await self._setup(bsc)
+        bsc.require_encryption = True
+        bsc.key_encryption_key = KeyWrapper('key1')
         small_stream = StringIO(u'small')
         large_stream = StringIO(u'large' * self.config.max_single_put_size)
         blob_name = self._get_blob_reference(BlobType.BlockBlob)
-        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob = bsc.get_blob_client(self.container_name, blob_name)
 
         # Assert
         # Block blob specific single shot
@@ -363,24 +314,22 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
             await blob.upload_blob(large_stream)
         self.assertTrue('Blob data should be of type bytes.' in str(e.exception))
 
-    @record
-    def test_put_blob_invalid_stream_type_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_put_blob_invalid_stream_type_async())
-
-    async def _test_put_blob_chunking_required_mult_of_block_size_async(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_put_blob_chunking_required_mult_of_block_size_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
-        # Arrange
-        await self._setup()
-        self.bsc.key_encryption_key = KeyWrapper('key1')
-        self.bsc.require_encryption = True
+        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, max_single_put_size=32 * 1024, max_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        await self._setup(bsc)
+        bsc.key_encryption_key = KeyWrapper('key1')
+        bsc.require_encryption = True
         content = self.get_random_bytes(
             self.config.max_single_put_size + self.config.max_block_size)
         blob_name = self._get_blob_reference(BlobType.BlockBlob)
-        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob = bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
         await blob.upload_blob(content, max_connections=3)
@@ -389,23 +338,21 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(content, blob_content)
 
-    @record
-    def test_put_blob_chunking_required_mult_of_block_size_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_put_blob_chunking_required_mult_of_block_size_async())
-
-    async def _test_put_blob_chunking_required_non_mult_of_block_size_async(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_put_blob_chunking_required_non_mult_of_block_size_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
-        # Arrange
-        await self._setup()
-        self.bsc.key_encryption_key = KeyWrapper('key1')
-        self.bsc.require_encryption = True
+        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, max_single_put_size=32 * 1024, max_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        await self._setup(bsc)
+        bsc.key_encryption_key = KeyWrapper('key1')
+        bsc.require_encryption = True
         content = urandom(self.config.max_single_put_size + 1)
         blob_name = self._get_blob_reference(BlobType.BlockBlob)
-        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob = bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
         await blob.upload_blob(content, max_connections=3)
@@ -414,23 +361,21 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(content, blob_content)
 
-    @record
-    def test_put_blob_chunking_required_non_mult_of_block_size_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_put_blob_chunking_required_non_mult_of_block_size_async())
-
-    async def _test_put_blob_chunking_required_range_specified_async(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_put_blob_chunking_required_range_specified_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
-        # Arrange
-        await self._setup()
-        self.bsc.key_encryption_key = KeyWrapper('key1')
-        self.bsc.require_encryption = True
+        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, max_single_put_size=32 * 1024, max_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        await self._setup(bsc)
+        bsc.key_encryption_key = KeyWrapper('key1')
+        bsc.require_encryption = True
         content = self.get_random_bytes(self.config.max_single_put_size * 2)
         blob_name = self._get_blob_reference(BlobType.BlockBlob)
-        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob = bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
         await blob.upload_blob(
@@ -442,19 +387,17 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(content[:self.config.max_single_put_size+53], blob_content)
 
-    @record
-    def test_put_blob_chunking_required_range_specified_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_put_blob_chunking_required_range_specified_async())
-
-    async def _test_put_block_blob_single_shot_async(self):
-        # Arrange
-        await self._setup()
-        self.bsc.key_encryption_key = KeyWrapper('key1')
-        self.bsc.require_encryption = True
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_put_block_blob_single_shot_async(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, max_single_put_size=32 * 1024, max_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        await self._setup(bsc)
+        bsc.key_encryption_key = KeyWrapper('key1')
+        bsc.require_encryption = True
         content = b'small'
         blob_name = self._get_blob_reference(BlobType.BlockBlob)
-        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob = bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
         await blob.upload_blob(content)
@@ -463,22 +406,20 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(content, blob_content)
 
-    @record
-    def test_put_block_blob_single_shot_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_put_block_blob_single_shot_async())
-
-    async def _test_put_blob_range_async(self):
-        # Arrange
-        await self._setup()
-        self.bsc.require_encryption = True
-        self.bsc.key_encryption_key = KeyWrapper('key1')
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_put_blob_range_async(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, max_single_put_size=32 * 1024, max_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        await self._setup(bsc)
+        bsc.require_encryption = True
+        bsc.key_encryption_key = KeyWrapper('key1')
         content = b'Random repeats' * self.config.max_single_put_size * 5
 
         # All page blob uploads call _upload_chunks, so this will test the ability
         # of that function to handle ranges even though it's a small blob
         blob_name = self._get_blob_reference(BlobType.BlockBlob)
-        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob = bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
         await blob.upload_blob(
@@ -490,19 +431,17 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(content[2:2 + self.config.max_single_put_size + 5], blob_content)
 
-    @record
-    def test_put_blob_range_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_put_blob_range_async())
-
-    async def _test_put_blob_empty_async(self):
-        # Arrange
-        await self._setup()
-        self.bsc.key_encryption_key = KeyWrapper('key1')
-        self.bsc.require_encryption = True
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_put_blob_empty_async(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, max_single_put_size=32 * 1024, max_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        await self._setup(bsc)
+        bsc.key_encryption_key = KeyWrapper('key1')
+        bsc.require_encryption = True
         content = b''
         blob_name = self._get_blob_reference(BlobType.BlockBlob)
-        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob = bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
         await blob.upload_blob(content)
@@ -511,19 +450,17 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(content, blob_content)
 
-    @record
-    def test_put_blob_empty_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_put_blob_empty_async())
-
-    async def _test_put_blob_serial_upload_chunking_async(self):
-        # Arrange
-        await self._setup()
-        self.bsc.key_encryption_key = KeyWrapper('key1')
-        self.bsc.require_encryption = True
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_put_blob_serial_upload_chunking_async(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, max_single_put_size=32 * 1024, max_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        await self._setup(bsc)
+        bsc.key_encryption_key = KeyWrapper('key1')
+        bsc.require_encryption = True
         content = self.get_random_bytes(self.config.max_single_put_size + 1)
         blob_name = self._get_blob_reference(BlobType.BlockBlob)
-        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob = bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
         await blob.upload_blob(content, max_connections=1)
@@ -532,19 +469,17 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(content, blob_content)
 
-    @record
-    def test_put_blob_serial_upload_chunking_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_put_blob_serial_upload_chunking_async())
-
-    async def _test_get_blob_range_beginning_to_middle_async(self):
-        # Arrange
-        await self._setup()
-        self.bsc.key_encryption_key = KeyWrapper('key1')
-        self.bsc.require_encryption = True
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_get_blob_range_beginning_to_middle_async(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, max_single_put_size=32 * 1024, max_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        await self._setup(bsc)
+        bsc.key_encryption_key = KeyWrapper('key1')
+        bsc.require_encryption = True
         content = self.get_random_bytes(128)
         blob_name = self._get_blob_reference(BlobType.BlockBlob)
-        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob = bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
         await blob.upload_blob(content, max_connections=1)
@@ -553,19 +488,17 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(content[:51], blob_content)
 
-    @record
-    def test_get_blob_range_beginning_to_middle_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_get_blob_range_beginning_to_middle_async())
-
-    async def _test_get_blob_range_middle_to_end_async(self):
-        # Arrange
-        await self._setup()
-        self.bsc.key_encryption_key = KeyWrapper('key1')
-        self.bsc.require_encryption = True
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_get_blob_range_middle_to_end_async(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, max_single_put_size=32 * 1024, max_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        await self._setup(bsc)
+        bsc.key_encryption_key = KeyWrapper('key1')
+        bsc.require_encryption = True
         content = self.get_random_bytes(128)
         blob_name = self._get_blob_reference(BlobType.BlockBlob)
-        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob = bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
         await blob.upload_blob(content, max_connections=1)
@@ -576,19 +509,17 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
         self.assertEqual(content[50:], blob_content)
         self.assertEqual(content[50:], blob_content2)
 
-    @record
-    def test_get_blob_range_middle_to_end_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_get_blob_range_middle_to_end_async())
-
-    async def _test_get_blob_range_middle_to_middle_async(self):
-        # Arrange
-        await self._setup()
-        self.bsc.key_encryption_key = KeyWrapper('key1')
-        self.bsc.require_encryption = True
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_get_blob_range_middle_to_middle_async(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, max_single_put_size=32 * 1024, max_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        await self._setup(bsc)
+        bsc.key_encryption_key = KeyWrapper('key1')
+        bsc.require_encryption = True
         content = self.get_random_bytes(128)
         blob_name = self._get_blob_reference(BlobType.BlockBlob)
-        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob = bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
         await blob.upload_blob(content)
@@ -597,19 +528,17 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(content[50:94], blob_content)
 
-    @record
-    def test_get_blob_range_middle_to_middle_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_get_blob_range_middle_to_middle_async())
-
-    async def _test_get_blob_range_aligns_on_16_byte_block_async(self):
-        # Arrange
-        await self._setup()
-        self.bsc.key_encryption_key = KeyWrapper('key1')
-        self.bsc.require_encryption = True
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_get_blob_range_aligns_on_16_byte_block_async(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, max_single_put_size=32 * 1024, max_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        await self._setup(bsc)
+        bsc.key_encryption_key = KeyWrapper('key1')
+        bsc.require_encryption = True
         content = self.get_random_bytes(128)
         blob_name = self._get_blob_reference(BlobType.BlockBlob)
-        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob = bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
         await blob.upload_blob(content)
@@ -618,19 +547,17 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(content[48:64], blob_content)
 
-    @record
-    def test_get_blob_range_aligns_on_16_byte_block_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_get_blob_range_aligns_on_16_byte_block_async())
-
-    async def _test_get_blob_range_expanded_to_beginning_block_align_async(self):
-        # Arrange
-        await self._setup()
-        self.bsc.key_encryption_key = KeyWrapper('key1')
-        self.bsc.require_encryption = True
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_get_blob_range_expanded_to_beginning_block_align_async(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, max_single_put_size=32 * 1024, max_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        await self._setup(bsc)
+        bsc.key_encryption_key = KeyWrapper('key1')
+        bsc.require_encryption = True
         content = self.get_random_bytes(128)
         blob_name = self._get_blob_reference(BlobType.BlockBlob)
-        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob = bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
         await blob.upload_blob(content)
@@ -639,19 +566,17 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(content[5:51], blob_content)
 
-    @record
-    def test_get_blob_range_expanded_to_beginning_block_align_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_get_blob_range_expanded_to_beginning_block_align_async())
-
-    async def _test_get_blob_range_expanded_to_beginning_iv_async(self):
-        # Arrange
-        await self._setup()
-        self.bsc.key_encryption_key = KeyWrapper('key1')
-        self.bsc.require_encryption = True
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_get_blob_range_expanded_to_beginning_iv_async(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, max_single_put_size=32 * 1024, max_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        await self._setup(bsc)
+        bsc.key_encryption_key = KeyWrapper('key1')
+        bsc.require_encryption = True
         content = self.get_random_bytes(128)
         blob_name = self._get_blob_reference(BlobType.BlockBlob)
-        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob = bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
         await blob.upload_blob(content)
@@ -660,21 +585,19 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
         # Assert
         self.assertEqual(content[22:43], blob_content)
 
-    @record
-    def test_get_blob_range_expanded_to_beginning_iv_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_get_blob_range_expanded_to_beginning_iv_async())
-
-    async def _test_put_blob_strict_mode_async(self):
-        # Arrange
-        await self._setup()
-        self.bsc.require_encryption = True
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_put_blob_strict_mode_async(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, max_single_put_size=32 * 1024, max_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        await self._setup(bsc)
+        bsc.require_encryption = True
         content = urandom(512)
 
         # Assert
         for service in self.blob_types:
             blob_name = self._get_blob_reference(service)
-            blob = self.bsc.get_blob_client(self.container_name, blob_name)
+            blob = bsc.get_blob_client(self.container_name, blob_name)
 
             with self.assertRaises(ValueError):
                 await blob.upload_blob(content, blob_type=service)
@@ -693,17 +616,15 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
             with self.assertRaises(ValueError):
                 await blob.upload_blob('To encrypt', blob_type=service)
 
-    @record
-    def test_put_blob_strict_mode_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_put_blob_strict_mode_async())
-
-    async def _test_get_blob_strict_mode_no_policy_async(self):
-        # Arrange
-        await self._setup()
-        self.bsc.require_encryption = True
-        self.bsc.key_encryption_key = KeyWrapper('key1')
-        blob = await self._create_small_blob(BlobType.BlockBlob)
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_get_blob_strict_mode_no_policy_async(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, max_single_put_size=32 * 1024, max_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        await self._setup(bsc)
+        bsc.require_encryption = True
+        bsc.key_encryption_key = KeyWrapper('key1')
+        blob = await self._create_small_blob(BlobType.BlockBlob, bsc)
 
         # Act
         blob.key_encryption_key = None
@@ -712,15 +633,13 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
         with self.assertRaises(ValueError):
             await (await blob.download_blob()).content_as_bytes()
 
-    @record
-    def test_get_blob_strict_mode_no_policy_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_get_blob_strict_mode_no_policy_async())
-
-    async def _test_get_blob_strict_mode_unencrypted_blob_async(self):
-        # Arrange
-        await self._setup()
-        blob = await self._create_small_blob(BlobType.BlockBlob)
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_get_blob_strict_mode_unencrypted_blob_async(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, max_single_put_size=32 * 1024, max_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        await self._setup(bsc)
+        blob = await self._create_small_blob(BlobType.BlockBlob, bsc)
 
         # Act
         blob.require_encryption = True
@@ -730,17 +649,15 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
         with self.assertRaises(HttpResponseError):
             await (await blob.download_blob()).content_as_bytes()
 
-    @record
-    def test_get_blob_strict_mode_unencrypted_blob_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_get_blob_strict_mode_unencrypted_blob_async())
-
-    async def _test_invalid_methods_fail_block_async(self):
-        # Arrange
-        await self._setup()
-        self.bsc.key_encryption_key = KeyWrapper('key1')
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_invalid_methods_fail_block_async(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, max_single_put_size=32 * 1024, max_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        await self._setup(bsc)
+        bsc.key_encryption_key = KeyWrapper('key1')
         blob_name = self._get_blob_reference(BlobType.BlockBlob)
-        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob = bsc.get_blob_client(self.container_name, blob_name)
 
         # Assert
         with self.assertRaises(ValueError) as e:
@@ -751,17 +668,15 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
             await blob.commit_block_list(['block1'])
         self.assertEqual(str(e.exception), _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
 
-    @record
-    def test_invalid_methods_fail_block_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_invalid_methods_fail_block_async())
-
-    async def _test_invalid_methods_fail_append_async(self):
-        # Arrange
-        await self._setup()
-        self.bsc.key_encryption_key = KeyWrapper('key1')
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_invalid_methods_fail_append_async(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, max_single_put_size=32 * 1024, max_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        await self._setup(bsc)
+        bsc.key_encryption_key = KeyWrapper('key1')
         blob_name = self._get_blob_reference(BlobType.AppendBlob)
-        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob = bsc.get_blob_client(self.container_name, blob_name)
 
         # Assert
         with self.assertRaises(ValueError) as e:
@@ -777,17 +692,15 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
             await blob.upload_blob(b'To encrypt', blob_type=BlobType.AppendBlob)
         self.assertEqual(str(e.exception), _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
 
-    @record
-    def test_invalid_methods_fail_append_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_invalid_methods_fail_append_async())
-
-    async def _test_invalid_methods_fail_page_async(self):
-        # Arrange
-        await self._setup()
-        self.bsc.key_encryption_key = KeyWrapper('key1')
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_invalid_methods_fail_page_async(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, max_single_put_size=32 * 1024, max_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        await self._setup(bsc)
+        bsc.key_encryption_key = KeyWrapper('key1')
         blob_name = self._get_blob_reference(BlobType.PageBlob)
-        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob = bsc.get_blob_client(self.container_name, blob_name)
 
         # Assert
         with self.assertRaises(ValueError) as e:
@@ -798,18 +711,16 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
             await blob.create_page_blob(512)
         self.assertEqual(str(e.exception), _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
 
-    @record
-    def test_invalid_methods_fail_page_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_invalid_methods_fail_page_async())
-
-    async def _test_validate_encryption_async(self):
-        # Arrange
-        await self._setup()
-        self.bsc.require_encryption = True
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_validate_encryption_async(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, max_single_put_size=32 * 1024, max_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        await self._setup(bsc)
+        bsc.require_encryption = True
         kek = KeyWrapper('key1')
-        self.bsc.key_encryption_key = kek
-        blob = await self._create_small_blob(BlobType.BlockBlob)
+        bsc.key_encryption_key = kek
+        blob = await self._create_small_blob(BlobType.BlockBlob, bsc)
 
         # Act
         blob.require_encryption = False
@@ -829,60 +740,47 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
         
         self.assertEqual(self.bytes, content)
 
-    @record
-    def test_validate_encryption_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_validate_encryption_async())
-
-    async def _test_create_block_blob_from_star_async(self):
-        await self._setup()
-        await self._create_blob_from_star(BlobType.BlockBlob, self.bytes, self.bytes)
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_create_block_blob_from_star_async(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, max_single_put_size=32 * 1024, max_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        await self._setup(bsc)
+        await self._create_blob_from_star(BlobType.BlockBlob, self.bytes, self.bytes, bsc)
 
         stream = BytesIO(self.bytes)
-        await self._create_blob_from_star(BlobType.BlockBlob, self.bytes, stream)
+        await self._create_blob_from_star(BlobType.BlockBlob, self.bytes, stream, bsc)
 
         FILE_PATH = 'blob_input.temp.dat'
         with open(FILE_PATH, 'wb') as stream:
             stream.write(self.bytes)
         with open(FILE_PATH, 'rb') as stream:
-            await self._create_blob_from_star(BlobType.BlockBlob, self.bytes, stream)
+            await self._create_blob_from_star(BlobType.BlockBlob, self.bytes, stream, bsc)
 
-        await self._create_blob_from_star(BlobType.BlockBlob, b'To encrypt', 'To encrypt')
+        await self._create_blob_from_star(BlobType.BlockBlob, b'To encrypt', 'To encrypt', bsc)
 
-    @record
-    def test_create_block_blob_from_star_async(self):
-        # This test only runs live
-        if TestMode.need_recording_file(self.test_mode):
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_create_block_blob_from_star_async())
-
-    async def _test_create_page_blob_from_star_async(self):
-        await self._setup()
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_create_page_blob_from_star_async(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, max_single_put_size=32 * 1024, max_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        await self._setup(bsc)
         content = self.get_random_bytes(512)
-        await self._create_blob_from_star(BlobType.PageBlob, content, content)
+        await self._create_blob_from_star(BlobType.PageBlob, content, content, bsc)
 
         stream = BytesIO(content)
-        await self._create_blob_from_star(BlobType.PageBlob, content, stream, length=512)
+        await self._create_blob_from_star(BlobType.PageBlob, content, stream, bsc, length=512)
 
         FILE_PATH = 'blob_input.temp.dat'
         with open(FILE_PATH, 'wb') as stream:
             stream.write(content)
 
         with open(FILE_PATH, 'rb') as stream:
-            await self._create_blob_from_star(BlobType.PageBlob, content, stream)
+            await self._create_blob_from_star(BlobType.PageBlob, content, stream, bsc)
 
-    @record
-    def test_create_page_blob_from_star_async(self):
-        # This test only runs live
-        if TestMode.need_recording_file(self.test_mode):
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_create_page_blob_from_star_async())
-
-    async def _create_blob_from_star(self, blob_type, content, data, **kwargs):
+    async def _create_blob_from_star(self, blob_type, content, data, bsc, **kwargs):
         blob_name = self._get_blob_reference(blob_type)
-        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob = bsc.get_blob_client(self.container_name, blob_name)
         blob.key_encryption_key = KeyWrapper('key1')
         blob.require_encryption = True
         await blob.upload_blob(data, blob_type=blob_type, **kwargs)
@@ -890,12 +788,12 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
         blob_content = await (await blob.download_blob()).content_as_bytes()
         self.assertEqual(content, blob_content)
 
-    async def _test_get_blob_to_star_async(self):
-        # Arrange
-        await self._setup()
-        self.bsc.require_encryption = True
-        self.bsc.key_encryption_key = KeyWrapper('key1')
-        blob = await self._create_small_blob(BlobType.BlockBlob)
+    async def test_get_blob_to_star_async(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, max_single_put_size=32 * 1024, max_block_size=4 * 1024, max_page_size=4 * 1024, transport=AiohttpTestTransport())
+        await self._setup(bsc)
+        bsc.require_encryption = True
+        bsc.key_encryption_key = KeyWrapper('key1')
+        blob = await self._create_small_blob(BlobType.BlockBlob, bsc)
 
         # Act
         content = await blob.download_blob()
@@ -913,11 +811,6 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
         self.assertEqual(self.bytes, bytes_blob)
         self.assertEqual(self.bytes, stream_blob.read())
         self.assertEqual(self.bytes.decode(), text_blob)
-
-    @record
-    def test_get_blob_to_star_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_get_blob_to_star_async())
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':

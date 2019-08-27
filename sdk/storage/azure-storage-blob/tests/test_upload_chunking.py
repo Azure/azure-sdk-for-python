@@ -9,7 +9,7 @@
 import pytest
 
 import os
-
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.storage.blob._shared.uploads import SubStream
 from threading import Lock
 from io import (BytesIO, SEEK_SET)
@@ -25,7 +25,9 @@ class StorageBlobUploadChunkingTest(StorageTestCase):
 
     # this is a white box test that's designed to make sure _Substream behaves properly
     # when the buffer needs to be swapped out at least once
-    def test_sub_stream_with_length_larger_than_buffer(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_sub_stream_with_length_larger_than_buffer(self, resource_group, location, storage_account, storage_account_key):
         data = os.urandom(12 * 1024 * 1024)
 
         # assuming the max size of the buffer is 4MB, this test needs to be updated if that has changed
@@ -77,7 +79,9 @@ class StorageBlobUploadChunkingTest(StorageTestCase):
 
     # this is a white box test that's designed to make sure _Substream behaves properly
     # when block size is smaller than 4MB, thus there's no need for buffer swap
-    def test_sub_stream_with_length_equal_to_buffer(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_sub_stream_with_length_equal_to_buffer(self, resource_group, location, storage_account, storage_account_key):
         data = os.urandom(6 * 1024 * 1024)
 
         # assuming the max size of the buffer is 4MB, this test needs to be updated if that has changed

@@ -14,6 +14,7 @@ import asyncio
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 
 from azure.storage.blob.aio import (
     BlobServiceClient,
@@ -22,10 +23,8 @@ from azure.storage.blob.aio import (
     StorageErrorCode,
     BlobProperties
 )
-from testcase import (
-    StorageTestCase,
-    TestMode,
-    record,
+from asyncblobtestcase import (
+    AsyncBlobTestCase,
 )
 
 # ------------------------------------------------------------------------------
@@ -68,7 +67,7 @@ class StorageGetBlobTestAsync(StorageTestCase):
         self.byte_data = self.get_random_bytes(64 * 1024 + 5)
 
     def tearDown(self):
-        if not self.is_playback():
+        if self.is_live:
             loop = asyncio.get_event_loop()
             try:
                 loop.run_until_complete(self.bsc.delete_container(self.container_name))
@@ -86,7 +85,7 @@ class StorageGetBlobTestAsync(StorageTestCase):
     # --Helpers-----------------------------------------------------------------
 
     async def _setup(self):
-        if not self.is_playback():
+        if self.is_live:
             container = self.bsc.get_container_client(self.container_name)
             await container.create_container()
 
@@ -112,7 +111,7 @@ class StorageGetBlobTestAsync(StorageTestCase):
     # -- Get test cases for blobs ----------------------------------------------
 
 
-    async def _test_unicode_get_blob_unicode_data_async(self):
+    async def test_unicode_get_blob_unicode_data_async(self):
         # Arrange
         await self._setup()
         blob_data = u'hello world啊齄丂狛狜'.encode('utf-8')
@@ -132,7 +131,7 @@ class StorageGetBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_unicode_get_blob_unicode_data_async())
 
-    async def _test_unicode_get_blob_binary_data_async(self):
+    async def test_unicode_get_blob_binary_data_async(self):
         # Arrange
         await self._setup()
         base64_data = 'AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/wABAgMEBQYHCAkKCwwNDg8QERITFBUWFxgZGhscHR4fICEiIyQlJicoKSorLC0uLzAxMjM0NTY3ODk6Ozw9Pj9AQUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVpbXF1eX2BhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ent8fX5/gIGCg4SFhoeIiYqLjI2Oj5CRkpOUlZaXmJmam5ydnp+goaKjpKWmp6ipqqusra6vsLGys7S1tre4ubq7vL2+v8DBwsPExcbHyMnKy8zNzs/Q0dLT1NXW19jZ2tvc3d7f4OHi4+Tl5ufo6err7O3u7/Dx8vP09fb3+Pn6+/z9/v8AAQIDBAUGBwgJCgsMDQ4PEBESExQVFhcYGRobHB0eHyAhIiMkJSYnKCkqKywtLi8wMTIzNDU2Nzg5Ojs8PT4/QEFCQ0RFRkdISUpLTE1OT1BRUlNUVVZXWFlaW1xdXl9gYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXp7fH1+f4CBgoOEhYaHiImKi4yNjo+QkZKTlJWWl5iZmpucnZ6foKGio6SlpqeoqaqrrK2ur7CxsrO0tba3uLm6u7y9vr/AwcLDxMXGx8jJysvMzc7P0NHS09TV1tfY2drb3N3e3+Dh4uPk5ebn6Onq6+zt7u/w8fLz9PX29/j5+vv8/f7/AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/w=='
@@ -154,7 +153,7 @@ class StorageGetBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_unicode_get_blob_binary_data_async())
 
-    async def _test_get_blob_no_content_async(self):
+    async def test_get_blob_no_content_async(self):
         # Arrange
         await self._setup()
         blob_data = b''
@@ -174,9 +173,9 @@ class StorageGetBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_no_content_async())
 
-    async def _test_get_blob_to_bytes_async(self):
+    async def test_get_blob_to_bytes_async(self):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -194,9 +193,9 @@ class StorageGetBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_to_bytes_async())
 
-    async def _test_ranged_get_blob_to_bytes_with_single_byte_async(self):
+    async def test_ranged_get_blob_to_bytes_with_single_byte_async(self):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -222,7 +221,7 @@ class StorageGetBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_ranged_get_blob_to_bytes_with_single_byte_async())
 
-    async def _test_ranged_get_blob_to_bytes_with_zero_byte_async(self):
+    async def test_ranged_get_blob_to_bytes_with_zero_byte_async(self):
         await self._setup()
         blob_data = b''
         blob_name = self._get_blob_reference()
@@ -244,7 +243,7 @@ class StorageGetBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_ranged_get_blob_to_bytes_with_zero_byte_async())
 
-    async def _test_ranged_get_blob_with_missing_start_range_async(self):
+    async def test_ranged_get_blob_with_missing_start_range_async(self):
         await self._setup()
         blob_data = b'foobar'
         blob_name = self._get_blob_reference()
@@ -261,9 +260,9 @@ class StorageGetBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_ranged_get_blob_with_missing_start_range_async())
 
-    async def _test_get_blob_to_bytes_snapshot_async(self):
+    async def test_get_blob_to_bytes_snapshot_async(self):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -285,9 +284,9 @@ class StorageGetBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_to_bytes_snapshot_async())
 
-    async def _test_get_blob_to_bytes_with_progress_async(self):
+    async def test_get_blob_to_bytes_with_progress_async(self):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -316,7 +315,7 @@ class StorageGetBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_to_bytes_with_progress_async())
 
-    async def _test_get_blob_to_bytes_non_parallel_async(self):
+    async def test_get_blob_to_bytes_non_parallel_async(self):
         # Arrange
         await self._setup()
         progress = []
@@ -343,7 +342,7 @@ class StorageGetBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_to_bytes_non_parallel_async())
 
-    async def _test_get_blob_to_bytes_small_async(self):
+    async def test_get_blob_to_bytes_small_async(self):
         # Arrange
         await self._setup()
         blob_data = self.get_random_bytes(1024)
@@ -374,9 +373,9 @@ class StorageGetBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_to_bytes_small_async())
 
-    async def _test_get_blob_to_stream_async(self):
+    async def test_get_blob_to_stream_async(self):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -399,9 +398,9 @@ class StorageGetBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_to_stream_async())
 
-    async def _test_get_blob_to_stream_with_progress_async(self):
+    async def test_get_blob_to_stream_with_progress_async(self):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -434,7 +433,7 @@ class StorageGetBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_to_stream_with_progress_async())
 
-    async def _test_get_blob_to_stream_non_parallel_async(self):
+    async def test_get_blob_to_stream_non_parallel_async(self):
         # Arrange
         await self._setup()
         progress = []
@@ -466,7 +465,7 @@ class StorageGetBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_to_stream_non_parallel_async())
 
-    async def _test_get_blob_to_stream_small_async(self):
+    async def test_get_blob_to_stream_small_async(self):
         # Arrange
         await self._setup()
         blob_data = self.get_random_bytes(1024)
@@ -503,9 +502,9 @@ class StorageGetBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_to_stream_small_async())
 
-    async def _test_ranged_get_blob_to_path_async(self):
+    async def test_ranged_get_blob_to_path_async(self):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -529,9 +528,9 @@ class StorageGetBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_ranged_get_blob_to_path_async())
 
-    async def _test_ranged_get_blob_to_path_with_progress_async(self):
+    async def test_ranged_get_blob_to_path_with_progress_async(self):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -567,7 +566,7 @@ class StorageGetBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_ranged_get_blob_to_path_with_progress_async())
 
-    async def _test_ranged_get_blob_to_path_small_async(self):
+    async def test_ranged_get_blob_to_path_small_async(self):
         # Arrange
         await self._setup()
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
@@ -588,7 +587,7 @@ class StorageGetBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_ranged_get_blob_to_path_small_async())
 
-    async def _test_ranged_get_blob_to_path_non_parallel_async(self):
+    async def test_ranged_get_blob_to_path_non_parallel_async(self):
         # Arrange
         await self._setup()
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
@@ -609,9 +608,9 @@ class StorageGetBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_ranged_get_blob_to_path_non_parallel_async())
 
-    async def _test_ranged_get_blob_to_path_invalid_range_parallel_async(self):
+    async def test_ranged_get_blob_to_path_invalid_range_parallel_async(self):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -639,9 +638,9 @@ class StorageGetBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_ranged_get_blob_to_path_invalid_range_parallel_async())
 
-    async def _test_ranged_get_blob_to_path_invalid_range_non_parallel_async(self):
+    async def test_ranged_get_blob_to_path_invalid_range_non_parallel_async(self):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -671,9 +670,9 @@ class StorageGetBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_ranged_get_blob_to_path_invalid_range_non_parallel_async())
 
-    async def _test_get_blob_to_text_async(self):
+    async def test_get_blob_to_text_async(self):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -694,9 +693,9 @@ class StorageGetBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_to_text_async())
 
-    async def _test_get_blob_to_text_with_progress_async(self):
+    async def test_get_blob_to_text_with_progress_async(self):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -729,7 +728,7 @@ class StorageGetBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_to_text_with_progress_async())
 
-    async def _test_get_blob_to_text_non_parallel_async(self):
+    async def test_get_blob_to_text_non_parallel_async(self):
         # Arrange
         await self._setup()
         text_blob = self._get_blob_reference()
@@ -760,7 +759,7 @@ class StorageGetBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_to_text_non_parallel_async())
 
-    async def _test_get_blob_to_text_small_async(self):
+    async def test_get_blob_to_text_small_async(self):
         # Arrange
         await self._setup()
         blob_data = self.get_random_text_data(1024)
@@ -791,7 +790,7 @@ class StorageGetBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_to_text_small_async())
 
-    async def _test_get_blob_to_text_with_encoding_async(self):
+    async def test_get_blob_to_text_with_encoding_async(self):
         # Arrange
         await self._setup()
         text = u'hello 啊齄丂狛狜 world'
@@ -810,7 +809,7 @@ class StorageGetBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_to_text_with_encoding_async())
 
-    async def _test_get_blob_to_text_with_encoding_and_progress_async(self):
+    async def test_get_blob_to_text_with_encoding_and_progress_async(self):
         # Arrange
         await self._setup()
         text = u'hello 啊齄丂狛狜 world'
@@ -841,7 +840,7 @@ class StorageGetBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_to_text_with_encoding_and_progress_async())
 
-    async def _test_get_blob_non_seekable_async(self):
+    async def test_get_blob_non_seekable_async(self):
         # Arrange
         await self._setup()
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
@@ -863,9 +862,9 @@ class StorageGetBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_non_seekable_async())
 
-    async def _test_get_blob_non_seekable_parallel_async(self):
+    async def test_get_blob_non_seekable_parallel_async(self):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -885,7 +884,7 @@ class StorageGetBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_non_seekable_parallel_async())
 
-    async def _test_get_blob_to_stream_exact_get_size_async(self):
+    async def test_get_blob_to_stream_exact_get_size_async(self):
         # Arrange
         await self._setup()
         blob_name = self._get_blob_reference()
@@ -920,7 +919,7 @@ class StorageGetBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_to_stream_exact_get_size_async())
 
-    async def _test_get_blob_exact_get_size_async(self):
+    async def test_get_blob_exact_get_size_async(self):
         # Arrange
         await self._setup()
         blob_name = self._get_blob_reference()
@@ -951,9 +950,9 @@ class StorageGetBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_exact_get_size_async())
 
-    async def _test_get_blob_exact_chunk_size_async(self):
+    async def test_get_blob_exact_chunk_size_async(self):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -988,9 +987,9 @@ class StorageGetBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_exact_chunk_size_async())
 
-    async def _test_get_blob_to_stream_with_md5_async(self):
+    async def test_get_blob_to_stream_with_md5_async(self):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -1013,9 +1012,9 @@ class StorageGetBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_to_stream_with_md5_async())
 
-    async def _test_get_blob_with_md5_async(self):
+    async def test_get_blob_with_md5_async(self):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -1033,9 +1032,9 @@ class StorageGetBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_with_md5_async())
 
-    async def _test_get_blob_range_to_stream_with_overall_md5_async(self):
+    async def test_get_blob_range_to_stream_with_overall_md5_async(self):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -1059,9 +1058,9 @@ class StorageGetBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_range_to_stream_with_overall_md5_async())
 
-    async def _test_get_blob_range_with_overall_md5_async(self):
+    async def test_get_blob_range_with_overall_md5_async(self):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         await self._setup()
@@ -1084,9 +1083,9 @@ class StorageGetBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_range_with_overall_md5_async())
 
-    async def _test_get_blob_range_with_range_md5_async(self):
+    async def test_get_blob_range_with_range_md5_async(self):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         await self._setup()

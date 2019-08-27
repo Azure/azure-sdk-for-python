@@ -7,10 +7,10 @@ import unittest
 import pytest
 
 from azure.storage.blob import BlobServiceClient
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 
 from testcase import (
     StorageTestCase,
-    record,
 )
 
 SERVICE_UNAVAILABLE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageServiceStats><GeoReplication><Status' \
@@ -40,25 +40,24 @@ class ServiceStatsTest(StorageTestCase):
         response.http_response.text = lambda: SERVICE_UNAVAILABLE_RESP_BODY
 
     # --Test cases per service ---------------------------------------
-
-    @record
-    def test_blob_service_stats(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_blob_service_stats(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        url = self._get_account_url()
-        credential = self._get_shared_key_credential()
-        bs = BlobServiceClient(url, credential=credential)
+        url = self._account_url(storage_account.name)
+        bs = BlobServiceClient(url, credential=storage_account_key)
         # Act
         stats = bs.get_service_stats()
 
         # Assert
         self._assert_stats_default(stats)
 
-    @record
-    def test_blob_service_stats_when_unavailable(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_blob_service_stats_when_unavailable(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        url = self._get_account_url()
-        credential = self._get_shared_key_credential()
-        bs = BlobServiceClient(url, credential=credential)
+        url = self._account_url(storage_account.name)
+        bs = BlobServiceClient(url, credential=storage_account_key)
 
         # Act
         stats = bs.get_service_stats(raw_response_hook=self.override_response_body_with_unavailable_status)

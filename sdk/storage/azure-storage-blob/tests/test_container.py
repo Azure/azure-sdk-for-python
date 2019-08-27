@@ -11,7 +11,7 @@ from dateutil.tz import tzutc
 
 import requests
 from datetime import datetime, timedelta
-
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError
 from azure.storage.blob import (
     BlobServiceClient,
@@ -24,7 +24,7 @@ from azure.storage.blob import (
     AccessPolicy
 )
 
-from testcase import StorageTestCase, TestMode, record, LogCaptured
+from testcase import StorageTestCase, LogCaptured
 
 #------------------------------------------------------------------------------
 TEST_CONTAINER_PREFIX = 'container'
@@ -40,7 +40,7 @@ class StorageContainerTest(StorageTestCase):
         self.test_containers = []
 
     def tearDown(self):
-        if not self.is_playback():
+        if self.is_live:
             for container_name in self.test_containers:
                 try:
                     container = self.bsc.get_container_client(container_name)
@@ -1012,7 +1012,7 @@ class StorageContainerTest(StorageTestCase):
     @record
     def test_shared_access_container(self):
         # SAS URL is calculated from storage key, so this test runs live only
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange

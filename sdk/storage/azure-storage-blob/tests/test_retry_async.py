@@ -57,7 +57,7 @@ class StorageRetryTestAsync(StorageTestCase):
 
     # --Test Cases --------------------------------------------
 
-    async def _test_retry_on_server_error_async(self):
+    async def test_retry_on_server_error_async(self):
         # Arrange
         container_name = self.get_resource_name()
         service = self._create_storage_service(BlobServiceClient, self.settings, transport=AiohttpTestTransport())
@@ -81,7 +81,7 @@ class StorageRetryTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_retry_on_server_error_async())
 
-    async def _test_retry_on_timeout_async(self):
+    async def test_retry_on_timeout_async(self):
         # Arrange
         container_name = self.get_resource_name()
         retry = ExponentialRetry(initial_backoff=1, increment_base=2)
@@ -106,7 +106,7 @@ class StorageRetryTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_retry_on_timeout_async())
 
-    async def _test_retry_callback_and_retry_context_async(self):
+    async def test_retry_callback_and_retry_context_async(self):
         # Arrange
         container_name = self.get_resource_name()
         retry = LinearRetry(backoff=1)
@@ -137,8 +137,8 @@ class StorageRetryTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_retry_callback_and_retry_context_async())
 
-    async def _test_retry_on_socket_timeout_async(self):
-        if TestMode.need_recording_file(self.test_mode):
+    async def test_retry_on_socket_timeout_async(self):
+        if not self.is_live:
             return
         # Arrange
         container_name = self.get_resource_name()
@@ -168,12 +168,12 @@ class StorageRetryTestAsync(StorageTestCase):
 
     def test_retry_on_socket_timeout_async(self):
         pytest.skip("Error not raised on retry")
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_retry_on_socket_timeout_async())
 
-    async def _test_no_retry_async(self):
+    async def test_no_retry_async(self):
         # Arrange
         container_name = self.get_resource_name()
         service = self._create_storage_service(
@@ -198,7 +198,7 @@ class StorageRetryTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_no_retry_async())
 
-    async def _test_linear_retry_async(self):
+    async def test_linear_retry_async(self):
         # Arrange
         container_name = self.get_resource_name()
         retry = LinearRetry(backoff=1)
@@ -224,7 +224,7 @@ class StorageRetryTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_linear_retry_async())
 
-    async def _test_exponential_retry_async(self):
+    async def test_exponential_retry_async(self):
         # Arrange
         container_name = self.get_resource_name()
         retry = ExponentialRetry(initial_backoff=1, increment_base=3, retry_total=3)
@@ -314,7 +314,7 @@ class StorageRetryTestAsync(StorageTestCase):
             # Assert backoff interval is within +/- 3 of 15
             self.assertTrue(12 <= backoff <= 18)
 
-    async def _test_invalid_retry_async(self):
+    async def test_invalid_retry_async(self):
         # Arrange
         container_name = self.get_resource_name()
         retry = ExponentialRetry(initial_backoff=1, increment_base=2)
@@ -338,7 +338,7 @@ class StorageRetryTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_invalid_retry_async())
 
-    async def _test_retry_with_deserialization_async(self):
+    async def test_retry_with_deserialization_async(self):
         # Arrange
         container_name = self.get_resource_name(prefix='retry')
         retry = ExponentialRetry(initial_backoff=1, increment_base=2)
@@ -365,7 +365,7 @@ class StorageRetryTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_retry_with_deserialization_async())
 
-    async def _test_secondary_location_mode_async(self):
+    async def test_secondary_location_mode_async(self):
         # Arrange
         container_name = self.get_resource_name()
         retry = ExponentialRetry(initial_backoff=1, increment_base=2)
@@ -398,7 +398,7 @@ class StorageRetryTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_secondary_location_mode_async())
 
-    async def _test_retry_to_secondary_with_put_async(self):
+    async def test_retry_to_secondary_with_put_async(self):
         # Arrange
         container_name = self.get_resource_name()
         retry = ExponentialRetry(retry_to_secondary=True, initial_backoff=1, increment_base=2)
@@ -429,7 +429,7 @@ class StorageRetryTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_retry_to_secondary_with_put_async())
 
-    async def _test_retry_to_secondary_with_get_async(self):
+    async def test_retry_to_secondary_with_get_async(self):
         # Arrange
         container_name = self.get_resource_name()
         retry = ExponentialRetry(retry_to_secondary=True, initial_backoff=1, increment_base=2)
@@ -458,7 +458,7 @@ class StorageRetryTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_retry_to_secondary_with_get_async())
 
-    async def _test_location_lock_async(self):
+    async def test_location_lock_async(self):
         # Arrange
         retry = ExponentialRetry(retry_to_secondary=True, initial_backoff=1, increment_base=2)
         service = self._create_storage_service(
@@ -495,7 +495,7 @@ class StorageRetryTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_location_lock_async())
 
-    async def _test_invalid_account_key_async(self):
+    async def test_invalid_account_key_async(self):
         # Arrange
         container_name = self.get_resource_name()
         retry = ExponentialRetry(initial_backoff=1, increment_base=3, retry_total=3)

@@ -10,11 +10,10 @@ import asyncio
 from azure.storage.blob.aio import BlobServiceClient
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 
-from testcase import (
-    StorageTestCase,
-    record,
-    TestMode
+from asyncblobtestcase import (
+    AsyncBlobTestCase,
 )
 
 SERVICE_UNAVAILABLE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageServiceStats><GeoReplication><Status' \
@@ -55,39 +54,30 @@ class ServiceStatsTestAsync(StorageTestCase):
         response.http_response.text = lambda: SERVICE_UNAVAILABLE_RESP_BODY
 
     # --Test cases per service ---------------------------------------
-
-    async def _test_blob_service_stats_async(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_blob_service_stats_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        url = self._get_account_url()
-        credential = self._get_shared_key_credential()
-        bs = BlobServiceClient(url, credential=credential, transport=AiohttpTestTransport())
+        bs = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
         # Act
         stats = await bs.get_service_stats()
 
         # Assert
         self._assert_stats_default(stats)
 
-    @record
-    def test_blob_service_stats_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_blob_service_stats_async())
-
-    async def _test_blob_service_stats_when_unavailable_async(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_blob_service_stats_when_unavailable_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        url = self._get_account_url()
-        credential = self._get_shared_key_credential()
-        bs = BlobServiceClient(url, credential=credential, transport=AiohttpTestTransport())
+        bs = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
 
         # Act
         stats = await bs.get_service_stats(raw_response_hook=self.override_response_body_with_unavailable_status)
 
         # Assert
         self._assert_stats_unavailable(stats)
-
-    @record
-    def test_blob_service_stats_when_unavailable_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_blob_service_stats_when_unavailable_async())
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':

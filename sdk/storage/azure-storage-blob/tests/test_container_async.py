@@ -16,7 +16,7 @@ from datetime import datetime, timedelta
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
-
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.storage.blob.aio import (
     BlobServiceClient,
     ContainerClient,
@@ -32,7 +32,10 @@ from azure.storage.blob.aio import (
     ContainerPermissions
 )
 
-from testcase import StorageTestCase, TestMode, record, LogCaptured
+from testcase import LogCaptured
+from asyncblobtestcase import (
+    AsyncBlobTestCase,
+)
 
 #------------------------------------------------------------------------------
 TEST_CONTAINER_PREFIX = 'container'
@@ -61,7 +64,7 @@ class StorageContainerTestAsync(StorageTestCase):
         self.test_containers = []
 
     def tearDown(self):
-        if not self.is_playback():
+        if self.is_live:
             loop = asyncio.get_event_loop()
             for container_name in self.test_containers:
                 try:
@@ -96,7 +99,7 @@ class StorageContainerTestAsync(StorageTestCase):
 
     #--Test cases for containers -----------------------------------------
     
-    async def _test_create_container(self):
+    async def test_create_container(self):
         # Arrange
         container_name = self._get_container_reference()
 
@@ -112,7 +115,7 @@ class StorageContainerTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_container())
 
-    async def _test_create_container_with_already_existing_container_fail_on_exist(self):
+    async def test_create_container_with_already_existing_container_fail_on_exist(self):
         # Arrange
         container_name = self._get_container_reference()
 
@@ -130,7 +133,7 @@ class StorageContainerTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_container_with_already_existing_container_fail_on_exist())
 
-    async def _test_create_container_with_public_access_container(self):
+    async def test_create_container_with_public_access_container(self):
         # Arrange
         container_name = self._get_container_reference()
 
@@ -146,7 +149,7 @@ class StorageContainerTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_container_with_public_access_container())
 
-    async def _test_create_container_with_public_access_blob(self):
+    async def test_create_container_with_public_access_blob(self):
         # Arrange
         container_name = self._get_container_reference()
 
@@ -171,7 +174,7 @@ class StorageContainerTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_container_with_public_access_blob())
 
-    async def _test_create_container_with_metadata(self):
+    async def test_create_container_with_metadata(self):
         # Arrange
         container_name = self._get_container_reference()
         metadata = {'hello': 'world', 'number': '42'}
@@ -191,7 +194,7 @@ class StorageContainerTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_container_with_metadata())
 
-    async def _test_container_exists_with_lease(self):
+    async def test_container_exists_with_lease(self):
         # Arrange
         container = await self._create_container()
         await container.acquire_lease()
@@ -207,7 +210,7 @@ class StorageContainerTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_container_exists_with_lease())
 
-    async def _test_unicode_create_container_unicode_name(self):
+    async def test_unicode_create_container_unicode_name(self):
         # Arrange
         container_name = u'啊齄丂狛狜'
 
@@ -224,7 +227,7 @@ class StorageContainerTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_unicode_create_container_unicode_name())
 
-    async def _test_list_containers(self):
+    async def test_list_containers(self):
         # Arrange
         container = await self._create_container()
 
@@ -247,7 +250,7 @@ class StorageContainerTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_containers())
 
-    async def _test_list_containers_with_prefix(self):
+    async def test_list_containers_with_prefix(self):
         # Arrange
         container = await self._create_container()
 
@@ -268,7 +271,7 @@ class StorageContainerTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_containers_with_prefix())
 
-    async def _test_list_containers_with_include_metadata(self):
+    async def test_list_containers_with_include_metadata(self):
         # Arrange
         container = await self._create_container()
         metadata = {'hello': 'world', 'number': '42'}
@@ -293,7 +296,7 @@ class StorageContainerTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_containers_with_include_metadata())
 
-    async def _test_list_containers_with_public_access(self):
+    async def test_list_containers_with_public_access(self):
         # Arrange
         container = await self._create_container()
         resp = await container.set_container_access_policy(public_access=PublicAccess.Blob)
@@ -315,7 +318,7 @@ class StorageContainerTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_containers_with_public_access())
 
-    async def _test_list_containers_with_num_results_and_marker(self):
+    async def test_list_containers_with_num_results_and_marker(self):
         # Arrange
         prefix = 'listcontainer'
         container_names = []
@@ -352,7 +355,7 @@ class StorageContainerTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_containers_with_num_results_and_marker())
 
-    async def _test_set_container_metadata(self):
+    async def test_set_container_metadata(self):
         # Arrange
         metadata = {'hello': 'world', 'number': '43'}
         container = await self._create_container()
@@ -369,7 +372,7 @@ class StorageContainerTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_container_metadata())
 
-    async def _test_set_container_metadata_with_lease_id(self):
+    async def test_set_container_metadata_with_lease_id(self):
         # Arrange
         metadata = {'hello': 'world', 'number': '43'}
         container = await self._create_container()
@@ -388,7 +391,7 @@ class StorageContainerTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_container_metadata_with_lease_id())
 
-    async def _test_set_container_metadata_with_non_existing_container(self):
+    async def test_set_container_metadata_with_non_existing_container(self):
         # Arrange
         container_name = self._get_container_reference()
         container = self.bsc.get_container_client(container_name)
@@ -404,7 +407,7 @@ class StorageContainerTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_container_metadata_with_non_existing_container())
 
-    async def _test_get_container_metadata(self):
+    async def test_get_container_metadata(self):
         # Arrange
         metadata = {'hello': 'world', 'number': '42'}
         container = await self._create_container()
@@ -422,7 +425,7 @@ class StorageContainerTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_container_metadata())
 
-    async def _test_get_container_metadata_with_lease_id(self):
+    async def test_get_container_metadata_with_lease_id(self):
         # Arrange
         metadata = {'hello': 'world', 'number': '42'}
         container = await self._create_container()
@@ -441,7 +444,7 @@ class StorageContainerTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_container_metadata_with_lease_id())
 
-    async def _test_get_container_properties(self):
+    async def test_get_container_properties(self):
         # Arrange
         metadata = {'hello': 'world', 'number': '42'}
         container = await self._create_container()
@@ -465,7 +468,7 @@ class StorageContainerTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_container_properties())
 
-    async def _test_get_container_properties_with_lease_id(self):
+    async def test_get_container_properties_with_lease_id(self):
         # Arrange
         metadata = {'hello': 'world', 'number': '42'}
         container = await self._create_container()
@@ -488,7 +491,7 @@ class StorageContainerTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_container_properties_with_lease_id())
 
-    async def _test_get_container_acl(self):
+    async def test_get_container_acl(self):
         # Arrange
         container = await self._create_container()
 
@@ -505,7 +508,7 @@ class StorageContainerTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_container_acl())
 
-    async def _test_get_container_acl_with_lease_id(self):
+    async def test_get_container_acl_with_lease_id(self):
         # Arrange
         container = await self._create_container()
         lease_id = await container.acquire_lease()
@@ -522,7 +525,7 @@ class StorageContainerTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_container_acl_with_lease_id())
 
-    async def _test_set_container_acl(self):
+    async def test_set_container_acl(self):
         # Arrange
         container = await self._create_container()
 
@@ -543,7 +546,7 @@ class StorageContainerTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_container_acl())
 
-    async def _test_set_container_acl_with_one_signed_identifier(self):
+    async def test_set_container_acl_with_one_signed_identifier(self):
         # Arrange
         from dateutil.tz import tzutc
         container = await self._create_container()
@@ -565,7 +568,7 @@ class StorageContainerTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_container_acl_with_one_signed_identifier())
 
-    async def _test_set_container_acl_with_lease_id(self):
+    async def test_set_container_acl_with_lease_id(self):
         # Arrange
         container = await self._create_container()
         lease_id = await container.acquire_lease()
@@ -583,7 +586,7 @@ class StorageContainerTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_container_acl_with_lease_id())
 
-    async def _test_set_container_acl_with_public_access(self):
+    async def test_set_container_acl_with_public_access(self):
         # Arrange
         container = await self._create_container()
 
@@ -600,7 +603,7 @@ class StorageContainerTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_container_acl_with_public_access())
 
-    async def _test_set_container_acl_with_empty_signed_identifiers(self):
+    async def test_set_container_acl_with_empty_signed_identifiers(self):
         # Arrange
         container = await self._create_container()
 
@@ -618,7 +621,7 @@ class StorageContainerTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_container_acl_with_empty_signed_identifiers())
 
-    async def _test_set_container_acl_with_signed_identifiers(self):
+    async def test_set_container_acl_with_signed_identifiers(self):
         # Arrange
         container = await self._create_container()
 
@@ -640,7 +643,7 @@ class StorageContainerTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_container_acl_with_signed_identifiers())
 
-    async def _test_set_container_acl_with_empty_identifiers(self):
+    async def test_set_container_acl_with_empty_identifiers(self):
         # Arrange
         container = await self._create_container()
         identifiers = {i: None for i in range(0, 3)}
@@ -661,7 +664,7 @@ class StorageContainerTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_container_acl_with_empty_identifiers())
 
-    async def _test_set_container_acl_with_three_identifiers(self):
+    async def test_set_container_acl_with_three_identifiers(self):
         # Arrange
         container = await self._create_container()
         access_policy = AccessPolicy(permission=ContainerPermissions.READ,
@@ -685,7 +688,7 @@ class StorageContainerTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_container_acl_with_three_identifiers())
 
-    async def _test_set_container_acl_too_many_ids(self):
+    async def test_set_container_acl_too_many_ids(self):
         # Arrange
         container_name = await self._create_container()
 
@@ -707,7 +710,7 @@ class StorageContainerTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_container_acl_too_many_ids())
 
-    async def _test_lease_container_acquire_and_release(self):
+    async def test_lease_container_acquire_and_release(self):
         # Arrange
         container = await self._create_container()
 
@@ -722,7 +725,7 @@ class StorageContainerTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_lease_container_acquire_and_release())
 
-    async def _test_lease_container_renew(self):
+    async def test_lease_container_renew(self):
         # Arrange
         container = await self._create_container()
         lease = await container.acquire_lease(lease_duration=15)
@@ -745,7 +748,7 @@ class StorageContainerTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_lease_container_renew())
 
-    async def _test_lease_container_break_period(self):
+    async def test_lease_container_break_period(self):
         # Arrange
         container = await self._create_container()
 
@@ -763,7 +766,7 @@ class StorageContainerTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_lease_container_break_period())
 
-    async def _test_lease_container_break_released_lease_fails(self):
+    async def test_lease_container_break_released_lease_fails(self):
         # Arrange
         container = await self._create_container()
         lease = await container.acquire_lease()
@@ -780,7 +783,7 @@ class StorageContainerTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_lease_container_break_released_lease_fails())
 
-    async def _test_lease_container_with_duration(self):
+    async def test_lease_container_with_duration(self):
         # Arrange
         container = await self._create_container()
 
@@ -798,7 +801,7 @@ class StorageContainerTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_lease_container_with_duration())
 
-    async def _test_lease_container_twice(self):
+    async def test_lease_container_twice(self):
         # Arrange
         container = await self._create_container()
 
@@ -814,7 +817,7 @@ class StorageContainerTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_lease_container_twice())
 
-    async def _test_lease_container_with_proposed_lease_id(self):
+    async def test_lease_container_with_proposed_lease_id(self):
         # Arrange
         container = await self._create_container()
 
@@ -830,7 +833,7 @@ class StorageContainerTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_lease_container_with_proposed_lease_id())
 
-    async def _test_lease_container_change_lease_id(self):
+    async def test_lease_container_change_lease_id(self):
         # Arrange
         container = await self._create_container()
 
@@ -853,7 +856,7 @@ class StorageContainerTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_lease_container_change_lease_id())
 
-    async def _test_delete_container_with_existing_container(self):
+    async def test_delete_container_with_existing_container(self):
         # Arrange
         container = await self._create_container()
 
@@ -868,7 +871,7 @@ class StorageContainerTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_delete_container_with_existing_container())
 
-    async def _test_delete_container_with_non_existing_container_fail_not_exist(self):
+    async def test_delete_container_with_non_existing_container_fail_not_exist(self):
         # Arrange
         container_name = self._get_container_reference()
         container = self.bsc.get_container_client(container_name)
@@ -886,7 +889,7 @@ class StorageContainerTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_delete_container_with_non_existing_container_fail_not_exist())
 
-    async def _test_delete_container_with_lease_id(self):
+    async def test_delete_container_with_lease_id(self):
         # Arrange
         container = await self._create_container()
         lease = await container.acquire_lease(lease_duration=15)
@@ -904,7 +907,7 @@ class StorageContainerTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_delete_container_with_lease_id())
 
-    async def _test_list_names(self):
+    async def test_list_names(self):
         # Arrange
         container = await self._create_container()
         data = b'hello world'
@@ -925,7 +928,7 @@ class StorageContainerTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_names())
 
-    async def _test_list_blobs(self):
+    async def test_list_blobs(self):
         # Arrange
         container = await self._create_container()
         data = b'hello world'
@@ -955,7 +958,7 @@ class StorageContainerTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_blobs())
 
-    async def _test_list_blobs_leased_blob(self):
+    async def test_list_blobs_leased_blob(self):
         # Arrange
         container = await self._create_container()
         data = b'hello world'
@@ -982,7 +985,7 @@ class StorageContainerTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_blobs_leased_blob())
 
-    async def _test_list_blobs_with_prefix(self):
+    async def test_list_blobs_with_prefix(self):
         # Arrange
         container = await self._create_container()
         data = b'hello world'
@@ -1009,7 +1012,7 @@ class StorageContainerTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_blobs_with_prefix())
 
-    async def _test_list_blobs_with_num_results(self):
+    async def test_list_blobs_with_num_results(self):
         # Arrange
         container = await self._create_container()
         data = b'hello world'
@@ -1039,7 +1042,7 @@ class StorageContainerTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_blobs_with_num_results())
 
-    async def _test_list_blobs_with_include_snapshots(self):
+    async def test_list_blobs_with_include_snapshots(self):
         # Arrange
         container = await self._create_container()
         data = b'hello world'
@@ -1067,7 +1070,7 @@ class StorageContainerTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_blobs_with_include_snapshots())
 
-    async def _test_list_blobs_with_include_metadata(self):
+    async def test_list_blobs_with_include_metadata(self):
         # Arrange
         pytest.skip("Waiting on metadata XML fix in msrest")
         container = await self._create_container()
@@ -1097,7 +1100,7 @@ class StorageContainerTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_blobs_with_include_metadata())
 
-    async def _test_list_blobs_with_include_uncommittedblobs(self):
+    async def test_list_blobs_with_include_uncommittedblobs(self):
         # Arrange
         container = await self._create_container()
         data = b'hello world'
@@ -1124,7 +1127,7 @@ class StorageContainerTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_blobs_with_include_uncommittedblobs())
 
-    async def _test_list_blobs_with_include_copy(self):
+    async def test_list_blobs_with_include_copy(self):
         # Arrange
         container = await self._create_container()
         data = b'hello world'
@@ -1167,7 +1170,7 @@ class StorageContainerTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_blobs_with_include_copy())
 
-    async def _test_list_blobs_with_delimiter(self):
+    async def test_list_blobs_with_delimiter(self):
         # Arrange
         container = await self._create_container()
         data = b'hello world'
@@ -1198,7 +1201,7 @@ class StorageContainerTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_blobs_with_delimiter())
 
-    async def _test_walk_blobs_with_delimiter(self):
+    async def test_walk_blobs_with_delimiter(self):
         # Arrange
         container = await self._create_container()
         data = b'hello world'
@@ -1229,12 +1232,12 @@ class StorageContainerTestAsync(StorageTestCase):
 
     @pytest.mark.skip
     def test_walk_blobs_with_delimiter(self):
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_walk_blobs_with_delimiter())
 
-    async def _test_list_blobs_with_include_multiple(self):
+    async def test_list_blobs_with_include_multiple(self):
         # Arrange
         pytest.skip("Waiting on metadata XML fix in msrest")
         container = await self._create_container()
@@ -1271,9 +1274,9 @@ class StorageContainerTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_blobs_with_include_multiple())
 
-    async def _test_shared_access_container(self):
+    async def test_shared_access_container(self):
         # SAS URL is calculated from storage key, so this test runs live only
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -1302,7 +1305,7 @@ class StorageContainerTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_shared_access_container())
 
-    async def _test_web_container_normal_operations_working(self):
+    async def test_web_container_normal_operations_working(self):
         web_container = "web"
 
         # create the web container in case it does not exist yet

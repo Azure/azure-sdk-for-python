@@ -9,36 +9,25 @@ interactions:
       Content-Type:
       - application/xml; charset=utf-8
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      x-ms-client-request-id:
-      - a23149a8-b4d2-11e9-bd30-b831b58100e8
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Fri, 02 Aug 2019 03:07:16 GMT
+      - Tue, 27 Aug 2019 20:34:10 GMT
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/?restype=service&comp=properties
+    uri: https://pyacrstorage60931a9a.blob.core.windows.net/?restype=service&comp=properties
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidXmlDocument</Code><Message>XML
-        specified is not syntactically valid.\nRequestId:512a17e9-601e-0077-7bdf-48e141000000\nTime:2019-08-02T03:07:16.9741458Z</Message><LineNumber>2</LineNumber><LinePosition>176</LinePosition><Reason>Retention
+        specified is not syntactically valid.\nRequestId:492bac51-a01e-00f7-2c16-5d169d000000\nTime:2019-08-27T20:34:10.6097778Z</Message><LineNumber>2</LineNumber><LinePosition>176</LinePosition><Reason>Retention
         days must be greater than 0 and less than or equal to 365 days.</Reason></Error>"
     headers:
-      ? !!python/object/new:multidict._istr.istr
-      - Content-Length
-      : '376'
-      ? !!python/object/new:multidict._istr.istr
-      - Content-Type
-      : application/xml
-      ? !!python/object/new:multidict._istr.istr
-      - Date
-      : Fri, 02 Aug 2019 03:07:16 GMT
-      ? !!python/object/new:multidict._istr.istr
-      - Server
-      : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      content-length: '376'
+      content-type: application/xml
+      date: Tue, 27 Aug 2019 20:34:09 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: InvalidXmlDocument
-      x-ms-request-id: 512a17e9-601e-0077-7bdf-48e141000000
-      x-ms-version: '2018-03-28'
+      x-ms-version: '2019-02-02'
     status:
       code: 400
       message: XML specified is not syntactically valid.
@@ -46,7 +35,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - amqptest.blob.core.windows.net
+        - pyacrstorage60931a9a.blob.core.windows.net
         - /
         - restype=service&comp=properties
         - ''

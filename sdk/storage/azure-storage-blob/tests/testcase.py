@@ -89,7 +89,7 @@ class StorageTestCase(AzureMgmtTestCase):
         self.logger.handlers = []
 
     def sleep(self, seconds):
-        if not self.is_playback():
+        if self.is_live:
             time.sleep(seconds)
 
     def get_random_bytes(self, size):

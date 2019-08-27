@@ -56,7 +56,6 @@ _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION = 'The require_encryption flag is set, 
 class StorageBlobEncryptionTest(StorageTestCase):
     #--Helpers-----------------------------------------------------------------
     def _setup(self, bsc):
-        self.config = bsc._config
         self.container_name = self.get_resource_name('utcontainer')
         self.blob_types = (BlobType.BlockBlob, BlobType.PageBlob, BlobType.AppendBlob)
 
@@ -269,7 +268,7 @@ class StorageBlobEncryptionTest(StorageTestCase):
         bsc.require_encryption = True
         bsc.key_encryption_key = KeyWrapper('key1')
         small_stream = StringIO(u'small')
-        large_stream = StringIO(u'large' * self.config.max_single_put_size)
+        large_stream = StringIO(u'large' * bsc._config.max_single_put_size)
         blob_name = self._get_blob_reference(BlobType.BlockBlob)
         blob = bsc.get_blob_client(self.container_name, blob_name)
 
@@ -296,7 +295,7 @@ class StorageBlobEncryptionTest(StorageTestCase):
         bsc.key_encryption_key = KeyWrapper('key1')
         bsc.require_encryption = True
         content = self.get_random_bytes(
-            self.config.max_single_put_size + self.config.max_block_size)
+            bsc._config.max_single_put_size + bsc._config.max_block_size)
         blob_name = self._get_blob_reference(BlobType.BlockBlob)
         blob = bsc.get_blob_client(self.container_name, blob_name)
 
@@ -318,7 +317,7 @@ class StorageBlobEncryptionTest(StorageTestCase):
         self._setup(bsc)
         bsc.key_encryption_key = KeyWrapper('key1')
         bsc.require_encryption = True
-        content = urandom(self.config.max_single_put_size + 1)
+        content = urandom(bsc._config.max_single_put_size + 1)
         blob_name = self._get_blob_reference(BlobType.BlockBlob)
         blob = bsc.get_blob_client(self.container_name, blob_name)
 
@@ -340,19 +339,19 @@ class StorageBlobEncryptionTest(StorageTestCase):
         self._setup(bsc)
         bsc.key_encryption_key = KeyWrapper('key1')
         bsc.require_encryption = True
-        content = self.get_random_bytes(self.config.max_single_put_size * 2)
+        content = self.get_random_bytes(bsc._config.max_single_put_size * 2)
         blob_name = self._get_blob_reference(BlobType.BlockBlob)
         blob = bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
         blob.upload_blob(
             content,
-            length=self.config.max_single_put_size + 53,
+            length=bsc._config.max_single_put_size + 53,
             max_connections=3)
         blob_content = blob.download_blob().content_as_bytes(max_connections=3)
 
         # Assert
-        self.assertEqual(content[:self.config.max_single_put_size+53], blob_content)
+        self.assertEqual(content[:bsc._config.max_single_put_size+53], blob_content)
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -379,7 +378,7 @@ class StorageBlobEncryptionTest(StorageTestCase):
         self._setup(bsc)
         bsc.require_encryption = True
         bsc.key_encryption_key = KeyWrapper('key1')
-        content = b'Random repeats' * self.config.max_single_put_size * 5
+        content = b'Random repeats' * bsc._config.max_single_put_size * 5
 
         # All page blob uploads call _upload_chunks, so this will test the ability
         # of that function to handle ranges even though it's a small blob
@@ -389,12 +388,12 @@ class StorageBlobEncryptionTest(StorageTestCase):
         # Act
         blob.upload_blob(
             content[2:],
-            length=self.config.max_single_put_size + 5,
+            length=bsc._config.max_single_put_size + 5,
             max_connections=1)
         blob_content = blob.download_blob().content_as_bytes(max_connections=1)
 
         # Assert
-        self.assertEqual(content[2:2 + self.config.max_single_put_size + 5], blob_content)
+        self.assertEqual(content[2:2 + bsc._config.max_single_put_size + 5], blob_content)
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
@@ -421,7 +420,7 @@ class StorageBlobEncryptionTest(StorageTestCase):
         self._setup(bsc)
         bsc.key_encryption_key = KeyWrapper('key1')
         bsc.require_encryption = True
-        content = self.get_random_bytes(self.config.max_single_put_size + 1)
+        content = self.get_random_bytes(bsc._config.max_single_put_size + 1)
         blob_name = self._get_blob_reference(BlobType.BlockBlob)
         blob = bsc.get_blob_client(self.container_name, blob_name)
 
@@ -694,34 +693,34 @@ class StorageBlobEncryptionTest(StorageTestCase):
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_block_blob_from_star(self, resource_group, location, storage_account, storage_account_key):
-        self._create_blob_from_star(BlobType.BlockBlob, self.bytes, self.bytes)
+        self._create_blob_from_star(BlobType.BlockBlob, self.bytes, self.bytes, bsc)
 
         stream = BytesIO(self.bytes)
-        self._create_blob_from_star(BlobType.BlockBlob, self.bytes, stream)
+        self._create_blob_from_star(BlobType.BlockBlob, self.bytes, stream, bsc)
 
         FILE_PATH = 'blob_input.temp.dat'
         with open(FILE_PATH, 'wb') as stream:
             stream.write(self.bytes)
         with open(FILE_PATH, 'rb') as stream:
-            self._create_blob_from_star(BlobType.BlockBlob, self.bytes, stream)
+            self._create_blob_from_star(BlobType.BlockBlob, self.bytes, stream, bsc)
 
-        self._create_blob_from_star(BlobType.BlockBlob, b'To encrypt', 'To encrypt')
+        self._create_blob_from_star(BlobType.BlockBlob, b'To encrypt', 'To encrypt', bsc)
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_page_blob_from_star(self, resource_group, location, storage_account, storage_account_key):
         content = self.get_random_bytes(512)
-        self._create_blob_from_star(BlobType.PageBlob, content, content)
+        self._create_blob_from_star(BlobType.PageBlob, content, content, bsc)
 
         stream = BytesIO(content)
-        self._create_blob_from_star(BlobType.PageBlob, content, stream, length=512)
+        self._create_blob_from_star(BlobType.PageBlob, content, stream, bsc, length=512)
 
         FILE_PATH = 'blob_input.temp.dat'
         with open(FILE_PATH, 'wb') as stream:
             stream.write(content)
 
         with open(FILE_PATH, 'rb') as stream:
-            self._create_blob_from_star(BlobType.PageBlob, content, stream)
+            self._create_blob_from_star(BlobType.PageBlob, content, stream, bsc)
 
     def _create_blob_from_star(self, blob_type, content, data, bsc, **kwargs):
         blob_name = self._get_blob_reference(blob_type)

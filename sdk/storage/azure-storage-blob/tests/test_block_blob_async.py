@@ -13,6 +13,7 @@ import asyncio
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 
 from azure.storage.blob.aio import (
     BlobServiceClient,
@@ -23,10 +24,8 @@ from azure.storage.blob.aio import (
     BlobBlock,
     StandardBlobTier
 )
-from testcase import (
-    StorageTestCase,
-    TestMode,
-    record,
+from asyncblobtestcase import (
+    AsyncBlobTestCase,
 )
 
 #------------------------------------------------------------------------------
@@ -63,28 +62,12 @@ class StorageBlockBlobTestAsync(StorageTestCase):
             max_single_put_size=32 * 1024,
             max_block_size=4 * 1024,
             transport=AiohttpTestTransport())
-        self.config = self.bsc._config
-        self.container_name = self.get_resource_name('utcontainer')
-
-    def tearDown(self):
-        if not self.is_playback():
-            loop = asyncio.get_event_loop()
-            try:
-                loop.run_until_complete(self.bsc.delete_container(self.container_name))
-            except:
-                pass
-
-        if os.path.isfile(FILE_PATH):
-            try:
-                os.remove(FILE_PATH)
-            except:
-                pass
-
-        return super(StorageBlockBlobTestAsync, self).tearDown()
 
     #--Helpers-----------------------------------------------------------------
-    async def _setup(self):
-        if not self.is_playback():
+    async def _setup(self, bsc):
+        self.config = self.bsc._config
+        self.container_name = self.get_resource_name('utcontainer')
+        if self.is_live:
             try:
                 await self.bsc.create_container(self.container_name)
             except ResourceExistsError:
@@ -120,7 +103,7 @@ class StorageBlockBlobTestAsync(StorageTestCase):
     #--Test cases for block blobs --------------------------------------------
 
     
-    async def _test_put_block(self):
+    async def test_put_block(self):
         await self._setup()
         # Arrange
         blob = await self._create_blob()
@@ -136,7 +119,7 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_put_block())
     
-    async def _test_put_block_unicode(self):
+    async def test_put_block_unicode(self):
         await self._setup()
         # Arrange
         blob = await self._create_blob()
@@ -152,7 +135,7 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_put_block_unicode())
     
-    async def _test_put_block_with_md5(self):
+    async def test_put_block_with_md5(self):
         # Arrange
         await self._setup()
         blob = await self._create_blob()
@@ -167,7 +150,7 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_put_block_with_md5())
     
-    async def _test_put_block_list(self):
+    async def test_put_block_list(self):
         # Arrange
         await self._setup()
         blob_name = self._get_blob_reference()
@@ -192,7 +175,7 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_put_block_list())
 
-    async def _test_put_block_list_invalid_block_id(self):
+    async def test_put_block_list_invalid_block_id(self):
         # Arrange
         await self._setup()
         blob_name = self._get_blob_reference()
@@ -216,7 +199,7 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_put_block_list_invalid_block_id())
 
-    async def _test_put_block_list_with_md5(self):
+    async def test_put_block_list_with_md5(self):
         # Arrange
         await self._setup()
         blob_name = self._get_blob_reference()
@@ -235,7 +218,7 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_put_block_list_with_md5())
 
-    async def _test_get_block_list_no_blocks(self):
+    async def test_get_block_list_no_blocks(self):
         # Arrange
         await self._setup()
         blob = await self._create_blob()
@@ -253,7 +236,7 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_block_list_no_blocks())
 
-    async def _test_get_block_list_uncommitted_blocks(self):
+    async def test_get_block_list_uncommitted_blocks(self):
         # Arrange
         await self._setup()
         blob_name = self._get_blob_reference()
@@ -282,7 +265,7 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_block_list_uncommitted_blocks())
 
-    async def _test_get_block_list_committed_blocks(self):
+    async def test_get_block_list_committed_blocks(self):
         # Arrange
         await self._setup()
         blob_name = self._get_blob_reference()
@@ -314,7 +297,7 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_block_list_committed_blocks())
 
-    async def _test_create_small_block_blob_with_no_overwrite(self):
+    async def test_create_small_block_blob_with_no_overwrite(self):
         # Arrange
         await self._setup()
         blob_name = self._get_blob_reference()
@@ -341,7 +324,7 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_small_block_blob_with_no_overwrite())
 
-    async def _test_create_small_block_blob_with_overwrite(self):
+    async def test_create_small_block_blob_with_overwrite(self):
         # Arrange
         await self._setup()
         blob_name = self._get_blob_reference()
@@ -366,7 +349,7 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_small_block_blob_with_overwrite())
 
-    async def _test_create_large_block_blob_with_no_overwrite(self):
+    async def test_create_large_block_blob_with_no_overwrite(self):
         # Arrange
         await self._setup()
         blob_name = self._get_blob_reference()
@@ -395,7 +378,7 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_large_block_blob_with_no_overwrite())
 
-    async def _test_create_large_block_blob_with_overwrite(self):
+    async def test_create_large_block_blob_with_overwrite(self):
         # Arrange
         await self._setup()
         blob_name = self._get_blob_reference()
@@ -422,7 +405,7 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_large_block_blob_with_overwrite())
 
-    async def _test_create_blob_from_bytes_single_put(self):
+    async def test_create_blob_from_bytes_single_put(self):
         # Arrange
         await self._setup()
         blob_name = self._get_blob_reference()
@@ -443,7 +426,7 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_blob_from_bytes_single_put())
 
-    async def _test_create_blob_from_0_bytes(self):
+    async def test_create_blob_from_0_bytes(self):
         # Arrange
         await self._setup()
         blob_name = self._get_blob_reference()
@@ -464,7 +447,7 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_blob_from_0_bytes())
 
-    async def _test_create_from_bytes_blob_unicode(self):
+    async def test_create_from_bytes_blob_unicode(self):
         # Arrange
         await self._setup()
         blob_name = self._get_blob_reference()
@@ -485,10 +468,10 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_from_bytes_blob_unicode())
 
-    async def _test_create_from_bytes_blob_with_lease_id(self):
+    async def test_create_from_bytes_blob_with_lease_id(self):
         # parallel tests introduce random order of requests, can only run live
         await self._setup()
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -511,10 +494,10 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_from_bytes_blob_with_lease_id())
 
-    async def _test_create_blob_from_bytes_with_metadata(self):
+    async def test_create_blob_from_bytes_with_metadata(self):
         # parallel tests introduce random order of requests, can only run live
         await self._setup()
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -536,10 +519,10 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_blob_from_bytes_with_metadata())
 
-    async def _test_create_blob_from_bytes_with_properties(self):
+    async def test_create_blob_from_bytes_with_properties(self):
         # parallel tests introduce random order of requests, can only run live
         await self._setup()
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -564,10 +547,10 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_blob_from_bytes_with_properties())
     
-    async def _test_create_blob_from_bytes_with_progress(self):
+    async def test_create_blob_from_bytes_with_progress(self):
         # parallel tests introduce random order of requests, can only run live
         await self._setup()
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -597,10 +580,10 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_blob_from_bytes_with_progress())
 
-    async def _test_create_blob_from_bytes_with_index(self):
+    async def test_create_blob_from_bytes_with_index(self):
         # parallel tests introduce random order of requests, can only run live
         await self._setup()
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -621,7 +604,7 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_blob_from_bytes_with_index())
 
-    async def _test_create_blob_from_bytes_with_index_and_count(self):
+    async def test_create_blob_from_bytes_with_index_and_count(self):
         # Arrange
         await self._setup()
         blob_name = self._get_blob_reference()
@@ -641,7 +624,7 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_blob_from_bytes_with_index_and_count())
 
-    async def _test_create_blob_from_bytes_with_index_and_count_and_properties(self):
+    async def test_create_blob_from_bytes_with_index_and_count_and_properties(self):
         # Arrange
         await self._setup()
         blob_name = self._get_blob_reference()
@@ -667,7 +650,7 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_blob_from_bytes_with_index_and_count_and_properties())
 
-    async def _test_create_blob_from_bytes_non_parallel(self):
+    async def test_create_blob_from_bytes_non_parallel(self):
         # Arrange
         await self._setup()
         blob_name = self._get_blob_reference()
@@ -685,10 +668,10 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_blob_from_bytes_non_parallel())
 
-    async def _test_create_blob_from_path(self):
+    async def test_create_blob_from_path(self):
         # parallel tests introduce random order of requests, can only run live
         await self._setup()
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -713,7 +696,7 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_blob_from_path())
 
-    async def _test_create_blob_from_path_non_parallel(self):
+    async def test_create_blob_from_path_non_parallel(self):
         # Arrange
         await self._setup()
         blob_name = self._get_blob_reference()
@@ -737,10 +720,10 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_blob_from_path_non_parallel())
 
-    async def _test_create_blob_from_path_with_progress(self):
+    async def test_create_blob_from_path_with_progress(self):
         # parallel tests introduce random order of requests, can only run live
         await self._setup()
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -770,10 +753,10 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_blob_from_path_with_progress())
 
-    async def _test_create_blob_from_path_with_properties(self):
+    async def test_create_blob_from_path_with_properties(self):
         # parallel tests introduce random order of requests, can only run live
         await self._setup()
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -801,10 +784,10 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_blob_from_path_with_properties())
 
-    async def _test_create_blob_from_stream_chunked_upload(self):
+    async def test_create_blob_from_stream_chunked_upload(self):
         # parallel tests introduce random order of requests, can only run live
         await self._setup()
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -829,10 +812,10 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_blob_from_stream_chunked_upload())
 
-    async def _test_create_blob_from_stream_non_seekable_chunked_upload_known_size(self):
+    async def test_create_blob_from_stream_non_seekable_chunked_upload_known_size(self):
         # parallel tests introduce random order of requests, can only run live
         await self._setup()
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -856,10 +839,10 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_blob_from_stream_non_seekable_chunked_upload_known_size())
 
-    async def _test_create_blob_from_stream_non_seekable_chunked_upload_unknown_size(self):
+    async def test_create_blob_from_stream_non_seekable_chunked_upload_unknown_size(self):
         # parallel tests introduce random order of requests, can only run live
         await self._setup()
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -882,10 +865,10 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_blob_from_stream_non_seekable_chunked_upload_unknown_size())
 
-    async def _test_create_blob_from_stream_with_progress_chunked_upload(self):
+    async def test_create_blob_from_stream_with_progress_chunked_upload(self):
         # parallel tests introduce random order of requests, can only run live
         await self._setup()
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -915,10 +898,10 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_blob_from_stream_with_progress_chunked_upload())
 
-    async def _test_create_blob_from_stream_chunked_upload_with_count(self):
+    async def test_create_blob_from_stream_chunked_upload_with_count(self):
         # parallel tests introduce random order of requests, can only run live
         await self._setup()
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -941,10 +924,10 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_blob_from_stream_chunked_upload_with_count())
 
-    async def _test_create_blob_from_stream_chunked_upload_with_count_and_properties(self):
+    async def test_create_blob_from_stream_chunked_upload_with_count_and_properties(self):
         # parallel tests introduce random order of requests, can only run live
         await self._setup()
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -973,10 +956,10 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_blob_from_stream_chunked_upload_with_count_and_properties())
 
-    async def _test_create_blob_from_stream_chunked_upload_with_properties(self):
+    async def test_create_blob_from_stream_chunked_upload_with_properties(self):
         # parallel tests introduce random order of requests, can only run live
         await self._setup()
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -1004,7 +987,7 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_blob_from_stream_chunked_upload_with_properties())
 
-    async def _test_create_blob_from_text(self):
+    async def test_create_blob_from_text(self):
         # Arrange
         await self._setup()
         blob_name = self._get_blob_reference()
@@ -1023,12 +1006,12 @@ class StorageBlockBlobTestAsync(StorageTestCase):
 
     @record
     def test_create_blob_from_text(self):
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_blob_from_text())
 
-    async def _test_create_blob_from_text_with_encoding(self):
+    async def test_create_blob_from_text_with_encoding(self):
         # Arrange
         await self._setup()
         blob_name = self._get_blob_reference()
@@ -1047,7 +1030,7 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_blob_from_text_with_encoding())
 
-    async def _test_create_blob_from_text_with_encoding_and_progress(self):
+    async def test_create_blob_from_text_with_encoding_and_progress(self):
         # Arrange
         await self._setup()
         blob_name = self._get_blob_reference()
@@ -1074,10 +1057,10 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_blob_from_text_with_encoding_and_progress())
 
-    async def _test_create_blob_from_text_chunked_upload(self):
+    async def test_create_blob_from_text_chunked_upload(self):
         # parallel tests introduce random order of requests, can only run live
         await self._setup()
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -1100,7 +1083,7 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_blob_from_text_chunked_upload())
 
-    async def _test_create_blob_with_md5(self):
+    async def test_create_blob_with_md5(self):
         # Arrange
         await self._setup()
         blob_name = self._get_blob_reference()
@@ -1117,9 +1100,9 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_blob_with_md5())
 
-    async def _test_create_blob_with_md5_chunked(self):
+    async def test_create_blob_with_md5_chunked(self):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange

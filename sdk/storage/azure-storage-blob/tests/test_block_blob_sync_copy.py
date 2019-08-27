@@ -14,6 +14,8 @@ from azure.storage.blob import (
     StorageErrorCode,
     BlobPermissions
 )
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
+
 from azure.storage.blob._shared.policies import StorageContentValidation
 from testcase import (
     StorageTestCase,
@@ -49,7 +51,7 @@ class StorageBlockBlobTest(StorageTestCase):
         self.source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
 
         blob = self.bsc.get_blob_client(self.container_name, self.source_blob_name)
-        if not self.is_playback():
+        if self.is_live:
             self.bsc.create_container(self.container_name)
             blob.upload_blob(self.source_blob_data)
 
@@ -61,7 +63,7 @@ class StorageBlockBlobTest(StorageTestCase):
         self.source_blob_url = BlobClient(blob.url, credential=sas_token).url
 
     def tearDown(self):
-        if not self.is_playback():
+        if self.is_live:
             try:
                 self.bsc.delete_container(self.container_name)
             except HttpResponseError:

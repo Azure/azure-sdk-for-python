@@ -43,10 +43,8 @@ from azure.storage.blob import (
     AccountPermissions,
 )
 
-from testcase import (
-    StorageTestCase,
-    TestMode,
-    record
+from asyncblobtestcase import (
+    AsyncBlobTestCase,
 )
 
 # ------------------------------------------------------------------------------
@@ -86,7 +84,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         self.remote_container_name = None
 
     def tearDown(self):
-        if not self.is_playback():
+        if self.is_live:
             loop = asyncio.get_event_loop()
             try:
                 loop.run_until_complete(self.bsc.delete_container(self.container_name, timeout=5))
@@ -110,7 +108,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
     # --Helpers-----------------------------------------------------------------
 
     async def _setup(self):
-        if not self.is_playback():
+        if self.is_live:
             container = self.bsc.get_container_client(self.container_name)
             try:
                 await container.create_container(timeout=5)
@@ -161,7 +159,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         await self.bsc.set_service_properties(delete_retention_policy=delete_retention_policy)
 
         # wait until the policy has gone into effect
-        if not self.is_playback():
+        if self.is_live:
             time.sleep(30)
 
     async def _disable_soft_delete(self):
@@ -180,7 +178,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
 
     # -- Common test cases for blobs ----------------------------------------------
 
-    async def _test_blob_exists(self):
+    async def test_blob_exists(self):
         # Arrange
         await self._setup()
         blob_name = await self._create_block_blob()
@@ -197,7 +195,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_blob_exists())
 
-    async def _test_blob_not_exists(self):
+    async def test_blob_not_exists(self):
         # Arrange
         await self._setup()
         blob_name = self._get_blob_reference()
@@ -212,7 +210,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_blob_not_exists())
 
-    async def _test_blob_snapshot_exists(self):
+    async def test_blob_snapshot_exists(self):
         # Arrange
         await self._setup()
         blob_name = await self._create_block_blob()
@@ -231,7 +229,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_blob_snapshot_exists())
 
-    async def _test_blob_snapshot_not_exists(self):
+    async def test_blob_snapshot_not_exists(self):
         # Arrange
         await self._setup()
         blob_name = await self._create_block_blob()
@@ -246,7 +244,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_blob_snapshot_not_exists())
 
-    async def _test_blob_container_not_exists(self):
+    async def test_blob_container_not_exists(self):
         # In this case both the blob and container do not exist
         # Arrange
         await self._setup()
@@ -262,7 +260,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_blob_container_not_exists())
 
-    async def _test_create_blob_with_question_mark(self):
+    async def test_create_blob_with_question_mark(self):
         # Arrange
         await self._setup()
         blob_name = '?ques?tion?'
@@ -284,7 +282,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_blob_with_question_mark())
 
-    async def _test_create_blob_with_special_chars(self):
+    async def test_create_blob_with_special_chars(self):
         # Arrange
         await self._setup()
         # Act
@@ -304,7 +302,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_blob_with_special_chars())
 
-    async def _test_create_blob_with_lease_id(self):
+    async def test_create_blob_with_lease_id(self):
         # Arrange
         await self._setup()
         blob_name = await self._create_block_blob()
@@ -326,7 +324,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_blob_with_lease_id())
 
-    async def _test_create_blob_with_metadata(self):
+    async def test_create_blob_with_metadata(self):
         # Arrange
         await self._setup()
         blob_name = self._get_blob_reference()
@@ -347,7 +345,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_blob_with_metadata())
 
-    async def _test_get_blob_with_existing_blob(self):
+    async def test_get_blob_with_existing_blob(self):
         # Arrange
         await self._setup()
         blob_name = await self._create_block_blob()
@@ -365,7 +363,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_with_existing_blob())
 
-    async def _test_get_blob_with_snapshot(self):
+    async def test_get_blob_with_snapshot(self):
         # Arrange
         await self._setup()
         blob_name = await self._create_block_blob()
@@ -386,7 +384,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_with_snapshot())
 
-    async def _test_get_blob_with_snapshot_previous(self):
+    async def test_get_blob_with_snapshot_previous(self):
         # Arrange
         await self._setup()
         blob_name = await self._create_block_blob()
@@ -413,7 +411,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_with_snapshot_previous())
 
-    async def _test_get_blob_with_range(self):
+    async def test_get_blob_with_range(self):
         # Arrange
         await self._setup()
         blob_name = await self._create_block_blob()
@@ -431,7 +429,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_with_range())
 
-    async def _test_get_blob_with_lease(self):
+    async def test_get_blob_with_lease(self):
         # Arrange
         await self._setup()
         blob_name = await self._create_block_blob()
@@ -451,7 +449,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_with_lease())
 
-    async def _test_get_blob_with_non_existing_blob(self):
+    async def test_get_blob_with_non_existing_blob(self):
         # Arrange
         await self._setup()
         blob_name = self._get_blob_reference()
@@ -467,7 +465,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_with_non_existing_blob())
 
-    async def _test_set_blob_properties_with_existing_blob(self):
+    async def test_set_blob_properties_with_existing_blob(self):
         # Arrange
         await self._setup()
         blob_name = await self._create_block_blob()
@@ -490,7 +488,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_blob_properties_with_existing_blob())
 
-    async def _test_set_blob_properties_with_blob_settings_param(self):
+    async def test_set_blob_properties_with_blob_settings_param(self):
         # Arrange
         await self._setup()
         blob_name = await self._create_block_blob()
@@ -512,7 +510,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_blob_properties_with_blob_settings_param())
 
-    async def _test_get_blob_properties(self):
+    async def test_get_blob_properties(self):
         # Arrange
         await self._setup()
         blob_name = await self._create_block_blob()
@@ -535,7 +533,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
 
     # This test is to validate that the ErrorCode is retrieved from the header during a
     # HEAD request.
-    async def _test_get_blob_properties_fail(self):
+    async def test_get_blob_properties_fail(self):
         # Arrange
         await self._setup()
         blob_name = await self._create_block_blob()
@@ -557,7 +555,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
 
     # This test is to validate that the ErrorCode is retrieved from the header during a
     # GET request. This is preferred to relying on the ErrorCode in the body.
-    async def _test_get_blob_metadata_fail(self):
+    async def test_get_blob_metadata_fail(self):
         # Arrange
         await self._setup()
         blob_name = await self._create_block_blob()
@@ -576,7 +574,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_metadata_fail())
 
-    async def _test_get_blob_server_encryption(self):
+    async def test_get_blob_server_encryption(self):
         # Arrange
         await self._setup()
         blob_name = await self._create_block_blob()
@@ -593,7 +591,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_server_encryption())
 
-    async def _test_get_blob_properties_server_encryption(self):
+    async def test_get_blob_properties_server_encryption(self):
         # Arrange
         await self._setup()
         blob_name = await self._create_block_blob()
@@ -610,9 +608,9 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_properties_server_encryption())
 
-    async def _test_list_blobs_server_encryption(self):
+    async def test_list_blobs_server_encryption(self):
         # test can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
         # Arrange
         await self._setup()
@@ -634,9 +632,9 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_list_blobs_server_encryption())
 
-    async def _test_no_server_encryption(self):
+    async def test_no_server_encryption(self):
         pytest.skip("Aiohttp headers dict (CIMultiDictProxy) is immutable.")
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
         # Arrange
         await self._setup()
@@ -657,7 +655,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_no_server_encryption())
 
-    async def _test_get_blob_properties_with_snapshot(self):
+    async def test_get_blob_properties_with_snapshot(self):
         # Arrange
         await self._setup()
         blob_name = await self._create_block_blob()
@@ -684,7 +682,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_properties_with_snapshot())
 
-    async def _test_get_blob_properties_with_leased_blob(self):
+    async def test_get_blob_properties_with_leased_blob(self):
         # Arrange
         await self._setup()
         blob_name = await self._create_block_blob()
@@ -707,7 +705,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_properties_with_leased_blob())
 
-    async def _test_get_blob_metadata(self):
+    async def test_get_blob_metadata(self):
         # Arrange
         await self._setup()
         blob_name = await self._create_block_blob()
@@ -724,7 +722,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_blob_metadata())
 
-    async def _test_set_blob_metadata_with_upper_case(self):
+    async def test_set_blob_metadata_with_upper_case(self):
         # Arrange
         await self._setup()
         metadata = {'hello': 'world', 'number': '42', 'UP': 'UPval'}
@@ -747,7 +745,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_blob_metadata_with_upper_case())
 
-    async def _test_delete_blob_with_existing_blob(self):
+    async def test_delete_blob_with_existing_blob(self):
         # Arrange
         await self._setup()
         blob_name = await self._create_block_blob()
@@ -764,7 +762,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_delete_blob_with_existing_blob())
 
-    async def _test_delete_blob_with_non_existing_blob(self):
+    async def test_delete_blob_with_non_existing_blob(self):
         # Arrange
         await self._setup()
         blob_name = self._get_blob_reference()
@@ -781,7 +779,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_delete_blob_with_non_existing_blob())
 
-    async def _test_delete_blob_snapshot(self):
+    async def test_delete_blob_snapshot(self):
         # Arrange
         await self._setup()
         blob_name = await self._create_block_blob()
@@ -807,7 +805,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_delete_blob_snapshot())
 
-    async def _test_delete_blob_snapshots(self):
+    async def test_delete_blob_snapshots(self):
         # Arrange
         await self._setup()
         blob_name = await self._create_block_blob()
@@ -830,7 +828,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_delete_blob_snapshots())
 
-    async def _test_delete_blob_with_snapshots(self):
+    async def test_delete_blob_with_snapshots(self):
         # Arrange
         await self._setup()
         blob_name = await self._create_block_blob()
@@ -855,7 +853,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_delete_blob_with_snapshots())
 
-    async def _test_soft_delete_blob_without_snapshots(self):
+    async def test_soft_delete_blob_without_snapshots(self):
         try:
             # Arrange
             await self._setup()
@@ -901,7 +899,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_soft_delete_blob_without_snapshots())
 
-    async def _test_soft_delete_single_blob_snapshot(self):
+    async def test_soft_delete_single_blob_snapshot(self):
         try:
             # Arrange
             await self._setup()
@@ -958,7 +956,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_soft_delete_single_blob_snapshot())
 
-    async def _test_soft_delete_only_snapshots_of_blob(self):
+    async def test_soft_delete_only_snapshots_of_blob(self):
         try:
             # Arrange
             await self._setup()
@@ -1012,7 +1010,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_soft_delete_only_snapshots_of_blob())
 
-    async def _test_soft_delete_blob_including_all_snapshots(self):
+    async def test_soft_delete_blob_including_all_snapshots(self):
         try:
             # Arrange
             await self._setup()
@@ -1061,7 +1059,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_soft_delete_blob_including_all_snapshots())
 
-    async def _test_soft_delete_with_leased_blob(self):
+    async def test_soft_delete_with_leased_blob(self):
         try:
             # Arrange
             await self._setup()
@@ -1111,7 +1109,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_soft_delete_with_leased_blob())
 
-    async def _test_copy_blob_with_existing_blob(self):
+    async def test_copy_blob_with_existing_blob(self):
         # Arrange
         await self._setup()
         blob_name = await self._create_block_blob()
@@ -1137,7 +1135,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_copy_blob_with_existing_blob())
 
-    async def _test_copy_blob_with_external_blob_fails(self):
+    async def test_copy_blob_with_external_blob_fails(self):
         # Arrange
         await self._setup()
         source_blob = "http://www.gutenberg.org/files/59466/59466-0.txt"
@@ -1158,7 +1156,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_copy_blob_with_external_blob_fails())
 
-    async def _test_copy_blob_async_private_blob_no_sas(self):
+    async def test_copy_blob_async_private_blob_no_sas(self):
         # Arrange
         await self._setup()
         await self._create_remote_container()
@@ -1177,7 +1175,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_copy_blob_async_private_blob_no_sas())
 
-    async def _test_copy_blob_async_private_blob_with_sas(self):
+    async def test_copy_blob_async_private_blob_with_sas(self):
         # Arrange
         await self._setup()
         data = b'12345678' * 1024 * 1024
@@ -1205,7 +1203,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_copy_blob_async_private_blob_with_sas())
 
-    async def _test_abort_copy_blob(self):
+    async def test_abort_copy_blob(self):
         # Arrange
         await self._setup()
         source_blob = "http://www.gutenberg.org/files/59466/59466-0.txt"
@@ -1230,7 +1228,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_abort_copy_blob())
 
-    async def _test_abort_copy_blob_with_synchronous_copy_fails(self):
+    async def test_abort_copy_blob_with_synchronous_copy_fails(self):
         # Arrange
         await self._setup()
         source_blob_name = await self._create_block_blob()
@@ -1252,7 +1250,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_abort_copy_blob_with_synchronous_copy_fails())
 
-    async def _test_snapshot_blob(self):
+    async def test_snapshot_blob(self):
         # Arrange
         await self._setup()
         blob_name = await self._create_block_blob()
@@ -1270,7 +1268,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_snapshot_blob())
 
-    async def _test_lease_blob_acquire_and_release(self):
+    async def test_lease_blob_acquire_and_release(self):
         # Arrange
         await self._setup()
         blob_name = await self._create_block_blob()
@@ -1290,7 +1288,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_lease_blob_acquire_and_release())
 
-    async def _test_lease_blob_with_duration(self):
+    async def test_lease_blob_with_duration(self):
         # Arrange
         await self._setup()
         blob_name = await self._create_block_blob()
@@ -1310,7 +1308,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_lease_blob_with_duration())
 
-    async def _test_lease_blob_with_proposed_lease_id(self):
+    async def test_lease_blob_with_proposed_lease_id(self):
         # Arrange
         await self._setup()
         blob_name = await self._create_block_blob()
@@ -1328,7 +1326,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_lease_blob_with_proposed_lease_id())
 
-    async def _test_lease_blob_change_lease_id(self):
+    async def test_lease_blob_change_lease_id(self):
         # Arrange
         await self._setup()
         blob_name = await self._create_block_blob()
@@ -1350,7 +1348,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_lease_blob_change_lease_id())
 
-    async def _test_lease_blob_break_period(self):
+    async def test_lease_blob_break_period(self):
         # Arrange
         await self._setup()
         blob_name = await self._create_block_blob()
@@ -1376,7 +1374,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_lease_blob_break_period())
 
-    async def _test_lease_blob_acquire_and_renew(self):
+    async def test_lease_blob_acquire_and_renew(self):
         # Arrange
         await self._setup()
         blob_name = await self._create_block_blob()
@@ -1395,7 +1393,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_lease_blob_acquire_and_renew())
 
-    async def _test_lease_blob_acquire_twice_fails(self):
+    async def test_lease_blob_acquire_twice_fails(self):
         # Arrange
         await self._setup()
         blob_name = await self._create_block_blob()
@@ -1414,7 +1412,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_lease_blob_acquire_twice_fails())
 
-    async def _test_unicode_get_blob_unicode_name(self):
+    async def test_unicode_get_blob_unicode_name(self):
         # Arrange
         await self._setup()
         blob_name = '啊齄丂狛狜'
@@ -1433,7 +1431,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_unicode_get_blob_unicode_name())
 
-    async def _test_create_blob_blob_unicode_data(self):
+    async def test_create_blob_blob_unicode_data(self):
         # Arrange
         await self._setup()
         blob_name = self._get_blob_reference()
@@ -1451,7 +1449,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_blob_blob_unicode_data())
 
-    async def _test_no_sas_private_blob(self):
+    async def test_no_sas_private_blob(self):
         # Arrange
         await self._setup()
         blob_name = await self._create_block_blob()
@@ -1469,9 +1467,9 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_no_sas_private_blob())
 
-    async def _test_no_sas_public_blob(self):
+    async def test_no_sas_public_blob(self):
         # test is live only
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
         # Arrange
         await self._setup()
@@ -1496,9 +1494,9 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_no_sas_public_blob())
 
-    async def _test_public_access_blob(self):
+    async def test_public_access_blob(self):
         # test is live only
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
         # Arrange
         await self._setup()
@@ -1524,9 +1522,9 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_public_access_blob())
 
-    async def _test_sas_access_blob(self):
+    async def test_sas_access_blob(self):
         # SAS URL is calculated from storage key, so this test runs live only
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -1552,9 +1550,9 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_sas_access_blob())
 
-    async def _test_sas_signed_identifier(self):
+    async def test_sas_signed_identifier(self):
         # SAS URL is calculated from storage key, so this test runs live only
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -1586,9 +1584,9 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_sas_signed_identifier())
 
-    async def _test_account_sas(self):
+    async def test_account_sas(self):
         # SAS URL is calculated from storage key, so this test runs live only
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -1620,9 +1618,9 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_account_sas())
 
-    async def _test_token_credential(self):
+    async def test_token_credential(self):
         pytest.skip("")
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         await self._setup()
@@ -1650,9 +1648,9 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_token_credential())
 
-    async def _test_shared_read_access_blob(self):
+    async def test_shared_read_access_blob(self):
         # SAS URL is calculated from storage key, so this test runs live only
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         await self._setup()
@@ -1679,9 +1677,9 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_shared_read_access_blob())
 
-    async def _test_shared_read_access_blob_with_content_query_params(self):
+    async def test_shared_read_access_blob_with_content_query_params(self):
         # SAS URL is calculated from storage key, so this test runs live only
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -1717,9 +1715,9 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_shared_read_access_blob_with_content_query_params())
 
-    async def _test_shared_write_access_blob(self):
+    async def test_shared_write_access_blob(self):
         # SAS URL is calculated from storage key, so this test runs live only
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -1749,9 +1747,9 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_shared_write_access_blob())
 
-    async def _test_shared_delete_access_blob(self):
+    async def test_shared_delete_access_blob(self):
         # SAS URL is calculated from storage key, so this test runs live only
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -1779,7 +1777,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_shared_delete_access_blob())
 
-    async def _test_get_account_information(self):
+    async def test_get_account_information(self):
         # Act
         await self._setup()
         info = await self.bsc.get_account_information()
@@ -1793,7 +1791,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_account_information())
 
-    async def _test_get_account_information_with_container_name(self):
+    async def test_get_account_information_with_container_name(self):
         # Act
         # Container name gets ignored
         await self._setup()
@@ -1809,7 +1807,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_account_information_with_container_name())
 
-    async def _test_get_account_information_with_blob_name(self):
+    async def test_get_account_information_with_blob_name(self):
         # Act
         # Both container and blob names get ignored
         await self._setup()
@@ -1825,9 +1823,9 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_account_information_with_blob_name())
 
-    async def _test_get_account_information_with_container_sas(self):
+    async def test_get_account_information_with_container_sas(self):
         # SAS URL is calculated from storage key, so this test runs live only
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -1851,9 +1849,9 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_account_information_with_container_sas())
 
-    async def _test_get_account_information_with_blob_sas(self):
+    async def test_get_account_information_with_blob_sas(self):
         # SAS URL is calculated from storage key, so this test runs live only
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -1879,8 +1877,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_account_information_with_blob_sas())
 
-    async def _test_download_to_file_with_sas(self):
-        if TestMode.need_recording_file(self.test_mode):
+    async def test_download_to_file_with_sas(self):
+        if not self.is_live:
             return
         # Arrange
         await self._setup()
@@ -1906,8 +1904,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_download_to_file_with_sas())
 
-    async def _test_download_to_file_with_credential(self):
-        if TestMode.need_recording_file(self.test_mode):
+    async def test_download_to_file_with_credential(self):
+        if not self.is_live:
             return
         # Arrange
         await self._setup()
@@ -1931,8 +1929,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_download_to_file_with_credential())
 
-    async def _test_download_to_stream_with_credential(self):
-        if TestMode.need_recording_file(self.test_mode):
+    async def test_download_to_stream_with_credential(self):
+        if not self.is_live:
             return
         # Arrange
         await self._setup()
@@ -1957,8 +1955,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_download_to_stream_with_credential())
 
-    async def _test_download_to_file_with_existing_file(self):
-        if TestMode.need_recording_file(self.test_mode):
+    async def test_download_to_file_with_existing_file(self):
+        if not self.is_live:
             return
         # Arrange
         await self._setup()
@@ -1984,8 +1982,8 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_download_to_file_with_existing_file())
 
-    async def _test_download_to_file_with_existing_file_overwrite(self):
-        if TestMode.need_recording_file(self.test_mode):
+    async def test_download_to_file_with_existing_file_overwrite(self):
+        if not self.is_live:
             return
         # Arrange
         await self._setup()
@@ -2014,9 +2012,9 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_download_to_file_with_existing_file_overwrite())
 
-    async def _test_upload_to_url_bytes_with_sas(self):
+    async def test_upload_to_url_bytes_with_sas(self):
         # SAS URL is calculated from storage key, so this test runs live only
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -2044,9 +2042,9 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_upload_to_url_bytes_with_sas())
 
-    async def _test_upload_to_url_bytes_with_credential(self):
+    async def test_upload_to_url_bytes_with_credential(self):
         # SAS URL is calculated from storage key, so this test runs live only
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -2069,9 +2067,9 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_upload_to_url_bytes_with_credential())
 
-    async def _test_upload_to_url_bytes_with_existing_blob(self):
+    async def test_upload_to_url_bytes_with_existing_blob(self):
         # SAS URL is calculated from storage key, so this test runs live only
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -2095,9 +2093,9 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_upload_to_url_bytes_with_existing_blob())
 
-    async def _test_upload_to_url_bytes_with_existing_blob_overwrite(self):
+    async def test_upload_to_url_bytes_with_existing_blob_overwrite(self):
         # SAS URL is calculated from storage key, so this test runs live only
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -2123,9 +2121,9 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_upload_to_url_bytes_with_existing_blob_overwrite())
 
-    async def _test_upload_to_url_text_with_credential(self):
+    async def test_upload_to_url_text_with_credential(self):
         # SAS URL is calculated from storage key, so this test runs live only
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -2148,9 +2146,9 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_upload_to_url_text_with_credential())
 
-    async def _test_upload_to_url_file_with_credential(self):
+    async def test_upload_to_url_file_with_credential(self):
         # SAS URL is calculated from storage key, so this test runs live only
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange

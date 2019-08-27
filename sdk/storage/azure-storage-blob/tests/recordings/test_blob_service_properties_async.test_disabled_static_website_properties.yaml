@@ -1,0 +1,41 @@
+interactions:
+- request:
+    body: '<?xml version=''1.0'' encoding=''utf-8''?>
+
+      <StorageServiceProperties><StaticWebsite><Enabled>false</Enabled></StaticWebsite></StorageServiceProperties>'
+    headers:
+      Content-Length:
+      - '147'
+      Content-Type:
+      - application/xml; charset=utf-8
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Tue, 27 Aug 2019 20:41:08 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://pyacrstorage7b741ea2.blob.core.windows.net/?restype=service&comp=properties
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>StaticWebsiteNotSupportedByAccountType</Code><Message>Static
+        website is not supported by this account type.\nRequestId:24dcd7fe-101e-00f0-4317-5d78a5000000\nTime:2019-08-27T20:41:10.0776247Z</Message></Error>"
+    headers:
+      content-length: '260'
+      content-type: application/xml
+      date: Tue, 27 Aug 2019 20:41:09 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code: StaticWebsiteNotSupportedByAccountType
+      x-ms-version: '2019-02-02'
+    status:
+      code: 400
+      message: Static website is not supported by this account type.
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstorage7b741ea2.blob.core.windows.net
+        - /
+        - restype=service&comp=properties
+        - ''
+version: 1

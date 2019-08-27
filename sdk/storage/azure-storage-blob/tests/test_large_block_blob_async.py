@@ -14,6 +14,7 @@ import unittest
 
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 
 from azure.storage.blob.aio import (
     BlobServiceClient,
@@ -27,10 +28,8 @@ if os.sys.version_info >= (3,):
 else:
     from cStringIO import StringIO as BytesIO
 
-from testcase import (
-    StorageTestCase,
-    TestMode,
-    record,
+from asyncblobtestcase import (
+    AsyncBlobTestCase,
 )
 
 # ------------------------------------------------------------------------------
@@ -73,7 +72,7 @@ class StorageLargeBlockBlobTestAsync(StorageTestCase):
         self.container_name = self.get_resource_name('utcontainer')
 
     def tearDown(self):
-        if not self.is_playback():
+        if self.is_live:
             loop = asyncio.get_event_loop()
             try:
                 loop.run_until_complete(self.bsc.delete_container(self.container_name))
@@ -91,7 +90,7 @@ class StorageLargeBlockBlobTestAsync(StorageTestCase):
     # --Helpers-----------------------------------------------------------------
     
     async def _setup(self):
-        if not self.is_playback():
+        if self.is_live:
             try:
                 await self.bsc.create_container(self.container_name)
             except:
@@ -116,8 +115,8 @@ class StorageLargeBlockBlobTestAsync(StorageTestCase):
 
     # --Test cases for block blobs --------------------------------------------
 
-    async def _test_put_block_bytes_large_async(self):
-        if TestMode.need_recording_file(self.test_mode):
+    async def test_put_block_bytes_large_async(self):
+        if not self.is_live:
             return
 
         # Arrange
@@ -139,8 +138,8 @@ class StorageLargeBlockBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_put_block_bytes_large_async())
 
-    async def _test_put_block_bytes_large_with_md5_async(self):
-        if TestMode.need_recording_file(self.test_mode):
+    async def test_put_block_bytes_large_with_md5_async(self):
+        if not self.is_live:
             return
 
         # Arrange
@@ -160,8 +159,8 @@ class StorageLargeBlockBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_put_block_bytes_large_with_md5_async())
 
-    async def _test_put_block_stream_large_async(self):
-        if TestMode.need_recording_file(self.test_mode):
+    async def test_put_block_stream_large_async(self):
+        if not self.is_live:
             return
 
         # Arrange
@@ -184,8 +183,8 @@ class StorageLargeBlockBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_put_block_stream_large_async())
 
-    async def _test_put_block_stream_large_with_md5_async(self):
-        if TestMode.need_recording_file(self.test_mode):
+    async def test_put_block_stream_large_with_md5_async(self):
+        if not self.is_live:
             return
 
         # Arrange
@@ -209,9 +208,9 @@ class StorageLargeBlockBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_put_block_stream_large_with_md5_async())
 
-    async def _test_create_large_blob_from_path_async(self):
+    async def test_create_large_blob_from_path_async(self):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -234,9 +233,9 @@ class StorageLargeBlockBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_large_blob_from_path_async())
 
-    async def _test_create_large_blob_from_path_with_md5_async(self):
+    async def test_create_large_blob_from_path_with_md5_async(self):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -259,8 +258,8 @@ class StorageLargeBlockBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_large_blob_from_path_with_md5_async())
 
-    async def _test_create_large_blob_from_path_non_parallel_async(self):
-        if TestMode.need_recording_file(self.test_mode):
+    async def test_create_large_blob_from_path_non_parallel_async(self):
+        if not self.is_live:
             return
 
         # Arrange
@@ -283,9 +282,9 @@ class StorageLargeBlockBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_large_blob_from_path_non_parallel_async())
 
-    async def _test_create_large_blob_from_path_with_progress_async(self):
+    async def test_create_large_blob_from_path_with_progress_async(self):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -316,9 +315,9 @@ class StorageLargeBlockBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_large_blob_from_path_with_progress_async())
 
-    async def _test_create_large_blob_from_path_with_properties_async(self):
+    async def test_create_large_blob_from_path_with_properties_async(self):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -347,9 +346,9 @@ class StorageLargeBlockBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_large_blob_from_path_with_properties_async())
 
-    async def _test_create_large_blob_from_stream_chunked_upload_async(self):
+    async def test_create_large_blob_from_stream_chunked_upload_async(self):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -372,9 +371,9 @@ class StorageLargeBlockBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_large_blob_from_stream_chunked_upload_async())
 
-    async def _test_create_large_blob_from_stream_with_progress_chunked_upload_async(self):
+    async def test_create_large_blob_from_stream_with_progress_chunked_upload_async(self):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -405,9 +404,9 @@ class StorageLargeBlockBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_large_blob_from_stream_with_progress_chunked_upload_async())
 
-    async def _test_create_large_blob_from_stream_chunked_upload_with_count_async(self):
+    async def test_create_large_blob_from_stream_chunked_upload_with_count_async(self):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -431,9 +430,9 @@ class StorageLargeBlockBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_large_blob_from_stream_chunked_upload_with_count_async())
 
-    async def _test_create_large_blob_from_stream_chunked_upload_with_count_and_properties_async(self):
+    async def test_create_large_blob_from_stream_chunked_upload_with_count_and_properties_async(self):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
@@ -464,9 +463,9 @@ class StorageLargeBlockBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_large_blob_from_stream_chunked_upload_with_count_and_properties_async())
 
-    async def _test_create_large_blob_from_stream_chunked_upload_with_properties_async(self):
+    async def test_create_large_blob_from_stream_chunked_upload_with_properties_async(self):
         # parallel tests introduce random order of requests, can only run live
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange

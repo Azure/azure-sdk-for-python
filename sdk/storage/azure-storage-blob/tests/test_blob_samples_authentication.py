@@ -105,7 +105,7 @@ class TestAuthSamples(StorageTestCase):
 
     def test_auth_shared_access_signature(self):
         # SAS URL is calculated from storage key, so this test runs live only
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Instantiate a BlobServiceClient using a connection string

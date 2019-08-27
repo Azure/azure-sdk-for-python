@@ -21,13 +21,10 @@ from azure.storage.blob.aio import (
 from azure.storage.blob.models import (
     StandardBlobTier
 )
-
-from testcase import (
-    StorageTestCase,
-    TestMode,
-    record
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
+from asyncblobtestcase import (
+    AsyncBlobTestCase,
 )
-
 # ------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'
 
@@ -46,59 +43,43 @@ class AiohttpTestTransport(AioHttpTransport):
         return response
 
 
-class BlobStorageAccountTestAsync(StorageTestCase):
-    def setUp(self):
-        super(BlobStorageAccountTestAsync, self).setUp()
-
-        url = self._get_account_url()
-        credential = self._get_shared_key_credential()
-        self.bsc = BlobServiceClient(url, credential=credential, transport=AiohttpTestTransport())
-        self.container_name = self.get_resource_name('utcontainer')
-
-        # if not self.is_playback():
-        #     self.bsc.create_container(self.container_name)
-
-    def tearDown(self):
-        if not self.is_playback():
-            loop = asyncio.get_event_loop()
-            try:
-                loop.run_until_complete(self.bsc.delete_container(self.container_name))
-            except:
-                pass
-
-        return super(BlobStorageAccountTestAsync, self).tearDown()
-
+class BlobStorageAccountTestAsync(AsyncBlobTestCase):
     # --Helpers-----------------------------------------------------------------
-    async def _setup(self):
-        if not self.is_playback():
+    async def _setup(self, bsc):
+        self.container_name = self.get_resource_name('utcontainer')
+        if self.is_live:
             try:
-                await self.bsc.create_container(self.container_name)
+                await bsc.create_container(self.container_name)
             except:
                 pass
 
-    def _get_blob_reference(self):
+    def _get_blob_reference(self, bsc):
         blob_name = self.get_resource_name(TEST_BLOB_PREFIX)
-        return self.bsc.get_blob_client(self.container_name, blob_name)
+        return bsc.get_blob_client(self.container_name, blob_name)
 
-    async def _create_blob(self):
-        blob = self._get_blob_reference()
+    async def _create_blob(self, bsc):
+        blob = self._get_blob_reference(bsc)
         await blob.upload_blob(b'')
         return blob
 
-    async def assertBlobEqual(self, container_name, blob_name, expected_data):
-        blob = self.bsc.get_blob_client(container_name, blob_name)
+    async def assertBlobEqual(self, container_name, blob_name, expected_data, bsc):
+        blob = bsc.get_blob_client(container_name, blob_name)
         actual_data = await blob.download_blob().content_as_bytes()
         self.assertEqual(actual_data, expected_data)
 
     # --Tests specific to Blob Storage Accounts (not general purpose)------------
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_standard_blob_tier_set_tier_api(self, resource_group, location, storage_account, storage_account_key):        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
 
-    async def _test_standard_blob_tier_set_tier_api(self):
-        await self._setup()
-        container = self.bsc.get_container_client(self.container_name)
+        await self._setup(bsc)
+        container = bsc.get_container_client(self.container_name)
         tiers = [StandardBlobTier.Archive, StandardBlobTier.Cool, StandardBlobTier.Hot]
 
         for tier in tiers:
-            blob = self._get_blob_reference()
+            blob = self._get_blob_reference(bsc)
             data = b'hello world'
             await blob.upload_blob(data)
 
@@ -142,16 +123,15 @@ class BlobStorageAccountTestAsync(StorageTestCase):
 
             await blob.delete_blob()
 
-    @record
-    def test_standard_blob_tier_set_tier_api(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_standard_blob_tier_set_tier_api())
-
-    async def _test_rehydration_status(self):
-        await self._setup()
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_rehydration_status(self, resource_group, location, storage_account, storage_account_key):
+        bsc = BlobServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
+        await self._setup(bsc)
         blob_name = 'rehydration_test_blob_1'
         blob_name2 = 'rehydration_test_blob_2'
-        container = self.bsc.get_container_client(self.container_name)
+        container = bsc.get_container_client(self.container_name)
 
         data = b'hello world'
         blob = await container.upload_blob(blob_name, data)
@@ -199,11 +179,6 @@ class BlobStorageAccountTestAsync(StorageTestCase):
         self.assertEqual(StandardBlobTier.Archive, blobs[0].blob_tier)
         self.assertEqual("rehydrate-pending-to-hot", blobs[0].archive_status)
         self.assertFalse(blobs[0].blob_tier_inferred)
-
-    @record
-    def test_rehydration_status(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_rehydration_status())
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
