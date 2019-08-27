@@ -914,7 +914,7 @@ class WorkflowsOperations(object):
     validate_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/workflows/{workflowName}/validate'}
 
     def validate_by_location(
-            self, resource_group_name, location, workflow_name, workflow, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, location, workflow_name, custom_headers=None, raw=False, **operation_config):
         """Validates the workflow definition.
 
         :param resource_group_name: The resource group name.
@@ -923,8 +923,6 @@ class WorkflowsOperations(object):
         :type location: str
         :param workflow_name: The workflow name.
         :type workflow_name: str
-        :param workflow: The workflow definition.
-        :type workflow: ~azure.mgmt.logic.models.Workflow
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -951,7 +949,6 @@ class WorkflowsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -959,11 +956,8 @@ class WorkflowsOperations(object):
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        # Construct body
-        body_content = self._serialize.body(workflow, 'Workflow')
-
         # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        request = self._client.post(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
