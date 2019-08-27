@@ -2254,7 +2254,7 @@ class IoTSecuritySolutionModel(Model):
 
 
 class IoTSeverityMetrics(Model):
-    """IoT Security solution analyics severity metrics.
+    """IoT Security solution analytics severity metrics.
 
     :param high: Count of high severity alerts/recommendations.
     :type high: int
