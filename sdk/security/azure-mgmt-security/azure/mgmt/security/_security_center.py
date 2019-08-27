@@ -19,9 +19,9 @@ from .operations import AlertsOperations
 from .operations import SettingsOperations
 from .operations import DeviceSecurityGroupsOperations
 from .operations import IotSecuritySolutionOperations
-from .operations import IoTSecuritySolutionsAnalyticsOperations
-from .operations import IoTSecuritySolutionsAnalyticsAggregatedAlertOperations
-from .operations import IoTSecuritySolutionsAnalyticsRecommendationOperations
+from .operations import IotSecuritySolutionsAnalyticsOperations
+from .operations import IotSecuritySolutionsAnalyticsAggregatedAlertOperations
+from .operations import IotSecuritySolutionsAnalyticsRecommendationOperations
 from .operations import AllowedConnectionsOperations
 from .operations import DiscoveredSecuritySolutionsOperations
 from .operations import ExternalSecuritySolutionsOperations
@@ -62,12 +62,12 @@ class SecurityCenter(SDKClient):
     :vartype device_security_groups: azure.mgmt.security.operations.DeviceSecurityGroupsOperations
     :ivar iot_security_solution: IotSecuritySolution operations
     :vartype iot_security_solution: azure.mgmt.security.operations.IotSecuritySolutionOperations
-    :ivar io_tsecurity_solutions_analytics: IoTSecuritySolutionsAnalytics operations
-    :vartype io_tsecurity_solutions_analytics: azure.mgmt.security.operations.IoTSecuritySolutionsAnalyticsOperations
-    :ivar io_tsecurity_solutions_analytics_aggregated_alert: IoTSecuritySolutionsAnalyticsAggregatedAlert operations
-    :vartype io_tsecurity_solutions_analytics_aggregated_alert: azure.mgmt.security.operations.IoTSecuritySolutionsAnalyticsAggregatedAlertOperations
-    :ivar io_tsecurity_solutions_analytics_recommendation: IoTSecuritySolutionsAnalyticsRecommendation operations
-    :vartype io_tsecurity_solutions_analytics_recommendation: azure.mgmt.security.operations.IoTSecuritySolutionsAnalyticsRecommendationOperations
+    :ivar iot_security_solutions_analytics: IotSecuritySolutionsAnalytics operations
+    :vartype iot_security_solutions_analytics: azure.mgmt.security.operations.IotSecuritySolutionsAnalyticsOperations
+    :ivar iot_security_solutions_analytics_aggregated_alert: IotSecuritySolutionsAnalyticsAggregatedAlert operations
+    :vartype iot_security_solutions_analytics_aggregated_alert: azure.mgmt.security.operations.IotSecuritySolutionsAnalyticsAggregatedAlertOperations
+    :ivar iot_security_solutions_analytics_recommendation: IotSecuritySolutionsAnalyticsRecommendation operations
+    :vartype iot_security_solutions_analytics_recommendation: azure.mgmt.security.operations.IotSecuritySolutionsAnalyticsRecommendationOperations
     :ivar allowed_connections: AllowedConnections operations
     :vartype allowed_connections: azure.mgmt.security.operations.AllowedConnectionsOperations
     :ivar discovered_security_solutions: DiscoveredSecuritySolutions operations
@@ -140,11 +140,11 @@ class SecurityCenter(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.iot_security_solution = IotSecuritySolutionOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.io_tsecurity_solutions_analytics = IoTSecuritySolutionsAnalyticsOperations(
+        self.iot_security_solutions_analytics = IotSecuritySolutionsAnalyticsOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.io_tsecurity_solutions_analytics_aggregated_alert = IoTSecuritySolutionsAnalyticsAggregatedAlertOperations(
+        self.iot_security_solutions_analytics_aggregated_alert = IotSecuritySolutionsAnalyticsAggregatedAlertOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.io_tsecurity_solutions_analytics_recommendation = IoTSecuritySolutionsAnalyticsRecommendationOperations(
+        self.iot_security_solutions_analytics_recommendation = IotSecuritySolutionsAnalyticsRecommendationOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.allowed_connections = AllowedConnectionsOperations(
             self._client, self.config, self._serialize, self._deserialize)

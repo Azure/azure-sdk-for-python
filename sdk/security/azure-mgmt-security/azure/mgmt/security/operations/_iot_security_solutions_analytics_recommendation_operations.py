@@ -16,8 +16,8 @@ from msrestazure.azure_exceptions import CloudError
 from .. import models
 
 
-class IoTSecuritySolutionsAnalyticsRecommendationOperations(object):
-    """IoTSecuritySolutionsAnalyticsRecommendationOperations operations.
+class IotSecuritySolutionsAnalyticsRecommendationOperations(object):
+    """IotSecuritySolutionsAnalyticsRecommendationOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
