@@ -386,8 +386,8 @@ class ResourceGroupsOperations(object):
         # Construct URL
         url = self.export_template.metadata['url']
         path_format_arguments = {
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -433,8 +433,8 @@ class ResourceGroupsOperations(object):
             self, resource_group_name, resources=None, options=None, custom_headers=None, raw=False, polling=True, **operation_config):
         """Captures the specified resource group as a template.
 
-        :param resource_group_name: The name of the resource group to export
-         as a template.
+        :param resource_group_name: The name of the resource group. The name
+         is case insensitive.
         :type resource_group_name: str
         :param resources: The IDs of the resources to filter the export by. To
          export all resources, supply an array with single entry '*'.
