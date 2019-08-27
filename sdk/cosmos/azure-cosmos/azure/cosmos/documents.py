@@ -430,3 +430,8 @@ class _QueryFeature(object):
     OffsetAndLimit = "OffsetAndLimit"
     OrderBy = "OrderBy"
     Top = "Top"
+
+class _DistinctType(object):
+    NoneType = "None"
+    Ordered = "Ordered"
+    Unordered = "Unordered"

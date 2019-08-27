@@ -23,6 +23,7 @@
 """
 
 import six
+from azure.cosmos.documents import _DistinctType
 
 class _PartitionedQueryExecutionInfo(object):
     '''
@@ -105,7 +106,7 @@ class _PartitionedQueryExecutionInfo(object):
         return self.get_offset() is not None
 
     def has_distinct_type(self):
-        return self.get_distinct_type() != "None"
+        return self.get_distinct_type() != _DistinctType.NoneType
 
     def has_order_by(self):
         order_by = self.get_order_by()

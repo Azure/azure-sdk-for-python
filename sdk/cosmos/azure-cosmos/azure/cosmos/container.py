@@ -124,7 +124,7 @@ class Container:
         :returns: :class:`Container` instance representing the retrieved container.
 
         """
-        if not request_options is not None:
+        if not request_options:
             request_options = {} # type: Dict[str, Any]
         if session_token is not None:
             request_options["sessionToken"] = session_token

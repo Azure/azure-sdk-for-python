@@ -44,7 +44,9 @@ class QueryIterable(object):
         :param dict options:
             The request options for the request.
         :param method fetch_function:
-        :param str collection_link:
+        :param method resource_type:
+            The type of the resource being queried
+        :param str resource_link:
             If this is a Document query/feed collection_link is required.
  
         Example of `fetch_function`:
@@ -122,7 +124,7 @@ class QueryIterable(object):
 
     def _create_pipelined_execution_context(self, query_execution_info):
 
-        assert self._resource_link, "code bug, resource_link has is required."
+        assert self._resource_link, "code bug, resource_link is required."
         execution_context_aggregator = multi_execution_aggregator._MultiExecutionContextAggregator(self._client,
                                                                                                    self._resource_link,
                                                                                                    self._query,

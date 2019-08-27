@@ -25,6 +25,7 @@
 from six.moves import xrange
 from azure.cosmos._execution_context.base_execution_context import _QueryExecutionContextBase
 from azure.cosmos._execution_context import endpoint_component
+from azure.cosmos.documents import _DistinctType
 
 
 class _PipelineExecutionContext(_QueryExecutionContextBase):
@@ -55,20 +56,20 @@ class _PipelineExecutionContext(_QueryExecutionContextBase):
             self._endpoint = endpoint_component._QueryExecutionAggregateEndpointComponent(self._endpoint, aggregates)
 
         offset = query_execution_info.get_offset()
-        if not (offset is None):
+        if offset is not None:
             self._endpoint = endpoint_component._QueryExecutionOffsetEndpointComponent(self._endpoint, offset)
 
         top = query_execution_info.get_top()
-        if not (top is None):
+        if top is not None:
             self._endpoint = endpoint_component._QueryExecutionTopEndpointComponent(self._endpoint, top)
 
         limit = query_execution_info.get_limit()
-        if not (limit is None):
+        if limit is not None:
             self._endpoint = endpoint_component._QueryExecutionTopEndpointComponent(self._endpoint, limit)
 
         distinct_type = query_execution_info.get_distinct_type()
-        if distinct_type != 'None':
-            if distinct_type == "Ordered":
+        if distinct_type != _DistinctType.NoneType:
+            if distinct_type == _DistinctType.Ordered:
                 self._endpoint = endpoint_component._QueryExecutionDistinctOrderedEndpointComponent(self._endpoint)
             else:
                 self._endpoint = endpoint_component._QueryExecutionDistinctUnorderedEndpointComponent(self._endpoint)

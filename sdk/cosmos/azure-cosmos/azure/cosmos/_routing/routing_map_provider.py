@@ -94,7 +94,7 @@ class SmartRoutingMapProvider(PartitionKeyRangeCache):
             ##r.min < #previous_r.max
             return False
         else:
-            if (range2.min == range1.max and range1.isMaxInclusive and range2.isMinInclusive):
+            if range2.min == range1.max and range1.isMaxInclusive and range2.isMinInclusive:
                 # the inclusive ending endpoint of previous_r is the same as the inclusive beginning endpoint of r
                 return False
         

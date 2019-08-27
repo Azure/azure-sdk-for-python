@@ -6,6 +6,7 @@ from azure.cosmos._execution_context.query_execution_info import _PartitionedQue
 import azure.cosmos.errors as errors
 from azure.cosmos.partition_key import PartitionKey
 from azure.cosmos._execution_context.base_execution_context import _QueryExecutionContextBase
+from azure.cosmos.documents import _DistinctType
 import pytest
 import collections
 import test_config
@@ -219,9 +220,35 @@ class QueryTest(unittest.TestCase):
 
     def test_get_query_plan_through_gateway(self):
         created_collection = self.config.create_multi_partition_collection_with_custom_pk_if_not_exist(self.client)
-        self._validate_query_plan("Select top 10 value count(c.id) from c", created_collection.container_link, 10, [], ['Count'], True, None, None, "None")
-        self._validate_query_plan("Select * from c order by c._ts offset 5 limit 10", created_collection.container_link, None, ['Ascending'], [], False, 5, 10, "None")
-        self._validate_query_plan("Select distinct value c.id from c order by c.id", created_collection.container_link, None, ['Ascending'], [], True, None, None, "Ordered")
+        self._validate_query_plan(query="Select top 10 value count(c.id) from c",
+                                  container_link=created_collection.container_link,
+                                  top=10,
+                                  order_by=[],
+                                  aggregate=['Count'],
+                                  select_value=True,
+                                  offset=None,
+                                  limit=None,
+                                  distinct=_DistinctType.NoneType)
+
+        self._validate_query_plan(query="Select * from c order by c._ts offset 5 limit 10",
+                                  container_link=created_collection.container_link,
+                                  top=None,
+                                  order_by=['Ascending'],
+                                  aggregate=[],
+                                  select_value=False,
+                                  offset=5,
+                                  limit=10,
+                                  distinct=_DistinctType.NoneType)
+
+        self._validate_query_plan(query="Select distinct value c.id from c order by c.id",
+                                  container_link=created_collection.container_link,
+                                  top=None,
+                                  order_by=['Ascending'],
+                                  aggregate=[],
+                                  select_value=True,
+                                  offset=None,
+                                  limit=None,
+                                  distinct=_DistinctType.Ordered)
 
     def _validate_query_plan(self, query, container_link, top, order_by, aggregate, select_value, offset, limit, distinct):
         query_plan_dict = self.client.client_connection._GetQueryPlanThroughGateway(query, container_link)
@@ -266,10 +293,25 @@ class QueryTest(unittest.TestCase):
             values.append(created_collection.create_item(body=document_definition)['pk'])
 
         for max_item_count in max_item_counts:
-            self._validate_offset_limit(created_collection, 'SELECT * from c ORDER BY c.pk OFFSET 0 LIMIT 5', max_item_count, values[:5])
-            self._validate_offset_limit(created_collection, 'SELECT * from c ORDER BY c.pk OFFSET 5 LIMIT 10', max_item_count, values[5:])
-            self._validate_offset_limit(created_collection, 'SELECT * from c ORDER BY c.pk OFFSET 10 LIMIT 5', max_item_count, [])
-            self._validate_offset_limit(created_collection, 'SELECT * from c ORDER BY c.pk OFFSET 100 LIMIT 1', max_item_count, [])
+            self._validate_offset_limit(created_collection=created_collection,
+                                        query='SELECT * from c ORDER BY c.pk OFFSET 0 LIMIT 5',
+                                        max_item_count=max_item_count,
+                                        results=values[:5])
+
+            self._validate_offset_limit(created_collection=created_collection,
+                                        query='SELECT * from c ORDER BY c.pk OFFSET 5 LIMIT 10',
+                                        max_item_count=max_item_count,
+                                        results=values[5:])
+
+            self._validate_offset_limit(created_collection=created_collection,
+                                        query='SELECT * from c ORDER BY c.pk OFFSET 10 LIMIT 5',
+                                        max_item_count=max_item_count,
+                                        results=[])
+
+            self._validate_offset_limit(created_collection=created_collection,
+                                        query='SELECT * from c ORDER BY c.pk OFFSET 100 LIMIT 1',
+                                        max_item_count=max_item_count,
+                                        results=[])
 
     def _validate_offset_limit(self, created_collection, query, max_item_count, results):
         query_iterable = created_collection.query_items(
@@ -392,6 +434,7 @@ class QueryTest(unittest.TestCase):
             enable_cross_partition_query=True
         )
         query_results = list(query_iterable)
+
         self.assertEquals(len(results), len(query_results))
         query_results_strings = []
         result_strings = []

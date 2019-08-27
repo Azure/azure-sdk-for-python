@@ -2758,6 +2758,9 @@ class CosmosClientConnection(object):
             The request options for the request.
         :param str partition_key_range_id:
             Specifies partition key range id.
+        :param function response_hook:
+        :param bool is_query_plan:
+            Specififes if the call is to fetch query plan
 
         :rtype:
             list
