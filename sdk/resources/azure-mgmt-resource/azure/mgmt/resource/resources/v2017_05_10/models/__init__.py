@@ -24,6 +24,8 @@ try:
     from ._models_py3 import DeploymentProperties
     from ._models_py3 import DeploymentPropertiesExtended
     from ._models_py3 import DeploymentValidateResult
+    from ._models_py3 import ErrorAdditionalInfo
+    from ._models_py3 import ErrorResponse
     from ._models_py3 import ExportTemplateRequest
     from ._models_py3 import GenericResource
     from ._models_py3 import GenericResourceFilter
@@ -65,6 +67,8 @@ except (SyntaxError, ImportError):
     from ._models import DeploymentProperties
     from ._models import DeploymentPropertiesExtended
     from ._models import DeploymentValidateResult
+    from ._models import ErrorAdditionalInfo
+    from ._models import ErrorResponse
     from ._models import ExportTemplateRequest
     from ._models import GenericResource
     from ._models import GenericResourceFilter
@@ -117,6 +121,8 @@ __all__ = [
     'DeploymentProperties',
     'DeploymentPropertiesExtended',
     'DeploymentValidateResult',
+    'ErrorAdditionalInfo',
+    'ErrorResponse',
     'ExportTemplateRequest',
     'GenericResource',
     'GenericResourceFilter',
