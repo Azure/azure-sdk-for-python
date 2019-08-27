@@ -29,6 +29,7 @@ from .authentication import BearerTokenCredentialPolicy
 from .custom_hook import CustomHookPolicy
 from .redirect import RedirectPolicy
 from .retry import RetryPolicy
+from .distributed_tracing import DistributedTracingPolicy
 from .universal import (
     HeadersPolicy,
     UserAgentPolicy,
@@ -48,7 +49,8 @@ __all__ = [
     'RetryPolicy',
     'RedirectPolicy',
     'ProxyPolicy',
-    'CustomHookPolicy'
+    'CustomHookPolicy',
+    'DistributedTracingPolicy'
 ]
 
 #pylint: disable=unused-import
