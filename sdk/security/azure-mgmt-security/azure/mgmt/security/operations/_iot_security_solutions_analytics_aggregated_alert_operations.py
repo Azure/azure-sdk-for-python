@@ -41,14 +41,15 @@ class IotSecuritySolutionsAnalyticsAggregatedAlertOperations(object):
 
     def list(
             self, resource_group_name, solution_name, top=None, custom_headers=None, raw=False, **operation_config):
-        """Security Analytics of a security solution.
+        """Use this method to get the aggregated alert list of yours IoT Security
+        solution.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription. The name is case insensitive.
         :type resource_group_name: str
-        :param solution_name: The solution manager name
+        :param solution_name: The name of the IoT Security solution.
         :type solution_name: str
-        :param top: The number of results to retrieve.
+        :param top: Number of results to retrieve.
         :type top: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -118,14 +119,15 @@ class IotSecuritySolutionsAnalyticsAggregatedAlertOperations(object):
 
     def get(
             self, resource_group_name, solution_name, aggregated_alert_name, custom_headers=None, raw=False, **operation_config):
-        """Security Analytics of a security solution.
+        """Use this method to get a single the aggregated alert of yours IoT
+        Security solution. This aggregation is performed by alert name.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription. The name is case insensitive.
         :type resource_group_name: str
-        :param solution_name: The solution manager name
+        :param solution_name: The name of the IoT Security solution.
         :type solution_name: str
-        :param aggregated_alert_name: Identifier of the aggregated alert
+        :param aggregated_alert_name: Identifier of the aggregated alert.
         :type aggregated_alert_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -183,14 +185,14 @@ class IotSecuritySolutionsAnalyticsAggregatedAlertOperations(object):
 
     def dismiss(
             self, resource_group_name, solution_name, aggregated_alert_name, custom_headers=None, raw=False, **operation_config):
-        """Security Analytics of a security solution.
+        """Use this method to dismiss an aggregated IoT Security Solution Alert.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription. The name is case insensitive.
         :type resource_group_name: str
-        :param solution_name: The solution manager name
+        :param solution_name: The name of the IoT Security solution.
         :type solution_name: str
-        :param aggregated_alert_name: Identifier of the aggregated alert
+        :param aggregated_alert_name: Identifier of the aggregated alert.
         :type aggregated_alert_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

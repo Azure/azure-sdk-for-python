@@ -41,15 +41,17 @@ class IotSecuritySolutionsAnalyticsRecommendationOperations(object):
 
     def get(
             self, resource_group_name, solution_name, aggregated_recommendation_name, custom_headers=None, raw=False, **operation_config):
-        """Security Analytics of a security solution.
+        """Use this method to get the aggregated security analytics recommendation
+        of yours IoT Security solution. This aggregation is performed by
+        recommendation name.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription. The name is case insensitive.
         :type resource_group_name: str
-        :param solution_name: The solution manager name
+        :param solution_name: The name of the IoT Security solution.
         :type solution_name: str
-        :param aggregated_recommendation_name: Identifier of the aggregated
-         recommendation
+        :param aggregated_recommendation_name: Name of the recommendation
+         aggregated for this query.
         :type aggregated_recommendation_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -109,14 +111,15 @@ class IotSecuritySolutionsAnalyticsRecommendationOperations(object):
 
     def list(
             self, resource_group_name, solution_name, top=None, custom_headers=None, raw=False, **operation_config):
-        """Security Analytics of a security solution.
+        """Use this method to get the list of aggregated security analytics
+        recommendations of yours IoT Security solution.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription. The name is case insensitive.
         :type resource_group_name: str
-        :param solution_name: The solution manager name
+        :param solution_name: The name of the IoT Security solution.
         :type solution_name: str
-        :param top: The number of results to retrieve.
+        :param top: Number of results to retrieve.
         :type top: int
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

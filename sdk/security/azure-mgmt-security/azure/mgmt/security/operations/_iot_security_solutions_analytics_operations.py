@@ -41,12 +41,12 @@ class IotSecuritySolutionsAnalyticsOperations(object):
 
     def list(
             self, resource_group_name, solution_name, custom_headers=None, raw=False, **operation_config):
-        """Security Analytics of a security solution.
+        """Use this method to get IoT security Analytics metrics in an array.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription. The name is case insensitive.
         :type resource_group_name: str
-        :param solution_name: The solution manager name
+        :param solution_name: The name of the IoT Security solution.
         :type solution_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -105,12 +105,12 @@ class IotSecuritySolutionsAnalyticsOperations(object):
 
     def get(
             self, resource_group_name, solution_name, custom_headers=None, raw=False, **operation_config):
-        """Security Analytics of a security solution.
+        """Use this method to get IoT Security Analytics metrics.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription. The name is case insensitive.
         :type resource_group_name: str
-        :param solution_name: The solution manager name
+        :param solution_name: The name of the IoT Security solution.
         :type solution_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

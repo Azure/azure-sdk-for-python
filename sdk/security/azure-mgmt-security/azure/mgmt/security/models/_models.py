@@ -504,7 +504,7 @@ class CustomAlertRule(Model):
     :vartype display_name: str
     :ivar description: The description of the custom alert.
     :vartype description: str
-    :param is_enabled: Required. Whether the custom alert is enabled.
+    :param is_enabled: Required. Status of the custom alert.
     :type is_enabled: bool
     :param rule_type: Required. The type of the custom alert rule.
     :type rule_type: str
@@ -544,7 +544,7 @@ class ListCustomAlertRule(CustomAlertRule):
     :vartype display_name: str
     :ivar description: The description of the custom alert.
     :vartype description: str
-    :param is_enabled: Required. Whether the custom alert is enabled.
+    :param is_enabled: Required. Status of the custom alert.
     :type is_enabled: bool
     :param rule_type: Required. The type of the custom alert rule.
     :type rule_type: str
@@ -587,7 +587,7 @@ class AllowlistCustomAlertRule(ListCustomAlertRule):
     :vartype display_name: str
     :ivar description: The description of the custom alert.
     :vartype description: str
-    :param is_enabled: Required. Whether the custom alert is enabled.
+    :param is_enabled: Required. Status of the custom alert.
     :type is_enabled: bool
     :param rule_type: Required. The type of the custom alert rule.
     :type rule_type: str
@@ -1397,7 +1397,7 @@ class DenylistCustomAlertRule(ListCustomAlertRule):
     :vartype display_name: str
     :ivar description: The description of the custom alert.
     :vartype description: str
-    :param is_enabled: Required. Whether the custom alert is enabled.
+    :param is_enabled: Required. Status of the custom alert.
     :type is_enabled: bool
     :param rule_type: Required. The type of the custom alert rule.
     :type rule_type: str
@@ -1444,16 +1444,16 @@ class DeviceSecurityGroup(Resource):
     :vartype name: str
     :ivar type: Resource type
     :vartype type: str
-    :param threshold_rules: A list of threshold custom alert rules.
+    :param threshold_rules: The list of custom alert threshold rules.
     :type threshold_rules:
      list[~azure.mgmt.security.models.ThresholdCustomAlertRule]
-    :param time_window_rules: A list of time window custom alert rules.
+    :param time_window_rules: The list of custom alert time-window rules.
     :type time_window_rules:
      list[~azure.mgmt.security.models.TimeWindowCustomAlertRule]
-    :param allowlist_rules: A list of allow-list custom alert rules.
+    :param allowlist_rules: The allow-list custom alert rules.
     :type allowlist_rules:
      list[~azure.mgmt.security.models.AllowlistCustomAlertRule]
-    :param denylist_rules: A list of deny-list custom alert rules.
+    :param denylist_rules: The deny-list custom alert rules.
     :type denylist_rules:
      list[~azure.mgmt.security.models.DenylistCustomAlertRule]
     """
@@ -1687,35 +1687,34 @@ class IoTSecurityAggregatedAlert(Model):
     :vartype type: str
     :param tags: Resource tags
     :type tags: dict[str, str]
-    :ivar alert_type: Name of the alert type
+    :ivar alert_type: Name of the alert type.
     :vartype alert_type: str
-    :ivar alert_display_name: Display name of the alert type
+    :ivar alert_display_name: Display name of the alert type.
     :vartype alert_display_name: str
-    :ivar aggregated_date_utc: The date the incidents were detected by the
-     vendor
+    :ivar aggregated_date_utc: Date of detection.
     :vartype aggregated_date_utc: date
-    :ivar vendor_name: Name of the vendor that discovered the incident
+    :ivar vendor_name: Name of the organization that raised the alert.
     :vartype vendor_name: str
-    :ivar reported_severity: Estimated severity of this alert. Possible values
-     include: 'Informational', 'Low', 'Medium', 'High'
+    :ivar reported_severity: Assessed alert severity. Possible values include:
+     'Informational', 'Low', 'Medium', 'High'
     :vartype reported_severity: str or
      ~azure.mgmt.security.models.ReportedSeverity
-    :ivar remediation_steps: Recommended steps for remediation
+    :ivar remediation_steps: Recommended steps for remediation.
     :vartype remediation_steps: str
-    :ivar description: Description of the incident and what it means
+    :ivar description: Description of the suspected vulnerability and meaning.
     :vartype description: str
-    :ivar count: Occurrence number of the alert within the aggregated date
+    :ivar count: Number of alerts occurrences within the aggregated time
+     window.
     :vartype count: int
-    :ivar effected_resource_type: Azure resource ID of the resource that got
-     the alerts
+    :ivar effected_resource_type: Azure resource ID of the resource that
+     received the alerts.
     :vartype effected_resource_type: str
-    :ivar system_source: The type of the alerted resource (Azure, Non-Azure)
+    :ivar system_source: The type of the alerted resource (Azure, Non-Azure).
     :vartype system_source: str
-    :ivar action_taken: The action that was taken as a response to the alert
-     (Active, Blocked etc.)
+    :ivar action_taken: IoT Security solution alert response.
     :vartype action_taken: str
-    :ivar log_analytics_query: query in log analytics to get the list of
-     affected devices/alerts
+    :ivar log_analytics_query: Log analytics query for getting the list of
+     affected devices/alerts.
     :vartype log_analytics_query: str
     """
 
@@ -1777,7 +1776,7 @@ class IoTSecurityAggregatedAlert(Model):
 
 
 class IoTSecurityAggregatedRecommendation(Model):
-    """Security Solution Recommendation Information.
+    """IoT Security solution recommendation information.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -1790,31 +1789,31 @@ class IoTSecurityAggregatedRecommendation(Model):
     :vartype type: str
     :param tags: Resource tags
     :type tags: dict[str, str]
-    :param recommendation_name: Name of the recommendation
+    :param recommendation_name: Name of the recommendation.
     :type recommendation_name: str
     :ivar recommendation_display_name: Display name of the recommendation
      type.
     :vartype recommendation_display_name: str
-    :ivar description: Description of the incident and what it means
+    :ivar description: Description of the suspected vulnerability and meaning.
     :vartype description: str
-    :ivar recommendation_type_id: The recommendation-type GUID.
+    :ivar recommendation_type_id: Recommendation-type GUID.
     :vartype recommendation_type_id: str
-    :ivar detected_by: Name of the vendor that discovered the issue
+    :ivar detected_by: Name of the organization that made the recommendation.
     :vartype detected_by: str
     :ivar remediation_steps: Recommended steps for remediation
     :vartype remediation_steps: str
-    :ivar reported_severity: Estimated severity of this recommendation.
-     Possible values include: 'Informational', 'Low', 'Medium', 'High'
+    :ivar reported_severity: Assessed recommendation severity. Possible values
+     include: 'Informational', 'Low', 'Medium', 'High'
     :vartype reported_severity: str or
      ~azure.mgmt.security.models.ReportedSeverity
-    :ivar healthy_devices: the number of the healthy devices within the
-     solution
+    :ivar healthy_devices: Number of healthy devices within the IoT Security
+     solution.
     :vartype healthy_devices: int
-    :ivar unhealthy_device_count: the number of the unhealthy devices within
-     the solution
+    :ivar unhealthy_device_count: Number of unhealthy devices within the IoT
+     Security solution.
     :vartype unhealthy_device_count: int
-    :ivar log_analytics_query: query in log analytics to get the list of
-     affected devices/alerts
+    :ivar log_analytics_query: Log analytics query for getting the list of
+     affected devices/alerts.
     :vartype log_analytics_query: str
     """
 
@@ -1869,15 +1868,15 @@ class IoTSecurityAggregatedRecommendation(Model):
 
 
 class IoTSecurityAlertedDevice(Model):
-    """Statistic information about the number of alerts per device during the last
-    period.
+    """Statistical information about the number of alerts per device during last
+    set number of days.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar device_id: Name of the alert type
+    :ivar device_id: Device identifier.
     :vartype device_id: str
-    :ivar alerts_count: the number of alerts raised for this device
+    :ivar alerts_count: Number of alerts raised for this device.
     :vartype alerts_count: int
     """
 
@@ -1898,11 +1897,12 @@ class IoTSecurityAlertedDevice(Model):
 
 
 class IoTSecurityAlertedDevicesList(Model):
-    """List of devices with the count of raised alerts.
+    """List of devices with open alerts including the count of alerts per device.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required. List of aggregated alerts data
+    :param value: Required. List of devices with open alerts including the
+     count of alerts per device
     :type value: list[~azure.mgmt.security.models.IoTSecurityAlertedDevice]
     """
 
@@ -1920,19 +1920,19 @@ class IoTSecurityAlertedDevicesList(Model):
 
 
 class IoTSecurityDeviceAlert(Model):
-    """Statistic information about the number of alerts per alert type during the
-    last period.
+    """Statistical information about the number of alerts per alert type during
+    last set number of days.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     :ivar alert_display_name: Display name of the alert
     :vartype alert_display_name: str
-    :ivar reported_severity: Estimated severity of this alert. Possible values
-     include: 'Informational', 'Low', 'Medium', 'High'
+    :ivar reported_severity: Assessed Alert severity. Possible values include:
+     'Informational', 'Low', 'Medium', 'High'
     :vartype reported_severity: str or
      ~azure.mgmt.security.models.ReportedSeverity
-    :ivar alerts_count: the number of alerts raised for this alert type
+    :ivar alerts_count: Number of alerts raised for this alert type.
     :vartype alerts_count: int
     """
 
@@ -1965,7 +1965,8 @@ class IoTSecurityDeviceAlertsList(Model):
 
     :param value: Required. List of top alerts data
     :type value: list[~azure.mgmt.security.models.IoTSecurityDeviceAlert]
-    :ivar next_link: The URI to fetch the next page.
+    :ivar next_link: When there is too much alert data for one page, use this
+     URI to fetch the next page.
     :vartype next_link: str
     """
 
@@ -1986,19 +1987,19 @@ class IoTSecurityDeviceAlertsList(Model):
 
 
 class IoTSecurityDeviceRecommendation(Model):
-    """Statistic information about the number of recommendations per
+    """Statistical information about the number of recommendations per device, per
     recommendation type.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar recommendation_display_name: Display name of the recommendation
+    :ivar recommendation_display_name: Display name of the recommendation.
     :vartype recommendation_display_name: str
-    :ivar reported_severity: Estimated severity of this recommendation.
-     Possible values include: 'Informational', 'Low', 'Medium', 'High'
+    :ivar reported_severity: Assessed recommendation severity. Possible values
+     include: 'Informational', 'Low', 'Medium', 'High'
     :vartype reported_severity: str or
      ~azure.mgmt.security.models.ReportedSeverity
-    :ivar devices_count: the number of device with this recommendation
+    :ivar devices_count: Number of devices with this recommendation.
     :vartype devices_count: int
     """
 
@@ -2022,7 +2023,8 @@ class IoTSecurityDeviceRecommendation(Model):
 
 
 class IoTSecurityDeviceRecommendationsList(Model):
-    """List of recommendations with the count of devices.
+    """List of aggregated recommendation data, per recommendation type, per
+    device.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -2045,7 +2047,7 @@ class IoTSecurityDeviceRecommendationsList(Model):
 
 
 class IoTSecuritySolutionAnalyticsModel(Resource):
-    """Security Analytics of a security solution.
+    """Security analytics of your IoT Security solution.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -2056,22 +2058,23 @@ class IoTSecuritySolutionAnalyticsModel(Resource):
     :vartype name: str
     :ivar type: Resource type
     :vartype type: str
-    :ivar metrics: Security Analytics of a security solution
+    :ivar metrics: Security analytics of your IoT Security solution.
     :vartype metrics: ~azure.mgmt.security.models.IoTSeverityMetrics
-    :ivar unhealthy_device_count: number of unhealthy devices
+    :ivar unhealthy_device_count: Number of unhealthy devices within your IoT
+     Security solution.
     :vartype unhealthy_device_count: int
-    :ivar devices_metrics: The list of devices metrics by the aggregated date.
+    :ivar devices_metrics: List of device metrics by the aggregation date.
     :vartype devices_metrics:
      list[~azure.mgmt.security.models.IoTSecuritySolutionAnalyticsModelPropertiesDevicesMetricsItem]
-    :param top_alerted_devices: The list of top 3 devices with the most
-     attacked.
+    :param top_alerted_devices: List of the 3 devices with the most alerts.
     :type top_alerted_devices:
      ~azure.mgmt.security.models.IoTSecurityAlertedDevicesList
-    :param most_prevalent_device_alerts: The list of most prevalent 3 alerts.
+    :param most_prevalent_device_alerts: List of the 3 most prevalent device
+     alerts.
     :type most_prevalent_device_alerts:
      ~azure.mgmt.security.models.IoTSecurityDeviceAlertsList
-    :param most_prevalent_device_recommendations: The list of most prevalent 3
-     recommendations.
+    :param most_prevalent_device_recommendations: List of the 3 most prevalent
+     device recommendations.
     :type most_prevalent_device_recommendations:
      ~azure.mgmt.security.models.IoTSecurityDeviceRecommendationsList
     """
@@ -2108,17 +2111,19 @@ class IoTSecuritySolutionAnalyticsModel(Resource):
 
 
 class IoTSecuritySolutionAnalyticsModelList(Model):
-    """List of Security Analytics of a security solution.
+    """List of Security analytics of your IoT Security solution.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param value: Required. List of Security Analytics of a security solution
+    :param value: Required. List of Security analytics of your IoT Security
+     solution
     :type value:
      list[~azure.mgmt.security.models.IoTSecuritySolutionAnalyticsModel]
-    :ivar next_link: The URI to fetch the next page.
+    :ivar next_link: When there is too much alert data for one page, use this
+     URI to fetch the next page.
     :vartype next_link: str
     """
 
@@ -2141,9 +2146,10 @@ class IoTSecuritySolutionAnalyticsModelList(Model):
 class IoTSecuritySolutionAnalyticsModelPropertiesDevicesMetricsItem(Model):
     """IoTSecuritySolutionAnalyticsModelPropertiesDevicesMetricsItem.
 
-    :param date_property: the date of the metrics
+    :param date_property: Aggregation of IoT Security solution device alert
+     metrics by date.
     :type date_property: datetime
-    :param devices_metrics: devices alerts count by severity.
+    :param devices_metrics: Device alert count by severity.
     :type devices_metrics: ~azure.mgmt.security.models.IoTSeverityMetrics
     """
 
@@ -2159,7 +2165,7 @@ class IoTSecuritySolutionAnalyticsModelPropertiesDevicesMetricsItem(Model):
 
 
 class IoTSecuritySolutionModel(Model):
-    """Security Solution.
+    """IoT Security solution confgurtion and resource information.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -2180,10 +2186,10 @@ class IoTSecuritySolutionModel(Model):
     :type workspace: str
     :param display_name: Required. Resource display name.
     :type display_name: str
-    :param status: Security solution status. Possible values include:
-     'Enabled', 'Disabled'. Default value: "Enabled" .
+    :param status: Status of the IoT Security solution. Possible values
+     include: 'Enabled', 'Disabled'. Default value: "Enabled" .
     :type status: str or ~azure.mgmt.security.models.SecuritySolutionStatus
-    :param export: List of additional export to workspace data options
+    :param export: List of additional options for exporting to workspace data.
     :type export: list[str or ~azure.mgmt.security.models.ExportData]
     :param disabled_data_sources: Disabled data sources. Disabling these data
      sources compromises the system.
@@ -2248,13 +2254,13 @@ class IoTSecuritySolutionModel(Model):
 
 
 class IoTSeverityMetrics(Model):
-    """Severity metrics.
+    """IoT Security solution analyics severity metrics.
 
-    :param high: count of high severity items
+    :param high: Count of high severity alerts/recommendations.
     :type high: int
-    :param medium: count of medium severity items
+    :param medium: Count of medium severity alerts/recommendations.
     :type medium: int
-    :param low: count of low severity items
+    :param low: Count of low severity alerts/recommendations.
     :type low: int
     """
 
@@ -2882,15 +2888,15 @@ class PublisherInfo(Model):
 
 
 class RecommendationConfigurationProperties(Model):
-    """Recommendation configuration.
+    """The type of IoT Security recommendation.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param recommendation_type: Required. The recommendation type. Possible
-     values include: 'IoT_ACRAuthentication',
+    :param recommendation_type: Required. The type of IoT Security
+     recommendation. Possible values include: 'IoT_ACRAuthentication',
      'IoT_AgentSendsUnutilizedMessages', 'IoT_Baseline',
      'IoT_EdgeHubMemOptimize', 'IoT_EdgeLoggingOptions',
      'IoT_InconsistentModuleSettings', 'IoT_InstallAgent',
@@ -2902,9 +2908,9 @@ class RecommendationConfigurationProperties(Model):
      ~azure.mgmt.security.models.RecommendationType
     :ivar name:
     :vartype name: str
-    :param status: Required. Recommendation status. The recommendation is not
-     generated when the status is disabled. Possible values include:
-     'Disabled', 'Enabled'. Default value: "Enabled" .
+    :param status: Required. Recommendation status. When the recommendtion
+     status is disabled recommendations are not generated. Possible values
+     include: 'Disabled', 'Enabled'. Default value: "Enabled" .
     :type status: str or
      ~azure.mgmt.security.models.RecommendationConfigStatus
     """
@@ -3372,7 +3378,7 @@ class ThresholdCustomAlertRule(CustomAlertRule):
     :vartype display_name: str
     :ivar description: The description of the custom alert.
     :vartype description: str
-    :param is_enabled: Required. Whether the custom alert is enabled.
+    :param is_enabled: Required. Status of the custom alert.
     :type is_enabled: bool
     :param rule_type: Required. The type of the custom alert rule.
     :type rule_type: str
@@ -3419,7 +3425,7 @@ class TimeWindowCustomAlertRule(Model):
     :vartype display_name: str
     :ivar description: The description of the custom alert.
     :vartype description: str
-    :param is_enabled: Required. Whether the custom alert is enabled.
+    :param is_enabled: Required. Status of the custom alert.
     :type is_enabled: bool
     :param rule_type: Required. The type of the custom alert rule.
     :type rule_type: str
@@ -3651,7 +3657,7 @@ class UpdateIotSecuritySolutionData(TagsResource):
 
 
 class UserDefinedResourcesProperties(Model):
-    """Properties of the solution's user defined resources.
+    """Properties of the IoT Security solution's user defined resources.
 
     All required parameters must be populated in order to send to Azure.
 

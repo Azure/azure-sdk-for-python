@@ -41,8 +41,8 @@ class DeviceSecurityGroupsOperations(object):
 
     def list(
             self, resource_id, custom_headers=None, raw=False, **operation_config):
-        """Gets the list of device security groups for the specified IoT hub
-        resource.
+        """Use this method get the list of device security groups for the
+        specified IoT Hub resource.
 
         :param resource_id: The identifier of the resource.
         :type resource_id: str
@@ -110,12 +110,14 @@ class DeviceSecurityGroupsOperations(object):
 
     def get(
             self, resource_id, device_security_group_name, custom_headers=None, raw=False, **operation_config):
-        """Gets the device security group for the specified IoT hub resource.
+        """Use this method to get the device security group for the specified IoT
+        Hub resource.
 
         :param resource_id: The identifier of the resource.
         :type resource_id: str
-        :param device_security_group_name: The name of the security group.
-         Please notice that the name is case insensitive.
+        :param device_security_group_name: The name of the device security
+         group. Note that the name of the device security group is case
+         insensitive.
         :type device_security_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -171,13 +173,14 @@ class DeviceSecurityGroupsOperations(object):
 
     def create_or_update(
             self, resource_id, device_security_group_name, device_security_group, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates the device security group on a specified IoT hub
-        resource.
+        """Use this method to creates or updates the device security group on a
+        specified IoT Hub resource.
 
         :param resource_id: The identifier of the resource.
         :type resource_id: str
-        :param device_security_group_name: The name of the security group.
-         Please notice that the name is case insensitive.
+        :param device_security_group_name: The name of the device security
+         group. Note that the name of the device security group is case
+         insensitive.
         :type device_security_group_name: str
         :param device_security_group: Security group object.
         :type device_security_group:
@@ -242,12 +245,13 @@ class DeviceSecurityGroupsOperations(object):
 
     def delete(
             self, resource_id, device_security_group_name, custom_headers=None, raw=False, **operation_config):
-        """Deletes the security group.
+        """User this method to deletes the device security group.
 
         :param resource_id: The identifier of the resource.
         :type resource_id: str
-        :param device_security_group_name: The name of the security group.
-         Please notice that the name is case insensitive.
+        :param device_security_group_name: The name of the device security
+         group. Note that the name of the device security group is case
+         insensitive.
         :type device_security_group_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the

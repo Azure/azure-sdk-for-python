@@ -41,10 +41,11 @@ class IotSecuritySolutionOperations(object):
 
     def list_by_subscription(
             self, filter=None, custom_headers=None, raw=False, **operation_config):
-        """List IoT security solutions by subscription.
+        """Use this method to get the list of IoT Security solutions by
+        subscription.
 
-        :param filter: filter the Security Solution with OData syntax.
-         supporting filter by iotHubs
+        :param filter: Filter the IoT Security solution with OData syntax.
+         Supports filtering by iotHubs.
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -112,13 +113,14 @@ class IotSecuritySolutionOperations(object):
 
     def list_by_resource_group(
             self, resource_group_name, filter=None, custom_headers=None, raw=False, **operation_config):
-        """List IoT security solutions by resource group.
+        """Use thie method to get the list IoT Security solutions organized by
+        resource group.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription. The name is case insensitive.
         :type resource_group_name: str
-        :param filter: filter the Security Solution with OData syntax.
-         supporting filter by iotHubs
+        :param filter: Filter the IoT Security solution with OData syntax.
+         Supports filtering by iotHubs.
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -187,12 +189,13 @@ class IotSecuritySolutionOperations(object):
 
     def get(
             self, resource_group_name, solution_name, custom_headers=None, raw=False, **operation_config):
-        """Get details of a specific IoT security solution.
+        """User this method to get details of a specific IoT Security solution
+        based on solution name.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription. The name is case insensitive.
         :type resource_group_name: str
-        :param solution_name: The solution manager name
+        :param solution_name: The name of the IoT Security solution.
         :type solution_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
@@ -249,12 +252,12 @@ class IotSecuritySolutionOperations(object):
 
     def create(
             self, resource_group_name, solution_name, iot_security_solution_data, custom_headers=None, raw=False, **operation_config):
-        """Create or update an IoT security solution.
+        """Use this method to create or update yours IoT Security solution.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription. The name is case insensitive.
         :type resource_group_name: str
-        :param solution_name: The solution manager name
+        :param solution_name: The name of the IoT Security solution.
         :type solution_name: str
         :param iot_security_solution_data: The security solution data
         :type iot_security_solution_data:
@@ -320,13 +323,14 @@ class IotSecuritySolutionOperations(object):
 
     def update(
             self, resource_group_name, solution_name, update_iot_security_solution_data, custom_headers=None, raw=False, **operation_config):
-        """Update an existing IoT security solution tags or user defined
-        resources. To update other fields use the CreateOrUpdate method.
+        """Use this method to update existing IoT Security solution tags or user
+        defined resources. To update other fields use the CreateOrUpdate
+        method.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription. The name is case insensitive.
         :type resource_group_name: str
-        :param solution_name: The solution manager name
+        :param solution_name: The name of the IoT Security solution.
         :type solution_name: str
         :param update_iot_security_solution_data: The security solution data
         :type update_iot_security_solution_data:
@@ -390,12 +394,12 @@ class IotSecuritySolutionOperations(object):
 
     def delete(
             self, resource_group_name, solution_name, custom_headers=None, raw=False, **operation_config):
-        """Delete an IoT security solution.
+        """Use this method to delete yours IoT Security solution.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription. The name is case insensitive.
         :type resource_group_name: str
-        :param solution_name: The solution manager name
+        :param solution_name: The name of the IoT Security solution.
         :type solution_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
