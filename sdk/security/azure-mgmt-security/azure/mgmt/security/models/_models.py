@@ -2165,7 +2165,7 @@ class IoTSecuritySolutionAnalyticsModelPropertiesDevicesMetricsItem(Model):
 
 
 class IoTSecuritySolutionModel(Model):
-    """IoT Security solution confgurtion and resource information.
+    """IoT Security solution configuration and resource information.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -2908,7 +2908,7 @@ class RecommendationConfigurationProperties(Model):
      ~azure.mgmt.security.models.RecommendationType
     :ivar name:
     :vartype name: str
-    :param status: Required. Recommendation status. When the recommendtion
+    :param status: Required. Recommendation status. When the recommendation
      status is disabled recommendations are not generated. Possible values
      include: 'Disabled', 'Enabled'. Default value: "Enabled" .
     :type status: str or

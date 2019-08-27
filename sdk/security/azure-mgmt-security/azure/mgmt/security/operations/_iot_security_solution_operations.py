@@ -113,7 +113,7 @@ class IotSecuritySolutionOperations(object):
 
     def list_by_resource_group(
             self, resource_group_name, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Use thie method to get the list IoT Security solutions organized by
+        """Use this method to get the list IoT Security solutions organized by
         resource group.
 
         :param resource_group_name: The name of the resource group within the
