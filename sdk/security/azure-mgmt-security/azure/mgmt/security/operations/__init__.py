@@ -13,14 +13,11 @@ from ._compliance_results_operations import ComplianceResultsOperations
 from ._pricings_operations import PricingsOperations
 from ._alerts_operations import AlertsOperations
 from ._settings_operations import SettingsOperations
-from ._io_tsecurity_solutions_operations import IoTSecuritySolutionsOperations
-from ._io_tsecurity_solutions_resource_group_operations import IoTSecuritySolutionsResourceGroupOperations
+from ._device_security_groups_operations import DeviceSecurityGroupsOperations
 from ._iot_security_solution_operations import IotSecuritySolutionOperations
 from ._io_tsecurity_solutions_analytics_operations import IoTSecuritySolutionsAnalyticsOperations
-from ._io_tsecurity_solutions_analytics_aggregated_alerts_operations import IoTSecuritySolutionsAnalyticsAggregatedAlertsOperations
 from ._io_tsecurity_solutions_analytics_aggregated_alert_operations import IoTSecuritySolutionsAnalyticsAggregatedAlertOperations
 from ._io_tsecurity_solutions_analytics_recommendation_operations import IoTSecuritySolutionsAnalyticsRecommendationOperations
-from ._io_tsecurity_solutions_analytics_recommendations_operations import IoTSecuritySolutionsAnalyticsRecommendationsOperations
 from ._allowed_connections_operations import AllowedConnectionsOperations
 from ._discovered_security_solutions_operations import DiscoveredSecuritySolutionsOperations
 from ._external_security_solutions_operations import ExternalSecuritySolutionsOperations
@@ -46,14 +43,11 @@ __all__ = [
     'PricingsOperations',
     'AlertsOperations',
     'SettingsOperations',
-    'IoTSecuritySolutionsOperations',
-    'IoTSecuritySolutionsResourceGroupOperations',
+    'DeviceSecurityGroupsOperations',
     'IotSecuritySolutionOperations',
     'IoTSecuritySolutionsAnalyticsOperations',
-    'IoTSecuritySolutionsAnalyticsAggregatedAlertsOperations',
     'IoTSecuritySolutionsAnalyticsAggregatedAlertOperations',
     'IoTSecuritySolutionsAnalyticsRecommendationOperations',
-    'IoTSecuritySolutionsAnalyticsRecommendationsOperations',
     'AllowedConnectionsOperations',
     'DiscoveredSecuritySolutionsOperations',
     'ExternalSecuritySolutionsOperations',

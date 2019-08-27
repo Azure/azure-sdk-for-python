@@ -492,6 +492,136 @@ class AllowedConnectionsResource(Model):
         self.connectable_resources = None
 
 
+class CustomAlertRule(Model):
+    """A custom alert rule.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar display_name: The display name of the custom alert.
+    :vartype display_name: str
+    :ivar description: The description of the custom alert.
+    :vartype description: str
+    :param is_enabled: Required. Whether the custom alert is enabled.
+    :type is_enabled: bool
+    :param rule_type: Required. The type of the custom alert rule.
+    :type rule_type: str
+    """
+
+    _validation = {
+        'display_name': {'readonly': True},
+        'description': {'readonly': True},
+        'is_enabled': {'required': True},
+        'rule_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
+        'rule_type': {'key': 'ruleType', 'type': 'str'},
+    }
+
+    def __init__(self, *, is_enabled: bool, rule_type: str, **kwargs) -> None:
+        super(CustomAlertRule, self).__init__(**kwargs)
+        self.display_name = None
+        self.description = None
+        self.is_enabled = is_enabled
+        self.rule_type = rule_type
+
+
+class ListCustomAlertRule(CustomAlertRule):
+    """A List custom alert rule.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar display_name: The display name of the custom alert.
+    :vartype display_name: str
+    :ivar description: The description of the custom alert.
+    :vartype description: str
+    :param is_enabled: Required. Whether the custom alert is enabled.
+    :type is_enabled: bool
+    :param rule_type: Required. The type of the custom alert rule.
+    :type rule_type: str
+    :ivar value_type: The value type of the items in the list. Possible values
+     include: 'IpCidr', 'String'
+    :vartype value_type: str or ~azure.mgmt.security.models.ValueType
+    """
+
+    _validation = {
+        'display_name': {'readonly': True},
+        'description': {'readonly': True},
+        'is_enabled': {'required': True},
+        'rule_type': {'required': True},
+        'value_type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
+        'rule_type': {'key': 'ruleType', 'type': 'str'},
+        'value_type': {'key': 'valueType', 'type': 'str'},
+    }
+
+    def __init__(self, *, is_enabled: bool, rule_type: str, **kwargs) -> None:
+        super(ListCustomAlertRule, self).__init__(is_enabled=is_enabled, rule_type=rule_type, **kwargs)
+        self.value_type = None
+
+
+class AllowlistCustomAlertRule(ListCustomAlertRule):
+    """A custom alert rule that checks if a value (depends on the custom alert
+    type) is allowed.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar display_name: The display name of the custom alert.
+    :vartype display_name: str
+    :ivar description: The description of the custom alert.
+    :vartype description: str
+    :param is_enabled: Required. Whether the custom alert is enabled.
+    :type is_enabled: bool
+    :param rule_type: Required. The type of the custom alert rule.
+    :type rule_type: str
+    :ivar value_type: The value type of the items in the list. Possible values
+     include: 'IpCidr', 'String'
+    :vartype value_type: str or ~azure.mgmt.security.models.ValueType
+    :param allowlist_values: Required. The values to allow. The format of the
+     values depends on the rule type.
+    :type allowlist_values: list[str]
+    """
+
+    _validation = {
+        'display_name': {'readonly': True},
+        'description': {'readonly': True},
+        'is_enabled': {'required': True},
+        'rule_type': {'required': True},
+        'value_type': {'readonly': True},
+        'allowlist_values': {'required': True},
+    }
+
+    _attribute_map = {
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
+        'rule_type': {'key': 'ruleType', 'type': 'str'},
+        'value_type': {'key': 'valueType', 'type': 'str'},
+        'allowlist_values': {'key': 'allowlistValues', 'type': '[str]'},
+    }
+
+    def __init__(self, *, is_enabled: bool, rule_type: str, allowlist_values, **kwargs) -> None:
+        super(AllowlistCustomAlertRule, self).__init__(is_enabled=is_enabled, rule_type=rule_type, **kwargs)
+        self.allowlist_values = allowlist_values
+
+
 class AppWhitelistingGroup(Model):
     """AppWhitelistingGroup.
 
@@ -1252,6 +1382,104 @@ class DataExportSetting(Setting):
     def __init__(self, *, kind, enabled: bool, **kwargs) -> None:
         super(DataExportSetting, self).__init__(kind=kind, **kwargs)
         self.enabled = enabled
+
+
+class DenylistCustomAlertRule(ListCustomAlertRule):
+    """A custom alert rule that checks if a value (depends on the custom alert
+    type) is denied.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar display_name: The display name of the custom alert.
+    :vartype display_name: str
+    :ivar description: The description of the custom alert.
+    :vartype description: str
+    :param is_enabled: Required. Whether the custom alert is enabled.
+    :type is_enabled: bool
+    :param rule_type: Required. The type of the custom alert rule.
+    :type rule_type: str
+    :ivar value_type: The value type of the items in the list. Possible values
+     include: 'IpCidr', 'String'
+    :vartype value_type: str or ~azure.mgmt.security.models.ValueType
+    :param denylist_values: Required. The values to deny. The format of the
+     values depends on the rule type.
+    :type denylist_values: list[str]
+    """
+
+    _validation = {
+        'display_name': {'readonly': True},
+        'description': {'readonly': True},
+        'is_enabled': {'required': True},
+        'rule_type': {'required': True},
+        'value_type': {'readonly': True},
+        'denylist_values': {'required': True},
+    }
+
+    _attribute_map = {
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
+        'rule_type': {'key': 'ruleType', 'type': 'str'},
+        'value_type': {'key': 'valueType', 'type': 'str'},
+        'denylist_values': {'key': 'denylistValues', 'type': '[str]'},
+    }
+
+    def __init__(self, *, is_enabled: bool, rule_type: str, denylist_values, **kwargs) -> None:
+        super(DenylistCustomAlertRule, self).__init__(is_enabled=is_enabled, rule_type=rule_type, **kwargs)
+        self.denylist_values = denylist_values
+
+
+class DeviceSecurityGroup(Resource):
+    """The device security group resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
+    :param threshold_rules: A list of threshold custom alert rules.
+    :type threshold_rules:
+     list[~azure.mgmt.security.models.ThresholdCustomAlertRule]
+    :param time_window_rules: A list of time window custom alert rules.
+    :type time_window_rules:
+     list[~azure.mgmt.security.models.TimeWindowCustomAlertRule]
+    :param allowlist_rules: A list of allow-list custom alert rules.
+    :type allowlist_rules:
+     list[~azure.mgmt.security.models.AllowlistCustomAlertRule]
+    :param denylist_rules: A list of deny-list custom alert rules.
+    :type denylist_rules:
+     list[~azure.mgmt.security.models.DenylistCustomAlertRule]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'threshold_rules': {'key': 'properties.thresholdRules', 'type': '[ThresholdCustomAlertRule]'},
+        'time_window_rules': {'key': 'properties.timeWindowRules', 'type': '[TimeWindowCustomAlertRule]'},
+        'allowlist_rules': {'key': 'properties.allowlistRules', 'type': '[AllowlistCustomAlertRule]'},
+        'denylist_rules': {'key': 'properties.denylistRules', 'type': '[DenylistCustomAlertRule]'},
+    }
+
+    def __init__(self, *, threshold_rules=None, time_window_rules=None, allowlist_rules=None, denylist_rules=None, **kwargs) -> None:
+        super(DeviceSecurityGroup, self).__init__(**kwargs)
+        self.threshold_rules = threshold_rules
+        self.time_window_rules = time_window_rules
+        self.allowlist_rules = allowlist_rules
+        self.denylist_rules = denylist_rules
 
 
 class DiscoveredSecuritySolution(Model):
@@ -3126,6 +3354,109 @@ class TagsResource(Model):
     def __init__(self, *, tags=None, **kwargs) -> None:
         super(TagsResource, self).__init__(**kwargs)
         self.tags = tags
+
+
+class ThresholdCustomAlertRule(CustomAlertRule):
+    """A custom alert rule that checks if a value (depends on the custom alert
+    type) is within the given range.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar display_name: The display name of the custom alert.
+    :vartype display_name: str
+    :ivar description: The description of the custom alert.
+    :vartype description: str
+    :param is_enabled: Required. Whether the custom alert is enabled.
+    :type is_enabled: bool
+    :param rule_type: Required. The type of the custom alert rule.
+    :type rule_type: str
+    :param min_threshold: Required. The minimum threshold.
+    :type min_threshold: int
+    :param max_threshold: Required. The maximum threshold.
+    :type max_threshold: int
+    """
+
+    _validation = {
+        'display_name': {'readonly': True},
+        'description': {'readonly': True},
+        'is_enabled': {'required': True},
+        'rule_type': {'required': True},
+        'min_threshold': {'required': True},
+        'max_threshold': {'required': True},
+    }
+
+    _attribute_map = {
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
+        'rule_type': {'key': 'ruleType', 'type': 'str'},
+        'min_threshold': {'key': 'minThreshold', 'type': 'int'},
+        'max_threshold': {'key': 'maxThreshold', 'type': 'int'},
+    }
+
+    def __init__(self, *, is_enabled: bool, rule_type: str, min_threshold: int, max_threshold: int, **kwargs) -> None:
+        super(ThresholdCustomAlertRule, self).__init__(is_enabled=is_enabled, rule_type=rule_type, **kwargs)
+        self.min_threshold = min_threshold
+        self.max_threshold = max_threshold
+
+
+class TimeWindowCustomAlertRule(Model):
+    """A custom alert rule that checks if the number of activities (depends on the
+    custom alert type) in a time window is within the given range.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar display_name: The display name of the custom alert.
+    :vartype display_name: str
+    :ivar description: The description of the custom alert.
+    :vartype description: str
+    :param is_enabled: Required. Whether the custom alert is enabled.
+    :type is_enabled: bool
+    :param rule_type: Required. The type of the custom alert rule.
+    :type rule_type: str
+    :param min_threshold: Required. The minimum threshold.
+    :type min_threshold: int
+    :param max_threshold: Required. The maximum threshold.
+    :type max_threshold: int
+    :param time_window_size: Required. The time window size in iso8601 format.
+    :type time_window_size: timedelta
+    """
+
+    _validation = {
+        'display_name': {'readonly': True},
+        'description': {'readonly': True},
+        'is_enabled': {'required': True},
+        'rule_type': {'required': True},
+        'min_threshold': {'required': True},
+        'max_threshold': {'required': True},
+        'time_window_size': {'required': True},
+    }
+
+    _attribute_map = {
+        'display_name': {'key': 'displayName', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
+        'rule_type': {'key': 'ruleType', 'type': 'str'},
+        'min_threshold': {'key': 'minThreshold', 'type': 'int'},
+        'max_threshold': {'key': 'maxThreshold', 'type': 'int'},
+        'time_window_size': {'key': 'timeWindowSize', 'type': 'duration'},
+    }
+
+    def __init__(self, *, is_enabled: bool, rule_type: str, min_threshold: int, max_threshold: int, time_window_size, **kwargs) -> None:
+        super(TimeWindowCustomAlertRule, self).__init__(**kwargs)
+        self.display_name = None
+        self.description = None
+        self.is_enabled = is_enabled
+        self.rule_type = rule_type
+        self.min_threshold = min_threshold
+        self.max_threshold = max_threshold
+        self.time_window_size = time_window_size
 
 
 class TopologyResource(Model):

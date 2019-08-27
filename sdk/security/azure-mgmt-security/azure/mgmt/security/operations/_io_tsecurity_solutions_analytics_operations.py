@@ -39,7 +39,7 @@ class IoTSecuritySolutionsAnalyticsOperations(object):
 
         self.config = config
 
-    def get_all(
+    def list(
             self, resource_group_name, solution_name, custom_headers=None, raw=False, **operation_config):
         """Security Analytics of a security solution.
 
@@ -61,7 +61,7 @@ class IoTSecuritySolutionsAnalyticsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.get_all.metadata['url']
+        url = self.list.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
@@ -101,9 +101,9 @@ class IoTSecuritySolutionsAnalyticsOperations(object):
             return client_raw_response
 
         return deserialized
-    get_all.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/iotSecuritySolutions/{solutionName}/analyticsModels'}
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/iotSecuritySolutions/{solutionName}/analyticsModels'}
 
-    def get_default(
+    def get(
             self, resource_group_name, solution_name, custom_headers=None, raw=False, **operation_config):
         """Security Analytics of a security solution.
 
@@ -124,7 +124,7 @@ class IoTSecuritySolutionsAnalyticsOperations(object):
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
-        url = self.get_default.metadata['url']
+        url = self.get.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
@@ -164,4 +164,4 @@ class IoTSecuritySolutionsAnalyticsOperations(object):
             return client_raw_response
 
         return deserialized
-    get_default.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/iotSecuritySolutions/{solutionName}/analyticsModels/default'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/iotSecuritySolutions/{solutionName}/analyticsModels/default'}
