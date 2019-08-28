@@ -51,6 +51,19 @@ class SBAuthorizationRulePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(SBAuthorizationRulePaged, self).__init__(*args, **kwargs)
+class NetworkRuleSetPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`NetworkRuleSet <azure.mgmt.servicebus.models.NetworkRuleSet>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[NetworkRuleSet]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(NetworkRuleSetPaged, self).__init__(*args, **kwargs)
 class ArmDisasterRecoveryPaged(Paged):
     """
     A paging container for iterating over a list of :class:`ArmDisasterRecovery <azure.mgmt.servicebus.models.ArmDisasterRecovery>` object

@@ -669,27 +669,6 @@ class NetworkRuleSet(Resource):
         self.ip_rules = ip_rules
 
 
-class NetworkRuleSetListResult(Model):
-    """The response of the List NetworkRuleSet operation.
-
-    :param value: Result of the List NetworkRuleSet operation.
-    :type value: list[~azure.mgmt.servicebus.models.NetworkRuleSet]
-    :param next_link: Link to the next set of results. Not empty if Value
-     contains incomplete list of NetworkRuleSet.
-    :type next_link: str
-    """
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[NetworkRuleSet]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-    }
-
-    def __init__(self, *, value=None, next_link: str=None, **kwargs) -> None:
-        super(NetworkRuleSetListResult, self).__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
 class NWRuleSetIpRules(Model):
     """Description of NetWorkRuleSet - IpRules resource.
 

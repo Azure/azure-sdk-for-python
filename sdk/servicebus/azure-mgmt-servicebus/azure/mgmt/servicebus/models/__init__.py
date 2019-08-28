@@ -24,7 +24,6 @@ try:
     from ._models_py3 import MessageCountDetails
     from ._models_py3 import MigrationConfigProperties
     from ._models_py3 import NetworkRuleSet
-    from ._models_py3 import NetworkRuleSetListResult
     from ._models_py3 import NWRuleSetIpRules
     from ._models_py3 import NWRuleSetVirtualNetworkRules
     from ._models_py3 import Operation
@@ -62,7 +61,6 @@ except (SyntaxError, ImportError):
     from ._models import MessageCountDetails
     from ._models import MigrationConfigProperties
     from ._models import NetworkRuleSet
-    from ._models import NetworkRuleSetListResult
     from ._models import NWRuleSetIpRules
     from ._models import NWRuleSetVirtualNetworkRules
     from ._models import Operation
@@ -88,6 +86,7 @@ except (SyntaxError, ImportError):
 from ._paged_models import ArmDisasterRecoveryPaged
 from ._paged_models import EventhubPaged
 from ._paged_models import MigrationConfigPropertiesPaged
+from ._paged_models import NetworkRuleSetPaged
 from ._paged_models import OperationPaged
 from ._paged_models import PremiumMessagingRegionsPaged
 from ._paged_models import RulePaged
@@ -127,7 +126,6 @@ __all__ = [
     'MessageCountDetails',
     'MigrationConfigProperties',
     'NetworkRuleSet',
-    'NetworkRuleSetListResult',
     'NWRuleSetIpRules',
     'NWRuleSetVirtualNetworkRules',
     'Operation',
@@ -153,6 +151,7 @@ __all__ = [
     'OperationPaged',
     'SBNamespacePaged',
     'SBAuthorizationRulePaged',
+    'NetworkRuleSetPaged',
     'ArmDisasterRecoveryPaged',
     'MigrationConfigPropertiesPaged',
     'SBQueuePaged',
