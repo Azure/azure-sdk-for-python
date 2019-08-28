@@ -11,7 +11,7 @@ from azure.eventhub.error import EventHubError, EventDataError, ConnectError, \
 from azure.eventhub.client import EventHubClient
 from azure.eventhub.producer import EventHubProducer
 from azure.eventhub.consumer import EventHubConsumer
-from uamqp import constants
+from uamqp import constants  # type: ignore
 from .common import EventHubSharedKeyCredential, EventHubSASTokenCredential
 
 TransportType = constants.TransportType

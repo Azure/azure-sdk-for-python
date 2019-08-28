@@ -8,7 +8,7 @@ import logging
 import datetime
 import functools
 try:
-    from urlparse import urlparse
+    from urlparse import urlparse  # type: ignore
     from urllib import unquote_plus, urlencode, quote_plus  # type: ignore
 except ImportError:
     from urllib.parse import urlparse, unquote_plus, urlencode, quote_plus

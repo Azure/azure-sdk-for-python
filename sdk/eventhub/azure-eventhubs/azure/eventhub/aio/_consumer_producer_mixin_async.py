@@ -6,7 +6,7 @@ import asyncio
 import logging
 import time
 
-from uamqp import errors, constants, compat
+from uamqp import errors, constants, compat  # type: ignore
 from azure.eventhub.error import EventHubError, ConnectError
 from ..aio.error_async import _handle_exception
 

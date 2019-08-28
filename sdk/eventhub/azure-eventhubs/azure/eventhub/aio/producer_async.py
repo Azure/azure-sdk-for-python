@@ -8,8 +8,8 @@ import logging
 from typing import Iterable, Union
 import time
 
-from uamqp import types, constants, errors
-from uamqp import SendClientAsync
+from uamqp import types, constants, errors  # type: ignore
+from uamqp import SendClientAsync  # type: ignore
 
 from azure.eventhub.common import EventData, EventDataBatch
 from azure.eventhub.error import _error_handler, OperationTimeoutError, EventDataError
