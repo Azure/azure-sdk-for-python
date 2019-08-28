@@ -1404,8 +1404,8 @@ class StorageFileTest(FileTestCase):
         sas_file = FileClient(
             file_client.url,
             credential=token)
-
-        content = file_client.download_file().decode(errors='replace').content_as_bytes()
+        
+        content = file_client.download_file().content_as_bytes()
 
         # Assert
         self.assertEqual(self.short_byte_data, content)
