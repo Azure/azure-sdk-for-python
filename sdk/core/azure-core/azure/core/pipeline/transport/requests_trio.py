@@ -74,7 +74,7 @@ class TrioStreamDownloadGenerator(AsyncIterator):
         retry_total = 3
         while retry_active:
             try:
-                chunk = await trio.run_sync_in_worker_thread(
+                chunk = await trio.to_thread.run_sync(
                     _iterate_response_content,
                     self.iter_content_func,
                 )
@@ -96,7 +96,7 @@ class TrioStreamDownloadGenerator(AsyncIterator):
                     resp = self.pipeline.run(self.request, stream=True, headers=headers)
                     if resp.status_code == 416:
                         raise
-                    chunk = await trio.run_sync_in_worker_thread(
+                    chunk = await trio.to_thread.run_sync(
                         _iterate_response_content,
                         self.iter_content_func,
                     )
@@ -162,7 +162,7 @@ class TrioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: ign
         response = None
         error = None # type: Optional[Union[ServiceRequestError, ServiceResponseError]]
         try:
-            response = await trio.run_sync_in_worker_thread(
+            response = await trio.to_thread.run_sync(
                 functools.partial(
                     self.session.request, # type: ignore
                     request.method,
