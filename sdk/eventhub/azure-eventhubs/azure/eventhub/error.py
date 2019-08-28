@@ -6,7 +6,7 @@ import six
 import time
 import logging
 
-from uamqp import constants, errors, compat
+from uamqp import constants, errors, compat  # type: ignore
 
 
 _NO_RETRY_ERRORS = (

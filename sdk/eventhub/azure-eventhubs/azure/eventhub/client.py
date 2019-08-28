@@ -9,15 +9,15 @@ import datetime
 import functools
 try:
     from urlparse import urlparse
-    from urllib import unquote_plus, urlencode, quote_plus
+    from urllib import unquote_plus, urlencode, quote_plus  # type: ignore
 except ImportError:
     from urllib.parse import urlparse, unquote_plus, urlencode, quote_plus
 from typing import Any, List, Dict
 
-import uamqp
-from uamqp import Message
-from uamqp import authentication
-from uamqp import constants
+import uamqp  # type: ignore
+from uamqp import Message  # type: ignore
+from uamqp import authentication  # type: ignore
+from uamqp import constants  # type: ignore
 
 from azure.eventhub.producer import EventHubProducer
 from azure.eventhub.consumer import EventHubConsumer

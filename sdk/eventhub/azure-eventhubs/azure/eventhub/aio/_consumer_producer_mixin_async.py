@@ -120,7 +120,7 @@ class ConsumerProducerMixin(object):
 
         """
         self.running = False
-        if self.error:
+        if self.error:  #type: ignore
             return
         if isinstance(exception, errors.LinkRedirect):
             self.redirected = exception

@@ -10,9 +10,10 @@ import uuid
 import time
 import functools
 from abc import abstractmethod
+from typing import Dict
 try:
     from urlparse import urlparse
-    from urllib import unquote_plus, urlencode, quote_plus
+    from urllib import unquote_plus, urlencode, quote_plus  # type: ignore
 except ImportError:
     from urllib.parse import urlparse, unquote_plus, urlencode, quote_plus
 
@@ -140,7 +141,7 @@ class EventHubClientAbstract(object):
         self.address = _Address()
         self.address.hostname = host
         self.address.path = "/" + event_hub_path if event_hub_path else ""
-        self._auth_config = {}
+        self._auth_config = {}  # type:Dict[str,str]
         self.credential = credential
         if isinstance(credential, EventHubSharedKeyCredential):
             self.username = credential.policy

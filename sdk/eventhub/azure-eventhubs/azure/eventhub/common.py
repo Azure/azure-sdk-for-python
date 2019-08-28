@@ -11,8 +11,8 @@ import six
 import logging
 
 from azure.eventhub.error import EventDataError
-from uamqp import BatchMessage, Message, types, constants
-from uamqp.message import MessageHeader, MessageProperties
+from uamqp import BatchMessage, Message, types, constants  # type: ignore
+from uamqp.message import MessageHeader, MessageProperties  # type: ignore
 
 log = logging.getLogger(__name__)
 

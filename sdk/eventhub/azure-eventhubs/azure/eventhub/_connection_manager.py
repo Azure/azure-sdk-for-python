@@ -4,7 +4,7 @@
 # --------------------------------------------------------------------------------------------
 
 from threading import RLock
-from uamqp import Connection, TransportType, c_uamqp
+from uamqp import Connection, TransportType, c_uamqp  # type: ignore
 
 
 class _SharedConnectionManager(object):
