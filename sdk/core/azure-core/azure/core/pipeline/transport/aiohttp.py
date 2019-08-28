@@ -30,13 +30,13 @@ import logging
 import asyncio
 import aiohttp
 
-from azure.core.configuration import ConnectionConfiguration
-from azure.core.exceptions import ServiceRequestError, ServiceResponseError, AzureError
-from azure.core.pipeline import Pipeline
-
 from requests.exceptions import (
     ChunkedEncodingError,
     StreamConsumedError)
+
+from azure.core.configuration import ConnectionConfiguration
+from azure.core.exceptions import ServiceRequestError, ServiceResponseError, AzureError
+from azure.core.pipeline import Pipeline
 
 from .base import HttpRequest
 from .base_async import (
@@ -103,7 +103,7 @@ class AioHttpTransport(AsyncHttpTransport):
             self._session_owner = False
             self.session = None
 
-    def _build_ssl_config(self, cert, verify):
+    def _build_ssl_config(self, cert, verify):  # pylint: disable=no-self-use
         ssl_ctx = None
 
         if cert or verify not in (True, False):

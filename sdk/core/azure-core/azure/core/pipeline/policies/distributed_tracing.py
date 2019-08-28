@@ -25,12 +25,12 @@
 # --------------------------------------------------------------------------
 """Traces network calls using the implementation library from the settings."""
 
+from six.moves import urllib
+
 from azure.core.tracing.context import tracing_context
 from azure.core.tracing.common import set_span_contexts
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.settings import settings
-
-from six.moves import urllib
 
 try:
     from typing import TYPE_CHECKING
@@ -54,7 +54,7 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
         self._request_id = "x-ms-client-request-id"
         self._response_id = "x-ms-request-id"
 
-    def set_header(self, request, span):
+    def set_header(self, request, span):  # pylint: disable=no-self-use
         # type: (PipelineRequest, Any) -> None
         """
         Sets the header information on the span.
