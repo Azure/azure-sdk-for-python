@@ -12,10 +12,8 @@ interactions:
       - '0'
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Tue, 27 Aug 2019 01:16:26 GMT
+      - Wed, 28 Aug 2019 02:07:59 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -27,11 +25,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 27 Aug 2019 01:16:24 GMT
+      - Wed, 28 Aug 2019 02:07:59 GMT
       etag:
-      - '"0x8D72A8C2E6880C6"'
+      - '"0x8D72B5C8D486EA9"'
       last-modified:
-      - Tue, 27 Aug 2019 01:16:25 GMT
+      - Wed, 28 Aug 2019 02:08:00 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -41,7 +39,7 @@ interactions:
       message: Created
 - request:
     body: !!binary |
-      hzrhpCrRvefXm8s8cFy8kQ==
+      OeRO+8+J19pIlBM3stb2jQ==
     headers:
       Accept:
       - '*/*'
@@ -60,11 +58,11 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Tue, 27 Aug 2019 01:16:27 GMT
+      - Wed, 28 Aug 2019 02:08:00 GMT
       x-ms-meta-encryptiondata:
-      - '{"WrappedContentKey": {"KeyId": "key1", "EncryptedKey": "W6jvBAOQ+jRxJDMXs/HHYSncnl/XIMubsmSmmjFTOF6b+eBQUwDW0w==",
+      - '{"WrappedContentKey": {"KeyId": "key1", "EncryptedKey": "pYl1AeAyoZOtUDD+NL8rPTAbRB6U7/KkdpFnncfCSUNXxSxJ3dZ1Og==",
         "Algorithm": "A256KW"}, "EncryptionAgent": {"Protocol": "1.0", "EncryptionAlgorithm":
-        "AES_CBC_256"}, "ContentEncryptionIV": "Ihdpytx1rgUNsRM5cmhn1Q==", "KeyWrappingMetadata":
+        "AES_CBC_256"}, "ContentEncryptionIV": "RCECfeOWfar9PamlQvbsSQ==", "KeyWrappingMetadata":
         {"EncryptionLibrary": "Python 12.0.0b2"}, "EncryptionMode": "FullBlob"}'
       x-ms-version:
       - '2019-02-02'
@@ -77,17 +75,17 @@ interactions:
       content-length:
       - '0'
       content-md5:
-      - 0ko0XUwJ5I4bkxpJ9VzrCg==
+      - +Cja56e8NkJoKFg8CFYsPg==
       date:
-      - Tue, 27 Aug 2019 01:16:25 GMT
+      - Wed, 28 Aug 2019 02:07:59 GMT
       etag:
-      - '"0x8D72A8C2E77F3FA"'
+      - '"0x8D72B5C8D53CE8C"'
       last-modified:
-      - Tue, 27 Aug 2019 01:16:25 GMT
+      - Wed, 28 Aug 2019 02:08:00 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64:
-      - nadZWPvraPk=
+      - h3y5rnSemUY=
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
@@ -106,10 +104,8 @@ interactions:
       - keep-alive
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Tue, 27 Aug 2019 01:16:27 GMT
+      - Wed, 28 Aug 2019 02:08:00 GMT
       x-ms-range:
       - bytes=0-33554431
       x-ms-version:
@@ -119,7 +115,7 @@ interactions:
   response:
     body:
       string: !!binary |
-        hzrhpCrRvefXm8s8cFy8kQ==
+        OeRO+8+J19pIlBM3stb2jQ==
     headers:
       accept-ranges:
       - bytes
@@ -130,27 +126,27 @@ interactions:
       content-type:
       - application/octet-stream
       date:
-      - Tue, 27 Aug 2019 01:16:25 GMT
+      - Wed, 28 Aug 2019 02:07:59 GMT
       etag:
-      - '"0x8D72A8C2E77F3FA"'
+      - '"0x8D72B5C8D53CE8C"'
       last-modified:
-      - Tue, 27 Aug 2019 01:16:25 GMT
+      - Wed, 28 Aug 2019 02:08:00 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-blob-content-md5:
-      - 0ko0XUwJ5I4bkxpJ9VzrCg==
+      - +Cja56e8NkJoKFg8CFYsPg==
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Tue, 27 Aug 2019 01:16:25 GMT
+      - Wed, 28 Aug 2019 02:08:00 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
       - unlocked
       x-ms-meta-encryptiondata:
-      - '{"WrappedContentKey": {"KeyId": "key1", "EncryptedKey": "W6jvBAOQ+jRxJDMXs/HHYSncnl/XIMubsmSmmjFTOF6b+eBQUwDW0w==",
+      - '{"WrappedContentKey": {"KeyId": "key1", "EncryptedKey": "pYl1AeAyoZOtUDD+NL8rPTAbRB6U7/KkdpFnncfCSUNXxSxJ3dZ1Og==",
         "Algorithm": "A256KW"}, "EncryptionAgent": {"Protocol": "1.0", "EncryptionAlgorithm":
-        "AES_CBC_256"}, "ContentEncryptionIV": "Ihdpytx1rgUNsRM5cmhn1Q==", "KeyWrappingMetadata":
+        "AES_CBC_256"}, "ContentEncryptionIV": "RCECfeOWfar9PamlQvbsSQ==", "KeyWrappingMetadata":
         {"EncryptionLibrary": "Python 12.0.0b2"}, "EncryptionMode": "FullBlob"}'
       x-ms-server-encrypted:
       - 'true'

@@ -11,10 +11,8 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
         customer_user_agent
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Mon, 26 Aug 2019 22:20:34 GMT
+      - Wed, 28 Aug 2019 02:07:47 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -27,7 +25,7 @@ interactions:
       content-type:
       - application/xml
       date:
-      - Mon, 26 Aug 2019 22:20:40 GMT
+      - Wed, 28 Aug 2019 02:07:47 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:

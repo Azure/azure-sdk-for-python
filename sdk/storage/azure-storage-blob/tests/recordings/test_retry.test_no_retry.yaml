@@ -12,10 +12,8 @@ interactions:
       - '0'
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Mon, 26 Aug 2019 20:26:51 GMT
+      - Wed, 28 Aug 2019 02:16:17 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -27,11 +25,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 26 Aug 2019 20:26:52 GMT
+      - Wed, 28 Aug 2019 02:16:17 GMT
       etag:
-      - '"0x8D72A63BB8C9EA2"'
+      - '"0x8D72B5DB5B41CB6"'
       last-modified:
-      - Mon, 26 Aug 2019 20:26:53 GMT
+      - Wed, 28 Aug 2019 02:16:17 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -52,10 +50,8 @@ interactions:
       - '0'
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Mon, 26 Aug 2019 20:26:54 GMT
+      - Wed, 28 Aug 2019 02:16:17 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
@@ -67,7 +63,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 26 Aug 2019 20:26:53 GMT
+      - Wed, 28 Aug 2019 02:16:17 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:

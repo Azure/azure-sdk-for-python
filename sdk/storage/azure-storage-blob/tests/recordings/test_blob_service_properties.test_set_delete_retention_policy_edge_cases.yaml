@@ -17,7 +17,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Tue, 27 Aug 2019 21:11:01 GMT
+      - Wed, 28 Aug 2019 02:11:30 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -29,7 +29,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 27 Aug 2019 21:11:01 GMT
+      - Wed, 28 Aug 2019 02:11:30 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -48,10 +48,8 @@ interactions:
       - keep-alive
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Tue, 27 Aug 2019 21:11:02 GMT
+      - Wed, 28 Aug 2019 02:11:30 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -64,7 +62,7 @@ interactions:
       content-type:
       - application/xml
       date:
-      - Tue, 27 Aug 2019 21:11:01 GMT
+      - Wed, 28 Aug 2019 02:11:30 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -92,7 +90,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Tue, 27 Aug 2019 21:11:02 GMT
+      - Wed, 28 Aug 2019 02:11:31 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -104,7 +102,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 27 Aug 2019 21:11:01 GMT
+      - Wed, 28 Aug 2019 02:11:30 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -123,10 +121,8 @@ interactions:
       - keep-alive
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Tue, 27 Aug 2019 21:11:02 GMT
+      - Wed, 28 Aug 2019 02:11:31 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -139,7 +135,7 @@ interactions:
       content-type:
       - application/xml
       date:
-      - Tue, 27 Aug 2019 21:11:02 GMT
+      - Wed, 28 Aug 2019 02:11:30 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -160,10 +156,8 @@ interactions:
       - keep-alive
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Tue, 27 Aug 2019 21:11:02 GMT
+      - Wed, 28 Aug 2019 02:11:31 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -176,7 +170,7 @@ interactions:
       content-type:
       - application/xml
       date:
-      - Tue, 27 Aug 2019 21:11:02 GMT
+      - Wed, 28 Aug 2019 02:11:30 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -204,7 +198,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Tue, 27 Aug 2019 21:11:02 GMT
+      - Wed, 28 Aug 2019 02:11:31 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -212,7 +206,7 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidXmlDocument</Code><Message>XML
-        specified is not syntactically valid.\nRequestId:c2930076-e01e-003a-2b1b-5dc594000000\nTime:2019-08-27T21:11:02.3156761Z</Message><LineNumber>2</LineNumber><LinePosition>91</LinePosition><Reason>Retention
+        specified is not syntactically valid.\nRequestId:71f79e81-901e-006c-5445-5dfe12000000\nTime:2019-08-28T02:11:31.1608729Z</Message><LineNumber>2</LineNumber><LinePosition>91</LinePosition><Reason>Retention
         days must be greater than 0 and less than or equal to 365 days.</Reason></Error>"
     headers:
       content-length:
@@ -220,7 +214,7 @@ interactions:
       content-type:
       - application/xml
       date:
-      - Tue, 27 Aug 2019 21:11:02 GMT
+      - Wed, 28 Aug 2019 02:11:30 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -241,10 +235,8 @@ interactions:
       - keep-alive
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Tue, 27 Aug 2019 21:11:02 GMT
+      - Wed, 28 Aug 2019 02:11:31 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -257,7 +249,7 @@ interactions:
       content-type:
       - application/xml
       date:
-      - Tue, 27 Aug 2019 21:11:02 GMT
+      - Wed, 28 Aug 2019 02:11:31 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:

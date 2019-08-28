@@ -18,7 +18,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Tue, 27 Aug 2019 21:10:38 GMT
+      - Wed, 28 Aug 2019 02:11:51 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -30,7 +30,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 27 Aug 2019 21:10:39 GMT
+      - Wed, 28 Aug 2019 02:11:52 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -49,10 +49,8 @@ interactions:
       - keep-alive
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Tue, 27 Aug 2019 21:10:40 GMT
+      - Wed, 28 Aug 2019 02:11:53 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -65,13 +63,11 @@ interactions:
       content-type:
       - application/xml
       date:
-      - Tue, 27 Aug 2019 21:10:39 GMT
+      - Wed, 28 Aug 2019 02:11:52 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
       - chunked
-      vary:
-      - Origin
       x-ms-version:
       - '2019-02-02'
     status:

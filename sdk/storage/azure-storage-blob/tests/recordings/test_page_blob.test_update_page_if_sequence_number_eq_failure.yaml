@@ -12,10 +12,8 @@ interactions:
       - '0'
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Tue, 27 Aug 2019 17:32:16 GMT
+      - Wed, 28 Aug 2019 02:13:30 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -27,11 +25,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 27 Aug 2019 17:32:14 GMT
+      - Wed, 28 Aug 2019 02:13:30 GMT
       etag:
-      - '"0x8D72B148068941A"'
+      - '"0x8D72B5D52E29B08"'
       last-modified:
-      - Tue, 27 Aug 2019 17:32:14 GMT
+      - Wed, 28 Aug 2019 02:13:31 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -52,8 +50,6 @@ interactions:
       - '0'
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-blob-content-length:
       - '512'
       x-ms-blob-sequence-number:
@@ -61,7 +57,7 @@ interactions:
       x-ms-blob-type:
       - PageBlob
       x-ms-date:
-      - Tue, 27 Aug 2019 17:32:17 GMT
+      - Wed, 28 Aug 2019 02:13:32 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -73,11 +69,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 27 Aug 2019 17:32:14 GMT
+      - Wed, 28 Aug 2019 02:13:31 GMT
       etag:
-      - '"0x8D72B148074E8B5"'
+      - '"0x8D72B5D52F48B81"'
       last-modified:
-      - Tue, 27 Aug 2019 17:32:15 GMT
+      - Wed, 28 Aug 2019 02:13:31 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted:
@@ -89,15 +85,15 @@ interactions:
       message: Created
 - request:
     body: !!binary |
-      S/NB4oPNho9Cj6ERhhdpkrUQRT6AAmDIuIKEbtlwx7UZ3ta7yirUmMssf5v7lFfujD3TH4zqTciD
-      TaYz2+rCZS+VKH+cjte5JSDFEBm2RbCGaEkosuEF58soOgxiNKvPYKyR7c1Ko7gwLaiZKU6CTA8x
-      N2iRDJUTNe0U5Dq+t+zHZmGmj0cB3WfXcBQTSk/R1fkLO4C3v2OwVHdULb4gd0ryaY/768oK1Ibx
-      ynQX56HcBwyTAFi2Bdpp48KMoQPhFVFDXwT4cIxt9QwuCmmY+ivNIBYFtTxgpYGecZVWn/z14Ebn
-      TmYi9jMthWXDFXlnUnhs1XNmckdFYjIr3TC/MyNC2SS3ZsHxEm71L908gG0TkbOqC6UCqzuu9gVv
-      a6mUnF8WVeiJ1bjsvZhm10K9opkmQH6EzrdNCX27vlM2sW0TQXKKOeNp/Txo0D4htLVnbunSQWdV
-      eN0xmstGehi/p4zaaQ6VGH7SOkMFmdnShGUWqLnVIEBfqvxOD7XLr4WVfxaO1nuccHvP1j++8Rap
-      EldHii/Su/WEsCGLq3xXgmqmLi1i9HeBBybMRiJcgTwm+Dt5y7Xkg6Gn/EjbN5oUJfiPSAwtQs8v
-      8+Sg03w9RfoZu84dPVbYn5vjQm6YHN1MJ/ayaFFYvjFHdia5SJgpioUU0I+iUVzEvAwx37FDDNs=
+      x5QkdKI03UCaC04q7ExTXoasVeKGSW5ClD5szIJ/HAvw6KxuBO0ObVT1Rc5brx2BLRdT5OYEwwn8
+      3WAwu/wnK4PKCK7kF/nfNJ4TxzKtt+dH054G0IUmATCIIOKFZmHI9onplNf1uutV8+Fn/EBo8b1C
+      eydNLTvunhSq0DQyg1N3/YfLz1EkFRaUzvZ1LjgLi6RMpmtQ7Pndtzp0s6GjhUSG+ZJ1WdAZdZSG
+      1giYvFwQsMw/roRr6N5NVnCPak2jXBWshqhv8053W6awrB65itKF+dyMQFnK0PO0HGt8MZE/+Aj2
+      yZB+rT4qQdhGaEuCJpvr9OU7KU/ZQMSSWY4cD2CJeCfoPqUMlzLeBEKnV4hNjBA4VcvzQGnilCr8
+      cIHLQj2TJVChwPeqkkV8HHY+6CvSobIv9z72ieQbDDnWbdcz4vFO49PdQhoJZQiQQaA8ogWGrL2a
+      FkH1YsLwY9MJ2Ah/ELHlNM8gbQk6mfkYDXzA6xJPs1UQScXkYCWLkMYPaGv+ZRmO2L3OTJMwpAY5
+      utppNTJmH9um1KLivPWQDvxJBvrZY2taRr4nn/hv7G4UiMXfxkH8HGszci/bbehUroZ4hOMkqO5E
+      /T2UqFbDBosMYQw82i8UQGrXzMzUoM42jFn4gVkApg1gLe+SA8SPtCut6uaT7zr+ildIGRxH/mQ=
     headers:
       Accept:
       - '*/*'
@@ -112,7 +108,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Tue, 27 Aug 2019 17:32:17 GMT
+      - Wed, 28 Aug 2019 02:13:32 GMT
       x-ms-if-sequence-number-eq:
       - '9'
       x-ms-page-write:
@@ -126,14 +122,14 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>SequenceNumberConditionNotMet</Code><Message>The
-        sequence number condition specified was not met.\nRequestId:554a2ecb-901e-011a-34fd-5ce885000000\nTime:2019-08-27T17:32:15.1663384Z</Message></Error>"
+        sequence number condition specified was not met.\nRequestId:97f11177-e01e-0027-6646-5dcf88000000\nTime:2019-08-28T02:13:32.4133770Z</Message></Error>"
     headers:
       content-length:
       - '250'
       content-type:
       - application/xml
       date:
-      - Tue, 27 Aug 2019 17:32:14 GMT
+      - Wed, 28 Aug 2019 02:13:31 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:

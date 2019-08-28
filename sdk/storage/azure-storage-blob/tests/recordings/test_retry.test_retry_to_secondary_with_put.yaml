@@ -12,10 +12,8 @@ interactions:
       - '0'
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Mon, 26 Aug 2019 20:27:16 GMT
+      - Wed, 28 Aug 2019 02:16:20 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -27,11 +25,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 26 Aug 2019 20:27:15 GMT
+      - Wed, 28 Aug 2019 02:16:21 GMT
       etag:
-      - '"0x8D72A63C8F5F996"'
+      - '"0x8D72B5DB857337A"'
       last-modified:
-      - Mon, 26 Aug 2019 20:27:15 GMT
+      - Wed, 28 Aug 2019 02:16:22 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -52,10 +50,8 @@ interactions:
       - '0'
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Mon, 26 Aug 2019 20:27:16 GMT
+      - Wed, 28 Aug 2019 02:16:20 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -63,14 +59,14 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerAlreadyExists</Code><Message>The
-        specified container already exists.\nRequestId:7401e217-701e-003f-3a4c-5c31eb000000\nTime:2019-08-26T20:27:15.9017633Z</Message></Error>"
+        specified container already exists.\nRequestId:a72ec7e1-301e-003a-6446-5dc21c000000\nTime:2019-08-28T02:16:25.3603396Z</Message></Error>"
     headers:
       content-length:
       - '230'
       content-type:
       - application/xml
       date:
-      - Mon, 26 Aug 2019 20:27:15 GMT
+      - Wed, 28 Aug 2019 02:16:24 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -93,10 +89,8 @@ interactions:
       - '0'
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Mon, 26 Aug 2019 20:27:17 GMT
+      - Wed, 28 Aug 2019 02:16:25 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
@@ -108,7 +102,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 26 Aug 2019 20:27:15 GMT
+      - Wed, 28 Aug 2019 02:16:24 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:

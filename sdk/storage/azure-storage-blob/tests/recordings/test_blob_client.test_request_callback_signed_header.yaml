@@ -12,10 +12,8 @@ interactions:
       - '0'
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Mon, 26 Aug 2019 22:16:37 GMT
+      - Wed, 28 Aug 2019 02:07:00 GMT
       x-ms-meta-hello:
       - world
       x-ms-version:
@@ -29,11 +27,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 26 Aug 2019 22:16:35 GMT
+      - Wed, 28 Aug 2019 02:07:00 GMT
       etag:
-      - '"0x8D72A730F4D8D4F"'
+      - '"0x8D72B5C69E4FA00"'
       last-modified:
-      - Mon, 26 Aug 2019 22:16:36 GMT
+      - Wed, 28 Aug 2019 02:07:00 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -52,10 +50,8 @@ interactions:
       - keep-alive
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Mon, 26 Aug 2019 22:16:37 GMT
+      - Wed, 28 Aug 2019 02:07:01 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -67,11 +63,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 26 Aug 2019 22:16:36 GMT
+      - Wed, 28 Aug 2019 02:07:00 GMT
       etag:
-      - '"0x8D72A730F4D8D4F"'
+      - '"0x8D72B5C69E4FA00"'
       last-modified:
-      - Mon, 26 Aug 2019 22:16:36 GMT
+      - Wed, 28 Aug 2019 02:07:00 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-has-immutability-policy:
@@ -102,10 +98,8 @@ interactions:
       - '0'
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Mon, 26 Aug 2019 22:16:38 GMT
+      - Wed, 28 Aug 2019 02:07:01 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
@@ -117,7 +111,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 26 Aug 2019 22:16:36 GMT
+      - Wed, 28 Aug 2019 02:07:00 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:

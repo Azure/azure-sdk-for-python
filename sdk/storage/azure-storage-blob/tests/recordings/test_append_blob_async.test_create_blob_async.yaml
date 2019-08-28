@@ -4,27 +4,31 @@ interactions:
     headers:
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Mon, 26 Aug 2019 20:52:07 GMT
+      - Wed, 28 Aug 2019 01:57:00 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
     uri: https://pyacrstoragea643124f.blob.core.windows.net/utcontainera643124f?restype=container
   response:
     body:
-      string: ''
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>AuthenticationFailed</Code><Message>Server
+        failed to authenticate the request. Make sure the value of Authorization header
+        is formed correctly including the signature.\nRequestId:5f7eeb5d-801e-0105-3c43-5d3395000000\nTime:2019-08-28T01:57:00.7156808Z</Message><AuthenticationErrorDetail>The
+        MAC signature found in the HTTP request 'a7j7leix9VRr0tqGMMOdju+MJBF0I6LHziuBB3/sVyY='
+        is not the same as any computed signature. Server used following string to
+        sign: 'PUT\n\n\n\n\napplication/octet-stream\n\n\n\n\n\n\nx-ms-client-request-id:1fa6e3e2-c937-11e9-9d89-2816a845e8c6\nx-ms-date:Wed,
+        28 Aug 2019 01:57:00 GMT\nx-ms-version:2019-02-02\n/pyacrstoragea643124f/utcontainera643124f\nrestype:container'.</AuthenticationErrorDetail></Error>"
     headers:
-      content-length: '0'
-      date: Mon, 26 Aug 2019 20:52:06 GMT
-      etag: '"0x8D72A67417D1DA7"'
-      last-modified: Mon, 26 Aug 2019 20:52:06 GMT
-      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-version: '2019-02-02'
+      content-length: '772'
+      content-type: application/xml
+      date: Wed, 28 Aug 2019 01:56:59 GMT
+      server: Microsoft-HTTPAPI/2.0
+      x-ms-error-code: AuthenticationFailed
     status:
-      code: 201
-      message: Created
+      code: 403
+      message: Server failed to authenticate the request. Make sure the value of Authorization
+        header is formed correctly including the signature.
     url: !!python/object/new:yarl.URL
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
@@ -40,73 +44,33 @@ interactions:
       - '0'
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-blob-type:
       - AppendBlob
       x-ms-date:
-      - Mon, 26 Aug 2019 20:52:08 GMT
+      - Wed, 28 Aug 2019 01:57:00 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
     uri: https://pyacrstoragea643124f.blob.core.windows.net/utcontainera643124f/bloba643124f
   response:
     body:
-      string: ''
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>AuthenticationFailed</Code><Message>Server
+        failed to authenticate the request. Make sure the value of Authorization header
+        is formed correctly including the signature.\nRequestId:5f7eeb77-801e-0105-5043-5d3395000000\nTime:2019-08-28T01:57:00.7537080Z</Message><AuthenticationErrorDetail>The
+        MAC signature found in the HTTP request 'YOr75uEULS4VxM9kVEe+B0mF069Dhq4ePHNTNIm/i2Q='
+        is not the same as any computed signature. Server used following string to
+        sign: 'PUT\n\n\n\n\napplication/octet-stream\n\n\n\n\n\n\nx-ms-blob-type:AppendBlob\nx-ms-client-request-id:2006e934-c937-11e9-9c08-2816a845e8c6\nx-ms-date:Wed,
+        28 Aug 2019 01:57:00 GMT\nx-ms-version:2019-02-02\n/pyacrstoragea643124f/utcontainera643124f/bloba643124f'.</AuthenticationErrorDetail></Error>"
     headers:
-      content-length: '0'
-      date: Mon, 26 Aug 2019 20:52:06 GMT
-      etag: '"0x8D72A67418754B3"'
-      last-modified: Mon, 26 Aug 2019 20:52:06 GMT
-      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-server-encrypted: 'true'
-      x-ms-version: '2019-02-02'
+      content-length: '793'
+      content-type: application/xml
+      date: Wed, 28 Aug 2019 01:56:59 GMT
+      server: Microsoft-HTTPAPI/2.0
+      x-ms-error-code: AuthenticationFailed
     status:
-      code: 201
-      message: Created
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - pyacrstoragea643124f.blob.core.windows.net
-        - /utcontainera643124f/bloba643124f
-        - ''
-        - ''
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-date:
-      - Mon, 26 Aug 2019 20:52:08 GMT
-      x-ms-version:
-      - '2019-02-02'
-    method: HEAD
-    uri: https://pyacrstoragea643124f.blob.core.windows.net/utcontainera643124f/bloba643124f
-  response:
-    body:
-      string: ''
-    headers:
-      accept-ranges: bytes
-      content-length: '0'
-      content-type: application/xml; charset=utf-8
-      date: Mon, 26 Aug 2019 20:52:06 GMT
-      etag: '"0x8D72A67418754B3"'
-      last-modified: Mon, 26 Aug 2019 20:52:06 GMT
-      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-blob-committed-block-count: '0'
-      x-ms-blob-type: AppendBlob
-      x-ms-creation-time: Mon, 26 Aug 2019 20:52:06 GMT
-      x-ms-lease-state: available
-      x-ms-lease-status: unlocked
-      x-ms-server-encrypted: 'true'
-      x-ms-tag-count: '0'
-      x-ms-version: '2019-02-02'
-    status:
-      code: 200
-      message: OK
+      code: 403
+      message: Server failed to authenticate the request. Make sure the value of Authorization
+        header is formed correctly including the signature.
     url: !!python/object/new:yarl.URL
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult

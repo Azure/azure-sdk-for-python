@@ -12,10 +12,8 @@ interactions:
       - '0'
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Mon, 26 Aug 2019 19:56:40 GMT
+      - Wed, 28 Aug 2019 01:59:10 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -27,11 +25,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 26 Aug 2019 19:56:40 GMT
+      - Wed, 28 Aug 2019 01:59:11 GMT
       etag:
-      - '"0x8D72A5F833F5F76"'
+      - '"0x8D72B5B52BE41D8"'
       last-modified:
-      - Mon, 26 Aug 2019 19:56:40 GMT
+      - Wed, 28 Aug 2019 01:59:12 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -52,12 +50,10 @@ interactions:
       - '0'
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-blob-type:
       - AppendBlob
       x-ms-date:
-      - Mon, 26 Aug 2019 19:56:42 GMT
+      - Wed, 28 Aug 2019 01:59:12 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -69,11 +65,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Mon, 26 Aug 2019 19:56:40 GMT
+      - Wed, 28 Aug 2019 01:59:11 GMT
       etag:
-      - '"0x8D72A5F834F0C42"'
+      - '"0x8D72B5B52C9B467"'
       last-modified:
-      - Mon, 26 Aug 2019 19:56:40 GMT
+      - Wed, 28 Aug 2019 01:59:12 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted:
@@ -94,10 +90,8 @@ interactions:
       - keep-alive
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Mon, 26 Aug 2019 19:56:42 GMT
+      - Wed, 28 Aug 2019 01:59:12 GMT
       x-ms-version:
       - '2019-02-02'
     method: HEAD
@@ -111,13 +105,13 @@ interactions:
       content-length:
       - '0'
       content-type:
-      - application/xml; charset=utf-8
+      - application/octet-stream
       date:
-      - Mon, 26 Aug 2019 19:56:40 GMT
+      - Wed, 28 Aug 2019 01:59:11 GMT
       etag:
-      - '"0x8D72A5F834F0C42"'
+      - '"0x8D72B5B52C9B467"'
       last-modified:
-      - Mon, 26 Aug 2019 19:56:40 GMT
+      - Wed, 28 Aug 2019 01:59:12 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-blob-committed-block-count:
@@ -125,7 +119,7 @@ interactions:
       x-ms-blob-type:
       - AppendBlob
       x-ms-creation-time:
-      - Mon, 26 Aug 2019 19:56:40 GMT
+      - Wed, 28 Aug 2019 01:59:12 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:

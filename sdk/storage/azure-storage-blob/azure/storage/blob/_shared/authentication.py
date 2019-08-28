@@ -117,9 +117,6 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
             raise _wrap_exception(ex, AzureSigningError)
 
     def on_request(self, request):
-        if not 'content-type' in request.http_request.headers:
-            request.http_request.headers['content-type'] = 'application/xml; charset=utf-8'
-
         string_to_sign = \
             self._get_verb(request) + \
             self._get_headers(

@@ -1,0 +1,75 @@
+interactions:
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Wed, 28 Aug 2019 02:08:31 GMT
+      x-ms-meta-hello:
+      - world
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://pyacrstorage52bd1a1a.blob.core.windows.net/cont52bd1a1a?restype=container
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>AuthenticationFailed</Code><Message>Server
+        failed to authenticate the request. Make sure the value of Authorization header
+        is formed correctly including the signature.\nRequestId:4a2da31d-301e-0034-6345-5dfb7c000000\nTime:2019-08-28T02:08:33.2719456Z</Message><AuthenticationErrorDetail>The
+        MAC signature found in the HTTP request 'pd/cnrlC0xqg/UCt8VqgNQrNkSXBOQ3Dz2Y4yUcddeQ='
+        is not the same as any computed signature. Server used following string to
+        sign: 'PUT\n\n\n\n\napplication/octet-stream\n\n\n\n\n\n\nx-ms-client-request-id:bb5b7508-c938-11e9-8190-2816a845e8c6\nx-ms-date:Wed,
+        28 Aug 2019 02:08:31 GMT\nx-ms-meta-hello:world\nx-ms-version:2019-02-02\n/pyacrstorage52bd1a1a/cont52bd1a1a\nrestype:container'.</AuthenticationErrorDetail></Error>"
+    headers:
+      content-length: '787'
+      content-type: application/xml
+      date: Wed, 28 Aug 2019 02:08:32 GMT
+      server: Microsoft-HTTPAPI/2.0
+      x-ms-error-code: AuthenticationFailed
+    status:
+      code: 403
+      message: Server failed to authenticate the request. Make sure the value of Authorization
+        header is formed correctly including the signature.
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstorage52bd1a1a.blob.core.windows.net
+        - /cont52bd1a1a
+        - restype=container
+        - ''
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Wed, 28 Aug 2019 02:08:33 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: DELETE
+    uri: https://pyacrstorage52bd1a1a.blob.core.windows.net/cont52bd1a1a?restype=container
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
+        specified container does not exist.\nRequestId:4a2da332-301e-0034-7645-5dfb7c000000\nTime:2019-08-28T02:08:33.3139757Z</Message></Error>"
+    headers:
+      content-length: '225'
+      content-type: application/xml
+      date: Wed, 28 Aug 2019 02:08:32 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code: ContainerNotFound
+      x-ms-version: '2019-02-02'
+    status:
+      code: 404
+      message: The specified container does not exist.
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstorage52bd1a1a.blob.core.windows.net
+        - /cont52bd1a1a
+        - restype=container
+        - ''
+version: 1

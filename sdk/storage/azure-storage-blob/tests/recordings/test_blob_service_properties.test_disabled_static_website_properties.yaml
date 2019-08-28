@@ -17,7 +17,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Tue, 27 Aug 2019 21:10:14 GMT
+      - Wed, 28 Aug 2019 02:10:40 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -25,14 +25,14 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>StaticWebsiteNotSupportedByAccountType</Code><Message>Static
-        website is not supported by this account type.\nRequestId:120b371d-401e-0015-061b-5d44ae000000\nTime:2019-08-27T21:10:15.5746293Z</Message></Error>"
+        website is not supported by this account type.\nRequestId:53877481-601e-00ee-2145-5d8b3c000000\nTime:2019-08-28T02:10:41.5219184Z</Message></Error>"
     headers:
       content-length:
       - '260'
       content-type:
       - application/xml
       date:
-      - Tue, 27 Aug 2019 21:10:15 GMT
+      - Wed, 28 Aug 2019 02:10:40 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:

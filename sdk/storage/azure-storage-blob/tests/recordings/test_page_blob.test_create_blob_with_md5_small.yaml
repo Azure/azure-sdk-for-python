@@ -12,10 +12,8 @@ interactions:
       - '0'
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Tue, 27 Aug 2019 17:31:49 GMT
+      - Wed, 28 Aug 2019 02:13:01 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -27,11 +25,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 27 Aug 2019 17:31:47 GMT
+      - Wed, 28 Aug 2019 02:13:03 GMT
       etag:
-      - '"0x8D72B14707732CB"'
+      - '"0x8D72B5D424E90EE"'
       last-modified:
-      - Tue, 27 Aug 2019 17:31:48 GMT
+      - Wed, 28 Aug 2019 02:13:04 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -54,14 +52,12 @@ interactions:
       - '*'
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-blob-content-length:
       - '512'
       x-ms-blob-type:
       - PageBlob
       x-ms-date:
-      - Tue, 27 Aug 2019 17:31:50 GMT
+      - Wed, 28 Aug 2019 02:13:04 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -73,11 +69,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 27 Aug 2019 17:31:47 GMT
+      - Wed, 28 Aug 2019 02:13:03 GMT
       etag:
-      - '"0x8D72B147082906C"'
+      - '"0x8D72B5D42601BA0"'
       last-modified:
-      - Tue, 27 Aug 2019 17:31:48 GMT
+      - Wed, 28 Aug 2019 02:13:04 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted:
@@ -89,15 +85,15 @@ interactions:
       message: Created
 - request:
     body: !!binary |
-      S4ZCXSokf33kvjl/N/p84LR4qH9PZJzDpUDEHa0KT47D2CRQti5NeP7GUTEtovBjkffRpM5c9zUc
-      z9QZAtLK5I6p7PV0Ee366HwBGqouYcphusfTNxI8CDM9zczgk3pSnPxosX7wkHtE+Eyyd+7hhSGz
-      W1wJFkQjs6SCCTUm3tHzbEmJsRM2B8BIFCTWnzyRP3eV6ipip+js6fBSB87PwPiYTfuOkaVEvF70
-      /YuVuLaXYR7Ku5REHykJ8zeTW3S9KxWYFonhsfxSGaYE09tMVvhqGgEurwJv9khgNsziKhLfFH0C
-      J1sgDY6Nm8JZTUVxgTUt2skn3iGkAFakcDkIun/jnYjvGbxv2j9a5R7bcz/qbnfPT1y2BWuCKZkJ
-      qZLkAvq/W+C2cmfT6rX6erzeSbEx9tas+sGWADS2+9PEKiehsASZHrUKdukCFIzJ3ufG2gqBPbUL
-      PTwmD2Iu80M9KVO1bGh8bSeE45hBOtFUIK+ZUQQf/W+EzJuhnCr9yY8CguchzvZWj5JSgvIVDwq1
-      jS8fPEBL8A/MwRFosrjj9KqVXZy/qa+2GGsl4YtthVeACp0lcmL5RUfNHYc/U/gcgL1g+ytHfcgw
-      rXDOBPyBEOyEN6ichRzu4nFzGXt7uFfpROvGo3Xs9JvRk+tLhgzPB7JMg3HkYIl6GX7r4U0MK7c=
+      QOfbNiamhzkt2H4KU9FXhWEJEc789bHzk4pEg9mVEeeV9UVf7/MP52Wy8KAiT0icwY1Got4Dh0CK
+      GZYvGWPCCc2WZooUuyax0XLQnLqAGGtUaIRTiiH9SxheZRscjrCMTDCUAMQhZ+3muiKKzX99xQTV
+      jQGj7xI56N4YRXCPPBHS0dzCJdXPcE2tusj6qqkId7mrEXIpvioExZQaIZpdhrI3Lr0oWjy2l4iQ
+      7Pegvt0YSOtxoPPCbcZCSpAoJ1hLe1phgszgHyJn1tZgPDqp0VNoKXeWb7C+4MpvNN7FwKuF6eOn
+      3cJx9tavZg95DDEe087HBABJ1EzmJs7zAtxBV0fma1bTWoUxbzIQugsnWM7wmCwrn0k0+RRjcMjq
+      ZLG03fOZ5HE+awU3y7MNNHKBGN5pmN4qGJYusvZ00cVbmjiYinwAyiax/Ff7NC44n3C9Ufv3l294
+      5q3on7FP3e6bokOyC/0puyHeKpW80HZFX+36iwLMZid07QCUwO+vgz4+TlgVCKhWv6zFtdEGsD3j
+      cq7InGAOUSaQhD5k0XWefftPVLuzoDLOaF6U93BlIANalLEU5gNqnJOhY97HJnLHcTV5RLZud35j
+      DuQE7iFyG87ZP1WQZYXeXGbs5Q4jQpgieqWGKltmBzPJxR2lwaFnNnYGxbAh9g/NyrsrvirFx6s=
     headers:
       Accept:
       - '*/*'
@@ -108,15 +104,15 @@ interactions:
       Content-Length:
       - '512'
       Content-MD5:
-      - NWE0MWN4pZ+fVnBpHKf/Fg==
+      - TCzUQuFDG+gUH3JhuHzd7Q==
       Content-Type:
       - application/octet-stream
       If-Match:
-      - '"0x8D72B147082906C"'
+      - '"0x8D72B5D42601BA0"'
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Tue, 27 Aug 2019 17:31:50 GMT
+      - Wed, 28 Aug 2019 02:13:04 GMT
       x-ms-page-write:
       - update
       x-ms-range:
@@ -132,13 +128,13 @@ interactions:
       content-length:
       - '0'
       content-md5:
-      - NWE0MWN4pZ+fVnBpHKf/Fg==
+      - TCzUQuFDG+gUH3JhuHzd7Q==
       date:
-      - Tue, 27 Aug 2019 17:31:47 GMT
+      - Wed, 28 Aug 2019 02:13:03 GMT
       etag:
-      - '"0x8D72B14708CF295"'
+      - '"0x8D72B5D42794D96"'
       last-modified:
-      - Tue, 27 Aug 2019 17:31:48 GMT
+      - Wed, 28 Aug 2019 02:13:04 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-blob-sequence-number:

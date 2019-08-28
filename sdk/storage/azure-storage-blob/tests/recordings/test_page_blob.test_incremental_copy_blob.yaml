@@ -12,10 +12,8 @@ interactions:
       - '0'
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Tue, 27 Aug 2019 17:31:52 GMT
+      - Wed, 28 Aug 2019 02:13:08 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -27,11 +25,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 27 Aug 2019 17:31:50 GMT
+      - Wed, 28 Aug 2019 02:13:09 GMT
       etag:
-      - '"0x8D72B147257554F"'
+      - '"0x8D72B5D45F1C76C"'
       last-modified:
-      - Tue, 27 Aug 2019 17:31:51 GMT
+      - Wed, 28 Aug 2019 02:13:10 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -52,14 +50,12 @@ interactions:
       - '0'
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-blob-content-length:
       - '2048'
       x-ms-blob-type:
       - PageBlob
       x-ms-date:
-      - Tue, 27 Aug 2019 17:31:53 GMT
+      - Wed, 28 Aug 2019 02:13:10 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -71,11 +67,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 27 Aug 2019 17:31:50 GMT
+      - Wed, 28 Aug 2019 02:13:09 GMT
       etag:
-      - '"0x8D72B147262FE6A"'
+      - '"0x8D72B5D46028A10"'
       last-modified:
-      - Tue, 27 Aug 2019 17:31:51 GMT
+      - Wed, 28 Aug 2019 02:13:10 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted:
@@ -87,15 +83,15 @@ interactions:
       message: Created
 - request:
     body: !!binary |
-      /Mv4+vUJoxOkI+YMr7KmZbSIPQcQ0BfG5nI9cagLq5R6wIy8R92XtfRGAaOsVl+r8sNC2aBnmDNH
-      6KlitG1EV4kF13kfeyx6rpJMXRDThwCp0UGEWqYnQlCfcDCcQSdqdBO1kzI48X2R1wBLVGzQonuI
-      e5+Jri+LiwxAGswlBFfAl00vsOeDsBDx61Pl+vaaAWkdCAaQVgtmeuj4Zsj7wBxjEqWJ8f2Fcjre
-      owc+t7yUacS35iln5XT9C8yJTMWxGLlloXoqcUbCd0cTw5wfM82pHAe00g/zf7qShH2BrgRXGjeA
-      ycc/e6vuVAelQhFChiKajfbI3+ffObRF/ZBaYgUSml106Qulq/2rGtCkdn1n457i7CQ7ZuAO041W
-      yiWo2LCKb0jPC8/HlXz9QzrYfDXpIsurJWJCUjOmQWun3dsFSwzQ5o+13S5n0U6ivC9z+b2UT4cM
-      r71e8QT5p+E3IUqemsjWRnC7SxTvtm97Mw9itU+Zvj9nKkfroZ8PKHF+LKQcHn85tdQA/So6iwD4
-      klydqYy0RjEBDSxEvXufa3kiR6oMjc0RnCMQ7kwZsbHbxbSvnZrWSZ4agY6Z0HKK/Uh2agZVxi+H
-      Guey2h3SfkqgkHiTHbMu+bwnz9H6K3sAuxmKP2N5xyrEJNDgDkOyl00ZEzWmfa1ynSDZRvXk6/g=
+      6594RgmDlH7mtF5lMd71mY4u/HqSjEIvi/wcVE4ZoExB6jxnUu01i2ZDnrGzd2HA1s9LgXHr1lYC
+      kgCCVEml4W6xDjKwPhvG4jU5QmY+IExXzpJzDcIjZXtqVKqLhBojWjLqzP0M3jleJyELEVD50OR+
+      GRKAlPNsELb60WEvtb1R2CrIcxxTsJ2g/Cr4ovLPg0R6lfPj9gGHw5bqGkLQrpXxA/f0wDvAdVN7
+      mbwrQuwOo/GWo8awayWFDKn+3G5QdqLhQDny4f4w49a31/INvuhBR5jsymN/dyixaL0zy/OOFG/4
+      lw9piK5qQwVBAoHcJsjh5DV6hKfCppyCzukEyORXIiRFt33FTS08matXHh71ituJcX3h1gPsBk2p
+      uc1DtDhmQxdlE0h3UFZ2O0gjdb37prwURvpzQb5kgUUA4UyehkmM8q4WvGuZN4uJEcHpGWjsGSaG
+      lYoeoiyLiRxY5pPB3UNWHUUj7wgUBN80oxbrykpkI+bEVrKtMRliID6H6XxskKsPnPDk7hcaFzbN
+      7dd0dXrhVGtYs/LjuARxWSPTrpicFlIlSQ7eFiWxH5DAvlhhZe0Q5sy+YLXVdPg+TSpIr72iswSK
+      WgcVrB6k3fBQlGnjr7NVTMVqlnOrrs6vn9NZ+spNRGBlXFIPkqjDGydQfJNiQWt00Y/4+YfCWJw=
     headers:
       Accept:
       - '*/*'
@@ -110,7 +106,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Tue, 27 Aug 2019 17:31:53 GMT
+      - Wed, 28 Aug 2019 02:13:10 GMT
       x-ms-page-write:
       - update
       x-ms-range:
@@ -126,17 +122,17 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 27 Aug 2019 17:31:51 GMT
+      - Wed, 28 Aug 2019 02:13:09 GMT
       etag:
-      - '"0x8D72B1472713295"'
+      - '"0x8D72B5D4618AE0D"'
       last-modified:
-      - Tue, 27 Aug 2019 17:31:51 GMT
+      - Wed, 28 Aug 2019 02:13:10 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-blob-sequence-number:
       - '0'
       x-ms-content-crc64:
-      - p+lQLVOyVQM=
+      - pRT8SFG8FWY=
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
@@ -146,15 +142,15 @@ interactions:
       message: Created
 - request:
     body: !!binary |
-      /Mv4+vUJoxOkI+YMr7KmZbSIPQcQ0BfG5nI9cagLq5R6wIy8R92XtfRGAaOsVl+r8sNC2aBnmDNH
-      6KlitG1EV4kF13kfeyx6rpJMXRDThwCp0UGEWqYnQlCfcDCcQSdqdBO1kzI48X2R1wBLVGzQonuI
-      e5+Jri+LiwxAGswlBFfAl00vsOeDsBDx61Pl+vaaAWkdCAaQVgtmeuj4Zsj7wBxjEqWJ8f2Fcjre
-      owc+t7yUacS35iln5XT9C8yJTMWxGLlloXoqcUbCd0cTw5wfM82pHAe00g/zf7qShH2BrgRXGjeA
-      ycc/e6vuVAelQhFChiKajfbI3+ffObRF/ZBaYgUSml106Qulq/2rGtCkdn1n457i7CQ7ZuAO041W
-      yiWo2LCKb0jPC8/HlXz9QzrYfDXpIsurJWJCUjOmQWun3dsFSwzQ5o+13S5n0U6ivC9z+b2UT4cM
-      r71e8QT5p+E3IUqemsjWRnC7SxTvtm97Mw9itU+Zvj9nKkfroZ8PKHF+LKQcHn85tdQA/So6iwD4
-      klydqYy0RjEBDSxEvXufa3kiR6oMjc0RnCMQ7kwZsbHbxbSvnZrWSZ4agY6Z0HKK/Uh2agZVxi+H
-      Guey2h3SfkqgkHiTHbMu+bwnz9H6K3sAuxmKP2N5xyrEJNDgDkOyl00ZEzWmfa1ynSDZRvXk6/g=
+      6594RgmDlH7mtF5lMd71mY4u/HqSjEIvi/wcVE4ZoExB6jxnUu01i2ZDnrGzd2HA1s9LgXHr1lYC
+      kgCCVEml4W6xDjKwPhvG4jU5QmY+IExXzpJzDcIjZXtqVKqLhBojWjLqzP0M3jleJyELEVD50OR+
+      GRKAlPNsELb60WEvtb1R2CrIcxxTsJ2g/Cr4ovLPg0R6lfPj9gGHw5bqGkLQrpXxA/f0wDvAdVN7
+      mbwrQuwOo/GWo8awayWFDKn+3G5QdqLhQDny4f4w49a31/INvuhBR5jsymN/dyixaL0zy/OOFG/4
+      lw9piK5qQwVBAoHcJsjh5DV6hKfCppyCzukEyORXIiRFt33FTS08matXHh71ituJcX3h1gPsBk2p
+      uc1DtDhmQxdlE0h3UFZ2O0gjdb37prwURvpzQb5kgUUA4UyehkmM8q4WvGuZN4uJEcHpGWjsGSaG
+      lYoeoiyLiRxY5pPB3UNWHUUj7wgUBN80oxbrykpkI+bEVrKtMRliID6H6XxskKsPnPDk7hcaFzbN
+      7dd0dXrhVGtYs/LjuARxWSPTrpicFlIlSQ7eFiWxH5DAvlhhZe0Q5sy+YLXVdPg+TSpIr72iswSK
+      WgcVrB6k3fBQlGnjr7NVTMVqlnOrrs6vn9NZ+spNRGBlXFIPkqjDGydQfJNiQWt00Y/4+YfCWJw=
     headers:
       Accept:
       - '*/*'
@@ -169,7 +165,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Tue, 27 Aug 2019 17:31:53 GMT
+      - Wed, 28 Aug 2019 02:13:10 GMT
       x-ms-page-write:
       - update
       x-ms-range:
@@ -185,17 +181,17 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 27 Aug 2019 17:31:51 GMT
+      - Wed, 28 Aug 2019 02:13:10 GMT
       etag:
-      - '"0x8D72B14727DB8A0"'
+      - '"0x8D72B5D462AB2A1"'
       last-modified:
-      - Tue, 27 Aug 2019 17:31:51 GMT
+      - Wed, 28 Aug 2019 02:13:10 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-blob-sequence-number:
       - '0'
       x-ms-content-crc64:
-      - p+lQLVOyVQM=
+      - pRT8SFG8FWY=
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
@@ -216,10 +212,8 @@ interactions:
       - '0'
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Tue, 27 Aug 2019 17:31:53 GMT
+      - Wed, 28 Aug 2019 02:13:10 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -231,17 +225,17 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 27 Aug 2019 17:31:51 GMT
+      - Wed, 28 Aug 2019 02:13:10 GMT
       etag:
-      - '"0x8D72B14727DB8A0"'
+      - '"0x8D72B5D462AB2A1"'
       last-modified:
-      - Tue, 27 Aug 2019 17:31:51 GMT
+      - Wed, 28 Aug 2019 02:13:10 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted:
       - 'false'
       x-ms-snapshot:
-      - '2019-08-27T17:31:51.7337579Z'
+      - '2019-08-28T02:13:10.6561602Z'
       x-ms-version:
       - '2019-02-02'
     status:
@@ -260,12 +254,10 @@ interactions:
       - '0'
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-copy-source:
-      - https://pyacrstorage5de010b2.blob.core.windows.net/utcontainer5de010b2/blob5de010b2?snapshot=2019-08-27T17:31:51.7337579Z&se=2019-08-27T18%3A31%3A53Z&sp=r&sv=2018-06-17&sr=bs&sig=yZKIBMI6lWBUEAVV%2BHobrUtAsy%2B1yHXq3tR/LPZCkf0%3D
+      - https://pyacrstorage5de010b2.blob.core.windows.net/utcontainer5de010b2/blob5de010b2?snapshot=2019-08-28T02:13:10.6561602Z&se=2019-08-28T03%3A13%3A10Z&sp=r&sv=2018-06-17&sr=bs&sig=bl/jcEB3uZ9g3lC8Ka9gn7c%2BA1w7jMKSygf6wP7J49w%3D
       x-ms-date:
-      - Tue, 27 Aug 2019 17:31:54 GMT
+      - Wed, 28 Aug 2019 02:13:10 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -277,15 +269,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 27 Aug 2019 17:31:52 GMT
+      - Wed, 28 Aug 2019 02:13:10 GMT
       etag:
-      - '"0x8D72B14733B4228"'
+      - '"0x8D72B5D465C2B95"'
       last-modified:
-      - Tue, 27 Aug 2019 17:31:52 GMT
+      - Wed, 28 Aug 2019 02:13:10 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-copy-id:
-      - 2a963f6d-c13a-4122-8a13-5ce4de91a940
+      - 8062af0f-b93c-4245-bdf2-b0a027b099df
       x-ms-copy-status:
       - pending
       x-ms-version:
@@ -304,10 +296,8 @@ interactions:
       - keep-alive
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Tue, 27 Aug 2019 17:31:55 GMT
+      - Wed, 28 Aug 2019 02:13:11 GMT
       x-ms-version:
       - '2019-02-02'
     method: HEAD
@@ -321,211 +311,13 @@ interactions:
       content-length:
       - '2048'
       content-type:
-      - application/xml; charset=utf-8
+      - application/octet-stream
       date:
-      - Tue, 27 Aug 2019 17:31:52 GMT
+      - Wed, 28 Aug 2019 02:13:10 GMT
       etag:
-      - '"0x8D72B14734752F8"'
+      - '"0x8D72B5D4666669B"'
       last-modified:
-      - Tue, 27 Aug 2019 17:31:52 GMT
-      server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-blob-sequence-number:
-      - '0'
-      x-ms-blob-type:
-      - PageBlob
-      x-ms-copy-id:
-      - 2a963f6d-c13a-4122-8a13-5ce4de91a940
-      x-ms-copy-progress:
-      - 0/2048
-      x-ms-copy-source:
-      - https://pyacrstorage5de010b2.blob.core.windows.net/utcontainer5de010b2/blob5de010b2?snapshot=2019-08-27T17:31:51.7337579Z&se=2019-08-27T18%3A31%3A53Z&sp=r&sv=2018-06-17&sr=bs&sig=yZKIBMI6lWBUEAVV%2BHobrUtAsy%2B1yHXq3tR/LPZCkf0%3D
-      x-ms-copy-status:
-      - pending
-      x-ms-creation-time:
-      - Tue, 27 Aug 2019 17:31:52 GMT
-      x-ms-incremental-copy:
-      - 'true'
-      x-ms-lease-state:
-      - available
-      x-ms-lease-status:
-      - unlocked
-      x-ms-server-encrypted:
-      - 'true'
-      x-ms-tag-count:
-      - '0'
-      x-ms-version:
-      - '2019-02-02'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-date:
-      - Tue, 27 Aug 2019 17:32:01 GMT
-      x-ms-version:
-      - '2019-02-02'
-    method: HEAD
-    uri: https://pyacrstorage5de010b2.blob.core.windows.net/utcontainer5de010b2/dest_blob
-  response:
-    body:
-      string: ''
-    headers:
-      accept-ranges:
-      - bytes
-      content-length:
-      - '2048'
-      content-type:
-      - application/xml; charset=utf-8
-      date:
-      - Tue, 27 Aug 2019 17:31:58 GMT
-      etag:
-      - '"0x8D72B14734752F8"'
-      last-modified:
-      - Tue, 27 Aug 2019 17:31:52 GMT
-      server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-blob-sequence-number:
-      - '0'
-      x-ms-blob-type:
-      - PageBlob
-      x-ms-copy-id:
-      - 2a963f6d-c13a-4122-8a13-5ce4de91a940
-      x-ms-copy-progress:
-      - 0/2048
-      x-ms-copy-source:
-      - https://pyacrstorage5de010b2.blob.core.windows.net/utcontainer5de010b2/blob5de010b2?snapshot=2019-08-27T17:31:51.7337579Z&se=2019-08-27T18%3A31%3A53Z&sp=r&sv=2018-06-17&sr=bs&sig=yZKIBMI6lWBUEAVV%2BHobrUtAsy%2B1yHXq3tR/LPZCkf0%3D
-      x-ms-copy-status:
-      - pending
-      x-ms-creation-time:
-      - Tue, 27 Aug 2019 17:31:52 GMT
-      x-ms-incremental-copy:
-      - 'true'
-      x-ms-lease-state:
-      - available
-      x-ms-lease-status:
-      - unlocked
-      x-ms-server-encrypted:
-      - 'true'
-      x-ms-tag-count:
-      - '0'
-      x-ms-version:
-      - '2019-02-02'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-date:
-      - Tue, 27 Aug 2019 17:32:07 GMT
-      x-ms-version:
-      - '2019-02-02'
-    method: HEAD
-    uri: https://pyacrstorage5de010b2.blob.core.windows.net/utcontainer5de010b2/dest_blob
-  response:
-    body:
-      string: ''
-    headers:
-      accept-ranges:
-      - bytes
-      content-length:
-      - '2048'
-      content-type:
-      - application/xml; charset=utf-8
-      date:
-      - Tue, 27 Aug 2019 17:32:04 GMT
-      etag:
-      - '"0x8D72B14734752F8"'
-      last-modified:
-      - Tue, 27 Aug 2019 17:31:52 GMT
-      server:
-      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-blob-sequence-number:
-      - '0'
-      x-ms-blob-type:
-      - PageBlob
-      x-ms-copy-id:
-      - 2a963f6d-c13a-4122-8a13-5ce4de91a940
-      x-ms-copy-progress:
-      - 0/2048
-      x-ms-copy-source:
-      - https://pyacrstorage5de010b2.blob.core.windows.net/utcontainer5de010b2/blob5de010b2?snapshot=2019-08-27T17:31:51.7337579Z&se=2019-08-27T18%3A31%3A53Z&sp=r&sv=2018-06-17&sr=bs&sig=yZKIBMI6lWBUEAVV%2BHobrUtAsy%2B1yHXq3tR/LPZCkf0%3D
-      x-ms-copy-status:
-      - pending
-      x-ms-creation-time:
-      - Tue, 27 Aug 2019 17:31:52 GMT
-      x-ms-incremental-copy:
-      - 'true'
-      x-ms-lease-state:
-      - available
-      x-ms-lease-status:
-      - unlocked
-      x-ms-server-encrypted:
-      - 'true'
-      x-ms-tag-count:
-      - '0'
-      x-ms-version:
-      - '2019-02-02'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-date:
-      - Tue, 27 Aug 2019 17:32:13 GMT
-      x-ms-version:
-      - '2019-02-02'
-    method: HEAD
-    uri: https://pyacrstorage5de010b2.blob.core.windows.net/utcontainer5de010b2/dest_blob
-  response:
-    body:
-      string: ''
-    headers:
-      accept-ranges:
-      - bytes
-      content-length:
-      - '2048'
-      content-type:
-      - application/xml; charset=utf-8
-      date:
-      - Tue, 27 Aug 2019 17:32:10 GMT
-      etag:
-      - '"0x8D72B147C1AF504"'
-      last-modified:
-      - Tue, 27 Aug 2019 17:32:07 GMT
+      - Wed, 28 Aug 2019 02:13:10 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-blob-sequence-number:
@@ -533,19 +325,19 @@ interactions:
       x-ms-blob-type:
       - PageBlob
       x-ms-copy-completion-time:
-      - Tue, 27 Aug 2019 17:32:07 GMT
+      - Wed, 28 Aug 2019 02:13:10 GMT
       x-ms-copy-destination-snapshot:
-      - '2019-08-27T17:32:07.7786336Z'
+      - '2019-08-28T02:13:10.9343520Z'
       x-ms-copy-id:
-      - 2a963f6d-c13a-4122-8a13-5ce4de91a940
+      - 8062af0f-b93c-4245-bdf2-b0a027b099df
       x-ms-copy-progress:
       - 2048/2048
       x-ms-copy-source:
-      - https://pyacrstorage5de010b2.blob.core.windows.net/utcontainer5de010b2/blob5de010b2?snapshot=2019-08-27T17:31:51.7337579Z&se=2019-08-27T18%3A31%3A53Z&sp=r&sv=2018-06-17&sr=bs&sig=yZKIBMI6lWBUEAVV%2BHobrUtAsy%2B1yHXq3tR/LPZCkf0%3D
+      - https://pyacrstorage5de010b2.blob.core.windows.net/utcontainer5de010b2/blob5de010b2?snapshot=2019-08-28T02:13:10.6561602Z&se=2019-08-28T03%3A13%3A10Z&sp=r&sv=2018-06-17&sr=bs&sig=bl/jcEB3uZ9g3lC8Ka9gn7c%2BA1w7jMKSygf6wP7J49w%3D
       x-ms-copy-status:
       - success
       x-ms-creation-time:
-      - Tue, 27 Aug 2019 17:31:52 GMT
+      - Wed, 28 Aug 2019 02:13:10 GMT
       x-ms-incremental-copy:
       - 'true'
       x-ms-lease-state:

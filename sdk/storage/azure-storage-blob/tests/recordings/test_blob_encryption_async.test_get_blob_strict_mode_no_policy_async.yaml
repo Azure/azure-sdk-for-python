@@ -3,52 +3,43 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - ecf01d98-b4d1-11e9-850f-b831b58100e8
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Fri, 02 Aug 2019 03:02:12 GMT
+      - Wed, 28 Aug 2019 02:11:20 GMT
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainerc90a1c15?restype=container
+    uri: https://pyacrstoragec90a1c15.blob.core.windows.net/utcontainerc90a1c15?restype=container
   response:
     body:
-      string: ''
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>AuthenticationFailed</Code><Message>Server
+        failed to authenticate the request. Make sure the value of Authorization header
+        is formed correctly including the signature.\nRequestId:aefcfaf0-b01e-001c-7f45-5d29b8000000\nTime:2019-08-28T02:11:21.0474710Z</Message><AuthenticationErrorDetail>The
+        MAC signature found in the HTTP request 'eACVifL4NSP5fici1WsCQr2dMUN9vbF4Bq1ZTWv3b4I='
+        is not the same as any computed signature. Server used following string to
+        sign: 'PUT\n\n\n\n\napplication/octet-stream\n\n\n\n\n\n\nx-ms-client-request-id:201983b6-c939-11e9-9873-2816a845e8c6\nx-ms-date:Wed,
+        28 Aug 2019 02:11:20 GMT\nx-ms-version:2019-02-02\n/pyacrstoragec90a1c15/utcontainerc90a1c15\nrestype:container'.</AuthenticationErrorDetail></Error>"
     headers:
-      ? !!python/object/new:multidict._istr.istr
-      - Content-Length
-      : '0'
-      ? !!python/object/new:multidict._istr.istr
-      - Date
-      : Fri, 02 Aug 2019 03:02:12 GMT
-      ? !!python/object/new:multidict._istr.istr
-      - Etag
-      : '"0x8D716F5D133AB91"'
-      ? !!python/object/new:multidict._istr.istr
-      - Last-Modified
-      : Fri, 02 Aug 2019 03:02:12 GMT
-      ? !!python/object/new:multidict._istr.istr
-      - Server
-      : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 5633a7c2-601e-0055-3fde-488f77000000
-      x-ms-version: '2018-03-28'
+      content-length: '772'
+      content-type: application/xml
+      date: Wed, 28 Aug 2019 02:11:20 GMT
+      server: Microsoft-HTTPAPI/2.0
+      x-ms-error-code: AuthenticationFailed
     status:
-      code: 201
-      message: Created
+      code: 403
+      message: Server failed to authenticate the request. Make sure the value of Authorization
+        header is formed correctly including the signature.
     url: !!python/object/new:yarl.URL
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - amqptest.blob.core.windows.net
+        - pyacrstoragec90a1c15.blob.core.windows.net
         - /utcontainerc90a1c15
         - restype=container
         - ''
 - request:
     body: !!binary |
-      yRoPkgjc+6tKdlbWrsThrw==
+      U9yjSTXaJ/qRg8k1zVeJbA==
     headers:
       Content-Length:
       - '16'
@@ -57,55 +48,39 @@ interactions:
       If-None-Match:
       - '*'
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-blob-type:
       - BlockBlob
-      x-ms-client-request-id:
-      - ed08893a-b4d1-11e9-8965-b831b58100e8
       x-ms-date:
-      - Fri, 02 Aug 2019 03:02:12 GMT
+      - Wed, 28 Aug 2019 02:11:21 GMT
       x-ms-meta-encryptiondata:
-      - '{"WrappedContentKey": {"KeyId": "key1", "EncryptedKey": "hKNnUfiE/ziBQWyMzrkX8iQwKsxX6r+yuUcTUEccuX4szUFyNl1EwA==",
+      - '{"WrappedContentKey": {"KeyId": "key1", "EncryptedKey": "DkCtbwusRXWfIin2d/7ea5AyaaQZ4jxXlUAunUOS/E3hpG+n3esSzw==",
         "Algorithm": "A256KW"}, "EncryptionAgent": {"Protocol": "1.0", "EncryptionAlgorithm":
-        "AES_CBC_256"}, "ContentEncryptionIV": "6niN0dqDUpTj7AVvr8Nl+Q==", "KeyWrappingMetadata":
-        {"EncryptionLibrary": "Python 12.0.0b1"}, "EncryptionMode": "FullBlob"}'
+        "AES_CBC_256"}, "ContentEncryptionIV": "2GbaAVIerVmAuO7uH1n+jQ==", "KeyWrappingMetadata":
+        {"EncryptionLibrary": "Python 12.0.0b2"}, "EncryptionMode": "FullBlob"}'
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/utcontainerc90a1c15/encryption_block_blobc90a1c15
+    uri: https://pyacrstoragec90a1c15.blob.core.windows.net/utcontainerc90a1c15/encryption_block_blobc90a1c15
   response:
     body:
-      string: ''
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
+        specified container does not exist.\nRequestId:aefcfaf4-b01e-001c-0245-5d29b8000000\nTime:2019-08-28T02:11:21.0905016Z</Message></Error>"
     headers:
-      ? !!python/object/new:multidict._istr.istr
-      - Content-Length
-      : '0'
-      ? !!python/object/new:multidict._istr.istr
-      - Content-Md5
-      : U6LkhDxzAH1dffuunbXwNw==
-      ? !!python/object/new:multidict._istr.istr
-      - Date
-      : Fri, 02 Aug 2019 03:02:12 GMT
-      ? !!python/object/new:multidict._istr.istr
-      - Etag
-      : '"0x8D716F5D13BF2F1"'
-      ? !!python/object/new:multidict._istr.istr
-      - Last-Modified
-      : Fri, 02 Aug 2019 03:02:12 GMT
-      ? !!python/object/new:multidict._istr.istr
-      - Server
-      : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 5633a810-601e-0055-06de-488f77000000
-      x-ms-request-server-encrypted: 'true'
-      x-ms-version: '2018-03-28'
+      content-length: '225'
+      content-type: application/xml
+      date: Wed, 28 Aug 2019 02:11:20 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code: ContainerNotFound
+      x-ms-version: '2019-02-02'
     status:
-      code: 201
-      message: Created
+      code: 404
+      message: The specified container does not exist.
     url: !!python/object/new:yarl.URL
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - amqptest.blob.core.windows.net
+        - pyacrstoragec90a1c15.blob.core.windows.net
         - /utcontainerc90a1c15/encryption_block_blobc90a1c15
         - ''
         - ''

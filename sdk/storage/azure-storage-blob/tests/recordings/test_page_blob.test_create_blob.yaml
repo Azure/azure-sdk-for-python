@@ -12,10 +12,8 @@ interactions:
       - '0'
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Tue, 27 Aug 2019 17:30:59 GMT
+      - Wed, 28 Aug 2019 02:12:27 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -27,11 +25,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 27 Aug 2019 17:30:58 GMT
+      - Wed, 28 Aug 2019 02:12:27 GMT
       etag:
-      - '"0x8D72B145304AD56"'
+      - '"0x8D72B5D2D0965FA"'
       last-modified:
-      - Tue, 27 Aug 2019 17:30:58 GMT
+      - Wed, 28 Aug 2019 02:12:28 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -52,14 +50,12 @@ interactions:
       - '0'
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-blob-content-length:
       - '1024'
       x-ms-blob-type:
       - PageBlob
       x-ms-date:
-      - Tue, 27 Aug 2019 17:31:01 GMT
+      - Wed, 28 Aug 2019 02:12:28 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -71,11 +67,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 27 Aug 2019 17:30:58 GMT
+      - Wed, 28 Aug 2019 02:12:27 GMT
       etag:
-      - '"0x8D72B145312DBAD"'
+      - '"0x8D72B5D2D197363"'
       last-modified:
-      - Tue, 27 Aug 2019 17:30:58 GMT
+      - Wed, 28 Aug 2019 02:12:28 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted:
@@ -96,10 +92,8 @@ interactions:
       - keep-alive
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Tue, 27 Aug 2019 17:31:01 GMT
+      - Wed, 28 Aug 2019 02:12:28 GMT
       x-ms-version:
       - '2019-02-02'
     method: HEAD
@@ -113,13 +107,13 @@ interactions:
       content-length:
       - '1024'
       content-type:
-      - application/xml; charset=utf-8
+      - application/octet-stream
       date:
-      - Tue, 27 Aug 2019 17:30:58 GMT
+      - Wed, 28 Aug 2019 02:12:27 GMT
       etag:
-      - '"0x8D72B145312DBAD"'
+      - '"0x8D72B5D2D197363"'
       last-modified:
-      - Tue, 27 Aug 2019 17:30:58 GMT
+      - Wed, 28 Aug 2019 02:12:28 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-blob-sequence-number:
@@ -127,7 +121,7 @@ interactions:
       x-ms-blob-type:
       - PageBlob
       x-ms-creation-time:
-      - Tue, 27 Aug 2019 17:30:58 GMT
+      - Wed, 28 Aug 2019 02:12:28 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
