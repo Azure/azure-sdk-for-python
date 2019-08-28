@@ -5,10 +5,6 @@ trigger:
   branches:
     include:
     - master
-    - feature/*
-    - hotfix/*
-    - release/*
-    - '*/resource-manager'
   paths:
     include:
     - sdk/servicebus/
@@ -20,7 +16,7 @@ pr:
     - feature/*
     - hotfix/*
     - release/*
-    - '*/resource-manager'
+    - restapi*
   paths:
     include:
     - sdk/servicebus/
