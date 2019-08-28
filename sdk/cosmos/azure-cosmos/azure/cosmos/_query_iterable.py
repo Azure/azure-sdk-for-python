@@ -112,14 +112,14 @@ class QueryIterable(object):
         # SELECT VALUE <AGGREGATE>. So we send the query down the old pipeline to avoid a breaking change.
 
         if query_execution_info.has_aggregates() and not query_execution_info.has_select_value():
-            if self._options and ('enableCrossPartitionQuery' in self._options and self._options['enableCrossPartitionQuery']):
+            if self._options and ("enableCrossPartitionQuery" in self._options and self._options["enableCrossPartitionQuery"]):
                 raise errors.HTTPFailure(http_constants.StatusCodes.BAD_REQUEST, "Cross partition query only supports 'VALUE <AggreateFunc>' for aggregates")
             return query_execution_context
 
         return self._create_pipelined_execution_context(query_execution_info)
 
     def _use_default_query_execution_context(self):
-        options = ['partitionKeyRangeId', 'changeFeed', 'partitionKey']
+        options = ["partitionKeyRangeId", "changeFeed", "partitionKey"]
         if self._options:
             for option in options:
                 if option in self._options:

@@ -288,7 +288,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
                 self.last_response_headers,
             )
 
-        return query_iterable.QueryIterable(self, query, options, fetch_fn, 'dbs')
+        return query_iterable.QueryIterable(self, query, options, fetch_fn, "dbs")
 
     def ReadContainers(self, database_link, options=None):
         """Reads all collections in a database.
@@ -336,7 +336,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
                 self.last_response_headers,
             )
 
-        return query_iterable.QueryIterable(self, query, options, fetch_fn, 'colls')
+        return query_iterable.QueryIterable(self, query, options, fetch_fn, "colls")
 
     def CreateContainer(self, database_link, collection, options=None):
         """Creates a collection in a database.
@@ -519,7 +519,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
                 self.last_response_headers,
             )
 
-        return query_iterable.QueryIterable(self, query, options, fetch_fn, 'users')
+        return query_iterable.QueryIterable(self, query, options, fetch_fn, "users")
 
     def DeleteDatabase(self, database_link, options=None):
         """Deletes a database.
@@ -661,7 +661,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
                 self.last_response_headers,
             )
 
-        return query_iterable.QueryIterable(self, query, options, fetch_fn, 'permissions')
+        return query_iterable.QueryIterable(self, query, options, fetch_fn, "permissions")
 
     def ReplaceUser(self, user_link, user, options=None):
         """Replaces a user and return it.
@@ -818,7 +818,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
                 self.last_response_headers,
             )
 
-        return query_iterable.QueryIterable(self, query, options, fetch_fn, 'docs', database_or_Container_link)
+        return query_iterable.QueryIterable(self, query, options, fetch_fn, "docs", database_or_Container_link)
 
     def QueryItemsChangeFeed(self, collection_link, options=None, response_hook=None):
         """Queries documents change feed in a collection.
@@ -947,7 +947,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
                 self.last_response_headers,
             )
 
-        return query_iterable.QueryIterable(self, query, options, fetch_fn, 'pkranges')
+        return query_iterable.QueryIterable(self, query, options, fetch_fn, "pkranges")
 
     def CreateItem(self, database_or_Container_link, document, options=None):
         """Creates a document in a collection.
@@ -1131,7 +1131,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
                 self.last_response_headers,
             )
 
-        return query_iterable.QueryIterable(self, query, options, fetch_fn, 'triggers')
+        return query_iterable.QueryIterable(self, query, options, fetch_fn, "triggers")
 
     def CreateTrigger(self, collection_link, trigger, options=None):
         """Creates a trigger in a collection.
@@ -1256,7 +1256,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
                 self.last_response_headers,
             )
 
-        return query_iterable.QueryIterable(self, query, options, fetch_fn, 'udfs')
+        return query_iterable.QueryIterable(self, query, options, fetch_fn, "udfs")
 
     def CreateUserDefinedFunction(self, collection_link, udf, options=None):
         """Creates a user defined function in a collection.
@@ -1381,7 +1381,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
                 self.last_response_headers,
             )
 
-        return query_iterable.QueryIterable(self, query, options, fetch_fn, 'sprocs')
+        return query_iterable.QueryIterable(self, query, options, fetch_fn, "sprocs")
 
     def CreateStoredProcedure(self, collection_link, sproc, options=None):
         """Creates a stored procedure in a collection.
@@ -1504,7 +1504,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
                 self.last_response_headers,
             )
 
-        return query_iterable.QueryIterable(self, query, options, fetch_fn, 'conflicts')
+        return query_iterable.QueryIterable(self, query, options, fetch_fn, "conflicts")
 
     def ReadConflict(self, conflict_link, options=None):
         """Reads a conflict.
@@ -1780,7 +1780,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
                 self.last_response_headers,
             )
 
-        return query_iterable.QueryIterable(self, query, options, fetch_fn, 'attachments')
+        return query_iterable.QueryIterable(self, query, options, fetch_fn, "attachments")
 
     def ReadMedia(self, media_link):
         """Reads a media.
@@ -2173,7 +2173,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
                 self.last_response_headers,
             )
 
-        return query_iterable.QueryIterable(self, query, options, fetch_fn, 'offfers')
+        return query_iterable.QueryIterable(self, query, options, fetch_fn, "offers")
 
     def GetDatabaseAccount(self, url_connection=None):
         """Gets database account info.
@@ -2559,7 +2559,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         initial_headers[http_constants.HttpHeaders.IsQuery] = "true"
         if not is_query_plan:
-            initial_headers[http_constants.HttpHeaders.IsQuery] = 'true'
+            initial_headers[http_constants.HttpHeaders.IsQuery] = "true"
 
         if (
             self._query_compatibility_mode == CosmosClientConnection._QueryCompatibilityMode.Default
@@ -2591,18 +2591,18 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
                                     documents._QueryFeature.Top)
 
         options = {
-            'contentType': runtime_constants.MediaTypes.Json,
-            'isQueryPlanRequest': True,
-            'supportedQueryFeatures': supported_query_features,
-            'queryVersion': http_constants.Versions.QueryVersion
+            "contentType": runtime_constants.MediaTypes.Json,
+            "isQueryPlanRequest": True,
+            "supportedQueryFeatures": supported_query_features,
+            "queryVersion": http_constants.Versions.QueryVersion
             }
 
         resource_link = base.TrimBeginningAndEndingSlashes(resource_link)
-        path = base.GetPathFromLink(resource_link, 'docs')
+        path = base.GetPathFromLink(resource_link, "docs")
         resource_id = base.GetResourceIdOrFullNameFromLink(resource_link)
 
         return self.__QueryFeed(path,
-                                'docs',
+                                "docs",
                                 resource_id,
                                 lambda r: r,
                                 None,

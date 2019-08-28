@@ -396,20 +396,20 @@ class ConnectionPolicy(object):  # pylint: disable=too-many-instance-attributes
 class _OperationType(object):
     """Represents the type of the operation
     """
-    Create = 'Create'
-    Delete = 'Delete'
-    ExecuteJavaScript = 'ExecuteJavaScript'
-    Head = 'Head'
-    HeadFeed = 'HeadFeed'
-    Query = 'Query'
-    Read = 'Read'
-    ReadFeed = 'ReadFeed'
-    Recreate = 'Recreate'
-    Replace = 'Replace'
-    SqlQuery = 'SqlQuery'
-    QueryPlan = 'QueryPlan'
-    Update = 'Update'
-    Upsert = 'Upsert'
+    Create = "Create"
+    Delete = "Delete"
+    ExecuteJavaScript = "ExecuteJavaScript"
+    Head = "Head"
+    HeadFeed = "HeadFeed"
+    Query = "Query"
+    Read = "Read"
+    ReadFeed = "ReadFeed"
+    Recreate = "Recreate"
+    Replace = "Replace"
+    SqlQuery = "SqlQuery"
+    QueryPlan = "QueryPlan"
+    Update = "Update"
+    Upsert = "Upsert"
 
     @staticmethod
     def IsWriteOperation(operationType):

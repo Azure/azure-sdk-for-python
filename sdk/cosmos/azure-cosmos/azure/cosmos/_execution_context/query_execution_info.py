@@ -32,16 +32,16 @@ class _PartitionedQueryExecutionInfo(object):
     returned by the backend.
     """
 
-    QueryInfoPath = 'queryInfo'
-    HasSelectValue = [QueryInfoPath, 'hasSelectValue']
-    TopPath = [QueryInfoPath, 'top']
-    OffsetPath = [QueryInfoPath, 'offset']
-    LimitPath = [QueryInfoPath, 'limit']
-    DistinctTypePath = [QueryInfoPath, 'distinctType']
-    OrderByPath = [QueryInfoPath, 'orderBy']
-    AggregatesPath = [QueryInfoPath, 'aggregates']
-    QueryRangesPath = 'queryRanges'
-    RewrittenQueryPath = [QueryInfoPath, 'rewrittenQuery']
+    QueryInfoPath = "queryInfo"
+    HasSelectValue = [QueryInfoPath, "hasSelectValue"]
+    TopPath = [QueryInfoPath, "top"]
+    OffsetPath = [QueryInfoPath, "offset"]
+    LimitPath = [QueryInfoPath, "limit"]
+    DistinctTypePath = [QueryInfoPath, "distinctType"]
+    OrderByPath = [QueryInfoPath, "orderBy"]
+    AggregatesPath = [QueryInfoPath, "aggregates"]
+    QueryRangesPath = "queryRanges"
+    RewrittenQueryPath = [QueryInfoPath, "rewrittenQuery"]
 
     def __init__(self, query_execution_info):
         """

@@ -87,8 +87,8 @@ class HttpHeaders:
     Referer = "referer"
 
     # Query
-    Query = 'x-ms-documentdb-query'
-    IsQuery = 'x-ms-documentdb-isquery'
+    Query = "x-ms-documentdb-query"
+    IsQuery = "x-ms-documentdb-isquery"
     IsQueryPlanRequest = "x-ms-cosmos-is-query-plan-request"
     SupportedQueryFeatures = "x-ms-cosmos-supported-query-features"
     QueryVersion = "x-ms-cosmos-query-version"
@@ -265,9 +265,9 @@ class CookieHeaders:
 class Versions:
     """Constants of versions.
     """
-    CurrentVersion = '2018-12-31'
-    SDKName = 'azure-cosmos'
-    SDKVersion = '4.0.0a1'
+    CurrentVersion = "2018-12-31"
+    SDKName = "azure-cosmos"
+    SDKVersion = "4.0.0a1"
     QueryVersion = "1.0"
 
 
