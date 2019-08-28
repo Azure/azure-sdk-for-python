@@ -59,7 +59,7 @@ class PipelineClient(PipelineClientBase):
     Builds a Pipeline client.
 
     :param str base_url: URL for the request.
-    :param config: Service configuration. This is a required parameter.
+    :param config: Service configuration. This is a required unless pipeline or policies are given separately.
     :type config: ~azure.core.Configuration
     :param kwargs: keyword arguments
     :return: A pipeline object.
@@ -80,10 +80,8 @@ class PipelineClient(PipelineClientBase):
             :caption: Builds the pipeline client.
     """
 
-    def __init__(self, base_url, config, **kwargs):
+    def __init__(self, base_url, config=None, **kwargs):
         super(PipelineClient, self).__init__(base_url)
-        if config is None:
-            raise ValueError("Config is a required parameter")
         self._config = config
         self._base_url = base_url
         if kwargs.get("pipeline"):
@@ -106,6 +104,8 @@ class PipelineClient(PipelineClientBase):
         policies = kwargs.get('policies')
 
         if policies is None:  # [] is a valid policy list
+            if config is None:
+                raise ValueError("No config or policies supplied.")
             policies = [
                 config.headers_policy,
                 config.user_agent_policy,
