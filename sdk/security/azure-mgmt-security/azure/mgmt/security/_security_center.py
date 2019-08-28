@@ -19,7 +19,7 @@ from .operations import AlertsOperations
 from .operations import SettingsOperations
 from .operations import DeviceSecurityGroupsOperations
 from .operations import IotSecuritySolutionOperations
-from .operations import IotSecuritySolutionsAnalyticsOperations
+from .operations import IotSecuritySolutionAnalyticsOperations
 from .operations import IotSecuritySolutionsAnalyticsAggregatedAlertOperations
 from .operations import IotSecuritySolutionsAnalyticsRecommendationOperations
 from .operations import AllowedConnectionsOperations
@@ -62,8 +62,8 @@ class SecurityCenter(SDKClient):
     :vartype device_security_groups: azure.mgmt.security.operations.DeviceSecurityGroupsOperations
     :ivar iot_security_solution: IotSecuritySolution operations
     :vartype iot_security_solution: azure.mgmt.security.operations.IotSecuritySolutionOperations
-    :ivar iot_security_solutions_analytics: IotSecuritySolutionsAnalytics operations
-    :vartype iot_security_solutions_analytics: azure.mgmt.security.operations.IotSecuritySolutionsAnalyticsOperations
+    :ivar iot_security_solution_analytics: IotSecuritySolutionAnalytics operations
+    :vartype iot_security_solution_analytics: azure.mgmt.security.operations.IotSecuritySolutionAnalyticsOperations
     :ivar iot_security_solutions_analytics_aggregated_alert: IotSecuritySolutionsAnalyticsAggregatedAlert operations
     :vartype iot_security_solutions_analytics_aggregated_alert: azure.mgmt.security.operations.IotSecuritySolutionsAnalyticsAggregatedAlertOperations
     :ivar iot_security_solutions_analytics_recommendation: IotSecuritySolutionsAnalyticsRecommendation operations
@@ -140,7 +140,7 @@ class SecurityCenter(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.iot_security_solution = IotSecuritySolutionOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.iot_security_solutions_analytics = IotSecuritySolutionsAnalyticsOperations(
+        self.iot_security_solution_analytics = IotSecuritySolutionAnalyticsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.iot_security_solutions_analytics_aggregated_alert = IotSecuritySolutionsAnalyticsAggregatedAlertOperations(
             self._client, self.config, self._serialize, self._deserialize)

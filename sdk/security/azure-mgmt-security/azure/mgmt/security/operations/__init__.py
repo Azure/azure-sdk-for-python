@@ -15,7 +15,7 @@ from ._alerts_operations import AlertsOperations
 from ._settings_operations import SettingsOperations
 from ._device_security_groups_operations import DeviceSecurityGroupsOperations
 from ._iot_security_solution_operations import IotSecuritySolutionOperations
-from ._iot_security_solutions_analytics_operations import IotSecuritySolutionsAnalyticsOperations
+from ._iot_security_solution_analytics_operations import IotSecuritySolutionAnalyticsOperations
 from ._iot_security_solutions_analytics_aggregated_alert_operations import IotSecuritySolutionsAnalyticsAggregatedAlertOperations
 from ._iot_security_solutions_analytics_recommendation_operations import IotSecuritySolutionsAnalyticsRecommendationOperations
 from ._allowed_connections_operations import AllowedConnectionsOperations
@@ -45,7 +45,7 @@ __all__ = [
     'SettingsOperations',
     'DeviceSecurityGroupsOperations',
     'IotSecuritySolutionOperations',
-    'IotSecuritySolutionsAnalyticsOperations',
+    'IotSecuritySolutionAnalyticsOperations',
     'IotSecuritySolutionsAnalyticsAggregatedAlertOperations',
     'IotSecuritySolutionsAnalyticsRecommendationOperations',
     'AllowedConnectionsOperations',
