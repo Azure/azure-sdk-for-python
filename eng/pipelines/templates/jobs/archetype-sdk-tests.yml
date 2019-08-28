@@ -3,6 +3,7 @@ parameters:
   EnvVars: {}
   MaxParallel: 0
   BeforeTestSteps: []
+  BuildTargetingString: 'azure-*'
   Matrix:
     Linux_Python35:
       OSName: 'Linux'
@@ -34,9 +35,11 @@ jobs:
     steps:
       - template: ../steps/build-test.yml
         parameters:
+          BuildTargetingString: ${{ parameters.BuildTargetingString }}
           ServiceDirectory: ${{ parameters.ServiceDirectory }}
           AdditionalTestArgs: '--disablecov'
           EnvVars: ${{ parameters.EnvVars }}
           BeforeTestSteps: ${{ parameters.BeforeTestSteps }}
           PythonVersion: $(PythonVersion)
           OSName: $(OSName)
+          ToxTestEnv: "whl"

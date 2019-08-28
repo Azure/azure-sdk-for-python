@@ -6,13 +6,18 @@ parameters:
   PythonVersion: ''
   OSName: ''
   BeforeTestSteps: []
+  AdditionalTestSteps: []
   BuildTargetingString: 'azure-*'
-
+  ToxTestEnv: ""
+  RunMyPy: and(ne(variables['PythonVersion'], '2.7'), ne(variables['PythonVersion'], 'pypy3'))
 
 steps:
   - powershell: |
-        Invoke-WebRequest -Uri "https://github.com/Azure/azure-sdk-tools/releases/download/sdk-tools_14793/sdk-tools.zip" `
-        -OutFile "sdk-tools.zip" | Wait-Process; Expand-Archive -Path "sdk-tools.zip" -DestinationPath "./sdk-tools/"
+      gci -r $(Build.ArtifactStagingDirectory)
+
+  - powershell: |
+      Invoke-WebRequest -Uri "https://github.com/Azure/azure-sdk-tools/releases/download/sdk-tools_14793/sdk-tools.zip" `
+      -OutFile "sdk-tools.zip" | Wait-Process; Expand-Archive -Path "sdk-tools.zip" -DestinationPath "./sdk-tools/"
     workingDirectory: '$(Build.BinariesDirectory)'
     displayName: 'Download Tools Archive From Github Release and Extract it'
 
@@ -28,27 +33,52 @@ steps:
       arguments: ${{ parameters.OSName }}
 
   - script: |
-      pip install pathlib twine codecov beautifulsoup4
+      pip install pathlib twine codecov beautifulsoup4 tox tox-monorepo
     displayName: 'Prep Environment'
 
   - ${{ parameters.BeforeTestSteps }}
 
   - task: PythonScript@0
-    displayName: 'Install Packages'
-    inputs:
-      scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
-      arguments: '"${{ parameters.BuildTargetingString }}" --runtype=setup'
-    env: ${{ parameters.EnvVars }}
-
-  - task: PythonScript@0
     displayName: 'Run Tests'
     inputs:
       scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
-      arguments: '"${{ parameters.BuildTargetingString }}" --runtype=execute --junitxml="junit/test-results.xml" ${{ parameters.AdditionalTestArgs }} --mark_arg="${{ parameters.TestMarkArgument }}" --service="${{ parameters.ServiceDirectory }}"'
+      arguments: >-
+        "${{ parameters.BuildTargetingString }}" 
+        ${{ parameters.AdditionalTestArgs }} 
+        --mark_arg="${{ parameters.TestMarkArgument }}" 
+        --service="${{ parameters.ServiceDirectory }}" 
+        --toxenv="${{ parameters.ToxTestEnv }}"
     env: ${{ parameters.EnvVars }}
 
   - task: PublishTestResults@2
     condition: succeededOrFailed()
     inputs:
-      testResultsFiles: 'junit/test-results.xml'
+      testResultsFiles: '**/*test*.xml'
       testRunTitle: '${{ parameters.OSName }} Python ${{ parameters.PythonVersion }}'
+
+  - task: PythonScript@0
+    displayName: 'Run Pylint'
+    inputs:
+      scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+      arguments: >-
+        "${{ parameters.BuildTargetingString }}" 
+        --mark_arg="${{ parameters.TestMarkArgument }}" 
+        --service="${{ parameters.ServiceDirectory }}" 
+        --toxenv="lint"
+        --disablecov
+    env: ${{ parameters.EnvVars }}
+
+  - task: PythonScript@0
+    displayName: 'Run MyPy'
+    inputs:
+      scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+      arguments: >-
+        "${{ parameters.BuildTargetingString }}" 
+        --mark_arg="${{ parameters.TestMarkArgument }}" 
+        --service="${{ parameters.ServiceDirectory }}" 
+        --toxenv="mypy"
+        --disablecov
+    env: ${{ parameters.EnvVars }}
+    condition: and(succeededOrFailed(), ${{ parameters.RunMyPy }})
+  
+  - ${{ parameters.AdditionalTestSteps }}

@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .kusto_management_client import KustoManagementClient
-from .version import VERSION
+from ._configuration import KustoManagementClientConfiguration
+from ._kusto_management_client import KustoManagementClient
+__all__ = ['KustoManagementClient', 'KustoManagementClientConfiguration']
 
-__all__ = ['KustoManagementClient']
+from .version import VERSION
 
 __version__ = VERSION
 

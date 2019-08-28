@@ -210,30 +210,6 @@ class DictMixin(object):
         return default
 
 
-class ModifiedAccessConditions(object):
-    """Additional parameters for a set of operations.
-
-    :param if_modified_since: Specify this header value to operate only on a
-     blob if it has been modified since the specified date/time.
-    :type if_modified_since: datetime
-    :param if_unmodified_since: Specify this header value to operate only on a
-     blob if it has not been modified since the specified date/time.
-    :type if_unmodified_since: datetime
-    :param if_match: Specify an ETag value to operate only on blobs with a
-     matching value.
-    :type if_match: str
-    :param if_none_match: Specify an ETag value to operate only on blobs
-     without a matching value.
-    :type if_none_match: str
-    """
-
-    def __init__(self, **kwargs):
-        self.if_modified_since = kwargs.get('if_modified_since', None)
-        self.if_unmodified_since = kwargs.get('if_unmodified_since', None)
-        self.if_match = kwargs.get('if_match', None)
-        self.if_none_match = kwargs.get('if_none_match', None)
-
-
 class LocationMode(object):
     """
     Specifies the location the request should be sent to. This mode only applies
@@ -403,32 +379,31 @@ AccountPermissions.PROCESS = AccountPermissions(process=True)
 
 
 class Services(object):
-    """
-    Specifies the services accessible with the account SAS.
+    """Specifies the services accessible with the account SAS.
 
     :cvar Services Services.BLOB: The blob service.
     :cvar Services Services.FILE: The file service
     :cvar Services Services.QUEUE: The queue service.
-    :cvar Services Services.TABLE: The table service.
     :param bool blob:
-        Access to any blob service, for example, the `.BlockBlobService`
+        Access for the `~azure.storage.blob.blob_service_client.BlobServiceClient`
     :param bool queue:
-        Access to the `.QueueService`
+        Access for the `~azure.storage.queue.queue_service_client.QueueServiceClient`
     :param bool file:
-        Access to the `.FileService`
-    :param bool table:
-        Access to the TableService
+        Access for the `~azure.storage.file.file_service_client.FileServiceClient`
     :param str _str:
         A string representing the services.
     """
 
-    def __init__(self, blob=False, queue=False, file=False, table=False, _str=None):
+    BLOB = None # type: Services
+    QUEUE = None # type: Services
+    FILE = None # type: Services
+
+    def __init__(self, blob=False, queue=False, file=False, _str=None):
         if not _str:
             _str = ''
         self.blob = blob or ('b' in _str)
         self.queue = queue or ('q' in _str)
         self.file = file or ('f' in _str)
-        self.table = table or ('t' in _str)
 
     def __or__(self, other):
         return Services(_str=str(self) + str(other))
@@ -439,11 +414,9 @@ class Services(object):
     def __str__(self):
         return (('b' if self.blob else '') +
                 ('q' if self.queue else '') +
-                ('t' if self.table else '') +
                 ('f' if self.file else ''))
 
 
-Services.BLOB = Services(blob=True) # type: ignore
-Services.QUEUE = Services(queue=True) # type: ignore
-Services.TABLE = Services(table=True) # type: ignore
-Services.FILE = Services(file=True) # type: ignore
+Services.BLOB = Services(blob=True)
+Services.QUEUE = Services(queue=True)
+Services.FILE = Services(file=True)

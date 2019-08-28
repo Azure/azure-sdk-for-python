@@ -197,6 +197,7 @@ class EventHubConsumer(ConsumerProducerMixin):
         :rtype: list[~azure.eventhub.common.EventData]
         :raises: ~azure.eventhub.AuthenticationError, ~azure.eventhub.ConnectError, ~azure.eventhub.ConnectionLostError,
                 ~azure.eventhub.EventHubError
+
         Example:
             .. literalinclude:: ../examples/test_examples_eventhub.py
                 :start-after: [START eventhub_client_sync_receive]
