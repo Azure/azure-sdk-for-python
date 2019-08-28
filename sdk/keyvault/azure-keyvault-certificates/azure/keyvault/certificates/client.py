@@ -20,7 +20,11 @@ from .models import (
     IssuerBase,
     Contact,
     CertificateOperation,
-    AdministratorDetails
+    AdministratorDetails,
+    LifetimeAction,
+    KeyProperties,
+    KeyUsageType,
+    SecretContentType
 )
 
 
@@ -42,7 +46,7 @@ class CertificateClient(KeyVaultClientBase):
     def create_certificate(
             self,
             name,  # type: str
-            policy,  # type: CertificatePolicy
+            policy=None,  # type: Optional[CertificatePolicy]
             enabled=None,  # type: Optional[bool]
             tags=None,  # type: Optional[Dict[str, str]]
             **kwargs  # type: **Any
@@ -81,6 +85,33 @@ class CertificateClient(KeyVaultClientBase):
             )
         else:
             attributes = None
+
+        if not policy:
+            lifetime_actions = [LifetimeAction(
+                days_before_expiry=90,
+                action_type="AutoRenew"
+            )]
+            policy = CertificatePolicy(key_properties=KeyProperties(exportable=True,
+                                                                    key_type='RSA',
+                                                                    key_size=2048,
+                                                                    reuse_key=True,
+                                                                    ekus=[
+                                                                        "1.3.6.1.5.5.7.3.1",
+                                                                        "1.3.6.1.5.5.7.3.2"
+                                                                    ],
+                                                                    key_usage=[
+                                                                        KeyUsageType.c_rl_sign,
+                                                                        KeyUsageType.data_encipherment,
+                                                                        KeyUsageType.digital_signature,
+                                                                        KeyUsageType.key_agreement,
+                                                                        KeyUsageType.key_cert_sign,
+                                                                        KeyUsageType.key_encipherment
+                                                                    ]),
+                                       issuer_name="Self",
+                                       lifetime_actions=lifetime_actions,
+                                       content_type=SecretContentType.PFX,
+                                       subject_name="CN=DefaultPolicy",
+                                       validity_in_months=12)
 
         bundle = self._client.create_certificate(
             vault_base_url=self.vault_url,

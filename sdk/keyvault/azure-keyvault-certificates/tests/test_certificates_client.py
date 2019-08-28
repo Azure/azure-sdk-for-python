@@ -179,28 +179,33 @@ class CertificateClientTests(KeyVaultTestCase):
         client = vault_client.certificates
         cert_name = self.get_resource_name("cert")
         lifetime_actions = [LifetimeAction(
-            trigger=Trigger(lifetime_percentage=2),
-            action=Action(action_type=ActionType.email_contacts)
+            trigger=Trigger(days_before_expiry=90),
+            action=Action(action_type=ActionType.auto_renew)
         )]
         cert_policy = CertificatePolicyGenerated(key_properties=KeyProperties(exportable=True,
                                                                               key_type='RSA',
                                                                               key_size=2048,
-                                                                              reuse_key=False),
+                                                                              reuse_key=True),
                                                  secret_properties=SecretProperties(
                                                      content_type='application/x-pkcs12'),
                                                  issuer_parameters=IssuerParameters(name='Self'),
                                                  lifetime_actions=lifetime_actions,
                                                  x509_certificate_properties=X509CertificateProperties(
-                                                     subject='CN=*.microsoft.com',
-                                                     subject_alternative_names=SubjectAlternativeNames(
-                                                         dns_names=['sdk.azure-int.net']
-                                                     ),
-                                                     validity_in_months=24
+                                                     subject='CN=DefaultPolicy',
+                                                     validity_in_months=12,
+                                                     key_usage=[
+                                                        "cRLSign",
+                                                        "dataEncipherment",
+                                                        "digitalSignature",
+                                                        "keyAgreement",
+                                                        "keyCertSign",
+                                                        "keyEncipherment"
+                                                     ]
                                                  ))
 
         # create certificate
         interval_time = 5 if not self.is_playback() else 0
-        client.create_certificate(name=cert_name, policy=CertificatePolicy._from_certificate_policy_bundle(cert_policy))
+        client.create_certificate(name=cert_name)
         while True:
             pending_cert = client.get_certificate_operation(cert_name)
             self._validate_certificate_operation(pending_cert, client.vault_url, cert_name, cert_policy)

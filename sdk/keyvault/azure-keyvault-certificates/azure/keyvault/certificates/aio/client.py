@@ -20,7 +20,11 @@ from azure.keyvault.certificates import(
     CertificateBase,
     Contact,
     Issuer,
-    IssuerBase
+    IssuerBase,
+    KeyProperties,
+    SecretContentType,
+    LifetimeAction,
+    KeyUsageType
 )
 from .._shared import AsyncKeyVaultClientBase
 
@@ -42,7 +46,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
     async def create_certificate(
         self,
         name: str,
-        policy: CertificatePolicy,
+        policy: Optional[CertificatePolicy] = None,
         enabled: Optional[bool] = None,
         tags: Optional[Dict[str, str]] = None,
         **kwargs: "**Any"
@@ -80,6 +84,33 @@ class CertificateClient(AsyncKeyVaultClientBase):
             )
         else:
             attributes = None
+
+        if not policy:
+            lifetime_actions = [LifetimeAction(
+                days_before_expiry=90,
+                action_type="AutoRenew"
+            )]
+            policy = CertificatePolicy(key_properties=KeyProperties(exportable=True,
+                                                                    key_type='RSA',
+                                                                    key_size=2048,
+                                                                    reuse_key=True,
+                                                                    ekus=[
+                                                                        "1.3.6.1.5.5.7.3.1",
+                                                                        "1.3.6.1.5.5.7.3.2"
+                                                                    ],
+                                                                    key_usage=[
+                                                                        KeyUsageType.c_rl_sign,
+                                                                        KeyUsageType.data_encipherment,
+                                                                        KeyUsageType.digital_signature,
+                                                                        KeyUsageType.key_agreement,
+                                                                        KeyUsageType.key_cert_sign,
+                                                                        KeyUsageType.key_encipherment
+                                                                    ]),
+                                       issuer_name="Self",
+                                       lifetime_actions=lifetime_actions,
+                                       content_type=SecretContentType.PFX,
+                                       subject_name="CN=DefaultPolicy",
+                                       validity_in_months=12)
 
         bundle = await self._client.create_certificate(
             vault_base_url=self.vault_url,
