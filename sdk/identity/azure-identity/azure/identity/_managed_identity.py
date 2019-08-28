@@ -4,6 +4,13 @@
 # ------------------------------------
 import os
 
+from azure.core import Configuration
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
+from azure.core.pipeline.policies import ContentDecodePolicy, HeadersPolicy, NetworkTraceLoggingPolicy, RetryPolicy
+
+from ._authn_client import AuthnClient
+from ._constants import Endpoints, EnvironmentVariables
+
 try:
     from typing import TYPE_CHECKING
 except ImportError:
@@ -13,13 +20,6 @@ if TYPE_CHECKING:
     # pylint:disable=unused-import
     from typing import Any, Mapping, Optional, Type
     from azure.core.credentials import AccessToken
-
-from azure.core import Configuration
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
-from azure.core.pipeline.policies import ContentDecodePolicy, HeadersPolicy, NetworkTraceLoggingPolicy, RetryPolicy
-
-from ._authn_client import AuthnClient
-from ._constants import Endpoints, EnvironmentVariables
 
 
 class _ManagedIdentityBase(object):

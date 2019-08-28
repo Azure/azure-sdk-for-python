@@ -6,12 +6,10 @@
 Credentials for asynchronous Azure SDK authentication.
 """
 import os
-from typing import Any, Dict, Mapping, Optional, Union
+from typing import Any, Mapping, Optional, Union
 
-from azure.core import Configuration
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
-from azure.core.pipeline.policies import ContentDecodePolicy, HeadersPolicy, NetworkTraceLoggingPolicy, AsyncRetryPolicy
 
 from ._authn_client import AsyncAuthnClient
 from ._managed_identity import ImdsCredential, MsiCredential
@@ -127,10 +125,7 @@ class EnvironmentCredential:
         :raises: :class:`azure.core.exceptions.ClientAuthenticationError`
         """
         if not self._credential:
-            message = "Missing environment settings. To authenticate with one of the service principal's client secrets, set {}. To authenticate with a certificate, set {}.".format(
-                ", ".join(EnvironmentVariables.CLIENT_SECRET_VARS), ", ".join(EnvironmentVariables.CERT_VARS)
-            )
-            raise ClientAuthenticationError(message=message)
+            raise ClientAuthenticationError(message="Incomplete environment configuration.")
         return await self._credential.get_token(*scopes)
 
 
@@ -138,7 +133,8 @@ class ManagedIdentityCredential(object):
     """
     Authenticates with a managed identity in an App Service, Azure VM or Cloud Shell environment.
 
-    :param str client_id: Optional client ID of a user-assigned identity. Leave unspecified to use a system-assigned identity.
+    :param str client_id:
+        (optional) client ID of a user-assigned identity. Leave unspecified to use a system-assigned identity.
     """
 
     def __new__(cls, *args, **kwargs):
@@ -151,7 +147,7 @@ class ManagedIdentityCredential(object):
     def __init__(self, client_id: Optional[str] = None, **kwargs: Any) -> None:
         pass
 
-    async def get_token(self, *scopes: str) -> AccessToken:
+    async def get_token(self, *scopes: str) -> AccessToken:  # pylint:disable=unused-argument,no-self-use
         """
         Asynchronously request an access token for `scopes`.
 
