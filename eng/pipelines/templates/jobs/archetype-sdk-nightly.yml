@@ -32,7 +32,7 @@ jobs:
       steps:
       - template: ../steps/analyze.yml
 
-  - job: 'Generic_Tests'
+  - job: 'Test'
     variables:
     - template: ../variables/globals.yml
 
@@ -72,7 +72,7 @@ jobs:
         ToxTestEnv: "whl,sdist"  
     - template: ../steps/publish-coverage.yml
 
-  - job: 'Generic_Tests'
+  - job: 'Test_No_Coverage'
     variables:
     - template: ../variables/globals.yml
 
