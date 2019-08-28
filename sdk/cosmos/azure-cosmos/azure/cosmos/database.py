@@ -25,6 +25,7 @@
 from typing import Any, List, Dict, Mapping, Union, cast
 
 import six
+from azure.core.tracing.decorator import distributed_trace
 
 from ._cosmos_client_connection import CosmosClientConnection
 from .container import Container
@@ -103,6 +104,7 @@ class Database(object):
             self.read()
         return self._properties
 
+    @distributed_trace
     def read(
         self,
         session_token=None,
@@ -110,6 +112,7 @@ class Database(object):
         populate_query_metrics=None,
         request_options=None,
         response_hook=None,
+        **kwargs
     ):
         # type: (str, Dict[str, str], bool, Dict[str, Any], Optional[Callable]) -> Dict[str, Any]
         """
@@ -139,13 +142,14 @@ class Database(object):
         if populate_query_metrics is not None:
             request_options["populateQueryMetrics"] = populate_query_metrics
 
-        self._properties = self.client_connection.ReadDatabase(database_link, options=request_options)
+        self._properties = self.client_connection.ReadDatabase(database_link, options=request_options, **kwargs)
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, self._properties)
 
         return self._properties
 
+    @distributed_trace
     def create_container(
         self,
         id,  # type: str  # pylint: disable=redefined-builtin
@@ -161,6 +165,7 @@ class Database(object):
         conflict_resolution_policy=None,  # type: Dict[str, Any]
         request_options=None,  # type: Dict[str, Any]
         response_hook=None,  # type: Optional[Callable]
+        **kwargs
     ):
         # type: (...) -> Container
         """
@@ -228,7 +233,7 @@ class Database(object):
             request_options["offerThroughput"] = offer_throughput
 
         data = self.client_connection.CreateContainer(
-            database_link=self.database_link, collection=definition, options=request_options
+            database_link=self.database_link, collection=definition, options=request_options, **kwargs
         )
 
         if response_hook:
@@ -236,6 +241,7 @@ class Database(object):
 
         return Container(self.client_connection, self.database_link, data["id"], properties=data)
 
+    @distributed_trace
     def delete_container(
         self,
         container,  # type: Union[str, Container, Dict[str, Any]]
@@ -245,6 +251,7 @@ class Database(object):
         populate_query_metrics=None,  # type: bool
         request_options=None,  # type: Dict[str, Any]
         response_hook=None,  # type: Optional[Callable]
+        **kwargs
     ):
         # type: (...) -> None
         """ Delete the container
@@ -273,7 +280,7 @@ class Database(object):
             request_options["populateQueryMetrics"] = populate_query_metrics
 
         collection_link = self._get_container_link(container)
-        result = self.client_connection.DeleteContainer(collection_link, options=request_options)
+        result = self.client_connection.DeleteContainer(collection_link, options=request_options, **kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
 
@@ -302,6 +309,7 @@ class Database(object):
 
         return Container(self.client_connection, self.database_link, id_value)
 
+    @distributed_trace
     def read_all_containers(
         self,
         max_item_count=None,
@@ -310,6 +318,7 @@ class Database(object):
         populate_query_metrics=None,
         feed_options=None,
         response_hook=None,
+        **kwargs
     ):
         # type: (int, str, Dict[str, str], bool, Dict[str, Any], Optional[Callable]) -> QueryIterable
         """ List the containers in the database.
@@ -342,11 +351,14 @@ class Database(object):
         if populate_query_metrics is not None:
             feed_options["populateQueryMetrics"] = populate_query_metrics
 
-        result = self.client_connection.ReadContainers(database_link=self.database_link, options=feed_options)
+        result = self.client_connection.ReadContainers(
+            database_link=self.database_link, options=feed_options, **kwargs
+        )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
         return result
 
+    @distributed_trace
     def query_containers(
         self,
         query=None,
@@ -357,6 +369,7 @@ class Database(object):
         populate_query_metrics=None,
         feed_options=None,
         response_hook=None,
+        **kwargs
     ):
         # type: (str, List, int, str, Dict[str, str], bool, Dict[str, Any], Optional[Callable]) -> QueryIterable
         """List properties for containers in the current database
@@ -387,11 +400,13 @@ class Database(object):
             database_link=self.database_link,
             query=query if parameters is None else dict(query=query, parameters=parameters),
             options=feed_options,
+            **kwargs
         )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
         return result
 
+    @distributed_trace
     def replace_container(
         self,
         container,  # type: Union[str, Container, Dict[str, Any]]
@@ -405,6 +420,7 @@ class Database(object):
         populate_query_metrics=None,  # type: bool
         request_options=None,  # type: Dict[str, Any]
         response_hook=None,  # type: Optional[Callable]
+        **kwargs
     ):
         # type: (...) -> Container
         """ Reset the properties of the container. Property changes are persisted immediately.
@@ -462,7 +478,7 @@ class Database(object):
         }
 
         container_properties = self.client_connection.ReplaceContainer(
-            container_link, collection=parameters, options=request_options
+            container_link, collection=parameters, options=request_options, **kwargs
         )
 
         if response_hook:
@@ -472,7 +488,8 @@ class Database(object):
             self.client_connection, self.database_link, container_properties["id"], properties=container_properties
         )
 
-    def read_all_users(self, max_item_count=None, feed_options=None, response_hook=None):
+    @distributed_trace
+    def read_all_users(self, max_item_count=None, feed_options=None, response_hook=None, **kwargs):
         # type: (int, Dict[str, Any], Optional[Callable]) -> QueryIterable
         """ List all users in the container.
 
@@ -487,12 +504,15 @@ class Database(object):
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
-        result = self.client_connection.ReadUsers(database_link=self.database_link, options=feed_options)
+        result = self.client_connection.ReadUsers(
+            database_link=self.database_link, options=feed_options, **kwargs
+        )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
         return result
 
-    def query_users(self, query, parameters=None, max_item_count=None, feed_options=None, response_hook=None):
+    @distributed_trace
+    def query_users(self, query, parameters=None, max_item_count=None, feed_options=None, response_hook=None, **kwargs):
         # type: (str, List, int, Dict[str, Any], Optional[Callable]) -> QueryIterable
         """Return all users matching the given `query`.
 
@@ -513,6 +533,7 @@ class Database(object):
             database_link=self.database_link,
             query=query if parameters is None else dict(query=query, parameters=parameters),
             options=feed_options,
+            **kwargs
         )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
@@ -538,7 +559,8 @@ class Database(object):
 
         return User(client_connection=self.client_connection, id=id_value, database_link=self.database_link)
 
-    def create_user(self, body, request_options=None, response_hook=None):
+    @distributed_trace
+    def create_user(self, body, request_options=None, response_hook=None, **kwargs):
         # type: (Dict[str, Any], Dict[str, Any], Optional[Callable]) -> User
         """ Create a user in the container.
 
@@ -563,7 +585,8 @@ class Database(object):
         if not request_options:
             request_options = {}  # type: Dict[str, Any]
 
-        user = self.client_connection.CreateUser(database_link=self.database_link, user=body, options=request_options)
+        user = self.client_connection.CreateUser(
+            database_link=self.database_link, user=body, options=request_options, **kwargs)
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, user)
@@ -572,7 +595,8 @@ class Database(object):
             client_connection=self.client_connection, id=user["id"], database_link=self.database_link, properties=user
         )
 
-    def upsert_user(self, body, request_options=None, response_hook=None):
+    @distributed_trace
+    def upsert_user(self, body, request_options=None, response_hook=None, **kwargs):
         # type: (Dict[str, Any], Dict[str, Any], Optional[Callable]) -> User
         """ Insert or update the specified user.
 
@@ -588,7 +612,9 @@ class Database(object):
         if not request_options:
             request_options = {}  # type: Dict[str, Any]
 
-        user = self.client_connection.UpsertUser(database_link=self.database_link, user=body, options=request_options)
+        user = self.client_connection.UpsertUser(
+            database_link=self.database_link, user=body, options=request_options, **kwargs
+        )
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, user)
@@ -597,7 +623,8 @@ class Database(object):
             client_connection=self.client_connection, id=user["id"], database_link=self.database_link, properties=user
         )
 
-    def replace_user(self, user, body, request_options=None, response_hook=None):
+    @distributed_trace
+    def replace_user(self, user, body, request_options=None, response_hook=None, **kwargs):
         # type: (Union[str, User, Dict[str, Any]], Dict[str, Any], Dict[str, Any], Optional[Callable]) -> User
         """ Replaces the specified user if it exists in the container.
 
@@ -614,7 +641,7 @@ class Database(object):
             request_options = {}  # type: Dict[str, Any]
 
         user = self.client_connection.ReplaceUser(
-            user_link=self._get_user_link(user), user=body, options=request_options
+            user_link=self._get_user_link(user), user=body, options=request_options, **kwargs
         )
 
         if response_hook:
@@ -624,7 +651,8 @@ class Database(object):
             client_connection=self.client_connection, id=user["id"], database_link=self.database_link, properties=user
         )
 
-    def delete_user(self, user, request_options=None, response_hook=None):
+    @distributed_trace
+    def delete_user(self, user, request_options=None, response_hook=None, **kwargs):
         # type: (Union[str, User, Dict[str, Any]], Dict[str, Any], Optional[Callable]) -> None
         """ Delete the specified user from the container.
 
@@ -639,11 +667,14 @@ class Database(object):
         if not request_options:
             request_options = {}  # type: Dict[str, Any]
 
-        result = self.client_connection.DeleteUser(user_link=self._get_user_link(user), options=request_options)
+        result = self.client_connection.DeleteUser(
+            user_link=self._get_user_link(user), options=request_options, **kwargs
+        )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
 
-    def read_offer(self, response_hook=None):
+    @distributed_trace
+    def read_offer(self, response_hook=None, **kwargs):
         # type: (Optional[Callable]) -> Offer
         """ Read the Offer object for this database.
 
@@ -658,7 +689,7 @@ class Database(object):
             "query": "SELECT * FROM root r WHERE r.resource=@link",
             "parameters": [{"name": "@link", "value": link}],
         }
-        offers = list(self.client_connection.QueryOffers(query_spec))
+        offers = list(self.client_connection.QueryOffers(query_spec, **kwargs))
         if not offers:
             raise HTTPFailure(StatusCodes.NOT_FOUND, "Could not find Offer for database " + self.database_link)
 
@@ -667,7 +698,8 @@ class Database(object):
 
         return Offer(offer_throughput=offers[0]["content"]["offerThroughput"], properties=offers[0])
 
-    def replace_throughput(self, throughput, response_hook=None):
+    @distributed_trace
+    def replace_throughput(self, throughput, response_hook=None, **kwargs):
         # type: (int, Optional[Callable]) -> Offer
         """ Replace the database level throughput.
 
@@ -688,7 +720,7 @@ class Database(object):
             raise HTTPFailure(StatusCodes.NOT_FOUND, "Could not find Offer for collection " + self.database_link)
         new_offer = offers[0].copy()
         new_offer["content"]["offerThroughput"] = throughput
-        data = self.client_connection.ReplaceOffer(offer_link=offers[0]["_self"], offer=offers[0])
+        data = self.client_connection.ReplaceOffer(offer_link=offers[0]["_self"], offer=offers[0], **kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers, data)
         return Offer(offer_throughput=data["content"]["offerThroughput"], properties=data)

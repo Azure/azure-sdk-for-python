@@ -25,6 +25,7 @@
 from typing import Any, Callable, Dict, Mapping, Optional, Union, cast
 
 import six
+from azure.core.tracing.decorator import distributed_trace
 
 from ._cosmos_client_connection import CosmosClientConnection
 from .database import Database
@@ -80,6 +81,7 @@ class CosmosClient:
         database_id = cast("Dict[str, str]", database_or_id)["id"]
         return "dbs/{}".format(database_id)
 
+    @distributed_trace
     def create_database(
         self,
         id,  # pylint: disable=redefined-builtin
@@ -90,6 +92,7 @@ class CosmosClient:
         offer_throughput=None,
         request_options=None,
         response_hook=None,
+        **kwargs
     ):
         # type: (str, str, Dict[str, str], Dict[str, str], bool, int, Dict[str, Any], Optional[Callable]) -> Database
         """Create a new database with the given ID (name).
@@ -128,7 +131,7 @@ class CosmosClient:
         if offer_throughput is not None:
             request_options["offerThroughput"] = offer_throughput
 
-        result = self.client_connection.CreateDatabase(database=dict(id=id), options=request_options)
+        result = self.client_connection.CreateDatabase(database=dict(id=id), options=request_options, **kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers)
         return Database(self.client_connection, id=result["id"], properties=result)
@@ -152,6 +155,7 @@ class CosmosClient:
 
         return Database(self.client_connection, id_value)
 
+    @distributed_trace
     def read_all_databases(
         self,
         max_item_count=None,
@@ -160,6 +164,7 @@ class CosmosClient:
         populate_query_metrics=None,
         feed_options=None,
         response_hook=None,
+        **kwargs
     ):
         # type: (int, str, Dict[str, str], bool, Dict[str, Any],  Optional[Callable]) -> QueryIterable
         """
@@ -185,11 +190,12 @@ class CosmosClient:
         if populate_query_metrics is not None:
             feed_options["populateQueryMetrics"] = populate_query_metrics
 
-        result = self.client_connection.ReadDatabases(options=feed_options)
+        result = self.client_connection.ReadDatabases(options=feed_options, **kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers)
         return result
 
+    @distributed_trace
     def query_databases(
         self,
         query=None,  # type: str
@@ -201,6 +207,7 @@ class CosmosClient:
         populate_query_metrics=None,  # type: bool
         feed_options=None,  # type: Dict[str, Any]
         response_hook=None,  # type: Optional[Callable]
+        **kwargs
     ):
         # type: (...) -> QueryIterable
 
@@ -239,15 +246,15 @@ class CosmosClient:
             # (just returning a generator did not initiate the first network call, so
             # the headers were misleading)
             # This needs to change for "real" implementation
-            result = self.client_connection.QueryDatabases(
-                query=query if parameters is None else dict(query=query, parameters=parameters), options=feed_options
-            )
+            query = query if parameters is None else dict(query=query, parameters=parameters)
+            result = self.client_connection.QueryDatabases(query=query, options=feed_options, **kwargs)
         else:
-            result = self.client_connection.ReadDatabases(options=feed_options)
+            result = self.client_connection.ReadDatabases(options=feed_options, **kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers)
         return result
 
+    @distributed_trace
     def delete_database(
         self,
         database,  # type: Union[str, Database, Dict[str, Any]]
@@ -257,6 +264,7 @@ class CosmosClient:
         populate_query_metrics=None,  # type: bool
         request_options=None,  # type: Dict[str, Any]
         response_hook=None,  # type: Optional[Callable]
+        **kwargs
     ):
         # type: (...) -> None
         """
@@ -285,11 +293,12 @@ class CosmosClient:
             request_options["populateQueryMetrics"] = populate_query_metrics
 
         database_link = self._get_database_link(database)
-        self.client_connection.DeleteDatabase(database_link, options=request_options)
+        self.client_connection.DeleteDatabase(database_link, options=request_options, **kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers)
 
-    def get_database_account(self, response_hook=None):
+    @distributed_trace
+    def get_database_account(self, response_hook=None, **kwargs):
         # type: (Optional[Callable]) -> DatabaseAccount
         """
         Retrieve the database account information.
@@ -298,7 +307,7 @@ class CosmosClient:
         :returns: A :class:`DatabaseAccount` instance representing the Cosmos DB Database Account.
 
         """
-        result = self.client_connection.GetDatabaseAccount()
+        result = self.client_connection.GetDatabaseAccount(**kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers)
         return result

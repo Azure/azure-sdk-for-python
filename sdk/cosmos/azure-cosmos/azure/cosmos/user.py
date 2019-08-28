@@ -25,6 +25,7 @@
 from typing import Any, List, Dict, Union, cast
 
 import six
+from azure.core.tracing.decorator import distributed_trace
 
 from ._cosmos_client_connection import CosmosClientConnection
 from .permission import Permission
@@ -54,7 +55,8 @@ class User:
             self.read()
         return self._properties
 
-    def read(self, request_options=None, response_hook=None):
+    @distributed_trace
+    def read(self, request_options=None, response_hook=None, **kwargs):
         # type: (Dict[str, Any], Optional[Callable]) -> User
         """
         Read user propertes.
@@ -68,14 +70,15 @@ class User:
         if not request_options:
             request_options = {}  # type: Dict[str, Any]
 
-        self._properties = self.client_connection.ReadUser(user_link=self.user_link, options=request_options)
+        self._properties = self.client_connection.ReadUser(user_link=self.user_link, options=request_options, **kwargs)
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, self._properties)
 
         return self._properties
 
-    def read_all_permissions(self, max_item_count=None, feed_options=None, response_hook=None):
+    @distributed_trace
+    def read_all_permissions(self, max_item_count=None, feed_options=None, response_hook=None, **kwargs):
         # type: (int, Dict[str, Any], Optional[Callable]) -> QueryIterable
         """ List all permission for the user.
 
@@ -90,14 +93,23 @@ class User:
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
-        result = self.client_connection.ReadPermissions(user_link=self.user_link, options=feed_options)
+        result = self.client_connection.ReadPermissions(user_link=self.user_link, options=feed_options, **kwargs)
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
 
         return result
 
-    def query_permissions(self, query, parameters=None, max_item_count=None, feed_options=None, response_hook=None):
+    @distributed_trace
+    def query_permissions(
+        self,
+        query,
+        parameters=None,
+        max_item_count=None,
+        feed_options=None,
+        response_hook=None,
+        **kwargs
+    ):
         # type: (str, List, int, Dict[str, Any], Optional[Callable]) -> QueryIterable
         """Return all permissions matching the given `query`.
 
@@ -118,6 +130,7 @@ class User:
             user_link=self.user_link,
             query=query if parameters is None else dict(query=query, parameters=parameters),
             options=feed_options,
+            **kwargs
         )
 
         if response_hook:
@@ -125,7 +138,8 @@ class User:
 
         return result
 
-    def get_permission(self, permission, request_options=None, response_hook=None):
+    @distributed_trace
+    def get_permission(self, permission, request_options=None, response_hook=None, **kwargs):
         # type: (str, Dict[str, Any], Optional[Callable]) -> Permission
         """
         Get the permission identified by `id`.
@@ -142,7 +156,7 @@ class User:
             request_options = {}  # type: Dict[str, Any]
 
         permission = self.client_connection.ReadPermission(
-            permission_link=self._get_permission_link(permission), options=request_options
+            permission_link=self._get_permission_link(permission), options=request_options, **kwargs
         )
 
         if response_hook:
@@ -156,7 +170,8 @@ class User:
             properties=permission,
         )
 
-    def create_permission(self, body, request_options=None, response_hook=None):
+    @distributed_trace
+    def create_permission(self, body, request_options=None, response_hook=None, **kwargs):
         # type: (Dict[str, Any], Dict[str, Any], Optional[Callable]) -> Permission
         """ Create a permission for the user.
 
@@ -173,7 +188,7 @@ class User:
             request_options = {}  # type: Dict[str, Any]
 
         permission = self.client_connection.CreatePermission(
-            user_link=self.user_link, permission=body, options=request_options
+            user_link=self.user_link, permission=body, options=request_options, **kwargs
         )
 
         if response_hook:
@@ -187,7 +202,8 @@ class User:
             properties=permission,
         )
 
-    def upsert_permission(self, body, request_options=None, response_hook=None):
+    @distributed_trace
+    def upsert_permission(self, body, request_options=None, response_hook=None, **kwargs):
         # type: (Dict[str, Any], Dict[str, Any], Optional[Callable]) -> Permission
         """ Insert or update the specified permission.
 
@@ -204,7 +220,7 @@ class User:
             request_options = {}  # type: Dict[str, Any]
 
         permission = self.client_connection.UpsertPermission(
-            user_link=self.user_link, permission=body, options=request_options
+            user_link=self.user_link, permission=body, options=request_options, **kwargs
         )
 
         if response_hook:
@@ -218,7 +234,8 @@ class User:
             properties=permission,
         )
 
-    def replace_permission(self, permission, body, request_options=None, response_hook=None):
+    @distributed_trace
+    def replace_permission(self, permission, body, request_options=None, response_hook=None, **kwargs):
         # type: (str, Dict[str, Any], Dict[str, Any], Optional[Callable]) -> Permission
         """ Replaces the specified permission if it exists for the user.
 
@@ -235,7 +252,7 @@ class User:
             request_options = {}  # type: Dict[str, Any]
 
         permission = self.client_connection.ReplacePermission(
-            permission_link=self._get_permission_link(permission), permission=body, options=request_options
+            permission_link=self._get_permission_link(permission), permission=body, options=request_options, **kwargs
         )
 
         if response_hook:
@@ -249,7 +266,8 @@ class User:
             properties=permission,
         )
 
-    def delete_permission(self, permission, request_options=None, response_hook=None):
+    @distributed_trace
+    def delete_permission(self, permission, request_options=None, response_hook=None, **kwargs):
         # type: (str, Dict[str, Any], Optional[Callable]) -> None
         """ Delete the specified permission from the user.
 
@@ -266,7 +284,7 @@ class User:
             request_options = {}  # type: Dict[str, Any]
 
         result = self.client_connection.DeletePermission(
-            permission_link=self._get_permission_link(permission), options=request_options
+            permission_link=self._get_permission_link(permission), options=request_options, **kwargs
         )
 
         if response_hook:
