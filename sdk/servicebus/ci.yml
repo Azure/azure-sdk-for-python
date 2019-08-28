@@ -13,6 +13,10 @@ pr:
   branches:
     include:
     - master
+    - feature/*
+    - hotfix/*
+    - release/*
+    - '*/resource-manager'
   paths:
     include:
     - sdk/servicebus/
