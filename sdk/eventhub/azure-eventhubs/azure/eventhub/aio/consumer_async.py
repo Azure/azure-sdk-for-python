@@ -8,8 +8,8 @@ import logging
 from typing import List
 import time
 
-from uamqp import errors, types
-from uamqp import ReceiveClientAsync, Source
+from uamqp import errors, types  # type: ignore
+from uamqp import ReceiveClientAsync, Source  # type: ignore
 
 from azure.eventhub import EventData, EventPosition
 from azure.eventhub.error import EventHubError, ConnectError, _error_handler

@@ -12,7 +12,7 @@ import functools
 from abc import abstractmethod
 from typing import Dict
 try:
-    from urlparse import urlparse
+    from urlparse import urlparse  # type: ignore
     from urllib import unquote_plus, urlencode, quote_plus  # type: ignore
 except ImportError:
     from urllib.parse import urlparse, unquote_plus, urlencode, quote_plus
@@ -22,7 +22,7 @@ try:
 except ImportError:
     TYPE_CHECKING = False
 if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
+    from azure.core.credentials import TokenCredential  # type: ignore
     from typing import Union, Any
 
 from azure.eventhub import __version__

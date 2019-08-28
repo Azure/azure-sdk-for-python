@@ -9,8 +9,8 @@ import logging
 import time
 from typing import List
 
-from uamqp import types, errors
-from uamqp import ReceiveClient, Source
+from uamqp import types, errors  # type: ignore
+from uamqp import ReceiveClient, Source  # type: ignore
 
 from azure.eventhub.common import EventData, EventPosition
 from azure.eventhub.error import _error_handler

@@ -8,11 +8,11 @@ import functools
 import asyncio
 from typing import Any, List, Dict
 
-from uamqp import authentication, constants
+from uamqp import authentication, constants  # type: ignore
 from uamqp import (
     Message,
     AMQPClientAsync,
-)
+)  # type: ignore
 
 from azure.eventhub.common import parse_sas_token, EventPosition, EventHubSharedKeyCredential, EventHubSASTokenCredential
 from ..client_abstract import EventHubClientAbstract

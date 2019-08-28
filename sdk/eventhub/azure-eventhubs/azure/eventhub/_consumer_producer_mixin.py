@@ -7,7 +7,7 @@ from __future__ import unicode_literals
 import logging
 import time
 
-from uamqp import errors, constants, compat
+from uamqp import errors, constants, compat  # type: ignore
 from azure.eventhub.error import EventHubError, _handle_exception
 
 log = logging.getLogger(__name__)
