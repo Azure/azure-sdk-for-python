@@ -4,8 +4,8 @@
 # --------------------------------------------------------------------------------------------
 
 from asyncio import Lock
-from uamqp import TransportType, c_uamqp
-from uamqp.async_ops import ConnectionAsync
+from uamqp import TransportType, c_uamqp  # type: ignore
+from uamqp.async_ops import ConnectionAsync  # type: ignore
 
 
 class _SharedConnectionManager(object):
