@@ -40,19 +40,13 @@ try:
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import Password
-    from ._models_py3 import QuotaBaseProperties
-    from ._models_py3 import QuotaUpdateParameters
     from ._models_py3 import RegistryListCredentialsResult
     from ._models_py3 import Resource
     from ._models_py3 import ResourceId
-    from ._models_py3 import ResourceName
-    from ._models_py3 import ResourceQuota
     from ._models_py3 import ScaleSettings
     from ._models_py3 import ServicePrincipalCredentials
     from ._models_py3 import SslConfiguration
     from ._models_py3 import SystemService
-    from ._models_py3 import UpdateWorkspaceQuotas
-    from ._models_py3 import UpdateWorkspaceQuotasResult
     from ._models_py3 import Usage
     from ._models_py3 import UsageName
     from ._models_py3 import UserAccountCredentials
@@ -95,19 +89,13 @@ except (SyntaxError, ImportError):
     from ._models import Operation
     from ._models import OperationDisplay
     from ._models import Password
-    from ._models import QuotaBaseProperties
-    from ._models import QuotaUpdateParameters
     from ._models import RegistryListCredentialsResult
     from ._models import Resource
     from ._models import ResourceId
-    from ._models import ResourceName
-    from ._models import ResourceQuota
     from ._models import ScaleSettings
     from ._models import ServicePrincipalCredentials
     from ._models import SslConfiguration
     from ._models import SystemService
-    from ._models import UpdateWorkspaceQuotas
-    from ._models import UpdateWorkspaceQuotasResult
     from ._models import Usage
     from ._models import UsageName
     from ._models import UserAccountCredentials
@@ -121,17 +109,16 @@ except (SyntaxError, ImportError):
     from ._models import WorkspaceUpdateParameters
 from ._paged_models import ComputeResourcePaged
 from ._paged_models import OperationPaged
-from ._paged_models import ResourceQuotaPaged
 from ._paged_models import UsagePaged
 from ._paged_models import WorkspacePaged
 from ._azure_machine_learning_workspaces_enums import (
     ProvisioningState,
     UsageUnit,
-    QuotaUnit,
-    Status,
     ResourceIdentityType,
     VmPriority,
+    RemoteLoginPortPublicAccess,
     AllocationState,
+    NodeState,
     ComputeType,
     UnderlyingResourceAction,
 )
@@ -167,19 +154,13 @@ __all__ = [
     'Operation',
     'OperationDisplay',
     'Password',
-    'QuotaBaseProperties',
-    'QuotaUpdateParameters',
     'RegistryListCredentialsResult',
     'Resource',
     'ResourceId',
-    'ResourceName',
-    'ResourceQuota',
     'ScaleSettings',
     'ServicePrincipalCredentials',
     'SslConfiguration',
     'SystemService',
-    'UpdateWorkspaceQuotas',
-    'UpdateWorkspaceQuotasResult',
     'Usage',
     'UsageName',
     'UserAccountCredentials',
@@ -194,15 +175,14 @@ __all__ = [
     'OperationPaged',
     'WorkspacePaged',
     'UsagePaged',
-    'ResourceQuotaPaged',
     'ComputeResourcePaged',
     'ProvisioningState',
     'UsageUnit',
-    'QuotaUnit',
-    'Status',
     'ResourceIdentityType',
     'VmPriority',
+    'RemoteLoginPortPublicAccess',
     'AllocationState',
+    'NodeState',
     'ComputeType',
     'UnderlyingResourceAction',
 ]
