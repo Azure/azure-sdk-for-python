@@ -83,8 +83,8 @@ class ApiDeploymentParameterMetadataSet(Model):
     """
 
     _attribute_map = {
-        'package_content_link': {'key': 'PackageContentLink', 'type': 'ApiDeploymentParameterMetadata'},
-        'redis_cache_connection_string': {'key': 'RedisCacheConnectionString', 'type': 'ApiDeploymentParameterMetadata'},
+        'package_content_link': {'key': 'packageContentLink', 'type': 'ApiDeploymentParameterMetadata'},
+        'redis_cache_connection_string': {'key': 'redisCacheConnectionString', 'type': 'ApiDeploymentParameterMetadata'},
     }
 
     def __init__(self, *, package_content_link=None, redis_cache_connection_string=None, **kwargs) -> None:
@@ -3436,38 +3436,27 @@ class IntegrationServiceEnvironmentNetworkEndpoint(Model):
 
 
 class IntegrationServiceEnvironmentProperties(Model):
-    """IntegrationServiceEnvironmentProperties.
+    """The integration service environment properties.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar provisioning_state: The provisioning state. Possible values include:
-     'NotSpecified', 'Accepted', 'Running', 'Ready', 'Creating', 'Created',
-     'Deleting', 'Deleted', 'Canceled', 'Failed', 'Succeeded', 'Moving',
-     'Updating', 'Registering', 'Registered', 'Unregistering', 'Unregistered',
-     'Completed'
-    :vartype provisioning_state: str or
+    :param provisioning_state: The provisioning state. Possible values
+     include: 'NotSpecified', 'Accepted', 'Running', 'Ready', 'Creating',
+     'Created', 'Deleting', 'Deleted', 'Canceled', 'Failed', 'Succeeded',
+     'Moving', 'Updating', 'Registering', 'Registered', 'Unregistering',
+     'Unregistered', 'Completed'
+    :type provisioning_state: str or
      ~azure.mgmt.logic.models.WorkflowProvisioningState
     :param state: The integration service environment state. Possible values
      include: 'NotSpecified', 'Completed', 'Enabled', 'Disabled', 'Deleted',
      'Suspended'
     :type state: str or ~azure.mgmt.logic.models.WorkflowState
-    :ivar integration_service_environment_id: Gets the tracking id.
-    :vartype integration_service_environment_id: str
-    :ivar endpoints_configuration: The endpoints configuration.
-    :vartype endpoints_configuration:
+    :param integration_service_environment_id: Gets the tracking id.
+    :type integration_service_environment_id: str
+    :param endpoints_configuration: The endpoints configuration.
+    :type endpoints_configuration:
      ~azure.mgmt.logic.models.FlowEndpointsConfiguration
-    :ivar network_configuration: The network configuration.
-    :vartype network_configuration:
-     ~azure.mgmt.logic.models.NetworkConfiguration
+    :param network_configuration: The network configuration.
+    :type network_configuration: ~azure.mgmt.logic.models.NetworkConfiguration
     """
-
-    _validation = {
-        'provisioning_state': {'readonly': True},
-        'integration_service_environment_id': {'readonly': True},
-        'endpoints_configuration': {'readonly': True},
-        'network_configuration': {'readonly': True},
-    }
 
     _attribute_map = {
         'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
@@ -3477,13 +3466,13 @@ class IntegrationServiceEnvironmentProperties(Model):
         'network_configuration': {'key': 'networkConfiguration', 'type': 'NetworkConfiguration'},
     }
 
-    def __init__(self, *, state=None, **kwargs) -> None:
+    def __init__(self, *, provisioning_state=None, state=None, integration_service_environment_id: str=None, endpoints_configuration=None, network_configuration=None, **kwargs) -> None:
         super(IntegrationServiceEnvironmentProperties, self).__init__(**kwargs)
-        self.provisioning_state = None
+        self.provisioning_state = provisioning_state
         self.state = state
-        self.integration_service_environment_id = None
-        self.endpoints_configuration = None
-        self.network_configuration = None
+        self.integration_service_environment_id = integration_service_environment_id
+        self.endpoints_configuration = endpoints_configuration
+        self.network_configuration = network_configuration
 
 
 class IntegrationServiceEnvironmentSku(Model):
