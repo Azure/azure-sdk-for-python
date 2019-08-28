@@ -5,27 +5,19 @@ trigger:
   branches:
     include:
     - master
-    - feature/*
-    - hotfix/*
-    - release/*
-    - '*/resource-manager'
   paths:
     include:
-    - sdk/servicebus/
+    - sdk/appconfiguration/
 
 pr:
   branches:
     include:
     - master
-    - feature/*
-    - hotfix/*
-    - release/*
-    - '*/resource-manager'
   paths:
     include:
-    - sdk/servicebus/
+    - sdk/appconfiguration/
 
 jobs:
 - template: ../../eng/pipelines/templates/jobs/archetype-sdk-client.yml
   parameters:
-    ServiceDirectory: servicebus
+    ServiceDirectory: appconfiguration

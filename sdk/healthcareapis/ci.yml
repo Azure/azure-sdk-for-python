@@ -5,13 +5,9 @@ trigger:
   branches:
     include:
     - master
-    - feature/*
-    - hotfix/*
-    - release/*
-    - '*/resource-manager'
   paths:
     include:
-    - sdk/servicebus/
+    - sdk/healthcareapis/
 
 pr:
   branches:
@@ -23,9 +19,9 @@ pr:
     - '*/resource-manager'
   paths:
     include:
-    - sdk/servicebus/
+    - sdk/healthcareapis/
 
 jobs:
 - template: ../../eng/pipelines/templates/jobs/archetype-sdk-client.yml
   parameters:
-    ServiceDirectory: servicebus
+    ServiceDirectory: healthcareapis
