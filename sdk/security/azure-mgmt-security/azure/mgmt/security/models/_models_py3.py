@@ -3646,8 +3646,8 @@ class UpdateIotSecuritySolutionData(TagsResource):
 
     _attribute_map = {
         'tags': {'key': 'tags', 'type': '{str}'},
-        'user_defined_resources': {'key': 'userDefinedResources', 'type': 'UserDefinedResourcesProperties'},
-        'recommendations_configuration': {'key': 'recommendationsConfiguration', 'type': '[RecommendationConfigurationProperties]'},
+        'user_defined_resources': {'key': 'properties.userDefinedResources', 'type': 'UserDefinedResourcesProperties'},
+        'recommendations_configuration': {'key': 'properties.recommendationsConfiguration', 'type': '[RecommendationConfigurationProperties]'},
     }
 
     def __init__(self, *, tags=None, user_defined_resources=None, recommendations_configuration=None, **kwargs) -> None:
