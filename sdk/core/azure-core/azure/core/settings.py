@@ -263,7 +263,7 @@ class PrioritizedSetting(object):
         self.set_value(value)
 
     def set_value(self, value):
-        # (Any) -> None
+        # type: (Any) -> None
         """Specify a value for this setting programmatically.
 
         A value set this way takes precedence over all other methods except
