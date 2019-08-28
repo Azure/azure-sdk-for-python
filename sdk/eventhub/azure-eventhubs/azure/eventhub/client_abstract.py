@@ -24,7 +24,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
     from typing import Union, Any
 
-from azure.eventhub import __version__
+from azure.eventhub import __version__, EventPosition
 from azure.eventhub.configuration import _Configuration
 from .common import EventHubSharedKeyCredential, EventHubSASTokenCredential, _Address
 
@@ -157,8 +157,8 @@ class EventHubClientAbstract(object):
         self.get_auth = functools.partial(self._create_auth)
         self.config = _Configuration(**kwargs)
         self.debug = self.config.network_tracing
-        self._is_iothub = kwargs.get("is_iothub", False)
-        self._iothub_redirected = None
+        self._is_iothub = False
+        self._iothub_redirect_info = None
 
         log.info("%r: Created the Event Hub client", self.container_id)
 
@@ -179,6 +179,11 @@ class EventHubClientAbstract(object):
             'iot_password': key,
             'username': username,
             'password': password}
+        client._is_iothub = True
+        client._redirect_consumer = client.create_consumer(consumer_group='$default',
+                                                           partition_id='0',
+                                                           event_position=EventPosition('-1'),
+                                                           operation='/messages/events')
         return client
 
     @abstractmethod
@@ -210,6 +215,17 @@ class EventHubClientAbstract(object):
 
         properties["user-agent"] = final_user_agent
         return properties
+
+    def _process_redirect_uri(self, redirect):
+        redirect_uri = redirect.address.decode('utf-8')
+        auth_uri, _, _ = redirect_uri.partition("/ConsumerGroups")
+        self.address = urlparse(auth_uri)
+        self.host = self.address.hostname
+        self.auth_uri = "sb://{}{}".format(self.address.hostname, self.address.path)
+        self.eh_name = self.address.path.lstrip('/')
+        self.mgmt_target = redirect_uri
+        if self._is_iothub:
+            self._iothub_redirect_info = redirect
 
     @classmethod
     def from_connection_string(cls, conn_str, **kwargs):
@@ -272,7 +288,6 @@ class EventHubClientAbstract(object):
             kwargs.pop("event_hub_path", None)
             return cls(host, entity, EventHubSharedKeyCredential(policy, key), **kwargs)
         else:
-            kwargs['is_iothub'] = True
             return cls._from_iothub_connection_string(conn_str, **kwargs)
 
     @abstractmethod

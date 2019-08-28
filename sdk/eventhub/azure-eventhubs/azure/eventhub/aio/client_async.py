@@ -107,6 +107,9 @@ class EventHubClient(EventHubClientAbstract):
         await self._conn_manager.reset_connection_if_broken()
 
     async def _management_request(self, mgmt_msg, op_type):
+        if self._is_iothub and not self._iothub_redirect_info:
+            await self._iothub_redirect()
+
         alt_creds = {
             "username": self._auth_config.get("iot_username"),
             "password": self._auth_config.get("iot_password")
@@ -133,23 +136,16 @@ class EventHubClient(EventHubClientAbstract):
                 await mgmt_client.close_async()
 
     async def _iothub_redirect(self):
-        async with self.create_consumer(consumer_group='$default',
-                                        partition_id='0',
-                                        event_position=EventPosition('-1'),
-                                        operation='/messages/events') as redirect_consumer:
-            await redirect_consumer._open_with_retry(timeout=self.config.receive_timeout)  # pylint: disable=protected-access
-
-    async def _process_redirect_uri(self, redirect):
         async with self._lock:
-            redirect_uri = redirect.address.decode('utf-8')
-            auth_uri, _, _ = redirect_uri.partition("/ConsumerGroups")
-            self.address = urlparse(auth_uri)
-            self.host = self.address.hostname
-            self.auth_uri = "sb://{}{}".format(self.address.hostname, self.address.path)
-            self.eh_name = self.address.path.lstrip('/')
-            self.mgmt_target = redirect_uri
-            if self._is_iothub:
-                self._iothub_redirected = redirect
+            if self._is_iothub and not self._iothub_redirect_info:
+                if not self._redirect_consumer:
+                    self._redirect_consumer = self.create_consumer(consumer_group='$default',
+                                                                   partition_id='0',
+                                                                   event_position=EventPosition('-1'),
+                                                                   operation='/messages/events')
+                async with self._redirect_consumer:
+                    await self._redirect_consumer._open_with_retry(timeout=self.config.receive_timeout)  # pylint: disable=protected-access
+                self._redirect_consumer = None
 
     async def get_properties(self):
         # type:() -> Dict[str, Any]
@@ -164,9 +160,8 @@ class EventHubClient(EventHubClientAbstract):
         :rtype: dict
         :raises: ~azure.eventhub.ConnectError
         """
-        if self._is_iothub and not self._iothub_redirected:
+        if self._is_iothub and not self._iothub_redirect_info:
             await self._iothub_redirect()
-
         mgmt_msg = Message(application_properties={'name': self.eh_name})
         response = await self._management_request(mgmt_msg, op_type=b'com.microsoft:eventhub')
         output = {}
@@ -206,9 +201,8 @@ class EventHubClient(EventHubClientAbstract):
         :rtype: dict
         :raises: ~azure.eventhub.ConnectError
         """
-        if self._is_iothub and not self._iothub_redirected:
+        if self._is_iothub and not self._iothub_redirect_info:
             await self._iothub_redirect()
-
         mgmt_msg = Message(application_properties={'name': self.eh_name,
                                                    'partition': partition})
         response = await self._management_request(mgmt_msg, op_type=b'com.microsoft:partition')

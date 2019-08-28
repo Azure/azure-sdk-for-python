@@ -139,8 +139,7 @@ class EventHubConsumer(ConsumerProducerMixin):
 
         """
         # pylint: disable=protected-access
-        if self.client._iothub_redirected:
-            self.redirected = self.client._iothub_redirected
+        self.redirected = self.redirected or self.client._iothub_redirect_info
 
         if not self.running and self.redirected:
             self.client._process_redirect_uri(self.redirected)
