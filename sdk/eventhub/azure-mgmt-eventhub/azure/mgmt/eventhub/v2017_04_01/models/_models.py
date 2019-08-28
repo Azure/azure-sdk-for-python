@@ -796,27 +796,6 @@ class NetworkRuleSet(Resource):
         self.ip_rules = kwargs.get('ip_rules', None)
 
 
-class NetworkRuleSetListResult(Model):
-    """The response of the List NetworkRuleSet operation.
-
-    :param value: Result of the List NetworkRuleSet operation.
-    :type value: list[~azure.mgmt.eventhub.v2017_04_01.models.NetworkRuleSet]
-    :param next_link: Link to the next set of results. Not empty if Value
-     contains incomplete list of NetworkRuleSet.
-    :type next_link: str
-    """
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[NetworkRuleSet]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(NetworkRuleSetListResult, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.next_link = kwargs.get('next_link', None)
-
-
 class NWRuleSetIpRules(Model):
     """Description of NetWorkRuleSet - IpRules resource.
 
