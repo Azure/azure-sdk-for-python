@@ -119,6 +119,7 @@ try:
     from .managed_database_security_alert_policy_py3 import ManagedDatabaseSecurityAlertPolicy
     from .managed_server_security_alert_policy_py3 import ManagedServerSecurityAlertPolicy
     from .sensitivity_label_py3 import SensitivityLabel
+    from .managed_instance_administrator_py3 import ManagedInstanceAdministrator
     from .database_operation_py3 import DatabaseOperation
     from .elastic_pool_operation_py3 import ElasticPoolOperation
     from .max_size_capability_py3 import MaxSizeCapability
@@ -165,6 +166,8 @@ try:
     from .usage_py3 import Usage
     from .managed_instance_py3 import ManagedInstance
     from .managed_instance_update_py3 import ManagedInstanceUpdate
+    from .private_link_resource_properties_py3 import PrivateLinkResourceProperties
+    from .private_link_resource_py3 import PrivateLinkResource
 except (SyntaxError, ImportError):
     from .recoverable_database import RecoverableDatabase
     from .restorable_dropped_database import RestorableDroppedDatabase
@@ -275,6 +278,7 @@ except (SyntaxError, ImportError):
     from .managed_database_security_alert_policy import ManagedDatabaseSecurityAlertPolicy
     from .managed_server_security_alert_policy import ManagedServerSecurityAlertPolicy
     from .sensitivity_label import SensitivityLabel
+    from .managed_instance_administrator import ManagedInstanceAdministrator
     from .database_operation import DatabaseOperation
     from .elastic_pool_operation import ElasticPoolOperation
     from .max_size_capability import MaxSizeCapability
@@ -321,6 +325,8 @@ except (SyntaxError, ImportError):
     from .usage import Usage
     from .managed_instance import ManagedInstance
     from .managed_instance_update import ManagedInstanceUpdate
+    from .private_link_resource_properties import PrivateLinkResourceProperties
+    from .private_link_resource import PrivateLinkResource
 from .recoverable_database_paged import RecoverableDatabasePaged
 from .restorable_dropped_database_paged import RestorableDroppedDatabasePaged
 from .server_paged import ServerPaged
@@ -375,6 +381,7 @@ from .restore_point_paged import RestorePointPaged
 from .managed_database_security_alert_policy_paged import ManagedDatabaseSecurityAlertPolicyPaged
 from .managed_server_security_alert_policy_paged import ManagedServerSecurityAlertPolicyPaged
 from .sensitivity_label_paged import SensitivityLabelPaged
+from .managed_instance_administrator_paged import ManagedInstanceAdministratorPaged
 from .database_operation_paged import DatabaseOperationPaged
 from .elastic_pool_operation_paged import ElasticPoolOperationPaged
 from .vulnerability_assessment_scan_record_paged import VulnerabilityAssessmentScanRecordPaged
@@ -388,6 +395,7 @@ from .server_vulnerability_assessment_paged import ServerVulnerabilityAssessment
 from .instance_pool_paged import InstancePoolPaged
 from .usage_paged import UsagePaged
 from .managed_instance_paged import ManagedInstancePaged
+from .private_link_resource_paged import PrivateLinkResourcePaged
 from .sql_management_client_enums import (
     CheckNameAvailabilityReason,
     ServerConnectionType,
@@ -582,6 +590,7 @@ __all__ = [
     'ManagedDatabaseSecurityAlertPolicy',
     'ManagedServerSecurityAlertPolicy',
     'SensitivityLabel',
+    'ManagedInstanceAdministrator',
     'DatabaseOperation',
     'ElasticPoolOperation',
     'MaxSizeCapability',
@@ -628,6 +637,8 @@ __all__ = [
     'Usage',
     'ManagedInstance',
     'ManagedInstanceUpdate',
+    'PrivateLinkResourceProperties',
+    'PrivateLinkResource',
     'RecoverableDatabasePaged',
     'RestorableDroppedDatabasePaged',
     'ServerPaged',
@@ -682,6 +693,7 @@ __all__ = [
     'ManagedDatabaseSecurityAlertPolicyPaged',
     'ManagedServerSecurityAlertPolicyPaged',
     'SensitivityLabelPaged',
+    'ManagedInstanceAdministratorPaged',
     'DatabaseOperationPaged',
     'ElasticPoolOperationPaged',
     'VulnerabilityAssessmentScanRecordPaged',
@@ -695,6 +707,7 @@ __all__ = [
     'InstancePoolPaged',
     'UsagePaged',
     'ManagedInstancePaged',
+    'PrivateLinkResourcePaged',
     'CheckNameAvailabilityReason',
     'ServerConnectionType',
     'SecurityAlertPolicyState',

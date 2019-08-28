@@ -113,8 +113,8 @@ class ExtendedDatabaseBlobAuditingPolicy(ProxyResource):
     :type is_storage_secondary_key_in_use: bool
     :param is_azure_monitor_target_enabled: Specifies whether audit events are
      sent to Azure Monitor.
-     In order to send the events to Azure Monitor, specify 'State' as 'Enabled'
-     and 'IsAzureMonitorTargetEnabled' as true.
+     In order to send the events to Azure Monitor, specify 'state' as 'Enabled'
+     and 'isAzureMonitorTargetEnabled' as true.
      When using REST API to configure auditing, Diagnostic Settings with
      'SQLSecurityAuditEvents' diagnostic logs category on the database should
      be also created.
