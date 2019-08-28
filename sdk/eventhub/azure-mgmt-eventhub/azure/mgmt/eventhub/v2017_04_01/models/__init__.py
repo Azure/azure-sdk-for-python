@@ -25,6 +25,7 @@ try:
     from ._models_py3 import MessagingRegions
     from ._models_py3 import MessagingRegionsProperties
     from ._models_py3 import NetworkRuleSet
+    from ._models_py3 import NetworkRuleSetListResult
     from ._models_py3 import NWRuleSetIpRules
     from ._models_py3 import NWRuleSetVirtualNetworkRules
     from ._models_py3 import Operation
@@ -50,6 +51,7 @@ except (SyntaxError, ImportError):
     from ._models import MessagingRegions
     from ._models import MessagingRegionsProperties
     from ._models import NetworkRuleSet
+    from ._models import NetworkRuleSetListResult
     from ._models import NWRuleSetIpRules
     from ._models import NWRuleSetVirtualNetworkRules
     from ._models import Operation
@@ -96,6 +98,7 @@ __all__ = [
     'MessagingRegions',
     'MessagingRegionsProperties',
     'NetworkRuleSet',
+    'NetworkRuleSetListResult',
     'NWRuleSetIpRules',
     'NWRuleSetVirtualNetworkRules',
     'Operation',
