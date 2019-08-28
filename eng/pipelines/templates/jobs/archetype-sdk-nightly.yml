@@ -90,7 +90,7 @@ jobs:
         Linux_Python35:
           OSName: 'Linux'
           OSVmImage: 'ubuntu-16.04'
-          PythonVersion: 'py3.5'
+          PythonVersion: '3.5'
         Linux_PyPy3:
           OSName: 'Linux'
           OSVmImage: 'ubuntu-16.04'
