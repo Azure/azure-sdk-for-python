@@ -43,7 +43,32 @@ def _is_readable_stream(obj):
     return False
 
 
-def _Request(global_endpoint_manager, request_options, connection_policy, pipeline_client, request):
+def _request_body_from_data(data):
+    """Gets request body from data.
+
+    When `data` is dict and list into unicode string; otherwise return `data`
+    without making any change.
+
+    :param (str, unicode, file-like stream object, dict, list or None) data:
+
+    :rtype:
+        str, unicode, file-like stream object, or None
+
+    """
+    if data is None or isinstance(data, six.string_types) or _is_readable_stream(data):
+        return data
+    elif isinstance(data, (dict, list, tuple)):
+        
+        json_dumped = json.dumps(data, separators=(',',':'))
+
+        if six.PY2:
+            return json_dumped.decode('utf-8')
+        else:
+            return json_dumped
+    return None
+
+
+def _Request(global_endpoint_manager, request_options, connection_policy, pipeline_client, request, **kwargs):
     """Makes one http request using the requests module.
 
     :param _GlobalEndpointManager global_endpoint_manager:
@@ -66,6 +91,7 @@ def _Request(global_endpoint_manager, request_options, connection_policy, pipeli
     is_media_stream = is_media and connection_policy.MediaReadMode == documents.MediaReadMode.Streamed
 
     connection_timeout = connection_policy.MediaRequestTimeout if is_media else connection_policy.RequestTimeout
+    connection_timeout = kwargs.pop('connection_timeout', connection_timeout / 1000.0)
 
     # Every request tries to perform a refresh
     global_endpoint_manager.refresh_endpoint_list(None)
@@ -91,23 +117,24 @@ def _Request(global_endpoint_manager, request_options, connection_policy, pipeli
         and not connection_policy.DisableSSLVerification
     )
 
-    if connection_policy.SSLConfiguration:
+    if connection_policy.SSLConfiguration or 'connection_cert' in kwargs:
         ca_certs = connection_policy.SSLConfiguration.SSLCaCerts
         cert_files = (connection_policy.SSLConfiguration.SSLCertFile, connection_policy.SSLConfiguration.SSLKeyFile)
         response = pipeline_client._pipeline.run(
             request,
             stream=is_media_stream,
-            connection_timeout=connection_timeout / 1000.0,
-            connection_verify=ca_certs,
-            connection_cert=cert_files
+            connection_timeout=connection_timeout,
+            connection_verify=kwargs.pop('connection_verify', ca_certs),
+            connection_cert=kwargs.pop('connection_cert', cert_files),
+
         )
     else:
         response = pipeline_client._pipeline.run(
             request,
             stream=is_media_stream,
-            connection_timeout=connection_timeout / 1000.0,
+            connection_timeout=connection_timeout,
             # If SSL is disabled, verify = false
-            connection_verify=is_ssl_enabled
+            connection_verify=kwargs.pop('connection_verify', is_ssl_enabled)
         )
 
     response = response.http_response
@@ -145,11 +172,9 @@ def SynchronizedRequest(
     global_endpoint_manager,
     connection_policy,
     pipeline_client,
-    method,
-    path,
+    request,
     request_data,
-    query_params,
-    headers,
+    **kwargs
 ):
     """Performs one synchronized http request according to the parameters.
 
@@ -172,18 +197,7 @@ def SynchronizedRequest(
         tuple of (dict dict)
 
     """
-    is_stream = _is_readable_stream(request_data)
-
-    request = pipeline_client._request(
-        method=method,
-        url=path + '?' + urlencode(query_params) if query_params else path,
-        params=None,
-        headers=headers,
-        content=request_data if not is_stream else None,
-        form_content=None,
-        stream_content=request_data if is_stream else None
-    )
-
+    request.data = _request_body_from_data(request_data)
     if request.data and isinstance(request.data, six.string_types):
         request.headers[http_constants.HttpHeaders.ContentLength] = len(request.data)
     elif request.data is None:
@@ -197,5 +211,6 @@ def SynchronizedRequest(
         request_options,
         connection_policy,
         pipeline_client,
-        request
+        request,
+        **kwargs
     )
