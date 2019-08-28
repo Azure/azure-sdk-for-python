@@ -26,7 +26,7 @@ class CosmosDB:
         return db.create_container(id="Planets", partition_key=partition_key)
 
     def create_documents(self, container):
-        # Cosmos will look for an 'id' field in the items, if the 'id' is not specify Cosmos is going to assing a random key.
+        # Cosmos will look for an 'id' field in the items, if the 'id' is not specified, Cosmos is going to assign a random key.
         planets = [
             {
                 "id": "Earth",
@@ -73,7 +73,7 @@ class CosmosDB:
         print("4) Delete Database (Clean up the resource)")
         print("")
 
-        # Ensure that the database does not exists
+        # Ensure that the database does not exist
         try:
             self.delete_database()
         except:
