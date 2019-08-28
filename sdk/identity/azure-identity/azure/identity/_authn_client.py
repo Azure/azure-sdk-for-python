@@ -5,32 +5,35 @@
 import calendar
 import time
 
+from msal import TokenCache
+
 from azure.core import Configuration, HttpRequest
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import ContentDecodePolicy, NetworkTraceLoggingPolicy, RetryPolicy
 from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
-from azure.core.pipeline.transport import HttpTransport, RequestsTransport
-from msal import TokenCache
+from azure.core.pipeline.transport import RequestsTransport
 
 try:
     from typing import TYPE_CHECKING
 except ImportError:
     TYPE_CHECKING = False
+
 if TYPE_CHECKING:
-    # pylint:disable=unused-import
+    # pylint:disable=unused-import,ungrouped-imports
     from time import struct_time
     from typing import Any, Dict, Iterable, Mapping, Optional, Union
     from azure.core.pipeline import PipelineResponse
+    from azure.core.pipeline.transport import HttpTransport
     from azure.core.pipeline.policies import HTTPPolicy
 
 
 class AuthnClientBase(object):
     """Sans I/O authentication client methods"""
 
-    def __init__(self, auth_url, **kwargs):
-        # type: (str, Mapping[str, Any]) -> None
+    def __init__(self, auth_url, **kwargs):  # pylint:disable=unused-argument
+        # type: (str, **Any) -> None
         if not auth_url:
             raise ValueError("auth_url should be the URL of an OAuth endpoint")
         super(AuthnClientBase, self).__init__()
@@ -94,8 +97,14 @@ class AuthnClientBase(object):
         return time.strptime(expires_on[: -len(" +00:00")], "%m/%d/%Y %H:%M:%S")
 
     # TODO: public, factor out of request_token
-    def _prepare_request(self, method="POST", headers=None, form_data=None, params=None):
-        # type: (Optional[str], Optional[Mapping[str, str]], Optional[Mapping[str, str]], Optional[Dict[str, str]]) -> HttpRequest
+    def _prepare_request(
+        self,
+        method="POST",  # type: Optional[str]
+        headers=None,  # type: Optional[Mapping[str, str]]
+        form_data=None,  # type: Optional[Mapping[str, str]]
+        params=None,  # type: Optional[Dict[str, str]]
+    ):
+        # type: (...) -> HttpRequest
         request = HttpRequest(method, self._auth_url, headers=headers)
         if form_data:
             request.headers["Content-Type"] = "application/x-www-form-urlencoded"
@@ -118,8 +127,16 @@ class AuthnClient(AuthnClientBase):
     :type transport:
     """
 
-    def __init__(self, auth_url, config=None, policies=None, transport=None, **kwargs):
-        # type: (str, Optional[Configuration], Optional[Iterable[HTTPPolicy]], Optional[HttpTransport], Mapping[str, Any]) -> None
+    # pylint:disable=missing-client-constructor-parameter-credential
+    def __init__(
+        self,
+        auth_url,  # type: str
+        config=None,  # type: Optional[Configuration]
+        policies=None,  # type: Optional[Iterable[HTTPPolicy]]
+        transport=None,  # type: Optional[HttpTransport]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> None
         config = config or self._create_config(**kwargs)
         policies = policies or [
             ContentDecodePolicy(),
@@ -132,12 +149,20 @@ class AuthnClient(AuthnClientBase):
         self._pipeline = Pipeline(transport=transport, policies=policies)
         super(AuthnClient, self).__init__(auth_url, **kwargs)
 
-    def request_token(self, scopes, method="POST", headers=None, form_data=None, params=None, **kwargs):
-        # type: (Iterable[str], Optional[str], Optional[Mapping[str, str]], Optional[Mapping[str, str]], Optional[Dict[str, str]], Any) -> AccessToken
+    def request_token(
+        self,
+        scopes,  # type: Iterable[str]
+        method="POST",  # type: Optional[str]
+        headers=None,  # type: Optional[Mapping[str, str]]
+        form_data=None,  # type: Optional[Mapping[str, str]]
+        params=None,  # type: Optional[Dict[str, str]]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> AccessToken
         request = self._prepare_request(method, headers=headers, form_data=form_data, params=params)
         request_time = int(time.time())
         response = self._pipeline.run(request, stream=False, **kwargs)
-        token = self._deserialize_and_cache_token(response, scopes, request_time)
+        token = self._deserialize_and_cache_token(response=response, scopes=scopes, request_time=request_time)
         return token
 
     @staticmethod
