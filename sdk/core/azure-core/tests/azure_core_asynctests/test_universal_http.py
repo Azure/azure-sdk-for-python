@@ -49,6 +49,15 @@ async def test_basic_aiohttp():
     assert response.status_code == 200
 
 @pytest.mark.asyncio
+async def test_aiohttp_auto_headers():
+
+    request = HttpRequest("POST", "https://www.bing.com/")
+    async with AioHttpTransport() as sender:
+        response = await sender.send(request)
+        auto_headers = response.internal_response.request_info.headers
+        assert 'Content-Type' not in auto_headers
+
+@pytest.mark.asyncio
 async def test_basic_async_requests():
 
     request = HttpRequest("GET", "https://www.bing.com/")
