@@ -20,6 +20,19 @@ class SecretContentType(str, Enum):
     PEM = 'application/x-pem-file'
 
 
+class KeyUsageType(str, Enum):
+
+    digital_signature = "digitalSignature"
+    non_repudiation = "nonRepudiation"
+    key_encipherment = "keyEncipherment"
+    data_encipherment = "dataEncipherment"
+    key_agreement = "keyAgreement"
+    key_cert_sign = "keyCertSign"
+    c_rl_sign = "cRLSign"
+    encipher_only = "encipherOnly"
+    decipher_only = "decipherOnly"
+
+
 class AdministratorDetails(object):
     """Details of the organization administrator of the certificate issuer."""
 
@@ -527,21 +540,25 @@ class CertificatePolicy(object):
 
         # pylint:disable=too-many-boolean-expressions
         if(self.subject_name or
-                self.key_properties.ekus or
-                self.key_properties.key_usage or
+                (self.key_properties and self.key_properties.ekus) or
+                (self.key_properties and self.key_properties.key_usage) or
                 self.san_emails or
                 self.san_upns or
                 self.san_dns_names or
                 self.validity_in_months):
+            if self.key_properties and self.key_properties.key_usage:
+                key_usage = [k.value for k in self.key_properties.key_usage]
+            else:
+                key_usage = None
             x509_certificate_properties = models.X509CertificateProperties(
                 subject=self.subject_name,
-                ekus=self.key_properties.ekus,
+                ekus=self.key_properties.ekus if self.key_properties else None,
                 subject_alternative_names=models.SubjectAlternativeNames(
                     emails=self.san_emails,
                     upns=self.san_upns,
                     dns_names=self.san_dns_names
                 ),
-                key_usage=self.key_properties.key_usage,
+                key_usage=key_usage,
                 validity_in_months=self.validity_in_months
             )
         else:
@@ -603,6 +620,11 @@ class CertificatePolicy(object):
                     key_properties_bundle.curve or
                     key_properties_bundle.ekus or
                     key_properties_bundle.key_usage)):
+            if certificate_policy_bundle.x509_certificate_properties.key_usage:
+                key_usage = [KeyUsageType(k) for k in certificate_policy_bundle.x509_certificate_properties.key_usage]
+            else:
+                key_usage = None
+
             key_properties = KeyProperties(
                 exportable=certificate_policy_bundle.key_properties.exportable,
                 key_type=certificate_policy_bundle.key_properties.key_type,
@@ -611,8 +633,7 @@ class CertificatePolicy(object):
                 curve=certificate_policy_bundle.key_properties.curve,
                 ekus=(certificate_policy_bundle.x509_certificate_properties.ekus
                       if certificate_policy_bundle.x509_certificate_properties else None),
-                key_usage=(certificate_policy_bundle.x509_certificate_properties.key_usage
-                           if certificate_policy_bundle.x509_certificate_properties else None),
+                key_usage=key_usage,
             )
         else:
             key_properties = None
@@ -664,7 +685,7 @@ class CertificatePolicy(object):
     def content_type(self):
         # type: () -> models.SecretContentType
         """The media type (MIME type).
-        :rtype: str
+        :rtype: SecretContentType
         """
         return self._content_type
 
@@ -987,7 +1008,7 @@ class KeyProperties(object):
         reuse_key=None,  # type: Optional[bool]
         curve=None,  # type: Optional[str]
         ekus=None,  # type: Optional[list[str]]
-        key_usage=None  # type: Optional[list[str]]
+        key_usage=None  # type: Optional[list[KeyUsageType]]
     ):
         # type: (...) -> None
         self._exportable = exportable
@@ -1048,9 +1069,9 @@ class KeyProperties(object):
 
     @property
     def key_usage(self):
-        # type: () -> list[str]
+        # type: () -> list[KeyUsageType]
         """List of key usages.
-        :rtype: list[str]
+        :rtype: list[KeyUsageType]
         """
         return self._key_usage
 
