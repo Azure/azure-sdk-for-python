@@ -37,12 +37,12 @@ class SessionTests(unittest.TestCase):
         cls.created_db = test_config._test_config.create_database_if_not_exist(cls.client)
         cls.created_collection = test_config._test_config.create_multi_partition_collection_with_custom_pk_if_not_exist(cls.client)
 
-    def _MockRequest(self, global_endpoint_manager, request_options, connection_policy, pipeline_client, request):
+    def _MockRequest(self, global_endpoint_manager, request_params, connection_policy, pipeline_client, request):
         if HttpHeaders.SessionToken in request.headers:
             self.last_session_token_sent = request.headers[HttpHeaders.SessionToken]
         else:
             self.last_session_token_sent = None
-        return self._OriginalRequest(global_endpoint_manager, request_options, connection_policy, pipeline_client, request)
+        return self._OriginalRequest(global_endpoint_manager, request_params, connection_policy, pipeline_client, request)
 
     def test_session_token_not_sent_for_master_resource_ops (self):
         self._OriginalRequest = synchronized_request._Request

@@ -1831,8 +1831,8 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         headers = base.GetHeaders(self, default_headers, "get", path, attachment_id, "media", {})
 
         # ReadMedia will always use WriteEndpoint since it's not replicated in readable Geo regions
-        request_options = _request_object.RequestObject("media", documents._OperationType.Read)
-        result, self.last_response_headers = self.__Get(path, request_options, headers, **kwargs)
+        request_params = _request_object.RequestObject("media", documents._OperationType.Read)
+        result, self.last_response_headers = self.__Get(path, request_params, headers, **kwargs)
         return result
 
     def UpdateMedia(self, media_link, readable_stream, options=None, **kwargs):
@@ -1870,8 +1870,8 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         headers = base.GetHeaders(self, initial_headers, "put", path, attachment_id, "media", options)
 
         # UpdateMedia will use WriteEndpoint since it uses PUT operation
-        request_options = _request_object.RequestObject("media", documents._OperationType.Update)
-        result, self.last_response_headers = self.__Put(path, request_options, readable_stream, headers, **kwargs)
+        request_params = _request_object.RequestObject("media", documents._OperationType.Update)
+        result, self.last_response_headers = self.__Put(path, request_params, readable_stream, headers, **kwargs)
 
         self._UpdateSessionIfRequired(headers, result, self.last_response_headers)
         return result
@@ -2050,8 +2050,8 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         headers = base.GetHeaders(self, initial_headers, "post", path, sproc_id, "sprocs", options)
 
         # ExecuteStoredProcedure will use WriteEndpoint since it uses POST operation
-        request_options = _request_object.RequestObject("sprocs", documents._OperationType.ExecuteJavaScript)
-        result, self.last_response_headers = self.__Post(path, request_options, params, headers, **kwargs)
+        request_params = _request_object.RequestObject("sprocs", documents._OperationType.ExecuteJavaScript)
+        result, self.last_response_headers = self.__Post(path, request_params, params, headers, **kwargs)
         return result
 
     def ReplaceStoredProcedure(self, sproc_link, sproc, options=None):
@@ -2215,8 +2215,8 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         initial_headers = dict(self.default_headers)
         headers = base.GetHeaders(self, initial_headers, "get", "", "", "", {})  # path  # id  # type
 
-        request_options = _request_object.RequestObject("databaseaccount", documents._OperationType.Read, url_connection)
-        result, self.last_response_headers = self.__Get("", request_options, headers, **kwargs)
+        request_params = _request_object.RequestObject("databaseaccount", documents._OperationType.Read, url_connection)
+        result, self.last_response_headers = self.__Get("", request_params, headers, **kwargs)
         database_account = documents.DatabaseAccount()
         database_account.DatabasesLink = "/dbs/"
         database_account.MediaLink = "/media/"
@@ -2269,8 +2269,8 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         headers = base.GetHeaders(self, initial_headers, "post", path, id, typ, options)
         # Create will use WriteEndpoint since it uses POST operation
 
-        request_options = _request_object.RequestObject(typ, documents._OperationType.Create)
-        result, self.last_response_headers = self.__Post(path, request_options, body, headers, **kwargs)
+        request_params = _request_object.RequestObject(typ, documents._OperationType.Create)
+        result, self.last_response_headers = self.__Post(path, request_params, body, headers, **kwargs)
 
         # update session for write request
         self._UpdateSessionIfRequired(headers, result, self.last_response_headers)
@@ -2302,8 +2302,8 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         headers[http_constants.HttpHeaders.IsUpsert] = True
 
         # Upsert will use WriteEndpoint since it uses POST operation
-        request_options = _request_object.RequestObject(typ, documents._OperationType.Upsert)
-        result, self.last_response_headers = self.__Post(path, request_options, body, headers, **kwargs)
+        request_params = _request_object.RequestObject(typ, documents._OperationType.Upsert)
+        result, self.last_response_headers = self.__Post(path, request_params, body, headers, **kwargs)
         # update session for write request
         self._UpdateSessionIfRequired(headers, result, self.last_response_headers)
         return result
@@ -2331,8 +2331,8 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         initial_headers = initial_headers or self.default_headers
         headers = base.GetHeaders(self, initial_headers, "put", path, id, typ, options)
         # Replace will use WriteEndpoint since it uses PUT operation
-        request_options = _request_object.RequestObject(typ, documents._OperationType.Replace)
-        result, self.last_response_headers = self.__Put(path, request_options, resource, headers, **kwargs)
+        request_params = _request_object.RequestObject(typ, documents._OperationType.Replace)
+        result, self.last_response_headers = self.__Put(path, request_params, resource, headers, **kwargs)
 
         # update session for request mutates data on server side
         self._UpdateSessionIfRequired(headers, result, self.last_response_headers)
@@ -2360,8 +2360,8 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         initial_headers = initial_headers or self.default_headers
         headers = base.GetHeaders(self, initial_headers, "get", path, id, typ, options)
         # Read will use ReadEndpoint since it uses GET operation
-        request_options = _request_object.RequestObject(typ, documents._OperationType.Read)
-        result, self.last_response_headers = self.__Get(path, request_options, headers, **kwargs)
+        request_params = _request_object.RequestObject(typ, documents._OperationType.Read)
+        result, self.last_response_headers = self.__Get(path, request_params, headers, **kwargs)
         return result
 
     def DeleteResource(self, path, typ, id, initial_headers, options=None, **kwargs):  # pylint: disable=redefined-builtin
@@ -2386,15 +2386,15 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         initial_headers = initial_headers or self.default_headers
         headers = base.GetHeaders(self, initial_headers, "delete", path, id, typ, options)
         # Delete will use WriteEndpoint since it uses DELETE operation
-        request_options = _request_object.RequestObject(typ, documents._OperationType.Delete)
-        result, self.last_response_headers = self.__Delete(path, request_options, headers, **kwargs)
+        request_params = _request_object.RequestObject(typ, documents._OperationType.Delete)
+        result, self.last_response_headers = self.__Delete(path, request_params, headers, **kwargs)
 
         # update session for request mutates data on server side
         self._UpdateSessionIfRequired(headers, result, self.last_response_headers)
 
         return result
 
-    def __Get(self, path, request_options, headers, **kwargs):
+    def __Get(self, path, request_params, headers, **kwargs):
         """Azure Cosmos 'GET' http request.
 
         :params str url:
@@ -2410,7 +2410,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         request = self.pipeline_client.get(url=path, headers=headers)
         return synchronized_request.SynchronizedRequest(
             client=self,
-            request_options=request_options,
+            request_params=request_params,
             global_endpoint_manager=self._global_endpoint_manager,
             connection_policy=self.connection_policy,
             pipeline_client=self.pipeline_client,
@@ -2419,7 +2419,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             **kwargs
         )
 
-    def __Post(self, path, request_options, body, headers, **kwargs):
+    def __Post(self, path, request_params, body, headers, **kwargs):
         """Azure Cosmos 'POST' http request.
 
         :params str url:
@@ -2436,7 +2436,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         request = self.pipeline_client.post(url=path, headers=headers)
         return synchronized_request.SynchronizedRequest(
             client=self,
-            request_options=request_options,
+            request_params=request_params,
             global_endpoint_manager=self._global_endpoint_manager,
             connection_policy=self.connection_policy,
             pipeline_client=self.pipeline_client,
@@ -2445,7 +2445,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             **kwargs
         )
 
-    def __Put(self, path, request_options, body, headers, **kwargs):
+    def __Put(self, path, request_params, body, headers, **kwargs):
         """Azure Cosmos 'PUT' http request.
 
         :params str url:
@@ -2462,7 +2462,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         request = self.pipeline_client.put(url=path, headers=headers)
         return synchronized_request.SynchronizedRequest(
             client=self,
-            request_options=request_options,
+            request_params=request_params,
             global_endpoint_manager=self._global_endpoint_manager,
             connection_policy=self.connection_policy,
             pipeline_client=self.pipeline_client,
@@ -2471,7 +2471,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             **kwargs
         )
 
-    def __Delete(self, path, request_options, headers, **kwargs):
+    def __Delete(self, path, request_params, headers, **kwargs):
         """Azure Cosmos 'DELETE' http request.
 
         :params str url:
@@ -2487,7 +2487,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         request = self.pipeline_client.delete(url=path, headers=headers)
         return synchronized_request.SynchronizedRequest(
             client=self,
-            request_options=request_options,
+            request_params=request_params,
             global_endpoint_manager=self._global_endpoint_manager,
             connection_policy=self.connection_policy,
             pipeline_client=self.pipeline_client,
@@ -2576,9 +2576,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         # Copy to make sure that default_headers won't be changed.
         if query is None:
             # Query operations will use ReadEndpoint even though it uses GET(for feed requests)
-            request_options = _request_object.RequestObject(typ, documents._OperationType.ReadFeed)
+            request_params = _request_object.RequestObject(typ, documents._OperationType.ReadFeed)
             headers = base.GetHeaders(self, initial_headers, "get", path, id_, typ, options, partition_key_range_id)
-            result, self.last_response_headers = self.__Get(path, request_options, headers, **kwargs)
+            result, self.last_response_headers = self.__Get(path, request_params, headers, **kwargs)
             if response_hook:
                 response_hook(self.last_response_headers, result)
             return __GetBodiesFromQueryResult(result)
@@ -2597,9 +2597,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             raise SystemError("Unexpected query compatibility mode.")
 
         # Query operations will use ReadEndpoint even though it uses POST(for regular query operations)
-        request_options = _request_object.RequestObject(typ, documents._OperationType.SqlQuery)
+        request_params = _request_object.RequestObject(typ, documents._OperationType.SqlQuery)
         headers = base.GetHeaders(self, initial_headers, "post", path, id_, typ, options, partition_key_range_id)
-        result, self.last_response_headers = self.__Post(path, request_options, query, headers, **kwargs)
+        result, self.last_response_headers = self.__Post(path, request_params, query, headers, **kwargs)
 
         if response_hook:
             response_hook(self.last_response_headers, result)

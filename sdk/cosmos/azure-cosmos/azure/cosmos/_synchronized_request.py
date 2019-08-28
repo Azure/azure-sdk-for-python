@@ -57,22 +57,21 @@ def _request_body_from_data(data):
     """
     if data is None or isinstance(data, six.string_types) or _is_readable_stream(data):
         return data
-    elif isinstance(data, (dict, list, tuple)):
-        
-        json_dumped = json.dumps(data, separators=(',',':'))
+    if isinstance(data, (dict, list, tuple)):
+
+        json_dumped = json.dumps(data, separators=(",", ":"))
 
         if six.PY2:
-            return json_dumped.decode('utf-8')
-        else:
-            return json_dumped
+            return json_dumped.decode("utf-8")
+        return json_dumped
     return None
 
 
-def _Request(global_endpoint_manager, request_options, connection_policy, pipeline_client, request, **kwargs):
+def _Request(global_endpoint_manager, request_params, connection_policy, pipeline_client, request, **kwargs):
     """Makes one http request using the requests module.
 
     :param _GlobalEndpointManager global_endpoint_manager:
-    :param dict request_options:
+    :param dict request_params:
         contains the resourceType, operationType, endpointOverride,
         useWriteEndpoint, useAlternateWriteEndpoint information
     :param documents.ConnectionPolicy connection_policy:
@@ -87,19 +86,19 @@ def _Request(global_endpoint_manager, request_options, connection_policy, pipeli
         tuple of (dict, dict)
 
     """
-    is_media = request.url.find('media') > -1
+    is_media = request.url.find("media") > -1
     is_media_stream = is_media and connection_policy.MediaReadMode == documents.MediaReadMode.Streamed
 
     connection_timeout = connection_policy.MediaRequestTimeout if is_media else connection_policy.RequestTimeout
-    connection_timeout = kwargs.pop('connection_timeout', connection_timeout / 1000.0)
+    connection_timeout = kwargs.pop("connection_timeout", connection_timeout / 1000.0)
 
     # Every request tries to perform a refresh
     global_endpoint_manager.refresh_endpoint_list(None)
 
-    if request_options.endpoint_override:
-        base_url = request_options.endpoint_override
+    if request_params.endpoint_override:
+        base_url = request_params.endpoint_override
     else:
-        base_url = global_endpoint_manager.resolve_service_endpoint(request_options)
+        base_url = global_endpoint_manager.resolve_service_endpoint(request_params)
     if base_url != pipeline_client._base_url:
         request.url = request.url.replace(pipeline_client._base_url, base_url)
 
@@ -117,15 +116,15 @@ def _Request(global_endpoint_manager, request_options, connection_policy, pipeli
         and not connection_policy.DisableSSLVerification
     )
 
-    if connection_policy.SSLConfiguration or 'connection_cert' in kwargs:
+    if connection_policy.SSLConfiguration or "connection_cert" in kwargs:
         ca_certs = connection_policy.SSLConfiguration.SSLCaCerts
         cert_files = (connection_policy.SSLConfiguration.SSLCertFile, connection_policy.SSLConfiguration.SSLKeyFile)
         response = pipeline_client._pipeline.run(
             request,
             stream=is_media_stream,
             connection_timeout=connection_timeout,
-            connection_verify=kwargs.pop('connection_verify', ca_certs),
-            connection_cert=kwargs.pop('connection_cert', cert_files),
+            connection_verify=kwargs.pop("connection_verify", ca_certs),
+            connection_cert=kwargs.pop("connection_cert", cert_files),
 
         )
     else:
@@ -134,7 +133,7 @@ def _Request(global_endpoint_manager, request_options, connection_policy, pipeli
             stream=is_media_stream,
             connection_timeout=connection_timeout,
             # If SSL is disabled, verify = false
-            connection_verify=kwargs.pop('connection_verify', is_ssl_enabled)
+            connection_verify=kwargs.pop("connection_verify", is_ssl_enabled)
         )
 
     response = response.http_response
@@ -168,7 +167,7 @@ def _Request(global_endpoint_manager, request_options, connection_policy, pipeli
 
 def SynchronizedRequest(
     client,
-    request_options,
+    request_params,
     global_endpoint_manager,
     connection_policy,
     pipeline_client,
@@ -180,7 +179,7 @@ def SynchronizedRequest(
 
     :param object client:
         Document client instance
-    :param dict request_options:
+    :param dict request_params:
     :param _GlobalEndpointManager global_endpoint_manager: 
     :param  documents.ConnectionPolicy connection_policy:
     :param azure.core.PipelineClient pipeline_client:
@@ -208,7 +207,7 @@ def SynchronizedRequest(
         client,
         global_endpoint_manager,
         _Request,
-        request_options,
+        request_params,
         connection_policy,
         pipeline_client,
         request,
