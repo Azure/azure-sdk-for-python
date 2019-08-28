@@ -9,7 +9,7 @@ from azure.storage.blob.aio import ContainerClient
 RECEIVE_TIMEOUT = 5  # timeout in seconds for a receiving operation. 0 or None means no timeout
 RETRY_TOTAL = 3  # max number of retries for receive operations within the receive timeout. Actual number of retries clould be less if RECEIVE_TIMEOUT is too small
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
-STORAGE_CONNECTION_STR = "DefaultEndpointsProtocol=https;AccountName=ephstg;AccountKey=JX+/0R9IFtbo406MlvgLb4/ihT66kZh7vyeqUoDZkS5RKeUi7CBO+3mpl1gnNTf2Do6uUFjDQtdr1i2idcQ7Uw==;BlobEndpoint=https://ephstg.blob.core.windows.net/;QueueEndpoint=https://ephstg.queue.core.windows.net/;TableEndpoint=https://ephstg.table.core.windows.net/;FileEndpoint=https://ephstg.file.core.windows.net/;"
+STORAGE_CONNECTION_STR = os.environ["AZURE_STORAGE_CONN_STR"]
 
 logging.basicConfig(level=logging.INFO)
 
