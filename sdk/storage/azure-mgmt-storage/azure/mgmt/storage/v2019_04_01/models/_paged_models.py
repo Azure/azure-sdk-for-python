@@ -90,3 +90,16 @@ class ListContainerItemPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(ListContainerItemPaged, self).__init__(*args, **kwargs)
+class FileShareItemPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`FileShareItem <azure.mgmt.storage.v2019_04_01.models.FileShareItem>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[FileShareItem]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(FileShareItemPaged, self).__init__(*args, **kwargs)
