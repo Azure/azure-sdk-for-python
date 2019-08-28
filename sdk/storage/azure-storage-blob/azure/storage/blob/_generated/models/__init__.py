@@ -19,7 +19,6 @@ try:
     from ._models_py3 import BlobMetadata
     from ._models_py3 import BlobPrefix
     from ._models_py3 import BlobProperties
-    from ._models_py3 import BlobTags
     from ._models_py3 import Block
     from ._models_py3 import BlockList
     from ._models_py3 import BlockLookupList
@@ -27,13 +26,10 @@ try:
     from ._models_py3 import ContainerItem
     from ._models_py3 import ContainerProperties
     from ._models_py3 import CorsRule
-    from ._models_py3 import CustomerProvidedKeyInfo
+    from ._models_py3 import CpkInfo
     from ._models_py3 import DataLakeStorageError, DataLakeStorageErrorException
     from ._models_py3 import DataLakeStorageErrorError
     from ._models_py3 import DirectoryHttpHeaders
-    from ._models_py3 import FilterBlobsItem
-    from ._models_py3 import FilterBlobsResponse
-    from ._models_py3 import FilterBlobsSegment
     from ._models_py3 import GeoReplication
     from ._models_py3 import KeyInfo
     from ._models_py3 import LeaseAccessConditions
@@ -53,7 +49,6 @@ try:
     from ._models_py3 import StorageError, StorageErrorException
     from ._models_py3 import StorageServiceProperties
     from ._models_py3 import StorageServiceStats
-    from ._models_py3 import Tag
     from ._models_py3 import UserDelegationKey
 except (SyntaxError, ImportError):
     from ._models import AccessPolicy
@@ -65,7 +60,6 @@ except (SyntaxError, ImportError):
     from ._models import BlobMetadata
     from ._models import BlobPrefix
     from ._models import BlobProperties
-    from ._models import BlobTags
     from ._models import Block
     from ._models import BlockList
     from ._models import BlockLookupList
@@ -73,13 +67,10 @@ except (SyntaxError, ImportError):
     from ._models import ContainerItem
     from ._models import ContainerProperties
     from ._models import CorsRule
-    from ._models import CustomerProvidedKeyInfo
+    from ._models import CpkInfo
     from ._models import DataLakeStorageError, DataLakeStorageErrorException
     from ._models import DataLakeStorageErrorError
     from ._models import DirectoryHttpHeaders
-    from ._models import FilterBlobsItem
-    from ._models import FilterBlobsResponse
-    from ._models import FilterBlobsSegment
     from ._models import GeoReplication
     from ._models import KeyInfo
     from ._models import LeaseAccessConditions
@@ -99,7 +90,6 @@ except (SyntaxError, ImportError):
     from ._models import StorageError, StorageErrorException
     from ._models import StorageServiceProperties
     from ._models import StorageServiceStats
-    from ._models import Tag
     from ._models import UserDelegationKey
 from ._azure_blob_storage_enums import (
     AccessTier,
@@ -137,7 +127,6 @@ __all__ = [
     'BlobMetadata',
     'BlobPrefix',
     'BlobProperties',
-    'BlobTags',
     'Block',
     'BlockList',
     'BlockLookupList',
@@ -145,13 +134,10 @@ __all__ = [
     'ContainerItem',
     'ContainerProperties',
     'CorsRule',
-    'CustomerProvidedKeyInfo',
+    'CpkInfo',
     'DataLakeStorageError', 'DataLakeStorageErrorException',
     'DataLakeStorageErrorError',
     'DirectoryHttpHeaders',
-    'FilterBlobsItem',
-    'FilterBlobsResponse',
-    'FilterBlobsSegment',
     'GeoReplication',
     'KeyInfo',
     'LeaseAccessConditions',
@@ -171,7 +157,6 @@ __all__ = [
     'StorageError', 'StorageErrorException',
     'StorageServiceProperties',
     'StorageServiceStats',
-    'Tag',
     'UserDelegationKey',
     'PublicAccessType',
     'CopyStatusType',
