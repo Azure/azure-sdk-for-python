@@ -152,7 +152,7 @@ class EnvironmentCredential:
         """
         if not self._credential:
             raise ClientAuthenticationError(message="Incomplete environment configuration.")
-        return self._credential.get_token(*scopes)
+        return self._credential.get_token(*scopes, **kwargs)
 
 
 class ManagedIdentityCredential(object):
@@ -214,7 +214,7 @@ class ChainedTokenCredential(object):
         history = []
         for credential in self.credentials:
             try:
-                return credential.get_token(*scopes)
+                return credential.get_token(*scopes, **kwargs)
             except ClientAuthenticationError as ex:
                 history.append((credential, ex.message))
             except Exception as ex:  # pylint: disable=broad-except
