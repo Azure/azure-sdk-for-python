@@ -56,7 +56,7 @@ class ClientConstructorTakesCorrectParameters(BaseChecker):
     ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
 
     def __init__(self, linter=None):
-        super().__init__(linter)
+        super(ClientConstructorTakesCorrectParameters, self).__init__(linter)
 
     def visit_functiondef(self, node):
         """Visits the constructor within a client class and checks that it has
@@ -109,7 +109,7 @@ class ClientHasKwargsInPoliciesForCreateConfigurationMethod(BaseChecker):
     )
 
     def __init__(self, linter=None):
-        super().__init__(linter)
+        super(ClientHasKwargsInPoliciesForCreateConfigurationMethod, self).__init__(linter)
 
     def visit_functiondef(self, node):
         """Visits the any method called `create_configuration` or `create_config` and checks
@@ -165,7 +165,7 @@ class ClientHasApprovedMethodNamePrefix(BaseChecker):
     ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
 
     def __init__(self, linter=None):
-        super().__init__(linter)
+        super(ClientHasApprovedMethodNamePrefix, self).__init__(linter)
 
     def visit_classdef(self, node):
         """Visits every class in file and checks if it is a client. If it is a client, checks
@@ -225,7 +225,7 @@ class ClientMethodsUseKwargsWithMultipleParameters(BaseChecker):
     ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
 
     def __init__(self, linter=None):
-        super().__init__(linter)
+        super(ClientMethodsUseKwargsWithMultipleParameters, self).__init__(linter)
 
     def visit_functiondef(self, node):
         """Visits every method in the client and checks that it doesn't have more than 5
@@ -279,7 +279,7 @@ class ClientMethodsHaveTypeAnnotations(BaseChecker):
     ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
 
     def __init__(self, linter=None):
-        super().__init__(linter)
+        super(ClientMethodsHaveTypeAnnotations, self).__init__(linter)
 
     def visit_functiondef(self, node):
         """Visits every method in the client and checks that all type comments/annotations
@@ -359,7 +359,7 @@ class ClientMethodsHaveTracingDecorators(BaseChecker):
     ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
 
     def __init__(self, linter=None):
-        super().__init__(linter)
+        super(ClientMethodsHaveTracingDecorators, self).__init__(linter)
 
     def visit_functiondef(self, node):
         """Visits every method in the client and checks that a distributed tracing decorator is present.
@@ -431,7 +431,7 @@ class ClientsDoNotUseStaticMethods(BaseChecker):
     ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
 
     def __init__(self, linter=None):
-        super().__init__(linter)
+        super(ClientsDoNotUseStaticMethods, self).__init__(linter)
 
     def visit_functiondef(self, node):
         """Visits every method in the client and checks that it does not use staticmethod.
@@ -481,7 +481,7 @@ class FileHasCopyrightHeader(BaseChecker):
     )
 
     def __init__(self, linter=None):
-        super().__init__(linter)
+        super(FileHasCopyrightHeader, self).__init__(linter)
 
     def visit_module(self, node):
         """Visits every file and checks that a copyright header is present.
@@ -529,7 +529,7 @@ class ClientUsesCorrectNamingConventions(BaseChecker):
     ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
 
     def __init__(self, linter=None):
-        super().__init__(linter)
+        super(ClientUsesCorrectNamingConventions, self).__init__(linter)
 
     def visit_classdef(self, node):
         """Visits every class in file and checks if it is a client.
@@ -599,7 +599,7 @@ class ClientMethodsHaveKwargsParameter(BaseChecker):
     ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
 
     def __init__(self, linter=None):
-        super().__init__(linter)
+        super(ClientMethodsHaveKwargsParameter, self).__init__(linter)
 
     def visit_functiondef(self, node):
         """Visits every method in the client and checks that it has a kwargs parameter.
@@ -656,7 +656,7 @@ class ClientMethodNamesDoNotUseDoubleUnderscorePrefix(BaseChecker):
     acceptable_names = ["__init__", "__enter__", "__exit__", "__aenter__", "__aexit__"]
 
     def __init__(self, linter=None):
-        super().__init__(linter)
+        super(ClientMethodNamesDoNotUseDoubleUnderscorePrefix, self).__init__(linter)
 
     def visit_functiondef(self, node):
         """Visits every method in the client and checks that no name begins with a double underscore.
@@ -706,7 +706,7 @@ class ClientDocstringUsesLiteralIncludeForCodeExample(BaseChecker):
     ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
 
     def __init__(self, linter=None):
-        super().__init__(linter)
+        super(ClientDocstringUsesLiteralIncludeForCodeExample, self).__init__(linter)
 
     def visit_classdef(self, node):
         """Visits every class in file and checks if it is a client.
@@ -774,7 +774,7 @@ class AsyncClientCorrectNaming(BaseChecker):
     ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
 
     def __init__(self, linter=None):
-        super().__init__(linter)
+        super(AsyncClientCorrectNaming, self).__init__(linter)
 
     def visit_classdef(self, node):
         """Visits every class in file and checks that an async client does not use
@@ -823,7 +823,7 @@ class SpecifyParameterNamesInCall(BaseChecker):
     ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
 
     def __init__(self, linter=None):
-        super().__init__(linter)
+        super(SpecifyParameterNamesInCall, self).__init__(linter)
 
     def visit_call(self, node):
         """Visits every call in the client and checks that it specifies the parameter name in
@@ -874,7 +874,7 @@ class ClientListMethodsUseCorePaging(BaseChecker):
     ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
 
     def __init__(self, linter=None):
-        super().__init__(linter)
+        super(ClientListMethodsUseCorePaging, self).__init__(linter)
 
     def visit_functiondef(self, node):
         """Visits every method in the client and checks that any list_ methods return
@@ -929,7 +929,7 @@ class ClientLROMethodsUseCorePolling(BaseChecker):
     ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
 
     def __init__(self, linter=None):
-        super().__init__(linter)
+        super(ClientLROMethodsUseCorePolling, self).__init__(linter)
 
     def visit_functiondef(self, node):
         """Visits every method in the client and checks that any begin_ methods return
@@ -984,7 +984,7 @@ class ClientLROMethodsUseCorrectNaming(BaseChecker):
     ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
 
     def __init__(self, linter=None):
-        super().__init__(linter)
+        super(ClientLROMethodsUseCorrectNaming, self).__init__(linter)
         self.is_client = []
 
     def visit_classdef(self, node):
@@ -1042,7 +1042,7 @@ class ClientConstructorDoesNotHaveConnectionStringParam(BaseChecker):
     ignore_clients = ["PipelineClient", "AsyncPipelineClient"]
 
     def __init__(self, linter=None):
-        super().__init__(linter)
+        super(ClientConstructorDoesNotHaveConnectionStringParam, self).__init__(linter)
 
     def visit_classdef(self, node):
         """Visits every class in file and checks if it is a client.
@@ -1092,7 +1092,7 @@ class PackageNameDoesNotUseUnderscoreOrPeriod(BaseChecker):
     )
 
     def __init__(self, linter=None):
-        super().__init__(linter)
+        super(PackageNameDoesNotUseUnderscoreOrPeriod, self).__init__(linter)
 
     def visit_module(self, node):
         """Visits setup.py and checks that its package name follows correct naming convention.
@@ -1142,7 +1142,7 @@ class ServiceClientUsesNameWithClientSuffix(BaseChecker):
     )
 
     def __init__(self, linter=None):
-        super().__init__(linter)
+        super(ServiceClientUsesNameWithClientSuffix, self).__init__(linter)
 
     def visit_module(self, node):
         """Visits a file that has "client" in the file name and checks that the service client
@@ -1257,7 +1257,7 @@ class CheckDocstringParameters(BaseChecker):
     )
 
     def __init__(self, linter=None):
-        super().__init__(linter)
+        super(CheckDocstringParameters, self).__init__(linter)
 
     def check_parameters(self, node):
         """Parse the docstring for any params and types
@@ -1483,7 +1483,7 @@ class CheckForPolicyUse(BaseChecker):
     )
 
     def __init__(self, linter=None):
-        super().__init__(linter)
+        super(CheckForPolicyUse, self).__init__(linter)
         self.node_to_use = None
         self.has_policies = set()
         self.ran_at_package_level = False
