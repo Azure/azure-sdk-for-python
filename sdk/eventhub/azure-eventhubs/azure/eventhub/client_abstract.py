@@ -10,24 +10,19 @@ import uuid
 import time
 import functools
 from abc import abstractmethod
-from typing import Dict
-try:
-    from urlparse import urlparse  # type: ignore
-    from urllib import unquote_plus, urlencode, quote_plus  # type: ignore
-except ImportError:
-    from urllib.parse import urlparse, unquote_plus, urlencode, quote_plus
-
-try:
-    from typing import TYPE_CHECKING
-except ImportError:
-    TYPE_CHECKING = False
-if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential  # type: ignore
-    from typing import Union, Any
-
+from typing import Dict, Union, TYPE_CHECKING
 from azure.eventhub import __version__
 from azure.eventhub.configuration import _Configuration
 from .common import EventHubSharedKeyCredential, EventHubSASTokenCredential, _Address
+
+try:
+    from urlparse import urlparse  # type: ignore
+    from urllib import urlencode, quote_plus  # type: ignore
+except ImportError:
+    from urllib.parse import urlparse, urlencode, quote_plus
+
+if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential  # type: ignore
 
 log = logging.getLogger(__name__)
 MAX_USER_AGENT_LENGTH = 512
@@ -88,14 +83,14 @@ def _build_uri(address, entity):
     return address
 
 
-class EventHubClientAbstract(object):
+class EventHubClientAbstract(object):  # pylint:disable=too-many-instance-attributes
     """
     The EventHubClientAbstract class defines a high level interface for sending
     events to and receiving events from the Azure Event Hubs service.
     """
 
     def __init__(self, host, event_hub_path, credential, **kwargs):
-        # type:(str, str, Union[EventHubSharedKeyCredential, EventHubSASTokenCredential, TokenCredential], Any) -> None
+        # type:(str, str, Union[EventHubSharedKeyCredential, EventHubSASTokenCredential, TokenCredential], ...) -> None
         """
         Constructs a new EventHubClient.
 
@@ -269,7 +264,7 @@ class EventHubClientAbstract(object):
         """
         event_hub_path = kwargs.pop("event_hub_path", None)
         is_iot_conn_str = conn_str.lstrip().lower().startswith("hostname")
-        if not is_iot_conn_str:
+        if not is_iot_conn_str:  # pylint:disable=no-else-return
             address, policy, key, entity = _parse_conn_str(conn_str)
             entity = event_hub_path or entity
             left_slash_pos = address.find("//")

@@ -28,11 +28,11 @@ def _error(outcome, condition):
 def _set_partition_key(event_datas, partition_key):
     ed_iter = iter(event_datas)
     for ed in ed_iter:
-        ed._set_partition_key(partition_key)
+        ed._set_partition_key(partition_key)  # pylint:disable=protected-access
         yield ed
 
 
-class EventHubProducer(ConsumerProducerMixin):
+class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instance-attributes
     """
     A producer responsible for transmitting EventData to a specific Event Hub,
     grouped together in batches. Depending on the options specified at creation, the producer may
@@ -111,9 +111,9 @@ class EventHubProducer(ConsumerProducerMixin):
         context will be used to create a new handler before opening it.
 
         """
-        # pylint: disable=protected-access
+
         if not self.running and self.redirected:
-            self.client._process_redirect_uri(self.redirected)
+            self.client._process_redirect_uri(self.redirected)  # pylint: disable=protected-access
             self.target = self.redirected.address
         super(EventHubProducer, self)._open(timeout_time)
 
@@ -140,7 +140,6 @@ class EventHubProducer(ConsumerProducerMixin):
                 if self._outcome == constants.MessageSendResult.Timeout:
                     self._condition = OperationTimeoutError("send operation timed out")
                 _error(self._outcome, self._condition)
-        return
 
     @_retry_decorator
     def _send_event_data_with_retry(self, timeout_time=None, last_exception=None):
@@ -229,7 +228,7 @@ class EventHubProducer(ConsumerProducerMixin):
             wrapper_event_data = event_data
         else:
             if isinstance(event_data, EventDataBatch):  # The partition_key in the param will be omitted.
-                if partition_key and not (partition_key == event_data._partition_key):  # pylint: disable=protected-access
+                if partition_key and not partition_key == event_data._partition_key:  # pylint: disable=protected-access
                     raise EventDataError('The partition_key does not match the one of the EventDataBatch')
                 wrapper_event_data = event_data  # type:ignore
             else:
@@ -240,7 +239,7 @@ class EventHubProducer(ConsumerProducerMixin):
         self.unsent_events = [wrapper_event_data.message]
         self._send_event_data_with_retry(timeout=timeout)
 
-    def close(self, exception=None):
+    def close(self, exception=None):  # pylint:disable=useless-super-delegation
         # type:(Exception) -> None
         """
         Close down the handler. If the handler has already closed,

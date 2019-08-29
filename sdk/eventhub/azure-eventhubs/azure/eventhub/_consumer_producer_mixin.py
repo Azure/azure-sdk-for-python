@@ -25,8 +25,8 @@ def _retry_decorator(to_be_wrapped_func):
         while True:
             try:
                 return to_be_wrapped_func(self, timeout_time=timeout_time, last_exception=last_exception, **kwargs)
-            except Exception as exception:
-                last_exception = self._handle_exception(exception, retry_count, max_retries, timeout_time)
+            except Exception as exception:  # pylint:disable=broad-except
+                last_exception = self._handle_exception(exception, retry_count, max_retries, timeout_time)  # pylint:disable=protected-access
                 retry_count += 1
     return wrapped_func
 
@@ -89,7 +89,7 @@ class ConsumerProducerMixin(object):
 
     def _close_connection(self):
         self._close_handler()
-        self.client._conn_manager.reset_connection_if_broken()
+        self.client._conn_manager.reset_connection_if_broken()  # pylint: disable=protected-access
 
     def _handle_exception(self, exception, retry_count, max_retries, timeout_time):
         if not self.running and isinstance(exception, compat.TimeoutException):
