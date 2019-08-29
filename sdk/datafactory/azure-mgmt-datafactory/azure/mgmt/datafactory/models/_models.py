@@ -6527,8 +6527,11 @@ class CassandraTableDataset(Dataset):
 
 
 class ChainingTrigger(Trigger):
-    """Trigger that schedules pipeline runs based on dependent pipelines
-    successful completion.
+    """Trigger that allows the referenced pipeline to depend on other pipeline
+    runs based on runDimension Name/Value pairs. Upstream pipelines should
+    declare the same runDimension Name and their runs should have the values
+    for those runDimensions. The referenced pipeline run would be triggered if
+    the values for the runDimension match for all upstream pipeline runs.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -6551,12 +6554,12 @@ class ChainingTrigger(Trigger):
     :param type: Required. Constant filled by server.
     :type type: str
     :param pipeline: Required. Pipeline for which runs are created when all
-     dependent pipelines complete successfully.
+     upstream pipelines complete successfully.
     :type pipeline: ~azure.mgmt.datafactory.models.TriggerPipelineReference
-    :param depends_on: Required. Dependent Pipelines.
+    :param depends_on: Required. Upstream Pipelines.
     :type depends_on: list[~azure.mgmt.datafactory.models.PipelineReference]
     :param run_dimension: Required. Run Dimension property that needs to be
-     emitted by dependent pipelines.
+     emitted by upstream pipelines.
     :type run_dimension: str
     """
 
@@ -20208,8 +20211,8 @@ class PipelineRun(Model):
     :ivar parameters: The full or partial list of parameter name, value pair
      used in the pipeline run.
     :vartype parameters: dict[str, str]
-    :ivar run_dimension: Run dimension emitted by Pipeline run.
-    :vartype run_dimension: dict[str, str]
+    :ivar run_dimensions: Run dimensions emitted by Pipeline run.
+    :vartype run_dimensions: dict[str, str]
     :ivar invoked_by: Entity that started the pipeline run.
     :vartype invoked_by: ~azure.mgmt.datafactory.models.PipelineRunInvokedBy
     :ivar last_updated: The last updated timestamp for the pipeline run event
@@ -20233,7 +20236,7 @@ class PipelineRun(Model):
         'is_latest': {'readonly': True},
         'pipeline_name': {'readonly': True},
         'parameters': {'readonly': True},
-        'run_dimension': {'readonly': True},
+        'run_dimensions': {'readonly': True},
         'invoked_by': {'readonly': True},
         'last_updated': {'readonly': True},
         'run_start': {'readonly': True},
@@ -20250,7 +20253,7 @@ class PipelineRun(Model):
         'is_latest': {'key': 'isLatest', 'type': 'bool'},
         'pipeline_name': {'key': 'pipelineName', 'type': 'str'},
         'parameters': {'key': 'parameters', 'type': '{str}'},
-        'run_dimension': {'key': 'runDimension', 'type': '{str}'},
+        'run_dimensions': {'key': 'runDimensions', 'type': '{str}'},
         'invoked_by': {'key': 'invokedBy', 'type': 'PipelineRunInvokedBy'},
         'last_updated': {'key': 'lastUpdated', 'type': 'iso-8601'},
         'run_start': {'key': 'runStart', 'type': 'iso-8601'},
@@ -20268,7 +20271,7 @@ class PipelineRun(Model):
         self.is_latest = None
         self.pipeline_name = None
         self.parameters = None
-        self.run_dimension = None
+        self.run_dimensions = None
         self.invoked_by = None
         self.last_updated = None
         self.run_start = None
