@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import itertools
+import shutil
 import time
 import os
 
@@ -575,7 +576,8 @@ class CertificateClientTests(KeyVaultTestCase):
     @VaultClientPreparer()
     def test_merge_certificate(self, vault_client, **kwargs):
         import base64
-        from subprocess import call
+        import subprocess
+        import shlex
         self.assertIsNotNone(vault_client)
         client = vault_client.certificates
         cert_name = "mergeCertificate"
@@ -591,27 +593,18 @@ class CertificateClientTests(KeyVaultTestCase):
                                             subject='CN=MyCert'
                                         ))
 
-        with open("ca.key", "rt") as f:
-            pkey = crypto.load_privatekey(crypto.FILETYPE_PEM, f.read())
-        with open("ca.crt", "rt") as f:
-            ca_cert = crypto.load_certificate(crypto.FILETYPE_PEM, f.read())
-
         client.create_certificate(name=cert_name, policy=CertificatePolicy._from_certificate_policy_bundle(cert_policy))
 
         with open("test.csr", "w") as f:
             f.write("-----BEGIN CERTIFICATE REQUEST-----\n")
             f.write(base64.b64encode(client.get_certificate_operation(name=cert_name).csr).decode())
             f.write("\n-----END CERTIFICATE REQUEST-----")
-        with open("test.csr", "rt") as f:
-            req = crypto.load_certificate_request(crypto.FILETYPE_PEM, f.read())
 
-        cert = crypto.X509()
-        cert.set_serial_number(1)
-        cert.set_issuer(ca_cert.get_subject())
-        cert.set_subject(req.get_subject())
-        cert.set_pubkey(req.get_pubkey())
-        cert.sign(pkey, "sha256")
-        signed_certificate_bytes = crypto.dump_certificate(crypto.FILETYPE_PEM, cert).decode().replace("\n", "")
+        cmd = "openssl x509 -req -in test.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out test.crt"
+        subprocess.Popen(cmd, shell=True)
+
+        with open("test.crt", "rt") as f:
+            signed_certificate_bytes = f.read().replace("\n", "")
         signed_certificate_bytes = signed_certificate_bytes.lstrip("-----BEGIN CERTIFICATE-----")
         signed_certificate_bytes = signed_certificate_bytes.rstrip("-----END CERTIFICATE-----")
 
