@@ -13,7 +13,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 28 Aug 2019 17:07:04 GMT
+      - Thu, 29 Aug 2019 08:49:33 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -25,11 +25,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 28 Aug 2019 17:07:03 GMT
+      - Thu, 29 Aug 2019 08:49:32 GMT
       etag:
-      - '"0x8D72BDA26896D32"'
+      - '"0x8D72C5DD01840C0"'
       last-modified:
-      - Wed, 28 Aug 2019 17:07:04 GMT
+      - Thu, 29 Aug 2019 08:49:33 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -51,13 +51,13 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 28 Aug 2019 17:07:05 GMT
+      - Thu, 29 Aug 2019 08:49:34 GMT
       x-ms-lease-action:
       - acquire
       x-ms-lease-duration:
       - '-1'
       x-ms-proposed-lease-id:
-      - 1422a07f-0a02-45ae-b857-da96bd1f276d
+      - c7eb30b0-a4ad-4f98-95c4-c5697106b845
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -69,15 +69,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 28 Aug 2019 17:07:04 GMT
+      - Thu, 29 Aug 2019 08:49:32 GMT
       etag:
-      - '"0x8D72BDA26896D32"'
+      - '"0x8D72C5DD01840C0"'
       last-modified:
-      - Wed, 28 Aug 2019 17:07:04 GMT
+      - Thu, 29 Aug 2019 08:49:33 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-lease-id:
-      - 1422a07f-0a02-45ae-b857-da96bd1f276d
+      - c7eb30b0-a4ad-4f98-95c4-c5697106b845
       x-ms-version:
       - '2019-02-02'
     status:
@@ -97,11 +97,11 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 28 Aug 2019 17:07:05 GMT
+      - Thu, 29 Aug 2019 08:49:34 GMT
       x-ms-lease-action:
       - release
       x-ms-lease-id:
-      - 1422a07f-0a02-45ae-b857-da96bd1f276d
+      - c7eb30b0-a4ad-4f98-95c4-c5697106b845
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -113,11 +113,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 28 Aug 2019 17:07:04 GMT
+      - Thu, 29 Aug 2019 08:49:32 GMT
       etag:
-      - '"0x8D72BDA26896D32"'
+      - '"0x8D72C5DD01840C0"'
       last-modified:
-      - Wed, 28 Aug 2019 17:07:04 GMT
+      - Thu, 29 Aug 2019 08:49:33 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:

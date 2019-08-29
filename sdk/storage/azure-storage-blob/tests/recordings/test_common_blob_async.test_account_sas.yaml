@@ -1,0 +1,239 @@
+interactions:
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Thu, 29 Aug 2019 07:51:22 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://pyacrstorage41131004.blob.core.windows.net/utcontainer41131004?timeout=5&restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Thu, 29 Aug 2019 07:51:21 GMT
+      etag: '"0x8D72C55AF400B62"'
+      last-modified: Thu, 29 Aug 2019 07:51:22 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2019-02-02'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstorage41131004.blob.core.windows.net
+        - /utcontainer41131004
+        - timeout=5&restype=container
+        - ''
+- request:
+    body: !!binary |
+      Ofv2uazIiYy8wupA86v4Z61Y5GyimDxdFhRUhfSUHubwFdBeblx+pUL9+XKoH6Lnz5T+PSFh7kWC
+      aHtTpU0gwqCdkmmT7yevkypHM8EgiViZlmM/xiwxT2JIjtgAcgjxu/OD8IlXdgKtrueTraI8JjzE
+      c6IowCTNZ3Kli7FKvd3sMyV6qFg+9yEkHaAfPRFh4XQZMdCW+7wnJi9x1W70SREUifLV14sH16Yk
+      EwAtsKb4Ho9qWGuMZxtVTgo1tgmJVXdEFemDkJiVA0sdnGskKlvDZOrfwo+UQGeeaTtWxX2qgi86
+      2QJ6c6bBsR91T1i9bBkDF4KIkDrelbq47HnvdNrKOM6yOeSbG91y7b8qRU8vOZecBKlN1dGjM+5j
+      bTIhK0AGXNq5nob6EStdRcalj32QzHQg3/UatzAyY29lUji1zux02Qrz4y0b7j3yguZB3wjs+l+/
+      jvZnQ+Ua6t1ExXrJkFyy+0Yx6oney/wKqVsgAdI1ZU3TVoE6y5muk8dizA8SX8EupaJtUX7q7lY/
+      1VNo7kklDACpn7oLsaeYWc2wRePCap64SJEyaZJsVlqi0+3AcY/cqz+mJs2rP/wbyzUD6o1rdE8M
+      mts1SDf2PWk2czsynmh2pTGglhuKuCAWS1OdNBlrrcTsBEzhNcbi7lzgzdOzBKmSR1IHzRUj5ZUN
+      Ojsbm3Xk6pzWsz+uTf6gPv682Qo70hC2r6gaagPHIKrdfUWPNrZhlmuEZrvb8YgxO2AGSWB1brZU
+      sHp7U5gUKF5va1yMGy1bexbciQ23k8AQLyVMrp7OH+qAuZ0l3bKIlF6fRV0L2rVwGQcfW5dzfhI9
+      u66lE86ciqWZTRjEuiBA8ZTqgWGyZKpyNKA+FC/Sm/EtNq+N3aVZO1jtVQGlU3J0twblNfCgknc0
+      HAgEzUeets5zmTJ5ssIrigtUPgkt6enUweVAAy/l0fOjdk4bZNlkwm3fEbzaKYGksFWtsgHSA7EG
+      nysec/lEW9I6LsyZj3YkwaoJdF939BTh/oD4H08LzmLtzuzbMRXA0dAMkLc4cZjpllwAV+7aePfi
+      2Mc310ldt0x9HEV0kSdjtR01dN2z/u9fuUZzf+e8LMTdXwZQPJPwBaz53VVEweeo8zz53FG273HC
+      B6c5qAIglMz00NQmpfbuUG/qzxPQHlRmskN80iEwKeJBBMd8Cn3mUJs+rvZsk+e+bkLLPQINKNM/
+      lvvscSnDyo7VeeXTcS5466OnDCD6ML8PYR7vs4/ZOR9PoU4soyllgHGFZ0SON86ldtdyC7n5Wwkx
+      HdoVRR8krHEBJ/6De8Ncy19Cw3CAXytPD5x+Hao/BmKPgkZ68VxZsXNTeyEjThqo+xh9QQzswA==
+    headers:
+      Content-Length:
+      - '1024'
+      Content-Type:
+      - application/octet-stream
+      If-None-Match:
+      - '*'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-date:
+      - Thu, 29 Aug 2019 07:51:23 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://pyacrstorage41131004.blob.core.windows.net/utcontainer41131004/blob41131004
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      content-md5: Egk8r7DRPDSFXWglKzBksQ==
+      date: Thu, 29 Aug 2019 07:51:21 GMT
+      etag: '"0x8D72C55AF56AC52"'
+      last-modified: Thu, 29 Aug 2019 07:51:22 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-content-crc64: l+rO7AwEd+o=
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2019-02-02'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstorage41131004.blob.core.windows.net
+        - /utcontainer41131004/blob41131004
+        - ''
+        - ''
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Thu, 29 Aug 2019 07:51:23 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://pyacrstorage41131004.blob.core.windows.net/utcontainer41131004?restype=container&se=2019-08-29T08:51:23Z&sp=r&sv=2018-06-17&ss=b&srt=co&sig=ERie1XPzuaGygBK92Q1UB0FaieU7wFAyxKv4H0IbdrY%3D
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Thu, 29 Aug 2019 07:51:21 GMT
+      etag: '"0x8D72C55AF400B62"'
+      last-modified: Thu, 29 Aug 2019 07:51:22 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-default-encryption-scope: $account-encryption-key
+      x-ms-deny-encryption-scope-override: 'false'
+      x-ms-has-immutability-policy: 'false'
+      x-ms-has-legal-hold: 'false'
+      x-ms-lease-state: available
+      x-ms-lease-status: unlocked
+      x-ms-version: '2019-02-02'
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstorage41131004.blob.core.windows.net
+        - /utcontainer41131004
+        - restype=container&se=2019-08-29T08:51:23Z&sp=r&sv=2018-06-17&ss=b&srt=co&sig=ERie1XPzuaGygBK92Q1UB0FaieU7wFAyxKv4H0IbdrY%3D
+        - ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.21.0
+    method: GET
+    uri: https://pyacrstorage41131004.blob.core.windows.net/utcontainer41131004/blob41131004?se=2019-08-29T08%3A51%3A23Z&sp=r&sv=2018-06-17&ss=b&srt=co&sig=ERie1XPzuaGygBK92Q1UB0FaieU7wFAyxKv4H0IbdrY%3D
+  response:
+    body:
+      string: !!binary |
+        Ofv2uazIiYy8wupA86v4Z61Y5GyimDxdFhRUhfSUHubwFdBeblx+pUL9+XKoH6Lnz5T+PSFh7kWC
+        aHtTpU0gwqCdkmmT7yevkypHM8EgiViZlmM/xiwxT2JIjtgAcgjxu/OD8IlXdgKtrueTraI8JjzE
+        c6IowCTNZ3Kli7FKvd3sMyV6qFg+9yEkHaAfPRFh4XQZMdCW+7wnJi9x1W70SREUifLV14sH16Yk
+        EwAtsKb4Ho9qWGuMZxtVTgo1tgmJVXdEFemDkJiVA0sdnGskKlvDZOrfwo+UQGeeaTtWxX2qgi86
+        2QJ6c6bBsR91T1i9bBkDF4KIkDrelbq47HnvdNrKOM6yOeSbG91y7b8qRU8vOZecBKlN1dGjM+5j
+        bTIhK0AGXNq5nob6EStdRcalj32QzHQg3/UatzAyY29lUji1zux02Qrz4y0b7j3yguZB3wjs+l+/
+        jvZnQ+Ua6t1ExXrJkFyy+0Yx6oney/wKqVsgAdI1ZU3TVoE6y5muk8dizA8SX8EupaJtUX7q7lY/
+        1VNo7kklDACpn7oLsaeYWc2wRePCap64SJEyaZJsVlqi0+3AcY/cqz+mJs2rP/wbyzUD6o1rdE8M
+        mts1SDf2PWk2czsynmh2pTGglhuKuCAWS1OdNBlrrcTsBEzhNcbi7lzgzdOzBKmSR1IHzRUj5ZUN
+        Ojsbm3Xk6pzWsz+uTf6gPv682Qo70hC2r6gaagPHIKrdfUWPNrZhlmuEZrvb8YgxO2AGSWB1brZU
+        sHp7U5gUKF5va1yMGy1bexbciQ23k8AQLyVMrp7OH+qAuZ0l3bKIlF6fRV0L2rVwGQcfW5dzfhI9
+        u66lE86ciqWZTRjEuiBA8ZTqgWGyZKpyNKA+FC/Sm/EtNq+N3aVZO1jtVQGlU3J0twblNfCgknc0
+        HAgEzUeets5zmTJ5ssIrigtUPgkt6enUweVAAy/l0fOjdk4bZNlkwm3fEbzaKYGksFWtsgHSA7EG
+        nysec/lEW9I6LsyZj3YkwaoJdF939BTh/oD4H08LzmLtzuzbMRXA0dAMkLc4cZjpllwAV+7aePfi
+        2Mc310ldt0x9HEV0kSdjtR01dN2z/u9fuUZzf+e8LMTdXwZQPJPwBaz53VVEweeo8zz53FG273HC
+        B6c5qAIglMz00NQmpfbuUG/qzxPQHlRmskN80iEwKeJBBMd8Cn3mUJs+rvZsk+e+bkLLPQINKNM/
+        lvvscSnDyo7VeeXTcS5466OnDCD6ML8PYR7vs4/ZOR9PoU4soyllgHGFZ0SON86ldtdyC7n5Wwkx
+        HdoVRR8krHEBJ/6De8Ncy19Cw3CAXytPD5x+Hao/BmKPgkZ68VxZsXNTeyEjThqo+xh9QQzswA==
+    headers:
+      accept-ranges:
+      - bytes
+      content-length:
+      - '1024'
+      content-md5:
+      - Egk8r7DRPDSFXWglKzBksQ==
+      content-type:
+      - application/octet-stream
+      date:
+      - Thu, 29 Aug 2019 07:51:22 GMT
+      etag:
+      - '"0x8D72C55AF56AC52"'
+      last-modified:
+      - Thu, 29 Aug 2019 07:51:22 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-creation-time:
+      - Thu, 29 Aug 2019 07:51:22 GMT
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2018-06-17'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.21.0
+    method: GET
+    uri: https://pyacrstorage41131004.blob.core.windows.net/utcontainer41131004?se=2019-08-29T08%3A51%3A23Z&sp=r&sv=2018-06-17&ss=b&srt=co&sig=ERie1XPzuaGygBK92Q1UB0FaieU7wFAyxKv4H0IbdrY%3D&restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Thu, 29 Aug 2019 07:51:22 GMT
+      etag:
+      - '"0x8D72C55AF400B62"'
+      last-modified:
+      - Thu, 29 Aug 2019 07:51:22 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-has-immutability-policy:
+      - 'false'
+      x-ms-has-legal-hold:
+      - 'false'
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-version:
+      - '2018-06-17'
+    status:
+      code: 200
+      message: OK
+version: 1

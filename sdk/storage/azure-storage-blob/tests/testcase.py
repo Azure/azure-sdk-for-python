@@ -33,26 +33,6 @@ from azure.core.credentials import AccessToken
 
 LOGGING_FORMAT = '%(asctime)s %(name)-20s %(levelname)-5s %(message)s'
 
-
-class TestMode(object):
-    none = 'None'.lower() # this will be for unit test, no need for any recordings
-    playback = 'Playback'.lower() # run against stored recordings
-    record = 'Record'.lower() # run tests against live storage and update recordings
-    run_live_no_record = 'RunLiveNoRecord'.lower() # run tests against live storage without altering recordings
-
-    @staticmethod
-    def is_playback(mode):
-        return mode == TestMode.playback
-
-    @staticmethod
-    def need_recording_file(mode):
-        return mode == TestMode.playback or mode == TestMode.record
-
-    @staticmethod
-    def need_real_credentials(mode):
-        return mode == TestMode.run_live_no_record or mode == TestMode.record
-
-
 class FakeTokenCredential(object):
     """Protocol for classes able to provide OAuth tokens.
     :param str scopes: Lets you specify the type of access needed.

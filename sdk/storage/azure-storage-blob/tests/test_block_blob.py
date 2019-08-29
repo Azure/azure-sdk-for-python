@@ -33,16 +33,12 @@ LARGE_BLOB_SIZE = 64 * 1024 + 5
 
 class StorageBlockBlobTest(StorageTestCase):
 
-    def setUp(self):
-        super(StorageBlockBlobTest, self).setUp()
-
-        url = self._get_account_url()
-
+    def _setup(self, name, key):
         # test chunking functionality by reducing the size of each chunk,
         # otherwise the tests would take too long to execute
         self.bsc = BlobServiceClient(
-            url,
-            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            self._account_url(name),
+            credential=key,
             connection_data_block_size=4 * 1024,
             max_single_put_size=32 * 1024,
             max_block_size=4 * 1024)
@@ -53,19 +49,11 @@ class StorageBlockBlobTest(StorageTestCase):
             self.bsc.create_container(self.container_name)
 
     def tearDown(self):
-        if self.is_live:
-            try:
-                self.bsc.delete_container(self.container_name)
-            except:
-                pass
-
         if os.path.isfile(FILE_PATH):
             try:
                 os.remove(FILE_PATH)
             except:
                 pass
-
-        return super(StorageBlockBlobTest, self).tearDown()
 
     #--Helpers-----------------------------------------------------------------
     def _get_blob_reference(self):
@@ -94,9 +82,10 @@ class StorageBlockBlobTest(StorageTestCase):
 
     #--Test cases for block blobs --------------------------------------------
 
-    @record
-    def test_put_block(self):
-        # Arrange
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_put_block(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account.name, storage_account_key)
         blob = self._create_blob()
 
         # Act
@@ -106,9 +95,10 @@ class StorageBlockBlobTest(StorageTestCase):
 
         # Assert
 
-    @record
-    def test_put_block_unicode(self):
-        # Arrange
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_put_block_unicode(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account.name, storage_account_key)
         blob = self._create_blob()
 
         # Act
@@ -117,9 +107,10 @@ class StorageBlockBlobTest(StorageTestCase):
 
         # Assert
 
-    @record
-    def test_put_block_with_md5(self):
-        # Arrange
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_put_block_with_md5(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account.name, storage_account_key)
         blob = self._create_blob()
 
         # Act
@@ -127,9 +118,10 @@ class StorageBlockBlobTest(StorageTestCase):
 
         # Assert
 
-    @record
-    def test_put_block_list(self):
-        # Arrange
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_put_block_list(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         blob.stage_block('1', b'AAA')
@@ -146,9 +138,10 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(content.properties.etag, put_block_list_resp.get('etag'))
         self.assertEqual(content.properties.last_modified, put_block_list_resp.get('last_modified'))
 
-    @record
-    def test_put_block_list_invalid_block_id(self):
-        # Arrange
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_put_block_list_invalid_block_id(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         blob.stage_block('1', b'AAA')
@@ -165,9 +158,10 @@ class StorageBlockBlobTest(StorageTestCase):
 
         # Assert
 
-    @record
-    def test_put_block_list_with_md5(self):
-        # Arrange
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_put_block_list_with_md5(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         blob.stage_block('1', b'AAA')
@@ -180,9 +174,10 @@ class StorageBlockBlobTest(StorageTestCase):
 
         # Assert
 
-    @record
-    def test_get_block_list_no_blocks(self):
-        # Arrange
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_get_block_list_no_blocks(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account.name, storage_account_key)
         blob = self._create_blob()
 
         # Act
@@ -193,9 +188,10 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(len(block_list[1]), 0)
         self.assertEqual(len(block_list[0]), 0)
 
-    @record
-    def test_get_block_list_uncommitted_blocks(self):
-        # Arrange
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_get_block_list_uncommitted_blocks(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         blob.stage_block('1', b'AAA')
@@ -217,9 +213,10 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(block_list[1][2].id, '3')
         self.assertEqual(block_list[1][2].size, 3)
 
-    @record
-    def test_get_block_list_committed_blocks(self):
-        # Arrange
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_get_block_list_committed_blocks(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         blob.stage_block('1', b'AAA')
@@ -244,9 +241,10 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(block_list[0][2].id, '3')
         self.assertEqual(block_list[0][2].size, 3)
 
-    @record
-    def test_create_small_block_blob_with_no_overwrite(self):
-        # Arrange
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_create_small_block_blob_with_no_overwrite(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data1 = b'hello world'
@@ -266,9 +264,10 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
         self.assertEqual(props.blob_type, BlobType.BlockBlob)
 
-    @record
-    def test_create_small_block_blob_with_overwrite(self):
-        # Arrange
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_create_small_block_blob_with_overwrite(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data1 = b'hello world'
@@ -286,9 +285,10 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(props.last_modified, update_resp.get('last_modified'))
         self.assertEqual(props.blob_type, BlobType.BlockBlob)
 
-    @record
-    def test_create_large_block_blob_with_no_overwrite(self):
-        # Arrange
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_create_large_block_blob_with_no_overwrite(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data1 = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -310,9 +310,10 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(props.metadata, {'BlobData': 'Data1'})
         self.assertEqual(props.size, LARGE_BLOB_SIZE)
 
-    @record
-    def test_create_large_block_blob_with_overwrite(self):
-        # Arrange
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_create_large_block_blob_with_overwrite(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data1 = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -332,9 +333,10 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(props.metadata, {'BlobData': 'Data2'})
         self.assertEqual(props.size, LARGE_BLOB_SIZE + 512)
 
-    @record
-    def test_create_blob_from_bytes_single_put(self):
-        # Arrange
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_create_blob_from_bytes_single_put(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = b'hello world'
@@ -348,9 +350,10 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(props.etag, create_resp.get('etag'))
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
 
-    @record
-    def test_create_blob_from_0_bytes(self):
-        # Arrange
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_create_blob_from_0_bytes(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = b''
@@ -364,9 +367,10 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(props.etag, create_resp.get('etag'))
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
 
-    @record
-    def test_create_from_bytes_blob_unicode(self):
-        # Arrange
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_create_from_bytes_blob_unicode(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = u'hello world'
@@ -380,9 +384,10 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(props.etag, create_resp.get('etag'))
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
 
-    @record
-    def test_create_from_bytes_blob_unicode(self):
-        # Arrange
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_create_from_bytes_blob_unicode(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
@@ -396,12 +401,14 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(props.etag, create_resp.get('etag'))
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
 
-    def test_create_from_bytes_blob_with_lease_id(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_create_from_bytes_blob_with_lease_id(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
             return
 
-        # Arrange
+        self._setup(storage_account.name, storage_account_key)
         blob = self._create_blob()
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
         lease = blob.acquire_lease()
@@ -415,12 +422,14 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(output.properties.etag, create_resp.get('etag'))
         self.assertEqual(output.properties.last_modified, create_resp.get('last_modified'))
 
-    def test_create_blob_from_bytes_with_metadata(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_create_blob_from_bytes_with_metadata(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
             return
 
-        # Arrange
+        self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -433,13 +442,14 @@ class StorageBlockBlobTest(StorageTestCase):
         md = blob.get_blob_properties().metadata
         self.assertDictEqual(md, metadata)
 
-
-    def test_create_blob_from_bytes_with_properties(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_create_blob_from_bytes_with_properties(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
             return
 
-        # Arrange
+        self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -456,12 +466,14 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(properties.content_settings.content_type, content_settings.content_type)
         self.assertEqual(properties.content_settings.content_language, content_settings.content_language)
 
-    def test_create_blob_from_bytes_with_progress(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_create_blob_from_bytes_with_progress(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
             return
 
-        # Arrange
+        self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -483,12 +495,14 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(props.etag, create_resp.get('etag'))
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
 
-    def test_create_blob_from_bytes_with_index(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_create_blob_from_bytes_with_index(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
             return
 
-        # Arrange
+        self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -499,9 +513,10 @@ class StorageBlockBlobTest(StorageTestCase):
         # Assert
         self.assertEqual(data[3:], b"".join(list(blob.download_blob())))
 
-    @record
-    def test_create_blob_from_bytes_with_index_and_count(self):
-        # Arrange
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_create_blob_from_bytes_with_index_and_count(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -512,9 +527,10 @@ class StorageBlockBlobTest(StorageTestCase):
         # Assert
         self.assertEqual(data[3:8], b"".join(list(blob.download_blob())))
 
-    @record
-    def test_create_blob_from_bytes_with_index_and_count_and_properties(self):
-        # Arrange
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_create_blob_from_bytes_with_index_and_count_and_properties(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -531,9 +547,10 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(properties.content_settings.content_type, content_settings.content_type)
         self.assertEqual(properties.content_settings.content_language, content_settings.content_language)
 
-    @record
-    def test_create_blob_from_bytes_non_parallel(self):
-        # Arrange
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_create_blob_from_bytes_non_parallel(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -544,12 +561,14 @@ class StorageBlockBlobTest(StorageTestCase):
         # Assert
         self.assertBlobEqual(self.container_name, blob.blob_name, data)
 
-    def test_create_blob_from_path(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_create_blob_from_path(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
             return
 
-        # Arrange
+        self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -566,9 +585,10 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(props.etag, create_resp.get('etag'))
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
 
-    @record
-    def test_create_blob_from_path_non_parallel(self):
-        # Arrange
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_create_blob_from_path_non_parallel(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(100)
@@ -585,12 +605,14 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(props.etag, create_resp.get('etag'))
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
 
-    def test_create_blob_from_path_with_progress(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_create_blob_from_path_with_progress(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
             return
 
-        # Arrange
+        self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -612,12 +634,14 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertBlobEqual(self.container_name, blob_name, data)
         self.assert_upload_progress(len(data), self.config.max_block_size, progress)
 
-    def test_create_blob_from_path_with_properties(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_create_blob_from_path_with_properties(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
             return
 
-        # Arrange
+        self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -637,12 +661,14 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(properties.content_settings.content_type, content_settings.content_type)
         self.assertEqual(properties.content_settings.content_language, content_settings.content_language)
 
-    def test_create_blob_from_stream_chunked_upload(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_create_blob_from_stream_chunked_upload(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
             return
 
-        # Arrange
+        self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -659,12 +685,14 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(props.etag, create_resp.get('etag'))
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
 
-    def test_create_blob_from_stream_non_seekable_chunked_upload_known_size(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_create_frm_stream_nonseek_chunk_upld_knwn_size(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
             return
 
-        # Arrange
+        self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -680,12 +708,14 @@ class StorageBlockBlobTest(StorageTestCase):
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data[:blob_size])
 
-    def test_create_blob_from_stream_non_seekable_chunked_upload_unknown_size(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_create_from_stream_nonseek_chunk_upld_unkwn_size(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
             return
 
-        # Arrange
+        self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -700,12 +730,14 @@ class StorageBlockBlobTest(StorageTestCase):
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)
 
-    def test_create_blob_from_stream_with_progress_chunked_upload(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_create_blob_from_stream_with_progress_chunked_upload(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
             return
 
-        # Arrange
+        self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -727,12 +759,14 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertBlobEqual(self.container_name, blob_name, data)
         self.assert_upload_progress(len(data), self.config.max_block_size, progress)
 
-    def test_create_blob_from_stream_chunked_upload_with_count(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_create_blob_from_stream_chunked_upload_with_count(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
             return
 
-        # Arrange
+        self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -747,12 +781,14 @@ class StorageBlockBlobTest(StorageTestCase):
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data[:blob_size])
 
-    def test_create_blob_from_stream_chunked_upload_with_count_and_properties(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_create_from_stream_chunk_upload_with_cntandrops(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
             return
 
-        # Arrange
+        self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -773,12 +809,14 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(properties.content_settings.content_type, content_settings.content_type)
         self.assertEqual(properties.content_settings.content_language, content_settings.content_language)
 
-    def test_create_blob_from_stream_chunked_upload_with_properties(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_create_blob_from_stream_chunked_upload_with_properties(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
             return
 
-        # Arrange
+        self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -798,9 +836,10 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(properties.content_settings.content_type, content_settings.content_type)
         self.assertEqual(properties.content_settings.content_language, content_settings.content_language)
 
-    @record
-    def test_create_blob_from_text(self):
-        # Arrange
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_create_blob_from_text(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         text = u'hello 啊齄丂狛狜 world'
@@ -815,9 +854,10 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertEqual(props.etag, create_resp.get('etag'))
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
 
-    @record
-    def test_create_blob_from_text_with_encoding(self):
-        # Arrange
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_create_blob_from_text_with_encoding(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         text = u'hello 啊齄丂狛狜 world'
@@ -829,9 +869,10 @@ class StorageBlockBlobTest(StorageTestCase):
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)
 
-    @record
-    def test_create_blob_from_text_with_encoding_and_progress(self):
-        # Arrange
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_create_blob_from_text_with_encoding_and_progress(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         text = u'hello 啊齄丂狛狜 world'
@@ -851,12 +892,14 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertBlobEqual(self.container_name, blob_name, data)
         self.assert_upload_progress(len(data), self.config.max_block_size, progress)
 
-    def test_create_blob_from_text_chunked_upload(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_create_blob_from_text_chunked_upload(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
             return
 
-        # Arrange
+        self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_text_data(LARGE_BLOB_SIZE)
@@ -871,9 +914,10 @@ class StorageBlockBlobTest(StorageTestCase):
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, encoded_data)
 
-    @record
-    def test_create_blob_with_md5(self):
-        # Arrange
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_create_blob_with_md5(self, resource_group, location, storage_account, storage_account_key):
+        self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = b'hello world'
@@ -883,12 +927,14 @@ class StorageBlockBlobTest(StorageTestCase):
 
         # Assert
 
-    def test_create_blob_with_md5_chunked(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_create_blob_with_md5_chunked(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
             return
 
-        # Arrange
+        self._setup(storage_account.name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)

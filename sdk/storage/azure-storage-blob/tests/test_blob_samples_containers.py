@@ -9,24 +9,16 @@
 import os
 from datetime import datetime, timedelta
 
-try:
-    import settings_real as settings
-except ImportError:
-    import blob_settings_fake as settings
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 
 from testcase import (
-    StorageTestCase,
-    TestMode,
-    record
+    StorageTestCase
 )
 
 SOURCE_FILE = 'SampleSource.txt'
 
 
 class TestContainerSamples(StorageTestCase):
-
-    connection_string = settings.CONNECTION_STRING
-
     def setUp(self):
         data = b"Lorem ipsum dolor sit amet, consectetur adipiscing elit"
         with open(SOURCE_FILE, 'wb') as stream:
@@ -45,13 +37,14 @@ class TestContainerSamples(StorageTestCase):
 
     #--Begin Blob Samples-----------------------------------------------------------------
 
-    @record
-    def test_container_sample(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_container_sample(self, resource_group, location, storage_account, storage_account_key):
 
         # [START create_container_client_from_service]
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string(storage_account, storage_account_key))
 
         # Instantiate a ContainerClient
         container_client = blob_service_client.get_container_client("mynewcontainer")
@@ -79,12 +72,13 @@ class TestContainerSamples(StorageTestCase):
             container_client.delete_container()
             # [END delete_container]
 
-    @record
-    def test_acquire_lease_on_container(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_acquire_lease_on_container(self, resource_group, location, storage_account, storage_account_key):
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string(storage_account, storage_account_key))
 
         # Instantiate a ContainerClient
         container_client = blob_service_client.get_container_client("myleasecontainer")
@@ -100,12 +94,13 @@ class TestContainerSamples(StorageTestCase):
         container_client.delete_container(lease=lease)
         # [END acquire_lease_on_container]
 
-    @record
-    def test_set_metadata_on_container(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_set_metadata_on_container(self, resource_group, location, storage_account, storage_account_key):
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string(storage_account, storage_account_key))
 
         # Instantiate a ContainerClient
         container_client = blob_service_client.get_container_client("mymetadatacontainer")
@@ -131,14 +126,16 @@ class TestContainerSamples(StorageTestCase):
             # Delete container
             container_client.delete_container()
 
-    def test_container_access_policy(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_container_access_policy(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:
             return
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string(storage_account, storage_account_key))
 
         # Instantiate a ContainerClient
         container_client = blob_service_client.get_container_client("myaccesscontainer")
@@ -184,12 +181,13 @@ class TestContainerSamples(StorageTestCase):
             # Delete container
             container_client.delete_container()
 
-    @record
-    def test_list_blobs_in_container(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_list_blobs_in_container(self, resource_group, location, storage_account, storage_account_key):
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string(storage_account, storage_account_key))
 
         # Instantiate a ContainerClient
         container_client = blob_service_client.get_container_client("myblobscontainer")
@@ -215,12 +213,13 @@ class TestContainerSamples(StorageTestCase):
         # Delete container
         container_client.delete_container()
 
-    @record
-    def test_get_blob_client_from_container(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_get_blob_client_from_container(self, resource_group, location, storage_account, storage_account_key):
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string(storage_account, storage_account_key))
 
         # Instantiate a ContainerClient
         container_client = blob_service_client.get_container_client("blobcontainer")

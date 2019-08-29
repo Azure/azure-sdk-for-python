@@ -5,30 +5,24 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 28 Aug 2019 02:15:59 GMT
+      - Thu, 29 Aug 2019 08:00:41 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
     uri: https://pyacrstorageb8441284.blob.core.windows.net/utcontainerb8441284?restype=container
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>AuthenticationFailed</Code><Message>Server
-        failed to authenticate the request. Make sure the value of Authorization header
-        is formed correctly including the signature.\nRequestId:87baec83-501e-0102-1a46-5d107b000000\nTime:2019-08-28T02:15:59.4967428Z</Message><AuthenticationErrorDetail>The
-        MAC signature found in the HTTP request 'suPDSh+vOO0JASS5xgG/pLX7xiLVNvgAUgxVPR0bWTc='
-        is not the same as any computed signature. Server used following string to
-        sign: 'PUT\n\n\n\n\napplication/octet-stream\n\n\n\n\n\n\nx-ms-client-request-id:c66bac24-c939-11e9-b569-2816a845e8c6\nx-ms-date:Wed,
-        28 Aug 2019 02:15:59 GMT\nx-ms-version:2019-02-02\n/pyacrstorageb8441284/utcontainerb8441284\nrestype:container'.</AuthenticationErrorDetail></Error>"
+      string: ''
     headers:
-      content-length: '772'
-      content-type: application/xml
-      date: Wed, 28 Aug 2019 02:15:58 GMT
-      server: Microsoft-HTTPAPI/2.0
-      x-ms-error-code: AuthenticationFailed
+      content-length: '0'
+      date: Thu, 29 Aug 2019 08:00:40 GMT
+      etag: '"0x8D72C56FC792FB6"'
+      last-modified: Thu, 29 Aug 2019 08:00:41 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2019-02-02'
     status:
-      code: 403
-      message: Server failed to authenticate the request. Make sure the value of Authorization
-        header is formed correctly including the signature.
+      code: 201
+      message: Created
     url: !!python/object/new:yarl.URL
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
@@ -36,5 +30,98 @@ interactions:
         - pyacrstorageb8441284.blob.core.windows.net
         - /utcontainerb8441284
         - restype=container
+        - ''
+- request:
+    body: null
+    headers:
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-blob-content-length:
+      - '512'
+      x-ms-blob-type:
+      - PageBlob
+      x-ms-date:
+      - Thu, 29 Aug 2019 08:00:42 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://pyacrstorageb8441284.blob.core.windows.net/utcontainerb8441284/blobb8441284
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Thu, 29 Aug 2019 08:00:40 GMT
+      etag: '"0x8D72C56FC840973"'
+      last-modified: Thu, 29 Aug 2019 08:00:41 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2019-02-02'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstorageb8441284.blob.core.windows.net
+        - /utcontainerb8441284/blobb8441284
+        - ''
+        - ''
+- request:
+    body: !!binary |
+      Bn3c2mqp4Nkt0TIWVvzlBFD9UQ0T3SnHww4ZmPkvCCRaa5MUFWAcaV74380qoFVpjFY3e2DAAiwL
+      1tO2uvB39q1y3PuvXWaNuxdGCXHpvwkNj5EX3ZXiA0dQIXSDvRVfBvgVVn/greDmiu+G5/bgozB3
+      3xupfHu4Rt1TqCI5bsSaDBhFuqLHVNJcnbJb4cbm2nRmMqt/Xy0dHBUQKCiacsM4anzfHev59mdN
+      xYLV+ij6YYGj+JVMRzezQhZaFLB5EwyUXzyPPtJgOlbkbDAuPiN1sDE07bDQ4+xl4ckdfuUbWylO
+      GTKTmQPBeUK7oZHzwtGzX1C9iumI5d0sQLAgtsWgs+n1UR+kXaQd5VaUblmAE9pX5nNHqDCZ0id3
+      kjY5hz1bEGUA1/Fq01ht7OhjbQP08riKSKydKQeWMmztNfvH4Q45exydR0zG8w49sdmkW15b7lHR
+      dzGDkyszX/KkXPhByS51Yg99obn+TEo3ocMheOz2+7D3iamoNkMrIurI4AaRXwZkxWPA5fg0H8VC
+      THwTNvyZaIzhDEWI0a2WPX8xdklaGYnpbUR9XtVCQ47YOS4ng6jn2mFPPgyBzJbdmIVy8Lat+3T3
+      ATN8eE7swQW46LkY4/PEpqS8nPvInKmFwqf3XBySYfJBnMG9eVGCaItiXTX7SWr5pCBaKZo2CVc=
+    headers:
+      Content-Length:
+      - '512'
+      Content-MD5:
+      - zfsIEnIFAq9ApGtf3JC8GQ==
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Thu, 29 Aug 2019 08:00:42 GMT
+      x-ms-page-write:
+      - update
+      x-ms-range:
+      - bytes=0-511
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://pyacrstorageb8441284.blob.core.windows.net/utcontainerb8441284/blobb8441284?comp=page
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      content-md5: zfsIEnIFAq9ApGtf3JC8GQ==
+      date: Thu, 29 Aug 2019 08:00:40 GMT
+      etag: '"0x8D72C56FC8BFA16"'
+      last-modified: Thu, 29 Aug 2019 08:00:41 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-blob-sequence-number: '0'
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2019-02-02'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstorageb8441284.blob.core.windows.net
+        - /utcontainerb8441284/blobb8441284
+        - comp=page
         - ''
 version: 1

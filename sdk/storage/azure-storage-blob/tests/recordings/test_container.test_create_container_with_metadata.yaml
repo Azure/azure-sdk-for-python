@@ -13,7 +13,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 28 Aug 2019 17:06:43 GMT
+      - Thu, 29 Aug 2019 08:46:39 GMT
       x-ms-meta-hello:
       - world
       x-ms-meta-number:
@@ -29,11 +29,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 28 Aug 2019 17:06:43 GMT
+      - Thu, 29 Aug 2019 08:46:37 GMT
       etag:
-      - '"0x8D72BDA1AA289D2"'
+      - '"0x8D72C5D681E54F7"'
       last-modified:
-      - Wed, 28 Aug 2019 17:06:44 GMT
+      - Thu, 29 Aug 2019 08:46:38 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -53,7 +53,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 28 Aug 2019 17:06:45 GMT
+      - Thu, 29 Aug 2019 08:46:39 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -65,17 +65,13 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 28 Aug 2019 17:06:43 GMT
+      - Thu, 29 Aug 2019 08:46:37 GMT
       etag:
-      - '"0x8D72BDA1AA289D2"'
+      - '"0x8D72C5D681E54F7"'
       last-modified:
-      - Wed, 28 Aug 2019 17:06:44 GMT
+      - Thu, 29 Aug 2019 08:46:38 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-default-encryption-scope:
-      - $account-encryption-key
-      x-ms-deny-encryption-scope-override:
-      - 'false'
       x-ms-has-immutability-policy:
       - 'false'
       x-ms-has-legal-hold:

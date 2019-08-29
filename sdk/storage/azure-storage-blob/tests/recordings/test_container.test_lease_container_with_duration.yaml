@@ -13,7 +13,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 28 Aug 2019 17:07:52 GMT
+      - Thu, 29 Aug 2019 08:49:36 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -25,11 +25,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 28 Aug 2019 17:07:51 GMT
+      - Thu, 29 Aug 2019 08:49:34 GMT
       etag:
-      - '"0x8D72BDA43107A60"'
+      - '"0x8D72C5DD199A651"'
       last-modified:
-      - Wed, 28 Aug 2019 17:07:52 GMT
+      - Thu, 29 Aug 2019 08:49:35 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -51,13 +51,13 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 28 Aug 2019 17:07:53 GMT
+      - Thu, 29 Aug 2019 08:49:36 GMT
       x-ms-lease-action:
       - acquire
       x-ms-lease-duration:
       - '15'
       x-ms-proposed-lease-id:
-      - 76a30bdf-f05d-486a-b8d0-6320bdf54797
+      - cc609d3f-4ef7-4043-b185-562e4544901f
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -69,15 +69,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 28 Aug 2019 17:07:52 GMT
+      - Thu, 29 Aug 2019 08:49:34 GMT
       etag:
-      - '"0x8D72BDA43107A60"'
+      - '"0x8D72C5DD199A651"'
       last-modified:
-      - Wed, 28 Aug 2019 17:07:52 GMT
+      - Thu, 29 Aug 2019 08:49:35 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-lease-id:
-      - 76a30bdf-f05d-486a-b8d0-6320bdf54797
+      - cc609d3f-4ef7-4043-b185-562e4544901f
       x-ms-version:
       - '2019-02-02'
     status:
@@ -97,13 +97,13 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 28 Aug 2019 17:07:53 GMT
+      - Thu, 29 Aug 2019 08:49:36 GMT
       x-ms-lease-action:
       - acquire
       x-ms-lease-duration:
       - '-1'
       x-ms-proposed-lease-id:
-      - 64d583fb-cc5d-47c2-a58d-356225927fd6
+      - dc62f1a0-92d5-40b5-a894-4249e23ddec0
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -111,14 +111,14 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseAlreadyPresent</Code><Message>There
-        is already a lease present.\nRequestId:0aab69e2-b01e-00ec-5ec3-5d89c6000000\nTime:2019-08-28T17:07:52.5733853Z</Message></Error>"
+        is already a lease present.\nRequestId:41293a4c-001e-0030-4e46-5edc1d000000\nTime:2019-08-29T08:49:35.7954095Z</Message></Error>"
     headers:
       content-length:
       - '221'
       content-type:
       - application/xml
       date:
-      - Wed, 28 Aug 2019 17:07:52 GMT
+      - Thu, 29 Aug 2019 08:49:34 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -142,13 +142,13 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 28 Aug 2019 17:08:08 GMT
+      - Thu, 29 Aug 2019 08:49:51 GMT
       x-ms-lease-action:
       - acquire
       x-ms-lease-duration:
       - '-1'
       x-ms-proposed-lease-id:
-      - a4b42606-315b-4ff7-ba1f-5985895efd25
+      - b6e37b95-40e9-4fa1-ba68-9d84a1573d52
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -160,15 +160,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 28 Aug 2019 17:08:07 GMT
+      - Thu, 29 Aug 2019 08:49:50 GMT
       etag:
-      - '"0x8D72BDA43107A60"'
+      - '"0x8D72C5DD199A651"'
       last-modified:
-      - Wed, 28 Aug 2019 17:07:52 GMT
+      - Thu, 29 Aug 2019 08:49:35 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-lease-id:
-      - a4b42606-315b-4ff7-ba1f-5985895efd25
+      - b6e37b95-40e9-4fa1-ba68-9d84a1573d52
       x-ms-version:
       - '2019-02-02'
     status:

@@ -5,30 +5,24 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 28 Aug 2019 02:09:23 GMT
+      - Thu, 29 Aug 2019 07:45:28 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
     uri: https://pyacrstoragee0771c38.blob.core.windows.net/utcontainere0771c38?restype=container
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>AuthenticationFailed</Code><Message>Server
-        failed to authenticate the request. Make sure the value of Authorization header
-        is formed correctly including the signature.\nRequestId:883b856c-301e-013b-0645-5d50df000000\nTime:2019-08-28T02:09:24.1872819Z</Message><AuthenticationErrorDetail>The
-        MAC signature found in the HTTP request 'lL64pTyim6kl2iLNfWTRzsIJ5UUABJkaFSYSFXGXWDo='
-        is not the same as any computed signature. Server used following string to
-        sign: 'PUT\n\n\n\n\napplication/octet-stream\n\n\n\n\n\n\nx-ms-client-request-id:da5be964-c938-11e9-8fcb-2816a845e8c6\nx-ms-date:Wed,
-        28 Aug 2019 02:09:23 GMT\nx-ms-version:2019-02-02\n/pyacrstoragee0771c38/utcontainere0771c38\nrestype:container'.</AuthenticationErrorDetail></Error>"
+      string: ''
     headers:
-      content-length: '772'
-      content-type: application/xml
-      date: Wed, 28 Aug 2019 02:09:23 GMT
-      server: Microsoft-HTTPAPI/2.0
-      x-ms-error-code: AuthenticationFailed
+      content-length: '0'
+      date: Thu, 29 Aug 2019 07:45:27 GMT
+      etag: '"0x8D72C54DC040D40"'
+      last-modified: Thu, 29 Aug 2019 07:45:27 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2019-02-02'
     status:
-      code: 403
-      message: Server failed to authenticate the request. Make sure the value of Authorization
-        header is formed correctly including the signature.
+      code: 201
+      message: Created
     url: !!python/object/new:yarl.URL
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
@@ -39,9 +33,9 @@ interactions:
         - ''
 - request:
     body: !!binary |
-      Djby3cVHGr73pUSA18Xl9v3NTl98pZC9eajdkWBD+noz/fzUaTzeBEEJ7R2i4RzMbdGK7Sq6Ma+P
-      qRh2KLkNwguC7E+crUZ+B+6S18OqdG8AMHAVFSXIMukzbRHSQb0dppV7mplXsGH6BxgPa46s3/K7
-      fMumA7bSD2+8v8iVxp2npamk2VyVMSosXasy2Mca
+      2sUYYjkxiSnCYZ4ZyjuWlIa9+PS6Ah/UMkt9xWvdQ/vj9Bl5WyjDFxOdgHYRGJzhZv3oMnbCWzgP
+      f9cMIa5aKFOs3AQMsnEcKLKB/X9bNbdvDDj/Fp7QNYLRnlZJNIiqF6gchNSTEbE3aUY9jWty2Kcq
+      0kNlMKWbogiusDWwiaj0R5IG0uO0xbY+Vstqpv9I
     headers:
       Content-Length:
       - '144'
@@ -54,11 +48,11 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Wed, 28 Aug 2019 02:09:24 GMT
+      - Thu, 29 Aug 2019 07:45:28 GMT
       x-ms-meta-encryptiondata:
-      - '{"WrappedContentKey": {"KeyId": "key1", "EncryptedKey": "ygbc3tZBZwNmPaRlM1RlkM9kPC2jfYNaDa4rn4tFD99mMz/0pJ+bCw==",
+      - '{"WrappedContentKey": {"KeyId": "key1", "EncryptedKey": "+W8bvsnWgaG8XpfVrufoAwOPA3f4q2UncqA8KR00OjvaoNFZZrCLjA==",
         "Algorithm": "A256KW"}, "EncryptionAgent": {"Protocol": "1.0", "EncryptionAlgorithm":
-        "AES_CBC_256"}, "ContentEncryptionIV": "okcD9qnbzWMx+rjT4uiCEg==", "KeyWrappingMetadata":
+        "AES_CBC_256"}, "ContentEncryptionIV": "Q0+9VeE+hVFxFDUjBS83fg==", "KeyWrappingMetadata":
         {"EncryptionLibrary": "Python 12.0.0b2"}, "EncryptionMode": "FullBlob"}'
       x-ms-version:
       - '2019-02-02'
@@ -66,18 +60,73 @@ interactions:
     uri: https://pyacrstoragee0771c38.blob.core.windows.net/utcontainere0771c38/encryption_block_blobe0771c38
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
-        specified container does not exist.\nRequestId:883b857b-301e-013b-1445-5d50df000000\nTime:2019-08-28T02:09:24.2313136Z</Message></Error>"
+      string: ''
     headers:
-      content-length: '225'
-      content-type: application/xml
-      date: Wed, 28 Aug 2019 02:09:23 GMT
+      content-length: '0'
+      content-md5: yypGbvxKe3JJYutzsOPrZA==
+      date: Thu, 29 Aug 2019 07:45:27 GMT
+      etag: '"0x8D72C54DC13471F"'
+      last-modified: Thu, 29 Aug 2019 07:45:27 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-error-code: ContainerNotFound
+      x-ms-content-crc64: i2xx1PZoybA=
+      x-ms-request-server-encrypted: 'true'
       x-ms-version: '2019-02-02'
     status:
-      code: 404
-      message: The specified container does not exist.
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstoragee0771c38.blob.core.windows.net
+        - /utcontainere0771c38/encryption_block_blobe0771c38
+        - ''
+        - ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml, application/octet-stream, text/plain
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Thu, 29 Aug 2019 07:45:28 GMT
+      x-ms-range:
+      - bytes=32-95
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://pyacrstoragee0771c38.blob.core.windows.net/utcontainere0771c38/encryption_block_blobe0771c38
+  response:
+    body:
+      string: !!binary |
+        4/QZeVsowxcTnYB2ERic4Wb96DJ2wls4D3/XDCGuWihTrNwEDLJxHCiygf1/WzW3bww4/xae0DWC
+        0Z5WSTSIqg==
+    headers:
+      accept-ranges: bytes
+      content-length: '64'
+      content-range: bytes 32-95/144
+      content-type: application/octet-stream
+      date: Thu, 29 Aug 2019 07:45:27 GMT
+      etag: '"0x8D72C54DC13471F"'
+      last-modified: Thu, 29 Aug 2019 07:45:27 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-blob-content-md5: yypGbvxKe3JJYutzsOPrZA==
+      x-ms-blob-type: BlockBlob
+      x-ms-creation-time: Thu, 29 Aug 2019 07:45:27 GMT
+      x-ms-lease-state: available
+      x-ms-lease-status: unlocked
+      x-ms-meta-encryptiondata: '{"WrappedContentKey": {"KeyId": "key1", "EncryptedKey":
+        "+W8bvsnWgaG8XpfVrufoAwOPA3f4q2UncqA8KR00OjvaoNFZZrCLjA==", "Algorithm": "A256KW"},
+        "EncryptionAgent": {"Protocol": "1.0", "EncryptionAlgorithm": "AES_CBC_256"},
+        "ContentEncryptionIV": "Q0+9VeE+hVFxFDUjBS83fg==", "KeyWrappingMetadata":
+        {"EncryptionLibrary": "Python 12.0.0b2"}, "EncryptionMode": "FullBlob"}'
+      x-ms-server-encrypted: 'true'
+      x-ms-tag-count: '0'
+      x-ms-version: '2019-02-02'
+    status:
+      code: 206
+      message: Partial Content
     url: !!python/object/new:yarl.URL
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult

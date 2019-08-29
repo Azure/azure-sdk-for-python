@@ -90,7 +90,8 @@ class AioHttpTransport(AsyncHttpTransport):
         if not self.session and self._session_owner:
             self.session = aiohttp.ClientSession(
                 loop=self._loop,
-                trust_env=self._use_env_settings
+                trust_env=self._use_env_settings,
+                skip_auto_headers=['Content-Type']
             )
         if self.session is not None:
             await self.session.__aenter__()

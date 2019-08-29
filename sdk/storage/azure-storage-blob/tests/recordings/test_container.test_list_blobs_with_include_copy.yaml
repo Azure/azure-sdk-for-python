@@ -13,7 +13,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 28 Aug 2019 17:07:27 GMT
+      - Thu, 29 Aug 2019 08:48:56 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -25,11 +25,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 28 Aug 2019 17:07:28 GMT
+      - Thu, 29 Aug 2019 08:48:54 GMT
       etag:
-      - '"0x8D72BDA34D2EDBD"'
+      - '"0x8D72C5DB9C90342"'
       last-modified:
-      - Wed, 28 Aug 2019 17:07:28 GMT
+      - Thu, 29 Aug 2019 08:48:55 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -57,7 +57,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Wed, 28 Aug 2019 17:07:29 GMT
+      - Thu, 29 Aug 2019 08:48:56 GMT
       x-ms-meta-status:
       - original
       x-ms-version:
@@ -73,11 +73,11 @@ interactions:
       content-md5:
       - XrY7u+Ae7tCTyyK7j1rNww==
       date:
-      - Wed, 28 Aug 2019 17:07:28 GMT
+      - Thu, 29 Aug 2019 08:48:55 GMT
       etag:
-      - '"0x8D72BDA34E2AED4"'
+      - '"0x8D72C5DB9D69298"'
       last-modified:
-      - Wed, 28 Aug 2019 17:07:28 GMT
+      - Thu, 29 Aug 2019 08:48:55 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64:
@@ -89,4 +89,95 @@ interactions:
     status:
       code: 201
       message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-copy-source:
+      - https://pyacrstoragee54813d5.blob.core.windows.net/containere54813d5/blob1
+      x-ms-date:
+      - Thu, 29 Aug 2019 08:48:56 GMT
+      x-ms-meta-status:
+      - copy
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://pyacrstoragee54813d5.blob.core.windows.net/containere54813d5/blob1copy
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Thu, 29 Aug 2019 08:48:55 GMT
+      etag:
+      - '"0x8D72C5DB9E64CE1"'
+      last-modified:
+      - Thu, 29 Aug 2019 08:48:55 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-copy-id:
+      - 7a3009db-00f5-4430-a20a-3654a98707a2
+      x-ms-copy-status:
+      - success
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml, application/octet-stream, text/plain
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Thu, 29 Aug 2019 08:48:56 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://pyacrstoragee54813d5.blob.core.windows.net/containere54813d5?include=copy&restype=container&comp=list
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
+        ServiceEndpoint=\"https://pyacrstoragee54813d5.blob.core.windows.net/\" ContainerName=\"containere54813d5\"><Blobs><Blob><Name>blob1</Name><Properties><Creation-Time>Thu,
+        29 Aug 2019 08:48:55 GMT</Creation-Time><Last-Modified>Thu, 29 Aug 2019 08:48:55
+        GMT</Last-Modified><Etag>0x8D72C5DB9D69298</Etag><Content-Length>11</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        /><Content-Language /><Content-CRC64>vo7q9sPVKY0=</Content-CRC64><Content-MD5>XrY7u+Ae7tCTyyK7j1rNww==</Content-MD5><Cache-Control
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><ServerEncrypted>true</ServerEncrypted><TagCount>0</TagCount></Properties></Blob><Blob><Name>blob1copy</Name><Properties><Creation-Time>Thu,
+        29 Aug 2019 08:48:55 GMT</Creation-Time><Last-Modified>Thu, 29 Aug 2019 08:48:55
+        GMT</Last-Modified><Etag>0x8D72C5DB9E64CE1</Etag><Content-Length>11</Content-Length><Content-Type>application/octet-stream</Content-Type><Content-Encoding
+        /><Content-Language /><Content-CRC64>vo7q9sPVKY0=</Content-CRC64><Content-MD5>XrY7u+Ae7tCTyyK7j1rNww==</Content-MD5><Cache-Control
+        /><Content-Disposition /><BlobType>BlockBlob</BlobType><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><CopyId>7a3009db-00f5-4430-a20a-3654a98707a2</CopyId><CopySource>https://pyacrstoragee54813d5.blob.core.windows.net/containere54813d5/blob1</CopySource><CopyStatus>success</CopyStatus><CopyProgress>11/11</CopyProgress><CopyCompletionTime>Thu,
+        29 Aug 2019 08:48:55 GMT</CopyCompletionTime><ServerEncrypted>true</ServerEncrypted><TagCount>0</TagCount></Properties></Blob></Blobs><NextMarker
+        /></EnumerationResults>"
+    headers:
+      content-type:
+      - application/xml
+      date:
+      - Thu, 29 Aug 2019 08:48:55 GMT
+      server:
+      - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding:
+      - chunked
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 200
+      message: OK
 version: 1

@@ -1,0 +1,221 @@
+interactions:
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Thu, 29 Aug 2019 07:44:20 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://pyacrstorage95141ee3.blob.core.windows.net/copyblobcontainerasync?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Thu, 29 Aug 2019 07:44:18 GMT
+      etag: '"0x8D72C54B346F4B5"'
+      last-modified: Thu, 29 Aug 2019 07:44:19 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2019-02-02'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstorage95141ee3.blob.core.windows.net
+        - /copyblobcontainerasync
+        - restype=container
+        - ''
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-copy-source:
+      - http://www.gutenberg.org/files/59466/59466-0.txt
+      x-ms-date:
+      - Thu, 29 Aug 2019 07:44:20 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://pyacrstorage95141ee3.blob.core.windows.net/copyblobcontainerasync/59466-0.txt
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Thu, 29 Aug 2019 07:44:18 GMT
+      etag: '"0x8D72C54B36FD875"'
+      last-modified: Thu, 29 Aug 2019 07:44:19 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-copy-id: ab1e5b95-4ffd-4633-815c-a7c531794d47
+      x-ms-copy-status: pending
+      x-ms-version: '2019-02-02'
+    status:
+      code: 202
+      message: Accepted
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstorage95141ee3.blob.core.windows.net
+        - /copyblobcontainerasync/59466-0.txt
+        - ''
+        - ''
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Thu, 29 Aug 2019 07:44:20 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: HEAD
+    uri: https://pyacrstorage95141ee3.blob.core.windows.net/copyblobcontainerasync/59466-0.txt
+  response:
+    body:
+      string: ''
+    headers:
+      accept-ranges: bytes
+      content-length: '0'
+      content-type: text/plain; charset=UTF-8
+      date: Thu, 29 Aug 2019 07:44:18 GMT
+      etag: '"0x8D72C54B36FD875"'
+      last-modified: Thu, 29 Aug 2019 07:44:19 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-blob-type: BlockBlob
+      x-ms-copy-id: ab1e5b95-4ffd-4633-815c-a7c531794d47
+      x-ms-copy-progress: 0/439274
+      x-ms-copy-source: http://www.gutenberg.org/files/59466/59466-0.txt
+      x-ms-copy-status: pending
+      x-ms-creation-time: Thu, 29 Aug 2019 07:44:19 GMT
+      x-ms-lease-state: available
+      x-ms-lease-status: unlocked
+      x-ms-server-encrypted: 'true'
+      x-ms-tag-count: '0'
+      x-ms-version: '2019-02-02'
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstorage95141ee3.blob.core.windows.net
+        - /copyblobcontainerasync/59466-0.txt
+        - ''
+        - ''
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-copy-action:
+      - abort
+      x-ms-date:
+      - Thu, 29 Aug 2019 07:44:20 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://pyacrstorage95141ee3.blob.core.windows.net/copyblobcontainerasync/59466-0.txt?copyid=ab1e5b95-4ffd-4633-815c-a7c531794d47&comp=copy
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Thu, 29 Aug 2019 07:44:19 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2019-02-02'
+    status:
+      code: 204
+      message: No Content
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstorage95141ee3.blob.core.windows.net
+        - /copyblobcontainerasync/59466-0.txt
+        - copyid=ab1e5b95-4ffd-4633-815c-a7c531794d47&comp=copy
+        - ''
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Thu, 29 Aug 2019 07:44:20 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: HEAD
+    uri: https://pyacrstorage95141ee3.blob.core.windows.net/copyblobcontainerasync/59466-0.txt
+  response:
+    body:
+      string: ''
+    headers:
+      accept-ranges: bytes
+      content-length: '0'
+      content-type: text/plain; charset=UTF-8
+      date: Thu, 29 Aug 2019 07:44:19 GMT
+      etag: '"0x8D72C54B3947E25"'
+      last-modified: Thu, 29 Aug 2019 07:44:19 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-blob-type: BlockBlob
+      x-ms-copy-completion-time: Thu, 29 Aug 2019 07:44:19 GMT
+      x-ms-copy-id: ab1e5b95-4ffd-4633-815c-a7c531794d47
+      x-ms-copy-progress: 0/439274
+      x-ms-copy-source: http://www.gutenberg.org/files/59466/59466-0.txt
+      x-ms-copy-status: aborted
+      x-ms-creation-time: Thu, 29 Aug 2019 07:44:19 GMT
+      x-ms-lease-state: available
+      x-ms-lease-status: unlocked
+      x-ms-server-encrypted: 'true'
+      x-ms-tag-count: '0'
+      x-ms-version: '2019-02-02'
+    status:
+      code: 200
+      message: OK
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstorage95141ee3.blob.core.windows.net
+        - /copyblobcontainerasync/59466-0.txt
+        - ''
+        - ''
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Thu, 29 Aug 2019 07:44:20 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: DELETE
+    uri: https://pyacrstorage95141ee3.blob.core.windows.net/copyblobcontainerasync?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Thu, 29 Aug 2019 07:44:19 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2019-02-02'
+    status:
+      code: 202
+      message: Accepted
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstorage95141ee3.blob.core.windows.net
+        - /copyblobcontainerasync
+        - restype=container
+        - ''
+version: 1

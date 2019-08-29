@@ -15,29 +15,25 @@ interactions:
       Content-Type:
       - application/xml; charset=utf-8
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      x-ms-client-request-id:
-      - 0be1ea2e-b410-11e9-af11-b831b58100e8
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 01 Aug 2019 03:54:22 GMT
+      - Thu, 29 Aug 2019 08:38:37 GMT
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/?restype=service&comp=properties
+    uri: https://pyacrstoraged6b4181b.blob.core.windows.net/?restype=service&comp=properties
   response:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
-      Date:
-      - Thu, 01 Aug 2019 03:54:22 GMT
-      Server:
+      date:
+      - Thu, 29 Aug 2019 08:38:36 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - 4d8d4257-f01e-001f-2f1c-48bf10000000
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     status:
       code: 202
       message: Accepted
@@ -53,35 +49,29 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - 0c73332c-b410-11e9-ae85-b831b58100e8
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 01 Aug 2019 03:54:23 GMT
+      - Thu, 29 Aug 2019 08:38:37 GMT
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/containerfordeletedblobs?restype=container
+    uri: https://pyacrstoraged6b4181b.blob.core.windows.net/containerfordeletedblobs?restype=container
   response:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
-      Date:
-      - Thu, 01 Aug 2019 03:54:22 GMT
-      ETag:
-      - '"0x8D71633F09CA5DB"'
-      Last-Modified:
-      - Thu, 01 Aug 2019 03:54:23 GMT
-      Server:
+      date:
+      - Thu, 29 Aug 2019 08:38:36 GMT
+      etag:
+      - '"0x8D72C5C48F2F9E8"'
+      last-modified:
+      - Thu, 29 Aug 2019 08:38:36 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - 4d8d433a-f01e-001f-771c-48bf10000000
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -101,39 +91,37 @@ interactions:
       If-None-Match:
       - '*'
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-blob-type:
       - BlockBlob
-      x-ms-client-request-id:
-      - 0c844936-b410-11e9-8428-b831b58100e8
       x-ms-date:
-      - Thu, 01 Aug 2019 03:54:23 GMT
+      - Thu, 29 Aug 2019 08:38:37 GMT
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/containerfordeletedblobs/my_blob
+    uri: https://pyacrstoraged6b4181b.blob.core.windows.net/containerfordeletedblobs/my_blob
   response:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
-      Content-MD5:
+      content-md5:
       - /BCgjff6+jhxFmZGYJ4clQ==
-      Date:
-      - Thu, 01 Aug 2019 03:54:22 GMT
-      ETag:
-      - '"0x8D71633F0A9C114"'
-      Last-Modified:
-      - Thu, 01 Aug 2019 03:54:23 GMT
-      Server:
+      date:
+      - Thu, 29 Aug 2019 08:38:36 GMT
+      etag:
+      - '"0x8D72C5C48FF9790"'
+      last-modified:
+      - Thu, 29 Aug 2019 08:38:36 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - 4d8d4358-f01e-001f-131c-48bf10000000
+      x-ms-content-crc64:
+      - 69CZwUFtgrU=
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -149,33 +137,27 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - 0c90c02e-b410-11e9-9dfd-b831b58100e8
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 01 Aug 2019 03:54:23 GMT
+      - Thu, 29 Aug 2019 08:38:38 GMT
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: DELETE
-    uri: https://storagename.blob.core.windows.net/containerfordeletedblobs/my_blob
+    uri: https://pyacrstoraged6b4181b.blob.core.windows.net/containerfordeletedblobs/my_blob
   response:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
-      Date:
-      - Thu, 01 Aug 2019 03:54:22 GMT
-      Server:
+      date:
+      - Thu, 29 Aug 2019 08:38:36 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-delete-type-permanent:
       - 'false'
-      x-ms-request-id:
-      - 4d8d4386-f01e-001f-3e1c-48bf10000000
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     status:
       code: 202
       message: Accepted
@@ -191,31 +173,25 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - 0ca41f94-b410-11e9-ab0d-b831b58100e8
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 01 Aug 2019 03:54:23 GMT
+      - Thu, 29 Aug 2019 08:38:38 GMT
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/containerfordeletedblobs/my_blob?comp=undelete
+    uri: https://pyacrstoraged6b4181b.blob.core.windows.net/containerfordeletedblobs/my_blob?comp=undelete
   response:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
-      Date:
-      - Thu, 01 Aug 2019 03:54:23 GMT
-      Server:
+      date:
+      - Thu, 29 Aug 2019 08:38:36 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - 4d8d43af-f01e-001f-651c-48bf10000000
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     status:
       code: 200
       message: OK
@@ -229,57 +205,47 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - 0cb86b0a-b410-11e9-8006-b831b58100e8
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 01 Aug 2019 03:54:23 GMT
+      - Thu, 29 Aug 2019 08:38:38 GMT
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: HEAD
-    uri: https://storagename.blob.core.windows.net/containerfordeletedblobs/my_blob
+    uri: https://pyacrstoraged6b4181b.blob.core.windows.net/containerfordeletedblobs/my_blob
   response:
     body:
       string: ''
     headers:
-      Accept-Ranges:
+      accept-ranges:
       - bytes
-      Content-Length:
+      content-length:
       - '55'
-      Content-MD5:
+      content-md5:
       - /BCgjff6+jhxFmZGYJ4clQ==
-      Content-Type:
+      content-type:
       - application/octet-stream
-      Date:
-      - Thu, 01 Aug 2019 03:54:23 GMT
-      ETag:
-      - '"0x8D71633F0A9C114"'
-      Last-Modified:
-      - Thu, 01 Aug 2019 03:54:23 GMT
-      Server:
+      date:
+      - Thu, 29 Aug 2019 08:38:36 GMT
+      etag:
+      - '"0x8D72C5C48FF9790"'
+      last-modified:
+      - Thu, 29 Aug 2019 08:38:36 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
-      x-ms-access-tier:
-      - Hot
-      x-ms-access-tier-inferred:
-      - 'true'
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Thu, 01 Aug 2019 03:54:23 GMT
+      - Thu, 29 Aug 2019 08:38:36 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
       - unlocked
-      x-ms-request-id:
-      - 4d8d43c5-f01e-001f-781c-48bf10000000
       x-ms-server-encrypted:
       - 'true'
+      x-ms-tag-count:
+      - '0'
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     status:
       code: 200
       message: OK
@@ -295,31 +261,25 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - 0cc7fcc0-b410-11e9-9f07-b831b58100e8
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 01 Aug 2019 03:54:23 GMT
+      - Thu, 29 Aug 2019 08:38:38 GMT
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: DELETE
-    uri: https://storagename.blob.core.windows.net/containerfordeletedblobs?restype=container
+    uri: https://pyacrstoraged6b4181b.blob.core.windows.net/containerfordeletedblobs?restype=container
   response:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
-      Date:
-      - Thu, 01 Aug 2019 03:54:23 GMT
-      Server:
+      date:
+      - Thu, 29 Aug 2019 08:38:36 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - 4d8d43d8-f01e-001f-0a1c-48bf10000000
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     status:
       code: 202
       message: Accepted

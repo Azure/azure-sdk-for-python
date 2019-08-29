@@ -28,11 +28,12 @@ from azure.storage.blob.aio import (
 )
 
 from testcase import (
-    StorageTestCase,
-    record,
-    TestMode,
     ResponseCallback,
     RetryCounter,
+)
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
+from asyncblobtestcase import (
+    AsyncBlobTestCase,
 )
 
 
@@ -48,19 +49,15 @@ class AiohttpTestTransport(AioHttpTransport):
 
 
 # --Test Class -----------------------------------------------------------------
-class StorageRetryTestAsync(StorageTestCase):
-    def setUp(self):
-        super(StorageRetryTestAsync, self).setUp()
-
-    def tearDown(self):
-        return super(StorageRetryTestAsync, self).tearDown()
-
+class StorageRetryTestAsync(AsyncBlobTestCase):
     # --Test Cases --------------------------------------------
-
-    async def test_retry_on_server_error_async(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_retry_on_server_error_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         container_name = self.get_resource_name()
-        service = self._create_storage_service(BlobServiceClient, self.settings, transport=AiohttpTestTransport())
+        service = self._create_storage_service(BlobServiceClient, storage_account, storage_account_key, transport=AiohttpTestTransport())
 
         # Force the create call to 'timeout' with a 408
         callback = ResponseCallback(status=201, new_status=500).override_status
@@ -76,17 +73,15 @@ class StorageRetryTestAsync(StorageTestCase):
 
         # Assert
 
-    @record
-    def test_retry_on_server_error_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_retry_on_server_error_async())
-
-    async def test_retry_on_timeout_async(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_retry_on_timeout_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         container_name = self.get_resource_name()
         retry = ExponentialRetry(initial_backoff=1, increment_base=2)
         service = self._create_storage_service(
-            BlobServiceClient, self.settings, retry_policy=retry, transport=AiohttpTestTransport())
+            BlobServiceClient, storage_account, storage_account_key, retry_policy=retry, transport=AiohttpTestTransport())
 
         callback = ResponseCallback(status=201, new_status=408).override_status
 
@@ -101,17 +96,15 @@ class StorageRetryTestAsync(StorageTestCase):
 
         # Assert
 
-    @record
-    def test_retry_on_timeout_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_retry_on_timeout_async())
-
-    async def test_retry_callback_and_retry_context_async(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_retry_callback_and_retry_context_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         container_name = self.get_resource_name()
         retry = LinearRetry(backoff=1)
         service = self._create_storage_service(
-            BlobServiceClient, self.settings, retry_policy=retry, transport=AiohttpTestTransport())
+            BlobServiceClient, storage_account, storage_account_key, retry_policy=retry, transport=AiohttpTestTransport())
 
         # Force the create call to 'timeout' with a 408
         callback = ResponseCallback(status=201, new_status=408).override_status
@@ -132,12 +125,10 @@ class StorageRetryTestAsync(StorageTestCase):
         finally:
             await service.delete_container(container_name)
 
-    @record
-    def test_retry_callback_and_retry_context_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_retry_callback_and_retry_context_async())
-
-    async def test_retry_on_socket_timeout_async(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_retry_on_socket_timeout_async(self, resource_group, location, storage_account, storage_account_key):
         if not self.is_live:
             return
         # Arrange
@@ -147,7 +138,7 @@ class StorageRetryTestAsync(StorageTestCase):
         # make the connect timeout reasonable, but packet timeout truly small, to make sure the request always times out
         socket_timeout = 0.000000000001
         service = self._create_storage_service(
-            BlobServiceClient, self.settings, retry_policy=retry, connection_timeout=socket_timeout, transport=AiohttpTestTransport())
+            BlobServiceClient, storage_account, storage_account_key, retry_policy=retry, connection_timeout=socket_timeout, transport=AiohttpTestTransport())
 
         assert service._client._client._pipeline._transport.connection_config.timeout == socket_timeout
 
@@ -166,18 +157,14 @@ class StorageRetryTestAsync(StorageTestCase):
             except:
                 pass
 
-    def test_retry_on_socket_timeout_async(self):
-        pytest.skip("Error not raised on retry")
-        if not self.is_live:
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_retry_on_socket_timeout_async())
-
-    async def test_no_retry_async(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_no_retry_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         container_name = self.get_resource_name()
         service = self._create_storage_service(
-            BlobServiceClient, self.settings, retry_policy=NoRetry(), transport=AiohttpTestTransport())
+            BlobServiceClient, storage_account, storage_account_key, retry_policy=NoRetry(), transport=AiohttpTestTransport())
 
 
         # Force the create call to 'timeout' with a 408
@@ -193,17 +180,15 @@ class StorageRetryTestAsync(StorageTestCase):
         finally:
             await service.delete_container(container_name)
 
-    @record
-    def test_no_retry_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_no_retry_async())
-
-    async def test_linear_retry_async(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_linear_retry_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         container_name = self.get_resource_name()
         retry = LinearRetry(backoff=1)
         service = self._create_storage_service(
-            BlobServiceClient, self.settings, retry_policy=retry, transport=AiohttpTestTransport())
+            BlobServiceClient, storage_account, storage_account_key, retry_policy=retry, transport=AiohttpTestTransport())
 
         # Force the create call to 'timeout' with a 408
         callback = ResponseCallback(status=201, new_status=408).override_status
@@ -219,17 +204,15 @@ class StorageRetryTestAsync(StorageTestCase):
 
         # Assert
 
-    @record
-    def test_linear_retry_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_linear_retry_async())
-
-    async def test_exponential_retry_async(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_exponential_retry_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         container_name = self.get_resource_name()
         retry = ExponentialRetry(initial_backoff=1, increment_base=3, retry_total=3)
         service = self._create_storage_service(
-            BlobServiceClient, self.settings, retry_policy=retry, transport=AiohttpTestTransport())
+            BlobServiceClient, storage_account, storage_account_key, retry_policy=retry, transport=AiohttpTestTransport())
 
         try:
             container = await service.create_container(container_name)
@@ -247,13 +230,9 @@ class StorageRetryTestAsync(StorageTestCase):
             # Clean up
             await service.delete_container(container_name)
 
-    @record
-    def test_exponential_retry_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_exponential_retry_async())
-
-    @record
-    def test_exponential_retry_interval_async(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_exponential_retry_interval_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         retry_policy = ExponentialRetry(initial_backoff=1, increment_base=3, random_jitter_range=3)
         context_stub = {}
@@ -287,8 +266,9 @@ class StorageRetryTestAsync(StorageTestCase):
             # Assert backoff interval is within +/- 3 of 28(1+3^3)
             self.assertTrue(25 <= backoff <= 31)
 
-    @record
-    def test_linear_retry_interval_async(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_linear_retry_interval_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         context_stub = {}
 
@@ -314,12 +294,15 @@ class StorageRetryTestAsync(StorageTestCase):
             # Assert backoff interval is within +/- 3 of 15
             self.assertTrue(12 <= backoff <= 18)
 
-    async def test_invalid_retry_async(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_invalid_retry_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         container_name = self.get_resource_name()
         retry = ExponentialRetry(initial_backoff=1, increment_base=2)
         service = self._create_storage_service(
-            BlobServiceClient, self.settings, retry_policy=retry, transport=AiohttpTestTransport())
+            BlobServiceClient, storage_account, storage_account_key, retry_policy=retry, transport=AiohttpTestTransport())
 
         # Force the create call to fail by pretending it's a teapot
         callback = ResponseCallback(status=201, new_status=418).override_status
@@ -333,17 +316,15 @@ class StorageRetryTestAsync(StorageTestCase):
         finally:
             await service.delete_container(container_name)
 
-    @record
-    def test_invalid_retry_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_invalid_retry_async())
-
-    async def test_retry_with_deserialization_async(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_retry_with_deserialization_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         container_name = self.get_resource_name(prefix='retry')
         retry = ExponentialRetry(initial_backoff=1, increment_base=2)
         service = self._create_storage_service(
-            BlobServiceClient, self.settings, retry_policy=retry, transport=AiohttpTestTransport())
+            BlobServiceClient, storage_account, storage_account_key, retry_policy=retry, transport=AiohttpTestTransport())
 
         try:
             created = await service.create_container(container_name)
@@ -360,17 +341,15 @@ class StorageRetryTestAsync(StorageTestCase):
         finally:
             await service.delete_container(container_name)
 
-    @record
-    def test_retry_with_deserialization_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_retry_with_deserialization_async())
-
-    async def test_secondary_location_mode_async(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_secondary_location_mode_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         container_name = self.get_resource_name()
         retry = ExponentialRetry(initial_backoff=1, increment_base=2)
         service = self._create_storage_service(
-            BlobServiceClient, self.settings, retry_policy=retry, transport=AiohttpTestTransport())
+            BlobServiceClient, storage_account, storage_account_key, retry_policy=retry, transport=AiohttpTestTransport())
 
         # Act
         try:
@@ -393,17 +372,15 @@ class StorageRetryTestAsync(StorageTestCase):
             # Delete will go to primary, so disable the request validation
             await service.delete_container(container_name)
 
-    @record
-    def test_secondary_location_mode_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_secondary_location_mode_async())
-
-    async def test_retry_to_secondary_with_put_async(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_retry_to_secondary_with_put_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         container_name = self.get_resource_name()
         retry = ExponentialRetry(retry_to_secondary=True, initial_backoff=1, increment_base=2)
         service = self._create_storage_service(
-            BlobServiceClient, self.settings, retry_policy=retry, transport=AiohttpTestTransport())
+            BlobServiceClient, storage_account, storage_account_key, retry_policy=retry, transport=AiohttpTestTransport())
 
         # Act
         try:
@@ -424,17 +401,15 @@ class StorageRetryTestAsync(StorageTestCase):
         finally:
             await service.delete_container(container_name)
 
-    @record
-    def test_retry_to_secondary_with_put_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_retry_to_secondary_with_put_async())
-
-    async def test_retry_to_secondary_with_get_async(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_retry_to_secondary_with_get_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         container_name = self.get_resource_name()
         retry = ExponentialRetry(retry_to_secondary=True, initial_backoff=1, increment_base=2)
         service = self._create_storage_service(
-            BlobServiceClient, self.settings, retry_policy=retry, transport=AiohttpTestTransport())
+            BlobServiceClient, storage_account, storage_account_key, retry_policy=retry, transport=AiohttpTestTransport())
 
         # Act
         try:
@@ -453,16 +428,14 @@ class StorageRetryTestAsync(StorageTestCase):
         finally:
             await service.delete_container(container_name)
 
-    @record
-    def test_retry_to_secondary_with_get_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_retry_to_secondary_with_get_async())
-
-    async def test_location_lock_async(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_location_lock_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         retry = ExponentialRetry(retry_to_secondary=True, initial_backoff=1, increment_base=2)
         service = self._create_storage_service(
-            BlobServiceClient, self.settings, retry_policy=retry, transport=AiohttpTestTransport())
+            BlobServiceClient, storage_account, storage_account_key, retry_policy=retry, transport=AiohttpTestTransport())
 
         # Act
         # Fail the first request and set the retry policy to retry to secondary
@@ -490,17 +463,15 @@ class StorageRetryTestAsync(StorageTestCase):
         await containers.__anext__()
         await containers.__anext__()
 
-    @record
-    def test_location_lock_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_location_lock_async())
-
-    async def test_invalid_account_key_async(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_invalid_account_key_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         container_name = self.get_resource_name()
         retry = ExponentialRetry(initial_backoff=1, increment_base=3, retry_total=3)
         service = self._create_storage_service(
-            BlobServiceClient, self.settings, retry_policy=retry, transport=AiohttpTestTransport())
+            BlobServiceClient, storage_account, storage_account_key, retry_policy=retry, transport=AiohttpTestTransport())
         service.credential.account_name = "dummy_account_name"
         service.credential.account_key = "dummy_account_key"
 
@@ -515,11 +486,6 @@ class StorageRetryTestAsync(StorageTestCase):
         # Assert
         # No retry should be performed since the signing error is fatal
         self.assertEqual(retry_counter.count, 0)
-
-    @record
-    def test_invalid_account_key_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_invalid_account_key_async())
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':

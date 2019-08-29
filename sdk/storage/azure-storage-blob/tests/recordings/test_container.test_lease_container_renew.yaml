@@ -13,7 +13,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 28 Aug 2019 17:07:03 GMT
+      - Thu, 29 Aug 2019 08:48:23 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -25,11 +25,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 28 Aug 2019 17:07:04 GMT
+      - Thu, 29 Aug 2019 08:48:21 GMT
       etag:
-      - '"0x8D72BDA26613654"'
+      - '"0x8D72C5DA5FA37CF"'
       last-modified:
-      - Wed, 28 Aug 2019 17:07:04 GMT
+      - Thu, 29 Aug 2019 08:48:22 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -51,13 +51,13 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 28 Aug 2019 17:07:05 GMT
+      - Thu, 29 Aug 2019 08:48:23 GMT
       x-ms-lease-action:
       - acquire
       x-ms-lease-duration:
       - '15'
       x-ms-proposed-lease-id:
-      - ec7c64b5-e0ec-44ba-b2ca-233d8b028d77
+      - 4d5e3172-b92a-44e3-9f84-08efd3b2e278
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -69,15 +69,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 28 Aug 2019 17:07:04 GMT
+      - Thu, 29 Aug 2019 08:48:21 GMT
       etag:
-      - '"0x8D72BDA26613654"'
+      - '"0x8D72C5DA5FA37CF"'
       last-modified:
-      - Wed, 28 Aug 2019 17:07:04 GMT
+      - Thu, 29 Aug 2019 08:48:22 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-lease-id:
-      - ec7c64b5-e0ec-44ba-b2ca-233d8b028d77
+      - 4d5e3172-b92a-44e3-9f84-08efd3b2e278
       x-ms-version:
       - '2019-02-02'
     status:
@@ -97,11 +97,11 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 28 Aug 2019 17:07:15 GMT
+      - Thu, 29 Aug 2019 08:48:33 GMT
       x-ms-lease-action:
       - renew
       x-ms-lease-id:
-      - ec7c64b5-e0ec-44ba-b2ca-233d8b028d77
+      - 4d5e3172-b92a-44e3-9f84-08efd3b2e278
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -113,15 +113,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 28 Aug 2019 17:07:14 GMT
+      - Thu, 29 Aug 2019 08:48:31 GMT
       etag:
-      - '"0x8D72BDA26613654"'
+      - '"0x8D72C5DA5FA37CF"'
       last-modified:
-      - Wed, 28 Aug 2019 17:07:04 GMT
+      - Thu, 29 Aug 2019 08:48:22 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-lease-id:
-      - ec7c64b5-e0ec-44ba-b2ca-233d8b028d77
+      - 4d5e3172-b92a-44e3-9f84-08efd3b2e278
       x-ms-version:
       - '2019-02-02'
     status:
@@ -141,7 +141,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 28 Aug 2019 17:07:20 GMT
+      - Thu, 29 Aug 2019 08:48:38 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
@@ -150,14 +150,14 @@ interactions:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseIdMissing</Code><Message>There
         is currently a lease on the container and no lease ID was specified in the
-        request.\nRequestId:4cd57fec-a01e-001f-11c3-5d5d27000000\nTime:2019-08-28T17:07:19.5382732Z</Message></Error>"
+        request.\nRequestId:ba819afa-001e-005a-5446-5e5255000000\nTime:2019-08-29T08:48:37.7223886Z</Message></Error>"
     headers:
       content-length:
       - '272'
       content-type:
       - application/xml
       date:
-      - Wed, 28 Aug 2019 17:07:19 GMT
+      - Thu, 29 Aug 2019 08:48:36 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -182,7 +182,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 28 Aug 2019 17:07:30 GMT
+      - Thu, 29 Aug 2019 08:48:48 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
@@ -194,7 +194,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 28 Aug 2019 17:07:29 GMT
+      - Thu, 29 Aug 2019 08:48:46 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:

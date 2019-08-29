@@ -13,7 +13,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 28 Aug 2019 17:08:42 GMT
+      - Thu, 29 Aug 2019 08:49:33 GMT
       x-ms-meta-hello:
       - world
       x-ms-meta-number:
@@ -25,14 +25,14 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
-        specified container does not exist.\nRequestId:e1efac00-901e-0066-5bc3-5d8339000000\nTime:2019-08-28T17:08:42.8827265Z</Message></Error>"
+        specified container does not exist.\nRequestId:39d8c6dd-401e-0113-5246-5ef20b000000\nTime:2019-08-29T08:49:33.1153309Z</Message></Error>"
     headers:
       content-length:
       - '225'
       content-type:
       - application/xml
       date:
-      - Wed, 28 Aug 2019 17:08:42 GMT
+      - Thu, 29 Aug 2019 08:49:32 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:

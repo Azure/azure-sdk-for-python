@@ -17,7 +17,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 28 Aug 2019 02:11:41 GMT
+      - Thu, 29 Aug 2019 07:46:19 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -25,12 +25,12 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidXmlDocument</Code><Message>XML
-        specified is not syntactically valid.\nRequestId:a38f0ad7-201e-00ec-6645-5d5cad000000\nTime:2019-08-28T02:11:42.5001499Z</Message><LineNumber>0</LineNumber><LinePosition>0</LinePosition><Reason
+        specified is not syntactically valid.\nRequestId:4589b62a-001e-0027-5b3d-5eab2a000000\nTime:2019-08-29T07:46:18.7583023Z</Message><LineNumber>0</LineNumber><LinePosition>0</LinePosition><Reason
         /></Error>"
     headers:
       content-length: '294'
       content-type: application/xml
-      date: Wed, 28 Aug 2019 02:11:42 GMT
+      date: Thu, 29 Aug 2019 07:46:18 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: InvalidXmlDocument
       x-ms-version: '2019-02-02'

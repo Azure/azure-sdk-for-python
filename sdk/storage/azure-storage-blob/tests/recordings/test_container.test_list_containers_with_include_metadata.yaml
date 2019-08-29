@@ -13,7 +13,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 28 Aug 2019 17:07:52 GMT
+      - Thu, 29 Aug 2019 08:46:59 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -25,11 +25,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 28 Aug 2019 17:07:52 GMT
+      - Thu, 29 Aug 2019 08:46:58 GMT
       etag:
-      - '"0x8D72BDA43370E17"'
+      - '"0x8D72C5D73FC8403"'
       last-modified:
-      - Wed, 28 Aug 2019 17:07:52 GMT
+      - Thu, 29 Aug 2019 08:46:58 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -51,7 +51,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 28 Aug 2019 17:07:53 GMT
+      - Thu, 29 Aug 2019 08:46:59 GMT
       x-ms-meta-hello:
       - world
       x-ms-meta-number:
@@ -67,11 +67,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 28 Aug 2019 17:07:52 GMT
+      - Thu, 29 Aug 2019 08:46:58 GMT
       etag:
-      - '"0x8D72BDA4343ADAF"'
+      - '"0x8D72C5D740C0B98"'
       last-modified:
-      - Wed, 28 Aug 2019 17:07:52 GMT
+      - Thu, 29 Aug 2019 08:46:58 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -91,7 +91,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 28 Aug 2019 17:07:53 GMT
+      - Thu, 29 Aug 2019 08:46:59 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -99,14 +99,14 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://pyacrstorageabb4177f.blob.core.windows.net/\"><Prefix>containerabb4177f</Prefix><Containers><Container><Name>containerabb4177f</Name><Properties><Last-Modified>Wed,
-        28 Aug 2019 17:07:52 GMT</Last-Modified><Etag>\"0x8D72BDA4343ADAF\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties><Metadata><hello>world</hello><number>42</number></Metadata></Container></Containers><NextMarker
+        ServiceEndpoint=\"https://pyacrstorageabb4177f.blob.core.windows.net/\"><Prefix>containerabb4177f</Prefix><Containers><Container><Name>containerabb4177f</Name><Properties><Last-Modified>Thu,
+        29 Aug 2019 08:46:58 GMT</Last-Modified><Etag>\"0x8D72C5D740C0B98\"</Etag><LeaseStatus>unlocked</LeaseStatus><LeaseState>available</LeaseState><DefaultEncryptionScope>$account-encryption-key</DefaultEncryptionScope><DenyEncryptionScopeOverride>false</DenyEncryptionScopeOverride><HasImmutabilityPolicy>false</HasImmutabilityPolicy><HasLegalHold>false</HasLegalHold></Properties><Metadata><hello>world</hello><number>42</number></Metadata></Container></Containers><NextMarker
         /></EnumerationResults>"
     headers:
       content-type:
       - application/xml
       date:
-      - Wed, 28 Aug 2019 17:07:52 GMT
+      - Thu, 29 Aug 2019 08:46:58 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:

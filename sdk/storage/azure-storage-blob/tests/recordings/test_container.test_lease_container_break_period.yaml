@@ -13,7 +13,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 28 Aug 2019 17:07:03 GMT
+      - Thu, 29 Aug 2019 08:46:45 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -25,11 +25,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 28 Aug 2019 17:07:03 GMT
+      - Thu, 29 Aug 2019 08:46:43 GMT
       etag:
-      - '"0x8D72BDA263166B7"'
+      - '"0x8D72C5D6BC8DEB4"'
       last-modified:
-      - Wed, 28 Aug 2019 17:07:03 GMT
+      - Thu, 29 Aug 2019 08:46:44 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -51,13 +51,13 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 28 Aug 2019 17:07:04 GMT
+      - Thu, 29 Aug 2019 08:46:45 GMT
       x-ms-lease-action:
       - acquire
       x-ms-lease-duration:
       - '15'
       x-ms-proposed-lease-id:
-      - afbff8ab-817a-48dc-8e40-fbbaeee89998
+      - 15a12225-62ba-4fe2-ba18-3d9249a13f63
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -69,15 +69,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 28 Aug 2019 17:07:03 GMT
+      - Thu, 29 Aug 2019 08:46:44 GMT
       etag:
-      - '"0x8D72BDA263166B7"'
+      - '"0x8D72C5D6BC8DEB4"'
       last-modified:
-      - Wed, 28 Aug 2019 17:07:03 GMT
+      - Thu, 29 Aug 2019 08:46:44 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-lease-id:
-      - afbff8ab-817a-48dc-8e40-fbbaeee89998
+      - 15a12225-62ba-4fe2-ba18-3d9249a13f63
       x-ms-version:
       - '2019-02-02'
     status:
@@ -97,7 +97,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 28 Aug 2019 17:07:04 GMT
+      - Thu, 29 Aug 2019 08:46:46 GMT
       x-ms-lease-action:
       - break
       x-ms-lease-break-period:
@@ -113,11 +113,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 28 Aug 2019 17:07:03 GMT
+      - Thu, 29 Aug 2019 08:46:44 GMT
       etag:
-      - '"0x8D72BDA263166B7"'
+      - '"0x8D72C5D6BC8DEB4"'
       last-modified:
-      - Wed, 28 Aug 2019 17:07:03 GMT
+      - Thu, 29 Aug 2019 08:46:44 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-lease-time:
@@ -141,9 +141,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 28 Aug 2019 17:07:10 GMT
+      - Thu, 29 Aug 2019 08:46:52 GMT
       x-ms-lease-id:
-      - afbff8ab-817a-48dc-8e40-fbbaeee89998
+      - 15a12225-62ba-4fe2-ba18-3d9249a13f63
       x-ms-version:
       - '2019-02-02'
     method: DELETE
@@ -151,14 +151,14 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>LeaseLost</Code><Message>A
-        lease ID was specified, but the lease for the container has expired.\nRequestId:ddf58f48-101e-0039-4cc3-5d1565000000\nTime:2019-08-28T17:07:10.2364473Z</Message></Error>"
+        lease ID was specified, but the lease for the container has expired.\nRequestId:c2ef68d4-e01e-00fa-0b46-5e9d33000000\nTime:2019-08-29T08:46:51.3318300Z</Message></Error>"
     headers:
       content-length:
       - '248'
       content-type:
       - application/xml
       date:
-      - Wed, 28 Aug 2019 17:07:09 GMT
+      - Thu, 29 Aug 2019 08:46:50 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:

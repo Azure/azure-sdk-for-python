@@ -1,0 +1,135 @@
+interactions:
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Thu, 29 Aug 2019 07:44:04 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://pyacrstorageaca917a4.blob.core.windows.net/utcontaineraca917a4?restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Thu, 29 Aug 2019 07:44:03 GMT
+      etag: '"0x8D72C54A9F2B0A0"'
+      last-modified: Thu, 29 Aug 2019 07:44:03 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2019-02-02'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstorageaca917a4.blob.core.windows.net
+        - /utcontaineraca917a4
+        - restype=container
+        - ''
+- request:
+    body: !!binary |
+      NrAY/oNfnqAJGKBF7I4Gdg==
+    headers:
+      Content-Length:
+      - '16'
+      Content-Type:
+      - application/octet-stream
+      If-None-Match:
+      - '*'
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-date:
+      - Thu, 29 Aug 2019 07:44:04 GMT
+      x-ms-meta-encryptiondata:
+      - '{"WrappedContentKey": {"KeyId": "key1", "EncryptedKey": "vB8q/IzOQfkRMPE1XPcSDhR8lKQlVzHBcH762W56kMVppHbWrMFH/A==",
+        "Algorithm": "A256KW"}, "EncryptionAgent": {"Protocol": "1.0", "EncryptionAlgorithm":
+        "AES_CBC_256"}, "ContentEncryptionIV": "6rfTBwFIzx1r+A3rpyx0Ng==", "KeyWrappingMetadata":
+        {"EncryptionLibrary": "Python 12.0.0b2"}, "EncryptionMode": "FullBlob"}'
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://pyacrstorageaca917a4.blob.core.windows.net/utcontaineraca917a4/encryption_block_blobaca917a4
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      content-md5: hdNyMBW1aZ/OlpZ+nU2YQQ==
+      date: Thu, 29 Aug 2019 07:44:03 GMT
+      etag: '"0x8D72C54A9FABF9A"'
+      last-modified: Thu, 29 Aug 2019 07:44:03 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-content-crc64: Iv2d/0VAkgk=
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2019-02-02'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstorageaca917a4.blob.core.windows.net
+        - /utcontaineraca917a4/encryption_block_blobaca917a4
+        - ''
+        - ''
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml, application/octet-stream, text/plain
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Thu, 29 Aug 2019 07:44:04 GMT
+      x-ms-range:
+      - bytes=0-33554431
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://pyacrstorageaca917a4.blob.core.windows.net/utcontaineraca917a4/encryption_block_blobaca917a4
+  response:
+    body:
+      string: !!binary |
+        NrAY/oNfnqAJGKBF7I4Gdg==
+    headers:
+      accept-ranges: bytes
+      content-length: '16'
+      content-range: bytes 0-15/16
+      content-type: application/octet-stream
+      date: Thu, 29 Aug 2019 07:44:03 GMT
+      etag: '"0x8D72C54A9FABF9A"'
+      last-modified: Thu, 29 Aug 2019 07:44:03 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-blob-content-md5: hdNyMBW1aZ/OlpZ+nU2YQQ==
+      x-ms-blob-type: BlockBlob
+      x-ms-creation-time: Thu, 29 Aug 2019 07:44:03 GMT
+      x-ms-lease-state: available
+      x-ms-lease-status: unlocked
+      x-ms-meta-encryptiondata: '{"WrappedContentKey": {"KeyId": "key1", "EncryptedKey":
+        "vB8q/IzOQfkRMPE1XPcSDhR8lKQlVzHBcH762W56kMVppHbWrMFH/A==", "Algorithm": "A256KW"},
+        "EncryptionAgent": {"Protocol": "1.0", "EncryptionAlgorithm": "AES_CBC_256"},
+        "ContentEncryptionIV": "6rfTBwFIzx1r+A3rpyx0Ng==", "KeyWrappingMetadata":
+        {"EncryptionLibrary": "Python 12.0.0b2"}, "EncryptionMode": "FullBlob"}'
+      x-ms-server-encrypted: 'true'
+      x-ms-tag-count: '0'
+      x-ms-version: '2019-02-02'
+    status:
+      code: 206
+      message: Partial Content
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstorageaca917a4.blob.core.windows.net
+        - /utcontaineraca917a4/encryption_block_blobaca917a4
+        - ''
+        - ''
+version: 1

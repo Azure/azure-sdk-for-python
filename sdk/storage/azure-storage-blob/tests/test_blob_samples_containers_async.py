@@ -9,22 +9,16 @@
 import os
 import asyncio
 from datetime import datetime, timedelta
-try:
-    import settings_real as settings
-except ImportError:
-    import blob_settings_fake as settings
-
-from testcase import (
-    StorageTestCase,
-    TestMode,
-    record
+from asyncblobtestcase import (
+    AsyncBlobTestCase,
 )
+
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 
 SOURCE_FILE = 'SampleSource.txt'
 
 
-class TestContainerSamplesAsync(StorageTestCase):
-    connection_string = settings.BLOB_CONNECTION_STRING
+class TestContainerSamplesAsync(AsyncBlobTestCase):
 
     def setUp(self):
         data = b"Lorem ipsum dolor sit amet, consectetur adipiscing elit"
@@ -44,12 +38,15 @@ class TestContainerSamplesAsync(StorageTestCase):
 
     # --Begin Blob Samples-----------------------------------------------------------------
 
-    async def test_container_sample_async(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_container_sample_async(self, resource_group, location, storage_account, storage_account_key):
 
         # [START create_container_client_from_service]
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string(storage_account, storage_account_key)(storage_account, storage_account_key))
 
         # Instantiate a ContainerClient
         container_client = blob_service_client.get_container_client("mynewcontainerasync")
@@ -77,18 +74,14 @@ class TestContainerSamplesAsync(StorageTestCase):
             await container_client.delete_container()
             # [END delete_container]
 
-    @record
-    def test_container_sample_async(self):
-        if not self.is_live:
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_container_sample_async())
-
-    async def test_acquire_lease_on_container_async(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_acquire_lease_on_container_async(self, resource_group, location, storage_account, storage_account_key):
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string(storage_account, storage_account_key)(storage_account, storage_account_key))
 
         # Instantiate a ContainerClient
         container_client = blob_service_client.get_container_client("myleasecontainerasync")
@@ -104,18 +97,14 @@ class TestContainerSamplesAsync(StorageTestCase):
         await container_client.delete_container(lease=lease)
         # [END acquire_lease_on_container]
 
-    @record
-    def test_acquire_lease_on_container_async(self):
-        if not self.is_live:
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_acquire_lease_on_container_async())
-
-    async def test_set_metadata_on_container_async(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_set_metadata_on_container_async(self, resource_group, location, storage_account, storage_account_key):
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string(storage_account, storage_account_key)(storage_account, storage_account_key))
 
         # Instantiate a ContainerClient
         container_client = blob_service_client.get_container_client("mymetadatacontainerasync")
@@ -141,21 +130,17 @@ class TestContainerSamplesAsync(StorageTestCase):
             # Delete container
             await container_client.delete_container()
 
-    @record
-    def test_set_metadata_on_container_async(self):
-        if not self.is_live:
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_set_metadata_on_container_async())
-
-    async def test_container_access_policy_async(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_container_access_policy_async(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:
             return
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string(storage_account, storage_account_key)(storage_account, storage_account_key))
 
         # Instantiate a ContainerClient
         container_client = blob_service_client.get_container_client("myaccesscontainerasync")
@@ -201,18 +186,14 @@ class TestContainerSamplesAsync(StorageTestCase):
             # Delete container
             await container_client.delete_container()
 
-    @record
-    def test_container_access_policy_async(self):
-        if not self.is_live:
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_container_access_policy_async())
-
-    async def test_list_blobs_in_container_async(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_list_blobs_in_container_async(self, resource_group, location, storage_account, storage_account_key):
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string(storage_account, storage_account_key)(storage_account, storage_account_key))
 
         # Instantiate a ContainerClient
         container_client = blob_service_client.get_container_client("myblobscontainerasync")
@@ -238,18 +219,14 @@ class TestContainerSamplesAsync(StorageTestCase):
         # Delete container
         await container_client.delete_container()
 
-    @record
-    def test_list_blobs_in_container_async(self):
-        if not self.is_live:
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_list_blobs_in_container_async())
-
-    async def test_get_blob_client_from_container_async(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncBlobTestCase.await_prepared_test
+    async def test_get_blob_client_from_container_async(self, resource_group, location, storage_account, storage_account_key):
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string(storage_account, storage_account_key)(storage_account, storage_account_key))
 
         # Instantiate a ContainerClient
         container_client = blob_service_client.get_container_client("blobcontainerasync")
@@ -264,10 +241,3 @@ class TestContainerSamplesAsync(StorageTestCase):
 
         # Delete container
         await container_client.delete_container()
-
-    @record
-    def test_get_blob_client_from_container_async(self):
-        if not self.is_live:
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_get_blob_client_from_container_async())

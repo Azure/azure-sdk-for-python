@@ -13,7 +13,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 28 Aug 2019 17:07:04 GMT
+      - Thu, 29 Aug 2019 08:46:58 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -25,11 +25,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 28 Aug 2019 17:07:04 GMT
+      - Thu, 29 Aug 2019 08:46:57 GMT
       etag:
-      - '"0x8D72BDA26BDE3C4"'
+      - '"0x8D72C5D737FE20A"'
       last-modified:
-      - Wed, 28 Aug 2019 17:07:04 GMT
+      - Thu, 29 Aug 2019 08:46:57 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -51,13 +51,13 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 28 Aug 2019 17:07:05 GMT
+      - Thu, 29 Aug 2019 08:46:58 GMT
       x-ms-lease-action:
       - acquire
       x-ms-lease-duration:
       - '-1'
       x-ms-proposed-lease-id:
-      - 4e53ee64-04fc-44a5-b1c1-6c094fc87eb3
+      - d692fc1f-651e-4e0b-8ffc-313a682ac10b
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -69,15 +69,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 28 Aug 2019 17:07:04 GMT
+      - Thu, 29 Aug 2019 08:46:57 GMT
       etag:
-      - '"0x8D72BDA26BDE3C4"'
+      - '"0x8D72C5D737FE20A"'
       last-modified:
-      - Wed, 28 Aug 2019 17:07:04 GMT
+      - Thu, 29 Aug 2019 08:46:57 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-lease-id:
-      - 4e53ee64-04fc-44a5-b1c1-6c094fc87eb3
+      - d692fc1f-651e-4e0b-8ffc-313a682ac10b
       x-ms-version:
       - '2019-02-02'
     status:
@@ -95,9 +95,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 28 Aug 2019 17:07:05 GMT
+      - Thu, 29 Aug 2019 08:46:58 GMT
       x-ms-lease-id:
-      - 4e53ee64-04fc-44a5-b1c1-6c094fc87eb3
+      - d692fc1f-651e-4e0b-8ffc-313a682ac10b
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -110,11 +110,11 @@ interactions:
       content-type:
       - application/xml
       date:
-      - Wed, 28 Aug 2019 17:07:04 GMT
+      - Thu, 29 Aug 2019 08:46:57 GMT
       etag:
-      - '"0x8D72BDA26BDE3C4"'
+      - '"0x8D72C5D737FE20A"'
       last-modified:
-      - Wed, 28 Aug 2019 17:07:04 GMT
+      - Thu, 29 Aug 2019 08:46:57 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:

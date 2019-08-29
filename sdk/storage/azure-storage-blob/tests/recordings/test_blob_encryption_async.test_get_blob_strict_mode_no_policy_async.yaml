@@ -5,30 +5,24 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 28 Aug 2019 02:11:20 GMT
+      - Thu, 29 Aug 2019 07:41:09 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
     uri: https://pyacrstoragec90a1c15.blob.core.windows.net/utcontainerc90a1c15?restype=container
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>AuthenticationFailed</Code><Message>Server
-        failed to authenticate the request. Make sure the value of Authorization header
-        is formed correctly including the signature.\nRequestId:aefcfaf0-b01e-001c-7f45-5d29b8000000\nTime:2019-08-28T02:11:21.0474710Z</Message><AuthenticationErrorDetail>The
-        MAC signature found in the HTTP request 'eACVifL4NSP5fici1WsCQr2dMUN9vbF4Bq1ZTWv3b4I='
-        is not the same as any computed signature. Server used following string to
-        sign: 'PUT\n\n\n\n\napplication/octet-stream\n\n\n\n\n\n\nx-ms-client-request-id:201983b6-c939-11e9-9873-2816a845e8c6\nx-ms-date:Wed,
-        28 Aug 2019 02:11:20 GMT\nx-ms-version:2019-02-02\n/pyacrstoragec90a1c15/utcontainerc90a1c15\nrestype:container'.</AuthenticationErrorDetail></Error>"
+      string: ''
     headers:
-      content-length: '772'
-      content-type: application/xml
-      date: Wed, 28 Aug 2019 02:11:20 GMT
-      server: Microsoft-HTTPAPI/2.0
-      x-ms-error-code: AuthenticationFailed
+      content-length: '0'
+      date: Thu, 29 Aug 2019 07:41:07 GMT
+      etag: '"0x8D72C54417B68CB"'
+      last-modified: Thu, 29 Aug 2019 07:41:08 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2019-02-02'
     status:
-      code: 403
-      message: Server failed to authenticate the request. Make sure the value of Authorization
-        header is formed correctly including the signature.
+      code: 201
+      message: Created
     url: !!python/object/new:yarl.URL
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
@@ -39,7 +33,7 @@ interactions:
         - ''
 - request:
     body: !!binary |
-      U9yjSTXaJ/qRg8k1zVeJbA==
+      x9Jv3lvmXV4BuMBcxeFa8Q==
     headers:
       Content-Length:
       - '16'
@@ -52,11 +46,11 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Wed, 28 Aug 2019 02:11:21 GMT
+      - Thu, 29 Aug 2019 07:41:09 GMT
       x-ms-meta-encryptiondata:
-      - '{"WrappedContentKey": {"KeyId": "key1", "EncryptedKey": "DkCtbwusRXWfIin2d/7ea5AyaaQZ4jxXlUAunUOS/E3hpG+n3esSzw==",
+      - '{"WrappedContentKey": {"KeyId": "key1", "EncryptedKey": "3kqheOAecK3ze9beJywdROBuodDSgn2KMqCgnj/cS98O4dtytkZF9A==",
         "Algorithm": "A256KW"}, "EncryptionAgent": {"Protocol": "1.0", "EncryptionAlgorithm":
-        "AES_CBC_256"}, "ContentEncryptionIV": "2GbaAVIerVmAuO7uH1n+jQ==", "KeyWrappingMetadata":
+        "AES_CBC_256"}, "ContentEncryptionIV": "Uo0KVSVnmnrofhLx0/dEgQ==", "KeyWrappingMetadata":
         {"EncryptionLibrary": "Python 12.0.0b2"}, "EncryptionMode": "FullBlob"}'
       x-ms-version:
       - '2019-02-02'
@@ -64,18 +58,20 @@ interactions:
     uri: https://pyacrstoragec90a1c15.blob.core.windows.net/utcontainerc90a1c15/encryption_block_blobc90a1c15
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
-        specified container does not exist.\nRequestId:aefcfaf4-b01e-001c-0245-5d29b8000000\nTime:2019-08-28T02:11:21.0905016Z</Message></Error>"
+      string: ''
     headers:
-      content-length: '225'
-      content-type: application/xml
-      date: Wed, 28 Aug 2019 02:11:20 GMT
+      content-length: '0'
+      content-md5: f+qY0x6UnuVLcxRZ38wP4Q==
+      date: Thu, 29 Aug 2019 07:41:07 GMT
+      etag: '"0x8D72C54418A1454"'
+      last-modified: Thu, 29 Aug 2019 07:41:08 GMT
       server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-error-code: ContainerNotFound
+      x-ms-content-crc64: GaBaCMwMJC8=
+      x-ms-request-server-encrypted: 'true'
       x-ms-version: '2019-02-02'
     status:
-      code: 404
-      message: The specified container does not exist.
+      code: 201
+      message: Created
     url: !!python/object/new:yarl.URL
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult

@@ -5,30 +5,24 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 28 Aug 2019 02:09:04 GMT
+      - Thu, 29 Aug 2019 07:44:01 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
     uri: https://pyacrstoragef4f218c6.blob.core.windows.net/utcontainerf4f218c6?restype=container
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>AuthenticationFailed</Code><Message>Server
-        failed to authenticate the request. Make sure the value of Authorization header
-        is formed correctly including the signature.\nRequestId:ae28dfeb-701e-0027-6645-5d3282000000\nTime:2019-08-28T02:09:04.5291987Z</Message><AuthenticationErrorDetail>The
-        MAC signature found in the HTTP request 'Ghxd/lNsu1NDFLZalVd4t0u8weij71Yv/fsfUSfDubI='
-        is not the same as any computed signature. Server used following string to
-        sign: 'PUT\n\n\n\n\napplication/octet-stream\n\n\n\n\n\n\nx-ms-client-request-id:cf1f176c-c938-11e9-b996-2816a845e8c6\nx-ms-date:Wed,
-        28 Aug 2019 02:09:04 GMT\nx-ms-version:2019-02-02\n/pyacrstoragef4f218c6/utcontainerf4f218c6\nrestype:container'.</AuthenticationErrorDetail></Error>"
+      string: ''
     headers:
-      content-length: '772'
-      content-type: application/xml
-      date: Wed, 28 Aug 2019 02:09:03 GMT
-      server: Microsoft-HTTPAPI/2.0
-      x-ms-error-code: AuthenticationFailed
+      content-length: '0'
+      date: Thu, 29 Aug 2019 07:44:00 GMT
+      etag: '"0x8D72C54A7FB1B72"'
+      last-modified: Thu, 29 Aug 2019 07:44:00 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2019-02-02'
     status:
-      code: 403
-      message: Server failed to authenticate the request. Make sure the value of Authorization
-        header is formed correctly including the signature.
+      code: 201
+      message: Created
     url: !!python/object/new:yarl.URL
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult

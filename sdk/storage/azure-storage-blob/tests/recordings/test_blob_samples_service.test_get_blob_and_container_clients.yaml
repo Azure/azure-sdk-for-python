@@ -3,43 +3,36 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/xml
+      - application/xml, application/octet-stream, text/plain
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b1 Python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit)
-      x-ms-client-request-id:
-      - ba356e7a-9c16-11e9-83ef-f45c89a7d159
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Mon, 01 Jul 2019 15:41:43 GMT
+      - Thu, 29 Aug 2019 08:39:15 GMT
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: GET
-    uri: https://storagename.blob.core.windows.net/containertest?restype=container&comp=list
+    uri: https://pyacrstorage60a18f3.blob.core.windows.net/containertest?restype=container&comp=list
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The\
-        \ specified container does not exist.\nRequestId:cc1c272f-501e-0012-6123-30501c000000\n\
-        Time:2019-07-01T15:41:44.2541909Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
+        specified container does not exist.\nRequestId:11046f77-a01e-013f-6845-5ec1ff000000\nTime:2019-08-29T08:39:15.1036669Z</Message></Error>"
     headers:
-      Content-Length:
+      content-length:
       - '225'
-      Content-Type:
+      content-type:
       - application/xml
-      Date:
-      - Mon, 01 Jul 2019 15:41:44 GMT
-      Server:
+      date:
+      - Thu, 29 Aug 2019 08:39:14 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
       x-ms-error-code:
       - ContainerNotFound
-      x-ms-request-id:
-      - cc1c272f-501e-0012-6123-30501c000000
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     status:
       code: 404
       message: The specified container does not exist.
@@ -55,33 +48,29 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b1 Python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit)
-      x-ms-client-request-id:
-      - ba53aafe-9c16-11e9-a007-f45c89a7d159
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Mon, 01 Jul 2019 15:41:44 GMT
+      - Thu, 29 Aug 2019 08:39:16 GMT
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: PUT
-    uri: https://storagename.blob.core.windows.net/containertest?restype=container
+    uri: https://pyacrstorage60a18f3.blob.core.windows.net/containertest?restype=container
   response:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
-      Date:
-      - Mon, 01 Jul 2019 15:41:44 GMT
-      ETag:
-      - '"0x8D6FE3A9EAB0D1C"'
-      Last-Modified:
-      - Mon, 01 Jul 2019 15:41:44 GMT
-      Server:
+      date:
+      - Thu, 29 Aug 2019 08:39:14 GMT
+      etag:
+      - '"0x8D72C5C5FC81A5E"'
+      last-modified:
+      - Thu, 29 Aug 2019 08:39:15 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - cc1c2745-501e-0012-7323-30501c000000
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -89,45 +78,38 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/xml
+      - application/xml, application/octet-stream, text/plain
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b1 Python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit)
-      x-ms-client-request-id:
-      - ba5d423a-9c16-11e9-8764-f45c89a7d159
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Mon, 01 Jul 2019 15:41:44 GMT
+      - Thu, 29 Aug 2019 08:39:16 GMT
       x-ms-range:
       - bytes=0-33554431
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: GET
-    uri: https://storagename.blob.core.windows.net/containertest/my_blob
+    uri: https://pyacrstorage60a18f3.blob.core.windows.net/containertest/my_blob
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>BlobNotFound</Code><Message>The\
-        \ specified blob does not exist.\nRequestId:cc1c2769-501e-0012-1123-30501c000000\n\
-        Time:2019-07-01T15:41:44.4303140Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>BlobNotFound</Code><Message>The
+        specified blob does not exist.\nRequestId:11046fff-a01e-013f-5245-5ec1ff000000\nTime:2019-08-29T08:39:15.2778317Z</Message></Error>"
     headers:
-      Content-Length:
+      content-length:
       - '215'
-      Content-Type:
+      content-type:
       - application/xml
-      Date:
-      - Mon, 01 Jul 2019 15:41:44 GMT
-      Server:
+      date:
+      - Thu, 29 Aug 2019 08:39:14 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
       x-ms-error-code:
       - BlobNotFound
-      x-ms-request-id:
-      - cc1c2769-501e-0012-1123-30501c000000
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     status:
       code: 404
       message: The specified blob does not exist.
@@ -143,29 +125,25 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b1 Python/3.6.5 (Darwin-16.7.0-x86_64-i386-64bit)
-      x-ms-client-request-id:
-      - ba6f5240-9c16-11e9-9f42-f45c89a7d159
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Mon, 01 Jul 2019 15:41:44 GMT
+      - Thu, 29 Aug 2019 08:39:16 GMT
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     method: DELETE
-    uri: https://storagename.blob.core.windows.net/containertest?restype=container
+    uri: https://pyacrstorage60a18f3.blob.core.windows.net/containertest?restype=container
   response:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
-      Date:
-      - Mon, 01 Jul 2019 15:41:44 GMT
-      Server:
+      date:
+      - Thu, 29 Aug 2019 08:39:15 GMT
+      server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - cc1c279f-501e-0012-4223-30501c000000
       x-ms-version:
-      - '2018-03-28'
+      - '2019-02-02'
     status:
       code: 202
       message: Accepted

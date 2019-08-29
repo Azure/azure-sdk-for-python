@@ -13,7 +13,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 28 Aug 2019 17:08:51 GMT
+      - Thu, 29 Aug 2019 08:50:09 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -25,11 +25,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 28 Aug 2019 17:08:51 GMT
+      - Thu, 29 Aug 2019 08:50:07 GMT
       etag:
-      - '"0x8D72BDA66A0F1EC"'
+      - '"0x8D72C5DE5342573"'
       last-modified:
-      - Wed, 28 Aug 2019 17:08:52 GMT
+      - Thu, 29 Aug 2019 08:50:08 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -57,7 +57,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Wed, 28 Aug 2019 17:08:52 GMT
+      - Thu, 29 Aug 2019 08:50:09 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -71,11 +71,11 @@ interactions:
       content-md5:
       - XrY7u+Ae7tCTyyK7j1rNww==
       date:
-      - Wed, 28 Aug 2019 17:08:51 GMT
+      - Thu, 29 Aug 2019 08:50:07 GMT
       etag:
-      - '"0x8D72BDA66ADDB2B"'
+      - '"0x8D72C5DE543A1B5"'
       last-modified:
-      - Wed, 28 Aug 2019 17:08:52 GMT
+      - Thu, 29 Aug 2019 08:50:08 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64:
@@ -99,7 +99,7 @@ interactions:
       User-Agent:
       - python-requests/2.21.0
     method: GET
-    uri: https://pyacrstorage83bd119a.blob.core.windows.net/container83bd119a/blob1?se=2019-08-28T18%3A08%3A52Z&sp=r&sv=2018-06-17&sr=c&sig=c6UVunt6wOMnUvloocy26fMOj92/qD80aX8cS4p/0rU%3D
+    uri: https://pyacrstorage83bd119a.blob.core.windows.net/container83bd119a/blob1?se=2019-08-29T09%3A50%3A09Z&sp=r&sv=2018-06-17&sr=c&sig=45WW3Tks%2BxNfgCgPYqcNFXxehmBd5vCDV4gspeVCUOc%3D
   response:
     body:
       string: hello world
@@ -113,17 +113,17 @@ interactions:
       content-type:
       - application/octet-stream
       date:
-      - Wed, 28 Aug 2019 17:08:52 GMT
+      - Thu, 29 Aug 2019 08:50:08 GMT
       etag:
-      - '"0x8D72BDA66ADDB2B"'
+      - '"0x8D72C5DE543A1B5"'
       last-modified:
-      - Wed, 28 Aug 2019 17:08:52 GMT
+      - Thu, 29 Aug 2019 08:50:08 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Wed, 28 Aug 2019 17:08:52 GMT
+      - Thu, 29 Aug 2019 08:50:08 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:

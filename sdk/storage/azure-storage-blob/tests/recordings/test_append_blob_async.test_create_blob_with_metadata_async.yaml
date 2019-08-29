@@ -5,30 +5,24 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 28 Aug 2019 01:58:29 GMT
+      - Thu, 29 Aug 2019 07:37:19 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
     uri: https://pyacrstoraged180180a.blob.core.windows.net/utcontainerd180180a?restype=container
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>AuthenticationFailed</Code><Message>Server
-        failed to authenticate the request. Make sure the value of Authorization header
-        is formed correctly including the signature.\nRequestId:a5d1657e-101e-005e-3d44-5d02ac000000\nTime:2019-08-28T01:58:33.8088369Z</Message><AuthenticationErrorDetail>The
-        MAC signature found in the HTTP request 'cETmAu+BWu2kWr/9wQzL9liy+SGVPpxFi7KsPmUEH9s='
-        is not the same as any computed signature. Server used following string to
-        sign: 'PUT\n\n\n\n\napplication/octet-stream\n\n\n\n\n\n\nx-ms-client-request-id:550274e2-c937-11e9-a99b-2816a845e8c6\nx-ms-date:Wed,
-        28 Aug 2019 01:58:29 GMT\nx-ms-version:2019-02-02\n/pyacrstoraged180180a/utcontainerd180180a\nrestype:container'.</AuthenticationErrorDetail></Error>"
+      string: ''
     headers:
-      content-length: '772'
-      content-type: application/xml
-      date: Wed, 28 Aug 2019 01:58:32 GMT
-      server: Microsoft-HTTPAPI/2.0
-      x-ms-error-code: AuthenticationFailed
+      content-length: '0'
+      date: Thu, 29 Aug 2019 07:37:17 GMT
+      etag: '"0x8D72C53B8576216"'
+      last-modified: Thu, 29 Aug 2019 07:37:18 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2019-02-02'
     status:
-      code: 403
-      message: Server failed to authenticate the request. Make sure the value of Authorization
-        header is formed correctly including the signature.
+      code: 201
+      message: Created
     url: !!python/object/new:yarl.URL
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
@@ -47,7 +41,7 @@ interactions:
       x-ms-blob-type:
       - AppendBlob
       x-ms-date:
-      - Wed, 28 Aug 2019 01:58:34 GMT
+      - Thu, 29 Aug 2019 07:37:19 GMT
       x-ms-meta-hello:
       - world
       x-ms-meta-number:
@@ -58,23 +52,61 @@ interactions:
     uri: https://pyacrstoraged180180a.blob.core.windows.net/utcontainerd180180a/blobd180180a
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>AuthenticationFailed</Code><Message>Server
-        failed to authenticate the request. Make sure the value of Authorization header
-        is formed correctly including the signature.\nRequestId:a5d16585-101e-005e-4344-5d02ac000000\nTime:2019-08-28T01:58:33.8488654Z</Message><AuthenticationErrorDetail>The
-        MAC signature found in the HTTP request 'tq68gSi/WgxZQpXHHL6HXYXvfF4Bf5QovEmxr2tk8rE='
-        is not the same as any computed signature. Server used following string to
-        sign: 'PUT\n\n\n\n\napplication/octet-stream\n\n\n\n\n\n\nx-ms-blob-type:AppendBlob\nx-ms-client-request-id:5783defa-c937-11e9-b54b-2816a845e8c6\nx-ms-date:Wed,
-        28 Aug 2019 01:58:34 GMT\nx-ms-meta-hello:world\nx-ms-meta-number:42\nx-ms-version:2019-02-02\n/pyacrstoraged180180a/utcontainerd180180a/blobd180180a'.</AuthenticationErrorDetail></Error>"
+      string: ''
     headers:
-      content-length: '835'
-      content-type: application/xml
-      date: Wed, 28 Aug 2019 01:58:32 GMT
-      server: Microsoft-HTTPAPI/2.0
-      x-ms-error-code: AuthenticationFailed
+      content-length: '0'
+      date: Thu, 29 Aug 2019 07:37:17 GMT
+      etag: '"0x8D72C53B862059E"'
+      last-modified: Thu, 29 Aug 2019 07:37:18 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2019-02-02'
     status:
-      code: 403
-      message: Server failed to authenticate the request. Make sure the value of Authorization
-        header is formed correctly including the signature.
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstoraged180180a.blob.core.windows.net
+        - /utcontainerd180180a/blobd180180a
+        - ''
+        - ''
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Thu, 29 Aug 2019 07:37:19 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: HEAD
+    uri: https://pyacrstoraged180180a.blob.core.windows.net/utcontainerd180180a/blobd180180a
+  response:
+    body:
+      string: ''
+    headers:
+      accept-ranges: bytes
+      content-length: '0'
+      content-type: application/octet-stream
+      date: Thu, 29 Aug 2019 07:37:17 GMT
+      etag: '"0x8D72C53B862059E"'
+      last-modified: Thu, 29 Aug 2019 07:37:18 GMT
+      server: Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-blob-committed-block-count: '0'
+      x-ms-blob-type: AppendBlob
+      x-ms-creation-time: Thu, 29 Aug 2019 07:37:18 GMT
+      x-ms-lease-state: available
+      x-ms-lease-status: unlocked
+      x-ms-meta-hello: world
+      x-ms-meta-number: '42'
+      x-ms-server-encrypted: 'true'
+      x-ms-tag-count: '0'
+      x-ms-version: '2019-02-02'
+    status:
+      code: 200
+      message: OK
     url: !!python/object/new:yarl.URL
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult

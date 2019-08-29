@@ -13,7 +13,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 28 Aug 2019 17:06:40 GMT
+      - Thu, 29 Aug 2019 08:48:46 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
@@ -21,14 +21,14 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
-        specified container does not exist.\nRequestId:cc4cfe31-401e-002b-7fc2-5d8517000000\nTime:2019-08-28T17:06:40.6021542Z</Message></Error>"
+        specified container does not exist.\nRequestId:fe0cbe51-001e-004f-1b46-5ece12000000\nTime:2019-08-29T08:48:45.8645944Z</Message></Error>"
     headers:
       content-length:
       - '225'
       content-type:
       - application/xml
       date:
-      - Wed, 28 Aug 2019 17:06:39 GMT
+      - Thu, 29 Aug 2019 08:48:45 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
