@@ -98,11 +98,11 @@ jobs:
         Windows_Python35:
           OSName: 'Windows'
           OSVmImage: 'vs2017-win2016'
-          PythonVersion: '3.5'
+          PythonVersion: '2.7'
         MacOS_Python27:
           OSName: 'MacOS'
           OSVmImage: 'macOS-10.13'
-          PythonVersion: '2.7'
+          PythonVersion: '3.5'
     pool:
       vmImage: '$(OSVmImage)'
 
@@ -121,4 +121,3 @@ jobs:
               artifactName: 'artifacts' 
               targetPath: $(Build.ArtifactStagingDirectory)
         ToxTestEnv: "whl,sdist"  
-    - template: ../steps/publish-coverage.yml
