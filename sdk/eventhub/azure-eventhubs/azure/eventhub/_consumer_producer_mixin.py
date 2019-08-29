@@ -7,7 +7,7 @@ from __future__ import unicode_literals
 import logging
 import time
 
-from uamqp import errors, constants, compat
+from uamqp import errors, constants, compat  # type: ignore
 from azure.eventhub.error import EventHubError, _handle_exception
 
 log = logging.getLogger(__name__)
@@ -25,8 +25,8 @@ def _retry_decorator(to_be_wrapped_func):
         while True:
             try:
                 return to_be_wrapped_func(self, timeout_time=timeout_time, last_exception=last_exception, **kwargs)
-            except Exception as exception:
-                last_exception = self._handle_exception(exception, retry_count, max_retries, timeout_time)
+            except Exception as exception:  # pylint:disable=broad-except
+                last_exception = self._handle_exception(exception, retry_count, max_retries, timeout_time)  # pylint:disable=protected-access
                 retry_count += 1
     return wrapped_func
 
@@ -119,7 +119,7 @@ class ConsumerProducerMixin(object):
 
         """
         self.running = False
-        if self.error:
+        if self.error:  # type: ignore
             return
         if isinstance(exception, errors.LinkRedirect):
             self.redirected = exception

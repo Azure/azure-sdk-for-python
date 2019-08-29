@@ -6,20 +6,17 @@ import logging
 import datetime
 import functools
 import asyncio
-try:
-    from urlparse import urlparse
-    from urllib import unquote_plus, urlencode, quote_plus
-except ImportError:
-    from urllib.parse import urlparse, unquote_plus, urlencode, quote_plus
-from typing import Any, List, Dict
 
-from uamqp import authentication, constants
+from typing import Any, List, Dict, Union, TYPE_CHECKING
+
+from uamqp import authentication, constants  # type: ignore
 from uamqp import (
     Message,
     AMQPClientAsync,
-)
+)  # type: ignore
 
-from azure.eventhub.common import parse_sas_token, EventPosition, EventHubSharedKeyCredential, EventHubSASTokenCredential
+from azure.eventhub.common import parse_sas_token, EventPosition, \
+    EventHubSharedKeyCredential, EventHubSASTokenCredential
 from ..client_abstract import EventHubClientAbstract
 
 from .producer_async import EventHubProducer
@@ -27,6 +24,8 @@ from .consumer_async import EventHubConsumer
 from ._connection_manager_async import get_connection_manager
 from .error_async import _handle_exception
 
+if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential  # type: ignore
 
 log = logging.getLogger(__name__)
 
@@ -47,7 +46,9 @@ class EventHubClient(EventHubClientAbstract):
     """
 
     def __init__(self, host, event_hub_path, credential, **kwargs):
-        super(EventHubClient, self).__init__(host, event_hub_path, credential, **kwargs)
+        # type:(str, str, Union[EventHubSharedKeyCredential, EventHubSASTokenCredential, TokenCredential], ...) -> None
+
+        super(EventHubClient, self).__init__(host=host, event_hub_path=event_hub_path, credential=credential, **kwargs)
         self._lock = asyncio.Lock()
         self._conn_manager = get_connection_manager(**kwargs)
 
@@ -71,7 +72,7 @@ class EventHubClient(EventHubClientAbstract):
         transport_type = self.config.transport_type
         auth_timeout = self.config.auth_timeout
 
-        if isinstance(self.credential, EventHubSharedKeyCredential):
+        if isinstance(self.credential, EventHubSharedKeyCredential):  # pylint:disable=no-else-return
             username = username or self._auth_config['username']
             password = password or self._auth_config['password']
             if "@sas.root" in username:
@@ -129,7 +130,7 @@ class EventHubClient(EventHubClientAbstract):
                     status_code_field=b'status-code',
                     description_fields=b'status-description')
                 return response
-            except Exception as exception:
+            except Exception as exception:  # pylint:disable=broad-except
                 await self._handle_exception(exception, retry_count, max_retries)
                 retry_count += 1
             finally:
@@ -219,7 +220,12 @@ class EventHubClient(EventHubClientAbstract):
             output['is_empty'] = partition_info[b'is_partition_empty']
         return output
 
-    def create_consumer(self, consumer_group: str, partition_id: str, event_position: EventPosition, **kwargs):
+    def create_consumer(
+            self,
+            consumer_group: str,
+            partition_id: str,
+            event_position: EventPosition, **kwargs
+    ) -> EventHubConsumer:
         """
         Create an async consumer to the client for a particular consumer group and partition.
 
@@ -250,12 +256,11 @@ class EventHubClient(EventHubClientAbstract):
                 :caption: Add an async consumer to the client for a particular consumer group and partition.
 
         """
-        owner_level = kwargs.get("owner_level", None)
-        operation = kwargs.get("operation", None)
-        prefetch = kwargs.get("prefetch", None)
-        loop = kwargs.get("loop", None)
+        owner_level = kwargs.get("owner_level")
+        operation = kwargs.get("operation")
+        prefetch = kwargs.get("prefetch") or self.config.prefetch
+        loop = kwargs.get("loop")
 
-        prefetch = prefetch or self.config.prefetch
         path = self.address.path + operation if operation else self.address.path
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
             self.address.hostname, path, consumer_group, partition_id)
@@ -264,8 +269,13 @@ class EventHubClient(EventHubClientAbstract):
             prefetch=prefetch, loop=loop)
         return handler
 
-    def create_producer(self, *, partition_id=None, operation=None, send_timeout=None, loop=None):
-        # type: (str, str, float, asyncio.AbstractEventLoop) -> EventHubProducer
+    def create_producer(
+            self, *,
+            partition_id: str = None,
+            operation: str = None,
+            send_timeout: float = None,
+            loop: asyncio.AbstractEventLoop = None
+    ) -> EventHubProducer:
         """
         Create an async producer to send EventData object to an EventHub.
 

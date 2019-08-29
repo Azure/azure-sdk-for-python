@@ -9,8 +9,8 @@ import logging
 import time
 from typing import List
 
-from uamqp import types, errors
-from uamqp import ReceiveClient, Source
+from uamqp import types, errors  # type: ignore
+from uamqp import ReceiveClient, Source  # type: ignore
 
 from azure.eventhub.common import EventData, EventPosition
 from azure.eventhub.error import _error_handler
@@ -20,7 +20,7 @@ from ._consumer_producer_mixin import ConsumerProducerMixin, _retry_decorator
 log = logging.getLogger(__name__)
 
 
-class EventHubConsumer(ConsumerProducerMixin):
+class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instance-attributes
     """
     A consumer responsible for reading EventData from a specific Event Hub
     partition and as a member of a specific consumer group.
@@ -96,23 +96,23 @@ class EventHubConsumer(ConsumerProducerMixin):
                 if not self.messages_iter:
                     self.messages_iter = self._handler.receive_messages_iter()
                 message = next(self.messages_iter)
-                event_data = EventData._from_message(message)
+                event_data = EventData._from_message(message)  # pylint:disable=protected-access
                 self.offset = EventPosition(event_data.offset, inclusive=False)
                 retry_count = 0
                 return event_data
-            except Exception as exception:
-                self._handle_exception(exception, retry_count, max_retries)
+            except Exception as exception:  # pylint:disable=broad-except
+                self._handle_exception(exception, retry_count, max_retries, timeout_time=None)
                 retry_count += 1
 
     def _create_handler(self):
         alt_creds = {
-            "username": self.client._auth_config.get("iot_username") if self.redirected else None,
-            "password": self.client._auth_config.get("iot_password") if self.redirected else None
+            "username": self.client._auth_config.get("iot_username") if self.redirected else None,  # pylint:disable=protected-access
+            "password": self.client._auth_config.get("iot_password") if self.redirected else None  # pylint:disable=protected-access
         }
 
         source = Source(self.source)
         if self.offset is not None:
-            source.set_filter(self.offset._selector())
+            source.set_filter(self.offset._selector())  # pylint:disable=protected-access
         self._handler = ReceiveClient(
             source,
             auth=self.client.get_auth(**alt_creds),
@@ -123,8 +123,8 @@ class EventHubConsumer(ConsumerProducerMixin):
             error_policy=self.retry_policy,
             keep_alive_interval=self.keep_alive,
             client_name=self.name,
-            properties=self.client._create_properties(
-                self.client.config.user_agent))  # pylint: disable=protected-access
+            properties=self.client._create_properties(  # pylint:disable=protected-access
+                self.client.config.user_agent))
         self.messages_iter = None
 
     def _redirect(self, redirect):
@@ -166,7 +166,7 @@ class EventHubConsumer(ConsumerProducerMixin):
             max_batch_size=max_batch_size - (len(data_batch) if data_batch else 0),
             timeout=remaining_time_ms)
         for message in message_batch:
-            event_data = EventData._from_message(message)
+            event_data = EventData._from_message(message)  # pylint:disable=protected-access
             self.offset = EventPosition(event_data.offset)
             data_batch.append(event_data)
         return data_batch

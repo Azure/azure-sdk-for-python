@@ -7,12 +7,12 @@ from __future__ import unicode_literals
 import datetime
 import calendar
 import json
-import six
 import logging
+import six
 
+from uamqp import BatchMessage, Message, types, constants  # type: ignore
+from uamqp.message import MessageHeader, MessageProperties  # type: ignore
 from azure.eventhub.error import EventDataError
-from uamqp import BatchMessage, Message, types, constants
-from uamqp.message import MessageHeader, MessageProperties
 
 log = logging.getLogger(__name__)
 
@@ -54,6 +54,7 @@ class EventData(object):
     PROP_SEQ_NUMBER = b"x-opt-sequence-number"
     PROP_OFFSET = b"x-opt-offset"
     PROP_PARTITION_KEY = b"x-opt-partition-key"
+    PROP_PARTITION_KEY_AMQP_SYMBOL = types.AMQPSymbol(PROP_PARTITION_KEY)
     PROP_TIMESTAMP = b"x-opt-enqueued-time"
     PROP_DEVICE_ID = b"iothub-connection-device-id"
 
@@ -67,20 +68,19 @@ class EventData(object):
         :type to_device: str
         """
 
-        self._partition_key = types.AMQPSymbol(EventData.PROP_PARTITION_KEY)
         self._annotations = {}
         self._app_properties = {}
-        self.msg_properties = MessageProperties()
+        self._msg_properties = MessageProperties()
         if to_device:
-            self.msg_properties.to = '/devices/{}/messages/devicebound'.format(to_device)
+            self._msg_properties.to = '/devices/{}/messages/devicebound'.format(to_device)
         if body and isinstance(body, list):
-            self.message = Message(body[0], properties=self.msg_properties)
+            self.message = Message(body[0], properties=self._msg_properties)
             for more in body[1:]:
                 self.message._body.append(more)  # pylint: disable=protected-access
         elif body is None:
             raise ValueError("EventData cannot be None.")
         else:
-            self.message = Message(body, properties=self.msg_properties)
+            self.message = Message(body, properties=self._msg_properties)
 
     def __str__(self):
         dic = {
@@ -108,7 +108,7 @@ class EventData(object):
         :type value: str or bytes
         """
         annotations = dict(self._annotations)
-        annotations[self._partition_key] = value
+        annotations[EventData.PROP_PARTITION_KEY_AMQP_SYMBOL] = value
         header = MessageHeader()
         header.durable = True
         self.message.annotations = annotations
@@ -119,9 +119,9 @@ class EventData(object):
     def _from_message(message):
         event_data = EventData(body='')
         event_data.message = message
-        event_data.msg_properties = message.properties
-        event_data._annotations = message.annotations
-        event_data._app_properties = message.application_properties
+        event_data._msg_properties = message.properties  # pylint:disable=protected-access
+        event_data._annotations = message.annotations  # pylint:disable=protected-access
+        event_data._app_properties = message.application_properties  # pylint:disable=protected-access
         return event_data
 
     @property
@@ -175,7 +175,7 @@ class EventData(object):
         :rtype: bytes
         """
         try:
-            return self._annotations[self._partition_key]
+            return self._annotations[EventData.PROP_PARTITION_KEY_AMQP_SYMBOL]
         except KeyError:
             return self._annotations.get(EventData.PROP_PARTITION_KEY, None)
 
@@ -281,7 +281,7 @@ class EventDataBatch(object):
     @staticmethod
     def _from_batch(batch_data, partition_key=None):
         batch_data_instance = EventDataBatch(partition_key=partition_key)
-        batch_data_instance.message._body_gen = batch_data
+        batch_data_instance.message._body_gen = batch_data  # pylint:disable=protected-access
         return batch_data_instance
 
     def _set_partition_key(self, value):
@@ -308,10 +308,10 @@ class EventDataBatch(object):
             raise TypeError('event_data should be type of EventData')
 
         if self._partition_key:
-            if event_data.partition_key and not (event_data.partition_key == self._partition_key):
+            if event_data.partition_key and not event_data.partition_key == self._partition_key:
                 raise EventDataError('The partition_key of event_data does not match the one of the EventDataBatch')
             if not event_data.partition_key:
-                event_data._set_partition_key(self._partition_key)
+                event_data._set_partition_key(self._partition_key)  # pylint:disable=protected-access
 
         event_data_size = event_data.message.get_message_encoded_size()
 
@@ -368,7 +368,7 @@ class EventPosition(object):
         :rtype: bytes
         """
         operator = ">=" if self.inclusive else ">"
-        if isinstance(self.value, datetime.datetime):
+        if isinstance(self.value, datetime.datetime):  # pylint:disable=no-else-return
             timestamp = (calendar.timegm(self.value.utctimetuple()) * 1000) + (self.value.microsecond/1000)
             return ("amqp.annotation.x-opt-enqueued-time {} '{}'".format(operator, int(timestamp))).encode('utf-8')
         elif isinstance(self.value, six.integer_types):
@@ -391,7 +391,7 @@ class EventHubSASTokenCredential(object):
         self.token = token
 
     def get_sas_token(self):
-        if callable(self.token):
+        if callable(self.token):  # pylint:disable=no-else-return
             return self.token()
         else:
             return self.token

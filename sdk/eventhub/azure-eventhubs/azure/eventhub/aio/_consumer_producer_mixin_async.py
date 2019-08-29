@@ -6,7 +6,7 @@ import asyncio
 import logging
 import time
 
-from uamqp import errors, constants, compat
+from uamqp import errors, constants, compat  # type: ignore
 from azure.eventhub.error import EventHubError, ConnectError
 from ..aio.error_async import _handle_exception
 
@@ -24,8 +24,10 @@ def _retry_decorator(to_be_wrapped_func):
         last_exception = None
         while True:
             try:
-                return await to_be_wrapped_func(self, timeout_time=timeout_time, last_exception=last_exception, **kwargs)
-            except Exception as exception:
+                return await to_be_wrapped_func(
+                    self, timeout_time=timeout_time, last_exception=last_exception, **kwargs
+                )
+            except Exception as exception:  # pylint:disable=broad-except
                 last_exception = await self._handle_exception(exception, retry_count, max_retries, timeout_time)
                 retry_count += 1
     return wrapped_func
@@ -90,7 +92,7 @@ class ConsumerProducerMixin(object):
 
     async def _close_connection(self):
         await self._close_handler()
-        await self.client._conn_manager.reset_connection_if_broken()
+        await self.client._conn_manager.reset_connection_if_broken()  # pylint:disable=protected-access
 
     async def _handle_exception(self, exception, retry_count, max_retries, timeout_time):
         if not self.running and isinstance(exception, compat.TimeoutException):
@@ -120,7 +122,7 @@ class ConsumerProducerMixin(object):
 
         """
         self.running = False
-        if self.error:
+        if self.error:  #type: ignore
             return
         if isinstance(exception, errors.LinkRedirect):
             self.redirected = exception

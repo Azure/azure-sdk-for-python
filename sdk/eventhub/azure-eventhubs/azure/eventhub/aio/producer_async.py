@@ -5,11 +5,11 @@
 import uuid
 import asyncio
 import logging
-from typing import Iterable, Union
+from typing import Iterable, Union, Any
 import time
 
-from uamqp import types, constants, errors
-from uamqp import SendClientAsync
+from uamqp import types, constants, errors  # type: ignore
+from uamqp import SendClientAsync  # type: ignore
 
 from azure.eventhub.common import EventData, EventDataBatch
 from azure.eventhub.error import _error_handler, OperationTimeoutError, EventDataError
@@ -185,7 +185,7 @@ class EventHubProducer(ConsumerProducerMixin):
         return EventDataBatch(max_size=(max_size or self._max_message_size_on_link), partition_key=partition_key)
 
     async def send(self, event_data, *, partition_key=None, timeout=None):
-        # type:(Union[EventData, EventDataBatch, Iterable[EventData]], Union[str, bytes], float) -> None
+        # type:(Union[EventData, EventDataBatch, Iterable[EventData]],Any, Union[str, bytes], float) -> None
         """
         Sends an event data and blocks until acknowledgement is
         received or operation times out.
@@ -224,7 +224,7 @@ class EventHubProducer(ConsumerProducerMixin):
             if isinstance(event_data, EventDataBatch):
                 if partition_key and not (partition_key == event_data._partition_key):  # pylint: disable=protected-access
                     raise EventDataError('The partition_key does not match the one of the EventDataBatch')
-                wrapper_event_data = event_data
+                wrapper_event_data = event_data  #type: ignore
             else:
                 if partition_key:
                     event_data = _set_partition_key(event_data, partition_key)
