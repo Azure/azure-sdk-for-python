@@ -351,7 +351,7 @@ class CertificateClient(KeyVaultClientBase):
         return CertificatePolicy._from_certificate_policy_bundle(certificate_policy_bundle=bundle)
 
     @distributed_trace
-    def update_policy(self, name, policy, **kwargs) -> CertificatePolicy:
+    def update_policy(self, name, policy, **kwargs):
         # type: (str, CertificatePolicy, **Any) -> CertificatePolicy
         """Updates the policy for a certificate.
 
@@ -494,7 +494,7 @@ class CertificateClient(KeyVaultClientBase):
         return Certificate._from_certificate_bundle(certificate_bundle=bundle)
 
     @distributed_trace
-    def list_deleted_certificates(self, include_pending=None, **kwargs) -> Iterable[DeletedCertificate]:
+    def list_deleted_certificates(self, include_pending=None, **kwargs):
         # type: (Optional[bool], **Any) -> Iterable[DeletedCertificate]
         """Lists the deleted certificates in the specified vault currently
         available for recovery.

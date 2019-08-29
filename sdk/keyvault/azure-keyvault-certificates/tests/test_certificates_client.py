@@ -98,17 +98,29 @@ class CertificateClientTests(KeyVaultTestCase):
         if not cert_policy_x509_props.subject_alternative_names:
             return
         if cert_policy_x509_props.subject_alternative_names.emails:
-            for (san_email, policy_email) in itertools.zip_longest(
-                    cert_policy_x509_props.subject_alternative_names.emails, cert_bundle_policy.san_emails):
-                self.assertEqual(san_email, policy_email)
+            policy_emails = cert_bundle_policy.san_emails
+            for san_email in cert_policy_x509_props.subject_alternative_names.emails:
+                for policy_email in policy_emails:
+                    if (san_email == policy_email):
+                        policy_emails.remove(policy_email)
+                        break
+            self.assertFalse(policy_emails)
         if cert_policy_x509_props.subject_alternative_names.upns:
-            for (san_upns, policy_upns) in itertools.zip_longest(cert_policy_x509_props.subject_alternative_names.upns,
-                                                                  cert_bundle_policy.san_upns):
-                self.assertEqual(san_upns, policy_upns)
+            policy_upns_list = cert_bundle_policy.san_upns
+            for san_upns in cert_policy_x509_props.subject_alternative_names.upns:
+                for policy_upns in policy_upns_list:
+                    if san_upns == policy_upns:
+                        policy_upns_list.remove(policy_upns)
+                        break
+            self.assertFalse(policy_upns_list)
         if cert_policy_x509_props.subject_alternative_names.dns_names:
-            for (san_dns_name, policy_dns_name) in itertools.zip_longest(
-                    cert_policy_x509_props.subject_alternative_names.dns_names, cert_bundle_policy.san_dns_names):
-                self.assertEqual(san_dns_name, policy_dns_name)
+            policy_dns_names = cert_bundle_policy.san_dns_names
+            for san_dns_name in cert_policy_x509_props.subject_alternative_names.dns_names:
+                for policy_dns_name in policy_dns_names:
+                    if san_dns_name == policy_dns_name:
+                        policy_dns_names.remove(policy_dns_name)
+                        break
+            self.assertFalse(policy_dns_names)
 
     def _validate_key_properties(self, cert_bundle_key_props, cert_policy_key_props):
         self.assertIsNotNone(cert_bundle_key_props)
@@ -122,15 +134,17 @@ class CertificateClientTests(KeyVaultTestCase):
     def _validate_lifetime_actions(self, cert_bundle_lifetime_actions, cert_policy_lifetime_actions):
         self.assertIsNotNone(cert_bundle_lifetime_actions)
         if cert_policy_lifetime_actions:
-            for (bundle_lifetime_action, policy_lifetime_action) in itertools.zip_longest(cert_bundle_lifetime_actions,
-                                                                                          cert_bundle_lifetime_actions):
-                self.assertEqual(bundle_lifetime_action.action_type, policy_lifetime_action.action_type)
-                if policy_lifetime_action.lifetime_percentage:
-                    self.assertEqual(bundle_lifetime_action.lifetime_percentage,
-                                     policy_lifetime_action.lifetime_percentage)
-                if policy_lifetime_action.days_before_expiry:
-                    self.assertEqual(bundle_lifetime_action.days_before_expiry,
-                                     policy_lifetime_action.days_before_expiry)
+            policy_lifetime_actions = cert_bundle_lifetime_actions
+            for bundle_lifetime_action in cert_bundle_lifetime_actions:
+                for policy_lifetime_action in policy_lifetime_actions:
+                    if bundle_lifetime_action == policy_lifetime_action:
+                        if policy_lifetime_action.lifetime_percentage:
+                            self.assertEqual(bundle_lifetime_action.lifetime_percentage, policy_lifetime_action.lifetime_percentage)
+                        if policy_lifetime_action.days_before_expiry:
+                            self.assertEqual(bundle_lifetime_action.days_before_expiry,  policy_lifetime_action.days_before_expiry)
+                        policy_lifetime_actions.remove(policy_lifetime_action)
+                        break
+            self.assertFalse(policy_lifetime_actions)
 
     def _validate_certificate_list(self, certificates, expected):
         for cert in certificates:
