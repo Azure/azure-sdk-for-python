@@ -575,6 +575,7 @@ class CertificateClientTests(KeyVaultTestCase):
     @VaultClientPreparer()
     def test_merge_certificate(self, vault_client, **kwargs):
         import base64
+        from subprocess import call
         self.assertIsNotNone(vault_client)
         client = vault_client.certificates
         cert_name = "mergeCertificate"
@@ -583,40 +584,38 @@ class CertificateClientTests(KeyVaultTestCase):
             trigger=Trigger(lifetime_percentage=2),
             action=Action(action_type=ActionType.email_contacts)
         )]
-        cert_policy = CertificatePolicyGenerated(key_properties=KeyProperties(exportable=True,
-                                                                     key_type='RSA',
-                                                                     key_size=2048,
-                                                                     reuse_key=False),
-                                        secret_properties=SecretProperties(content_type='application/x-pem-file'),
-                                        issuer_parameters=IssuerParameters(name=issuer_name),
-                                        lifetime_actions=lifetime_actions,
+        cert_policy = CertificatePolicyGenerated(
+                                        issuer_parameters=IssuerParameters(name=issuer_name,
+                                                                           certificate_transparency=False),
                                         x509_certificate_properties=X509CertificateProperties(
-                                            subject='CN=*.microsoft.com',
-                                            subject_alternative_names=SubjectAlternativeNames(
-                                                dns_names=['sdk.azure-int.net']
-                                            ),
-                                            validity_in_months=24
+                                            subject='CN=MyCert'
                                         ))
-        pkey = crypto.PKey()
-        pkey.generate_key(crypto.TYPE_RSA, 2048)
 
-        create_certificate_operation = client.create_certificate(name=cert_name, policy=CertificatePolicy._from_certificate_policy_bundle(cert_policy))
-        csr = "-----BEGIN NEW CERTIFICATE REQUEST-----" + os.linesep + base64.b64encode(create_certificate_operation.csr).decode() + os.linesep + "-----END NEW CERTIFICATE REQUEST-----"
-        req = crypto.load_certificate_request(crypto.FILETYPE_PEM, csr)
-        req.set_pubkey(pkey)
-        req.sign(pkey, 'sha256')
+        with open("ca.key", "rt") as f:
+            pkey = crypto.load_privatekey(crypto.FILETYPE_PEM, f.read())
+        with open("ca.crt", "rt") as f:
+            ca_cert = crypto.load_certificate(crypto.FILETYPE_PEM, f.read())
 
+        client.create_certificate(name=cert_name, policy=CertificatePolicy._from_certificate_policy_bundle(cert_policy))
+
+        with open("test.csr", "w") as f:
+            f.write("-----BEGIN CERTIFICATE REQUEST-----\n")
+            f.write(base64.b64encode(client.get_certificate_operation(name=cert_name).csr).decode())
+            f.write("\n-----END CERTIFICATE REQUEST-----")
+        with open("test.csr", "rt") as f:
+            req = crypto.load_certificate_request(crypto.FILETYPE_PEM, f.read())
 
         cert = crypto.X509()
-        cert.set_issuer(req.get_subject())
+        cert.set_serial_number(1)
+        cert.set_issuer(ca_cert.get_subject())
         cert.set_subject(req.get_subject())
         cert.set_pubkey(req.get_pubkey())
-        signed_certificate_bytes = crypto.dump_certificate(crypto.FILETYPE_PEM, cert).decode('utf-8').replace("\n", "")
+        cert.sign(pkey, "sha256")
+        signed_certificate_bytes = crypto.dump_certificate(crypto.FILETYPE_PEM, cert).decode().replace("\n", "")
         signed_certificate_bytes = signed_certificate_bytes.lstrip("-----BEGIN CERTIFICATE-----")
         signed_certificate_bytes = signed_certificate_bytes.rstrip("-----END CERTIFICATE-----")
-        signed_certificate_bytes = base64.b64decode(signed_certificate_bytes)
 
-        client.merge_certificate(name=cert_name, x509_certificates=[signed_certificate_bytes])
+        client.merge_certificate(name=cert_name, x509_certificates=[signed_certificate_bytes.encode()])
 
     @ResourceGroupPreparer()
     @VaultClientPreparer()

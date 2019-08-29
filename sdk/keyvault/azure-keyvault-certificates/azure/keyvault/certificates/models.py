@@ -564,11 +564,12 @@ class CertificatePolicy(object):
         else:
             x509_certificate_properties = None
 
-        if (self.key_properties.exportable or
+        if (self.key_properties and
+                (self.key_properties.exportable or
                 self.key_properties.key_type or
                 self.key_properties.key_size or
                 self.key_properties.reuse_key or
-                self.key_properties.curve):
+                self.key_properties.curve)):
             key_properties = models.KeyProperties(
                 exportable=self.key_properties.exportable,
                 key_type=self.key_properties.key_type,
