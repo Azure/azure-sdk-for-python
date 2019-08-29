@@ -44,3 +44,11 @@ def deserialize_file_stream(response, obj, headers):
     file_properties = deserialize_file_properties(response, obj, headers)
     obj.properties = file_properties
     return response.location_mode, obj
+
+
+def _deserialize_permission(response):
+    '''
+    Extracts out file permission
+    '''
+
+    return response.body

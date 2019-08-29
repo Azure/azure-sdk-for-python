@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import ( # pylint: disable=unused-import
+from typing import (  # pylint: disable=unused-import
     Optional, Union, Dict, Any, TYPE_CHECKING
 )
 try:
@@ -622,6 +622,31 @@ class ShareClient(StorageAccountHostsMixin):
         directory = self.get_directory_client(directory_name)
         return directory.list_directories_and_files(
             name_starts_with=name_starts_with, marker=marker, timeout=timeout, **kwargs)
+
+    @distributed_trace()
+    def get_permission_for_share(  # type: ignore
+            self, file_permission_key,  # type: str
+            timeout=None,  # type: Optional[int]
+            **kwargs  # type: Any
+    ):
+        """
+        Get a permission(a security descriptor) for a given key.
+        This 'permission' can be used for the files/directories in the share.
+
+        :param str file_permission_key:
+            Key of the file permission to retrieve
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns a file permission(a portable SDDL)
+        :rtype str
+        """
+        try:
+            return self._client.share.get_permission(  # type: ignore
+                file_permission_key=file_permission_key,
+                timeout=timeout,
+                **kwargs)
+        except StorageErrorException as error:
+            process_storage_error(error)
 
     @distributed_trace
     def create_directory(self, directory_name, metadata=None, timeout=None, **kwargs):

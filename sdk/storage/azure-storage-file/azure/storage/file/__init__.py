@@ -29,7 +29,8 @@ from .models import (
     AccessPolicy,
     FilePermissions,
     SharePermissions,
-    ContentSettings)
+    ContentSettings,
+    NTFSAttributes)
 
 
 __version__ = VERSION
@@ -60,5 +61,6 @@ __all__ = [
     'FileProperties',
     'ContentSettings',
     'Handle',
-    'HandlesPaged'
+    'HandlesPaged',
+    'NTFSAttributes'
 ]

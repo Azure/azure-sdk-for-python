@@ -25,7 +25,8 @@ from ..models import (
     AccessPolicy,
     FilePermissions,
     SharePermissions,
-    ContentSettings)
+    ContentSettings,
+    NTFSAttributes)
 from .models import (
     HandlesPaged,
     SharePropertiesPaged,
@@ -57,5 +58,6 @@ __all__ = [
     'DirectoryProperties',
     'DirectoryPropertiesPaged',
     'FileProperties',
-    'ContentSettings'
+    'ContentSettings',
+    'NTFSAttributes'
 ]

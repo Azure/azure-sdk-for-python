@@ -4,25 +4,11 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import sys
 from datetime import date
 
+from .parser import _str, _to_utc_datetime
 from .constants import X_MS_VERSION
 from . import sign_string, url_quote
-
-
-if sys.version_info < (3,):
-    def _str(value):
-        if isinstance(value, unicode):  # pylint: disable=undefined-variable
-            return value.encode('utf-8')
-
-        return str(value)
-else:
-    _str = str
-
-
-def _to_utc_datetime(value):
-    return value.strftime('%Y-%m-%dT%H:%M:%SZ')
 
 
 class QueryStringConstants(object):

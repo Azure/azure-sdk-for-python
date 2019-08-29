@@ -8,7 +8,6 @@
 import base64
 import os
 import unittest
-import time
 from datetime import datetime, timedelta
 
 import requests
@@ -24,8 +23,8 @@ from azure.storage.file import (
     AccessPolicy,
     ResourceTypes,
     AccountPermissions,
-    StorageErrorCode
-)
+    StorageErrorCode,
+    NTFSAttributes)
 from filetestcase import (
     FileTestCase,
     TestMode,
@@ -101,6 +100,12 @@ class StorageFileTest(FileTestCase):
         share_client = self.fsc.get_share_client(self.share_name)
         file_client = share_client.get_file_client(file_name)
         file_client.upload_file(self.short_byte_data)
+        return file_client
+
+    def _get_file_client(self):
+        file_name = self._get_file_reference()
+        share_client = self.fsc.get_share_client(self.share_name)
+        file_client = share_client.get_file_client(file_name)
         return file_client
 
     def _create_remote_share(self):
@@ -249,6 +254,36 @@ class StorageFileTest(FileTestCase):
         self.assertEqual(props.last_modified, resp['last_modified'])
         self.assertDictEqual(props.metadata, metadata)
 
+    def test_create_file_when_file_permission_is_too_long(self):
+        file_client = self._get_file_client()
+        permission = str(self.get_random_bytes(8 * 1024 + 1))
+        with self.assertRaises(ValueError):
+            file_client.create_file(1024, file_permission=permission)
+
+    @record
+    def test_create_file_with_invalid_file_permission(self):
+        # Arrange
+        file_name = self._get_file_client()
+
+        with self.assertRaises(HttpResponseError):
+            file_name.create_file(1024, file_permission="abcde")
+
+    @record
+    def test_create_file_will_set_all_smb_properties(self):
+        # Arrange
+        file_client = self._get_file_client()
+
+        # Act
+        file_client.create_file(1024)
+        file_properties = file_client.get_file_properties()
+
+        # Assert
+        self.assertIsNotNone(file_properties)
+        self.assertIsNotNone(file_properties.change_time)
+        self.assertIsNotNone(file_properties.creation_time)
+        self.assertIsNotNone(file_properties.file_attributes)
+        self.assertIsNotNone(file_properties.last_write_time)
+
     @record
     def test_file_exists(self):
         # Arrange
@@ -331,7 +366,6 @@ class StorageFileTest(FileTestCase):
 
     @record
     def test_set_file_properties(self):
-        pytest.skip("TODO: Verify the x-ms-file-permission value.")
         # Arrange
         file_client = self._create_file()
 
@@ -345,6 +379,40 @@ class StorageFileTest(FileTestCase):
         properties = file_client.get_file_properties()
         self.assertEqual(properties.content_settings.content_language, content_settings.content_language)
         self.assertEqual(properties.content_settings.content_disposition, content_settings.content_disposition)
+        self.assertIsNotNone(properties.last_write_time)
+        self.assertIsNotNone(properties.creation_time)
+        self.assertIsNotNone(properties.permission_key)
+
+    @record
+    def test_set_file_properties_with_file_permission(self):
+        # Arrange
+        file_client = self._create_file()
+        properties_on_creation = file_client.get_file_properties()
+
+        content_settings = ContentSettings(
+            content_language='spanish',
+            content_disposition='inline')
+
+        ntfs_attributes = NTFSAttributes(archive=True, temporary=True)
+        last_write_time = properties_on_creation.last_write_time + timedelta(hours=3)
+        creation_time = properties_on_creation.creation_time + timedelta(hours=3)
+
+        # Act
+        file_client.set_http_headers(
+            content_settings=content_settings,
+            file_attributes=ntfs_attributes,
+            file_last_write_time=last_write_time,
+            file_creation_time=creation_time,
+        )
+
+        # Assert
+        properties = file_client.get_file_properties()
+        self.assertEquals(properties.content_settings.content_language, content_settings.content_language)
+        self.assertEquals(properties.content_settings.content_disposition, content_settings.content_disposition)
+        self.assertEquals(properties.creation_time, creation_time)
+        self.assertEquals(properties.last_write_time, last_write_time)
+        self.assertIn("Archive", properties.file_attributes)
+        self.assertIn("Temporary", properties.file_attributes)
 
     @record
     def test_get_file_properties(self):
@@ -802,6 +870,21 @@ class StorageFileTest(FileTestCase):
         # Assert
         content = file_client.download_file().content_as_bytes()
         self.assertEqual(content, data)
+
+    @record
+    def test_file_unicode_data_and_file_attributes(self):
+        # Arrange
+        file_client = self._get_file_client()
+
+        # Act
+        data = u'hello world啊齄丂狛狜'.encode('utf-8')
+        file_client.upload_file(data, file_attributes=NTFSAttributes(temporary=True))
+
+        # Assert
+        content = file_client.download_file().content_as_bytes()
+        properties = file_client.get_file_properties()
+        self.assertEqual(content, data)
+        self.assertIn('Temporary', properties.file_attributes)
 
     @record
     def test_unicode_get_file_binary_data(self):
