@@ -5,7 +5,7 @@ Release History
 
 7.0.0 (2019-08-30)
 ++++++++++++++++++
-
+  
 **Features**
 
 - Model ContainerServiceNetworkProfile has a new parameter load_balancer_profile
