@@ -4,14 +4,13 @@
 # --------------------------------------------------------------------------------------------
 
 __version__ = "5.0.0b2"
-
+from uamqp import constants  # type: ignore
 from azure.eventhub.common import EventData, EventDataBatch, EventPosition
 from azure.eventhub.error import EventHubError, EventDataError, ConnectError, \
     AuthenticationError, EventDataSendError, ConnectionLostError
 from azure.eventhub.client import EventHubClient
 from azure.eventhub.producer import EventHubProducer
 from azure.eventhub.consumer import EventHubConsumer
-from uamqp import constants  # type: ignore
 from .common import EventHubSharedKeyCredential, EventHubSASTokenCredential
 
 TransportType = constants.TransportType

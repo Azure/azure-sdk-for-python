@@ -5,7 +5,7 @@
 import uuid
 import asyncio
 import logging
-from typing import Iterable, Union
+from typing import Iterable, Union, Any
 import time
 
 from uamqp import types, constants, errors  # type: ignore
@@ -185,7 +185,7 @@ class EventHubProducer(ConsumerProducerMixin):
         return EventDataBatch(max_size=(max_size or self._max_message_size_on_link), partition_key=partition_key)
 
     async def send(self, event_data, *, partition_key=None, timeout=None):
-        # type:(Union[EventData, EventDataBatch, Iterable[EventData]], Union[str, bytes], float) -> None
+        # type:(Union[EventData, EventDataBatch, Iterable[EventData]],Any, Union[str, bytes], float) -> None
         """
         Sends an event data and blocks until acknowledgement is
         received or operation times out.
