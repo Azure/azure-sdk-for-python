@@ -9,7 +9,7 @@ import json
 from azure.core.configuration import Configuration
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline import Pipeline
-from azure.core.pipeline.policies import ContentDecodePolicy, NetworkTraceLoggingPolicy, RetryPolicy
+from azure.core.pipeline.policies import ContentDecodePolicy, NetworkTraceLoggingPolicy, ProxyPolicy, RetryPolicy
 from azure.core.pipeline.transport import HttpRequest, RequestsTransport
 
 try:
@@ -55,6 +55,7 @@ class MsalTransportAdapter(object):
         config = Configuration(**kwargs)
         config.logging_policy = NetworkTraceLoggingPolicy(**kwargs)
         config.retry_policy = RetryPolicy(**kwargs)
+        config.proxy_policy = ProxyPolicy(**kwargs)
         return config
 
     def _build_pipeline(self, config=None, policies=None, transport=None, **kwargs):
