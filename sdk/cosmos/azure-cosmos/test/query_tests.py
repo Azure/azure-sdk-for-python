@@ -11,7 +11,6 @@ import pytest
 import collections
 import test_config
 
-
 pytestmark = pytest.mark.cosmosEmulator
 
 @pytest.mark.usefixtures("teardown")
