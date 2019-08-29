@@ -3,6 +3,18 @@
 Release History
 ===============
 
+7.0.0 (2019-08-30)
+++++++++++++++++++
+
+**Features**
+
+- Model ContainerServiceNetworkProfile has a new parameter load_balancer_profile
+- Model ManagedCluster has a new parameter api_server_access_profile
+
+**Breaking changes**
+
+- Model ManagedCluster no longer has parameter api_server_authorized_ip_ranges
+
 6.0.0 (2019-06-20)
 ++++++++++++++++++
 
