@@ -23,6 +23,8 @@
 """
 import numbers
 import copy
+import hashlib
+import json
 
 from azure.cosmos._execution_context.aggregators import (
     _AverageAggregator,
@@ -102,23 +104,27 @@ class _QueryExecutionDistinctUnorderedEndpointComponent(_QueryExecutionEndpointC
         super(_QueryExecutionDistinctUnorderedEndpointComponent, self).__init__(execution_context)
         self.last_result = set()
 
-    def make_hashable(self, value):
+    def make_hash(self, value):
         if isinstance(value, (set, tuple, list)):
-            return tuple([self.make_hashable(v) for v in value])
+            return tuple([self.make_hash(v) for v in value])
         elif not isinstance(value, dict):
+            if isinstance(value, numbers.Number):
+                return float(value)
             return value
         new_value = copy.deepcopy(value)
         for k, v in new_value.items():
-            new_value[k] = self.make_hashable(v)
+            new_value[k] = self.make_hash(v)
 
         return tuple(frozenset(sorted(new_value.items())))
 
     def next(self):
         res = next(self._execution_context)
-        hashed_result = self.make_hashable(res)
+        hash_object = hashlib.sha1(json.dumps(self.make_hash(res)))
+        hashed_result = hash_object.hexdigest()
         while hashed_result in self.last_result:
             res = next(self._execution_context)
-            hashed_result = self.make_hashable(res)
+            hash_object = hashlib.sha1(json.dumps(self.make_hash(res)))
+            hashed_result = hash_object.hexdigest()
         self.last_result.add(hashed_result)
         return res
 
