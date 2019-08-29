@@ -74,10 +74,16 @@ class TrioStreamDownloadGenerator(AsyncIterator):
         retry_total = 3
         while retry_active:
             try:
-                chunk = await trio.run_sync_in_worker_thread(
-                    _iterate_response_content,
-                    self.iter_content_func,
-                )
+                try:
+                    chunk = await trio.to_thread.run_sync(
+                        _iterate_response_content,
+                        self.iter_content_func,
+                    )
+                except AttributeError:  # trio < 0.12.1
+                    chunk = await trio.run_sync_in_worker_thread(  # pylint: disable=no-member
+                        _iterate_response_content,
+                        self.iter_content_func,
+                    )
                 if not chunk:
                     raise _ResponseStopIteration()
                 self.downloaded += self.block_size
@@ -96,10 +102,16 @@ class TrioStreamDownloadGenerator(AsyncIterator):
                     resp = self.pipeline.run(self.request, stream=True, headers=headers)
                     if resp.status_code == 416:
                         raise
-                    chunk = await trio.run_sync_in_worker_thread(
-                        _iterate_response_content,
-                        self.iter_content_func,
-                    )
+                    try:
+                        chunk = await trio.to_thread.run_sync(
+                            _iterate_response_content,
+                            self.iter_content_func,
+                        )
+                    except AttributeError:  # trio < 0.12.1
+                        chunk = await trio.run_sync_in_worker_thread(  # pylint: disable=no-member
+                            _iterate_response_content,
+                            self.iter_content_func,
+                        )
                     if not chunk:
                         raise StopIteration()
                     self.downloaded += chunk
@@ -162,20 +174,36 @@ class TrioRequestsTransport(RequestsTransport, AsyncHttpTransport):  # type: ign
         response = None
         error = None # type: Optional[Union[ServiceRequestError, ServiceResponseError]]
         try:
-            response = await trio.run_sync_in_worker_thread(
-                functools.partial(
-                    self.session.request, # type: ignore
-                    request.method,
-                    request.url,
-                    headers=request.headers,
-                    data=request.data,
-                    files=request.files,
-                    verify=kwargs.pop('connection_verify', self.connection_config.verify),
-                    timeout=kwargs.pop('connection_timeout', self.connection_config.timeout),
-                    cert=kwargs.pop('connection_cert', self.connection_config.cert),
-                    allow_redirects=False,
-                    **kwargs),
-                limiter=trio_limiter)
+            try:
+                response = await trio.to_thread.run_sync(
+                    functools.partial(
+                        self.session.request, # type: ignore
+                        request.method,
+                        request.url,
+                        headers=request.headers,
+                        data=request.data,
+                        files=request.files,
+                        verify=kwargs.pop('connection_verify', self.connection_config.verify),
+                        timeout=kwargs.pop('connection_timeout', self.connection_config.timeout),
+                        cert=kwargs.pop('connection_cert', self.connection_config.cert),
+                        allow_redirects=False,
+                        **kwargs),
+                    limiter=trio_limiter)
+            except AttributeError:  # trio < 0.12.1
+                response = await trio.run_sync_in_worker_thread(  # pylint: disable=no-member
+                    functools.partial(
+                        self.session.request, # type: ignore
+                        request.method,
+                        request.url,
+                        headers=request.headers,
+                        data=request.data,
+                        files=request.files,
+                        verify=kwargs.pop('connection_verify', self.connection_config.verify),
+                        timeout=kwargs.pop('connection_timeout', self.connection_config.timeout),
+                        cert=kwargs.pop('connection_cert', self.connection_config.cert),
+                        allow_redirects=False,
+                        **kwargs),
+                    limiter=trio_limiter)
 
         except urllib3.exceptions.NewConnectionError as err:
             error = ServiceRequestError(err, error=err)
