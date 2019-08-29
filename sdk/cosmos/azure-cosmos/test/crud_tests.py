@@ -1946,7 +1946,7 @@ class CRUDTests(unittest.TestCase):
 
         root_included_path = __get_first([included_path for included_path in indexing_policy['includedPaths']
                                           if included_path['path'] == '/*'])
-        self.assertFalse('indexes' in root_included_path)
+        self.assertFalse(root_included_path.get('indexes'))
 
     def test_client_request_timeout(self):
         connection_policy = documents.ConnectionPolicy()
@@ -2565,8 +2565,8 @@ class CRUDTests(unittest.TestCase):
         self.assertEquals(read_permission.id, created_permission.id)
 
     def _MockExecuteFunction(self, function, *args, **kwargs):
-        self.last_headers.append(args[5]['headers'][HttpHeaders.PartitionKey]
-                                    if HttpHeaders.PartitionKey in args[5]['headers'] else '')
+        self.last_headers.append(args[4].headers[HttpHeaders.PartitionKey]
+                                    if HttpHeaders.PartitionKey in args[4].headers else '')
         return self.OriginalExecuteFunction(function, *args, **kwargs)
 
 if __name__ == '__main__':

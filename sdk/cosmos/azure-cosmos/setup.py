@@ -7,7 +7,7 @@
 # pylint:disable=missing-docstring
 
 import re
-import os.path
+import os
 from io import open
 from setuptools import find_packages, setup
 
@@ -20,6 +20,10 @@ PACKAGE_FOLDER_PATH = PACKAGE_NAME.replace("-", "/")
 # a-b-c => a.b.c
 NAMESPACE_NAME = PACKAGE_NAME.replace("-", ".")
 
+# Version extraction inspired from 'requests'
+with open(os.path.join(PACKAGE_FOLDER_PATH, 'version.py'), 'r') as fd:
+    version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]',
+                        fd.read(), re.MULTILINE).group(1)
 
 with open("README.md", encoding="utf-8") as f:
     README = f.read()
@@ -28,7 +32,7 @@ with open("changelog.md", encoding="utf-8") as f:
 
 setup(
     name=PACKAGE_NAME,
-    version='4.0.0b1',
+    version=version,
     description="Microsoft Azure {} Client Library for Python".format(PACKAGE_PPRINT_NAME),
     long_description=README + "\n\n" + HISTORY,
     long_description_content_type="text/markdown",
@@ -66,7 +70,7 @@ setup(
     ),
     install_requires=[
       'six >=1.6',
-      'requests>=2.18.4'
+      'azure-core<2.0.0,>=1.0.0b2'
     ],
     extras_require={
       ":python_version<'3.0'": ["azure-nspkg"],

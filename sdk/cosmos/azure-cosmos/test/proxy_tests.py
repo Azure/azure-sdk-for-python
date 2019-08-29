@@ -30,7 +30,7 @@ if six.PY2:
 else:
     from http.server import BaseHTTPRequestHandler, HTTPServer
 from threading import Thread
-from requests.exceptions import ProxyError
+from azure.core.exceptions import ServiceRequestError
 
 pytestmark = pytest.mark.cosmosEmulator
 
@@ -104,7 +104,7 @@ class ProxyTests(unittest.TestCase):
             client = cosmos_client_connection.CosmosClientConnection(self.host, {'masterKey': self.masterKey}, connection_policy)
             self.fail("Client instantiation is not expected")
         except Exception as e:
-            self.assertTrue(type(e) is ProxyError, msg="Error is not a ProxyError")
+            self.assertTrue(type(e) is ServiceRequestError, msg="Error is not a ServiceRequestError")
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

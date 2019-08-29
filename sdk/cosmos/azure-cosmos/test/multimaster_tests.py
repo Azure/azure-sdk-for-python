@@ -123,8 +123,8 @@ class MultiMasterTests(unittest.TestCase):
             return {constants._Constants.EnableMultipleWritableLocations: self.EnableMultipleWritableLocations}, {}
         else:
             if len(args) > 0:
-                self.last_headers.append(HttpHeaders.AllowTentativeWrites in args[5]['headers'] 
-                                         and args[5]['headers'][HttpHeaders.AllowTentativeWrites] == 'true')
+                self.last_headers.append(HttpHeaders.AllowTentativeWrites in args[4].headers
+                                         and args[4].headers[HttpHeaders.AllowTentativeWrites] == 'true')
             return self.OriginalExecuteFunction(function, *args, **kwargs)
 
 
