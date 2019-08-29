@@ -573,6 +573,7 @@ class CertificateClientTests(KeyVaultTestCase):
     @VaultClientPreparer()
     def test_merge_certificate(self, vault_client, **kwargs):
         import base64
+        import os
         from OpenSSL import crypto
         self.assertIsNotNone(vault_client)
         client = vault_client.certificates
@@ -584,20 +585,17 @@ class CertificateClientTests(KeyVaultTestCase):
                                         x509_certificate_properties=X509CertificateProperties(
                                             subject='CN=MyCert'
                                         ))
+        dirname = os.path.dirname(os.path.abspath(__file__))
 
-        with open("ca.key", "rt") as f:
+        with open(os.path.abspath(os.path.join(dirname, "ca.key")), "rt") as f:
             pkey = crypto.load_privatekey(crypto.FILETYPE_PEM, f.read())
-        with open("ca.crt", "rt") as f:
+        with open(os.path.abspath(os.path.join(dirname, "ca.crt")), "rt") as f:
             ca_cert = crypto.load_certificate(crypto.FILETYPE_PEM, f.read())
 
         create_certificate_operation = client.create_certificate(name=cert_name, policy=CertificatePolicy._from_certificate_policy_bundle(cert_policy))
 
-        with open("test.csr", "w") as f:
-            f.write("-----BEGIN CERTIFICATE REQUEST-----\n")
-            f.write(base64.b64encode(create_certificate_operation.csr).decode())
-            f.write("\n-----END CERTIFICATE REQUEST-----")
-        with open("test.csr", "rt") as f:
-            req = crypto.load_certificate_request(crypto.FILETYPE_PEM, f.read())
+        csr = "-----BEGIN CERTIFICATE REQUEST-----\n" + base64.b64encode(create_certificate_operation.csr).decode() + "\n-----END CERTIFICATE REQUEST-----"
+        req = crypto.load_certificate_request(crypto.FILETYPE_PEM, csr)
 
         cert = crypto.X509()
         cert.set_serial_number(1)

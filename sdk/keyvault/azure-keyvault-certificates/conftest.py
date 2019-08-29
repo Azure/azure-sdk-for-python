@@ -13,9 +13,9 @@ if sys.version_info < (3, 5):
     collect_ignore_glob.append("tests/*_async.py")
 
 os.environ['PYTHONHASHSEED'] = '0'
+
 dirname = os.path.dirname(os.path.abspath(__file__))
-seed_filename = os.path.abspath(os.path.join(dirname, "seed.txt"))
-print(seed_filename)
+seed_filename = os.path.abspath(os.path.join(dirname, "tests", "seed.txt"))
 
 run_identifier_set = False
 

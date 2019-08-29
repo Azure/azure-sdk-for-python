@@ -621,7 +621,8 @@ class CertificatePolicy(object):
                     key_properties_bundle.curve or
                     key_properties_bundle.ekus or
                     key_properties_bundle.key_usage)):
-            if certificate_policy_bundle.x509_certificate_properties.key_usage:
+            if certificate_policy_bundle.x509_certificate_properties and \
+                    certificate_policy_bundle.x509_certificate_properties.key_usage:
                 key_usage = [KeyUsageType(k) for k in certificate_policy_bundle.x509_certificate_properties.key_usage]
             else:
                 key_usage = None

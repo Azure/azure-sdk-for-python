@@ -7,12 +7,12 @@ interactions:
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [azsdk-python-keyvault-certificates/4.0.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: POST
-    uri: https://vault4ca615b0.vault.azure.net/certificates/mergeCertificate/create?api-version=7.0
+    uri: https://vault10511599974ca615b0.vault.azure.net/certificates/mergeCertificate/create?api-version=7.0
   response:
     body: {string: '{"error":{"code":"Unauthorized","message":"Request is missing
         a Bearer or PoP token."}}'}
     headers: {cache-control: no-cache, content-length: '87', content-type: application/json;
-        charset=utf-8, date: 'Thu, 29 Aug 2019 01:43:00 GMT', expires: '-1', pragma: no-cache,
+        charset=utf-8, date: 'Thu, 29 Aug 2019 01:59:04 GMT', expires: '-1', pragma: no-cache,
       server: Microsoft-IIS/10.0, strict-transport-security: max-age=31536000;includeSubDomains,
       www-authenticate: 'Bearer authorization="https://login.windows.net/72f988bf-86f1-41af-91ab-2d7cd011db47",
         resource="https://vault.azure.net"', x-aspnet-version: 4.0.30319, x-content-type-options: nosniff,
@@ -21,7 +21,7 @@ interactions:
     status: {code: 401, message: Unauthorized}
     url: !!python/object/new:yarl.URL
       state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult [https, vault4ca615b0.vault.azure.net,
+      - !!python/object/new:urllib.parse.SplitResult [https, vault10511599974ca615b0.vault.azure.net,
         /certificates/mergeCertificate/create, api-version=7.0, '']
 - request:
     body: '{"policy": {"x509_props": {"subject": "CN=MyCert", "sans": {}}, "issuer":
@@ -32,23 +32,24 @@ interactions:
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [azsdk-python-keyvault-certificates/4.0.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: POST
-    uri: https://vault4ca615b0.vault.azure.net/certificates/mergeCertificate/create?api-version=7.0
+    uri: https://vault10511599974ca615b0.vault.azure.net/certificates/mergeCertificate/create?api-version=7.0
   response:
-    body: {string: '{"id":"https://vault4ca615b0.vault.azure.net/certificates/mergeCertificate/pending","issuer":{"name":"Unknown"},"csr":"MIICoTCCAYkCAQAwETEPMA0GA1UEAxMGTXlDZXJ0MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAthz70YahzHIinXCqmFVE0nLkn1hAoHF2FwjXXSPbEFeA3k6OqG/SDfMiC3pX3Ued0WtDYhTdqtd6qVdGa79nVkw0KrofKO8hr02p82Zp4z12rnwSwqsoVvtPry+CDdIe9n5CbE6WJdULk9DBF56nDKeA+vUYil1JWwGcPeUDolr6EtsgtPQt56OpKIZnQ1hfnJdxNXT7OK+TfJw4f6xSvUmhiGsXwofiZX7Eif/gSDpa2skfDEd5R2jApdYsns3iWjcXA50057QdHn0qnzFYHdSHAFgva2eZdSILQxuMVZ5Xv14U3LVC31vKkBPMSVBbL4mj6rB743ocCiv5QHUWwQIDAQABoEswSQYJKoZIhvcNAQkOMTwwOjAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAJOLHMeNDeuLEnJ6Y1qkP4mmZrPzIzDgmEvD/LkcSemgUrubcYR+ccskHUsyy+vyxFR4H3ZR+1NAyjQBTStuEjdY13SUWjRm+YkEA7NTVnM/rncoLkDXzAzceL3/VE0xa0ODTlEXZCoxkA74R7RLQgirn/kzrm7YEab+R2HQr8+888xpSNiH49qPdGgvRniPvPs5r81b8j9JMpEjhmb8l4vwBbZkRcthwRpJXee8hZPO+If8btvGDaa+dCvwdPPs4Xtyqrnerdd2iFL5JZQSAuytWNtEwROxmHaR9kUGZLuAHeIYg2k/PLEmcbh5W6j5UmPV4JiB3cZ+z8uchPj2MdY=","cancellation_requested":false,"status":"inProgress","status_details":"Pending
-        certificate created. Please Perform Merge to complete the request.","request_id":"bf6ac5749fd64ace8b3a93001a5ded4d"}'}
+    body: {string: '{"id":"https://vault10511599974ca615b0.vault.azure.net/certificates/mergeCertificate/pending","issuer":{"name":"Unknown"},"csr":"MIICoTCCAYkCAQAwETEPMA0GA1UEAxMGTXlDZXJ0MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAmYqB5h118lhSduVvX3rW9BNhlsB5x72nXktOg9XTkole/qvSyMOZJOoXnW0CCNgWa+m5ppxrqjlo4bKHf0IbQfj+0letwyWJLbFQkE+pQNeB4nYqtjsm2TomyZj8SKmqzK/23BFwIfAsutWJEkGBwMxmCbkft5NGpDpVyYhiQZpAkf8T0GuOT630opfDvW6wqcXgF/SHea7jH7oUcHm1ZulIjZ38+Di07q4UVZZsieBiKSbQ96ngvrdU4J4OM/hyZnchLasYONCZpJbu+NIQOZ3SqswMiZviXRLl1YkfeAPJXRixHh6Xr3SwjczBxmGxTHL6r4AZKMez3Hjmk7laTQIDAQABoEswSQYJKoZIhvcNAQkOMTwwOjAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMAkGA1UdEwQCMAAwDQYJKoZIhvcNAQELBQADggEBAJeVjudWwymewuKd+aMWoBfRzIB9/6dFk/KElGUlb0PZUXLvDZxYTo/fFLrq73AWcKkq9OT0J9ts+OCu1AGPmLZ9R81mDpCqjYgns49P9YfmVqBBZwrsp4EYkKpLpR2YGIQoP3NhHSsZ6M6KV9j0SrNum61wJCngKBNKGCI5tAk3ohK4bXtOKzjXx6Sk81h6oIyzHOKxYOdlNWZW0XDVv2g1W8LPsu285N0iuoOGOhROvqIu6OwOCTd6U6b/KgzRA/8wFLE5BQDNc0nDyPNuZO56AHQ+ArODZKrLdH2zY+kuVEQUtUG64OMAUMDh3uRZ6etI55MoCLEUBCB7zDx+kwg=","cancellation_requested":false,"status":"inProgress","status_details":"Pending
+        certificate created. Please Perform Merge to complete the request.","request_id":"f85e2b58e3334907afb17530387170e0"}'}
     headers:
       cache-control: no-cache
-      content-length: '1220'
+      content-length: '1230'
       content-type: application/json; charset=utf-8
-      date: Thu, 29 Aug 2019 01:43:02 GMT
+      date: Thu, 29 Aug 2019 01:59:05 GMT
       expires: '-1'
-      location: [h, t, t, p, s, ':', /, /, v, a, u, l, t, '4', c, a, '6', '1', '5',
-        b, '0', ., v, a, u, l, t, ., a, z, u, r, e, ., n, e, t, /, c, e, r, t, i,
-        f, i, c, a, t, e, s, /, m, e, r, g, e, C, e, r, t, i, f, i, c, a, t, e, /,
-        p, e, n, d, i, n, g, '?', a, p, i, '-', v, e, r, s, i, o, n, '=', '7', .,
-        '0', '&', r, e, q, u, e, s, t, _, i, d, '=', b, f, '6', a, c, '5', '7', '4',
-        '9', f, d, '6', '4', a, c, e, '8', b, '3', a, '9', '3', '0', '0', '1', a,
-        '5', d, e, d, '4', d]
+      location: [h, t, t, p, s, ':', /, /, v, a, u, l, t, '1', '0', '5', '1', '1',
+        '5', '9', '9', '9', '7', '4', c, a, '6', '1', '5', b, '0', ., v, a, u, l,
+        t, ., a, z, u, r, e, ., n, e, t, /, c, e, r, t, i, f, i, c, a, t, e, s, /,
+        m, e, r, g, e, C, e, r, t, i, f, i, c, a, t, e, /, p, e, n, d, i, n, g, '?',
+        a, p, i, '-', v, e, r, s, i, o, n, '=', '7', ., '0', '&', r, e, q, u, e, s,
+        t, _, i, d, '=', f, '8', '5', e, '2', b, '5', '8', e, '3', '3', '3', '4',
+        '9', '0', '7', a, f, b, '1', '7', '5', '3', '0', '3', '8', '7', '1', '7',
+        '0', e, '0']
       pragma: no-cache
       retry-after: '10'
       server: Microsoft-IIS/10.0
@@ -62,29 +63,30 @@ interactions:
     status: {code: 202, message: Accepted}
     url: !!python/object/new:yarl.URL
       state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult [https, vault4ca615b0.vault.azure.net,
+      - !!python/object/new:urllib.parse.SplitResult [https, vault10511599974ca615b0.vault.azure.net,
         /certificates/mergeCertificate/create, api-version=7.0, '']
 - request:
-    body: '{"x5c": ["TUlJQ3lqQ0NBYklDQVFFd0RRWUpLb1pJaHZjTkFRRUxCUUF3UlRFTE1Ba0dBMVVFQmhNQ1FWVXhFekFSQmdOVkJBZ01DbE52YldVdFUzUmhkR1V4SVRBZkJnTlZCQW9NR0VsdWRHVnlibVYwSUZkcFpHZHBkSE1nVUhSNUlFeDBaREFlRncweE9UQTRNamt3TVRRek1ESmFGdzB4T1RBNE1qa3dNVFEwTURKYU1CRXhEekFOQmdOVkJBTVRCazE1UTJWeWREQ0NBU0l3RFFZSktvWklodmNOQVFFQkJRQURnZ0VQQURDQ0FRb0NnZ0VCQUxZYys5R0dvY3h5SXAxd3FwaFZSTkp5NUo5WVFLQnhkaGNJMTEwajJ4QlhnTjVPanFodjBnM3pJZ3Q2VjkxSG5kRnJRMklVM2FyWGVxbFhSbXUvWjFaTU5DcTZIeWp2SWE5TnFmTm1hZU05ZHE1OEVzS3JLRmI3VDY4dmdnM1NIdlorUW14T2xpWFZDNVBRd1JlZXB3eW5nUHIxR0lwZFNWc0JuRDNsQTZKYStoTGJJTFQwTGVlanFTaUdaME5ZWDV5WGNUVjAreml2azN5Y09IK3NVcjFKb1lockY4S0g0bVYreEluLzRFZzZXdHJKSHd4SGVVZG93S1hXTEo3TjRsbzNGd09kTk9lMEhSNTlLcDh4V0IzVWh3QllMMnRubVhVaUMwTWJqRldlVjc5ZUZOeTFRdDlieXBBVHpFbFFXeStKbytxd2UrTjZIQW9yK1VCMUZzRUNBd0VBQVRBTkJna3Foa2lHOXcwQkFRc0ZBQU9DQVFFQWQ5VVZnOWYvOE5LWEhlZE5oeS8xUVRYY2VEbzRFWUtLOHgyVE15QzVYR1NHdXFpY3pvNDhBV3dBNzVWUDFPWU0xRm1Db1IzQkNiaTVuYW1lNHhTQUZGMVJiOGw1L3NLWFREcTFWSWdDVnorTGh2UzJDZ016Mlg5N1V3ZzY2MHpnRjdLTE5sZmhIWDdrZWc1ZGxJbEJoZWUxcXg0MnFDM3pObzczY1BtemdIU2RNNEtqVHg0SjNTb2pvYzZSS2YzaDE5SnRIcFY5MHJvcE1KRDNIUXBVdVBrSUIzbVVja0QxeEhiUEFLVG9lUWFLOEMwOS94U0lHQzBXVEtscDZEaGorRzFIS2FiNk9wbEdDMXZZZFdBTkdZNTBwV3NRVUt0ck1Tdk5nazdRczZnVHdyV1hENkI2LzVPSDRHMWYvYmp1T1VmbDhsZ3hhTmd5U2x3MmZEakRpUT09"]}'
+    body: '{"x5c": ["TUlJQ3lqQ0NBYklDQVFFd0RRWUpLb1pJaHZjTkFRRUxCUUF3UlRFTE1Ba0dBMVVFQmhNQ1FWVXhFekFSQmdOVkJBZ01DbE52YldVdFUzUmhkR1V4SVRBZkJnTlZCQW9NR0VsdWRHVnlibVYwSUZkcFpHZHBkSE1nVUhSNUlFeDBaREFlRncweE9UQTRNamt3TVRVNU1EWmFGdzB4T1RBNE1qa3dNakF3TURaYU1CRXhEekFOQmdOVkJBTVRCazE1UTJWeWREQ0NBU0l3RFFZSktvWklodmNOQVFFQkJRQURnZ0VQQURDQ0FRb0NnZ0VCQUptS2dlWWRkZkpZVW5ibGIxOTYxdlFUWVpiQWVjZTlwMTVMVG9QVjA1S0pYdjZyMHNqRG1TVHFGNTF0QWdqWUZtdnB1YWFjYTZvNWFPR3loMzlDRzBINC90SlhyY01saVMyeFVKQlBxVURYZ2VKMktyWTdKdGs2SnNtWS9FaXBxc3l2OXR3UmNDSHdMTHJWaVJKQmdjRE1aZ201SDdlVFJxUTZWY21JWWtHYVFKSC9FOUJyamsrdDlLS1h3NzF1c0tuRjRCZjBoM211NHgrNkZIQjV0V2JwU0kyZC9QZzR0TzZ1RkZXV2JJbmdZaWttMFBlcDRMNjNWT0NlRGpQNGNtWjNJUzJyR0RqUW1hU1c3dmpTRURtZDBxck1ESW1iNGwwUzVkV0pIM2dEeVYwWXNSNGVsNjkwc0kzTXdjWmhzVXh5K3ErQUdTakhzOXg0NXBPNVdrMENBd0VBQVRBTkJna3Foa2lHOXcwQkFRc0ZBQU9DQVFFQTQrb3EwL2FLYVphL3VjdXdKZFcraWY1aFBqMEJZK3ZSaUlndXlwaVZ1dUI2dTk0QWtmRWVzc2dUbFZsUGsyU0pyak53cnpLcVNGZDU3Y050Nko0ejlWWjZ0bC8xeEV6NnA4UWJmTDBPY3JhdkhyMUZJalN1Z2JtV01jbWFoMllNTVhwL2xuL1VZMkM4VVFxcStFalhieGZQUlFzSDB4RWRBOEQ0TjRyOVl2UnNqUU4vZHZxTHk2ZWIvZks4OVVzTDlmM3VKanR1RWRMVlk3SDZLaTMzaDc1d1hkUVVZZWlXd0VUS0lheHIra0wxbUl4MDhtVEVGdm80cENMU2VaRlB6MERSY3ppTTdmRzlaMDliN3QwZmpSN0EzZG1QMHZZdWxCUkRCTmpVaE55Y3VIR3hJMWpkajZjcFBFc29kR0ZqRHVUQ3MxQmVLNW9lbGlIQ2hQeWwwQT09"]}'
     headers:
       Accept: [application/json]
       Content-Length: ['1293']
       Content-Type: [application/json; charset=utf-8]
       User-Agent: [azsdk-python-keyvault-certificates/4.0.0b1 Python/3.6.6 (Windows-10-10.0.18362-SP0)]
     method: POST
-    uri: https://vault4ca615b0.vault.azure.net/certificates/mergeCertificate/pending/merge?api-version=7.0
+    uri: https://vault10511599974ca615b0.vault.azure.net/certificates/mergeCertificate/pending/merge?api-version=7.0
   response:
-    body: {string: '{"id":"https://vault4ca615b0.vault.azure.net/certificates/mergeCertificate/5075fbc40e884f90b30933e991d584e4","kid":"https://vault4ca615b0.vault.azure.net/keys/mergeCertificate/5075fbc40e884f90b30933e991d584e4","sid":"https://vault4ca615b0.vault.azure.net/secrets/mergeCertificate/5075fbc40e884f90b30933e991d584e4","x5t":"fxGparC3FBdos5RzhA_7OxtJ9VU","cer":"MIICyjCCAbICAQEwDQYJKoZIhvcNAQELBQAwRTELMAkGA1UEBhMCQVUxEzARBgNVBAgMClNvbWUtU3RhdGUxITAfBgNVBAoMGEludGVybmV0IFdpZGdpdHMgUHR5IEx0ZDAeFw0xOTA4MjkwMTQzMDJaFw0xOTA4MjkwMTQ0MDJaMBExDzANBgNVBAMTBk15Q2VydDCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALYc+9GGocxyIp1wqphVRNJy5J9YQKBxdhcI110j2xBXgN5Ojqhv0g3zIgt6V91HndFrQ2IU3arXeqlXRmu/Z1ZMNCq6HyjvIa9NqfNmaeM9dq58EsKrKFb7T68vgg3SHvZ+QmxOliXVC5PQwReepwyngPr1GIpdSVsBnD3lA6Ja+hLbILT0LeejqSiGZ0NYX5yXcTV0+zivk3ycOH+sUr1JoYhrF8KH4mV+xIn/4Eg6WtrJHwxHeUdowKXWLJ7N4lo3FwOdNOe0HR59Kp8xWB3UhwBYL2tnmXUiC0MbjFWeV79eFNy1Qt9bypATzElQWy+Jo+qwe+N6HAor+UB1FsECAwEAATANBgkqhkiG9w0BAQsFAAOCAQEAd9UVg9f/8NKXHedNhy/1QTXceDo4EYKK8x2TMyC5XGSGuqiczo48AWwA75VP1OYM1FmCoR3BCbi5name4xSAFF1Rb8l5/sKXTDq1VIgCVz+LhvS2CgMz2X97Uwg660zgF7KLNlfhHX7keg5dlIlBhee1qx42qC3zNo73cPmzgHSdM4KjTx4J3Sojoc6RKf3h19JtHpV90ropMJD3HQpUuPkIB3mUckD1xHbPAKToeQaK8C09/xSIGC0WTKlp6Dhj+G1HKab6OplGC1vYdWANGY50pWsQUKtrMSvNgk7Qs6gTwrWXD6B6/5OH4G1f/bjuOUfl8lgxaNgySlw2fDjDiQ==","attributes":{"enabled":true,"nbf":1567042982,"exp":1567043042,"created":1567042983,"updated":1567042983,"recoveryLevel":"Purgeable"},"policy":{"id":"https://vault4ca615b0.vault.azure.net/certificates/mergeCertificate/policy","key_props":{"exportable":true,"kty":"RSA","key_size":2048,"reuse_key":false},"secret_props":{"contentType":"application/x-pkcs12"},"x509_props":{"subject":"CN=MyCert","sans":{},"ekus":["1.3.6.1.5.5.7.3.1","1.3.6.1.5.5.7.3.2"],"key_usage":["digitalSignature","keyEncipherment"],"validity_months":12,"basic_constraints":{"ca":false}},"lifetime_actions":[{"trigger":{"lifetime_percentage":80},"action":{"action_type":"EmailContacts"}}],"issuer":{"name":"Unknown","cert_transparency":false},"attributes":{"enabled":true,"created":1567042982,"updated":1567042982}},"pending":{"id":"https://vault4ca615b0.vault.azure.net/certificates/mergeCertificate/pending"}}'}
+    body: {string: '{"id":"https://vault10511599974ca615b0.vault.azure.net/certificates/mergeCertificate/e59b77eb3db24ecca2991d822c1ec6c8","kid":"https://vault10511599974ca615b0.vault.azure.net/keys/mergeCertificate/e59b77eb3db24ecca2991d822c1ec6c8","sid":"https://vault10511599974ca615b0.vault.azure.net/secrets/mergeCertificate/e59b77eb3db24ecca2991d822c1ec6c8","x5t":"V_Fv0qHaGQhnx_5Xpj335uUU6s4","cer":"MIICyjCCAbICAQEwDQYJKoZIhvcNAQELBQAwRTELMAkGA1UEBhMCQVUxEzARBgNVBAgMClNvbWUtU3RhdGUxITAfBgNVBAoMGEludGVybmV0IFdpZGdpdHMgUHR5IEx0ZDAeFw0xOTA4MjkwMTU5MDZaFw0xOTA4MjkwMjAwMDZaMBExDzANBgNVBAMTBk15Q2VydDCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAJmKgeYddfJYUnblb1961vQTYZbAece9p15LToPV05KJXv6r0sjDmSTqF51tAgjYFmvpuaaca6o5aOGyh39CG0H4/tJXrcMliS2xUJBPqUDXgeJ2KrY7Jtk6JsmY/Eipqsyv9twRcCHwLLrViRJBgcDMZgm5H7eTRqQ6VcmIYkGaQJH/E9Brjk+t9KKXw71usKnF4Bf0h3mu4x+6FHB5tWbpSI2d/Pg4tO6uFFWWbIngYikm0Pep4L63VOCeDjP4cmZ3IS2rGDjQmaSW7vjSEDmd0qrMDImb4l0S5dWJH3gDyV0YsR4el690sI3MwcZhsUxy+q+AGSjHs9x45pO5Wk0CAwEAATANBgkqhkiG9w0BAQsFAAOCAQEA4+oq0/aKaZa/ucuwJdW+if5hPj0BY+vRiIguypiVuuB6u94AkfEessgTlVlPk2SJrjNwrzKqSFd57cNt6J4z9VZ6tl/1xEz6p8QbfL0OcravHr1FIjSugbmWMcmah2YMMXp/ln/UY2C8UQqq+EjXbxfPRQsH0xEdA8D4N4r9YvRsjQN/dvqLy6eb/fK89UsL9f3uJjtuEdLVY7H6Ki33h75wXdQUYeiWwETKIaxr+kL1mIx08mTEFvo4pCLSeZFPz0DRcziM7fG9Z09b7t0fjR7A3dmP0vYulBRDBNjUhNycuHGxI1jdj6cpPEsodGFjDuTCs1BeK5oeliHChPyl0A==","attributes":{"enabled":true,"nbf":1567043946,"exp":1567044006,"created":1567043946,"updated":1567043946,"recoveryLevel":"Purgeable"},"policy":{"id":"https://vault10511599974ca615b0.vault.azure.net/certificates/mergeCertificate/policy","key_props":{"exportable":true,"kty":"RSA","key_size":2048,"reuse_key":false},"secret_props":{"contentType":"application/x-pkcs12"},"x509_props":{"subject":"CN=MyCert","sans":{},"ekus":["1.3.6.1.5.5.7.3.1","1.3.6.1.5.5.7.3.2"],"key_usage":["digitalSignature","keyEncipherment"],"validity_months":12,"basic_constraints":{"ca":false}},"lifetime_actions":[{"trigger":{"lifetime_percentage":80},"action":{"action_type":"EmailContacts"}}],"issuer":{"name":"Unknown","cert_transparency":false},"attributes":{"enabled":true,"created":1567043945,"updated":1567043945}},"pending":{"id":"https://vault10511599974ca615b0.vault.azure.net/certificates/mergeCertificate/pending"}}'}
     headers:
       cache-control: no-cache
-      content-length: '2201'
+      content-length: '2251'
       content-type: application/json; charset=utf-8
-      date: Thu, 29 Aug 2019 01:43:03 GMT
+      date: Thu, 29 Aug 2019 01:59:07 GMT
       expires: '-1'
-      location: [h, t, t, p, s, ':', /, /, v, a, u, l, t, '4', c, a, '6', '1', '5',
-        b, '0', ., v, a, u, l, t, ., a, z, u, r, e, ., n, e, t, /, c, e, r, t, i,
-        f, i, c, a, t, e, s, /, m, e, r, g, e, C, e, r, t, i, f, i, c, a, t, e, '?',
-        a, p, i, '-', v, e, r, s, i, o, n, '=', '7', ., '0']
+      location: [h, t, t, p, s, ':', /, /, v, a, u, l, t, '1', '0', '5', '1', '1',
+        '5', '9', '9', '9', '7', '4', c, a, '6', '1', '5', b, '0', ., v, a, u, l,
+        t, ., a, z, u, r, e, ., n, e, t, /, c, e, r, t, i, f, i, c, a, t, e, s, /,
+        m, e, r, g, e, C, e, r, t, i, f, i, c, a, t, e, '?', a, p, i, '-', v, e, r,
+        s, i, o, n, '=', '7', ., '0']
       pragma: no-cache
       server: Microsoft-IIS/10.0
       strict-transport-security: max-age=31536000;includeSubDomains
@@ -97,6 +99,6 @@ interactions:
     status: {code: 201, message: Created}
     url: !!python/object/new:yarl.URL
       state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult [https, vault4ca615b0.vault.azure.net,
+      - !!python/object/new:urllib.parse.SplitResult [https, vault10511599974ca615b0.vault.azure.net,
         /certificates/mergeCertificate/pending/merge, api-version=7.0, '']
 version: 1
