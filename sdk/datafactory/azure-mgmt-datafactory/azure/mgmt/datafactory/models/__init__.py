@@ -483,6 +483,7 @@ try:
     from ._models_py3 import SybaseLinkedService
     from ._models_py3 import SybaseSource
     from ._models_py3 import SybaseTableDataset
+    from ._models_py3 import TabularSource
     from ._models_py3 import TeradataLinkedService
     from ._models_py3 import TeradataPartitionSettings
     from ._models_py3 import TeradataSource
@@ -999,6 +1000,7 @@ except (SyntaxError, ImportError):
     from ._models import SybaseLinkedService
     from ._models import SybaseSource
     from ._models import SybaseTableDataset
+    from ._models import TabularSource
     from ._models import TeradataLinkedService
     from ._models import TeradataPartitionSettings
     from ._models import TeradataSource
@@ -1096,13 +1098,13 @@ from ._data_factory_management_client_enums import (
     AvroCompressionCodec,
     AzureFunctionActivityMethod,
     WebActivityMethod,
+    OraclePartitionOption,
+    SalesforceSourceReadBehavior,
     NetezzaPartitionOption,
     CassandraSourceReadConsistencyLevels,
     TeradataPartitionOption,
-    OraclePartitionOption,
     StoredProcedureParameterType,
     SapTablePartitionOption,
-    SalesforceSourceReadBehavior,
     SsisPackageLocationType,
     HDInsightActivityDebugInfoOption,
     SalesforceSinkWriteBehavior,
@@ -1598,6 +1600,7 @@ __all__ = [
     'SybaseLinkedService',
     'SybaseSource',
     'SybaseTableDataset',
+    'TabularSource',
     'TeradataLinkedService',
     'TeradataPartitionSettings',
     'TeradataSource',
@@ -1694,13 +1697,13 @@ __all__ = [
     'AvroCompressionCodec',
     'AzureFunctionActivityMethod',
     'WebActivityMethod',
+    'OraclePartitionOption',
+    'SalesforceSourceReadBehavior',
     'NetezzaPartitionOption',
     'CassandraSourceReadConsistencyLevels',
     'TeradataPartitionOption',
-    'OraclePartitionOption',
     'StoredProcedureParameterType',
     'SapTablePartitionOption',
-    'SalesforceSourceReadBehavior',
     'SsisPackageLocationType',
     'HDInsightActivityDebugInfoOption',
     'SalesforceSinkWriteBehavior',
