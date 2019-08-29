@@ -32,8 +32,9 @@ from collections import namedtuple
 from enum import Enum
 import logging
 import os
-import six
 import sys
+import six
+from azure.core.tracing import AbstractSpan
 
 try:
     from typing import Type, Optional, Dict, Callable, cast, TYPE_CHECKING
@@ -43,13 +44,10 @@ except ImportError:
 if TYPE_CHECKING:
     from typing import Any, Union
     try:
-        from azure.core.tracing.ext.opencensus_span import OpenCensusSpan
+        # pylint:disable=unused-import
+        from azure.core.tracing.ext.opencensus_span import OpenCensusSpan  # pylint:disable=redefined-outer-name
     except ImportError:
         pass
-
-
-from azure.core.tracing import AbstractSpan
-
 
 __all__ = ("settings",)
 
@@ -129,7 +127,7 @@ def get_opencensus_span():
     # type: () -> Optional[Type[AbstractSpan]]
     """Returns the OpenCensusSpan if opencensus is installed else returns None"""
     try:
-        from azure.core.tracing.ext.opencensus_span import OpenCensusSpan
+        from azure.core.tracing.ext.opencensus_span import OpenCensusSpan  # pylint:disable=redefined-outer-name
 
         return OpenCensusSpan
     except ImportError:
@@ -143,7 +141,9 @@ def get_opencensus_span_if_opencensus_is_imported():
     return get_opencensus_span()
 
 
-_tracing_implementation_dict = {"opencensus": get_opencensus_span}  # type: Dict[str, Callable[[], Optional[Type[AbstractSpan]]]]
+_tracing_implementation_dict = {
+    "opencensus": get_opencensus_span
+}  # type: Dict[str, Callable[[], Optional[Type[AbstractSpan]]]]
 
 
 def convert_tracing_impl(value):
@@ -263,7 +263,7 @@ class PrioritizedSetting(object):
         self.set_value(value)
 
     def set_value(self, value):
-        # (Any) -> None
+        # type: (Any) -> None
         """Specify a value for this setting programmatically.
 
         A value set this way takes precedence over all other methods except

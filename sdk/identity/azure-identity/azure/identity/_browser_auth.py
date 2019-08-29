@@ -7,18 +7,20 @@ import time
 import uuid
 import webbrowser
 
+from azure.core.credentials import AccessToken
+from azure.core.exceptions import ClientAuthenticationError
+
+from ._internal import AuthCodeRedirectServer, ConfidentialClientCredential, wrap_exceptions
+
 try:
     from typing import TYPE_CHECKING
 except ImportError:
     TYPE_CHECKING = False
 
 if TYPE_CHECKING:
+    # pylint:disable=unused-import
     from typing import Any, List, Mapping
 
-from azure.core.credentials import AccessToken
-from azure.core.exceptions import ClientAuthenticationError
-
-from ._internal import AuthCodeRedirectServer, ConfidentialClientCredential, wrap_exceptions
 
 
 class InteractiveBrowserCredential(ConfidentialClientCredential):
@@ -98,7 +100,8 @@ class InteractiveBrowserCredential(ConfidentialClientCredential):
 
         return AccessToken(result["access_token"], now + int(result["expires_in"]))
 
-    def _parse_response(self, request_state, response):
+    @staticmethod
+    def _parse_response(request_state, response):
         # type: (str, Mapping[str, Any]) -> List[str]
         """
         Validates ``response`` and returns the authorization code it contains, if authentication succeeded. Raises

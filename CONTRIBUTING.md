@@ -65,7 +65,7 @@ If at any time you want to blow away the tox created virtual environments and st
 
 Note that we didn't provide an `environment` argument for this example. Reason here is that the _default_ environment selected by our common `tox.ini` file is one that runs `pytest`.
 
-#### `*wheel_tests` environments
+#### `whl` environment
 Used for test execution across the spectrum of all the platforms we want to support. Maintained at a `platform specific` level just in case we run into platform-specific bugs.
 
 * Installs the wheel, runs tests using the wheel

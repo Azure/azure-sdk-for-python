@@ -7,7 +7,7 @@ trigger:
     - master
   paths:
     include:
-    - sdk/logic/
+    - sdk/healthcareapis/
 
 pr:
   branches:
@@ -19,9 +19,9 @@ pr:
     - restapi*
   paths:
     include:
-    - sdk/logic/
+    - sdk/healthcareapis/
 
 jobs:
 - template: ../../eng/pipelines/templates/jobs/archetype-sdk-client.yml
   parameters:
-    ServiceDirectory: logic
+    ServiceDirectory: healthcareapis
