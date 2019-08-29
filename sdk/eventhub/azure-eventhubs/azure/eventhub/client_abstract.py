@@ -10,7 +10,7 @@ import uuid
 import time
 import functools
 from abc import abstractmethod
-from typing import Dict, Union, TYPE_CHECKING
+from typing import Dict, Union, Any, TYPE_CHECKING
 from azure.eventhub import __version__
 from azure.eventhub.configuration import _Configuration
 from .common import EventHubSharedKeyCredential, EventHubSASTokenCredential, _Address
@@ -90,7 +90,7 @@ class EventHubClientAbstract(object):  # pylint:disable=too-many-instance-attrib
     """
 
     def __init__(self, host, event_hub_path, credential, **kwargs):
-        # type:(str, str, Union[EventHubSharedKeyCredential, EventHubSASTokenCredential, TokenCredential], ...) -> None
+        # type:(str, str, Union[EventHubSharedKeyCredential, EventHubSASTokenCredential, TokenCredential], Any) -> None
         """
         Constructs a new EventHubClient.
 

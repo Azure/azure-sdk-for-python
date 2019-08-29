@@ -44,9 +44,10 @@ class EventHubClient(EventHubClientAbstract):
 
     """
 
-    def __init__(self, host, event_hub_path, credential, **kwargs):
-        # type:(str, str, Union[EventHubSharedKeyCredential, EventHubSASTokenCredential, TokenCredential], ...) -> None
-
+    def __init__(
+            self, host: str, event_hub_path: str,
+            credential: Union[EventHubSharedKeyCredential, EventHubSASTokenCredential, TokenCredential],
+            **kwargs):
         super(EventHubClient, self).__init__(host=host, event_hub_path=event_hub_path, credential=credential, **kwargs)
         self._conn_manager = get_connection_manager(**kwargs)
 
