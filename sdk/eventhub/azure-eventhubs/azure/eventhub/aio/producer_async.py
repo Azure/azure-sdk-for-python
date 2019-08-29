@@ -20,7 +20,7 @@ from ._consumer_producer_mixin_async import ConsumerProducerMixin, _retry_decora
 log = logging.getLogger(__name__)
 
 
-class EventHubProducer(ConsumerProducerMixin):
+class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-instance-attributes
     """
     A producer responsible for transmitting EventData to a specific Event Hub,
     grouped together in batches. Depending on the options specified at creation, the producer may
@@ -94,8 +94,8 @@ class EventHubProducer(ConsumerProducerMixin):
             keep_alive_interval=self.keep_alive,
             client_name=self.name,
             link_properties=self._link_properties,
-            properties=self.client._create_properties(
-                self.client.config.user_agent),  # pylint: disable=protected-access
+            properties=self.client._create_properties(  # pylint: disable=protected-access
+                self.client.config.user_agent),
             loop=self.loop)
 
     async def _open(self, timeout_time=None, **kwargs):
@@ -106,7 +106,7 @@ class EventHubProducer(ConsumerProducerMixin):
 
         """
         if not self.running and self.redirected:
-            self.client._process_redirect_uri(self.redirected)
+            self.client._process_redirect_uri(self.redirected)  # pylint: disable=protected-access
             self.target = self.redirected.address
         await super(EventHubProducer, self)._open(timeout_time)
 
@@ -222,7 +222,7 @@ class EventHubProducer(ConsumerProducerMixin):
             wrapper_event_data = event_data
         else:
             if isinstance(event_data, EventDataBatch):
-                if partition_key and not (partition_key == event_data._partition_key):  # pylint: disable=protected-access
+                if partition_key and partition_key != event_data._partition_key:  # pylint: disable=protected-access
                     raise EventDataError('The partition_key does not match the one of the EventDataBatch')
                 wrapper_event_data = event_data  #type: ignore
             else:
@@ -233,7 +233,7 @@ class EventHubProducer(ConsumerProducerMixin):
         self.unsent_events = [wrapper_event_data.message]
         await self._send_event_data_with_retry(timeout=timeout)
 
-    async def close(self,  exception=None):
+    async def close(self, exception=None):
         # type: (Exception) -> None
         """
         Close down the handler. If the handler has already closed,
