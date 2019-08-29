@@ -287,4 +287,5 @@ class EventHubClient(EventHubClientAbstract):
         return handler
 
     async def close(self):
+        # type: () -> None
         await self._conn_manager.close_connection()
