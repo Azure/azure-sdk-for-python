@@ -291,7 +291,7 @@ def test_device_code_credential_timeout():
     )
 
     credential = DeviceCodeCredential(
-        client_id="_", prompt_callback=Mock(), transport=transport, timeout=0.1, instance_discovery=False
+        client_id="_", prompt_callback=Mock(), transport=transport, timeout=0.01, instance_discovery=False
     )
 
     with pytest.raises(ClientAuthenticationError) as ex:
@@ -348,8 +348,8 @@ def test_interactive_credential_timeout():
     )
 
     # mock local server blocks long enough to exceed the timeout
-    timeout = 1
-    server_instance = Mock(wait_for_redirect=functools.partial(time.sleep, timeout + 1))
+    timeout = 0.01
+    server_instance = Mock(wait_for_redirect=functools.partial(time.sleep, timeout + 0.01))
     server_class = Mock(return_value=server_instance)
 
     credential = InteractiveBrowserCredential(
