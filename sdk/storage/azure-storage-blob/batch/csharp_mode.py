@@ -23,6 +23,8 @@ response = batch_client.send(
 raw_response = response.get_raw_response()
 
 delete0_result = response.get_value(delete0_receipt)
+# or
+delete0_result = response.get_results()[delete0_receipt]
 
 
 # SDK code
