@@ -623,7 +623,7 @@ class ShareClient(StorageAccountHostsMixin):
         return directory.list_directories_and_files(
             name_starts_with=name_starts_with, marker=marker, timeout=timeout, **kwargs)
 
-    @distributed_trace()
+    @distributed_trace
     def get_permission_for_share(  # type: ignore
             self, file_permission_key,  # type: str
             timeout=None,  # type: Optional[int]

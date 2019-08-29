@@ -8,7 +8,6 @@
 import base64
 import os
 import unittest
-import time
 from datetime import datetime, timedelta
 import asyncio
 from azure.core.pipeline.transport import AioHttpTransport
@@ -17,6 +16,7 @@ import requests
 import pytest
 
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError
+from azure.storage.file import NTFSAttributes
 
 from azure.storage.file.aio import (
     FileClient,
@@ -56,9 +56,9 @@ class AiohttpTestTransport(AioHttpTransport):
         return response
 
 
-class StorageFileTestAsync(FileTestCase):
+class StorageFileAsyncTest(FileTestCase):
     def setUp(self):
-        super(StorageFileTestAsync, self).setUp()
+        super(StorageFileAsyncTest, self).setUp()
 
         url = self.get_file_url()
         credential = self.get_shared_key_credential()
@@ -107,7 +107,7 @@ class StorageFileTestAsync(FileTestCase):
             except:
                 pass
 
-        return super(StorageFileTestAsync, self).tearDown()
+        return super(StorageFileAsyncTest, self).tearDown()
 
     # --Helpers-----------------------------------------------------------------
     def _get_file_reference(self):
@@ -131,6 +131,13 @@ class StorageFileTestAsync(FileTestCase):
         share_client = self.fsc.get_share_client(self.share_name)
         file_client = share_client.get_file_client(file_name)
         await file_client.upload_file(self.short_byte_data)
+        return file_client
+
+    async def _get_file_client(self):
+        await self._setup_share()
+        file_name = self._get_file_reference()
+        share_client = self.fsc.get_share_client(self.share_name)
+        file_client = share_client.get_file_client(file_name)
         return file_client
 
     async def _create_remote_share(self):
@@ -306,6 +313,44 @@ class StorageFileTestAsync(FileTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_file_with_metadata_async())
 
+    async def test_create_file_when_file_permission_is_too_long(self):
+        file_client = await self._get_file_client()
+        permission = str(self.get_random_bytes(8 * 1024 + 1))
+        with self.assertRaises(ValueError):
+            await file_client.create_file(1024, file_permission=permission)
+
+    async def _test_create_file_with_invalid_file_permission(self):
+        # Arrange
+        file_name = await self._get_file_client()
+
+        with self.assertRaises(HttpResponseError):
+            await file_name.create_file(1024, file_permission="abcde")
+
+    @record
+    def test_create_file_with_invalid_file_permission_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_create_file_with_invalid_file_permission())
+
+    async def _test_create_file_will_set_all_smb_properties(self):
+        # Arrange
+        file_client = await self._get_file_client()
+
+        # Act
+        await file_client.create_file(1024)
+        file_properties = await file_client.get_file_properties()
+
+        # Assert
+        self.assertIsNotNone(file_properties)
+        self.assertIsNotNone(file_properties.change_time)
+        self.assertIsNotNone(file_properties.creation_time)
+        self.assertIsNotNone(file_properties.file_attributes)
+        self.assertIsNotNone(file_properties.last_write_time)
+
+    @record
+    def test_create_file_will_set_all_smb_properties_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_create_file_will_set_all_smb_properties())
+
     async def _test_file_exists_async(self):
         # Arrange
         file_client = await self._create_file()
@@ -421,12 +466,49 @@ class StorageFileTestAsync(FileTestCase):
         properties = await file_client.get_file_properties()
         self.assertEqual(properties.content_settings.content_language, content_settings.content_language)
         self.assertEqual(properties.content_settings.content_disposition, content_settings.content_disposition)
+        self.assertIsNotNone(properties.last_write_time)
+        self.assertIsNotNone(properties.creation_time)
+        self.assertIsNotNone(properties.permission_key)
 
     @record
     def test_set_file_properties_async(self):
-        pytest.skip("TODO: Verify the x-ms-file-permission value.")
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_file_properties_async())
+
+    async def _test_set_file_properties_with_file_permission(self):
+        # Arrange
+        file_client = await self._create_file()
+        properties_on_creation = await file_client.get_file_properties()
+
+        content_settings = ContentSettings(
+            content_language='spanish',
+            content_disposition='inline')
+
+        ntfs_attributes = NTFSAttributes(archive=True, temporary=True)
+        last_write_time = properties_on_creation.last_write_time + timedelta(hours=3)
+        creation_time = properties_on_creation.creation_time + timedelta(hours=3)
+
+        # Act
+        await file_client.set_http_headers(
+            content_settings=content_settings,
+            file_attributes=ntfs_attributes,
+            file_last_write_time=last_write_time,
+            file_creation_time=creation_time,
+        )
+
+        # Assert
+        properties = await file_client.get_file_properties()
+        self.assertEquals(properties.content_settings.content_language, content_settings.content_language)
+        self.assertEquals(properties.content_settings.content_disposition, content_settings.content_disposition)
+        self.assertEquals(properties.creation_time, creation_time)
+        self.assertEquals(properties.last_write_time, last_write_time)
+        self.assertIn("Archive", properties.file_attributes)
+        self.assertIn("Temporary", properties.file_attributes)
+
+    @record
+    def test_set_file_properties_with_file_permission_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_set_file_properties_with_file_permission())
 
     async def _test_get_file_properties_async(self):
         # Arrange
@@ -1007,6 +1089,26 @@ class StorageFileTestAsync(FileTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_file_unicode_data_async())
 
+    async def _test_file_unicode_data_and_file_attributes(self):
+        # Arrange
+        file_client = await self._get_file_client()
+
+        # Act
+        data = u'hello world啊齄丂狛狜'.encode('utf-8')
+        await file_client.upload_file(data, file_attributes=NTFSAttributes(temporary=True))
+
+        # Assert
+        content = await file_client.download_file()
+        transformed_content = await content.content_as_bytes()
+        properties = await file_client.get_file_properties()
+        self.assertEqual(transformed_content, data)
+        self.assertIn('Temporary', properties.file_attributes)
+
+    @record
+    def test_file_unicode_data_and_file_attributes_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_file_unicode_data_and_file_attributes())
+
     async def _test_unicode_get_file_binary_data_async(self):
         # Arrange
         base64_data = 'AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/wABAgMEBQYHCAkKCwwNDg8QERITFBUWFxgZGhscHR4fICEiIyQlJicoKSorLC0uLzAxMjM0NTY3ODk6Ozw9Pj9AQUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVpbXF1eX2BhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ent8fX5/gIGCg4SFhoeIiYqLjI2Oj5CRkpOUlZaXmJmam5ydnp+goaKjpKWmp6ipqqusra6vsLGys7S1tre4ubq7vL2+v8DBwsPExcbHyMnKy8zNzs/Q0dLT1NXW19jZ2tvc3d7f4OHi4+Tl5ufo6err7O3u7/Dx8vP09fb3+Pn6+/z9/v8AAQIDBAUGBwgJCgsMDQ4PEBESExQVFhcYGRobHB0eHyAhIiMkJSYnKCkqKywtLi8wMTIzNDU2Nzg5Ojs8PT4/QEFCQ0RFRkdISUpLTE1OT1BRUlNUVVZXWFlaW1xdXl9gYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXp7fH1+f4CBgoOEhYaHiImKi4yNjo+QkZKTlJWWl5iZmpucnZ6foKGio6SlpqeoqaqrrK2ur7CxsrO0tba3uLm6u7y9vr/AwcLDxMXGx8jJysvMzc7P0NHS09TV1tfY2drb3N3e3+Dh4uPk5ebn6Onq6+zt7u/w8fLz9PX29/j5+vv8/f7/AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/w=='
@@ -1262,7 +1364,7 @@ class StorageFileTestAsync(FileTestCase):
         # Act
         file_size = len(data)
         with open(INPUT_FILE_PATH, 'rb') as stream:
-            non_seekable_file = StorageFileTestAsync.NonSeekableFile(stream)
+            non_seekable_file = StorageFileAsyncTest.NonSeekableFile(stream)
             await file_client.upload_file(non_seekable_file, length=file_size, max_connections=1)
 
         # Assert
