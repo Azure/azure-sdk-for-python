@@ -14,7 +14,7 @@ log = logging.getLogger(__name__)
 
 
 def _retry_decorator(to_be_wrapped_func):
-    async def wrapped_func(self, *args, **kwargs):
+    async def wrapped_func(self, *args, **kwargs):  # pylint:disable=unused-argument # TODO: to refactor
         timeout = kwargs.pop("timeout", 100000)
         if not timeout:
             timeout = 100000  # timeout equals to 0 means no timeout, set the value to be a large number.
@@ -28,7 +28,7 @@ def _retry_decorator(to_be_wrapped_func):
                     self, timeout_time=timeout_time, last_exception=last_exception, **kwargs
                 )
             except Exception as exception:  # pylint:disable=broad-except
-                last_exception = await self._handle_exception(exception, retry_count, max_retries, timeout_time)
+                last_exception = await self._handle_exception(exception, retry_count, max_retries, timeout_time)  # pylint:disable=protected-access
                 retry_count += 1
     return wrapped_func
 
@@ -58,7 +58,7 @@ class ConsumerProducerMixin(object):
         self.running = False
         await self._close_connection()
 
-    async def _open(self, timeout_time=None):
+    async def _open(self, timeout_time=None):  # pylint:disable=unused-argument # TODO: to refactor
         """
         Open the EventHubConsumer using the supplied connection.
         If the handler has previously been redirected, the redirect
