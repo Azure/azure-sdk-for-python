@@ -10,6 +10,10 @@ from typing import ( # pylint: disable=unused-import
     Optional, Union, IO, List, Dict, Any, Iterable,
     TYPE_CHECKING
 )
+
+from ._parser import _get_file_permission, _datetime_to_str
+from ._shared.parser import _str
+
 try:
     from urllib.parse import urlparse, quote, unquote
 except ImportError:
@@ -31,7 +35,7 @@ from ._shared.request_handlers import add_metadata_headers, get_length
 from ._shared.response_handlers import return_response_headers, process_storage_error
 from ._deserialize import deserialize_file_properties, deserialize_file_stream
 from ._polling import CloseHandles
-from .models import HandlesPaged
+from .models import HandlesPaged, NTFSAttributes
 from ._shared_access_signature import FileSharedAccessSignature
 
 if TYPE_CHECKING:
@@ -50,6 +54,11 @@ def _upload_file_helper(
         timeout,
         max_connections,
         file_settings,
+        file_attributes="none",
+        file_creation_time="now",
+        file_last_write_time="now",
+        file_permission=None,
+        file_permission_key=None,
         **kwargs):
     try:
         if size is None or size < 0:
@@ -59,6 +68,11 @@ def _upload_file_helper(
             content_settings=content_settings,
             metadata=metadata,
             timeout=timeout,
+            file_attributes=file_attributes,
+            file_creation_time=file_creation_time,
+            file_last_write_time=file_last_write_time,
+            file_permission=file_permission,
+            file_permission_key=file_permission_key,
             **kwargs
         )
         if size == 0:
@@ -318,13 +332,18 @@ class FileClient(StorageAccountHostsMixin):
             content_type=content_type)
 
     @distributed_trace
-    def create_file( # type: ignore
-            self, size, # type: int
-            content_settings=None, # type: Optional[ContentSettings]
+    def create_file(  # type: ignore
+            self, size,  # type: int
+            content_settings=None,  # type: Optional[ContentSettings]
             metadata=None,  # type: Optional[Dict[str, str]]
-            timeout=None, # type: Optional[int]
-            **kwargs # type: Any
-        ):
+            timeout=None,  # type: Optional[int]
+            file_attributes="none",  # type: Union[str, NTFSAttributes]
+            file_creation_time="now",  # type: Union[str, datetime]
+            file_last_write_time="now",  # type: Union[str, datetime]
+            file_permission=None,   # type: Optional[str]
+            file_permission_key=None,  # type: Optional[str]
+            **kwargs  # type: Any
+    ):
         # type: (...) -> Dict[str, Any]
         """Creates a new file.
 
@@ -339,6 +358,28 @@ class FileClient(StorageAccountHostsMixin):
         :type metadata: dict(str, str)
         :param int timeout:
             The timeout parameter is expressed in seconds.
+        :param file_attributes:
+            The file system attributes for files and directories.
+            If not set, indicates preservation of existing values.
+            Here is an example for when the var type is str: 'Temporary|Archive'
+        :type file_attributes: str or :class:`~azure.storage.file.models.NTFSAttributes`
+        :param file_creation_time: Creation time for the file
+            Default value: Now.
+        :type file_creation_time: str or datetime
+        :param file_last_write_time: Last write time for the file
+            Default value: Now.
+        :type file_last_write_time: str or datetime
+        :param file_permission: If specified the permission (security
+            descriptor) shall be set for the directory/file. This header can be
+            used if Permission size is <= 8KB, else x-ms-file-permission-key
+            header shall be used. Default value: Inherit. If SDDL is specified as
+            input, it must have owner, group and dacl. Note: Only one of the
+            x-ms-file-permission or x-ms-file-permission-key should be specified.
+        :type file_permission: str
+        :param file_permission_key: Key of the permission to be set for the
+            directory/file. Note: Only one of the x-ms-file-permission or
+            x-ms-file-permission-key should be specified.
+        :type file_permission_key: str
         :returns: File-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
 
@@ -365,11 +406,17 @@ class FileClient(StorageAccountHostsMixin):
                 file_content_language=content_settings.content_language,
                 file_content_disposition=content_settings.content_disposition
             )
+        file_permission = _get_file_permission(file_permission, file_permission_key, 'Inherit')
         try:
-            return self._client.file.create( # type: ignore
+            return self._client.file.create(  # type: ignore
                 file_content_length=size,
+                file_attributes=_str(file_attributes),
+                file_creation_time=_datetime_to_str(file_creation_time),
+                file_last_write_time=_datetime_to_str(file_last_write_time),
                 timeout=timeout,
                 metadata=metadata,
+                file_permission=file_permission,
+                file_permission_key=file_permission_key,
                 file_http_headers=file_http_headers,
                 headers=headers,
                 cls=return_response_headers,
@@ -387,6 +434,11 @@ class FileClient(StorageAccountHostsMixin):
             max_connections=1,  # type: Optional[int]
             timeout=None, # type: Optional[int]
             encoding='UTF-8',  # type: str
+            file_attributes="none",  # type: Union[str, NTFSAttributes]
+            file_creation_time="now",  # type: Union[str, datetime]
+            file_last_write_time="now",  # type: Union[str, datetime]
+            file_permission=None,   # type: Optional[str]
+            file_permission_key=None,  # type: Optional[str]
             **kwargs # type: Any
         ):
         # type: (...) -> Dict[str, Any]
@@ -414,6 +466,28 @@ class FileClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :param str encoding:
             Defaults to UTF-8.
+        :param file_attributes:
+            The file system attributes for files and directories.
+            If not set, indicates preservation of existing values.
+            Here is an example for when the var type is str: 'Temporary|Archive'
+        :type file_attributes: str or :class:`~azure.storage.file.models.NTFSAttributes`
+        :param file_creation_time: Creation time for the file
+            Default value: Now.
+        :type file_creation_time: str or datetime
+        :param file_last_write_time: Last write time for the file
+            Default value: Now.
+        :type file_last_write_time: str or datetime
+        :param file_permission: If specified the permission (security
+            descriptor) shall be set for the directory/file. This header can be
+            used if Permission size is <= 8KB, else x-ms-file-permission-key
+            header shall be used. Default value: Inherit. If SDDL is specified as
+            input, it must have owner, group and dacl. Note: Only one of the
+            x-ms-file-permission or x-ms-file-permission-key should be specified.
+        :type file_permission: str
+        :param file_permission_key: Key of the permission to be set for the
+            directory/file. Note: Only one of the x-ms-file-permission or
+            x-ms-file-permission-key should be specified.
+        :type file_permission_key: str
         :returns: File-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
 
@@ -453,6 +527,11 @@ class FileClient(StorageAccountHostsMixin):
             timeout,
             max_connections,
             self._config,
+            file_attributes=file_attributes,
+            file_creation_time=file_creation_time,
+            file_last_write_time=file_last_write_time,
+            file_permission=file_permission,
+            file_permission_key=file_permission_key,
             **kwargs)
 
     @distributed_trace
@@ -633,14 +712,44 @@ class FileClient(StorageAccountHostsMixin):
         return file_props # type: ignore
 
     @distributed_trace
-    def set_http_headers(self, content_settings, timeout=None, **kwargs): # type: ignore
-        #type: (ContentSettings, Optional[int], Optional[Any]) -> Dict[str, Any]
+    def set_http_headers(self, content_settings,  # type: ContentSettings
+                         timeout=None,  # type: Optional[int]
+                         file_attributes="preserve",  # type: Union[str, NTFSAttributes]
+                         file_creation_time="preserve",  # type: Union[str, datetime]
+                         file_last_write_time="preserve",  # type: Union[str, datetime]
+                         file_permission=None,  # type: Optional[str]
+                         file_permission_key=None,  # type: Optional[str]
+                         **kwargs  # Any
+                         ):  # type: ignore
+        # type: (ContentSettings, Optional[int], Optional[Any]) -> Dict[str, Any]
         """Sets HTTP headers on the file.
 
         :param ~azure.storage.file.models.ContentSettings content_settings:
             ContentSettings object used to set file properties.
         :param int timeout:
             The timeout parameter is expressed in seconds.
+        :param file_attributes:
+            The file system attributes for files and directories.
+            If not set, indicates preservation of existing values.
+            Here is an example for when the var type is str: 'Temporary|Archive'
+        :type file_attributes: str or :class:`~azure.storage.file.models.NTFSAttributes`
+        :param file_creation_time: Creation time for the file
+            Default value: Now.
+        :type file_creation_time: str or datetime
+        :param file_last_write_time: Last write time for the file
+            Default value: Now.
+        :type file_last_write_time: str or datetime
+        :param file_permission: If specified the permission (security
+            descriptor) shall be set for the directory/file. This header can be
+            used if Permission size is <= 8KB, else x-ms-file-permission-key
+            header shall be used. Default value: Inherit. If SDDL is specified as
+            input, it must have owner, group and dacl. Note: Only one of the
+            x-ms-file-permission or x-ms-file-permission-key should be specified.
+        :type file_permission: str
+        :param file_permission_key: Key of the permission to be set for the
+            directory/file. Note: Only one of the x-ms-file-permission or
+            x-ms-file-permission-key should be specified.
+        :type file_permission_key: str
         :returns: File-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
@@ -653,14 +762,18 @@ class FileClient(StorageAccountHostsMixin):
             file_content_language=content_settings.content_language,
             file_content_disposition=content_settings.content_disposition
         )
+        file_permission = _get_file_permission(file_permission, file_permission_key, 'preserve')
         try:
-            return self._client.file.set_http_headers( # type: ignore
+            return self._client.file.set_http_headers(  # type: ignore
                 timeout=timeout,
                 file_content_length=file_content_length,
                 file_http_headers=file_http_headers,
                 cls=return_response_headers,
-                file_creation_time="preserve", # TODO: Verify these default values are correct
-                file_last_write_time="preserve", # TODO: Verify these default values are correct
+                file_attributes=_str(file_attributes),
+                file_creation_time=_datetime_to_str(file_creation_time),
+                file_last_write_time=_datetime_to_str(file_last_write_time),
+                file_permission=file_permission,
+                file_permission_key=file_permission_key,
                 **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
@@ -696,12 +809,12 @@ class FileClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def upload_range( # type: ignore
+    def upload_range(  # type: ignore
             self, data,  # type: bytes
-            start_range, # type: int
-            end_range, # type: int
+            start_range,  # type: int
+            end_range,  # type: int
             validate_content=False, # type: Optional[bool]
-            timeout=None, # type: Optional[int]
+            timeout=None,  # type: Optional[int]
             encoding='UTF-8',
             **kwargs
         ):
