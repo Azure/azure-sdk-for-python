@@ -4,13 +4,11 @@
 # ------------------------------------
 import itertools
 import time
-import os
 
 from azure_devtools.scenario_tests import RecordingProcessor, RequestUrlNormalizer
 
 from azure.keyvault.certificates import Issuer
 from azure.keyvault.certificates._shared import parse_vault_id
-from OpenSSL import crypto
 from devtools_testutils import ResourceGroupPreparer
 from certificates_preparer import VaultClientPreparer
 from certificates_test_case import KeyVaultTestCase
@@ -575,15 +573,11 @@ class CertificateClientTests(KeyVaultTestCase):
     @VaultClientPreparer()
     def test_merge_certificate(self, vault_client, **kwargs):
         import base64
-        from subprocess import call
+        from OpenSSL import crypto
         self.assertIsNotNone(vault_client)
         client = vault_client.certificates
         cert_name = "mergeCertificate"
         issuer_name = "Unknown"
-        lifetime_actions = [LifetimeAction(
-            trigger=Trigger(lifetime_percentage=2),
-            action=Action(action_type=ActionType.email_contacts)
-        )]
         cert_policy = CertificatePolicyGenerated(
                                         issuer_parameters=IssuerParameters(name=issuer_name,
                                                                            certificate_transparency=False),
@@ -596,17 +590,19 @@ class CertificateClientTests(KeyVaultTestCase):
         with open("ca.crt", "rt") as f:
             ca_cert = crypto.load_certificate(crypto.FILETYPE_PEM, f.read())
 
-        client.create_certificate(name=cert_name, policy=CertificatePolicy._from_certificate_policy_bundle(cert_policy))
+        create_certificate_operation = client.create_certificate(name=cert_name, policy=CertificatePolicy._from_certificate_policy_bundle(cert_policy))
 
         with open("test.csr", "w") as f:
             f.write("-----BEGIN CERTIFICATE REQUEST-----\n")
-            f.write(base64.b64encode(client.get_certificate_operation(name=cert_name).csr).decode())
+            f.write(base64.b64encode(create_certificate_operation.csr).decode())
             f.write("\n-----END CERTIFICATE REQUEST-----")
         with open("test.csr", "rt") as f:
             req = crypto.load_certificate_request(crypto.FILETYPE_PEM, f.read())
 
         cert = crypto.X509()
         cert.set_serial_number(1)
+        cert.gmtime_adj_notBefore(0)
+        cert.gmtime_adj_notAfter(60)  # Testing certificates need not be long lived
         cert.set_issuer(ca_cert.get_subject())
         cert.set_subject(req.get_subject())
         cert.set_pubkey(req.get_pubkey())

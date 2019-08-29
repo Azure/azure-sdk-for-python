@@ -825,7 +825,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
             tags=tags,
             **kwargs
         )
-        return CertificateOperation._from_certificate_operation_bundle(certificate_operation_bundle=bundle)
+        return Certificate._from_certificate_bundle(certificate_bundle=bundle)
 
     @distributed_trace_async
     async def get_issuer(self, name: str, **kwargs: "**Any") -> Issuer:
