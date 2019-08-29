@@ -413,11 +413,7 @@ class CertificateClient(KeyVaultClientBase):
                 :caption: Update a certificate's attributes
                 :dedent: 8
         """
-<<<<<<< HEAD
         if enabled is not None:
-=======
-        if enabled is not None :
->>>>>>> 46263b5a3d1ff2e0f30a342e326255d0c4b361bb
             attributes = self._client.models.CertificateAttributes(
                 enabled=enabled
             )
