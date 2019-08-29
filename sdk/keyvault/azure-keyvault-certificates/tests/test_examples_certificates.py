@@ -270,7 +270,3 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(recovered_certificate.name)
 
         # [END recover_deleted_certificate]
-
-
-
-
