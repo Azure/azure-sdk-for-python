@@ -53,9 +53,11 @@ class EventProcessor(object):
                 await partition_manager.close()
 
     """
-    def __init__(self, eventhub_client: EventHubClient, consumer_group_name: str,
-                 partition_processor_factory: Callable[..., PartitionProcessor],
-                 partition_manager: PartitionManager, **kwargs):
+    def __init__(
+            self, eventhub_client: EventHubClient, consumer_group_name: str,
+            partition_processor_factory: Callable[..., PartitionProcessor],
+            partition_manager: PartitionManager, **kwargs
+    ):
         """
         Instantiate an EventProcessor.
 
@@ -88,7 +90,8 @@ class EventProcessor(object):
         self._max_batch_size = eventhub_client.config.max_batch_size
         self._receive_timeout = eventhub_client.config.receive_timeout
         self._polling_interval = kwargs.get("polling_interval", 10)
-        self._ownership_timeout = self._polling_interval * 2  # TODO: Team haven't decided if this is a separate argument
+        self._ownership_timeout = self._polling_interval * 2
+        # TODO: Team haven't decided if this is a separate argument
         self._tasks = {}  # type: Dict[str, asyncio.Task]
         self._id = str(uuid.uuid4())
         self._running = False
@@ -104,13 +107,15 @@ class EventProcessor(object):
         2. Cancels tasks for partitions that are no longer owned by this EventProcessor
         3. Creates tasks for partitions that are newly claimed by this EventProcessor
         4. Keeps tasks running for partitions that haven't changed ownership
-        5. Each task repeatedly calls EvenHubConsumer.receive() to retrieve events and call user defined partition processor
+        5. Each task repeatedly calls EvenHubConsumer.receive() to retrieve events and
+        call user defined partition processor
 
         :return: None
 
         """
         log.info("EventProcessor %r is being started", self._id)
-        ownership_manager = OwnershipManager(self, self._eventhub_client, self._ownership_timeout)
+        ownership_manager = OwnershipManager(self._eventhub_client, self._consumer_group_name, self._id,
+                                             self._partition_manager, self._ownership_timeout)
         if not self._running:
             self._running = True
             while self._running:
