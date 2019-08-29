@@ -95,10 +95,6 @@ class CertificateClient(KeyVaultClientBase):
                                                                     key_type='RSA',
                                                                     key_size=2048,
                                                                     reuse_key=True,
-                                                                    ekus=[
-                                                                        "1.3.6.1.5.5.7.3.1",
-                                                                        "1.3.6.1.5.5.7.3.2"
-                                                                    ],
                                                                     key_usage=[
                                                                         KeyUsageType.c_rl_sign,
                                                                         KeyUsageType.data_encipherment,

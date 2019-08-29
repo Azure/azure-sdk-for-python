@@ -468,6 +468,7 @@ class CertificatePolicy(object):
         key_properties=None,  # type: Optional[KeyProperties]
         content_type=None,  # type: Optional[models.SecretContentType]
         subject_name=None,  # type: Optional[str]
+        subject_alternative_names=None,  # type: collections.
         san_emails=None,  # type: Optional[list[str]]
         san_dns_names=None,  # type: Optional[list[str]]
         san_upns=None,  # type: Optional[list[str]]
