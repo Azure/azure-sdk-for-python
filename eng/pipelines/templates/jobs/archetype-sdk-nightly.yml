@@ -95,11 +95,11 @@ jobs:
           OSName: 'Linux'
           OSVmImage: 'ubuntu-16.04'
           PythonVersion: 'pypy3'
-        MacOS_Python35:
+        Windows_Python35:
           OSName: 'Windows'
           OSVmImage: 'vs2017-win2016'
           PythonVersion: '2.7'
-        Windows_Python27:
+        MacOS_Python27:
           OSName: 'MacOS'
           OSVmImage: 'macOS-10.13'
           PythonVersion: '3.5'
