@@ -398,7 +398,9 @@ class CertificateClientTests(KeyVaultTestCase):
 
         # validate the recovered certificates
         expected = {k: v for k, v in certs.items() if k.startswith('certrec')}
-        actual = {k: await client.get_certificate(name=k, version="") for k in expected.keys()}
+        actual = {}
+        async for k in expected.keys():
+            actual[k] = await client.get_certificate(name=k, version="")
         self.assertEqual(len(set(expected.keys()) & set(actual.keys())), len(expected))
 
     @ResourceGroupPreparer()
