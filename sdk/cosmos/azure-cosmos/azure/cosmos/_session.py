@@ -204,7 +204,7 @@ class SessionContainer(object):
         return id_to_sessionlsn
 
 
-class Session:
+class Session(object):
     """
     State of a Azure Cosmos session. This session object
     can be shared across clients within the same process

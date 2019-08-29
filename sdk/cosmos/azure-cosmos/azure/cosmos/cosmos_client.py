@@ -28,14 +28,14 @@ import six
 from azure.core.tracing.decorator import distributed_trace
 
 from ._cosmos_client_connection import CosmosClientConnection
-from .database import Database
+from .database_client import DatabaseClient
 from .documents import ConnectionPolicy, DatabaseAccount
 from ._query_iterable import QueryIterable
 
 __all__ = ("CosmosClient",)
 
 
-class CosmosClient:
+class CosmosClient(object):
     """
     Provides a client-side logical representation of an Azure Cosmos DB account.
     Use this client to configure and execute requests to the Azure Cosmos DB service.
@@ -75,7 +75,7 @@ class CosmosClient:
         if isinstance(database_or_id, six.string_types):
             return "dbs/{}".format(database_or_id)
         try:
-            return cast("Database", database_or_id).database_link
+            return cast("DatabaseClient", database_or_id).database_link
         except AttributeError:
             pass
         database_id = cast("Dict[str, str]", database_or_id)["id"]
@@ -94,7 +94,7 @@ class CosmosClient:
         response_hook=None,
         **kwargs
     ):
-        # type: (str, str, Dict[str, str], Dict[str, str], bool, int, Dict[str, Any], Optional[Callable]) -> Database
+        # type: (str, str, Dict[str, str], Dict[str, str], bool, int, Dict[str, Any], Optional[Callable]) -> DatabaseClient
         """Create a new database with the given ID (name).
 
         :param id: ID (name) of the database to create.
@@ -105,7 +105,7 @@ class CosmosClient:
         :param offer_throughput: The provisioned throughput for this offer.
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
-        :returns: A :class:`Database` instance representing the new database.
+        :returns: A :class:`DatabaseClient` instance representing the new database.
         :raises `HTTPFailure`: If database with the given ID already exists.
 
         .. literalinclude:: ../../examples/examples.py
@@ -134,26 +134,26 @@ class CosmosClient:
         result = self.client_connection.CreateDatabase(database=dict(id=id), options=request_options, **kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers)
-        return Database(self.client_connection, id=result["id"], properties=result)
+        return DatabaseClient(self.client_connection, id=result["id"], properties=result)
 
     def get_database_client(self, database):
-        # type: (Union[str, Database, Dict[str, Any]]) -> Database
+        # type: (Union[str, DatabaseClient, Dict[str, Any]]) -> DatabaseClient
         """
         Retrieve an existing database with the ID (name) `id`.
 
-        :param database: The ID (name), dict representing the properties or :class:`Database`
+        :param database: The ID (name), dict representing the properties or :class:`DatabaseClient`
             instance of the database to read.
-        :returns: A :class:`Database` instance representing the retrieved database.
+        :returns: A :class:`DatabaseClient` instance representing the retrieved database.
 
         """
-        if isinstance(database, Database):
+        if isinstance(database, DatabaseClient):
             id_value = database.id
         elif isinstance(database, Mapping):
             id_value = database["id"]
         else:
             id_value = database
 
-        return Database(self.client_connection, id_value)
+        return DatabaseClient(self.client_connection, id_value)
 
     @distributed_trace
     def read_all_databases(
@@ -257,7 +257,7 @@ class CosmosClient:
     @distributed_trace
     def delete_database(
         self,
-        database,  # type: Union[str, Database, Dict[str, Any]]
+        database,  # type: Union[str, DatabaseClient, Dict[str, Any]]
         session_token=None,  # type: str
         initial_headers=None,  # type: Dict[str, str]
         access_condition=None,  # type:  Dict[str, str]
@@ -270,7 +270,7 @@ class CosmosClient:
         """
         Delete the database with the given ID (name).
 
-        :param database: The ID (name), dict representing the properties or :class:`Database`
+        :param database: The ID (name), dict representing the properties or :class:`DatabaseClient`
             instance of the database to delete.
         :param session_token: Token for use with Session consistency.
         :param initial_headers: Initial headers to be sent as part of the request.

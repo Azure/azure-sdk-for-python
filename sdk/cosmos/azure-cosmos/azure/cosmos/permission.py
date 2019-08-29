@@ -25,7 +25,7 @@
 from .documents import PermissionMode
 
 
-class Permission:
+class Permission(object):
     def __init__(self, id, user_link, permission_mode, resource_link, properties):  # pylint: disable=redefined-builtin
         # type: (str, str, PermissionMode, str, Dict[str, Any]) -> None
         self.id = id

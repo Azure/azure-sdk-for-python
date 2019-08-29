@@ -19,9 +19,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from .container import Container
+from .container_client import ContainerClient
 from .cosmos_client import CosmosClient
-from .database import Database
+from .database_client import DatabaseClient
+from .user_client import UserClient
 from .documents import (
     ConsistencyLevel,
     DataType,
@@ -36,7 +37,6 @@ from .documents import (
 from .partition_key import PartitionKey
 from .permission import Permission
 from .scripts import Scripts
-from .user import User
 from .version import VERSION
 
 __all__ = (

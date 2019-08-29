@@ -28,19 +28,19 @@ import six
 from azure.core.tracing.decorator import distributed_trace
 
 from ._cosmos_client_connection import CosmosClientConnection
-from .container import Container
+from .container_client import ContainerClient
 from .offer import Offer
 from .http_constants import StatusCodes
 from .errors import HTTPFailure
-from .user import User
+from .user_client import UserClient
 from ._query_iterable import QueryIterable
 
-__all__ = ("Database",)
+__all__ = ("DatabaseClient",)
 
 # pylint: disable=protected-access
 
 
-class Database(object):
+class DatabaseClient(object):
     """ Represents an Azure Cosmos DB SQL API database.
 
     A database contains one or more containers, each of which can contain items,
@@ -75,25 +75,25 @@ class Database(object):
 
     @staticmethod
     def _get_container_id(container_or_id):
-        # type: (Union[str, Container, Dict[str, Any]]) -> str
+        # type: (Union[str, ContainerClient, Dict[str, Any]]) -> str
         if isinstance(container_or_id, six.string_types):
             return container_or_id
         try:
-            return cast("Container", container_or_id).id
+            return cast("ContainerClient", container_or_id).id
         except AttributeError:
             pass
         return cast("Dict[str, str]", container_or_id)["id"]
 
     def _get_container_link(self, container_or_id):
-        # type: (Union[str, Container, Dict[str, Any]]) -> str
+        # type: (Union[str, ContainerClient, Dict[str, Any]]) -> str
         return u"{}/colls/{}".format(self.database_link, self._get_container_id(container_or_id))
 
     def _get_user_link(self, user_or_id):
-        # type: (Union[User, str, Dict[str, Any]]) -> str
+        # type: (Union[UserClient, str, Dict[str, Any]]) -> str
         if isinstance(user_or_id, six.string_types):
             return u"{}/users/{}".format(self.database_link, user_or_id)
         try:
-            return cast("User", user_or_id).user_link
+            return cast("UserClient", user_or_id).user_link
         except AttributeError:
             pass
         return u"{}/users/{}".format(self.database_link, cast("Dict[str, str]", user_or_id)["id"])
@@ -118,7 +118,7 @@ class Database(object):
         """
         Read the database properties
 
-        :param database: The ID (name), dict representing the properties or :class:`Database`
+        :param database: The ID (name), dict representing the properties or :class:`DatabaseClient`
             instance of the database to read.
         :param session_token: Token for use with Session consistency.
         :param initial_headers: Initial headers to be sent as part of the request.
@@ -167,7 +167,7 @@ class Database(object):
         response_hook=None,  # type: Optional[Callable]
         **kwargs
     ):
-        # type: (...) -> Container
+        # type: (...) -> ContainerClient
         """
         Create a new container with the given ID (name).
 
@@ -186,7 +186,7 @@ class Database(object):
         :param conflict_resolution_policy: The conflict resolution policy to apply to the container.
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
-        :returns: A :class:`Container` instance representing the new container.
+        :returns: A :class:`ContainerClient` instance representing the new container.
         :raise HTTPFailure: The container creation failed.
 
 
@@ -239,12 +239,12 @@ class Database(object):
         if response_hook:
             response_hook(self.client_connection.last_response_headers, data)
 
-        return Container(self.client_connection, self.database_link, data["id"], properties=data)
+        return ContainerClient(self.client_connection, self.database_link, data["id"], properties=data)
 
     @distributed_trace
     def delete_container(
         self,
-        container,  # type: Union[str, Container, Dict[str, Any]]
+        container,  # type: Union[str, ContainerClient, Dict[str, Any]]
         session_token=None,  # type: str
         initial_headers=None,  # type: Dict[str, str]
         access_condition=None,  # type: Dict[str, str]
@@ -257,7 +257,7 @@ class Database(object):
         """ Delete the container
 
         :param container: The ID (name) of the container to delete. You can either
-            pass in the ID of the container to delete, a :class:`Container` instance or
+            pass in the ID of the container to delete, a :class:`ContainerClient` instance or
             a dict representing the properties of the container.
         :param session_token: Token for use with Session consistency.
         :param initial_headers: Initial headers to be sent as part of the request.
@@ -285,10 +285,10 @@ class Database(object):
             response_hook(self.client_connection.last_response_headers, result)
 
     def get_container_client(self, container):
-        # type: (Union[str, Container, Dict[str, Any]]) -> Container
-        """ Get the specified `Container`, or a container with specified ID (name).
+        # type: (Union[str, ContainerClient, Dict[str, Any]]) -> ContainerClient
+        """ Get the specified `ContainerClient`, or a container with specified ID (name).
 
-        :param container: The ID (name) of the container, a :class:`Container` instance,
+        :param container: The ID (name) of the container, a :class:`ContainerClient` instance,
             or a dict representing the properties of the container to be retrieved.
 
         .. literalinclude:: ../../examples/examples.py
@@ -300,14 +300,14 @@ class Database(object):
             :name: get_container
 
         """
-        if isinstance(container, Container):
+        if isinstance(container, ContainerClient):
             id_value = container.id
         elif isinstance(container, Mapping):
             id_value = container["id"]
         else:
             id_value = container
 
-        return Container(self.client_connection, self.database_link, id_value)
+        return ContainerClient(self.client_connection, self.database_link, id_value)
 
     @distributed_trace
     def read_all_containers(
@@ -409,7 +409,7 @@ class Database(object):
     @distributed_trace
     def replace_container(
         self,
-        container,  # type: Union[str, Container, Dict[str, Any]]
+        container,  # type: Union[str, ContainerClient, Dict[str, Any]]
         partition_key,  # type: PartitionKey
         indexing_policy=None,  # type: Dict[str, Any]
         default_ttl=None,  # type: int
@@ -422,13 +422,13 @@ class Database(object):
         response_hook=None,  # type: Optional[Callable]
         **kwargs
     ):
-        # type: (...) -> Container
+        # type: (...) -> ContainerClient
         """ Reset the properties of the container. Property changes are persisted immediately.
 
         Any properties not specified will be reset to their default values.
 
         :param container: The ID (name), dict representing the properties or
-            :class:`Container` instance of the container to be replaced.
+            :class:`ContainerClient` instance of the container to be replaced.
         :param partition_key: The partition key to use for the container.
         :param indexing_policy: The indexing policy to apply to the container.
         :param default_ttl: Default time to live (TTL) for items in the container. If unspecified, items do not expire.
@@ -441,7 +441,7 @@ class Database(object):
         :param response_hook: a callable invoked with the response metadata
         :raise `HTTPFailure`: Raised if the container couldn't be replaced. This includes
             if the container with given id does not exist.
-        :returns: :class:`Container` instance representing the container after replace completed.
+        :returns: :class:`ContainerClient` instance representing the container after replace completed.
 
         .. literalinclude:: ../../examples/examples.py
             :start-after: [START reset_container_properties]
@@ -484,7 +484,7 @@ class Database(object):
         if response_hook:
             response_hook(self.client_connection.last_response_headers, container_properties)
 
-        return Container(
+        return ContainerClient(
             self.client_connection, self.database_link, container_properties["id"], properties=container_properties
         )
 
@@ -540,38 +540,38 @@ class Database(object):
         return result
 
     def get_user_client(self, user):
-        # type: (Union[str, User, Dict[str, Any]]) -> User
+        # type: (Union[str, UserClient, Dict[str, Any]]) -> UserClient
         """
         Get the user identified by `id`.
 
-        :param user: The ID (name), dict representing the properties or :class:`User`
+        :param user: The ID (name), dict representing the properties or :class:`UserClient`
             instance of the user to be retrieved.
-        :returns: A :class:`User` instance representing the retrieved user.
+        :returns: A :class:`UserClient` instance representing the retrieved user.
         :raise `HTTPFailure`: If the given user couldn't be retrieved.
 
         """
-        if isinstance(user, User):
+        if isinstance(user, UserClient):
             id_value = user.id
         elif isinstance(user, Mapping):
             id_value = user["id"]
         else:
             id_value = user
 
-        return User(client_connection=self.client_connection, id=id_value, database_link=self.database_link)
+        return UserClient(client_connection=self.client_connection, id=id_value, database_link=self.database_link)
 
     @distributed_trace
     def create_user(self, body, request_options=None, response_hook=None, **kwargs):
-        # type: (Dict[str, Any], Dict[str, Any], Optional[Callable]) -> User
+        # type: (Dict[str, Any], Dict[str, Any], Optional[Callable]) -> UserClient
         """ Create a user in the container.
 
         :param body: A dict-like object with an `id` key and value representing the user to be created.
         The user ID must be unique within the database, and consist of no more than 255 characters.
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
-        :returns: A :class:`User` instance representing the new user.
+        :returns: A :class:`UserClient` instance representing the new user.
         :raise `HTTPFailure`: If the given user couldn't be created.
 
-        To update or replace an existing user, use the :func:`Container.upsert_user` method.
+        To update or replace an existing user, use the :func:`ContainerClient.upsert_user` method.
 
         .. literalinclude:: ../../examples/examples.py
             :start-after: [START create_user]
@@ -591,19 +591,19 @@ class Database(object):
         if response_hook:
             response_hook(self.client_connection.last_response_headers, user)
 
-        return User(
+        return UserClient(
             client_connection=self.client_connection, id=user["id"], database_link=self.database_link, properties=user
         )
 
     @distributed_trace
     def upsert_user(self, body, request_options=None, response_hook=None, **kwargs):
-        # type: (Dict[str, Any], Dict[str, Any], Optional[Callable]) -> User
+        # type: (Dict[str, Any], Dict[str, Any], Optional[Callable]) -> UserClient
         """ Insert or update the specified user.
 
         :param body: A dict-like object representing the user to update or insert.
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
-        :returns: A :class:`User` instance representing the upserted user.
+        :returns: A :class:`UserClient` instance representing the upserted user.
         :raise `HTTPFailure`: If the given user could not be upserted.
 
         If the user already exists in the container, it is replaced. If it does not, it is inserted.
@@ -619,21 +619,21 @@ class Database(object):
         if response_hook:
             response_hook(self.client_connection.last_response_headers, user)
 
-        return User(
+        return UserClient(
             client_connection=self.client_connection, id=user["id"], database_link=self.database_link, properties=user
         )
 
     @distributed_trace
     def replace_user(self, user, body, request_options=None, response_hook=None, **kwargs):
-        # type: (Union[str, User, Dict[str, Any]], Dict[str, Any], Dict[str, Any], Optional[Callable]) -> User
+        # type: (Union[str, UserClient, Dict[str, Any]], Dict[str, Any], Dict[str, Any], Optional[Callable]) -> UserClient
         """ Replaces the specified user if it exists in the container.
 
-        :param user: The ID (name), dict representing the properties or :class:`User`
+        :param user: The ID (name), dict representing the properties or :class:`UserClient`
             instance of the user to be replaced.
         :param body: A dict-like object representing the user to replace.
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
-        :returns: A :class:`User` instance representing the user after replace went through.
+        :returns: A :class:`UserClient` instance representing the user after replace went through.
         :raise `HTTPFailure`: If the replace failed or the user with given id does not exist.
 
         """
@@ -647,16 +647,16 @@ class Database(object):
         if response_hook:
             response_hook(self.client_connection.last_response_headers, user)
 
-        return User(
+        return UserClient(
             client_connection=self.client_connection, id=user["id"], database_link=self.database_link, properties=user
         )
 
     @distributed_trace
     def delete_user(self, user, request_options=None, response_hook=None, **kwargs):
-        # type: (Union[str, User, Dict[str, Any]], Dict[str, Any], Optional[Callable]) -> None
+        # type: (Union[str, UserClient, Dict[str, Any]], Dict[str, Any], Optional[Callable]) -> None
         """ Delete the specified user from the container.
 
-        :param user: The ID (name), dict representing the properties or :class:`User`
+        :param user: The ID (name), dict representing the properties or :class:`UserClient`
             instance of the user to be deleted.
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata

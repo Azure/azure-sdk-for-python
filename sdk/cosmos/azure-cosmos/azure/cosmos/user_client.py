@@ -31,7 +31,8 @@ from ._cosmos_client_connection import CosmosClientConnection
 from .permission import Permission
 
 
-class User:
+class UserClient(object):
+
     def __init__(self, client_connection, id, database_link, properties=None):  # pylint: disable=redefined-builtin
         # type: (CosmosClientConnection, str, str, Dict[str, Any]) -> None
         self.client_connection = client_connection
@@ -57,13 +58,13 @@ class User:
 
     @distributed_trace
     def read(self, request_options=None, response_hook=None, **kwargs):
-        # type: (Dict[str, Any], Optional[Callable]) -> User
+        # type: (Dict[str, Any], Optional[Callable]) -> UserClient
         """
         Read user propertes.
 
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
-        :returns: A :class:`User` instance representing the retrieved user.
+        :returns: A :class:`UserClient` instance representing the retrieved user.
         :raise `HTTPFailure`: If the given user couldn't be retrieved.
 
         """
@@ -181,7 +182,7 @@ class User:
         :returns: A dict representing the new permission.
         :raise `HTTPFailure`: If the given permission couldn't be created.
 
-        To update or replace an existing permision, use the :func:`User.upsert_permission` method.
+        To update or replace an existing permision, use the :func:`UserClient.upsert_permission` method.
 
         """
         if not request_options:

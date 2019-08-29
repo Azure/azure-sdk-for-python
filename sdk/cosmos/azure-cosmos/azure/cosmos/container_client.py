@@ -40,7 +40,7 @@ __all__ = ("Container",)
 # pylint: disable=protected-access
 
 
-class Container:
+class ContainerClient(object):
     """ An Azure Cosmos DB container.
 
     A container in an Azure Cosmos DB SQL API database is a collection of documents,

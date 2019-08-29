@@ -33,13 +33,13 @@ from ._query_iterable import QueryIterable
 # pylint: disable=protected-access
 
 
-class ScriptType:
+class ScriptType(object):
     StoredProcedure = "sprocs"
     Trigger = "triggers"
     UserDefinedFunction = "udfs"
 
 
-class Scripts:
+class Scripts(object):
     def __init__(self, client_connection, container_link, is_system_key):
         # type: (CosmosClientConnection, str, bool) -> None
         self.client_connection = client_connection
