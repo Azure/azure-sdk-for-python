@@ -272,6 +272,32 @@ class ExpressRouteLinkPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(ExpressRouteLinkPaged, self).__init__(*args, **kwargs)
+class FirewallPolicyPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`FirewallPolicy <azure.mgmt.network.v2019_06_01.models.FirewallPolicy>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[FirewallPolicy]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(FirewallPolicyPaged, self).__init__(*args, **kwargs)
+class FirewallPolicyRuleGroupPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`FirewallPolicyRuleGroup <azure.mgmt.network.v2019_06_01.models.FirewallPolicyRuleGroup>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[FirewallPolicyRuleGroup]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(FirewallPolicyRuleGroupPaged, self).__init__(*args, **kwargs)
 class LoadBalancerPaged(Paged):
     """
     A paging container for iterating over a list of :class:`LoadBalancer <azure.mgmt.network.v2019_06_01.models.LoadBalancer>` object

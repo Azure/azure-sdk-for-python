@@ -23,7 +23,7 @@ except ImportError:
 
 class AuthCodeRedirectHandler(BaseHTTPRequestHandler):
     """HTTP request handler to capture the authentication server's response.
-    Largely from the Azure CLI: https://github.com/Azure/azure-cli/blob/dev/src/azure-cli-core/azure/cli/core/_profile.py
+    Mostly from the Azure CLI: https://github.com/Azure/azure-cli/blob/dev/src/azure-cli-core/azure/cli/core/_profile.py
     """
 
     def do_GET(self):

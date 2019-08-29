@@ -1,6 +1,6 @@
 parameters:
   ServiceDirectory: ''
-  BeforeBuildJobPublishBuildArtifacts: []
+  BeforePublishSteps: []
   TestMarkArgument: ''
   BuildTargetingString: 'azure-*'
 
@@ -13,37 +13,11 @@ jobs:
       vmImage: 'ubuntu-16.04'
 
     steps:
-      - script: |
-          echo "##vso[build.addbuildtag]Scheduled"
-        displayName: 'Tag scheduled builds'
-        condition: and(eq(variables['Build.SourceBranchName'],'master'),eq(variables['Build.Reason'],'Schedule'))
-
-      - task: UsePythonVersion@0
-        displayName: 'Use Python $(PythonVersion)'
-        inputs:
-          versionSpec: $(PythonVersion)
-
-      - script: |
-          pip install wheel setuptools pathlib twine readme-renderer[md]
-        displayName: 'Prep Environment'
-
-      - task: PythonScript@0
-        displayName: 'Generate Packages'
-        inputs:
-          scriptPath: 'scripts/devops_tasks/build_packages.py'
-          arguments: '-d "$(Build.ArtifactStagingDirectory)" "${{ parameters.BuildTargetingString }}" --service=${{parameters.ServiceDirectory}}'
-
-      - script: |
-          twine check $(Build.ArtifactStagingDirectory)/*
-        displayName: 'Verify Readme'
-
-      - ${{ parameters.BeforeBuildJobPublishBuildArtifacts }}
-
-      - task: PublishBuildArtifacts@1
-        condition: succeededOrFailed()
-        displayName: 'Publish Artifacts'
-        inputs:
-          artifactName: packages
+    - template: ../steps/build-artifacts.yml
+      parameters: 
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
 
   - job: 'Analyze'
     variables:
@@ -55,42 +29,15 @@ jobs:
     pool:
       vmImage: 'ubuntu-16.04'
 
-    steps:
-      - task: UsePythonVersion@0
-        displayName: 'Use Python $(PythonVersion)'
-        inputs:
-          versionSpec: '$(PythonVersion)'
-
-      - script: |
-          pip install setuptools wheel Jinja2
-          pip install doc-warden==0.3.0
-          ward scan -d $(Build.SourcesDirectory) -c $(Build.SourcesDirectory)/.docsettings.yml
-        displayName: 'Verify Readmes'
-
-      - task: PythonScript@0
-        displayName: 'Analyze dependencies'
-        inputs:
-          scriptPath: 'scripts/analyze_deps.py'
-          arguments: '--verbose --out "$(Build.ArtifactStagingDirectory)/dependencies.html"'
-
-      - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
-        # ComponentGovernance is currently unable to run on pull requests of public projects. Running on non-PR
-        # builds should be sufficient.
-        condition: and(succeededOrFailed(), ne(variables['Build.Reason'],'PullRequest'))
-        displayName: 'Component Detection'
-
-      - task: PublishBuildArtifacts@1
-        condition: succeededOrFailed()
-        displayName: 'Publish Report Artifacts'
-        inputs:
-          artifactName: reports
+      steps:
+      - template: ../steps/analyze.yml
 
   - job: 'Generic_Tests'
     variables:
     - template: ../variables/globals.yml
 
     dependsOn:
-      - 'Build'
+       - 'Build'
 
     strategy:
       matrix:
@@ -98,10 +45,6 @@ jobs:
           OSName: 'Linux'
           OSVmImage: 'ubuntu-16.04'
           PythonVersion: '2.7'
-        Linux_Python34:
-          OSName: 'Linux'
-          OSVmImage: 'ubuntu-16.04'
-          PythonVersion: '3.4'
         Linux_Python35:
           OSName: 'Linux'
           OSVmImage: 'ubuntu-16.04'
@@ -127,28 +70,33 @@ jobs:
       vmImage: '$(OSVmImage)'
 
     steps:
-      - template: ../steps/build-test.yml
-        parameters:
-          ServiceDirectory: ${{ parameters.ServiceDirectory }}
-          TestMarkArgument: ${{ parameters.TestMarkArgument }}
-          OSName: $(OSName)
-          PythonVersion: $(PythonVersion)
-          BuildTargetingString: ${{ parameters.BuildTargetingString }}
+    - template: ../steps/build-test.yml
+      parameters:
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        TestMarkArgument: ${{ parameters.TestMarkArgument }}
+        AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
+        OSName: $(OSName)
+        PythonVersion: $(PythonVersion)
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        ToxTestEnv: 'whl,sdist'
+        BeforeTestSteps: 
+          - task: DownloadPipelineArtifact@0
+            inputs:
+              artifactName: 'artifacts' 
+              targetPath: $(Build.ArtifactStagingDirectory)
+    - template: ../steps/publish-coverage.yml
 
-      - template: ../steps/publish-coverage.yml
-
-
-# Run PyPy tests without coverage
+  # Run PyPy tests without coverage
   - job: 'Test_PyPy'
 
     variables:
-      - template: ../variables/globals.yml
-      - name: OSName
-        value: 'Linux'
-      - name: PythonVersion
-        value: 'pypy3'
-      - name: OSVmImage
-        value: ubuntu-16.04
+    - template: ../variables/globals.yml
+    - name: OSName
+      value: 'Linux'
+    - name: PythonVersion
+      value: 'pypy3'
+    - name: OSVmImage
+      value: ubuntu-16.04
 
     dependsOn:
       - 'Build'
@@ -157,11 +105,17 @@ jobs:
       vmImage: $(OSVmImage)
 
     steps:
-      - template: ../steps/build-test.yml
-        parameters:
-          AdditionalTestArgs: '--disablecov'
-          ServiceDirectory: ${{ parameters.ServiceDirectory }}
-          TestMarkArgument: ${{ parameters.TestMarkArgument }}
-          OSName: $(OSName)
-          PythonVersion: $(PythonVersion)
-          BuildTargetingString: ${{ parameters.BuildTargetingString }}
+    - template: ../steps/build-test.yml
+      parameters:
+        AdditionalTestArgs: '--disablecov --wheel_dir="$(Build.ArtifactStagingDirectory)"'
+        ServiceDirectory: ${{ parameters.ServiceDirectory }}
+        TestMarkArgument: ${{ parameters.TestMarkArgument }}
+        OSName: $(OSName)
+        PythonVersion: $(PythonVersion)
+        BuildTargetingString: ${{ parameters.BuildTargetingString }}
+        ToxTestEnv: 'whl,sdist'
+        BeforeTestSteps: 
+          - task: DownloadPipelineArtifact@0
+            inputs:
+              artifactName: 'artifacts' 
+              targetPath: $(Build.ArtifactStagingDirectory)
