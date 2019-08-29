@@ -291,6 +291,18 @@ class HyperVGenerationType(str, Enum):
     v2 = "V2"
 
 
+class VirtualMachinePriorityTypes(str, Enum):
+
+    regular = "Regular"
+    low = "Low"
+
+
+class VirtualMachineEvictionPolicyTypes(str, Enum):
+
+    deallocate = "Deallocate"
+    delete = "Delete"
+
+
 class UpgradeMode(str, Enum):
 
     automatic = "Automatic"
@@ -308,18 +320,6 @@ class IPVersion(str, Enum):
 
     ipv4 = "IPv4"
     ipv6 = "IPv6"
-
-
-class VirtualMachinePriorityTypes(str, Enum):
-
-    regular = "Regular"
-    low = "Low"
-
-
-class VirtualMachineEvictionPolicyTypes(str, Enum):
-
-    deallocate = "Deallocate"
-    delete = "Delete"
 
 
 class VirtualMachineScaleSetSkuScaleType(str, Enum):
