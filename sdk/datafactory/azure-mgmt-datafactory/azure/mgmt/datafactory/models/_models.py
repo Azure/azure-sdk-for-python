@@ -18654,7 +18654,7 @@ class Office365LinkedService(LinkedService):
 
 
 class Office365Source(CopySource):
-    """A copy activity source for an Office365 service.
+    """A copy activity source for an Office 365 service.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -18690,6 +18690,10 @@ class Office365Source(CopySource):
     :param end_time: End time of the requested range for this dataset. Type:
      string (or Expression with resultType string).
     :type end_time: object
+    :param output_columns: The columns to be read out from the Office 365
+     table. Type: array of objects (or Expression with resultType array of
+     objects). Example: [ { "name": "Id" }, { "name": "CreatedDateTime" } ]
+    :type output_columns: object
     """
 
     _validation = {
@@ -18707,6 +18711,7 @@ class Office365Source(CopySource):
         'date_filter_column': {'key': 'dateFilterColumn', 'type': 'object'},
         'start_time': {'key': 'startTime', 'type': 'object'},
         'end_time': {'key': 'endTime', 'type': 'object'},
+        'output_columns': {'key': 'outputColumns', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
@@ -18716,6 +18721,7 @@ class Office365Source(CopySource):
         self.date_filter_column = kwargs.get('date_filter_column', None)
         self.start_time = kwargs.get('start_time', None)
         self.end_time = kwargs.get('end_time', None)
+        self.output_columns = kwargs.get('output_columns', None)
         self.type = 'Office365Source'
 
 

@@ -18654,7 +18654,7 @@ class Office365LinkedService(LinkedService):
 
 
 class Office365Source(CopySource):
-    """A copy activity source for an Office365 service.
+    """A copy activity source for an Office 365 service.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -18690,6 +18690,10 @@ class Office365Source(CopySource):
     :param end_time: End time of the requested range for this dataset. Type:
      string (or Expression with resultType string).
     :type end_time: object
+    :param output_columns: The columns to be read out from the Office 365
+     table. Type: array of objects (or Expression with resultType array of
+     objects). Example: [ { "name": "Id" }, { "name": "CreatedDateTime" } ]
+    :type output_columns: object
     """
 
     _validation = {
@@ -18707,15 +18711,17 @@ class Office365Source(CopySource):
         'date_filter_column': {'key': 'dateFilterColumn', 'type': 'object'},
         'start_time': {'key': 'startTime', 'type': 'object'},
         'end_time': {'key': 'endTime', 'type': 'object'},
+        'output_columns': {'key': 'outputColumns', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, allowed_groups=None, user_scope_filter_uri=None, date_filter_column=None, start_time=None, end_time=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, allowed_groups=None, user_scope_filter_uri=None, date_filter_column=None, start_time=None, end_time=None, output_columns=None, **kwargs) -> None:
         super(Office365Source, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
         self.allowed_groups = allowed_groups
         self.user_scope_filter_uri = user_scope_filter_uri
         self.date_filter_column = date_filter_column
         self.start_time = start_time
         self.end_time = end_time
+        self.output_columns = output_columns
         self.type = 'Office365Source'
 
 
