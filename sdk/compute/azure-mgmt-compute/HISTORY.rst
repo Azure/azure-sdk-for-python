@@ -3,6 +3,29 @@
 Release History
 ===============
 
+7.0.0 (2019-08-27)
+++++++++++++++++++
+
+**Features**
+
+- Model VirtualMachineScaleSetUpdateVMProfile has a new parameter scheduled_events_profile
+- Model VirtualMachineScaleSetUpdateVMProfile has a new parameter billing_profile
+- Model VirtualMachine has a new parameter virtual_machine_scale_set
+- Model VirtualMachine has a new parameter priority
+- Model VirtualMachine has a new parameter billing_profile
+- Model VirtualMachine has a new parameter eviction_policy
+- Model VirtualMachineScaleSetVMProfile has a new parameter scheduled_events_profile
+- Model VirtualMachineScaleSetVMProfile has a new parameter billing_profile
+- Model VirtualMachineImage has a new parameter hyper_vgeneration
+- Model VirtualMachineUpdate has a new parameter virtual_machine_scale_set
+- Model VirtualMachineUpdate has a new parameter priority
+- Model VirtualMachineUpdate has a new parameter billing_profile
+- Model VirtualMachineUpdate has a new parameter eviction_policy
+
+**Breaking changes**
+
+- Operation VirtualMachineScaleSetVMsOperations.get has a new signature
+
 6.0.0 (2019-07-20)
 ++++++++++++++++++
 

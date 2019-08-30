@@ -29,7 +29,7 @@ class AzureDatabricksLinkedService(LinkedService):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset.
+     linked service.
     :type annotations: list[object]
     :param type: Required. Constant filled by server.
     :type type: str
@@ -64,6 +64,16 @@ class AzureDatabricksLinkedService(LinkedService):
     :type new_cluster_spark_env_vars: dict[str, object]
     :param new_cluster_custom_tags: Additional tags for cluster resources.
     :type new_cluster_custom_tags: dict[str, object]
+    :param new_cluster_driver_node_type: The driver node type for the new
+     cluster. Type: string (or Expression with resultType string).
+    :type new_cluster_driver_node_type: object
+    :param new_cluster_init_scripts: User-defined initialization scripts for
+     the new cluster. Type: array of strings (or Expression with resultType
+     array of strings).
+    :type new_cluster_init_scripts: object
+    :param new_cluster_enable_elastic_disk: Enable the elastic disk on the new
+     cluster. Type: boolean (or Expression with resultType boolean).
+    :type new_cluster_enable_elastic_disk: object
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).
@@ -92,6 +102,9 @@ class AzureDatabricksLinkedService(LinkedService):
         'new_cluster_spark_conf': {'key': 'typeProperties.newClusterSparkConf', 'type': '{object}'},
         'new_cluster_spark_env_vars': {'key': 'typeProperties.newClusterSparkEnvVars', 'type': '{object}'},
         'new_cluster_custom_tags': {'key': 'typeProperties.newClusterCustomTags', 'type': '{object}'},
+        'new_cluster_driver_node_type': {'key': 'typeProperties.newClusterDriverNodeType', 'type': 'object'},
+        'new_cluster_init_scripts': {'key': 'typeProperties.newClusterInitScripts', 'type': 'object'},
+        'new_cluster_enable_elastic_disk': {'key': 'typeProperties.newClusterEnableElasticDisk', 'type': 'object'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
@@ -106,5 +119,8 @@ class AzureDatabricksLinkedService(LinkedService):
         self.new_cluster_spark_conf = kwargs.get('new_cluster_spark_conf', None)
         self.new_cluster_spark_env_vars = kwargs.get('new_cluster_spark_env_vars', None)
         self.new_cluster_custom_tags = kwargs.get('new_cluster_custom_tags', None)
+        self.new_cluster_driver_node_type = kwargs.get('new_cluster_driver_node_type', None)
+        self.new_cluster_init_scripts = kwargs.get('new_cluster_init_scripts', None)
+        self.new_cluster_enable_elastic_disk = kwargs.get('new_cluster_enable_elastic_disk', None)
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
         self.type = 'AzureDatabricks'

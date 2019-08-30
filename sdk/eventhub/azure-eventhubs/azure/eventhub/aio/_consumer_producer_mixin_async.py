@@ -6,7 +6,7 @@ import asyncio
 import logging
 import time
 
-from uamqp import errors, constants, compat
+from uamqp import errors, constants, compat  # type: ignore
 from azure.eventhub.error import EventHubError, ConnectError
 from ..aio.error_async import _handle_exception
 
@@ -14,7 +14,7 @@ log = logging.getLogger(__name__)
 
 
 def _retry_decorator(to_be_wrapped_func):
-    async def wrapped_func(self, *args, **kwargs):
+    async def wrapped_func(self, *args, **kwargs):  # pylint:disable=unused-argument # TODO: to refactor
         timeout = kwargs.pop("timeout", 100000)
         if not timeout:
             timeout = 100000  # timeout equals to 0 means no timeout, set the value to be a large number.
@@ -24,9 +24,11 @@ def _retry_decorator(to_be_wrapped_func):
         last_exception = None
         while True:
             try:
-                return await to_be_wrapped_func(self, timeout_time=timeout_time, last_exception=last_exception, **kwargs)
-            except Exception as exception:
-                last_exception = await self._handle_exception(exception, retry_count, max_retries, timeout_time)
+                return await to_be_wrapped_func(
+                    self, timeout_time=timeout_time, last_exception=last_exception, **kwargs
+                )
+            except Exception as exception:  # pylint:disable=broad-except
+                last_exception = await self._handle_exception(exception, retry_count, max_retries, timeout_time)  # pylint:disable=protected-access
                 retry_count += 1
     return wrapped_func
 
@@ -56,7 +58,7 @@ class ConsumerProducerMixin(object):
         self.running = False
         await self._close_connection()
 
-    async def _open(self, timeout_time=None):
+    async def _open(self, timeout_time=None):  # pylint:disable=unused-argument # TODO: to refactor
         """
         Open the EventHubConsumer using the supplied connection.
         If the handler has previously been redirected, the redirect
@@ -90,7 +92,7 @@ class ConsumerProducerMixin(object):
 
     async def _close_connection(self):
         await self._close_handler()
-        await self.client._conn_manager.reset_connection_if_broken()
+        await self.client._conn_manager.reset_connection_if_broken()  # pylint:disable=protected-access
 
     async def _handle_exception(self, exception, retry_count, max_retries, timeout_time):
         if not self.running and isinstance(exception, compat.TimeoutException):
@@ -120,7 +122,7 @@ class ConsumerProducerMixin(object):
 
         """
         self.running = False
-        if self.error:
+        if self.error:  #type: ignore
             return
         if isinstance(exception, errors.LinkRedirect):
             self.redirected = exception

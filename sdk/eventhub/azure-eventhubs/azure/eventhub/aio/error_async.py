@@ -1,8 +1,12 @@
+# --------------------------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------------------------
 import asyncio
 import time
 import logging
 
-from uamqp import errors, compat
+from uamqp import errors, compat  # type: ignore
 from ..error import EventHubError, EventDataSendError, \
     EventDataError, ConnectError, ConnectionLostError, AuthenticationError
 
@@ -32,20 +36,20 @@ def _create_eventhub_exception(exception):
     return error
 
 
-async def _handle_exception(exception, retry_count, max_retries, closable, timeout_time=None):
+async def _handle_exception(exception, retry_count, max_retries, closable, timeout_time=None):  # pylint:disable=too-many-branches, too-many-statements
     if isinstance(exception, asyncio.CancelledError):
-        raise
+        raise exception
     try:
         name = closable.name
     except AttributeError:
         name = closable.container_id
-    if isinstance(exception, KeyboardInterrupt):
+    if isinstance(exception, KeyboardInterrupt):  # pylint:disable=no-else-raise
         log.info("%r stops due to keyboard interrupt", name)
         closable.close()
-        raise
+        raise exception
     elif isinstance(exception, EventHubError):
         closable.close()
-        raise
+        raise exception
     elif isinstance(exception, (
             errors.MessageAccepted,
             errors.MessageAlreadySettled,
@@ -68,29 +72,29 @@ async def _handle_exception(exception, retry_count, max_retries, closable, timeo
     else:
         if isinstance(exception, errors.AuthenticationException):
             if hasattr(closable, "_close_connection"):
-                await closable._close_connection()
+                await closable._close_connection()  # pylint:disable=protected-access
         elif isinstance(exception, errors.LinkRedirect):
             log.info("%r link redirect received. Redirecting...", name)
             redirect = exception
             if hasattr(closable, "_redirect"):
-                await closable._redirect(redirect)
+                await closable._redirect(redirect)  # pylint:disable=protected-access
         elif isinstance(exception, errors.LinkDetach):
             if hasattr(closable, "_close_handler"):
-                await closable._close_handler()
+                await closable._close_handler()  # pylint:disable=protected-access
         elif isinstance(exception, errors.ConnectionClose):
             if hasattr(closable, "_close_connection"):
-                await closable._close_connection()
+                await closable._close_connection()  # pylint:disable=protected-access
         elif isinstance(exception, errors.MessageHandlerError):
             if hasattr(closable, "_close_handler"):
-                await closable._close_handler()
+                await closable._close_handler()  # pylint:disable=protected-access
         elif isinstance(exception, errors.AMQPConnectionError):
             if hasattr(closable, "_close_connection"):
-                await closable._close_connection()
+                await closable._close_connection()  # pylint:disable=protected-access
         elif isinstance(exception, compat.TimeoutException):
             pass  # Timeout doesn't need to recreate link or connection to retry
         else:
             if hasattr(closable, "_close_connection"):
-                await closable._close_connection()
+                await closable._close_connection()  # pylint:disable=protected-access
         # start processing retry delay
         try:
             backoff_factor = closable.client.config.backoff_factor
@@ -99,7 +103,7 @@ async def _handle_exception(exception, retry_count, max_retries, closable, timeo
             backoff_factor = closable.config.backoff_factor
             backoff_max = closable.config.backoff_max
         backoff = backoff_factor * 2 ** retry_count
-        if backoff <= backoff_max and (timeout_time is None or time.time() + backoff <= timeout_time):
+        if backoff <= backoff_max and (timeout_time is None or time.time() + backoff <= timeout_time):  # pylint:disable=no-else-return
             await asyncio.sleep(backoff)
             log.info("%r has an exception (%r). Retrying...", format(name), exception)
             return _create_eventhub_exception(exception)
