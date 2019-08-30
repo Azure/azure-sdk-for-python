@@ -16,7 +16,7 @@ pr:
     - feature/*
     - hotfix/*
     - release/*
-    - '*/resource-manager'
+    - restapi*
   paths:
     include:
     - sdk/healthcareapis/

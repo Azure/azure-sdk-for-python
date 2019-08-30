@@ -23,6 +23,7 @@ from .container_client import ContainerClient
 from .cosmos_client import CosmosClient
 from .database_client import DatabaseClient
 from .user_client import UserClient
+from .scripts_client import ScriptsClient
 from .documents import (
     ConsistencyLevel,
     DataType,
@@ -36,7 +37,6 @@ from .documents import (
 )
 from .partition_key import PartitionKey
 from .permission import Permission
-from .scripts_client import ScriptsClient
 from .version import VERSION
 
 __all__ = (
