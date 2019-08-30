@@ -2,11 +2,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-import six
 import time
 import logging
+import six
 
-from uamqp import constants, errors, compat
+from uamqp import errors, compat  # type: ignore
 
 
 _NO_RETRY_ERRORS = (
@@ -102,14 +102,12 @@ class ConnectionLostError(EventHubError):
     """Connection to event hub is lost. SDK will retry. So this shouldn't happen.
 
     """
-    pass
 
 
 class ConnectError(EventHubError):
     """Fail to connect to event hubs
 
     """
-    pass
 
 
 class AuthenticationError(ConnectError):
@@ -117,28 +115,24 @@ class AuthenticationError(ConnectError):
 
 
     """
-    pass
 
 
 class EventDataError(EventHubError):
     """Problematic event data so the send will fail at client side
 
     """
-    pass
 
 
 class EventDataSendError(EventHubError):
     """Service returns error while an event data is being sent
 
     """
-    pass
 
 
 class OperationTimeoutError(EventHubError):
     """Operation times out
 
     """
-    pass
 
 
 def _create_eventhub_exception(exception):
@@ -163,18 +157,18 @@ def _create_eventhub_exception(exception):
     return error
 
 
-def _handle_exception(exception, retry_count, max_retries, closable, timeout_time=None):
+def _handle_exception(exception, retry_count, max_retries, closable, timeout_time=None):  # pylint:disable=too-many-branches, too-many-statements
     try:
         name = closable.name
     except AttributeError:
         name = closable.container_id
-    if isinstance(exception, KeyboardInterrupt):
+    if isinstance(exception, KeyboardInterrupt):  # pylint:disable=no-else-raise
         log.info("%r stops due to keyboard interrupt", name)
         closable.close()
-        raise
+        raise exception
     elif isinstance(exception, EventHubError):
         closable.close()
-        raise
+        raise exception
     elif isinstance(exception, (
             errors.MessageAccepted,
             errors.MessageAlreadySettled,
@@ -197,29 +191,29 @@ def _handle_exception(exception, retry_count, max_retries, closable, timeout_tim
     else:
         if isinstance(exception, errors.AuthenticationException):
             if hasattr(closable, "_close_connection"):
-                closable._close_connection()
+                closable._close_connection()  # pylint:disable=protected-access
         elif isinstance(exception, errors.LinkRedirect):
             log.info("%r link redirect received. Redirecting...", name)
             redirect = exception
             if hasattr(closable, "_redirect"):
-                closable._redirect(redirect)
+                closable._redirect(redirect)  # pylint:disable=protected-access
         elif isinstance(exception, errors.LinkDetach):
             if hasattr(closable, "_close_handler"):
-                closable._close_handler()
+                closable._close_handler()  # pylint:disable=protected-access
         elif isinstance(exception, errors.ConnectionClose):
             if hasattr(closable, "_close_connection"):
-                closable._close_connection()
+                closable._close_connection()  # pylint:disable=protected-access
         elif isinstance(exception, errors.MessageHandlerError):
             if hasattr(closable, "_close_handler"):
-                closable._close_handler()
+                closable._close_handler()  # pylint:disable=protected-access
         elif isinstance(exception, errors.AMQPConnectionError):
             if hasattr(closable, "_close_connection"):
-                closable._close_connection()
+                closable._close_connection()  # pylint:disable=protected-access
         elif isinstance(exception, compat.TimeoutException):
             pass  # Timeout doesn't need to recreate link or connection to retry
         else:
             if hasattr(closable, "_close_connection"):
-                closable._close_connection()
+                closable._close_connection()  # pylint:disable=protected-access
         # start processing retry delay
         try:
             backoff_factor = closable.client.config.backoff_factor
@@ -228,7 +222,7 @@ def _handle_exception(exception, retry_count, max_retries, closable, timeout_tim
             backoff_factor = closable.config.backoff_factor
             backoff_max = closable.config.backoff_max
         backoff = backoff_factor * 2 ** retry_count
-        if backoff <= backoff_max and (timeout_time is None or time.time() + backoff <= timeout_time):
+        if backoff <= backoff_max and (timeout_time is None or time.time() + backoff <= timeout_time):  #pylint:disable=no-else-return
             time.sleep(backoff)
             log.info("%r has an exception (%r). Retrying...", format(name), exception)
             return _create_eventhub_exception(exception)

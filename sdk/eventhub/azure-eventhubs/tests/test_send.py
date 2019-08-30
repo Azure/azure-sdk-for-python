@@ -33,10 +33,10 @@ def test_send_with_partition_key(connstr_receivers):
         received = partition.receive(timeout=5)
         for message in received:
             try:
-                existing = found_partition_keys[message._partition_key]
+                existing = found_partition_keys[message.partition_key]
                 assert existing == index
             except KeyError:
-                found_partition_keys[message._partition_key] = index
+                found_partition_keys[message.partition_key] = index
 
 
 @pytest.mark.liveTest
