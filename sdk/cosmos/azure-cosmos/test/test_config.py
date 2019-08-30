@@ -25,7 +25,7 @@ import uuid
 import azure.cosmos.documents as documents
 import azure.cosmos.errors as errors
 from azure.cosmos.http_constants import StatusCodes
-from azure.cosmos.database import Database
+from azure.cosmos.database_client import DatabaseClient
 from azure.cosmos.cosmos_client import CosmosClient
 from azure.cosmos.partition_key import PartitionKey
 from azure.cosmos.partition_key import NonePartitionKeyValue
@@ -86,7 +86,7 @@ class _test_config(object):
         # type: (CosmosClient) -> None
         try:
             client.delete_database(cls.TEST_DATABASE_ID)
-        except errors.HTTPFailure as e:
+        except errors.CosmosHttpResponseError as e:
             if e.status_code != StatusCodes.NOT_FOUND:
                 raise e
 
@@ -161,5 +161,12 @@ class _test_config(object):
                     # sleep to ensure deletes are propagated for multimaster enabled accounts
                     time.sleep(2)
                 break
-            except errors.HTTPFailure as e:
+            except errors.CosmosHttpResponseError as e:
                 print("Error occurred while deleting documents:" + str(e) + " \nRetrying...")
+
+
+class FakeResponse:
+    def __init__(self, headers):
+        self.headers = headers
+        self.reason = "foo"
+        self.status_code = "bar"
