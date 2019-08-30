@@ -282,9 +282,22 @@ class ApiOperationPropertiesDefinition(Model):
         self.is_notification = kwargs.get('is_notification', None)
 
 
-class ApiReference(Model):
+class ApiReference(Resource):
     """ApiReference.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The resource id.
+    :vartype id: str
+    :ivar name: Gets the resource name.
+    :vartype name: str
+    :ivar type: Gets the resource type.
+    :vartype type: str
+    :param location: The resource location.
+    :type location: str
+    :param tags: The resource tags.
+    :type tags: dict[str, str]
     :param display_name: The display name of the api.
     :type display_name: str
     :param description: The description of the api.
@@ -304,7 +317,18 @@ class ApiReference(Model):
      ~azure.mgmt.logic.models.ResourceReference
     """
 
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
         'display_name': {'key': 'displayName', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'icon_uri': {'key': 'iconUri', 'type': 'str'},
@@ -5001,6 +5025,9 @@ class Workflow(Resource):
     :vartype version: str
     :ivar access_endpoint: Gets the access endpoint.
     :vartype access_endpoint: str
+    :param endpoints_configuration: The endpoints configuration.
+    :type endpoints_configuration:
+     ~azure.mgmt.logic.models.FlowEndpointsConfiguration
     :param sku: The sku.
     :type sku: ~azure.mgmt.logic.models.Sku
     :param integration_account: The integration account.
@@ -5038,6 +5065,7 @@ class Workflow(Resource):
         'state': {'key': 'properties.state', 'type': 'str'},
         'version': {'key': 'properties.version', 'type': 'str'},
         'access_endpoint': {'key': 'properties.accessEndpoint', 'type': 'str'},
+        'endpoints_configuration': {'key': 'properties.endpointsConfiguration', 'type': 'FlowEndpointsConfiguration'},
         'sku': {'key': 'properties.sku', 'type': 'Sku'},
         'integration_account': {'key': 'properties.integrationAccount', 'type': 'ResourceReference'},
         'integration_service_environment': {'key': 'properties.integrationServiceEnvironment', 'type': 'ResourceReference'},
@@ -5053,6 +5081,7 @@ class Workflow(Resource):
         self.state = kwargs.get('state', None)
         self.version = None
         self.access_endpoint = None
+        self.endpoints_configuration = kwargs.get('endpoints_configuration', None)
         self.sku = kwargs.get('sku', None)
         self.integration_account = kwargs.get('integration_account', None)
         self.integration_service_environment = kwargs.get('integration_service_environment', None)
