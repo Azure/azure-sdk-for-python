@@ -26,11 +26,11 @@ class PrivateEndpointConnection(ProxyResource):
     :vartype type: str
     :param private_endpoint: Private endpoint which the connection belongs to.
     :type private_endpoint: ~azure.mgmt.sql.models.PrivateEndpointProperty
-    :param private_link_service_connection_state: Connection State of the
-     Private Endpoint Connection.
+    :param private_link_service_connection_state: Connection state of the
+     private endpoint connection.
     :type private_link_service_connection_state:
      ~azure.mgmt.sql.models.PrivateLinkServiceConnectionStateProperty
-    :ivar provisioning_state: State of the Private Endpoint Connection.
+    :ivar provisioning_state: State of the private endpoint connection.
     :vartype provisioning_state: str
     """
 

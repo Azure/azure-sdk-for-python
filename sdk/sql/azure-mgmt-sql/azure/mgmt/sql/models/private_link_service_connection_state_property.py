@@ -25,7 +25,8 @@ class PrivateLinkServiceConnectionStateProperty(Model):
     :param description: Required. The private link service connection
      description.
     :type description: str
-    :ivar actions_required: The private link service connection description.
+    :ivar actions_required: The actions required for private link service
+     connection.
     :vartype actions_required: str
     """
 

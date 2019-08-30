@@ -175,8 +175,8 @@ class PrivateEndpointConnectionsOperations(object):
         :param private_endpoint: Private endpoint which the connection belongs
          to.
         :type private_endpoint: ~azure.mgmt.sql.models.PrivateEndpointProperty
-        :param private_link_service_connection_state: Connection State of the
-         Private Endpoint Connection.
+        :param private_link_service_connection_state: Connection state of the
+         private endpoint connection.
         :type private_link_service_connection_state:
          ~azure.mgmt.sql.models.PrivateLinkServiceConnectionStateProperty
         :param dict custom_headers: headers that will be added to the request
