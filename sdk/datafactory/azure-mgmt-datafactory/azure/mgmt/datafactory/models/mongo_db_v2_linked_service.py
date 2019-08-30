@@ -15,8 +15,6 @@ from .linked_service import LinkedService
 class MongoDbV2LinkedService(LinkedService):
     """Linked service for MongoDB data source.
 
-    All required parameters must be populated in order to send to Azure.
-
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -31,14 +29,14 @@ class MongoDbV2LinkedService(LinkedService):
     :param annotations: List of tags that can be used for describing the
      linked service.
     :type annotations: list[object]
-    :param type: Required. Constant filled by server.
+    :param type: Constant filled by server.
     :type type: str
-    :param connection_string: Required. The MongoDB connection string. Type:
-     string, SecureString or AzureKeyVaultSecretReference. Type: string,
-     SecureString or AzureKeyVaultSecretReference.
+    :param connection_string: The MongoDB connection string. Type: string,
+     SecureString or AzureKeyVaultSecretReference. Type: string, SecureString
+     or AzureKeyVaultSecretReference.
     :type connection_string: object
-    :param database: Required. The name of the MongoDB database that you want
-     to access. Type: string (or Expression with resultType string).
+    :param database: The name of the MongoDB database that you want to access.
+     Type: string (or Expression with resultType string).
     :type database: object
     """
 
@@ -59,8 +57,8 @@ class MongoDbV2LinkedService(LinkedService):
         'database': {'key': 'typeProperties.database', 'type': 'object'},
     }
 
-    def __init__(self, **kwargs):
-        super(MongoDbV2LinkedService, self).__init__(**kwargs)
-        self.connection_string = kwargs.get('connection_string', None)
-        self.database = kwargs.get('database', None)
+    def __init__(self, connection_string, database, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None):
+        super(MongoDbV2LinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations)
+        self.connection_string = connection_string
+        self.database = database
         self.type = 'MongoDbV2'

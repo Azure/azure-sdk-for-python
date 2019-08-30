@@ -18,12 +18,9 @@ class TriggerReference(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar type: Required. Trigger reference type. Default value:
-     "TriggerReference" .
+    :ivar type: Trigger reference type. Default value: "TriggerReference" .
     :vartype type: str
-    :param reference_name: Required. Reference trigger name.
+    :param reference_name: Reference trigger name.
     :type reference_name: str
     """
 
@@ -39,6 +36,6 @@ class TriggerReference(Model):
 
     type = "TriggerReference"
 
-    def __init__(self, **kwargs):
-        super(TriggerReference, self).__init__(**kwargs)
-        self.reference_name = kwargs.get('reference_name', None)
+    def __init__(self, reference_name):
+        super(TriggerReference, self).__init__()
+        self.reference_name = reference_name

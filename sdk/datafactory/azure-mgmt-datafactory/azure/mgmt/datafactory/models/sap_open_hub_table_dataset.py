@@ -15,8 +15,6 @@ from .dataset import Dataset
 class SapOpenHubTableDataset(Dataset):
     """Sap Business Warehouse Open Hub Destination Table properties.
 
-    All required parameters must be populated in order to send to Azure.
-
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -29,7 +27,7 @@ class SapOpenHubTableDataset(Dataset):
      dataset. Type: array (or Expression with resultType array), itemType:
      DatasetSchemaDataElement.
     :type schema: object
-    :param linked_service_name: Required. Linked service reference.
+    :param linked_service_name: Linked service reference.
     :type linked_service_name:
      ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
@@ -41,11 +39,11 @@ class SapOpenHubTableDataset(Dataset):
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
-    :param type: Required. Constant filled by server.
+    :param type: Constant filled by server.
     :type type: str
-    :param open_hub_destination_name: Required. The name of the Open Hub
-     Destination with destination type as Database Table. Type: string (or
-     Expression with resultType string).
+    :param open_hub_destination_name: The name of the Open Hub Destination
+     with destination type as Database Table. Type: string (or Expression with
+     resultType string).
     :type open_hub_destination_name: object
     :param exclude_last_request: Whether to exclude the records of the last
      request. The default value is true. Type: boolean (or Expression with
@@ -79,9 +77,9 @@ class SapOpenHubTableDataset(Dataset):
         'base_request_id': {'key': 'typeProperties.baseRequestId', 'type': 'object'},
     }
 
-    def __init__(self, **kwargs):
-        super(SapOpenHubTableDataset, self).__init__(**kwargs)
-        self.open_hub_destination_name = kwargs.get('open_hub_destination_name', None)
-        self.exclude_last_request = kwargs.get('exclude_last_request', None)
-        self.base_request_id = kwargs.get('base_request_id', None)
+    def __init__(self, linked_service_name, open_hub_destination_name, additional_properties=None, description=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, exclude_last_request=None, base_request_id=None):
+        super(SapOpenHubTableDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder)
+        self.open_hub_destination_name = open_hub_destination_name
+        self.exclude_last_request = exclude_last_request
+        self.base_request_id = base_request_id
         self.type = 'SapOpenHubTable'

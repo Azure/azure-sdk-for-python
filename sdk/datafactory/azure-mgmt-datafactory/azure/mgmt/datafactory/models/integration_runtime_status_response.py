@@ -18,11 +18,9 @@ class IntegrationRuntimeStatusResponse(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
     :ivar name: The integration runtime name.
     :vartype name: str
-    :param properties: Required. Integration runtime properties.
+    :param properties: Integration runtime properties.
     :type properties: ~azure.mgmt.datafactory.models.IntegrationRuntimeStatus
     """
 
@@ -36,7 +34,7 @@ class IntegrationRuntimeStatusResponse(Model):
         'properties': {'key': 'properties', 'type': 'IntegrationRuntimeStatus'},
     }
 
-    def __init__(self, **kwargs):
-        super(IntegrationRuntimeStatusResponse, self).__init__(**kwargs)
+    def __init__(self, properties):
+        super(IntegrationRuntimeStatusResponse, self).__init__()
         self.name = None
-        self.properties = kwargs.get('properties', None)
+        self.properties = properties

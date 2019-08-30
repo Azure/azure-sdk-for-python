@@ -15,8 +15,6 @@ from .dataset import Dataset
 class JsonDataset(Dataset):
     """Json dataset.
 
-    All required parameters must be populated in order to send to Azure.
-
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -29,7 +27,7 @@ class JsonDataset(Dataset):
      dataset. Type: array (or Expression with resultType array), itemType:
      DatasetSchemaDataElement.
     :type schema: object
-    :param linked_service_name: Required. Linked service reference.
+    :param linked_service_name: Linked service reference.
     :type linked_service_name:
      ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
@@ -41,9 +39,9 @@ class JsonDataset(Dataset):
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
-    :param type: Required. Constant filled by server.
+    :param type: Constant filled by server.
     :type type: str
-    :param location: Required. The location of the json data storage.
+    :param location: The location of the json data storage.
     :type location: ~azure.mgmt.datafactory.models.DatasetLocation
     :param encoding_name: The code page name of the preferred encoding. If not
      specified, the default value is UTF-8, unless BOM denotes another Unicode
@@ -77,9 +75,9 @@ class JsonDataset(Dataset):
         'compression': {'key': 'typeProperties.compression', 'type': 'DatasetCompression'},
     }
 
-    def __init__(self, **kwargs):
-        super(JsonDataset, self).__init__(**kwargs)
-        self.location = kwargs.get('location', None)
-        self.encoding_name = kwargs.get('encoding_name', None)
-        self.compression = kwargs.get('compression', None)
+    def __init__(self, linked_service_name, location, additional_properties=None, description=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, encoding_name=None, compression=None):
+        super(JsonDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder)
+        self.location = location
+        self.encoding_name = encoding_name
+        self.compression = compression
         self.type = 'Json'

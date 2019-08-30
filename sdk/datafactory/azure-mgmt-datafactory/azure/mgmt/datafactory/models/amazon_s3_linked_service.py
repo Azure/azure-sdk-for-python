@@ -15,8 +15,6 @@ from .linked_service import LinkedService
 class AmazonS3LinkedService(LinkedService):
     """Linked service for Amazon S3.
 
-    All required parameters must be populated in order to send to Azure.
-
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -31,7 +29,7 @@ class AmazonS3LinkedService(LinkedService):
     :param annotations: List of tags that can be used for describing the
      linked service.
     :type annotations: list[object]
-    :param type: Required. Constant filled by server.
+    :param type: Constant filled by server.
     :type type: str
     :param access_key_id: The access key identifier of the Amazon S3 Identity
      and Access Management (IAM) user. Type: string (or Expression with
@@ -68,10 +66,10 @@ class AmazonS3LinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, **kwargs):
-        super(AmazonS3LinkedService, self).__init__(**kwargs)
-        self.access_key_id = kwargs.get('access_key_id', None)
-        self.secret_access_key = kwargs.get('secret_access_key', None)
-        self.service_url = kwargs.get('service_url', None)
-        self.encrypted_credential = kwargs.get('encrypted_credential', None)
+    def __init__(self, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None, access_key_id=None, secret_access_key=None, service_url=None, encrypted_credential=None):
+        super(AmazonS3LinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations)
+        self.access_key_id = access_key_id
+        self.secret_access_key = secret_access_key
+        self.service_url = service_url
+        self.encrypted_credential = encrypted_credential
         self.type = 'AmazonS3'

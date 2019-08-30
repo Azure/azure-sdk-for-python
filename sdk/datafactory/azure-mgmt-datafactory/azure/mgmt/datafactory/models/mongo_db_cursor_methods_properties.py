@@ -44,10 +44,10 @@ class MongoDbCursorMethodsProperties(Model):
         'limit': {'key': 'limit', 'type': 'object'},
     }
 
-    def __init__(self, **kwargs):
-        super(MongoDbCursorMethodsProperties, self).__init__(**kwargs)
-        self.additional_properties = kwargs.get('additional_properties', None)
-        self.project = kwargs.get('project', None)
-        self.sort = kwargs.get('sort', None)
-        self.skip = kwargs.get('skip', None)
-        self.limit = kwargs.get('limit', None)
+    def __init__(self, additional_properties=None, project=None, sort=None, skip=None, limit=None):
+        super(MongoDbCursorMethodsProperties, self).__init__()
+        self.additional_properties = additional_properties
+        self.project = project
+        self.sort = sort
+        self.skip = skip
+        self.limit = limit

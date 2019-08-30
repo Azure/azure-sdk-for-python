@@ -15,12 +15,10 @@ from msrest.serialization import Model
 class FormatReadSettings(Model):
     """Format read settings.
 
-    All required parameters must be populated in order to send to Azure.
-
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param type: Required. The read setting type.
+    :param type: The read setting type.
     :type type: str
     """
 
@@ -33,7 +31,7 @@ class FormatReadSettings(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(FormatReadSettings, self).__init__(**kwargs)
-        self.additional_properties = kwargs.get('additional_properties', None)
-        self.type = kwargs.get('type', None)
+    def __init__(self, type, additional_properties=None):
+        super(FormatReadSettings, self).__init__()
+        self.additional_properties = additional_properties
+        self.type = type

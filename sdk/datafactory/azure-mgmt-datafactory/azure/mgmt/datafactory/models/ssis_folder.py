@@ -15,15 +15,13 @@ from .ssis_object_metadata import SsisObjectMetadata
 class SsisFolder(SsisObjectMetadata):
     """Ssis folder.
 
-    All required parameters must be populated in order to send to Azure.
-
     :param id: Metadata id.
     :type id: long
     :param name: Metadata name.
     :type name: str
     :param description: Metadata description.
     :type description: str
-    :param type: Required. Constant filled by server.
+    :param type: Constant filled by server.
     :type type: str
     """
 
@@ -31,13 +29,6 @@ class SsisFolder(SsisObjectMetadata):
         'type': {'required': True},
     }
 
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'long'},
-        'name': {'key': 'name', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(SsisFolder, self).__init__(**kwargs)
+    def __init__(self, id=None, name=None, description=None):
+        super(SsisFolder, self).__init__(id=id, name=name, description=description)
         self.type = 'Folder'

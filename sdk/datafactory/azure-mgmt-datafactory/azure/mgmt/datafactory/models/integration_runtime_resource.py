@@ -18,8 +18,6 @@ class IntegrationRuntimeResource(SubResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
     :ivar id: The resource identifier.
     :vartype id: str
     :ivar name: The resource name.
@@ -28,7 +26,7 @@ class IntegrationRuntimeResource(SubResource):
     :vartype type: str
     :ivar etag: Etag identifies change in the resource.
     :vartype etag: str
-    :param properties: Required. Integration runtime properties.
+    :param properties: Integration runtime properties.
     :type properties: ~azure.mgmt.datafactory.models.IntegrationRuntime
     """
 
@@ -48,6 +46,6 @@ class IntegrationRuntimeResource(SubResource):
         'properties': {'key': 'properties', 'type': 'IntegrationRuntime'},
     }
 
-    def __init__(self, **kwargs):
-        super(IntegrationRuntimeResource, self).__init__(**kwargs)
-        self.properties = kwargs.get('properties', None)
+    def __init__(self, properties):
+        super(IntegrationRuntimeResource, self).__init__()
+        self.properties = properties

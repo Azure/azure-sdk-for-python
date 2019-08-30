@@ -15,8 +15,6 @@ from .copy_sink import CopySink
 class SalesforceServiceCloudSink(CopySink):
     """A copy activity Salesforce Service Cloud sink.
 
-    All required parameters must be populated in order to send to Azure.
-
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -38,7 +36,7 @@ class SalesforceServiceCloudSink(CopySink):
      for the sink data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
-    :param type: Required. Constant filled by server.
+    :param type: Constant filled by server.
     :type type: str
     :param write_behavior: The write behavior for the operation. Default is
      Insert. Possible values include: 'Insert', 'Upsert'
@@ -76,9 +74,9 @@ class SalesforceServiceCloudSink(CopySink):
         'ignore_null_values': {'key': 'ignoreNullValues', 'type': 'object'},
     }
 
-    def __init__(self, **kwargs):
-        super(SalesforceServiceCloudSink, self).__init__(**kwargs)
-        self.write_behavior = kwargs.get('write_behavior', None)
-        self.external_id_field_name = kwargs.get('external_id_field_name', None)
-        self.ignore_null_values = kwargs.get('ignore_null_values', None)
+    def __init__(self, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, max_concurrent_connections=None, write_behavior=None, external_id_field_name=None, ignore_null_values=None):
+        super(SalesforceServiceCloudSink, self).__init__(additional_properties=additional_properties, write_batch_size=write_batch_size, write_batch_timeout=write_batch_timeout, sink_retry_count=sink_retry_count, sink_retry_wait=sink_retry_wait, max_concurrent_connections=max_concurrent_connections)
+        self.write_behavior = write_behavior
+        self.external_id_field_name = external_id_field_name
+        self.ignore_null_values = ignore_null_values
         self.type = 'SalesforceServiceCloudSink'

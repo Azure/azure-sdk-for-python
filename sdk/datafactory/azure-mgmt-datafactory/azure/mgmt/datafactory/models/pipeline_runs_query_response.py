@@ -15,9 +15,7 @@ from msrest.serialization import Model
 class PipelineRunsQueryResponse(Model):
     """A list pipeline runs.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param value: Required. List of pipeline runs.
+    :param value: List of pipeline runs.
     :type value: list[~azure.mgmt.datafactory.models.PipelineRun]
     :param continuation_token: The continuation token for getting the next
      page of results, if any remaining results exist, null otherwise.
@@ -33,7 +31,7 @@ class PipelineRunsQueryResponse(Model):
         'continuation_token': {'key': 'continuationToken', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(PipelineRunsQueryResponse, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.continuation_token = kwargs.get('continuation_token', None)
+    def __init__(self, value, continuation_token=None):
+        super(PipelineRunsQueryResponse, self).__init__()
+        self.value = value
+        self.continuation_token = continuation_token

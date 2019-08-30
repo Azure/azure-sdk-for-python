@@ -15,8 +15,6 @@ from .linked_service import LinkedService
 class WebLinkedService(LinkedService):
     """Web linked service.
 
-    All required parameters must be populated in order to send to Azure.
-
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -31,9 +29,9 @@ class WebLinkedService(LinkedService):
     :param annotations: List of tags that can be used for describing the
      linked service.
     :type annotations: list[object]
-    :param type: Required. Constant filled by server.
+    :param type: Constant filled by server.
     :type type: str
-    :param type_properties: Required. Web linked service properties.
+    :param type_properties: Web linked service properties.
     :type type_properties:
      ~azure.mgmt.datafactory.models.WebLinkedServiceTypeProperties
     """
@@ -53,7 +51,7 @@ class WebLinkedService(LinkedService):
         'type_properties': {'key': 'typeProperties', 'type': 'WebLinkedServiceTypeProperties'},
     }
 
-    def __init__(self, **kwargs):
-        super(WebLinkedService, self).__init__(**kwargs)
-        self.type_properties = kwargs.get('type_properties', None)
+    def __init__(self, type_properties, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None):
+        super(WebLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations)
+        self.type_properties = type_properties
         self.type = 'Web'

@@ -15,12 +15,10 @@ from .dataset_compression import DatasetCompression
 class DatasetDeflateCompression(DatasetCompression):
     """The Deflate compression method used on a dataset.
 
-    All required parameters must be populated in order to send to Azure.
-
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param type: Required. Constant filled by server.
+    :param type: Constant filled by server.
     :type type: str
     :param level: The Deflate compression level.
     :type level: object
@@ -36,7 +34,7 @@ class DatasetDeflateCompression(DatasetCompression):
         'level': {'key': 'level', 'type': 'object'},
     }
 
-    def __init__(self, **kwargs):
-        super(DatasetDeflateCompression, self).__init__(**kwargs)
-        self.level = kwargs.get('level', None)
+    def __init__(self, additional_properties=None, level=None):
+        super(DatasetDeflateCompression, self).__init__(additional_properties=additional_properties)
+        self.level = level
         self.type = 'Deflate'

@@ -35,9 +35,9 @@ class CreateLinkedIntegrationRuntimeRequest(Model):
         'data_factory_location': {'key': 'dataFactoryLocation', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(CreateLinkedIntegrationRuntimeRequest, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.subscription_id = kwargs.get('subscription_id', None)
-        self.data_factory_name = kwargs.get('data_factory_name', None)
-        self.data_factory_location = kwargs.get('data_factory_location', None)
+    def __init__(self, name=None, subscription_id=None, data_factory_name=None, data_factory_location=None):
+        super(CreateLinkedIntegrationRuntimeRequest, self).__init__()
+        self.name = name
+        self.subscription_id = subscription_id
+        self.data_factory_name = data_factory_name
+        self.data_factory_location = data_factory_location

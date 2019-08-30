@@ -15,10 +15,8 @@ from msrest.serialization import Model
 class SSISExecutionParameter(Model):
     """SSIS execution parameter.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param value: Required. SSIS package execution parameter value. Type:
-     string (or Expression with resultType string).
+    :param value: SSIS package execution parameter value. Type: string (or
+     Expression with resultType string).
     :type value: object
     """
 
@@ -30,6 +28,6 @@ class SSISExecutionParameter(Model):
         'value': {'key': 'value', 'type': 'object'},
     }
 
-    def __init__(self, **kwargs):
-        super(SSISExecutionParameter, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+    def __init__(self, value):
+        super(SSISExecutionParameter, self).__init__()
+        self.value = value

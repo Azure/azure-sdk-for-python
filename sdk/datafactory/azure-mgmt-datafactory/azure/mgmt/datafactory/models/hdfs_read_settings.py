@@ -15,12 +15,10 @@ from .store_read_settings import StoreReadSettings
 class HdfsReadSettings(StoreReadSettings):
     """HDFS read settings.
 
-    All required parameters must be populated in order to send to Azure.
-
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param type: Required. The read setting type.
+    :param type: The read setting type.
     :type type: str
     :param max_concurrent_connections: The maximum concurrent connection count
      for the source data store. Type: integer (or Expression with resultType
@@ -66,12 +64,12 @@ class HdfsReadSettings(StoreReadSettings):
         'distcp_settings': {'key': 'distcpSettings', 'type': 'DistcpSettings'},
     }
 
-    def __init__(self, **kwargs):
-        super(HdfsReadSettings, self).__init__(**kwargs)
-        self.recursive = kwargs.get('recursive', None)
-        self.wildcard_folder_path = kwargs.get('wildcard_folder_path', None)
-        self.wildcard_file_name = kwargs.get('wildcard_file_name', None)
-        self.enable_partition_discovery = kwargs.get('enable_partition_discovery', None)
-        self.modified_datetime_start = kwargs.get('modified_datetime_start', None)
-        self.modified_datetime_end = kwargs.get('modified_datetime_end', None)
-        self.distcp_settings = kwargs.get('distcp_settings', None)
+    def __init__(self, type, additional_properties=None, max_concurrent_connections=None, recursive=None, wildcard_folder_path=None, wildcard_file_name=None, enable_partition_discovery=None, modified_datetime_start=None, modified_datetime_end=None, distcp_settings=None):
+        super(HdfsReadSettings, self).__init__(additional_properties=additional_properties, type=type, max_concurrent_connections=max_concurrent_connections)
+        self.recursive = recursive
+        self.wildcard_folder_path = wildcard_folder_path
+        self.wildcard_file_name = wildcard_file_name
+        self.enable_partition_discovery = enable_partition_discovery
+        self.modified_datetime_start = modified_datetime_start
+        self.modified_datetime_end = modified_datetime_end
+        self.distcp_settings = distcp_settings

@@ -42,8 +42,8 @@ class SubResource(Model):
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(SubResource, self).__init__(**kwargs)
+    def __init__(self):
+        super(SubResource, self).__init__()
         self.id = None
         self.name = None
         self.type = None

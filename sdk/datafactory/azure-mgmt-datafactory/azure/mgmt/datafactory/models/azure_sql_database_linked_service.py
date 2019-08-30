@@ -15,8 +15,6 @@ from .linked_service import LinkedService
 class AzureSqlDatabaseLinkedService(LinkedService):
     """Microsoft Azure SQL Database linked service.
 
-    All required parameters must be populated in order to send to Azure.
-
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -31,9 +29,9 @@ class AzureSqlDatabaseLinkedService(LinkedService):
     :param annotations: List of tags that can be used for describing the
      linked service.
     :type annotations: list[object]
-    :param type: Required. Constant filled by server.
+    :param type: Constant filled by server.
     :type type: str
-    :param connection_string: Required. The connection string. Type: string,
+    :param connection_string: The connection string. Type: string,
      SecureString or AzureKeyVaultSecretReference.
     :type connection_string: object
     :param password: The Azure key vault secret reference of password in
@@ -76,12 +74,12 @@ class AzureSqlDatabaseLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, **kwargs):
-        super(AzureSqlDatabaseLinkedService, self).__init__(**kwargs)
-        self.connection_string = kwargs.get('connection_string', None)
-        self.password = kwargs.get('password', None)
-        self.service_principal_id = kwargs.get('service_principal_id', None)
-        self.service_principal_key = kwargs.get('service_principal_key', None)
-        self.tenant = kwargs.get('tenant', None)
-        self.encrypted_credential = kwargs.get('encrypted_credential', None)
+    def __init__(self, connection_string, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None, password=None, service_principal_id=None, service_principal_key=None, tenant=None, encrypted_credential=None):
+        super(AzureSqlDatabaseLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations)
+        self.connection_string = connection_string
+        self.password = password
+        self.service_principal_id = service_principal_id
+        self.service_principal_key = service_principal_key
+        self.tenant = tenant
+        self.encrypted_credential = encrypted_credential
         self.type = 'AzureSqlDatabase'

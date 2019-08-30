@@ -15,9 +15,7 @@ from msrest.serialization import Model
 class TriggerRunsQueryResponse(Model):
     """A list of trigger runs.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param value: Required. List of trigger runs.
+    :param value: List of trigger runs.
     :type value: list[~azure.mgmt.datafactory.models.TriggerRun]
     :param continuation_token: The continuation token for getting the next
      page of results, if any remaining results exist, null otherwise.
@@ -33,7 +31,7 @@ class TriggerRunsQueryResponse(Model):
         'continuation_token': {'key': 'continuationToken', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(TriggerRunsQueryResponse, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.continuation_token = kwargs.get('continuation_token', None)
+    def __init__(self, value, continuation_token=None):
+        super(TriggerRunsQueryResponse, self).__init__()
+        self.value = value
+        self.continuation_token = continuation_token

@@ -29,8 +29,8 @@ class AccessPolicyResponse(Model):
         'data_plane_url': {'key': 'dataPlaneUrl', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(AccessPolicyResponse, self).__init__(**kwargs)
-        self.policy = kwargs.get('policy', None)
-        self.access_token = kwargs.get('access_token', None)
-        self.data_plane_url = kwargs.get('data_plane_url', None)
+    def __init__(self, policy=None, access_token=None, data_plane_url=None):
+        super(AccessPolicyResponse, self).__init__()
+        self.policy = policy
+        self.access_token = access_token
+        self.data_plane_url = data_plane_url

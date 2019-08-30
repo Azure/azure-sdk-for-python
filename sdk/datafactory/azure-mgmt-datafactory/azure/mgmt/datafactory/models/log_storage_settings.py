@@ -15,13 +15,10 @@ from msrest.serialization import Model
 class LogStorageSettings(Model):
     """Log storage settings.
 
-    All required parameters must be populated in order to send to Azure.
-
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param linked_service_name: Required. Log storage linked service
-     reference.
+    :param linked_service_name: Log storage linked service reference.
     :type linked_service_name:
      ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param path: The path to storage for storing detailed logs of activity
@@ -39,8 +36,8 @@ class LogStorageSettings(Model):
         'path': {'key': 'path', 'type': 'object'},
     }
 
-    def __init__(self, **kwargs):
-        super(LogStorageSettings, self).__init__(**kwargs)
-        self.additional_properties = kwargs.get('additional_properties', None)
-        self.linked_service_name = kwargs.get('linked_service_name', None)
-        self.path = kwargs.get('path', None)
+    def __init__(self, linked_service_name, additional_properties=None, path=None):
+        super(LogStorageSettings, self).__init__()
+        self.additional_properties = additional_properties
+        self.linked_service_name = linked_service_name
+        self.path = path

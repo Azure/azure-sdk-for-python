@@ -15,8 +15,6 @@ from .linked_service import LinkedService
 class RestServiceLinkedService(LinkedService):
     """Rest Service linked service.
 
-    All required parameters must be populated in order to send to Azure.
-
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -31,17 +29,17 @@ class RestServiceLinkedService(LinkedService):
     :param annotations: List of tags that can be used for describing the
      linked service.
     :type annotations: list[object]
-    :param type: Required. Constant filled by server.
+    :param type: Constant filled by server.
     :type type: str
-    :param url: Required. The base URL of the REST service.
+    :param url: The base URL of the REST service.
     :type url: object
     :param enable_server_certificate_validation: Whether to validate server
      side SSL certificate when connecting to the endpoint.The default value is
      true. Type: boolean (or Expression with resultType boolean).
     :type enable_server_certificate_validation: object
-    :param authentication_type: Required. Type of authentication used to
-     connect to the REST service. Possible values include: 'Anonymous',
-     'Basic', 'AadServicePrincipal', 'ManagedServiceIdentity'
+    :param authentication_type: Type of authentication used to connect to the
+     REST service. Possible values include: 'Anonymous', 'Basic',
+     'AadServicePrincipal', 'ManagedServiceIdentity'
     :type authentication_type: str or
      ~azure.mgmt.datafactory.models.RestServiceAuthenticationType
     :param user_name: The user name used in Basic authentication type.
@@ -92,16 +90,16 @@ class RestServiceLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, **kwargs):
-        super(RestServiceLinkedService, self).__init__(**kwargs)
-        self.url = kwargs.get('url', None)
-        self.enable_server_certificate_validation = kwargs.get('enable_server_certificate_validation', None)
-        self.authentication_type = kwargs.get('authentication_type', None)
-        self.user_name = kwargs.get('user_name', None)
-        self.password = kwargs.get('password', None)
-        self.service_principal_id = kwargs.get('service_principal_id', None)
-        self.service_principal_key = kwargs.get('service_principal_key', None)
-        self.tenant = kwargs.get('tenant', None)
-        self.aad_resource_id = kwargs.get('aad_resource_id', None)
-        self.encrypted_credential = kwargs.get('encrypted_credential', None)
+    def __init__(self, url, authentication_type, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None, enable_server_certificate_validation=None, user_name=None, password=None, service_principal_id=None, service_principal_key=None, tenant=None, aad_resource_id=None, encrypted_credential=None):
+        super(RestServiceLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations)
+        self.url = url
+        self.enable_server_certificate_validation = enable_server_certificate_validation
+        self.authentication_type = authentication_type
+        self.user_name = user_name
+        self.password = password
+        self.service_principal_id = service_principal_id
+        self.service_principal_key = service_principal_key
+        self.tenant = tenant
+        self.aad_resource_id = aad_resource_id
+        self.encrypted_credential = encrypted_credential
         self.type = 'RestService'

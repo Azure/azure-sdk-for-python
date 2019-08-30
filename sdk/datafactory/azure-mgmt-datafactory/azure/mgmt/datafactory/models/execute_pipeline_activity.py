@@ -15,12 +15,10 @@ from .control_activity import ControlActivity
 class ExecutePipelineActivity(ControlActivity):
     """Execute pipeline activity.
 
-    All required parameters must be populated in order to send to Azure.
-
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param name: Required. Activity name.
+    :param name: Activity name.
     :type name: str
     :param description: Activity description.
     :type description: str
@@ -28,9 +26,9 @@ class ExecutePipelineActivity(ControlActivity):
     :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
     :param user_properties: Activity user properties.
     :type user_properties: list[~azure.mgmt.datafactory.models.UserProperty]
-    :param type: Required. Constant filled by server.
+    :param type: Constant filled by server.
     :type type: str
-    :param pipeline: Required. Pipeline reference.
+    :param pipeline: Pipeline reference.
     :type pipeline: ~azure.mgmt.datafactory.models.PipelineReference
     :param parameters: Pipeline parameters.
     :type parameters: dict[str, object]
@@ -57,9 +55,9 @@ class ExecutePipelineActivity(ControlActivity):
         'wait_on_completion': {'key': 'typeProperties.waitOnCompletion', 'type': 'bool'},
     }
 
-    def __init__(self, **kwargs):
-        super(ExecutePipelineActivity, self).__init__(**kwargs)
-        self.pipeline = kwargs.get('pipeline', None)
-        self.parameters = kwargs.get('parameters', None)
-        self.wait_on_completion = kwargs.get('wait_on_completion', None)
+    def __init__(self, name, pipeline, additional_properties=None, description=None, depends_on=None, user_properties=None, parameters=None, wait_on_completion=None):
+        super(ExecutePipelineActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties)
+        self.pipeline = pipeline
+        self.parameters = parameters
+        self.wait_on_completion = wait_on_completion
         self.type = 'ExecutePipeline'

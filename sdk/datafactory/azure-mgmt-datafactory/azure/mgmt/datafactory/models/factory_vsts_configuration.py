@@ -15,21 +15,19 @@ from .factory_repo_configuration import FactoryRepoConfiguration
 class FactoryVSTSConfiguration(FactoryRepoConfiguration):
     """Factory's VSTS repo information.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param account_name: Required. Account name.
+    :param account_name: Account name.
     :type account_name: str
-    :param repository_name: Required. Repository name.
+    :param repository_name: Repository name.
     :type repository_name: str
-    :param collaboration_branch: Required. Collaboration branch.
+    :param collaboration_branch: Collaboration branch.
     :type collaboration_branch: str
-    :param root_folder: Required. Root folder.
+    :param root_folder: Root folder.
     :type root_folder: str
     :param last_commit_id: Last commit id.
     :type last_commit_id: str
-    :param type: Required. Constant filled by server.
+    :param type: Constant filled by server.
     :type type: str
-    :param project_name: Required. VSTS project name.
+    :param project_name: VSTS project name.
     :type project_name: str
     :param tenant_id: VSTS tenant id.
     :type tenant_id: str
@@ -55,8 +53,8 @@ class FactoryVSTSConfiguration(FactoryRepoConfiguration):
         'tenant_id': {'key': 'tenantId', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(FactoryVSTSConfiguration, self).__init__(**kwargs)
-        self.project_name = kwargs.get('project_name', None)
-        self.tenant_id = kwargs.get('tenant_id', None)
+    def __init__(self, account_name, repository_name, collaboration_branch, root_folder, project_name, last_commit_id=None, tenant_id=None):
+        super(FactoryVSTSConfiguration, self).__init__(account_name=account_name, repository_name=repository_name, collaboration_branch=collaboration_branch, root_folder=root_folder, last_commit_id=last_commit_id)
+        self.project_name = project_name
+        self.tenant_id = tenant_id
         self.type = 'FactoryVSTSConfiguration'

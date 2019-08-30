@@ -15,12 +15,10 @@ from .dataset_compression import DatasetCompression
 class DatasetBZip2Compression(DatasetCompression):
     """The BZip2 compression method used on a dataset.
 
-    All required parameters must be populated in order to send to Azure.
-
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param type: Required. Constant filled by server.
+    :param type: Constant filled by server.
     :type type: str
     """
 
@@ -28,11 +26,6 @@ class DatasetBZip2Compression(DatasetCompression):
         'type': {'required': True},
     }
 
-    _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(DatasetBZip2Compression, self).__init__(**kwargs)
+    def __init__(self, additional_properties=None):
+        super(DatasetBZip2Compression, self).__init__(additional_properties=additional_properties)
         self.type = 'BZip2'

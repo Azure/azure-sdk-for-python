@@ -15,8 +15,6 @@ from .linked_service import LinkedService
 class SapTableLinkedService(LinkedService):
     """SAP Table Linked Service.
 
-    All required parameters must be populated in order to send to Azure.
-
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -31,7 +29,7 @@ class SapTableLinkedService(LinkedService):
     :param annotations: List of tags that can be used for describing the
      linked service.
     :type annotations: list[object]
-    :param type: Required. Constant filled by server.
+    :param type: Constant filled by server.
     :type type: str
     :param server: Host name of the SAP instance where the table is located.
      Type: string (or Expression with resultType string).
@@ -119,22 +117,22 @@ class SapTableLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, **kwargs):
-        super(SapTableLinkedService, self).__init__(**kwargs)
-        self.server = kwargs.get('server', None)
-        self.system_number = kwargs.get('system_number', None)
-        self.client_id = kwargs.get('client_id', None)
-        self.language = kwargs.get('language', None)
-        self.system_id = kwargs.get('system_id', None)
-        self.user_name = kwargs.get('user_name', None)
-        self.password = kwargs.get('password', None)
-        self.message_server = kwargs.get('message_server', None)
-        self.message_server_service = kwargs.get('message_server_service', None)
-        self.snc_mode = kwargs.get('snc_mode', None)
-        self.snc_my_name = kwargs.get('snc_my_name', None)
-        self.snc_partner_name = kwargs.get('snc_partner_name', None)
-        self.snc_library_path = kwargs.get('snc_library_path', None)
-        self.snc_qop = kwargs.get('snc_qop', None)
-        self.logon_group = kwargs.get('logon_group', None)
-        self.encrypted_credential = kwargs.get('encrypted_credential', None)
+    def __init__(self, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None, server=None, system_number=None, client_id=None, language=None, system_id=None, user_name=None, password=None, message_server=None, message_server_service=None, snc_mode=None, snc_my_name=None, snc_partner_name=None, snc_library_path=None, snc_qop=None, logon_group=None, encrypted_credential=None):
+        super(SapTableLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations)
+        self.server = server
+        self.system_number = system_number
+        self.client_id = client_id
+        self.language = language
+        self.system_id = system_id
+        self.user_name = user_name
+        self.password = password
+        self.message_server = message_server
+        self.message_server_service = message_server_service
+        self.snc_mode = snc_mode
+        self.snc_my_name = snc_my_name
+        self.snc_partner_name = snc_partner_name
+        self.snc_library_path = snc_library_path
+        self.snc_qop = snc_qop
+        self.logon_group = logon_group
+        self.encrypted_credential = encrypted_credential
         self.type = 'SapTable'

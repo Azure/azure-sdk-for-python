@@ -15,10 +15,8 @@ from msrest.serialization import Model
 class VariableSpecification(Model):
     """Definition of a single variable for a Pipeline.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param type: Required. Variable type. Possible values include: 'String',
-     'Bool', 'Array'
+    :param type: Variable type. Possible values include: 'String', 'Bool',
+     'Array'
     :type type: str or ~azure.mgmt.datafactory.models.VariableType
     :param default_value: Default value of variable.
     :type default_value: object
@@ -33,7 +31,7 @@ class VariableSpecification(Model):
         'default_value': {'key': 'defaultValue', 'type': 'object'},
     }
 
-    def __init__(self, **kwargs):
-        super(VariableSpecification, self).__init__(**kwargs)
-        self.type = kwargs.get('type', None)
-        self.default_value = kwargs.get('default_value', None)
+    def __init__(self, type, default_value=None):
+        super(VariableSpecification, self).__init__()
+        self.type = type
+        self.default_value = default_value

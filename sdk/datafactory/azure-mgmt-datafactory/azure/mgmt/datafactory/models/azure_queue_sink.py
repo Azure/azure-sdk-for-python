@@ -15,8 +15,6 @@ from .copy_sink import CopySink
 class AzureQueueSink(CopySink):
     """A copy activity Azure Queue sink.
 
-    All required parameters must be populated in order to send to Azure.
-
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -38,7 +36,7 @@ class AzureQueueSink(CopySink):
      for the sink data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
-    :param type: Required. Constant filled by server.
+    :param type: Constant filled by server.
     :type type: str
     """
 
@@ -46,16 +44,6 @@ class AzureQueueSink(CopySink):
         'type': {'required': True},
     }
 
-    _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'write_batch_size': {'key': 'writeBatchSize', 'type': 'object'},
-        'write_batch_timeout': {'key': 'writeBatchTimeout', 'type': 'object'},
-        'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
-        'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
-        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(AzureQueueSink, self).__init__(**kwargs)
+    def __init__(self, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, max_concurrent_connections=None):
+        super(AzureQueueSink, self).__init__(additional_properties=additional_properties, write_batch_size=write_batch_size, write_batch_timeout=write_batch_timeout, sink_retry_count=sink_retry_count, sink_retry_wait=sink_retry_wait, max_concurrent_connections=max_concurrent_connections)
         self.type = 'AzureQueueSink'

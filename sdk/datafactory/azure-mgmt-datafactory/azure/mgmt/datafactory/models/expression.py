@@ -18,11 +18,9 @@ class Expression(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar type: Required. Expression type. Default value: "Expression" .
+    :ivar type: Expression type. Default value: "Expression" .
     :vartype type: str
-    :param value: Required. Expression value.
+    :param value: Expression value.
     :type value: str
     """
 
@@ -38,6 +36,6 @@ class Expression(Model):
 
     type = "Expression"
 
-    def __init__(self, **kwargs):
-        super(Expression, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
+    def __init__(self, value):
+        super(Expression, self).__init__()
+        self.value = value

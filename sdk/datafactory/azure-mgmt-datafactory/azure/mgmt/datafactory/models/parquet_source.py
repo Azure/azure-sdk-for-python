@@ -15,8 +15,6 @@ from .copy_source import CopySource
 class ParquetSource(CopySource):
     """A copy activity Parquet source.
 
-    All required parameters must be populated in order to send to Azure.
-
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -31,7 +29,7 @@ class ParquetSource(CopySource):
      for the source data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
-    :param type: Required. Constant filled by server.
+    :param type: Constant filled by server.
     :type type: str
     :param store_settings: Parquet store settings.
     :type store_settings: ~azure.mgmt.datafactory.models.StoreReadSettings
@@ -50,7 +48,7 @@ class ParquetSource(CopySource):
         'store_settings': {'key': 'storeSettings', 'type': 'StoreReadSettings'},
     }
 
-    def __init__(self, **kwargs):
-        super(ParquetSource, self).__init__(**kwargs)
-        self.store_settings = kwargs.get('store_settings', None)
+    def __init__(self, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, store_settings=None):
+        super(ParquetSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections)
+        self.store_settings = store_settings
         self.type = 'ParquetSource'

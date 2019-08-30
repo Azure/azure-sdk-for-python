@@ -15,8 +15,6 @@ from .copy_sink import CopySink
 class JsonSink(CopySink):
     """A copy activity Json sink.
 
-    All required parameters must be populated in order to send to Azure.
-
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -38,7 +36,7 @@ class JsonSink(CopySink):
      for the sink data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
-    :param type: Required. Constant filled by server.
+    :param type: Constant filled by server.
     :type type: str
     :param store_settings: Json store settings.
     :type store_settings: ~azure.mgmt.datafactory.models.StoreWriteSettings
@@ -62,8 +60,8 @@ class JsonSink(CopySink):
         'format_settings': {'key': 'formatSettings', 'type': 'JsonWriteSettings'},
     }
 
-    def __init__(self, **kwargs):
-        super(JsonSink, self).__init__(**kwargs)
-        self.store_settings = kwargs.get('store_settings', None)
-        self.format_settings = kwargs.get('format_settings', None)
+    def __init__(self, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, max_concurrent_connections=None, store_settings=None, format_settings=None):
+        super(JsonSink, self).__init__(additional_properties=additional_properties, write_batch_size=write_batch_size, write_batch_timeout=write_batch_timeout, sink_retry_count=sink_retry_count, sink_retry_wait=sink_retry_wait, max_concurrent_connections=max_concurrent_connections)
+        self.store_settings = store_settings
+        self.format_settings = format_settings
         self.type = 'JsonSink'

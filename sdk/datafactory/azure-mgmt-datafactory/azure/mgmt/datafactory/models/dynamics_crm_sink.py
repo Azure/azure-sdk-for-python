@@ -18,8 +18,6 @@ class DynamicsCrmSink(CopySink):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -41,10 +39,10 @@ class DynamicsCrmSink(CopySink):
      for the sink data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
-    :param type: Required. Constant filled by server.
+    :param type: Constant filled by server.
     :type type: str
-    :ivar write_behavior: Required. The write behavior for the operation.
-     Default value: "Upsert" .
+    :ivar write_behavior: The write behavior for the operation. Default value:
+     "Upsert" .
     :vartype write_behavior: str
     :param ignore_null_values: The flag indicating whether to ignore null
      values from input dataset (except key fields) during write operation.
@@ -71,7 +69,7 @@ class DynamicsCrmSink(CopySink):
 
     write_behavior = "Upsert"
 
-    def __init__(self, **kwargs):
-        super(DynamicsCrmSink, self).__init__(**kwargs)
-        self.ignore_null_values = kwargs.get('ignore_null_values', None)
+    def __init__(self, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, max_concurrent_connections=None, ignore_null_values=None):
+        super(DynamicsCrmSink, self).__init__(additional_properties=additional_properties, write_batch_size=write_batch_size, write_batch_timeout=write_batch_timeout, sink_retry_count=sink_retry_count, sink_retry_wait=sink_retry_wait, max_concurrent_connections=max_concurrent_connections)
+        self.ignore_null_values = ignore_null_values
         self.type = 'DynamicsCrmSink'

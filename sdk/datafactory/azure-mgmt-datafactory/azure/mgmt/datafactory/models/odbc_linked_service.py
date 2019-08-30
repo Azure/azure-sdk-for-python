@@ -15,8 +15,6 @@ from .linked_service import LinkedService
 class OdbcLinkedService(LinkedService):
     """Open Database Connectivity (ODBC) linked service.
 
-    All required parameters must be populated in order to send to Azure.
-
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -31,10 +29,10 @@ class OdbcLinkedService(LinkedService):
     :param annotations: List of tags that can be used for describing the
      linked service.
     :type annotations: list[object]
-    :param type: Required. Constant filled by server.
+    :param type: Constant filled by server.
     :type type: str
-    :param connection_string: Required. The non-access credential portion of
-     the connection string as well as an optional encrypted credential. Type:
+    :param connection_string: The non-access credential portion of the
+     connection string as well as an optional encrypted credential. Type:
      string, SecureString or AzureKeyVaultSecretReference.
     :type connection_string: object
     :param authentication_type: Type of authentication used to connect to the
@@ -75,12 +73,12 @@ class OdbcLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, **kwargs):
-        super(OdbcLinkedService, self).__init__(**kwargs)
-        self.connection_string = kwargs.get('connection_string', None)
-        self.authentication_type = kwargs.get('authentication_type', None)
-        self.credential = kwargs.get('credential', None)
-        self.user_name = kwargs.get('user_name', None)
-        self.password = kwargs.get('password', None)
-        self.encrypted_credential = kwargs.get('encrypted_credential', None)
+    def __init__(self, connection_string, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None, authentication_type=None, credential=None, user_name=None, password=None, encrypted_credential=None):
+        super(OdbcLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations)
+        self.connection_string = connection_string
+        self.authentication_type = authentication_type
+        self.credential = credential
+        self.user_name = user_name
+        self.password = password
+        self.encrypted_credential = encrypted_credential
         self.type = 'Odbc'

@@ -15,8 +15,6 @@ from .copy_source import CopySource
 class AzureSqlSource(CopySource):
     """A copy activity Azure SQL source.
 
-    All required parameters must be populated in order to send to Azure.
-
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -31,7 +29,7 @@ class AzureSqlSource(CopySource):
      for the source data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
-    :param type: Required. Constant filled by server.
+    :param type: Constant filled by server.
     :type type: str
     :param sql_reader_query: SQL reader query. Type: string (or Expression
      with resultType string).
@@ -64,10 +62,10 @@ class AzureSqlSource(CopySource):
         'produce_additional_types': {'key': 'produceAdditionalTypes', 'type': 'object'},
     }
 
-    def __init__(self, **kwargs):
-        super(AzureSqlSource, self).__init__(**kwargs)
-        self.sql_reader_query = kwargs.get('sql_reader_query', None)
-        self.sql_reader_stored_procedure_name = kwargs.get('sql_reader_stored_procedure_name', None)
-        self.stored_procedure_parameters = kwargs.get('stored_procedure_parameters', None)
-        self.produce_additional_types = kwargs.get('produce_additional_types', None)
+    def __init__(self, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, sql_reader_query=None, sql_reader_stored_procedure_name=None, stored_procedure_parameters=None, produce_additional_types=None):
+        super(AzureSqlSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections)
+        self.sql_reader_query = sql_reader_query
+        self.sql_reader_stored_procedure_name = sql_reader_stored_procedure_name
+        self.stored_procedure_parameters = stored_procedure_parameters
+        self.produce_additional_types = produce_additional_types
         self.type = 'AzureSqlSource'

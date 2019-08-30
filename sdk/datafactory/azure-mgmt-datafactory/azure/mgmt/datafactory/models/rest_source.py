@@ -15,8 +15,6 @@ from .copy_source import CopySource
 class RestSource(CopySource):
     """A copy activity Rest service source.
 
-    All required parameters must be populated in order to send to Azure.
-
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -31,7 +29,7 @@ class RestSource(CopySource):
      for the source data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
-    :param type: Required. Constant filled by server.
+    :param type: Constant filled by server.
     :type type: str
     :param request_method: The HTTP method used to call the RESTful API. The
      default is GET. Type: string (or Expression with resultType string).
@@ -75,12 +73,12 @@ class RestSource(CopySource):
         'request_interval': {'key': 'requestInterval', 'type': 'object'},
     }
 
-    def __init__(self, **kwargs):
-        super(RestSource, self).__init__(**kwargs)
-        self.request_method = kwargs.get('request_method', None)
-        self.request_body = kwargs.get('request_body', None)
-        self.additional_headers = kwargs.get('additional_headers', None)
-        self.pagination_rules = kwargs.get('pagination_rules', None)
-        self.http_request_timeout = kwargs.get('http_request_timeout', None)
-        self.request_interval = kwargs.get('request_interval', None)
+    def __init__(self, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, request_method=None, request_body=None, additional_headers=None, pagination_rules=None, http_request_timeout=None, request_interval=None):
+        super(RestSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections)
+        self.request_method = request_method
+        self.request_body = request_body
+        self.additional_headers = additional_headers
+        self.pagination_rules = pagination_rules
+        self.http_request_timeout = http_request_timeout
+        self.request_interval = request_interval
         self.type = 'RestSource'

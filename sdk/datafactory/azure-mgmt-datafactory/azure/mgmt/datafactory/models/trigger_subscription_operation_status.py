@@ -36,7 +36,7 @@ class TriggerSubscriptionOperationStatus(Model):
         'status': {'key': 'status', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(TriggerSubscriptionOperationStatus, self).__init__(**kwargs)
+    def __init__(self):
+        super(TriggerSubscriptionOperationStatus, self).__init__()
         self.trigger_name = None
         self.status = None

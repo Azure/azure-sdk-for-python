@@ -18,8 +18,6 @@ class TriggerResource(SubResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
     :ivar id: The resource identifier.
     :vartype id: str
     :ivar name: The resource name.
@@ -28,7 +26,7 @@ class TriggerResource(SubResource):
     :vartype type: str
     :ivar etag: Etag identifies change in the resource.
     :vartype etag: str
-    :param properties: Required. Properties of the trigger.
+    :param properties: Properties of the trigger.
     :type properties: ~azure.mgmt.datafactory.models.Trigger
     """
 
@@ -48,6 +46,6 @@ class TriggerResource(SubResource):
         'properties': {'key': 'properties', 'type': 'Trigger'},
     }
 
-    def __init__(self, **kwargs):
-        super(TriggerResource, self).__init__(**kwargs)
-        self.properties = kwargs.get('properties', None)
+    def __init__(self, properties):
+        super(TriggerResource, self).__init__()
+        self.properties = properties

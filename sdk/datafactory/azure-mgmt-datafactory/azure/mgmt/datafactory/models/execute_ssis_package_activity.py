@@ -15,12 +15,10 @@ from .execution_activity import ExecutionActivity
 class ExecuteSSISPackageActivity(ExecutionActivity):
     """Execute SSIS package activity.
 
-    All required parameters must be populated in order to send to Azure.
-
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param name: Required. Activity name.
+    :param name: Activity name.
     :type name: str
     :param description: Activity description.
     :type description: str
@@ -28,14 +26,14 @@ class ExecuteSSISPackageActivity(ExecutionActivity):
     :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
     :param user_properties: Activity user properties.
     :type user_properties: list[~azure.mgmt.datafactory.models.UserProperty]
-    :param type: Required. Constant filled by server.
+    :param type: Constant filled by server.
     :type type: str
     :param linked_service_name: Linked service reference.
     :type linked_service_name:
      ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param policy: Activity policy.
     :type policy: ~azure.mgmt.datafactory.models.ActivityPolicy
-    :param package_location: Required. SSIS package location.
+    :param package_location: SSIS package location.
     :type package_location: ~azure.mgmt.datafactory.models.SSISPackageLocation
     :param runtime: Specifies the runtime to execute SSIS package. The value
      should be "x86" or "x64". Type: string (or Expression with resultType
@@ -50,7 +48,7 @@ class ExecuteSSISPackageActivity(ExecutionActivity):
     :param execution_credential: The package execution credential.
     :type execution_credential:
      ~azure.mgmt.datafactory.models.SSISExecutionCredential
-    :param connect_via: Required. The integration runtime reference.
+    :param connect_via: The integration runtime reference.
     :type connect_via:
      ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     :param project_parameters: The project level parameters to execute the
@@ -107,18 +105,18 @@ class ExecuteSSISPackageActivity(ExecutionActivity):
         'log_location': {'key': 'typeProperties.logLocation', 'type': 'SSISLogLocation'},
     }
 
-    def __init__(self, **kwargs):
-        super(ExecuteSSISPackageActivity, self).__init__(**kwargs)
-        self.package_location = kwargs.get('package_location', None)
-        self.runtime = kwargs.get('runtime', None)
-        self.logging_level = kwargs.get('logging_level', None)
-        self.environment_path = kwargs.get('environment_path', None)
-        self.execution_credential = kwargs.get('execution_credential', None)
-        self.connect_via = kwargs.get('connect_via', None)
-        self.project_parameters = kwargs.get('project_parameters', None)
-        self.package_parameters = kwargs.get('package_parameters', None)
-        self.project_connection_managers = kwargs.get('project_connection_managers', None)
-        self.package_connection_managers = kwargs.get('package_connection_managers', None)
-        self.property_overrides = kwargs.get('property_overrides', None)
-        self.log_location = kwargs.get('log_location', None)
+    def __init__(self, name, package_location, connect_via, additional_properties=None, description=None, depends_on=None, user_properties=None, linked_service_name=None, policy=None, runtime=None, logging_level=None, environment_path=None, execution_credential=None, project_parameters=None, package_parameters=None, project_connection_managers=None, package_connection_managers=None, property_overrides=None, log_location=None):
+        super(ExecuteSSISPackageActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy)
+        self.package_location = package_location
+        self.runtime = runtime
+        self.logging_level = logging_level
+        self.environment_path = environment_path
+        self.execution_credential = execution_credential
+        self.connect_via = connect_via
+        self.project_parameters = project_parameters
+        self.package_parameters = package_parameters
+        self.project_connection_managers = project_connection_managers
+        self.package_connection_managers = package_connection_managers
+        self.property_overrides = property_overrides
+        self.log_location = log_location
         self.type = 'ExecuteSSISPackage'

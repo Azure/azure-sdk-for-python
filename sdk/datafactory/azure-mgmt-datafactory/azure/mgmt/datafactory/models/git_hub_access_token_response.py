@@ -23,6 +23,6 @@ class GitHubAccessTokenResponse(Model):
         'git_hub_access_token': {'key': 'gitHubAccessToken', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(GitHubAccessTokenResponse, self).__init__(**kwargs)
-        self.git_hub_access_token = kwargs.get('git_hub_access_token', None)
+    def __init__(self, git_hub_access_token=None):
+        super(GitHubAccessTokenResponse, self).__init__()
+        self.git_hub_access_token = git_hub_access_token

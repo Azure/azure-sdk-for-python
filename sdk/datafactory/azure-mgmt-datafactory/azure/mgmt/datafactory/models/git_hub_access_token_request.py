@@ -15,14 +15,11 @@ from msrest.serialization import Model
 class GitHubAccessTokenRequest(Model):
     """Get GitHub access token request definition.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param git_hub_access_code: Required. GitHub access code.
+    :param git_hub_access_code: GitHub access code.
     :type git_hub_access_code: str
     :param git_hub_client_id: GitHub application client ID.
     :type git_hub_client_id: str
-    :param git_hub_access_token_base_url: Required. GitHub access token base
-     URL.
+    :param git_hub_access_token_base_url: GitHub access token base URL.
     :type git_hub_access_token_base_url: str
     """
 
@@ -37,8 +34,8 @@ class GitHubAccessTokenRequest(Model):
         'git_hub_access_token_base_url': {'key': 'gitHubAccessTokenBaseUrl', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(GitHubAccessTokenRequest, self).__init__(**kwargs)
-        self.git_hub_access_code = kwargs.get('git_hub_access_code', None)
-        self.git_hub_client_id = kwargs.get('git_hub_client_id', None)
-        self.git_hub_access_token_base_url = kwargs.get('git_hub_access_token_base_url', None)
+    def __init__(self, git_hub_access_code, git_hub_access_token_base_url, git_hub_client_id=None):
+        super(GitHubAccessTokenRequest, self).__init__()
+        self.git_hub_access_code = git_hub_access_code
+        self.git_hub_client_id = git_hub_client_id
+        self.git_hub_access_token_base_url = git_hub_access_token_base_url

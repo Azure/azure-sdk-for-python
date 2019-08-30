@@ -15,12 +15,10 @@ from .execution_activity import ExecutionActivity
 class CopyActivity(ExecutionActivity):
     """Copy activity.
 
-    All required parameters must be populated in order to send to Azure.
-
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param name: Required. Activity name.
+    :param name: Activity name.
     :type name: str
     :param description: Activity description.
     :type description: str
@@ -28,16 +26,16 @@ class CopyActivity(ExecutionActivity):
     :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
     :param user_properties: Activity user properties.
     :type user_properties: list[~azure.mgmt.datafactory.models.UserProperty]
-    :param type: Required. Constant filled by server.
+    :param type: Constant filled by server.
     :type type: str
     :param linked_service_name: Linked service reference.
     :type linked_service_name:
      ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param policy: Activity policy.
     :type policy: ~azure.mgmt.datafactory.models.ActivityPolicy
-    :param source: Required. Copy activity source.
+    :param source: Copy activity source.
     :type source: ~azure.mgmt.datafactory.models.CopySource
-    :param sink: Required. Copy activity sink.
+    :param sink: Copy activity sink.
     :type sink: ~azure.mgmt.datafactory.models.CopySink
     :param translator: Copy activity translator. If not specified, tabular
      translator is used.
@@ -106,19 +104,19 @@ class CopyActivity(ExecutionActivity):
         'outputs': {'key': 'outputs', 'type': '[DatasetReference]'},
     }
 
-    def __init__(self, **kwargs):
-        super(CopyActivity, self).__init__(**kwargs)
-        self.source = kwargs.get('source', None)
-        self.sink = kwargs.get('sink', None)
-        self.translator = kwargs.get('translator', None)
-        self.enable_staging = kwargs.get('enable_staging', None)
-        self.staging_settings = kwargs.get('staging_settings', None)
-        self.parallel_copies = kwargs.get('parallel_copies', None)
-        self.data_integration_units = kwargs.get('data_integration_units', None)
-        self.enable_skip_incompatible_row = kwargs.get('enable_skip_incompatible_row', None)
-        self.redirect_incompatible_row_settings = kwargs.get('redirect_incompatible_row_settings', None)
-        self.preserve_rules = kwargs.get('preserve_rules', None)
-        self.preserve = kwargs.get('preserve', None)
-        self.inputs = kwargs.get('inputs', None)
-        self.outputs = kwargs.get('outputs', None)
+    def __init__(self, name, source, sink, additional_properties=None, description=None, depends_on=None, user_properties=None, linked_service_name=None, policy=None, translator=None, enable_staging=None, staging_settings=None, parallel_copies=None, data_integration_units=None, enable_skip_incompatible_row=None, redirect_incompatible_row_settings=None, preserve_rules=None, preserve=None, inputs=None, outputs=None):
+        super(CopyActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy)
+        self.source = source
+        self.sink = sink
+        self.translator = translator
+        self.enable_staging = enable_staging
+        self.staging_settings = staging_settings
+        self.parallel_copies = parallel_copies
+        self.data_integration_units = data_integration_units
+        self.enable_skip_incompatible_row = enable_skip_incompatible_row
+        self.redirect_incompatible_row_settings = redirect_incompatible_row_settings
+        self.preserve_rules = preserve_rules
+        self.preserve = preserve
+        self.inputs = inputs
+        self.outputs = outputs
         self.type = 'Copy'

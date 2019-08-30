@@ -15,8 +15,6 @@ from .copy_sink import CopySink
 class FileSystemSink(CopySink):
     """A copy activity file system sink.
 
-    All required parameters must be populated in order to send to Azure.
-
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -38,7 +36,7 @@ class FileSystemSink(CopySink):
      for the sink data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
-    :param type: Required. Constant filled by server.
+    :param type: Constant filled by server.
     :type type: str
     :param copy_behavior: The type of copy behavior for copy sink.
     :type copy_behavior: object
@@ -59,7 +57,7 @@ class FileSystemSink(CopySink):
         'copy_behavior': {'key': 'copyBehavior', 'type': 'object'},
     }
 
-    def __init__(self, **kwargs):
-        super(FileSystemSink, self).__init__(**kwargs)
-        self.copy_behavior = kwargs.get('copy_behavior', None)
+    def __init__(self, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, max_concurrent_connections=None, copy_behavior=None):
+        super(FileSystemSink, self).__init__(additional_properties=additional_properties, write_batch_size=write_batch_size, write_batch_timeout=write_batch_timeout, sink_retry_count=sink_retry_count, sink_retry_wait=sink_retry_wait, max_concurrent_connections=max_concurrent_connections)
+        self.copy_behavior = copy_behavior
         self.type = 'FileSystemSink'

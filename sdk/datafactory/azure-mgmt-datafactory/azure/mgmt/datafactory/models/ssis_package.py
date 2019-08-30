@@ -15,15 +15,13 @@ from .ssis_object_metadata import SsisObjectMetadata
 class SsisPackage(SsisObjectMetadata):
     """Ssis Package.
 
-    All required parameters must be populated in order to send to Azure.
-
     :param id: Metadata id.
     :type id: long
     :param name: Metadata name.
     :type name: str
     :param description: Metadata description.
     :type description: str
-    :param type: Required. Constant filled by server.
+    :param type: Constant filled by server.
     :type type: str
     :param folder_id: Folder id which contains package.
     :type folder_id: long
@@ -50,10 +48,10 @@ class SsisPackage(SsisObjectMetadata):
         'parameters': {'key': 'parameters', 'type': '[SsisParameter]'},
     }
 
-    def __init__(self, **kwargs):
-        super(SsisPackage, self).__init__(**kwargs)
-        self.folder_id = kwargs.get('folder_id', None)
-        self.project_version = kwargs.get('project_version', None)
-        self.project_id = kwargs.get('project_id', None)
-        self.parameters = kwargs.get('parameters', None)
+    def __init__(self, id=None, name=None, description=None, folder_id=None, project_version=None, project_id=None, parameters=None):
+        super(SsisPackage, self).__init__(id=id, name=name, description=description)
+        self.folder_id = folder_id
+        self.project_version = project_version
+        self.project_id = project_id
+        self.parameters = parameters
         self.type = 'Package'

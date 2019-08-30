@@ -16,12 +16,10 @@ class UntilActivity(ControlActivity):
     """This activity executes inner activities until the specified boolean
     expression results to true or timeout is reached, whichever is earlier.
 
-    All required parameters must be populated in order to send to Azure.
-
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param name: Required. Activity name.
+    :param name: Activity name.
     :type name: str
     :param description: Activity description.
     :type description: str
@@ -29,10 +27,10 @@ class UntilActivity(ControlActivity):
     :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
     :param user_properties: Activity user properties.
     :type user_properties: list[~azure.mgmt.datafactory.models.UserProperty]
-    :param type: Required. Constant filled by server.
+    :param type: Constant filled by server.
     :type type: str
-    :param expression: Required. An expression that would evaluate to Boolean.
-     The loop will continue until this expression evaluates to true
+    :param expression: An expression that would evaluate to Boolean. The loop
+     will continue until this expression evaluates to true
     :type expression: ~azure.mgmt.datafactory.models.Expression
     :param timeout: Specifies the timeout for the activity to run. If there is
      no value specified, it takes the value of TimeSpan.FromDays(7) which is 1
@@ -41,7 +39,7 @@ class UntilActivity(ControlActivity):
      string (or Expression with resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type timeout: object
-    :param activities: Required. List of activities to execute.
+    :param activities: List of activities to execute.
     :type activities: list[~azure.mgmt.datafactory.models.Activity]
     """
 
@@ -64,9 +62,9 @@ class UntilActivity(ControlActivity):
         'activities': {'key': 'typeProperties.activities', 'type': '[Activity]'},
     }
 
-    def __init__(self, **kwargs):
-        super(UntilActivity, self).__init__(**kwargs)
-        self.expression = kwargs.get('expression', None)
-        self.timeout = kwargs.get('timeout', None)
-        self.activities = kwargs.get('activities', None)
+    def __init__(self, name, expression, activities, additional_properties=None, description=None, depends_on=None, user_properties=None, timeout=None):
+        super(UntilActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties)
+        self.expression = expression
+        self.timeout = timeout
+        self.activities = activities
         self.type = 'Until'

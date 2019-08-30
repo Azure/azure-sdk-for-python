@@ -15,14 +15,12 @@ from msrest.serialization import Model
 class ScriptAction(Model):
     """Custom script action to run on HDI ondemand cluster once it's up.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param name: Required. The user provided name of the script action.
+    :param name: The user provided name of the script action.
     :type name: str
-    :param uri: Required. The URI for the script action.
+    :param uri: The URI for the script action.
     :type uri: str
-    :param roles: Required. The node types on which the script action should
-     be executed.
+    :param roles: The node types on which the script action should be
+     executed.
     :type roles: object
     :param parameters: The parameters for the script action.
     :type parameters: str
@@ -41,9 +39,9 @@ class ScriptAction(Model):
         'parameters': {'key': 'parameters', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(ScriptAction, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
-        self.uri = kwargs.get('uri', None)
-        self.roles = kwargs.get('roles', None)
-        self.parameters = kwargs.get('parameters', None)
+    def __init__(self, name, uri, roles, parameters=None):
+        super(ScriptAction, self).__init__()
+        self.name = name
+        self.uri = uri
+        self.roles = roles
+        self.parameters = parameters

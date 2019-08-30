@@ -18,12 +18,10 @@ class IntegrationRuntimeReference(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar type: Required. Type of integration runtime. Default value:
+    :ivar type: Type of integration runtime. Default value:
      "IntegrationRuntimeReference" .
     :vartype type: str
-    :param reference_name: Required. Reference integration runtime name.
+    :param reference_name: Reference integration runtime name.
     :type reference_name: str
     :param parameters: Arguments for integration runtime.
     :type parameters: dict[str, object]
@@ -42,7 +40,7 @@ class IntegrationRuntimeReference(Model):
 
     type = "IntegrationRuntimeReference"
 
-    def __init__(self, **kwargs):
-        super(IntegrationRuntimeReference, self).__init__(**kwargs)
-        self.reference_name = kwargs.get('reference_name', None)
-        self.parameters = kwargs.get('parameters', None)
+    def __init__(self, reference_name, parameters=None):
+        super(IntegrationRuntimeReference, self).__init__()
+        self.reference_name = reference_name
+        self.parameters = parameters

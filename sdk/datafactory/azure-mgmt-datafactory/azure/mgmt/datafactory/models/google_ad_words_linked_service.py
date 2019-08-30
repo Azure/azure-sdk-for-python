@@ -15,8 +15,6 @@ from .linked_service import LinkedService
 class GoogleAdWordsLinkedService(LinkedService):
     """Google AdWords service linked service.
 
-    All required parameters must be populated in order to send to Azure.
-
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -31,18 +29,17 @@ class GoogleAdWordsLinkedService(LinkedService):
     :param annotations: List of tags that can be used for describing the
      linked service.
     :type annotations: list[object]
-    :param type: Required. Constant filled by server.
+    :param type: Constant filled by server.
     :type type: str
-    :param client_customer_id: Required. The Client customer ID of the AdWords
-     account that you want to fetch report data for.
+    :param client_customer_id: The Client customer ID of the AdWords account
+     that you want to fetch report data for.
     :type client_customer_id: object
-    :param developer_token: Required. The developer token associated with the
-     manager account that you use to grant access to the AdWords API.
+    :param developer_token: The developer token associated with the manager
+     account that you use to grant access to the AdWords API.
     :type developer_token: ~azure.mgmt.datafactory.models.SecretBase
-    :param authentication_type: Required. The OAuth 2.0 authentication
-     mechanism used for authentication. ServiceAuthentication can only be used
-     on self-hosted IR. Possible values include: 'ServiceAuthentication',
-     'UserAuthentication'
+    :param authentication_type: The OAuth 2.0 authentication mechanism used
+     for authentication. ServiceAuthentication can only be used on self-hosted
+     IR. Possible values include: 'ServiceAuthentication', 'UserAuthentication'
     :type authentication_type: str or
      ~azure.mgmt.datafactory.models.GoogleAdWordsAuthenticationType
     :param refresh_token: The refresh token obtained from Google for
@@ -103,17 +100,17 @@ class GoogleAdWordsLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, **kwargs):
-        super(GoogleAdWordsLinkedService, self).__init__(**kwargs)
-        self.client_customer_id = kwargs.get('client_customer_id', None)
-        self.developer_token = kwargs.get('developer_token', None)
-        self.authentication_type = kwargs.get('authentication_type', None)
-        self.refresh_token = kwargs.get('refresh_token', None)
-        self.client_id = kwargs.get('client_id', None)
-        self.client_secret = kwargs.get('client_secret', None)
-        self.email = kwargs.get('email', None)
-        self.key_file_path = kwargs.get('key_file_path', None)
-        self.trusted_cert_path = kwargs.get('trusted_cert_path', None)
-        self.use_system_trust_store = kwargs.get('use_system_trust_store', None)
-        self.encrypted_credential = kwargs.get('encrypted_credential', None)
+    def __init__(self, client_customer_id, developer_token, authentication_type, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None, refresh_token=None, client_id=None, client_secret=None, email=None, key_file_path=None, trusted_cert_path=None, use_system_trust_store=None, encrypted_credential=None):
+        super(GoogleAdWordsLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations)
+        self.client_customer_id = client_customer_id
+        self.developer_token = developer_token
+        self.authentication_type = authentication_type
+        self.refresh_token = refresh_token
+        self.client_id = client_id
+        self.client_secret = client_secret
+        self.email = email
+        self.key_file_path = key_file_path
+        self.trusted_cert_path = trusted_cert_path
+        self.use_system_trust_store = use_system_trust_store
+        self.encrypted_credential = encrypted_credential
         self.type = 'GoogleAdWords'

@@ -15,8 +15,6 @@ from .store_write_settings import StoreWriteSettings
 class AzureBlobStorageWriteSettings(StoreWriteSettings):
     """Azure blob write settings.
 
-    All required parameters must be populated in order to send to Azure.
-
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -26,7 +24,7 @@ class AzureBlobStorageWriteSettings(StoreWriteSettings):
     :type max_concurrent_connections: object
     :param copy_behavior: The type of copy behavior for copy sink.
     :type copy_behavior: object
-    :param type: Required. Constant filled by server.
+    :param type: Constant filled by server.
     :type type: str
     :param block_size_in_mb: Indicates the block size(MB) when writing data to
      blob. Type: integer (or Expression with resultType integer).
@@ -45,7 +43,7 @@ class AzureBlobStorageWriteSettings(StoreWriteSettings):
         'block_size_in_mb': {'key': 'blockSizeInMB', 'type': 'object'},
     }
 
-    def __init__(self, **kwargs):
-        super(AzureBlobStorageWriteSettings, self).__init__(**kwargs)
-        self.block_size_in_mb = kwargs.get('block_size_in_mb', None)
+    def __init__(self, additional_properties=None, max_concurrent_connections=None, copy_behavior=None, block_size_in_mb=None):
+        super(AzureBlobStorageWriteSettings, self).__init__(additional_properties=additional_properties, max_concurrent_connections=max_concurrent_connections, copy_behavior=copy_behavior)
+        self.block_size_in_mb = block_size_in_mb
         self.type = 'AzureBlobStorageWriteSettings'

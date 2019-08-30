@@ -30,6 +30,6 @@ class IntegrationRuntimeNodeIpAddress(Model):
         'ip_address': {'key': 'ipAddress', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(IntegrationRuntimeNodeIpAddress, self).__init__(**kwargs)
+    def __init__(self):
+        super(IntegrationRuntimeNodeIpAddress, self).__init__()
         self.ip_address = None

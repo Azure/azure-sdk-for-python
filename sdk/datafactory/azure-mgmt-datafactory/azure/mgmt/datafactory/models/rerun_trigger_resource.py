@@ -18,8 +18,6 @@ class RerunTriggerResource(SubResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
     :ivar id: The resource identifier.
     :vartype id: str
     :ivar name: The resource name.
@@ -28,7 +26,7 @@ class RerunTriggerResource(SubResource):
     :vartype type: str
     :ivar etag: Etag identifies change in the resource.
     :vartype etag: str
-    :param properties: Required. Properties of the rerun trigger.
+    :param properties: Properties of the rerun trigger.
     :type properties:
      ~azure.mgmt.datafactory.models.RerunTumblingWindowTrigger
     """
@@ -49,6 +47,6 @@ class RerunTriggerResource(SubResource):
         'properties': {'key': 'properties', 'type': 'RerunTumblingWindowTrigger'},
     }
 
-    def __init__(self, **kwargs):
-        super(RerunTriggerResource, self).__init__(**kwargs)
-        self.properties = kwargs.get('properties', None)
+    def __init__(self, properties):
+        super(RerunTriggerResource, self).__init__()
+        self.properties = properties

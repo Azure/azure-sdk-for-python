@@ -15,8 +15,6 @@ from .copy_source import CopySource
 class DynamicsSource(CopySource):
     """A copy activity Dynamics source.
 
-    All required parameters must be populated in order to send to Azure.
-
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -31,7 +29,7 @@ class DynamicsSource(CopySource):
      for the source data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
-    :param type: Required. Constant filled by server.
+    :param type: Constant filled by server.
     :type type: str
     :param query: FetchXML is a proprietary query language that is used in
      Microsoft Dynamics (online & on-premises). Type: string (or Expression
@@ -52,7 +50,7 @@ class DynamicsSource(CopySource):
         'query': {'key': 'query', 'type': 'object'},
     }
 
-    def __init__(self, **kwargs):
-        super(DynamicsSource, self).__init__(**kwargs)
-        self.query = kwargs.get('query', None)
+    def __init__(self, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None):
+        super(DynamicsSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections)
+        self.query = query
         self.type = 'DynamicsSource'

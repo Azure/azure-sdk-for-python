@@ -12,7 +12,7 @@
 from enum import Enum
 
 
-class IntegrationRuntimeState(str, Enum):
+class IntegrationRuntimeState(Enum):
 
     initial = "Initial"
     stopped = "Stopped"
@@ -26,13 +26,13 @@ class IntegrationRuntimeState(str, Enum):
     access_denied = "AccessDenied"
 
 
-class IntegrationRuntimeAutoUpdate(str, Enum):
+class IntegrationRuntimeAutoUpdate(Enum):
 
     on = "On"
     off = "Off"
 
 
-class ParameterType(str, Enum):
+class ParameterType(Enum):
 
     object_enum = "Object"
     string = "String"
@@ -43,7 +43,7 @@ class ParameterType(str, Enum):
     secure_string = "SecureString"
 
 
-class DependencyCondition(str, Enum):
+class DependencyCondition(Enum):
 
     succeeded = "Succeeded"
     failed = "Failed"
@@ -51,21 +51,21 @@ class DependencyCondition(str, Enum):
     completed = "Completed"
 
 
-class VariableType(str, Enum):
+class VariableType(Enum):
 
     string = "String"
     bool_enum = "Bool"
     array = "Array"
 
 
-class TriggerRuntimeState(str, Enum):
+class TriggerRuntimeState(Enum):
 
     started = "Started"
     stopped = "Stopped"
     disabled = "Disabled"
 
 
-class EventSubscriptionStatus(str, Enum):
+class EventSubscriptionStatus(Enum):
 
     enabled = "Enabled"
     provisioning = "Provisioning"
@@ -74,7 +74,7 @@ class EventSubscriptionStatus(str, Enum):
     unknown = "Unknown"
 
 
-class RunQueryFilterOperand(str, Enum):
+class RunQueryFilterOperand(Enum):
 
     pipeline_name = "PipelineName"
     status = "Status"
@@ -90,7 +90,7 @@ class RunQueryFilterOperand(str, Enum):
     latest_only = "LatestOnly"
 
 
-class RunQueryFilterOperator(str, Enum):
+class RunQueryFilterOperator(Enum):
 
     equals = "Equals"
     not_equals = "NotEquals"
@@ -98,7 +98,7 @@ class RunQueryFilterOperator(str, Enum):
     not_in = "NotIn"
 
 
-class RunQueryOrderByField(str, Enum):
+class RunQueryOrderByField(Enum):
 
     run_start = "RunStart"
     run_end = "RunEnd"
@@ -111,32 +111,32 @@ class RunQueryOrderByField(str, Enum):
     trigger_run_timestamp = "TriggerRunTimestamp"
 
 
-class RunQueryOrder(str, Enum):
+class RunQueryOrder(Enum):
 
     asc = "ASC"
     desc = "DESC"
 
 
-class TriggerRunStatus(str, Enum):
+class TriggerRunStatus(Enum):
 
     succeeded = "Succeeded"
     failed = "Failed"
     inprogress = "Inprogress"
 
 
-class TumblingWindowFrequency(str, Enum):
+class TumblingWindowFrequency(Enum):
 
     minute = "Minute"
     hour = "Hour"
 
 
-class BlobEventTypes(str, Enum):
+class BlobEventTypes(Enum):
 
     microsoft_storage_blob_created = "Microsoft.Storage.BlobCreated"
     microsoft_storage_blob_deleted = "Microsoft.Storage.BlobDeleted"
 
 
-class DayOfWeek(str, Enum):
+class DayOfWeek(Enum):
 
     sunday = "Sunday"
     monday = "Monday"
@@ -147,7 +147,7 @@ class DayOfWeek(str, Enum):
     saturday = "Saturday"
 
 
-class DaysOfWeek(str, Enum):
+class DaysOfWeek(Enum):
 
     sunday = "Sunday"
     monday = "Monday"
@@ -158,7 +158,7 @@ class DaysOfWeek(str, Enum):
     saturday = "Saturday"
 
 
-class RecurrenceFrequency(str, Enum):
+class RecurrenceFrequency(Enum):
 
     not_specified = "NotSpecified"
     minute = "Minute"
@@ -169,27 +169,27 @@ class RecurrenceFrequency(str, Enum):
     year = "Year"
 
 
-class GoogleAdWordsAuthenticationType(str, Enum):
+class GoogleAdWordsAuthenticationType(Enum):
 
     service_authentication = "ServiceAuthentication"
     user_authentication = "UserAuthentication"
 
 
-class SparkServerType(str, Enum):
+class SparkServerType(Enum):
 
     shark_server = "SharkServer"
     shark_server2 = "SharkServer2"
     spark_thrift_server = "SparkThriftServer"
 
 
-class SparkThriftTransportProtocol(str, Enum):
+class SparkThriftTransportProtocol(Enum):
 
     binary = "Binary"
     sasl = "SASL"
     http = "HTTP "
 
 
-class SparkAuthenticationType(str, Enum):
+class SparkAuthenticationType(Enum):
 
     anonymous = "Anonymous"
     username = "Username"
@@ -197,47 +197,47 @@ class SparkAuthenticationType(str, Enum):
     windows_azure_hd_insight_service = "WindowsAzureHDInsightService"
 
 
-class ServiceNowAuthenticationType(str, Enum):
+class ServiceNowAuthenticationType(Enum):
 
     basic = "Basic"
     oauth2 = "OAuth2"
 
 
-class PrestoAuthenticationType(str, Enum):
+class PrestoAuthenticationType(Enum):
 
     anonymous = "Anonymous"
     ldap = "LDAP"
 
 
-class PhoenixAuthenticationType(str, Enum):
+class PhoenixAuthenticationType(Enum):
 
     anonymous = "Anonymous"
     username_and_password = "UsernameAndPassword"
     windows_azure_hd_insight_service = "WindowsAzureHDInsightService"
 
 
-class ImpalaAuthenticationType(str, Enum):
+class ImpalaAuthenticationType(Enum):
 
     anonymous = "Anonymous"
     sasl_username = "SASLUsername"
     username_and_password = "UsernameAndPassword"
 
 
-class HiveServerType(str, Enum):
+class HiveServerType(Enum):
 
     hive_server1 = "HiveServer1"
     hive_server2 = "HiveServer2"
     hive_thrift_server = "HiveThriftServer"
 
 
-class HiveThriftTransportProtocol(str, Enum):
+class HiveThriftTransportProtocol(Enum):
 
     binary = "Binary"
     sasl = "SASL"
     http = "HTTP "
 
 
-class HiveAuthenticationType(str, Enum):
+class HiveAuthenticationType(Enum):
 
     anonymous = "Anonymous"
     username = "Username"
@@ -245,37 +245,37 @@ class HiveAuthenticationType(str, Enum):
     windows_azure_hd_insight_service = "WindowsAzureHDInsightService"
 
 
-class HBaseAuthenticationType(str, Enum):
+class HBaseAuthenticationType(Enum):
 
     anonymous = "Anonymous"
     basic = "Basic"
 
 
-class GoogleBigQueryAuthenticationType(str, Enum):
+class GoogleBigQueryAuthenticationType(Enum):
 
     service_authentication = "ServiceAuthentication"
     user_authentication = "UserAuthentication"
 
 
-class SapHanaAuthenticationType(str, Enum):
+class SapHanaAuthenticationType(Enum):
 
     basic = "Basic"
     windows = "Windows"
 
 
-class SftpAuthenticationType(str, Enum):
+class SftpAuthenticationType(Enum):
 
     basic = "Basic"
     ssh_public_key = "SshPublicKey"
 
 
-class FtpAuthenticationType(str, Enum):
+class FtpAuthenticationType(Enum):
 
     basic = "Basic"
     anonymous = "Anonymous"
 
 
-class HttpAuthenticationType(str, Enum):
+class HttpAuthenticationType(Enum):
 
     basic = "Basic"
     anonymous = "Anonymous"
@@ -284,7 +284,7 @@ class HttpAuthenticationType(str, Enum):
     client_certificate = "ClientCertificate"
 
 
-class RestServiceAuthenticationType(str, Enum):
+class RestServiceAuthenticationType(Enum):
 
     anonymous = "Anonymous"
     basic = "Basic"
@@ -292,13 +292,13 @@ class RestServiceAuthenticationType(str, Enum):
     managed_service_identity = "ManagedServiceIdentity"
 
 
-class MongoDbAuthenticationType(str, Enum):
+class MongoDbAuthenticationType(Enum):
 
     basic = "Basic"
     anonymous = "Anonymous"
 
 
-class ODataAuthenticationType(str, Enum):
+class ODataAuthenticationType(Enum):
 
     basic = "Basic"
     anonymous = "Anonymous"
@@ -307,42 +307,42 @@ class ODataAuthenticationType(str, Enum):
     managed_service_identity = "ManagedServiceIdentity"
 
 
-class ODataAadServicePrincipalCredentialType(str, Enum):
+class ODataAadServicePrincipalCredentialType(Enum):
 
     service_principal_key = "ServicePrincipalKey"
     service_principal_cert = "ServicePrincipalCert"
 
 
-class TeradataAuthenticationType(str, Enum):
+class TeradataAuthenticationType(Enum):
 
     basic = "Basic"
     windows = "Windows"
 
 
-class Db2AuthenticationType(str, Enum):
+class Db2AuthenticationType(Enum):
 
     basic = "Basic"
 
 
-class SybaseAuthenticationType(str, Enum):
+class SybaseAuthenticationType(Enum):
 
     basic = "Basic"
     windows = "Windows"
 
 
-class DynamicsDeploymentType(str, Enum):
+class DynamicsDeploymentType(Enum):
 
     online = "Online"
     on_premises_with_ifd = "OnPremisesWithIfd"
 
 
-class DynamicsAuthenticationType(str, Enum):
+class DynamicsAuthenticationType(Enum):
 
     office365 = "Office365"
     ifd = "Ifd"
 
 
-class AvroCompressionCodec(str, Enum):
+class AvroCompressionCodec(Enum):
 
     none = "none"
     deflate = "deflate"
@@ -351,7 +351,7 @@ class AvroCompressionCodec(str, Enum):
     bzip2 = "bzip2"
 
 
-class AzureFunctionActivityMethod(str, Enum):
+class AzureFunctionActivityMethod(Enum):
 
     get = "GET"
     post = "POST"
@@ -362,7 +362,7 @@ class AzureFunctionActivityMethod(str, Enum):
     trace = "TRACE"
 
 
-class WebActivityMethod(str, Enum):
+class WebActivityMethod(Enum):
 
     get = "GET"
     post = "POST"
@@ -370,14 +370,14 @@ class WebActivityMethod(str, Enum):
     delete = "DELETE"
 
 
-class NetezzaPartitionOption(str, Enum):
+class NetezzaPartitionOption(Enum):
 
     none = "None"
     data_slice = "DataSlice"
     dynamic_range = "DynamicRange"
 
 
-class CassandraSourceReadConsistencyLevels(str, Enum):
+class CassandraSourceReadConsistencyLevels(Enum):
 
     all = "ALL"
     each_quorum = "EACH_QUORUM"
@@ -391,21 +391,21 @@ class CassandraSourceReadConsistencyLevels(str, Enum):
     local_serial = "LOCAL_SERIAL"
 
 
-class TeradataPartitionOption(str, Enum):
+class TeradataPartitionOption(Enum):
 
     none = "None"
     hash = "Hash"
     dynamic_range = "DynamicRange"
 
 
-class OraclePartitionOption(str, Enum):
+class OraclePartitionOption(Enum):
 
     none = "None"
     physical_partitions_of_table = "PhysicalPartitionsOfTable"
     dynamic_range = "DynamicRange"
 
 
-class StoredProcedureParameterType(str, Enum):
+class StoredProcedureParameterType(Enum):
 
     string = "String"
     int_enum = "Int"
@@ -416,7 +416,7 @@ class StoredProcedureParameterType(str, Enum):
     date_enum = "Date"
 
 
-class SapTablePartitionOption(str, Enum):
+class SapTablePartitionOption(Enum):
 
     none = "None"
     partition_on_int = "PartitionOnInt"
@@ -426,67 +426,67 @@ class SapTablePartitionOption(str, Enum):
     partition_on_time = "PartitionOnTime"
 
 
-class SalesforceSourceReadBehavior(str, Enum):
+class SalesforceSourceReadBehavior(Enum):
 
     query = "Query"
     query_all = "QueryAll"
 
 
-class SsisPackageLocationType(str, Enum):
+class SsisPackageLocationType(Enum):
 
     ssisdb = "SSISDB"
     file = "File"
 
 
-class HDInsightActivityDebugInfoOption(str, Enum):
+class HDInsightActivityDebugInfoOption(Enum):
 
     none = "None"
     always = "Always"
     failure = "Failure"
 
 
-class SalesforceSinkWriteBehavior(str, Enum):
+class SalesforceSinkWriteBehavior(Enum):
 
     insert = "Insert"
     upsert = "Upsert"
 
 
-class AzureSearchIndexWriteBehaviorType(str, Enum):
+class AzureSearchIndexWriteBehaviorType(Enum):
 
     merge = "Merge"
     upload = "Upload"
 
 
-class PolybaseSettingsRejectType(str, Enum):
+class PolybaseSettingsRejectType(Enum):
 
     value = "value"
     percentage = "percentage"
 
 
-class JsonWriteFilePattern(str, Enum):
+class JsonWriteFilePattern(Enum):
 
     set_of_objects = "setOfObjects"
     array_of_objects = "arrayOfObjects"
 
 
-class SapCloudForCustomerSinkWriteBehavior(str, Enum):
+class SapCloudForCustomerSinkWriteBehavior(Enum):
 
     insert = "Insert"
     update = "Update"
 
 
-class WebHookActivityMethod(str, Enum):
+class WebHookActivityMethod(Enum):
 
     post = "POST"
 
 
-class IntegrationRuntimeType(str, Enum):
+class IntegrationRuntimeType(Enum):
 
     managed = "Managed"
     self_hosted = "SelfHosted"
 
 
-class SelfHostedIntegrationRuntimeNodeStatus(str, Enum):
+class SelfHostedIntegrationRuntimeNodeStatus(Enum):
 
     need_registration = "NeedRegistration"
     online = "Online"
@@ -497,21 +497,21 @@ class SelfHostedIntegrationRuntimeNodeStatus(str, Enum):
     initialize_failed = "InitializeFailed"
 
 
-class IntegrationRuntimeUpdateResult(str, Enum):
+class IntegrationRuntimeUpdateResult(Enum):
 
     none = "None"
     succeed = "Succeed"
     fail = "Fail"
 
 
-class IntegrationRuntimeInternalChannelEncryptionMode(str, Enum):
+class IntegrationRuntimeInternalChannelEncryptionMode(Enum):
 
     not_set = "NotSet"
     ssl_encrypted = "SslEncrypted"
     not_encrypted = "NotEncrypted"
 
 
-class ManagedIntegrationRuntimeNodeStatus(str, Enum):
+class ManagedIntegrationRuntimeNodeStatus(Enum):
 
     starting = "Starting"
     available = "Available"
@@ -519,13 +519,13 @@ class ManagedIntegrationRuntimeNodeStatus(str, Enum):
     unavailable = "Unavailable"
 
 
-class IntegrationRuntimeEntityReferenceType(str, Enum):
+class IntegrationRuntimeEntityReferenceType(Enum):
 
     integration_runtime_reference = "IntegrationRuntimeReference"
     linked_service_reference = "LinkedServiceReference"
 
 
-class IntegrationRuntimeSsisCatalogPricingTier(str, Enum):
+class IntegrationRuntimeSsisCatalogPricingTier(Enum):
 
     basic = "Basic"
     standard = "Standard"
@@ -533,19 +533,19 @@ class IntegrationRuntimeSsisCatalogPricingTier(str, Enum):
     premium_rs = "PremiumRS"
 
 
-class IntegrationRuntimeLicenseType(str, Enum):
+class IntegrationRuntimeLicenseType(Enum):
 
     base_price = "BasePrice"
     license_included = "LicenseIncluded"
 
 
-class IntegrationRuntimeEdition(str, Enum):
+class IntegrationRuntimeEdition(Enum):
 
     standard = "Standard"
     enterprise = "Enterprise"
 
 
-class SsisObjectMetadataType(str, Enum):
+class SsisObjectMetadataType(Enum):
 
     folder = "Folder"
     project = "Project"
@@ -553,7 +553,7 @@ class SsisObjectMetadataType(str, Enum):
     environment = "Environment"
 
 
-class IntegrationRuntimeAuthKeyName(str, Enum):
+class IntegrationRuntimeAuthKeyName(Enum):
 
     auth_key1 = "authKey1"
     auth_key2 = "authKey2"

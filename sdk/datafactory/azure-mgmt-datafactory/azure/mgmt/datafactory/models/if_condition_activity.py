@@ -17,12 +17,10 @@ class IfConditionActivity(ControlActivity):
     activities under the ifTrueActivities property or the ifFalseActivities
     property depending on the result of the expression.
 
-    All required parameters must be populated in order to send to Azure.
-
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param name: Required. Activity name.
+    :param name: Activity name.
     :type name: str
     :param description: Activity description.
     :type description: str
@@ -30,10 +28,10 @@ class IfConditionActivity(ControlActivity):
     :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
     :param user_properties: Activity user properties.
     :type user_properties: list[~azure.mgmt.datafactory.models.UserProperty]
-    :param type: Required. Constant filled by server.
+    :param type: Constant filled by server.
     :type type: str
-    :param expression: Required. An expression that would evaluate to Boolean.
-     This is used to determine the block of activities (ifTrueActivities or
+    :param expression: An expression that would evaluate to Boolean. This is
+     used to determine the block of activities (ifTrueActivities or
      ifFalseActivities) that will be executed.
     :type expression: ~azure.mgmt.datafactory.models.Expression
     :param if_true_activities: List of activities to execute if expression is
@@ -64,9 +62,9 @@ class IfConditionActivity(ControlActivity):
         'if_false_activities': {'key': 'typeProperties.ifFalseActivities', 'type': '[Activity]'},
     }
 
-    def __init__(self, **kwargs):
-        super(IfConditionActivity, self).__init__(**kwargs)
-        self.expression = kwargs.get('expression', None)
-        self.if_true_activities = kwargs.get('if_true_activities', None)
-        self.if_false_activities = kwargs.get('if_false_activities', None)
+    def __init__(self, name, expression, additional_properties=None, description=None, depends_on=None, user_properties=None, if_true_activities=None, if_false_activities=None):
+        super(IfConditionActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties)
+        self.expression = expression
+        self.if_true_activities = if_true_activities
+        self.if_false_activities = if_false_activities
         self.type = 'IfCondition'

@@ -15,8 +15,6 @@ from .linked_service import LinkedService
 class MySqlLinkedService(LinkedService):
     """Linked service for MySQL data source.
 
-    All required parameters must be populated in order to send to Azure.
-
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -31,9 +29,9 @@ class MySqlLinkedService(LinkedService):
     :param annotations: List of tags that can be used for describing the
      linked service.
     :type annotations: list[object]
-    :param type: Required. Constant filled by server.
+    :param type: Constant filled by server.
     :type type: str
-    :param connection_string: Required. The connection string.
+    :param connection_string: The connection string.
     :type connection_string: ~azure.mgmt.datafactory.models.SecretBase
     :param password: The Azure key vault secret reference of password in
      connection string.
@@ -62,9 +60,9 @@ class MySqlLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, **kwargs):
-        super(MySqlLinkedService, self).__init__(**kwargs)
-        self.connection_string = kwargs.get('connection_string', None)
-        self.password = kwargs.get('password', None)
-        self.encrypted_credential = kwargs.get('encrypted_credential', None)
+    def __init__(self, connection_string, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None, password=None, encrypted_credential=None):
+        super(MySqlLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations)
+        self.connection_string = connection_string
+        self.password = password
+        self.encrypted_credential = encrypted_credential
         self.type = 'MySql'

@@ -15,8 +15,6 @@ from .dataset import Dataset
 class AmazonS3Dataset(Dataset):
     """A single Amazon Simple Storage Service (S3) object or a set of S3 objects.
 
-    All required parameters must be populated in order to send to Azure.
-
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -29,7 +27,7 @@ class AmazonS3Dataset(Dataset):
      dataset. Type: array (or Expression with resultType array), itemType:
      DatasetSchemaDataElement.
     :type schema: object
-    :param linked_service_name: Required. Linked service reference.
+    :param linked_service_name: Linked service reference.
     :type linked_service_name:
      ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
@@ -41,10 +39,10 @@ class AmazonS3Dataset(Dataset):
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
-    :param type: Required. Constant filled by server.
+    :param type: Constant filled by server.
     :type type: str
-    :param bucket_name: Required. The name of the Amazon S3 bucket. Type:
-     string (or Expression with resultType string).
+    :param bucket_name: The name of the Amazon S3 bucket. Type: string (or
+     Expression with resultType string).
     :type bucket_name: object
     :param key: The key of the Amazon S3 object. Type: string (or Expression
      with resultType string).
@@ -94,14 +92,14 @@ class AmazonS3Dataset(Dataset):
         'compression': {'key': 'typeProperties.compression', 'type': 'DatasetCompression'},
     }
 
-    def __init__(self, **kwargs):
-        super(AmazonS3Dataset, self).__init__(**kwargs)
-        self.bucket_name = kwargs.get('bucket_name', None)
-        self.key = kwargs.get('key', None)
-        self.prefix = kwargs.get('prefix', None)
-        self.version = kwargs.get('version', None)
-        self.modified_datetime_start = kwargs.get('modified_datetime_start', None)
-        self.modified_datetime_end = kwargs.get('modified_datetime_end', None)
-        self.format = kwargs.get('format', None)
-        self.compression = kwargs.get('compression', None)
+    def __init__(self, linked_service_name, bucket_name, additional_properties=None, description=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, key=None, prefix=None, version=None, modified_datetime_start=None, modified_datetime_end=None, format=None, compression=None):
+        super(AmazonS3Dataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder)
+        self.bucket_name = bucket_name
+        self.key = key
+        self.prefix = prefix
+        self.version = version
+        self.modified_datetime_start = modified_datetime_start
+        self.modified_datetime_end = modified_datetime_end
+        self.format = format
+        self.compression = compression
         self.type = 'AmazonS3Object'

@@ -15,8 +15,6 @@ from .copy_sink import CopySink
 class SqlDWSink(CopySink):
     """A copy activity SQL Data Warehouse sink.
 
-    All required parameters must be populated in order to send to Azure.
-
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -38,7 +36,7 @@ class SqlDWSink(CopySink):
      for the sink data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
-    :param type: Required. Constant filled by server.
+    :param type: Constant filled by server.
     :type type: str
     :param pre_copy_script: SQL pre-copy script. Type: string (or Expression
      with resultType string).
@@ -74,10 +72,10 @@ class SqlDWSink(CopySink):
         'table_option': {'key': 'tableOption', 'type': 'object'},
     }
 
-    def __init__(self, **kwargs):
-        super(SqlDWSink, self).__init__(**kwargs)
-        self.pre_copy_script = kwargs.get('pre_copy_script', None)
-        self.allow_poly_base = kwargs.get('allow_poly_base', None)
-        self.poly_base_settings = kwargs.get('poly_base_settings', None)
-        self.table_option = kwargs.get('table_option', None)
+    def __init__(self, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, max_concurrent_connections=None, pre_copy_script=None, allow_poly_base=None, poly_base_settings=None, table_option=None):
+        super(SqlDWSink, self).__init__(additional_properties=additional_properties, write_batch_size=write_batch_size, write_batch_timeout=write_batch_timeout, sink_retry_count=sink_retry_count, sink_retry_wait=sink_retry_wait, max_concurrent_connections=max_concurrent_connections)
+        self.pre_copy_script = pre_copy_script
+        self.allow_poly_base = allow_poly_base
+        self.poly_base_settings = poly_base_settings
+        self.table_option = table_option
         self.type = 'SqlDWSink'

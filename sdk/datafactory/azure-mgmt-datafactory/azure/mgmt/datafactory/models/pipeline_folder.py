@@ -24,6 +24,6 @@ class PipelineFolder(Model):
         'name': {'key': 'name', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(PipelineFolder, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+    def __init__(self, name=None):
+        super(PipelineFolder, self).__init__()
+        self.name = name

@@ -15,8 +15,6 @@ from .dataset_storage_format import DatasetStorageFormat
 class ParquetFormat(DatasetStorageFormat):
     """The data stored in Parquet format.
 
-    All required parameters must be populated in order to send to Azure.
-
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -26,7 +24,7 @@ class ParquetFormat(DatasetStorageFormat):
     :param deserializer: Deserializer. Type: string (or Expression with
      resultType string).
     :type deserializer: object
-    :param type: Required. Constant filled by server.
+    :param type: Constant filled by server.
     :type type: str
     """
 
@@ -34,13 +32,6 @@ class ParquetFormat(DatasetStorageFormat):
         'type': {'required': True},
     }
 
-    _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'serializer': {'key': 'serializer', 'type': 'object'},
-        'deserializer': {'key': 'deserializer', 'type': 'object'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(ParquetFormat, self).__init__(**kwargs)
+    def __init__(self, additional_properties=None, serializer=None, deserializer=None):
+        super(ParquetFormat, self).__init__(additional_properties=additional_properties, serializer=serializer, deserializer=deserializer)
         self.type = 'ParquetFormat'

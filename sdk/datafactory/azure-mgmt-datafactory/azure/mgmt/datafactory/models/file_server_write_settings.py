@@ -15,8 +15,6 @@ from .store_write_settings import StoreWriteSettings
 class FileServerWriteSettings(StoreWriteSettings):
     """File server write settings.
 
-    All required parameters must be populated in order to send to Azure.
-
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -26,7 +24,7 @@ class FileServerWriteSettings(StoreWriteSettings):
     :type max_concurrent_connections: object
     :param copy_behavior: The type of copy behavior for copy sink.
     :type copy_behavior: object
-    :param type: Required. Constant filled by server.
+    :param type: Constant filled by server.
     :type type: str
     """
 
@@ -34,13 +32,6 @@ class FileServerWriteSettings(StoreWriteSettings):
         'type': {'required': True},
     }
 
-    _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
-        'copy_behavior': {'key': 'copyBehavior', 'type': 'object'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(FileServerWriteSettings, self).__init__(**kwargs)
+    def __init__(self, additional_properties=None, max_concurrent_connections=None, copy_behavior=None):
+        super(FileServerWriteSettings, self).__init__(additional_properties=additional_properties, max_concurrent_connections=max_concurrent_connections, copy_behavior=copy_behavior)
         self.type = 'FileServerWriteSettings'

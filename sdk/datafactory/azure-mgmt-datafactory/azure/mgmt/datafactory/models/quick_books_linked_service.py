@@ -15,8 +15,6 @@ from .linked_service import LinkedService
 class QuickBooksLinkedService(LinkedService):
     """QuickBooks server linked service.
 
-    All required parameters must be populated in order to send to Azure.
-
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -31,25 +29,21 @@ class QuickBooksLinkedService(LinkedService):
     :param annotations: List of tags that can be used for describing the
      linked service.
     :type annotations: list[object]
-    :param type: Required. Constant filled by server.
+    :param type: Constant filled by server.
     :type type: str
-    :param endpoint: Required. The endpoint of the QuickBooks server. (i.e.
+    :param endpoint: The endpoint of the QuickBooks server. (i.e.
      quickbooks.api.intuit.com)
     :type endpoint: object
-    :param company_id: Required. The company ID of the QuickBooks company to
-     authorize.
+    :param company_id: The company ID of the QuickBooks company to authorize.
     :type company_id: object
-    :param consumer_key: Required. The consumer key for OAuth 1.0
-     authentication.
+    :param consumer_key: The consumer key for OAuth 1.0 authentication.
     :type consumer_key: object
-    :param consumer_secret: Required. The consumer secret for OAuth 1.0
-     authentication.
+    :param consumer_secret: The consumer secret for OAuth 1.0 authentication.
     :type consumer_secret: ~azure.mgmt.datafactory.models.SecretBase
-    :param access_token: Required. The access token for OAuth 1.0
-     authentication.
+    :param access_token: The access token for OAuth 1.0 authentication.
     :type access_token: ~azure.mgmt.datafactory.models.SecretBase
-    :param access_token_secret: Required. The access token secret for OAuth
-     1.0 authentication.
+    :param access_token_secret: The access token secret for OAuth 1.0
+     authentication.
     :type access_token_secret: ~azure.mgmt.datafactory.models.SecretBase
     :param use_encrypted_endpoints: Specifies whether the data source
      endpoints are encrypted using HTTPS. The default value is true.
@@ -87,14 +81,14 @@ class QuickBooksLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, **kwargs):
-        super(QuickBooksLinkedService, self).__init__(**kwargs)
-        self.endpoint = kwargs.get('endpoint', None)
-        self.company_id = kwargs.get('company_id', None)
-        self.consumer_key = kwargs.get('consumer_key', None)
-        self.consumer_secret = kwargs.get('consumer_secret', None)
-        self.access_token = kwargs.get('access_token', None)
-        self.access_token_secret = kwargs.get('access_token_secret', None)
-        self.use_encrypted_endpoints = kwargs.get('use_encrypted_endpoints', None)
-        self.encrypted_credential = kwargs.get('encrypted_credential', None)
+    def __init__(self, endpoint, company_id, consumer_key, consumer_secret, access_token, access_token_secret, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None, use_encrypted_endpoints=None, encrypted_credential=None):
+        super(QuickBooksLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations)
+        self.endpoint = endpoint
+        self.company_id = company_id
+        self.consumer_key = consumer_key
+        self.consumer_secret = consumer_secret
+        self.access_token = access_token
+        self.access_token_secret = access_token_secret
+        self.use_encrypted_endpoints = use_encrypted_endpoints
+        self.encrypted_credential = encrypted_credential
         self.type = 'QuickBooks'

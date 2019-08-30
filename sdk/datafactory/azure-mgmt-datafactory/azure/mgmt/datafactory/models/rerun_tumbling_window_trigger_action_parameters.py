@@ -15,16 +15,14 @@ from msrest.serialization import Model
 class RerunTumblingWindowTriggerActionParameters(Model):
     """Rerun tumbling window trigger Parameters.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param start_time: Required. The start time for the time period for which
+    :param start_time: The start time for the time period for which
      restatement is initiated. Only UTC time is currently supported.
     :type start_time: datetime
-    :param end_time: Required. The end time for the time period for which
-     restatement is initiated. Only UTC time is currently supported.
+    :param end_time: The end time for the time period for which restatement is
+     initiated. Only UTC time is currently supported.
     :type end_time: datetime
-    :param max_concurrency: Required. The max number of parallel time windows
-     (ready for execution) for which a rerun is triggered.
+    :param max_concurrency: The max number of parallel time windows (ready for
+     execution) for which a rerun is triggered.
     :type max_concurrency: int
     """
 
@@ -40,8 +38,8 @@ class RerunTumblingWindowTriggerActionParameters(Model):
         'max_concurrency': {'key': 'maxConcurrency', 'type': 'int'},
     }
 
-    def __init__(self, **kwargs):
-        super(RerunTumblingWindowTriggerActionParameters, self).__init__(**kwargs)
-        self.start_time = kwargs.get('start_time', None)
-        self.end_time = kwargs.get('end_time', None)
-        self.max_concurrency = kwargs.get('max_concurrency', None)
+    def __init__(self, start_time, end_time, max_concurrency):
+        super(RerunTumblingWindowTriggerActionParameters, self).__init__()
+        self.start_time = start_time
+        self.end_time = end_time
+        self.max_concurrency = max_concurrency

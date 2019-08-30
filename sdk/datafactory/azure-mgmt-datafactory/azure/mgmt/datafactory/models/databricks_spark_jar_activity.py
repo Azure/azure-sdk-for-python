@@ -15,12 +15,10 @@ from .execution_activity import ExecutionActivity
 class DatabricksSparkJarActivity(ExecutionActivity):
     """DatabricksSparkJar activity.
 
-    All required parameters must be populated in order to send to Azure.
-
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param name: Required. Activity name.
+    :param name: Activity name.
     :type name: str
     :param description: Activity description.
     :type description: str
@@ -28,17 +26,16 @@ class DatabricksSparkJarActivity(ExecutionActivity):
     :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
     :param user_properties: Activity user properties.
     :type user_properties: list[~azure.mgmt.datafactory.models.UserProperty]
-    :param type: Required. Constant filled by server.
+    :param type: Constant filled by server.
     :type type: str
     :param linked_service_name: Linked service reference.
     :type linked_service_name:
      ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param policy: Activity policy.
     :type policy: ~azure.mgmt.datafactory.models.ActivityPolicy
-    :param main_class_name: Required. The full name of the class containing
-     the main method to be executed. This class must be contained in a JAR
-     provided as a library. Type: string (or Expression with resultType
-     string).
+    :param main_class_name: The full name of the class containing the main
+     method to be executed. This class must be contained in a JAR provided as a
+     library. Type: string (or Expression with resultType string).
     :type main_class_name: object
     :param parameters: Parameters that will be passed to the main method.
     :type parameters: list[object]
@@ -67,9 +64,9 @@ class DatabricksSparkJarActivity(ExecutionActivity):
         'libraries': {'key': 'typeProperties.libraries', 'type': '[{object}]'},
     }
 
-    def __init__(self, **kwargs):
-        super(DatabricksSparkJarActivity, self).__init__(**kwargs)
-        self.main_class_name = kwargs.get('main_class_name', None)
-        self.parameters = kwargs.get('parameters', None)
-        self.libraries = kwargs.get('libraries', None)
+    def __init__(self, name, main_class_name, additional_properties=None, description=None, depends_on=None, user_properties=None, linked_service_name=None, policy=None, parameters=None, libraries=None):
+        super(DatabricksSparkJarActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy)
+        self.main_class_name = main_class_name
+        self.parameters = parameters
+        self.libraries = libraries
         self.type = 'DatabricksSparkJar'

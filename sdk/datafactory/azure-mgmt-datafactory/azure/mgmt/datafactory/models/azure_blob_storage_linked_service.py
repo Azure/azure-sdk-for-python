@@ -15,8 +15,6 @@ from .linked_service import LinkedService
 class AzureBlobStorageLinkedService(LinkedService):
     """The azure blob storage linked service.
 
-    All required parameters must be populated in order to send to Azure.
-
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -31,7 +29,7 @@ class AzureBlobStorageLinkedService(LinkedService):
     :param annotations: List of tags that can be used for describing the
      linked service.
     :type annotations: list[object]
-    :param type: Required. Constant filled by server.
+    :param type: Constant filled by server.
     :type type: str
     :param connection_string: The connection string. It is mutually exclusive
      with sasUri, serviceEndpoint property. Type: string, SecureString or
@@ -90,15 +88,15 @@ class AzureBlobStorageLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(AzureBlobStorageLinkedService, self).__init__(**kwargs)
-        self.connection_string = kwargs.get('connection_string', None)
-        self.account_key = kwargs.get('account_key', None)
-        self.sas_uri = kwargs.get('sas_uri', None)
-        self.sas_token = kwargs.get('sas_token', None)
-        self.service_endpoint = kwargs.get('service_endpoint', None)
-        self.service_principal_id = kwargs.get('service_principal_id', None)
-        self.service_principal_key = kwargs.get('service_principal_key', None)
-        self.tenant = kwargs.get('tenant', None)
-        self.encrypted_credential = kwargs.get('encrypted_credential', None)
+    def __init__(self, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None, connection_string=None, account_key=None, sas_uri=None, sas_token=None, service_endpoint=None, service_principal_id=None, service_principal_key=None, tenant=None, encrypted_credential=None):
+        super(AzureBlobStorageLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations)
+        self.connection_string = connection_string
+        self.account_key = account_key
+        self.sas_uri = sas_uri
+        self.sas_token = sas_token
+        self.service_endpoint = service_endpoint
+        self.service_principal_id = service_principal_id
+        self.service_principal_key = service_principal_key
+        self.tenant = tenant
+        self.encrypted_credential = encrypted_credential
         self.type = 'AzureBlobStorage'

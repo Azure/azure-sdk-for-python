@@ -15,12 +15,10 @@ from .store_read_settings import StoreReadSettings
 class HttpReadSettings(StoreReadSettings):
     """Sftp read settings.
 
-    All required parameters must be populated in order to send to Azure.
-
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param type: Required. The read setting type.
+    :param type: The read setting type.
     :type type: str
     :param max_concurrent_connections: The maximum concurrent connection count
      for the source data store. Type: integer (or Expression with resultType
@@ -55,9 +53,9 @@ class HttpReadSettings(StoreReadSettings):
         'request_timeout': {'key': 'requestTimeout', 'type': 'object'},
     }
 
-    def __init__(self, **kwargs):
-        super(HttpReadSettings, self).__init__(**kwargs)
-        self.request_method = kwargs.get('request_method', None)
-        self.request_body = kwargs.get('request_body', None)
-        self.additional_headers = kwargs.get('additional_headers', None)
-        self.request_timeout = kwargs.get('request_timeout', None)
+    def __init__(self, type, additional_properties=None, max_concurrent_connections=None, request_method=None, request_body=None, additional_headers=None, request_timeout=None):
+        super(HttpReadSettings, self).__init__(additional_properties=additional_properties, type=type, max_concurrent_connections=max_concurrent_connections)
+        self.request_method = request_method
+        self.request_body = request_body
+        self.additional_headers = additional_headers
+        self.request_timeout = request_timeout

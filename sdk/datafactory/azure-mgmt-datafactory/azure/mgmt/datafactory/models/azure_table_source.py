@@ -15,8 +15,6 @@ from .copy_source import CopySource
 class AzureTableSource(CopySource):
     """A copy activity Azure Table source.
 
-    All required parameters must be populated in order to send to Azure.
-
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -31,7 +29,7 @@ class AzureTableSource(CopySource):
      for the source data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
-    :param type: Required. Constant filled by server.
+    :param type: Constant filled by server.
     :type type: str
     :param azure_table_source_query: Azure Table source query. Type: string
      (or Expression with resultType string).
@@ -56,8 +54,8 @@ class AzureTableSource(CopySource):
         'azure_table_source_ignore_table_not_found': {'key': 'azureTableSourceIgnoreTableNotFound', 'type': 'object'},
     }
 
-    def __init__(self, **kwargs):
-        super(AzureTableSource, self).__init__(**kwargs)
-        self.azure_table_source_query = kwargs.get('azure_table_source_query', None)
-        self.azure_table_source_ignore_table_not_found = kwargs.get('azure_table_source_ignore_table_not_found', None)
+    def __init__(self, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, azure_table_source_query=None, azure_table_source_ignore_table_not_found=None):
+        super(AzureTableSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections)
+        self.azure_table_source_query = azure_table_source_query
+        self.azure_table_source_ignore_table_not_found = azure_table_source_ignore_table_not_found
         self.type = 'AzureTableSource'

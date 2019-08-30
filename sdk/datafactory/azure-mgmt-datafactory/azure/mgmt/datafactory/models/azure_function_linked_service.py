@@ -15,8 +15,6 @@ from .linked_service import LinkedService
 class AzureFunctionLinkedService(LinkedService):
     """Azure Function linked service.
 
-    All required parameters must be populated in order to send to Azure.
-
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -31,10 +29,10 @@ class AzureFunctionLinkedService(LinkedService):
     :param annotations: List of tags that can be used for describing the
      linked service.
     :type annotations: list[object]
-    :param type: Required. Constant filled by server.
+    :param type: Constant filled by server.
     :type type: str
-    :param function_app_url: Required. The endpoint of the Azure Function App.
-     URL will be in the format https://<accountName>.azurewebsites.net.
+    :param function_app_url: The endpoint of the Azure Function App. URL will
+     be in the format https://<accountName>.azurewebsites.net.
     :type function_app_url: object
     :param function_key: Function or Host key for Azure Function App.
     :type function_key: ~azure.mgmt.datafactory.models.SecretBase
@@ -61,9 +59,9 @@ class AzureFunctionLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, **kwargs):
-        super(AzureFunctionLinkedService, self).__init__(**kwargs)
-        self.function_app_url = kwargs.get('function_app_url', None)
-        self.function_key = kwargs.get('function_key', None)
-        self.encrypted_credential = kwargs.get('encrypted_credential', None)
+    def __init__(self, function_app_url, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None, function_key=None, encrypted_credential=None):
+        super(AzureFunctionLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations)
+        self.function_app_url = function_app_url
+        self.function_key = function_key
+        self.encrypted_credential = encrypted_credential
         self.type = 'AzureFunction'

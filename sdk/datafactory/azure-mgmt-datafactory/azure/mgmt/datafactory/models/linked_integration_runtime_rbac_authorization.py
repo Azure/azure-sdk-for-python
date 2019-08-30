@@ -16,12 +16,10 @@ class LinkedIntegrationRuntimeRbacAuthorization(LinkedIntegrationRuntimeType):
     """The role based access control (RBAC) authorization type integration
     runtime.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param authorization_type: Required. Constant filled by server.
+    :param authorization_type: Constant filled by server.
     :type authorization_type: str
-    :param resource_id: Required. The resource identifier of the integration
-     runtime to be shared.
+    :param resource_id: The resource identifier of the integration runtime to
+     be shared.
     :type resource_id: str
     """
 
@@ -35,7 +33,7 @@ class LinkedIntegrationRuntimeRbacAuthorization(LinkedIntegrationRuntimeType):
         'resource_id': {'key': 'resourceId', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(LinkedIntegrationRuntimeRbacAuthorization, self).__init__(**kwargs)
-        self.resource_id = kwargs.get('resource_id', None)
+    def __init__(self, resource_id):
+        super(LinkedIntegrationRuntimeRbacAuthorization, self).__init__()
+        self.resource_id = resource_id
         self.authorization_type = 'RBAC'

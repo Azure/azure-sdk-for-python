@@ -15,12 +15,10 @@ from msrest.serialization import Model
 class DatasetLocation(Model):
     """Dataset location.
 
-    All required parameters must be populated in order to send to Azure.
-
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param type: Required. Type of dataset storage location.
+    :param type: Type of dataset storage location.
     :type type: str
     :param folder_path: Specify the folder path of dataset. Type: string (or
      Expression with resultType string)
@@ -41,9 +39,9 @@ class DatasetLocation(Model):
         'file_name': {'key': 'fileName', 'type': 'object'},
     }
 
-    def __init__(self, **kwargs):
-        super(DatasetLocation, self).__init__(**kwargs)
-        self.additional_properties = kwargs.get('additional_properties', None)
-        self.type = kwargs.get('type', None)
-        self.folder_path = kwargs.get('folder_path', None)
-        self.file_name = kwargs.get('file_name', None)
+    def __init__(self, type, additional_properties=None, folder_path=None, file_name=None):
+        super(DatasetLocation, self).__init__()
+        self.additional_properties = additional_properties
+        self.type = type
+        self.folder_path = folder_path
+        self.file_name = file_name

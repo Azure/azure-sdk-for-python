@@ -32,9 +32,9 @@ class SsisObjectMetadataStatusResponse(Model):
         'error': {'key': 'error', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(SsisObjectMetadataStatusResponse, self).__init__(**kwargs)
-        self.status = kwargs.get('status', None)
-        self.name = kwargs.get('name', None)
-        self.properties = kwargs.get('properties', None)
-        self.error = kwargs.get('error', None)
+    def __init__(self, status=None, name=None, properties=None, error=None):
+        super(SsisObjectMetadataStatusResponse, self).__init__()
+        self.status = status
+        self.name = name
+        self.properties = properties
+        self.error = error

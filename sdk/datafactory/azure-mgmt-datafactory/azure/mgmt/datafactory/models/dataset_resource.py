@@ -18,8 +18,6 @@ class DatasetResource(SubResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
     :ivar id: The resource identifier.
     :vartype id: str
     :ivar name: The resource name.
@@ -28,7 +26,7 @@ class DatasetResource(SubResource):
     :vartype type: str
     :ivar etag: Etag identifies change in the resource.
     :vartype etag: str
-    :param properties: Required. Dataset properties.
+    :param properties: Dataset properties.
     :type properties: ~azure.mgmt.datafactory.models.Dataset
     """
 
@@ -48,6 +46,6 @@ class DatasetResource(SubResource):
         'properties': {'key': 'properties', 'type': 'Dataset'},
     }
 
-    def __init__(self, **kwargs):
-        super(DatasetResource, self).__init__(**kwargs)
-        self.properties = kwargs.get('properties', None)
+    def __init__(self, properties):
+        super(DatasetResource, self).__init__()
+        self.properties = properties

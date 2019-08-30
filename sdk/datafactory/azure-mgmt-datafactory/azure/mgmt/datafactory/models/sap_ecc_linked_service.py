@@ -15,8 +15,6 @@ from .linked_service import LinkedService
 class SapEccLinkedService(LinkedService):
     """Linked service for SAP ERP Central Component(SAP ECC).
 
-    All required parameters must be populated in order to send to Azure.
-
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -31,9 +29,9 @@ class SapEccLinkedService(LinkedService):
     :param annotations: List of tags that can be used for describing the
      linked service.
     :type annotations: list[object]
-    :param type: Required. Constant filled by server.
+    :param type: Constant filled by server.
     :type type: str
-    :param url: Required. The URL of SAP ECC OData API. For example,
+    :param url: The URL of SAP ECC OData API. For example,
      '[https://hostname:port/sap/opu/odata/sap/servicename/]'. Type: string (or
      Expression with resultType string).
     :type url: str
@@ -67,10 +65,10 @@ class SapEccLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(SapEccLinkedService, self).__init__(**kwargs)
-        self.url = kwargs.get('url', None)
-        self.username = kwargs.get('username', None)
-        self.password = kwargs.get('password', None)
-        self.encrypted_credential = kwargs.get('encrypted_credential', None)
+    def __init__(self, url, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None, username=None, password=None, encrypted_credential=None):
+        super(SapEccLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations)
+        self.url = url
+        self.username = username
+        self.password = password
+        self.encrypted_credential = encrypted_credential
         self.type = 'SapEcc'

@@ -15,11 +15,9 @@ from .trigger_dependency_reference import TriggerDependencyReference
 class TumblingWindowTriggerDependencyReference(TriggerDependencyReference):
     """Referenced tumbling window trigger dependency.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param type: Required. Constant filled by server.
+    :param type: Constant filled by server.
     :type type: str
-    :param reference_trigger: Required. Referenced trigger.
+    :param reference_trigger: Referenced trigger.
     :type reference_trigger: ~azure.mgmt.datafactory.models.TriggerReference
     :param offset: Timespan applied to the start time of a tumbling window
      when evaluating dependency.
@@ -43,8 +41,8 @@ class TumblingWindowTriggerDependencyReference(TriggerDependencyReference):
         'size': {'key': 'size', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(TumblingWindowTriggerDependencyReference, self).__init__(**kwargs)
-        self.offset = kwargs.get('offset', None)
-        self.size = kwargs.get('size', None)
+    def __init__(self, reference_trigger, offset=None, size=None):
+        super(TumblingWindowTriggerDependencyReference, self).__init__(reference_trigger=reference_trigger)
+        self.offset = offset
+        self.size = size
         self.type = 'TumblingWindowTriggerDependencyReference'

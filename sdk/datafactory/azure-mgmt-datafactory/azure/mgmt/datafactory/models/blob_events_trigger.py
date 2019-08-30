@@ -18,8 +18,6 @@ class BlobEventsTrigger(MultiplePipelineTrigger):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -33,7 +31,7 @@ class BlobEventsTrigger(MultiplePipelineTrigger):
     :param annotations: List of tags that can be used for describing the
      trigger.
     :type annotations: list[object]
-    :param type: Required. Constant filled by server.
+    :param type: Constant filled by server.
     :type type: str
     :param pipelines: Pipelines that need to be started.
     :type pipelines:
@@ -49,10 +47,9 @@ class BlobEventsTrigger(MultiplePipelineTrigger):
      fire the trigger for blobs named boxes in a december folder. At least one
      of these must be provided: blobPathBeginsWith, blobPathEndsWith.
     :type blob_path_ends_with: str
-    :param events: Required. The type of events that cause this trigger to
-     fire.
+    :param events: The type of events that cause this trigger to fire.
     :type events: list[str or ~azure.mgmt.datafactory.models.BlobEventTypes]
-    :param scope: Required. The ARM resource ID of the Storage Account.
+    :param scope: The ARM resource ID of the Storage Account.
     :type scope: str
     """
 
@@ -76,10 +73,10 @@ class BlobEventsTrigger(MultiplePipelineTrigger):
         'scope': {'key': 'typeProperties.scope', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(BlobEventsTrigger, self).__init__(**kwargs)
-        self.blob_path_begins_with = kwargs.get('blob_path_begins_with', None)
-        self.blob_path_ends_with = kwargs.get('blob_path_ends_with', None)
-        self.events = kwargs.get('events', None)
-        self.scope = kwargs.get('scope', None)
+    def __init__(self, events, scope, additional_properties=None, description=None, annotations=None, pipelines=None, blob_path_begins_with=None, blob_path_ends_with=None):
+        super(BlobEventsTrigger, self).__init__(additional_properties=additional_properties, description=description, annotations=annotations, pipelines=pipelines)
+        self.blob_path_begins_with = blob_path_begins_with
+        self.blob_path_ends_with = blob_path_ends_with
+        self.events = events
+        self.scope = scope
         self.type = 'BlobEventsTrigger'

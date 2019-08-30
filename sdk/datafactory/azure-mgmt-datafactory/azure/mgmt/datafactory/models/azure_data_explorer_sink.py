@@ -15,8 +15,6 @@ from .copy_sink import CopySink
 class AzureDataExplorerSink(CopySink):
     """A copy activity Azure Data Explorer sink.
 
-    All required parameters must be populated in order to send to Azure.
-
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -38,7 +36,7 @@ class AzureDataExplorerSink(CopySink):
      for the sink data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
-    :param type: Required. Constant filled by server.
+    :param type: Constant filled by server.
     :type type: str
     :param ingestion_mapping_name: A name of a pre-created csv mapping that
      was defined on the target Kusto table. Type: string.
@@ -68,9 +66,9 @@ class AzureDataExplorerSink(CopySink):
         'flush_immediately': {'key': 'flushImmediately', 'type': 'object'},
     }
 
-    def __init__(self, **kwargs):
-        super(AzureDataExplorerSink, self).__init__(**kwargs)
-        self.ingestion_mapping_name = kwargs.get('ingestion_mapping_name', None)
-        self.ingestion_mapping_as_json = kwargs.get('ingestion_mapping_as_json', None)
-        self.flush_immediately = kwargs.get('flush_immediately', None)
+    def __init__(self, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, max_concurrent_connections=None, ingestion_mapping_name=None, ingestion_mapping_as_json=None, flush_immediately=None):
+        super(AzureDataExplorerSink, self).__init__(additional_properties=additional_properties, write_batch_size=write_batch_size, write_batch_timeout=write_batch_timeout, sink_retry_count=sink_retry_count, sink_retry_wait=sink_retry_wait, max_concurrent_connections=max_concurrent_connections)
+        self.ingestion_mapping_name = ingestion_mapping_name
+        self.ingestion_mapping_as_json = ingestion_mapping_as_json
+        self.flush_immediately = flush_immediately
         self.type = 'AzureDataExplorerSink'

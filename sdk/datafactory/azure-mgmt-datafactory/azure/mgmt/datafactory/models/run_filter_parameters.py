@@ -15,16 +15,14 @@ from msrest.serialization import Model
 class RunFilterParameters(Model):
     """Query parameters for listing runs.
 
-    All required parameters must be populated in order to send to Azure.
-
     :param continuation_token: The continuation token for getting the next
      page of results. Null for first page.
     :type continuation_token: str
-    :param last_updated_after: Required. The time at or after which the run
-     event was updated in 'ISO 8601' format.
+    :param last_updated_after: The time at or after which the run event was
+     updated in 'ISO 8601' format.
     :type last_updated_after: datetime
-    :param last_updated_before: Required. The time at or before which the run
-     event was updated in 'ISO 8601' format.
+    :param last_updated_before: The time at or before which the run event was
+     updated in 'ISO 8601' format.
     :type last_updated_before: datetime
     :param filters: List of filters.
     :type filters: list[~azure.mgmt.datafactory.models.RunQueryFilter]
@@ -45,10 +43,10 @@ class RunFilterParameters(Model):
         'order_by': {'key': 'orderBy', 'type': '[RunQueryOrderBy]'},
     }
 
-    def __init__(self, **kwargs):
-        super(RunFilterParameters, self).__init__(**kwargs)
-        self.continuation_token = kwargs.get('continuation_token', None)
-        self.last_updated_after = kwargs.get('last_updated_after', None)
-        self.last_updated_before = kwargs.get('last_updated_before', None)
-        self.filters = kwargs.get('filters', None)
-        self.order_by = kwargs.get('order_by', None)
+    def __init__(self, last_updated_after, last_updated_before, continuation_token=None, filters=None, order_by=None):
+        super(RunFilterParameters, self).__init__()
+        self.continuation_token = continuation_token
+        self.last_updated_after = last_updated_after
+        self.last_updated_before = last_updated_before
+        self.filters = filters
+        self.order_by = order_by

@@ -15,12 +15,10 @@ from .execution_activity import ExecutionActivity
 class DeleteActivity(ExecutionActivity):
     """Delete activity.
 
-    All required parameters must be populated in order to send to Azure.
-
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param name: Required. Activity name.
+    :param name: Activity name.
     :type name: str
     :param description: Activity description.
     :type description: str
@@ -28,7 +26,7 @@ class DeleteActivity(ExecutionActivity):
     :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
     :param user_properties: Activity user properties.
     :type user_properties: list[~azure.mgmt.datafactory.models.UserProperty]
-    :param type: Required. Constant filled by server.
+    :param type: Constant filled by server.
     :type type: str
     :param linked_service_name: Linked service reference.
     :type linked_service_name:
@@ -50,7 +48,7 @@ class DeleteActivity(ExecutionActivity):
      when enableLogging is true.
     :type log_storage_settings:
      ~azure.mgmt.datafactory.models.LogStorageSettings
-    :param dataset: Required. Delete activity dataset reference.
+    :param dataset: Delete activity dataset reference.
     :type dataset: ~azure.mgmt.datafactory.models.DatasetReference
     """
 
@@ -77,11 +75,11 @@ class DeleteActivity(ExecutionActivity):
         'dataset': {'key': 'typeProperties.dataset', 'type': 'DatasetReference'},
     }
 
-    def __init__(self, **kwargs):
-        super(DeleteActivity, self).__init__(**kwargs)
-        self.recursive = kwargs.get('recursive', None)
-        self.max_concurrent_connections = kwargs.get('max_concurrent_connections', None)
-        self.enable_logging = kwargs.get('enable_logging', None)
-        self.log_storage_settings = kwargs.get('log_storage_settings', None)
-        self.dataset = kwargs.get('dataset', None)
+    def __init__(self, name, dataset, additional_properties=None, description=None, depends_on=None, user_properties=None, linked_service_name=None, policy=None, recursive=None, max_concurrent_connections=None, enable_logging=None, log_storage_settings=None):
+        super(DeleteActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy)
+        self.recursive = recursive
+        self.max_concurrent_connections = max_concurrent_connections
+        self.enable_logging = enable_logging
+        self.log_storage_settings = log_storage_settings
+        self.dataset = dataset
         self.type = 'Delete'

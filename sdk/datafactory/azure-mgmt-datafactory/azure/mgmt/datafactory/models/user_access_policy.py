@@ -42,10 +42,10 @@ class UserAccessPolicy(Model):
         'expire_time': {'key': 'expireTime', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(UserAccessPolicy, self).__init__(**kwargs)
-        self.permissions = kwargs.get('permissions', None)
-        self.access_resource_path = kwargs.get('access_resource_path', None)
-        self.profile_name = kwargs.get('profile_name', None)
-        self.start_time = kwargs.get('start_time', None)
-        self.expire_time = kwargs.get('expire_time', None)
+    def __init__(self, permissions=None, access_resource_path=None, profile_name=None, start_time=None, expire_time=None):
+        super(UserAccessPolicy, self).__init__()
+        self.permissions = permissions
+        self.access_resource_path = access_resource_path
+        self.profile_name = profile_name
+        self.start_time = start_time
+        self.expire_time = expire_time

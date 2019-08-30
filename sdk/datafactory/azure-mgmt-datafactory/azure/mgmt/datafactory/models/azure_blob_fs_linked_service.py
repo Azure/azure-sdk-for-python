@@ -15,8 +15,6 @@ from .linked_service import LinkedService
 class AzureBlobFSLinkedService(LinkedService):
     """Azure Data Lake Storage Gen2 linked service.
 
-    All required parameters must be populated in order to send to Azure.
-
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -31,10 +29,10 @@ class AzureBlobFSLinkedService(LinkedService):
     :param annotations: List of tags that can be used for describing the
      linked service.
     :type annotations: list[object]
-    :param type: Required. Constant filled by server.
+    :param type: Constant filled by server.
     :type type: str
-    :param url: Required. Endpoint for the Azure Data Lake Storage Gen2
-     service. Type: string (or Expression with resultType string).
+    :param url: Endpoint for the Azure Data Lake Storage Gen2 service. Type:
+     string (or Expression with resultType string).
     :type url: object
     :param account_key: Account key for the Azure Data Lake Storage Gen2
      service. Type: string (or Expression with resultType string).
@@ -75,12 +73,12 @@ class AzureBlobFSLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, **kwargs):
-        super(AzureBlobFSLinkedService, self).__init__(**kwargs)
-        self.url = kwargs.get('url', None)
-        self.account_key = kwargs.get('account_key', None)
-        self.service_principal_id = kwargs.get('service_principal_id', None)
-        self.service_principal_key = kwargs.get('service_principal_key', None)
-        self.tenant = kwargs.get('tenant', None)
-        self.encrypted_credential = kwargs.get('encrypted_credential', None)
+    def __init__(self, url, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None, account_key=None, service_principal_id=None, service_principal_key=None, tenant=None, encrypted_credential=None):
+        super(AzureBlobFSLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations)
+        self.url = url
+        self.account_key = account_key
+        self.service_principal_id = service_principal_id
+        self.service_principal_key = service_principal_key
+        self.tenant = tenant
+        self.encrypted_credential = encrypted_credential
         self.type = 'AzureBlobFS'

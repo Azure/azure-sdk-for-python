@@ -18,9 +18,7 @@ class SecretBase(Model):
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: SecureString, AzureKeyVaultSecretReference
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param type: Required. Constant filled by server.
+    :param type: Constant filled by server.
     :type type: str
     """
 
@@ -36,6 +34,6 @@ class SecretBase(Model):
         'type': {'SecureString': 'SecureString', 'AzureKeyVaultSecret': 'AzureKeyVaultSecretReference'}
     }
 
-    def __init__(self, **kwargs):
-        super(SecretBase, self).__init__(**kwargs)
+    def __init__(self):
+        super(SecretBase, self).__init__()
         self.type = None

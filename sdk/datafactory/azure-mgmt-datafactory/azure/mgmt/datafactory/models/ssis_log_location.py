@@ -18,13 +18,10 @@ class SSISLogLocation(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param log_path: Required. The SSIS package execution log path. Type:
-     string (or Expression with resultType string).
+    :param log_path: The SSIS package execution log path. Type: string (or
+     Expression with resultType string).
     :type log_path: object
-    :ivar type: Required. The type of SSIS log location. Default value: "File"
-     .
+    :ivar type: The type of SSIS log location. Default value: "File" .
     :vartype type: str
     :param access_credential: The package execution log access credential.
     :type access_credential:
@@ -50,8 +47,8 @@ class SSISLogLocation(Model):
 
     type = "File"
 
-    def __init__(self, **kwargs):
-        super(SSISLogLocation, self).__init__(**kwargs)
-        self.log_path = kwargs.get('log_path', None)
-        self.access_credential = kwargs.get('access_credential', None)
-        self.log_refresh_interval = kwargs.get('log_refresh_interval', None)
+    def __init__(self, log_path, access_credential=None, log_refresh_interval=None):
+        super(SSISLogLocation, self).__init__()
+        self.log_path = log_path
+        self.access_credential = access_credential
+        self.log_refresh_interval = log_refresh_interval

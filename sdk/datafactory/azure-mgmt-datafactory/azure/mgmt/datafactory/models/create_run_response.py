@@ -15,9 +15,7 @@ from msrest.serialization import Model
 class CreateRunResponse(Model):
     """Response body with a run identifier.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :param run_id: Required. Identifier of a run.
+    :param run_id: Identifier of a run.
     :type run_id: str
     """
 
@@ -29,6 +27,6 @@ class CreateRunResponse(Model):
         'run_id': {'key': 'runId', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(CreateRunResponse, self).__init__(**kwargs)
-        self.run_id = kwargs.get('run_id', None)
+    def __init__(self, run_id):
+        super(CreateRunResponse, self).__init__()
+        self.run_id = run_id
