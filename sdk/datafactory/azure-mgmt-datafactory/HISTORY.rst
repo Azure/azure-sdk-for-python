@@ -3,6 +3,268 @@
 Release History
 ===============
 
+0.8.0 (2019-08-30)
+++++++++++++++++++
+
+**Features**
+
+- Model HubspotSource has a new parameter max_concurrent_connections
+- Model CouchbaseSource has a new parameter max_concurrent_connections
+- Model HttpSource has a new parameter max_concurrent_connections
+- Model AzureDataLakeStoreSource has a new parameter max_concurrent_connections
+- Model ConcurSource has a new parameter max_concurrent_connections
+- Model FileShareDataset has a new parameter modified_datetime_start
+- Model FileShareDataset has a new parameter modified_datetime_end
+- Model SalesforceSource has a new parameter max_concurrent_connections
+- Model NetezzaSource has a new parameter partition_option
+- Model NetezzaSource has a new parameter max_concurrent_connections
+- Model NetezzaSource has a new parameter partition_settings
+- Model AzureMySqlSource has a new parameter max_concurrent_connections
+- Model OdbcSink has a new parameter max_concurrent_connections
+- Model ImpalaObjectDataset has a new parameter impala_object_dataset_schema
+- Model ImpalaObjectDataset has a new parameter table
+- Model AzureSqlDWTableDataset has a new parameter azure_sql_dw_table_dataset_schema
+- Model AzureSqlDWTableDataset has a new parameter table
+- Model SapEccSource has a new parameter max_concurrent_connections
+- Model CopySource has a new parameter max_concurrent_connections
+- Model ServiceNowSource has a new parameter max_concurrent_connections
+- Model Trigger has a new parameter annotations
+- Model CassandraSource has a new parameter max_concurrent_connections
+- Model AzureQueueSink has a new parameter max_concurrent_connections
+- Model DrillSource has a new parameter max_concurrent_connections
+- Model DocumentDbCollectionSink has a new parameter write_behavior
+- Model DocumentDbCollectionSink has a new parameter max_concurrent_connections
+- Model SapHanaLinkedService has a new parameter connection_string
+- Model SalesforceSink has a new parameter max_concurrent_connections
+- Model HiveObjectDataset has a new parameter hive_object_dataset_schema
+- Model HiveObjectDataset has a new parameter table
+- Model GoogleBigQueryObjectDataset has a new parameter dataset
+- Model GoogleBigQueryObjectDataset has a new parameter table
+- Model FileSystemSource has a new parameter max_concurrent_connections
+- Model SqlSink has a new parameter stored_procedure_table_type_parameter_name
+- Model SqlSink has a new parameter max_concurrent_connections
+- Model CopySink has a new parameter max_concurrent_connections
+- Model SapCloudForCustomerSource has a new parameter max_concurrent_connections
+- Model CopyActivity has a new parameter preserve_rules
+- Model CopyActivity has a new parameter preserve
+- Model AmazonMWSSource has a new parameter max_concurrent_connections
+- Model SqlDWSink has a new parameter max_concurrent_connections
+- Model MagentoSource has a new parameter max_concurrent_connections
+- Model BlobEventsTrigger has a new parameter annotations
+- Model DynamicsSink has a new parameter max_concurrent_connections
+- Model AzurePostgreSqlTableDataset has a new parameter table
+- Model AzurePostgreSqlTableDataset has a new parameter azure_postgre_sql_table_dataset_schema
+- Model SqlServerTableDataset has a new parameter sql_server_table_dataset_schema
+- Model SqlServerTableDataset has a new parameter table
+- Model DocumentDbCollectionSource has a new parameter max_concurrent_connections
+- Model AzurePostgreSqlSource has a new parameter max_concurrent_connections
+- Model BlobSource has a new parameter max_concurrent_connections
+- Model VerticaTableDataset has a new parameter vertica_table_dataset_schema
+- Model VerticaTableDataset has a new parameter table
+- Model PhoenixObjectDataset has a new parameter phoenix_object_dataset_schema
+- Model PhoenixObjectDataset has a new parameter table
+- Model AzureSearchIndexSink has a new parameter max_concurrent_connections
+- Model MarketoSource has a new parameter max_concurrent_connections
+- Model DynamicsSource has a new parameter max_concurrent_connections
+- Model SparkObjectDataset has a new parameter spark_object_dataset_schema
+- Model SparkObjectDataset has a new parameter table
+- Model XeroSource has a new parameter max_concurrent_connections
+- Model AmazonRedshiftSource has a new parameter max_concurrent_connections
+- Model CustomActivity has a new parameter retention_time_in_days
+- Model WebSource has a new parameter max_concurrent_connections
+- Model GreenplumTableDataset has a new parameter greenplum_table_dataset_schema
+- Model GreenplumTableDataset has a new parameter table
+- Model SalesforceMarketingCloudSource has a new parameter max_concurrent_connections
+- Model GoogleBigQuerySource has a new parameter max_concurrent_connections
+- Model JiraSource has a new parameter max_concurrent_connections
+- Model MongoDbSource has a new parameter max_concurrent_connections
+- Model DrillTableDataset has a new parameter drill_table_dataset_schema
+- Model DrillTableDataset has a new parameter table
+- Model ExecuteSSISPackageActivity has a new parameter log_location
+- Model SparkSource has a new parameter max_concurrent_connections
+- Model AzureTableSink has a new parameter max_concurrent_connections
+- Model AzureDataLakeStoreSink has a new parameter enable_adls_single_file_parallel
+- Model AzureDataLakeStoreSink has a new parameter max_concurrent_connections
+- Model PrestoSource has a new parameter max_concurrent_connections
+- Model RelationalSource has a new parameter max_concurrent_connections
+- Model TumblingWindowTrigger has a new parameter annotations
+- Model ImpalaSource has a new parameter max_concurrent_connections
+- Model ScheduleTrigger has a new parameter annotations
+- Model QuickBooksSource has a new parameter max_concurrent_connections
+- Model PrestoObjectDataset has a new parameter presto_object_dataset_schema
+- Model PrestoObjectDataset has a new parameter table
+- Model OracleSink has a new parameter max_concurrent_connections
+- Model HdfsSource has a new parameter max_concurrent_connections
+- Model PhoenixSource has a new parameter max_concurrent_connections
+- Model SapCloudForCustomerSink has a new parameter max_concurrent_connections
+- Model SquareSource has a new parameter max_concurrent_connections
+- Model OracleSource has a new parameter partition_option
+- Model OracleSource has a new parameter max_concurrent_connections
+- Model OracleSource has a new parameter partition_settings
+- Model BlobTrigger has a new parameter annotations
+- Model HDInsightOnDemandLinkedService has a new parameter virtual_network_id
+- Model HDInsightOnDemandLinkedService has a new parameter subnet_name
+- Model AmazonS3LinkedService has a new parameter service_url
+- Model HDInsightLinkedService has a new parameter file_system
+- Model MultiplePipelineTrigger has a new parameter annotations
+- Model HBaseSource has a new parameter max_concurrent_connections
+- Model OracleTableDataset has a new parameter oracle_table_dataset_schema
+- Model OracleTableDataset has a new parameter table
+- Model RerunTumblingWindowTrigger has a new parameter annotations
+- Model EloquaSource has a new parameter max_concurrent_connections
+- Model AzureSqlTableDataset has a new parameter azure_sql_table_dataset_schema
+- Model AzureSqlTableDataset has a new parameter table
+- Model BlobSink has a new parameter max_concurrent_connections
+- Model HiveSource has a new parameter max_concurrent_connections
+- Model SqlSource has a new parameter max_concurrent_connections
+- Model PaypalSource has a new parameter max_concurrent_connections
+- Model AzureBlobDataset has a new parameter modified_datetime_start
+- Model AzureBlobDataset has a new parameter modified_datetime_end
+- Model VerticaSource has a new parameter max_concurrent_connections
+- Model AmazonS3Dataset has a new parameter modified_datetime_start
+- Model AmazonS3Dataset has a new parameter modified_datetime_end
+- Model PipelineRun has a new parameter run_group_id
+- Model PipelineRun has a new parameter is_latest
+- Model ShopifySource has a new parameter max_concurrent_connections
+- Model MariaDBSource has a new parameter max_concurrent_connections
+- Model TeradataLinkedService has a new parameter connection_string
+- Model ODataLinkedService has a new parameter service_principal_embedded_cert
+- Model ODataLinkedService has a new parameter aad_service_principal_credential_type
+- Model ODataLinkedService has a new parameter service_principal_key
+- Model ODataLinkedService has a new parameter service_principal_id
+- Model ODataLinkedService has a new parameter aad_resource_id
+- Model ODataLinkedService has a new parameter service_principal_embedded_cert_password
+- Model ODataLinkedService has a new parameter tenant
+- Model AzureTableSource has a new parameter max_concurrent_connections
+- Model IntegrationRuntimeSsisProperties has a new parameter data_proxy_properties
+- Model ZohoSource has a new parameter max_concurrent_connections
+- Model ResponsysSource has a new parameter max_concurrent_connections
+- Model FileSystemSink has a new parameter max_concurrent_connections
+- Model SqlDWSource has a new parameter max_concurrent_connections
+- Model GreenplumSource has a new parameter max_concurrent_connections
+- Model AzureDatabricksLinkedService has a new parameter new_cluster_init_scripts
+- Model AzureDatabricksLinkedService has a new parameter new_cluster_driver_node_type
+- Model AzureDatabricksLinkedService has a new parameter new_cluster_enable_elastic_disk
+- Added operation TriggerRunsOperations.rerun
+- Added operation ExposureControlOperations.get_feature_value_by_factory
+- Added model Office365Dataset
+- Added model AzureBlobFSDataset
+- Added model CommonDataServiceForAppsEntityDataset
+- Added model DynamicsCrmEntityDataset
+- Added model AzureSqlMITableDataset
+- Added model HdfsLocation
+- Added model HttpServerLocation
+- Added model SftpLocation
+- Added model FtpServerLocation
+- Added model FileServerLocation
+- Added model AmazonS3Location
+- Added model AzureDataLakeStoreLocation
+- Added model AzureBlobFSLocation
+- Added model AzureBlobStorageLocation
+- Added model DatasetLocation
+- Added model BinaryDataset
+- Added model JsonDataset
+- Added model DelimitedTextDataset
+- Added model ParquetDataset
+- Added model AvroDataset
+- Added model GoogleAdWordsSource
+- Added model OracleServiceCloudSource
+- Added model DynamicsAXSource
+- Added model NetezzaPartitionSettings
+- Added model AzureMariaDBSource
+- Added model AzureBlobFSSource
+- Added model Office365Source
+- Added model MongoDbCursorMethodsProperties
+- Added model CosmosDbMongoDbApiSource
+- Added model MongoDbV2Source
+- Added model TeradataPartitionSettings
+- Added model TeradataSource
+- Added model OraclePartitionSettings
+- Added model AzureDataExplorerSource
+- Added model SqlMISource
+- Added model AzureSqlSource
+- Added model SqlServerSource
+- Added model RestSource
+- Added model SapTablePartitionSettings
+- Added model SapTableSource
+- Added model SapOpenHubSource
+- Added model SapHanaSource
+- Added model SalesforceServiceCloudSource
+- Added model ODataSource
+- Added model SapBwSource
+- Added model SybaseSource
+- Added model PostgreSqlSource
+- Added model MySqlSource
+- Added model OdbcSource
+- Added model Db2Source
+- Added model MicrosoftAccessSource
+- Added model InformixSource
+- Added model CommonDataServiceForAppsSource
+- Added model DynamicsCrmSource
+- Added model HdfsReadSettings
+- Added model HttpReadSettings
+- Added model SftpReadSettings
+- Added model FtpReadSettings
+- Added model FileServerReadSettings
+- Added model AmazonS3ReadSettings
+- Added model AzureDataLakeStoreReadSettings
+- Added model AzureBlobFSReadSettings
+- Added model AzureBlobStorageReadSettings
+- Added model StoreReadSettings
+- Added model BinarySource
+- Added model JsonSource
+- Added model FormatReadSettings
+- Added model DelimitedTextReadSettings
+- Added model DelimitedTextSource
+- Added model ParquetSource
+- Added model AvroSource
+- Added model AzureDataExplorerCommandActivity
+- Added model SSISAccessCredential
+- Added model SSISLogLocation
+- Added model CosmosDbMongoDbApiSink
+- Added model SalesforceServiceCloudSink
+- Added model AzureDataExplorerSink
+- Added model CommonDataServiceForAppsSink
+- Added model DynamicsCrmSink
+- Added model MicrosoftAccessSink
+- Added model InformixSink
+- Added model AzureBlobFSSink
+- Added model SqlMISink
+- Added model AzureSqlSink
+- Added model SqlServerSink
+- Added model FileServerWriteSettings
+- Added model AzureDataLakeStoreWriteSettings
+- Added model AzureBlobFSWriteSettings
+- Added model AzureBlobStorageWriteSettings
+- Added model StoreWriteSettings
+- Added model BinarySink
+- Added model ParquetSink
+- Added model JsonWriteSettings
+- Added model DelimitedTextWriteSettings
+- Added model FormatWriteSettings
+- Added model AvroWriteSettings
+- Added model AvroSink
+- Added model AzureMySqlSink
+- Added model AzurePostgreSqlSink
+- Added model JsonSink
+- Added model DelimitedTextSink
+- Added model WebHookActivity
+- Added model ValidationActivity
+- Added model EntityReference
+- Added model IntegrationRuntimeDataProxyProperties
+- Added model SsisVariable
+- Added model SsisEnvironment
+- Added model SsisParameter
+- Added model SsisPackage
+- Added model SsisEnvironmentReference
+- Added model SsisProject
+- Added model SsisFolder
+
+**Breaking changes**
+
+- Operation PipelinesOperations.create_run has a new signature
+- Model SSISPackageLocation has a new signature
+
 0.7.0 (2019-01-31)
 ++++++++++++++++++
 

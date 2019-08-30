@@ -43,9 +43,15 @@ class NetezzaTableDataset(Dataset):
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
-    :param table_name: The table name. Type: string (or Expression with
-     resultType string).
+    :param table_name: This property will be retired. Please consider using
+     schema + table properties instead.
     :type table_name: object
+    :param table: The table name of the Netezza. Type: string (or Expression
+     with resultType string).
+    :type table: object
+    :param netezza_table_dataset_schema: The schema name of the Netezza. Type:
+     string (or Expression with resultType string).
+    :type netezza_table_dataset_schema: object
     """
 
     _validation = {
@@ -64,9 +70,13 @@ class NetezzaTableDataset(Dataset):
         'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
         'table_name': {'key': 'typeProperties.tableName', 'type': 'object'},
+        'table': {'key': 'typeProperties.table', 'type': 'object'},
+        'netezza_table_dataset_schema': {'key': 'typeProperties.schema', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
         super(NetezzaTableDataset, self).__init__(**kwargs)
         self.table_name = kwargs.get('table_name', None)
+        self.table = kwargs.get('table', None)
+        self.netezza_table_dataset_schema = kwargs.get('netezza_table_dataset_schema', None)
         self.type = 'NetezzaTable'

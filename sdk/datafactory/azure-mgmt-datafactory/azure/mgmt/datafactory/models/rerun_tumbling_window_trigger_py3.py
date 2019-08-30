@@ -31,6 +31,9 @@ class RerunTumblingWindowTrigger(Trigger):
      'Started', 'Stopped', 'Disabled'
     :vartype runtime_state: str or
      ~azure.mgmt.datafactory.models.TriggerRuntimeState
+    :param annotations: List of tags that can be used for describing the
+     trigger.
+    :type annotations: list[object]
     :param type: Required. Constant filled by server.
     :type type: str
     :param parent_trigger: The parent trigger reference.
@@ -58,6 +61,7 @@ class RerunTumblingWindowTrigger(Trigger):
         'additional_properties': {'key': '', 'type': '{object}'},
         'description': {'key': 'description', 'type': 'str'},
         'runtime_state': {'key': 'runtimeState', 'type': 'str'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
         'parent_trigger': {'key': 'typeProperties.parentTrigger', 'type': 'object'},
         'requested_start_time': {'key': 'typeProperties.requestedStartTime', 'type': 'iso-8601'},
@@ -65,8 +69,8 @@ class RerunTumblingWindowTrigger(Trigger):
         'max_concurrency': {'key': 'typeProperties.maxConcurrency', 'type': 'int'},
     }
 
-    def __init__(self, *, requested_start_time, requested_end_time, max_concurrency: int, additional_properties=None, description: str=None, parent_trigger=None, **kwargs) -> None:
-        super(RerunTumblingWindowTrigger, self).__init__(additional_properties=additional_properties, description=description, **kwargs)
+    def __init__(self, *, requested_start_time, requested_end_time, max_concurrency: int, additional_properties=None, description: str=None, annotations=None, parent_trigger=None, **kwargs) -> None:
+        super(RerunTumblingWindowTrigger, self).__init__(additional_properties=additional_properties, description=description, annotations=annotations, **kwargs)
         self.parent_trigger = parent_trigger
         self.requested_start_time = requested_start_time
         self.requested_end_time = requested_end_time

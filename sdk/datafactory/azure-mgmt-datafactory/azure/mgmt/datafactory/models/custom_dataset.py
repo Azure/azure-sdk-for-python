@@ -43,14 +43,13 @@ class CustomDataset(Dataset):
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
-    :param type_properties: Required. Custom dataset properties.
+    :param type_properties: Custom dataset properties.
     :type type_properties: object
     """
 
     _validation = {
         'linked_service_name': {'required': True},
         'type': {'required': True},
-        'type_properties': {'required': True},
     }
 
     _attribute_map = {
