@@ -133,6 +133,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         except AttributeError:
             raise ValueError("Blob URL must be a string.")
         parsed_url = urlparse(blob_url.rstrip('/'))
+        self.account_name = parsed_url.hostname.split('.')[0]
         if not parsed_url.path and not (container and blob):
             raise ValueError("Please specify a container and blob name.")
         if not parsed_url.netloc:
@@ -231,7 +232,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             content_disposition=None,  # type: Optional[str]
             content_encoding=None,  # type: Optional[str]
             content_language=None,  # type: Optional[str]
-            content_type=None  # type: Optional[str]
+            content_type=None,  # type: Optional[str]
+            user_delegation_key=None
         ):
         # type: (...) -> Any
         """
@@ -289,12 +291,20 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param str content_type:
             Response header value for Content-Type when resource is accessed
             using this shared access signature.
+        :param ~azure.storage.blob._shared.models.UserDelegationKey user_delegation_key:
+            Instead of an account key, the user could pass in a user delegation key.
+            A user delegation key can be obtained from the service by authenticating with an AAD identity;
+            this can be accomplished by calling get_user_delegation_key.
+            When present, the SAS is signed with the user delegation key instead.
         :return: A Shared Access Signature (sas) token.
         :rtype: str
         """
-        if not hasattr(self.credential, 'account_key') or not self.credential.account_key:
-            raise ValueError("No account SAS key available.")
-        sas = BlobSharedAccessSignature(self.credential.account_name, self.credential.account_key)
+        if user_delegation_key is not None:
+            sas = BlobSharedAccessSignature(self.account_name, user_delegation_key=user_delegation_key)
+        else:
+            if not hasattr(self.credential, 'account_key') or not self.credential.account_key:
+                raise ValueError("No account SAS key available.")
+            sas = BlobSharedAccessSignature(self.credential.account_name, self.credential.account_key)
         return sas.generate_blob(
             self.container_name,
             self.blob_name,
