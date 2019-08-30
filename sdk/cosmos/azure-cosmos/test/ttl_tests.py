@@ -60,7 +60,7 @@ class Test_ttl_tests(unittest.TestCase):
         try:
             func(*args, **kwargs)
             self.assertFalse(True, 'function should fail.')
-        except errors.HTTPFailure as inst:
+        except errors.CosmosHttpResponseError as inst:
             self.assertEqual(inst.status_code, status_code)
 
     @classmethod

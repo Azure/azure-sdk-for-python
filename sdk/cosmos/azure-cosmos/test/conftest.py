@@ -48,9 +48,8 @@ def teardown(request):
             for database_id in database_ids_to_delete:
                 try:
                     client.delete_database(database_id)
-                except errors.HTTPFailure as e:
-                    if e.status_code != StatusCodes.NOT_FOUND:
-                        raise e
+                except errors.CosmosResourceNotFoundError:
+                    pass
             del database_ids_to_delete[:]
         print("Clean up completed!")
 

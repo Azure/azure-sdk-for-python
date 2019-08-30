@@ -31,7 +31,7 @@ from ._cosmos_client_connection import CosmosClientConnection
 from .container_client import ContainerClient
 from .offer import Offer
 from .http_constants import StatusCodes
-from .errors import HTTPFailure
+from .errors import CosmosResourceNotFoundError
 from .user_client import UserClient
 from ._query_iterable import QueryIterable
 
@@ -126,7 +126,7 @@ class DatabaseClient(object):
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
         :returns: Dict[Str, Any]
-        :raise `HTTPFailure`: If the given database couldn't be retrieved.
+        :raise `CosmosHttpResponseError`: If the given database couldn't be retrieved.
 
         """
         # TODO this helper function should be extracted from CosmosClient
@@ -171,7 +171,7 @@ class DatabaseClient(object):
         """
         Create a new container with the given ID (name).
 
-        If a container with the given ID already exists, an HTTPFailure with status_code 409 is raised.
+        If a container with the given ID already exists, a CosmosResourceExistsError is raised.
 
         :param id: ID (name) of container to create.
         :param partition_key: The partition key to use for the container.
@@ -187,7 +187,7 @@ class DatabaseClient(object):
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
         :returns: A :class:`ContainerClient` instance representing the new container.
-        :raise HTTPFailure: The container creation failed.
+        :raise CosmosHttpResponseError: The container creation failed.
 
 
         .. literalinclude:: ../../examples/examples.py
@@ -265,7 +265,7 @@ class DatabaseClient(object):
         :param populate_query_metrics: Enable returning query metrics in response headers.
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
-        :raise HTTPFailure: If the container couldn't be deleted.
+        :raise CosmosHttpResponseError: If the container couldn't be deleted.
 
         """
         if not request_options:
@@ -439,7 +439,7 @@ class DatabaseClient(object):
         :param populate_query_metrics: Enable returning query metrics in response headers.
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
-        :raise `HTTPFailure`: Raised if the container couldn't be replaced. This includes
+        :raise `CosmosHttpResponseError`: Raised if the container couldn't be replaced. This includes
             if the container with given id does not exist.
         :returns: :class:`ContainerClient` instance representing the container after replace completed.
 
@@ -547,7 +547,7 @@ class DatabaseClient(object):
         :param user: The ID (name), dict representing the properties or :class:`UserClient`
             instance of the user to be retrieved.
         :returns: A :class:`UserClient` instance representing the retrieved user.
-        :raise `HTTPFailure`: If the given user couldn't be retrieved.
+        :raise `CosmosHttpResponseError`: If the given user couldn't be retrieved.
 
         """
         if isinstance(user, UserClient):
@@ -569,7 +569,7 @@ class DatabaseClient(object):
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
         :returns: A :class:`UserClient` instance representing the new user.
-        :raise `HTTPFailure`: If the given user couldn't be created.
+        :raise `CosmosHttpResponseError`: If the given user couldn't be created.
 
         To update or replace an existing user, use the :func:`ContainerClient.upsert_user` method.
 
@@ -604,7 +604,7 @@ class DatabaseClient(object):
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
         :returns: A :class:`UserClient` instance representing the upserted user.
-        :raise `HTTPFailure`: If the given user could not be upserted.
+        :raise `CosmosHttpResponseError`: If the given user could not be upserted.
 
         If the user already exists in the container, it is replaced. If it does not, it is inserted.
 
@@ -634,7 +634,7 @@ class DatabaseClient(object):
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
         :returns: A :class:`UserClient` instance representing the user after replace went through.
-        :raise `HTTPFailure`: If the replace failed or the user with given id does not exist.
+        :raise `CosmosHttpResponseError`: If the replace failed or the user with given id does not exist.
 
         """
         if not request_options:
@@ -660,7 +660,7 @@ class DatabaseClient(object):
             instance of the user to be deleted.
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
-        :raises `HTTPFailure`: The user wasn't deleted successfully. If the user does not
+        :raises `CosmosHttpResponseError`: The user wasn't deleted successfully. If the user does not
             exist in the container, a `404` error is returned.
 
         """
@@ -680,7 +680,7 @@ class DatabaseClient(object):
 
         :param response_hook: a callable invoked with the response metadata
         :returns: Offer for the database.
-        :raise HTTPFailure: If no offer exists for the database or if the offer could not be retrieved.
+        :raise CosmosHttpResponseError: If no offer exists for the database or if the offer could not be retrieved.
 
         """
         properties = self._get_properties()
@@ -691,7 +691,9 @@ class DatabaseClient(object):
         }
         offers = list(self.client_connection.QueryOffers(query_spec, **kwargs))
         if not offers:
-            raise HTTPFailure(StatusCodes.NOT_FOUND, "Could not find Offer for database " + self.database_link)
+            raise CosmosResourceNotFoundError(
+                status=StatusCodes.NOT_FOUND,
+                message="Could not find Offer for database " + self.database_link)
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, offers)
@@ -706,7 +708,7 @@ class DatabaseClient(object):
         :param throughput: The throughput to be set (an integer).
         :param response_hook: a callable invoked with the response metadata
         :returns: Offer for the database, updated with new throughput.
-        :raise HTTPFailure: If no offer exists for the database or if the offer could not be updated.
+        :raise CosmosHttpResponseError: If no offer exists for the database or if the offer could not be updated.
 
         """
         properties = self._get_properties()
@@ -717,7 +719,9 @@ class DatabaseClient(object):
         }
         offers = list(self.client_connection.QueryOffers(query_spec))
         if not offers:
-            raise HTTPFailure(StatusCodes.NOT_FOUND, "Could not find Offer for collection " + self.database_link)
+            raise CosmosResourceNotFoundError(
+                status=StatusCodes.NOT_FOUND,
+                message="Could not find Offer for collection " + self.database_link)
         new_offer = offers[0].copy()
         new_offer["content"]["offerThroughput"] = throughput
         data = self.client_connection.ReplaceOffer(offer_link=offers[0]["_self"], offer=offers[0], **kwargs)

@@ -72,7 +72,7 @@ class Test_globaldb_tests(unittest.TestCase):
         try:
             func(*args, **kwargs)
             self.assertFalse(True, 'function should fail.')
-        except errors.HTTPFailure as inst:
+        except errors.CosmosHttpResponseError as inst:
             self.assertEqual(inst.status_code, status_code)
             self.assertEqual(inst.sub_status, sub_status)
 
@@ -385,7 +385,11 @@ class Test_globaldb_tests(unittest.TestCase):
         _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
 
     def _MockExecuteFunction(self, function, *args, **kwargs):
-        raise errors.HTTPFailure(StatusCodes.FORBIDDEN, "Write Forbidden", {'x-ms-substatus' : SubStatusCodes.WRITE_FORBIDDEN})
+        response = test_config.FakeResponse({'x-ms-substatus' : SubStatusCodes.WRITE_FORBIDDEN})
+        raise errors.CosmosHttpResponseError(
+            status_code=StatusCodes.FORBIDDEN,
+            message="Write Forbidden",
+            response=response)
             
     def _MockGetDatabaseAccount(self, url_conection):
         database_account = documents.DatabaseAccount()

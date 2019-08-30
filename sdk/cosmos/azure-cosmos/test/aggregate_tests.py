@@ -31,7 +31,7 @@ from six.moves import xrange
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.documents as documents
 import test_config
-from azure.cosmos.errors import HTTPFailure
+from azure.cosmos.errors import CosmosHttpResponseError
 from azure.cosmos.partition_key import PartitionKey
 
 pytestmark = pytest.mark.cosmosEmulator
@@ -233,7 +233,7 @@ class AggregationQueryTest(with_metaclass(AggregateQueryTestSequenceMeta, unitte
             self.assertEqual(result_iterable.fetch_next_block(), [])
 
         if isinstance(expected, Exception):
-            self.assertRaises(HTTPFailure, _verify_result)
+            self.assertRaises(CosmosHttpResponseError, _verify_result)
         else:
             _verify_result()
 

@@ -106,7 +106,7 @@ class CosmosClient(object):
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
         :returns: A :class:`DatabaseClient` instance representing the new database.
-        :raises `HTTPFailure`: If database with the given ID already exists.
+        :raises `CosmosHttpResponseError`: If database with the given ID already exists.
 
         .. literalinclude:: ../../examples/examples.py
             :start-after: [START create_database]
@@ -278,7 +278,7 @@ class CosmosClient(object):
         :param populate_query_metrics: Enable returning query metrics in response headers.
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
-        :raise HTTPFailure: If the database couldn't be deleted.
+        :raise CosmosHttpResponseError: If the database couldn't be deleted.
 
         """
         if not request_options:

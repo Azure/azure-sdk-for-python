@@ -39,7 +39,7 @@ class ScriptType(object):
     UserDefinedFunction = "udfs"
 
 
-class Scripts(object):
+class ScriptsClient(object):
     def __init__(self, client_connection, container_link, is_system_key):
         # type: (CosmosClientConnection, str, bool) -> None
         self.client_connection = client_connection
@@ -98,7 +98,7 @@ class Scripts(object):
         :param sproc: The ID (name) or dict representing stored procedure to retrieve.
         :param request_options: Dictionary of additional properties to be used for the request.
         :returns: A dict representing the retrieved stored procedure.
-        :raise `HTTPFailure`: If the given stored procedure couldn't be retrieved.
+        :raise `CosmosHttpResponseError`: If the given stored procedure couldn't be retrieved.
 
         """
         if not request_options:
@@ -115,7 +115,7 @@ class Scripts(object):
         :param body: A dict-like object representing the sproc to create.
         :param request_options: Dictionary of additional properties to be used for the request.
         :returns: A dict representing the new stored procedure.
-        :raise `HTTPFailure`: If the given stored procedure couldn't be created.
+        :raise `CosmosHttpResponseError`: If the given stored procedure couldn't be created.
 
         To replace an existing sproc, use the :func:`Container.scripts.replace_stored_procedure` method.
 
@@ -135,7 +135,7 @@ class Scripts(object):
         :param body: A dict-like object representing the sproc to replace.
         :param request_options: Dictionary of additional properties to be used for the request.
         :returns: A dict representing the stored procedure after replace went through.
-        :raise `HTTPFailure`: If the replace failed or the stored procedure with given id does not exist.
+        :raise `CosmosHttpResponseError`: If the replace failed or the stored procedure with given id does not exist.
 
         """
         if not request_options:
@@ -151,7 +151,7 @@ class Scripts(object):
 
         :param sproc: The ID (name) or dict representing stored procedure to be deleted.
         :param request_options: Dictionary of additional properties to be used for the request.
-        :raises `HTTPFailure`: The sproc wasn't deleted successfully. If the sproc does not
+        :raises `CosmosHttpResponseError`: The sproc wasn't deleted successfully. If the sproc does not
             exist in the container, a `404` error is returned.
 
         """
@@ -174,7 +174,7 @@ class Scripts(object):
         :param partition_key: Specifies the partition key to indicate which partition the sproc should execute on.
         :param request_options: Dictionary of additional properties to be used for the request.
         :returns: result of the executed stored procedure for the given parameters.
-        :raise `HTTPFailure`: If the stored procedure execution failed or if the stored procedure with
+        :raise `CosmosHttpResponseError`: If the stored procedure execution failed or if the stored procedure with
             given id does not exists in the container.
 
         """
@@ -242,7 +242,7 @@ class Scripts(object):
         :param trigger: The ID (name) or dict representing trigger to retrieve.
         :param request_options: Dictionary of additional properties to be used for the request.
         :returns: A dict representing the retrieved trigger.
-        :raise `HTTPFailure`: If the given trigger couldn't be retrieved.
+        :raise `CosmosHttpResponseError`: If the given trigger couldn't be retrieved.
 
         """
         if not request_options:
@@ -259,7 +259,7 @@ class Scripts(object):
         :param body: A dict-like object representing the trigger to create.
         :param request_options: Dictionary of additional properties to be used for the request.
         :returns: A dict representing the new trigger.
-        :raise `HTTPFailure`: If the given trigger couldn't be created.
+        :raise `CosmosHttpResponseError`: If the given trigger couldn't be created.
 
         To replace an existing trigger, use the :func:`Container.scripts.replace_trigger` method.
 
@@ -279,7 +279,7 @@ class Scripts(object):
         :param body: A dict-like object representing the trigger to replace.
         :param request_options: Dictionary of additional properties to be used for the request.
         :returns: A dict representing the trigger after replace went through.
-        :raise `HTTPFailure`: If the replace failed or the trigger with given id does not exist.
+        :raise `CosmosHttpResponseError`: If the replace failed or the trigger with given id does not exist.
 
         """
         if not request_options:
@@ -295,7 +295,7 @@ class Scripts(object):
 
         :param trigger: The ID (name) or dict representing trigger to be deleted.
         :param request_options: Dictionary of additional properties to be used for the request.
-        :raises `HTTPFailure`: The trigger wasn't deleted successfully. If the trigger does not
+        :raises `CosmosHttpResponseError`: The trigger wasn't deleted successfully. If the trigger does not
             exist in the container, a `404` error is returned.
 
         """
@@ -354,7 +354,7 @@ class Scripts(object):
         :param udf: The ID (name) or dict representing udf to retrieve.
         :param request_options: Dictionary of additional properties to be used for the request.
         :returns: A dict representing the retrieved user defined function.
-        :raise `HTTPFailure`: If the given user defined function couldn't be retrieved.
+        :raise `CosmosHttpResponseError`: If the given user defined function couldn't be retrieved.
 
         """
         if not request_options:
@@ -371,7 +371,7 @@ class Scripts(object):
         :param body: A dict-like object representing the udf to create.
         :param request_options: Dictionary of additional properties to be used for the request.
         :returns: A dict representing the new user defined function.
-        :raise `HTTPFailure`: If the given user defined function couldn't be created.
+        :raise `CosmosHttpResponseError`: If the given user defined function couldn't be created.
 
         To replace an existing udf, use the :func:`Container.scripts.replace_user_defined_function` method.
 
@@ -391,7 +391,7 @@ class Scripts(object):
         :param body: A dict-like object representing the udf to replace.
         :param request_options: Dictionary of additional properties to be used for the request.
         :returns: A dict representing the user defined function after replace went through.
-        :raise `HTTPFailure`: If the replace failed or the user defined function with given id does not exist.
+        :raise `CosmosHttpResponseError`: If the replace failed or the user defined function with given id does not exist.
 
         """
         if not request_options:
@@ -407,7 +407,7 @@ class Scripts(object):
 
         :param udf: The ID (name) or dict representing udf to be deleted.
         :param request_options: Dictionary of additional properties to be used for the request.
-        :raises `HTTPFailure`: The udf wasn't deleted successfully. If the udf does not
+        :raises `CosmosHttpResponseError`: The udf wasn't deleted successfully. If the udf does not
             exist in the container, a `404` error is returned.
 
         """

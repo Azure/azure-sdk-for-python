@@ -36,7 +36,7 @@ from .documents import (
 )
 from .partition_key import PartitionKey
 from .permission import Permission
-from .scripts import Scripts
+from .scripts_client import ScriptsClient
 from .version import VERSION
 
 __all__ = (
@@ -45,7 +45,7 @@ __all__ = (
     "Database",
     "PartitionKey",
     "Permission",
-    "Scripts",
+    "ScriptsClient",
     "User",
     "ConsistencyLevel",
     "DataType",

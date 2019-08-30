@@ -44,6 +44,7 @@ def ObtainClient():
 
     return cosmos_client.CosmosClient(HOST, {'masterKey': MASTER_KEY}, "Session", connection_policy)
 
+
 # Query for Entity / Entities
 def Query_Entities(parent, entity_type, id = None):
     find_entity_by_id_query = {
@@ -71,7 +72,7 @@ def Query_Entities(parent, entity_type, id = None):
                 entities = list(parent.read_all_items())
             else:
                 entities = list(parent.query_items(find_entity_by_id_query))
-    except errors.CosmosError as e:
+    except errors.AzureError as e:
         print("The following error occured while querying for the entity / entities ", entity_type, id if id != None else "")
         print(e)
         raise
@@ -81,35 +82,34 @@ def Query_Entities(parent, entity_type, id = None):
         return entities[0]
     return None
 
+
 def CreateDatabaseIfNotExists(client, database_id):
     try:
         database = Query_Entities(client, 'database', id = database_id)
         if database == None:
             database = client.create_database(id=database_id)
         return client.get_database_client(database['id'])
-    except errors.HTTPFailure as e:
-        if e.status_code == 409: # Move these constants to an enum
-            pass
-        else: 
-            raise errors.HTTPFailure(e.status_code)
+    except errors.CosmosResourceExistsError:
+        pass
+
 
 def DeleteContainerIfExists(db, collection_id):
     try:
         db.delete_container(collection_id)
         print('Collection with id \'{0}\' was deleted'.format(collection_id))
-    except errors.HTTPFailure as e:
-        if e.status_code == 404:
-            pass
-        elif e.status_code == 400:
+    except errors.CosmosResourceNotFoundError:
+        pass
+    except errors.CosmosHttpResponseError as e
+        if e.status_code == 400:
             print("Bad request for collection link", collection_id)
-            raise
-        else:
-            raise
+        raise
+
 
 def print_dictionary_items(dict):
     for k, v in dict.items():
         print("{:<15}".format(k), v)
     print()
+
 
 def FetchAllDatabases(client):
     databases = Query_Entities(client, 'database')
@@ -119,6 +119,7 @@ def FetchAllDatabases(client):
         print_dictionary_items(db)
         print("-" * 41)
 
+
 def QueryDocumentsWithCustomQuery(container, query_with_optional_parameters, message = "Document(s) found by query: "):
     try:
         results = list(container.query_items(query_with_optional_parameters, enable_cross_partition_query=True))
@@ -126,10 +127,10 @@ def QueryDocumentsWithCustomQuery(container, query_with_optional_parameters, mes
         for doc in results:
             print(doc)
         return results
-    except errors.HTTPFailure as e:
-        if e.status_code == 404:
-            print("Document doesn't exist")
-        elif e.status_code == 400:
+    except errors.CosmosResourceNotFoundError:
+        print("Document doesn't exist")
+    except errors.CosmosHttpResponseError as e:
+        if e.status_code == 400:
             # Can occur when we are trying to query on excluded paths
             print("Bad Request exception occured: ", e)
             pass
@@ -137,6 +138,7 @@ def QueryDocumentsWithCustomQuery(container, query_with_optional_parameters, mes
             raise
     finally:
         print()
+
 
 def ExplicitlyExcludeFromIndex(db):
     """ The default index policy on a DocumentContainer will AUTOMATICALLY index ALL documents added.
@@ -190,14 +192,11 @@ def ExplicitlyExcludeFromIndex(db):
         # Cleanup
         db.delete_container(created_Container)
         print("\n")
-    
-    except errors.HTTPFailure as e:
-        if e.status_code == 409:
-            print("Entity already exists")
-        elif e.status_code == 404:
-            print("Entity doesn't exist")
-        else:
-            raise
+    except errors.CosmosResourceExistsError:
+        print("Entity already exists")
+    except errors.CosmosResourceNotFoundError:
+        print("Entity doesn't exist")
+
 
 def UseManualIndexing(db):
     """The default index policy on a DocumentContainer will AUTOMATICALLY index ALL documents added.
@@ -254,14 +253,11 @@ def UseManualIndexing(db):
         # Cleanup
         db.delete_container(created_Container)
         print("\n")
+    except errors.CosmosResourceExistsError:
+        print("Entity already exists")
+    except errors.CosmosResourceNotFoundError:
+        print("Entity doesn't exist")
 
-    except errors.HTTPFailure as e:
-        if e.status_code == 409:
-            print("Entity already exists")
-        elif e.status_code == 404:
-            print("Entity doesn't exist")
-        else:
-            raise
 
 def ExcludePathsFromIndex(db):
     """The default behavior is for Cosmos to index every attribute in every document automatically.
@@ -329,14 +325,11 @@ def ExcludePathsFromIndex(db):
         # Cleanup
         db.delete_container(created_Container)
         print("\n")
+    except errors.CosmosResourceExistsError:
+        print("Entity already exists")
+    except errors.CosmosResourceNotFoundError:
+        print("Entity doesn't exist")
 
-    except errors.HTTPFailure as e:
-        if e.status_code == 409:
-            print("Entity already exists")
-        elif e.status_code == 404:
-            print("Entity doesn't exist")
-        else:
-            raise
 
 def RangeScanOnHashIndex(db):
     """When a range index is not available (i.e. Only hash or no index found on the path), comparisons queries can still 
@@ -393,13 +386,11 @@ def RangeScanOnHashIndex(db):
         # Cleanup
         db.delete_container(created_Container)
         print("\n")
-    except errors.HTTPFailure as e:
-        if e.status_code == 409:
-            print("Entity already exists")
-        elif e.status_code == 404:
-            print("Entity doesn't exist")
-        else:
-            raise
+    except errors.CosmosResourceExistsError:
+        print("Entity already exists")
+    except errors.CosmosResourceNotFoundError:
+        print("Entity doesn't exist")
+
 
 def UseRangeIndexesOnStrings(db):
     """Showing how range queries can be performed even on strings.
@@ -481,13 +472,11 @@ def UseRangeIndexesOnStrings(db):
         # Cleanup
         db.delete_container(created_Container)
         print("\n")
-    except errors.HTTPFailure as e:
-        if e.status_code == 409:
-            print("Entity already exists")
-        elif e.status_code == 404:
-            print("Entity doesn't exist")
-        else:
-            raise
+    except errors.CosmosResourceExistsError:
+        print("Entity already exists")
+    except errors.CosmosResourceNotFoundError:
+        print("Entity doesn't exist")
+
 
 def PerformIndexTransformations(db):
     try:
@@ -539,13 +528,11 @@ def PerformIndexTransformations(db):
         # Cleanup
         db.delete_container(created_Container)
         print("\n")
-    except errors.HTTPFailure as e:
-        if e.status_code == 409:
-            print("Entity already exists")
-        elif e.status_code == 404:
-            print("Entity doesn't exist")
-        else:
-            raise
+    except errors.CosmosResourceExistsError:
+        print("Entity already exists")
+    except errors.CosmosResourceNotFoundError:
+        print("Entity doesn't exist")
+
 
 def PerformMultiOrderbyQuery(db):
     try:
@@ -632,13 +619,11 @@ def PerformMultiOrderbyQuery(db):
         # Cleanup
         db.delete_container(created_container)
         print("\n")
-    except errors.HTTPFailure as e:
-        if e.status_code == 409:
-            print("Entity already exists")
-        elif e.status_code == 404:
-            print("Entity doesn't exist")
-        else:
-            raise
+    except errors.CosmosResourceExistsError:
+        print("Entity already exists")
+    except errors.CosmosResourceNotFoundError:
+        print("Entity doesn't exist")
+
 
 def PerformMultiOrderbyQuery(client, database_id):
     try:
@@ -728,13 +713,11 @@ def PerformMultiOrderbyQuery(client, database_id):
         # Cleanup
         client.DeleteContainer(collection_link)
         print("\n")
-    except errors.HTTPFailure as e:
-        if e.status_code == 409:
-            print("Entity already exists")
-        elif e.status_code == 404:
-            print("Entity doesn't exist")
-        else:
-            raise
+    except errors.CosmosResourceExistsError:
+        print("Entity already exists")
+    except errors.CosmosResourceNotFoundError:
+        print("Entity doesn't exist")
+
 
 def RunIndexDemo():
     try:
@@ -769,7 +752,7 @@ def RunIndexDemo():
         # 8. Perform Multi Orderby queries using composite indexes
         PerformMultiOrderbyQuery(client, DATABASE_ID)
 
-    except errors.CosmosError as e:
+    except errors.AzureError as e:
         raise e
 
 if __name__ == '__main__':

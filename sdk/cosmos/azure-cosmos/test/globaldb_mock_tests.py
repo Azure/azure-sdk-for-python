@@ -152,10 +152,14 @@ class Test_globaldb_mock_tests(unittest.TestCase):
         else:
             self.endpoint_discovery_retry_count += 1
             location_changed = True
-            raise errors.HTTPFailure(StatusCodes.FORBIDDEN, "Forbidden", {'x-ms-substatus' : 3})
+            raise errors.CosmosHttpResponseError(
+                status_code=StatusCodes.FORBIDDEN,
+                message="Forbidden",
+                response=test_config.FakeResponse({'x-ms-substatus' : 3}))
 
     def MockGetDatabaseAccountStub(self, endpoint):
-        raise errors.HTTPFailure(StatusCodes.SERVICE_UNAVAILABLE, "Service unavailable")
+        raise errors.CosmosHttpResponseError(
+            status_code=StatusCodes.SERVICE_UNAVAILABLE, message="Service unavailable")
     
     def MockCreateDatabase(self, client, database):
         self.OriginalExecuteFunction = _retry_utility.ExecuteFunction

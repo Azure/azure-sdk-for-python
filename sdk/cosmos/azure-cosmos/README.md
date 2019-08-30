@@ -63,7 +63,7 @@ export ACCOUNT_KEY=$(az cosmosdb list-keys --resource-group $RES_GROUP --name $A
 Once you've populated the `ACCOUNT_URI` and `ACCOUNT_KEY` environment variables, you can create the [CosmosClient][ref_cosmosclient].
 
 ```Python
-from azure.cosmos import HTTPFailure, CosmosClient, Container, Database, PartitionKey
+from azure.cosmos import CosmosClient, Container, Database, PartitionKey, errors
 
 import os
 url = os.environ['ACCOUNT_URI']
@@ -106,9 +106,7 @@ After authenticating your [CosmosClient][ref_cosmosclient], you can work with an
 database_name = 'testDatabase'
 try:
     database = client.create_database(database_name)
-except HTTPFailure as e:
-    if e.status_code != 409:
-        raise
+except errors.CosmosResourceExistsError:
     database = client.get_database_client(database_name)
 ```
 
@@ -120,13 +118,13 @@ This example creates a container with default settings. If a container with the 
 container_name = 'products'
 try:
     container = database.create_container(id=container_name, partition_key=PartitionKey(path="/productName"))
-except HTTPFailure as e:
-    if e.status_code != 409:
-        raise
+except errors.CosmosResourceExistsError:
     container = database.get_container_client(container_name)
+except errors.CosmosHttpResponseError:
+    raise
 ```
 
-The preceding snippet also handles the [HTTPFailure][ref_httpfailure] exception if the container creation failed. For more information on error handling and troubleshooting, see the [Troubleshooting](#troubleshooting) section.
+The preceding snippet also handles the [CosmosHttpResponseError][ref_httpfailure] exception if the container creation failed. For more information on error handling and troubleshooting, see the [Troubleshooting](#troubleshooting) section.
 
 ### Get an existing container
 
@@ -243,13 +241,11 @@ For example, if you try to create a container using an ID (name) that's already 
 ```Python
 try:
     database.create_container(id=container_name, partition_key=PartitionKey(path="/productName")
-except HTTPFailure as e:
-    if e.status_code == 409:
-        print("""Error creating container.
+except errors.CosmosResourceExistsError:
+    print("""Error creating container.
 HTTP status code 409: The ID (name) provided for the container is already in use.
 The container name must be unique within the database.""")
-    else:
-        raise
+
 ```
 
 ## More sample code
@@ -285,7 +281,7 @@ For more extensive documentation on the Cosmos DB service, see the [Azure Cosmos
 [ref_cosmosclient_create_database]: http://cosmosproto.westus.azurecontainer.io/#azure.cosmos.CosmosClient.create_database
 [ref_cosmosclient]: http://cosmosproto.westus.azurecontainer.io/#azure.cosmos.CosmosClient
 [ref_database]: http://cosmosproto.westus.azurecontainer.io/#azure.cosmos.Database
-[ref_httpfailure]: https://docs.microsoft.com/python/api/azure-cosmos/azure.cosmos.errors.httpfailure
+[ref_httpfailure]: https://docs.microsoft.com/python/api/azure-cosmos/azure.cosmos.errors.CosmosHttpResponseError
 [ref_item]: http://cosmosproto.westus.azurecontainer.io/#azure.cosmos.Item
 [sample_database_mgmt]: https://github.com/binderjoe/cosmos-python-prototype/blob/master/examples/databasemanagementsample.py
 [sample_document_mgmt]: https://github.com/binderjoe/cosmos-python-prototype/blob/master/examples/documentmanagementsample.py

@@ -62,10 +62,10 @@ class Worker(object):
         while doc:
             try:
                 self.client.DeleteItem(doc['_self'], {'partitionKey': doc['id']})
-            except errors.CosmosError as e:
-                if e.status_code != StatusCodes.NOT_FOUND:
-                    print("Error occurred while deleting document from %s" % self.client.WriteEndpoint)
-                else:
-                    raise e
+            except errors.CosmosResourceNotFoundError:
+                raise
+            except errors.CosmosHttpResponseError as e:
+                print("Error occurred while deleting document from %s" % self.client.WriteEndpoint)
+
             doc = next(it, None)
         print("Deleted all documents from region %s" % self.client.WriteEndpoint)

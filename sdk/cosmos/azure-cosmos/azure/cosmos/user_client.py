@@ -65,7 +65,7 @@ class UserClient(object):
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
         :returns: A :class:`UserClient` instance representing the retrieved user.
-        :raise `HTTPFailure`: If the given user couldn't be retrieved.
+        :raise `CosmosHttpResponseError`: If the given user couldn't be retrieved.
 
         """
         if not request_options:
@@ -150,7 +150,7 @@ class UserClient(object):
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
         :returns: A dict representing the retrieved permission.
-        :raise `HTTPFailure`: If the given permission couldn't be retrieved.
+        :raise `CosmosHttpResponseError`: If the given permission couldn't be retrieved.
 
         """
         if not request_options:
@@ -180,7 +180,7 @@ class UserClient(object):
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
         :returns: A dict representing the new permission.
-        :raise `HTTPFailure`: If the given permission couldn't be created.
+        :raise `CosmosHttpResponseError`: If the given permission couldn't be created.
 
         To update or replace an existing permision, use the :func:`UserClient.upsert_permission` method.
 
@@ -212,7 +212,7 @@ class UserClient(object):
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
         :returns: A dict representing the upserted permission.
-        :raise `HTTPFailure`: If the given permission could not be upserted.
+        :raise `CosmosHttpResponseError`: If the given permission could not be upserted.
 
         If the permission already exists in the container, it is replaced. If it does not, it is inserted.
         """
@@ -246,7 +246,7 @@ class UserClient(object):
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
         :returns: A dict representing the permission after replace went through.
-        :raise `HTTPFailure`: If the replace failed or the permission with given id does not exist.
+        :raise `CosmosHttpResponseError`: If the replace failed or the permission with given id does not exist.
 
         """
         if not request_options:
@@ -276,7 +276,7 @@ class UserClient(object):
             instance of the permission to be replaced.
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
-        :raises `HTTPFailure`: The permission wasn't deleted successfully. If the permission does
+        :raises `CosmosHttpResponseError`: The permission wasn't deleted successfully. If the permission does
             not exist for the user, a `404` error is returned.
 
         """

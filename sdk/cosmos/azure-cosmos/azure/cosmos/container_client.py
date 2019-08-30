@@ -28,10 +28,10 @@ import six
 from azure.core.tracing.decorator import distributed_trace
 
 from ._cosmos_client_connection import CosmosClientConnection
-from .errors import HTTPFailure
+from .errors import CosmosResourceNotFoundError
 from .http_constants import StatusCodes
 from .offer import Offer
-from .scripts import Scripts
+from .scripts_client import ScriptsClient
 from ._query_iterable import QueryIterable
 from .partition_key import NonePartitionKeyValue
 
@@ -82,7 +82,7 @@ class ContainerClient(object):
     @property
     def scripts(self):
         if self._scripts is None:
-            self._scripts = Scripts(self.client_connection, self.container_link, self.is_system_key)
+            self._scripts = ScriptsClient(self.client_connection, self.container_link, self.is_system_key)
         return self._scripts
 
     def _get_document_link(self, item_or_link):
@@ -120,7 +120,7 @@ class ContainerClient(object):
         :param populate_quota_info: Enable returning collection storage quota information in response headers.
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
-        :raise `HTTPFailure`: Raised if the container couldn't be retrieved. This includes
+        :raise `CosmosHttpResponseError`: Raised if the container couldn't be retrieved. This includes
             if the container does not exist.
         :returns: :class:`Container` instance representing the retrieved container.
 
@@ -172,7 +172,7 @@ class ContainerClient(object):
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
         :returns: Dict representing the item to be retrieved.
-        :raise `HTTPFailure`: If the given item couldn't be retrieved.
+        :raise `CosmosHttpResponseError`: If the given item couldn't be retrieved.
 
         .. literalinclude:: ../../examples/examples.py
             :start-after: [START update_item]
@@ -409,7 +409,7 @@ class ContainerClient(object):
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
         :returns: A dict representing the item after replace went through.
-        :raise `HTTPFailure`: If the replace failed or the item with given id does not exist.
+        :raise `CosmosHttpResponseError`: If the replace failed or the item with given id does not exist.
 
         """
         item_link = self._get_document_link(item)
@@ -463,7 +463,7 @@ class ContainerClient(object):
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
         :returns: A dict representing the upserted item.
-        :raise `HTTPFailure`: If the given item could not be upserted.
+        :raise `CosmosHttpResponseError`: If the given item could not be upserted.
 
         If the item already exists in the container, it is replaced. If it does not, it is inserted.
 
@@ -519,7 +519,7 @@ class ContainerClient(object):
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
         :returns: A dict representing the new item.
-        :raises `HTTPFailure`: If item with the given ID already exists.
+        :raises `CosmosHttpResponseError`: If item with the given ID already exists.
 
         To update or replace an existing item, use the :func:`Container.upsert_item` method.
 
@@ -578,7 +578,7 @@ class ContainerClient(object):
         :param post_trigger_include: trigger id to be used as post operation trigger.
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
-        :raises `HTTPFailure`: The item wasn't deleted successfully. If the item does not
+        :raises `CosmosHttpResponseError`: The item wasn't deleted successfully. If the item does not
             exist in the container, a `404` error is returned.
 
         """
@@ -611,7 +611,7 @@ class ContainerClient(object):
 
         :param response_hook: a callable invoked with the response metadata
         :returns: Offer for the container.
-        :raise HTTPFailure: If no offer exists for the container or if the offer could not be retrieved.
+        :raise CosmosHttpResponseError: If no offer exists for the container or if the offer could not be retrieved.
 
         """
         properties = self._get_properties()
@@ -622,7 +622,9 @@ class ContainerClient(object):
         }
         offers = list(self.client_connection.QueryOffers(query_spec, **kwargs))
         if not offers:
-            raise HTTPFailure(StatusCodes.NOT_FOUND, "Could not find Offer for container " + self.container_link)
+            raise CosmosResourceNotFoundError(
+                status_code=StatusCodes.NOT_FOUND,
+                message="Could not find Offer for container " + self.container_link)
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, offers)
@@ -637,7 +639,7 @@ class ContainerClient(object):
         :param throughput: The throughput to be set (an integer).
         :param response_hook: a callable invoked with the response metadata
         :returns: Offer for the container, updated with new throughput.
-        :raise HTTPFailure: If no offer exists for the container or if the offer could not be updated.
+        :raise CosmosHttpResponseError: If no offer exists for the container or if the offer could not be updated.
 
         """
         properties = self._get_properties()
@@ -648,7 +650,9 @@ class ContainerClient(object):
         }
         offers = list(self.client_connection.QueryOffers(query_spec, **kwargs))
         if not offers:
-            raise HTTPFailure(StatusCodes.NOT_FOUND, "Could not find Offer for container " + self.container_link)
+            raise CosmosResourceNotFoundError(
+                status=StatusCodes.NOT_FOUND,
+                message="Could not find Offer for container " + self.container_link)
         new_offer = offers[0].copy()
         new_offer["content"]["offerThroughput"] = throughput
         data = self.client_connection.ReplaceOffer(offer_link=offers[0]["_self"], offer=offers[0], **kwargs)
@@ -737,7 +741,7 @@ class ContainerClient(object):
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
         :returns: A dict representing the retrieved conflict.
-        :raise `HTTPFailure`: If the given conflict couldn't be retrieved.
+        :raise `CosmosHttpResponseError`: If the given conflict couldn't be retrieved.
 
         """
         if not request_options:
@@ -761,7 +765,7 @@ class ContainerClient(object):
         :param partition_key: Partition key for the conflict to delete.
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
-        :raises `HTTPFailure`: The conflict wasn't deleted successfully. If the conflict
+        :raises `CosmosHttpResponseError`: The conflict wasn't deleted successfully. If the conflict
             does not exist in the container, a `404` error is returned.
 
         """

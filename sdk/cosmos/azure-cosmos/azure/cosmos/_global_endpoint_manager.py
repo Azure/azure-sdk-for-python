@@ -126,13 +126,13 @@ class _GlobalEndpointManager(object):
         # specified (by creating a locational endpoint) and keeping eating the exception
         # until we get the database account and return None at the end, if we are not able
         # to get that info from any endpoints
-        except errors.HTTPFailure:
+        except errors.CosmosHttpResponseError:
             for location_name in self.PreferredLocations:
                 locational_endpoint = _GlobalEndpointManager.GetLocationalEndpoint(self.DefaultEndpoint, location_name)
                 try:
                     database_account = self._GetDatabaseAccountStub(locational_endpoint)
                     return database_account
-                except errors.HTTPFailure:
+                except errors.CosmosHttpResponseError:
                     pass
 
             return None

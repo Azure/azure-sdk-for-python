@@ -26,6 +26,7 @@ import json
 
 from six.moves.urllib.parse import urlparse, urlencode
 import six
+from azure.core.exceptions import DecodeError
 
 from . import documents
 from . import errors
@@ -149,8 +150,14 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
         # python 3 compatible: convert data from byte to unicode string
         data = data.decode("utf-8")
 
+    if response.status_code == 404:
+        raise errors.CosmosResourceNotFoundError(message=data, response=response)
+    if response.status_code == 409:
+        raise errors.CosmosResourceExistsError(message=data, response=response)
+    if response.status_code == 412:
+        raise errors.CosmosResourceModifiedError(message=data, response=response)
     if response.status_code >= 400:
-        raise errors.HTTPFailure(response.status_code, data, headers)
+        raise errors.CosmosHttpResponseError(message=data, response=response)
 
     result = None
     if is_media:
@@ -159,8 +166,11 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
         if data:
             try:
                 result = json.loads(data)
-            except:
-                raise errors.JSONParseFailure(data)
+            except Exception as e:
+                raise DecodeError(
+                    message="Failed to decode JSON data: {}".format(e),
+                    response=response,
+                    error=e)
 
     return (result, headers)
 

@@ -24,7 +24,7 @@
 
 import json
 from six.moves import xrange
-from azure.cosmos.errors import HTTPFailure
+from azure.cosmos.errors import CosmosHttpResponseError
 from azure.cosmos._execution_context.base_execution_context import _QueryExecutionContextBase
 from azure.cosmos._execution_context.base_execution_context import _DefaultQueryExecutionContext
 from azure.cosmos._execution_context.query_execution_info import _PartitionedQueryExecutionInfo
@@ -42,7 +42,7 @@ def _is_partitioned_execution_info(e):
 
 
 def _get_partitioned_execution_info(e):
-    error_msg = json.loads(e._http_error_message)
+    error_msg = json.loads(e.http_error_message)
     return _PartitionedQueryExecutionInfo(json.loads(error_msg["additionalErrorInfo"]))
 
 
@@ -76,7 +76,7 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
         """
         try:
             return next(self._execution_context)
-        except HTTPFailure as e:
+        except CosmosHttpResponseError as e:
             if _is_partitioned_execution_info(e):
                 query_execution_info = _get_partitioned_execution_info(e)
                 self._execution_context = self._create_pipelined_execution_context(query_execution_info)
@@ -97,7 +97,7 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
         """
         try:
             return self._execution_context.fetch_next_block()
-        except HTTPFailure as e:
+        except CosmosHttpResponseError as e:
             if _is_partitioned_execution_info(e):
                 query_execution_info = _get_partitioned_execution_info(e)
                 self._execution_context = self._create_pipelined_execution_context(query_execution_info)
