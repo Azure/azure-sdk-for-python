@@ -692,7 +692,7 @@ class DatabaseClient(object):
         offers = list(self.client_connection.QueryOffers(query_spec, **kwargs))
         if not offers:
             raise CosmosResourceNotFoundError(
-                status=StatusCodes.NOT_FOUND,
+                status_code=StatusCodes.NOT_FOUND,
                 message="Could not find Offer for database " + self.database_link)
 
         if response_hook:
@@ -720,7 +720,7 @@ class DatabaseClient(object):
         offers = list(self.client_connection.QueryOffers(query_spec))
         if not offers:
             raise CosmosResourceNotFoundError(
-                status=StatusCodes.NOT_FOUND,
+                status_code=StatusCodes.NOT_FOUND,
                 message="Could not find Offer for collection " + self.database_link)
         new_offer = offers[0].copy()
         new_offer["content"]["offerThroughput"] = throughput

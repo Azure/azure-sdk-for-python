@@ -242,7 +242,7 @@ For example, if you try to create a container using an ID (name) that's already 
 try:
     database.create_container(id=container_name, partition_key=PartitionKey(path="/productName")
 except errors.CosmosResourceExistsError:
-    print("""Error creating container.
+    print("Error creating container.")
 HTTP status code 409: The ID (name) provided for the container is already in use.
 The container name must be unique within the database.""")
 
