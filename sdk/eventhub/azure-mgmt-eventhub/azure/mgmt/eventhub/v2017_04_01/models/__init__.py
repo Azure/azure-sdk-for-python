@@ -65,6 +65,7 @@ from ._paged_models import ConsumerGroupPaged
 from ._paged_models import EHNamespacePaged
 from ._paged_models import EventhubPaged
 from ._paged_models import MessagingRegionsPaged
+from ._paged_models import NetworkRuleSetPaged
 from ._paged_models import OperationPaged
 from ._event_hub_management_client_enums import (
     SkuName,
@@ -108,6 +109,7 @@ __all__ = [
     'OperationPaged',
     'EHNamespacePaged',
     'AuthorizationRulePaged',
+    'NetworkRuleSetPaged',
     'ArmDisasterRecoveryPaged',
     'EventhubPaged',
     'ConsumerGroupPaged',
