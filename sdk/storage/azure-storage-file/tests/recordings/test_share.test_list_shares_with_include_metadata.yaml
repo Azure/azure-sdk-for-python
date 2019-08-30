@@ -12,10 +12,8 @@ interactions:
       - '0'
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Fri, 23 Aug 2019 03:04:12 GMT
+      - Thu, 29 Aug 2019 19:58:16 GMT
       x-ms-meta:
       - '{''hello'': ''world'', ''number'': ''42''}'
       x-ms-meta-hello:
@@ -33,11 +31,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 23 Aug 2019 03:04:12 GMT
+      - Thu, 29 Aug 2019 19:58:14 GMT
       etag:
-      - '"0x8D72776931E0457"'
+      - '"0x8D72CBB3ABB511B"'
       last-modified:
-      - Fri, 23 Aug 2019 03:04:12 GMT
+      - Thu, 29 Aug 2019 19:58:15 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -56,10 +54,8 @@ interactions:
       - keep-alive
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Fri, 23 Aug 2019 03:04:12 GMT
+      - Thu, 29 Aug 2019 19:58:16 GMT
       x-ms-version:
       - '2018-11-09'
     method: GET
@@ -67,14 +63,14 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://pyacrstoragef877141f.file.core.windows.net/\"><Prefix>sharef877141f</Prefix><Shares><Share><Name>sharef877141f</Name><Properties><Last-Modified>Fri,
-        23 Aug 2019 03:04:12 GMT</Last-Modified><Etag>\"0x8D72776931E0457\"</Etag><Quota>5120</Quota></Properties><Metadata><hello>world</hello><number>42</number></Metadata></Share></Shares><NextMarker
+        ServiceEndpoint=\"https://pyacrstoragef877141f.file.core.windows.net/\"><Prefix>sharef877141f</Prefix><Shares><Share><Name>sharef877141f</Name><Properties><Last-Modified>Thu,
+        29 Aug 2019 19:58:15 GMT</Last-Modified><Etag>\"0x8D72CBB3ABB511B\"</Etag><Quota>5120</Quota></Properties><Metadata><hello>world</hello><number>42</number></Metadata></Share></Shares><NextMarker
         /></EnumerationResults>"
     headers:
       content-type:
       - application/xml
       date:
-      - Fri, 23 Aug 2019 03:04:12 GMT
+      - Thu, 29 Aug 2019 19:58:15 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:

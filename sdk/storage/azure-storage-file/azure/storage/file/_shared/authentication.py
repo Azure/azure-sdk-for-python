@@ -117,7 +117,6 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
             raise _wrap_exception(ex, AzureSigningError)
 
     def on_request(self, request):
-        import ipdb; ipdb.set_trace()
         string_to_sign = \
             self._get_verb(request) + \
             self._get_headers(

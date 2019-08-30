@@ -12,10 +12,8 @@ interactions:
       - '0'
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Fri, 23 Aug 2019 03:03:49 GMT
+      - Thu, 29 Aug 2019 19:57:51 GMT
       x-ms-version:
       - '2018-11-09'
     method: PUT
@@ -27,11 +25,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 23 Aug 2019 03:03:48 GMT
+      - Thu, 29 Aug 2019 19:57:49 GMT
       etag:
-      - '"0x8D727768561417F"'
+      - '"0x8D72CBB2BC80953"'
       last-modified:
-      - Fri, 23 Aug 2019 03:03:49 GMT
+      - Thu, 29 Aug 2019 19:57:50 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -52,10 +50,8 @@ interactions:
       - '0'
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Fri, 23 Aug 2019 03:03:49 GMT
+      - Thu, 29 Aug 2019 19:57:51 GMT
       x-ms-version:
       - '2018-11-09'
     method: PUT
@@ -67,15 +63,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 23 Aug 2019 03:03:48 GMT
+      - Thu, 29 Aug 2019 19:57:50 GMT
       etag:
-      - '"0x8D727768561417F"'
+      - '"0x8D72CBB2BC80953"'
       last-modified:
-      - Fri, 23 Aug 2019 03:03:49 GMT
+      - Thu, 29 Aug 2019 19:57:50 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-snapshot:
-      - '2019-08-23T03:03:49.0000000Z'
+      - '2019-08-29T19:57:51.0000000Z'
       x-ms-version:
       - '2018-11-09'
     status:
@@ -94,10 +90,8 @@ interactions:
       - '0'
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Fri, 23 Aug 2019 03:03:49 GMT
+      - Thu, 29 Aug 2019 19:57:52 GMT
       x-ms-version:
       - '2018-11-09'
     method: DELETE
@@ -105,14 +99,14 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareHasSnapshots</Code><Message>The
-        share has snapshots and the operation requires no snapshots.\nRequestId:87fa6cb9-201a-0019-115f-59ddc7000000\nTime:2019-08-23T03:03:49.6564347Z</Message></Error>"
+        share has snapshots and the operation requires no snapshots.\nRequestId:129e36d4-801a-0133-48a4-5e4ab9000000\nTime:2019-08-29T19:57:51.6161334Z</Message></Error>"
     headers:
       content-length:
       - '250'
       content-type:
       - application/xml
       date:
-      - Fri, 23 Aug 2019 03:03:48 GMT
+      - Thu, 29 Aug 2019 19:57:51 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -135,10 +129,8 @@ interactions:
       - '0'
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Fri, 23 Aug 2019 03:03:49 GMT
+      - Thu, 29 Aug 2019 19:57:53 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
@@ -152,7 +144,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Fri, 23 Aug 2019 03:03:48 GMT
+      - Thu, 29 Aug 2019 19:57:51 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
