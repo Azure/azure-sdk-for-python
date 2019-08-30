@@ -188,7 +188,7 @@ class BlobSharedAccessSignature(SharedAccessSignature):
                                           content_encoding, content_language,
                                           content_type)
         sas.add_resource_signature(self.account_name, self.account_key, container_name,
-                                   user_delegation_key=None)
+                                   user_delegation_key=self.user_delegation_key)
         return sas.get_token()
 
 
