@@ -18,7 +18,7 @@ class Compute(Model):
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: AKS, AmlCompute, VirtualMachine, HDInsight, DataFactory,
-    Databricks, DataLakeAnalytics
+    Databricks, DataLakeAnalytics, OnPrem
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -74,7 +74,7 @@ class Compute(Model):
     }
 
     _subtype_map = {
-        'compute_type': {'AKS': 'AKS', 'AmlCompute': 'AmlCompute', 'VirtualMachine': 'VirtualMachine', 'HDInsight': 'HDInsight', 'DataFactory': 'DataFactory', 'Databricks': 'Databricks', 'DataLakeAnalytics': 'DataLakeAnalytics'}
+        'compute_type': {'AKS': 'AKS', 'AmlCompute': 'AmlCompute', 'VirtualMachine': 'VirtualMachine', 'HDInsight': 'HDInsight', 'DataFactory': 'DataFactory', 'Databricks': 'Databricks', 'DataLakeAnalytics': 'DataLakeAnalytics', 'OnPrem': 'OnPrem'}
     }
 
     def __init__(self, **kwargs):
@@ -1287,6 +1287,96 @@ class NodeStateCounts(Model):
         self.unusable_node_count = None
         self.leaving_node_count = None
         self.preempted_node_count = None
+
+
+class OnPrem(Compute):
+    """A OnPrem compute.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param compute_location: Location for the underlying compute
+    :type compute_location: str
+    :ivar provisioning_state: The provision state of the cluster. Valid values
+     are Unknown, Updating, Provisioning, Succeeded, and Failed. Possible
+     values include: 'Unknown', 'Updating', 'Creating', 'Deleting',
+     'Succeeded', 'Failed', 'Canceled'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.machinelearningservices.models.ProvisioningState
+    :param description: The description of the Machine Learning compute.
+    :type description: str
+    :ivar created_on: The date and time when the compute was created.
+    :vartype created_on: datetime
+    :ivar modified_on: The date and time when the compute was last modified.
+    :vartype modified_on: datetime
+    :param resource_id: ARM resource id of the underlying compute
+    :type resource_id: str
+    :ivar provisioning_errors: Errors during provisioning
+    :vartype provisioning_errors:
+     list[~azure.mgmt.machinelearningservices.models.MachineLearningServiceError]
+    :ivar is_attached_compute: Indicating whether the compute was provisioned
+     by user and brought from outside if true, or machine learning service
+     provisioned it if false.
+    :vartype is_attached_compute: bool
+    :param compute_type: Required. Constant filled by server.
+    :type compute_type: str
+    :param properties:
+    :type properties:
+     ~azure.mgmt.machinelearningservices.models.OnPremProperties
+    """
+
+    _validation = {
+        'provisioning_state': {'readonly': True},
+        'created_on': {'readonly': True},
+        'modified_on': {'readonly': True},
+        'provisioning_errors': {'readonly': True},
+        'is_attached_compute': {'readonly': True},
+        'compute_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'compute_location': {'key': 'computeLocation', 'type': 'str'},
+        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'created_on': {'key': 'createdOn', 'type': 'iso-8601'},
+        'modified_on': {'key': 'modifiedOn', 'type': 'iso-8601'},
+        'resource_id': {'key': 'resourceId', 'type': 'str'},
+        'provisioning_errors': {'key': 'provisioningErrors', 'type': '[MachineLearningServiceError]'},
+        'is_attached_compute': {'key': 'isAttachedCompute', 'type': 'bool'},
+        'compute_type': {'key': 'computeType', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'OnPremProperties'},
+    }
+
+    def __init__(self, **kwargs):
+        super(OnPrem, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)
+        self.compute_type = 'OnPrem'
+
+
+class OnPremProperties(Model):
+    """OnPremProperties.
+
+    :param address: Public IP address of the virtual machine.
+    :type address: str
+    :param username: Username of admin account
+    :type username: str
+    :param password: Password of admin account
+    :type password: str
+    """
+
+    _attribute_map = {
+        'address': {'key': 'address', 'type': 'str'},
+        'username': {'key': 'username', 'type': 'str'},
+        'password': {'key': 'password', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(OnPremProperties, self).__init__(**kwargs)
+        self.address = kwargs.get('address', None)
+        self.username = kwargs.get('username', None)
+        self.password = kwargs.get('password', None)
 
 
 class Operation(Model):

@@ -37,6 +37,8 @@ try:
     from ._models_py3 import ListWorkspaceKeysResult
     from ._models_py3 import MachineLearningServiceError, MachineLearningServiceErrorException
     from ._models_py3 import NodeStateCounts
+    from ._models_py3 import OnPrem
+    from ._models_py3 import OnPremProperties
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import Password
@@ -86,6 +88,8 @@ except (SyntaxError, ImportError):
     from ._models import ListWorkspaceKeysResult
     from ._models import MachineLearningServiceError, MachineLearningServiceErrorException
     from ._models import NodeStateCounts
+    from ._models import OnPrem
+    from ._models import OnPremProperties
     from ._models import Operation
     from ._models import OperationDisplay
     from ._models import Password
@@ -151,6 +155,8 @@ __all__ = [
     'ListWorkspaceKeysResult',
     'MachineLearningServiceError', 'MachineLearningServiceErrorException',
     'NodeStateCounts',
+    'OnPrem',
+    'OnPremProperties',
     'Operation',
     'OperationDisplay',
     'Password',

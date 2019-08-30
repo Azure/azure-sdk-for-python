@@ -71,6 +71,7 @@ class ComputeType(str, Enum):
     hd_insight = "HDInsight"
     databricks = "Databricks"
     data_lake_analytics = "DataLakeAnalytics"
+    on_prem = "OnPrem"
 
 
 class UnderlyingResourceAction(str, Enum):
