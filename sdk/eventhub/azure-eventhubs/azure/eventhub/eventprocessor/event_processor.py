@@ -192,10 +192,10 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
                     log.info(
                         "PartitionProcessor of EventProcessor instance %r of eventhub %r partition %r consumer group %r"
                         " is cancelled",
-                        ownership["owner_id"],
-                        ownership["eventhub_name"],
-                        ownership["partition_id"],
-                        ownership["consumer_group_name"]
+                        owner_id,
+                        eventhub_name,
+                        partition_id,
+                        consumer_group_name
                     )
                     await partition_processor.process_error(cancelled_error, checkpoint_manager)
                     await partition_processor.close(CloseReason.SHUTDOWN, checkpoint_manager)
@@ -207,10 +207,10 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
                     log.warning(
                         "PartitionProcessor of EventProcessor instance %r of eventhub %r partition %r consumer group %r"
                         " has met an exception receiving events. It's being closed. The exception is %r.",
-                        ownership["owner_id"],
-                        ownership["eventhub_name"],
-                        ownership["partition_id"],
-                        ownership["consumer_group_name"],
+                        owner_id,
+                        eventhub_name,
+                        partition_id,
+                        consumer_group_name,
                         eh_err
                     )
                     await partition_processor.process_error(eh_err, checkpoint_manager)
