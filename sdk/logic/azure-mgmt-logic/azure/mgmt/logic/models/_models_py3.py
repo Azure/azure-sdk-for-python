@@ -244,8 +244,8 @@ class ApiOperationPropertiesDefinition(Model):
     :param responses_definition: The operation responses definition schemas.
     :type responses_definition: dict[str,
      ~azure.mgmt.logic.models.SwaggerSchema]
-    :param is_web_hook: Indicates whether the API operation is webhook or not.
-    :type is_web_hook: bool
+    :param is_webhook: Indicates whether the API operation is webhook or not.
+    :type is_webhook: bool
     :param is_notification: Indicates whether the API operation is
      notification or not.
     :type is_notification: bool
@@ -262,11 +262,11 @@ class ApiOperationPropertiesDefinition(Model):
         'api': {'key': 'api', 'type': 'ApiReference'},
         'inputs_definition': {'key': 'inputsDefinition', 'type': 'SwaggerSchema'},
         'responses_definition': {'key': 'responsesDefinition', 'type': '{SwaggerSchema}'},
-        'is_web_hook': {'key': 'isWebHook', 'type': 'bool'},
+        'is_webhook': {'key': 'isWebhook', 'type': 'bool'},
         'is_notification': {'key': 'isNotification', 'type': 'bool'},
     }
 
-    def __init__(self, *, summary: str=None, description: str=None, visibility: str=None, trigger: str=None, trigger_hint: str=None, pageable: bool=None, annotation=None, api=None, inputs_definition=None, responses_definition=None, is_web_hook: bool=None, is_notification: bool=None, **kwargs) -> None:
+    def __init__(self, *, summary: str=None, description: str=None, visibility: str=None, trigger: str=None, trigger_hint: str=None, pageable: bool=None, annotation=None, api=None, inputs_definition=None, responses_definition=None, is_webhook: bool=None, is_notification: bool=None, **kwargs) -> None:
         super(ApiOperationPropertiesDefinition, self).__init__(**kwargs)
         self.summary = summary
         self.description = description
@@ -278,7 +278,7 @@ class ApiOperationPropertiesDefinition(Model):
         self.api = api
         self.inputs_definition = inputs_definition
         self.responses_definition = responses_definition
-        self.is_web_hook = is_web_hook
+        self.is_webhook = is_webhook
         self.is_notification = is_notification
 
 

@@ -244,8 +244,8 @@ class ApiOperationPropertiesDefinition(Model):
     :param responses_definition: The operation responses definition schemas.
     :type responses_definition: dict[str,
      ~azure.mgmt.logic.models.SwaggerSchema]
-    :param is_web_hook: Indicates whether the API operation is webhook or not.
-    :type is_web_hook: bool
+    :param is_webhook: Indicates whether the API operation is webhook or not.
+    :type is_webhook: bool
     :param is_notification: Indicates whether the API operation is
      notification or not.
     :type is_notification: bool
@@ -262,7 +262,7 @@ class ApiOperationPropertiesDefinition(Model):
         'api': {'key': 'api', 'type': 'ApiReference'},
         'inputs_definition': {'key': 'inputsDefinition', 'type': 'SwaggerSchema'},
         'responses_definition': {'key': 'responsesDefinition', 'type': '{SwaggerSchema}'},
-        'is_web_hook': {'key': 'isWebHook', 'type': 'bool'},
+        'is_webhook': {'key': 'isWebhook', 'type': 'bool'},
         'is_notification': {'key': 'isNotification', 'type': 'bool'},
     }
 
@@ -278,7 +278,7 @@ class ApiOperationPropertiesDefinition(Model):
         self.api = kwargs.get('api', None)
         self.inputs_definition = kwargs.get('inputs_definition', None)
         self.responses_definition = kwargs.get('responses_definition', None)
-        self.is_web_hook = kwargs.get('is_web_hook', None)
+        self.is_webhook = kwargs.get('is_webhook', None)
         self.is_notification = kwargs.get('is_notification', None)
 
 
