@@ -300,9 +300,11 @@ class AvailabilitySetsOperations(object):
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/availabilitySets/{availabilitySetName}'}
 
     def list_by_subscription(
-            self, custom_headers=None, raw=False, **operation_config):
+            self, expand=None, custom_headers=None, raw=False, **operation_config):
         """Lists all availability sets in a subscription.
 
+        :param expand: The expand expression to apply to the operation.
+        :type expand: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -325,6 +327,8 @@ class AvailabilitySetsOperations(object):
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                if expand is not None:
+                    query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
 
             else:
                 url = next_link
