@@ -6,8 +6,8 @@
 import time
 import random
 import math
-import collections
-from collections import Counter
+from typing import List
+from collections import Counter, defaultdict
 from azure.eventhub.aio import EventHubClient
 from .partition_manager import PartitionManager
 
@@ -26,7 +26,7 @@ class OwnershipManager(object):
             self, eventhub_client: EventHubClient, consumer_group_name: str, owner_id: str,
             partition_manager: PartitionManager, ownership_timeout: int
     ):
-        self.cached_parition_ids = []
+        self.cached_parition_ids = []  # type: List[str]
         self.eventhub_client = eventhub_client
         self.eventhub_name = eventhub_client.eh_name
         self.consumer_group_name = consumer_group_name
@@ -45,7 +45,7 @@ class OwnershipManager(object):
         """
         if not self.cached_parition_ids:
             await self._retrieve_partition_ids()
-        to_claim = await self._balance_ownership()
+        to_claim = await self._balance_ownership(self.cached_parition_ids)
         claimed_list = await self.partition_manager.claim_ownership(to_claim) if to_claim else None
         return claimed_list
 
@@ -56,7 +56,7 @@ class OwnershipManager(object):
         """
         self.cached_parition_ids = await self.eventhub_client.get_partition_ids()
 
-    async def _balance_ownership(self):
+    async def _balance_ownership(self, all_partition_ids):
         """Balances and claims ownership of partitions for this EventProcessor.
         The balancing algorithm is:
         1. Find partitions with inactive ownership and partitions that haven never been claimed before
@@ -87,19 +87,19 @@ class OwnershipManager(object):
         )
         now = time.time()
         ownership_dict = dict((x["partition_id"], x) for x in ownership_list)  # put the list to dict for fast lookup
-        not_owned_partition_ids = [pid for pid in self.cached_parition_ids if pid not in ownership_dict]
+        not_owned_partition_ids = [pid for pid in all_partition_ids if pid not in ownership_dict]
         timed_out_partition_ids = [ownership["partition_id"] for ownership in ownership_list
                                    if ownership["last_modified_time"] + self.ownership_timeout < now]
         claimable_partition_ids = not_owned_partition_ids + timed_out_partition_ids
         active_ownership = [ownership for ownership in ownership_list
                             if ownership["last_modified_time"] + self.ownership_timeout >= now]
-        active_ownership_by_owner = collections.defaultdict(list)
+        active_ownership_by_owner = defaultdict(list)
         for ownership in active_ownership:
             active_ownership_by_owner[ownership["owner_id"]].append(ownership)
         active_ownership_self = active_ownership_by_owner[self.owner_id]
 
         # calculate expected count per owner
-        all_partition_count = len(self.cached_parition_ids)
+        all_partition_count = len(all_partition_ids)
         owners_count = len(active_ownership_by_owner) + \
                        (0 if self.owner_id in active_ownership_by_owner else 1)
         expected_count_per_owner = all_partition_count // owners_count
@@ -109,20 +109,21 @@ class OwnershipManager(object):
         to_claim = active_ownership_self
         if len(active_ownership_self) > most_count_allowed_per_owner:  # needs to abandon a partition
             to_claim.pop()  # abandon one partition if owned too many
-            # TODO: Release a ownership immediately so other EventProcessors won't need to wait it to timeout
-        elif len(active_ownership_self) < expected_count_per_owner:  # Either claims an inactive partition, or steals from other owners
+            # TODO: Release an ownership immediately so other EventProcessors won't need to wait it to timeout
+        elif len(active_ownership_self) < expected_count_per_owner:
+            # Either claims an inactive partition, or steals from other owners
             if claimable_partition_ids:  # claim an inactive partition if there is
                 random_partition_id = random.choice(claimable_partition_ids)
                 random_chosen_to_claim = ownership_dict.get(random_partition_id,
                                                             {"partition_id": random_partition_id,
                                                              "eventhub_name": self.eventhub_client.eh_name,
-                                                             "consumer_group_name": self.consumer_group_name,
-                                                             "owner_level": 0})  # TODO: consider removing owner_level
+                                                             "consumer_group_name": self.consumer_group_name
+                                                             })
                 random_chosen_to_claim["owner_id"] = self.owner_id
                 to_claim.append(random_chosen_to_claim)
             else:  # steal from another owner that has the most count
                 active_ownership_count_group_by_owner = Counter(
-                    (x, len(y)) for x, y in active_ownership_by_owner.items())
+                    dict((x, len(y)) for x, y in active_ownership_by_owner.items()))
                 most_frequent_owner_id = active_ownership_count_group_by_owner.most_common(1)[0][0]
                 # randomly choose a partition to steal from the most_frequent_owner
                 to_steal_partition = random.choice(active_ownership_by_owner[most_frequent_owner_id])

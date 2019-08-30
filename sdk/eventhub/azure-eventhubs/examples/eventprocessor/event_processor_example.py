@@ -2,7 +2,7 @@ import asyncio
 import logging
 import os
 from azure.eventhub.aio import EventHubClient
-from azure.eventhub.eventprocessor import EventProcessor
+from azure.eventhub.eventprocessor import EventProcessor, PartitionProcessor
 from azure.eventhub.eventprocessor import Sqlite3PartitionManager
 
 RECEIVE_TIMEOUT = 5  # timeout in seconds for a receiving operation. 0 or None means no timeout
@@ -17,7 +17,7 @@ async def do_operation(event):
     print(event)
 
 
-class MyPartitionProcessor(object):
+class MyPartitionProcessor(PartitionProcessor):
     async def process_events(self, events, checkpoint_manager):
         if events:
             await asyncio.gather(*[do_operation(event) for event in events])

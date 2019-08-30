@@ -13,8 +13,8 @@ class CheckpointManager(object):
     The interaction with the chosen storage service is done via ~azure.eventhub.eventprocessor.PartitionManager.
 
     """
-    def __init__(self, partition_id: str, eventhub_name: str, consumer_group_name: str,
-                 owner_id: str, partition_manager: PartitionManager):
+    def __init__(self, eventhub_name: str, consumer_group_name: str,
+                 partition_id: str, owner_id: str, partition_manager: PartitionManager):
         self.partition_id = partition_id
         self.eventhub_name = eventhub_name
         self.consumer_group_name = consumer_group_name

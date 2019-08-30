@@ -53,9 +53,6 @@ class Sqlite3PartitionManager(PartitionManager):
                   + ",".join(self.primary_keys)\
                   + "))"
             c.execute(sql)
-        except sqlite3.OperationalError:
-            raise
-            pass
         finally:
             c.close()
         self.conn = conn
@@ -100,13 +97,16 @@ class Sqlite3PartitionManager(PartitionManager):
                     if p.get("etag") == cursor_fetch[0][0]:
                         p["last_modified_time"] = time.time()
                         p["etag"] = str(uuid.uuid4())
-                        other_fields_without_checkpoint = list(filter(lambda x: x not in self.checkpoint_fields, self.other_fields))
+                        other_fields_without_checkpoint = list(
+                            filter(lambda x: x not in self.checkpoint_fields, self.other_fields)
+                        )
                         sql = "update " + _check_table_name(self.ownership_table) + " set "\
                                        + ','.join([field+"=?" for field in other_fields_without_checkpoint])\
                                        + " where "\
                                        + " and ".join([field+"=?" for field in self.primary_keys])
 
-                        cursor.execute(sql, tuple(p.get(field) for field in other_fields_without_checkpoint) + tuple(p.get(field) for field in self.primary_keys))
+                        cursor.execute(sql, tuple(p.get(field) for field in other_fields_without_checkpoint)
+                                       + tuple(p.get(field) for field in self.primary_keys))
                         result.append(p)
                     else:
                         logger.info("EventProcessor %r failed to claim partition %r "
@@ -121,15 +121,19 @@ class Sqlite3PartitionManager(PartitionManager):
             offset, sequence_number):
         cursor = self.conn.cursor()
         try:
-            cursor.execute("select owner_id from " + _check_table_name(self.ownership_table) + " where eventhub_name=? and consumer_group_name=? and partition_id=?",
+            cursor.execute("select owner_id from " + _check_table_name(self.ownership_table)
+                           + " where eventhub_name=? and consumer_group_name=? and partition_id=?",
                            (eventhub_name, consumer_group_name, partition_id))
             cursor_fetch = cursor.fetchall()
             if cursor_fetch and owner_id == cursor_fetch[0][0]:
-                cursor.execute("update " + _check_table_name(self.ownership_table) + " set offset=?, sequence_number=? where eventhub_name=? and consumer_group_name=? and partition_id=?",
+                cursor.execute("update " + _check_table_name(self.ownership_table)
+                               + " set offset=?, sequence_number=? "
+                                 "where eventhub_name=? and consumer_group_name=? and partition_id=?",
                                (offset, sequence_number, eventhub_name, consumer_group_name, partition_id))
                 self.conn.commit()
             else:
-                logger.info("EventProcessor couldn't checkpoint to partition %r because it no longer has the ownership", partition_id)
+                logger.info("EventProcessor couldn't checkpoint to partition %r because it no longer has the ownership",
+                            partition_id)
 
         finally:
             cursor.close()

@@ -4,11 +4,10 @@
 # -----------------------------------------------------------------------------------
 
 from typing import List
-from typing_extensions import Protocol
+from abc import ABC
 from enum import Enum
-from .checkpoint_manager import CheckpointManager
-
 from azure.eventhub import EventData
+from .checkpoint_manager import CheckpointManager
 
 
 class CloseReason(Enum):
@@ -17,12 +16,14 @@ class CloseReason(Enum):
     EVENTHUB_EXCEPTION = 2  # Exception happens during receiving events
 
 
-class PartitionProcessor(Protocol):
+class PartitionProcessor(ABC):
     """
     PartitionProcessor processes events received from the Azure Event Hubs service. A single instance of a class
-    implementing this abstract class will be created for every partition the associated ~azure.eventhub.eventprocessor.EventProcessor owns.
+    implementing this abstract class will be created for every partition the associated
+    ~azure.eventhub.eventprocessor.EventProcessor owns.
 
     """
+
     async def initialize(self):
         pass
 
@@ -34,15 +35,18 @@ class PartitionProcessor(Protocol):
 
         :param reason: Reason for closing the PartitionProcessor.
         :type reason: ~azure.eventhub.eventprocessor.CloseReason
+        :param checkpoint_manager: Use its method update_checkpoint to update checkpoint to the data store
+        :type checkpoint_manager: ~azure.eventhub.CheckpointManager
 
         """
-        pass
 
     async def process_events(self, events: List[EventData], checkpoint_manager: CheckpointManager):
         """Called when a batch of events have been received.
 
         :param events: Received events.
         :type events: list[~azure.eventhub.common.EventData]
+        :param checkpoint_manager: Use its method update_checkpoint to update checkpoint to the data store
+        :type checkpoint_manager: ~azure.eventhub.CheckpointManager
 
         """
         raise NotImplementedError
@@ -52,6 +56,7 @@ class PartitionProcessor(Protocol):
 
         :param error: The error that happens.
         :type error: Exception
+        :param checkpoint_manager: Use its method update_checkpoint to update checkpoint to the data store
+        :type checkpoint_manager: ~azure.eventhub.CheckpointManager
 
         """
-        pass
