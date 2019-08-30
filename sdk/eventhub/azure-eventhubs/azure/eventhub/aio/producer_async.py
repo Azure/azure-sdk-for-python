@@ -98,7 +98,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
                 self.client.config.user_agent),
             loop=self.loop)
 
-    async def _open(self, timeout_time=None, **kwargs):
+    async def _open(self, timeout_time=None, **kwargs):  # pylint:disable=arguments-differ, unused-argument # TODO: to refactor
         """
         Open the EventHubProducer using the supplied connection.
         If the handler has previously been redirected, the redirect
@@ -184,8 +184,9 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
 
         return EventDataBatch(max_size=(max_size or self._max_message_size_on_link), partition_key=partition_key)
 
-    async def send(self, event_data, *, partition_key=None, timeout=None):
-        # type:(Union[EventData, EventDataBatch, Iterable[EventData]],Any, Union[str, bytes], float) -> None
+    async def send(
+            self, event_data: Union[EventData, EventDataBatch, Iterable[EventData]],
+            *, partition_key: Union[str, bytes] = None, timeout: float = None):
         """
         Sends an event data and blocks until acknowledgement is
         received or operation times out.
@@ -231,7 +232,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
                 wrapper_event_data = EventDataBatch._from_batch(event_data, partition_key)  # pylint: disable=protected-access
         wrapper_event_data.message.on_send_complete = self._on_outcome
         self.unsent_events = [wrapper_event_data.message]
-        await self._send_event_data_with_retry(timeout=timeout)
+        await self._send_event_data_with_retry(timeout=timeout)  # pylint:disable=unexpected-keyword-arg # TODO: to refactor
 
     async def close(self, exception=None):
         # type: (Exception) -> None

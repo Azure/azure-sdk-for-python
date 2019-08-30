@@ -104,7 +104,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
             link_properties=self._link_properties,
             properties=self.client._create_properties(self.client.config.user_agent))  # pylint: disable=protected-access
 
-    def _open(self, timeout_time=None, **kwargs):
+    def _open(self, timeout_time=None, **kwargs):  # pylint:disable=unused-argument, arguments-differ # TODO:To refactor
         """
         Open the EventHubProducer using the supplied connection.
         If the handler has previously been redirected, the redirect
@@ -237,7 +237,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
                 wrapper_event_data = EventDataBatch._from_batch(event_data, partition_key)  # pylint: disable=protected-access
         wrapper_event_data.message.on_send_complete = self._on_outcome
         self.unsent_events = [wrapper_event_data.message]
-        self._send_event_data_with_retry(timeout=timeout)
+        self._send_event_data_with_retry(timeout=timeout)  # pylint:disable=unexpected-keyword-arg # TODO:to refactor
 
     def close(self, exception=None):  # pylint:disable=useless-super-delegation
         # type:(Exception) -> None
