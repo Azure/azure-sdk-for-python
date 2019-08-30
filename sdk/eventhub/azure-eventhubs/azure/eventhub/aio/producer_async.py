@@ -185,7 +185,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
         return EventDataBatch(max_size=(max_size or self._max_message_size_on_link), partition_key=partition_key)
 
     async def send(
-            self, event_data:Union[EventData, EventDataBatch, Iterable[EventData]],
+            self, event_data: Union[EventData, EventDataBatch, Iterable[EventData]],
             *, partition_key: Union[str, bytes] = None, timeout: float = None):
         """
         Sends an event data and blocks until acknowledgement is
