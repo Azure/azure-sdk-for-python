@@ -30,6 +30,9 @@ class BlobTrigger(MultiplePipelineTrigger):
      'Started', 'Stopped', 'Disabled'
     :vartype runtime_state: str or
      ~azure.mgmt.datafactory.models.TriggerRuntimeState
+    :param annotations: List of tags that can be used for describing the
+     trigger.
+    :type annotations: list[object]
     :param type: Required. Constant filled by server.
     :type type: str
     :param pipelines: Pipelines that need to be started.
@@ -59,6 +62,7 @@ class BlobTrigger(MultiplePipelineTrigger):
         'additional_properties': {'key': '', 'type': '{object}'},
         'description': {'key': 'description', 'type': 'str'},
         'runtime_state': {'key': 'runtimeState', 'type': 'str'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
         'pipelines': {'key': 'pipelines', 'type': '[TriggerPipelineReference]'},
         'folder_path': {'key': 'typeProperties.folderPath', 'type': 'str'},

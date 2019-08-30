@@ -49,6 +49,12 @@ class FileShareDataset(Dataset):
     :param file_name: The name of the on-premises file system. Type: string
      (or Expression with resultType string).
     :type file_name: object
+    :param modified_datetime_start: The start of file's modified datetime.
+     Type: string (or Expression with resultType string).
+    :type modified_datetime_start: object
+    :param modified_datetime_end: The end of file's modified datetime. Type:
+     string (or Expression with resultType string).
+    :type modified_datetime_end: object
     :param format: The format of the files.
     :type format: ~azure.mgmt.datafactory.models.DatasetStorageFormat
     :param file_filter: Specify a filter to be used to select a subset of
@@ -76,6 +82,8 @@ class FileShareDataset(Dataset):
         'type': {'key': 'type', 'type': 'str'},
         'folder_path': {'key': 'typeProperties.folderPath', 'type': 'object'},
         'file_name': {'key': 'typeProperties.fileName', 'type': 'object'},
+        'modified_datetime_start': {'key': 'typeProperties.modifiedDatetimeStart', 'type': 'object'},
+        'modified_datetime_end': {'key': 'typeProperties.modifiedDatetimeEnd', 'type': 'object'},
         'format': {'key': 'typeProperties.format', 'type': 'DatasetStorageFormat'},
         'file_filter': {'key': 'typeProperties.fileFilter', 'type': 'object'},
         'compression': {'key': 'typeProperties.compression', 'type': 'DatasetCompression'},
@@ -85,6 +93,8 @@ class FileShareDataset(Dataset):
         super(FileShareDataset, self).__init__(**kwargs)
         self.folder_path = kwargs.get('folder_path', None)
         self.file_name = kwargs.get('file_name', None)
+        self.modified_datetime_start = kwargs.get('modified_datetime_start', None)
+        self.modified_datetime_end = kwargs.get('modified_datetime_end', None)
         self.format = kwargs.get('format', None)
         self.file_filter = kwargs.get('file_filter', None)
         self.compression = kwargs.get('compression', None)

@@ -43,15 +43,20 @@ class AzureSqlTableDataset(Dataset):
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
-    :param table_name: Required. The table name of the Azure SQL database.
-     Type: string (or Expression with resultType string).
+    :param table_name: This property will be retired. Please consider using
+     schema + table properties instead.
     :type table_name: object
+    :param azure_sql_table_dataset_schema: The schema name of the Azure SQL
+     database. Type: string (or Expression with resultType string).
+    :type azure_sql_table_dataset_schema: object
+    :param table: The table name of the Azure SQL database. Type: string (or
+     Expression with resultType string).
+    :type table: object
     """
 
     _validation = {
         'linked_service_name': {'required': True},
         'type': {'required': True},
-        'table_name': {'required': True},
     }
 
     _attribute_map = {
@@ -65,9 +70,13 @@ class AzureSqlTableDataset(Dataset):
         'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
         'table_name': {'key': 'typeProperties.tableName', 'type': 'object'},
+        'azure_sql_table_dataset_schema': {'key': 'typeProperties.schema', 'type': 'object'},
+        'table': {'key': 'typeProperties.table', 'type': 'object'},
     }
 
-    def __init__(self, *, linked_service_name, table_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, **kwargs) -> None:
+    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, azure_sql_table_dataset_schema=None, table=None, **kwargs) -> None:
         super(AzureSqlTableDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
         self.table_name = table_name
+        self.azure_sql_table_dataset_schema = azure_sql_table_dataset_schema
+        self.table = table
         self.type = 'AzureSqlTable'

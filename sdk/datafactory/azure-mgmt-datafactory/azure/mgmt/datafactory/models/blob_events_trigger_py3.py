@@ -30,6 +30,9 @@ class BlobEventsTrigger(MultiplePipelineTrigger):
      'Started', 'Stopped', 'Disabled'
     :vartype runtime_state: str or
      ~azure.mgmt.datafactory.models.TriggerRuntimeState
+    :param annotations: List of tags that can be used for describing the
+     trigger.
+    :type annotations: list[object]
     :param type: Required. Constant filled by server.
     :type type: str
     :param pipelines: Pipelines that need to be started.
@@ -64,6 +67,7 @@ class BlobEventsTrigger(MultiplePipelineTrigger):
         'additional_properties': {'key': '', 'type': '{object}'},
         'description': {'key': 'description', 'type': 'str'},
         'runtime_state': {'key': 'runtimeState', 'type': 'str'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
         'pipelines': {'key': 'pipelines', 'type': '[TriggerPipelineReference]'},
         'blob_path_begins_with': {'key': 'typeProperties.blobPathBeginsWith', 'type': 'str'},
@@ -72,8 +76,8 @@ class BlobEventsTrigger(MultiplePipelineTrigger):
         'scope': {'key': 'typeProperties.scope', 'type': 'str'},
     }
 
-    def __init__(self, *, events, scope: str, additional_properties=None, description: str=None, pipelines=None, blob_path_begins_with: str=None, blob_path_ends_with: str=None, **kwargs) -> None:
-        super(BlobEventsTrigger, self).__init__(additional_properties=additional_properties, description=description, pipelines=pipelines, **kwargs)
+    def __init__(self, *, events, scope: str, additional_properties=None, description: str=None, annotations=None, pipelines=None, blob_path_begins_with: str=None, blob_path_ends_with: str=None, **kwargs) -> None:
+        super(BlobEventsTrigger, self).__init__(additional_properties=additional_properties, description=description, annotations=annotations, pipelines=pipelines, **kwargs)
         self.blob_path_begins_with = blob_path_begins_with
         self.blob_path_ends_with = blob_path_ends_with
         self.events = events
