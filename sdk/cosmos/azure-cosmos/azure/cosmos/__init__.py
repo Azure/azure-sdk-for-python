@@ -40,9 +40,9 @@ from .permission import Permission
 from .version import VERSION
 
 __all__ = (
-    "Container",
+    "ContainerClient",
     "CosmosClient",
-    "Database",
+    "DatabaseClient",
     "PartitionKey",
     "Permission",
     "ScriptsClient",
