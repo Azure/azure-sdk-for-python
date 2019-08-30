@@ -34,12 +34,14 @@ class FileSystemSink(CopySink):
      resultType string), pattern:
      ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
     :type sink_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count
+     for the sink data store. Type: integer (or Expression with resultType
+     integer).
+    :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
-    :param copy_behavior: The type of copy behavior for copy sink. Possible
-     values include: 'PreserveHierarchy', 'FlattenHierarchy', 'MergeFiles'
-    :type copy_behavior: str or
-     ~azure.mgmt.datafactory.models.CopyBehaviorType
+    :param copy_behavior: The type of copy behavior for copy sink.
+    :type copy_behavior: object
     """
 
     _validation = {
@@ -52,8 +54,9 @@ class FileSystemSink(CopySink):
         'write_batch_timeout': {'key': 'writeBatchTimeout', 'type': 'object'},
         'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
         'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
-        'copy_behavior': {'key': 'copyBehavior', 'type': 'str'},
+        'copy_behavior': {'key': 'copyBehavior', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
