@@ -29,8 +29,8 @@ jobs:
     pool:
       vmImage: 'ubuntu-16.04'
 
-      steps:
-      - template: ../steps/analyze.yml
+    steps:
+    - template: ../steps/analyze.yml
 
   - job: 'Generic_Tests'
     variables:
