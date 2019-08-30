@@ -46,7 +46,7 @@ __all__ = (
     "PartitionKey",
     "Permission",
     "ScriptsClient",
-    "User",
+    "UserClient",
     "ConsistencyLevel",
     "DataType",
     "IndexKind",
