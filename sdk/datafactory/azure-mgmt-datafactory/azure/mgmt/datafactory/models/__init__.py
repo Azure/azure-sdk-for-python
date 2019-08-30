@@ -435,6 +435,8 @@ try:
     from .hd_insight_hive_activity_py3 import HDInsightHiveActivity
     from .redirect_incompatible_row_settings_py3 import RedirectIncompatibleRowSettings
     from .staging_settings_py3 import StagingSettings
+    from .tabular_translator_py3 import TabularTranslator
+    from .copy_translator_py3 import CopyTranslator
     from .cosmos_db_mongo_db_api_sink_py3 import CosmosDbMongoDbApiSink
     from .salesforce_service_cloud_sink_py3 import SalesforceServiceCloudSink
     from .salesforce_sink_py3 import SalesforceSink
@@ -951,6 +953,8 @@ except (SyntaxError, ImportError):
     from .hd_insight_hive_activity import HDInsightHiveActivity
     from .redirect_incompatible_row_settings import RedirectIncompatibleRowSettings
     from .staging_settings import StagingSettings
+    from .tabular_translator import TabularTranslator
+    from .copy_translator import CopyTranslator
     from .cosmos_db_mongo_db_api_sink import CosmosDbMongoDbApiSink
     from .salesforce_service_cloud_sink import SalesforceServiceCloudSink
     from .salesforce_sink import SalesforceSink
@@ -1550,6 +1554,8 @@ __all__ = [
     'HDInsightHiveActivity',
     'RedirectIncompatibleRowSettings',
     'StagingSettings',
+    'TabularTranslator',
+    'CopyTranslator',
     'CosmosDbMongoDbApiSink',
     'SalesforceServiceCloudSink',
     'SalesforceSink',
