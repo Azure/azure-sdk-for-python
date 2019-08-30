@@ -67,6 +67,12 @@ try:
     from ._models_py3 import PartitionUsage
     from ._models_py3 import PercentileMetric
     from ._models_py3 import PercentileMetricValue
+    from ._models_py3 import PrivateEndpointConnection
+    from ._models_py3 import PrivateEndpointProperty
+    from ._models_py3 import PrivateLinkResource
+    from ._models_py3 import PrivateLinkResourceListResult
+    from ._models_py3 import PrivateLinkResourceProperties
+    from ._models_py3 import PrivateLinkServiceConnectionStateProperty
     from ._models_py3 import RegionForOnlineOffline
     from ._models_py3 import Resource
     from ._models_py3 import SqlContainer
@@ -143,6 +149,12 @@ except (SyntaxError, ImportError):
     from ._models import PartitionUsage
     from ._models import PercentileMetric
     from ._models import PercentileMetricValue
+    from ._models import PrivateEndpointConnection
+    from ._models import PrivateEndpointProperty
+    from ._models import PrivateLinkResource
+    from ._models import PrivateLinkResourceListResult
+    from ._models import PrivateLinkResourceProperties
+    from ._models import PrivateLinkServiceConnectionStateProperty
     from ._models import RegionForOnlineOffline
     from ._models import Resource
     from ._models import SqlContainer
@@ -251,6 +263,12 @@ __all__ = [
     'PartitionUsage',
     'PercentileMetric',
     'PercentileMetricValue',
+    'PrivateEndpointConnection',
+    'PrivateEndpointProperty',
+    'PrivateLinkResource',
+    'PrivateLinkResourceListResult',
+    'PrivateLinkResourceProperties',
+    'PrivateLinkServiceConnectionStateProperty',
     'RegionForOnlineOffline',
     'Resource',
     'SqlContainer',

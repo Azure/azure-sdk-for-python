@@ -533,6 +533,13 @@ class DatabaseAccount(Resource):
     :param connector_offer: The cassandra connector offer type for the Cosmos
      DB database C* account. Possible values include: 'Small'
     :type connector_offer: str or ~azure.mgmt.cosmosdb.models.ConnectorOffer
+    :param is_private_endpoint_connection_enabled: Flag to indicate whether to
+     enable/disable private endpoint connections.
+    :type is_private_endpoint_connection_enabled: bool
+    :param private_endpoint_connections: List of private endpoint connections
+     configured for the Cosmos DB account
+    :type private_endpoint_connections:
+     list[~azure.mgmt.cosmosdb.models.PrivateEndpointConnection]
     """
 
     _validation = {
@@ -568,9 +575,11 @@ class DatabaseAccount(Resource):
         'enable_multiple_write_locations': {'key': 'properties.enableMultipleWriteLocations', 'type': 'bool'},
         'enable_cassandra_connector': {'key': 'properties.enableCassandraConnector', 'type': 'bool'},
         'connector_offer': {'key': 'properties.connectorOffer', 'type': 'str'},
+        'is_private_endpoint_connection_enabled': {'key': 'properties.isPrivateEndpointConnectionEnabled', 'type': 'bool'},
+        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
     }
 
-    def __init__(self, *, location: str=None, tags=None, kind="GlobalDocumentDB", provisioning_state: str=None, ip_range_filter: str=None, is_virtual_network_filter_enabled: bool=None, enable_automatic_failover: bool=None, consistency_policy=None, capabilities=None, virtual_network_rules=None, enable_multiple_write_locations: bool=None, enable_cassandra_connector: bool=None, connector_offer=None, **kwargs) -> None:
+    def __init__(self, *, location: str=None, tags=None, kind="GlobalDocumentDB", provisioning_state: str=None, ip_range_filter: str=None, is_virtual_network_filter_enabled: bool=None, enable_automatic_failover: bool=None, consistency_policy=None, capabilities=None, virtual_network_rules=None, enable_multiple_write_locations: bool=None, enable_cassandra_connector: bool=None, connector_offer=None, is_private_endpoint_connection_enabled: bool=None, private_endpoint_connections=None, **kwargs) -> None:
         super(DatabaseAccount, self).__init__(location=location, tags=tags, **kwargs)
         self.kind = kind
         self.provisioning_state = provisioning_state
@@ -588,6 +597,8 @@ class DatabaseAccount(Resource):
         self.enable_multiple_write_locations = enable_multiple_write_locations
         self.enable_cassandra_connector = enable_cassandra_connector
         self.connector_offer = connector_offer
+        self.is_private_endpoint_connection_enabled = is_private_endpoint_connection_enabled
+        self.private_endpoint_connections = private_endpoint_connections
 
 
 class DatabaseAccountConnectionString(Model):
@@ -2187,6 +2198,188 @@ class PercentileMetricValue(MetricValue):
         self.p90 = None
         self.p95 = None
         self.p99 = None
+
+
+class PrivateEndpointConnection(Resource):
+    """A private endpoint connection.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The unique resource identifier of the database account.
+    :vartype id: str
+    :ivar name: The name of the database account.
+    :vartype name: str
+    :ivar type: The type of Azure resource.
+    :vartype type: str
+    :param location: The location of the resource group to which the resource
+     belongs.
+    :type location: str
+    :param tags:
+    :type tags: dict[str, str]
+    :param private_endpoint: Private endpoint which the connection belongs to.
+    :type private_endpoint:
+     ~azure.mgmt.cosmosdb.models.PrivateEndpointProperty
+    :param private_link_service_connection_state: Connection State of the
+     Private Endpoint Connection.
+    :type private_link_service_connection_state:
+     ~azure.mgmt.cosmosdb.models.PrivateLinkServiceConnectionStateProperty
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'PrivateEndpointProperty'},
+        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionStateProperty'},
+    }
+
+    def __init__(self, *, location: str=None, tags=None, private_endpoint=None, private_link_service_connection_state=None, **kwargs) -> None:
+        super(PrivateEndpointConnection, self).__init__(location=location, tags=tags, **kwargs)
+        self.private_endpoint = private_endpoint
+        self.private_link_service_connection_state = private_link_service_connection_state
+
+
+class PrivateEndpointProperty(Model):
+    """Private endpoint which the connection belongs to.
+
+    :param id: Resource id of the private endpoint.
+    :type id: str
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(self, *, id: str=None, **kwargs) -> None:
+        super(PrivateEndpointProperty, self).__init__(**kwargs)
+        self.id = id
+
+
+class PrivateLinkResource(Resource):
+    """PrivateLinkResource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The unique resource identifier of the database account.
+    :vartype id: str
+    :ivar name: The name of the database account.
+    :vartype name: str
+    :ivar type: The type of Azure resource.
+    :vartype type: str
+    :param location: The location of the resource group to which the resource
+     belongs.
+    :type location: str
+    :param tags:
+    :type tags: dict[str, str]
+    :param properties:
+    :type properties:
+     ~azure.mgmt.cosmosdb.models.PrivateLinkResourceProperties
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'properties': {'key': 'properties', 'type': 'PrivateLinkResourceProperties'},
+    }
+
+    def __init__(self, *, location: str=None, tags=None, properties=None, **kwargs) -> None:
+        super(PrivateLinkResource, self).__init__(location=location, tags=tags, **kwargs)
+        self.properties = properties
+
+
+class PrivateLinkResourceListResult(Model):
+    """PrivateLinkResourceListResult.
+
+    :param value: Array of private link resources
+    :type value: list[~azure.mgmt.cosmosdb.models.PrivateLinkResource]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[PrivateLinkResource]'},
+    }
+
+    def __init__(self, *, value=None, **kwargs) -> None:
+        super(PrivateLinkResourceListResult, self).__init__(**kwargs)
+        self.value = value
+
+
+class PrivateLinkResourceProperties(Model):
+    """Properties of a private link resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar group_id: The private link resource group id.
+    :vartype group_id: str
+    :ivar required_members: The private link resource required member names.
+    :vartype required_members: list[str]
+    """
+
+    _validation = {
+        'group_id': {'readonly': True},
+        'required_members': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'group_id': {'key': 'groupId', 'type': 'str'},
+        'required_members': {'key': 'requiredMembers', 'type': '[str]'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(PrivateLinkResourceProperties, self).__init__(**kwargs)
+        self.group_id = None
+        self.required_members = None
+
+
+class PrivateLinkServiceConnectionStateProperty(Model):
+    """Connection State of the Private Endpoint Connection.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param status: The private link service connection status.
+    :type status: str
+    :param description: The private link service connection description.
+    :type description: str
+    :ivar actions_required: Any action that is required beyond basic workflow
+     (approve/ reject/ disconnect)
+    :vartype actions_required: str
+    """
+
+    _validation = {
+        'actions_required': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'actions_required': {'key': 'actionsRequired', 'type': 'str'},
+    }
+
+    def __init__(self, *, status: str=None, description: str=None, **kwargs) -> None:
+        super(PrivateLinkServiceConnectionStateProperty, self).__init__(**kwargs)
+        self.status = status
+        self.description = description
+        self.actions_required = None
 
 
 class RegionForOnlineOffline(Model):

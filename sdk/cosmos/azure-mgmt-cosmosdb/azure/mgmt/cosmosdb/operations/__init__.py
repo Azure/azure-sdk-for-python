@@ -22,6 +22,8 @@ from ._collection_partition_region_operations import CollectionPartitionRegionOp
 from ._collection_partition_operations import CollectionPartitionOperations
 from ._partition_key_range_id_operations import PartitionKeyRangeIdOperations
 from ._partition_key_range_id_region_operations import PartitionKeyRangeIdRegionOperations
+from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
+from ._private_link_resources_operations import PrivateLinkResourcesOperations
 
 __all__ = [
     'DatabaseAccountsOperations',
@@ -37,4 +39,6 @@ __all__ = [
     'CollectionPartitionOperations',
     'PartitionKeyRangeIdOperations',
     'PartitionKeyRangeIdRegionOperations',
+    'PrivateEndpointConnectionsOperations',
+    'PrivateLinkResourcesOperations',
 ]
