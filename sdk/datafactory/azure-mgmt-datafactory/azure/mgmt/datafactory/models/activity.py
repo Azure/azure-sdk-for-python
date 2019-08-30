@@ -18,10 +18,12 @@ class Activity(Model):
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: ExecutionActivity, ControlActivity
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param name: Activity name.
+    :param name: Required. Activity name.
     :type name: str
     :param description: Activity description.
     :type description: str
@@ -29,7 +31,7 @@ class Activity(Model):
     :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
     :param user_properties: Activity user properties.
     :type user_properties: list[~azure.mgmt.datafactory.models.UserProperty]
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     """
 
@@ -51,11 +53,11 @@ class Activity(Model):
         'type': {'Execution': 'ExecutionActivity', 'Container': 'ControlActivity'}
     }
 
-    def __init__(self, name, additional_properties=None, description=None, depends_on=None, user_properties=None):
-        super(Activity, self).__init__()
-        self.additional_properties = additional_properties
-        self.name = name
-        self.description = description
-        self.depends_on = depends_on
-        self.user_properties = user_properties
+    def __init__(self, **kwargs):
+        super(Activity, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.name = kwargs.get('name', None)
+        self.description = kwargs.get('description', None)
+        self.depends_on = kwargs.get('depends_on', None)
+        self.user_properties = kwargs.get('user_properties', None)
         self.type = None

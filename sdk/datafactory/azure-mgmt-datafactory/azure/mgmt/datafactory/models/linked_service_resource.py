@@ -18,6 +18,8 @@ class LinkedServiceResource(SubResource):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :ivar id: The resource identifier.
     :vartype id: str
     :ivar name: The resource name.
@@ -26,7 +28,7 @@ class LinkedServiceResource(SubResource):
     :vartype type: str
     :ivar etag: Etag identifies change in the resource.
     :vartype etag: str
-    :param properties: Properties of linked service.
+    :param properties: Required. Properties of linked service.
     :type properties: ~azure.mgmt.datafactory.models.LinkedService
     """
 
@@ -46,6 +48,6 @@ class LinkedServiceResource(SubResource):
         'properties': {'key': 'properties', 'type': 'LinkedService'},
     }
 
-    def __init__(self, properties):
-        super(LinkedServiceResource, self).__init__()
-        self.properties = properties
+    def __init__(self, **kwargs):
+        super(LinkedServiceResource, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)

@@ -15,6 +15,8 @@ from .linked_service import LinkedService
 class AzureDatabricksLinkedService(LinkedService):
     """Azure Databricks linked service.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -29,14 +31,14 @@ class AzureDatabricksLinkedService(LinkedService):
     :param annotations: List of tags that can be used for describing the
      linked service.
     :type annotations: list[object]
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
-    :param domain: <REGION>.azuredatabricks.net, domain name of your
+    :param domain: Required. <REGION>.azuredatabricks.net, domain name of your
      Databricks deployment. Type: string (or Expression with resultType
      string).
     :type domain: object
-    :param access_token: Access token for databricks REST API. Refer to
-     https://docs.azuredatabricks.net/api/latest/authentication.html. Type:
+    :param access_token: Required. Access token for databricks REST API. Refer
+     to https://docs.azuredatabricks.net/api/latest/authentication.html. Type:
      string (or Expression with resultType string).
     :type access_token: ~azure.mgmt.datafactory.models.SecretBase
     :param existing_cluster_id: The id of an existing cluster that will be
@@ -106,19 +108,19 @@ class AzureDatabricksLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, domain, access_token, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None, existing_cluster_id=None, new_cluster_version=None, new_cluster_num_of_worker=None, new_cluster_node_type=None, new_cluster_spark_conf=None, new_cluster_spark_env_vars=None, new_cluster_custom_tags=None, new_cluster_driver_node_type=None, new_cluster_init_scripts=None, new_cluster_enable_elastic_disk=None, encrypted_credential=None):
-        super(AzureDatabricksLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations)
-        self.domain = domain
-        self.access_token = access_token
-        self.existing_cluster_id = existing_cluster_id
-        self.new_cluster_version = new_cluster_version
-        self.new_cluster_num_of_worker = new_cluster_num_of_worker
-        self.new_cluster_node_type = new_cluster_node_type
-        self.new_cluster_spark_conf = new_cluster_spark_conf
-        self.new_cluster_spark_env_vars = new_cluster_spark_env_vars
-        self.new_cluster_custom_tags = new_cluster_custom_tags
-        self.new_cluster_driver_node_type = new_cluster_driver_node_type
-        self.new_cluster_init_scripts = new_cluster_init_scripts
-        self.new_cluster_enable_elastic_disk = new_cluster_enable_elastic_disk
-        self.encrypted_credential = encrypted_credential
+    def __init__(self, **kwargs):
+        super(AzureDatabricksLinkedService, self).__init__(**kwargs)
+        self.domain = kwargs.get('domain', None)
+        self.access_token = kwargs.get('access_token', None)
+        self.existing_cluster_id = kwargs.get('existing_cluster_id', None)
+        self.new_cluster_version = kwargs.get('new_cluster_version', None)
+        self.new_cluster_num_of_worker = kwargs.get('new_cluster_num_of_worker', None)
+        self.new_cluster_node_type = kwargs.get('new_cluster_node_type', None)
+        self.new_cluster_spark_conf = kwargs.get('new_cluster_spark_conf', None)
+        self.new_cluster_spark_env_vars = kwargs.get('new_cluster_spark_env_vars', None)
+        self.new_cluster_custom_tags = kwargs.get('new_cluster_custom_tags', None)
+        self.new_cluster_driver_node_type = kwargs.get('new_cluster_driver_node_type', None)
+        self.new_cluster_init_scripts = kwargs.get('new_cluster_init_scripts', None)
+        self.new_cluster_enable_elastic_disk = kwargs.get('new_cluster_enable_elastic_disk', None)
+        self.encrypted_credential = kwargs.get('encrypted_credential', None)
         self.type = 'AzureDatabricks'

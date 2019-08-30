@@ -26,6 +26,8 @@ class CopySink(Model):
     SapCloudForCustomerSink, AzureMySqlSink, AzurePostgreSqlSink, JsonSink,
     DelimitedTextSink
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -47,7 +49,7 @@ class CopySink(Model):
      for the sink data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     """
 
@@ -69,12 +71,12 @@ class CopySink(Model):
         'type': {'CosmosDbMongoDbApiSink': 'CosmosDbMongoDbApiSink', 'SalesforceServiceCloudSink': 'SalesforceServiceCloudSink', 'SalesforceSink': 'SalesforceSink', 'AzureDataExplorerSink': 'AzureDataExplorerSink', 'CommonDataServiceForAppsSink': 'CommonDataServiceForAppsSink', 'DynamicsCrmSink': 'DynamicsCrmSink', 'DynamicsSink': 'DynamicsSink', 'MicrosoftAccessSink': 'MicrosoftAccessSink', 'InformixSink': 'InformixSink', 'OdbcSink': 'OdbcSink', 'AzureSearchIndexSink': 'AzureSearchIndexSink', 'AzureBlobFSSink': 'AzureBlobFSSink', 'AzureDataLakeStoreSink': 'AzureDataLakeStoreSink', 'OracleSink': 'OracleSink', 'SqlDWSink': 'SqlDWSink', 'SqlMISink': 'SqlMISink', 'AzureSqlSink': 'AzureSqlSink', 'SqlServerSink': 'SqlServerSink', 'SqlSink': 'SqlSink', 'DocumentDbCollectionSink': 'DocumentDbCollectionSink', 'FileSystemSink': 'FileSystemSink', 'BlobSink': 'BlobSink', 'BinarySink': 'BinarySink', 'ParquetSink': 'ParquetSink', 'AvroSink': 'AvroSink', 'AzureTableSink': 'AzureTableSink', 'AzureQueueSink': 'AzureQueueSink', 'SapCloudForCustomerSink': 'SapCloudForCustomerSink', 'AzureMySqlSink': 'AzureMySqlSink', 'AzurePostgreSqlSink': 'AzurePostgreSqlSink', 'JsonSink': 'JsonSink', 'DelimitedTextSink': 'DelimitedTextSink'}
     }
 
-    def __init__(self, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, max_concurrent_connections=None):
-        super(CopySink, self).__init__()
-        self.additional_properties = additional_properties
-        self.write_batch_size = write_batch_size
-        self.write_batch_timeout = write_batch_timeout
-        self.sink_retry_count = sink_retry_count
-        self.sink_retry_wait = sink_retry_wait
-        self.max_concurrent_connections = max_concurrent_connections
+    def __init__(self, **kwargs):
+        super(CopySink, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.write_batch_size = kwargs.get('write_batch_size', None)
+        self.write_batch_timeout = kwargs.get('write_batch_timeout', None)
+        self.sink_retry_count = kwargs.get('sink_retry_count', None)
+        self.sink_retry_wait = kwargs.get('sink_retry_wait', None)
+        self.max_concurrent_connections = kwargs.get('max_concurrent_connections', None)
         self.type = None

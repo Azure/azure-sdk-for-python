@@ -15,6 +15,8 @@ from .copy_source import CopySource
 class OracleSource(CopySource):
     """A copy activity Oracle source.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -29,7 +31,7 @@ class OracleSource(CopySource):
      for the source data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param oracle_reader_query: Oracle reader query. Type: string (or
      Expression with resultType string).
@@ -65,10 +67,10 @@ class OracleSource(CopySource):
         'partition_settings': {'key': 'partitionSettings', 'type': 'OraclePartitionSettings'},
     }
 
-    def __init__(self, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, oracle_reader_query=None, query_timeout=None, partition_option=None, partition_settings=None):
-        super(OracleSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections)
-        self.oracle_reader_query = oracle_reader_query
-        self.query_timeout = query_timeout
-        self.partition_option = partition_option
-        self.partition_settings = partition_settings
+    def __init__(self, **kwargs):
+        super(OracleSource, self).__init__(**kwargs)
+        self.oracle_reader_query = kwargs.get('oracle_reader_query', None)
+        self.query_timeout = kwargs.get('query_timeout', None)
+        self.partition_option = kwargs.get('partition_option', None)
+        self.partition_settings = kwargs.get('partition_settings', None)
         self.type = 'OracleSource'

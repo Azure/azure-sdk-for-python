@@ -26,7 +26,7 @@ class IntegrationRuntimeAuthKeys(Model):
         'auth_key2': {'key': 'authKey2', 'type': 'str'},
     }
 
-    def __init__(self, auth_key1=None, auth_key2=None):
-        super(IntegrationRuntimeAuthKeys, self).__init__()
-        self.auth_key1 = auth_key1
-        self.auth_key2 = auth_key2
+    def __init__(self, **kwargs):
+        super(IntegrationRuntimeAuthKeys, self).__init__(**kwargs)
+        self.auth_key1 = kwargs.get('auth_key1', None)
+        self.auth_key2 = kwargs.get('auth_key2', None)

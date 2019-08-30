@@ -16,6 +16,8 @@ class SapOpenHubSource(CopySource):
     """A copy activity source for SAP Business Warehouse Open Hub Destination
     source.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -30,7 +32,7 @@ class SapOpenHubSource(CopySource):
      for the source data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param exclude_last_request: Whether to exclude the records of the last
      request. The default value is true. Type: boolean (or Expression with
@@ -57,8 +59,8 @@ class SapOpenHubSource(CopySource):
         'base_request_id': {'key': 'baseRequestId', 'type': 'object'},
     }
 
-    def __init__(self, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, exclude_last_request=None, base_request_id=None):
-        super(SapOpenHubSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections)
-        self.exclude_last_request = exclude_last_request
-        self.base_request_id = base_request_id
+    def __init__(self, **kwargs):
+        super(SapOpenHubSource, self).__init__(**kwargs)
+        self.exclude_last_request = kwargs.get('exclude_last_request', None)
+        self.base_request_id = kwargs.get('base_request_id', None)
         self.type = 'SapOpenHubSource'

@@ -38,9 +38,9 @@ class OraclePartitionSettings(Model):
         'partition_lower_bound': {'key': 'partitionLowerBound', 'type': 'object'},
     }
 
-    def __init__(self, partition_names=None, partition_column_name=None, partition_upper_bound=None, partition_lower_bound=None):
-        super(OraclePartitionSettings, self).__init__()
-        self.partition_names = partition_names
-        self.partition_column_name = partition_column_name
-        self.partition_upper_bound = partition_upper_bound
-        self.partition_lower_bound = partition_lower_bound
+    def __init__(self, **kwargs):
+        super(OraclePartitionSettings, self).__init__(**kwargs)
+        self.partition_names = kwargs.get('partition_names', None)
+        self.partition_column_name = kwargs.get('partition_column_name', None)
+        self.partition_upper_bound = kwargs.get('partition_upper_bound', None)
+        self.partition_lower_bound = kwargs.get('partition_lower_bound', None)

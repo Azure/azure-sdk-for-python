@@ -18,13 +18,15 @@ class SsisObjectMetadata(Model):
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: SsisEnvironment, SsisPackage, SsisProject, SsisFolder
 
+    All required parameters must be populated in order to send to Azure.
+
     :param id: Metadata id.
     :type id: long
     :param name: Metadata name.
     :type name: str
     :param description: Metadata description.
     :type description: str
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     """
 
@@ -43,9 +45,9 @@ class SsisObjectMetadata(Model):
         'type': {'Environment': 'SsisEnvironment', 'Package': 'SsisPackage', 'Project': 'SsisProject', 'Folder': 'SsisFolder'}
     }
 
-    def __init__(self, id=None, name=None, description=None):
-        super(SsisObjectMetadata, self).__init__()
-        self.id = id
-        self.name = name
-        self.description = description
+    def __init__(self, **kwargs):
+        super(SsisObjectMetadata, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.name = kwargs.get('name', None)
+        self.description = kwargs.get('description', None)
         self.type = None

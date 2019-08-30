@@ -15,10 +15,12 @@ from .format_write_settings import FormatWriteSettings
 class JsonWriteSettings(FormatWriteSettings):
     """Json write settings.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param type: The write setting type.
+    :param type: Required. The write setting type.
     :type type: str
     :param file_pattern: File pattern of JSON. This setting controls the way a
      collection of JSON objects will be treated. The default value is
@@ -38,6 +40,6 @@ class JsonWriteSettings(FormatWriteSettings):
         'file_pattern': {'key': 'filePattern', 'type': 'str'},
     }
 
-    def __init__(self, type, additional_properties=None, file_pattern=None):
-        super(JsonWriteSettings, self).__init__(additional_properties=additional_properties, type=type)
-        self.file_pattern = file_pattern
+    def __init__(self, **kwargs):
+        super(JsonWriteSettings, self).__init__(**kwargs)
+        self.file_pattern = kwargs.get('file_pattern', None)

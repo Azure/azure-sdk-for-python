@@ -15,6 +15,8 @@ from .dataset import Dataset
 class Db2TableDataset(Dataset):
     """The Db2 table dataset.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -27,7 +29,7 @@ class Db2TableDataset(Dataset):
      dataset. Type: array (or Expression with resultType array), itemType:
      DatasetSchemaDataElement.
     :type schema: object
-    :param linked_service_name: Linked service reference.
+    :param linked_service_name: Required. Linked service reference.
     :type linked_service_name:
      ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
@@ -39,7 +41,7 @@ class Db2TableDataset(Dataset):
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param table_name: This property will be retired. Please consider using
      schema + table properties instead.
@@ -72,9 +74,9 @@ class Db2TableDataset(Dataset):
         'table': {'key': 'typeProperties.table', 'type': 'object'},
     }
 
-    def __init__(self, linked_service_name, additional_properties=None, description=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, db2_table_dataset_schema=None, table=None):
-        super(Db2TableDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder)
-        self.table_name = table_name
-        self.db2_table_dataset_schema = db2_table_dataset_schema
-        self.table = table
+    def __init__(self, **kwargs):
+        super(Db2TableDataset, self).__init__(**kwargs)
+        self.table_name = kwargs.get('table_name', None)
+        self.db2_table_dataset_schema = kwargs.get('db2_table_dataset_schema', None)
+        self.table = kwargs.get('table', None)
         self.type = 'Db2Table'

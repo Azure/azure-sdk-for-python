@@ -15,6 +15,8 @@ from .copy_sink import CopySink
 class CosmosDbMongoDbApiSink(CopySink):
     """A copy activity sink for a CosmosDB (MongoDB API) database.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -36,7 +38,7 @@ class CosmosDbMongoDbApiSink(CopySink):
      for the sink data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param write_behavior: Specifies whether the document with same key to be
      overwritten (upsert) rather than throw exception (insert). The default
@@ -60,7 +62,7 @@ class CosmosDbMongoDbApiSink(CopySink):
         'write_behavior': {'key': 'writeBehavior', 'type': 'object'},
     }
 
-    def __init__(self, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, max_concurrent_connections=None, write_behavior=None):
-        super(CosmosDbMongoDbApiSink, self).__init__(additional_properties=additional_properties, write_batch_size=write_batch_size, write_batch_timeout=write_batch_timeout, sink_retry_count=sink_retry_count, sink_retry_wait=sink_retry_wait, max_concurrent_connections=max_concurrent_connections)
-        self.write_behavior = write_behavior
+    def __init__(self, **kwargs):
+        super(CosmosDbMongoDbApiSink, self).__init__(**kwargs)
+        self.write_behavior = kwargs.get('write_behavior', None)
         self.type = 'CosmosDbMongoDbApiSink'

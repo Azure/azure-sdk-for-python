@@ -15,10 +15,12 @@ from .control_activity import ControlActivity
 class SetVariableActivity(ControlActivity):
     """Set value for a Variable.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param name: Activity name.
+    :param name: Required. Activity name.
     :type name: str
     :param description: Activity description.
     :type description: str
@@ -26,7 +28,7 @@ class SetVariableActivity(ControlActivity):
     :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
     :param user_properties: Activity user properties.
     :type user_properties: list[~azure.mgmt.datafactory.models.UserProperty]
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param variable_name: Name of the variable whose value needs to be set.
     :type variable_name: str
@@ -50,8 +52,8 @@ class SetVariableActivity(ControlActivity):
         'value': {'key': 'typeProperties.value', 'type': 'object'},
     }
 
-    def __init__(self, name, additional_properties=None, description=None, depends_on=None, user_properties=None, variable_name=None, value=None):
-        super(SetVariableActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties)
-        self.variable_name = variable_name
-        self.value = value
+    def __init__(self, **kwargs):
+        super(SetVariableActivity, self).__init__(**kwargs)
+        self.variable_name = kwargs.get('variable_name', None)
+        self.value = kwargs.get('value', None)
         self.type = 'SetVariable'

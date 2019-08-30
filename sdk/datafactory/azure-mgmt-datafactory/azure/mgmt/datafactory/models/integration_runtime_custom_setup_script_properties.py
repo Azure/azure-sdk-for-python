@@ -27,7 +27,7 @@ class IntegrationRuntimeCustomSetupScriptProperties(Model):
         'sas_token': {'key': 'sasToken', 'type': 'SecureString'},
     }
 
-    def __init__(self, blob_container_uri=None, sas_token=None):
-        super(IntegrationRuntimeCustomSetupScriptProperties, self).__init__()
-        self.blob_container_uri = blob_container_uri
-        self.sas_token = sas_token
+    def __init__(self, **kwargs):
+        super(IntegrationRuntimeCustomSetupScriptProperties, self).__init__(**kwargs)
+        self.blob_container_uri = kwargs.get('blob_container_uri', None)
+        self.sas_token = kwargs.get('sas_token', None)

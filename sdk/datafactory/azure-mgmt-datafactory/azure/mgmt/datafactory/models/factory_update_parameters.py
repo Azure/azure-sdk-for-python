@@ -26,7 +26,7 @@ class FactoryUpdateParameters(Model):
         'identity': {'key': 'identity', 'type': 'FactoryIdentity'},
     }
 
-    def __init__(self, tags=None, identity=None):
-        super(FactoryUpdateParameters, self).__init__()
-        self.tags = tags
-        self.identity = identity
+    def __init__(self, **kwargs):
+        super(FactoryUpdateParameters, self).__init__(**kwargs)
+        self.tags = kwargs.get('tags', None)
+        self.identity = kwargs.get('identity', None)

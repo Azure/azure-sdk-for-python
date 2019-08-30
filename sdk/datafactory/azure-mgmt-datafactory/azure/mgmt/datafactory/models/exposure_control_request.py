@@ -26,7 +26,7 @@ class ExposureControlRequest(Model):
         'feature_type': {'key': 'featureType', 'type': 'str'},
     }
 
-    def __init__(self, feature_name=None, feature_type=None):
-        super(ExposureControlRequest, self).__init__()
-        self.feature_name = feature_name
-        self.feature_type = feature_type
+    def __init__(self, **kwargs):
+        super(ExposureControlRequest, self).__init__(**kwargs)
+        self.feature_name = kwargs.get('feature_name', None)
+        self.feature_type = kwargs.get('feature_type', None)

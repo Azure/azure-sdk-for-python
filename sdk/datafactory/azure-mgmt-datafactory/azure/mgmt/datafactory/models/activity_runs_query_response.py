@@ -15,7 +15,9 @@ from msrest.serialization import Model
 class ActivityRunsQueryResponse(Model):
     """A list activity runs.
 
-    :param value: List of activity runs.
+    All required parameters must be populated in order to send to Azure.
+
+    :param value: Required. List of activity runs.
     :type value: list[~azure.mgmt.datafactory.models.ActivityRun]
     :param continuation_token: The continuation token for getting the next
      page of results, if any remaining results exist, null otherwise.
@@ -31,7 +33,7 @@ class ActivityRunsQueryResponse(Model):
         'continuation_token': {'key': 'continuationToken', 'type': 'str'},
     }
 
-    def __init__(self, value, continuation_token=None):
-        super(ActivityRunsQueryResponse, self).__init__()
-        self.value = value
-        self.continuation_token = continuation_token
+    def __init__(self, **kwargs):
+        super(ActivityRunsQueryResponse, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+        self.continuation_token = kwargs.get('continuation_token', None)

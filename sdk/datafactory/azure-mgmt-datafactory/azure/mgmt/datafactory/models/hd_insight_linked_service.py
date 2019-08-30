@@ -15,6 +15,8 @@ from .linked_service import LinkedService
 class HDInsightLinkedService(LinkedService):
     """HDInsight linked service.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -29,10 +31,10 @@ class HDInsightLinkedService(LinkedService):
     :param annotations: List of tags that can be used for describing the
      linked service.
     :type annotations: list[object]
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
-    :param cluster_uri: HDInsight cluster URI. Type: string (or Expression
-     with resultType string).
+    :param cluster_uri: Required. HDInsight cluster URI. Type: string (or
+     Expression with resultType string).
     :type cluster_uri: object
     :param user_name: HDInsight cluster user name. Type: string (or Expression
      with resultType string).
@@ -81,14 +83,14 @@ class HDInsightLinkedService(LinkedService):
         'file_system': {'key': 'typeProperties.fileSystem', 'type': 'object'},
     }
 
-    def __init__(self, cluster_uri, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None, user_name=None, password=None, linked_service_name=None, hcatalog_linked_service_name=None, encrypted_credential=None, is_esp_enabled=None, file_system=None):
-        super(HDInsightLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations)
-        self.cluster_uri = cluster_uri
-        self.user_name = user_name
-        self.password = password
-        self.linked_service_name = linked_service_name
-        self.hcatalog_linked_service_name = hcatalog_linked_service_name
-        self.encrypted_credential = encrypted_credential
-        self.is_esp_enabled = is_esp_enabled
-        self.file_system = file_system
+    def __init__(self, **kwargs):
+        super(HDInsightLinkedService, self).__init__(**kwargs)
+        self.cluster_uri = kwargs.get('cluster_uri', None)
+        self.user_name = kwargs.get('user_name', None)
+        self.password = kwargs.get('password', None)
+        self.linked_service_name = kwargs.get('linked_service_name', None)
+        self.hcatalog_linked_service_name = kwargs.get('hcatalog_linked_service_name', None)
+        self.encrypted_credential = kwargs.get('encrypted_credential', None)
+        self.is_esp_enabled = kwargs.get('is_esp_enabled', None)
+        self.file_system = kwargs.get('file_system', None)
         self.type = 'HDInsight'

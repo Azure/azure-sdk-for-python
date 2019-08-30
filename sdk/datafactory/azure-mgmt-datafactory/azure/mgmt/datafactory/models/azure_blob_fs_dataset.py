@@ -15,6 +15,8 @@ from .dataset import Dataset
 class AzureBlobFSDataset(Dataset):
     """The Azure Data Lake Storage Gen2 storage.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -27,7 +29,7 @@ class AzureBlobFSDataset(Dataset):
      dataset. Type: array (or Expression with resultType array), itemType:
      DatasetSchemaDataElement.
     :type schema: object
-    :param linked_service_name: Linked service reference.
+    :param linked_service_name: Required. Linked service reference.
     :type linked_service_name:
      ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
@@ -39,7 +41,7 @@ class AzureBlobFSDataset(Dataset):
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param folder_path: The path of the Azure Data Lake Storage Gen2 storage.
      Type: string (or Expression with resultType string).
@@ -74,10 +76,10 @@ class AzureBlobFSDataset(Dataset):
         'compression': {'key': 'typeProperties.compression', 'type': 'DatasetCompression'},
     }
 
-    def __init__(self, linked_service_name, additional_properties=None, description=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, folder_path=None, file_name=None, format=None, compression=None):
-        super(AzureBlobFSDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder)
-        self.folder_path = folder_path
-        self.file_name = file_name
-        self.format = format
-        self.compression = compression
+    def __init__(self, **kwargs):
+        super(AzureBlobFSDataset, self).__init__(**kwargs)
+        self.folder_path = kwargs.get('folder_path', None)
+        self.file_name = kwargs.get('file_name', None)
+        self.format = kwargs.get('format', None)
+        self.compression = kwargs.get('compression', None)
         self.type = 'AzureBlobFSFile'

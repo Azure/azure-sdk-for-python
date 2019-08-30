@@ -15,6 +15,8 @@ from .dataset import Dataset
 class AvroDataset(Dataset):
     """Avro dataset.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -27,7 +29,7 @@ class AvroDataset(Dataset):
      dataset. Type: array (or Expression with resultType array), itemType:
      DatasetSchemaDataElement.
     :type schema: object
-    :param linked_service_name: Linked service reference.
+    :param linked_service_name: Required. Linked service reference.
     :type linked_service_name:
      ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
@@ -39,9 +41,9 @@ class AvroDataset(Dataset):
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
-    :param location: The location of the avro storage.
+    :param location: Required. The location of the avro storage.
     :type location: ~azure.mgmt.datafactory.models.DatasetLocation
     :param avro_compression_codec: Possible values include: 'none', 'deflate',
      'snappy', 'xz', 'bzip2'
@@ -73,9 +75,9 @@ class AvroDataset(Dataset):
         'avro_compression_level': {'key': 'typeProperties.avroCompressionLevel', 'type': 'int'},
     }
 
-    def __init__(self, linked_service_name, location, additional_properties=None, description=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, avro_compression_codec=None, avro_compression_level=None):
-        super(AvroDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder)
-        self.location = location
-        self.avro_compression_codec = avro_compression_codec
-        self.avro_compression_level = avro_compression_level
+    def __init__(self, **kwargs):
+        super(AvroDataset, self).__init__(**kwargs)
+        self.location = kwargs.get('location', None)
+        self.avro_compression_codec = kwargs.get('avro_compression_codec', None)
+        self.avro_compression_level = kwargs.get('avro_compression_level', None)
         self.type = 'Avro'

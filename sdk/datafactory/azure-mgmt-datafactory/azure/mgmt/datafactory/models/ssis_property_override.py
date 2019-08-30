@@ -15,8 +15,10 @@ from msrest.serialization import Model
 class SSISPropertyOverride(Model):
     """SSIS property override.
 
-    :param value: SSIS package property override value. Type: string (or
-     Expression with resultType string).
+    All required parameters must be populated in order to send to Azure.
+
+    :param value: Required. SSIS package property override value. Type: string
+     (or Expression with resultType string).
     :type value: object
     :param is_sensitive: Whether SSIS package property override value is
      sensitive data. Value will be encrypted in SSISDB if it is true
@@ -32,7 +34,7 @@ class SSISPropertyOverride(Model):
         'is_sensitive': {'key': 'isSensitive', 'type': 'bool'},
     }
 
-    def __init__(self, value, is_sensitive=None):
-        super(SSISPropertyOverride, self).__init__()
-        self.value = value
-        self.is_sensitive = is_sensitive
+    def __init__(self, **kwargs):
+        super(SSISPropertyOverride, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+        self.is_sensitive = kwargs.get('is_sensitive', None)

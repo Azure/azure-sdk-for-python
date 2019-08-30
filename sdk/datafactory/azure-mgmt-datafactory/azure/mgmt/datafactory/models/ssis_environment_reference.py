@@ -32,9 +32,9 @@ class SsisEnvironmentReference(Model):
         'reference_type': {'key': 'referenceType', 'type': 'str'},
     }
 
-    def __init__(self, id=None, environment_folder_name=None, environment_name=None, reference_type=None):
-        super(SsisEnvironmentReference, self).__init__()
-        self.id = id
-        self.environment_folder_name = environment_folder_name
-        self.environment_name = environment_name
-        self.reference_type = reference_type
+    def __init__(self, **kwargs):
+        super(SsisEnvironmentReference, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.environment_folder_name = kwargs.get('environment_folder_name', None)
+        self.environment_name = kwargs.get('environment_name', None)
+        self.reference_type = kwargs.get('reference_type', None)

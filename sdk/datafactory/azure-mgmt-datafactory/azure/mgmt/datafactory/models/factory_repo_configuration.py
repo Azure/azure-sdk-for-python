@@ -18,17 +18,19 @@ class FactoryRepoConfiguration(Model):
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: FactoryVSTSConfiguration, FactoryGitHubConfiguration
 
-    :param account_name: Account name.
+    All required parameters must be populated in order to send to Azure.
+
+    :param account_name: Required. Account name.
     :type account_name: str
-    :param repository_name: Repository name.
+    :param repository_name: Required. Repository name.
     :type repository_name: str
-    :param collaboration_branch: Collaboration branch.
+    :param collaboration_branch: Required. Collaboration branch.
     :type collaboration_branch: str
-    :param root_folder: Root folder.
+    :param root_folder: Required. Root folder.
     :type root_folder: str
     :param last_commit_id: Last commit id.
     :type last_commit_id: str
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     """
 
@@ -53,11 +55,11 @@ class FactoryRepoConfiguration(Model):
         'type': {'FactoryVSTSConfiguration': 'FactoryVSTSConfiguration', 'FactoryGitHubConfiguration': 'FactoryGitHubConfiguration'}
     }
 
-    def __init__(self, account_name, repository_name, collaboration_branch, root_folder, last_commit_id=None):
-        super(FactoryRepoConfiguration, self).__init__()
-        self.account_name = account_name
-        self.repository_name = repository_name
-        self.collaboration_branch = collaboration_branch
-        self.root_folder = root_folder
-        self.last_commit_id = last_commit_id
+    def __init__(self, **kwargs):
+        super(FactoryRepoConfiguration, self).__init__(**kwargs)
+        self.account_name = kwargs.get('account_name', None)
+        self.repository_name = kwargs.get('repository_name', None)
+        self.collaboration_branch = kwargs.get('collaboration_branch', None)
+        self.root_folder = kwargs.get('root_folder', None)
+        self.last_commit_id = kwargs.get('last_commit_id', None)
         self.type = None

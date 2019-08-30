@@ -22,6 +22,8 @@ class MultiplePipelineTrigger(Trigger):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -35,7 +37,7 @@ class MultiplePipelineTrigger(Trigger):
     :param annotations: List of tags that can be used for describing the
      trigger.
     :type annotations: list[object]
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param pipelines: Pipelines that need to be started.
     :type pipelines:
@@ -60,7 +62,7 @@ class MultiplePipelineTrigger(Trigger):
         'type': {'BlobEventsTrigger': 'BlobEventsTrigger', 'BlobTrigger': 'BlobTrigger', 'ScheduleTrigger': 'ScheduleTrigger'}
     }
 
-    def __init__(self, additional_properties=None, description=None, annotations=None, pipelines=None):
-        super(MultiplePipelineTrigger, self).__init__(additional_properties=additional_properties, description=description, annotations=annotations)
-        self.pipelines = pipelines
+    def __init__(self, **kwargs):
+        super(MultiplePipelineTrigger, self).__init__(**kwargs)
+        self.pipelines = kwargs.get('pipelines', None)
         self.type = 'MultiplePipelineTrigger'

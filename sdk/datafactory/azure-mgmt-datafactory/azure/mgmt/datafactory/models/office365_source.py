@@ -15,6 +15,8 @@ from .copy_source import CopySource
 class Office365Source(CopySource):
     """A copy activity source for an Office365 service.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -29,7 +31,7 @@ class Office365Source(CopySource):
      for the source data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param allowed_groups: The groups containing all the users. Type: array of
      strings (or Expression with resultType array of strings).
@@ -66,11 +68,11 @@ class Office365Source(CopySource):
         'end_time': {'key': 'endTime', 'type': 'object'},
     }
 
-    def __init__(self, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, allowed_groups=None, user_scope_filter_uri=None, date_filter_column=None, start_time=None, end_time=None):
-        super(Office365Source, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections)
-        self.allowed_groups = allowed_groups
-        self.user_scope_filter_uri = user_scope_filter_uri
-        self.date_filter_column = date_filter_column
-        self.start_time = start_time
-        self.end_time = end_time
+    def __init__(self, **kwargs):
+        super(Office365Source, self).__init__(**kwargs)
+        self.allowed_groups = kwargs.get('allowed_groups', None)
+        self.user_scope_filter_uri = kwargs.get('user_scope_filter_uri', None)
+        self.date_filter_column = kwargs.get('date_filter_column', None)
+        self.start_time = kwargs.get('start_time', None)
+        self.end_time = kwargs.get('end_time', None)
         self.type = 'Office365Source'

@@ -18,10 +18,12 @@ class WebHookActivity(ControlActivity):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param name: Activity name.
+    :param name: Required. Activity name.
     :type name: str
     :param description: Activity description.
     :type description: str
@@ -29,12 +31,13 @@ class WebHookActivity(ControlActivity):
     :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
     :param user_properties: Activity user properties.
     :type user_properties: list[~azure.mgmt.datafactory.models.UserProperty]
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
-    :ivar method: Rest API method for target endpoint. Default value: "POST" .
+    :ivar method: Required. Rest API method for target endpoint. Default
+     value: "POST" .
     :vartype method: str
-    :param url: WebHook activity target endpoint and path. Type: string (or
-     Expression with resultType string).
+    :param url: Required. WebHook activity target endpoint and path. Type:
+     string (or Expression with resultType string).
     :type url: object
     :param timeout: The timeout within which the webhook should be called
      back. If there is no value specified, it defaults to 10 minutes. Type:
@@ -79,11 +82,11 @@ class WebHookActivity(ControlActivity):
 
     method = "POST"
 
-    def __init__(self, name, url, additional_properties=None, description=None, depends_on=None, user_properties=None, timeout=None, headers=None, body=None, authentication=None):
-        super(WebHookActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties)
-        self.url = url
-        self.timeout = timeout
-        self.headers = headers
-        self.body = body
-        self.authentication = authentication
+    def __init__(self, **kwargs):
+        super(WebHookActivity, self).__init__(**kwargs)
+        self.url = kwargs.get('url', None)
+        self.timeout = kwargs.get('timeout', None)
+        self.headers = kwargs.get('headers', None)
+        self.body = kwargs.get('body', None)
+        self.authentication = kwargs.get('authentication', None)
         self.type = 'WebHook'

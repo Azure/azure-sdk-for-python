@@ -15,6 +15,8 @@ from .dataset import Dataset
 class CosmosDbMongoDbApiCollectionDataset(Dataset):
     """The CosmosDB (MongoDB API) database dataset.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -27,7 +29,7 @@ class CosmosDbMongoDbApiCollectionDataset(Dataset):
      dataset. Type: array (or Expression with resultType array), itemType:
      DatasetSchemaDataElement.
     :type schema: object
-    :param linked_service_name: Linked service reference.
+    :param linked_service_name: Required. Linked service reference.
     :type linked_service_name:
      ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
@@ -39,10 +41,10 @@ class CosmosDbMongoDbApiCollectionDataset(Dataset):
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
-    :param collection: The collection name of the CosmosDB (MongoDB API)
-     database. Type: string (or Expression with resultType string).
+    :param collection: Required. The collection name of the CosmosDB (MongoDB
+     API) database. Type: string (or Expression with resultType string).
     :type collection: object
     """
 
@@ -65,7 +67,7 @@ class CosmosDbMongoDbApiCollectionDataset(Dataset):
         'collection': {'key': 'typeProperties.collection', 'type': 'object'},
     }
 
-    def __init__(self, linked_service_name, collection, additional_properties=None, description=None, structure=None, schema=None, parameters=None, annotations=None, folder=None):
-        super(CosmosDbMongoDbApiCollectionDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder)
-        self.collection = collection
+    def __init__(self, **kwargs):
+        super(CosmosDbMongoDbApiCollectionDataset, self).__init__(**kwargs)
+        self.collection = kwargs.get('collection', None)
         self.type = 'CosmosDbMongoDbApiCollection'

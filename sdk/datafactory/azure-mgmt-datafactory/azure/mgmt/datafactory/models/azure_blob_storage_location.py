@@ -15,10 +15,12 @@ from .dataset_location import DatasetLocation
 class AzureBlobStorageLocation(DatasetLocation):
     """The location of azure blob dataset.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param type: Type of dataset storage location.
+    :param type: Required. Type of dataset storage location.
     :type type: str
     :param folder_path: Specify the folder path of dataset. Type: string (or
      Expression with resultType string)
@@ -43,6 +45,6 @@ class AzureBlobStorageLocation(DatasetLocation):
         'container': {'key': 'container', 'type': 'object'},
     }
 
-    def __init__(self, type, additional_properties=None, folder_path=None, file_name=None, container=None):
-        super(AzureBlobStorageLocation, self).__init__(additional_properties=additional_properties, type=type, folder_path=folder_path, file_name=file_name)
-        self.container = container
+    def __init__(self, **kwargs):
+        super(AzureBlobStorageLocation, self).__init__(**kwargs)
+        self.container = kwargs.get('container', None)

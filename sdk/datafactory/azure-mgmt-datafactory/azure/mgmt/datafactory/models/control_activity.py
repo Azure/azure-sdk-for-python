@@ -20,10 +20,12 @@ class ControlActivity(Activity):
     SetVariableActivity, FilterActivity, ValidationActivity, UntilActivity,
     WaitActivity, ForEachActivity, IfConditionActivity, ExecutePipelineActivity
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param name: Activity name.
+    :param name: Required. Activity name.
     :type name: str
     :param description: Activity description.
     :type description: str
@@ -31,7 +33,7 @@ class ControlActivity(Activity):
     :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
     :param user_properties: Activity user properties.
     :type user_properties: list[~azure.mgmt.datafactory.models.UserProperty]
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     """
 
@@ -40,10 +42,19 @@ class ControlActivity(Activity):
         'type': {'required': True},
     }
 
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
+        'user_properties': {'key': 'userProperties', 'type': '[UserProperty]'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
     _subtype_map = {
         'type': {'WebHook': 'WebHookActivity', 'AppendVariable': 'AppendVariableActivity', 'SetVariable': 'SetVariableActivity', 'Filter': 'FilterActivity', 'Validation': 'ValidationActivity', 'Until': 'UntilActivity', 'Wait': 'WaitActivity', 'ForEach': 'ForEachActivity', 'IfCondition': 'IfConditionActivity', 'ExecutePipeline': 'ExecutePipelineActivity'}
     }
 
-    def __init__(self, name, additional_properties=None, description=None, depends_on=None, user_properties=None):
-        super(ControlActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties)
+    def __init__(self, **kwargs):
+        super(ControlActivity, self).__init__(**kwargs)
         self.type = 'Container'

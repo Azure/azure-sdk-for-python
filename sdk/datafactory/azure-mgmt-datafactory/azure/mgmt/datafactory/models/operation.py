@@ -33,9 +33,9 @@ class Operation(Model):
         'service_specification': {'key': 'properties.serviceSpecification', 'type': 'OperationServiceSpecification'},
     }
 
-    def __init__(self, name=None, origin=None, display=None, service_specification=None):
-        super(Operation, self).__init__()
-        self.name = name
-        self.origin = origin
-        self.display = display
-        self.service_specification = service_specification
+    def __init__(self, **kwargs):
+        super(Operation, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.origin = kwargs.get('origin', None)
+        self.display = kwargs.get('display', None)
+        self.service_specification = kwargs.get('service_specification', None)

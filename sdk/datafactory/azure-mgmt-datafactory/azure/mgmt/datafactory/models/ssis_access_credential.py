@@ -15,11 +15,13 @@ from msrest.serialization import Model
 class SSISAccessCredential(Model):
     """SSIS access credential.
 
-    :param domain: Domain for windows authentication.
+    All required parameters must be populated in order to send to Azure.
+
+    :param domain: Required. Domain for windows authentication.
     :type domain: object
-    :param user_name: UseName for windows authentication.
+    :param user_name: Required. UseName for windows authentication.
     :type user_name: object
-    :param password: Password for windows authentication.
+    :param password: Required. Password for windows authentication.
     :type password: ~azure.mgmt.datafactory.models.SecureString
     """
 
@@ -35,8 +37,8 @@ class SSISAccessCredential(Model):
         'password': {'key': 'password', 'type': 'SecureString'},
     }
 
-    def __init__(self, domain, user_name, password):
-        super(SSISAccessCredential, self).__init__()
-        self.domain = domain
-        self.user_name = user_name
-        self.password = password
+    def __init__(self, **kwargs):
+        super(SSISAccessCredential, self).__init__(**kwargs)
+        self.domain = kwargs.get('domain', None)
+        self.user_name = kwargs.get('user_name', None)
+        self.password = kwargs.get('password', None)

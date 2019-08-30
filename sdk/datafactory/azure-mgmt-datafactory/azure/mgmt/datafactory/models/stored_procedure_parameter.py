@@ -29,7 +29,7 @@ class StoredProcedureParameter(Model):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, value=None, type=None):
-        super(StoredProcedureParameter, self).__init__()
-        self.value = value
-        self.type = type
+    def __init__(self, **kwargs):
+        super(StoredProcedureParameter, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+        self.type = kwargs.get('type', None)

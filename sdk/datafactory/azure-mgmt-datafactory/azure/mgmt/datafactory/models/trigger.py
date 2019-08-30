@@ -23,6 +23,8 @@ class Trigger(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -36,7 +38,7 @@ class Trigger(Model):
     :param annotations: List of tags that can be used for describing the
      trigger.
     :type annotations: list[object]
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     """
 
@@ -57,10 +59,10 @@ class Trigger(Model):
         'type': {'RerunTumblingWindowTrigger': 'RerunTumblingWindowTrigger', 'TumblingWindowTrigger': 'TumblingWindowTrigger', 'MultiplePipelineTrigger': 'MultiplePipelineTrigger'}
     }
 
-    def __init__(self, additional_properties=None, description=None, annotations=None):
-        super(Trigger, self).__init__()
-        self.additional_properties = additional_properties
-        self.description = description
+    def __init__(self, **kwargs):
+        super(Trigger, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.description = kwargs.get('description', None)
         self.runtime_state = None
-        self.annotations = annotations
+        self.annotations = kwargs.get('annotations', None)
         self.type = None

@@ -72,13 +72,13 @@ class PipelineResource(SubResource):
         'folder': {'key': 'properties.folder', 'type': 'PipelineFolder'},
     }
 
-    def __init__(self, additional_properties=None, description=None, activities=None, parameters=None, variables=None, concurrency=None, annotations=None, folder=None):
-        super(PipelineResource, self).__init__()
-        self.additional_properties = additional_properties
-        self.description = description
-        self.activities = activities
-        self.parameters = parameters
-        self.variables = variables
-        self.concurrency = concurrency
-        self.annotations = annotations
-        self.folder = folder
+    def __init__(self, **kwargs):
+        super(PipelineResource, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.description = kwargs.get('description', None)
+        self.activities = kwargs.get('activities', None)
+        self.parameters = kwargs.get('parameters', None)
+        self.variables = kwargs.get('variables', None)
+        self.concurrency = kwargs.get('concurrency', None)
+        self.annotations = kwargs.get('annotations', None)
+        self.folder = kwargs.get('folder', None)

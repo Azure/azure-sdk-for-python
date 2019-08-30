@@ -31,8 +31,8 @@ class IntegrationRuntimeVNetProperties(Model):
         'subnet': {'key': 'subnet', 'type': 'str'},
     }
 
-    def __init__(self, additional_properties=None, v_net_id=None, subnet=None):
-        super(IntegrationRuntimeVNetProperties, self).__init__()
-        self.additional_properties = additional_properties
-        self.v_net_id = v_net_id
-        self.subnet = subnet
+    def __init__(self, **kwargs):
+        super(IntegrationRuntimeVNetProperties, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.v_net_id = kwargs.get('v_net_id', None)
+        self.subnet = kwargs.get('subnet', None)

@@ -15,6 +15,8 @@ from .copy_source import CopySource
 class MongoDbV2Source(CopySource):
     """A copy activity source for a MongoDB database.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -29,7 +31,7 @@ class MongoDbV2Source(CopySource):
      for the source data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param filter: Specifies selection filter using query operators. To return
      all documents in a collection, omit this parameter or pass an empty
@@ -61,9 +63,9 @@ class MongoDbV2Source(CopySource):
         'batch_size': {'key': 'batchSize', 'type': 'object'},
     }
 
-    def __init__(self, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, filter=None, cursor_methods=None, batch_size=None):
-        super(MongoDbV2Source, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections)
-        self.filter = filter
-        self.cursor_methods = cursor_methods
-        self.batch_size = batch_size
+    def __init__(self, **kwargs):
+        super(MongoDbV2Source, self).__init__(**kwargs)
+        self.filter = kwargs.get('filter', None)
+        self.cursor_methods = kwargs.get('cursor_methods', None)
+        self.batch_size = kwargs.get('batch_size', None)
         self.type = 'MongoDbV2Source'

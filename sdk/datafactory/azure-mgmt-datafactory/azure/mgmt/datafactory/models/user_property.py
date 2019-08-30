@@ -15,10 +15,12 @@ from msrest.serialization import Model
 class UserProperty(Model):
     """User property.
 
-    :param name: User property name.
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. User property name.
     :type name: str
-    :param value: User property value. Type: string (or Expression with
-     resultType string).
+    :param value: Required. User property value. Type: string (or Expression
+     with resultType string).
     :type value: object
     """
 
@@ -32,7 +34,7 @@ class UserProperty(Model):
         'value': {'key': 'value', 'type': 'object'},
     }
 
-    def __init__(self, name, value):
-        super(UserProperty, self).__init__()
-        self.name = name
-        self.value = value
+    def __init__(self, **kwargs):
+        super(UserProperty, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.value = kwargs.get('value', None)

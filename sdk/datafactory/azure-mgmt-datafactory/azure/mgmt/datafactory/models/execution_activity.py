@@ -26,10 +26,12 @@ class ExecutionActivity(Activity):
     HDInsightStreamingActivity, HDInsightMapReduceActivity,
     HDInsightPigActivity, HDInsightHiveActivity, CopyActivity
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param name: Activity name.
+    :param name: Required. Activity name.
     :type name: str
     :param description: Activity description.
     :type description: str
@@ -37,7 +39,7 @@ class ExecutionActivity(Activity):
     :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
     :param user_properties: Activity user properties.
     :type user_properties: list[~azure.mgmt.datafactory.models.UserProperty]
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param linked_service_name: Linked service reference.
     :type linked_service_name:
@@ -66,8 +68,8 @@ class ExecutionActivity(Activity):
         'type': {'AzureFunctionActivity': 'AzureFunctionActivity', 'DatabricksSparkPython': 'DatabricksSparkPythonActivity', 'DatabricksSparkJar': 'DatabricksSparkJarActivity', 'DatabricksNotebook': 'DatabricksNotebookActivity', 'DataLakeAnalyticsU-SQL': 'DataLakeAnalyticsUSQLActivity', 'AzureMLUpdateResource': 'AzureMLUpdateResourceActivity', 'AzureMLBatchExecution': 'AzureMLBatchExecutionActivity', 'GetMetadata': 'GetMetadataActivity', 'WebActivity': 'WebActivity', 'Lookup': 'LookupActivity', 'AzureDataExplorerCommand': 'AzureDataExplorerCommandActivity', 'Delete': 'DeleteActivity', 'SqlServerStoredProcedure': 'SqlServerStoredProcedureActivity', 'Custom': 'CustomActivity', 'ExecuteSSISPackage': 'ExecuteSSISPackageActivity', 'HDInsightSpark': 'HDInsightSparkActivity', 'HDInsightStreaming': 'HDInsightStreamingActivity', 'HDInsightMapReduce': 'HDInsightMapReduceActivity', 'HDInsightPig': 'HDInsightPigActivity', 'HDInsightHive': 'HDInsightHiveActivity', 'Copy': 'CopyActivity'}
     }
 
-    def __init__(self, name, additional_properties=None, description=None, depends_on=None, user_properties=None, linked_service_name=None, policy=None):
-        super(ExecutionActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties)
-        self.linked_service_name = linked_service_name
-        self.policy = policy
+    def __init__(self, **kwargs):
+        super(ExecutionActivity, self).__init__(**kwargs)
+        self.linked_service_name = kwargs.get('linked_service_name', None)
+        self.policy = kwargs.get('policy', None)
         self.type = 'Execution'

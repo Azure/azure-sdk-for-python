@@ -15,10 +15,12 @@ from .control_activity import ControlActivity
 class ValidationActivity(ControlActivity):
     """This activity verifies that an external resource exists.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param name: Activity name.
+    :param name: Required. Activity name.
     :type name: str
     :param description: Activity description.
     :type description: str
@@ -26,7 +28,7 @@ class ValidationActivity(ControlActivity):
     :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
     :param user_properties: Activity user properties.
     :type user_properties: list[~azure.mgmt.datafactory.models.UserProperty]
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param timeout: Specifies the timeout for the activity to run. If there is
      no value specified, it takes the value of TimeSpan.FromDays(7) which is 1
@@ -45,7 +47,7 @@ class ValidationActivity(ControlActivity):
      true, the folder must have at least one file. If set to false, the folder
      must be empty. Type: boolean (or Expression with resultType boolean).
     :type child_items: object
-    :param dataset: Validation activity dataset reference.
+    :param dataset: Required. Validation activity dataset reference.
     :type dataset: ~azure.mgmt.datafactory.models.DatasetReference
     """
 
@@ -69,11 +71,11 @@ class ValidationActivity(ControlActivity):
         'dataset': {'key': 'typeProperties.dataset', 'type': 'DatasetReference'},
     }
 
-    def __init__(self, name, dataset, additional_properties=None, description=None, depends_on=None, user_properties=None, timeout=None, sleep=None, minimum_size=None, child_items=None):
-        super(ValidationActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties)
-        self.timeout = timeout
-        self.sleep = sleep
-        self.minimum_size = minimum_size
-        self.child_items = child_items
-        self.dataset = dataset
+    def __init__(self, **kwargs):
+        super(ValidationActivity, self).__init__(**kwargs)
+        self.timeout = kwargs.get('timeout', None)
+        self.sleep = kwargs.get('sleep', None)
+        self.minimum_size = kwargs.get('minimum_size', None)
+        self.child_items = kwargs.get('child_items', None)
+        self.dataset = kwargs.get('dataset', None)
         self.type = 'Validation'

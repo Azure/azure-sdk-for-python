@@ -19,6 +19,8 @@ class RerunTumblingWindowTrigger(Trigger):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -32,18 +34,18 @@ class RerunTumblingWindowTrigger(Trigger):
     :param annotations: List of tags that can be used for describing the
      trigger.
     :type annotations: list[object]
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param parent_trigger: The parent trigger reference.
     :type parent_trigger: object
-    :param requested_start_time: The start time for the time period for which
-     restatement is initiated. Only UTC time is currently supported.
+    :param requested_start_time: Required. The start time for the time period
+     for which restatement is initiated. Only UTC time is currently supported.
     :type requested_start_time: datetime
-    :param requested_end_time: The end time for the time period for which
-     restatement is initiated. Only UTC time is currently supported.
+    :param requested_end_time: Required. The end time for the time period for
+     which restatement is initiated. Only UTC time is currently supported.
     :type requested_end_time: datetime
-    :param max_concurrency: The max number of parallel time windows (ready for
-     execution) for which a rerun is triggered.
+    :param max_concurrency: Required. The max number of parallel time windows
+     (ready for execution) for which a rerun is triggered.
     :type max_concurrency: int
     """
 
@@ -67,10 +69,10 @@ class RerunTumblingWindowTrigger(Trigger):
         'max_concurrency': {'key': 'typeProperties.maxConcurrency', 'type': 'int'},
     }
 
-    def __init__(self, requested_start_time, requested_end_time, max_concurrency, additional_properties=None, description=None, annotations=None, parent_trigger=None):
-        super(RerunTumblingWindowTrigger, self).__init__(additional_properties=additional_properties, description=description, annotations=annotations)
-        self.parent_trigger = parent_trigger
-        self.requested_start_time = requested_start_time
-        self.requested_end_time = requested_end_time
-        self.max_concurrency = max_concurrency
+    def __init__(self, **kwargs):
+        super(RerunTumblingWindowTrigger, self).__init__(**kwargs)
+        self.parent_trigger = kwargs.get('parent_trigger', None)
+        self.requested_start_time = kwargs.get('requested_start_time', None)
+        self.requested_end_time = kwargs.get('requested_end_time', None)
+        self.max_concurrency = kwargs.get('max_concurrency', None)
         self.type = 'RerunTumblingWindowTrigger'

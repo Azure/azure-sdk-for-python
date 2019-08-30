@@ -16,10 +16,12 @@ class ForEachActivity(ControlActivity):
     """This activity is used for iterating over a collection and execute given
     activities.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param name: Activity name.
+    :param name: Required. Activity name.
     :type name: str
     :param description: Activity description.
     :type description: str
@@ -27,7 +29,7 @@ class ForEachActivity(ControlActivity):
     :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
     :param user_properties: Activity user properties.
     :type user_properties: list[~azure.mgmt.datafactory.models.UserProperty]
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param is_sequential: Should the loop be executed in sequence or in
      parallel (max 50)
@@ -35,9 +37,9 @@ class ForEachActivity(ControlActivity):
     :param batch_count: Batch count to be used for controlling the number of
      parallel execution (when isSequential is set to false).
     :type batch_count: int
-    :param items: Collection to iterate.
+    :param items: Required. Collection to iterate.
     :type items: ~azure.mgmt.datafactory.models.Expression
-    :param activities: List of activities to execute .
+    :param activities: Required. List of activities to execute .
     :type activities: list[~azure.mgmt.datafactory.models.Activity]
     """
 
@@ -62,10 +64,10 @@ class ForEachActivity(ControlActivity):
         'activities': {'key': 'typeProperties.activities', 'type': '[Activity]'},
     }
 
-    def __init__(self, name, items, activities, additional_properties=None, description=None, depends_on=None, user_properties=None, is_sequential=None, batch_count=None):
-        super(ForEachActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties)
-        self.is_sequential = is_sequential
-        self.batch_count = batch_count
-        self.items = items
-        self.activities = activities
+    def __init__(self, **kwargs):
+        super(ForEachActivity, self).__init__(**kwargs)
+        self.is_sequential = kwargs.get('is_sequential', None)
+        self.batch_count = kwargs.get('batch_count', None)
+        self.items = kwargs.get('items', None)
+        self.activities = kwargs.get('activities', None)
         self.type = 'ForEach'

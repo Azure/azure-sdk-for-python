@@ -20,11 +20,13 @@ class WebLinkedServiceTypeProperties(Model):
     sub-classes are: WebClientCertificateAuthentication,
     WebBasicAuthentication, WebAnonymousAuthentication
 
-    :param url: The URL of the web service endpoint, e.g.
+    All required parameters must be populated in order to send to Azure.
+
+    :param url: Required. The URL of the web service endpoint, e.g.
      http://www.microsoft.com . Type: string (or Expression with resultType
      string).
     :type url: object
-    :param authentication_type: Constant filled by server.
+    :param authentication_type: Required. Constant filled by server.
     :type authentication_type: str
     """
 
@@ -42,7 +44,7 @@ class WebLinkedServiceTypeProperties(Model):
         'authentication_type': {'ClientCertificate': 'WebClientCertificateAuthentication', 'Basic': 'WebBasicAuthentication', 'Anonymous': 'WebAnonymousAuthentication'}
     }
 
-    def __init__(self, url):
-        super(WebLinkedServiceTypeProperties, self).__init__()
-        self.url = url
+    def __init__(self, **kwargs):
+        super(WebLinkedServiceTypeProperties, self).__init__(**kwargs)
+        self.url = kwargs.get('url', None)
         self.authentication_type = None

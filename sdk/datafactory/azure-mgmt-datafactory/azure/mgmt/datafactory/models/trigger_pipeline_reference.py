@@ -26,7 +26,7 @@ class TriggerPipelineReference(Model):
         'parameters': {'key': 'parameters', 'type': '{object}'},
     }
 
-    def __init__(self, pipeline_reference=None, parameters=None):
-        super(TriggerPipelineReference, self).__init__()
-        self.pipeline_reference = pipeline_reference
-        self.parameters = parameters
+    def __init__(self, **kwargs):
+        super(TriggerPipelineReference, self).__init__(**kwargs)
+        self.pipeline_reference = kwargs.get('pipeline_reference', None)
+        self.parameters = kwargs.get('parameters', None)

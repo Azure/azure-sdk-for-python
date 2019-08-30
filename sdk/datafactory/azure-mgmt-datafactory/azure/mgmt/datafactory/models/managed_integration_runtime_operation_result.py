@@ -54,9 +54,9 @@ class ManagedIntegrationRuntimeOperationResult(Model):
         'activity_id': {'key': 'activityId', 'type': 'str'},
     }
 
-    def __init__(self, additional_properties=None):
-        super(ManagedIntegrationRuntimeOperationResult, self).__init__()
-        self.additional_properties = additional_properties
+    def __init__(self, **kwargs):
+        super(ManagedIntegrationRuntimeOperationResult, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
         self.type = None
         self.start_time = None
         self.result = None

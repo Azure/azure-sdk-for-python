@@ -15,6 +15,8 @@ from .linked_service import LinkedService
 class Office365LinkedService(LinkedService):
     """Office365 linked service.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -29,19 +31,19 @@ class Office365LinkedService(LinkedService):
     :param annotations: List of tags that can be used for describing the
      linked service.
     :type annotations: list[object]
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
-    :param office365_tenant_id: Azure tenant ID to which the Office 365
-     account belongs. Type: string (or Expression with resultType string).
+    :param office365_tenant_id: Required. Azure tenant ID to which the Office
+     365 account belongs. Type: string (or Expression with resultType string).
     :type office365_tenant_id: object
-    :param service_principal_tenant_id: Specify the tenant information under
-     which your Azure AD web application resides. Type: string (or Expression
-     with resultType string).
-    :type service_principal_tenant_id: object
-    :param service_principal_id: Specify the application's client ID. Type:
+    :param service_principal_tenant_id: Required. Specify the tenant
+     information under which your Azure AD web application resides. Type:
      string (or Expression with resultType string).
+    :type service_principal_tenant_id: object
+    :param service_principal_id: Required. Specify the application's client
+     ID. Type: string (or Expression with resultType string).
     :type service_principal_id: object
-    :param service_principal_key: Specify the application's key.
+    :param service_principal_key: Required. Specify the application's key.
     :type service_principal_key: ~azure.mgmt.datafactory.models.SecretBase
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
@@ -71,11 +73,11 @@ class Office365LinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, office365_tenant_id, service_principal_tenant_id, service_principal_id, service_principal_key, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None, encrypted_credential=None):
-        super(Office365LinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations)
-        self.office365_tenant_id = office365_tenant_id
-        self.service_principal_tenant_id = service_principal_tenant_id
-        self.service_principal_id = service_principal_id
-        self.service_principal_key = service_principal_key
-        self.encrypted_credential = encrypted_credential
+    def __init__(self, **kwargs):
+        super(Office365LinkedService, self).__init__(**kwargs)
+        self.office365_tenant_id = kwargs.get('office365_tenant_id', None)
+        self.service_principal_tenant_id = kwargs.get('service_principal_tenant_id', None)
+        self.service_principal_id = kwargs.get('service_principal_id', None)
+        self.service_principal_key = kwargs.get('service_principal_key', None)
+        self.encrypted_credential = kwargs.get('encrypted_credential', None)
         self.type = 'Office365'

@@ -15,6 +15,8 @@ from .copy_source import CopySource
 class BlobSource(CopySource):
     """A copy activity Azure Blob source.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -29,7 +31,7 @@ class BlobSource(CopySource):
      for the source data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param treat_empty_as_null: Treat empty as null. Type: boolean (or
      Expression with resultType boolean).
@@ -58,9 +60,9 @@ class BlobSource(CopySource):
         'recursive': {'key': 'recursive', 'type': 'object'},
     }
 
-    def __init__(self, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, treat_empty_as_null=None, skip_header_line_count=None, recursive=None):
-        super(BlobSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections)
-        self.treat_empty_as_null = treat_empty_as_null
-        self.skip_header_line_count = skip_header_line_count
-        self.recursive = recursive
+    def __init__(self, **kwargs):
+        super(BlobSource, self).__init__(**kwargs)
+        self.treat_empty_as_null = kwargs.get('treat_empty_as_null', None)
+        self.skip_header_line_count = kwargs.get('skip_header_line_count', None)
+        self.recursive = kwargs.get('recursive', None)
         self.type = 'BlobSource'

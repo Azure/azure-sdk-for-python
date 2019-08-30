@@ -15,6 +15,8 @@ from .copy_source import CopySource
 class SalesforceSource(CopySource):
     """A copy activity Salesforce source.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -29,7 +31,7 @@ class SalesforceSource(CopySource):
      for the source data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param query: Database query. Type: string (or Expression with resultType
      string).
@@ -54,8 +56,8 @@ class SalesforceSource(CopySource):
         'read_behavior': {'key': 'readBehavior', 'type': 'str'},
     }
 
-    def __init__(self, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, read_behavior=None):
-        super(SalesforceSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections)
-        self.query = query
-        self.read_behavior = read_behavior
+    def __init__(self, **kwargs):
+        super(SalesforceSource, self).__init__(**kwargs)
+        self.query = kwargs.get('query', None)
+        self.read_behavior = kwargs.get('read_behavior', None)
         self.type = 'SalesforceSource'

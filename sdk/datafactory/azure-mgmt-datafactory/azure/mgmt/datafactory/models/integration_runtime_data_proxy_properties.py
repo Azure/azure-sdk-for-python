@@ -30,8 +30,8 @@ class IntegrationRuntimeDataProxyProperties(Model):
         'path': {'key': 'path', 'type': 'str'},
     }
 
-    def __init__(self, connect_via=None, staging_linked_service=None, path=None):
-        super(IntegrationRuntimeDataProxyProperties, self).__init__()
-        self.connect_via = connect_via
-        self.staging_linked_service = staging_linked_service
-        self.path = path
+    def __init__(self, **kwargs):
+        super(IntegrationRuntimeDataProxyProperties, self).__init__(**kwargs)
+        self.connect_via = kwargs.get('connect_via', None)
+        self.staging_linked_service = kwargs.get('staging_linked_service', None)
+        self.path = kwargs.get('path', None)

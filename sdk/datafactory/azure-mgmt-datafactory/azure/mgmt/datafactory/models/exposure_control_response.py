@@ -34,7 +34,7 @@ class ExposureControlResponse(Model):
         'value': {'key': 'value', 'type': 'str'},
     }
 
-    def __init__(self):
-        super(ExposureControlResponse, self).__init__()
+    def __init__(self, **kwargs):
+        super(ExposureControlResponse, self).__init__(**kwargs)
         self.feature_name = None
         self.value = None

@@ -15,10 +15,12 @@ from .format_read_settings import FormatReadSettings
 class DelimitedTextReadSettings(FormatReadSettings):
     """Delimited text read settings.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param type: The read setting type.
+    :param type: Required. The read setting type.
     :type type: str
     :param skip_line_count: Indicates the number of non-empty rows to skip
      when reading data from input files. Type: integer (or Expression with
@@ -36,6 +38,6 @@ class DelimitedTextReadSettings(FormatReadSettings):
         'skip_line_count': {'key': 'skipLineCount', 'type': 'object'},
     }
 
-    def __init__(self, type, additional_properties=None, skip_line_count=None):
-        super(DelimitedTextReadSettings, self).__init__(additional_properties=additional_properties, type=type)
-        self.skip_line_count = skip_line_count
+    def __init__(self, **kwargs):
+        super(DelimitedTextReadSettings, self).__init__(**kwargs)
+        self.skip_line_count = kwargs.get('skip_line_count', None)

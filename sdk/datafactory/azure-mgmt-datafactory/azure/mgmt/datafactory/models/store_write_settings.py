@@ -19,6 +19,8 @@ class StoreWriteSettings(Model):
     sub-classes are: FileServerWriteSettings, AzureDataLakeStoreWriteSettings,
     AzureBlobFSWriteSettings, AzureBlobStorageWriteSettings
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -28,7 +30,7 @@ class StoreWriteSettings(Model):
     :type max_concurrent_connections: object
     :param copy_behavior: The type of copy behavior for copy sink.
     :type copy_behavior: object
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     """
 
@@ -47,9 +49,9 @@ class StoreWriteSettings(Model):
         'type': {'FileServerWriteSettings': 'FileServerWriteSettings', 'AzureDataLakeStoreWriteSettings': 'AzureDataLakeStoreWriteSettings', 'AzureBlobFSWriteSettings': 'AzureBlobFSWriteSettings', 'AzureBlobStorageWriteSettings': 'AzureBlobStorageWriteSettings'}
     }
 
-    def __init__(self, additional_properties=None, max_concurrent_connections=None, copy_behavior=None):
-        super(StoreWriteSettings, self).__init__()
-        self.additional_properties = additional_properties
-        self.max_concurrent_connections = max_concurrent_connections
-        self.copy_behavior = copy_behavior
+    def __init__(self, **kwargs):
+        super(StoreWriteSettings, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.max_concurrent_connections = kwargs.get('max_concurrent_connections', None)
+        self.copy_behavior = kwargs.get('copy_behavior', None)
         self.type = None

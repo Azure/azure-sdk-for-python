@@ -15,6 +15,8 @@ from .dataset import Dataset
 class DelimitedTextDataset(Dataset):
     """Delimited text dataset.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -27,7 +29,7 @@ class DelimitedTextDataset(Dataset):
      dataset. Type: array (or Expression with resultType array), itemType:
      DatasetSchemaDataElement.
     :type schema: object
-    :param linked_service_name: Linked service reference.
+    :param linked_service_name: Required. Linked service reference.
     :type linked_service_name:
      ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
@@ -39,9 +41,9 @@ class DelimitedTextDataset(Dataset):
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
-    :param location: The location of the delimited text storage.
+    :param location: Required. The location of the delimited text storage.
     :type location: ~azure.mgmt.datafactory.models.DatasetLocation
     :param column_delimiter: The column delimiter. Type: string (or Expression
      with resultType string).
@@ -105,16 +107,16 @@ class DelimitedTextDataset(Dataset):
         'null_value': {'key': 'typeProperties.nullValue', 'type': 'object'},
     }
 
-    def __init__(self, linked_service_name, location, additional_properties=None, description=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, column_delimiter=None, row_delimiter=None, encoding_name=None, compression_codec=None, compression_level=None, quote_char=None, escape_char=None, first_row_as_header=None, null_value=None):
-        super(DelimitedTextDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder)
-        self.location = location
-        self.column_delimiter = column_delimiter
-        self.row_delimiter = row_delimiter
-        self.encoding_name = encoding_name
-        self.compression_codec = compression_codec
-        self.compression_level = compression_level
-        self.quote_char = quote_char
-        self.escape_char = escape_char
-        self.first_row_as_header = first_row_as_header
-        self.null_value = null_value
+    def __init__(self, **kwargs):
+        super(DelimitedTextDataset, self).__init__(**kwargs)
+        self.location = kwargs.get('location', None)
+        self.column_delimiter = kwargs.get('column_delimiter', None)
+        self.row_delimiter = kwargs.get('row_delimiter', None)
+        self.encoding_name = kwargs.get('encoding_name', None)
+        self.compression_codec = kwargs.get('compression_codec', None)
+        self.compression_level = kwargs.get('compression_level', None)
+        self.quote_char = kwargs.get('quote_char', None)
+        self.escape_char = kwargs.get('escape_char', None)
+        self.first_row_as_header = kwargs.get('first_row_as_header', None)
+        self.null_value = kwargs.get('null_value', None)
         self.type = 'DelimitedText'

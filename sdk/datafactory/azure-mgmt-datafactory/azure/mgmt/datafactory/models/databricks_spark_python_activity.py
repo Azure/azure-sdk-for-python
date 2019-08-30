@@ -15,10 +15,12 @@ from .execution_activity import ExecutionActivity
 class DatabricksSparkPythonActivity(ExecutionActivity):
     """DatabricksSparkPython activity.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param name: Activity name.
+    :param name: Required. Activity name.
     :type name: str
     :param description: Activity description.
     :type description: str
@@ -26,15 +28,16 @@ class DatabricksSparkPythonActivity(ExecutionActivity):
     :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
     :param user_properties: Activity user properties.
     :type user_properties: list[~azure.mgmt.datafactory.models.UserProperty]
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param linked_service_name: Linked service reference.
     :type linked_service_name:
      ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param policy: Activity policy.
     :type policy: ~azure.mgmt.datafactory.models.ActivityPolicy
-    :param python_file: The URI of the Python file to be executed. DBFS paths
-     are supported. Type: string (or Expression with resultType string).
+    :param python_file: Required. The URI of the Python file to be executed.
+     DBFS paths are supported. Type: string (or Expression with resultType
+     string).
     :type python_file: object
     :param parameters: Command line parameters that will be passed to the
      Python file.
@@ -64,9 +67,9 @@ class DatabricksSparkPythonActivity(ExecutionActivity):
         'libraries': {'key': 'typeProperties.libraries', 'type': '[{object}]'},
     }
 
-    def __init__(self, name, python_file, additional_properties=None, description=None, depends_on=None, user_properties=None, linked_service_name=None, policy=None, parameters=None, libraries=None):
-        super(DatabricksSparkPythonActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy)
-        self.python_file = python_file
-        self.parameters = parameters
-        self.libraries = libraries
+    def __init__(self, **kwargs):
+        super(DatabricksSparkPythonActivity, self).__init__(**kwargs)
+        self.python_file = kwargs.get('python_file', None)
+        self.parameters = kwargs.get('parameters', None)
+        self.libraries = kwargs.get('libraries', None)
         self.type = 'DatabricksSparkPython'

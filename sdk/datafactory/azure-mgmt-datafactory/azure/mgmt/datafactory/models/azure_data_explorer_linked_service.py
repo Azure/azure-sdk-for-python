@@ -15,6 +15,8 @@ from .linked_service import LinkedService
 class AzureDataExplorerLinkedService(LinkedService):
     """Azure Data Explorer (Kusto) linked service.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -29,25 +31,25 @@ class AzureDataExplorerLinkedService(LinkedService):
     :param annotations: List of tags that can be used for describing the
      linked service.
     :type annotations: list[object]
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
-    :param endpoint: The endpoint of Azure Data Explorer (the engine's
-     endpoint). URL will be in the format
+    :param endpoint: Required. The endpoint of Azure Data Explorer (the
+     engine's endpoint). URL will be in the format
      https://<clusterName>.<regionName>.kusto.windows.net. Type: string (or
      Expression with resultType string)
     :type endpoint: object
-    :param service_principal_id: The ID of the service principal used to
-     authenticate against Azure Data Explorer. Type: string (or Expression with
-     resultType string).
+    :param service_principal_id: Required. The ID of the service principal
+     used to authenticate against Azure Data Explorer. Type: string (or
+     Expression with resultType string).
     :type service_principal_id: object
-    :param service_principal_key: The key of the service principal used to
-     authenticate against Kusto.
+    :param service_principal_key: Required. The key of the service principal
+     used to authenticate against Kusto.
     :type service_principal_key: ~azure.mgmt.datafactory.models.SecretBase
-    :param database: Database name for connection. Type: string (or Expression
-     with resultType string).
+    :param database: Required. Database name for connection. Type: string (or
+     Expression with resultType string).
     :type database: object
-    :param tenant: The name or ID of the tenant to which the service principal
-     belongs. Type: string (or Expression with resultType string).
+    :param tenant: Required. The name or ID of the tenant to which the service
+     principal belongs. Type: string (or Expression with resultType string).
     :type tenant: object
     """
 
@@ -74,11 +76,11 @@ class AzureDataExplorerLinkedService(LinkedService):
         'tenant': {'key': 'typeProperties.tenant', 'type': 'object'},
     }
 
-    def __init__(self, endpoint, service_principal_id, service_principal_key, database, tenant, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None):
-        super(AzureDataExplorerLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations)
-        self.endpoint = endpoint
-        self.service_principal_id = service_principal_id
-        self.service_principal_key = service_principal_key
-        self.database = database
-        self.tenant = tenant
+    def __init__(self, **kwargs):
+        super(AzureDataExplorerLinkedService, self).__init__(**kwargs)
+        self.endpoint = kwargs.get('endpoint', None)
+        self.service_principal_id = kwargs.get('service_principal_id', None)
+        self.service_principal_key = kwargs.get('service_principal_key', None)
+        self.database = kwargs.get('database', None)
+        self.tenant = kwargs.get('tenant', None)
         self.type = 'AzureDataExplorer'

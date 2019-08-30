@@ -15,10 +15,12 @@ from .dependency_reference import DependencyReference
 class SelfDependencyTumblingWindowTriggerReference(DependencyReference):
     """Self referenced tumbling window trigger dependency.
 
-    :param type: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Constant filled by server.
     :type type: str
-    :param offset: Timespan applied to the start time of a tumbling window
-     when evaluating dependency.
+    :param offset: Required. Timespan applied to the start time of a tumbling
+     window when evaluating dependency.
     :type offset: str
     :param size: The size of the window when evaluating the dependency. If
      undefined the frequency of the tumbling window will be used.
@@ -37,8 +39,8 @@ class SelfDependencyTumblingWindowTriggerReference(DependencyReference):
         'size': {'key': 'size', 'type': 'str'},
     }
 
-    def __init__(self, offset, size=None):
-        super(SelfDependencyTumblingWindowTriggerReference, self).__init__()
-        self.offset = offset
-        self.size = size
+    def __init__(self, **kwargs):
+        super(SelfDependencyTumblingWindowTriggerReference, self).__init__(**kwargs)
+        self.offset = kwargs.get('offset', None)
+        self.size = kwargs.get('size', None)
         self.type = 'SelfDependencyTumblingWindowTriggerReference'

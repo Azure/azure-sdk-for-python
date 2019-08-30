@@ -16,11 +16,13 @@ class WebAnonymousAuthentication(WebLinkedServiceTypeProperties):
     """A WebLinkedService that uses anonymous authentication to communicate with
     an HTTP endpoint.
 
-    :param url: The URL of the web service endpoint, e.g.
+    All required parameters must be populated in order to send to Azure.
+
+    :param url: Required. The URL of the web service endpoint, e.g.
      http://www.microsoft.com . Type: string (or Expression with resultType
      string).
     :type url: object
-    :param authentication_type: Constant filled by server.
+    :param authentication_type: Required. Constant filled by server.
     :type authentication_type: str
     """
 
@@ -29,6 +31,11 @@ class WebAnonymousAuthentication(WebLinkedServiceTypeProperties):
         'authentication_type': {'required': True},
     }
 
-    def __init__(self, url):
-        super(WebAnonymousAuthentication, self).__init__(url=url)
+    _attribute_map = {
+        'url': {'key': 'url', 'type': 'object'},
+        'authentication_type': {'key': 'authenticationType', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(WebAnonymousAuthentication, self).__init__(**kwargs)
         self.authentication_type = 'Anonymous'

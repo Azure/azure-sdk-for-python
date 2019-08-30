@@ -27,7 +27,7 @@ class FactoryRepoUpdate(Model):
         'repo_configuration': {'key': 'repoConfiguration', 'type': 'FactoryRepoConfiguration'},
     }
 
-    def __init__(self, factory_resource_id=None, repo_configuration=None):
-        super(FactoryRepoUpdate, self).__init__()
-        self.factory_resource_id = factory_resource_id
-        self.repo_configuration = repo_configuration
+    def __init__(self, **kwargs):
+        super(FactoryRepoUpdate, self).__init__(**kwargs)
+        self.factory_resource_id = kwargs.get('factory_resource_id', None)
+        self.repo_configuration = kwargs.get('repo_configuration', None)

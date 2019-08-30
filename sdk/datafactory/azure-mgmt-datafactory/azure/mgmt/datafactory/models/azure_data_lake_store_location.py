@@ -15,10 +15,12 @@ from .dataset_location import DatasetLocation
 class AzureDataLakeStoreLocation(DatasetLocation):
     """The location of azure data lake store dataset.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param type: Type of dataset storage location.
+    :param type: Required. Type of dataset storage location.
     :type type: str
     :param folder_path: Specify the folder path of dataset. Type: string (or
      Expression with resultType string)
@@ -32,5 +34,12 @@ class AzureDataLakeStoreLocation(DatasetLocation):
         'type': {'required': True},
     }
 
-    def __init__(self, type, additional_properties=None, folder_path=None, file_name=None):
-        super(AzureDataLakeStoreLocation, self).__init__(additional_properties=additional_properties, type=type, folder_path=folder_path, file_name=file_name)
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'folder_path': {'key': 'folderPath', 'type': 'object'},
+        'file_name': {'key': 'fileName', 'type': 'object'},
+    }
+
+    def __init__(self, **kwargs):
+        super(AzureDataLakeStoreLocation, self).__init__(**kwargs)

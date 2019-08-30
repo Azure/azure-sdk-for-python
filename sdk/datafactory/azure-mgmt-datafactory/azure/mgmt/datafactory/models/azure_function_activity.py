@@ -15,10 +15,12 @@ from .execution_activity import ExecutionActivity
 class AzureFunctionActivity(ExecutionActivity):
     """Azure Function activity.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param name: Activity name.
+    :param name: Required. Activity name.
     :type name: str
     :param description: Activity description.
     :type description: str
@@ -26,19 +28,20 @@ class AzureFunctionActivity(ExecutionActivity):
     :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
     :param user_properties: Activity user properties.
     :type user_properties: list[~azure.mgmt.datafactory.models.UserProperty]
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param linked_service_name: Linked service reference.
     :type linked_service_name:
      ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param policy: Activity policy.
     :type policy: ~azure.mgmt.datafactory.models.ActivityPolicy
-    :param method: Rest API method for target endpoint. Possible values
-     include: 'GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'HEAD', 'TRACE'
+    :param method: Required. Rest API method for target endpoint. Possible
+     values include: 'GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'HEAD', 'TRACE'
     :type method: str or
      ~azure.mgmt.datafactory.models.AzureFunctionActivityMethod
-    :param function_name: Name of the Function that the Azure Function
-     Activity will call. Type: string (or Expression with resultType string)
+    :param function_name: Required. Name of the Function that the Azure
+     Function Activity will call. Type: string (or Expression with resultType
+     string)
     :type function_name: object
     :param headers: Represents the headers that will be sent to the request.
      For example, to set the language and type on a request: "headers" : {
@@ -73,10 +76,10 @@ class AzureFunctionActivity(ExecutionActivity):
         'body': {'key': 'typeProperties.body', 'type': 'object'},
     }
 
-    def __init__(self, name, method, function_name, additional_properties=None, description=None, depends_on=None, user_properties=None, linked_service_name=None, policy=None, headers=None, body=None):
-        super(AzureFunctionActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy)
-        self.method = method
-        self.function_name = function_name
-        self.headers = headers
-        self.body = body
+    def __init__(self, **kwargs):
+        super(AzureFunctionActivity, self).__init__(**kwargs)
+        self.method = kwargs.get('method', None)
+        self.function_name = kwargs.get('function_name', None)
+        self.headers = kwargs.get('headers', None)
+        self.body = kwargs.get('body', None)
         self.type = 'AzureFunctionActivity'

@@ -18,9 +18,11 @@ class TriggerDependencyReference(DependencyReference):
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: TumblingWindowTriggerDependencyReference
 
-    :param type: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Constant filled by server.
     :type type: str
-    :param reference_trigger: Referenced trigger.
+    :param reference_trigger: Required. Referenced trigger.
     :type reference_trigger: ~azure.mgmt.datafactory.models.TriggerReference
     """
 
@@ -38,7 +40,7 @@ class TriggerDependencyReference(DependencyReference):
         'type': {'TumblingWindowTriggerDependencyReference': 'TumblingWindowTriggerDependencyReference'}
     }
 
-    def __init__(self, reference_trigger):
-        super(TriggerDependencyReference, self).__init__()
-        self.reference_trigger = reference_trigger
+    def __init__(self, **kwargs):
+        super(TriggerDependencyReference, self).__init__(**kwargs)
+        self.reference_trigger = kwargs.get('reference_trigger', None)
         self.type = 'TriggerDependencyReference'

@@ -15,6 +15,8 @@ from .copy_sink import CopySink
 class AzureDataLakeStoreSink(CopySink):
     """A copy activity Azure Data Lake Store sink.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -36,7 +38,7 @@ class AzureDataLakeStoreSink(CopySink):
      for the sink data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param copy_behavior: The type of copy behavior for copy sink.
     :type copy_behavior: object
@@ -60,8 +62,8 @@ class AzureDataLakeStoreSink(CopySink):
         'enable_adls_single_file_parallel': {'key': 'enableAdlsSingleFileParallel', 'type': 'object'},
     }
 
-    def __init__(self, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, max_concurrent_connections=None, copy_behavior=None, enable_adls_single_file_parallel=None):
-        super(AzureDataLakeStoreSink, self).__init__(additional_properties=additional_properties, write_batch_size=write_batch_size, write_batch_timeout=write_batch_timeout, sink_retry_count=sink_retry_count, sink_retry_wait=sink_retry_wait, max_concurrent_connections=max_concurrent_connections)
-        self.copy_behavior = copy_behavior
-        self.enable_adls_single_file_parallel = enable_adls_single_file_parallel
+    def __init__(self, **kwargs):
+        super(AzureDataLakeStoreSink, self).__init__(**kwargs)
+        self.copy_behavior = kwargs.get('copy_behavior', None)
+        self.enable_adls_single_file_parallel = kwargs.get('enable_adls_single_file_parallel', None)
         self.type = 'AzureDataLakeStoreSink'

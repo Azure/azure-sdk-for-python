@@ -15,10 +15,12 @@ from .format_write_settings import FormatWriteSettings
 class AvroWriteSettings(FormatWriteSettings):
     """Avro write settings.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param type: The write setting type.
+    :param type: Required. The write setting type.
     :type type: str
     :param record_name: Top level record name in write result, which is
      required in AVRO spec.
@@ -38,7 +40,7 @@ class AvroWriteSettings(FormatWriteSettings):
         'record_namespace': {'key': 'recordNamespace', 'type': 'str'},
     }
 
-    def __init__(self, type, additional_properties=None, record_name=None, record_namespace=None):
-        super(AvroWriteSettings, self).__init__(additional_properties=additional_properties, type=type)
-        self.record_name = record_name
-        self.record_namespace = record_namespace
+    def __init__(self, **kwargs):
+        super(AvroWriteSettings, self).__init__(**kwargs)
+        self.record_name = kwargs.get('record_name', None)
+        self.record_namespace = kwargs.get('record_namespace', None)

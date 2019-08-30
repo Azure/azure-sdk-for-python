@@ -15,8 +15,10 @@ from msrest.serialization import Model
 class LinkedIntegrationRuntimeRequest(Model):
     """Data factory name for linked integration runtime request.
 
-    :param linked_factory_name: The data factory name for linked integration
-     runtime.
+    All required parameters must be populated in order to send to Azure.
+
+    :param linked_factory_name: Required. The data factory name for linked
+     integration runtime.
     :type linked_factory_name: str
     """
 
@@ -28,6 +30,6 @@ class LinkedIntegrationRuntimeRequest(Model):
         'linked_factory_name': {'key': 'factoryName', 'type': 'str'},
     }
 
-    def __init__(self, linked_factory_name):
-        super(LinkedIntegrationRuntimeRequest, self).__init__()
-        self.linked_factory_name = linked_factory_name
+    def __init__(self, **kwargs):
+        super(LinkedIntegrationRuntimeRequest, self).__init__(**kwargs)
+        self.linked_factory_name = kwargs.get('linked_factory_name', None)

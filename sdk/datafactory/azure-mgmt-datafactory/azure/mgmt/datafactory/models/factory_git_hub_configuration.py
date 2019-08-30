@@ -15,17 +15,19 @@ from .factory_repo_configuration import FactoryRepoConfiguration
 class FactoryGitHubConfiguration(FactoryRepoConfiguration):
     """Factory's GitHub repo information.
 
-    :param account_name: Account name.
+    All required parameters must be populated in order to send to Azure.
+
+    :param account_name: Required. Account name.
     :type account_name: str
-    :param repository_name: Repository name.
+    :param repository_name: Required. Repository name.
     :type repository_name: str
-    :param collaboration_branch: Collaboration branch.
+    :param collaboration_branch: Required. Collaboration branch.
     :type collaboration_branch: str
-    :param root_folder: Root folder.
+    :param root_folder: Required. Root folder.
     :type root_folder: str
     :param last_commit_id: Last commit id.
     :type last_commit_id: str
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param host_name: GitHub Enterprise host name. For example:
      https://github.mydomain.com
@@ -50,7 +52,7 @@ class FactoryGitHubConfiguration(FactoryRepoConfiguration):
         'host_name': {'key': 'hostName', 'type': 'str'},
     }
 
-    def __init__(self, account_name, repository_name, collaboration_branch, root_folder, last_commit_id=None, host_name=None):
-        super(FactoryGitHubConfiguration, self).__init__(account_name=account_name, repository_name=repository_name, collaboration_branch=collaboration_branch, root_folder=root_folder, last_commit_id=last_commit_id)
-        self.host_name = host_name
+    def __init__(self, **kwargs):
+        super(FactoryGitHubConfiguration, self).__init__(**kwargs)
+        self.host_name = kwargs.get('host_name', None)
         self.type = 'FactoryGitHubConfiguration'

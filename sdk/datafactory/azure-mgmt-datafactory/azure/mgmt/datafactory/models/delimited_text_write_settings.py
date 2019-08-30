@@ -15,17 +15,19 @@ from .format_write_settings import FormatWriteSettings
 class DelimitedTextWriteSettings(FormatWriteSettings):
     """Delimited text write settings.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param type: The write setting type.
+    :param type: Required. The write setting type.
     :type type: str
     :param quote_all_text: Indicates whether string values should always be
      enclosed with quotes. Type: boolean (or Expression with resultType
      boolean).
     :type quote_all_text: object
-    :param file_extension: The file extension used to create the files. Type:
-     string (or Expression with resultType string).
+    :param file_extension: Required. The file extension used to create the
+     files. Type: string (or Expression with resultType string).
     :type file_extension: object
     """
 
@@ -41,7 +43,7 @@ class DelimitedTextWriteSettings(FormatWriteSettings):
         'file_extension': {'key': 'fileExtension', 'type': 'object'},
     }
 
-    def __init__(self, type, file_extension, additional_properties=None, quote_all_text=None):
-        super(DelimitedTextWriteSettings, self).__init__(additional_properties=additional_properties, type=type)
-        self.quote_all_text = quote_all_text
-        self.file_extension = file_extension
+    def __init__(self, **kwargs):
+        super(DelimitedTextWriteSettings, self).__init__(**kwargs)
+        self.quote_all_text = kwargs.get('quote_all_text', None)
+        self.file_extension = kwargs.get('file_extension', None)

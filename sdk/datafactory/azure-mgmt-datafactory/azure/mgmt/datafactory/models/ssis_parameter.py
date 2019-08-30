@@ -56,17 +56,17 @@ class SsisParameter(Model):
         'variable': {'key': 'variable', 'type': 'str'},
     }
 
-    def __init__(self, id=None, name=None, description=None, data_type=None, required=None, sensitive=None, design_default_value=None, default_value=None, sensitive_default_value=None, value_type=None, value_set=None, variable=None):
-        super(SsisParameter, self).__init__()
-        self.id = id
-        self.name = name
-        self.description = description
-        self.data_type = data_type
-        self.required = required
-        self.sensitive = sensitive
-        self.design_default_value = design_default_value
-        self.default_value = default_value
-        self.sensitive_default_value = sensitive_default_value
-        self.value_type = value_type
-        self.value_set = value_set
-        self.variable = variable
+    def __init__(self, **kwargs):
+        super(SsisParameter, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.name = kwargs.get('name', None)
+        self.description = kwargs.get('description', None)
+        self.data_type = kwargs.get('data_type', None)
+        self.required = kwargs.get('required', None)
+        self.sensitive = kwargs.get('sensitive', None)
+        self.design_default_value = kwargs.get('design_default_value', None)
+        self.default_value = kwargs.get('default_value', None)
+        self.sensitive_default_value = kwargs.get('sensitive_default_value', None)
+        self.value_type = kwargs.get('value_type', None)
+        self.value_set = kwargs.get('value_set', None)
+        self.variable = kwargs.get('variable', None)

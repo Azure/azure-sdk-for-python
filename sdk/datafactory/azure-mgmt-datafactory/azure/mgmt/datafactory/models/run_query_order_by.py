@@ -15,16 +15,18 @@ from msrest.serialization import Model
 class RunQueryOrderBy(Model):
     """An object to provide order by options for listing runs.
 
-    :param order_by: Parameter name to be used for order by. The allowed
-     parameters to order by for pipeline runs are PipelineName, RunStart,
-     RunEnd and Status; for activity runs are ActivityName, ActivityRunStart,
-     ActivityRunEnd and Status; for trigger runs are TriggerName,
-     TriggerRunTimestamp and Status. Possible values include: 'RunStart',
-     'RunEnd', 'PipelineName', 'Status', 'ActivityName', 'ActivityRunStart',
-     'ActivityRunEnd', 'TriggerName', 'TriggerRunTimestamp'
+    All required parameters must be populated in order to send to Azure.
+
+    :param order_by: Required. Parameter name to be used for order by. The
+     allowed parameters to order by for pipeline runs are PipelineName,
+     RunStart, RunEnd and Status; for activity runs are ActivityName,
+     ActivityRunStart, ActivityRunEnd and Status; for trigger runs are
+     TriggerName, TriggerRunTimestamp and Status. Possible values include:
+     'RunStart', 'RunEnd', 'PipelineName', 'Status', 'ActivityName',
+     'ActivityRunStart', 'ActivityRunEnd', 'TriggerName', 'TriggerRunTimestamp'
     :type order_by: str or ~azure.mgmt.datafactory.models.RunQueryOrderByField
-    :param order: Sorting order of the parameter. Possible values include:
-     'ASC', 'DESC'
+    :param order: Required. Sorting order of the parameter. Possible values
+     include: 'ASC', 'DESC'
     :type order: str or ~azure.mgmt.datafactory.models.RunQueryOrder
     """
 
@@ -38,7 +40,7 @@ class RunQueryOrderBy(Model):
         'order': {'key': 'order', 'type': 'str'},
     }
 
-    def __init__(self, order_by, order):
-        super(RunQueryOrderBy, self).__init__()
-        self.order_by = order_by
-        self.order = order
+    def __init__(self, **kwargs):
+        super(RunQueryOrderBy, self).__init__(**kwargs)
+        self.order_by = kwargs.get('order_by', None)
+        self.order = kwargs.get('order', None)

@@ -29,6 +29,6 @@ class UpdateIntegrationRuntimeNodeRequest(Model):
         'concurrent_jobs_limit': {'key': 'concurrentJobsLimit', 'type': 'int'},
     }
 
-    def __init__(self, concurrent_jobs_limit=None):
-        super(UpdateIntegrationRuntimeNodeRequest, self).__init__()
-        self.concurrent_jobs_limit = concurrent_jobs_limit
+    def __init__(self, **kwargs):
+        super(UpdateIntegrationRuntimeNodeRequest, self).__init__(**kwargs)
+        self.concurrent_jobs_limit = kwargs.get('concurrent_jobs_limit', None)

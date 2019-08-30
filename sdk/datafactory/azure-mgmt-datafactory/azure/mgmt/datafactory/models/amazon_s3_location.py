@@ -15,10 +15,12 @@ from .dataset_location import DatasetLocation
 class AmazonS3Location(DatasetLocation):
     """The location of amazon S3 dataset.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param type: Type of dataset storage location.
+    :param type: Required. Type of dataset storage location.
     :type type: str
     :param folder_path: Specify the folder path of dataset. Type: string (or
      Expression with resultType string)
@@ -47,7 +49,7 @@ class AmazonS3Location(DatasetLocation):
         'version': {'key': 'version', 'type': 'object'},
     }
 
-    def __init__(self, type, additional_properties=None, folder_path=None, file_name=None, bucket_name=None, version=None):
-        super(AmazonS3Location, self).__init__(additional_properties=additional_properties, type=type, folder_path=folder_path, file_name=file_name)
-        self.bucket_name = bucket_name
-        self.version = version
+    def __init__(self, **kwargs):
+        super(AmazonS3Location, self).__init__(**kwargs)
+        self.bucket_name = kwargs.get('bucket_name', None)
+        self.version = kwargs.get('version', None)

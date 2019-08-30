@@ -15,9 +15,11 @@ from .linked_integration_runtime_type import LinkedIntegrationRuntimeType
 class LinkedIntegrationRuntimeKeyAuthorization(LinkedIntegrationRuntimeType):
     """The key authorization type integration runtime.
 
-    :param authorization_type: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param authorization_type: Required. Constant filled by server.
     :type authorization_type: str
-    :param key: The key used for authorization.
+    :param key: Required. The key used for authorization.
     :type key: ~azure.mgmt.datafactory.models.SecureString
     """
 
@@ -31,7 +33,7 @@ class LinkedIntegrationRuntimeKeyAuthorization(LinkedIntegrationRuntimeType):
         'key': {'key': 'key', 'type': 'SecureString'},
     }
 
-    def __init__(self, key):
-        super(LinkedIntegrationRuntimeKeyAuthorization, self).__init__()
-        self.key = key
+    def __init__(self, **kwargs):
+        super(LinkedIntegrationRuntimeKeyAuthorization, self).__init__(**kwargs)
+        self.key = kwargs.get('key', None)
         self.authorization_type = 'Key'

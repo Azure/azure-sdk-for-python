@@ -15,6 +15,8 @@ from .linked_service import LinkedService
 class ODataLinkedService(LinkedService):
     """Open Data Protocol (OData) linked service.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -29,10 +31,10 @@ class ODataLinkedService(LinkedService):
     :param annotations: List of tags that can be used for describing the
      linked service.
     :type annotations: list[object]
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
-    :param url: The URL of the OData service endpoint. Type: string (or
-     Expression with resultType string).
+    :param url: Required. The URL of the OData service endpoint. Type: string
+     (or Expression with resultType string).
     :type url: object
     :param authentication_type: Type of authentication used to connect to the
      OData service. Possible values include: 'Basic', 'Anonymous', 'Windows',
@@ -108,18 +110,18 @@ class ODataLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, url, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None, authentication_type=None, user_name=None, password=None, tenant=None, service_principal_id=None, aad_resource_id=None, aad_service_principal_credential_type=None, service_principal_key=None, service_principal_embedded_cert=None, service_principal_embedded_cert_password=None, encrypted_credential=None):
-        super(ODataLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations)
-        self.url = url
-        self.authentication_type = authentication_type
-        self.user_name = user_name
-        self.password = password
-        self.tenant = tenant
-        self.service_principal_id = service_principal_id
-        self.aad_resource_id = aad_resource_id
-        self.aad_service_principal_credential_type = aad_service_principal_credential_type
-        self.service_principal_key = service_principal_key
-        self.service_principal_embedded_cert = service_principal_embedded_cert
-        self.service_principal_embedded_cert_password = service_principal_embedded_cert_password
-        self.encrypted_credential = encrypted_credential
+    def __init__(self, **kwargs):
+        super(ODataLinkedService, self).__init__(**kwargs)
+        self.url = kwargs.get('url', None)
+        self.authentication_type = kwargs.get('authentication_type', None)
+        self.user_name = kwargs.get('user_name', None)
+        self.password = kwargs.get('password', None)
+        self.tenant = kwargs.get('tenant', None)
+        self.service_principal_id = kwargs.get('service_principal_id', None)
+        self.aad_resource_id = kwargs.get('aad_resource_id', None)
+        self.aad_service_principal_credential_type = kwargs.get('aad_service_principal_credential_type', None)
+        self.service_principal_key = kwargs.get('service_principal_key', None)
+        self.service_principal_embedded_cert = kwargs.get('service_principal_embedded_cert', None)
+        self.service_principal_embedded_cert_password = kwargs.get('service_principal_embedded_cert_password', None)
+        self.encrypted_credential = kwargs.get('encrypted_credential', None)
         self.type = 'OData'

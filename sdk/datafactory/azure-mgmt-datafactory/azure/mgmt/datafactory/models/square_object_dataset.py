@@ -15,6 +15,8 @@ from .dataset import Dataset
 class SquareObjectDataset(Dataset):
     """Square Service dataset.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -27,7 +29,7 @@ class SquareObjectDataset(Dataset):
      dataset. Type: array (or Expression with resultType array), itemType:
      DatasetSchemaDataElement.
     :type schema: object
-    :param linked_service_name: Linked service reference.
+    :param linked_service_name: Required. Linked service reference.
     :type linked_service_name:
      ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param parameters: Parameters for dataset.
@@ -39,7 +41,7 @@ class SquareObjectDataset(Dataset):
     :param folder: The folder that this Dataset is in. If not specified,
      Dataset will appear at the root level.
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param table_name: The table name. Type: string (or Expression with
      resultType string).
@@ -64,7 +66,7 @@ class SquareObjectDataset(Dataset):
         'table_name': {'key': 'typeProperties.tableName', 'type': 'object'},
     }
 
-    def __init__(self, linked_service_name, additional_properties=None, description=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None):
-        super(SquareObjectDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder)
-        self.table_name = table_name
+    def __init__(self, **kwargs):
+        super(SquareObjectDataset, self).__init__(**kwargs)
+        self.table_name = kwargs.get('table_name', None)
         self.type = 'SquareObject'

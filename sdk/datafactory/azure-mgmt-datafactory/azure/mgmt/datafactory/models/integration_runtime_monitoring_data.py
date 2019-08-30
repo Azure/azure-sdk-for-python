@@ -27,7 +27,7 @@ class IntegrationRuntimeMonitoringData(Model):
         'nodes': {'key': 'nodes', 'type': '[IntegrationRuntimeNodeMonitoringData]'},
     }
 
-    def __init__(self, name=None, nodes=None):
-        super(IntegrationRuntimeMonitoringData, self).__init__()
-        self.name = name
-        self.nodes = nodes
+    def __init__(self, **kwargs):
+        super(IntegrationRuntimeMonitoringData, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.nodes = kwargs.get('nodes', None)

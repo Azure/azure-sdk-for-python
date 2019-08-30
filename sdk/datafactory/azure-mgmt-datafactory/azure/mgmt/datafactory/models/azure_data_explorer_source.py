@@ -15,6 +15,8 @@ from .copy_source import CopySource
 class AzureDataExplorerSource(CopySource):
     """A copy activity Azure Data Explorer (Kusto) source.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -29,10 +31,10 @@ class AzureDataExplorerSource(CopySource):
      for the source data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
-    :param query: Database query. Should be a Kusto Query Language (KQL)
-     query. Type: string (or Expression with resultType string).
+    :param query: Required. Database query. Should be a Kusto Query Language
+     (KQL) query. Type: string (or Expression with resultType string).
     :type query: object
     :param no_truncation: The name of the Boolean option that controls whether
      truncation is applied to result-sets that go beyond a certain row-count
@@ -60,9 +62,9 @@ class AzureDataExplorerSource(CopySource):
         'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
     }
 
-    def __init__(self, query, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, no_truncation=None, query_timeout=None):
-        super(AzureDataExplorerSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections)
-        self.query = query
-        self.no_truncation = no_truncation
-        self.query_timeout = query_timeout
+    def __init__(self, **kwargs):
+        super(AzureDataExplorerSource, self).__init__(**kwargs)
+        self.query = kwargs.get('query', None)
+        self.no_truncation = kwargs.get('no_truncation', None)
+        self.query_timeout = kwargs.get('query_timeout', None)
         self.type = 'AzureDataExplorerSource'

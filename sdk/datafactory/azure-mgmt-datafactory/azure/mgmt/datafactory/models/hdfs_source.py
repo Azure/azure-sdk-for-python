@@ -15,6 +15,8 @@ from .copy_source import CopySource
 class HdfsSource(CopySource):
     """A copy activity HDFS source.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -29,7 +31,7 @@ class HdfsSource(CopySource):
      for the source data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param recursive: If true, files under the folder path will be read
      recursively. Default is true. Type: boolean (or Expression with resultType
@@ -53,8 +55,8 @@ class HdfsSource(CopySource):
         'distcp_settings': {'key': 'distcpSettings', 'type': 'DistcpSettings'},
     }
 
-    def __init__(self, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, recursive=None, distcp_settings=None):
-        super(HdfsSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections)
-        self.recursive = recursive
-        self.distcp_settings = distcp_settings
+    def __init__(self, **kwargs):
+        super(HdfsSource, self).__init__(**kwargs)
+        self.recursive = kwargs.get('recursive', None)
+        self.distcp_settings = kwargs.get('distcp_settings', None)
         self.type = 'HdfsSource'

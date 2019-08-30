@@ -19,7 +19,9 @@ class DependencyReference(Model):
     sub-classes are: SelfDependencyTumblingWindowTriggerReference,
     TriggerDependencyReference
 
-    :param type: Constant filled by server.
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Constant filled by server.
     :type type: str
     """
 
@@ -35,6 +37,6 @@ class DependencyReference(Model):
         'type': {'SelfDependencyTumblingWindowTriggerReference': 'SelfDependencyTumblingWindowTriggerReference', 'TriggerDependencyReference': 'TriggerDependencyReference'}
     }
 
-    def __init__(self):
-        super(DependencyReference, self).__init__()
+    def __init__(self, **kwargs):
+        super(DependencyReference, self).__init__(**kwargs)
         self.type = None

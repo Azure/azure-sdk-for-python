@@ -35,8 +35,8 @@ class NetezzaPartitionSettings(Model):
         'partition_lower_bound': {'key': 'partitionLowerBound', 'type': 'object'},
     }
 
-    def __init__(self, partition_column_name=None, partition_upper_bound=None, partition_lower_bound=None):
-        super(NetezzaPartitionSettings, self).__init__()
-        self.partition_column_name = partition_column_name
-        self.partition_upper_bound = partition_upper_bound
-        self.partition_lower_bound = partition_lower_bound
+    def __init__(self, **kwargs):
+        super(NetezzaPartitionSettings, self).__init__(**kwargs)
+        self.partition_column_name = kwargs.get('partition_column_name', None)
+        self.partition_upper_bound = kwargs.get('partition_upper_bound', None)
+        self.partition_lower_bound = kwargs.get('partition_lower_bound', None)

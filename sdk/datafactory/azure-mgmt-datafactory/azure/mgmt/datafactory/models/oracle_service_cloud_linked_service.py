@@ -15,6 +15,8 @@ from .linked_service import LinkedService
 class OracleServiceCloudLinkedService(LinkedService):
     """Oracle Service Cloud linked service.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -29,15 +31,15 @@ class OracleServiceCloudLinkedService(LinkedService):
     :param annotations: List of tags that can be used for describing the
      linked service.
     :type annotations: list[object]
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
-    :param host: The URL of the Oracle Service Cloud instance.
+    :param host: Required. The URL of the Oracle Service Cloud instance.
     :type host: object
-    :param username: The user name that you use to access Oracle Service Cloud
-     server.
+    :param username: Required. The user name that you use to access Oracle
+     Service Cloud server.
     :type username: object
-    :param password: The password corresponding to the user name that you
-     provided in the username key.
+    :param password: Required. The password corresponding to the user name
+     that you provided in the username key.
     :type password: ~azure.mgmt.datafactory.models.SecretBase
     :param use_encrypted_endpoints: Specifies whether the data source
      endpoints are encrypted using HTTPS. The default value is true. Type:
@@ -81,13 +83,13 @@ class OracleServiceCloudLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, host, username, password, additional_properties=None, connect_via=None, description=None, parameters=None, annotations=None, use_encrypted_endpoints=None, use_host_verification=None, use_peer_verification=None, encrypted_credential=None):
-        super(OracleServiceCloudLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations)
-        self.host = host
-        self.username = username
-        self.password = password
-        self.use_encrypted_endpoints = use_encrypted_endpoints
-        self.use_host_verification = use_host_verification
-        self.use_peer_verification = use_peer_verification
-        self.encrypted_credential = encrypted_credential
+    def __init__(self, **kwargs):
+        super(OracleServiceCloudLinkedService, self).__init__(**kwargs)
+        self.host = kwargs.get('host', None)
+        self.username = kwargs.get('username', None)
+        self.password = kwargs.get('password', None)
+        self.use_encrypted_endpoints = kwargs.get('use_encrypted_endpoints', None)
+        self.use_host_verification = kwargs.get('use_host_verification', None)
+        self.use_peer_verification = kwargs.get('use_peer_verification', None)
+        self.encrypted_credential = kwargs.get('encrypted_credential', None)
         self.type = 'OracleServiceCloud'

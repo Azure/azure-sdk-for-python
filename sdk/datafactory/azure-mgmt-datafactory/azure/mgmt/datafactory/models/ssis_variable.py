@@ -41,12 +41,12 @@ class SsisVariable(Model):
         'sensitive_value': {'key': 'sensitiveValue', 'type': 'str'},
     }
 
-    def __init__(self, id=None, name=None, description=None, data_type=None, sensitive=None, value=None, sensitive_value=None):
-        super(SsisVariable, self).__init__()
-        self.id = id
-        self.name = name
-        self.description = description
-        self.data_type = data_type
-        self.sensitive = sensitive
-        self.value = value
-        self.sensitive_value = sensitive_value
+    def __init__(self, **kwargs):
+        super(SsisVariable, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.name = kwargs.get('name', None)
+        self.description = kwargs.get('description', None)
+        self.data_type = kwargs.get('data_type', None)
+        self.sensitive = kwargs.get('sensitive', None)
+        self.value = kwargs.get('value', None)
+        self.sensitive_value = kwargs.get('sensitive_value', None)

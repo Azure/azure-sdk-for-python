@@ -23,6 +23,6 @@ class GetSsisObjectMetadataRequest(Model):
         'metadata_path': {'key': 'metadataPath', 'type': 'str'},
     }
 
-    def __init__(self, metadata_path=None):
-        super(GetSsisObjectMetadataRequest, self).__init__()
-        self.metadata_path = metadata_path
+    def __init__(self, **kwargs):
+        super(GetSsisObjectMetadataRequest, self).__init__(**kwargs)
+        self.metadata_path = kwargs.get('metadata_path', None)

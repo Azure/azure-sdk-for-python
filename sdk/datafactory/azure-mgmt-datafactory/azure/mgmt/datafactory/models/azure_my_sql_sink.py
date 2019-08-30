@@ -15,6 +15,8 @@ from .copy_sink import CopySink
 class AzureMySqlSink(CopySink):
     """A copy activity Azure MySql sink.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
@@ -36,7 +38,7 @@ class AzureMySqlSink(CopySink):
      for the sink data store. Type: integer (or Expression with resultType
      integer).
     :type max_concurrent_connections: object
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param pre_copy_script: A query to execute before starting the copy. Type:
      string (or Expression with resultType string).
@@ -58,7 +60,7 @@ class AzureMySqlSink(CopySink):
         'pre_copy_script': {'key': 'preCopyScript', 'type': 'object'},
     }
 
-    def __init__(self, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, max_concurrent_connections=None, pre_copy_script=None):
-        super(AzureMySqlSink, self).__init__(additional_properties=additional_properties, write_batch_size=write_batch_size, write_batch_timeout=write_batch_timeout, sink_retry_count=sink_retry_count, sink_retry_wait=sink_retry_wait, max_concurrent_connections=max_concurrent_connections)
-        self.pre_copy_script = pre_copy_script
+    def __init__(self, **kwargs):
+        super(AzureMySqlSink, self).__init__(**kwargs)
+        self.pre_copy_script = kwargs.get('pre_copy_script', None)
         self.type = 'AzureMySqlSink'

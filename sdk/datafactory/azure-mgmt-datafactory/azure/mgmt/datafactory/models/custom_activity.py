@@ -15,10 +15,12 @@ from .execution_activity import ExecutionActivity
 class CustomActivity(ExecutionActivity):
     """Custom activity type.
 
+    All required parameters must be populated in order to send to Azure.
+
     :param additional_properties: Unmatched properties from the message are
      deserialized this collection
     :type additional_properties: dict[str, object]
-    :param name: Activity name.
+    :param name: Required. Activity name.
     :type name: str
     :param description: Activity description.
     :type description: str
@@ -26,15 +28,15 @@ class CustomActivity(ExecutionActivity):
     :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
     :param user_properties: Activity user properties.
     :type user_properties: list[~azure.mgmt.datafactory.models.UserProperty]
-    :param type: Constant filled by server.
+    :param type: Required. Constant filled by server.
     :type type: str
     :param linked_service_name: Linked service reference.
     :type linked_service_name:
      ~azure.mgmt.datafactory.models.LinkedServiceReference
     :param policy: Activity policy.
     :type policy: ~azure.mgmt.datafactory.models.ActivityPolicy
-    :param command: Command for custom activity Type: string (or Expression
-     with resultType string).
+    :param command: Required. Command for custom activity Type: string (or
+     Expression with resultType string).
     :type command: object
     :param resource_linked_service: Resource linked service reference.
     :type resource_linked_service:
@@ -78,12 +80,12 @@ class CustomActivity(ExecutionActivity):
         'retention_time_in_days': {'key': 'typeProperties.retentionTimeInDays', 'type': 'object'},
     }
 
-    def __init__(self, name, command, additional_properties=None, description=None, depends_on=None, user_properties=None, linked_service_name=None, policy=None, resource_linked_service=None, folder_path=None, reference_objects=None, extended_properties=None, retention_time_in_days=None):
-        super(CustomActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy)
-        self.command = command
-        self.resource_linked_service = resource_linked_service
-        self.folder_path = folder_path
-        self.reference_objects = reference_objects
-        self.extended_properties = extended_properties
-        self.retention_time_in_days = retention_time_in_days
+    def __init__(self, **kwargs):
+        super(CustomActivity, self).__init__(**kwargs)
+        self.command = kwargs.get('command', None)
+        self.resource_linked_service = kwargs.get('resource_linked_service', None)
+        self.folder_path = kwargs.get('folder_path', None)
+        self.reference_objects = kwargs.get('reference_objects', None)
+        self.extended_properties = kwargs.get('extended_properties', None)
+        self.retention_time_in_days = kwargs.get('retention_time_in_days', None)
         self.type = 'Custom'

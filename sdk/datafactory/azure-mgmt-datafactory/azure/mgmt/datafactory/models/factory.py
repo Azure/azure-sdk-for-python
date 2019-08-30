@@ -71,11 +71,11 @@ class Factory(Resource):
         'repo_configuration': {'key': 'properties.repoConfiguration', 'type': 'FactoryRepoConfiguration'},
     }
 
-    def __init__(self, location=None, tags=None, additional_properties=None, identity=None, repo_configuration=None):
-        super(Factory, self).__init__(location=location, tags=tags)
-        self.additional_properties = additional_properties
-        self.identity = identity
+    def __init__(self, **kwargs):
+        super(Factory, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.identity = kwargs.get('identity', None)
         self.provisioning_state = None
         self.create_time = None
         self.version = None
-        self.repo_configuration = repo_configuration
+        self.repo_configuration = kwargs.get('repo_configuration', None)

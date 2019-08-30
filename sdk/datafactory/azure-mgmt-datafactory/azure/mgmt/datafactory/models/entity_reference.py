@@ -28,7 +28,7 @@ class EntityReference(Model):
         'reference_name': {'key': 'referenceName', 'type': 'str'},
     }
 
-    def __init__(self, type=None, reference_name=None):
-        super(EntityReference, self).__init__()
-        self.type = type
-        self.reference_name = reference_name
+    def __init__(self, **kwargs):
+        super(EntityReference, self).__init__(**kwargs)
+        self.type = kwargs.get('type', None)
+        self.reference_name = kwargs.get('reference_name', None)
