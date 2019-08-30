@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import time
 import os
 from azure.keyvault.certificates import CertificateClient, CertificatePolicy, KeyProperties, LifetimeAction, SecretContentType
 from azure.identity import DefaultAzureCredential
@@ -54,37 +53,24 @@ def run_sample():
             action_type="EmailContacts"
         )]
 
-        # Before creating your certificate, let's create the management policy for your certificate.
-        # Here you specify the properties of the key, secret, and issuer backing your certificate,
-        # the X509 component of your certificate, and any lifetime actions you would like to be taken
-        # on your certificate
-        cert_policy = CertificatePolicy(key_properties=KeyProperties(exportable=True,
-                                                                     key_type='RSA',
-                                                                     key_size=2048,
-                                                                     reuse_key=False),
-                                        content_type=SecretContentType.PFX,
-                                        issuer_name='Self',
-                                        subject_name='CN=*.microsoft.com',
-                                        san_dns_names=['sdk.azure-int.net'],
-                                        validity_in_months=24,
-                                        lifetime_actions=lifetime_actions
-                                        )
-
         # Let's create a certificate for your key vault.
         # if the certificate already exists in the Key Vault, then a new version of the certificate is created.
-        # A certificate operation is returned.
-        certificate_operation = client.create_certificate(name=cert_name, policy=cert_policy)
-        print("Certificate with name '{0}' created.".format(certificate_operation.name))
+        # A long running poller is returned for the create certificate operation.
+        create_certificate_poller = client.create_certificate(name=cert_name)
+
+        # the wait call awaits the completion of the create certificate operation
+        create_certificate_poller.wait()
+        print("Certificate with name '{0}' created.".format(cert_name))
 
         # Backups are good to have, if in case certificates gets deleted accidentally.
         # For long term storage, it is ideal to write the backup to a file.
         print("\n2. Create a backup for an existing certificate")
-        certificate_backup = client.backup_certificate(name=certificate_operation.name)
-        print("Backup created for certificate with name '{0}'.".format(certificate_operation.name))
+        certificate_backup = client.backup_certificate(name=cert_name)
+        print("Backup created for certificate with name '{0}'.".format(cert_name))
 
         # The storage account certificate is no longer in use, so you can delete it.
-        client.delete_certificate(name=certificate_operation.name)
-        print("Deleted Certificate with name '{0}'".format(certificate_operation.name))
+        client.delete_certificate(name=cert_name)
+        print("Deleted Certificate with name '{0}'".format(cert_name))
 
         # In future, if the certificate is required again, we can use the backup value to restore it in the Key Vault.
         print("\n3. Restore the certificate using the backed up certificate bytes")

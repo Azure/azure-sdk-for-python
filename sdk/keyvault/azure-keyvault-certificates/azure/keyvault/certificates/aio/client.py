@@ -6,10 +6,12 @@
 import base64
 import uuid
 from typing import Any, AsyncIterable, Optional, Iterable, List, Dict
+from functools import partial
 
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.polling import async_poller
 
 from azure.keyvault.certificates import(
     AdministratorDetails,
@@ -26,6 +28,7 @@ from azure.keyvault.certificates import(
     LifetimeAction,
     KeyUsageType
 )
+from ._polling_async import CreateCertificatePollerAsync
 from .._shared import AsyncKeyVaultClientBase
 
 
@@ -108,7 +111,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
                                        subject_name="CN=DefaultPolicy",
                                        validity_in_months=12)
 
-        bundle = await self._client.create_certificate(
+        await self._client.create_certificate(
             vault_base_url=self.vault_url,
             certificate_name=name,
             certificate_policy=policy._to_certificate_policy_bundle(),
@@ -117,7 +120,20 @@ class CertificateClient(AsyncKeyVaultClientBase):
             **kwargs
         )
 
-        return CertificateOperation._from_certificate_operation_bundle(certificate_operation_bundle=bundle)
+        command = partial(
+            self._client.get_certificate_operation,
+            vault_base_url=self.vault_url,
+            certificate_name=name,
+            **kwargs
+        )
+
+        create_certificate_polling = CreateCertificatePollerAsync(unknown_issuer=(policy.issuer_name.lower() == 'unknown'))
+        return async_poller(
+            command,
+            "inprogress",
+            None,
+            create_certificate_polling
+        )
 
     @distributed_trace_async
     async def get_certificate(

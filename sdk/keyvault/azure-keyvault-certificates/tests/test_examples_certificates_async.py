@@ -47,18 +47,18 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
                                         san_dns_names=['onedrive.microsoft.com', 'xbox.microsoft.com'],
                                         validity_in_months=24
                                         )
+        cert_name = "cert-name"
+        # create a certificate with optional arguments, returns an async poller
+        create_certificate_poller = await certificate_client.create_certificate(name=cert_name, policy=cert_policy)
 
-        # create a certificate with optional arguments, returns a certificate operation that is creating the certificate
-        certificate_operation = await certificate_client.create_certificate(name="cert-name", policy=cert_policy)
-
-        print(certificate_operation.name)
-        print(certificate_operation.id)
-        print(certificate_operation.status)
+        # awaiting the certificate poller gives us the result of the long running operation
+        create_certificate_result = await create_certificate_poller
+        print(create_certificate_result)
 
         # [END create_certificate]
         interval_time = 5
         while True:
-            pending_cert = await certificate_client.get_certificate_operation(certificate_operation.name)
+            pending_cert = await certificate_client.get_certificate_operation(cert_name)
             if pending_cert.status.lower() == 'completed':
                 break
             elif pending_cert.status.lower() != 'inprogress':
@@ -68,10 +68,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         # [START get_certificate]
 
         # get the latest version of a certificate
-        certificate = await certificate_client.get_certificate(name="cert-name")
-
-        # alternatively, specify a version
-        certificate_version = certificate.version
+        certificate = await certificate_client.get_certificate(name=cert_name)
 
         print(certificate.id)
         print(certificate.name)
@@ -100,7 +97,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         # [START delete_certificate]
 
         # delete a certificate
-        deleted_certificate = await certificate_client.delete_certificate("cert-name")
+        deleted_certificate = await certificate_client.delete_certificate(name=cert_name)
 
         print(deleted_certificate.name)
 
@@ -192,17 +189,10 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
                                         validity_in_months=24
                                         )
 
-        certificate_operation = await certificate_client.create_certificate(name="cert-name", policy=cert_policy)
-        cert_name = certificate_operation.name
+        cert_name = "cert-name"
+        create_certificate_poller = await certificate_client.create_certificate(name=cert_name, policy=cert_policy)
 
-        interval_time = 5
-        while True:
-            pending_cert = await certificate_client.get_certificate_operation(cert_name)
-            if pending_cert.status.lower() == 'completed':
-                break
-            elif pending_cert.status.lower() != 'inprogress':
-                raise Exception('Unknown status code for pending certificate: {}'.format(pending_cert))
-            await asyncio.sleep(interval_time)
+        await create_certificate_poller
 
         # [START backup_certificate]
 
@@ -244,10 +234,13 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
                                         san_dns_names=['onedrive.microsoft.com', 'xbox.microsoft.com'],
                                         validity_in_months=24
                                         )
-        certificate_operation = await certificate_client.create_certificate(name="cert-name", policy=cert_policy)
-        await certificate_client.delete_certificate(name=certificate_operation.name)
+
+        cert_name = "cert-name"
+        await certificate_client.create_certificate(name=cert_name, policy=cert_policy)
+
+        await certificate_client.delete_certificate(name=cert_name)
         await self._poll_until_no_exception(
-            certificate_client.get_deleted_certificate, certificate_operation.name, expected_exception=ResourceNotFoundError
+            certificate_client.get_deleted_certificate, cert_name, expected_exception=ResourceNotFoundError
         )
 
         # [START get_deleted_certificate]

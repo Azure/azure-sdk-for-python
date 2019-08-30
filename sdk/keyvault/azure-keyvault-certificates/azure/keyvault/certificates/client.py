@@ -7,7 +7,9 @@
 import base64
 import uuid
 from typing import Any, Dict, List, Optional, Iterable
+from functools import partial
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
+from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 
 from ._shared import KeyVaultClientBase
@@ -26,6 +28,7 @@ from .models import (
     KeyUsageType,
     SecretContentType
 )
+from ._polling import CreateCertificatePoller
 
 
 class CertificateClient(KeyVaultClientBase):
@@ -109,7 +112,7 @@ class CertificateClient(KeyVaultClientBase):
                                        subject_name="CN=DefaultPolicy",
                                        validity_in_months=12)
 
-        bundle = self._client.create_certificate(
+        self._client.create_certificate(
             vault_base_url=self.vault_url,
             certificate_name=name,
             certificate_policy=policy._to_certificate_policy_bundle(),
@@ -118,7 +121,21 @@ class CertificateClient(KeyVaultClientBase):
             **kwargs
         )
 
-        return CertificateOperation._from_certificate_operation_bundle(certificate_operation_bundle=bundle)
+        command = partial(
+            self._client.get_certificate_operation,
+            vault_base_url=self.vault_url,
+            certificate_name=name,
+            **kwargs
+        )
+
+        create_certificate_polling = CreateCertificatePoller(unknown_issuer=(policy.issuer_name.lower() == 'unknown'))
+        return LROPoller(
+            command,
+            "inprogress",
+            None,
+            create_certificate_polling
+        )
+
 
     @distributed_trace
     def get_certificate(self, name, version=None, **kwargs):

@@ -216,20 +216,13 @@ class CertificateClientTests(KeyVaultTestCase):
                                                  ))
 
         # create certificate
-        interval_time = 5 if not self.is_playback() else 0
-        client.create_certificate(name=cert_name)
-        while True:
-            pending_cert = client.get_certificate_operation(cert_name)
-            self._validate_certificate_operation(pending_cert, client.vault_url, cert_name, cert_policy)
-            if pending_cert.status.lower() == 'completed':
-                cert_id = parse_vault_id(url=pending_cert.target)
-                break
-            elif pending_cert.status.lower() != 'inprogress':
-                raise Exception('Unknown status code for pending certificate: {}'.format(pending_cert))
-            time.sleep(interval_time)
+        create_certificate_poller = client.create_certificate(name=cert_name)
+
+        self.assertEqual(create_certificate_poller.result(), 'completed')
+        self.assertEqual(client.get_certificate_operation(name=cert_name).status.lower(), 'completed')
 
         # get certificate
-        cert = client.get_certificate(name=cert_id.name)
+        cert = client.get_certificate(name=cert_name)
         self._validate_certificate_bundle(
             cert=cert,
             cert_name=cert_name,
@@ -428,7 +421,8 @@ class CertificateClientTests(KeyVaultTestCase):
                                         ))
 
         # create certificate
-        client.create_certificate(name=cert_name, policy=CertificatePolicy._from_certificate_policy_bundle(cert_policy))
+        create_certificate_poller = client.create_certificate(name=cert_name, policy=CertificatePolicy._from_certificate_policy_bundle(cert_policy))
+
 
         # cancel certificate operation
         cancel_operation = client.cancel_certificate_operation(name=cert_name)
@@ -440,6 +434,8 @@ class CertificateClientTests(KeyVaultTestCase):
             cert_name=cert_name,
             cert_policy=cert_policy
         )
+
+        self.assertEqual(create_certificate_poller.result(), 'cancelled')
 
         retrieved_operation = client.get_certificate_operation(name=cert_name)
         self.assertTrue(hasattr(retrieved_operation, 'cancellation_requested'))
@@ -519,13 +515,14 @@ class CertificateClientTests(KeyVaultTestCase):
                                                  ))
 
         # get pending certiificate signing request
-        cert_operation = client.create_certificate(name=cert_name, policy=CertificatePolicy._from_certificate_policy_bundle(cert_policy))
+        create_certificate_poller = client.create_certificate(name=cert_name, policy=CertificatePolicy._from_certificate_policy_bundle(cert_policy))
         pending_version_csr = client.get_pending_certificate_signing_request(name=cert_name)
         try:
-            self.assertEqual(cert_operation.csr, pending_version_csr)
+            self.assertEqual(client.get_certificate_operation(name=cert_name).csr, pending_version_csr)
         except Exception as ex:
             pass
         finally:
+            create_certificate_poller.wait()
             client.delete_certificate(name=cert_name)
 
     @ResourceGroupPreparer()
@@ -557,22 +554,15 @@ class CertificateClientTests(KeyVaultTestCase):
                                                  ))
 
         # create certificate
-        interval_time = 5 if not self.is_playback() else 0
-        certificate_operation = client.create_certificate(name=cert_name, policy=CertificatePolicy._from_certificate_policy_bundle(cert_policy))
-        while True:
-            pending_cert = client.get_certificate_operation(cert_name)
-            self._validate_certificate_operation(pending_cert, client.vault_url, cert_name, cert_policy)
-            if pending_cert.status.lower() == 'completed':
-                break
-            elif pending_cert.status.lower() != 'inprogress':
-                raise Exception('Unknown status code for pending certificate: {}'.format(pending_cert))
-            time.sleep(interval_time)
+        create_certificate_poller = client.create_certificate(name=cert_name, policy=CertificatePolicy._from_certificate_policy_bundle(cert_policy))
+        create_certificate_poller.wait()
+
 
         # create a backup
-        certificate_backup = client.backup_certificate(name=certificate_operation.name)
+        certificate_backup = client.backup_certificate(name=cert_name)
 
         # delete the certificate
-        client.delete_certificate(name=certificate_operation.name)
+        client.delete_certificate(name=cert_name)
 
         # restore certificate
         restored_certificate = client.restore_certificate(backup=certificate_backup)
@@ -606,9 +596,10 @@ class CertificateClientTests(KeyVaultTestCase):
         with open(os.path.abspath(os.path.join(dirname, "ca.crt")), "rt") as f:
             ca_cert = crypto.load_certificate(crypto.FILETYPE_PEM, f.read())
 
-        create_certificate_operation = client.create_certificate(name=cert_name, policy=CertificatePolicy._from_certificate_policy_bundle(cert_policy))
+        create_certificate_poller = client.create_certificate(name=cert_name, policy=CertificatePolicy._from_certificate_policy_bundle(cert_policy))
+        create_certificate_poller.result()
 
-        csr = "-----BEGIN CERTIFICATE REQUEST-----\n" + base64.b64encode(create_certificate_operation.csr).decode() + "\n-----END CERTIFICATE REQUEST-----"
+        csr = "-----BEGIN CERTIFICATE REQUEST-----\n" + base64.b64encode(client.get_certificate_operation(name=cert_name).csr).decode() + "\n-----END CERTIFICATE REQUEST-----"
         req = crypto.load_certificate_request(crypto.FILETYPE_PEM, csr)
 
         cert = crypto.X509()

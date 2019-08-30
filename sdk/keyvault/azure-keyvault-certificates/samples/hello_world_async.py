@@ -55,6 +55,9 @@ async def run_sample():
         # Here you specify the properties of the key, secret, and issuer backing your certificate,
         # the X509 component of your certificate, and any lifetime actions you would like to be taken
         # on your certificate
+
+        # Alternatively, if you would like to use our default policy, don't pass a policy parameter to
+        # our certificate creation method
         cert_policy = CertificatePolicy(key_properties=KeyProperties(exportable=True,
                                                                      key_type='RSA',
                                                                      key_size=2048,
@@ -67,12 +70,13 @@ async def run_sample():
                                         )
         cert_name="HelloWorldCertificate"
         expires = datetime.datetime.utcnow() + datetime.timedelta(days=365)
-        certificate_operation = await client.create_certificate(name=cert_name, policy=cert_policy, expires=expires)
-        print("Certificate with name '{0}' created".format(certificate_operation.name))
+        create_certificate_poller = await client.create_certificate(name=cert_name, policy=cert_policy, expires=expires)
+        await create_certificate_poller
+        print("Certificate with name '{0}' created".format(cert_name))
 
         # Let's get the bank certificate using its name
         print("\n2. Get a Certificate by name")
-        bank_certificate = await client.get_certificate(name=certificate_operation.name)
+        bank_certificate = await client.get_certificate(name=cert_name)
         print("Certificate with name '{0}' was found with expiration date '{1}'.".format(bank_certificate.name, bank_certificate.expires))
 
         # After one year, the bank account is still active, we need to update the expiry time of the certificate.

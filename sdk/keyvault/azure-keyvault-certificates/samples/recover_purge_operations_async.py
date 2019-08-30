@@ -49,35 +49,25 @@ async def run_sample():
     try:
         # Let's create certificates holding storage and bank accounts credentials. If the certificate
         # already exists in the Key Vault, then a new version of the certificate is created.
-        print("\n1. Create Secret")
-
-        # Before creating your certificate, let's create the management policy for your certificate.
-        # Here you specify the properties of the key, secret, and issuer backing your certificate,
-        # the X509 component of your certificate, and any lifetime actions you would like to be taken
-        # on your certificate
-        cert_policy = CertificatePolicy(key_properties=KeyProperties(exportable=True,
-                                                                     key_type='RSA',
-                                                                     key_size=2048,
-                                                                     reuse_key=False),
-                                        content_type=SecretContentType.PFX,
-                                        issuer_name='Self',
-                                        subject_name='CN=*.microsoft.com',
-                                        san_dns_names=['sdk.azure-int.net'],
-                                        validity_in_months=24
-                                        )
+        print("\n1. Create Certificates")
         bank_cert_name = "BankRecoverCertificate"
         storage_cert_name = "ServerRecoverCertificate"
 
-        bank_certificate_operation = await client.create_certificate(name=bank_cert_name, policy=cert_policy)
-        storage_certificate_operation = await client.create_certificate(name=storage_cert_name, policy=cert_policy)
-        print("Certificate with name '{0}' was created.".format(bank_certificate_operation.name))
-        print("Certificate with name '{0}' was created.".format(storage_certificate_operation.name))
+        bank_certificate_poller = await client.create_certificate(name=bank_cert_name)
+        storage_certificate_poller = await client.create_certificate(name=storage_cert_name)
+
+        await bank_certificate_poller
+        await storage_certificate_poller
+        print("Certificate with name '{0}' was created.".format(bank_cert_name))
+        print("Certificate with name '{0}' was created.".format(storage_cert_name))
 
         # The storage account was closed, need to delete its credentials from the Key Vault.
         print("\n2. Delete a Certificate")
-        deleted_bank_certificate = await client.delete_certificate(name=bank_certificate_operation.name)
-        time.sleep(20)
-        print("Certificate with name '{0}' was deleted on date {1}.".format(deleted_bank_certificate.name, deleted_bank_certificate.deleted_date))
+        deleted_bank_certificate = await client.delete_certificate(name=bank_cert_name)
+        print("Certificate with name '{0}' was deleted on date {1}.".format(
+            deleted_bank_certificate.name,
+            deleted_bank_certificate.deleted_date)
+        )
 
         # We accidentally deleted the bank account certificate. Let's recover it.
         # A deleted certificate can only be recovered if the Key Vault is soft-delete enabled.
@@ -87,15 +77,11 @@ async def run_sample():
 
         # Let's delete storage account now.
         # If the keyvault is soft-delete enabled, then for permanent deletion deleted certificate needs to be purged.
-        await client.delete_certificate(name=storage_certificate_operation.name)
-
-        # To ensure certificate is deleted on the server side.
-        print("\nDeleting Storage Certificate...")
-        time.sleep(20)
+        await client.delete_certificate(name=storage_cert_name)
 
         # To ensure permanent deletion, we might need to purge the secret.
         print("\n4. Purge Deleted Certificate")
-        await client.purge_deleted_certificate(name=storage_certificate_operation.name)
+        await client.purge_deleted_certificate(name=storage_cert_name)
         print("Certificate has been permanently deleted.")
 
     except HttpResponseError as e:

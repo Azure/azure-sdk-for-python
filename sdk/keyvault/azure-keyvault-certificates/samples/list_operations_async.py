@@ -51,36 +51,19 @@ async def run_sample():
         # Let's create a certificate for holding storage and bank accounts credentials. If the certificate
         # already exists in the Key Vault, then a new version of the certificate is created.
         print("\n1. Create Certificate")
-        # Before creating your certificate, let's create the management policy for your certificate.
-        # Here you specify the properties of the key, secret, and issuer backing your certificate,
-        # the X509 component of your certificate, and any lifetime actions you would like to be taken
-        # on your certificate
-        cert_policy = CertificatePolicy(key_properties=KeyProperties(exportable=True,
-                                                                     key_type='RSA',
-                                                                     key_size=2048,
-                                                                     reuse_key=False),
-                                        content_type=SecretContentType.PFX,
-                                        issuer_name='Self',
-                                        subject_name='CN=*.microsoft.com',
-                                        san_dns_names=['sdk.azure-int.net'],
-                                        validity_in_months=24
-                                        )
         bank_cert_name = "BankListCertificate"
         storage_cert_name = "StorageListCertificate"
         expires = datetime.datetime.utcnow() + datetime.timedelta(days=365)
-        bank_certificate_operation = await client.create_certificate(name=bank_cert_name, policy=cert_policy, expires=expires)
-        storage_certificate_operation = await client.create_certificate(name=storage_cert_name, policy=cert_policy)
 
-        # iterate until both certificates are fully created
-        while True:
-            pending_bank_cert = await client.get_certificate_operation(name=bank_cert_name)
-            pending_storage_cert = await client.get_certificate_operation(name=storage_cert_name)
-            if pending_bank_cert.status.lower() == 'completed' and pending_storage_cert.status.lower() == 'completed':
-                break
-            time.sleep(5)
+        bank_certificate_poller = await client.create_certificate(name=bank_cert_name, expires=expires)
+        storage_certificate_poller = await client.create_certificate(name=storage_cert_name)
 
-        print("Certificate with name '{0}' was created.".format(bank_certificate_operation.name))
-        print("Certificate with name '{0}' was created.".format(storage_certificate_operation.name))
+        # await the creation of the bank and storage certificate
+        await bank_certificate_poller
+        await storage_certificate_poller
+
+        print("Certificate with name '{0}' was created.".format(bank_cert_name))
+        print("Certificate with name '{0}' was created.".format(storage_cert_name))
 
         # Let's list the certificates.
         print("\n2. List certificates from the Key Vault")
@@ -93,20 +76,20 @@ async def run_sample():
 
         expires = datetime.datetime.utcnow() + datetime.timedelta(days=365)
 
-        updated_bank_certificate_operation = await client.create_certificate(name=bank_certificate_operation.name, policy=cert_policy, expires=expires)
+        updated_bank_certificate_operation = await client.create_certificate(name=bank_cert_name, expires=expires)
         print(
             "Certificate with name '{0}' was updated with expiration date '{1}'".format(updated_bank_certificate_operation.name, expires)
         )
 
         # You need to check all the different expiration dates your bank account certificate had previously. Lets print all the versions of this certificate.
         print("\n3. List versions of the certificate using its name")
-        certificate_versions = client.list_certificate_versions(bank_certificate_operation.name)
+        certificate_versions = client.list_certificate_versions(bank_cert_name)
         async for certificate_version in certificate_versions:
             print("Bank Certificate with name '{0}' with version '{1}' has expiration date: '{2}'.".format(certificate_version.name, certificate_version.version, certificate_version.expires))
 
         # The bank acoount and storage accounts got closed. Let's delete bank and storage accounts certificates.
-        await client.delete_certificate(name=bank_certificate_operation.name)
-        await client.delete_certificate(name=storage_certificate_operation.name)
+        await client.delete_certificate(name=bank_cert_name)
+        await client.delete_certificate(name=storage_cert_name)
 
         # To ensure certificate is deleted on the server side.
         print("Deleting certificates...")

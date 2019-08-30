@@ -38,7 +38,6 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         certificate_client = vault_client.certificates
         # [START create_certificate]
         from azure.keyvault.certificates import CertificatePolicy, KeyProperties, SecretContentType
-        import time
         # specify the certificate policy
         cert_policy = CertificatePolicy(key_properties=KeyProperties(exportable=True,
                                                                      key_type='RSA',
@@ -51,29 +50,22 @@ class TestExamplesKeyVault(KeyVaultTestCase):
                                         validity_in_months=24
                                         )
 
-        # create a certificate with optional arguments, returns a certificate operation that is creating the certificate
-        certificate_operation = certificate_client.create_certificate(name="cert-name", policy=cert_policy)
+        cert_name = "cert-name"
+        # create a certificate with optional arguments, returns a long running operation poller
+        certificate_operation_poller = certificate_client.create_certificate(name=cert_name, policy=cert_policy)
 
-        print(certificate_operation.name)
-        print(certificate_operation.id)
-        print(certificate_operation.status)
+        # Here we are waiting for the certificate creation operation to be completed
+        certificate_operation_poller.wait()
+
+        # You can get the final status of the certificate operation poller using .result()
+        print(certificate_operation_poller.result())
 
         # [END create_certificate]
-
-        # iterate to make sure certificate creation operation is complete
-        interval_time = 5
-        while True:
-            pending_cert = certificate_client.get_certificate_operation(certificate_operation.name)
-            if pending_cert.status.lower() == 'completed':
-                break
-            elif pending_cert.status.lower() != 'inprogress':
-                raise Exception('Unknown status code for pending certificate: {}'.format(pending_cert))
-            time.sleep(interval_time)
 
         # [START get_certificate]
 
         # get the certificate
-        certificate = certificate_client.get_certificate(name=certificate_operation.name)
+        certificate = certificate_client.get_certificate(name=cert_name)
 
         print(certificate.id)
         print(certificate.name)
@@ -128,12 +120,13 @@ class TestExamplesKeyVault(KeyVaultTestCase):
                                         content_type=SecretContentType.PFX,
                                         issuer_name='Self',
                                         subject_name='CN=*.microsoft.com',
-                                        san_dns_names=['onedrive.microsoft.com', 'xbox.microsoft.com'],
+                                        san_dns_names=['sdk.azure-int.net'],
                                         validity_in_months=24
                                         )
 
         for i in range(4):
-            certificate_client.create_certificate(name="certificate{}".format(i), policy=cert_policy)
+            create_certificate_poller = certificate_client.create_certificate(name="certificate{}".format(i), policy=cert_policy)
+            create_certificate_poller.wait()
 
         # [START list_certificates]
 
@@ -142,7 +135,10 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         for certificate in certificates:
             print(certificate.id)
+            print(certificate.created)
             print(certificate.name)
+            print(certificate.updated)
+            print(certificate.enabled)
 
         # [END list_certificates]
         # [START list_certificate_versions]
@@ -152,7 +148,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         for certificate in certificate_versions:
             print(certificate.id)
-            print(certificate.name)
+            print(certificate.updated)
+            print(certificate.version)
 
         # [END list_certificate_versions]
         # [START list_deleted_certificates]
@@ -188,18 +185,9 @@ class TestExamplesKeyVault(KeyVaultTestCase):
                                         validity_in_months=24
                                         )
 
-        certificate_operation = certificate_client.create_certificate(name="cert-name", policy=cert_policy)
-        cert_name = certificate_operation.name
-
-        # iterate to make sure certificate creation operation is complete
-        interval_time = 5
-        while True:
-            pending_cert = certificate_client.get_certificate_operation(certificate_operation.name)
-            if pending_cert.status.lower() == 'completed':
-                break
-            elif pending_cert.status.lower() != 'inprogress':
-                raise Exception('Unknown status code for pending certificate: {}'.format(pending_cert))
-            time.sleep(interval_time)
+        cert_name = "cert-name"
+        create_certificate_poller = certificate_client.create_certificate(name=cert_name, policy=cert_policy)
+        create_certificate_poller.wait()
 
         # [START backup_certificate]
 
@@ -242,16 +230,18 @@ class TestExamplesKeyVault(KeyVaultTestCase):
                                         validity_in_months=24
                                         )
 
-        certificate_operation = certificate_client.create_certificate(name="cert-name", policy=cert_policy)
-        certificate_client.delete_certificate(name=certificate_operation.name)
+        cert_name = "cert-name"
+        create_certificate_poller = certificate_client.create_certificate(name=cert_name, policy=cert_policy)
+        create_certificate_poller.wait()
+        certificate_client.delete_certificate(name=cert_name)
         self._poll_until_no_exception(
-            functools.partial(certificate_client.get_deleted_certificate, certificate_operation.name),
+            functools.partial(certificate_client.get_deleted_certificate, cert_name),
             ResourceNotFoundError
         )
         # [START get_deleted_certificate]
 
         # get a deleted certificate (requires soft-delete enabled for the vault)
-        deleted_certificate = certificate_client.get_deleted_certificate(name="cert-name")
+        deleted_certificate = certificate_client.get_deleted_certificate(name=cert_name)
         print(deleted_certificate.name)
 
         # if the vault has soft-delete enabled, the certificate's deleted date,
@@ -264,7 +254,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [START recover_deleted_certificate]
 
         # recover a deleted certificate to its latest version (requires soft-delete enabled for the vault)
-        recovered_certificate = certificate_client.recover_deleted_certificate(name="cert-name")
+        recovered_certificate = certificate_client.recover_deleted_certificate(name=cert_name)
 
         print(recovered_certificate.id)
         print(recovered_certificate.name)
