@@ -41,6 +41,10 @@ class CognitiveServicesManagementClientOperationsMixin(object):
 
         # Construct URL
         url = self.check_domain_availability.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -78,4 +82,4 @@ class CognitiveServicesManagementClientOperationsMixin(object):
             return client_raw_response
 
         return deserialized
-    check_domain_availability.metadata = {'url': '/providers/Microsoft.CognitiveServices/checkDomainAvailability'}
+    check_domain_availability.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.CognitiveServices/checkDomainAvailability'}
