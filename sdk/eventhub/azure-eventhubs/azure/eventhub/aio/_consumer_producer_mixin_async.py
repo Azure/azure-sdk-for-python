@@ -9,28 +9,9 @@ import time
 from uamqp import errors, constants, compat  # type: ignore
 from azure.eventhub.error import EventHubError, ConnectError
 from ..aio.error_async import _handle_exception
+from .._consumer_producer_mixin import _OperationType
 
 log = logging.getLogger(__name__)
-
-
-def _retry_decorator(to_be_wrapped_func):
-    async def wrapped_func(self, *args, **kwargs):  # pylint:disable=unused-argument # TODO: to refactor
-        timeout = kwargs.pop("timeout", 100000)
-        if not timeout:
-            timeout = 100000  # timeout equals to 0 means no timeout, set the value to be a large number.
-        timeout_time = time.time() + timeout
-        max_retries = self.client.config.max_retries
-        retry_count = 0
-        last_exception = None
-        while True:
-            try:
-                return await to_be_wrapped_func(
-                    self, timeout_time=timeout_time, last_exception=last_exception, **kwargs
-                )
-            except Exception as exception:  # pylint:disable=broad-except
-                last_exception = await self._handle_exception(exception, retry_count, max_retries, timeout_time)  # pylint:disable=protected-access
-                retry_count += 1
-    return wrapped_func
 
 
 class ConsumerProducerMixin(object):
@@ -58,7 +39,7 @@ class ConsumerProducerMixin(object):
         self.running = False
         await self._close_connection()
 
-    async def _open(self, timeout_time=None):  # pylint:disable=unused-argument # TODO: to refactor
+    async def _open(self):
         """
         Open the EventHubConsumer using the supplied connection.
         If the handler has previously been redirected, the redirect
@@ -100,6 +81,27 @@ class ConsumerProducerMixin(object):
             return await _handle_exception(exception, retry_count, max_retries, self, timeout_time)
 
         return await _handle_exception(exception, retry_count, max_retries, self, timeout_time)
+
+    async def _do_retryable_operation(self, operation_type, timeout=None, **kwargs):
+        # pylint:disable=protected-access
+        if not timeout:
+            timeout = 100000  # timeout equals to 0 means no timeout, set the value to be a large number.
+        timeout_time = time.time() + timeout
+        max_retries = self.client.config.max_retries
+        retry_count = 0
+        last_exception = kwargs.pop('last_exception', None)
+        while True:
+            print('retrying:{}'.format(retry_count))
+            try:
+                if operation_type == _OperationType.OPEN:
+                    return await self._open()
+                elif operation_type == _OperationType.SEND:
+                    return await self._send_event_data(timeout_time=timeout_time, last_exception=last_exception)
+                elif operation_type == _OperationType.RECEIVE:
+                    return await self._receive(timeout_time=timeout_time, last_exception=last_exception, **kwargs)
+            except Exception as exception:  # pylint:disable=broad-except
+                last_exception = await self._handle_exception(exception, retry_count, max_retries, timeout_time)
+                retry_count += 1
 
     async def close(self, exception=None):
         # type: (Exception) -> None

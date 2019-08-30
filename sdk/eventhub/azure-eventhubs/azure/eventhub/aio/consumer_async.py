@@ -13,7 +13,8 @@ from uamqp import ReceiveClientAsync, Source  # type: ignore
 
 from azure.eventhub import EventData, EventPosition
 from azure.eventhub.error import EventHubError, ConnectError, _error_handler
-from ._consumer_producer_mixin_async import ConsumerProducerMixin, _retry_decorator
+from ._consumer_producer_mixin_async import ConsumerProducerMixin
+from .._consumer_producer_mixin import _OperationType
 
 log = logging.getLogger(__name__)
 
@@ -134,7 +135,7 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         self.messages_iter = None
         await super(EventHubConsumer, self)._redirect(redirect)
 
-    async def _open(self, timeout_time=None):
+    async def _open(self):
         """
         Open the EventHubConsumer using the supplied connection.
         If the handler has previously been redirected, the redirect
@@ -145,13 +146,13 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         if not self.running and self.redirected:
             self.client._process_redirect_uri(self.redirected)
             self.source = self.redirected.address
-        await super(EventHubConsumer, self)._open(timeout_time)
+        await super(EventHubConsumer, self)._open()
 
     async def _receive(self, timeout_time=None, max_batch_size=None, **kwargs):
         last_exception = kwargs.get("last_exception")
         data_batch = kwargs.get("data_batch")
 
-        await self._open(timeout_time)
+        await self._open()
         remaining_time = timeout_time - time.time()
         if remaining_time <= 0.0:
             if last_exception:
@@ -169,9 +170,9 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
             data_batch.append(event_data)
         return data_batch
 
-    @_retry_decorator
-    async def _receive_with_try(self, timeout_time=None, max_batch_size=None, **kwargs):
-        return await self._receive(timeout_time=timeout_time, max_batch_size=max_batch_size, **kwargs)
+    async def _receive_with_try(self, timeout=None, max_batch_size=None, **kwargs):
+        return await self._do_retryable_operation(_OperationType.RECEIVE, timeout=timeout,
+                                                  max_batch_size=max_batch_size, **kwargs)
 
     @property
     def queue_size(self):

@@ -6,29 +6,12 @@ from __future__ import unicode_literals
 
 import logging
 import time
+from enum import Enum
 
 from uamqp import errors, constants, compat  # type: ignore
 from azure.eventhub.error import EventHubError, _handle_exception
 
 log = logging.getLogger(__name__)
-
-
-def _retry_decorator(to_be_wrapped_func):
-    def wrapped_func(self, *args, **kwargs):  # pylint:disable=unused-argument # TODO: to refactor
-        timeout = kwargs.pop("timeout", 100000)
-        if not timeout:
-            timeout = 100000  # timeout equals to 0 means no timeout, set the value to be a large number.
-        timeout_time = time.time() + timeout
-        max_retries = self.client.config.max_retries
-        retry_count = 0
-        last_exception = None
-        while True:
-            try:
-                return to_be_wrapped_func(self, timeout_time=timeout_time, last_exception=last_exception, **kwargs)
-            except Exception as exception:  # pylint:disable=broad-except
-                last_exception = self._handle_exception(exception, retry_count, max_retries, timeout_time)  # pylint:disable=protected-access
-                retry_count += 1
-    return wrapped_func
 
 
 class ConsumerProducerMixin(object):
@@ -55,9 +38,9 @@ class ConsumerProducerMixin(object):
         self.running = False
         self._close_connection()
 
-    def _open(self, timeout_time=None):  # pylint:disable=unused-argument # TODO: to refactor
+    def _open(self):
         """
-        Open the EventHubConsumer using the supplied connection.
+        Open the EventHubConsumer/EventHubProducer using the supplied connection.
         If the handler has previously been redirected, the redirect
         context will be used to create a new handler before opening it.
 
@@ -98,6 +81,26 @@ class ConsumerProducerMixin(object):
 
         return _handle_exception(exception, retry_count, max_retries, self, timeout_time)
 
+    def _do_retryable_operation(self, operation_type, timeout=None, **kwargs):
+        # pylint:disable=protected-access
+        if not timeout:
+            timeout = 100000  # timeout equals to 0 means no timeout, set the value to be a large number.
+        timeout_time = time.time() + timeout
+        max_retries = self.client.config.max_retries
+        retry_count = 0
+        last_exception = kwargs.pop('last_exception', None)
+        while True:
+            try:
+                if operation_type == _OperationType.OPEN:
+                    return self._open()
+                elif operation_type == _OperationType.SEND:
+                    return self._send_event_data(timeout_time=timeout_time, last_exception=last_exception)
+                elif operation_type == _OperationType.RECEIVE:
+                    return self._receive(timeout_time=timeout_time, last_exception=last_exception, **kwargs)
+            except Exception as exception:  # pylint:disable=broad-except
+                last_exception = self._handle_exception(exception, retry_count, max_retries, timeout_time)
+                retry_count += 1
+
     def close(self, exception=None):
         # type:(Exception) -> None
         """
@@ -131,3 +134,9 @@ class ConsumerProducerMixin(object):
             self.error = EventHubError("{} handler is closed.".format(self.name))
         if self._handler:
             self._handler.close()  # this will close link if sharing connection. Otherwise close connection
+
+
+class _OperationType(Enum):
+    OPEN = 0
+    SEND = 1
+    RECEIVE = 2

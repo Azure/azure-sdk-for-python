@@ -14,8 +14,8 @@ from uamqp import SendClientAsync  # type: ignore
 from azure.eventhub.common import EventData, EventDataBatch
 from azure.eventhub.error import _error_handler, OperationTimeoutError, EventDataError
 from ..producer import _error, _set_partition_key
-from ._consumer_producer_mixin_async import ConsumerProducerMixin, _retry_decorator
-
+from ._consumer_producer_mixin_async import ConsumerProducerMixin
+from .._consumer_producer_mixin import _OperationType
 
 log = logging.getLogger(__name__)
 
@@ -98,7 +98,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
                 self.client.config.user_agent),
             loop=self.loop)
 
-    async def _open(self, timeout_time=None, **kwargs):  # pylint:disable=arguments-differ, unused-argument # TODO: to refactor
+    async def _open(self):
         """
         Open the EventHubProducer using the supplied connection.
         If the handler has previously been redirected, the redirect
@@ -108,15 +108,14 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
         if not self.running and self.redirected:
             self.client._process_redirect_uri(self.redirected)  # pylint: disable=protected-access
             self.target = self.redirected.address
-        await super(EventHubProducer, self)._open(timeout_time)
+        await super(EventHubProducer, self)._open()
 
-    @_retry_decorator
-    async def _open_with_retry(self, timeout_time=None, **kwargs):
-        return await self._open(timeout_time=timeout_time, **kwargs)
+    async def _open_with_retry(self):
+        return await self._do_retryable_operation(_OperationType.OPEN)
 
     async def _send_event_data(self, timeout_time=None, last_exception=None):
         if self.unsent_events:
-            await self._open(timeout_time)
+            await self._open()
             remaining_time = timeout_time - time.time()
             if remaining_time <= 0.0:
                 if last_exception:
@@ -135,9 +134,8 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
                 _error(self._outcome, self._condition)
         return
 
-    @_retry_decorator
-    async def _send_event_data_with_retry(self, timeout_time=None, last_exception=None):
-        return await self._send_event_data(timeout_time=timeout_time, last_exception=last_exception)
+    async def _send_event_data_with_retry(self, timeout=None):
+        return await self._do_retryable_operation(_OperationType.SEND, timeout=timeout)
 
     def _on_outcome(self, outcome, condition):
         """
@@ -176,7 +174,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
         """
 
         if not self._max_message_size_on_link:
-            await self._open_with_retry(timeout=self.client.config.send_timeout)
+            await self._open_with_retry()
 
         if max_size and max_size > self._max_message_size_on_link:
             raise ValueError('Max message size: {} is too large, acceptable max batch size is: {} bytes.'

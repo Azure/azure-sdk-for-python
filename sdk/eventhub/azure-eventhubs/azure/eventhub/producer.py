@@ -14,7 +14,7 @@ from uamqp import SendClient  # type: ignore
 
 from azure.eventhub.common import EventData, EventDataBatch
 from azure.eventhub.error import _error_handler, OperationTimeoutError, EventDataError
-from ._consumer_producer_mixin import ConsumerProducerMixin, _retry_decorator
+from ._consumer_producer_mixin import ConsumerProducerMixin, _OperationType
 
 
 log = logging.getLogger(__name__)
@@ -104,26 +104,24 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
             link_properties=self._link_properties,
             properties=self.client._create_properties(self.client.config.user_agent))  # pylint: disable=protected-access
 
-    def _open(self, timeout_time=None, **kwargs):  # pylint:disable=unused-argument, arguments-differ # TODO:To refactor
+    def _open(self):
         """
         Open the EventHubProducer using the supplied connection.
         If the handler has previously been redirected, the redirect
         context will be used to create a new handler before opening it.
 
         """
-
         if not self.running and self.redirected:
             self.client._process_redirect_uri(self.redirected)  # pylint: disable=protected-access
             self.target = self.redirected.address
-        super(EventHubProducer, self)._open(timeout_time)
+        super(EventHubProducer, self)._open()
 
-    @_retry_decorator
-    def _open_with_retry(self, timeout_time=None, **kwargs):
-        return self._open(timeout_time=timeout_time, **kwargs)
+    def _open_with_retry(self):
+        return self._do_retryable_operation(_OperationType.OPEN)
 
     def _send_event_data(self, timeout_time=None, last_exception=None):
         if self.unsent_events:
-            self._open(timeout_time)
+            self._open()
             remaining_time = timeout_time - time.time()
             if remaining_time <= 0.0:
                 if last_exception:
@@ -141,9 +139,8 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
                     self._condition = OperationTimeoutError("send operation timed out")
                 _error(self._outcome, self._condition)
 
-    @_retry_decorator
-    def _send_event_data_with_retry(self, timeout_time=None, last_exception=None):
-        return self._send_event_data(timeout_time=timeout_time, last_exception=last_exception)
+    def _send_event_data_with_retry(self, timeout=None):
+        return self._do_retryable_operation(_OperationType.SEND, timeout=timeout)
 
     def _on_outcome(self, outcome, condition):
         """
@@ -182,7 +179,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         """
 
         if not self._max_message_size_on_link:
-            self._open_with_retry(timeout=self.client.config.send_timeout)
+            self._open_with_retry()
 
         if max_size and max_size > self._max_message_size_on_link:
             raise ValueError('Max message size: {} is too large, acceptable max batch size is: {} bytes.'
@@ -237,7 +234,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
                 wrapper_event_data = EventDataBatch._from_batch(event_data, partition_key)  # pylint: disable=protected-access
         wrapper_event_data.message.on_send_complete = self._on_outcome
         self.unsent_events = [wrapper_event_data.message]
-        self._send_event_data_with_retry(timeout=timeout)  # pylint:disable=unexpected-keyword-arg # TODO:to refactor
+        self._send_event_data_with_retry(timeout=timeout)
 
     def close(self, exception=None):  # pylint:disable=useless-super-delegation
         # type:(Exception) -> None
