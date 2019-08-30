@@ -15,7 +15,6 @@ from azure.eventhub.common import EventData, EventDataBatch
 from azure.eventhub.error import _error_handler, OperationTimeoutError, EventDataError
 from ..producer import _error, _set_partition_key
 from ._consumer_producer_mixin_async import ConsumerProducerMixin
-from .._consumer_producer_mixin import _OperationType
 
 log = logging.getLogger(__name__)
 
@@ -111,7 +110,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
         await super(EventHubProducer, self)._open()
 
     async def _open_with_retry(self):
-        return await self._do_retryable_operation(_OperationType.OPEN)
+        return await self._do_retryable_operation(self._open, operation_need_param=False)
 
     async def _send_event_data(self, timeout_time=None, last_exception=None):
         if self.unsent_events:
@@ -135,7 +134,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
         return
 
     async def _send_event_data_with_retry(self, timeout=None):
-        return await self._do_retryable_operation(_OperationType.SEND, timeout=timeout)
+        return await self._do_retryable_operation(self._send_event_data, timeout=timeout)
 
     def _on_outcome(self, outcome, condition):
         """

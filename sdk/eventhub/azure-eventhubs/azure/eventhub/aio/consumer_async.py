@@ -14,7 +14,6 @@ from uamqp import ReceiveClientAsync, Source  # type: ignore
 from azure.eventhub import EventData, EventPosition
 from azure.eventhub.error import EventHubError, ConnectError, _error_handler
 from ._consumer_producer_mixin_async import ConsumerProducerMixin
-from .._consumer_producer_mixin import _OperationType
 
 log = logging.getLogger(__name__)
 
@@ -93,9 +92,8 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         return self
 
     async def __anext__(self):
-        max_retries = self.client.config.max_retries
-        retry_count = 0
-        while True:
+        retried_times = 0
+        while retried_times < self.client.config.max_retries:
             try:
                 await self._open()
                 if not self.messages_iter:
@@ -103,11 +101,13 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
                 message = await self.messages_iter.__anext__()
                 event_data = EventData._from_message(message)  # pylint:disable=protected-access
                 self.offset = EventPosition(event_data.offset, inclusive=False)
-                retry_count = 0
+                retried_times = 0
                 return event_data
             except Exception as exception:  # pylint:disable=broad-except
-                await self._handle_exception(exception, retry_count, max_retries, timeout_time=None)
-                retry_count += 1
+                last_exception = await self._handle_exception(exception)
+                await self.client._try_delay(retried_times=retried_times, last_exception=last_exception,
+                                             entity_name=self.name)
+                retried_times += 1
 
     def _create_handler(self):
         alt_creds = {
@@ -170,8 +170,8 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
             data_batch.append(event_data)
         return data_batch
 
-    async def _receive_with_try(self, timeout=None, max_batch_size=None, **kwargs):
-        return await self._do_retryable_operation(_OperationType.RECEIVE, timeout=timeout,
+    async def _receive_with_retry(self, timeout=None, max_batch_size=None, **kwargs):
+        return await self._do_retryable_operation(self._receive, timeout=timeout,
                                                   max_batch_size=max_batch_size, **kwargs)
 
     @property
@@ -220,7 +220,7 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         max_batch_size = max_batch_size or min(self.client.config.max_batch_size, self.prefetch)
         data_batch = []  # type: List[EventData]
 
-        return await self._receive_with_try(timeout=timeout, max_batch_size=max_batch_size, data_batch=data_batch)
+        return await self._receive_with_retry(timeout=timeout, max_batch_size=max_batch_size, data_batch=data_batch)
 
     async def close(self, exception=None):
         # type: (Exception) -> None

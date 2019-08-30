@@ -4,6 +4,7 @@
 # --------------------------------------------------------------------------------------------
 import logging
 import datetime
+import time
 import functools
 import asyncio
 from typing import Any, List, Dict, Union, TYPE_CHECKING
@@ -99,15 +100,23 @@ class EventHubClient(EventHubClientAbstract):
                                                 get_jwt_token, http_proxy=http_proxy,
                                                 transport_type=transport_type)
 
-    async def _handle_exception(self, exception, retry_count, max_retries):
-        await _handle_exception(exception, retry_count, max_retries, self)
-
     async def _close_connection(self):
         await self._conn_manager.reset_connection_if_broken()
 
+    async def _try_delay(self, retried_times, last_exception, timeout_time=None, entity_name=None):
+        entity_name = entity_name or self.container_id
+        backoff = self.config.backoff_factor * 2 ** retried_times
+        if backoff <= self.config.backoff_max and (
+                timeout_time is None or time.time() + backoff <= timeout_time):  # pylint:disable=no-else-return
+            asyncio.sleep(backoff)
+            log.info("%r has an exception (%r). Retrying...", format(entity_name), last_exception)
+        else:
+            log.info("%r operation has timed out. Last exception before timeout is (%r)",
+                     entity_name, last_exception)
+            raise last_exception
+
     async def _management_request(self, mgmt_msg, op_type):
-        max_retries = self.config.max_retries
-        retry_count = 0
+        retried_times = 0
         while True:
             mgmt_auth = self._create_auth()
             mgmt_client = AMQPClientAsync(self.mgmt_target, auth=mgmt_auth, debug=self.config.network_tracing)
@@ -122,8 +131,9 @@ class EventHubClient(EventHubClientAbstract):
                     description_fields=b'status-description')
                 return response
             except Exception as exception:  # pylint:disable=broad-except
-                await self._handle_exception(exception, retry_count, max_retries)
-                retry_count += 1
+                last_exception = await _handle_exception(exception, self)
+                await self._try_delay(retried_times=retried_times, last_exception=last_exception)
+                retried_times += 1
             finally:
                 await mgmt_client.close_async()
 

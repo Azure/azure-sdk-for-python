@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 
 import logging
 import datetime
+import time
 import functools
 from typing import Any, List, Dict, Union, TYPE_CHECKING
 
@@ -99,16 +100,25 @@ class EventHubClient(EventHubClientAbstract):
                                                get_jwt_token, http_proxy=http_proxy,
                                                transport_type=transport_type)
 
-    def _handle_exception(self, exception, retry_count, max_retries):
-        _handle_exception(exception, retry_count, max_retries, self)
-
     def _close_connection(self):
         self._conn_manager.reset_connection_if_broken()
 
+    def _try_delay(self, retried_times, last_exception, timeout_time=None, entity_name=None):
+        entity_name = entity_name or self.container_id
+        backoff = self.config.backoff_factor * 2 ** retried_times
+        if backoff <= self.config.backoff_max and (
+                timeout_time is None or time.time() + backoff <= timeout_time):  # pylint:disable=no-else-return
+            time.sleep(backoff)
+            log.info("%r has an exception (%r). Retrying...", format(entity_name), last_exception)
+        else:
+            log.info("%r operation has timed out. Last exception before timeout is (%r)",
+                     entity_name, last_exception)
+            raise last_exception
+
     def _management_request(self, mgmt_msg, op_type):
-        max_retries = self.config.max_retries
-        retry_count = 0
-        while retry_count <= self.config.max_retries:
+        retried_times = 0
+
+        while retried_times <= self.config.max_retries:
             mgmt_auth = self._create_auth()
             mgmt_client = uamqp.AMQPClient(self.mgmt_target)
             try:
@@ -122,8 +132,9 @@ class EventHubClient(EventHubClientAbstract):
                     description_fields=b'status-description')
                 return response
             except Exception as exception:  # pylint: disable=broad-except
-                self._handle_exception(exception, retry_count, max_retries)
-                retry_count += 1
+                last_exception = _handle_exception(exception, self)
+                self._try_delay(retried_times=retried_times, last_exception=last_exception)
+                retried_times += 1
             finally:
                 mgmt_client.close()
 

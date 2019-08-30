@@ -14,7 +14,7 @@ from uamqp import SendClient  # type: ignore
 
 from azure.eventhub.common import EventData, EventDataBatch
 from azure.eventhub.error import _error_handler, OperationTimeoutError, EventDataError
-from ._consumer_producer_mixin import ConsumerProducerMixin, _OperationType
+from ._consumer_producer_mixin import ConsumerProducerMixin
 
 
 log = logging.getLogger(__name__)
@@ -117,7 +117,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         super(EventHubProducer, self)._open()
 
     def _open_with_retry(self):
-        return self._do_retryable_operation(_OperationType.OPEN)
+        return self._do_retryable_operation(self._open, operation_need_param=False)
 
     def _send_event_data(self, timeout_time=None, last_exception=None):
         if self.unsent_events:
@@ -140,7 +140,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
                 _error(self._outcome, self._condition)
 
     def _send_event_data_with_retry(self, timeout=None):
-        return self._do_retryable_operation(_OperationType.SEND, timeout=timeout)
+        return self._do_retryable_operation(self._send_event_data, timeout=timeout)
 
     def _on_outcome(self, outcome, condition):
         """

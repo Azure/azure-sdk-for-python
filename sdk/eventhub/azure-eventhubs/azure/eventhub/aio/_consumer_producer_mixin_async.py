@@ -9,7 +9,6 @@ import time
 from uamqp import errors, constants, compat  # type: ignore
 from azure.eventhub.error import EventHubError, ConnectError
 from ..aio.error_async import _handle_exception
-from .._consumer_producer_mixin import _OperationType
 
 log = logging.getLogger(__name__)
 
@@ -75,33 +74,36 @@ class ConsumerProducerMixin(object):
         await self._close_handler()
         await self.client._conn_manager.reset_connection_if_broken()  # pylint:disable=protected-access
 
-    async def _handle_exception(self, exception, retry_count, max_retries, timeout_time):
+    async def _handle_exception(self, exception):
         if not self.running and isinstance(exception, compat.TimeoutException):
             exception = errors.AuthenticationException("Authorization timeout.")
-            return await _handle_exception(exception, retry_count, max_retries, self, timeout_time)
+            return await _handle_exception(exception, self)
 
-        return await _handle_exception(exception, retry_count, max_retries, self, timeout_time)
+        return await _handle_exception(exception, self)
 
-    async def _do_retryable_operation(self, operation_type, timeout=None, **kwargs):
+    async def _do_retryable_operation(self, operation, timeout=None, **kwargs):
         # pylint:disable=protected-access
         if not timeout:
             timeout = 100000  # timeout equals to 0 means no timeout, set the value to be a large number.
         timeout_time = time.time() + timeout
-        max_retries = self.client.config.max_retries
-        retry_count = 0
+        retried_times = 0
         last_exception = kwargs.pop('last_exception', None)
-        while True:
-            print('retrying:{}'.format(retry_count))
+        operation_need_param = kwargs.pop('operation_need_param', True)
+
+        while retried_times <= self.client.config.max_retries:
             try:
-                if operation_type == _OperationType.OPEN:
-                    return await self._open()
-                elif operation_type == _OperationType.SEND:
-                    return await self._send_event_data(timeout_time=timeout_time, last_exception=last_exception)
-                elif operation_type == _OperationType.RECEIVE:
-                    return await self._receive(timeout_time=timeout_time, last_exception=last_exception, **kwargs)
+                if operation_need_param:
+                    return await operation(timeout_time=timeout_time, last_exception=last_exception, **kwargs)
+                else:
+                    return await operation()
             except Exception as exception:  # pylint:disable=broad-except
-                last_exception = await self._handle_exception(exception, retry_count, max_retries, timeout_time)
-                retry_count += 1
+                last_exception = await self._handle_exception(exception)
+                await self.client._try_delay(retried_times=retried_times, last_exception=last_exception,
+                                             timeout_time=timeout_time, entity_name=self.name)
+                retried_times += 1
+
+        log.info("%r has exhausted retry. Exception still occurs (%r)", self.name, last_exception)
+        raise last_exception
 
     async def close(self, exception=None):
         # type: (Exception) -> None
