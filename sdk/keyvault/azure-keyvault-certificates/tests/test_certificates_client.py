@@ -7,7 +7,7 @@ import time
 
 from azure_devtools.scenario_tests import RecordingProcessor, RequestUrlNormalizer
 
-from azure.keyvault.certificates import Issuer
+from azure.keyvault.certificates import Issuer, Contact
 from azure.keyvault.certificates._shared import parse_vault_id
 from devtools_testutils import ResourceGroupPreparer
 from certificates_preparer import VaultClientPreparer
@@ -16,7 +16,7 @@ from azure.keyvault.certificates._shared._generated.v7_0.models import Certifica
 from azure.keyvault.certificates.models import CertificatePolicy as CertificatePolicy
 from azure.keyvault.certificates._shared._generated.v7_0.models import (
     SecretProperties, IssuerParameters, X509CertificateProperties,
-    SubjectAlternativeNames, Contact, LifetimeAction, Trigger, Action, ActionType, IssuerAttributes)
+    SubjectAlternativeNames, LifetimeAction, Trigger, Action, ActionType, IssuerAttributes)
 from azure.keyvault.certificates.models import (
     AdministratorDetails, IssuerBase, KeyProperties)
 
@@ -155,10 +155,11 @@ class CertificateClientTests(KeyVaultTestCase):
         self.assertEqual(len(expected), 0)
 
     def _validate_certificate_contacts(self, contacts, expected):
-        self.assertEqual(len(list(contacts)), len(expected))
+        self.assertEqual(len(contacts), len(expected))
         for contact in contacts:
-            exp_contact = next(x for x in expected if x.email_address == contact.email_address)
-            self.assertEqual(contact, exp_contact)
+            exp_contact = next(x for x in expected if x.email == contact.email)
+            self.assertEqual(contact.name, exp_contact.name)
+            self.assertEqual(contact.phone, exp_contact.phone)
 
     def _admin_detail_equal(self, admin_detail, exp_admin_detail):
         return (admin_detail.first_name == exp_admin_detail.first_name and
@@ -323,10 +324,10 @@ class CertificateClientTests(KeyVaultTestCase):
         client = vault_client.certificates
 
         contact_list = [
-            Contact(email_address='admin@contoso.com',
+            Contact(email='admin@contoso.com',
                     name='John Doe',
                     phone='1111111111'),
-            Contact(email_address='admin2@contoso.com',
+            Contact(email='admin2@contoso.com',
                     name='John Doe2',
                     phone='2222222222')
         ]

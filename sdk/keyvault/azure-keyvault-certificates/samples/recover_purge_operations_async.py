@@ -3,10 +3,8 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import asyncio
-import time
 import os
 from azure.keyvault.certificates.aio import CertificateClient
-from azure.keyvault.certificates import CertificatePolicy, KeyProperties, SecretContentType
 from azure.identity.aio import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 

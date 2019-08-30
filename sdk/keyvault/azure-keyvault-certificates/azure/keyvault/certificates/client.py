@@ -1,12 +1,20 @@
-# --------------------------------------------------------------------------
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License. See LICENSE.txt in the project root for
-# license information.
-# --------------------------------------------------------------------------
-# pylint:disable=too-many-lines,unused-import,too-many-public-methods
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
+# pylint:disable=too-many-lines,too-many-public-methods
 import base64
 import uuid
-from typing import Any, Dict, List, Optional, Iterable
+
+try:
+    from typing import TYPE_CHECKING
+except ImportError:
+    TYPE_CHECKING = False
+
+if TYPE_CHECKING:
+    # pylint:disable=unused-import
+    from typing import Any, Dict, List, Optional, Iterable
+
 from functools import partial
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.polling import LROPoller
@@ -163,13 +171,10 @@ class CertificateClient(KeyVaultClientBase):
                 :caption: Get a certificate
                 :dedent: 8
         """
-        if version is None:
-            version = ""
-
         bundle = self._client.get_certificate(
             vault_base_url=self.vault_url,
             certificate_name=name,
-            certificate_version=version,
+            certificate_version=version or "",
             **kwargs
         )
         return Certificate._from_certificate_bundle(certificate_bundle=bundle)
@@ -629,8 +634,12 @@ class CertificateClient(KeyVaultClientBase):
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
-        bundle = self._client.set_certificate_contacts(vault_base_url=self.vault_url, contact_list=contacts, **kwargs)
-        return (Contact._from_certificate_contacts_item(contact_item=item) for item in bundle.contact_list)
+        contacts = self._client.set_certificate_contacts(
+            vault_base_url=self.vault_url,
+            contact_list=[c._to_certificate_contacts_item() for c in contacts],
+            **kwargs
+        )
+        return [Contact._from_certificate_contacts_item(contact_item=item) for item in contacts.contact_list]
 
     @distributed_trace
     def get_contacts(self, **kwargs):
@@ -644,8 +653,8 @@ class CertificateClient(KeyVaultClientBase):
         :return: The certificate contacts for the key vault.
         :rtype: Iterator[azure.security.keyvault.certificates._models.Contact]
         """
-        pages = self._client.get_certificate_contacts(vault_base_url=self._vault_url, **kwargs)
-        return (Contact._from_certificate_contacts_item(contact_item=item) for item in pages.contact_list)
+        contacts = self._client.get_certificate_contacts(vault_base_url=self._vault_url, **kwargs)
+        return [Contact._from_certificate_contacts_item(contact_item=item) for item in contacts.contact_list]
 
     @distributed_trace
     def delete_contacts(self, **kwargs):
@@ -660,8 +669,8 @@ class CertificateClient(KeyVaultClientBase):
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
-        bundle = self._client.delete_certificate_contacts(vault_base_url=self.vault_url, **kwargs)
-        return (Contact._from_certificate_contacts_item(contact_item=item) for item in bundle.contact_list)
+        contacts = self._client.delete_certificate_contacts(vault_base_url=self.vault_url, **kwargs)
+        return [Contact._from_certificate_contacts_item(contact_item=item) for item in contacts.contact_list]
 
     @distributed_trace
     def get_certificate_operation(self, name, **kwargs):
@@ -776,7 +785,6 @@ class CertificateClient(KeyVaultClientBase):
     def get_pending_certificate_signing_request(
         self,
         name,  # type: str
-        custom_headers=None,  # type: Optional[Dict[str, str]]
         **kwargs  # type: **Any
     ):
         # type: (...) -> str
@@ -790,6 +798,7 @@ class CertificateClient(KeyVaultClientBase):
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
+        custom_headers = kwargs.pop('header', None)
         error_map = kwargs.pop('error_map', None)
         vault_base_url = self.vault_url
         # Construct URL

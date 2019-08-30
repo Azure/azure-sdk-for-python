@@ -2,9 +2,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import time
 import os
-from azure.keyvault.certificates import CertificateClient, CertificatePolicy, KeyProperties, SecretContentType
+from azure.keyvault.certificates import CertificateClient
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 

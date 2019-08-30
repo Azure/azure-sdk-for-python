@@ -618,7 +618,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
             **kwargs)
 
     @distributed_trace_async
-    async def create_contacts(self, contacts: Iterable[Contact], **kwargs: "**Any") -> Iterable[Contact]:
+    async def create_contacts(self, contacts: Iterable[Contact], **kwargs: "**Any") -> AsyncIterable[Contact]:
         """Sets the certificate contacts for the key vault.
 
         Sets the certificate contacts for the key vault. This
@@ -633,10 +633,10 @@ class CertificateClient(AsyncKeyVaultClientBase):
         """
         contacts = await self._client.set_certificate_contacts(
             vault_base_url=self.vault_url,
-            contact_list=contacts,
+            contact_list=[c._to_certificate_contacts_item() for c in contacts],
             **kwargs
         )
-        return (Contact._from_certificate_contacts_item(contact_item=item) for item in contacts.contact_list)
+        return [Contact._from_certificate_contacts_item(contact_item=item) for item in contacts.contact_list]
 
     @distributed_trace_async
     async def get_contacts(self, **kwargs: "**Any") -> AsyncIterable[Contact]:
@@ -650,7 +650,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         :rtype: Iterator[azure.security.keyvault.certificates._models.Contact]
         """
         contacts = await self._client.get_certificate_contacts(vault_base_url=self._vault_url, **kwargs)
-        return (Contact._from_certificate_contacts_item(contact_item=item) for item in contacts.contact_list)
+        return [Contact._from_certificate_contacts_item(contact_item=item) for item in contacts.contact_list]
 
     @distributed_trace_async
     async def delete_contacts(self, **kwargs: "**Any") -> AsyncIterable[Contact]:
@@ -665,7 +665,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
          :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
         contacts = await self._client.delete_certificate_contacts(vault_base_url=self.vault_url, **kwargs)
-        return (Contact._from_certificate_contacts_item(contact_item=item) for item in contacts.contact_list)
+        return [Contact._from_certificate_contacts_item(contact_item=item) for item in contacts.contact_list]
 
     @distributed_trace_async
     async def get_certificate_operation(self, name: str, **kwargs: "**Any") -> CertificateOperation:

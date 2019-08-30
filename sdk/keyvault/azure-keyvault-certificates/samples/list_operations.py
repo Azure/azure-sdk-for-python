@@ -3,9 +3,8 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import datetime
-import time
 import os
-from azure.keyvault.certificates import CertificateClient, CertificatePolicy, KeyProperties, SecretContentType
+from azure.keyvault.certificates import CertificateClient
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 
@@ -26,8 +25,7 @@ from azure.core.exceptions import HttpResponseError
 #
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates the basic list operations on a vault(certificate) resource for Azure Key Vault.
-# The vault has to be soft-delete enabled to perform one of the following operations. [Azure Key Vault soft delete]
-# (https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete)
+# The vault has to be soft-delete enabled to perform one of the following operations: https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete
 #
 # 1. Create certificate (create_certificate)
 #
@@ -79,7 +77,6 @@ def run_sample():
 
         client.create_certificate(
             name=bank_cert_name,
-            policy=cert_policy,
             expires=expires
         ).wait()
         print(

@@ -7,7 +7,14 @@
 
 from datetime import datetime
 from enum import Enum
-from typing import Any, Dict, Optional
+
+try:
+    from typing import TYPE_CHECKING
+except ImportError:
+    TYPE_CHECKING = False
+
+if TYPE_CHECKING:
+    from typing import Any, Dict, Optional
 
 from ._shared import parse_vault_id
 from ._shared._generated.v7_0 import models
@@ -278,23 +285,20 @@ class Certificate(CertificateBase):
     @property
     def key_id(self):
         # type: () -> str
-        """The key id.
-        :rtype: str
-        """
+        """:rtype: str"""
         return self._key_id
 
     @property
     def secret_id(self):
         # type: () -> str
-        """The secret id.
-        :rtype: str
-        """
+        """:rtype: str"""
         return self._secret_id
 
     @property
     def policy(self):
         # type: () -> CertificatePolicy
         """The management policy of the certificate.
+
         :rtype: CertificatePolicy
         """
         return self._policy
@@ -303,6 +307,7 @@ class Certificate(CertificateBase):
     def cer(self):
         # type: () -> bytes
         """The CER contents of the certificate.
+
         :rtype: bytes
         """
         return self._cer
@@ -363,23 +368,20 @@ class CertificateOperation(object):
     @property
     def id(self):
         # type: () -> str
-        """The id of the certificate with this operation.
-        :rtype: str
-        """
+        """:rtype: str"""
         return self._id
 
     @property
     def name(self):
         # type: () -> str
-        """The name of the certificate with this operation.
-        :rtype: str
-        """
+        """:rtype: str"""
         return self._vault_id.name
 
     @property
     def issuer_name(self):
         # type: () -> str
         """The name of the issuer of the certificate.
+
         :rtype: str
         """
         return self._issuer_name
@@ -388,6 +390,7 @@ class CertificateOperation(object):
     def certificate_type(self):
         # type: () -> str
         """Type of certificate to be requested from the issuer provider.
+
         :rtype: str
         """
         return self._certificate_type
@@ -397,6 +400,7 @@ class CertificateOperation(object):
         # type: () -> bool
         """Whether certificates generated under this policy should be published to certificate
         transparency logs.
+
         :rtype: bool
         """
         return self._certificate_transparency
@@ -405,6 +409,7 @@ class CertificateOperation(object):
     def csr(self):
         # type: () -> bytes
         """The certificate signing request that is being used in this certificate operation.
+
         :rtype: bytes
         """
         return self._csr
@@ -413,6 +418,7 @@ class CertificateOperation(object):
     def cancellation_requested(self):
         # type: () -> bool
         """Whether cancellation was requested on the certificate operation.
+
         :rtype: bool
         """
         return self._cancellation_requested
@@ -420,31 +426,26 @@ class CertificateOperation(object):
     @property
     def status(self):
         # type: () -> str
-        """Status of the certificate operation.
-        :rtype: str
-        """
+        """:rtype: str"""
         return self._status
 
     @property
     def status_details(self):
         # type: () -> str
-        """Status details of the certificate operation.
-        :rtype: str
-        """
+        """:rtype: str"""
         return self._status_details
 
     @property
     def error(self):
         # type: () -> models.Error
-        """Error encountered, if any, during the certificate operation.
-        :rtype: models.Error
-        """
+        """:rtype: models.Error"""
         return self._error
 
     @property
     def target(self):
         # type: () -> str
         """Location which contains the result of the certificate operation.
+
         :rtype: str
         """
         return self._target
@@ -453,6 +454,7 @@ class CertificateOperation(object):
     def request_id(self):
         # type: () -> str
         """Identifier for the certificate operation.
+
         :rtype: str
         """
         return self._request_id
@@ -613,14 +615,7 @@ class CertificatePolicy(object):
             lifetime_actions = None
         key_properties_bundle = certificate_policy_bundle.key_properties
         # pylint:disable=too-many-boolean-expressions
-        if (key_properties_bundle and
-                (key_properties_bundle.exportable or
-                    key_properties_bundle.key_type or
-                    key_properties_bundle.key_size or
-                    key_properties_bundle.reuse_key or
-                    key_properties_bundle.curve or
-                    key_properties_bundle.ekus or
-                    key_properties_bundle.key_usage)):
+        if key_properties_bundle:
             if certificate_policy_bundle.x509_certificate_properties and \
                     certificate_policy_bundle.x509_certificate_properties.key_usage:
                 key_usage = [KeyUsageType(k) for k in certificate_policy_bundle.x509_certificate_properties.key_usage]
@@ -670,15 +665,14 @@ class CertificatePolicy(object):
     @property
     def id(self):
         # type: () -> str
-        """The certificate id.
-        :rtype: str
-        """
+        """:rtype: str"""
         return self._id
 
     @property
     def key_properties(self):
         # type: () -> models.KeyProperties
         """Properties of the key backing the certificate.
+
         :rtype: KeyProperties
         """
         return self._key_properties
@@ -687,6 +681,7 @@ class CertificatePolicy(object):
     def content_type(self):
         # type: () -> models.SecretContentType
         """The media type (MIME type).
+
         :rtype: SecretContentType
         """
         return self._content_type
@@ -694,15 +689,14 @@ class CertificatePolicy(object):
     @property
     def subject_name(self):
         # type: () -> str
-        """The subject name.
-        :rtype: str
-        """
+        """:rtype: str"""
         return self._subject_name
 
     @property
     def san_emails(self):
         # type: () -> list[str]
         """The subject alternative email addresses.
+
         :rtype: list[str]
         """
         return self._san_emails
@@ -711,6 +705,7 @@ class CertificatePolicy(object):
     def san_dns_names(self):
         # type: () -> list[str]
         """The subject alternative domain names.
+
         :rtype: list[str]
         """
         return self._san_dns_names
@@ -719,6 +714,7 @@ class CertificatePolicy(object):
     def san_upns(self):
         # type: () -> list[str]
         """The subject alternative user principal names.
+
         :rtype: list[str]
         """
         return self._san_upns
@@ -727,6 +723,7 @@ class CertificatePolicy(object):
     def validity_in_months(self):
         # type: () -> int
         """The duration that the certificate is valid for in months.
+
         :rtype: int
         """
         return self._validity_in_months
@@ -736,6 +733,7 @@ class CertificatePolicy(object):
         # type: () -> list[LifetimeAction]
         """Actions and their triggers that will be performed by Key Vault over
         the lifetime of the certificate.
+
         :rtype: list[LifetimeAction]
         """
         return self._lifetime_actions
@@ -745,6 +743,7 @@ class CertificatePolicy(object):
         # type: () -> str
         """Name of the referenced issuer object or reserved names for the issuer
         of the certificate.
+
         :rtype: str
         """
         return self._issuer_name
@@ -753,6 +752,7 @@ class CertificatePolicy(object):
     def certificate_type(self):
         # type: () -> str
         """Type of certificate requested from the issuer provider.
+
         :rtype: str
         """
         return self._certificate_type
@@ -762,6 +762,7 @@ class CertificatePolicy(object):
         # type: () -> bool
         """Whether the certificates generated under this policy should be published
         to certificate transparency logs.
+
         :rtype: bool
         """
         return self._certificate_transparency
@@ -770,6 +771,7 @@ class CertificatePolicy(object):
     def enabled(self):
         # type: () -> bool
         """Whether the certificate is enabled or not.
+
         :rtype: bool
         """
         return self._attributes.enabled if self._attributes else None
@@ -778,6 +780,7 @@ class CertificatePolicy(object):
     def not_before(self):
         # type: () -> datetime
         """The datetime before which the certificate is not valid.
+
         :rtype: datetime
         """
         return self._attributes.not_before if self._attributes else None
@@ -786,6 +789,7 @@ class CertificatePolicy(object):
     def expires(self):
         # type: () -> datetime
         """The datetime when the certificate expires.
+
         :rtype: datetime
         """
         return self._attributes.expires if self._attributes else None
@@ -794,6 +798,7 @@ class CertificatePolicy(object):
     def created(self):
         # type: () -> datetime
         """The datetime when the certificate is created.
+
         :rtype: datetime
         """
         return self._attributes.created if self._attributes else None
@@ -802,6 +807,7 @@ class CertificatePolicy(object):
     def updated(self):
         # type: () -> datetime
         """The datetime when the certificate was last updated.
+
         :rtype: datetime
         """
         return self._attributes.updated if self._attributes else None
@@ -810,12 +816,13 @@ class CertificatePolicy(object):
     def recovery_level(self):
         # type: () -> models.DeletionRecoveryLevel
         """The deletion recovery level currently in effect for the certificate.
-        :rtype: models.DeletionRecoveryLevel
+
+        :rtype: DeletionRecoveryLevel
         """
         return self._attributes.recovery_level if self._attributes else None
 
 
-class Contact:
+class Contact(object):
     """The contact information for the vault certificates."""
 
     def __init__(self, email=None, name=None, phone=None):
@@ -823,6 +830,14 @@ class Contact:
         self._email = email
         self._name = name
         self._phone = phone
+
+    def _to_certificate_contacts_item(self):
+        # type: (Contact) -> models.Contact
+        return models.Contact(
+            email_address=self.email,
+            name=self.name,
+            phone=self.phone
+        )
 
     @classmethod
     def _from_certificate_contacts_item(cls, contact_item):
@@ -833,25 +848,19 @@ class Contact:
     @property
     def email(self):
         # type: () -> str
-        """Email address.
-        :rtype: str
-        """
+        """:rtype: str"""
         return self._email
 
     @property
     def name(self):
         # type: () -> str
-        """Name.
-        :rtype: str
-        """
+        """:rtype: str"""
         return self._name
 
     @property
     def phone(self):
         # type: () -> str
-        """Phone number.
-        :rtype: str
-        """
+        """:rtype: str"""
         return self._phone
 
 
@@ -872,32 +881,27 @@ class IssuerBase(object):
     @property
     def id(self):
         # type: () -> str
-        """Certificate identifier.
-        :rtype: str
-        """
+        """:rtype: str"""
         return self._id
 
     @property
     def name(self):
         # type: () -> str
         # Issuer name is listed under version under vault_id
-        """Name of the issuer.
-        :rtype: str
-        """
+        """:rtype: str"""
         return self._vault_id.version
 
     @property
     def provider(self):
         # type: () -> str
-        """The issuer provider.
-        :rtype: str
-        """
+        """:rtype: str"""
         return self._provider
 
     @property
     def vault_url(self):
         # type: () -> str
         """The name of the vault with this issuer.
+
         :rtype: str
         """
         return self._vault_id.vault_url
@@ -947,6 +951,7 @@ class Issuer(IssuerBase):
     def enabled(self):
         # type: () -> bool
         """Whether the certificate is enabled or not.
+
         :rtype: bool
         """
         return self._attributes.enabled if self._attributes else None
@@ -955,6 +960,7 @@ class Issuer(IssuerBase):
     def created(self):
         # type: () -> datetime
         """The datetime when the certificate is created.
+
         :rtype: datetime
         """
         return self._attributes.created if self._attributes else None
@@ -963,6 +969,7 @@ class Issuer(IssuerBase):
     def updated(self):
         # type: () -> datetime
         """The datetime when the certificate was last updated.
+
         :rtype: datetime
         """
         return self._attributes.updated if self._attributes else None
@@ -971,6 +978,7 @@ class Issuer(IssuerBase):
     def account_id(self):
         # type: () -> str
         """THe username/ account name/ account id.
+
         :rtype: str
         """
         return self._account_id
@@ -979,6 +987,7 @@ class Issuer(IssuerBase):
     def password(self):
         # type: () -> str
         """The password / secret / account key.
+
         :rtype: str
         """
         return self._password
@@ -986,15 +995,14 @@ class Issuer(IssuerBase):
     @property
     def organization_id(self):
         # type: () -> str
-        """Id of the organization.
-        :rtype: str
-        """
+        """:rtype: str"""
         return self._organization_id
 
     @property
     def admin_details(self):
         # type: () -> List[AdministratorDetails]
         """Details of the organization administrator of this issuer.
+
         :rtype: List[AdministratorDetails]
         """
         return self._admin_details
@@ -1025,6 +1033,7 @@ class KeyProperties(object):
     def exportable(self):
         # type: () -> bool
         """Whether the private key can be exported.
+
         :rtype: bool
         """
         return self._exportable
@@ -1033,6 +1042,7 @@ class KeyProperties(object):
     def key_type(self):
         # type: () -> models.JsonWebKeyType
         """The type of key pair to be used for the certificate.
+
         :rtype: models.JsonWebKeyType
         """
         return self._key_type
@@ -1041,6 +1051,7 @@ class KeyProperties(object):
     def key_size(self):
         # type: () -> int
         """The key size in bits.
+
         :rtype: int
         """
         return self._key_size
@@ -1049,6 +1060,7 @@ class KeyProperties(object):
     def reuse_key(self):
         # type: () -> bool
         """Whether the same key pair will be used on certificate renewal.
+
         :rtype: bool
         """
         return self._reuse_key
@@ -1057,6 +1069,7 @@ class KeyProperties(object):
     def curve(self):
         # type: () -> models.JsonWebKeyCurveName
         """Elliptic curve name.
+
         :rtype: models.JsonWebKeyCurveName
         """
         return self._curve
@@ -1065,6 +1078,7 @@ class KeyProperties(object):
     def ekus(self):
         # type: () -> list[str]
         """The enhanced key usage.
+
         :rtype: list[str]
         """
         return self._ekus
@@ -1073,6 +1087,7 @@ class KeyProperties(object):
     def key_usage(self):
         # type: () -> list[KeyUsageType]
         """List of key usages.
+
         :rtype: list[KeyUsageType]
         """
         return self._key_usage
@@ -1093,6 +1108,7 @@ class LifetimeAction(object):
     def lifetime_percentage(self):
         # type: () -> int
         """Percentage of lifetime at which to trigger.
+
         :rtype: int
         """
         return self._lifetime_percentage
@@ -1101,6 +1117,7 @@ class LifetimeAction(object):
     def days_before_expiry(self):
         # type: () -> int
         """Days before expiry to attempt renewal.
+
         :rtype: int
         """
         return self._days_before_expiry
@@ -1110,6 +1127,7 @@ class LifetimeAction(object):
         # type: () -> str
         """The type of the action that will be executed.
         Valid values are "EmailContacts" and "AutoRenew"
+
         :rtype: str or models.ActionType
         """
         return self._action_type
@@ -1189,6 +1207,7 @@ class DeletedCertificate(Certificate):
     def deleted_date(self):
         # type: () -> datetime
         """The datetime that the certificate was deleted.
+
         :rtype: datetime
         """
         return self._deleted_date
@@ -1197,6 +1216,7 @@ class DeletedCertificate(Certificate):
     def recovery_id(self):
         # type: () -> str
         """The url of the recovery object, used to identify and recover the deleted certificate.
+
         :rtype: str
         """
         return self._recovery_id
@@ -1205,6 +1225,7 @@ class DeletedCertificate(Certificate):
     def scheduled_purge_date(self):
         # type: () -> datetime
         """The datetime when the certificate is scheduled to be purged.
+
         :rtype: str
         """
         return self._scheduled_purge_date

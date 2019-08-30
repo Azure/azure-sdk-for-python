@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
-from azure.keyvault.certificates import CertificateClient, CertificatePolicy, KeyProperties, LifetimeAction, SecretContentType
+from azure.keyvault.certificates import CertificateClient
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 
@@ -48,10 +48,6 @@ def run_sample():
 
         print("\n1. Create Certificate")
         cert_name = 'BackupRestoreCertificate'
-        lifetime_actions = [LifetimeAction(
-            lifetime_percentage=2,
-            action_type="EmailContacts"
-        )]
 
         # Let's create a certificate for your key vault.
         # if the certificate already exists in the Key Vault, then a new version of the certificate is created.

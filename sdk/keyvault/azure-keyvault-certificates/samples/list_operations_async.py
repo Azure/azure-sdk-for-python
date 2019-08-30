@@ -7,7 +7,6 @@ import datetime
 import time
 import os
 from azure.keyvault.certificates.aio import CertificateClient
-from azure.keyvault.certificates import CertificatePolicy, KeyProperties, SecretContentType
 from azure.identity.aio import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 
@@ -27,8 +26,8 @@ from azure.core.exceptions import HttpResponseError
 # How to do this - https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-certificates#createget-credentials)
 #
 # ----------------------------------------------------------------------------------------------------------
-# Sample - demonstrates the basic list operations on a vault(certificate) resource for Azure Key Vault. The vault has to be soft-delete enabled
-# to perform one of the following operations. [Azure Key Vault soft delete](https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete)
+# Sample - demonstrates the basic list operations on a vault(certificate) resource for Azure Key Vault.
+# The vault has to be soft-delete enabled to perform one of the following operations: https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete
 #
 # 1. Create certificate (create_certificate)
 #

@@ -6,7 +6,6 @@ import asyncio
 import time
 import os
 from azure.keyvault.certificates.aio import CertificateClient
-from azure.keyvault.certificates import CertificatePolicy, KeyProperties, LifetimeAction, SecretContentType
 from azure.identity.aio import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 
@@ -51,10 +50,6 @@ async def run_sample():
 
         print("\n1. Create Certificate")
         cert_name = 'BackupRestoreCertificate'
-        lifetime_actions = [LifetimeAction(
-            lifetime_percentage=2,
-            action_type="EmailContacts"
-        )]
 
         # Let's create a certificate for your key vault.
         # if the certificate already exists in the Key Vault, then a new version of the certificate is created.

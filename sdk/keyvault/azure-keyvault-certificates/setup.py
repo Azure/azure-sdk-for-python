@@ -56,7 +56,7 @@ setup(
     license="MIT License",
     author="Microsoft Corporation",
     author_email="azurekeyvault@microsoft.com",
-    url="https://github.com/Azure/azure-sdk-for-python",
+    url="https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-certificates",
     classifiers=[
         "Development Status :: 4 - Beta",
         "Programming Language :: Python",
