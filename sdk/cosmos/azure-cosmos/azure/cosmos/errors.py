@@ -45,8 +45,6 @@ class CosmosHttpResponseError(HttpResponseError):
         self.sub_status = None
         self.http_error_message = message
         status = status_code or (int(response.status_code) if response else 0)
-        if not status:
-            raise Exception("Got no status: {}".format(status_code))
 
         if http_constants.HttpHeaders.SubStatus in self.headers:
             self.sub_status = int(self.headers[http_constants.HttpHeaders.SubStatus])

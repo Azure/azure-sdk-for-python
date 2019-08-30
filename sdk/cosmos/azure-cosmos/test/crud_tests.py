@@ -121,8 +121,7 @@ class CRUDTests(unittest.TestCase):
                 {'name': '@id', 'value': database_id}
             ]
         }))
-        self.assert_(databases,
-                     'number of results for the query should be > 0')
+        self.assertTrue(databases, 'number of results for the query should be > 0')
 
         # read database.
         self.client.get_database_client(created_db.id)
@@ -149,12 +148,12 @@ class CRUDTests(unittest.TestCase):
 
         # Verify offer throughput for database
         offer = created_db.read_offer()
-        self.assertEquals(offer.offer_throughput, offer_throughput)
+        self.assertEqual(offer.offer_throughput, offer_throughput)
 
         # Update database offer throughput
         new_offer_throughput = 2000
         offer = created_db.replace_throughput(new_offer_throughput)
-        self.assertEquals(offer.offer_throughput, new_offer_throughput)
+        self.assertEqual(offer.offer_throughput, new_offer_throughput)
 
     def test_sql_query_crud(self):
         # create two databases.
@@ -303,7 +302,7 @@ class CRUDTests(unittest.TestCase):
         # create document without partition key being specified
         created_document = created_collection.create_item(body=document_definition)
         _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
-        self.assertEquals(self.last_headers[1], '["WA"]')
+        self.assertEqual(self.last_headers[1], '["WA"]')
         del self.last_headers[:]
 
         self.assertEqual(created_document.get('id'), document_definition.get('id'))
@@ -320,7 +319,7 @@ class CRUDTests(unittest.TestCase):
         # Create document with partitionkey not present as a leaf level property but a dict
         created_document = created_collection1.create_item(document_definition)
         _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
-        self.assertEquals(self.last_headers[1], [{}])
+        self.assertEqual(self.last_headers[1], [{}])
         del self.last_headers[:]
 
         #self.assertEqual(options['partitionKey'], documents.Undefined)
@@ -336,7 +335,7 @@ class CRUDTests(unittest.TestCase):
         # Create document with partitionkey not present in the document
         created_document = created_collection2.create_item(document_definition)
         _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
-        self.assertEquals(self.last_headers[1], [{}])
+        self.assertEqual(self.last_headers[1], [{}])
         del self.last_headers[:]
 
         #self.assertEqual(options['partitionKey'], documents.Undefined)
@@ -362,7 +361,7 @@ class CRUDTests(unittest.TestCase):
         _retry_utility.ExecuteFunction = self._MockExecuteFunction
         created_document = created_collection1.create_item(body=document_definition)
         _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
-        self.assertEquals(self.last_headers[1], '["val1"]')
+        self.assertEqual(self.last_headers[1], '["val1"]')
         del self.last_headers[:]
 
         collection_definition2 = {
@@ -390,7 +389,7 @@ class CRUDTests(unittest.TestCase):
         # create document without partition key being specified
         created_document = created_collection2.create_item(body=document_definition)
         _retry_utility.ExecuteFunction = self.OriginalExecuteFunction
-        self.assertEquals(self.last_headers[1], '["val2"]')
+        self.assertEqual(self.last_headers[1], '["val2"]')
         del self.last_headers[:]
 
         created_db.delete_container(created_collection1.id)
@@ -1165,7 +1164,7 @@ class CRUDTests(unittest.TestCase):
                     {'name': '@id', 'value': permission.id}
                 ]
         ))
-        self.assert_(results)
+        self.assertTrue(results)
 
         # replace permission
         change_permission = permission.properties.copy()
@@ -1452,7 +1451,7 @@ class CRUDTests(unittest.TestCase):
                     {'name': '@id', 'value': trigger_definition['id']}
                 ]
         ))
-        self.assert_(triggers)
+        self.assertTrue(triggers)
 
         # replace trigger
         change_trigger = trigger.copy()
@@ -1510,7 +1509,7 @@ class CRUDTests(unittest.TestCase):
                     {'name': '@id', 'value': udf_definition['id']}
                 ]
         ))
-        self.assert_(results)
+        self.assertTrue(results)
         # replace udf
         change_udf = udf.copy()
         udf['body'] = 'function() {var x = 20;}'
@@ -2452,40 +2451,40 @@ class CRUDTests(unittest.TestCase):
 
         # read database with id
         read_db = self.client.get_database_client(created_db.id)
-        self.assertEquals(read_db.id, created_db.id)
+        self.assertEqual(read_db.id, created_db.id)
 
         # read database with instance
         read_db = self.client.get_database_client(created_db)
-        self.assertEquals(read_db.id, created_db.id)
+        self.assertEqual(read_db.id, created_db.id)
 
         # read database with properties
         read_db = self.client.get_database_client(created_db.read())
-        self.assertEquals(read_db.id, created_db.id)
+        self.assertEqual(read_db.id, created_db.id)
 
         created_container = self.configs.create_multi_partition_collection_if_not_exist(self.client)
 
         # read container with id
         read_container = created_db.get_container_client(created_container.id)
-        self.assertEquals(read_container.id, created_container.id)
+        self.assertEqual(read_container.id, created_container.id)
 
         # read container with instance
         read_container = created_db.get_container_client(created_container)
-        self.assertEquals(read_container.id, created_container.id)
+        self.assertEqual(read_container.id, created_container.id)
 
         # read container with properties
         created_properties = created_container.read()
         read_container = created_db.get_container_client(created_properties)
-        self.assertEquals(read_container.id, created_container.id)
+        self.assertEqual(read_container.id, created_container.id)
 
         created_item = created_container.create_item({'id':'1' + str(uuid.uuid4())})
 
         # read item with id
         read_item = created_container.read_item(item=created_item['id'], partition_key=created_item['id'])
-        self.assertEquals(read_item['id'], created_item['id'])
+        self.assertEqual(read_item['id'], created_item['id'])
 
         # read item with properties
         read_item = created_container.read_item(item=created_item, partition_key=created_item['id'])
-        self.assertEquals(read_item['id'], created_item['id'])
+        self.assertEqual(read_item['id'], created_item['id'])
 
         created_sproc = created_container.scripts.create_stored_procedure({
             'id': 'storedProcedure' + str(uuid.uuid4()),
@@ -2494,11 +2493,11 @@ class CRUDTests(unittest.TestCase):
 
         # read sproc with id
         read_sproc = created_container.scripts.get_stored_procedure(created_sproc['id'])
-        self.assertEquals(read_sproc['id'], created_sproc['id'])
+        self.assertEqual(read_sproc['id'], created_sproc['id'])
 
         # read sproc with properties
         read_sproc = created_container.scripts.get_stored_procedure(created_sproc)
-        self.assertEquals(read_sproc['id'], created_sproc['id'])
+        self.assertEqual(read_sproc['id'], created_sproc['id'])
 
         created_trigger = created_container.scripts.create_trigger({
             'id': 'sample trigger' + str(uuid.uuid4()),
@@ -2509,11 +2508,11 @@ class CRUDTests(unittest.TestCase):
 
         # read trigger with id
         read_trigger = created_container.scripts.get_trigger(created_trigger['id'])
-        self.assertEquals(read_trigger['id'], created_trigger['id'])
+        self.assertEqual(read_trigger['id'], created_trigger['id'])
 
         # read trigger with properties
         read_trigger = created_container.scripts.get_trigger(created_trigger)
-        self.assertEquals(read_trigger['id'], created_trigger['id'])
+        self.assertEqual(read_trigger['id'], created_trigger['id'])
 
         created_udf = created_container.scripts.create_user_defined_function({
             'id': 'sample udf' + str(uuid.uuid4()),
@@ -2522,11 +2521,11 @@ class CRUDTests(unittest.TestCase):
 
         # read udf with id
         read_udf = created_container.scripts.get_user_defined_function(created_udf['id'])
-        self.assertEquals(created_udf['id'], read_udf['id'])
+        self.assertEqual(created_udf['id'], read_udf['id'])
 
         # read udf with properties
         read_udf = created_container.scripts.get_user_defined_function(created_udf)
-        self.assertEquals(created_udf['id'], read_udf['id'])
+        self.assertEqual(created_udf['id'], read_udf['id'])
 
         created_user = created_db.create_user({
             'id': 'user' + str(uuid.uuid4())
@@ -2534,16 +2533,16 @@ class CRUDTests(unittest.TestCase):
 
         # read user with id
         read_user = created_db.get_user_client(created_user.id)
-        self.assertEquals(read_user.id, created_user.id)
+        self.assertEqual(read_user.id, created_user.id)
 
         # read user with instance
         read_user = created_db.get_user_client(created_user)
-        self.assertEquals(read_user.id, created_user.id)
+        self.assertEqual(read_user.id, created_user.id)
 
         # read user with properties
         created_user_properties = created_user.read()
         read_user = created_db.get_user_client(created_user_properties)
-        self.assertEquals(read_user.id, created_user.id)
+        self.assertEqual(read_user.id, created_user.id)
 
         created_permission = created_user.create_permission({
             'id': 'all permission' + str(uuid.uuid4()),
@@ -2554,15 +2553,15 @@ class CRUDTests(unittest.TestCase):
 
         # read permission with id
         read_permission = created_user.get_permission(created_permission.id)
-        self.assertEquals(read_permission.id, created_permission.id)
+        self.assertEqual(read_permission.id, created_permission.id)
 
         # read permission with instance
         read_permission = created_user.get_permission(created_permission)
-        self.assertEquals(read_permission.id, created_permission.id)
+        self.assertEqual(read_permission.id, created_permission.id)
 
         # read permission with properties
         read_permission = created_user.get_permission(created_permission.properties)
-        self.assertEquals(read_permission.id, created_permission.id)
+        self.assertEqual(read_permission.id, created_permission.id)
 
     def _MockExecuteFunction(self, function, *args, **kwargs):
         self.last_headers.append(args[4].headers[HttpHeaders.PartitionKey]
