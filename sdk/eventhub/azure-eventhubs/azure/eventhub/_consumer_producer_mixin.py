@@ -6,7 +6,6 @@ from __future__ import unicode_literals
 
 import logging
 import time
-from enum import Enum
 
 from uamqp import errors, constants, compat  # type: ignore
 from azure.eventhub.error import EventHubError, _handle_exception
