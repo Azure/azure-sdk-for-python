@@ -21,7 +21,3 @@ steps:
     inputs:
       codeCoverageTool: Cobertura
       summaryFileLocation: '$(Build.SourcesDirectory)/coverage.xml'
-
-  - template: ../steps/test-nightly.yml
-    parameters: 
-      RunCoverage: ${{ parameters.ServiceDirectory }}
