@@ -9,7 +9,7 @@ parameters:
   CoverageArg: ''
   BuildTargetingString: 'azure-*'
   ToxTestEnv: ""
-  RunCoverage: ne(${{ parameters.CoverageArg }}, '--disablecov')
+  RunCoverage: ne(variables['CoverageArg'], '--disablecov')
   RunMyPy: and(ne(variables['PythonVersion'], '2.7'), ne(variables['PythonVersion'], 'pypy3'))
 
 steps:
