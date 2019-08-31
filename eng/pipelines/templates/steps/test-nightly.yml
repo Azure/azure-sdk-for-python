@@ -79,22 +79,6 @@ steps:
     env: ${{ parameters.EnvVars }}
     condition: and(succeededOrFailed(), ne(variables['Build.Reason'], 'PullRequest'))
 
-  - script: |
-      coverage xml -i
-    displayName: 'Generate Coverage XML'
-    continueOnError: true
-    condition: and(succeededOrFailed(), ${{ parameters.RunCoverage }})
-
-  - script: |
-      codecov -t $(codecov-python-repository-token)
-    displayName: 'Publish Code Cov'
-    continueOnError: true
-    condition: and(ne(variables['codecov-python-repository-token'], ''), succeededOrFailed(), ${{ parameters.RunCoverage }})
-
-  - task: PublishCodeCoverageResults@1
-    displayName: 'Publish Code Coverage to DevOps'
-    continueOnError: true
-    condition: and(succeededOrFailed(), ${{ parameters.RunCoverage }})
-    inputs:
-      codeCoverageTool: Cobertura
-      summaryFileLocation: '$(Build.SourcesDirectory)/coverage.xml'
+  - template: publish-coverage.yml
+    parameters: 
+      RunCoverage: ${{ parameters.RunCoverage }}

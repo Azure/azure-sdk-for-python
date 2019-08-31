@@ -6,7 +6,7 @@ parameters:
   PythonVersion: ''
   OSName: ''
   BeforeTestSteps: []
-  CoverageArg: '--disablecov'
+  AdditionalTestSteps: []
   BuildTargetingString: 'azure-*'
   ToxTestEnv: ""
   RunMyPy: and(ne(variables['PythonVersion'], '2.7'), ne(variables['PythonVersion'], 'pypy3'))
@@ -14,13 +14,11 @@ parameters:
 steps:
   - powershell: |
       gci -r $(Build.ArtifactStagingDirectory)
-
   - powershell: |
       Invoke-WebRequest -Uri "https://github.com/Azure/azure-sdk-tools/releases/download/sdk-tools_14793/sdk-tools.zip" `
       -OutFile "sdk-tools.zip" | Wait-Process; Expand-Archive -Path "sdk-tools.zip" -DestinationPath "./sdk-tools/"
     workingDirectory: '$(Build.BinariesDirectory)'
     displayName: 'Download Tools Archive From Github Release and Extract it'
-
   - task: UsePythonVersion@0
     displayName: 'Use Python ${{ parameters.PythonVersion }}'
     inputs:
@@ -35,7 +33,6 @@ steps:
   - script: |
       pip install pathlib twine codecov beautifulsoup4 tox tox-monorepo
     displayName: 'Prep Environment'
-
   - ${{ parameters.BeforeTestSteps }}
 
   - task: PythonScript@0
@@ -44,8 +41,7 @@ steps:
       scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
       arguments: >-
         "${{ parameters.BuildTargetingString }}" 
-        ${{ parameters.AdditionalTestArgs }}
-        ${{ parameters.CoverageArg }}
+        ${{ parameters.AdditionalTestArgs }} 
         --mark_arg="${{ parameters.TestMarkArgument }}" 
         --service="${{ parameters.ServiceDirectory }}" 
         --toxenv="${{ parameters.ToxTestEnv }}"
@@ -81,23 +77,5 @@ steps:
         --disablecov
     env: ${{ parameters.EnvVars }}
     condition: and(succeededOrFailed(), ${{ parameters.RunMyPy }})
-
-  - script: |
-      coverage xml -i
-    displayName: 'Generate Coverage XML'
-    continueOnError: true
-    condition: and(succeededOrFailed(), ne(${{ parameters.CoverageArg }}, '--disablecov'))
-
-  - script: |
-      codecov -t $(codecov-python-repository-token)
-    displayName: 'Publish Code Cov'
-    continueOnError: true
-    condition: and(ne(variables['codecov-python-repository-token'], ''), succeededOrFailed(), ne(${{ parameters.CoverageArg }}, '--disablecov'))
-
-  - task: PublishCodeCoverageResults@1
-    displayName: 'Publish Code Coverage to DevOps'
-    continueOnError: true
-    condition: and(succeededOrFailed(), ne(${{ parameters.CoverageArg }}, '--disablecov'))
-    inputs:
-      codeCoverageTool: Cobertura
-      summaryFileLocation: '$(Build.SourcesDirectory)/coverage.xml'
+  
+  - ${{ parameters.AdditionalTestSteps }}
