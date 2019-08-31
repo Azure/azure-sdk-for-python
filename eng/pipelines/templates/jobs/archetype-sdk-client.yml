@@ -32,7 +32,7 @@ jobs:
     steps:
     - template: ../steps/analyze.yml
 
-  - job: 'Generic_Tests'
+  - job: 'Test'
     variables:
     - template: ../variables/globals.yml
 
@@ -45,26 +45,37 @@ jobs:
           OSName: 'Linux'
           OSVmImage: 'ubuntu-16.04'
           PythonVersion: '2.7'
+          CoverageArg: ''
         Linux_Python35:
           OSName: 'Linux'
           OSVmImage: 'ubuntu-16.04'
           PythonVersion: '3.5'
+          CoverageArg: ''
         Linux_Python36:
           OSName: 'Linux'
           OSVmImage: 'ubuntu-16.04'
           PythonVersion: '3.6'
+          CoverageArg: ''
         Linux_Python37:
           OSName: 'Linux'
           OSVmImage: 'ubuntu-16.04'
           PythonVersion: '3.7'
+          CoverageArg: ''
         Windows_Python35:
           OSName: 'Windows'
           OSVmImage: 'vs2017-win2016'
           PythonVersion: '3.5'
+          CoverageArg: ''
         MacOS_Python27:
           OSName: 'MacOS'
           OSVmImage: 'macOS-10.13'
           PythonVersion: '2.7'
+          CoverageArg: ''
+        Linux_pypy3:
+          OSName: 'Linux'
+          OSVmImage: 'ubuntu-16.04'
+          PythonVersion: 'pypy3'
+          CoverageArg: '--disablecov'
 
     pool:
       vmImage: '$(OSVmImage)'
@@ -76,41 +87,7 @@ jobs:
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
         AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
         OSName: $(OSName)
-        PythonVersion: $(PythonVersion)
-        BuildTargetingString: ${{ parameters.BuildTargetingString }}
-        ToxTestEnv: 'whl,sdist'
-        BeforeTestSteps: 
-          - task: DownloadPipelineArtifact@0
-            inputs:
-              artifactName: 'artifacts' 
-              targetPath: $(Build.ArtifactStagingDirectory)
-    - template: ../steps/publish-coverage.yml
-
-  # Run PyPy tests without coverage
-  - job: 'Test_PyPy'
-
-    variables:
-    - template: ../variables/globals.yml
-    - name: OSName
-      value: 'Linux'
-    - name: PythonVersion
-      value: 'pypy3'
-    - name: OSVmImage
-      value: ubuntu-16.04
-
-    dependsOn:
-      - 'Build'
-
-    pool:
-      vmImage: $(OSVmImage)
-
-    steps:
-    - template: ../steps/build-test.yml
-      parameters:
-        AdditionalTestArgs: '--disablecov --wheel_dir="$(Build.ArtifactStagingDirectory)"'
-        ServiceDirectory: ${{ parameters.ServiceDirectory }}
-        TestMarkArgument: ${{ parameters.TestMarkArgument }}
-        OSName: $(OSName)
+        CoverageArg: $(CoverageArg)
         PythonVersion: $(PythonVersion)
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         ToxTestEnv: 'whl,sdist'
