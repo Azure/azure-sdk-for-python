@@ -6,7 +6,6 @@ parameters:
   PythonVersion: ''
   OSName: ''
   BeforeTestSteps: []
-  AdditionalTestSteps: []
   BuildTargetingString: 'azure-*'
   ToxTestEnv: ""
   RunMyPy: and(ne(variables['PythonVersion'], '2.7'), ne(variables['PythonVersion'], 'pypy3'))

@@ -87,22 +87,27 @@ jobs:
           OSName: 'Linux'
           OSVmImage: 'ubuntu-16.04'
           PythonVersion: '3.6'
+          CoverageArg: '--disablecov'
         Linux_Python35:
           OSName: 'Linux'
           OSVmImage: 'ubuntu-16.04'
           PythonVersion: '3.5'
+          CoverageArg: '--disablecov'
         Linux_PyPy3:
           OSName: 'Linux'
           OSVmImage: 'ubuntu-16.04'
           PythonVersion: 'pypy3'
+          CoverageArg: '--disablecov'
         Windows_Python27:
           OSName: 'Windows'
           OSVmImage: 'vs2017-win2016'
           PythonVersion: '2.7'
+          CoverageArg: '--disablecov'
         MacOS_Python35:
           OSName: 'MacOS'
           OSVmImage: 'macOS-10.13'
           PythonVersion: '3.5'
+          CoverageArg: '--disablecov'
     pool:
       vmImage: '$(OSVmImage)'
 
@@ -114,7 +119,8 @@ jobs:
         OSName: $(OSName)
         PythonVersion: $(PythonVersion)
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
-        AdditionalTestArgs: '--disablecov --wheel_dir="$(Build.ArtifactStagingDirectory)"'
+        CoverageArg: $(CoverageArg)
+        AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
         BeforeTestSteps: 
           - task: DownloadPipelineArtifact@0
             inputs:

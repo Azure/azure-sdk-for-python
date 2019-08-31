@@ -79,6 +79,7 @@ jobs:
         PythonVersion: $(PythonVersion)
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         ToxTestEnv: 'whl,sdist'
+        CoverageArg: '--disablecov'
         BeforeTestSteps: 
           - task: DownloadPipelineArtifact@0
             inputs:
