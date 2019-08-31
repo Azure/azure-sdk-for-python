@@ -44,14 +44,17 @@ class StorageAppendBlobTest(StorageTestCase):
         self.bsc = BlobServiceClient(url, credential=credential, max_block_size=4 * 1024)
         self.config = self.bsc._config
         self.container_name = self.get_resource_name('utcontainer')
+        self.source_container_name = self.get_resource_name('utcontainersource')
 
         if not self.is_playback():
             self.bsc.create_container(self.container_name)
+            self.bsc.create_container(self.source_container_name)
 
     def tearDown(self):
         if not self.is_playback():
             try:
                 self.bsc.delete_container(self.container_name)
+                self.bs.delete_container(self.source_container_name)
             except:
                 pass
 
@@ -74,6 +77,12 @@ class StorageAppendBlobTest(StorageTestCase):
             blob_name)
         blob.create_append_blob()
         return blob
+
+    def _create_source_blob(self, data):
+        blob_client = self.bsc.get_blob_client(self.source_container_name, self.get_resource_name(TEST_BLOB_PREFIX))
+        blob_client.create_append_blob()
+        blob_client.append_block(data)
+        return blob_client
 
     def assertBlobEqual(self, blob, expected_data):
         stream = blob.download_blob()
@@ -183,9 +192,8 @@ class StorageAppendBlobTest(StorageTestCase):
     @record
     def test_append_block_from_url(self):
         # Arrange
-        source_blob_client = self._create_blob()
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        source_blob_client.append_block(source_blob_data)
+        source_blob_client = self._create_source_blob(source_blob_data)
         sas = source_blob_client.generate_shared_access_signature(
             permission=BlobPermissions.READ + BlobPermissions.DELETE,
             expiry=datetime.utcnow() + timedelta(hours=1),
@@ -223,10 +231,9 @@ class StorageAppendBlobTest(StorageTestCase):
     @record
     def test_append_block_from_url_and_validate_content_md5(self):
         # Arrange
-        source_blob_client = self._create_blob()
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
+        source_blob_client = self._create_source_blob(source_blob_data)
         src_md5 = StorageContentValidation.get_content_md5(source_blob_data)
-        source_blob_client.append_block(source_blob_data)
         sas = source_blob_client.generate_shared_access_signature(
             permission=BlobPermissions.READ + BlobPermissions.DELETE,
             expiry=datetime.utcnow() + timedelta(hours=1),
@@ -251,14 +258,15 @@ class StorageAppendBlobTest(StorageTestCase):
         # Act part 2: put block from url with wrong md5
         with self.assertRaises(HttpResponseError):
             destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
-                                          source_content_md5=StorageContentValidation.get_content_md5(b"POTATO"))
+                                                          source_content_md5=StorageContentValidation.get_content_md5(
+                                                              b"POTATO"))
 
     @record
     def test_append_block_from_url_with_source_if_modified(self):
         # Arrange
-        source_blob_client = self._create_blob()
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        resource_properties = source_blob_client.append_block(source_blob_data)
+        source_blob_client = self._create_source_blob(source_blob_data)
+        source_blob_properties = source_blob_client.get_blob_properties()
         sas = source_blob_client.generate_shared_access_signature(
             permission=BlobPermissions.READ + BlobPermissions.DELETE,
             expiry=datetime.utcnow() + timedelta(hours=1),
@@ -270,7 +278,8 @@ class StorageAppendBlobTest(StorageTestCase):
         resp = destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
                                                              source_range_start=0,
                                                              source_range_end=LARGE_BLOB_SIZE - 1,
-                                                             source_if_modified_since=resource_properties.get('last_modified') - timedelta(hours=15))
+                                                             source_if_modified_since=source_blob_properties.get(
+                                                                 'last_modified') - timedelta(hours=15))
         self.assertEqual(resp.get('blob_append_offset'), '0')
         self.assertEqual(resp.get('blob_committed_block_count'), 1)
         self.assertIsNotNone(resp.get('etag'))
@@ -286,14 +295,15 @@ class StorageAppendBlobTest(StorageTestCase):
         with self.assertRaises(ResourceNotFoundError):
             destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
                                                           source_range_start=0, source_range_end=LARGE_BLOB_SIZE - 1,
-                                                          source_if_modified_since=resource_properties.get('last_modified'))
+                                                          source_if_modified_since=source_blob_properties.get(
+                                                              'last_modified'))
 
     @record
     def test_append_block_from_url_with_source_if_unmodified(self):
         # Arrange
-        source_blob_client = self._create_blob()
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        resource_properties = source_blob_client.append_block(source_blob_data)
+        source_blob_client = self._create_source_blob(source_blob_data)
+        source_blob_properties = source_blob_client.get_blob_properties()
         sas = source_blob_client.generate_shared_access_signature(
             permission=BlobPermissions.READ + BlobPermissions.DELETE,
             expiry=datetime.utcnow() + timedelta(hours=1),
@@ -304,7 +314,7 @@ class StorageAppendBlobTest(StorageTestCase):
         # Act part 1: make append block from url calls
         resp = destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
                                                              source_range_start=0, source_range_end=LARGE_BLOB_SIZE - 1,
-                                                             source_if_unmodified_since=resource_properties.get(
+                                                             source_if_unmodified_since=source_blob_properties.get(
                                                                  'last_modified'))
         self.assertEqual(resp.get('blob_append_offset'), '0')
         self.assertEqual(resp.get('blob_committed_block_count'), 1)
@@ -319,18 +329,18 @@ class StorageAppendBlobTest(StorageTestCase):
 
         # Act part 2: put block from url with failing condition
         with self.assertRaises(ResourceModifiedError):
-            destination_blob_client\
+            destination_blob_client \
                 .append_block_from_url(source_blob_client.url + '?' + sas,
                                        source_range_start=0, source_range_end=LARGE_BLOB_SIZE - 1,
-                                       if_unmodified_since=resource_properties.get('last_modified') - timedelta(
+                                       if_unmodified_since=source_blob_properties.get('last_modified') - timedelta(
                                            hours=15))
 
     @record
     def test_append_block_from_url_with_source_if_match(self):
         # Arrange
-        source_blob_client = self._create_blob()
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        source_properties = source_blob_client.append_block(source_blob_data)
+        source_blob_client = self._create_source_blob(source_blob_data)
+        source_blob_properties = source_blob_client.get_blob_properties()
         sas = source_blob_client.generate_shared_access_signature(
             permission=BlobPermissions.READ + BlobPermissions.DELETE,
             expiry=datetime.utcnow() + timedelta(hours=1),
@@ -342,7 +352,7 @@ class StorageAppendBlobTest(StorageTestCase):
         resp = destination_blob_client. \
             append_block_from_url(source_blob_client.url + '?' + sas,
                                   source_range_start=0, source_range_end=LARGE_BLOB_SIZE - 1,
-                                  source_if_match=source_properties.get('etag'))
+                                  source_if_match=source_blob_properties.get('etag'))
         self.assertEqual(resp.get('blob_append_offset'), '0')
         self.assertEqual(resp.get('blob_committed_block_count'), 1)
         self.assertIsNotNone(resp.get('etag'))
@@ -363,9 +373,9 @@ class StorageAppendBlobTest(StorageTestCase):
     @record
     def test_append_block_from_url_with_source_if_none_match(self):
         # Arrange
-        source_blob_client = self._create_blob()
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        source_properties = source_blob_client.append_block(source_blob_data)
+        source_blob_client = self._create_source_blob(source_blob_data)
+        source_blob_properties = source_blob_client.get_blob_properties()
         sas = source_blob_client.generate_shared_access_signature(
             permission=BlobPermissions.READ + BlobPermissions.DELETE,
             expiry=datetime.utcnow() + timedelta(hours=1),
@@ -393,14 +403,13 @@ class StorageAppendBlobTest(StorageTestCase):
         with self.assertRaises(ResourceNotFoundError):
             destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
                                                           source_range_start=0, source_range_end=LARGE_BLOB_SIZE - 1,
-                                                          source_if_none_match=source_properties.get('etag'))
+                                                          source_if_none_match=source_blob_properties.get('etag'))
 
     @record
     def test_append_block_from_url_with_if_match(self):
         # Arrange
-        source_blob_client = self._create_blob()
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        source_blob_client.append_block(source_blob_data)
+        source_blob_client = self._create_source_blob(source_blob_data)
         sas = source_blob_client.generate_shared_access_signature(
             permission=BlobPermissions.READ + BlobPermissions.DELETE,
             expiry=datetime.utcnow() + timedelta(hours=1),
@@ -437,9 +446,8 @@ class StorageAppendBlobTest(StorageTestCase):
     @record
     def test_append_block_from_url_with_if_none_match(self):
         # Arrange
-        source_blob_client = self._create_blob()
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        source_blob_client.append_block(source_blob_data)
+        source_blob_client = self._create_source_blob(source_blob_data)
         sas = source_blob_client.generate_shared_access_signature(
             permission=BlobPermissions.READ + BlobPermissions.DELETE,
             expiry=datetime.utcnow() + timedelta(hours=1),
@@ -472,9 +480,8 @@ class StorageAppendBlobTest(StorageTestCase):
     @record
     def test_append_block_from_url_with_maxsize_condition(self):
         # Arrange
-        source_blob_client = self._create_blob()
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        source_blob_client.append_block(source_blob_data)
+        source_blob_client = self._create_source_blob(source_blob_data)
         sas = source_blob_client.generate_shared_access_signature(
             permission=BlobPermissions.READ + BlobPermissions.DELETE,
             expiry=datetime.utcnow() + timedelta(hours=1),
@@ -507,9 +514,8 @@ class StorageAppendBlobTest(StorageTestCase):
     @record
     def test_append_block_from_url_with_appendpos_condition(self):
         # Arrange
-        source_blob_client = self._create_blob()
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        source_blob_client.append_block(source_blob_data)
+        source_blob_client = self._create_source_blob(source_blob_data)
         sas = source_blob_client.generate_shared_access_signature(
             permission=BlobPermissions.READ + BlobPermissions.DELETE,
             expiry=datetime.utcnow() + timedelta(hours=1),
@@ -542,9 +548,9 @@ class StorageAppendBlobTest(StorageTestCase):
     @record
     def test_append_block_from_url_with_if_modified(self):
         # Arrange
-        source_blob_client = self._create_blob()
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        source_properties = source_blob_client.append_block(source_blob_data)
+        source_blob_client = self._create_source_blob(source_blob_data)
+        source_properties = source_blob_client.get_blob_properties()
         sas = source_blob_client.generate_shared_access_signature(
             permission=BlobPermissions.READ + BlobPermissions.DELETE,
             expiry=datetime.utcnow() + timedelta(hours=1),
@@ -572,13 +578,14 @@ class StorageAppendBlobTest(StorageTestCase):
         with self.assertRaises(HttpResponseError):
             destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
                                                           source_range_start=0, source_range_end=LARGE_BLOB_SIZE - 1,
-                                                          if_modified_since=source_properties.get('last_modified'))
+                                                          if_modified_since=destination_blob_properties.get(
+                                                              'last_modified'))
 
     @record
     def test_append_block_from_url_with_if_unmodified(self):
         # Arrange
-        source_blob_client = self._create_blob()
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
+        source_blob_client = self._create_source_blob(source_blob_data)
         source_properties = source_blob_client.append_block(source_blob_data)
         sas = source_blob_client.generate_shared_access_signature(
             permission=BlobPermissions.READ + BlobPermissions.DELETE,
@@ -607,7 +614,8 @@ class StorageAppendBlobTest(StorageTestCase):
         with self.assertRaises(ResourceModifiedError):
             destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
                                                           source_range_start=0, source_range_end=LARGE_BLOB_SIZE - 1,
-                                                          if_unmodified_since=source_properties.get('last_modified') - timedelta(minutes=15))
+                                                          if_unmodified_since=source_properties.get(
+                                                              'last_modified') - timedelta(minutes=15))
 
     @record
     def test_create_append_blob_with_no_overwrite(self):

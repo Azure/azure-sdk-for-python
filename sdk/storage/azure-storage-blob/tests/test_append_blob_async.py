@@ -65,12 +65,14 @@ class StorageAppendBlobTestAsync(StorageTestCase):
                                      transport=AiohttpTestTransport())
         self.config = self.bsc._config
         self.container_name = self.get_resource_name('utcontainer')
+        self.source_container_name = self.get_resource_name('utcontainersource')
 
     def tearDown(self):
         if not self.is_playback():
             loop = asyncio.get_event_loop()
             try:
                 loop.run_until_complete(self.bsc.delete_container(self.container_name))
+                loop.run_until_complete(self.bs.delete_container(self.source_container_name))
             except:
                 pass
 
@@ -88,6 +90,7 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         if not self.is_playback():
             try:
                 await self.bsc.create_container(self.container_name)
+                await self.bsc.create_container(self.source_container_name)
             except:
                 pass
 
@@ -101,6 +104,12 @@ class StorageAppendBlobTestAsync(StorageTestCase):
             blob_name)
         await blob.create_append_blob()
         return blob
+
+    async def _create_source_blob(self, data):
+        blob_client = self.bsc.get_blob_client(self.source_container_name, self.get_resource_name(TEST_BLOB_PREFIX))
+        await blob_client.create_append_blob()
+        await blob_client.append_block(data)
+        return blob_client
 
     async def assertBlobEqual(self, blob, expected_data):
         stream = await blob.download_blob()
@@ -240,9 +249,8 @@ class StorageAppendBlobTestAsync(StorageTestCase):
     async def _test_append_block_from_url(self):
         # Arrange
         await self._setup()
-        source_blob_client = await self._create_blob()
-        data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        await source_blob_client.append_block(data)
+        source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
+        source_blob_client = await self._create_source_blob(source_blob_data)
         sas = source_blob_client.generate_shared_access_signature(
             permission=BlobPermissions.READ + BlobPermissions.DELETE,
             expiry=datetime.utcnow() + timedelta(hours=1),
@@ -268,7 +276,7 @@ class StorageAppendBlobTestAsync(StorageTestCase):
 
         # Assert the destination blob is constructed correctly
         blob = await destination_blob_client.get_blob_properties()
-        self.assertBlobEqual(destination_blob_client, data)
+        self.assertBlobEqual(destination_blob_client, source_blob_data)
         self.assertEqual(blob.get('etag'), resp.get('etag'))
         self.assertEqual(blob.get('last_modified'), resp.get('last_modified'))
 
@@ -285,10 +293,9 @@ class StorageAppendBlobTestAsync(StorageTestCase):
     async def _test_append_block_from_url_and_validate_content_md5(self):
         # Arrange
         await self._setup()
-        source_blob_client = await self._create_blob()
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
+        source_blob_client = await self._create_source_blob(source_blob_data)
         src_md5 = StorageContentValidation.get_content_md5(source_blob_data)
-        await source_blob_client.append_block(source_blob_data)
         sas = source_blob_client.generate_shared_access_signature(
             permission=BlobPermissions.READ + BlobPermissions.DELETE,
             expiry=datetime.utcnow() + timedelta(hours=1),
@@ -324,9 +331,9 @@ class StorageAppendBlobTestAsync(StorageTestCase):
     async def _test_append_block_from_url_with_source_if_modified(self):
         # Arrange
         await self._setup()
-        source_blob_client = await self._create_blob()
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        resource_properties = await source_blob_client.append_block(source_blob_data)
+        source_blob_client = await self._create_source_blob(source_blob_data)
+        source_blob_properties = await source_blob_client.get_blob_properties()
         sas = source_blob_client.generate_shared_access_signature(
             permission=BlobPermissions.READ + BlobPermissions.DELETE,
             expiry=datetime.utcnow() + timedelta(hours=1),
@@ -338,7 +345,7 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         resp = await destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
                                                                    source_range_start=0,
                                                                    source_range_end=LARGE_BLOB_SIZE - 1,
-                                                                   source_if_modified_since=resource_properties.get(
+                                                                   source_if_modified_since=source_blob_properties.get(
                                                                        'last_modified') - timedelta(hours=15))
         self.assertEqual(resp.get('blob_append_offset'), '0')
         self.assertEqual(resp.get('blob_committed_block_count'), 1)
@@ -356,7 +363,7 @@ class StorageAppendBlobTestAsync(StorageTestCase):
             await destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
                                                                 source_range_start=0,
                                                                 source_range_end=LARGE_BLOB_SIZE - 1,
-                                                                source_if_modified_since=resource_properties.get(
+                                                                source_if_modified_since=source_blob_properties.get(
                                                                     'last_modified'))
 
     @record
@@ -367,9 +374,9 @@ class StorageAppendBlobTestAsync(StorageTestCase):
     async def _test_append_block_from_url_with_source_if_unmodified(self):
         # Arrange
         await self._setup()
-        source_blob_client = await self._create_blob()
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        resource_properties = await source_blob_client.append_block(source_blob_data)
+        source_blob_client = await self._create_source_blob(source_blob_data)
+        source_blob_properties = await source_blob_client.get_blob_properties()
         sas = source_blob_client.generate_shared_access_signature(
             permission=BlobPermissions.READ + BlobPermissions.DELETE,
             expiry=datetime.utcnow() + timedelta(hours=1),
@@ -381,7 +388,7 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         resp = await destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
                                                                    source_range_start=0,
                                                                    source_range_end=LARGE_BLOB_SIZE - 1,
-                                                                   source_if_unmodified_since=resource_properties.get(
+                                                                   source_if_unmodified_since=source_blob_properties.get(
                                                                        'last_modified'))
         self.assertEqual(resp.get('blob_append_offset'), '0')
         self.assertEqual(resp.get('blob_committed_block_count'), 1)
@@ -399,7 +406,7 @@ class StorageAppendBlobTestAsync(StorageTestCase):
             await destination_blob_client \
                 .append_block_from_url(source_blob_client.url + '?' + sas,
                                        source_range_start=0, source_range_end=LARGE_BLOB_SIZE - 1,
-                                       if_unmodified_since=resource_properties.get('last_modified') - timedelta(
+                                       if_unmodified_since=source_blob_properties.get('last_modified') - timedelta(
                                            hours=15))
 
     @record
@@ -410,9 +417,9 @@ class StorageAppendBlobTestAsync(StorageTestCase):
     async def _test_append_block_from_url_with_source_if_match(self):
         # Arrange
         await self._setup()
-        source_blob_client = await self._create_blob()
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        source_properties = await source_blob_client.append_block(source_blob_data)
+        source_blob_client = await self._create_source_blob(source_blob_data)
+        source_properties = await source_blob_client.get_blob_properties()
         sas = source_blob_client.generate_shared_access_signature(
             permission=BlobPermissions.READ + BlobPermissions.DELETE,
             expiry=datetime.utcnow() + timedelta(hours=1),
@@ -451,9 +458,9 @@ class StorageAppendBlobTestAsync(StorageTestCase):
     async def _test_append_block_from_url_with_source_if_none_match(self):
         # Arrange
         await self._setup()
-        source_blob_client = await self._create_blob()
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        source_properties = await source_blob_client.append_block(source_blob_data)
+        source_blob_client = await self._create_source_blob(source_blob_data)
+        source_properties = await source_blob_client.get_blob_properties()
         sas = source_blob_client.generate_shared_access_signature(
             permission=BlobPermissions.READ + BlobPermissions.DELETE,
             expiry=datetime.utcnow() + timedelta(hours=1),
@@ -492,9 +499,8 @@ class StorageAppendBlobTestAsync(StorageTestCase):
     async def _test_append_block_from_url_with_if_match(self):
         # Arrange
         await self._setup()
-        source_blob_client = await self._create_blob()
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        await source_blob_client.append_block(source_blob_data)
+        source_blob_client = await self._create_source_blob(source_blob_data)
         sas = source_blob_client.generate_shared_access_signature(
             permission=BlobPermissions.READ + BlobPermissions.DELETE,
             expiry=datetime.utcnow() + timedelta(hours=1),
@@ -537,9 +543,8 @@ class StorageAppendBlobTestAsync(StorageTestCase):
     async def _test_append_block_from_url_with_if_none_match(self):
         # Arrange
         await self._setup()
-        source_blob_client = await self._create_blob()
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        await source_blob_client.append_block(source_blob_data)
+        source_blob_client = await self._create_source_blob(source_blob_data)
         sas = source_blob_client.generate_shared_access_signature(
             permission=BlobPermissions.READ + BlobPermissions.DELETE,
             expiry=datetime.utcnow() + timedelta(hours=1),
@@ -578,9 +583,8 @@ class StorageAppendBlobTestAsync(StorageTestCase):
     async def _test_append_block_from_url_with_maxsize_condition(self):
         # Arrange
         await self._setup()
-        source_blob_client = await self._create_blob()
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        await source_blob_client.append_block(source_blob_data)
+        source_blob_client = await self._create_source_blob(source_blob_data)
         sas = source_blob_client.generate_shared_access_signature(
             permission=BlobPermissions.READ + BlobPermissions.DELETE,
             expiry=datetime.utcnow() + timedelta(hours=1),
@@ -619,9 +623,8 @@ class StorageAppendBlobTestAsync(StorageTestCase):
     async def _test_append_block_from_url_with_appendpos_condition(self):
         # Arrange
         await self._setup()
-        source_blob_client = await self._create_blob()
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        await source_blob_client.append_block(source_blob_data)
+        source_blob_client = await self._create_source_blob(source_blob_data)
         sas = source_blob_client.generate_shared_access_signature(
             permission=BlobPermissions.READ + BlobPermissions.DELETE,
             expiry=datetime.utcnow() + timedelta(hours=1),
@@ -660,9 +663,9 @@ class StorageAppendBlobTestAsync(StorageTestCase):
     async def _test_append_block_from_url_with_if_modified(self):
         # Arrange
         await self._setup()
-        source_blob_client = await self._create_blob()
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        source_properties = await source_blob_client.append_block(source_blob_data)
+        source_blob_client = await self._create_source_blob(source_blob_data)
+        source_properties = await source_blob_client.get_blob_properties()
         sas = source_blob_client.generate_shared_access_signature(
             permission=BlobPermissions.READ + BlobPermissions.DELETE,
             expiry=datetime.utcnow() + timedelta(hours=1),
@@ -702,9 +705,9 @@ class StorageAppendBlobTestAsync(StorageTestCase):
     async def _test_append_block_from_url_with_if_unmodified(self):
         # Arrange
         await self._setup()
-        source_blob_client = await self._create_blob()
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
-        source_properties = await source_blob_client.append_block(source_blob_data)
+        source_blob_client = await self._create_source_blob(source_blob_data)
+        source_properties = await source_blob_client.get_blob_properties()
         sas = source_blob_client.generate_shared_access_signature(
             permission=BlobPermissions.READ + BlobPermissions.DELETE,
             expiry=datetime.utcnow() + timedelta(hours=1),
