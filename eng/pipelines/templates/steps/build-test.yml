@@ -6,9 +6,10 @@ parameters:
   PythonVersion: ''
   OSName: ''
   BeforeTestSteps: []
-  AdditionalTestSteps: []
+  CoverageArg: ''
   BuildTargetingString: 'azure-*'
   ToxTestEnv: ""
+  RunCoverage: ne(variables['CoverageArg'], '--disablecov')
   RunMyPy: and(ne(variables['PythonVersion'], '2.7'), ne(variables['PythonVersion'], 'pypy3'))
 
 steps:
@@ -45,6 +46,7 @@ steps:
       arguments: >-
         "${{ parameters.BuildTargetingString }}" 
         ${{ parameters.AdditionalTestArgs }} 
+        ${{ parameters.CoverageArg }} 
         --mark_arg="${{ parameters.TestMarkArgument }}" 
         --service="${{ parameters.ServiceDirectory }}" 
         --toxenv="${{ parameters.ToxTestEnv }}"
@@ -81,4 +83,6 @@ steps:
     env: ${{ parameters.EnvVars }}
     condition: and(succeededOrFailed(), ${{ parameters.RunMyPy }})
   
-  - ${{ parameters.AdditionalTestSteps }}
+  - template: publish-coverage.yml
+    parameters: 
+      RunCoverage: ${{ parameters.RunCoverage }}
