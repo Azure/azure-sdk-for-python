@@ -26,7 +26,7 @@ class ApplicationTypesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The version of the Service Fabric resource provider API. This is a required parameter and it's value must be "2019-03-01" for this specification. Constant value: "2019-03-01".
+    :ivar api_version: The version of the Service Fabric resource provider API. This is a required parameter and it's value must be "2019-06-01-preview" for this specification. Constant value: "2019-06-01-preview".
     """
 
     models = models
@@ -36,7 +36,7 @@ class ApplicationTypesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-03-01"
+        self.api_version = "2019-06-01-preview"
 
         self.config = config
 
@@ -107,7 +107,7 @@ class ApplicationTypesOperations(object):
         return deserialized
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/clusters/{clusterName}/applicationTypes/{applicationTypeName}'}
 
-    def create_or_update(
+    def create(
             self, resource_group_name, cluster_name, application_type_name, location=None, tags=None, custom_headers=None, raw=False, **operation_config):
         """Creates or updates a Service Fabric application type name resource.
 
@@ -140,7 +140,7 @@ class ApplicationTypesOperations(object):
         parameters = models.ApplicationTypeResource(location=location, tags=tags)
 
         # Construct URL
-        url = self.create_or_update.metadata['url']
+        url = self.create.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
@@ -183,7 +183,7 @@ class ApplicationTypesOperations(object):
             return client_raw_response
 
         return deserialized
-    create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/clusters/{clusterName}/applicationTypes/{applicationTypeName}'}
+    create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceFabric/clusters/{clusterName}/applicationTypes/{applicationTypeName}'}
 
 
     def _delete_initial(

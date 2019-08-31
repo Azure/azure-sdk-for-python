@@ -21,6 +21,7 @@ try:
     from ._models_py3 import ApplicationTypeVersionResource
     from ._models_py3 import ApplicationTypeVersionResourceList
     from ._models_py3 import ApplicationUpgradePolicy
+    from ._models_py3 import ApplicationUserAssignedIdentity
     from ._models_py3 import ArmApplicationHealthPolicy
     from ._models_py3 import ArmRollingUpgradeMonitoringPolicy
     from ._models_py3 import ArmServiceTypeHealthPolicy
@@ -42,6 +43,7 @@ try:
     from ._models_py3 import EndpointRangeDescription
     from ._models_py3 import ErrorModel, ErrorModelException
     from ._models_py3 import ErrorModelError
+    from ._models_py3 import ManagedIdentity
     from ._models_py3 import NamedPartitionSchemeDescription
     from ._models_py3 import NodeTypeDescription
     from ._models_py3 import OperationResult
@@ -69,6 +71,7 @@ try:
     from ._models_py3 import StatelessServiceProperties
     from ._models_py3 import StatelessServiceUpdateProperties
     from ._models_py3 import UniformInt64RangePartitionSchemeDescription
+    from ._models_py3 import UserAssignedIdentity
 except (SyntaxError, ImportError):
     from ._models import ApplicationDeltaHealthPolicy
     from ._models import ApplicationHealthPolicy
@@ -81,6 +84,7 @@ except (SyntaxError, ImportError):
     from ._models import ApplicationTypeVersionResource
     from ._models import ApplicationTypeVersionResourceList
     from ._models import ApplicationUpgradePolicy
+    from ._models import ApplicationUserAssignedIdentity
     from ._models import ArmApplicationHealthPolicy
     from ._models import ArmRollingUpgradeMonitoringPolicy
     from ._models import ArmServiceTypeHealthPolicy
@@ -102,6 +106,7 @@ except (SyntaxError, ImportError):
     from ._models import EndpointRangeDescription
     from ._models import ErrorModel, ErrorModelException
     from ._models import ErrorModelError
+    from ._models import ManagedIdentity
     from ._models import NamedPartitionSchemeDescription
     from ._models import NodeTypeDescription
     from ._models import OperationResult
@@ -129,9 +134,11 @@ except (SyntaxError, ImportError):
     from ._models import StatelessServiceProperties
     from ._models import StatelessServiceUpdateProperties
     from ._models import UniformInt64RangePartitionSchemeDescription
+    from ._models import UserAssignedIdentity
 from ._paged_models import OperationResultPaged
 from ._service_fabric_management_client_enums import (
     ProvisioningState,
+    ManagedIdentityType,
     ArmUpgradeFailureAction,
     ServiceCorrelationScheme,
     MoveCost,
@@ -154,6 +161,7 @@ __all__ = [
     'ApplicationTypeVersionResource',
     'ApplicationTypeVersionResourceList',
     'ApplicationUpgradePolicy',
+    'ApplicationUserAssignedIdentity',
     'ArmApplicationHealthPolicy',
     'ArmRollingUpgradeMonitoringPolicy',
     'ArmServiceTypeHealthPolicy',
@@ -175,6 +183,7 @@ __all__ = [
     'EndpointRangeDescription',
     'ErrorModel', 'ErrorModelException',
     'ErrorModelError',
+    'ManagedIdentity',
     'NamedPartitionSchemeDescription',
     'NodeTypeDescription',
     'OperationResult',
@@ -202,8 +211,10 @@ __all__ = [
     'StatelessServiceProperties',
     'StatelessServiceUpdateProperties',
     'UniformInt64RangePartitionSchemeDescription',
+    'UserAssignedIdentity',
     'OperationResultPaged',
     'ProvisioningState',
+    'ManagedIdentityType',
     'ArmUpgradeFailureAction',
     'ServiceCorrelationScheme',
     'MoveCost',
