@@ -24,6 +24,8 @@
 from azure.cosmos._execution_context import execution_dispatcher
 from azure.cosmos._execution_context import base_execution_context
 
+# pylint: disable=protected-access
+
 
 class QueryIterable(object):
     """Represents an iterable object of the query results.
@@ -80,8 +82,8 @@ class QueryIterable(object):
         # This will call the base constructor(__init__ method above)
 
         self = cls(client, query, options, None, None)
-        self._database_link = database_link
-        self._partition_key = partition_key
+        self._database_link = database_link  # pylint: disable=attribute-defined-outside-init
+        self._partition_key = partition_key  # pylint: disable=attribute-defined-outside-init
 
         return self
 

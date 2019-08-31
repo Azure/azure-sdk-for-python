@@ -29,7 +29,7 @@ class Offer(dict):
     To read and update offers use the associated methods on the :class:`Container`.
     """
 
-    def __init__(self, offer_throughput, properties=None):
+    def __init__(self, offer_throughput, properties=None):  # pylint: disable=super-init-not-called
         # type: (int, Dict[str, Any]) -> None
         self.offer_throughput = offer_throughput
         self.properties = properties

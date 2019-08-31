@@ -46,8 +46,7 @@ class EventHubClient(EventHubClientAbstract):
     """
 
     def __init__(self, host, event_hub_path, credential, **kwargs):
-        # type:(str, str, Union[EventHubSharedKeyCredential, EventHubSASTokenCredential, TokenCredential], ...) -> None
-
+        # type:(str, str, Union[EventHubSharedKeyCredential, EventHubSASTokenCredential, TokenCredential], Any) -> None
         super(EventHubClient, self).__init__(host=host, event_hub_path=event_hub_path, credential=credential, **kwargs)
         self._lock = asyncio.Lock()
         self._conn_manager = get_connection_manager(**kwargs)
@@ -312,4 +311,5 @@ class EventHubClient(EventHubClientAbstract):
         return handler
 
     async def close(self):
+        # type: () -> None
         await self._conn_manager.close_connection()

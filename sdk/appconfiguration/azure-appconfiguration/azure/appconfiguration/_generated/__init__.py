@@ -6,9 +6,9 @@
 # --------------------------------------------------------------------------
 
 from ._configuration_client import ConfigurationClient
-__all__ = ['ConfigurationClient']
+
+__all__ = ["ConfigurationClient"]
 
 from .version import VERSION
 
 __version__ = VERSION
-

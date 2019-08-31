@@ -8,6 +8,7 @@ from datetime import datetime
 import re
 from requests.structures import CaseInsensitiveDict
 
+
 def escape_reserved(value):
     """
     Reserved characters are star(*), comma(,) and backslash(\\)
@@ -20,13 +21,12 @@ def escape_reserved(value):
     if value == "":
         return "\0"  # '\0' will be encoded to %00 in the url.
     if isinstance(value, list):
-        return [
-            escape_reserved(s) for s in value
-        ]
+        return [escape_reserved(s) for s in value]
     value = str(value)  # value is unicode for Python 2.7
     # precede all reserved characters with a backslash.
     # But if a * is at the beginning or the end, don't add the backslash
     return re.sub(r"((?!^)\*(?!$)|\\|,)", r"\\\1", value)
+
 
 def escape_and_tolist(value):
     if value is not None:
@@ -35,10 +35,12 @@ def escape_and_tolist(value):
         value = escape_reserved(value)
     return value
 
+
 def quote_etag(etag):
     if etag != "*" and etag is not None:
         return '"' + etag + '"'
     return etag
+
 
 def prep_update_configuration_setting(key, etag=None, **kwargs):
     # type: (str, str, dict) -> CaseInsensitiveDict
@@ -47,13 +49,12 @@ def prep_update_configuration_setting(key, etag=None, **kwargs):
 
     custom_headers = CaseInsensitiveDict(kwargs.get("headers"))
     if etag:
-        custom_headers["if-match"] = quote_etag(
-            etag
-        )
+        custom_headers["if-match"] = quote_etag(etag)
     elif "if-match" not in custom_headers:
         custom_headers["if-match"] = "*"
 
     return custom_headers
+
 
 def get_endpoint_from_connection_string(connection_string):
     endpoint, _, _ = parse_connection_string(connection_string)
@@ -84,6 +85,7 @@ def parse_connection_string(connection_string):
         raise ValueError("Invalid connection string.")
 
     return endpoint, id_, secret
+
 
 def get_current_utc_time():
     return str(datetime.utcnow().strftime("%b, %d %Y %H:%M:%S ")) + "GMT"

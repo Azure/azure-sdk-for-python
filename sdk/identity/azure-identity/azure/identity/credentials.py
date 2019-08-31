@@ -8,13 +8,10 @@ Credentials for Azure SDK authentication.
 import os
 import time
 
-from azure.core import Configuration
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
-from azure.core.pipeline.policies import ContentDecodePolicy, HeadersPolicy, NetworkTraceLoggingPolicy, RetryPolicy
 
 from ._authn_client import AuthnClient
-from ._browser_auth import InteractiveBrowserCredential
 from ._base import ClientSecretCredentialBase, CertificateCredentialBase
 from ._internal import PublicClientCredential, wrap_exceptions
 from ._managed_identity import ImdsCredential, MsiCredential
@@ -162,7 +159,8 @@ class ManagedIdentityCredential(object):
     """
     Authenticates with a managed identity in an App Service, Azure VM or Cloud Shell environment.
 
-    :param str client_id: Optional client ID of a user-assigned identity. Leave unspecified to use a system-assigned identity.
+    :param str client_id:
+        (optional) client ID of a user-assigned identity. Leave unspecified to use a system-assigned identity.
     """
 
     def __new__(cls, *args, **kwargs):
@@ -176,7 +174,7 @@ class ManagedIdentityCredential(object):
         # type: (Optional[str], Any) -> None
         pass
 
-    def get_token(self, *scopes):
+    def get_token(self, *scopes):  # pylint:disable=unused-argument,no-self-use
         # type (*str) -> AccessToken
         """
         Request an access token for `scopes`.

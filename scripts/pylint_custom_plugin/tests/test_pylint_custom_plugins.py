@@ -21,7 +21,6 @@ class TestClientMethodsHaveTracingDecorators(pylint.testutils.CheckerTestCase):
         """)
 
         with self.assertNoMessages():
-            self.checker.visit_classdef(class_node)
             self.checker.visit_functiondef(function_node)
 
     def test_ignores_private_method(self):
@@ -32,7 +31,6 @@ class TestClientMethodsHaveTracingDecorators(pylint.testutils.CheckerTestCase):
         """)
 
         with self.assertNoMessages():
-            self.checker.visit_classdef(class_node)
             self.checker.visit_functiondef(function_node)
 
     def test_ignores_private_method_async(self):
@@ -43,7 +41,6 @@ class TestClientMethodsHaveTracingDecorators(pylint.testutils.CheckerTestCase):
         """)
 
         with self.assertNoMessages():
-            self.checker.visit_classdef(class_node)
             self.checker.visit_asyncfunctiondef(function_node)
 
     def test_ignores_methods_with_decorators(self):
@@ -51,18 +48,17 @@ class TestClientMethodsHaveTracingDecorators(pylint.testutils.CheckerTestCase):
         from azure.core.tracing.decorator import distributed_trace
         class SomeClient(): #@
             @distributed_trace
-            def create_configuration(self): #@
+            def create_configuration(self, **kwargs): #@
                 pass
             @distributed_trace
-            def get_thing(self): #@
+            def get_thing(self, **kwargs): #@
                 pass
             @distributed_trace
-            def list_thing(self): #@
+            def list_thing(self, **kwargs): #@
                 pass
         """)
 
         with self.assertNoMessages():
-            self.checker.visit_classdef(class_node)
             self.checker.visit_functiondef(func_node_a)
             self.checker.visit_functiondef(func_node_b)
             self.checker.visit_functiondef(func_node_c)
@@ -72,18 +68,17 @@ class TestClientMethodsHaveTracingDecorators(pylint.testutils.CheckerTestCase):
         from azure.core.tracing.decorator_async import distributed_trace_async
         class SomeClient(): #@
             @distributed_trace_async
-            async def create_configuration(self): #@
+            async def create_configuration(self, **kwargs): #@
                 pass
             @distributed_trace_async
-            async def get_thing(self): #@
+            async def get_thing(self, **kwargs): #@
                 pass
             @distributed_trace_async
-            async def list_thing(self): #@
+            async def list_thing(self, **kwargs): #@
                 pass
         """)
 
         with self.assertNoMessages():
-            self.checker.visit_classdef(class_node)
             self.checker.visit_asyncfunctiondef(func_node_a)
             self.checker.visit_asyncfunctiondef(func_node_b)
             self.checker.visit_asyncfunctiondef(func_node_c)
@@ -93,13 +88,13 @@ class TestClientMethodsHaveTracingDecorators(pylint.testutils.CheckerTestCase):
         from azure.core.tracing.decorator import distributed_trace
         class SomeClient(): #@
             @distributed_trace
-            async def create_configuration(self): #@
+            async def create_configuration(self, **kwargs): #@
                 pass
             @distributed_trace
-            async def get_thing(self): #@
+            async def get_thing(self, **kwargs): #@
                 pass
             @distributed_trace
-            async def list_thing(self): #@
+            async def list_thing(self, **kwargs): #@
                 pass
         """)
         with self.assertAddsMessages(
@@ -113,7 +108,6 @@ class TestClientMethodsHaveTracingDecorators(pylint.testutils.CheckerTestCase):
                 msg_id="client-method-missing-tracing-decorator-async", node=func_node_c
             ),
         ):
-            self.checker.visit_classdef(class_node)
             self.checker.visit_asyncfunctiondef(func_node_a)
             self.checker.visit_asyncfunctiondef(func_node_b)
             self.checker.visit_asyncfunctiondef(func_node_c)
@@ -123,13 +117,13 @@ class TestClientMethodsHaveTracingDecorators(pylint.testutils.CheckerTestCase):
         from azure.core.tracing.decorator_async import distributed_trace_async
         class SomeClient(): #@
             @distributed_trace_async
-            def create_configuration(self): #@
+            def create_configuration(self, **kwargs): #@
                 pass
             @distributed_trace_async
-            def get_thing(self): #@
+            def get_thing(self, **kwargs): #@
                 pass
             @distributed_trace_async
-            def list_thing(self): #@
+            def list_thing(self, **kwargs): #@
                 pass
         """)
         with self.assertAddsMessages(
@@ -143,7 +137,6 @@ class TestClientMethodsHaveTracingDecorators(pylint.testutils.CheckerTestCase):
                 msg_id="client-method-missing-tracing-decorator", node=func_node_c
             ),
         ):
-            self.checker.visit_classdef(class_node)
             self.checker.visit_functiondef(func_node_a)
             self.checker.visit_functiondef(func_node_b)
             self.checker.visit_functiondef(func_node_c)
@@ -166,7 +159,6 @@ class TestClientMethodsHaveTracingDecorators(pylint.testutils.CheckerTestCase):
         )
 
         with self.assertNoMessages():
-            self.checker.visit_classdef(class_node)
             self.checker.visit_functiondef(func_node_a)
             self.checker.visit_functiondef(func_node_b)
 
@@ -188,7 +180,6 @@ class TestClientMethodsHaveTracingDecorators(pylint.testutils.CheckerTestCase):
         )
 
         with self.assertNoMessages():
-            self.checker.visit_classdef(class_node)
             self.checker.visit_asyncfunctiondef(func_node_a)
             self.checker.visit_asyncfunctiondef(func_node_b)
 
@@ -206,7 +197,6 @@ class TestClientMethodsHaveTracingDecorators(pylint.testutils.CheckerTestCase):
         )
 
         with self.assertNoMessages():
-            self.checker.visit_classdef(class_node)
             self.checker.visit_functiondef(func_node_a)
             self.checker.visit_asyncfunctiondef(func_node_b)
 
@@ -230,7 +220,6 @@ class TestClientsDoNotUseStaticMethods(pylint.testutils.CheckerTestCase):
         """)
 
         with self.assertNoMessages():
-            self.checker.visit_classdef(class_node)
             self.checker.visit_functiondef(function_node)
 
     def test_ignores_private_method(self):
@@ -242,7 +231,6 @@ class TestClientsDoNotUseStaticMethods(pylint.testutils.CheckerTestCase):
         """)
 
         with self.assertNoMessages():
-            self.checker.visit_classdef(class_node)
             self.checker.visit_functiondef(function_node)
 
     def test_ignores_private_method_async(self):
@@ -254,7 +242,6 @@ class TestClientsDoNotUseStaticMethods(pylint.testutils.CheckerTestCase):
         """)
 
         with self.assertNoMessages():
-            self.checker.visit_classdef(class_node)
             self.checker.visit_asyncfunctiondef(function_node)
 
     def test_ignores_methods_with_other_decorators(self):
@@ -272,7 +259,6 @@ class TestClientsDoNotUseStaticMethods(pylint.testutils.CheckerTestCase):
         """)
 
         with self.assertNoMessages():
-            self.checker.visit_classdef(class_node)
             self.checker.visit_functiondef(func_node_a)
             self.checker.visit_functiondef(func_node_b)
             self.checker.visit_functiondef(func_node_c)
@@ -292,7 +278,6 @@ class TestClientsDoNotUseStaticMethods(pylint.testutils.CheckerTestCase):
         """)
 
         with self.assertNoMessages():
-            self.checker.visit_classdef(class_node)
             self.checker.visit_asyncfunctiondef(func_node_a)
             self.checker.visit_asyncfunctiondef(func_node_b)
             self.checker.visit_asyncfunctiondef(func_node_c)
@@ -321,7 +306,6 @@ class TestClientsDoNotUseStaticMethods(pylint.testutils.CheckerTestCase):
                     msg_id="client-method-should-not-use-static-method", node=func_node_c
                 ),
         ):
-            self.checker.visit_classdef(class_node)
             self.checker.visit_asyncfunctiondef(func_node_a)
             self.checker.visit_asyncfunctiondef(func_node_b)
             self.checker.visit_asyncfunctiondef(func_node_c)
@@ -350,7 +334,6 @@ class TestClientsDoNotUseStaticMethods(pylint.testutils.CheckerTestCase):
                     msg_id="client-method-should-not-use-static-method", node=func_node_c
                 ),
         ):
-            self.checker.visit_classdef(class_node)
             self.checker.visit_functiondef(func_node_a)
             self.checker.visit_functiondef(func_node_b)
             self.checker.visit_functiondef(func_node_c)
@@ -372,7 +355,6 @@ class TestClientsDoNotUseStaticMethods(pylint.testutils.CheckerTestCase):
         )
 
         with self.assertNoMessages():
-            self.checker.visit_classdef(class_node)
             self.checker.visit_functiondef(func_node_a)
             self.checker.visit_functiondef(func_node_b)
 
@@ -393,7 +375,6 @@ class TestClientsDoNotUseStaticMethods(pylint.testutils.CheckerTestCase):
         )
 
         with self.assertNoMessages():
-            self.checker.visit_classdef(class_node)
             self.checker.visit_asyncfunctiondef(func_node_a)
             self.checker.visit_asyncfunctiondef(func_node_b)
 
@@ -412,7 +393,6 @@ class TestClientsDoNotUseStaticMethods(pylint.testutils.CheckerTestCase):
         )
 
         with self.assertNoMessages():
-            self.checker.visit_classdef(class_node)
             self.checker.visit_functiondef(func_node_a)
             self.checker.visit_asyncfunctiondef(func_node_b)
 
@@ -638,7 +618,6 @@ class TestClientConstructorTakesCorrectParameters(pylint.testutils.CheckerTestCa
         """)
 
         with self.assertNoMessages():
-            self.checker.visit_classdef(class_node)
             self.checker.visit_functiondef(function_node)
 
     def test_ignores_non_constructor_methods(self):
@@ -649,7 +628,6 @@ class TestClientConstructorTakesCorrectParameters(pylint.testutils.CheckerTestCa
         """)
 
         with self.assertNoMessages():
-            self.checker.visit_classdef(class_node)
             self.checker.visit_functiondef(function_node)
 
     def test_ignores_non_client_constructor_methods(self):
@@ -660,7 +638,6 @@ class TestClientConstructorTakesCorrectParameters(pylint.testutils.CheckerTestCa
         """)
 
         with self.assertNoMessages():
-            self.checker.visit_classdef(class_node)
             self.checker.visit_functiondef(function_node)
 
     def test_finds_constructor_without_kwargs(self):
@@ -675,7 +652,6 @@ class TestClientConstructorTakesCorrectParameters(pylint.testutils.CheckerTestCa
                 msg_id="missing-client-constructor-parameter-kwargs", node=function_node
             )
         ):
-            self.checker.visit_classdef(class_node)
             self.checker.visit_functiondef(function_node)
 
     def test_finds_constructor_without_credentials(self):
@@ -690,7 +666,6 @@ class TestClientConstructorTakesCorrectParameters(pylint.testutils.CheckerTestCa
                 msg_id="missing-client-constructor-parameter-credential", node=function_node
             )
         ):
-            self.checker.visit_classdef(class_node)
             self.checker.visit_functiondef(function_node)
 
     def test_finds_constructor_with_no_params(self):
@@ -708,7 +683,6 @@ class TestClientConstructorTakesCorrectParameters(pylint.testutils.CheckerTestCa
                 msg_id="missing-client-constructor-parameter-kwargs", node=function_node
             )
         ):
-            self.checker.visit_classdef(class_node)
             self.checker.visit_functiondef(function_node)
 
     def test_guidelines_link_active(self):
@@ -760,7 +734,6 @@ class TestClientMethodsUseKwargsWithMultipleParameters(pylint.testutils.CheckerT
         """)
 
         with self.assertNoMessages():
-            self.checker.visit_classdef(class_node)
             self.checker.visit_functiondef(function_node)
             self.checker.visit_functiondef(function_node_a)
             self.checker.visit_functiondef(function_node_b)
@@ -813,7 +786,6 @@ class TestClientMethodsUseKwargsWithMultipleParameters(pylint.testutils.CheckerT
         """)
 
         with self.assertNoMessages():
-            self.checker.visit_classdef(class_node)
             self.checker.visit_asyncfunctiondef(function_node)
             self.checker.visit_asyncfunctiondef(function_node_a)
             self.checker.visit_asyncfunctiondef(function_node_b)
@@ -873,7 +845,6 @@ class TestClientMethodsUseKwargsWithMultipleParameters(pylint.testutils.CheckerT
                 msg_id="client-method-has-more-than-5-positional-arguments", node=function_node_f
             )
         ):
-            self.checker.visit_classdef(class_node)
             self.checker.visit_functiondef(function_node)
             self.checker.visit_functiondef(function_node_a)
             self.checker.visit_functiondef(function_node_b)
@@ -926,7 +897,6 @@ class TestClientMethodsUseKwargsWithMultipleParameters(pylint.testutils.CheckerT
                 msg_id="client-method-has-more-than-5-positional-arguments", node=function_node_f
             )
         ):
-            self.checker.visit_classdef(class_node)
             self.checker.visit_asyncfunctiondef(function_node)
             self.checker.visit_asyncfunctiondef(function_node_a)
             self.checker.visit_asyncfunctiondef(function_node_b)
@@ -947,7 +917,6 @@ class TestClientMethodsUseKwargsWithMultipleParameters(pylint.testutils.CheckerT
         """)
 
         with self.assertNoMessages():
-            self.checker.visit_classdef(class_node)
             self.checker.visit_functiondef(function_node_a)
             self.checker.visit_asyncfunctiondef(function_node_b)
 
@@ -973,7 +942,6 @@ class TestClientMethodsHaveTypeAnnotations(pylint.testutils.CheckerTestCase):
         """)
 
         with self.assertNoMessages():
-            self.checker.visit_classdef(class_node)
             self.checker.visit_functiondef(function_node_a)
             self.checker.visit_asyncfunctiondef(function_node_b)
 
@@ -999,7 +967,6 @@ class TestClientMethodsHaveTypeAnnotations(pylint.testutils.CheckerTestCase):
         """)
 
         with self.assertNoMessages():
-            self.checker.visit_classdef(class_node)
             self.checker.visit_functiondef(function_node_a)
             self.checker.visit_functiondef(function_node_b)
             self.checker.visit_functiondef(function_node_c)
@@ -1026,7 +993,6 @@ class TestClientMethodsHaveTypeAnnotations(pylint.testutils.CheckerTestCase):
         """)
 
         with self.assertNoMessages():
-            self.checker.visit_classdef(class_node)
             self.checker.visit_asyncfunctiondef(function_node_a)
             self.checker.visit_asyncfunctiondef(function_node_b)
             self.checker.visit_asyncfunctiondef(function_node_c)
@@ -1043,7 +1009,6 @@ class TestClientMethodsHaveTypeAnnotations(pylint.testutils.CheckerTestCase):
         """)
 
         with self.assertNoMessages():
-            self.checker.visit_classdef(class_node)
             self.checker.visit_functiondef(function_node_a)
             self.checker.visit_functiondef(function_node_b)
 
@@ -1059,7 +1024,6 @@ class TestClientMethodsHaveTypeAnnotations(pylint.testutils.CheckerTestCase):
         """)
 
         with self.assertNoMessages():
-            self.checker.visit_classdef(class_node)
             self.checker.visit_asyncfunctiondef(function_node_a)
             self.checker.visit_asyncfunctiondef(function_node_b)
 
@@ -1080,7 +1044,6 @@ class TestClientMethodsHaveTypeAnnotations(pylint.testutils.CheckerTestCase):
                 msg_id="client-method-missing-type-annotations", node=function_node_b
                 ),
         ):
-            self.checker.visit_classdef(class_node)
             self.checker.visit_functiondef(function_node_a)
             self.checker.visit_functiondef(function_node_b)
 
@@ -1096,7 +1059,6 @@ class TestClientMethodsHaveTypeAnnotations(pylint.testutils.CheckerTestCase):
                 msg_id="client-method-missing-type-annotations", node=function_node
             )
         ):
-            self.checker.visit_classdef(class_node)
             self.checker.visit_functiondef(function_node)
 
     def test_finds_method_missing_annotations_async(self):
@@ -1111,7 +1073,6 @@ class TestClientMethodsHaveTypeAnnotations(pylint.testutils.CheckerTestCase):
                 msg_id="client-method-missing-type-annotations", node=function_node
             )
         ):
-            self.checker.visit_classdef(class_node)
             self.checker.visit_asyncfunctiondef(function_node)
 
     def test_finds_constructor_without_annotations(self):
@@ -1126,7 +1087,6 @@ class TestClientMethodsHaveTypeAnnotations(pylint.testutils.CheckerTestCase):
                     msg_id="client-method-missing-type-annotations", node=function_node
                 )
         ):
-            self.checker.visit_classdef(class_node)
             self.checker.visit_functiondef(function_node)
 
     def test_finds_missing_return_annotation_but_has_type_hints(self):
@@ -1148,7 +1108,6 @@ class TestClientMethodsHaveTypeAnnotations(pylint.testutils.CheckerTestCase):
                 msg_id="client-method-missing-type-annotations", node=function_node_b
             ),
         ):
-            self.checker.visit_classdef(class_node)
             self.checker.visit_functiondef(function_node_a)
             self.checker.visit_functiondef(function_node_b)
 
@@ -1171,7 +1130,6 @@ class TestClientMethodsHaveTypeAnnotations(pylint.testutils.CheckerTestCase):
                 msg_id="client-method-missing-type-annotations", node=function_node_b
             ),
         ):
-            self.checker.visit_classdef(class_node)
             self.checker.visit_asyncfunctiondef(function_node_a)
             self.checker.visit_asyncfunctiondef(function_node_b)
 
@@ -1194,7 +1152,6 @@ class TestClientMethodsHaveTypeAnnotations(pylint.testutils.CheckerTestCase):
                 msg_id="client-method-missing-type-annotations", node=function_node_b
             )
         ):
-            self.checker.visit_classdef(class_node)
             self.checker.visit_functiondef(function_node_a)
             self.checker.visit_functiondef(function_node_b)
 
@@ -1217,7 +1174,6 @@ class TestClientMethodsHaveTypeAnnotations(pylint.testutils.CheckerTestCase):
                 msg_id="client-method-missing-type-annotations", node=function_node_b
             )
         ):
-            self.checker.visit_classdef(class_node)
             self.checker.visit_asyncfunctiondef(function_node_a)
             self.checker.visit_asyncfunctiondef(function_node_b)
 
@@ -1229,7 +1185,6 @@ class TestClientMethodsHaveTypeAnnotations(pylint.testutils.CheckerTestCase):
         """)
 
         with self.assertNoMessages():
-            self.checker.visit_classdef(class_node)
             self.checker.visit_functiondef(function_node)
 
     def test_ignores_private_methods(self):
@@ -1240,7 +1195,6 @@ class TestClientMethodsHaveTypeAnnotations(pylint.testutils.CheckerTestCase):
         """)
 
         with self.assertNoMessages():
-            self.checker.visit_classdef(class_node)
             self.checker.visit_functiondef(function_node)
 
     def test_guidelines_link_active(self):
@@ -1591,7 +1545,6 @@ class TestClientMethodsHaveKwargsParameter(pylint.testutils.CheckerTestCase):
         """)
 
         with self.assertNoMessages():
-            self.checker.visit_classdef(class_node)
             self.checker.visit_functiondef(function_node)
 
     def test_ignores_properties(self):
@@ -1603,7 +1556,6 @@ class TestClientMethodsHaveKwargsParameter(pylint.testutils.CheckerTestCase):
         """)
 
         with self.assertNoMessages():
-            self.checker.visit_classdef(class_node)
             self.checker.visit_functiondef(function_node)
 
     def test_ignores_properties_async(self):
@@ -1615,7 +1567,6 @@ class TestClientMethodsHaveKwargsParameter(pylint.testutils.CheckerTestCase):
         """)
 
         with self.assertNoMessages():
-            self.checker.visit_classdef(class_node)
             self.checker.visit_asyncfunctiondef(function_node)
 
     def test_ignores_non_client_methods(self):
@@ -1626,7 +1577,6 @@ class TestClientMethodsHaveKwargsParameter(pylint.testutils.CheckerTestCase):
         """)
 
         with self.assertNoMessages():
-            self.checker.visit_classdef(class_node)
             self.checker.visit_functiondef(function_node)
 
     def test_ignores_methods_with_kwargs(self):
@@ -1640,7 +1590,6 @@ class TestClientMethodsHaveKwargsParameter(pylint.testutils.CheckerTestCase):
         """)
 
         with self.assertNoMessages():
-            self.checker.visit_classdef(class_node)
             self.checker.visit_functiondef(function_node_a)
             self.checker.visit_functiondef(function_node_b)
 
@@ -1665,7 +1614,6 @@ class TestClientMethodsHaveKwargsParameter(pylint.testutils.CheckerTestCase):
                 msg_id="client-method-missing-kwargs", node=function_node_b
             ),
         ):
-            self.checker.visit_classdef(class_node)
             self.checker.visit_functiondef(function_node_a)
             self.checker.visit_functiondef(function_node_b)
 
@@ -1679,7 +1627,6 @@ class TestClientMethodsHaveKwargsParameter(pylint.testutils.CheckerTestCase):
         """)
 
         with self.assertNoMessages():
-            self.checker.visit_classdef(class_node)
             self.checker.visit_asyncfunctiondef(function_node_a)
             self.checker.visit_asyncfunctiondef(function_node_b)
 
@@ -1704,7 +1651,6 @@ class TestClientMethodsHaveKwargsParameter(pylint.testutils.CheckerTestCase):
                 msg_id="client-method-missing-kwargs", node=function_node_b
             ),
         ):
-            self.checker.visit_classdef(class_node)
             self.checker.visit_asyncfunctiondef(function_node_a)
             self.checker.visit_asyncfunctiondef(function_node_b)
 
@@ -1808,7 +1754,6 @@ class TestSpecifyParameterNamesInCall(pylint.testutils.CheckerTestCase):
         """)
 
         with self.assertNoMessages():
-            self.checker.visit_classdef(class_node)
             self.checker.visit_call(call_node)
 
     def test_ignores_call_with_two_unnamed_params_and_one_named(self):
@@ -1819,7 +1764,6 @@ class TestSpecifyParameterNamesInCall(pylint.testutils.CheckerTestCase):
         """)
 
         with self.assertNoMessages():
-            self.checker.visit_classdef(class_node)
             self.checker.visit_call(call_node)
 
     def test_ignores_call_from_non_client(self):
@@ -1830,7 +1774,6 @@ class TestSpecifyParameterNamesInCall(pylint.testutils.CheckerTestCase):
         """)
 
         with self.assertNoMessages():
-            self.checker.visit_classdef(class_node)
             self.checker.visit_call(call_node)
 
     def test_ignores_call_with_named_params(self):
@@ -1845,7 +1788,6 @@ class TestSpecifyParameterNamesInCall(pylint.testutils.CheckerTestCase):
         """)
 
         with self.assertNoMessages():
-            self.checker.visit_classdef(class_node)
             self.checker.visit_call(call_node_a)
             self.checker.visit_call(call_node_b)
             self.checker.visit_call(call_node_c)
@@ -1871,7 +1813,6 @@ class TestSpecifyParameterNamesInCall(pylint.testutils.CheckerTestCase):
                 msg_id="specify-parameter-names-in-call", node=call_node
             ),
         ):
-            self.checker.visit_classdef(class_node)
             self.checker.visit_call(call_node)
 
     def test_finds_call_with_more_than_two_unnamed_params_and_some_named(self):
@@ -1886,7 +1827,6 @@ class TestSpecifyParameterNamesInCall(pylint.testutils.CheckerTestCase):
                 msg_id="specify-parameter-names-in-call", node=call_node
             ),
         ):
-            self.checker.visit_classdef(class_node)
             self.checker.visit_call(call_node)
 
     def test_guidelines_link_active(self):
@@ -1909,7 +1849,6 @@ class TestClientListMethodsUseCorePaging(pylint.testutils.CheckerTestCase):
         """)
 
         with self.assertNoMessages():
-            self.checker.visit_classdef(class_node)
             self.checker.visit_functiondef(function_node)
 
     def test_ignores_non_client_methods(self):
@@ -1920,7 +1859,6 @@ class TestClientListMethodsUseCorePaging(pylint.testutils.CheckerTestCase):
         """)
 
         with self.assertNoMessages():
-            self.checker.visit_classdef(class_node)
             self.checker.visit_functiondef(function_node)
 
     def test_ignores_methods_return_ItemPaged(self):
@@ -1938,7 +1876,6 @@ class TestClientListMethodsUseCorePaging(pylint.testutils.CheckerTestCase):
         """)
 
         with self.assertNoMessages():
-            self.checker.visit_classdef(class_node)
             self.checker.visit_functiondef(function_node_a)
             self.checker.visit_functiondef(function_node_b)
 
@@ -1957,7 +1894,6 @@ class TestClientListMethodsUseCorePaging(pylint.testutils.CheckerTestCase):
         """)
 
         with self.assertNoMessages():
-            self.checker.visit_classdef(class_node)
             self.checker.visit_functiondef(function_node_a)
             self.checker.visit_functiondef(function_node_b)
 
@@ -1980,7 +1916,6 @@ class TestClientListMethodsUseCorePaging(pylint.testutils.CheckerTestCase):
                 msg_id="client-list-methods-use-paging", node=function_node_b
             ),
         ):
-            self.checker.visit_classdef(class_node)
             self.checker.visit_functiondef(function_node_a)
             self.checker.visit_functiondef(function_node_b)
 
@@ -2004,7 +1939,6 @@ class TestClientListMethodsUseCorePaging(pylint.testutils.CheckerTestCase):
                 msg_id="client-list-methods-use-paging", node=function_node_b
             ),
         ):
-            self.checker.visit_classdef(class_node)
             self.checker.visit_functiondef(function_node_a)
             self.checker.visit_functiondef(function_node_b)
 
@@ -2028,7 +1962,6 @@ class TestClientLROMethodsUseCorePolling(pylint.testutils.CheckerTestCase):
         """)
 
         with self.assertNoMessages():
-            self.checker.visit_classdef(class_node)
             self.checker.visit_functiondef(function_node)
 
     def test_ignores_non_client_methods(self):
@@ -2039,7 +1972,6 @@ class TestClientLROMethodsUseCorePolling(pylint.testutils.CheckerTestCase):
         """)
 
         with self.assertNoMessages():
-            self.checker.visit_classdef(class_node)
             self.checker.visit_functiondef(function_node)
 
     def test_ignores_methods_return_LROPoller(self):
@@ -2055,7 +1987,6 @@ class TestClientLROMethodsUseCorePolling(pylint.testutils.CheckerTestCase):
         """)
 
         with self.assertNoMessages():
-            self.checker.visit_classdef(class_node)
             self.checker.visit_functiondef(function_node_a)
             self.checker.visit_functiondef(function_node_b)
 
@@ -2076,7 +2007,6 @@ class TestClientLROMethodsUseCorePolling(pylint.testutils.CheckerTestCase):
                 msg_id="client-lro-methods-use-polling", node=function_node_b
             ),
         ):
-            self.checker.visit_classdef(class_node)
             self.checker.visit_functiondef(function_node_a)
             self.checker.visit_functiondef(function_node_b)
 
@@ -2221,6 +2151,180 @@ class TestClientConstructorDoesNotHaveConnectionStringParam(pylint.testutils.Che
 
     def test_guidelines_link_active(self):
         url = "https://azure.github.io/azure-sdk/python_design.html#constructors-and-factory-methods"
+        config = Configuration()
+        client = PipelineClient(url, config=config)
+        request = client.get(url)
+        response = client._pipeline.run(request)
+        assert response.http_response.status_code == 200
+
+
+class TestClientMethodNamesDoNotUseDoubleUnderscorePrefix(pylint.testutils.CheckerTestCase):
+    CHECKER_CLASS = checker.ClientMethodNamesDoNotUseDoubleUnderscorePrefix
+
+    def test_ignores_constructor(self):
+        class_node, function_node = astroid.extract_node("""
+        class SomeClient(): #@
+            def __init__(self, **kwargs): #@
+                pass
+        """)
+
+        with self.assertNoMessages():
+            self.checker.visit_functiondef(function_node)
+
+    def test_ignores_other_dunder(self):
+        class_node, function_node_a, function_node_b, function_node_c, function_node_d = astroid.extract_node("""
+        class SomeClient(): #@
+            def __enter__(self): #@
+                pass
+            def __exit__(self): #@
+                pass
+            def __aenter__(self): #@
+                pass
+            def __aexit__(self): #@
+                pass
+        """)
+
+        with self.assertNoMessages():
+            self.checker.visit_functiondef(function_node_a)
+            self.checker.visit_functiondef(function_node_b)
+            self.checker.visit_functiondef(function_node_c)
+            self.checker.visit_functiondef(function_node_d)
+
+    def test_ignores_private_method(self):
+        class_node, function_node = astroid.extract_node("""
+        class SomeClient(): #@
+            @staticmethod
+            def _private_method(self, **kwargs): #@
+                pass
+        """)
+
+        with self.assertNoMessages():
+            self.checker.visit_functiondef(function_node)
+
+    def test_ignores_private_method_async(self):
+        class_node, function_node = astroid.extract_node("""
+        class SomeClient(): #@
+            @staticmethod
+            async def _private_method(self, **kwargs): #@
+                pass
+        """)
+
+        with self.assertNoMessages():
+            self.checker.visit_asyncfunctiondef(function_node)
+
+    def test_ignores_methods_with_decorators(self):
+        class_node, func_node_a, func_node_b, func_node_c = astroid.extract_node("""
+        class SomeClient(): #@
+            @distributed_trace
+            def create_configuration(self): #@
+                pass
+            @distributed_trace
+            def get_thing(self): #@
+                pass
+            @distributed_trace
+            def list_thing(self): #@
+                pass
+        """)
+
+        with self.assertNoMessages():
+            self.checker.visit_functiondef(func_node_a)
+            self.checker.visit_functiondef(func_node_b)
+            self.checker.visit_functiondef(func_node_c)
+
+    def test_ignores_async_methods_with_decorators(self):
+        class_node, func_node_a, func_node_b, func_node_c = astroid.extract_node("""
+        class SomeClient(): #@
+            @distributed_trace_async
+            async def create_configuration(self): #@
+                pass
+            @distributed_trace_async
+            async def get_thing(self): #@
+                pass
+            @distributed_trace_async
+            async def list_thing(self): #@
+                pass
+        """)
+
+        with self.assertNoMessages():
+            self.checker.visit_asyncfunctiondef(func_node_a)
+            self.checker.visit_asyncfunctiondef(func_node_b)
+            self.checker.visit_asyncfunctiondef(func_node_c)
+
+    def test_finds_double_underscore_on_async_method(self):
+        class_node, func_node_a, func_node_b, func_node_c = astroid.extract_node("""
+        class SomeClient(): #@
+            @staticmethod
+            async def __create_configuration(self): #@
+                pass
+            @staticmethod
+            async def __get_thing(self): #@
+                pass
+            @staticmethod
+            async def __list_thing(self): #@
+                pass
+        """)
+        with self.assertAddsMessages(
+                pylint.testutils.Message(
+                    msg_id="client-method-name-no-double-underscore", node=func_node_a
+                ),
+                pylint.testutils.Message(
+                    msg_id="client-method-name-no-double-underscore", node=func_node_b
+                ),
+                pylint.testutils.Message(
+                    msg_id="client-method-name-no-double-underscore", node=func_node_c
+                ),
+        ):
+            self.checker.visit_asyncfunctiondef(func_node_a)
+            self.checker.visit_asyncfunctiondef(func_node_b)
+            self.checker.visit_asyncfunctiondef(func_node_c)
+
+    def test_finds_double_underscore_on_sync_method(self):
+        class_node, func_node_a, func_node_b, func_node_c = astroid.extract_node("""
+        class SomeClient(): #@
+            @staticmethod
+            def __create_configuration(self): #@
+                pass
+            @staticmethod
+            def __get_thing(self): #@
+                pass
+            @staticmethod
+            def __list_thing(self): #@
+                pass
+        """)
+        with self.assertAddsMessages(
+                pylint.testutils.Message(
+                    msg_id="client-method-name-no-double-underscore", node=func_node_a
+                ),
+                pylint.testutils.Message(
+                    msg_id="client-method-name-no-double-underscore", node=func_node_b
+                ),
+                pylint.testutils.Message(
+                    msg_id="client-method-name-no-double-underscore", node=func_node_c
+                ),
+        ):
+            self.checker.visit_functiondef(func_node_a)
+            self.checker.visit_functiondef(func_node_b)
+            self.checker.visit_functiondef(func_node_c)
+
+    def test_ignores_non_client_method(self):
+        class_node, func_node_a, func_node_b = astroid.extract_node(
+            """
+        class SomethingElse(): #@
+            @staticmethod
+            def __download_thing(self, some, **kwargs): #@
+                pass
+
+            @staticmethod
+            async def __do_thing(self, some, **kwargs): #@
+                pass
+        """
+        )
+        with self.assertNoMessages():
+            self.checker.visit_functiondef(func_node_a)
+            self.checker.visit_asyncfunctiondef(func_node_b)
+
+    def test_guidelines_link_active(self):
+        url = "https://azure.github.io/azure-sdk/python_introduction.html#public-vs-private"
         config = Configuration()
         client = PipelineClient(url, config=config)
         request = client.get(url)

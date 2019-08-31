@@ -14,7 +14,4 @@ from ._generated.models import ConfigurationSetting
 from .version import VERSION
 
 __version__ = VERSION
-__all__ = [
-    'AzureAppConfigurationClient',
-    'ConfigurationSetting',
-    ]
+__all__ = ["AzureAppConfigurationClient", "ConfigurationSetting"]

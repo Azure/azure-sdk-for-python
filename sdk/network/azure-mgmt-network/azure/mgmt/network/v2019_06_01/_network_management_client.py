@@ -37,6 +37,8 @@ from .operations import ExpressRouteConnectionsOperations
 from .operations import ExpressRoutePortsLocationsOperations
 from .operations import ExpressRoutePortsOperations
 from .operations import ExpressRouteLinksOperations
+from .operations import FirewallPoliciesOperations
+from .operations import FirewallPolicyRuleGroupsOperations
 from .operations import LoadBalancersOperations
 from .operations import LoadBalancerBackendAddressPoolsOperations
 from .operations import LoadBalancerFrontendIPConfigurationsOperations
@@ -149,6 +151,10 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, SDKClient)
     :vartype express_route_ports: azure.mgmt.network.v2019_06_01.operations.ExpressRoutePortsOperations
     :ivar express_route_links: ExpressRouteLinks operations
     :vartype express_route_links: azure.mgmt.network.v2019_06_01.operations.ExpressRouteLinksOperations
+    :ivar firewall_policies: FirewallPolicies operations
+    :vartype firewall_policies: azure.mgmt.network.v2019_06_01.operations.FirewallPoliciesOperations
+    :ivar firewall_policy_rule_groups: FirewallPolicyRuleGroups operations
+    :vartype firewall_policy_rule_groups: azure.mgmt.network.v2019_06_01.operations.FirewallPolicyRuleGroupsOperations
     :ivar load_balancers: LoadBalancers operations
     :vartype load_balancers: azure.mgmt.network.v2019_06_01.operations.LoadBalancersOperations
     :ivar load_balancer_backend_address_pools: LoadBalancerBackendAddressPools operations
@@ -329,6 +335,10 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, SDKClient)
         self.express_route_ports = ExpressRoutePortsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.express_route_links = ExpressRouteLinksOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.firewall_policies = FirewallPoliciesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.firewall_policy_rule_groups = FirewallPolicyRuleGroupsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.load_balancers = LoadBalancersOperations(
             self._client, self.config, self._serialize, self._deserialize)

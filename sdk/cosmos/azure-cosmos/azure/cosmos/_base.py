@@ -37,8 +37,10 @@ from . import partition_key
 from . import http_constants
 from . import _runtime_constants
 
+# pylint: disable=protected-access
 
-def GetHeaders(
+
+def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     cosmos_client_connection,
     default_headers,
     verb,
@@ -398,7 +400,7 @@ def IsDatabaseLink(link):
     return True
 
 
-def IsItemContainerLink(link):
+def IsItemContainerLink(link):  # pylint: disable=too-many-return-statements
     """Finds whether the link is a document colllection Self Link or a document colllection ID based link
 
     :param str link:
@@ -547,7 +549,8 @@ def IsValidBase64String(string_to_validate):
             return False
     except Exception as e:  # pylint: disable=broad-except
         if six.PY2:
-            e = e.message
+            e = e.message  # pylint: disable=no-member
+            # (e.message does exist on py2)
         if isinstance(e, binascii.Error):
             return False
         raise e

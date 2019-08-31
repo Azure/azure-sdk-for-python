@@ -40,7 +40,9 @@ class CosmosClient:
     Use this client to configure and execute requests to the Azure Cosmos DB service.
     """
 
-    def __init__(self, url, auth, consistency_level="Session", connection_policy=None):
+    def __init__(
+        self, url, auth, consistency_level="Session", connection_policy=None
+    ):  # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs,line-too-long
         # type: (str, Dict[str, str], str, ConnectionPolicy) -> None
         """ Instantiate a new CosmosClient.
 
@@ -190,17 +192,17 @@ class CosmosClient:
 
     def query_databases(
         self,
-        query=None,
-        parameters=None,
-        enable_cross_partition_query=None,
-        max_item_count=None,
-        session_token=None,
-        initial_headers=None,
-        populate_query_metrics=None,
-        feed_options=None,
-        response_hook=None,
+        query=None,  # type: str
+        parameters=None,  # type: List[str]
+        enable_cross_partition_query=None,  # type: bool
+        max_item_count=None,  # type:  int
+        session_token=None,  # type: str
+        initial_headers=None,  # type: Dict[str,str]
+        populate_query_metrics=None,  # type: bool
+        feed_options=None,  # type: Dict[str, Any]
+        response_hook=None,  # type: Optional[Callable]
     ):
-        # type: (str, List[str], bool, int, str, Dict[str,str], bool, Dict[str, Any], Optional[Callable]) -> QueryIterable
+        # type: (...) -> QueryIterable
 
         """
         Query the databases in a Cosmos DB SQL database account.
@@ -248,15 +250,15 @@ class CosmosClient:
 
     def delete_database(
         self,
-        database,
-        session_token=None,
-        initial_headers=None,
-        access_condition=None,
-        populate_query_metrics=None,
-        request_options=None,
-        response_hook=None,
+        database,  # type: Union[str, Database, Dict[str, Any]]
+        session_token=None,  # type: str
+        initial_headers=None,  # type: Dict[str, str]
+        access_condition=None,  # type:  Dict[str, str]
+        populate_query_metrics=None,  # type: bool
+        request_options=None,  # type: Dict[str, Any]
+        response_hook=None,  # type: Optional[Callable]
     ):
-        # type: (Union[str, Database, Dict[str, Any]], str, Dict[str, str], Dict[str, str], bool, Dict[str, Any], Optional[Callable]) -> None
+        # type: (...) -> None
         """
         Delete the database with the given ID (name).
 

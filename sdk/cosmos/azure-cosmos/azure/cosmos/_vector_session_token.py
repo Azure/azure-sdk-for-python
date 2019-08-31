@@ -58,7 +58,7 @@ class VectorSessionToken(object):
                 )
 
     @classmethod
-    def create(cls, session_token):
+    def create(cls, session_token):  # pylint: disable=too-many-return-statements
         """ Parses session token and creates the vector session token
 
         :param str session_token:
