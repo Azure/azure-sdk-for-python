@@ -83,7 +83,7 @@ steps:
       coverage xml -i
     displayName: 'Generate Coverage XML'
     continueOnError: true
-    condition: and(succeededOrFailed(), ${{ parameters.RunCoverage }}, '--disablecov'))
+    condition: and(succeededOrFailed(), ${{ parameters.RunCoverage }})
 
   - script: |
       codecov -t $(codecov-python-repository-token)
