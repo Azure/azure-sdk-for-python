@@ -47,42 +47,12 @@ jobs:
           OSName: 'Linux'
           OSVmImage: 'ubuntu-16.04'
           PythonVersion: '2.7'
+          CoverageArg: ''
         Linux_Python37:
           OSName: 'Linux'
           OSVmImage: 'ubuntu-16.04'
           PythonVersion: '3.7'
-
-    pool:
-      vmImage: '$(OSVmImage)'
-
-    steps:
-    - template: ../steps/test-nightly.yml
-      parameters: 
-        ServiceDirectory: ${{ parameters.ServiceDirectory }}
-        TestMarkArgument: ${{ parameters.TestMarkArgument }}
-        OSName: $(OSName)
-        PythonVersion: $(PythonVersion)
-        BuildTargetingString: ${{ parameters.BuildTargetingString }}
-        AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
-        BeforeTestSteps: 
-          - task: DownloadPipelineArtifact@0
-            inputs:
-              artifactName: 'artifacts' 
-              targetPath: $(Build.ArtifactStagingDirectory)
-        ToxTestEnv: "whl,sdist"  
-    - template: ../steps/publish-coverage.yml
-
-  - job: 'Test_No_Coverage'
-    variables:
-    - template: ../variables/globals.yml
-
-    dependsOn:
-       - 'Build'
-
-    timeoutInMinutes: 240
-
-    strategy:
-      matrix:
+          CoverageArg: ''
         Linux_Python36:
           OSName: 'Linux'
           OSVmImage: 'ubuntu-16.04'
@@ -119,11 +89,11 @@ jobs:
         OSName: $(OSName)
         PythonVersion: $(PythonVersion)
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
-        CoverageArg: $(CoverageArg)
         AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
+        CoverageArg: $(CoverageArg)
         BeforeTestSteps: 
           - task: DownloadPipelineArtifact@0
             inputs:
               artifactName: 'artifacts' 
               targetPath: $(Build.ArtifactStagingDirectory)
-        ToxTestEnv: "whl,sdist"  
+        ToxTestEnv: "whl,sdist"
