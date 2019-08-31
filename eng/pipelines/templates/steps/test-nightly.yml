@@ -6,6 +6,7 @@ parameters:
   PythonVersion: ''
   OSName: ''
   BeforeTestSteps: []
+  CoverageArg: ''
   BuildTargetingString: 'azure-*'
   ToxTestEnv: ""
   RunMyPy: and(ne(variables['PythonVersion'], '2.7'), ne(variables['PythonVersion'], 'pypy3'))
@@ -43,6 +44,7 @@ steps:
       scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
       arguments: >-
         "${{ parameters.BuildTargetingString }}" 
+        ${{ parameters.CoverageArg }} 
         ${{ parameters.AdditionalTestArgs }} 
         --mark_arg="${{ parameters.TestMarkArgument }}" 
         --service="${{ parameters.ServiceDirectory }}" 
@@ -75,3 +77,23 @@ steps:
         --service="${{ parameters.ServiceDirectory }}"
     env: ${{ parameters.EnvVars }}
     condition: and(succeededOrFailed(), ne(variables['Build.Reason'], 'PullRequest'))
+
+  - script: |
+      coverage xml -i
+    displayName: 'Generate Coverage XML'
+    continueOnError: true
+    condition: and(succeededOrFailed(), ne(${{ parameters.CoverageArg }}, '--disablecov'))
+
+  - script: |
+      codecov -t $(codecov-python-repository-token)
+    displayName: 'Publish Code Cov'
+    continueOnError: true
+    condition: and(ne(variables['codecov-python-repository-token'], ''), succeededOrFailed(), ne(${{ parameters.CoverageArg }}, '--disablecov'))
+
+  - task: PublishCodeCoverageResults@1
+    displayName: 'Publish Code Coverage to DevOps'
+    continueOnError: true
+    condition: and(succeededOrFailed(), ne(${{ parameters.CoverageArg }}, '--disablecov'))
+    inputs:
+      codeCoverageTool: Cobertura
+      summaryFileLocation: '$(Build.SourcesDirectory)/coverage.xml'
