@@ -49,11 +49,8 @@ try:
     from ._models_py3 import IoTSecurityAggregatedAlert
     from ._models_py3 import IoTSecurityAggregatedRecommendation
     from ._models_py3 import IoTSecurityAlertedDevice
-    from ._models_py3 import IoTSecurityAlertedDevicesList
     from ._models_py3 import IoTSecurityDeviceAlert
-    from ._models_py3 import IoTSecurityDeviceAlertsList
     from ._models_py3 import IoTSecurityDeviceRecommendation
-    from ._models_py3 import IoTSecurityDeviceRecommendationsList
     from ._models_py3 import IoTSecuritySolutionAnalyticsModel
     from ._models_py3 import IoTSecuritySolutionAnalyticsModelList
     from ._models_py3 import IoTSecuritySolutionAnalyticsModelPropertiesDevicesMetricsItem
@@ -142,11 +139,8 @@ except (SyntaxError, ImportError):
     from ._models import IoTSecurityAggregatedAlert
     from ._models import IoTSecurityAggregatedRecommendation
     from ._models import IoTSecurityAlertedDevice
-    from ._models import IoTSecurityAlertedDevicesList
     from ._models import IoTSecurityDeviceAlert
-    from ._models import IoTSecurityDeviceAlertsList
     from ._models import IoTSecurityDeviceRecommendation
-    from ._models import IoTSecurityDeviceRecommendationsList
     from ._models import IoTSecuritySolutionAnalyticsModel
     from ._models import IoTSecuritySolutionAnalyticsModelList
     from ._models import IoTSecuritySolutionAnalyticsModelPropertiesDevicesMetricsItem
@@ -282,11 +276,8 @@ __all__ = [
     'IoTSecurityAggregatedAlert',
     'IoTSecurityAggregatedRecommendation',
     'IoTSecurityAlertedDevice',
-    'IoTSecurityAlertedDevicesList',
     'IoTSecurityDeviceAlert',
-    'IoTSecurityDeviceAlertsList',
     'IoTSecurityDeviceRecommendation',
-    'IoTSecurityDeviceRecommendationsList',
     'IoTSecuritySolutionAnalyticsModel',
     'IoTSecuritySolutionAnalyticsModelList',
     'IoTSecuritySolutionAnalyticsModelPropertiesDevicesMetricsItem',

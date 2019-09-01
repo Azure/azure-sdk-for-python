@@ -1896,29 +1896,6 @@ class IoTSecurityAlertedDevice(Model):
         self.alerts_count = None
 
 
-class IoTSecurityAlertedDevicesList(Model):
-    """List of devices with open alerts including the count of alerts per device.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param value: Required. List of devices with open alerts including the
-     count of alerts per device
-    :type value: list[~azure.mgmt.security.models.IoTSecurityAlertedDevice]
-    """
-
-    _validation = {
-        'value': {'required': True},
-    }
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[IoTSecurityAlertedDevice]'},
-    }
-
-    def __init__(self, **kwargs):
-        super(IoTSecurityAlertedDevicesList, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-
-
 class IoTSecurityDeviceAlert(Model):
     """Statistical information about the number of alerts per alert type during
     last set number of days.
@@ -1953,37 +1930,6 @@ class IoTSecurityDeviceAlert(Model):
         self.alert_display_name = None
         self.reported_severity = None
         self.alerts_count = None
-
-
-class IoTSecurityDeviceAlertsList(Model):
-    """List of alerts with the count of raised alerts.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param value: Required. List of top alerts data
-    :type value: list[~azure.mgmt.security.models.IoTSecurityDeviceAlert]
-    :ivar next_link: When there is too much alert data for one page, use this
-     URI to fetch the next page.
-    :vartype next_link: str
-    """
-
-    _validation = {
-        'value': {'required': True},
-        'next_link': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[IoTSecurityDeviceAlert]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(IoTSecurityDeviceAlertsList, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-        self.next_link = None
 
 
 class IoTSecurityDeviceRecommendation(Model):
@@ -2022,30 +1968,6 @@ class IoTSecurityDeviceRecommendation(Model):
         self.devices_count = None
 
 
-class IoTSecurityDeviceRecommendationsList(Model):
-    """List of aggregated recommendation data, per recommendation type, per
-    device.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param value: Required. List of aggregated recommendation data
-    :type value:
-     list[~azure.mgmt.security.models.IoTSecurityDeviceRecommendation]
-    """
-
-    _validation = {
-        'value': {'required': True},
-    }
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[IoTSecurityDeviceRecommendation]'},
-    }
-
-    def __init__(self, **kwargs):
-        super(IoTSecurityDeviceRecommendationsList, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-
-
 class IoTSecuritySolutionAnalyticsModel(Resource):
     """Security analytics of your IoT Security solution.
 
@@ -2068,15 +1990,15 @@ class IoTSecuritySolutionAnalyticsModel(Resource):
      list[~azure.mgmt.security.models.IoTSecuritySolutionAnalyticsModelPropertiesDevicesMetricsItem]
     :param top_alerted_devices: List of the 3 devices with the most alerts.
     :type top_alerted_devices:
-     ~azure.mgmt.security.models.IoTSecurityAlertedDevicesList
+     list[~azure.mgmt.security.models.IoTSecurityAlertedDevice]
     :param most_prevalent_device_alerts: List of the 3 most prevalent device
      alerts.
     :type most_prevalent_device_alerts:
-     ~azure.mgmt.security.models.IoTSecurityDeviceAlertsList
+     list[~azure.mgmt.security.models.IoTSecurityDeviceAlert]
     :param most_prevalent_device_recommendations: List of the 3 most prevalent
      device recommendations.
     :type most_prevalent_device_recommendations:
-     ~azure.mgmt.security.models.IoTSecurityDeviceRecommendationsList
+     list[~azure.mgmt.security.models.IoTSecurityDeviceRecommendation]
     """
 
     _validation = {
@@ -2095,9 +2017,9 @@ class IoTSecuritySolutionAnalyticsModel(Resource):
         'metrics': {'key': 'properties.metrics', 'type': 'IoTSeverityMetrics'},
         'unhealthy_device_count': {'key': 'properties.unhealthyDeviceCount', 'type': 'int'},
         'devices_metrics': {'key': 'properties.devicesMetrics', 'type': '[IoTSecuritySolutionAnalyticsModelPropertiesDevicesMetricsItem]'},
-        'top_alerted_devices': {'key': 'properties.topAlertedDevices', 'type': 'IoTSecurityAlertedDevicesList'},
-        'most_prevalent_device_alerts': {'key': 'properties.mostPrevalentDeviceAlerts', 'type': 'IoTSecurityDeviceAlertsList'},
-        'most_prevalent_device_recommendations': {'key': 'properties.mostPrevalentDeviceRecommendations', 'type': 'IoTSecurityDeviceRecommendationsList'},
+        'top_alerted_devices': {'key': 'properties.topAlertedDevices', 'type': '[IoTSecurityAlertedDevice]'},
+        'most_prevalent_device_alerts': {'key': 'properties.mostPrevalentDeviceAlerts', 'type': '[IoTSecurityDeviceAlert]'},
+        'most_prevalent_device_recommendations': {'key': 'properties.mostPrevalentDeviceRecommendations', 'type': '[IoTSecurityDeviceRecommendation]'},
     }
 
     def __init__(self, **kwargs):
