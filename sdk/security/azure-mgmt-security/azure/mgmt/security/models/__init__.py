@@ -18,7 +18,6 @@ try:
     from ._models_py3 import Alert
     from ._models_py3 import AlertConfidenceReason
     from ._models_py3 import AlertEntity
-    from ._models_py3 import AllowedConnectionsConnectedResources
     from ._models_py3 import AllowedConnectionsResource
     from ._models_py3 import AppWhitelistingGroup
     from ._models_py3 import AppWhitelistingGroups
@@ -35,6 +34,7 @@ try:
     from ._models_py3 import ComplianceSegment
     from ._models_py3 import ConnectableResource
     from ._models_py3 import ConnectedResource
+    from ._models_py3 import ConnectedResources
     from ._models_py3 import ConnectedWorkspace
     from ._models_py3 import ConnectionDetails
     from ._models_py3 import DataExportSetting
@@ -98,7 +98,6 @@ try:
     from ._models_py3 import TopologySingleResource
     from ._models_py3 import TopologySingleResourceChild
     from ._models_py3 import TopologySingleResourceParent
-    from ._models_py3 import UnusedPortsConnectedResources
     from ._models_py3 import UpdateIotSecuritySolutionData
     from ._models_py3 import UserDefinedResourcesProperties
     from ._models_py3 import UserRecommendation
@@ -113,7 +112,6 @@ except (SyntaxError, ImportError):
     from ._models import Alert
     from ._models import AlertConfidenceReason
     from ._models import AlertEntity
-    from ._models import AllowedConnectionsConnectedResources
     from ._models import AllowedConnectionsResource
     from ._models import AppWhitelistingGroup
     from ._models import AppWhitelistingGroups
@@ -130,6 +128,7 @@ except (SyntaxError, ImportError):
     from ._models import ComplianceSegment
     from ._models import ConnectableResource
     from ._models import ConnectedResource
+    from ._models import ConnectedResources
     from ._models import ConnectedWorkspace
     from ._models import ConnectionDetails
     from ._models import DataExportSetting
@@ -193,7 +192,6 @@ except (SyntaxError, ImportError):
     from ._models import TopologySingleResource
     from ._models import TopologySingleResourceChild
     from ._models import TopologySingleResourceParent
-    from ._models import UnusedPortsConnectedResources
     from ._models import UpdateIotSecuritySolutionData
     from ._models import UserDefinedResourcesProperties
     from ._models import UserRecommendation
@@ -257,7 +255,6 @@ __all__ = [
     'Alert',
     'AlertConfidenceReason',
     'AlertEntity',
-    'AllowedConnectionsConnectedResources',
     'AllowedConnectionsResource',
     'AppWhitelistingGroup',
     'AppWhitelistingGroups',
@@ -274,6 +271,7 @@ __all__ = [
     'ComplianceSegment',
     'ConnectableResource',
     'ConnectedResource',
+    'ConnectedResources',
     'ConnectedWorkspace',
     'ConnectionDetails',
     'DataExportSetting',
@@ -337,7 +335,6 @@ __all__ = [
     'TopologySingleResource',
     'TopologySingleResourceChild',
     'TopologySingleResourceParent',
-    'UnusedPortsConnectedResources',
     'UpdateIotSecuritySolutionData',
     'UserDefinedResourcesProperties',
     'UserRecommendation',

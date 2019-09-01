@@ -469,44 +469,6 @@ class AlertEntity(Model):
         self.type = None
 
 
-class AllowedConnectionsConnectedResources(Model):
-    """The allowed connections details.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar tcp_ports_count: The allowed connections tcp ports count
-    :vartype tcp_ports_count: int
-    :ivar udp_ports_count: The allowed connections udp ports count
-    :vartype udp_ports_count: int
-    :ivar tcp_ports: The allowed connections tcp ports
-    :vartype tcp_ports: str
-    :ivar udp_ports: The allowed connections udp ports
-    :vartype udp_ports: str
-    """
-
-    _validation = {
-        'tcp_ports_count': {'readonly': True},
-        'udp_ports_count': {'readonly': True},
-        'tcp_ports': {'readonly': True},
-        'udp_ports': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'tcp_ports_count': {'key': 'tcpPortsCount', 'type': 'int'},
-        'udp_ports_count': {'key': 'udpPortsCount', 'type': 'int'},
-        'tcp_ports': {'key': 'tcpPorts', 'type': 'str'},
-        'udp_ports': {'key': 'udpPorts', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs) -> None:
-        super(AllowedConnectionsConnectedResources, self).__init__(**kwargs)
-        self.tcp_ports_count = None
-        self.udp_ports_count = None
-        self.tcp_ports = None
-        self.udp_ports = None
-
-
 class AllowedConnectionsResource(Model):
     """The resource whose properties describes the allowed traffic between Azure
     resources.
@@ -1180,6 +1142,44 @@ class ConnectedResource(Model):
     def __init__(self, **kwargs) -> None:
         super(ConnectedResource, self).__init__(**kwargs)
         self.connected_resource_id = None
+        self.tcp_ports = None
+        self.udp_ports = None
+
+
+class ConnectedResources(Model):
+    """The connections details.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar tcp_ports_count: The allowed connections tcp ports count
+    :vartype tcp_ports_count: int
+    :ivar udp_ports_count: The allowed connections udp ports count
+    :vartype udp_ports_count: int
+    :ivar tcp_ports: The allowed connections tcp ports
+    :vartype tcp_ports: str
+    :ivar udp_ports: The allowed connections udp ports
+    :vartype udp_ports: str
+    """
+
+    _validation = {
+        'tcp_ports_count': {'readonly': True},
+        'udp_ports_count': {'readonly': True},
+        'tcp_ports': {'readonly': True},
+        'udp_ports': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'tcp_ports_count': {'key': 'tcpPortsCount', 'type': 'int'},
+        'udp_ports_count': {'key': 'udpPortsCount', 'type': 'int'},
+        'tcp_ports': {'key': 'tcpPorts', 'type': 'str'},
+        'udp_ports': {'key': 'udpPorts', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(ConnectedResources, self).__init__(**kwargs)
+        self.tcp_ports_count = None
+        self.udp_ports_count = None
         self.tcp_ports = None
         self.udp_ports = None
 
@@ -2657,10 +2657,10 @@ class NetworkDataConnectableResourceAllowedConnections(Model):
     :vartype calculated_date_time: datetime
     :param inbound_connected_resources:
     :type inbound_connected_resources:
-     ~azure.mgmt.security.models.AllowedConnectionsConnectedResources
+     ~azure.mgmt.security.models.ConnectedResources
     :param outbound_connected_resources:
     :type outbound_connected_resources:
-     ~azure.mgmt.security.models.AllowedConnectionsConnectedResources
+     ~azure.mgmt.security.models.ConnectedResources
     """
 
     _validation = {
@@ -2669,8 +2669,8 @@ class NetworkDataConnectableResourceAllowedConnections(Model):
 
     _attribute_map = {
         'calculated_date_time': {'key': 'calculatedDateTime', 'type': 'iso-8601'},
-        'inbound_connected_resources': {'key': 'inboundConnectedResources', 'type': 'AllowedConnectionsConnectedResources'},
-        'outbound_connected_resources': {'key': 'outboundConnectedResources', 'type': 'AllowedConnectionsConnectedResources'},
+        'inbound_connected_resources': {'key': 'inboundConnectedResources', 'type': 'ConnectedResources'},
+        'outbound_connected_resources': {'key': 'outboundConnectedResources', 'type': 'ConnectedResources'},
     }
 
     def __init__(self, *, inbound_connected_resources=None, outbound_connected_resources=None, **kwargs) -> None:
@@ -2685,15 +2685,15 @@ class NetworkDataConnectableResourceUnusedPorts(Model):
 
     :param inbound_connected_resources:
     :type inbound_connected_resources:
-     ~azure.mgmt.security.models.UnusedPortsConnectedResources
+     ~azure.mgmt.security.models.ConnectedResources
     :param outbound_connected_resources:
     :type outbound_connected_resources:
-     ~azure.mgmt.security.models.UnusedPortsConnectedResources
+     ~azure.mgmt.security.models.ConnectedResources
     """
 
     _attribute_map = {
-        'inbound_connected_resources': {'key': 'inboundConnectedResources', 'type': 'UnusedPortsConnectedResources'},
-        'outbound_connected_resources': {'key': 'outboundConnectedResources', 'type': 'UnusedPortsConnectedResources'},
+        'inbound_connected_resources': {'key': 'inboundConnectedResources', 'type': 'ConnectedResources'},
+        'outbound_connected_resources': {'key': 'outboundConnectedResources', 'type': 'ConnectedResources'},
     }
 
     def __init__(self, *, inbound_connected_resources=None, outbound_connected_resources=None, **kwargs) -> None:
@@ -3568,44 +3568,6 @@ class TopologySingleResourceParent(Model):
     def __init__(self, **kwargs) -> None:
         super(TopologySingleResourceParent, self).__init__(**kwargs)
         self.resource_id = None
-
-
-class UnusedPortsConnectedResources(Model):
-    """The unused ports details.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar unused_tcp_ports_count: The unused tcp ports count
-    :vartype unused_tcp_ports_count: int
-    :ivar unused_udp_ports_count: The unused udp ports count
-    :vartype unused_udp_ports_count: int
-    :ivar tcp_ports: The unused tcp ports
-    :vartype tcp_ports: str
-    :ivar udp_ports: The unused udp ports
-    :vartype udp_ports: str
-    """
-
-    _validation = {
-        'unused_tcp_ports_count': {'readonly': True},
-        'unused_udp_ports_count': {'readonly': True},
-        'tcp_ports': {'readonly': True},
-        'udp_ports': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'unused_tcp_ports_count': {'key': 'unusedTcpPortsCount', 'type': 'int'},
-        'unused_udp_ports_count': {'key': 'unusedUdpPortsCount', 'type': 'int'},
-        'tcp_ports': {'key': 'tcpPorts', 'type': 'str'},
-        'udp_ports': {'key': 'udpPorts', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs) -> None:
-        super(UnusedPortsConnectedResources, self).__init__(**kwargs)
-        self.unused_tcp_ports_count = None
-        self.unused_udp_ports_count = None
-        self.tcp_ports = None
-        self.udp_ports = None
 
 
 class UpdateIotSecuritySolutionData(TagsResource):
