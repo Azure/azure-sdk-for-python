@@ -105,6 +105,7 @@ try:
     from ._models_py3 import CassandraLinkedService
     from ._models_py3 import CassandraSource
     from ._models_py3 import CassandraTableDataset
+    from ._models_py3 import ChainingTrigger
     from ._models_py3 import CmdkeySetup
     from ._models_py3 import CommonDataServiceForAppsEntityDataset
     from ._models_py3 import CommonDataServiceForAppsLinkedService
@@ -625,6 +626,7 @@ except (SyntaxError, ImportError):
     from ._models import CassandraLinkedService
     from ._models import CassandraSource
     from ._models import CassandraTableDataset
+    from ._models import ChainingTrigger
     from ._models import CmdkeySetup
     from ._models import CommonDataServiceForAppsEntityDataset
     from ._models import CommonDataServiceForAppsLinkedService
@@ -1228,6 +1230,7 @@ __all__ = [
     'CassandraLinkedService',
     'CassandraSource',
     'CassandraTableDataset',
+    'ChainingTrigger',
     'CmdkeySetup',
     'CommonDataServiceForAppsEntityDataset',
     'CommonDataServiceForAppsLinkedService',
