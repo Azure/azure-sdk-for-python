@@ -9,11 +9,15 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
+from .metrics_operations import MetricsOperations
+from .metric_definitions_operations import MetricDefinitionsOperations
 from .operations import Operations
 from .diagnostic_settings_operations import DiagnosticSettingsOperations
 from .diagnostic_settings_category_operations import DiagnosticSettingsCategoryOperations
 
 __all__ = [
+    'MetricsOperations',
+    'MetricDefinitionsOperations',
     'Operations',
     'DiagnosticSettingsOperations',
     'DiagnosticSettingsCategoryOperations',

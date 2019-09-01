@@ -12,6 +12,33 @@
 from enum import Enum
 
 
+class Unit(str, Enum):
+
+    count = "Count"
+    bytes = "Bytes"
+    seconds = "Seconds"
+    count_per_second = "CountPerSecond"
+    bytes_per_second = "BytesPerSecond"
+    percent = "Percent"
+    milli_seconds = "MilliSeconds"
+    byte_seconds = "ByteSeconds"
+    unspecified = "Unspecified"
+    cores = "Cores"
+    milli_cores = "MilliCores"
+    nano_cores = "NanoCores"
+    bits_per_second = "BitsPerSecond"
+
+
+class AggregationType(str, Enum):
+
+    none = "None"
+    average = "Average"
+    count = "Count"
+    minimum = "Minimum"
+    maximum = "Maximum"
+    total = "Total"
+
+
 class Category(str, Enum):
 
     audit_logs = "AuditLogs"
@@ -21,3 +48,9 @@ class Category(str, Enum):
 class CategoryType(str, Enum):
 
     logs = "Logs"
+
+
+class ResultType(str, Enum):
+
+    data = "Data"
+    metadata = "Metadata"

@@ -13,6 +13,8 @@ from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 from msrestazure import AzureConfiguration
 from .version import VERSION
+from .operations.metrics_operations import MetricsOperations
+from .operations.metric_definitions_operations import MetricDefinitionsOperations
 from .operations.operations import Operations
 from .operations.diagnostic_settings_operations import DiagnosticSettingsOperations
 from .operations.diagnostic_settings_category_operations import DiagnosticSettingsCategoryOperations
@@ -52,6 +54,10 @@ class azureactivedirectoryClient(SDKClient):
     :ivar config: Configuration for client.
     :vartype config: azureactivedirectoryClientConfiguration
 
+    :ivar metrics: Metrics operations
+    :vartype metrics: microsoft.aadiam.operations.MetricsOperations
+    :ivar metric_definitions: MetricDefinitions operations
+    :vartype metric_definitions: microsoft.aadiam.operations.MetricDefinitionsOperations
     :ivar operations: Operations operations
     :vartype operations: microsoft.aadiam.operations.Operations
     :ivar diagnostic_settings: DiagnosticSettings operations
@@ -72,10 +78,13 @@ class azureactivedirectoryClient(SDKClient):
         super(azureactivedirectoryClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2017-04-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
+        self.metrics = MetricsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.metric_definitions = MetricDefinitionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
         self.diagnostic_settings = DiagnosticSettingsOperations(

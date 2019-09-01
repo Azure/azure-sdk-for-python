@@ -10,6 +10,15 @@
 # --------------------------------------------------------------------------
 
 try:
+    from .localizable_string_py3 import LocalizableString
+    from .metric_value_py3 import MetricValue
+    from .metadata_value_py3 import MetadataValue
+    from .metric_error_response_py3 import MetricErrorResponse, MetricErrorResponseException
+    from .time_series_element_py3 import TimeSeriesElement
+    from .metric_py3 import Metric
+    from .response_py3 import Response
+    from .metric_availability_py3 import MetricAvailability
+    from .metric_definition_py3 import MetricDefinition
     from .proxy_only_resource_py3 import ProxyOnlyResource
     from .retention_policy_py3 import RetentionPolicy
     from .log_settings_py3 import LogSettings
@@ -23,6 +32,15 @@ try:
     from .diagnostic_settings_category_resource_py3 import DiagnosticSettingsCategoryResource
     from .diagnostic_settings_category_resource_collection_py3 import DiagnosticSettingsCategoryResourceCollection
 except (SyntaxError, ImportError):
+    from .localizable_string import LocalizableString
+    from .metric_value import MetricValue
+    from .metadata_value import MetadataValue
+    from .metric_error_response import MetricErrorResponse, MetricErrorResponseException
+    from .time_series_element import TimeSeriesElement
+    from .metric import Metric
+    from .response import Response
+    from .metric_availability import MetricAvailability
+    from .metric_definition import MetricDefinition
     from .proxy_only_resource import ProxyOnlyResource
     from .retention_policy import RetentionPolicy
     from .log_settings import LogSettings
@@ -35,12 +53,25 @@ except (SyntaxError, ImportError):
     from .operations_discovery_collection import OperationsDiscoveryCollection
     from .diagnostic_settings_category_resource import DiagnosticSettingsCategoryResource
     from .diagnostic_settings_category_resource_collection import DiagnosticSettingsCategoryResourceCollection
+from .metric_definition_paged import MetricDefinitionPaged
 from .azureactivedirectory_client_enums import (
+    Unit,
+    AggregationType,
     Category,
     CategoryType,
+    ResultType,
 )
 
 __all__ = [
+    'LocalizableString',
+    'MetricValue',
+    'MetadataValue',
+    'MetricErrorResponse', 'MetricErrorResponseException',
+    'TimeSeriesElement',
+    'Metric',
+    'Response',
+    'MetricAvailability',
+    'MetricDefinition',
     'ProxyOnlyResource',
     'RetentionPolicy',
     'LogSettings',
@@ -53,6 +84,10 @@ __all__ = [
     'OperationsDiscoveryCollection',
     'DiagnosticSettingsCategoryResource',
     'DiagnosticSettingsCategoryResourceCollection',
+    'MetricDefinitionPaged',
+    'Unit',
+    'AggregationType',
     'Category',
     'CategoryType',
+    'ResultType',
 ]
