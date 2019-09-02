@@ -33,7 +33,7 @@ if __name__ == '__main__':
     client = EventHubClient.from_connection_string(CONNECTION_STR, receive_timeout=RECEIVE_TIMEOUT, retry_total=RETRY_TOTAL)
     container_client = ContainerClient.from_connection_string(STORAGE_CONNECTION_STR, container="eventprocessor")
     partition_manager = BlobPartitionManager(container_client=container_client)
-    event_processor = EventProcessor(client, "$default", MyPartitionProcessor, partition_manager, polling_interval=1)
+    event_processor = EventProcessor(client, "$default", MyPartitionProcessor, partition_manager, polling_interval=5)
     try:
         loop.run_until_complete(event_processor.start())
     except KeyboardInterrupt:
