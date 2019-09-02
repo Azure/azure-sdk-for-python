@@ -1366,6 +1366,52 @@ class Password(Model):
         self.value = None
 
 
+class QuotaBaseProperties(Model):
+    """The properties for Quota update or retrieval.
+
+    :param id: Specifies the resource ID.
+    :type id: str
+    :param type: Specifies the resource type.
+    :type type: str
+    :param limit: Limit. The maximum permitted quota of the resource.
+    :type limit: long
+    :param unit: An enum describing the unit of quota measurement. Possible
+     values include: 'Count'
+    :type unit: str or ~azure.mgmt.machinelearningservices.models.QuotaUnit
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'limit': {'key': 'limit', 'type': 'long'},
+        'unit': {'key': 'unit', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(QuotaBaseProperties, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.type = kwargs.get('type', None)
+        self.limit = kwargs.get('limit', None)
+        self.unit = kwargs.get('unit', None)
+
+
+class QuotaUpdateParameters(Model):
+    """Quota update parameters.
+
+    :param value: The list for update quota.
+    :type value:
+     list[~azure.mgmt.machinelearningservices.models.QuotaBaseProperties]
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[QuotaBaseProperties]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(QuotaUpdateParameters, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+
+
 class RegistryListCredentialsResult(Model):
     """RegistryListCredentialsResult.
 
@@ -1419,6 +1465,78 @@ class ResourceId(Model):
     def __init__(self, **kwargs):
         super(ResourceId, self).__init__(**kwargs)
         self.id = kwargs.get('id', None)
+
+
+class ResourceName(Model):
+    """The Resource Name.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar value: The name of the resource.
+    :vartype value: str
+    :ivar localized_value: The localized name of the resource.
+    :vartype localized_value: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'localized_value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': 'str'},
+        'localized_value': {'key': 'localizedValue', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ResourceName, self).__init__(**kwargs)
+        self.value = None
+        self.localized_value = None
+
+
+class ResourceQuota(Model):
+    """The quota assigned to a resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Specifies the resource ID.
+    :vartype id: str
+    :ivar type: Specifies the resource type.
+    :vartype type: str
+    :ivar name: Name of the resource.
+    :vartype name: ~azure.mgmt.machinelearningservices.models.ResourceName
+    :ivar limit: Limit. The maximum permitted quota of the resource.
+    :vartype limit: long
+    :ivar unit: An enum describing the unit of quota measurement. Possible
+     values include: 'Count'
+    :vartype unit: str or ~azure.mgmt.machinelearningservices.models.QuotaUnit
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'type': {'readonly': True},
+        'name': {'readonly': True},
+        'limit': {'readonly': True},
+        'unit': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'ResourceName'},
+        'limit': {'key': 'limit', 'type': 'long'},
+        'unit': {'key': 'unit', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ResourceQuota, self).__init__(**kwargs)
+        self.id = None
+        self.type = None
+        self.name = None
+        self.limit = None
+        self.unit = None
 
 
 class ScaleSettings(Model):
@@ -1539,6 +1657,82 @@ class SystemService(Model):
         self.system_service_type = None
         self.public_ip_address = None
         self.version = None
+
+
+class UpdateWorkspaceQuotas(Model):
+    """The properties for update Quota response.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Specifies the resource ID.
+    :vartype id: str
+    :ivar type: Specifies the resource type.
+    :vartype type: str
+    :param limit: Limit. The maximum permitted quota of the resource.
+    :type limit: long
+    :ivar unit: An enum describing the unit of quota measurement. Possible
+     values include: 'Count'
+    :vartype unit: str or ~azure.mgmt.machinelearningservices.models.QuotaUnit
+    :param status: Update Workspace Quota Status. Status of update workspace
+     quota. Possible values include: 'Undefined', 'Success', 'Failure',
+     'InvalidQuotaBelowClusterMinimum', 'InvalidQuotaExceedsSubscriptionLimit',
+     'InvalidVMFamilyName'
+    :type status: str or ~azure.mgmt.machinelearningservices.models.Status
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'type': {'readonly': True},
+        'unit': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'limit': {'key': 'limit', 'type': 'long'},
+        'unit': {'key': 'unit', 'type': 'str'},
+        'status': {'key': 'status', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(UpdateWorkspaceQuotas, self).__init__(**kwargs)
+        self.id = None
+        self.type = None
+        self.limit = kwargs.get('limit', None)
+        self.unit = None
+        self.status = kwargs.get('status', None)
+
+
+class UpdateWorkspaceQuotasResult(Model):
+    """The result of update workspace quota.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar value: The list of workspace quota update result.
+    :vartype value:
+     list[~azure.mgmt.machinelearningservices.models.UpdateWorkspaceQuotas]
+    :ivar next_link: The URI to fetch the next page of workspace quota update
+     result. Call ListNext() with this to fetch the next page of Workspace
+     Quota update result.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[UpdateWorkspaceQuotas]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(UpdateWorkspaceQuotasResult, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
 
 
 class Usage(Model):
