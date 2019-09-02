@@ -3334,7 +3334,7 @@ class ThresholdCustomAlertRule(CustomAlertRule):
         self.max_threshold = kwargs.get('max_threshold', None)
 
 
-class TimeWindowCustomAlertRule(Model):
+class TimeWindowCustomAlertRule(ThresholdCustomAlertRule):
     """A custom alert rule that checks if the number of activities (depends on the
     custom alert type) in a time window is within the given range.
 
@@ -3381,12 +3381,6 @@ class TimeWindowCustomAlertRule(Model):
 
     def __init__(self, **kwargs):
         super(TimeWindowCustomAlertRule, self).__init__(**kwargs)
-        self.display_name = None
-        self.description = None
-        self.is_enabled = kwargs.get('is_enabled', None)
-        self.rule_type = kwargs.get('rule_type', None)
-        self.min_threshold = kwargs.get('min_threshold', None)
-        self.max_threshold = kwargs.get('max_threshold', None)
         self.time_window_size = kwargs.get('time_window_size', None)
 
 
