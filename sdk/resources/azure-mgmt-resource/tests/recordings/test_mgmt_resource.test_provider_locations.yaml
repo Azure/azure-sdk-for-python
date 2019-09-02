@@ -9,12 +9,12 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
-        msrest_azure/0.4.34 azure-mgmt-resource/3.1.0 Azure-SDK-For-Python
+      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+        msrest_azure/0.4.34 azure-mgmt-resource/4.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
     method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Web?api-version=2019-05-10
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Web?api-version=2019-08-01
   response:
     body:
       string: '{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.Web","namespace":"Microsoft.Web","authorization":{"applicationId":"abfa0a7c-a6b6-4736-8310-5855508787cd","roleDefinitionId":"f47ed98b-b063-4a5b-9e10-4b9b44fa7735"},"resourceTypes":[{"resourceType":"publishingUsers","locations":["Central
@@ -316,7 +316,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Sat, 20 Jul 2019 13:01:52 GMT
+      - Tue, 03 Sep 2019 07:41:54 GMT
       expires:
       - '-1'
       pragma:
