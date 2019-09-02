@@ -153,7 +153,7 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         await super(EventHubConsumer, self)._open()
 
     async def _open_with_retry(self):
-        return await self._open()
+        return await self._do_retryable_operation(self._open, operation_need_param=False)
 
     async def _receive(self, timeout_time=None, max_batch_size=None, **kwargs):
         last_exception = kwargs.get("last_exception")
