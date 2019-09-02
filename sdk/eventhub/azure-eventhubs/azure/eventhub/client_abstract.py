@@ -11,7 +11,8 @@ import time
 import functools
 from abc import abstractmethod
 from typing import Dict, Union, Any, TYPE_CHECKING
-from azure.eventhub import __version__
+
+from azure.eventhub import __version__, EventPosition
 from azure.eventhub.configuration import _Configuration
 from .common import EventHubSharedKeyCredential, EventHubSASTokenCredential, _Address
 
@@ -153,6 +154,8 @@ class EventHubClientAbstract(object):  # pylint:disable=too-many-instance-attrib
         self.get_auth = functools.partial(self._create_auth)
         self.config = _Configuration(**kwargs)
         self.debug = self.config.network_tracing
+        self._is_iothub = False
+        self._iothub_redirect_info = None
 
         log.info("%r: Created the Event Hub client", self.container_id)
 
@@ -173,6 +176,11 @@ class EventHubClientAbstract(object):  # pylint:disable=too-many-instance-attrib
             'iot_password': key,
             'username': username,
             'password': password}
+        client._is_iothub = True
+        client._redirect_consumer = client.create_consumer(consumer_group='$default',
+                                                           partition_id='0',
+                                                           event_position=EventPosition('-1'),
+                                                           operation='/messages/events')
         return client
 
     @abstractmethod
@@ -213,6 +221,8 @@ class EventHubClientAbstract(object):  # pylint:disable=too-many-instance-attrib
         self.auth_uri = "sb://{}{}".format(self.address.hostname, self.address.path)
         self.eh_name = self.address.path.lstrip('/')
         self.mgmt_target = redirect_uri
+        if self._is_iothub:
+            self._iothub_redirect_info = redirect
 
     @classmethod
     def from_connection_string(cls, conn_str, **kwargs):

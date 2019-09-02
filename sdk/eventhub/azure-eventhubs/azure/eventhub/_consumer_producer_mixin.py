@@ -73,7 +73,7 @@ class ConsumerProducerMixin(object):
             else:
                 alt_creds = {}
             self._create_handler()
-            self._handler.open(connection=self.client._conn_manager.get_connection(
+            self._handler.open(connection=self.client._conn_manager.get_connection(  # pylint: disable=protected-access
                 self.client.address.hostname,
                 self.client.get_auth(**alt_creds)
             ))
