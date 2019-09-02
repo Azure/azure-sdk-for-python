@@ -7,15 +7,13 @@ import logging
 from collections import defaultdict
 import asyncio
 from azure.core.exceptions import ResourceModifiedError, ResourceExistsError
-
-from azure.eventhub.eventprocessor import PartitionManager
 from azure.storage.blob.aio import ContainerClient
 
 logger = logging.getLogger(__name__)
 UPLOAD_DATA = ""
 
 
-class BlobPartitionManager(PartitionManager):
+class BlobPartitionManager(object):
     def __init__(self, container_client: ContainerClient):
         self._container_client = container_client
         self._cached_ownership_dict = defaultdict(dict)
