@@ -170,7 +170,8 @@ class ActualTrafficConnectedResources(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar traffic_volume: The actual traffic volume
+    :ivar traffic_volume: The actual traffic volume between the actual traffic
+     start time to the actual traffic end time
     :vartype traffic_volume: str
     :param connections_details:
     :type connections_details:
@@ -1208,7 +1209,8 @@ class ConnectionDetails(Model):
 
     :ivar port_and_protocol: The port and the protocol of the traffic
     :vartype port_and_protocol: str
-    :ivar volume: The volume of the traffic
+    :ivar volume: The volume of the traffic between the actual traffic start
+     time to the actual traffic end time
     :vartype volume: str
     """
 
