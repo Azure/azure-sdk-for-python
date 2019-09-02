@@ -152,7 +152,7 @@ class EventHubClient(EventHubClientAbstract):
                                                                    event_position=EventPosition('-1'),
                                                                    operation='/messages/events')
                 async with self._redirect_consumer:
-                    await self._redirect_consumer._open_with_retry(timeout=self.config.receive_timeout)  # pylint: disable=protected-access
+                    await self._redirect_consumer._open_with_retry()  # pylint: disable=protected-access
                 self._redirect_consumer = None
 
     async def get_properties(self):

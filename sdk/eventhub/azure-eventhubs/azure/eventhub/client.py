@@ -154,7 +154,7 @@ class EventHubClient(EventHubClientAbstract):
                                                                    event_position=EventPosition('-1'),
                                                                    operation='/messages/events')
                 with self._redirect_consumer:
-                    self._redirect_consumer._open_with_retry(timeout=self.config.receive_timeout)  # pylint: disable=protected-access
+                    self._redirect_consumer._open_with_retry()  # pylint: disable=protected-access
                 self._redirect_consumer = None
 
     def get_properties(self):
