@@ -13,26 +13,22 @@ from msrest.serialization import Model
 
 
 class Sku(Model):
-    """The resource model definition representing SKU.
+    """An ARM Resource SKU.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the SKU. Ex - P3. It is typically a
-     letter+number code
+    :param name: Required. The name of the SKU, typically, a letter + Number
+     code, e.g. P3.
     :type name: str
-    :param tier: This field is required to be implemented by the Resource
-     Provider if the service has more than one tier, but is not required on a
-     PUT.
+    :param tier: The tier or edition of the particular SKU, e.g. Basic,
+     Premium.
     :type tier: str
-    :param size: The SKU size. When the name field is the combination of tier
-     and some other value, this would be the standalone code.
+    :param size: Size of the particular SKU
     :type size: str
     :param family: If the service has different generations of hardware, for
      the same SKU, then that can be captured here.
     :type family: str
-    :param capacity: If the SKU supports scale out/in then the capacity
-     integer should be included. If scale out/in is not possible for the
-     resource this may be omitted.
+    :param capacity: Capacity of the particular SKU.
     :type capacity: int
     """
 

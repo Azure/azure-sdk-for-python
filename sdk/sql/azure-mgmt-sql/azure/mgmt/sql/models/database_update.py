@@ -69,7 +69,7 @@ class DatabaseUpdate(Model):
      'Offline', 'Standby', 'Shutdown', 'EmergencyMode', 'AutoClosed',
      'Copying', 'Creating', 'Inaccessible', 'OfflineSecondary', 'Pausing',
      'Paused', 'Resuming', 'Scaling', 'OfflineChangingDwPerformanceTiers',
-     'OnlineChangingDwPerformanceTiers'
+     'OnlineChangingDwPerformanceTiers', 'Disabled'
     :vartype status: str or ~azure.mgmt.sql.models.DatabaseStatus
     :ivar database_id: The ID of the database.
     :vartype database_id: str
@@ -123,11 +123,16 @@ class DatabaseUpdate(Model):
     :ivar earliest_restore_date: This records the earliest start date and time
      that restore is available for this database (ISO8601 format).
     :vartype earliest_restore_date: datetime
-    :param read_scale: The state of read-only routing. If enabled, connections
-     that have application intent set to readonly in their connection string
-     may be routed to a readonly secondary replica in the same region. Possible
-     values include: 'Enabled', 'Disabled'
+    :param read_scale: If enabled, connections that have application intent
+     set to readonly in their connection string may be routed to a readonly
+     secondary replica. This property is only settable for Premium and Business
+     Critical databases. Possible values include: 'Enabled', 'Disabled'
     :type read_scale: str or ~azure.mgmt.sql.models.DatabaseReadScale
+    :param read_replica_count: The number of readonly secondary replicas
+     associated with the database to which readonly application intent
+     connections may be routed. This property is only settable for Hyperscale
+     edition databases.
+    :type read_replica_count: int
     :ivar current_sku: The name and tier of the SKU.
     :vartype current_sku: ~azure.mgmt.sql.models.Sku
     :param auto_pause_delay: Time in minutes after which database is
@@ -136,6 +141,12 @@ class DatabaseUpdate(Model):
     :param min_capacity: Minimal capacity that database will always have
      allocated, if not paused
     :type min_capacity: float
+    :ivar paused_date: The date when database was paused by user configuration
+     or action (ISO8601 format). Null if the database is ready.
+    :vartype paused_date: datetime
+    :ivar resumed_date: The date when database was resumed by user action or
+     database login (ISO8601 format). Null if the database is paused.
+    :vartype resumed_date: datetime
     :param tags: Resource tags.
     :type tags: dict[str, str]
     """
@@ -151,6 +162,8 @@ class DatabaseUpdate(Model):
         'max_log_size_bytes': {'readonly': True},
         'earliest_restore_date': {'readonly': True},
         'current_sku': {'readonly': True},
+        'paused_date': {'readonly': True},
+        'resumed_date': {'readonly': True},
     }
 
     _attribute_map = {
@@ -180,9 +193,12 @@ class DatabaseUpdate(Model):
         'max_log_size_bytes': {'key': 'properties.maxLogSizeBytes', 'type': 'long'},
         'earliest_restore_date': {'key': 'properties.earliestRestoreDate', 'type': 'iso-8601'},
         'read_scale': {'key': 'properties.readScale', 'type': 'str'},
+        'read_replica_count': {'key': 'properties.readReplicaCount', 'type': 'int'},
         'current_sku': {'key': 'properties.currentSku', 'type': 'Sku'},
         'auto_pause_delay': {'key': 'properties.autoPauseDelay', 'type': 'int'},
         'min_capacity': {'key': 'properties.minCapacity', 'type': 'float'},
+        'paused_date': {'key': 'properties.pausedDate', 'type': 'iso-8601'},
+        'resumed_date': {'key': 'properties.resumedDate', 'type': 'iso-8601'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
@@ -214,7 +230,10 @@ class DatabaseUpdate(Model):
         self.max_log_size_bytes = None
         self.earliest_restore_date = None
         self.read_scale = kwargs.get('read_scale', None)
+        self.read_replica_count = kwargs.get('read_replica_count', None)
         self.current_sku = None
         self.auto_pause_delay = kwargs.get('auto_pause_delay', None)
         self.min_capacity = kwargs.get('min_capacity', None)
+        self.paused_date = None
+        self.resumed_date = None
         self.tags = kwargs.get('tags', None)
