@@ -83,7 +83,7 @@ class OwnershipManager(object):
         :return: List[Dict[str, Any]], A list of ownership.
         """
         ownership_list = await self.partition_manager.list_ownership(
-            self.eventhub_client.eh_name, self.consumer_group_name
+            self.eventhub_name, self.consumer_group_name
         )
         now = time.time()
         ownership_dict = dict((x["partition_id"], x) for x in ownership_list)  # put the list to dict for fast lookup
@@ -116,7 +116,7 @@ class OwnershipManager(object):
                 random_partition_id = random.choice(claimable_partition_ids)
                 random_chosen_to_claim = ownership_dict.get(random_partition_id,
                                                             {"partition_id": random_partition_id,
-                                                             "eventhub_name": self.eventhub_client.eh_name,
+                                                             "eventhub_name": self.eventhub_name,
                                                              "consumer_group_name": self.consumer_group_name
                                                              })
                 random_chosen_to_claim["owner_id"] = self.owner_id
