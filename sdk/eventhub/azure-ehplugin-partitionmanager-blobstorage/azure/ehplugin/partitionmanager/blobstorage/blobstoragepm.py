@@ -14,7 +14,16 @@ UPLOAD_DATA = ""
 
 
 class BlobPartitionManager(object):
+    """An PartitionManager that uses Azure Blob Storage to store the partition ownership and checkpoint data.
+
+    This class implements the methods (list_ownership, claim_ownership, update_checkpoint) defined in class
+    azure.eventhub.eventprocessor.PartitionManager of package azure-eventhub.
+    """
     def __init__(self, container_client: ContainerClient):
+        """
+
+        :param container_client: The Azure Blob Storage Container client.
+        """
         self._container_client = container_client
         self._cached_ownership_dict = defaultdict(dict)
         self._lock = asyncio.Lock()
@@ -64,6 +73,7 @@ class BlobPartitionManager(object):
                     logger.info("Partition %r was claimed by another EventProcessor", partition_id)
                 except Exception as err:
                     logger.warning("Claim error occurred: %r", err)
+                    raise
                 result.append(ownership)
         return result
 
