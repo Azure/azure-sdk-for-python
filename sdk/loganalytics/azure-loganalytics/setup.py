@@ -53,7 +53,6 @@ setup(
     version=version,
     description='Microsoft Azure {} Client Library for Python'.format(PACKAGE_PPRINT_NAME),
     long_description=readme + '\n\n' + history,
-    long_description_content_type='text/x-rst',
     license='MIT License',
     author='Microsoft Corporation',
     author_email='azpysdkhelp@microsoft.com',
@@ -64,6 +63,7 @@ setup(
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
@@ -77,7 +77,6 @@ setup(
     ]),
     install_requires=[
         'msrest>=0.5.0',
-        'msrestazure>=0.4.32,<2.0.0',
         'azure-common~=1.1',
     ],
     extras_require={
