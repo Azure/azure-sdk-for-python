@@ -242,8 +242,8 @@ from ._security_center_enums import (
     AlertNotifications,
     AlertsToAdmins,
     State,
-    ConnectionType,
     ExpandValues,
+    ConnectionType,
 )
 
 __all__ = [
@@ -384,6 +384,6 @@ __all__ = [
     'AlertNotifications',
     'AlertsToAdmins',
     'State',
-    'ConnectionType',
     'ExpandValues',
+    'ConnectionType',
 ]

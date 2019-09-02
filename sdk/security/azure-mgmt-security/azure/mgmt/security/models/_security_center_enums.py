@@ -161,13 +161,13 @@ class State(str, Enum):
     unsupported = "Unsupported"  #: No supported regulatory compliance data for the given standard
 
 
-class ConnectionType(str, Enum):
-
-    internal = "Internal"
-    external = "External"
-
-
 class ExpandValues(str, Enum):
 
     true = "true"  #: Get the expand network data object - more information about the network data (ports and connections details)
     false = "false"  #: Get the slim network data object
+
+
+class ConnectionType(str, Enum):
+
+    internal = "Internal"
+    external = "External"
