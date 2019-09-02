@@ -2549,7 +2549,10 @@ class PathRecommendation(Model):
 
 
 class Pricing(Resource):
-    """Pricing tier will be applied for the scope based on the resource ID.
+    """Azure Security Center is provided in two pricing tiers: free and standard,
+    with the standard tier available with a trial period. The standard tier
+    offers advanced security capabilities, while the free tier offers basic
+    security features.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
