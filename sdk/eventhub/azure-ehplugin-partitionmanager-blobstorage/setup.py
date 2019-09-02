@@ -72,7 +72,7 @@ setup(
     zip_safe=False,
     packages=find_packages(exclude=exclude_packages),
     install_requires=[
-
+        'azure-storage<13.0.0,>=12.0.0b2',
     ],
     extras_require={
         ":python_version<'3.0'": ['azure-nspkg'],
