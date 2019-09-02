@@ -166,6 +166,9 @@ try:
     from .usage_py3 import Usage
     from .managed_instance_py3 import ManagedInstance
     from .managed_instance_update_py3 import ManagedInstanceUpdate
+    from .private_endpoint_property_py3 import PrivateEndpointProperty
+    from .private_link_service_connection_state_property_py3 import PrivateLinkServiceConnectionStateProperty
+    from .private_endpoint_connection_py3 import PrivateEndpointConnection
     from .private_link_resource_properties_py3 import PrivateLinkResourceProperties
     from .private_link_resource_py3 import PrivateLinkResource
 except (SyntaxError, ImportError):
@@ -325,6 +328,9 @@ except (SyntaxError, ImportError):
     from .usage import Usage
     from .managed_instance import ManagedInstance
     from .managed_instance_update import ManagedInstanceUpdate
+    from .private_endpoint_property import PrivateEndpointProperty
+    from .private_link_service_connection_state_property import PrivateLinkServiceConnectionStateProperty
+    from .private_endpoint_connection import PrivateEndpointConnection
     from .private_link_resource_properties import PrivateLinkResourceProperties
     from .private_link_resource import PrivateLinkResource
 from .recoverable_database_paged import RecoverableDatabasePaged
@@ -395,6 +401,7 @@ from .server_vulnerability_assessment_paged import ServerVulnerabilityAssessment
 from .instance_pool_paged import InstancePoolPaged
 from .usage_paged import UsagePaged
 from .managed_instance_paged import ManagedInstancePaged
+from .private_endpoint_connection_paged import PrivateEndpointConnectionPaged
 from .private_link_resource_paged import PrivateLinkResourcePaged
 from .sql_management_client_enums import (
     CheckNameAvailabilityReason,
@@ -637,6 +644,9 @@ __all__ = [
     'Usage',
     'ManagedInstance',
     'ManagedInstanceUpdate',
+    'PrivateEndpointProperty',
+    'PrivateLinkServiceConnectionStateProperty',
+    'PrivateEndpointConnection',
     'PrivateLinkResourceProperties',
     'PrivateLinkResource',
     'RecoverableDatabasePaged',
@@ -707,6 +717,7 @@ __all__ = [
     'InstancePoolPaged',
     'UsagePaged',
     'ManagedInstancePaged',
+    'PrivateEndpointConnectionPaged',
     'PrivateLinkResourcePaged',
     'CheckNameAvailabilityReason',
     'ServerConnectionType',
