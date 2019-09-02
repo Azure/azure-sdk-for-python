@@ -21,10 +21,6 @@ class SecurityCenterConfiguration(AzureConfiguration):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param expand: expand whether you want to get more information about the
-     network data (ports and connections details). Possible values include:
-     'true', 'false'
-    :type expand: str or ~azure.mgmt.security.models.ExpandValues
     :param subscription_id: Azure subscription ID
     :type subscription_id: str
     :param asc_location: The location where ASC stores the data of the
@@ -34,7 +30,7 @@ class SecurityCenterConfiguration(AzureConfiguration):
     """
 
     def __init__(
-            self, credentials, subscription_id, asc_location, expand=None, base_url=None):
+            self, credentials, subscription_id, asc_location, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
@@ -54,6 +50,5 @@ class SecurityCenterConfiguration(AzureConfiguration):
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
-        self.expand = expand
         self.subscription_id = subscription_id
         self.asc_location = asc_location

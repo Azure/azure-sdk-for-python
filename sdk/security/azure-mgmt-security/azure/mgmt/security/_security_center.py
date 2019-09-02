@@ -122,10 +122,6 @@ class SecurityCenter(SDKClient):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param expand: expand whether you want to get more information about the
-     network data (ports and connections details). Possible values include:
-     'true', 'false'
-    :type expand: str or ~azure.mgmt.security.models.ExpandValues
     :param subscription_id: Azure subscription ID
     :type subscription_id: str
     :param asc_location: The location where ASC stores the data of the
@@ -135,9 +131,9 @@ class SecurityCenter(SDKClient):
     """
 
     def __init__(
-            self, credentials, subscription_id, asc_location, expand=None, base_url=None):
+            self, credentials, subscription_id, asc_location, base_url=None):
 
-        self.config = SecurityCenterConfiguration(credentials, subscription_id, asc_location, expand, base_url)
+        self.config = SecurityCenterConfiguration(credentials, subscription_id, asc_location, base_url)
         super(SecurityCenter, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
