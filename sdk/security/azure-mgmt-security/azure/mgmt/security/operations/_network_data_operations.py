@@ -112,18 +112,11 @@ class NetworkDataOperations(object):
     list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/networkData'}
 
     def get(
-            self, resource_group_name, resource_namespace, resource_type, resource_name, expand=None, custom_headers=None, raw=False, **operation_config):
+            self, resource_id, expand=None, custom_headers=None, raw=False, **operation_config):
         """Get the network data on your scanned resource.
 
-        :param resource_group_name: The name of the resource group within the
-         user's subscription. The name is case insensitive.
-        :type resource_group_name: str
-        :param resource_namespace: The Namespace of the resource.
-        :type resource_namespace: str
-        :param resource_type: The type of the resource.
-        :type resource_type: str
-        :param resource_name: Name of the resource.
-        :type resource_name: str
+        :param resource_id: The identifier of the resource.
+        :type resource_id: str
         :param expand: expand whether you want to get more information about
          the network data (ports and connections details). Possible values
          include: 'true', 'false'
@@ -141,11 +134,7 @@ class NetworkDataOperations(object):
         # Construct URL
         url = self.get.metadata['url']
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str', pattern=r'^[0-9A-Fa-f]{8}-([0-9A-Fa-f]{4}-){3}[0-9A-Fa-f]{12}$'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
-            'resourceNamespace': self._serialize.url("resource_namespace", resource_namespace, 'str'),
-            'resourceType': self._serialize.url("resource_type", resource_type, 'str'),
-            'resourceName': self._serialize.url("resource_name", resource_name, 'str')
+            'resourceId': self._serialize.url("resource_id", resource_id, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -183,4 +172,4 @@ class NetworkDataOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceNamespace}/{resourceType}/{resourceName}/providers/Microsoft.Security/NetworkData/default'}
+    get.metadata = {'url': '/{resourceId}/providers/Microsoft.Security/NetworkData/default'}
