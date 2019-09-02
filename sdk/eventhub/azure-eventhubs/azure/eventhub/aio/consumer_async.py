@@ -111,8 +111,10 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
 
     def _create_handler(self):
         alt_creds = {
-            "username": self.client._auth_config.get("iot_username"),  # pylint:disable=protected-access
-            "password": self.client._auth_config.get("iot_password")}  # pylint:disable=protected-access
+            "username": self.client._auth_config.get("iot_username") if self.redirected else None,  # pylint:disable=protected-access
+            "password": self.client._auth_config.get("iot_password") if self.redirected else None  # pylint:disable=protected-access
+        }
+
         source = Source(self.source)
         if self.offset is not None:
             source.set_filter(self.offset._selector())  # pylint:disable=protected-access
@@ -143,10 +145,15 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
 
         """
         # pylint: disable=protected-access
+        self.redirected = self.redirected or self.client._iothub_redirect_info
+
         if not self.running and self.redirected:
             self.client._process_redirect_uri(self.redirected)
             self.source = self.redirected.address
         await super(EventHubConsumer, self)._open()
+
+    async def _open_with_retry(self):
+        return await self._open()
 
     async def _receive(self, timeout_time=None, max_batch_size=None, **kwargs):
         last_exception = kwargs.get("last_exception")
@@ -255,4 +262,5 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
             self.error = EventHubError(str(exception))
         else:
             self.error = EventHubError("This receive handler is now closed.")
-        await self._handler.close_async()
+        if self._handler:
+            await self._handler.close_async()

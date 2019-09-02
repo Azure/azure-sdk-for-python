@@ -7,6 +7,7 @@ import datetime
 import time
 import functools
 import asyncio
+
 from typing import Any, List, Dict, Union, TYPE_CHECKING
 
 from uamqp import authentication, constants  # type: ignore
@@ -46,9 +47,9 @@ class EventHubClient(EventHubClientAbstract):
     """
 
     def __init__(self, host, event_hub_path, credential, **kwargs):
-        # type:(str, str, Union[EventHubSharedKeyCredential, EventHubSASTokenCredential, TokenCredential], ...) -> None
-
+        # type:(str, str, Union[EventHubSharedKeyCredential, EventHubSASTokenCredential, TokenCredential], Any) -> None
         super(EventHubClient, self).__init__(host=host, event_hub_path=event_hub_path, credential=credential, **kwargs)
+        self._lock = asyncio.Lock()
         self._conn_manager = get_connection_manager(**kwargs)
 
     async def __aenter__(self):
@@ -116,9 +117,14 @@ class EventHubClient(EventHubClientAbstract):
             raise last_exception
 
     async def _management_request(self, mgmt_msg, op_type):
+        alt_creds = {
+            "username": self._auth_config.get("iot_username"),
+            "password": self._auth_config.get("iot_password")
+        }
+
         retried_times = 0
-        while True:
-            mgmt_auth = self._create_auth()
+        while retried_times <= self.config.max_retries:
+            mgmt_auth = self._create_auth(**alt_creds)
             mgmt_client = AMQPClientAsync(self.mgmt_target, auth=mgmt_auth, debug=self.config.network_tracing)
             try:
                 conn = await self._conn_manager.get_connection(self.host, mgmt_auth)
@@ -137,6 +143,18 @@ class EventHubClient(EventHubClientAbstract):
             finally:
                 await mgmt_client.close_async()
 
+    async def _iothub_redirect(self):
+        async with self._lock:
+            if self._is_iothub and not self._iothub_redirect_info:
+                if not self._redirect_consumer:
+                    self._redirect_consumer = self.create_consumer(consumer_group='$default',
+                                                                   partition_id='0',
+                                                                   event_position=EventPosition('-1'),
+                                                                   operation='/messages/events')
+                async with self._redirect_consumer:
+                    await self._redirect_consumer._open_with_retry(timeout=self.config.receive_timeout)  # pylint: disable=protected-access
+                self._redirect_consumer = None
+
     async def get_properties(self):
         # type:() -> Dict[str, Any]
         """
@@ -150,6 +168,8 @@ class EventHubClient(EventHubClientAbstract):
         :rtype: dict
         :raises: ~azure.eventhub.ConnectError
         """
+        if self._is_iothub and not self._iothub_redirect_info:
+            await self._iothub_redirect()
         mgmt_msg = Message(application_properties={'name': self.eh_name})
         response = await self._management_request(mgmt_msg, op_type=b'com.microsoft:eventhub')
         output = {}
@@ -189,6 +209,8 @@ class EventHubClient(EventHubClientAbstract):
         :rtype: dict
         :raises: ~azure.eventhub.ConnectError
         """
+        if self._is_iothub and not self._iothub_redirect_info:
+            await self._iothub_redirect()
         mgmt_msg = Message(application_properties={'name': self.eh_name,
                                                    'partition': partition})
         response = await self._management_request(mgmt_msg, op_type=b'com.microsoft:partition')

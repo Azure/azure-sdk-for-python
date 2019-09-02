@@ -11,7 +11,7 @@ from azure.core import Configuration, HttpRequest
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline import Pipeline
-from azure.core.pipeline.policies import ContentDecodePolicy, NetworkTraceLoggingPolicy, RetryPolicy
+from azure.core.pipeline.policies import ContentDecodePolicy, NetworkTraceLoggingPolicy, ProxyPolicy, RetryPolicy
 from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
 from azure.core.pipeline.transport import RequestsTransport
 
@@ -171,4 +171,5 @@ class AuthnClient(AuthnClientBase):
         config = Configuration(**kwargs)
         config.logging_policy = NetworkTraceLoggingPolicy(**kwargs)
         config.retry_policy = RetryPolicy(**kwargs)
+        config.proxy_policy = ProxyPolicy(**kwargs)
         return config

@@ -8,6 +8,8 @@ import logging
 import datetime
 import time
 import functools
+import threading
+
 from typing import Any, List, Dict, Union, TYPE_CHECKING
 
 import uamqp  # type: ignore
@@ -45,8 +47,9 @@ class EventHubClient(EventHubClientAbstract):
     """
 
     def __init__(self, host, event_hub_path, credential, **kwargs):
-        # type:(str, str, Union[EventHubSharedKeyCredential, EventHubSASTokenCredential, TokenCredential], ...) -> None
+        # type:(str, str, Union[EventHubSharedKeyCredential, EventHubSASTokenCredential, TokenCredential], Any) -> None
         super(EventHubClient, self).__init__(host=host, event_hub_path=event_hub_path, credential=credential, **kwargs)
+        self._lock = threading.RLock()
         self._conn_manager = get_connection_manager(**kwargs)
 
     def __enter__(self):
@@ -116,10 +119,14 @@ class EventHubClient(EventHubClientAbstract):
             raise last_exception
 
     def _management_request(self, mgmt_msg, op_type):
-        retried_times = 0
+        alt_creds = {
+            "username": self._auth_config.get("iot_username"),
+            "password": self._auth_config.get("iot_password")
+        }
 
+        retried_times = 0
         while retried_times <= self.config.max_retries:
-            mgmt_auth = self._create_auth()
+            mgmt_auth = self._create_auth(**alt_creds)
             mgmt_client = uamqp.AMQPClient(self.mgmt_target)
             try:
                 conn = self._conn_manager.get_connection(self.host, mgmt_auth)  #pylint:disable=assignment-from-none
@@ -138,6 +145,18 @@ class EventHubClient(EventHubClientAbstract):
             finally:
                 mgmt_client.close()
 
+    def _iothub_redirect(self):
+        with self._lock:
+            if self._is_iothub and not self._iothub_redirect_info:
+                if not self._redirect_consumer:
+                    self._redirect_consumer = self.create_consumer(consumer_group='$default',
+                                                                   partition_id='0',
+                                                                   event_position=EventPosition('-1'),
+                                                                   operation='/messages/events')
+                with self._redirect_consumer:
+                    self._redirect_consumer._open_with_retry(timeout=self.config.receive_timeout)  # pylint: disable=protected-access
+                self._redirect_consumer = None
+
     def get_properties(self):
         # type:() -> Dict[str, Any]
         """
@@ -151,6 +170,8 @@ class EventHubClient(EventHubClientAbstract):
         :rtype: dict
         :raises: ~azure.eventhub.ConnectError
         """
+        if self._is_iothub and not self._iothub_redirect_info:
+            self._iothub_redirect()
         mgmt_msg = Message(application_properties={'name': self.eh_name})
         response = self._management_request(mgmt_msg, op_type=b'com.microsoft:eventhub')
         output = {}
@@ -190,6 +211,8 @@ class EventHubClient(EventHubClientAbstract):
         :rtype: dict
         :raises: ~azure.eventhub.ConnectError
         """
+        if self._is_iothub and not self._iothub_redirect_info:
+            self._iothub_redirect()
         mgmt_msg = Message(application_properties={'name': self.eh_name,
                                                    'partition': partition})
         response = self._management_request(mgmt_msg, op_type=b'com.microsoft:partition')

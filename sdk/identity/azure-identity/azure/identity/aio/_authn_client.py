@@ -9,7 +9,13 @@ from azure.core import Configuration
 from azure.core.credentials import AccessToken
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
-from azure.core.pipeline.policies import AsyncRetryPolicy, ContentDecodePolicy, HTTPPolicy, NetworkTraceLoggingPolicy
+from azure.core.pipeline.policies import (
+    AsyncRetryPolicy,
+    ContentDecodePolicy,
+    HTTPPolicy,
+    NetworkTraceLoggingPolicy,
+    ProxyPolicy,
+)
 from azure.core.pipeline.transport import AsyncHttpTransport
 from azure.core.pipeline.transport.requests_asyncio import AsyncioRequestsTransport
 
@@ -60,4 +66,5 @@ class AsyncAuthnClient(AuthnClientBase):  # pylint:disable=async-client-bad-name
         config = Configuration(**kwargs)
         config.logging_policy = NetworkTraceLoggingPolicy(**kwargs)
         config.retry_policy = AsyncRetryPolicy(**kwargs)
+        config.proxy_policy = ProxyPolicy(**kwargs)
         return config

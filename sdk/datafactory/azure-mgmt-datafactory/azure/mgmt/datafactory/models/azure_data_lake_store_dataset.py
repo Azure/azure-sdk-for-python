@@ -43,8 +43,8 @@ class AzureDataLakeStoreDataset(Dataset):
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
-    :param folder_path: Required. Path to the folder in the Azure Data Lake
-     Store. Type: string (or Expression with resultType string).
+    :param folder_path: Path to the folder in the Azure Data Lake Store. Type:
+     string (or Expression with resultType string).
     :type folder_path: object
     :param file_name: The name of the file in the Azure Data Lake Store. Type:
      string (or Expression with resultType string).
@@ -59,7 +59,6 @@ class AzureDataLakeStoreDataset(Dataset):
     _validation = {
         'linked_service_name': {'required': True},
         'type': {'required': True},
-        'folder_path': {'required': True},
     }
 
     _attribute_map = {
