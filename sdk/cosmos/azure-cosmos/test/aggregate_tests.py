@@ -220,16 +220,18 @@ class AggregationQueryTest(with_metaclass(AggregateQueryTestSequenceMeta, unitte
             self.assertRaises(StopIteration, invokeNext)
 
             ######################################
-            # test fetch_next_block() behavior
+            # test by_page() behavior
             ######################################
-            fetched_res = result_iterable.fetch_next_block()
+            page_iter = result_iterable.by_page()
+            fetched_res = list(next(page_iter))
             fetched_size = len(fetched_res)
 
             self.assertEqual(fetched_size, 1)
             self.assertEqual(fetched_res[0], expected)
 
             # no more results will be returned
-            self.assertEqual(result_iterable.fetch_next_block(), [])
+            with self.assertRaises(StopIteration):
+                next(page_iter)
 
         if isinstance(expected, Exception):
             self.assertRaises(CosmosHttpResponseError, _verify_result)

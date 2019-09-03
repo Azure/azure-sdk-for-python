@@ -28,6 +28,7 @@ import platform
 
 import requests
 import six
+from azure.core.paging import ItemPaged
 from azure.core import PipelineClient
 from azure.core.pipeline.policies import (
     ContentDecodePolicy,
@@ -307,7 +308,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
                 self.last_response_headers,
             )
 
-        return query_iterable.QueryIterable(self, query, options, fetch_fn)
+        return ItemPaged(
+            self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable
+        )
 
     def ReadContainers(self, database_link, options=None):
         """Reads all collections in a database.
@@ -355,7 +358,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
                 self.last_response_headers,
             )
 
-        return query_iterable.QueryIterable(self, query, options, fetch_fn)
+        return ItemPaged(
+            self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable
+        )
 
     def CreateContainer(self, database_link, collection, options=None):
         """Creates a collection in a database.
@@ -538,7 +543,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
                 self.last_response_headers,
             )
 
-        return query_iterable.QueryIterable(self, query, options, fetch_fn)
+        return ItemPaged(
+            self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable
+        )
 
     def DeleteDatabase(self, database_link, options=None):
         """Deletes a database.
@@ -680,7 +687,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
                 self.last_response_headers,
             )
 
-        return query_iterable.QueryIterable(self, query, options, fetch_fn)
+        return ItemPaged(
+            self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable
+        )
 
     def ReplaceUser(self, user_link, user, options=None):
         """Replaces a user and return it.
@@ -788,10 +797,10 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         return self.QueryItems(collection_link, None, feed_options, response_hook=response_hook)
 
-    def QueryItems(self, database_or_Container_link, query, options=None, partition_key=None, response_hook=None):
+    def QueryItems(self, database_or_container_link, query, options=None, partition_key=None, response_hook=None):
         """Queries documents in a collection.
 
-        :param str database_or_Container_link:
+        :param str database_or_container_link:
             The link to the database when using partitioning, otherwise link to the document collection.
         :param (str or dict) query:
         :param dict options:
@@ -807,20 +816,23 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             query_iterable.QueryIterable
 
         """
-        database_or_Container_link = base.TrimBeginningAndEndingSlashes(database_or_Container_link)
+        database_or_container_link = base.TrimBeginningAndEndingSlashes(database_or_container_link)
 
         if options is None:
             options = {}
 
-        if base.IsDatabaseLink(database_or_Container_link):
-            # Python doesn't have a good way of specifying an overloaded constructor,
-            # and this is how it's generally overloaded constructors are specified (by
-            # calling a @classmethod) and returning the 'self' instance
-            return query_iterable.QueryIterable.PartitioningQueryIterable(
-                self, query, options, database_or_Container_link, partition_key
+        if base.IsDatabaseLink(database_or_container_link):
+            return ItemPaged(
+                self,
+                query,
+                options,
+                database_link=database_or_container_link,
+                partition_key=partition_key,
+                page_iterator_class=query_iterable.QueryIterable
             )
-        path = base.GetPathFromLink(database_or_Container_link, "docs")
-        collection_id = base.GetResourceIdOrFullNameFromLink(database_or_Container_link)
+
+        path = base.GetPathFromLink(database_or_container_link, "docs")
+        collection_id = base.GetResourceIdOrFullNameFromLink(database_or_container_link)
 
         def fetch_fn(options):
             return (
@@ -837,7 +849,14 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
                 self.last_response_headers,
             )
 
-        return query_iterable.QueryIterable(self, query, options, fetch_fn, database_or_Container_link)
+        return ItemPaged(
+            self,
+            query,
+            options,
+            fetch_function=fetch_fn,
+            collection_link=database_or_container_link,
+            page_iterator_class=query_iterable.QueryIterable
+        )
 
     def QueryItemsChangeFeed(self, collection_link, options=None, response_hook=None):
         """Queries documents change feed in a collection.
@@ -917,7 +936,14 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
                 self.last_response_headers,
             )
 
-        return query_iterable.QueryIterable(self, None, options, fetch_fn, collection_link)
+        return ItemPaged(
+            self,
+            None,
+            options,
+            fetch_function=fetch_fn,
+            collection_link=collection_link,
+            page_iterator_class=query_iterable.QueryIterable
+        )
 
     def _ReadPartitionKeyRanges(self, collection_link, feed_options=None):
         """Reads Partition Key Ranges.
@@ -966,12 +992,14 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
                 self.last_response_headers,
             )
 
-        return query_iterable.QueryIterable(self, query, options, fetch_fn)
+        return ItemPaged(
+            self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable
+        )
 
-    def CreateItem(self, database_or_Container_link, document, options=None):
+    def CreateItem(self, database_or_container_link, document, options=None):
         """Creates a document in a collection.
 
-        :param str database_or_Container_link:
+        :param str database_or_container_link:
             The link to the database when using partitioning, otherwise link to the document collection.
         :param dict document:
             The Azure Cosmos document to create.
@@ -999,18 +1027,18 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         # We check the link to be document collection link since it can be database
         # link in case of client side partitioning
-        if base.IsItemContainerLink(database_or_Container_link):
-            options = self._AddPartitionKey(database_or_Container_link, document, options)
+        if base.IsItemContainerLink(database_or_container_link):
+            options = self._AddPartitionKey(database_or_container_link, document, options)
 
         collection_id, document, path = self._GetContainerIdWithPathForItem(
-            database_or_Container_link, document, options
+            database_or_container_link, document, options
         )
         return self.Create(document, path, "docs", collection_id, None, options)
 
-    def UpsertItem(self, database_or_Container_link, document, options=None):
+    def UpsertItem(self, database_or_container_link, document, options=None):
         """Upserts a document in a collection.
 
-        :param str database_or_Container_link:
+        :param str database_or_container_link:
             The link to the database when using partitioning, otherwise link to the document collection.
         :param dict document:
             The Azure Cosmos document to upsert.
@@ -1038,11 +1066,11 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         # We check the link to be document collection link since it can be database
         # link in case of client side partitioning
-        if base.IsItemContainerLink(database_or_Container_link):
-            options = self._AddPartitionKey(database_or_Container_link, document, options)
+        if base.IsItemContainerLink(database_or_container_link):
+            options = self._AddPartitionKey(database_or_container_link, document, options)
 
         collection_id, document, path = self._GetContainerIdWithPathForItem(
-            database_or_Container_link, document, options
+            database_or_container_link, document, options
         )
         return self.Upsert(document, path, "docs", collection_id, None, options)
 
@@ -1054,10 +1082,10 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
     )
 
     # Gets the collection id and path for the document
-    def _GetContainerIdWithPathForItem(self, database_or_Container_link, document, options):
+    def _GetContainerIdWithPathForItem(self, database_or_container_link, document, options):
 
-        if not database_or_Container_link:
-            raise ValueError("database_or_Container_link is None or empty.")
+        if not database_or_container_link:
+            raise ValueError("database_or_container_link is None or empty.")
 
         if document is None:
             raise ValueError("document is None.")
@@ -1067,10 +1095,10 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         if not document.get("id") and not options.get("disableAutomaticIdGeneration"):
             document["id"] = base.GenerateGuidId()
 
-        collection_link = database_or_Container_link
+        collection_link = database_or_container_link
 
-        if base.IsDatabaseLink(database_or_Container_link):
-            partition_resolver = self.GetPartitionResolver(database_or_Container_link)
+        if base.IsDatabaseLink(database_or_container_link):
+            partition_resolver = self.GetPartitionResolver(database_or_container_link)
 
             if partition_resolver is not None:
                 collection_link = partition_resolver.ResolveForCreate(document)
@@ -1150,7 +1178,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
                 self.last_response_headers,
             )
 
-        return query_iterable.QueryIterable(self, query, options, fetch_fn)
+        return ItemPaged(
+            self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable
+        )
 
     def CreateTrigger(self, collection_link, trigger, options=None):
         """Creates a trigger in a collection.
@@ -1275,7 +1305,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
                 self.last_response_headers,
             )
 
-        return query_iterable.QueryIterable(self, query, options, fetch_fn)
+        return ItemPaged(
+            self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable
+        )
 
     def CreateUserDefinedFunction(self, collection_link, udf, options=None):
         """Creates a user defined function in a collection.
@@ -1400,7 +1432,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
                 self.last_response_headers,
             )
 
-        return query_iterable.QueryIterable(self, query, options, fetch_fn)
+        return ItemPaged(
+            self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable
+        )
 
     def CreateStoredProcedure(self, collection_link, sproc, options=None):
         """Creates a stored procedure in a collection.
@@ -1523,7 +1557,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
                 self.last_response_headers,
             )
 
-        return query_iterable.QueryIterable(self, query, options, fetch_fn)
+        return ItemPaged(
+            self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable
+        )
 
     def ReadConflict(self, conflict_link, options=None):
         """Reads a conflict.
@@ -1799,7 +1835,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
                 self.last_response_headers,
             )
 
-        return query_iterable.QueryIterable(self, query, options, fetch_fn)
+        return ItemPaged(
+            self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable
+        )
 
     def ReadMedia(self, media_link, **kwargs):
         """Reads a media.
@@ -2192,7 +2230,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
                 self.last_response_headers,
             )
 
-        return query_iterable.QueryIterable(self, query, options, fetch_fn)
+        return ItemPaged(
+            self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable
+        )
 
     def GetDatabaseAccount(self, url_connection=None, **kwargs):
         """Gets database account info.

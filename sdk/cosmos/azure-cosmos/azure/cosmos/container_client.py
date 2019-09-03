@@ -369,7 +369,7 @@ class ContainerClient(object):
             response_hook.clear()
 
         items = self.client_connection.QueryItems(
-            database_or_Container_link=self.container_link,
+            database_or_container_link=self.container_link,
             query=query if parameters is None else dict(query=query, parameters=parameters),
             options=feed_options,
             partition_key=partition_key,
@@ -485,7 +485,7 @@ class ContainerClient(object):
             request_options["postTriggerInclude"] = post_trigger_include
 
         result = self.client_connection.UpsertItem(
-            database_or_Container_link=self.container_link, document=body, **kwargs)
+            database_or_container_link=self.container_link, document=body, **kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
         return result
@@ -544,7 +544,7 @@ class ContainerClient(object):
             request_options["indexingDirective"] = indexing_directive
 
         result = self.client_connection.CreateItem(
-            database_or_Container_link=self.container_link, document=body, options=request_options, **kwargs
+            database_or_container_link=self.container_link, document=body, options=request_options, **kwargs
         )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)

@@ -2010,18 +2010,14 @@ class CRUDTests(unittest.TestCase):
 
         # Get query results page by page.
         results = resources['coll'].read_all_items(max_item_count=2)
-        first_block = results.fetch_next_block()
-        self.assertEqual(2,
-                         len(first_block),
-                         'First block should have 2 entries.')
+        page_iter = results.by_page()
+        first_block = list(next(page_iter))
+        self.assertEqual(2, len(first_block), 'First block should have 2 entries.')
         self.assertEqual(resources['doc1']['id'], first_block[0]['id'])
         self.assertEqual(resources['doc2']['id'], first_block[1]['id'])
-        self.assertEqual(1,
-                         len(results.fetch_next_block()),
-                         'Second block should have 1 entry.')
-        self.assertEqual(0,
-                         len(results.fetch_next_block()),
-                         'Then its empty.')
+        self.assertEqual(1, len(list(next(page_iter))), 'Second block should have 1 entry.')
+        with self.assertRaises(StopIteration):
+            next(page_iter)
 
     def test_trigger_functionality(self):
         triggers_in_collection1 = [

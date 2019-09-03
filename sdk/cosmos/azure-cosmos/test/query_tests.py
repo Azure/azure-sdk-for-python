@@ -105,7 +105,7 @@ class QueryTest(unittest.TestCase):
                 actual_ids += item['id'] + '.'    
             self.assertEqual(actual_ids, expected_ids)
 
-            # verify fetch_next_block
+            # verify by_page
             # the options is not copied, therefore it need to be restored
             query_iterable = created_collection.query_items_change_feed(
                 partition_key_range_id=pkRangeId,
@@ -115,19 +115,16 @@ class QueryTest(unittest.TestCase):
             count = 0
             expected_count = 2
             all_fetched_res = []
-            while (True):
-                fetched_res = query_iterable.fetch_next_block()
+            for page in query_iterable.by_page():
+                fetched_res = list(page)
                 self.assertEqual(len(fetched_res), min(pageSize, expected_count - count))
                 count += len(fetched_res)
                 all_fetched_res.extend(fetched_res)
-                if len(fetched_res) == 0:
-                    break
+
             actual_ids = ''
             for item in all_fetched_res:
                 actual_ids += item['id'] + '.'
             self.assertEqual(actual_ids, expected_ids)
-            # verify there's no more results
-            self.assertEqual(query_iterable.fetch_next_block(), [])
 
         # verify reading change feed from the beginning
         query_iterable = created_collection.query_items_change_feed(
@@ -203,9 +200,8 @@ class QueryTest(unittest.TestCase):
         self.count = 0
         self.OriginalExecuteFunction = retry_utility.ExecuteFunction
         retry_utility.ExecuteFunction = self._MockExecuteFunction
-        block = query_iterable.fetch_next_block()
-        while block:
-            block = query_iterable.fetch_next_block()
+        for block in query_iterable.by_page():
+            assert len(list(block)) != 0
         retry_utility.ExecuteFunction = self.OriginalExecuteFunction
         self.assertEqual(self.count, expected_count)
         self.count = 0
