@@ -493,8 +493,8 @@ class FaceLandmarks(Model):
 
 
 class NameAndUserDataContract(Model):
-    """A combination of user defined name and user specified data for the person,
-    largePersonGroup/personGroup, and largeFaceList/faceList.
+    """A combination of user defined name and user specified data for the person
+    and largePersonGroup/personGroup.
 
     :param name: User defined name, maximum length is 128.
     :type name: str
@@ -520,7 +520,7 @@ class NameAndUserDataContract(Model):
 
 class MetaDataContract(NameAndUserDataContract):
     """A combination of user defined name and user specified data and recognition
-    model name for largePersonGroup/personGroup, and largeFaceList/faceList.
+    model name for largePersonGroup/personGroup.
 
     :param name: User defined name, maximum length is 128.
     :type name: str
@@ -1065,6 +1065,66 @@ class Makeup(Model):
         super(Makeup, self).__init__(**kwargs)
         self.eye_makeup = eye_makeup
         self.lip_makeup = lip_makeup
+
+
+class NameAndUserDataContractMandatoryName(Model):
+    """A combination of user defined name and user specified data for
+    largeFaceList/faceList.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. User defined name, maximum length is 128.
+    :type name: str
+    :param user_data: User specified data. Length should not exceed 16KB.
+    :type user_data: str
+    """
+
+    _validation = {
+        'name': {'required': True, 'max_length': 128},
+        'user_data': {'max_length': 16384},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'user_data': {'key': 'userData', 'type': 'str'},
+    }
+
+    def __init__(self, *, name: str, user_data: str=None, **kwargs) -> None:
+        super(NameAndUserDataContractMandatoryName, self).__init__(**kwargs)
+        self.name = name
+        self.user_data = user_data
+
+
+class MetaDataContractMandatoryName(NameAndUserDataContractMandatoryName):
+    """A combination of user defined name and user specified data and recognition
+    model name for largeFaceList/faceList.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. User defined name, maximum length is 128.
+    :type name: str
+    :param user_data: User specified data. Length should not exceed 16KB.
+    :type user_data: str
+    :param recognition_model: Possible values include: 'recognition_01',
+     'recognition_02'. Default value: "recognition_01" .
+    :type recognition_model: str or
+     ~azure.cognitiveservices.vision.face.models.RecognitionModel
+    """
+
+    _validation = {
+        'name': {'required': True, 'max_length': 128},
+        'user_data': {'max_length': 16384},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'user_data': {'key': 'userData', 'type': 'str'},
+        'recognition_model': {'key': 'recognitionModel', 'type': 'str'},
+    }
+
+    def __init__(self, *, name: str, user_data: str=None, recognition_model="recognition_01", **kwargs) -> None:
+        super(MetaDataContractMandatoryName, self).__init__(name=name, user_data=user_data, **kwargs)
+        self.recognition_model = recognition_model
 
 
 class Noise(Model):

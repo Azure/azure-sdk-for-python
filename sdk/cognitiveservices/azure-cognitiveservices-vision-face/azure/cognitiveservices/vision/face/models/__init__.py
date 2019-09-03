@@ -38,7 +38,9 @@ try:
     from ._models_py3 import LargePersonGroup
     from ._models_py3 import Makeup
     from ._models_py3 import MetaDataContract
+    from ._models_py3 import MetaDataContractMandatoryName
     from ._models_py3 import NameAndUserDataContract
+    from ._models_py3 import NameAndUserDataContractMandatoryName
     from ._models_py3 import Noise
     from ._models_py3 import Occlusion
     from ._models_py3 import OperationStatus
@@ -83,7 +85,9 @@ except (SyntaxError, ImportError):
     from ._models import LargePersonGroup
     from ._models import Makeup
     from ._models import MetaDataContract
+    from ._models import MetaDataContractMandatoryName
     from ._models import NameAndUserDataContract
+    from ._models import NameAndUserDataContractMandatoryName
     from ._models import Noise
     from ._models import Occlusion
     from ._models import OperationStatus
@@ -146,7 +150,9 @@ __all__ = [
     'LargePersonGroup',
     'Makeup',
     'MetaDataContract',
+    'MetaDataContractMandatoryName',
     'NameAndUserDataContract',
+    'NameAndUserDataContractMandatoryName',
     'Noise',
     'Occlusion',
     'OperationStatus',

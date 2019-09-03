@@ -36,7 +36,7 @@ class LargeFaceListOperations(object):
         self.config = config
 
     def create(
-            self, large_face_list_id, name=None, user_data=None, recognition_model="recognition_01", custom_headers=None, raw=False, **operation_config):
+            self, large_face_list_id, name, user_data=None, recognition_model="recognition_01", custom_headers=None, raw=False, **operation_config):
         """Create an empty large face list with user-specified largeFaceListId,
         name, an optional userData and recognitionModel.
         <br /> Large face list is a list of faces, up to 1,000,000 faces, and
@@ -100,7 +100,7 @@ class LargeFaceListOperations(object):
         :raises:
          :class:`APIErrorException<azure.cognitiveservices.vision.face.models.APIErrorException>`
         """
-        body = models.MetaDataContract(name=name, user_data=user_data, recognition_model=recognition_model)
+        body = models.MetaDataContractMandatoryName(name=name, user_data=user_data, recognition_model=recognition_model)
 
         # Construct URL
         url = self.create.metadata['url']
@@ -120,7 +120,7 @@ class LargeFaceListOperations(object):
             header_parameters.update(custom_headers)
 
         # Construct body
-        body_content = self._serialize.body(body, 'MetaDataContract')
+        body_content = self._serialize.body(body, 'MetaDataContractMandatoryName')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
