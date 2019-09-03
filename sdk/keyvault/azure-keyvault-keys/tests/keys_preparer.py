@@ -45,7 +45,6 @@ DEFAULT_SKU = SkuName.premium.value
 
 
 class VaultClientPreparer(AzureMgmtPreparer):
-    @pytest.mark.usefixtures("get_run_identifier")
     def __init__(
         self,
         sku=None,
