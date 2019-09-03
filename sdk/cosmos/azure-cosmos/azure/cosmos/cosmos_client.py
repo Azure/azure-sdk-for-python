@@ -88,6 +88,13 @@ class CosmosClient(object):
             url, auth=auth, consistency_level=consistency_level, connection_policy=connection_policy
         )
 
+    def __enter__(self):
+        self.client_connection.pipeline_client.__enter__()
+        return self
+
+    def __exit__(self, *args):
+        return self.client_connection.pipeline_client.__exit__(*args)
+
     @classmethod
     def from_connection_string(cls, conn_str, credential=None, consistency_level="Session", **kwargs):
         settings = _parse_connection_str(conn_str, credential)
