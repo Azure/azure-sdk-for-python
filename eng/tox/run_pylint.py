@@ -24,14 +24,14 @@ lint_plugin_path = os.path.join(root_dir, "scripts/pylint_custom_plugin")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Run pylint against target folder. Add a local custom plugin to the path prior to execution."
+        description="Run pylint against target folder. Add a local custom plugin to the path prior to execution. "
     )
 
     parser.add_argument(
         "-t",
         "--target",
         dest="target_package",
-        help="The target module on disk.",
+        help="The target package directory on disk. The target module passed to pylint will be <target_package>/azure.",
         required=True,
     )
 
@@ -39,8 +39,8 @@ if __name__ == "__main__":
 
     package_name = os.path.basename(args.target_package)
 
-    try:
-        if "mgmt" not in package_name:
+    if package_name not in PYLINT_ACCEPTABLE_FAILURES:
+        try:
             check_call(
                 [
                     sys.executable,
@@ -51,15 +51,8 @@ if __name__ == "__main__":
                     os.path.join(args.target_package, "azure"),
                 ]
             )
-    except CalledProcessError as e:
-        logging.error(
-            "{} exited with linting error {}".format(package_name, e.returncode)
-        )
-        if package_name not in PYLINT_ACCEPTABLE_FAILURES:
-            exit(1)
-        else:
-            logging.info(
-                "Ignoring failure for pylint run against package {}".format(
-                    package_name
-                )
+        except CalledProcessError as e:
+            logging.error(
+                "{} exited with linting error {}".format(package_name, e.returncode)
             )
+            exit(1)
