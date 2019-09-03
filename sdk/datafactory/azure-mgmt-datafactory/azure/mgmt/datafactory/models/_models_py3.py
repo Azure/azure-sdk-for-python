@@ -5961,8 +5961,8 @@ class Trigger(Model):
     pipeline run.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: RerunTumblingWindowTrigger, TumblingWindowTrigger,
-    MultiplePipelineTrigger
+    sub-classes are: RerunTumblingWindowTrigger, ChainingTrigger,
+    TumblingWindowTrigger, MultiplePipelineTrigger
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -6000,7 +6000,7 @@ class Trigger(Model):
     }
 
     _subtype_map = {
-        'type': {'RerunTumblingWindowTrigger': 'RerunTumblingWindowTrigger', 'TumblingWindowTrigger': 'TumblingWindowTrigger', 'MultiplePipelineTrigger': 'MultiplePipelineTrigger'}
+        'type': {'RerunTumblingWindowTrigger': 'RerunTumblingWindowTrigger', 'ChainingTrigger': 'ChainingTrigger', 'TumblingWindowTrigger': 'TumblingWindowTrigger', 'MultiplePipelineTrigger': 'MultiplePipelineTrigger'}
     }
 
     def __init__(self, *, additional_properties=None, description: str=None, annotations=None, **kwargs) -> None:
@@ -6526,6 +6526,70 @@ class CassandraTableDataset(Dataset):
         self.type = 'CassandraTable'
 
 
+class ChainingTrigger(Trigger):
+    """Trigger that allows the referenced pipeline to depend on other pipeline
+    runs based on runDimension Name/Value pairs. Upstream pipelines should
+    declare the same runDimension Name and their runs should have the values
+    for those runDimensions. The referenced pipeline run would be triggered if
+    the values for the runDimension match for all upstream pipeline runs.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param description: Trigger description.
+    :type description: str
+    :ivar runtime_state: Indicates if trigger is running or not. Updated when
+     Start/Stop APIs are called on the Trigger. Possible values include:
+     'Started', 'Stopped', 'Disabled'
+    :vartype runtime_state: str or
+     ~azure.mgmt.datafactory.models.TriggerRuntimeState
+    :param annotations: List of tags that can be used for describing the
+     trigger.
+    :type annotations: list[object]
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param pipeline: Required. Pipeline for which runs are created when all
+     upstream pipelines complete successfully.
+    :type pipeline: ~azure.mgmt.datafactory.models.TriggerPipelineReference
+    :param depends_on: Required. Upstream Pipelines.
+    :type depends_on: list[~azure.mgmt.datafactory.models.PipelineReference]
+    :param run_dimension: Required. Run Dimension property that needs to be
+     emitted by upstream pipelines.
+    :type run_dimension: str
+    """
+
+    _validation = {
+        'runtime_state': {'readonly': True},
+        'type': {'required': True},
+        'pipeline': {'required': True},
+        'depends_on': {'required': True},
+        'run_dimension': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'description': {'key': 'description', 'type': 'str'},
+        'runtime_state': {'key': 'runtimeState', 'type': 'str'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
+        'type': {'key': 'type', 'type': 'str'},
+        'pipeline': {'key': 'pipeline', 'type': 'TriggerPipelineReference'},
+        'depends_on': {'key': 'typeProperties.dependsOn', 'type': '[PipelineReference]'},
+        'run_dimension': {'key': 'typeProperties.runDimension', 'type': 'str'},
+    }
+
+    def __init__(self, *, pipeline, depends_on, run_dimension: str, additional_properties=None, description: str=None, annotations=None, **kwargs) -> None:
+        super(ChainingTrigger, self).__init__(additional_properties=additional_properties, description=description, annotations=annotations, **kwargs)
+        self.pipeline = pipeline
+        self.depends_on = depends_on
+        self.run_dimension = run_dimension
+        self.type = 'ChainingTrigger'
+
+
 class CloudError(Model):
     """The object that defines the structure of an Azure Data Factory error
     response.
@@ -6572,6 +6636,72 @@ class CloudErrorException(HttpOperationError):
     def __init__(self, deserialize, response, *args):
 
         super(CloudErrorException, self).__init__(deserialize, response, 'CloudError', *args)
+
+
+class CustomSetupBase(Model):
+    """The base definition of the custom setup.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: ComponentSetup, EnvironmentVariableSetup, CmdkeySetup
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Constant filled by server.
+    :type type: str
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'type': {'ComponentSetup': 'ComponentSetup', 'EnvironmentVariableSetup': 'EnvironmentVariableSetup', 'CmdkeySetup': 'CmdkeySetup'}
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(CustomSetupBase, self).__init__(**kwargs)
+        self.type = None
+
+
+class CmdkeySetup(CustomSetupBase):
+    """The custom setup of running cmdkey commands.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param target_name: Required. The server name of data source access.
+    :type target_name: object
+    :param user_name: Required. The user name of data source access.
+    :type user_name: object
+    :param password: Required. The password of data source access.
+    :type password: ~azure.mgmt.datafactory.models.SecretBase
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'target_name': {'required': True},
+        'user_name': {'required': True},
+        'password': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'target_name': {'key': 'typeProperties.targetName', 'type': 'object'},
+        'user_name': {'key': 'typeProperties.userName', 'type': 'object'},
+        'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
+    }
+
+    def __init__(self, *, target_name, user_name, password, **kwargs) -> None:
+        super(CmdkeySetup, self).__init__(**kwargs)
+        self.target_name = target_name
+        self.user_name = user_name
+        self.password = password
+        self.type = 'CmdkeySetup'
 
 
 class CommonDataServiceForAppsEntityDataset(Dataset):
@@ -6846,6 +6976,38 @@ class CommonDataServiceForAppsSource(CopySource):
         super(CommonDataServiceForAppsSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
         self.query = query
         self.type = 'CommonDataServiceForAppsSource'
+
+
+class ComponentSetup(CustomSetupBase):
+    """The custom setup of installing 3rd party components.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param component_name: Required. The name of the 3rd party component.
+    :type component_name: str
+    :param license_key: Required. The license key to activate the component.
+    :type license_key: ~azure.mgmt.datafactory.models.SecretBase
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'component_name': {'required': True},
+        'license_key': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'component_name': {'key': 'typeProperties.componentName', 'type': 'str'},
+        'license_key': {'key': 'typeProperties.licenseKey', 'type': 'SecretBase'},
+    }
+
+    def __init__(self, *, component_name: str, license_key, **kwargs) -> None:
+        super(ComponentSetup, self).__init__(**kwargs)
+        self.component_name = component_name
+        self.license_key = license_key
+        self.type = 'ComponentSetup'
 
 
 class ConcurLinkedService(LinkedService):
@@ -10330,6 +10492,38 @@ class EntityReference(Model):
         super(EntityReference, self).__init__(**kwargs)
         self.type = type
         self.reference_name = reference_name
+
+
+class EnvironmentVariableSetup(CustomSetupBase):
+    """The custom setup of setting environment variable.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param variable_name: Required. The name of the environment variable.
+    :type variable_name: str
+    :param variable_value: Required. The value of the environment variable.
+    :type variable_value: str
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'variable_name': {'required': True},
+        'variable_value': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'variable_name': {'key': 'typeProperties.variableName', 'type': 'str'},
+        'variable_value': {'key': 'typeProperties.variableValue', 'type': 'str'},
+    }
+
+    def __init__(self, *, variable_name: str, variable_value: str, **kwargs) -> None:
+        super(EnvironmentVariableSetup, self).__init__(**kwargs)
+        self.variable_name = variable_name
+        self.variable_value = variable_value
+        self.type = 'EnvironmentVariableSetup'
 
 
 class ExecutePipelineActivity(ControlActivity):
@@ -15238,6 +15432,10 @@ class IntegrationRuntimeSsisProperties(Model):
      values include: 'Standard', 'Enterprise'
     :type edition: str or
      ~azure.mgmt.datafactory.models.IntegrationRuntimeEdition
+    :param express_custom_setup_properties: Custom setup without script
+     properties for a SSIS integration runtime.
+    :type express_custom_setup_properties:
+     list[~azure.mgmt.datafactory.models.CustomSetupBase]
     """
 
     _attribute_map = {
@@ -15247,9 +15445,10 @@ class IntegrationRuntimeSsisProperties(Model):
         'custom_setup_script_properties': {'key': 'customSetupScriptProperties', 'type': 'IntegrationRuntimeCustomSetupScriptProperties'},
         'data_proxy_properties': {'key': 'dataProxyProperties', 'type': 'IntegrationRuntimeDataProxyProperties'},
         'edition': {'key': 'edition', 'type': 'str'},
+        'express_custom_setup_properties': {'key': 'expressCustomSetupProperties', 'type': '[CustomSetupBase]'},
     }
 
-    def __init__(self, *, additional_properties=None, catalog_info=None, license_type=None, custom_setup_script_properties=None, data_proxy_properties=None, edition=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, catalog_info=None, license_type=None, custom_setup_script_properties=None, data_proxy_properties=None, edition=None, express_custom_setup_properties=None, **kwargs) -> None:
         super(IntegrationRuntimeSsisProperties, self).__init__(**kwargs)
         self.additional_properties = additional_properties
         self.catalog_info = catalog_info
@@ -15257,6 +15456,7 @@ class IntegrationRuntimeSsisProperties(Model):
         self.custom_setup_script_properties = custom_setup_script_properties
         self.data_proxy_properties = data_proxy_properties
         self.edition = edition
+        self.express_custom_setup_properties = express_custom_setup_properties
 
 
 class IntegrationRuntimeStatus(Model):
@@ -20238,6 +20438,8 @@ class PipelineResource(SubResource):
     :param annotations: List of tags that can be used for describing the
      Pipeline.
     :type annotations: list[object]
+    :param run_dimensions: Dimensions emitted by Pipeline.
+    :type run_dimensions: dict[str, object]
     :param folder: The folder that this Pipeline is in. If not specified,
      Pipeline will appear at the root level.
     :type folder: ~azure.mgmt.datafactory.models.PipelineFolder
@@ -20263,10 +20465,11 @@ class PipelineResource(SubResource):
         'variables': {'key': 'properties.variables', 'type': '{VariableSpecification}'},
         'concurrency': {'key': 'properties.concurrency', 'type': 'int'},
         'annotations': {'key': 'properties.annotations', 'type': '[object]'},
+        'run_dimensions': {'key': 'properties.runDimensions', 'type': '{object}'},
         'folder': {'key': 'properties.folder', 'type': 'PipelineFolder'},
     }
 
-    def __init__(self, *, additional_properties=None, description: str=None, activities=None, parameters=None, variables=None, concurrency: int=None, annotations=None, folder=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, description: str=None, activities=None, parameters=None, variables=None, concurrency: int=None, annotations=None, run_dimensions=None, folder=None, **kwargs) -> None:
         super(PipelineResource, self).__init__(**kwargs)
         self.additional_properties = additional_properties
         self.description = description
@@ -20275,6 +20478,7 @@ class PipelineResource(SubResource):
         self.variables = variables
         self.concurrency = concurrency
         self.annotations = annotations
+        self.run_dimensions = run_dimensions
         self.folder = folder
 
 
@@ -20300,6 +20504,8 @@ class PipelineRun(Model):
     :ivar parameters: The full or partial list of parameter name, value pair
      used in the pipeline run.
     :vartype parameters: dict[str, str]
+    :ivar run_dimensions: Run dimensions emitted by Pipeline run.
+    :vartype run_dimensions: dict[str, str]
     :ivar invoked_by: Entity that started the pipeline run.
     :vartype invoked_by: ~azure.mgmt.datafactory.models.PipelineRunInvokedBy
     :ivar last_updated: The last updated timestamp for the pipeline run event
@@ -20323,6 +20529,7 @@ class PipelineRun(Model):
         'is_latest': {'readonly': True},
         'pipeline_name': {'readonly': True},
         'parameters': {'readonly': True},
+        'run_dimensions': {'readonly': True},
         'invoked_by': {'readonly': True},
         'last_updated': {'readonly': True},
         'run_start': {'readonly': True},
@@ -20339,6 +20546,7 @@ class PipelineRun(Model):
         'is_latest': {'key': 'isLatest', 'type': 'bool'},
         'pipeline_name': {'key': 'pipelineName', 'type': 'str'},
         'parameters': {'key': 'parameters', 'type': '{str}'},
+        'run_dimensions': {'key': 'runDimensions', 'type': '{str}'},
         'invoked_by': {'key': 'invokedBy', 'type': 'PipelineRunInvokedBy'},
         'last_updated': {'key': 'lastUpdated', 'type': 'iso-8601'},
         'run_start': {'key': 'runStart', 'type': 'iso-8601'},
@@ -20356,6 +20564,7 @@ class PipelineRun(Model):
         self.is_latest = None
         self.pipeline_name = None
         self.parameters = None
+        self.run_dimensions = None
         self.invoked_by = None
         self.last_updated = None
         self.run_start = None
@@ -27585,6 +27794,10 @@ class TriggerRun(Model):
     :ivar triggered_pipelines: List of pipeline name and run Id triggered by
      the trigger run.
     :vartype triggered_pipelines: dict[str, str]
+    :ivar run_dimension: Run dimension for which trigger was fired.
+    :vartype run_dimension: dict[str, str]
+    :ivar dependency_status: Status of the upstream pipelines.
+    :vartype dependency_status: dict[str, object]
     """
 
     _validation = {
@@ -27596,6 +27809,8 @@ class TriggerRun(Model):
         'message': {'readonly': True},
         'properties': {'readonly': True},
         'triggered_pipelines': {'readonly': True},
+        'run_dimension': {'readonly': True},
+        'dependency_status': {'readonly': True},
     }
 
     _attribute_map = {
@@ -27608,6 +27823,8 @@ class TriggerRun(Model):
         'message': {'key': 'message', 'type': 'str'},
         'properties': {'key': 'properties', 'type': '{str}'},
         'triggered_pipelines': {'key': 'triggeredPipelines', 'type': '{str}'},
+        'run_dimension': {'key': 'runDimension', 'type': '{str}'},
+        'dependency_status': {'key': 'dependencyStatus', 'type': '{object}'},
     }
 
     def __init__(self, *, additional_properties=None, **kwargs) -> None:
@@ -27621,6 +27838,8 @@ class TriggerRun(Model):
         self.message = None
         self.properties = None
         self.triggered_pipelines = None
+        self.run_dimension = None
+        self.dependency_status = None
 
 
 class TriggerRunsQueryResponse(Model):
