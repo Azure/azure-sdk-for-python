@@ -43,9 +43,15 @@ class GoogleBigQueryObjectDataset(Dataset):
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
-    :param table_name: The table name. Type: string (or Expression with
-     resultType string).
+    :param table_name: This property will be retired. Please consider using
+     database + table properties instead.
     :type table_name: object
+    :param table: The table name of the Google BigQuery. Type: string (or
+     Expression with resultType string).
+    :type table: object
+    :param dataset: The database name of the Google BigQuery. Type: string (or
+     Expression with resultType string).
+    :type dataset: object
     """
 
     _validation = {
@@ -64,9 +70,13 @@ class GoogleBigQueryObjectDataset(Dataset):
         'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
         'table_name': {'key': 'typeProperties.tableName', 'type': 'object'},
+        'table': {'key': 'typeProperties.table', 'type': 'object'},
+        'dataset': {'key': 'typeProperties.dataset', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
         super(GoogleBigQueryObjectDataset, self).__init__(**kwargs)
         self.table_name = kwargs.get('table_name', None)
+        self.table = kwargs.get('table', None)
+        self.dataset = kwargs.get('dataset', None)
         self.type = 'GoogleBigQueryObject'
