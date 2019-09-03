@@ -35,6 +35,18 @@ from ._query_iterable import QueryIterable
 __all__ = ("CosmosClient",)
 
 
+def _parse_connection_str(conn_str, credential):
+    conn_str = conn_str.rstrip(";")
+    conn_settings = dict( # pylint: disable=consider-using-dict-comprehension
+        [s.split("=", 1) for s in conn_str.split(";")]
+    )
+    if 'AccountEndpoint' not in conn_settings:
+        raise ValueError("Connection string missing setting 'AccountEndpoint'.")
+    if not credential and 'AccountKey' not in conn_settings:
+        raise ValueError("Connection string missing setting 'AccountKey'.")
+    return conn_settings
+
+
 class CosmosClient(object):
     """
     Provides a client-side logical representation of an Azure Cosmos DB account.
@@ -42,13 +54,13 @@ class CosmosClient(object):
     """
 
     def __init__(
-        self, url, auth, consistency_level="Session", connection_policy=None
+        self, url, credential, consistency_level="Session", connection_policy=None
     ):  # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs,line-too-long
         # type: (str, Dict[str, str], str, ConnectionPolicy) -> None
         """ Instantiate a new CosmosClient.
 
         :param url: The URL of the Cosmos DB account.
-        :param auth:
+        :param credential:
             Contains 'masterKey' or 'resourceTokens', where
             auth['masterKey'] is the default authorization key to use to
             create the client, and auth['resourceTokens'] is the alternative
@@ -65,8 +77,25 @@ class CosmosClient(object):
             :name: create_client
 
         """
+        auth = {}
+        if isinstance(credential, dict):
+            auth['resourceTokens'] = credential
+        elif isinstance(credential, list):
+            auth['permissionFeed'] = credential
+        else:
+            auth['masterKey'] = credential
         self.client_connection = CosmosClientConnection(
-            url, auth, consistency_level=consistency_level, connection_policy=connection_policy
+            url, auth=auth, consistency_level=consistency_level, connection_policy=connection_policy
+        )
+
+    @classmethod
+    def from_connection_string(cls, conn_str, credential=None, consistency_level="Session", **kwargs):
+        settings = _parse_connection_str(conn_str, credential)
+        return cls(
+            url=settings['AccountEndpoint'],
+            credential=credential or settings['AccountKey'],
+            consistency_level=consistency_level,
+            **kwargs
         )
 
     @staticmethod

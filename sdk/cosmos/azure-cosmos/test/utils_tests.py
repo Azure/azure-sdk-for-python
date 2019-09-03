@@ -21,9 +21,11 @@
 
 import unittest
 import pytest
+import azure.cosmos
 import azure.cosmos._utils as _utils
 import platform
 import azure.cosmos.http_constants as http_constants
+import test_config
 
 pytestmark = pytest.mark.cosmosEmulator
 
@@ -35,12 +37,15 @@ class UtilsTests(unittest.TestCase):
     def test_user_agent(self):
         user_agent = _utils.get_user_agent()
 
-        expected_user_agent = "{}/{} Python/{} azure-cosmos/{}".format(
-            platform.system(), platform.release(), platform.python_version(), 
-            http_constants.Versions.SDKVersion
+        expected_user_agent = "azsdk-python-cosmos/{} Python/{} ({})".format(
+            azure.cosmos.__version__,
+            platform.python_version(),
+            platform.platform()
         )
-
         self.assertEqual(user_agent, expected_user_agent)   
+
+    #def test_connection_string(self):
+
         
 if __name__ == "__main__":
     unittest.main()

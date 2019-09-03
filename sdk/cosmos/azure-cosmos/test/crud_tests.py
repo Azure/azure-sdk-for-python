@@ -95,11 +95,11 @@ class CRUDTests(unittest.TestCase):
                 "You must specify your Azure Cosmos account values for "
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
-        cls.client = cosmos_client.CosmosClient(cls.host, {'masterKey': cls.masterKey}, connection_policy=cls.connectionPolicy)
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, connection_policy=cls.connectionPolicy)
         cls.databaseForTest = cls.configs.create_database_if_not_exist(cls.client)
 
     def setUp(self):
-        self.client = cosmos_client.CosmosClient(self.host, {'masterKey':self.masterKey}, "Session",
+        self.client = cosmos_client.CosmosClient(self.host, self.masterKey, "Session",
                                                  self.connectionPolicy)
     def test_database_crud(self):
         # read databases.
@@ -538,8 +538,7 @@ class CRUDTests(unittest.TestCase):
         resource_tokens[urllib.quote(all_collection.id)] = (all_permission.properties['_token'])
         resource_tokens[urllib.quote(read_collection.id)] = (read_permission.properties['_token'])
 
-        restricted_client = cosmos_client.CosmosClient(
-            CRUDTests.host, {'resourceTokens': resource_tokens}, "Session", CRUDTests.connectionPolicy)
+        restricted_client = cosmos_client.CosmosClient(CRUDTests.host, resource_tokens, "Session", CRUDTests.connectionPolicy)
 
         document_definition = {'id': 'document1',
                                'key': 1
@@ -1355,7 +1354,7 @@ class CRUDTests(unittest.TestCase):
                                            client.read_all_databases())
         # Client with master key.
         client = cosmos_client.CosmosClient(CRUDTests.host,
-                                            {'masterKey': CRUDTests.masterKey},
+                                            CRUDTests.masterKey,
                                             "Session",
                                             CRUDTests.connectionPolicy)
         # setup entities
@@ -1365,8 +1364,7 @@ class CRUDTests(unittest.TestCase):
             entities['permissionOnColl1'].properties['_token'])
         resource_tokens[entities['doc1']['id']]= (
             entities['permissionOnColl1'].properties['_token'])
-        col1_client = cosmos_client.CosmosClient(
-            CRUDTests.host, {'resourceTokens': resource_tokens},"Session", CRUDTests.connectionPolicy)
+        col1_client = cosmos_client.CosmosClient(CRUDTests.host, resource_tokens,"Session", CRUDTests.connectionPolicy)
         db = entities['db']
 
         old_client_connection = db.client_connection
@@ -1396,7 +1394,7 @@ class CRUDTests(unittest.TestCase):
             'Expected to read children using parent permissions')
         col2_client = cosmos_client.CosmosClient(
             CRUDTests.host,
-            {'permissionFeed': [entities['permissionOnColl2'].properties]}, "Session", CRUDTests.connectionPolicy)
+            [entities['permissionOnColl2'].properties], "Session", CRUDTests.connectionPolicy)
         doc = {
             'CustomProperty1': 'BBBBBB',
             'customProperty2': 1000,
@@ -1953,7 +1951,7 @@ class CRUDTests(unittest.TestCase):
         connection_policy.RequestTimeout = 0
         with self.assertRaises(Exception):
             # client does a getDatabaseAccount on initialization, which will time out
-            cosmos_client.CosmosClient(CRUDTests.host, {'masterKey': CRUDTests.masterKey}, "Session", connection_policy)
+            cosmos_client.CosmosClient(CRUDTests.host, CRUDTests.masterKey, "Session", connection_policy)
 
     def test_query_iterable_functionality(self):
         def __create_resources(client):

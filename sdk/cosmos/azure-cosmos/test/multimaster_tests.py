@@ -36,7 +36,7 @@ class MultiMasterTests(unittest.TestCase):
 
         connectionPolicy = MultiMasterTests.connectionPolicy
         connectionPolicy.UseMultipleWriteLocations = True
-        client = cosmos_client.CosmosClient(MultiMasterTests.host, {'masterKey': MultiMasterTests.masterKey}, "Session",
+        client = cosmos_client.CosmosClient(MultiMasterTests.host, MultiMasterTests.masterKey, "Session",
                                             connectionPolicy)
 
         created_db = client.create_database(id='multi_master_tests ' + str(uuid.uuid4()))

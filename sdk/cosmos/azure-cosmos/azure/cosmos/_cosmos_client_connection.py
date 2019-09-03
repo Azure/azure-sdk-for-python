@@ -51,7 +51,6 @@ from ._routing import routing_map_provider
 from . import _session
 from . import _utils
 from .partition_key import _Undefined, _Empty
-from .version import VERSION
 
 # pylint: disable=protected-access
 
@@ -121,7 +120,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         self.default_headers = {
             http_constants.HttpHeaders.CacheControl: "no-cache",
             http_constants.HttpHeaders.Version: http_constants.Versions.CurrentVersion,
-            http_constants.HttpHeaders.UserAgent: _utils.get_user_agent(),
             # For single partition query with aggregate functions we would try to accumulate the results on the SDK.
             # We need to set continuation as not expected.
             http_constants.HttpHeaders.IsContinuationExpected: False,
@@ -150,15 +148,11 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             url = six.moves.urllib.parse.urlparse(host)
             proxy = host if url.port else host + ":" + str(connection_policy.ProxyConfiguration.Port)
             proxies = {url.scheme : proxy}
-        user_agent = "azsdk-python-cosmos/{} Python/{} ({})".format(
-            VERSION,
-            platform.python_version(),
-            platform.platform())
 
         policies = [
             HeadersPolicy(),
             ProxyPolicy(proxies=proxies),
-            UserAgentPolicy(base_user_agent=user_agent),
+            UserAgentPolicy(base_user_agent=_utils.get_user_agent()),
             ContentDecodePolicy(),
             CustomHookPolicy(),
             DistributedTracingPolicy(),

@@ -170,7 +170,7 @@ class Test_globaldb_mock_tests(unittest.TestCase):
         connection_policy = documents.ConnectionPolicy()
         connection_policy.EnableEndpointDiscovery = True
 
-        write_location_client = cosmos_client_connection.CosmosClientConnection(Test_globaldb_mock_tests.write_location_host, {'masterKey': Test_globaldb_mock_tests.masterKey}, connection_policy)
+        write_location_client = cosmos_client_connection.CosmosClientConnection(Test_globaldb_mock_tests.write_location_host, Test_globaldb_mock_tests.masterKey, connection_policy)
         self.assertEqual(write_location_client._global_endpoint_manager.WriteEndpoint, Test_globaldb_mock_tests.write_location_host)
         
         self.MockCreateDatabase(write_location_client, { 'id': 'mock database' })
@@ -181,7 +181,7 @@ class Test_globaldb_mock_tests(unittest.TestCase):
         connection_policy = documents.ConnectionPolicy()
         connection_policy.EnableEndpointDiscovery = True
 
-        client = cosmos_client_connection.CosmosClientConnection(Test_globaldb_mock_tests.host, {'masterKey': Test_globaldb_mock_tests.masterKey}, connection_policy)
+        client = cosmos_client_connection.CosmosClientConnection(Test_globaldb_mock_tests.host, Test_globaldb_mock_tests.masterKey, connection_policy)
 
         self.assertEqual(client._global_endpoint_manager.WriteEndpoint, Test_globaldb_mock_tests.write_location_host)
         self.assertEqual(client._global_endpoint_manager.ReadEndpoint, Test_globaldb_mock_tests.write_location_host)

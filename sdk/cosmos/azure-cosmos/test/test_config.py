@@ -38,17 +38,18 @@ except:
 class _test_config(object):
 
     #[SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Cosmos DB Emulator Key")]
-    masterKey = os.getenv('ACCOUNT_KEY', 'C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==')
-    host = os.getenv('ACCOUNT_HOST', 'https://localhost:443/')
+    masterKey = os.getenv('ACCOUNT_KEY', 'Lq2gvNa7V3bTpYmRmOKr7OtUgLWp1HwjUEwqld4A4Fx5roQfM2cbHCSxRsGVFUeEA9Ndmo3cD15TdXtTSPxRoQ==')
+    host = os.getenv('ACCOUNT_HOST', 'https://pytest.documents.azure.com:443/')
+    connection_str = os.getenv('ACCOUNT_CONNECTION_STR', 'AccountEndpoint={};AccountKey={};'.format(host, masterKey))
 
     connectionPolicy = documents.ConnectionPolicy()
     connectionPolicy.DisableSSLVerification = True
 
-    global_host = '[YOUR_GLOBAL_ENDPOINT_HERE]'
-    write_location_host = '[YOUR_WRITE_ENDPOINT_HERE]'
-    read_location_host = '[YOUR_READ_ENDPOINT_HERE]'
-    read_location2_host = '[YOUR_READ_ENDPOINT2_HERE]'
-    global_masterKey = '[YOUR_KEY_HERE]'
+    global_host = os.getenv('ACCOUNT_HOST', 'https://pytest.documents.azure.com:443/')
+    write_location_host = os.getenv('ACCOUNT_HOST', 'https://pytest.documents.azure.com:443/')
+    read_location_host = os.getenv('ACCOUNT_HOST', 'https://pytest.documents.azure.com:443/')
+    read_location2_host = os.getenv('ACCOUNT_HOST', 'https://pytest.documents.azure.com:443/')
+    global_masterKey = os.getenv('ACCOUNT_KEY', 'C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==')
 
     write_location = '[YOUR_WRITE_LOCATION_HERE]'
     read_location = '[YOUR_READ_LOCATION_HERE]'

@@ -265,7 +265,6 @@ class Versions(object):
 
     CurrentVersion = "2018-12-31"
     SDKName = "azure-cosmos"
-    SDKVersion = "4.0.0a1"
 
 
 class Delimiters(object):
