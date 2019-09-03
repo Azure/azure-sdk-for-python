@@ -47,3 +47,9 @@ class ActionType(str, Enum):
 
     edit = "Edit"
     load = "Load"
+
+
+class Mode(str, Enum):
+
+    proof = "proof"
+    spell = "spell"
