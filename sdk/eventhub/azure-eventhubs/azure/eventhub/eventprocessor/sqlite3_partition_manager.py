@@ -7,7 +7,7 @@ import time
 import uuid
 import sqlite3
 import logging
-from .partition_manager import PartitionManager
+from .partition_manager import PartitionManager, OwnershipLostError
 
 logger = logging.getLogger(__name__)
 
@@ -134,6 +134,7 @@ class Sqlite3PartitionManager(PartitionManager):
             else:
                 logger.info("EventProcessor couldn't checkpoint to partition %r because it no longer has the ownership",
                             partition_id)
+                raise OwnershipLostError()
 
         finally:
             cursor.close()

@@ -77,8 +77,15 @@ class PartitionManager(ABC):
         :param sequence_number: The sequence_number of the ~azure.eventhub.EventData the new checkpoint
         will be associated with.
         :type sequence_number: int
-        :return:
+        :return: None
+        :raise: `OwnershipLostError`, `CheckpointError`
         """
 
     async def close(self):
         pass
+
+
+class OwnershipLostError(Exception):
+    """Raises when update_checkpoint detects the ownership has been lost
+
+    """
