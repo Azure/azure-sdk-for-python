@@ -201,6 +201,10 @@ class EventData(object):
         self.message.application_properties = properties
 
     @property
+    def system_properties(self):
+        return self._annotations
+
+    @property
     def body(self):
         """
         The body of the event data object.
