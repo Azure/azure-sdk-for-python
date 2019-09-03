@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # -------------------------------------
 from collections import namedtuple
+from ._shared import parse_vault_id
 
 try:
     from typing import TYPE_CHECKING
@@ -11,16 +12,14 @@ except ImportError:
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
+    from typing import Any, Dict, Optional
     from datetime import datetime
-    from typing import Any, Dict, Generator, Mapping, Optional
     from ._shared._generated.v7_0 import models as _models
-
-from ._shared import parse_vault_id
 
 KeyOperationResult = namedtuple("KeyOperationResult", ["id", "value"])
 
-
 class JsonWebKey(object):
+    # pylint:disable=too-many-instance-attributes
     """As of http://tools.ietf.org/html/draft-ietf-jose-json-web-key-18. All parameters are optional.
 
     :param str kid: Key identifier.
@@ -45,7 +44,7 @@ class JsonWebKey(object):
     """
 
     def __init__(self, **kwargs):
-        # type: (Any) -> None
+        # type: (**Any) -> None
         super(JsonWebKey, self).__init__(**kwargs)
         self.kid = kwargs.get("kid", None)
         self.kty = kwargs.get("kty", None)
@@ -69,7 +68,7 @@ class KeyBase(object):
     """A key's id and attributes."""
 
     def __init__(self, attributes, vault_id, **kwargs):
-        # type: (_models.KeyAttributes, str, Mapping[str, Any]) -> None
+        # type: (_models.KeyAttributes, str, **Any) -> None
         self._attributes = attributes
         self._id = vault_id
         self._vault_id = parse_vault_id(vault_id)
@@ -187,7 +186,7 @@ class Key(KeyBase):
     """A key's attributes and cryptographic material"""
 
     def __init__(self, attributes, vault_id, key_material, **kwargs):
-        # type: (_models.KeyAttributes, str, _models.JsonWebKey, Mapping[str, Any]) -> None
+        # type: (_models.KeyAttributes, str, _models.JsonWebKey, **Any) -> None
         super(Key, self).__init__(attributes, vault_id, **kwargs)
         self._key_material = key_material
 
@@ -215,15 +214,15 @@ class DeletedKey(Key):
 
     def __init__(
         self,
-        attributes,
-        vault_id,
-        key_material=None,
-        deleted_date=None,
-        recovery_id=None,
-        scheduled_purge_date=None,
-        **kwargs
+        attributes,  # type: _models.KeyAttributes
+        vault_id,  # type: str
+        key_material=None,  # type: _models.JsonWebKey
+        deleted_date=None,  # type: Optional[datetime]
+        recovery_id=None,  # type: Optional[str]
+        scheduled_purge_date=None,  # type: Optional[datetime]
+        **kwargs  # type: **Any
     ):
-        # type: (_models.KeyAttributes, str, _models.JsonWebKey, Optional[datetime], Optional[str], Optional[datetime], Mapping[str, Any]) -> None
+        # type: (...) -> None
         super(DeletedKey, self).__init__(attributes, vault_id, key_material, **kwargs)
         self._deleted_date = deleted_date
         self._recovery_id = recovery_id

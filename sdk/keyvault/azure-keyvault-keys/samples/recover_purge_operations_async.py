@@ -22,7 +22,7 @@ from azure.core.exceptions import HttpResponseError
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates the basic recover and purge operations on a vault(key) resource for Azure Key Vault. The vault
 # has to be soft-delete enabled to perform the following operations. See for more information about soft delete:
-# https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete
+# # https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete
 #
 # 1. Create a key (create_key)
 #

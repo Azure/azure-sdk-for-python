@@ -2,6 +2,13 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import six
+from azure.core.exceptions import HttpResponseError
+
+from . import DecryptResult, EncryptResult, SignResult, VerifyResult, UnwrapKeyResult, WrapKeyResult
+from ..models import Key
+from .._shared import KeyVaultClientBase, parse_vault_id
+
 try:
     from typing import TYPE_CHECKING
 except ImportError:
@@ -12,13 +19,6 @@ if TYPE_CHECKING:
     from typing import Any, Optional, Union
     from azure.core.credentials import TokenCredential
     from . import EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
-
-from azure.core.exceptions import HttpResponseError
-import six
-
-from . import DecryptResult, EncryptResult, SignResult, VerifyResult, UnwrapKeyResult, WrapKeyResult
-from ..models import Key
-from .._shared import KeyVaultClientBase, parse_vault_id
 
 
 class CryptographyClient(KeyVaultClientBase):
@@ -38,7 +38,7 @@ class CryptographyClient(KeyVaultClientBase):
     """
 
     def __init__(self, key, credential, **kwargs):
-        # type: (Union[Key, str], TokenCredential, Any) -> None
+        # type: (Union[Key, str], TokenCredential, **Any) -> None
 
         if isinstance(key, Key):
             self._key = key
@@ -82,7 +82,7 @@ class CryptographyClient(KeyVaultClientBase):
         return self._key
 
     def encrypt(self, algorithm, plaintext, **kwargs):
-        # type: (EncryptionAlgorithm, bytes, Any) -> EncryptResult
+        # type: (EncryptionAlgorithm, bytes, **Any) -> EncryptResult
         """
         Encrypt bytes using the client's key. Requires the keys/encrypt permission.
 
@@ -100,17 +100,23 @@ class CryptographyClient(KeyVaultClientBase):
             from azure.keyvault.keys.crypto import EncryptionAlgorithm
 
             # encrypt returns a tuple with the ciphertext and the metadata required to decrypt it
-            key_id, algorithm, ciphertext, authentication_tag = client.encrypt(EncryptionAlgorithm.rsa_oaep, b"plaintext")
+            key_id, algorithm, ciphertext, authentication_tag =
+                client.encrypt(EncryptionAlgorithm.rsa_oaep, b"plaintext")
 
         """
 
         result = self._client.encrypt(
-            self._key_id.vault_url, self._key_id.name, self._key_id.version, algorithm, plaintext, **kwargs
+            vault_base_url=self._key_id.vault_url,
+            key_name=self._key_id.name,
+            key_version=self._key_id.version,
+            algorithm=algorithm,
+            value=plaintext,
+            **kwargs
         )
         return EncryptResult(key_id=self.key_id, algorithm=algorithm, ciphertext=result.result, authentication_tag=None)
 
     def decrypt(self, algorithm, ciphertext, **kwargs):
-        # type: (EncryptionAlgorithm, bytes, Any) -> DecryptResult
+        # type: (EncryptionAlgorithm, bytes, **Any) -> DecryptResult
         """
         Decrypt a single block of encrypted data using the client's key. Requires the keys/decrypt permission.
 
@@ -138,12 +144,17 @@ class CryptographyClient(KeyVaultClientBase):
             raise ValueError("'authentication_tag' is required when 'authentication_data' is specified")
 
         result = self._client.decrypt(
-            self._key_id.vault_url, self._key_id.name, self._key_id.version, algorithm, ciphertext, **kwargs
+            vault_base_url=self._key_id.vault_url,
+            key_name=self._key_id.name,
+            key_version=self._key_id.version,
+            algorithm=algorithm,
+            value=ciphertext,
+            **kwargs
         )
         return DecryptResult(decrypted_bytes=result.result)
 
     def wrap(self, algorithm, key, **kwargs):
-        # type: (KeyWrapAlgorithm, bytes, Any) -> WrapKeyResult
+        # type: (KeyWrapAlgorithm, bytes, **Any) -> WrapKeyResult
         """
         Wrap a key with the client's key. Requires the keys/wrapKey permission.
 
@@ -164,12 +175,17 @@ class CryptographyClient(KeyVaultClientBase):
         """
 
         result = self._client.wrap_key(
-            self._key_id.vault_url, self._key_id.name, self._key_id.version, algorithm=algorithm, value=key, **kwargs
+            vault_base_url=self._key_id.vault_url,
+            key_name=self._key_id.name,
+            key_version=self._key_id.version,
+            algorithm=algorithm,
+            value=key,
+            **kwargs
         )
         return WrapKeyResult(key_id=self.key_id, algorithm=algorithm, encrypted_key=result.result)
 
     def unwrap(self, algorithm, encrypted_key, **kwargs):
-        # type: (KeyWrapAlgorithm, bytes, Any) -> UnwrapKeyResult
+        # type: (KeyWrapAlgorithm, bytes, **Any) -> UnwrapKeyResult
         """
         Unwrap a key previously wrapped with the client's key. Requires the keys/unwrapKey permission.
 
@@ -190,9 +206,9 @@ class CryptographyClient(KeyVaultClientBase):
         """
 
         result = self._client.unwrap_key(
-            self._key_id.vault_url,
-            self._key_id.name,
-            self._key_id.version,
+            vault_base_url=self._key_id.vault_url,
+            key_name=self._key_id.name,
+            key_version=self._key_id.version,
             algorithm=algorithm,
             value=encrypted_key,
             **kwargs
@@ -200,7 +216,7 @@ class CryptographyClient(KeyVaultClientBase):
         return UnwrapKeyResult(unwrapped_bytes=result.result)
 
     def sign(self, algorithm, digest, **kwargs):
-        # type: (SignatureAlgorithm, bytes, Any) -> SignResult
+        # type: (SignatureAlgorithm, bytes, **Any) -> SignResult
         """
         Create a signature from a digest using the client's key. Requires the keys/sign permission.
 
@@ -224,12 +240,17 @@ class CryptographyClient(KeyVaultClientBase):
         """
 
         result = self._client.sign(
-            self._key_id.vault_url, self._key_id.name, self._key_id.version, algorithm, digest, **kwargs
+            vault_base_url=self._key_id.vault_url,
+            key_name=self._key_id.name,
+            key_version=self._key_id.version,
+            algorithm=algorithm,
+            value=digest,
+            **kwargs
         )
         return SignResult(key_id=self.key_id, algorithm=algorithm, signature=result.result)
 
     def verify(self, algorithm, digest, signature, **kwargs):
-        # type: (SignatureAlgorithm, bytes, bytes, Any) -> VerifyResult
+        # type: (SignatureAlgorithm, bytes, bytes, **Any) -> VerifyResult
         """
         Verify a signature using the client's key. Requires the keys/verify permission.
 
@@ -251,6 +272,12 @@ class CryptographyClient(KeyVaultClientBase):
         """
 
         result = self._client.verify(
-            self._key_id.vault_url, self._key_id.name, self._key_id.version, algorithm, digest, signature, **kwargs
+            vault_base_url=self._key_id.vault_url,
+            key_name=self._key_id.name,
+            key_version=self._key_id.version,
+            algorithm=algorithm,
+            digest=digest,
+            signature=signature,
+            **kwargs
         )
         return VerifyResult(result=result.value)

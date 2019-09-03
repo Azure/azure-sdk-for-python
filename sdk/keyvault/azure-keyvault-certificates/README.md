@@ -80,7 +80,7 @@ Once you've populated the **AZURE_CLIENT_ID**, **AZURE_CLIENT_SECRET** and **AZU
 * updated: Indicates when this version of the certificate was updated.
 
 ### Certificate Client:
-The Certificate client performs the interactions with the Azure Key Vault service for getting, setting, updating, deleting, and listing secrets and its versions. An asynchronous and synchronous, SecretClient, client exists in the SDK allowing for selection of a client based on an application's use case. Once you've initialized a CertificateClient, you can interact with the primary resource types in Key Vault.
+The Certificate client performs the interactions with the Azure Key Vault service for getting, setting, updating, deleting, and listing certificates and their versions. An asynchronous and synchronous, CertificateClient, client exists in the SDK allowing for selection of a client based on an application's use case. Once you've initialized a CertificateClient, you can interact with the primary resource types in Key Vault.
 
 ## Examples
 The following section provides several code snippets using the above created `certificate_client`, covering some of the most common Azure Key Vault Certificate service related tasks, including:
