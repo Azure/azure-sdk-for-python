@@ -17,37 +17,37 @@ class ExpansionResultAggregation(Model):
 
     All required parameters must be populated in order to send to Azure.
 
+    :param aggregation_type: The common type of the aggregation. (for e.g.
+     entity field name)
+    :type aggregation_type: str
+    :param count: Required. Total number of aggregations of the given kind
+     (and aggregationType if given) in the expansion result.
+    :type count: int
+    :param display_name: The display name of the aggregation by type.
+    :type display_name: str
     :param entity_kind: Required. The kind of the aggregated entity. Possible
      values include: 'Account', 'Host', 'File', 'AzureResource',
      'CloudApplication', 'DnsResolution', 'FileHash', 'Ip', 'Malware',
      'Process', 'RegistryKey', 'RegistryValue', 'SecurityGroup', 'Url',
      'SecurityAlert', 'Bookmark'
     :type entity_kind: str or ~azure.mgmt.securityinsight.models.EntityKind
-    :param count: Required. Total number of aggregations of the given kind
-     (and aggregationType if given) in the expansion result.
-    :type count: int
-    :param aggregation_type: The common type of the aggregation. (for e.g.
-     entity field name)
-    :type aggregation_type: str
-    :param display_name: The display name of the aggregation by type.
-    :type display_name: str
     """
 
     _validation = {
-        'entity_kind': {'required': True},
         'count': {'required': True},
+        'entity_kind': {'required': True},
     }
 
     _attribute_map = {
-        'entity_kind': {'key': 'entityKind', 'type': 'str'},
-        'count': {'key': 'count', 'type': 'int'},
         'aggregation_type': {'key': 'aggregationType', 'type': 'str'},
+        'count': {'key': 'count', 'type': 'int'},
         'display_name': {'key': 'displayName', 'type': 'str'},
+        'entity_kind': {'key': 'entityKind', 'type': 'str'},
     }
 
-    def __init__(self, *, entity_kind, count: int, aggregation_type: str=None, display_name: str=None, **kwargs) -> None:
+    def __init__(self, *, count: int, entity_kind, aggregation_type: str=None, display_name: str=None, **kwargs) -> None:
         super(ExpansionResultAggregation, self).__init__(**kwargs)
-        self.entity_kind = entity_kind
-        self.count = count
         self.aggregation_type = aggregation_type
+        self.count = count
         self.display_name = display_name
+        self.entity_kind = entity_kind

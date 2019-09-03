@@ -15,19 +15,19 @@ from msrest.serialization import Model
 class EntityExpandResponse(Model):
     """The entity expansion result operation response.
 
-    :param value: The expansion result values.
-    :type value: ~azure.mgmt.securityinsight.models.EntityExpandResponseValue
     :param meta_data: The metadata from the expansion operation results.
     :type meta_data:
      ~azure.mgmt.securityinsight.models.ExpansionResultsMetadata
+    :param value: The expansion result values.
+    :type value: ~azure.mgmt.securityinsight.models.EntityExpandResponseValue
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': 'EntityExpandResponseValue'},
         'meta_data': {'key': 'metaData', 'type': 'ExpansionResultsMetadata'},
+        'value': {'key': 'value', 'type': 'EntityExpandResponseValue'},
     }
 
-    def __init__(self, *, value=None, meta_data=None, **kwargs) -> None:
+    def __init__(self, *, meta_data=None, value=None, **kwargs) -> None:
         super(EntityExpandResponse, self).__init__(**kwargs)
-        self.value = value
         self.meta_data = meta_data
+        self.value = value

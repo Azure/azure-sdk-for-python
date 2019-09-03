@@ -22,58 +22,58 @@ class SecurityGroupEntity(Entity):
 
     :ivar id: Azure resource Id
     :vartype id: str
-    :ivar type: Azure resource type
-    :vartype type: str
     :ivar name: Azure resource name
     :vartype name: str
+    :ivar type: Azure resource type
+    :vartype type: str
     :param kind: Required. Constant filled by server.
     :type kind: str
+    :ivar additional_data: A bag of custom fields that should be part of the
+     entity and will be presented to the user.
+    :vartype additional_data: dict[str, object]
     :ivar friendly_name: The graph item display name which is a short humanly
      readable description of the graph item instance. This property is optional
      and might be system generated.
     :vartype friendly_name: str
-    :ivar additional_data: A bag of custom fields that should be part of the
-     entity and will be presented to the user.
-    :vartype additional_data: dict[str, object]
     :ivar distinguished_name: The group distinguished name
     :vartype distinguished_name: str
-    :ivar sid: The SID attribute is a single-value attribute that specifies
-     the security identifier (SID) of the group
-    :vartype sid: str
     :ivar object_guid: A single-value attribute that is the unique identifier
      for the object, assigned by active directory.
     :vartype object_guid: str
+    :ivar sid: The SID attribute is a single-value attribute that specifies
+     the security identifier (SID) of the group
+    :vartype sid: str
     """
 
     _validation = {
         'id': {'readonly': True},
-        'type': {'readonly': True},
         'name': {'readonly': True},
+        'type': {'readonly': True},
         'kind': {'required': True},
-        'friendly_name': {'readonly': True},
         'additional_data': {'readonly': True},
+        'friendly_name': {'readonly': True},
         'distinguished_name': {'readonly': True},
-        'sid': {'readonly': True},
         'object_guid': {'readonly': True},
+        'sid': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
         'additional_data': {'key': 'properties.additionalData', 'type': '{object}'},
+        'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
         'distinguished_name': {'key': 'properties.distinguishedName', 'type': 'str'},
-        'sid': {'key': 'properties.sid', 'type': 'str'},
         'object_guid': {'key': 'properties.objectGuid', 'type': 'str'},
+        'sid': {'key': 'properties.sid', 'type': 'str'},
     }
 
     def __init__(self, **kwargs) -> None:
         super(SecurityGroupEntity, self).__init__(**kwargs)
-        self.friendly_name = None
         self.additional_data = None
+        self.friendly_name = None
         self.distinguished_name = None
-        self.sid = None
         self.object_guid = None
+        self.sid = None
         self.kind = 'SecurityGroup'

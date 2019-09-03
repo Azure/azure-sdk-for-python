@@ -22,65 +22,65 @@ class Bookmark(Resource):
 
     :ivar id: Azure resource Id
     :vartype id: str
-    :ivar type: Azure resource type
-    :vartype type: str
     :ivar name: Azure resource name
     :vartype name: str
+    :ivar type: Azure resource type
+    :vartype type: str
     :param etag: Etag of the bookmark.
     :type etag: str
-    :param display_name: Required. The display name of the bookmark
-    :type display_name: str
-    :param updated: The last time the bookmark was updated
-    :type updated: datetime
     :param created: The time the bookmark was created
     :type created: datetime
     :param created_by: Describes a user that created the bookmark
     :type created_by: ~azure.mgmt.securityinsight.models.UserInfo
-    :param updated_by: Describes a user that updated the bookmark
-    :type updated_by: ~azure.mgmt.securityinsight.models.UserInfo
-    :param notes: The notes of the bookmark
-    :type notes: str
+    :param display_name: Required. The display name of the bookmark
+    :type display_name: str
     :param labels: List of labels relevant to this bookmark
     :type labels: list[str]
+    :param notes: The notes of the bookmark
+    :type notes: str
     :param query: Required. The query of the bookmark.
     :type query: str
     :param query_result: The query result of the bookmark.
     :type query_result: str
+    :param updated: The last time the bookmark was updated
+    :type updated: datetime
+    :param updated_by: Describes a user that updated the bookmark
+    :type updated_by: ~azure.mgmt.securityinsight.models.UserInfo
     """
 
     _validation = {
         'id': {'readonly': True},
-        'type': {'readonly': True},
         'name': {'readonly': True},
+        'type': {'readonly': True},
         'display_name': {'required': True},
         'query': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'updated': {'key': 'properties.updated', 'type': 'iso-8601'},
         'created': {'key': 'properties.created', 'type': 'iso-8601'},
         'created_by': {'key': 'properties.createdBy', 'type': 'UserInfo'},
-        'updated_by': {'key': 'properties.updatedBy', 'type': 'UserInfo'},
-        'notes': {'key': 'properties.notes', 'type': 'str'},
+        'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'labels': {'key': 'properties.labels', 'type': '[str]'},
+        'notes': {'key': 'properties.notes', 'type': 'str'},
         'query': {'key': 'properties.query', 'type': 'str'},
         'query_result': {'key': 'properties.queryResult', 'type': 'str'},
+        'updated': {'key': 'properties.updated', 'type': 'iso-8601'},
+        'updated_by': {'key': 'properties.updatedBy', 'type': 'UserInfo'},
     }
 
     def __init__(self, **kwargs):
         super(Bookmark, self).__init__(**kwargs)
         self.etag = kwargs.get('etag', None)
-        self.display_name = kwargs.get('display_name', None)
-        self.updated = kwargs.get('updated', None)
         self.created = kwargs.get('created', None)
         self.created_by = kwargs.get('created_by', None)
-        self.updated_by = kwargs.get('updated_by', None)
-        self.notes = kwargs.get('notes', None)
+        self.display_name = kwargs.get('display_name', None)
         self.labels = kwargs.get('labels', None)
+        self.notes = kwargs.get('notes', None)
         self.query = kwargs.get('query', None)
         self.query_result = kwargs.get('query_result', None)
+        self.updated = kwargs.get('updated', None)
+        self.updated_by = kwargs.get('updated_by', None)
