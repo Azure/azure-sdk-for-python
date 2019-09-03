@@ -32,6 +32,9 @@ class TumblingWindowTrigger(Trigger):
      'Started', 'Stopped', 'Disabled'
     :vartype runtime_state: str or
      ~azure.mgmt.datafactory.models.TriggerRuntimeState
+    :param annotations: List of tags that can be used for describing the
+     trigger.
+    :type annotations: list[object]
     :param type: Required. Constant filled by server.
     :type type: str
     :param pipeline: Required. Pipeline for which runs are created when an
@@ -82,6 +85,7 @@ class TumblingWindowTrigger(Trigger):
         'additional_properties': {'key': '', 'type': '{object}'},
         'description': {'key': 'description', 'type': 'str'},
         'runtime_state': {'key': 'runtimeState', 'type': 'str'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
         'pipeline': {'key': 'pipeline', 'type': 'TriggerPipelineReference'},
         'frequency': {'key': 'typeProperties.frequency', 'type': 'str'},
@@ -94,8 +98,8 @@ class TumblingWindowTrigger(Trigger):
         'depends_on': {'key': 'typeProperties.dependsOn', 'type': '[DependencyReference]'},
     }
 
-    def __init__(self, *, pipeline, frequency, interval: int, start_time, max_concurrency: int, additional_properties=None, description: str=None, end_time=None, delay=None, retry_policy=None, depends_on=None, **kwargs) -> None:
-        super(TumblingWindowTrigger, self).__init__(additional_properties=additional_properties, description=description, **kwargs)
+    def __init__(self, *, pipeline, frequency, interval: int, start_time, max_concurrency: int, additional_properties=None, description: str=None, annotations=None, end_time=None, delay=None, retry_policy=None, depends_on=None, **kwargs) -> None:
+        super(TumblingWindowTrigger, self).__init__(additional_properties=additional_properties, description=description, annotations=annotations, **kwargs)
         self.pipeline = pipeline
         self.frequency = frequency
         self.interval = interval

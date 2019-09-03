@@ -37,8 +37,9 @@ jobs:
         parameters:
           BuildTargetingString: ${{ parameters.BuildTargetingString }}
           ServiceDirectory: ${{ parameters.ServiceDirectory }}
-          AdditionalTestArgs: '--disablecov'
+          CoverageArg: '--disablecov'
           EnvVars: ${{ parameters.EnvVars }}
           BeforeTestSteps: ${{ parameters.BeforeTestSteps }}
           PythonVersion: $(PythonVersion)
           OSName: $(OSName)
+          ToxTestEnv: "whl"

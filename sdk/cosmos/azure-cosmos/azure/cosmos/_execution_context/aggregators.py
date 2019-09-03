@@ -43,13 +43,13 @@ class _AverageAggregator(_Aggregator):
         self.count = None
 
     def aggregate(self, other):
-        if other is None or not 'sum' in other:
+        if other is None or not "sum" in other:
             return
         if self.sum is None:
             self.sum = 0.0
             self.count = 0
-        self.sum += other['sum']
-        self.count += other['count']
+        self.sum += other["sum"]
+        self.count += other["count"]
 
     def get_result(self):
         if self.sum is None or self.count is None or self.count <= 0:
@@ -76,7 +76,7 @@ class _MinAggregator(_Aggregator):
         if self.value is None:
             self.value = other
         else:
-            if (_OrderByHelper.compare({'item': other}, {'item': self.value}) < 0):
+            if _OrderByHelper.compare({"item": other}, {"item": self.value}) < 0:
                 self.value = other
 
     def get_result(self):
@@ -91,7 +91,7 @@ class _MaxAggregator(_Aggregator):
         if self.value is None:
             self.value = other
         else:
-            if (_OrderByHelper.compare({'item': other}, {'item': self.value}) > 0):
+            if _OrderByHelper.compare({"item": other}, {"item": self.value}) > 0:
                 self.value = other
 
     def get_result(self):

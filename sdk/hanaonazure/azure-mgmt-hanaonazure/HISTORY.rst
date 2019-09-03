@@ -3,6 +3,14 @@
 Release History
 ===============
 
+0.10.0 (2019-08-15)
++++++++++++++++++++
+
+**Features**
+
+- Model SapMonitor has a new parameter log_analytics_workspace_arm_id
+- Model SapMonitor has a new parameter managed_resource_group_name
+
 0.9.0 (2019-07-31)
 ++++++++++++++++++
 

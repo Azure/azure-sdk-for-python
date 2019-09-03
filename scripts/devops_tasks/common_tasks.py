@@ -12,12 +12,39 @@ import glob
 from pathlib import Path
 from subprocess import check_call, CalledProcessError
 import os
+import errno
+import shutil
 import sys
 import logging
 
 logging.getLogger().setLevel(logging.INFO)
 
 OMITTED_CI_PACKAGES = ["azure-mgmt-documentdb", "azure-servicemanagement-legacy"]
+
+MANAGEMENT_PACKAGE_IDENTIFIERS = [
+    "mgmt",
+    "azure-cognitiveservices",
+    "azure-servicefabric",
+    "azure-nspkg",
+]
+
+
+def log_file(file_location, is_error=False):
+    with open(file_location, "r") as file:
+        for line in file:
+            sys.stdout.write(line)
+        sys.stdout.write("\n")
+        # CI consistently sees outputs in the wrong location. Trying this to see if it helps
+        sys.stdout.flush()
+
+
+
+def read_file(file_location):
+    str_buffer = ""
+    with open(file_location, "r") as file:
+        for line in file:
+            str_buffer += line
+    return str_buffer
 
 
 def cleanup_folder(target_folder):
@@ -27,7 +54,19 @@ def cleanup_folder(target_folder):
             if os.path.isfile(file_path):
                 os.remove(file_path)
         except Exception as e:
-            print(e)
+            logging.error(e)
+
+
+# helper functions
+def clean_coverage(coverage_dir):
+    try:
+        os.mkdir(coverage_dir)
+    except OSError as e:
+        if e.errno == errno.EEXIST:
+            logging.info("Coverage dir already exists. Cleaning.")
+            cleanup_folder(coverage_dir)
+        else:
+            raise
 
 
 # this function is where a glob string gets translated to a list of packages
@@ -56,7 +95,7 @@ def process_glob_string(glob_string, target_root_dir):
     # however, if there are multiple packages being built, we should honor the omission list and NOT build the omitted
     # packages
     else:
-        return remove_omitted_packages(collected_directories)
+        return sorted(remove_omitted_packages(collected_directories))
 
 
 def remove_omitted_packages(collected_directories):

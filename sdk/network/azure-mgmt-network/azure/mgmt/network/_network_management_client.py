@@ -1340,6 +1340,32 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
+    def firewall_policies(self):
+        """Instance depends on the API version:
+
+           * 2019-06-01: :class:`FirewallPoliciesOperations<azure.mgmt.network.v2019_06_01.operations.FirewallPoliciesOperations>`
+        """
+        api_version = self._get_api_version('firewall_policies')
+        if api_version == '2019-06-01':
+            from .v2019_06_01.operations import FirewallPoliciesOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def firewall_policy_rule_groups(self):
+        """Instance depends on the API version:
+
+           * 2019-06-01: :class:`FirewallPolicyRuleGroupsOperations<azure.mgmt.network.v2019_06_01.operations.FirewallPolicyRuleGroupsOperations>`
+        """
+        api_version = self._get_api_version('firewall_policy_rule_groups')
+        if api_version == '2019-06-01':
+            from .v2019_06_01.operations import FirewallPolicyRuleGroupsOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
     def hub_virtual_network_connections(self):
         """Instance depends on the API version:
 

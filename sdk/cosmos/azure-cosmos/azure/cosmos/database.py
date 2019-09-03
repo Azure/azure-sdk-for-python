@@ -1,28 +1,31 @@
-#The MIT License (MIT)
-#Copyright (c) 2014 Microsoft Corporation
+# The MIT License (MIT)
+# Copyright (c) 2014 Microsoft Corporation
 
-#Permission is hereby granted, free of charge, to any person obtaining a copy
-#of this software and associated documentation files (the "Software"), to deal
-#in the Software without restriction, including without limitation the rights
-#to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-#copies of the Software, and to permit persons to whom the Software is
-#furnished to do so, subject to the following conditions:
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
 
-#The above copyright notice and this permission notice shall be included in all
-#copies or substantial portions of the Software.
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
 
-#THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-#IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-#FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-#AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-#LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-#OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-#SOFTWARE.
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 
 """Create, read, update and delete containers in the Azure Cosmos DB SQL API service.
 """
 
+from typing import Any, List, Dict, Mapping, Union, cast
+
 import six
+
 from ._cosmos_client_connection import CosmosClientConnection
 from .container import Container
 from .offer import Offer
@@ -30,20 +33,11 @@ from .http_constants import StatusCodes
 from .errors import HTTPFailure
 from .user import User
 from ._query_iterable import QueryIterable
-from .partition_key import  PartitionKey
 
-from typing import (
-    Any,
-    List,
-    Dict,
-    Mapping,
-    Union,
-    cast
-)
+__all__ = ("Database",)
 
-__all__ = (
-    'Database',
-)
+# pylint: disable=protected-access
+
 
 class Database(object):
     """ Represents an Azure Cosmos DB SQL API database.
@@ -67,7 +61,7 @@ class Database(object):
     * `_users`:	The addressable path of the users resource.
     """
 
-    def __init__(self, client_connection, id, properties=None):
+    def __init__(self, client_connection, id, properties=None):  # pylint: disable=redefined-builtin
         # type: (CosmosClientConnection, str, Dict[str, Any]) -> None
         """
         :param ClientSession client_connection: Client from which this database was retrieved.
@@ -115,13 +109,14 @@ class Database(object):
         initial_headers=None,
         populate_query_metrics=None,
         request_options=None,
-        response_hook=None
+        response_hook=None,
     ):
         # type: (str, Dict[str, str], bool, Dict[str, Any], Optional[Callable]) -> Dict[str, Any]
         """
         Read the database properties
 
-        :param database: The ID (name), dict representing the properties or :class:`Database` instance of the database to read.
+        :param database: The ID (name), dict representing the properties or :class:`Database`
+            instance of the database to read.
         :param session_token: Token for use with Session consistency.
         :param initial_headers: Initial headers to be sent as part of the request.
         :param populate_query_metrics: Enable returning query metrics in response headers.
@@ -132,10 +127,11 @@ class Database(object):
 
         """
         # TODO this helper function should be extracted from CosmosClient
-        from .cosmos_client import CosmosClient 
+        from .cosmos_client import CosmosClient
+
         database_link = CosmosClient._get_database_link(self)
         if not request_options:
-            request_options = {} # type: Dict[str, Any]
+            request_options = {}  # type: Dict[str, Any]
         if session_token:
             request_options["sessionToken"] = session_token
         if initial_headers:
@@ -143,9 +139,7 @@ class Database(object):
         if populate_query_metrics is not None:
             request_options["populateQueryMetrics"] = populate_query_metrics
 
-        self._properties = self.client_connection.ReadDatabase(
-            database_link, options=request_options
-        )
+        self._properties = self.client_connection.ReadDatabase(database_link, options=request_options)
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, self._properties)
@@ -154,21 +148,21 @@ class Database(object):
 
     def create_container(
         self,
-        id,
-        partition_key,
-        indexing_policy=None,
-        default_ttl=None,
-        session_token=None,
-        initial_headers=None,
-        access_condition=None,
-        populate_query_metrics=None,
-        offer_throughput=None,
-        unique_key_policy=None,
-        conflict_resolution_policy=None,
-        request_options=None, 
-        response_hook=None
+        id,  # type: str  # pylint: disable=redefined-builtin
+        partition_key,  # type: PartitionKey
+        indexing_policy=None,  # type: Dict[str, Any]
+        default_ttl=None,  # type: int
+        session_token=None,  # type: str
+        initial_headers=None,  # type:  Dict[str, str]
+        access_condition=None,  # type: Dict[str, str]
+        populate_query_metrics=None,  # type: bool
+        offer_throughput=None,  # type: int
+        unique_key_policy=None,  # type: Dict[str, Any]
+        conflict_resolution_policy=None,  # type: Dict[str, Any]
+        request_options=None,  # type: Dict[str, Any]
+        response_hook=None,  # type: Optional[Callable]
     ):
-        # type: (str, PartitionKey, Dict[str, Any], int, str, Dict[str, str], Dict[str, str], bool, int, Dict[str, Any], Dict[str, Any], Dict[str, Any], Optional[Callable]) -> Container
+        # type: (...) -> Container
         """
         Create a new container with the given ID (name).
 
@@ -221,7 +215,7 @@ class Database(object):
             definition["conflictResolutionPolicy"] = conflict_resolution_policy
 
         if not request_options:
-            request_options = {} # type: Dict[str, Any]
+            request_options = {}  # type: Dict[str, Any]
         if session_token:
             request_options["sessionToken"] = session_token
         if initial_headers:
@@ -234,9 +228,7 @@ class Database(object):
             request_options["offerThroughput"] = offer_throughput
 
         data = self.client_connection.CreateContainer(
-            database_link=self.database_link,
-            collection=definition,
-            options=request_options,
+            database_link=self.database_link, collection=definition, options=request_options
         )
 
         if response_hook:
@@ -246,18 +238,20 @@ class Database(object):
 
     def delete_container(
         self,
-        container,
-        session_token=None,
-        initial_headers=None,
-        access_condition=None,
-        populate_query_metrics=None,
-        request_options=None, 
-        response_hook=None
+        container,  # type: Union[str, Container, Dict[str, Any]]
+        session_token=None,  # type: str
+        initial_headers=None,  # type: Dict[str, str]
+        access_condition=None,  # type: Dict[str, str]
+        populate_query_metrics=None,  # type: bool
+        request_options=None,  # type: Dict[str, Any]
+        response_hook=None,  # type: Optional[Callable]
     ):
-        # type: (Union[str, Container, Dict[str, Any]], str, Dict[str, str], Dict[str, str], bool, Dict[str, Any], Optional[Callable]) -> None
+        # type: (...) -> None
         """ Delete the container
 
-        :param container: The ID (name) of the container to delete. You can either pass in the ID of the container to delete, a :class:`Container` instance or a dict representing the properties of the container.
+        :param container: The ID (name) of the container to delete. You can either
+            pass in the ID of the container to delete, a :class:`Container` instance or
+            a dict representing the properties of the container.
         :param session_token: Token for use with Session consistency.
         :param initial_headers: Initial headers to be sent as part of the request.
         :param access_condition: Conditions Associated with the request.
@@ -268,7 +262,7 @@ class Database(object):
 
         """
         if not request_options:
-            request_options = {} # type: Dict[str, Any]
+            request_options = {}  # type: Dict[str, Any]
         if session_token:
             request_options["sessionToken"] = session_token
         if initial_headers:
@@ -283,14 +277,12 @@ class Database(object):
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
 
-    def get_container_client(
-        self,
-        container,
-    ):
+    def get_container_client(self, container):
         # type: (Union[str, Container, Dict[str, Any]]) -> Container
         """ Get the specified `Container`, or a container with specified ID (name).
 
-        :param container: The ID (name) of the container, a :class:`Container` instance, or a dict representing the properties of the container to be retrieved.
+        :param container: The ID (name) of the container, a :class:`Container` instance,
+            or a dict representing the properties of the container to be retrieved.
 
         .. literalinclude:: ../../examples/examples.py
             :start-after: [START get_container]
@@ -304,15 +296,11 @@ class Database(object):
         if isinstance(container, Container):
             id_value = container.id
         elif isinstance(container, Mapping):
-            id_value = container['id']
+            id_value = container["id"]
         else:
             id_value = container
 
-        return Container(
-            self.client_connection,
-            self.database_link,
-            id_value
-        )
+        return Container(self.client_connection, self.database_link, id_value)
 
     def read_all_containers(
         self,
@@ -320,8 +308,8 @@ class Database(object):
         session_token=None,
         initial_headers=None,
         populate_query_metrics=None,
-        feed_options=None, 
-        response_hook=None
+        feed_options=None,
+        response_hook=None,
     ):
         # type: (int, str, Dict[str, str], bool, Dict[str, Any], Optional[Callable]) -> QueryIterable
         """ List the containers in the database.
@@ -344,7 +332,7 @@ class Database(object):
 
         """
         if not feed_options:
-            feed_options = {} # type: Dict[str, Any]
+            feed_options = {}  # type: Dict[str, Any]
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
         if session_token:
@@ -354,14 +342,10 @@ class Database(object):
         if populate_query_metrics is not None:
             feed_options["populateQueryMetrics"] = populate_query_metrics
 
-        result = self.client_connection.ReadContainers(
-            database_link=self.database_link,
-            options=feed_options
-        )
+        result = self.client_connection.ReadContainers(database_link=self.database_link, options=feed_options)
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
         return result
-
 
     def query_containers(
         self,
@@ -371,8 +355,8 @@ class Database(object):
         session_token=None,
         initial_headers=None,
         populate_query_metrics=None,
-        feed_options=None, 
-        response_hook=None
+        feed_options=None,
+        response_hook=None,
     ):
         # type: (str, List, int, str, Dict[str, str], bool, Dict[str, Any], Optional[Callable]) -> QueryIterable
         """List properties for containers in the current database
@@ -389,7 +373,7 @@ class Database(object):
 
         """
         if not feed_options:
-            feed_options = {} # type: Dict[str, Any]
+            feed_options = {}  # type: Dict[str, Any]
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
         if session_token:
@@ -400,36 +384,35 @@ class Database(object):
             feed_options["populateQueryMetrics"] = populate_query_metrics
 
         result = self.client_connection.QueryContainers(
-                    database_link=self.database_link,
-                    query=query
-                    if parameters is None
-                    else dict(query=query, parameters=parameters),
-                    options=feed_options,
-                )
+            database_link=self.database_link,
+            query=query if parameters is None else dict(query=query, parameters=parameters),
+            options=feed_options,
+        )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
         return result
 
     def replace_container(
         self,
-        container,
-        partition_key,
-        indexing_policy=None,
-        default_ttl=None,
-        conflict_resolution_policy=None,
-        session_token=None,
-        initial_headers=None,
-        access_condition=None,
-        populate_query_metrics=None,
-        request_options=None, 
-        response_hook=None
+        container,  # type: Union[str, Container, Dict[str, Any]]
+        partition_key,  # type: PartitionKey
+        indexing_policy=None,  # type: Dict[str, Any]
+        default_ttl=None,  # type: int
+        conflict_resolution_policy=None,  # type: Dict[str, Any]
+        session_token=None,  # type: str
+        initial_headers=None,  # type: Dict[str, str]
+        access_condition=None,  # type:  Dict[str, str]
+        populate_query_metrics=None,  # type: bool
+        request_options=None,  # type: Dict[str, Any]
+        response_hook=None,  # type: Optional[Callable]
     ):
-        # type: (Union[str, Container, Dict[str, Any]], PartitionKey, Dict[str, Any], int, Dict[str, Any], str, Dict[str, str], Dict[str, str], bool, Dict[str, Any], Optional[Callable]) -> Container
+        # type: (...) -> Container
         """ Reset the properties of the container. Property changes are persisted immediately.
 
         Any properties not specified will be reset to their default values.
 
-        :param container: The ID (name), dict representing the properties or :class:`Container` instance of the container to be replaced.
+        :param container: The ID (name), dict representing the properties or
+            :class:`Container` instance of the container to be replaced.
         :param partition_key: The partition key to use for the container.
         :param indexing_policy: The indexing policy to apply to the container.
         :param default_ttl: Default time to live (TTL) for items in the container. If unspecified, items do not expire.
@@ -440,7 +423,8 @@ class Database(object):
         :param populate_query_metrics: Enable returning query metrics in response headers.
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
-        :raise `HTTPFailure`: Raised if the container couldn't be replaced. This includes if the container with given id does not exist.
+        :raise `HTTPFailure`: Raised if the container couldn't be replaced. This includes
+            if the container with given id does not exist.
         :returns: :class:`Container` instance representing the container after replace completed.
 
         .. literalinclude:: ../../examples/examples.py
@@ -453,7 +437,7 @@ class Database(object):
 
         """
         if not request_options:
-            request_options = {} # type: Dict[str, Any]
+            request_options = {}  # type: Dict[str, Any]
         if session_token:
             request_options["sessionToken"] = session_token
         if initial_headers:
@@ -485,18 +469,10 @@ class Database(object):
             response_hook(self.client_connection.last_response_headers, container_properties)
 
         return Container(
-            self.client_connection,
-            self.database_link,
-            container_properties["id"],
-            properties=container_properties,
+            self.client_connection, self.database_link, container_properties["id"], properties=container_properties
         )
 
-    def read_all_users(
-            self,
-            max_item_count=None,
-            feed_options=None, 
-            response_hook=None
-    ):
+    def read_all_users(self, max_item_count=None, feed_options=None, response_hook=None):
         # type: (int, Dict[str, Any], Optional[Callable]) -> QueryIterable
         """ List all users in the container.
 
@@ -507,27 +483,16 @@ class Database(object):
 
         """
         if not feed_options:
-            feed_options = {} # type: Dict[str, Any]
+            feed_options = {}  # type: Dict[str, Any]
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
-        result = self.client_connection.ReadUsers(
-            database_link=self.database_link,
-            options=feed_options
-        )
+        result = self.client_connection.ReadUsers(database_link=self.database_link, options=feed_options)
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
         return result
 
-
-    def query_users(
-            self,
-            query,
-            parameters=None,
-            max_item_count=None,
-            feed_options=None, 
-            response_hook=None
-    ):
+    def query_users(self, query, parameters=None, max_item_count=None, feed_options=None, response_hook=None):
         # type: (str, List, int, Dict[str, Any], Optional[Callable]) -> QueryIterable
         """Return all users matching the given `query`.
 
@@ -540,54 +505,40 @@ class Database(object):
 
         """
         if not feed_options:
-            feed_options = {} # type: Dict[str, Any]
+            feed_options = {}  # type: Dict[str, Any]
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
         result = self.client_connection.QueryUsers(
             database_link=self.database_link,
-            query=query
-            if parameters is None
-            else dict(query=query, parameters=parameters),
+            query=query if parameters is None else dict(query=query, parameters=parameters),
             options=feed_options,
         )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
         return result
 
-
-    def get_user_client(
-            self,
-            user,
-    ):
-        # type: (Union[str, User, Dict[str, Any]], Dict[str, Any], Optional[Callable]) -> User
+    def get_user_client(self, user):
+        # type: (Union[str, User, Dict[str, Any]]) -> User
         """
         Get the user identified by `id`.
 
-        :param user: The ID (name), dict representing the properties or :class:`User` instance of the user to be retrieved.
+        :param user: The ID (name), dict representing the properties or :class:`User`
+            instance of the user to be retrieved.
         :returns: A :class:`User` instance representing the retrieved user.
         :raise `HTTPFailure`: If the given user couldn't be retrieved.
-        
+
         """
         if isinstance(user, User):
             id_value = user.id
         elif isinstance(user, Mapping):
-            id_value = user['id']
+            id_value = user["id"]
         else:
             id_value = user
 
-        return User(
-            client_connection=self.client_connection,
-            id=id_value,
-            database_link=self.database_link,
-        )
+        return User(client_connection=self.client_connection, id=id_value, database_link=self.database_link)
 
-    def create_user(
-            self,
-            body,
-            request_options=None, 
-            response_hook=None
-    ):
+    def create_user(self, body, request_options=None, response_hook=None):
         # type: (Dict[str, Any], Dict[str, Any], Optional[Callable]) -> User
         """ Create a user in the container.
 
@@ -610,30 +561,18 @@ class Database(object):
 
         """
         if not request_options:
-            request_options = {} # type: Dict[str, Any]
+            request_options = {}  # type: Dict[str, Any]
 
-        user = self.client_connection.CreateUser(
-            database_link=self.database_link,
-            user=body,
-            options=request_options
-        )
+        user = self.client_connection.CreateUser(database_link=self.database_link, user=body, options=request_options)
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, user)
 
         return User(
-            client_connection=self.client_connection,
-            id=user['id'],
-            database_link=self.database_link,
-            properties=user
+            client_connection=self.client_connection, id=user["id"], database_link=self.database_link, properties=user
         )
 
-    def upsert_user(
-            self,
-            body,
-            request_options=None, 
-            response_hook=None
-    ):
+    def upsert_user(self, body, request_options=None, response_hook=None):
         # type: (Dict[str, Any], Dict[str, Any], Optional[Callable]) -> User
         """ Insert or update the specified user.
 
@@ -647,35 +586,23 @@ class Database(object):
 
         """
         if not request_options:
-            request_options = {} # type: Dict[str, Any]
+            request_options = {}  # type: Dict[str, Any]
 
-        user = self.client_connection.UpsertUser(
-            database_link=self.database_link,
-            user=body,
-            options=request_options
-        )
+        user = self.client_connection.UpsertUser(database_link=self.database_link, user=body, options=request_options)
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, user)
 
         return User(
-            client_connection=self.client_connection,
-            id=user['id'],
-            database_link=self.database_link,
-            properties=user
+            client_connection=self.client_connection, id=user["id"], database_link=self.database_link, properties=user
         )
 
-    def replace_user(
-            self,
-            user,
-            body,
-            request_options=None, 
-            response_hook=None
-    ):
+    def replace_user(self, user, body, request_options=None, response_hook=None):
         # type: (Union[str, User, Dict[str, Any]], Dict[str, Any], Dict[str, Any], Optional[Callable]) -> User
         """ Replaces the specified user if it exists in the container.
 
-        :param user: The ID (name), dict representing the properties or :class:`User` instance of the user to be replaced.
+        :param user: The ID (name), dict representing the properties or :class:`User`
+            instance of the user to be replaced.
         :param body: A dict-like object representing the user to replace.
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
@@ -684,45 +611,35 @@ class Database(object):
 
         """
         if not request_options:
-            request_options = {} # type: Dict[str, Any]
+            request_options = {}  # type: Dict[str, Any]
 
         user = self.client_connection.ReplaceUser(
-            user_link=self._get_user_link(user),
-            user=body,
-            options=request_options
+            user_link=self._get_user_link(user), user=body, options=request_options
         )
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, user)
 
         return User(
-            client_connection=self.client_connection,
-            id=user['id'],
-            database_link=self.database_link,
-            properties=user
+            client_connection=self.client_connection, id=user["id"], database_link=self.database_link, properties=user
         )
 
-    def delete_user(
-            self,
-            user,
-            request_options=None, 
-            response_hook=None
-    ):
+    def delete_user(self, user, request_options=None, response_hook=None):
         # type: (Union[str, User, Dict[str, Any]], Dict[str, Any], Optional[Callable]) -> None
         """ Delete the specified user from the container.
 
-        :param user: The ID (name), dict representing the properties or :class:`User` instance of the user to be deleted.
+        :param user: The ID (name), dict representing the properties or :class:`User`
+            instance of the user to be deleted.
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
-        :raises `HTTPFailure`: The user wasn't deleted successfully. If the user does not exist in the container, a `404` error is returned.
+        :raises `HTTPFailure`: The user wasn't deleted successfully. If the user does not
+            exist in the container, a `404` error is returned.
 
         """
         if not request_options:
-            request_options = {} # type: Dict[str, Any]
+            request_options = {}  # type: Dict[str, Any]
 
-        result = self.client_connection.DeleteUser(
-            user_link=self._get_user_link(user), options=request_options
-        )
+        result = self.client_connection.DeleteUser(user_link=self._get_user_link(user), options=request_options)
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
 
@@ -736,29 +653,21 @@ class Database(object):
 
         """
         properties = self._get_properties()
-        link = properties['_self']
+        link = properties["_self"]
         query_spec = {
-                        'query': 'SELECT * FROM root r WHERE r.resource=@link',
-                        'parameters': [
-                            {'name': '@link', 'value': link}
-                        ]
-                     }
+            "query": "SELECT * FROM root r WHERE r.resource=@link",
+            "parameters": [{"name": "@link", "value": link}],
+        }
         offers = list(self.client_connection.QueryOffers(query_spec))
-        if len(offers) <= 0:
+        if not offers:
             raise HTTPFailure(StatusCodes.NOT_FOUND, "Could not find Offer for database " + self.database_link)
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, offers)
 
-        return Offer(
-            offer_throughput=offers[0]['content']['offerThroughput'],
-            properties=offers[0])
+        return Offer(offer_throughput=offers[0]["content"]["offerThroughput"], properties=offers[0])
 
-    def replace_throughput(
-            self,
-            throughput, 
-            response_hook=None
-    ):
+    def replace_throughput(self, throughput, response_hook=None):
         # type: (int, Optional[Callable]) -> Offer
         """ Replace the database level throughput.
 
@@ -769,24 +678,17 @@ class Database(object):
 
         """
         properties = self._get_properties()
-        link = properties['_self']
+        link = properties["_self"]
         query_spec = {
-                        'query': 'SELECT * FROM root r WHERE r.resource=@link',
-                        'parameters': [
-                            {'name': '@link', 'value': link}
-                        ]
-                     }
+            "query": "SELECT * FROM root r WHERE r.resource=@link",
+            "parameters": [{"name": "@link", "value": link}],
+        }
         offers = list(self.client_connection.QueryOffers(query_spec))
-        if (len(offers) <= 0):
+        if not offers:
             raise HTTPFailure(StatusCodes.NOT_FOUND, "Could not find Offer for collection " + self.database_link)
         new_offer = offers[0].copy()
-        new_offer['content']['offerThroughput'] = throughput
-        data = self.client_connection.ReplaceOffer(
-            offer_link=offers[0]['_self'],
-            offer=offers[0]
-        )
+        new_offer["content"]["offerThroughput"] = throughput
+        data = self.client_connection.ReplaceOffer(offer_link=offers[0]["_self"], offer=offers[0])
         if response_hook:
             response_hook(self.client_connection.last_response_headers, data)
-        return Offer(
-            offer_throughput=data['content']['offerThroughput'],
-            properties=data)
+        return Offer(offer_throughput=data["content"]["offerThroughput"], properties=data)
