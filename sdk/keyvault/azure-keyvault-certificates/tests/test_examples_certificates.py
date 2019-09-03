@@ -46,8 +46,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
                                         content_type=SecretContentType.PFX,
                                         issuer_name='Self',
                                         subject_name='CN=*.microsoft.com',
-                                        san_dns_names=['onedrive.microsoft.com', 'xbox.microsoft.com'],
-                                        validity_in_months=24
+                                        validity_in_months=24,
+                                        san_dns_names=['onedrive.microsoft.com', 'xbox.microsoft.com']
                                         )
 
         cert_name = "cert-name"
@@ -120,8 +120,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
                                         content_type=SecretContentType.PFX,
                                         issuer_name='Self',
                                         subject_name='CN=*.microsoft.com',
-                                        san_dns_names=['sdk.azure-int.net'],
-                                        validity_in_months=24
+                                        validity_in_months=24,
+                                        san_dns_names=['sdk.azure-int.net']
                                         )
 
         for i in range(4):
@@ -181,8 +181,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
                                         content_type=SecretContentType.PFX,
                                         issuer_name='Self',
                                         subject_name='CN=*.microsoft.com',
-                                        san_dns_names=['onedrive.microsoft.com', 'xbox.microsoft.com'],
-                                        validity_in_months=24
+                                        validity_in_months=24,
+                                        san_dns_names=['onedrive.microsoft.com', 'xbox.microsoft.com']
                                         )
 
         cert_name = "cert-name"
@@ -226,8 +226,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
                                         content_type=SecretContentType.PFX,
                                         issuer_name='Self',
                                         subject_name='CN=*.microsoft.com',
-                                        san_dns_names=['onedrive.microsoft.com', 'xbox.microsoft.com'],
-                                        validity_in_months=24
+                                        validity_in_months=24,
+                                        san_dns_names=['onedrive.microsoft.com', 'xbox.microsoft.com']
                                         )
 
         cert_name = "cert-name"

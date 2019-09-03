@@ -5,7 +5,7 @@
 # pylint:disable=too-many-lines,too-many-public-methods
 import base64
 import uuid
-from typing import Any, AsyncIterable, Optional, Iterable, List, Dict, Collection
+from typing import Any, AsyncIterable, Optional, Iterable, List, Dict
 from functools import partial
 
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
@@ -619,7 +619,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
             **kwargs)
 
     @distributed_trace_async
-    async def create_contacts(self, contacts: Iterable[Contact], **kwargs: "**Any") -> Collection[Contact]:
+    async def create_contacts(self, contacts: Iterable[Contact], **kwargs: "**Any") -> List[Contact]:
         # pylint:disable=unsubscriptable-object
 
         # disabled unsubscruptable-object because of pylint bug referenced here:
@@ -644,7 +644,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         return [Contact._from_certificate_contacts_item(contact_item=item) for item in contacts.contact_list]
 
     @distributed_trace_async
-    async def get_contacts(self, **kwargs: "**Any") -> Collection[Contact]:
+    async def get_contacts(self, **kwargs: "**Any") -> List[Contact]:
         # pylint:disable=unsubscriptable-object
 
         # disabled unsubscruptable-object because of pylint bug referenced here:
@@ -662,7 +662,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         return [Contact._from_certificate_contacts_item(contact_item=item) for item in contacts.contact_list]
 
     @distributed_trace_async
-    async def delete_contacts(self, **kwargs: "**Any") -> Collection[Contact]:
+    async def delete_contacts(self, **kwargs: "**Any") -> List[Contact]:
         # pylint:disable=unsubscriptable-object
 
         # disabled unsubscruptable-object because of pylint bug referenced here:

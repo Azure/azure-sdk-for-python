@@ -65,8 +65,8 @@ async def run_sample():
                                         content_type=SecretContentType.PFX,
                                         issuer_name='Self',
                                         subject_name='CN=*.microsoft.com',
-                                        san_dns_names=['sdk.azure-int.net'],
-                                        validity_in_months=24
+                                        validity_in_months=24,
+                                        san_dns_names=['sdk.azure-int.net']
                                         )
         cert_name="HelloWorldCertificate"
         expires = datetime.datetime.utcnow() + datetime.timedelta(days=365)

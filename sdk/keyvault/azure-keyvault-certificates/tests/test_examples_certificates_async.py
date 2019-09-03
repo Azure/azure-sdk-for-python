@@ -44,8 +44,8 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
                                         content_type=SecretContentType.PFX,
                                         issuer_name='Self',
                                         subject_name='CN=*.microsoft.com',
-                                        san_dns_names=['onedrive.microsoft.com', 'xbox.microsoft.com'],
-                                        validity_in_months=24
+                                        validity_in_months=24,
+                                        san_dns_names=['sdk.azure-int.net']
                                         )
         cert_name = "cert-name"
         # create a certificate with optional arguments, returns an async poller
@@ -56,14 +56,6 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         print(create_certificate_result)
 
         # [END create_certificate]
-        interval_time = 5
-        while True:
-            pending_cert = await certificate_client.get_certificate_operation(cert_name)
-            if pending_cert.status.lower() == 'completed':
-                break
-            elif pending_cert.status.lower() != 'inprogress':
-                raise Exception('Unknown status code for pending certificate: {}'.format(pending_cert))
-            await asyncio.sleep(interval_time)
 
         # [START get_certificate]
 
@@ -124,8 +116,8 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
                                         content_type=SecretContentType.PFX,
                                         issuer_name='Self',
                                         subject_name='CN=*.microsoft.com',
-                                        san_dns_names=['onedrive.microsoft.com', 'xbox.microsoft.com'],
-                                        validity_in_months=24
+                                        validity_in_months=24,
+                                        san_dns_names=['sdk.azure-int.net']
                                         )
 
         for i in range(4):
@@ -185,8 +177,8 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
                                         content_type=SecretContentType.PFX,
                                         issuer_name='Self',
                                         subject_name='CN=*.microsoft.com',
-                                        san_dns_names=['onedrive.microsoft.com', 'xbox.microsoft.com'],
-                                        validity_in_months=24
+                                        validity_in_months=24,
+                                        san_dns_names=['sdk.azure-int.net']
                                         )
 
         cert_name = "cert-name"
@@ -231,8 +223,8 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
                                         content_type=SecretContentType.PFX,
                                         issuer_name='Self',
                                         subject_name='CN=*.microsoft.com',
-                                        san_dns_names=['onedrive.microsoft.com', 'xbox.microsoft.com'],
-                                        validity_in_months=24
+                                        validity_in_months=24,
+                                        san_dns_names=['sdk.azure-int.net']
                                         )
 
         cert_name = "cert-name"
