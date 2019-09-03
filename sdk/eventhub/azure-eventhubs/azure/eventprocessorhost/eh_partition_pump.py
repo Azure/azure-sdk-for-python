@@ -30,6 +30,8 @@ class EventHubPartitionPump(PartitionPump):
         """
         _opened_ok = False
         _retry_count = 0
+        last_exception = None
+
         while (not _opened_ok) and (_retry_count < 5):
             try:
                 await self.open_clients_async()
