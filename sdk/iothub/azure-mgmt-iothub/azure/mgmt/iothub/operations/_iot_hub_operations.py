@@ -91,7 +91,8 @@ class IotHubOperations(object):
 
         :param iot_hub_name: Name of the IoT hub to failover
         :type iot_hub_name: str
-        :param resource_group_name: Resource group in which the IoT hub is in
+        :param resource_group_name: Name of the resource group containing the
+         IoT hub resource
         :type resource_group_name: str
         :param failover_region: Region the hub will be failed over to
         :type failover_region: str
