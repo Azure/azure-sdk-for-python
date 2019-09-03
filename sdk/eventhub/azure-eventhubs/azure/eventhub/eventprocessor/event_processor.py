@@ -11,7 +11,7 @@ import logging
 from azure.eventhub import EventPosition, EventHubError
 from azure.eventhub.aio import EventHubClient
 from .checkpoint_manager import CheckpointManager
-from .partition_manager import PartitionManager
+from .partition_manager import PartitionManager, OwnershipLostError
 from ._ownership_manager import OwnershipManager
 from .partition_processor import CloseReason, PartitionProcessor
 
@@ -182,13 +182,43 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
             EventPosition(ownership.get("offset", self._initial_event_position))
         )
 
+        async def process_error(err):
+            log.error(
+                "PartitionProcessor of EventProcessor instance %r of eventhub %r partition %r consumer group %r"
+                " has met an error. The exception is %r.",
+                owner_id, eventhub_name, partition_id, consumer_group_name, err
+            )
+            try:
+                await partition_processor.process_error(err, checkpoint_manager)
+            except Exception as err_again:  # pylint:disable=broad-except
+                log.error(
+                    "PartitionProcessor of EventProcessor instance %r of eventhub %r partition %r consumer group %r"
+                    " has another error during running process_error(). The exception is %r.",
+                    owner_id, eventhub_name, partition_id, consumer_group_name, err_again
+                )
+
+        async def close(reason):
+            log.info(
+                "PartitionProcessor of EventProcessor instance %r of eventhub %r partition %r consumer group %r"
+                " is being closed. Reason is: %r",
+                owner_id, eventhub_name, partition_id, consumer_group_name, reason
+            )
+            try:
+                await partition_processor.close(reason, checkpoint_manager)
+            except Exception as err:  # pylint:disable=broad-except
+                log.error(
+                    "PartitionProcessor of EventProcessor instance %r of eventhub %r partition %r consumer group %r"
+                    " has an error during running close(). The exception is %r.",
+                    owner_id, eventhub_name, partition_id, consumer_group_name, err
+                )
+
         try:
             while True:
                 try:
                     await partition_processor.initialize()
                     events = await partition_consumer.receive(timeout=self._receive_timeout)
                     await partition_processor.process_events(events, checkpoint_manager)
-                except asyncio.CancelledError as cancelled_error:
+                except asyncio.CancelledError:
                     log.info(
                         "PartitionProcessor of EventProcessor instance %r of eventhub %r partition %r consumer group %r"
                         " is cancelled",
@@ -197,28 +227,25 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
                         partition_id,
                         consumer_group_name
                     )
-                    await partition_processor.process_error(cancelled_error, checkpoint_manager)
-                    await partition_processor.close(CloseReason.SHUTDOWN, checkpoint_manager)
-                    # TODO: release the ownership immediately via partition manager
+                    if self._running is False:
+                        await close(CloseReason.SHUTDOWN)
+                    else:
+                        await close(CloseReason.OWNERSHIP_LOST)
+                    # TODO: release the ownership immediately via partition manager in preview 4
                     break
                 except EventHubError as eh_err:
-                    reason = CloseReason.OWNERSHIP_LOST if eh_err.error == "link:stolen" \
-                        else CloseReason.EVENTHUB_EXCEPTION
-                    log.warning(
-                        "PartitionProcessor of EventProcessor instance %r of eventhub %r partition %r consumer group %r"
-                        " has met an exception receiving events. It's being closed. The exception is %r.",
-                        owner_id,
-                        eventhub_name,
-                        partition_id,
-                        consumer_group_name,
-                        eh_err
-                    )
-                    await partition_processor.process_error(eh_err, checkpoint_manager)
-                    await partition_processor.close(reason, checkpoint_manager)
+                    await process_error(eh_err)
+                    await close(CloseReason.EVENTHUB_EXCEPTION)
                     # An EventProcessor will pick up this partition again after the ownership is released
-                    # TODO: release the ownership immediately via partition manager
+                    # TODO: release the ownership immediately via partition manager in preview 4
                     break
-                except Exception as exp:  # pylint:disable=broad-except
-                    log.warning(exp)
+                except OwnershipLostError:
+                    await close(CloseReason.OWNERSHIP_LOST)
+                    break
+                except Exception as other_error:  # pylint:disable=broad-except
+                    await process_error(other_error)
+                    await close(CloseReason.PROCESS_EVENTS_ERROR)
+                    # TODO: release the ownership immediately via partition manager in preview 4
+                    break
         finally:
             await partition_consumer.close()
