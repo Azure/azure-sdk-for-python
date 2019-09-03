@@ -5,16 +5,6 @@
 # pylint:disable=too-many-lines,too-many-public-methods
 import base64
 import uuid
-
-try:
-    from typing import TYPE_CHECKING
-except ImportError:
-    TYPE_CHECKING = False
-
-if TYPE_CHECKING:
-    # pylint:disable=unused-import
-    from typing import Any, Dict, List, Optional, Iterable
-
 from functools import partial
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.polling import LROPoller
@@ -30,13 +20,21 @@ from .models import (
     IssuerBase,
     Contact,
     CertificateOperation,
-    AdministratorDetails,
     LifetimeAction,
     KeyProperties,
     KeyUsageType,
     SecretContentType
 )
 from ._polling import CreateCertificatePoller
+
+try:
+    from typing import TYPE_CHECKING
+except ImportError:
+    TYPE_CHECKING = False
+
+if TYPE_CHECKING:
+    # pylint:disable=unused-import
+    from typing import Any, Dict, List, Optional, Iterable
 
 
 class CertificateClient(KeyVaultClientBase):
@@ -798,7 +796,6 @@ class CertificateClient(KeyVaultClientBase):
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
         """
-        custom_headers = kwargs.pop('header', None)
         error_map = kwargs.pop('error_map', None)
         vault_base_url = self.vault_url
         # Construct URL
@@ -822,8 +819,6 @@ class CertificateClient(KeyVaultClientBase):
         header_parameters['Accept'] = 'application/pkcs10'
         if self._client._config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
 
         # Construct and send request
         request = self._client._client.get(

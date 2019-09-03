@@ -8,6 +8,9 @@
 from datetime import datetime
 from enum import Enum
 
+from ._shared import parse_vault_id
+from ._shared._generated.v7_0 import models
+
 try:
     from typing import TYPE_CHECKING
 except ImportError:
@@ -15,9 +18,6 @@ except ImportError:
 
 if TYPE_CHECKING:
     from typing import Any, Dict, Optional
-
-from ._shared import parse_vault_id
-from ._shared._generated.v7_0 import models
 
 
 class SecretContentType(str, Enum):
