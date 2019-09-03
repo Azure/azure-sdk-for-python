@@ -46,7 +46,6 @@ CLIENT_OID = '00000000-0000-0000-0000-000000000000'
 
 
 class VaultClientPreparer(AzureMgmtPreparer):
-    @pytest.mark.usefixtures("get_run_identifier")
     def __init__(
         self,
         sku=None,
