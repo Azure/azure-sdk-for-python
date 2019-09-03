@@ -4,6 +4,7 @@
 # --------------------------------------------------------------------------------------------
 import logging
 import datetime
+import time
 import functools
 import asyncio
 
@@ -100,23 +101,29 @@ class EventHubClient(EventHubClientAbstract):
                                                 get_jwt_token, http_proxy=http_proxy,
                                                 transport_type=transport_type)
 
-    async def _handle_exception(self, exception, retry_count, max_retries):
-        await _handle_exception(exception, retry_count, max_retries, self)
-
     async def _close_connection(self):
         await self._conn_manager.reset_connection_if_broken()
 
-    async def _management_request(self, mgmt_msg, op_type):
-        if self._is_iothub and not self._iothub_redirect_info:
-            await self._iothub_redirect()
+    async def _try_delay(self, retried_times, last_exception, timeout_time=None, entity_name=None):
+        entity_name = entity_name or self.container_id
+        backoff = self.config.backoff_factor * 2 ** retried_times
+        if backoff <= self.config.backoff_max and (
+                timeout_time is None or time.time() + backoff <= timeout_time):  # pylint:disable=no-else-return
+            asyncio.sleep(backoff)
+            log.info("%r has an exception (%r). Retrying...", format(entity_name), last_exception)
+        else:
+            log.info("%r operation has timed out. Last exception before timeout is (%r)",
+                     entity_name, last_exception)
+            raise last_exception
 
+    async def _management_request(self, mgmt_msg, op_type):
         alt_creds = {
             "username": self._auth_config.get("iot_username"),
             "password": self._auth_config.get("iot_password")
         }
-        max_retries = self.config.max_retries
-        retry_count = 0
-        while True:
+
+        retried_times = 0
+        while retried_times <= self.config.max_retries:
             mgmt_auth = self._create_auth(**alt_creds)
             mgmt_client = AMQPClientAsync(self.mgmt_target, auth=mgmt_auth, debug=self.config.network_tracing)
             try:
@@ -130,8 +137,9 @@ class EventHubClient(EventHubClientAbstract):
                     description_fields=b'status-description')
                 return response
             except Exception as exception:  # pylint:disable=broad-except
-                await self._handle_exception(exception, retry_count, max_retries)
-                retry_count += 1
+                last_exception = await _handle_exception(exception, self)
+                await self._try_delay(retried_times=retried_times, last_exception=last_exception)
+                retried_times += 1
             finally:
                 await mgmt_client.close_async()
 
@@ -144,7 +152,7 @@ class EventHubClient(EventHubClientAbstract):
                                                                    event_position=EventPosition('-1'),
                                                                    operation='/messages/events')
                 async with self._redirect_consumer:
-                    await self._redirect_consumer._open_with_retry(timeout=self.config.receive_timeout)  # pylint: disable=protected-access
+                    await self._redirect_consumer._open_with_retry()  # pylint: disable=protected-access
                 self._redirect_consumer = None
 
     async def get_properties(self):

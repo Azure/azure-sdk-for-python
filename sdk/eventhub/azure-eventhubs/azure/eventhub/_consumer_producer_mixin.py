@@ -13,24 +13,6 @@ from azure.eventhub.error import EventHubError, _handle_exception
 log = logging.getLogger(__name__)
 
 
-def _retry_decorator(to_be_wrapped_func):
-    def wrapped_func(self, *args, **kwargs):  # pylint:disable=unused-argument # TODO: to refactor
-        timeout = kwargs.pop("timeout", 100000)
-        if not timeout:
-            timeout = 100000  # timeout equals to 0 means no timeout, set the value to be a large number.
-        timeout_time = time.time() + timeout
-        max_retries = self.client.config.max_retries
-        retry_count = 0
-        last_exception = None
-        while True:
-            try:
-                return to_be_wrapped_func(self, timeout_time=timeout_time, last_exception=last_exception, **kwargs)
-            except Exception as exception:  # pylint:disable=broad-except
-                last_exception = self._handle_exception(exception, retry_count, max_retries, timeout_time)  # pylint:disable=protected-access
-                retry_count += 1
-    return wrapped_func
-
-
 class ConsumerProducerMixin(object):
     def __init__(self):
         self.client = None
@@ -55,9 +37,9 @@ class ConsumerProducerMixin(object):
         self.running = False
         self._close_connection()
 
-    def _open(self, timeout_time=None):  # pylint:disable=unused-argument # TODO: to refactor
+    def _open(self):
         """
-        Open the EventHubConsumer using the supplied connection.
+        Open the EventHubConsumer/EventHubProducer using the supplied connection.
         If the handler has previously been redirected, the redirect
         context will be used to create a new handler before opening it.
 
@@ -91,12 +73,36 @@ class ConsumerProducerMixin(object):
         self._close_handler()
         self.client._conn_manager.reset_connection_if_broken()  # pylint: disable=protected-access
 
-    def _handle_exception(self, exception, retry_count, max_retries, timeout_time):
+    def _handle_exception(self, exception):
         if not self.running and isinstance(exception, compat.TimeoutException):
             exception = errors.AuthenticationException("Authorization timeout.")
-            return _handle_exception(exception, retry_count, max_retries, self, timeout_time)
+            return _handle_exception(exception, self)
 
-        return _handle_exception(exception, retry_count, max_retries, self, timeout_time)
+        return _handle_exception(exception, self)
+
+    def _do_retryable_operation(self, operation, timeout=None, **kwargs):
+        # pylint:disable=protected-access
+        if not timeout:
+            timeout = 100000  # timeout equals to 0 means no timeout, set the value to be a large number.
+        timeout_time = time.time() + timeout
+        retried_times = 0
+        last_exception = kwargs.pop('last_exception', None)
+        operation_need_param = kwargs.pop('operation_need_param', True)
+
+        while retried_times <= self.client.config.max_retries:
+            try:
+                if operation_need_param:
+                    return operation(timeout_time=timeout_time, last_exception=last_exception, **kwargs)
+                else:
+                    return operation()
+            except Exception as exception:  # pylint:disable=broad-except
+                last_exception = self._handle_exception(exception)
+                self.client._try_delay(retried_times=retried_times, last_exception=last_exception,
+                                       timeout_time=timeout_time, entity_name=self.name)
+                retried_times += 1
+
+        log.info("%r has exhausted retry. Exception still occurs (%r)", self.name, last_exception)
+        raise last_exception
 
     def close(self, exception=None):
         # type:(Exception) -> None
