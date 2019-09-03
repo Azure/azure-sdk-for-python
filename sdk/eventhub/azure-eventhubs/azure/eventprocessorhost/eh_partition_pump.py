@@ -30,6 +30,8 @@ class EventHubPartitionPump(PartitionPump):
         """
         _opened_ok = False
         _retry_count = 0
+        last_exception = None
+
         while (not _opened_ok) and (_retry_count < 5):
             try:
                 await self.open_clients_async()
@@ -45,17 +47,36 @@ class EventHubPartitionPump(PartitionPump):
             await self.processor.process_error_async(self.partition_context, last_exception)
             self.set_pump_status("OpenFailed")
 
+        _started_ok = False
+        _retry_count = 0
+
         if self.pump_status == "Opening":
             loop = asyncio.get_event_loop()
-            self.set_pump_status("Running")
-            await self.eh_client.run_async()
-            self.running = loop.create_task(self.partition_receiver.run())
+            while (not _started_ok) and (_retry_count < 5):
+                try:
+                    await self.eh_client.run_async()
+                    _started_ok = True
+                except Exception as err:
+                    _logger.warning(
+                        "%r,%r PartitionPumpWarning: Failure starting client or receiver, retrying: %r",
+                        self.host.guid, self.partition_context.partition_id, err)
+                    last_exception = err
+                    _retry_count += 1
+
+            if not _started_ok:
+                _logger.warning(
+                    "%r,%r PartitionPumpWarning: Failure starting client or receiver: %r",
+                    self.host.guid, self.partition_context.partition_id, last_exception)
+                await self.process_error_async(self.partition_context, last_exception)
+                self.set_pump_status("Errored")
+            else:
+                self.running = loop.create_task(self.partition_receiver.run())
+                self.set_pump_status("Running")
 
         if self.pump_status in ["OpenFailed", "Errored"]:
             self.set_pump_status("Closing")
             await self.clean_up_clients_async()
             self.set_pump_status("Closed")
-
 
     async def open_clients_async(self):
         """
