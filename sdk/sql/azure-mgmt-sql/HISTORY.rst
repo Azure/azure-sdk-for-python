@@ -3,6 +3,57 @@
 Release History
 ===============
 
+0.13.0 (2019-09-03)
++++++++++++++++++++
+
+**Features**
+
+- Model ManagedInstanceUpdate has a new parameter source_managed_instance_id
+- Model ManagedInstanceUpdate has a new parameter instance_pool_id
+- Model ManagedInstanceUpdate has a new parameter restore_point_in_time
+- Model ManagedInstanceUpdate has a new parameter managed_instance_create_mode
+- Model SensitivityLabel has a new parameter is_disabled
+- Model Database has a new parameter paused_date
+- Model Database has a new parameter read_replica_count
+- Model Database has a new parameter resumed_date
+- Model Database has a new parameter auto_pause_delay
+- Model Database has a new parameter min_capacity
+- Model ManagedInstance has a new parameter source_managed_instance_id
+- Model ManagedInstance has a new parameter instance_pool_id
+- Model ManagedInstance has a new parameter restore_point_in_time
+- Model ManagedInstance has a new parameter managed_instance_create_mode
+- Model DatabaseUpdate has a new parameter paused_date
+- Model DatabaseUpdate has a new parameter read_replica_count
+- Model DatabaseUpdate has a new parameter resumed_date
+- Model DatabaseUpdate has a new parameter auto_pause_delay
+- Model DatabaseUpdate has a new parameter min_capacity
+- Added operation ManagedInstanceEncryptionProtectorsOperations.revalidate
+- Added operation ManagedDatabaseSensitivityLabelsOperations.enable_recommendation
+- Added operation ManagedDatabaseSensitivityLabelsOperations.disable_recommendation
+- Added operation ElasticPoolsOperations.failover
+- Added operation ManagedInstancesOperations.list_by_instance_pool
+- Added operation DatabasesOperations.failover
+- Added operation LongTermRetentionBackupsOperations.get_by_resource_group
+- Added operation LongTermRetentionBackupsOperations.list_by_resource_group_server
+- Added operation LongTermRetentionBackupsOperations.delete_by_resource_group
+- Added operation LongTermRetentionBackupsOperations.list_by_resource_group_location
+- Added operation LongTermRetentionBackupsOperations.list_by_resource_group_database
+- Added operation SensitivityLabelsOperations.enable_recommendation
+- Added operation SensitivityLabelsOperations.disable_recommendation
+- Added operation EncryptionProtectorsOperations.revalidate
+- Added operation group InstancePoolsOperations
+- Added operation group ManagedInstanceAdministratorsOperations
+- Added operation group UsagesOperations
+- Added operation group PrivateLinkResourcesOperations
+- Added operation group PrivateEndpointConnectionsOperations
+
+**Breaking changes**
+
+- Operation ManagedDatabaseSensitivityLabelsOperations.list_recommended_by_database has a new signature
+- Operation SensitivityLabelsOperations.list_recommended_by_database has a new signature
+- Operation EncryptionProtectorsOperations.create_or_update has a new signature
+
+
 0.12.0 (2019-03-28)
 +++++++++++++++++++
 
