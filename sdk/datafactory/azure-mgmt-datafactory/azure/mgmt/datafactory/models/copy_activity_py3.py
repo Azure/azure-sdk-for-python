@@ -41,7 +41,7 @@ class CopyActivity(ExecutionActivity):
     :type sink: ~azure.mgmt.datafactory.models.CopySink
     :param translator: Copy activity translator. If not specified, tabular
      translator is used.
-    :type translator: ~azure.mgmt.datafactory.models.CopyTranslator
+    :type translator: object
     :param enable_staging: Specifies whether to copy data via an interim
      staging. Default value is false. Type: boolean (or Expression with
      resultType boolean).
@@ -65,6 +65,10 @@ class CopyActivity(ExecutionActivity):
      settings when EnableSkipIncompatibleRow is true.
     :type redirect_incompatible_row_settings:
      ~azure.mgmt.datafactory.models.RedirectIncompatibleRowSettings
+    :param preserve_rules: Preserve Rules.
+    :type preserve_rules: list[object]
+    :param preserve: Preserve rules.
+    :type preserve: list[object]
     :param inputs: List of inputs for the activity.
     :type inputs: list[~azure.mgmt.datafactory.models.DatasetReference]
     :param outputs: List of outputs for the activity.
@@ -89,18 +93,20 @@ class CopyActivity(ExecutionActivity):
         'policy': {'key': 'policy', 'type': 'ActivityPolicy'},
         'source': {'key': 'typeProperties.source', 'type': 'CopySource'},
         'sink': {'key': 'typeProperties.sink', 'type': 'CopySink'},
-        'translator': {'key': 'typeProperties.translator', 'type': 'CopyTranslator'},
+        'translator': {'key': 'typeProperties.translator', 'type': 'object'},
         'enable_staging': {'key': 'typeProperties.enableStaging', 'type': 'object'},
         'staging_settings': {'key': 'typeProperties.stagingSettings', 'type': 'StagingSettings'},
         'parallel_copies': {'key': 'typeProperties.parallelCopies', 'type': 'object'},
         'data_integration_units': {'key': 'typeProperties.dataIntegrationUnits', 'type': 'object'},
         'enable_skip_incompatible_row': {'key': 'typeProperties.enableSkipIncompatibleRow', 'type': 'object'},
         'redirect_incompatible_row_settings': {'key': 'typeProperties.redirectIncompatibleRowSettings', 'type': 'RedirectIncompatibleRowSettings'},
+        'preserve_rules': {'key': 'typeProperties.preserveRules', 'type': '[object]'},
+        'preserve': {'key': 'typeProperties.preserve', 'type': '[object]'},
         'inputs': {'key': 'inputs', 'type': '[DatasetReference]'},
         'outputs': {'key': 'outputs', 'type': '[DatasetReference]'},
     }
 
-    def __init__(self, *, name: str, source, sink, additional_properties=None, description: str=None, depends_on=None, user_properties=None, linked_service_name=None, policy=None, translator=None, enable_staging=None, staging_settings=None, parallel_copies=None, data_integration_units=None, enable_skip_incompatible_row=None, redirect_incompatible_row_settings=None, inputs=None, outputs=None, **kwargs) -> None:
+    def __init__(self, *, name: str, source, sink, additional_properties=None, description: str=None, depends_on=None, user_properties=None, linked_service_name=None, policy=None, translator=None, enable_staging=None, staging_settings=None, parallel_copies=None, data_integration_units=None, enable_skip_incompatible_row=None, redirect_incompatible_row_settings=None, preserve_rules=None, preserve=None, inputs=None, outputs=None, **kwargs) -> None:
         super(CopyActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
         self.source = source
         self.sink = sink
@@ -111,6 +117,8 @@ class CopyActivity(ExecutionActivity):
         self.data_integration_units = data_integration_units
         self.enable_skip_incompatible_row = enable_skip_incompatible_row
         self.redirect_incompatible_row_settings = redirect_incompatible_row_settings
+        self.preserve_rules = preserve_rules
+        self.preserve = preserve
         self.inputs = inputs
         self.outputs = outputs
         self.type = 'Copy'

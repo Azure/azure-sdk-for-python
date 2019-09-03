@@ -8,7 +8,7 @@ from typing import Any, Optional
 from azure.core import Configuration
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
-from azure.core.pipeline.policies import ContentDecodePolicy, HeadersPolicy, NetworkTraceLoggingPolicy, AsyncRetryPolicy
+from azure.core.pipeline.policies import AsyncRetryPolicy
 
 from ._authn_client import AsyncAuthnClient
 from .._constants import Endpoints, EnvironmentVariables

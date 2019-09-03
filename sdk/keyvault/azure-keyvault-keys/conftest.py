@@ -4,15 +4,15 @@
 # license information.
 # -------------------------------------------------------------------------
 
-import os
 import sys
-os.environ['PYTHONHASHSEED'] = '0'
+import os
 
 # Ignore async tests for Python < 3.5
 collect_ignore_glob = []
 if sys.version_info < (3, 5):
     collect_ignore_glob.append("tests/*_async.py")
 
+# get the run identifier for unique test runs
 dirname = os.path.dirname(os.path.abspath(__file__))
 seed_filename = os.path.abspath(os.path.join(dirname, "tests", "seed.txt"))
 

@@ -6,6 +6,12 @@
 
 import json
 
+from azure.core.configuration import Configuration
+from azure.core.exceptions import ClientAuthenticationError
+from azure.core.pipeline import Pipeline
+from azure.core.pipeline.policies import ContentDecodePolicy, NetworkTraceLoggingPolicy, ProxyPolicy, RetryPolicy
+from azure.core.pipeline.transport import HttpRequest, RequestsTransport
+
 try:
     from typing import TYPE_CHECKING
 except ImportError:
@@ -15,12 +21,6 @@ if TYPE_CHECKING:
     # pylint:disable=unused-import
     from typing import Any, Dict, Mapping, Optional
     from azure.core.pipeline import PipelineResponse
-
-from azure.core.configuration import Configuration
-from azure.core.exceptions import ClientAuthenticationError
-from azure.core.pipeline import Pipeline
-from azure.core.pipeline.policies import ContentDecodePolicy, NetworkTraceLoggingPolicy, RetryPolicy
-from azure.core.pipeline.transport import HttpRequest, RequestsTransport
 
 
 class MsalTransportResponse:
@@ -55,6 +55,7 @@ class MsalTransportAdapter(object):
         config = Configuration(**kwargs)
         config.logging_policy = NetworkTraceLoggingPolicy(**kwargs)
         config.retry_policy = RetryPolicy(**kwargs)
+        config.proxy_policy = ProxyPolicy(**kwargs)
         return config
 
     def _build_pipeline(self, config=None, policies=None, transport=None, **kwargs):
@@ -74,8 +75,17 @@ class MsalTransportAdapter(object):
         )
         return MsalTransportResponse(response)
 
-    def post(self, url, data=None, headers=None, params=None, timeout=None, verify=None, **kwargs):
-        # type: (str, Optional[Mapping[str, str]], Optional[Mapping[str, str]], Optional[Dict[str, str]], float, bool, Any) -> MsalTransportResponse
+    def post(
+        self,
+        url,  # type: str
+        data=None,  # type: Optional[Mapping[str, str]]
+        headers=None,  # type: Optional[Mapping[str, str]]
+        params=None,  # type: Optional[Dict[str, str]]
+        timeout=None,  # type: float
+        verify=None,  # type: bool
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> MsalTransportResponse
         request = HttpRequest("POST", url, headers=headers)
         if params:
             request.format_parameters(params)

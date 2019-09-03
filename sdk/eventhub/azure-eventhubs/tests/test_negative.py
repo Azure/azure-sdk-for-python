@@ -85,7 +85,7 @@ def test_send_partition_key_with_partition_sync(connection_str):
     sender = client.create_producer(partition_id="1")
     try:
         data = EventData(b"Data")
-        data.partition_key = b"PKey"
+        data._set_partition_key(b"PKey")
         with pytest.raises(ValueError):
             sender.send(data)
     finally:

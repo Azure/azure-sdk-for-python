@@ -36,17 +36,14 @@ class ContextProtocol(Protocol):
     def clear(self):
         # type: () -> None
         """Reset the value to the default value"""
-        pass
 
     def get(self):
         # type: () -> Any
         """Get the stored value."""
-        pass
 
     def set(self, value):
         # type: (Any) -> None
         """Set the value in the context."""
-        pass
 
 
 class _AsyncContext(object):

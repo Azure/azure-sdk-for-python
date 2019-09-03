@@ -4,10 +4,10 @@
 # --------------------------------------------------------------------------------------------
 
 from threading import RLock
-from uamqp import Connection, TransportType, c_uamqp
+from uamqp import Connection, TransportType, c_uamqp  # type: ignore
 
 
-class _SharedConnectionManager(object):
+class _SharedConnectionManager(object):  #pylint:disable=too-many-instance-attributes
     def __init__(self, **kwargs):
         self._lock = RLock()
         self._conn = None  # type: Connection
@@ -50,11 +50,11 @@ class _SharedConnectionManager(object):
 
     def reset_connection_if_broken(self):
         with self._lock:
-            if self._conn and self._conn._state in (
-                c_uamqp.ConnectionState.CLOSE_RCVD,
-                c_uamqp.ConnectionState.CLOSE_SENT,
-                c_uamqp.ConnectionState.DISCARDING,
-                c_uamqp.ConnectionState.END,
+            if self._conn and self._conn._state in (  # pylint:disable=protected-access
+                c_uamqp.ConnectionState.CLOSE_RCVD,  # pylint:disable=c-extension-no-member
+                c_uamqp.ConnectionState.CLOSE_SENT,  # pylint:disable=c-extension-no-member
+                c_uamqp.ConnectionState.DISCARDING,  # pylint:disable=c-extension-no-member
+                c_uamqp.ConnectionState.END,  # pylint:disable=c-extension-no-member
             ):
                 self._conn = None
 
@@ -63,7 +63,7 @@ class _SeparateConnectionManager(object):
     def __init__(self, **kwargs):
         pass
 
-    def get_connection(self, host, auth):
+    def get_connection(self, host, auth):  # pylint:disable=unused-argument, no-self-use
         return None
 
     def close_connection(self):
