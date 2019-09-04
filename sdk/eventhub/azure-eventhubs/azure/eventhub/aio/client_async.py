@@ -109,7 +109,7 @@ class EventHubClient(EventHubClientAbstract):
         backoff = self.config.backoff_factor * 2 ** retried_times
         if backoff <= self.config.backoff_max and (
                 timeout_time is None or time.time() + backoff <= timeout_time):  # pylint:disable=no-else-return
-            asyncio.sleep(backoff)
+            await asyncio.sleep(backoff)
             log.info("%r has an exception (%r). Retrying...", format(entity_name), last_exception)
         else:
             log.info("%r operation has timed out. Last exception before timeout is (%r)",
