@@ -28,18 +28,20 @@ class BlobPartitionManager(PartitionManager):
         """
         self._container_client = container_client
         self._cached_ownership_dict = defaultdict(dict)  # type: Dict[str, Dict[str, Any]]
-        self._lock = asyncio.Lock()  # TODO: consider locking every ownership/partition instead of whole thing.
+        # lock each partition for list_ownership, claim_ownership and update_checkpoint etag doesn't get out of sync
+        # when the three methods are running concurrently
+        self._cached_ownership_locks = defaultdict(asyncio.Lock)
 
     async def list_ownership(self, eventhub_name: str, consumer_group_name: str) -> Iterable[Dict[str, Any]]:
-        async with self._lock:
-            try:
-                blobs = self._container_client.list_blobs(include=['metadata'])
-            except AzureError as azure_err:  # list_blobs has exhausted retry
-                logger.exception("An exception occurred during list_ownership for eventhub %r consumer group %r."
-                                 " An empty ownership list is returned",
-                                 eventhub_name, consumer_group_name, exc_info=azure_err)
-                return []
-            async for b in blobs:  # TODO: consider running them concurrently
+        try:
+            blobs = self._container_client.list_blobs(include=['metadata'])
+        except AzureError as azure_err:  # list_blobs has exhausted retry
+            logger.exception("An exception occurred during list_ownership for eventhub %r consumer group %r."
+                             " An empty ownership list is returned",
+                             eventhub_name, consumer_group_name, exc_info=azure_err)
+            return []
+        async for b in blobs:  # TODO: running them concurrently
+            async with self._cached_ownership_locks[b.name]:
                 metadata = b.metadata
                 ownership = {
                     "eventhub_name": eventhub_name,
@@ -55,17 +57,18 @@ class BlobPartitionManager(PartitionManager):
 
     async def claim_ownership(self, ownership_list: Iterable[Dict[str, Any]]) -> Iterable[Dict[str, Any]]:
         result = []
-        async with self._lock:
-            for ownership in ownership_list:  # TODO: consider claiming concurrently
+        for ownership in ownership_list:  # TODO: claiming concurrently
+            partition_id = ownership["partition_id"]
+            eventhub_name = ownership["eventhub_name"]
+            consumer_group_name = ownership["consumer_group_name"]
+            owner_id = ownership["owner_id"]
+
+            async with self._cached_ownership_locks[partition_id]:
                 metadata = {"owner_id": ownership["owner_id"]}
                 if "offset" in ownership:
                     metadata["offset"] = ownership["offset"]
                 if "sequence_number" in ownership:
                     metadata["sequence_number"] = ownership["sequence_number"]
-                partition_id = ownership["partition_id"]
-                eventhub_name = ownership["eventhub_name"]
-                consumer_group_name = ownership["consumer_group_name"]
-                owner_id = ownership["owner_id"]
 
                 etag = ownership.get("etag")
                 if etag:
@@ -100,7 +103,7 @@ class BlobPartitionManager(PartitionManager):
             "offset": offset,
             "sequence_number": str(sequence_number)
         }
-        async with self._lock:
+        async with self._cached_ownership_locks[partition_id]:
             try:
                 blob_client = await self._container_client.upload_blob(
                     name=partition_id, data=UPLOAD_DATA, metadata=metadata, overwrite=True)
