@@ -9,7 +9,7 @@ from datetime import datetime
 
 from ._shared import parse_vault_id
 from ._shared._generated.v7_0 import models
-from .enums import KeyUsageType, SecretContentType
+from .enums import ActionType, KeyUsageType, JsonWebKeyCurveName, JsonWebKeyType, SecretContentType
 
 try:
     from typing import TYPE_CHECKING
@@ -628,7 +628,10 @@ class CertificatePolicy(object):
                             lifetime_percentage=lifetime_action.lifetime_percentage,
                             days_before_expiry=lifetime_action.days_before_expiry
                         ),
-                        action=models.Action(action_type=lifetime_action.action_type)
+                        action=models.Action(action_type=lifetime_action.action_type.value
+                                             if not isinstance(lifetime_action.action_type, str)
+                                             and lifetime_action.action_type
+                                             else lifetime_action.action_type)
                     )
                 )
         else:
@@ -673,17 +676,21 @@ class CertificatePolicy(object):
                 self.key_properties.curve)):
             key_properties = models.KeyProperties(
                 exportable=self.key_properties.exportable,
-                key_type=self.key_properties.key_type,
+                key_type=(self.key_properties.key_type.value
+                          if not isinstance(self.key_properties.key_type, str) and self.key_properties.key_type
+                          else self.key_properties.key_type),
                 key_size=self.key_properties.key_size,
                 reuse_key=self.key_properties.reuse_key,
-                curve=self.key_properties.curve
+                curve=(self.key_properties.curve.value
+                       if not isinstance(self.key_properties.curve, str) and self.key_properties.curve
+                       else self.key_properties.curve)
             )
         else:
             key_properties = None
 
         if self.content_type:
             secret_properties = models.SecretProperties(content_type=self.content_type.value
-                                                        if not isinstance(self.content_type, str)
+                                                        if not isinstance(self.content_type, str) and self.content_type
                                                         else self.content_type)
         else:
             secret_properties = None
@@ -706,7 +713,8 @@ class CertificatePolicy(object):
         if certificate_policy_bundle.lifetime_actions:
             lifetime_actions = [
                 LifetimeAction(
-                    action_type=item.action.action_type,
+                    action_type=(ActionType(item.action.action_type)
+                                 if item.action.action_type else None),
                     lifetime_percentage=item.trigger.lifetime_percentage,
                     days_before_expiry=item.trigger.days_before_expiry,
                 )
@@ -725,10 +733,12 @@ class CertificatePolicy(object):
 
             key_properties = KeyProperties(
                 exportable=certificate_policy_bundle.key_properties.exportable,
-                key_type=certificate_policy_bundle.key_properties.key_type,
+                key_type=(JsonWebKeyType(certificate_policy_bundle.key_properties.key_type)
+                          if certificate_policy_bundle.key_properties.key_type else None),
                 key_size=certificate_policy_bundle.key_properties.key_size,
                 reuse_key=certificate_policy_bundle.key_properties.reuse_key,
-                curve=certificate_policy_bundle.key_properties.curve,
+                curve=(JsonWebKeyCurveName(certificate_policy_bundle.key_properties.curve)
+                       if certificate_policy_bundle.key_properties.curve else None),
                 ekus=(certificate_policy_bundle.x509_certificate_properties.ekus
                       if certificate_policy_bundle.x509_certificate_properties else None),
                 key_usage=key_usage,
@@ -1163,10 +1173,10 @@ class KeyProperties(object):
     def __init__(
         self,
         exportable=None,  # type: Optional[bool]
-        key_type=None,  # type: Optional[str]
+        key_type=None,  # type: Optional[JsonWebKeyType]
         key_size=None,  # type: Optional[str]
         reuse_key=None,  # type: Optional[bool]
-        curve=None,  # type: Optional[str]
+        curve=None,  # type: Optional[JsonWebKeyCurveName]
         ekus=None,  # type: Optional[list[str]]
         key_usage=None  # type: Optional[list[KeyUsageType]]
     ):
@@ -1260,7 +1270,7 @@ class LifetimeAction(object):
     """
 
     def __init__(self, action_type, lifetime_percentage=None, days_before_expiry=None):
-        # type: (str, Optional[int], Optional[int]) -> None
+        # type: (ActionType, Optional[int], Optional[int]) -> None
         self._lifetime_percentage = lifetime_percentage
         self._days_before_expiry = days_before_expiry
         self._action_type = action_type

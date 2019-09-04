@@ -8,15 +8,15 @@ import itertools
 from azure_devtools.scenario_tests import RecordingProcessor
 from certificates_async_test_case import AsyncKeyVaultTestCase
 
-from azure.keyvault.certificates import Issuer, Contact
+from azure.keyvault.certificates import AdministratorDetails, Contact, CertificatePolicy, KeyProperties
 from azure.keyvault.certificates._shared import parse_vault_id
 from devtools_testutils import ResourceGroupPreparer
 from certificates_test_case import KeyVaultTestCase
 from azure.keyvault.certificates._shared._generated.v7_0.models import CertificatePolicy as CertificatePolicyGenerated
-from azure.keyvault.certificates import AdministratorDetails, CertificatePolicy as CertificatePolicy, IssuerBase, KeyProperties
 from azure.keyvault.certificates._shared._generated.v7_0.models import (
     SecretProperties, IssuerParameters, X509CertificateProperties,
     SubjectAlternativeNames, LifetimeAction, Trigger, Action, ActionType, IssuerAttributes)
+from azure.keyvault.certificates.models import Issuer, IssuerBase
 from certificates_async_preparer import AsyncVaultClientPreparer
 
 class RetryAfterReplacer(RecordingProcessor):

@@ -7,18 +7,16 @@ import time
 
 from azure_devtools.scenario_tests import RecordingProcessor, RequestUrlNormalizer
 
-from azure.keyvault.certificates import Issuer, Contact
+from azure.keyvault.certificates import AdministratorDetails, Contact, CertificatePolicy, KeyProperties
 from azure.keyvault.certificates._shared import parse_vault_id
 from devtools_testutils import ResourceGroupPreparer
 from certificates_preparer import VaultClientPreparer
 from certificates_test_case import KeyVaultTestCase
 from azure.keyvault.certificates._shared._generated.v7_0.models import CertificatePolicy as CertificatePolicyGenerated
-from azure.keyvault.certificates.models import CertificatePolicy as CertificatePolicy
 from azure.keyvault.certificates._shared._generated.v7_0.models import (
     SecretProperties, IssuerParameters, X509CertificateProperties,
     SubjectAlternativeNames, LifetimeAction, Trigger, Action, ActionType, IssuerAttributes)
-from azure.keyvault.certificates.models import (
-    AdministratorDetails, IssuerBase, KeyProperties)
+from azure.keyvault.certificates.models import Issuer, IssuerBase
 
 class RetryAfterReplacer(RecordingProcessor):
     """Replace the retry after wait time in the replay process to 0."""

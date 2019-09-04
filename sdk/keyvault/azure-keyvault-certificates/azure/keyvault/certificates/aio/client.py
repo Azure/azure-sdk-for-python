@@ -13,7 +13,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.polling import async_poller
 
-from azure.keyvault.certificates import(
+from azure.keyvault.certificates.models import(
     AdministratorDetails,
     CertificatePolicy,
     CertificateOperation,
