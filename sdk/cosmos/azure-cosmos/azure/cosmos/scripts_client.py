@@ -22,15 +22,15 @@
 """Create, read, update and delete and execute scripts in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, List, Dict, Union
+from typing import Any, List, Dict, Union, Iterable
 
 import six
 
 from azure.cosmos._cosmos_client_connection import CosmosClientConnection
 from .partition_key import NonePartitionKeyValue
-from ._query_iterable import QueryIterable
 
 # pylint: disable=protected-access
+# pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
 
 
 class ScriptType(object):
@@ -53,7 +53,7 @@ class ScriptsClient(object):
         return script_or_id["_self"]
 
     def list_stored_procedures(self, max_item_count=None, feed_options=None):
-        # type: (int, Dict[str, Any]) -> QueryIterable
+        # type: (int, Dict[str, Any]) -> Iterable[Dict[str, Any]]
         """ List all stored procedures in the container.
 
         :param max_item_count: Max number of items to be returned in the enumeration operation.
@@ -69,7 +69,7 @@ class ScriptsClient(object):
         return self.client_connection.ReadStoredProcedures(collection_link=self.container_link, options=feed_options)
 
     def query_stored_procedures(self, query, parameters=None, max_item_count=None, feed_options=None):
-        # type: (str, List, int, Dict[str, Any]) -> QueryIterable
+        # type: (str, List, int, Dict[str, Any]) -> Iterable[Dict[str, Any]]
         """Return all stored procedures matching the given `query`.
 
         :param query: The Azure Cosmos DB SQL query to execute.
@@ -197,7 +197,7 @@ class ScriptsClient(object):
         )
 
     def list_triggers(self, max_item_count=None, feed_options=None):
-        # type: (int, Dict[str, Any]) -> QueryIterable
+        # type: (int, Dict[str, Any]) -> Iterable[Dict[str, Any]]
         """ List all triggers in the container.
 
         :param max_item_count: Max number of items to be returned in the enumeration operation.
@@ -213,7 +213,7 @@ class ScriptsClient(object):
         return self.client_connection.ReadTriggers(collection_link=self.container_link, options=feed_options)
 
     def query_triggers(self, query, parameters=None, max_item_count=None, feed_options=None):
-        # type: (str, List, int, Dict[str, Any]) -> QueryIterable
+        # type: (str, List, int, Dict[str, Any]) -> Iterable[Dict[str, Any]]
         """Return all triggers matching the given `query`.
 
         :param query: The Azure Cosmos DB SQL query to execute.
@@ -307,7 +307,7 @@ class ScriptsClient(object):
         )
 
     def list_user_defined_functions(self, max_item_count=None, feed_options=None):
-        # type: (int, Dict[str, Any]) -> QueryIterable
+        # type: (int, Dict[str, Any]) -> Iterable[Dict[str, Any]]
         """ List all user defined functions in the container.
 
         :param max_item_count: Max number of items to be returned in the enumeration operation.
@@ -325,7 +325,7 @@ class ScriptsClient(object):
         )
 
     def query_user_defined_functions(self, query, parameters=None, max_item_count=None, feed_options=None):
-        # type: (str, List, int, Dict[str, Any]) -> QueryIterable
+        # type: (str, List, int, Dict[str, Any]) -> Iterable[Dict[str, Any]]
         """Return all user defined functions matching the given `query`.
 
         :param query: The Azure Cosmos DB SQL query to execute.
@@ -391,7 +391,8 @@ class ScriptsClient(object):
         :param body: A dict-like object representing the udf to replace.
         :param request_options: Dictionary of additional properties to be used for the request.
         :returns: A dict representing the user defined function after replace went through.
-        :raise `CosmosHttpResponseError`: If the replace failed or the user defined function with given id does not exist.
+        :raise `CosmosHttpResponseError`: If the replace failed or the user defined function with
+            given id does not exist.
 
         """
         if not request_options:

@@ -24,9 +24,6 @@
 
 """Document client class for the Azure Cosmos database service.
 """
-import platform
-
-import requests
 import six
 from azure.core.paging import ItemPaged
 from azure.core import PipelineClient
@@ -81,8 +78,14 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
     _DefaultStringRangePrecision = -1
 
     def __init__(
-        self, url_connection, auth, connection_policy=None, consistency_level=documents.ConsistencyLevel.Session, **kwargs
+        self,
+        url_connection,  # type: str
+        auth,  # type: Dict[str, Any]
+        connection_policy=None,  # type: Optional[ConnectionPolicy]
+        consistency_level=documents.ConsistencyLevel.Session,  # type: str
+        **kwargs  # type: Any
     ):
+        # type: (...) -> None
         """
         :param str url_connection:
             The URL for connecting to the DB server.

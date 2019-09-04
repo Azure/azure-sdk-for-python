@@ -24,7 +24,7 @@
 
 import json
 
-from six.moves.urllib.parse import urlparse, urlencode
+from six.moves.urllib.parse import urlparse
 import six
 from azure.core.exceptions import DecodeError
 
@@ -87,6 +87,8 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
         tuple of (dict, dict)
 
     """
+    # pylint: disable=protected-access
+
     is_media = request.url.find("media") > -1
     is_media_stream = is_media and connection_policy.MediaReadMode == documents.MediaReadMode.Streamed
 
@@ -190,7 +192,7 @@ def SynchronizedRequest(
     :param object client:
         Document client instance
     :param dict request_params:
-    :param _GlobalEndpointManager global_endpoint_manager: 
+    :param _GlobalEndpointManager global_endpoint_manager:
     :param  documents.ConnectionPolicy connection_policy:
     :param azure.core.PipelineClient pipeline_client:
         PipelineClient to process the request.

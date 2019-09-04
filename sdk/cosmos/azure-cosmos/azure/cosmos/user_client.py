@@ -19,10 +19,12 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+# pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
+
 """Create, read, update and delete permissions in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, List, Dict, Union, cast
+from typing import Any, List, Dict, Union, cast, Iterable
 
 import six
 from azure.core.tracing.decorator import distributed_trace
@@ -80,7 +82,7 @@ class UserClient(object):
 
     @distributed_trace
     def read_all_permissions(self, max_item_count=None, feed_options=None, response_hook=None, **kwargs):
-        # type: (int, Dict[str, Any], Optional[Callable]) -> QueryIterable
+        # type: (int, Dict[str, Any], Optional[Callable]) -> Iterable[Dict[str, Any]]
         """ List all permission for the user.
 
         :param max_item_count: Max number of permissions to be returned in the enumeration operation.
@@ -111,7 +113,7 @@ class UserClient(object):
         response_hook=None,
         **kwargs
     ):
-        # type: (str, List, int, Dict[str, Any], Optional[Callable]) -> QueryIterable
+        # type: (str, List, int, Dict[str, Any], Optional[Callable]) -> Iterable[Dict[str, Any]]
         """Return all permissions matching the given `query`.
 
         :param query: The Azure Cosmos DB SQL query to execute.

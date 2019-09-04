@@ -21,7 +21,7 @@
 
 """PyCosmos Exceptions in the Azure Cosmos database service.
 """
-from azure.core.exceptions import (
+from azure.core.exceptions import (  # pylint: disable=unused-import
     AzureError,
     HttpResponseError,
     ResourceExistsError,
@@ -50,7 +50,6 @@ class CosmosHttpResponseError(HttpResponseError):
             self.sub_status = int(self.headers[http_constants.HttpHeaders.SubStatus])
             formatted_message = "Status code: %d Sub-status: %d\n%s" % (status, self.sub_status, str(message))
         else:
-            
             formatted_message = "Status code: %d\n%s" % (status, str(message))
 
         super(CosmosHttpResponseError, self).__init__(message=formatted_message, response=response, **kwargs)

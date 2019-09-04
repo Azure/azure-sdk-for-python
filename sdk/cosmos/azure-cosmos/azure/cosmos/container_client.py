@@ -22,7 +22,7 @@
 """Create, read, update and delete items in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, Callable, Dict, List, Optional, Union
+from typing import Any, Callable, Dict, List, Optional, Union, Iterable
 
 import six
 from azure.core.tracing.decorator import distributed_trace
@@ -32,12 +32,12 @@ from .errors import CosmosResourceNotFoundError
 from .http_constants import StatusCodes
 from .offer import Offer
 from .scripts_client import ScriptsClient
-from ._query_iterable import QueryIterable
 from .partition_key import NonePartitionKeyValue
 
-__all__ = ("Container",)
+__all__ = ("ContainerClient",)
 
 # pylint: disable=protected-access
+# pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
 
 
 class ContainerClient(object):
@@ -72,6 +72,7 @@ class ContainerClient(object):
 
     @property
     def is_system_key(self):
+        # type: () -> bool
         if self._is_system_key is None:
             properties = self._get_properties()
             self._is_system_key = (
@@ -81,6 +82,7 @@ class ContainerClient(object):
 
     @property
     def scripts(self):
+        # type: () -> ScriptsClient
         if self._scripts is None:
             self._scripts = ScriptsClient(self.client_connection, self.container_link, self.is_system_key)
         return self._scripts
@@ -214,7 +216,7 @@ class ContainerClient(object):
         response_hook=None,
         **kwargs
     ):
-        # type: (int, str, Dict[str, str], bool, Dict[str, Any], Optional[Callable]) -> QueryIterable
+        # type: (int, str, Dict[str, str], bool, Dict[str, Any], Optional[Callable]) -> Iterable[Dict[str, Any]]
         """ List all items in the container.
 
         :param max_item_count: Max number of items to be returned in the enumeration operation.
@@ -249,14 +251,15 @@ class ContainerClient(object):
     @distributed_trace
     def query_items_change_feed(
         self,
-        partition_key_range_id=None,
-        is_start_from_beginning=False,
-        continuation=None,
-        max_item_count=None,
-        feed_options=None,
-        response_hook=None,
-        **kwargs
+        partition_key_range_id=None,  # type: Optional[str]
+        is_start_from_beginning=False,  # type: bool
+        continuation=None,  # type: Optional[str]
+        max_item_count=None,  # type: Optional[int]
+        feed_options=None,  # type: Optional[Dict[str, Any]]
+        response_hook=None,  # type: Optional[Callable]
+        **kwargs  # type: Any
     ):
+        # type: (...) -> Iterable[Dict[str, Any]]
         """ Get a sorted list of items that were changed, in the order in which they were modified.
 
         :param partition_key_range_id: ChangeFeed requests can be executed against specific partition key ranges.
@@ -308,7 +311,7 @@ class ContainerClient(object):
         response_hook=None,  # type: Optional[Callable]
         **kwargs
     ):
-        # type: (...) -> QueryIterable
+        # type: (...) -> Iterable[Dict[str, Any]]
         """Return all results matching the given `query`.
 
         :param query: The Azure Cosmos DB SQL query to execute.
@@ -664,7 +667,7 @@ class ContainerClient(object):
 
     @distributed_trace
     def read_all_conflicts(self, max_item_count=None, feed_options=None, response_hook=None, **kwargs):
-        # type: (int, Dict[str, Any], Optional[Callable]) -> QueryIterable
+        # type: (int, Dict[str, Any], Optional[Callable]) -> Iterable[Dict[str, Any]]
         """ List all conflicts in the container.
 
         :param max_item_count: Max number of items to be returned in the enumeration operation.
@@ -697,7 +700,7 @@ class ContainerClient(object):
         response_hook=None,
         **kwargs
     ):
-        # type: (str, List, bool, Any, int, Dict[str, Any], Optional[Callable]) -> QueryIterable
+        # type: (str, List, bool, Any, int, Dict[str, Any], Optional[Callable]) -> Iterable[Dict[str, Any]]
         """Return all conflicts matching the given `query`.
 
         :param query: The Azure Cosmos DB SQL query to execute.

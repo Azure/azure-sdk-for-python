@@ -22,7 +22,7 @@
 """Create, read, and delete databases in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, Callable, Dict, Mapping, Optional, Union, cast
+from typing import Any, Callable, Dict, Mapping, Optional, Union, cast, Iterable
 
 import six
 from azure.core.tracing.decorator import distributed_trace
@@ -30,7 +30,6 @@ from azure.core.tracing.decorator import distributed_trace
 from ._cosmos_client_connection import CosmosClientConnection
 from .database_client import DatabaseClient
 from .documents import ConnectionPolicy, DatabaseAccount
-from ._query_iterable import QueryIterable
 
 __all__ = ("CosmosClient",)
 
@@ -65,6 +64,7 @@ def _build_auth(credential):
 
 
 def _build_connection_policy(kwargs):
+    # pylint: disable=protected-access
     policy = kwargs.pop('connection_policy', None) or ConnectionPolicy()
 
     # Connection config
@@ -128,7 +128,7 @@ class CosmosClient(object):
             :name: create_client
 
         """
-        auth = _build_auth(credential) 
+        auth = _build_auth(credential)
         connection_policy = _build_connection_policy(kwargs)
         self.client_connection = CosmosClientConnection(
             url, auth=auth, consistency_level=consistency_level, connection_policy=connection_policy, **kwargs
@@ -143,6 +143,7 @@ class CosmosClient(object):
 
     @classmethod
     def from_connection_string(cls, conn_str, credential=None, consistency_level="Session", **kwargs):
+        # type: (str, Optional[Any], str, Any) -> CosmosClient
         settings = _parse_connection_str(conn_str, credential)
         return cls(
             url=settings['AccountEndpoint'],
@@ -164,19 +165,19 @@ class CosmosClient(object):
         return "dbs/{}".format(database_id)
 
     @distributed_trace
-    def create_database(
+    def create_database(  # pylint: disable=redefined-builtin
         self,
-        id,  # pylint: disable=redefined-builtin
-        session_token=None,
-        initial_headers=None,
-        access_condition=None,
-        populate_query_metrics=None,
-        offer_throughput=None,
-        request_options=None,
-        response_hook=None,
-        **kwargs
+        id,  # type: str
+        session_token=None,  # type: Optional[str]
+        initial_headers=None,  # type: Optional[Dict[str, str]]
+        access_condition=None,  # type: Optional[Dict[str, str]]
+        populate_query_metrics=None,  # type: Optional[bool]
+        offer_throughput=None,  # type: Optional[int]
+        request_options=None,  # type: Optional[Dict[str, Any]]
+        response_hook=None,  # type: Optional[Callable]
+        **kwargs  # type: Any
     ):
-        # type: (str, str, Dict[str, str], Dict[str, str], bool, int, Dict[str, Any], Optional[Callable]) -> DatabaseClient
+        # type: (...) -> DatabaseClient
         """Create a new database with the given ID (name).
 
         :param id: ID (name) of the database to create.
@@ -248,7 +249,7 @@ class CosmosClient(object):
         response_hook=None,
         **kwargs
     ):
-        # type: (int, str, Dict[str, str], bool, Dict[str, Any],  Optional[Callable]) -> QueryIterable
+        # type: (int, str, Dict[str, str], bool, Dict[str, Any],  Optional[Callable]) -> Iterable[Dict[str, Any]]
         """
         List the databases in a Cosmos DB SQL database account.
 
@@ -291,7 +292,7 @@ class CosmosClient(object):
         response_hook=None,  # type: Optional[Callable]
         **kwargs
     ):
-        # type: (...) -> QueryIterable
+        # type: (...) -> Iterable[Dict[str, Any]]
 
         """
         Query the databases in a Cosmos DB SQL database account.

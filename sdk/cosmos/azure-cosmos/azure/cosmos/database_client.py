@@ -22,7 +22,7 @@
 """Create, read, update and delete containers in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, List, Dict, Mapping, Union, cast
+from typing import Any, List, Dict, Mapping, Union, cast, Iterable
 
 import six
 from azure.core.tracing.decorator import distributed_trace
@@ -33,11 +33,11 @@ from .offer import Offer
 from .http_constants import StatusCodes
 from .errors import CosmosResourceNotFoundError
 from .user_client import UserClient
-from ._query_iterable import QueryIterable
 
 __all__ = ("DatabaseClient",)
 
 # pylint: disable=protected-access
+# pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
 
 
 class DatabaseClient(object):
@@ -320,7 +320,7 @@ class DatabaseClient(object):
         response_hook=None,
         **kwargs
     ):
-        # type: (int, str, Dict[str, str], bool, Dict[str, Any], Optional[Callable]) -> QueryIterable
+        # type: (int, str, Dict[str, str], bool, Dict[str, Any], Optional[Callable]) -> Iterable[Dict[str, Any]]
         """ List the containers in the database.
 
         :param max_item_count: Max number of items to be returned in the enumeration operation.
@@ -361,17 +361,17 @@ class DatabaseClient(object):
     @distributed_trace
     def query_containers(
         self,
-        query=None,
-        parameters=None,
-        max_item_count=None,
-        session_token=None,
-        initial_headers=None,
-        populate_query_metrics=None,
-        feed_options=None,
-        response_hook=None,
-        **kwargs
+        query=None,  # type: Optional[str]
+        parameters=None,  # type: Optional[List[str]]
+        max_item_count=None,  # type: Optional[int]
+        session_token=None,  # type: Optional[str]
+        initial_headers=None,  # type: Optional[Dict[str, str]]
+        populate_query_metrics=None,  # type: Optional[bool]
+        feed_options=None,  # type: Optional[Dict[str, Any]]
+        response_hook=None,  # type: Optional[Callable]
+        **kwargs  # type: Any
     ):
-        # type: (str, List, int, str, Dict[str, str], bool, Dict[str, Any], Optional[Callable]) -> QueryIterable
+        # type: (...) -> Iterable[Dict[str, Any]]
         """List properties for containers in the current database
 
         :param query: The Azure Cosmos DB SQL query to execute.
@@ -431,7 +431,8 @@ class DatabaseClient(object):
             :class:`ContainerClient` instance of the container to be replaced.
         :param partition_key: The partition key to use for the container.
         :param indexing_policy: The indexing policy to apply to the container.
-        :param default_ttl: Default time to live (TTL) for items in the container. If unspecified, items do not expire.
+        :param default_ttl: Default time to live (TTL) for items in the container.
+            If unspecified, items do not expire.
         :param conflict_resolution_policy: The conflict resolution policy to apply to the container.
         :param session_token: Token for use with Session consistency.
         :param access_condition: Conditions Associated with the request.
@@ -490,7 +491,7 @@ class DatabaseClient(object):
 
     @distributed_trace
     def read_all_users(self, max_item_count=None, feed_options=None, response_hook=None, **kwargs):
-        # type: (int, Dict[str, Any], Optional[Callable]) -> QueryIterable
+        # type: (int, Dict[str, Any], Optional[Callable]) -> Iterable[Dict[str, Any]]
         """ List all users in the container.
 
         :param max_item_count: Max number of users to be returned in the enumeration operation.
@@ -513,7 +514,7 @@ class DatabaseClient(object):
 
     @distributed_trace
     def query_users(self, query, parameters=None, max_item_count=None, feed_options=None, response_hook=None, **kwargs):
-        # type: (str, List, int, Dict[str, Any], Optional[Callable]) -> QueryIterable
+        # type: (str, List, int, Dict[str, Any], Optional[Callable]) -> Iterable[Dict[str, Any]]
         """Return all users matching the given `query`.
 
         :param query: The Azure Cosmos DB SQL query to execute.
@@ -624,8 +625,15 @@ class DatabaseClient(object):
         )
 
     @distributed_trace
-    def replace_user(self, user, body, request_options=None, response_hook=None, **kwargs):
-        # type: (Union[str, UserClient, Dict[str, Any]], Dict[str, Any], Dict[str, Any], Optional[Callable]) -> UserClient
+    def replace_user(
+        self,
+        user,  # type: Union[str, UserClient, Dict[str, Any]]
+        body,  # type: Dict[str, Any]
+        request_options=None,  # type: Optional(Dict[str, Any])
+        response_hook=None,  # type: Optional[Callable]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> UserClient
         """ Replaces the specified user if it exists in the container.
 
         :param user: The ID (name), dict representing the properties or :class:`UserClient`
