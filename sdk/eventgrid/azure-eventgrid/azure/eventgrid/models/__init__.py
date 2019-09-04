@@ -39,6 +39,15 @@ try:
     from ._models_py3 import IotHubDeviceDeletedEventData
     from ._models_py3 import IotHubDeviceDisconnectedEventData
     from ._models_py3 import IotHubDeviceTelemetryEventData
+    from ._models_py3 import KeyVaultCertificateExpiredEventData
+    from ._models_py3 import KeyVaultCertificateNearExpiryEventData
+    from ._models_py3 import KeyVaultCertificateNewVersionCreatedEventData
+    from ._models_py3 import KeyVaultKeyExpiredEventData
+    from ._models_py3 import KeyVaultKeyNearExpiryEventData
+    from ._models_py3 import KeyVaultKeyNewVersionCreatedEventData
+    from ._models_py3 import KeyVaultSecretExpiredEventData
+    from ._models_py3 import KeyVaultSecretNearExpiryEventData
+    from ._models_py3 import KeyVaultSecretNewVersionCreatedEventData
     from ._models_py3 import MapsGeofenceEnteredEventData
     from ._models_py3 import MapsGeofenceEventProperties
     from ._models_py3 import MapsGeofenceExitedEventData
@@ -120,6 +129,15 @@ except (SyntaxError, ImportError):
     from ._models import IotHubDeviceDeletedEventData
     from ._models import IotHubDeviceDisconnectedEventData
     from ._models import IotHubDeviceTelemetryEventData
+    from ._models import KeyVaultCertificateExpiredEventData
+    from ._models import KeyVaultCertificateNearExpiryEventData
+    from ._models import KeyVaultCertificateNewVersionCreatedEventData
+    from ._models import KeyVaultKeyExpiredEventData
+    from ._models import KeyVaultKeyNearExpiryEventData
+    from ._models import KeyVaultKeyNewVersionCreatedEventData
+    from ._models import KeyVaultSecretExpiredEventData
+    from ._models import KeyVaultSecretNearExpiryEventData
+    from ._models import KeyVaultSecretNewVersionCreatedEventData
     from ._models import MapsGeofenceEnteredEventData
     from ._models import MapsGeofenceEventProperties
     from ._models import MapsGeofenceExitedEventData
@@ -208,6 +226,15 @@ __all__ = [
     'IotHubDeviceDeletedEventData',
     'IotHubDeviceDisconnectedEventData',
     'IotHubDeviceTelemetryEventData',
+    'KeyVaultCertificateExpiredEventData',
+    'KeyVaultCertificateNearExpiryEventData',
+    'KeyVaultCertificateNewVersionCreatedEventData',
+    'KeyVaultKeyExpiredEventData',
+    'KeyVaultKeyNearExpiryEventData',
+    'KeyVaultKeyNewVersionCreatedEventData',
+    'KeyVaultSecretExpiredEventData',
+    'KeyVaultSecretNearExpiryEventData',
+    'KeyVaultSecretNewVersionCreatedEventData',
     'MapsGeofenceEnteredEventData',
     'MapsGeofenceEventProperties',
     'MapsGeofenceExitedEventData',

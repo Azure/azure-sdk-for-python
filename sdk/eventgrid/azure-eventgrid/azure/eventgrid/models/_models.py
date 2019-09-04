@@ -927,6 +927,374 @@ class IotHubDeviceTelemetryEventData(DeviceTelemetryEventProperties):
         super(IotHubDeviceTelemetryEventData, self).__init__(**kwargs)
 
 
+class KeyVaultCertificateExpiredEventData(Model):
+    """Schema of the Data property of an EventGridEvent for an CertificateExpired
+    event.
+
+    :param id: The id of the object that triggered this event.
+    :type id: str
+    :param vault_name: Key vault name of the object that triggered this event.
+    :type vault_name: str
+    :param object_type: The type of the object that triggered this event
+    :type object_type: str
+    :param object_name: The name of the object that triggered this event
+    :type object_name: str
+    :param version: The version of the object that triggered this event
+    :type version: str
+    :param nbf: Not before date of the object that triggered this event
+    :type nbf: float
+    :param exp: The expiration date of the object that triggered this event
+    :type exp: float
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'vault_name': {'key': 'vaultName', 'type': 'str'},
+        'object_type': {'key': 'objectType', 'type': 'str'},
+        'object_name': {'key': 'objectName', 'type': 'str'},
+        'version': {'key': 'version', 'type': 'str'},
+        'nbf': {'key': 'nbf', 'type': 'float'},
+        'exp': {'key': 'exp', 'type': 'float'},
+    }
+
+    def __init__(self, **kwargs):
+        super(KeyVaultCertificateExpiredEventData, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.vault_name = kwargs.get('vault_name', None)
+        self.object_type = kwargs.get('object_type', None)
+        self.object_name = kwargs.get('object_name', None)
+        self.version = kwargs.get('version', None)
+        self.nbf = kwargs.get('nbf', None)
+        self.exp = kwargs.get('exp', None)
+
+
+class KeyVaultCertificateNearExpiryEventData(Model):
+    """Schema of the Data property of an EventGridEvent for an
+    CertificateNearExpiry event.
+
+    :param id: The id of the object that triggered this event.
+    :type id: str
+    :param vault_name: Key vault name of the object that triggered this event.
+    :type vault_name: str
+    :param object_type: The type of the object that triggered this event
+    :type object_type: str
+    :param object_name: The name of the object that triggered this event
+    :type object_name: str
+    :param version: The version of the object that triggered this event
+    :type version: str
+    :param nbf: Not before date of the object that triggered this event
+    :type nbf: float
+    :param exp: The expiration date of the object that triggered this event
+    :type exp: float
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'vault_name': {'key': 'vaultName', 'type': 'str'},
+        'object_type': {'key': 'objectType', 'type': 'str'},
+        'object_name': {'key': 'objectName', 'type': 'str'},
+        'version': {'key': 'version', 'type': 'str'},
+        'nbf': {'key': 'nbf', 'type': 'float'},
+        'exp': {'key': 'exp', 'type': 'float'},
+    }
+
+    def __init__(self, **kwargs):
+        super(KeyVaultCertificateNearExpiryEventData, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.vault_name = kwargs.get('vault_name', None)
+        self.object_type = kwargs.get('object_type', None)
+        self.object_name = kwargs.get('object_name', None)
+        self.version = kwargs.get('version', None)
+        self.nbf = kwargs.get('nbf', None)
+        self.exp = kwargs.get('exp', None)
+
+
+class KeyVaultCertificateNewVersionCreatedEventData(Model):
+    """Schema of the Data property of an EventGridEvent for an
+    CertificateNewVersionCreated event.
+
+    :param id: The id of the object that triggered this event.
+    :type id: str
+    :param vault_name: Key vault name of the object that triggered this event.
+    :type vault_name: str
+    :param object_type: The type of the object that triggered this event
+    :type object_type: str
+    :param object_name: The name of the object that triggered this event
+    :type object_name: str
+    :param version: The version of the object that triggered this event
+    :type version: str
+    :param nbf: Not before date of the object that triggered this event
+    :type nbf: float
+    :param exp: The expiration date of the object that triggered this event
+    :type exp: float
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'vault_name': {'key': 'vaultName', 'type': 'str'},
+        'object_type': {'key': 'objectType', 'type': 'str'},
+        'object_name': {'key': 'objectName', 'type': 'str'},
+        'version': {'key': 'version', 'type': 'str'},
+        'nbf': {'key': 'nbf', 'type': 'float'},
+        'exp': {'key': 'exp', 'type': 'float'},
+    }
+
+    def __init__(self, **kwargs):
+        super(KeyVaultCertificateNewVersionCreatedEventData, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.vault_name = kwargs.get('vault_name', None)
+        self.object_type = kwargs.get('object_type', None)
+        self.object_name = kwargs.get('object_name', None)
+        self.version = kwargs.get('version', None)
+        self.nbf = kwargs.get('nbf', None)
+        self.exp = kwargs.get('exp', None)
+
+
+class KeyVaultKeyExpiredEventData(Model):
+    """Schema of the Data property of an EventGridEvent for an KeyExpired event.
+
+    :param id: The id of the object that triggered this event.
+    :type id: str
+    :param vault_name: Key vault name of the object that triggered this event.
+    :type vault_name: str
+    :param object_type: The type of the object that triggered this event
+    :type object_type: str
+    :param object_name: The name of the object that triggered this event
+    :type object_name: str
+    :param version: The version of the object that triggered this event
+    :type version: str
+    :param nbf: Not before date of the object that triggered this event
+    :type nbf: float
+    :param exp: The expiration date of the object that triggered this event
+    :type exp: float
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'vault_name': {'key': 'vaultName', 'type': 'str'},
+        'object_type': {'key': 'objectType', 'type': 'str'},
+        'object_name': {'key': 'objectName', 'type': 'str'},
+        'version': {'key': 'version', 'type': 'str'},
+        'nbf': {'key': 'nbf', 'type': 'float'},
+        'exp': {'key': 'exp', 'type': 'float'},
+    }
+
+    def __init__(self, **kwargs):
+        super(KeyVaultKeyExpiredEventData, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.vault_name = kwargs.get('vault_name', None)
+        self.object_type = kwargs.get('object_type', None)
+        self.object_name = kwargs.get('object_name', None)
+        self.version = kwargs.get('version', None)
+        self.nbf = kwargs.get('nbf', None)
+        self.exp = kwargs.get('exp', None)
+
+
+class KeyVaultKeyNearExpiryEventData(Model):
+    """Schema of the Data property of an EventGridEvent for an KeyNearExpiry
+    event.
+
+    :param id: The id of the object that triggered this event.
+    :type id: str
+    :param vault_name: Key vault name of the object that triggered this event.
+    :type vault_name: str
+    :param object_type: The type of the object that triggered this event
+    :type object_type: str
+    :param object_name: The name of the object that triggered this event
+    :type object_name: str
+    :param version: The version of the object that triggered this event
+    :type version: str
+    :param nbf: Not before date of the object that triggered this event
+    :type nbf: float
+    :param exp: The expiration date of the object that triggered this event
+    :type exp: float
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'vault_name': {'key': 'vaultName', 'type': 'str'},
+        'object_type': {'key': 'objectType', 'type': 'str'},
+        'object_name': {'key': 'objectName', 'type': 'str'},
+        'version': {'key': 'version', 'type': 'str'},
+        'nbf': {'key': 'nbf', 'type': 'float'},
+        'exp': {'key': 'exp', 'type': 'float'},
+    }
+
+    def __init__(self, **kwargs):
+        super(KeyVaultKeyNearExpiryEventData, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.vault_name = kwargs.get('vault_name', None)
+        self.object_type = kwargs.get('object_type', None)
+        self.object_name = kwargs.get('object_name', None)
+        self.version = kwargs.get('version', None)
+        self.nbf = kwargs.get('nbf', None)
+        self.exp = kwargs.get('exp', None)
+
+
+class KeyVaultKeyNewVersionCreatedEventData(Model):
+    """Schema of the Data property of an EventGridEvent for an
+    KeyNewVersionCreated event.
+
+    :param id: The id of the object that triggered this event.
+    :type id: str
+    :param vault_name: Key vault name of the object that triggered this event.
+    :type vault_name: str
+    :param object_type: The type of the object that triggered this event
+    :type object_type: str
+    :param object_name: The name of the object that triggered this event
+    :type object_name: str
+    :param version: The version of the object that triggered this event
+    :type version: str
+    :param nbf: Not before date of the object that triggered this event
+    :type nbf: float
+    :param exp: The expiration date of the object that triggered this event
+    :type exp: float
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'vault_name': {'key': 'vaultName', 'type': 'str'},
+        'object_type': {'key': 'objectType', 'type': 'str'},
+        'object_name': {'key': 'objectName', 'type': 'str'},
+        'version': {'key': 'version', 'type': 'str'},
+        'nbf': {'key': 'nbf', 'type': 'float'},
+        'exp': {'key': 'exp', 'type': 'float'},
+    }
+
+    def __init__(self, **kwargs):
+        super(KeyVaultKeyNewVersionCreatedEventData, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.vault_name = kwargs.get('vault_name', None)
+        self.object_type = kwargs.get('object_type', None)
+        self.object_name = kwargs.get('object_name', None)
+        self.version = kwargs.get('version', None)
+        self.nbf = kwargs.get('nbf', None)
+        self.exp = kwargs.get('exp', None)
+
+
+class KeyVaultSecretExpiredEventData(Model):
+    """Schema of the Data property of an EventGridEvent for an SecretExpired
+    event.
+
+    :param id: The id of the object that triggered this event.
+    :type id: str
+    :param vault_name: Key vault name of the object that triggered this event.
+    :type vault_name: str
+    :param object_type: The type of the object that triggered this event
+    :type object_type: str
+    :param object_name: The name of the object that triggered this event
+    :type object_name: str
+    :param version: The version of the object that triggered this event
+    :type version: str
+    :param nbf: Not before date of the object that triggered this event
+    :type nbf: float
+    :param exp: The expiration date of the object that triggered this event
+    :type exp: float
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'vault_name': {'key': 'vaultName', 'type': 'str'},
+        'object_type': {'key': 'objectType', 'type': 'str'},
+        'object_name': {'key': 'objectName', 'type': 'str'},
+        'version': {'key': 'version', 'type': 'str'},
+        'nbf': {'key': 'nbf', 'type': 'float'},
+        'exp': {'key': 'exp', 'type': 'float'},
+    }
+
+    def __init__(self, **kwargs):
+        super(KeyVaultSecretExpiredEventData, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.vault_name = kwargs.get('vault_name', None)
+        self.object_type = kwargs.get('object_type', None)
+        self.object_name = kwargs.get('object_name', None)
+        self.version = kwargs.get('version', None)
+        self.nbf = kwargs.get('nbf', None)
+        self.exp = kwargs.get('exp', None)
+
+
+class KeyVaultSecretNearExpiryEventData(Model):
+    """Schema of the Data property of an EventGridEvent for an SecretNearExpiry
+    event.
+
+    :param id: The id of the object that triggered this event.
+    :type id: str
+    :param vault_name: Key vault name of the object that triggered this event.
+    :type vault_name: str
+    :param object_type: The type of the object that triggered this event
+    :type object_type: str
+    :param object_name: The name of the object that triggered this event
+    :type object_name: str
+    :param version: The version of the object that triggered this event
+    :type version: str
+    :param nbf: Not before date of the object that triggered this event
+    :type nbf: float
+    :param exp: The expiration date of the object that triggered this event
+    :type exp: float
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'vault_name': {'key': 'vaultName', 'type': 'str'},
+        'object_type': {'key': 'objectType', 'type': 'str'},
+        'object_name': {'key': 'objectName', 'type': 'str'},
+        'version': {'key': 'version', 'type': 'str'},
+        'nbf': {'key': 'nbf', 'type': 'float'},
+        'exp': {'key': 'exp', 'type': 'float'},
+    }
+
+    def __init__(self, **kwargs):
+        super(KeyVaultSecretNearExpiryEventData, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.vault_name = kwargs.get('vault_name', None)
+        self.object_type = kwargs.get('object_type', None)
+        self.object_name = kwargs.get('object_name', None)
+        self.version = kwargs.get('version', None)
+        self.nbf = kwargs.get('nbf', None)
+        self.exp = kwargs.get('exp', None)
+
+
+class KeyVaultSecretNewVersionCreatedEventData(Model):
+    """Schema of the Data property of an EventGridEvent for an
+    SecretNewVersionCreated event.
+
+    :param id: The id of the object that triggered this event.
+    :type id: str
+    :param vault_name: Key vault name of the object that triggered this event.
+    :type vault_name: str
+    :param object_type: The type of the object that triggered this event
+    :type object_type: str
+    :param object_name: The name of the object that triggered this event
+    :type object_name: str
+    :param version: The version of the object that triggered this event
+    :type version: str
+    :param nbf: Not before date of the object that triggered this event
+    :type nbf: float
+    :param exp: The expiration date of the object that triggered this event
+    :type exp: float
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'vault_name': {'key': 'vaultName', 'type': 'str'},
+        'object_type': {'key': 'objectType', 'type': 'str'},
+        'object_name': {'key': 'objectName', 'type': 'str'},
+        'version': {'key': 'version', 'type': 'str'},
+        'nbf': {'key': 'nbf', 'type': 'float'},
+        'exp': {'key': 'exp', 'type': 'float'},
+    }
+
+    def __init__(self, **kwargs):
+        super(KeyVaultSecretNewVersionCreatedEventData, self).__init__(**kwargs)
+        self.id = kwargs.get('id', None)
+        self.vault_name = kwargs.get('vault_name', None)
+        self.object_type = kwargs.get('object_type', None)
+        self.object_name = kwargs.get('object_name', None)
+        self.version = kwargs.get('version', None)
+        self.nbf = kwargs.get('nbf', None)
+        self.exp = kwargs.get('exp', None)
+
+
 class MapsGeofenceEventProperties(Model):
     """Schema of the Data property of an EventGridEvent for a Geofence event
     (GeofenceEntered, GeofenceExited, GeofenceResult).
