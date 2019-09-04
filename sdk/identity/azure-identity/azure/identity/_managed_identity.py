@@ -79,8 +79,8 @@ class ImdsCredential(_ManagedIdentityBase):
         super(ImdsCredential, self).__init__(endpoint=Endpoints.IMDS, client_cls=AuthnClient, config=config, **kwargs)
         self._endpoint_available = None  # type: Optional[bool]
 
-    def get_token(self, *scopes):
-        # type: (*str) -> AccessToken
+    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
+        # type: (*str, **Any) -> AccessToken
         """
         Request an access token for `scopes`.
 
@@ -137,8 +137,8 @@ class MsiCredential(_ManagedIdentityBase):
                 endpoint=endpoint, client_cls=AuthnClient, config=config, **kwargs
             )
 
-    def get_token(self, *scopes):
-        # type: (*str) -> AccessToken
+    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
+        # type: (*str, **Any) -> AccessToken
         """
         Request an access token for `scopes`.
 
