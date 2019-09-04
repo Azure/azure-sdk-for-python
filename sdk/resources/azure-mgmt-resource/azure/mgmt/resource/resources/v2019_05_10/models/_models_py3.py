@@ -10,6 +10,7 @@
 # --------------------------------------------------------------------------
 
 from msrest.serialization import Model
+from msrest.exceptions import HttpOperationError
 
 
 class AliasPathType(Model):
@@ -78,11 +79,32 @@ class BasicDependency(Model):
 
 
 class CloudError(Model):
-    """CloudError.
+    """An error response for a resource management request.
+
+    :param error:
+    :type error:
+     ~azure.mgmt.resource.resources.v2019_05_10.models.ErrorResponse
     """
 
     _attribute_map = {
+        'error': {'key': 'error', 'type': 'ErrorResponse'},
     }
+
+    def __init__(self, *, error=None, **kwargs) -> None:
+        super(CloudError, self).__init__(**kwargs)
+        self.error = error
+
+
+class CloudErrorException(HttpOperationError):
+    """Server responsed with exception of type: 'CloudError'.
+
+    :param deserialize: A deserializer
+    :param response: Server response to be deserialized.
+    """
+
+    def __init__(self, deserialize, response, *args):
+
+        super(CloudErrorException, self).__init__(deserialize, response, 'CloudError', *args)
 
 
 class DebugSetting(Model):
@@ -516,6 +538,79 @@ class DeploymentValidateResult(Model):
         super(DeploymentValidateResult, self).__init__(**kwargs)
         self.error = error
         self.properties = properties
+
+
+class ErrorAdditionalInfo(Model):
+    """The resource management error additional info.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar type: The additional info type.
+    :vartype type: str
+    :ivar info: The additional info.
+    :vartype info: object
+    """
+
+    _validation = {
+        'type': {'readonly': True},
+        'info': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'info': {'key': 'info', 'type': 'object'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(ErrorAdditionalInfo, self).__init__(**kwargs)
+        self.type = None
+        self.info = None
+
+
+class ErrorResponse(Model):
+    """The resource management error response.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details:
+     list[~azure.mgmt.resource.resources.v2019_05_10.models.ErrorResponse]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info:
+     list[~azure.mgmt.resource.resources.v2019_05_10.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        'code': {'readonly': True},
+        'message': {'readonly': True},
+        'target': {'readonly': True},
+        'details': {'readonly': True},
+        'additional_info': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+        'details': {'key': 'details', 'type': '[ErrorResponse]'},
+        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(ErrorResponse, self).__init__(**kwargs)
+        self.code = None
+        self.message = None
+        self.target = None
+        self.details = None
+        self.additional_info = None
 
 
 class ExportTemplateRequest(Model):
@@ -1408,6 +1503,27 @@ class TargetResource(Model):
         self.id = id
         self.resource_name = resource_name
         self.resource_type = resource_type
+
+
+class TemplateHashResult(Model):
+    """Result of the request to calculate template hash. It contains a string of
+    minified template and its hash.
+
+    :param minified_template: The minified template string.
+    :type minified_template: str
+    :param template_hash: The template hash.
+    :type template_hash: str
+    """
+
+    _attribute_map = {
+        'minified_template': {'key': 'minifiedTemplate', 'type': 'str'},
+        'template_hash': {'key': 'templateHash', 'type': 'str'},
+    }
+
+    def __init__(self, *, minified_template: str=None, template_hash: str=None, **kwargs) -> None:
+        super(TemplateHashResult, self).__init__(**kwargs)
+        self.minified_template = minified_template
+        self.template_hash = template_hash
 
 
 class TemplateLink(Model):
