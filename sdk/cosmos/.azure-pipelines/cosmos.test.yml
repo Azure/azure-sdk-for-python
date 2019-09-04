@@ -4,6 +4,10 @@ pr:
   branches:
     include:
     - master
+    - feature/*
+    - hotfix/*
+    - release/*
+    - restapi*
   paths:
     include:
     - sdk/cosmos
