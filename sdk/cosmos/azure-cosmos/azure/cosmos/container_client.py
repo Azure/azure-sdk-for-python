@@ -28,6 +28,7 @@ import six
 from azure.core.tracing.decorator import distributed_trace
 
 from ._cosmos_client_connection import CosmosClientConnection
+from ._base import build_options
 from .errors import CosmosResourceNotFoundError
 from .http_constants import StatusCodes
 from .offer import Offer
@@ -99,16 +100,17 @@ class ContainerClient(object):
             return u"{}/conflicts/{}".format(self.container_link, conflict_or_link)
         return conflict_or_link["_self"]
 
+    def _set_partition_key(self, partition_key):
+        if partition_key == NonePartitionKeyValue:
+            return CosmosClientConnection._return_undefined_or_empty_partition_key(self.is_system_key)
+        return partition_key
+
     @distributed_trace
     def read(
         self,
-        session_token=None,  # type: Optional[str]
-        initial_headers=None,  # type: Optional[Dict[str, str]]
         populate_query_metrics=None,  # type: Optional[bool]
         populate_partition_key_range_statistics=None,  # type: Optional[bool]
         populate_quota_info=None,  # type: Optional[bool]
-        request_options=None,  # type: Optional[Dict[str, Any]]
-        response_hook=None,  # type: Optional[Callable]
         **kwargs  # type: Any
     ):
         # type: (...) -> Container
@@ -127,12 +129,8 @@ class ContainerClient(object):
         :returns: :class:`Container` instance representing the retrieved container.
 
         """
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
-        if session_token:
-            request_options["sessionToken"] = session_token
-        if initial_headers:
-            request_options["initialHeaders"] = initial_headers
+        request_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
         if populate_query_metrics is not None:
             request_options["populateQueryMetrics"] = populate_query_metrics
         if populate_partition_key_range_statistics is not None:
@@ -153,12 +151,8 @@ class ContainerClient(object):
         self,
         item,  # type: Union[str, Dict[str, Any]]
         partition_key,  # type: Any
-        session_token=None,  # type: Optional[str]
-        initial_headers=None,  # type: Optional[Dict[str, str]]
         populate_query_metrics=None,  # type: Optional[bool]
         post_trigger_include=None,  # type: Optioanl[str]
-        request_options=None,  # type: Optional[Dict[str, Any]]
-        response_hook=None,  # type: Optional[Callable]
         **kwargs  # type: Any
     ):
         # type: (...) -> Dict[str, str]
@@ -186,15 +180,11 @@ class ContainerClient(object):
 
         """
         doc_link = self._get_document_link(item)
+        request_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
 
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
         if partition_key:
             request_options["partitionKey"] = self._set_partition_key(partition_key)
-        if session_token:
-            request_options["sessionToken"] = session_token
-        if initial_headers:
-            request_options["initialHeaders"] = initial_headers
         if populate_query_metrics is not None:
             request_options["populateQueryMetrics"] = populate_query_metrics
         if post_trigger_include:
@@ -209,11 +199,7 @@ class ContainerClient(object):
     def list_items(
         self,
         max_item_count=None,  # type: Optional[int]
-        session_token=None,  # type: Optional[str]
-        initial_headers=None,  # type: Optional[Dict[str, str]]
         populate_query_metrics=None,  # type: Optional[bool]
-        feed_options=None,  # type: Optional[Dict[str, Any]]
-        response_hook=None,  # type: Optional[Callable]
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable[Dict[str, Any]]
@@ -227,14 +213,10 @@ class ContainerClient(object):
         :param response_hook: a callable invoked with the response metadata
         :returns: An Iterable of items (dicts).
         """
-        if not feed_options:
-            feed_options = {}  # type: Dict[str, Any]
+        feed_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
-        if session_token:
-            feed_options["sessionToken"] = session_token
-        if initial_headers:
-            feed_options["initialHeaders"] = initial_headers
         if populate_query_metrics is not None:
             feed_options["populateQueryMetrics"] = populate_query_metrics
 
@@ -255,8 +237,6 @@ class ContainerClient(object):
         is_start_from_beginning=False,  # type: bool
         continuation=None,  # type: Optional[str]
         max_item_count=None,  # type: Optional[int]
-        feed_options=None,  # type: Optional[Dict[str, Any]]
-        response_hook=None,  # type: Optional[Callable]
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable[Dict[str, Any]]
@@ -274,8 +254,8 @@ class ContainerClient(object):
         :returns: An Iterable of items (dicts).
 
         """
-        if not feed_options:
-            feed_options = {}  # type: Dict[str, Any]
+        feed_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
         if partition_key_range_id is not None:
             feed_options["partitionKeyRangeId"] = partition_key_range_id
         if is_start_from_beginning is not None:
@@ -303,12 +283,8 @@ class ContainerClient(object):
         partition_key=None,  # type: Optional[Any]
         enable_cross_partition_query=None,  # type: Optional[bool]
         max_item_count=None,  # type: Optional[int]
-        session_token=None,  # type: Optional[str]
-        initial_headers=None,  # type: Optional[Dict[str, str]]
         enable_scan_in_query=None,  # type: Optional[bool]
         populate_query_metrics=None,  # type: Optional[bool]
-        feed_options=None,  # type: Optional[Dict[str, Any]]
-        response_hook=None,  # type: Optional[Callable]
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable[Dict[str, Any]]
@@ -351,16 +327,12 @@ class ContainerClient(object):
             :name: query_items_param
 
         """
-        if not feed_options:
-            feed_options = {}  # type: Dict[str, Any]
+        feed_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
         if enable_cross_partition_query is not None:
             feed_options["enableCrossPartitionQuery"] = enable_cross_partition_query
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
-        if session_token:
-            feed_options["sessionToken"] = session_token
-        if initial_headers:
-            feed_options["initialHeaders"] = initial_headers
         if populate_query_metrics is not None:
             feed_options["populateQueryMetrics"] = populate_query_metrics
         if partition_key is not None:
@@ -388,14 +360,9 @@ class ContainerClient(object):
         self,
         item,  # type: Union[str, Dict[str, Any]]
         body,  # type: Dict[str, Any]
-        session_token=None,  # type: str
-        initial_headers=None,  # type: Dict[str, str]
-        access_condition=None,  # type: Dict[str, str]
-        populate_query_metrics=None,  # type: bool
-        pre_trigger_include=None,  # type: str
-        post_trigger_include=None,  # type: str
-        request_options=None,  # type: Dict[str, Any]
-        response_hook=None,  # type: Optional[Callable]
+        populate_query_metrics=None,  # type: Optional[bool]
+        pre_trigger_include=None,  # type: Optional[str]
+        post_trigger_include=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> Dict[str, str]
@@ -416,15 +383,9 @@ class ContainerClient(object):
 
         """
         item_link = self._get_document_link(item)
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
+        request_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
         request_options["disableIdGeneration"] = True
-        if session_token:
-            request_options["sessionToken"] = session_token
-        if initial_headers:
-            request_options["initialHeaders"] = initial_headers
-        if access_condition:
-            request_options["accessCondition"] = access_condition
         if populate_query_metrics is not None:
             request_options["populateQueryMetrics"] = populate_query_metrics
         if pre_trigger_include:
@@ -443,14 +404,9 @@ class ContainerClient(object):
     def upsert_item(
         self,
         body,  # type: Dict[str, Any]
-        session_token=None,  # type: str
-        initial_headers=None,  # type: Dict[str, str]
-        access_condition=None,  # type: Dict[str, str]
-        populate_query_metrics=None,  # type: bool
-        pre_trigger_include=None,  # type: str
-        post_trigger_include=None,  # type: str
-        request_options=None,  # type: Dict[str, Any]
-        response_hook=None,  # type: Optional[Callable]
+        populate_query_metrics=None,  # type: Optional[bool]
+        pre_trigger_include=None,  # type: Optional[str]
+        post_trigger_include=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> Dict[str, str]
@@ -471,15 +427,9 @@ class ContainerClient(object):
         If the item already exists in the container, it is replaced. If it does not, it is inserted.
 
         """
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
+        request_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
         request_options["disableIdGeneration"] = True
-        if session_token:
-            request_options["sessionToken"] = session_token
-        if initial_headers:
-            request_options["initialHeaders"] = initial_headers
-        if access_condition:
-            request_options["accessCondition"] = access_condition
         if populate_query_metrics is not None:
             request_options["populateQueryMetrics"] = populate_query_metrics
         if pre_trigger_include:
@@ -497,15 +447,10 @@ class ContainerClient(object):
     def create_item(
         self,
         body,  # type: Dict[str, Any]
-        session_token=None,  # type: str
-        initial_headers=None,  # type: Dict[str, str]
-        access_condition=None,  # type: Dict[str, str]
-        populate_query_metrics=None,  # type: bool
-        pre_trigger_include=None,  # type: str
-        post_trigger_include=None,  # type: str
-        indexing_directive=None,  # type: Any
-        request_options=None,  # type: Dict[str, Any]
-        response_hook=None,  # type: Optional[Callable]
+        populate_query_metrics=None,  # type: Optional[bool]
+        pre_trigger_include=None,  # type: Optional[str]
+        post_trigger_include=None,  # type: Optional[str]
+        indexing_directive=None,  # type: Optional[Any]
         **kwargs  # type: Any
     ):
         # type: (...) -> Dict[str, str]
@@ -527,16 +472,10 @@ class ContainerClient(object):
         To update or replace an existing item, use the :func:`Container.upsert_item` method.
 
         """
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
+        request_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
 
         request_options["disableAutomaticIdGeneration"] = True
-        if session_token:
-            request_options["sessionToken"] = session_token
-        if initial_headers:
-            request_options["initialHeaders"] = initial_headers
-        if access_condition:
-            request_options["accessCondition"] = access_condition
         if populate_query_metrics:
             request_options["populateQueryMetrics"] = populate_query_metrics
         if pre_trigger_include:
@@ -558,14 +497,9 @@ class ContainerClient(object):
         self,
         item,  # type: Union[Dict[str, Any], str]
         partition_key,  # type: Any
-        session_token=None,  # type: str
-        initial_headers=None,  # type: Dict[str, str]
-        access_condition=None,  # type: Dict[str, str]
-        populate_query_metrics=None,  # type: bool
-        pre_trigger_include=None,  # type: str
-        post_trigger_include=None,  # type: str
-        request_options=None,  # type: Dict[str, Any]
-        response_hook=None,  # type: Optional[Callable]
+        populate_query_metrics=None,  # type: Optional[bool]
+        pre_trigger_include=None,  # type: Optional[str]
+        post_trigger_include=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -585,16 +519,10 @@ class ContainerClient(object):
             exist in the container, a `404` error is returned.
 
         """
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
+        request_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
         if partition_key:
             request_options["partitionKey"] = self._set_partition_key(partition_key)
-        if session_token:
-            request_options["sessionToken"] = session_token
-        if initial_headers:
-            request_options["initialHeaders"] = initial_headers
-        if access_condition:
-            request_options["accessCondition"] = access_condition
         if populate_query_metrics is not None:
             request_options["populateQueryMetrics"] = populate_query_metrics
         if pre_trigger_include:
@@ -608,8 +536,8 @@ class ContainerClient(object):
             response_hook(self.client_connection.last_response_headers, result)
 
     @distributed_trace
-    def read_offer(self, response_hook=None, **kwargs):
-        # type: (Optional[Callable], Any) -> Offer
+    def read_offer(self, **kwargs):
+        # type: (Any) -> Offer
         """ Read the Offer object for this container.
 
         :param response_hook: a callable invoked with the response metadata
@@ -617,6 +545,7 @@ class ContainerClient(object):
         :raise CosmosHttpResponseError: If no offer exists for the container or if the offer could not be retrieved.
 
         """
+        response_hook = kwargs.pop('response_hook', None)
         properties = self._get_properties()
         link = properties["_self"]
         query_spec = {
@@ -635,8 +564,8 @@ class ContainerClient(object):
         return Offer(offer_throughput=offers[0]["content"]["offerThroughput"], properties=offers[0])
 
     @distributed_trace
-    def replace_throughput(self, throughput, response_hook=None, **kwargs):
-        # type: (int, Optional[Callable], Any) -> Offer
+    def replace_throughput(self, throughput, **kwargs):
+        # type: (int, Any) -> Offer
         """ Replace the container's throughput
 
         :param throughput: The throughput to be set (an integer).
@@ -645,6 +574,7 @@ class ContainerClient(object):
         :raise CosmosHttpResponseError: If no offer exists for the container or if the offer could not be updated.
 
         """
+        response_hook = kwargs.pop('response_hook', None)
         properties = self._get_properties()
         link = properties["_self"]
         query_spec = {
@@ -666,8 +596,8 @@ class ContainerClient(object):
         return Offer(offer_throughput=data["content"]["offerThroughput"], properties=data)
 
     @distributed_trace
-    def list_conflicts(self, max_item_count=None, feed_options=None, response_hook=None, **kwargs):
-        # type: (Optional[int], Optional[Dict[str, Any]], Optional[Callable], Any) -> Iterable[Dict[str, Any]]
+    def list_conflicts(self, max_item_count=None, **kwargs):
+        # type: (Optional[int], Any) -> Iterable[Dict[str, Any]]
         """ List all conflicts in the container.
 
         :param max_item_count: Max number of items to be returned in the enumeration operation.
@@ -676,8 +606,8 @@ class ContainerClient(object):
         :returns: An Iterable of conflicts (dicts).
 
         """
-        if not feed_options:
-            feed_options = {}  # type: Dict[str, Any]
+        feed_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
@@ -696,8 +626,6 @@ class ContainerClient(object):
         enable_cross_partition_query=None,  # type: Optional[bool]
         partition_key=None,  # type: Optional[Any]
         max_item_count=None,  # type: Optional[int]
-        feed_options=None,  # type: Optional[Dict[str, Any]]
-        response_hook=None,  # type: Optional[Callable]
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable[Dict[str, Any]]
@@ -715,8 +643,8 @@ class ContainerClient(object):
         :returns: An Iterable of conflicts (dicts).
 
         """
-        if not feed_options:
-            feed_options = {}  # type: Dict[str, Any]
+        feed_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
         if enable_cross_partition_query is not None:
@@ -735,8 +663,8 @@ class ContainerClient(object):
         return result
 
     @distributed_trace
-    def get_conflict(self, conflict, partition_key, request_options=None, response_hook=None, **kwargs):
-        # type: (Union[str, Dict[str, Any]], Any, Dict[str, Any], Optional[Callable], Any) -> Dict[str, str]
+    def get_conflict(self, conflict, partition_key, **kwargs):
+        # type: (Union[str, Dict[str, Any]], Any, Any) -> Dict[str, str]
         """ Get the conflict identified by `id`.
 
         :param conflict: The ID (name) or dict representing the conflict to retrieve.
@@ -747,8 +675,8 @@ class ContainerClient(object):
         :raise `CosmosHttpResponseError`: If the given conflict couldn't be retrieved.
 
         """
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
+        request_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
         if partition_key:
             request_options["partitionKey"] = self._set_partition_key(partition_key)
 
@@ -760,8 +688,8 @@ class ContainerClient(object):
         return result
 
     @distributed_trace
-    def delete_conflict(self, conflict, partition_key, request_options=None, response_hook=None, **kwargs):
-        # type: (Union[str, Dict[str, Any]], Any, Dict[str, Any], Optional[Callable], Any) -> None
+    def delete_conflict(self, conflict, partition_key, **kwargs):
+        # type: (Union[str, Dict[str, Any]], Any, Any) -> None
         """ Delete the specified conflict from the container.
 
         :param conflict: The ID (name) or dict representing the conflict to be deleted.
@@ -772,8 +700,8 @@ class ContainerClient(object):
             does not exist in the container, a `404` error is returned.
 
         """
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
+        request_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
         if partition_key:
             request_options["partitionKey"] = self._set_partition_key(partition_key)
 
@@ -782,8 +710,3 @@ class ContainerClient(object):
         )
         if response_hook:
             response_hook(self.client_connection.last_response_headers, result)
-
-    def _set_partition_key(self, partition_key):
-        if partition_key == NonePartitionKeyValue:
-            return CosmosClientConnection._return_undefined_or_empty_partition_key(self.is_system_key)
-        return partition_key

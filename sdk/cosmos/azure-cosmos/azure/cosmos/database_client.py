@@ -28,6 +28,7 @@ import six
 from azure.core.tracing.decorator import distributed_trace
 
 from ._cosmos_client_connection import CosmosClientConnection
+from ._base import build_options
 from .container_client import ContainerClient
 from .offer import Offer
 from .http_constants import StatusCodes
@@ -105,16 +106,8 @@ class DatabaseClient(object):
         return self._properties
 
     @distributed_trace
-    def read(
-        self,
-        session_token=None,
-        initial_headers=None,
-        populate_query_metrics=None,
-        request_options=None,
-        response_hook=None,
-        **kwargs
-    ):
-        # type: (str, Dict[str, str], bool, Dict[str, Any], Optional[Callable]) -> Dict[str, Any]
+    def read(self, populate_query_metrics=None, **kwargs):
+        # type: (Optional[bool], Any) -> Dict[str, Any]
         """
         Read the database properties
 
@@ -133,12 +126,8 @@ class DatabaseClient(object):
         from .cosmos_client import CosmosClient
 
         database_link = CosmosClient._get_database_link(self)
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
-        if session_token:
-            request_options["sessionToken"] = session_token
-        if initial_headers:
-            request_options["initialHeaders"] = initial_headers
+        request_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
         if populate_query_metrics is not None:
             request_options["populateQueryMetrics"] = populate_query_metrics
 
@@ -154,18 +143,13 @@ class DatabaseClient(object):
         self,
         id,  # type: str  # pylint: disable=redefined-builtin
         partition_key,  # type: PartitionKey
-        indexing_policy=None,  # type: Dict[str, Any]
-        default_ttl=None,  # type: int
-        session_token=None,  # type: str
-        initial_headers=None,  # type:  Dict[str, str]
-        access_condition=None,  # type: Dict[str, str]
-        populate_query_metrics=None,  # type: bool
-        offer_throughput=None,  # type: int
-        unique_key_policy=None,  # type: Dict[str, Any]
-        conflict_resolution_policy=None,  # type: Dict[str, Any]
-        request_options=None,  # type: Dict[str, Any]
-        response_hook=None,  # type: Optional[Callable]
-        **kwargs
+        indexing_policy=None,  # type: Optional[Dict[str, Any]]
+        default_ttl=None,  # type: Optional[int]
+        populate_query_metrics=None,  # type: Optional[bool]
+        offer_throughput=None,  # type: Optional[int]
+        unique_key_policy=None,  # type: Optional[Dict[str, Any]]
+        conflict_resolution_policy=None,  # type: Optional[Dict[str, Any]]
+        **kwargs  # type: Any
     ):
         # type: (...) -> ContainerClient
         """
@@ -219,14 +203,8 @@ class DatabaseClient(object):
         if conflict_resolution_policy:
             definition["conflictResolutionPolicy"] = conflict_resolution_policy
 
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
-        if session_token:
-            request_options["sessionToken"] = session_token
-        if initial_headers:
-            request_options["initialHeaders"] = initial_headers
-        if access_condition:
-            request_options["accessCondition"] = access_condition
+        request_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
         if populate_query_metrics is not None:
             request_options["populateQueryMetrics"] = populate_query_metrics
         if offer_throughput is not None:
@@ -245,13 +223,8 @@ class DatabaseClient(object):
     def delete_container(
         self,
         container,  # type: Union[str, ContainerClient, Dict[str, Any]]
-        session_token=None,  # type: str
-        initial_headers=None,  # type: Dict[str, str]
-        access_condition=None,  # type: Dict[str, str]
-        populate_query_metrics=None,  # type: bool
-        request_options=None,  # type: Dict[str, Any]
-        response_hook=None,  # type: Optional[Callable]
-        **kwargs
+        populate_query_metrics=None,  # type: Optional[bool]
+        **kwargs  # type: Any
     ):
         # type: (...) -> None
         """ Delete the container
@@ -268,14 +241,8 @@ class DatabaseClient(object):
         :raise CosmosHttpResponseError: If the container couldn't be deleted.
 
         """
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
-        if session_token:
-            request_options["sessionToken"] = session_token
-        if initial_headers:
-            request_options["initialHeaders"] = initial_headers
-        if access_condition:
-            request_options["accessCondition"] = access_condition
+        request_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
         if populate_query_metrics is not None:
             request_options["populateQueryMetrics"] = populate_query_metrics
 
@@ -310,17 +277,8 @@ class DatabaseClient(object):
         return ContainerClient(self.client_connection, self.database_link, id_value)
 
     @distributed_trace
-    def list_containers(
-        self,
-        max_item_count=None,
-        session_token=None,
-        initial_headers=None,
-        populate_query_metrics=None,
-        feed_options=None,
-        response_hook=None,
-        **kwargs
-    ):
-        # type: (int, str, Dict[str, str], bool, Dict[str, Any], Optional[Callable]) -> Iterable[Dict[str, Any]]
+    def list_containers(self, max_item_count=None, populate_query_metrics=None, **kwargs):
+        # type: (Optional[int], Optional[bool], Any) -> Iterable[Dict[str, Any]]
         """ List the containers in the database.
 
         :param max_item_count: Max number of items to be returned in the enumeration operation.
@@ -340,14 +298,10 @@ class DatabaseClient(object):
             :name: list_containers
 
         """
-        if not feed_options:
-            feed_options = {}  # type: Dict[str, Any]
+        feed_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
-        if session_token:
-            feed_options["sessionToken"] = session_token
-        if initial_headers:
-            feed_options["initialHeaders"] = initial_headers
         if populate_query_metrics is not None:
             feed_options["populateQueryMetrics"] = populate_query_metrics
 
@@ -364,11 +318,7 @@ class DatabaseClient(object):
         query=None,  # type: Optional[str]
         parameters=None,  # type: Optional[List[str]]
         max_item_count=None,  # type: Optional[int]
-        session_token=None,  # type: Optional[str]
-        initial_headers=None,  # type: Optional[Dict[str, str]]
         populate_query_metrics=None,  # type: Optional[bool]
-        feed_options=None,  # type: Optional[Dict[str, Any]]
-        response_hook=None,  # type: Optional[Callable]
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable[Dict[str, Any]]
@@ -385,14 +335,10 @@ class DatabaseClient(object):
         :returns: An Iterable of container properties (dicts).
 
         """
-        if not feed_options:
-            feed_options = {}  # type: Dict[str, Any]
+        feed_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
-        if session_token:
-            feed_options["sessionToken"] = session_token
-        if initial_headers:
-            feed_options["initialHeaders"] = initial_headers
         if populate_query_metrics is not None:
             feed_options["populateQueryMetrics"] = populate_query_metrics
 
@@ -411,16 +357,11 @@ class DatabaseClient(object):
         self,
         container,  # type: Union[str, ContainerClient, Dict[str, Any]]
         partition_key,  # type: PartitionKey
-        indexing_policy=None,  # type: Dict[str, Any]
-        default_ttl=None,  # type: int
-        conflict_resolution_policy=None,  # type: Dict[str, Any]
-        session_token=None,  # type: str
-        initial_headers=None,  # type: Dict[str, str]
-        access_condition=None,  # type:  Dict[str, str]
-        populate_query_metrics=None,  # type: bool
-        request_options=None,  # type: Dict[str, Any]
-        response_hook=None,  # type: Optional[Callable]
-        **kwargs
+        indexing_policy=None,  # type: Optional[Dict[str, Any]]
+        default_ttl=None,  # type: Optional[int]
+        conflict_resolution_policy=None,  # type: Optional[Dict[str, Any]]
+        populate_query_metrics=None,  # type: Optional[bool]
+        **kwargs  # type: Any
     ):
         # type: (...) -> ContainerClient
         """ Reset the properties of the container. Property changes are persisted immediately.
@@ -453,14 +394,8 @@ class DatabaseClient(object):
             :name: reset_container_properties
 
         """
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
-        if session_token:
-            request_options["sessionToken"] = session_token
-        if initial_headers:
-            request_options["initialHeaders"] = initial_headers
-        if access_condition:
-            request_options["accessCondition"] = access_condition
+        request_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
         if populate_query_metrics is not None:
             request_options["populateQueryMetrics"] = populate_query_metrics
 
@@ -490,8 +425,8 @@ class DatabaseClient(object):
         )
 
     @distributed_trace
-    def list_users(self, max_item_count=None, feed_options=None, response_hook=None, **kwargs):
-        # type: (int, Dict[str, Any], Optional[Callable]) -> Iterable[Dict[str, Any]]
+    def list_users(self, max_item_count=None, **kwargs):
+        # type: (Optional[int], Any) -> Iterable[Dict[str, Any]]
         """ List all users in the container.
 
         :param max_item_count: Max number of users to be returned in the enumeration operation.
@@ -500,8 +435,8 @@ class DatabaseClient(object):
         :returns: An Iterable of user properties (dicts).
 
         """
-        if not feed_options:
-            feed_options = {}  # type: Dict[str, Any]
+        feed_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
@@ -513,8 +448,8 @@ class DatabaseClient(object):
         return result
 
     @distributed_trace
-    def query_users(self, query, parameters=None, max_item_count=None, feed_options=None, response_hook=None, **kwargs):
-        # type: (str, List, int, Dict[str, Any], Optional[Callable]) -> Iterable[Dict[str, Any]]
+    def query_users(self, query, parameters=None, max_item_count=None, **kwargs):
+        # type: (str, Optional[List[str]], Optional[int], Any) -> Iterable[Dict[str, Any]]
         """Return all users matching the given `query`.
 
         :param query: The Azure Cosmos DB SQL query to execute.
@@ -525,8 +460,8 @@ class DatabaseClient(object):
         :returns: An Iterable of user properties (dicts).
 
         """
-        if not feed_options:
-            feed_options = {}  # type: Dict[str, Any]
+        feed_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
@@ -561,8 +496,8 @@ class DatabaseClient(object):
         return UserClient(client_connection=self.client_connection, id=id_value, database_link=self.database_link)
 
     @distributed_trace
-    def create_user(self, body, request_options=None, response_hook=None, **kwargs):
-        # type: (Dict[str, Any], Dict[str, Any], Optional[Callable]) -> UserClient
+    def create_user(self, body, **kwargs):
+        # type: (Dict[str, Any], Any) -> UserClient
         """ Create a user in the container.
 
         :param body: A dict-like object with an `id` key and value representing the user to be created.
@@ -583,8 +518,8 @@ class DatabaseClient(object):
             :name: create_user
 
         """
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
+        request_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
 
         user = self.client_connection.CreateUser(
             database_link=self.database_link, user=body, options=request_options, **kwargs)
@@ -597,8 +532,8 @@ class DatabaseClient(object):
         )
 
     @distributed_trace
-    def upsert_user(self, body, request_options=None, response_hook=None, **kwargs):
-        # type: (Dict[str, Any], Dict[str, Any], Optional[Callable]) -> UserClient
+    def upsert_user(self, body, **kwargs):
+        # type: (Dict[str, Any], Any) -> UserClient
         """ Insert or update the specified user.
 
         :param body: A dict-like object representing the user to update or insert.
@@ -610,8 +545,8 @@ class DatabaseClient(object):
         If the user already exists in the container, it is replaced. If it does not, it is inserted.
 
         """
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
+        request_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
 
         user = self.client_connection.UpsertUser(
             database_link=self.database_link, user=body, options=request_options, **kwargs
@@ -629,8 +564,6 @@ class DatabaseClient(object):
         self,
         user,  # type: Union[str, UserClient, Dict[str, Any]]
         body,  # type: Dict[str, Any]
-        request_options=None,  # type: Optional(Dict[str, Any])
-        response_hook=None,  # type: Optional[Callable]
         **kwargs  # type: Any
     ):
         # type: (...) -> UserClient
@@ -645,8 +578,8 @@ class DatabaseClient(object):
         :raise `CosmosHttpResponseError`: If the replace failed or the user with given id does not exist.
 
         """
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
+        request_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
 
         user = self.client_connection.ReplaceUser(
             user_link=self._get_user_link(user), user=body, options=request_options, **kwargs
@@ -660,8 +593,8 @@ class DatabaseClient(object):
         )
 
     @distributed_trace
-    def delete_user(self, user, request_options=None, response_hook=None, **kwargs):
-        # type: (Union[str, UserClient, Dict[str, Any]], Dict[str, Any], Optional[Callable]) -> None
+    def delete_user(self, user, **kwargs):
+        # type: (Union[str, UserClient, Dict[str, Any]], Any) -> None
         """ Delete the specified user from the container.
 
         :param user: The ID (name), dict representing the properties or :class:`UserClient`
@@ -672,8 +605,8 @@ class DatabaseClient(object):
             exist in the container, a `404` error is returned.
 
         """
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
+        request_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
 
         result = self.client_connection.DeleteUser(
             user_link=self._get_user_link(user), options=request_options, **kwargs
@@ -682,8 +615,8 @@ class DatabaseClient(object):
             response_hook(self.client_connection.last_response_headers, result)
 
     @distributed_trace
-    def read_offer(self, response_hook=None, **kwargs):
-        # type: (Optional[Callable]) -> Offer
+    def read_offer(self, **kwargs):
+        # type: (Any) -> Offer
         """ Read the Offer object for this database.
 
         :param response_hook: a callable invoked with the response metadata
@@ -691,6 +624,7 @@ class DatabaseClient(object):
         :raise CosmosHttpResponseError: If no offer exists for the database or if the offer could not be retrieved.
 
         """
+        response_hook = kwargs.pop('response_hook', None)
         properties = self._get_properties()
         link = properties["_self"]
         query_spec = {
@@ -709,8 +643,8 @@ class DatabaseClient(object):
         return Offer(offer_throughput=offers[0]["content"]["offerThroughput"], properties=offers[0])
 
     @distributed_trace
-    def replace_throughput(self, throughput, response_hook=None, **kwargs):
-        # type: (int, Optional[Callable]) -> Offer
+    def replace_throughput(self, throughput, **kwargs):
+        # type: (Optional[int], Any) -> Offer
         """ Replace the database level throughput.
 
         :param throughput: The throughput to be set (an integer).
@@ -719,6 +653,7 @@ class DatabaseClient(object):
         :raise CosmosHttpResponseError: If no offer exists for the database or if the offer could not be updated.
 
         """
+        response_hook = kwargs.pop('response_hook', None)
         properties = self._get_properties()
         link = properties["_self"]
         query_spec = {

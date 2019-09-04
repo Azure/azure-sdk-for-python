@@ -808,9 +808,7 @@ class CRUDTests(unittest.TestCase):
             created_collection.replace_item,
             replaced_document['id'],
             replaced_document,
-            None,
-            None,
-            {'type': 'IfMatch', 'condition': old_etag},
+            if_match=old_etag,
         )
 
         # should pass for most recent etag

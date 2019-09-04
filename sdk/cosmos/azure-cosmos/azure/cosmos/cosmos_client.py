@@ -28,6 +28,7 @@ import six
 from azure.core.tracing.decorator import distributed_trace
 
 from ._cosmos_client_connection import CosmosClientConnection
+from ._base import build_options
 from .database_client import DatabaseClient
 from .documents import ConnectionPolicy, DatabaseAccount
 
@@ -35,6 +36,7 @@ __all__ = ("CosmosClient",)
 
 
 def _parse_connection_str(conn_str, credential):
+    # type: (str, Optional[Any]) -> Dict[str, str]
     conn_str = conn_str.rstrip(";")
     conn_settings = dict( # pylint: disable=consider-using-dict-comprehension
         [s.split("=", 1) for s in conn_str.split(";")]
@@ -47,6 +49,7 @@ def _parse_connection_str(conn_str, credential):
 
 
 def _build_auth(credential):
+    # type: (Any) -> Dict[str, Any]
     auth = {}
     if isinstance(credential, six.string_types):
         auth['masterKey'] = credential
@@ -64,6 +67,7 @@ def _build_auth(credential):
 
 
 def _build_connection_policy(kwargs):
+    # type: (Dict[str, Any]) -> ConnectionPolicy
     # pylint: disable=protected-access
     policy = kwargs.pop('connection_policy', None) or ConnectionPolicy()
 
@@ -168,13 +172,8 @@ class CosmosClient(object):
     def create_database(  # pylint: disable=redefined-builtin
         self,
         id,  # type: str
-        session_token=None,  # type: Optional[str]
-        initial_headers=None,  # type: Optional[Dict[str, str]]
-        access_condition=None,  # type: Optional[Dict[str, str]]
         populate_query_metrics=None,  # type: Optional[bool]
         offer_throughput=None,  # type: Optional[int]
-        request_options=None,  # type: Optional[Dict[str, Any]]
-        response_hook=None,  # type: Optional[Callable]
         **kwargs  # type: Any
     ):
         # type: (...) -> DatabaseClient
@@ -201,14 +200,8 @@ class CosmosClient(object):
 
         """
 
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
-        if session_token:
-            request_options["sessionToken"] = session_token
-        if initial_headers:
-            request_options["initialHeaders"] = initial_headers
-        if access_condition:
-            request_options["accessCondition"] = access_condition
+        request_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
         if populate_query_metrics is not None:
             request_options["populateQueryMetrics"] = populate_query_metrics
         if offer_throughput is not None:
@@ -241,15 +234,11 @@ class CosmosClient(object):
     @distributed_trace
     def list_databases(
         self,
-        max_item_count=None,
-        session_token=None,
-        initial_headers=None,
-        populate_query_metrics=None,
-        feed_options=None,
-        response_hook=None,
-        **kwargs
+        max_item_count=None,  # type: Optional[int]
+        populate_query_metrics=None,  # type: Optional[bool]
+        **kwargs  # type: Any
     ):
-        # type: (int, str, Dict[str, str], bool, Dict[str, Any],  Optional[Callable]) -> Iterable[Dict[str, Any]]
+        # type: (...) -> Iterable[Dict[str, Any]]
         """
         List the databases in a Cosmos DB SQL database account.
 
@@ -262,14 +251,10 @@ class CosmosClient(object):
         :returns: An Iterable of database properties (dicts).
 
         """
-        if not feed_options:
-            feed_options = {}  # type: Dict[str, Any]
+        feed_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
-        if session_token:
-            feed_options["sessionToken"] = session_token
-        if initial_headers:
-            feed_options["initialHeaders"] = initial_headers
         if populate_query_metrics is not None:
             feed_options["populateQueryMetrics"] = populate_query_metrics
 
@@ -281,19 +266,14 @@ class CosmosClient(object):
     @distributed_trace
     def query_databases(
         self,
-        query=None,  # type: str
-        parameters=None,  # type: List[str]
-        enable_cross_partition_query=None,  # type: bool
-        max_item_count=None,  # type:  int
-        session_token=None,  # type: str
-        initial_headers=None,  # type: Dict[str,str]
-        populate_query_metrics=None,  # type: bool
-        feed_options=None,  # type: Dict[str, Any]
-        response_hook=None,  # type: Optional[Callable]
-        **kwargs
+        query=None,  # type: Optional[str]
+        parameters=None,  # type: Optional[List[str]]
+        enable_cross_partition_query=None,  # type: Optional[bool]
+        max_item_count=None,  # type:  Optional[int]
+        populate_query_metrics=None,  # type: Optional[bool]
+        **kwargs  # type: Any
     ):
         # type: (...) -> Iterable[Dict[str, Any]]
-
         """
         Query the databases in a Cosmos DB SQL database account.
 
@@ -310,16 +290,12 @@ class CosmosClient(object):
         :returns: An Iterable of database properties (dicts).
 
         """
-        if not feed_options:
-            feed_options = {}  # type: Dict[str, Any]
+        feed_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
         if enable_cross_partition_query is not None:
             feed_options["enableCrossPartitionQuery"] = enable_cross_partition_query
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
-        if session_token:
-            feed_options["sessionToken"] = session_token
-        if initial_headers:
-            feed_options["initialHeaders"] = initial_headers
         if populate_query_metrics is not None:
             feed_options["populateQueryMetrics"] = populate_query_metrics
 
@@ -341,13 +317,8 @@ class CosmosClient(object):
     def delete_database(
         self,
         database,  # type: Union[str, DatabaseClient, Dict[str, Any]]
-        session_token=None,  # type: str
-        initial_headers=None,  # type: Dict[str, str]
-        access_condition=None,  # type:  Dict[str, str]
-        populate_query_metrics=None,  # type: bool
-        request_options=None,  # type: Dict[str, Any]
-        response_hook=None,  # type: Optional[Callable]
-        **kwargs
+        populate_query_metrics=None,  # type: Optional[bool]
+        **kwargs  # type: Any
     ):
         # type: (...) -> None
         """
@@ -364,14 +335,8 @@ class CosmosClient(object):
         :raise CosmosHttpResponseError: If the database couldn't be deleted.
 
         """
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
-        if session_token:
-            request_options["sessionToken"] = session_token
-        if initial_headers:
-            request_options["initialHeaders"] = initial_headers
-        if access_condition:
-            request_options["accessCondition"] = access_condition
+        request_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
         if populate_query_metrics is not None:
             request_options["populateQueryMetrics"] = populate_query_metrics
 
@@ -381,8 +346,8 @@ class CosmosClient(object):
             response_hook(self.client_connection.last_response_headers)
 
     @distributed_trace
-    def get_database_account(self, response_hook=None, **kwargs):
-        # type: (Optional[Callable]) -> DatabaseAccount
+    def get_database_account(self, **kwargs):
+        # type: (Any) -> DatabaseAccount
         """
         Retrieve the database account information.
 
@@ -390,6 +355,7 @@ class CosmosClient(object):
         :returns: A :class:`DatabaseAccount` instance representing the Cosmos DB Database Account.
 
         """
+        response_hook = kwargs.pop('response_hook', None)
         result = self.client_connection.GetDatabaseAccount(**kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers)

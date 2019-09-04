@@ -27,6 +27,7 @@ from typing import Any, List, Dict, Union, Iterable
 import six
 
 from azure.cosmos._cosmos_client_connection import CosmosClientConnection
+from ._base import build_options
 from .partition_key import NonePartitionKeyValue
 
 # pylint: disable=protected-access
@@ -52,8 +53,8 @@ class ScriptsClient(object):
             return u"{}/{}/{}".format(self.container_link, typ, script_or_id)
         return script_or_id["_self"]
 
-    def list_stored_procedures(self, max_item_count=None, feed_options=None):
-        # type: (int, Dict[str, Any]) -> Iterable[Dict[str, Any]]
+    def list_stored_procedures(self, max_item_count=None, **kwargs):
+        # type: (Optional[int], Any) -> Iterable[Dict[str, Any]]
         """ List all stored procedures in the container.
 
         :param max_item_count: Max number of items to be returned in the enumeration operation.
@@ -61,15 +62,16 @@ class ScriptsClient(object):
         :returns: An Iterable of stored procedures (dicts).
 
         """
-        if not feed_options:
-            feed_options = {}  # type: Dict[str, Any]
+        feed_options = build_options(kwargs)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
-        return self.client_connection.ReadStoredProcedures(collection_link=self.container_link, options=feed_options)
+        return self.client_connection.ReadStoredProcedures(
+            collection_link=self.container_link, options=feed_options, **kwargs
+        )
 
-    def query_stored_procedures(self, query, parameters=None, max_item_count=None, feed_options=None):
-        # type: (str, List, int, Dict[str, Any]) -> Iterable[Dict[str, Any]]
+    def query_stored_procedures(self, query, parameters=None, max_item_count=None, **kwargs):
+        # type: (str, Optional[List[str]], Optional[int], Any) -> Iterable[Dict[str, Any]]
         """Return all stored procedures matching the given `query`.
 
         :param query: The Azure Cosmos DB SQL query to execute.
@@ -79,8 +81,7 @@ class ScriptsClient(object):
         :returns: An Iterable of stored procedures (dicts).
 
         """
-        if not feed_options:
-            feed_options = {}  # type: Dict[str, Any]
+        feed_options = build_options(kwargs)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
@@ -88,10 +89,11 @@ class ScriptsClient(object):
             collection_link=self.container_link,
             query=query if parameters is None else dict(query=query, parameters=parameters),
             options=feed_options,
+            **kwargs
         )
 
-    def get_stored_procedure(self, sproc, request_options=None):
-        # type: (Union[str, Dict[str, Any]], Dict[str, Any]) -> Dict[str, Any]
+    def get_stored_procedure(self, sproc, **kwargs):
+        # type: (Union[str, Dict[str, Any]], Any) -> Dict[str, Any]
         """
         Get the stored procedure identified by `id`.
 
@@ -101,15 +103,14 @@ class ScriptsClient(object):
         :raise `CosmosHttpResponseError`: If the given stored procedure couldn't be retrieved.
 
         """
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
+        request_options = build_options(kwargs)
 
         return self.client_connection.ReadStoredProcedure(
-            sproc_link=self._get_resource_link(sproc, ScriptType.StoredProcedure), options=request_options
+            sproc_link=self._get_resource_link(sproc, ScriptType.StoredProcedure), options=request_options, **kwargs
         )
 
-    def create_stored_procedure(self, body, request_options=None):
-        # type: (Dict[str, Any], Dict[str, Any]) -> Dict[str, Any]
+    def create_stored_procedure(self, body, **kwargs):
+        # type: (Dict[str, Any], Any) -> Dict[str, Any]
         """ Create a stored procedure in the container.
 
         :param body: A dict-like object representing the sproc to create.
@@ -120,15 +121,14 @@ class ScriptsClient(object):
         To replace an existing sproc, use the :func:`Container.scripts.replace_stored_procedure` method.
 
         """
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
+        request_options = build_options(kwargs)
 
         return self.client_connection.CreateStoredProcedure(
-            collection_link=self.container_link, sproc=body, options=request_options
+            collection_link=self.container_link, sproc=body, options=request_options, **kwargs
         )
 
-    def replace_stored_procedure(self, sproc, body, request_options=None):
-        # type: (Union[str, Dict[str, Any]], Dict[str, Any], Dict[str, Any]) -> Dict[str, Any]
+    def replace_stored_procedure(self, sproc, body, **kwargs):
+        # type: (Union[str, Dict[str, Any]], Dict[str, Any], Any) -> Dict[str, Any]
         """ Replaces the specified stored procedure if it exists in the container.
 
         :param sproc: The ID (name) or dict representing stored procedure to be replaced.
@@ -138,15 +138,17 @@ class ScriptsClient(object):
         :raise `CosmosHttpResponseError`: If the replace failed or the stored procedure with given id does not exist.
 
         """
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
+        request_options = build_options(kwargs)
 
         return self.client_connection.ReplaceStoredProcedure(
-            sproc_link=self._get_resource_link(sproc, ScriptType.StoredProcedure), sproc=body, options=request_options
+            sproc_link=self._get_resource_link(sproc, ScriptType.StoredProcedure),
+            sproc=body,
+            options=request_options,
+            **kwargs
         )
 
-    def delete_stored_procedure(self, sproc, request_options=None):
-        # type: (Union[str, Dict[str, Any]], Dict[str, Any]) -> None
+    def delete_stored_procedure(self, sproc, **kwargs):
+        # type: (Union[str, Dict[str, Any]], **kwargs) -> None
         """ Delete the specified stored procedure from the container.
 
         :param sproc: The ID (name) or dict representing stored procedure to be deleted.
@@ -155,17 +157,21 @@ class ScriptsClient(object):
             exist in the container, a `404` error is returned.
 
         """
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
+        request_options = build_options(kwargs)
 
         self.client_connection.DeleteStoredProcedure(
-            sproc_link=self._get_resource_link(sproc, ScriptType.StoredProcedure), options=request_options
+            sproc_link=self._get_resource_link(sproc, ScriptType.StoredProcedure), options=request_options, **kwargs
         )
 
     def execute_stored_procedure(
-        self, sproc, partition_key=None, params=None, enable_script_logging=None, request_options=None
+        self,
+        sproc,  # type: Union[str, Dict[str, Any]]
+        partition_key=None,  # type: Optional[str]
+        params=None,  # type: Optional[List[Any]]
+        enable_script_logging=None,  # type: Optional[bool]
+        **kwargs  # type: Any
     ):
-        # type: (Union[str, Dict[str, Any]], str, List[Any], bool, Dict[str, Any]) -> Any
+        # type: (...) -> Any
         """ execute the specified stored procedure.
 
         :param sproc: The ID (name) or dict representing stored procedure to be executed.
@@ -179,8 +185,7 @@ class ScriptsClient(object):
 
         """
 
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
+        request_options = build_options(kwargs)
         if partition_key is not None:
             request_options["partitionKey"] = (
                 CosmosClientConnection._return_undefined_or_empty_partition_key(self.is_system_key)
@@ -194,10 +199,11 @@ class ScriptsClient(object):
             sproc_link=self._get_resource_link(sproc, ScriptType.StoredProcedure),
             params=params,
             options=request_options,
+            **kwargs
         )
 
-    def list_triggers(self, max_item_count=None, feed_options=None):
-        # type: (int, Dict[str, Any]) -> Iterable[Dict[str, Any]]
+    def list_triggers(self, max_item_count=None, **kwargs):
+        # type: (Optional[int], Any) -> Iterable[Dict[str, Any]]
         """ List all triggers in the container.
 
         :param max_item_count: Max number of items to be returned in the enumeration operation.
@@ -205,15 +211,16 @@ class ScriptsClient(object):
         :returns: An Iterable of triggers (dicts).
 
         """
-        if not feed_options:
-            feed_options = {}  # type: Dict[str, Any]
+        feed_options = build_options(kwargs)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
-        return self.client_connection.ReadTriggers(collection_link=self.container_link, options=feed_options)
+        return self.client_connection.ReadTriggers(
+            collection_link=self.container_link, options=feed_options, **kwargs
+        )
 
-    def query_triggers(self, query, parameters=None, max_item_count=None, feed_options=None):
-        # type: (str, List, int, Dict[str, Any]) -> Iterable[Dict[str, Any]]
+    def query_triggers(self, query, parameters=None, max_item_count=None, **kwargs):
+        # type: (str, Optional[List[str]], Optional[int], Any) -> Iterable[Dict[str, Any]]
         """Return all triggers matching the given `query`.
 
         :param query: The Azure Cosmos DB SQL query to execute.
@@ -223,8 +230,7 @@ class ScriptsClient(object):
         :returns: An Iterable of triggers (dicts).
 
         """
-        if not feed_options:
-            feed_options = {}  # type: Dict[str, Any]
+        feed_options = build_options(kwargs)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
@@ -232,10 +238,11 @@ class ScriptsClient(object):
             collection_link=self.container_link,
             query=query if parameters is None else dict(query=query, parameters=parameters),
             options=feed_options,
+            **kwargs
         )
 
-    def get_trigger(self, trigger, request_options=None):
-        # type: (Union[str, Dict[str, Any]], Dict[str, Any]) -> Dict[str, Any]
+    def get_trigger(self, trigger, **kwargs):
+        # type: (Union[str, Dict[str, Any]], Any) -> Dict[str, Any]
         """
         Get the trigger identified by `id`.
 
@@ -245,15 +252,14 @@ class ScriptsClient(object):
         :raise `CosmosHttpResponseError`: If the given trigger couldn't be retrieved.
 
         """
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
+        request_options = build_options(kwargs)
 
         return self.client_connection.ReadTrigger(
-            trigger_link=self._get_resource_link(trigger, ScriptType.Trigger), options=request_options
+            trigger_link=self._get_resource_link(trigger, ScriptType.Trigger), options=request_options, **kwargs
         )
 
-    def create_trigger(self, body, request_options=None):
-        # type: (Dict[str, Any], Dict[str, Any]) -> Dict[str, Any]
+    def create_trigger(self, body, **kwargs):
+        # type: (Dict[str, Any], Any) -> Dict[str, Any]
         """ Create a trigger in the container.
 
         :param body: A dict-like object representing the trigger to create.
@@ -264,15 +270,14 @@ class ScriptsClient(object):
         To replace an existing trigger, use the :func:`Container.scripts.replace_trigger` method.
 
         """
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
+        request_options = build_options(kwargs)
 
         return self.client_connection.CreateTrigger(
-            collection_link=self.container_link, trigger=body, options=request_options
+            collection_link=self.container_link, trigger=body, options=request_options, **kwargs
         )
 
-    def replace_trigger(self, trigger, body, request_options=None):
-        # type: (Union[str, Dict[str, Any]], Dict[str, Any], Dict[str, Any]) -> Dict[str, Any]
+    def replace_trigger(self, trigger, body, **kwargs):
+        # type: (Union[str, Dict[str, Any]], Dict[str, Any], Any) -> Dict[str, Any]
         """ Replaces the specified tigger if it exists in the container.
 
         :param trigger: The ID (name) or dict representing trigger to be replaced.
@@ -282,15 +287,17 @@ class ScriptsClient(object):
         :raise `CosmosHttpResponseError`: If the replace failed or the trigger with given id does not exist.
 
         """
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
+        request_options = build_options(kwargs)
 
         return self.client_connection.ReplaceTrigger(
-            trigger_link=self._get_resource_link(trigger, ScriptType.Trigger), trigger=body, options=request_options
+            trigger_link=self._get_resource_link(trigger, ScriptType.Trigger),
+            trigger=body,
+            options=request_options,
+            **kwargs
         )
 
-    def delete_trigger(self, trigger, request_options=None):
-        # type: (Union[str, Dict[str, Any]], Dict[str, Any]) -> None
+    def delete_trigger(self, trigger, **kwargs):
+        # type: (Union[str, Dict[str, Any]], Any) -> None
         """ Delete the specified trigger from the container.
 
         :param trigger: The ID (name) or dict representing trigger to be deleted.
@@ -299,15 +306,14 @@ class ScriptsClient(object):
             exist in the container, a `404` error is returned.
 
         """
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
+        request_options = build_options(kwargs)
 
         self.client_connection.DeleteTrigger(
-            trigger_link=self._get_resource_link(trigger, ScriptType.Trigger), options=request_options
+            trigger_link=self._get_resource_link(trigger, ScriptType.Trigger), options=request_options, **kwargs
         )
 
-    def list_user_defined_functions(self, max_item_count=None, feed_options=None):
-        # type: (int, Dict[str, Any]) -> Iterable[Dict[str, Any]]
+    def list_user_defined_functions(self, max_item_count=None, **kwargs):
+        # type: (Optional[int], Any) -> Iterable[Dict[str, Any]]
         """ List all user defined functions in the container.
 
         :param max_item_count: Max number of items to be returned in the enumeration operation.
@@ -315,17 +321,16 @@ class ScriptsClient(object):
         :returns: An Iterable of user defined functions (dicts).
 
         """
-        if not feed_options:
-            feed_options = {}  # type: Dict[str, Any]
+        feed_options = build_options(kwargs)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
         return self.client_connection.ReadUserDefinedFunctions(
-            collection_link=self.container_link, options=feed_options
+            collection_link=self.container_link, options=feed_options, **kwargs
         )
 
-    def query_user_defined_functions(self, query, parameters=None, max_item_count=None, feed_options=None):
-        # type: (str, List, int, Dict[str, Any]) -> Iterable[Dict[str, Any]]
+    def query_user_defined_functions(self, query, parameters=None, max_item_count=None, **kwargs):
+        # type: (str, Optional[List[str]], Optional[int], Any) -> Iterable[Dict[str, Any]]
         """Return all user defined functions matching the given `query`.
 
         :param query: The Azure Cosmos DB SQL query to execute.
@@ -335,8 +340,7 @@ class ScriptsClient(object):
         :returns: An Iterable of user defined functions (dicts).
 
         """
-        if not feed_options:
-            feed_options = {}  # type: Dict[str, Any]
+        feed_options = build_options(kwargs)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
@@ -344,10 +348,11 @@ class ScriptsClient(object):
             collection_link=self.container_link,
             query=query if parameters is None else dict(query=query, parameters=parameters),
             options=feed_options,
+            **kwargs
         )
 
-    def get_user_defined_function(self, udf, request_options=None):
-        # type: (Union[str, Dict[str, Any]], Dict[str, Any]) -> Dict[str, Any]
+    def get_user_defined_function(self, udf, **kwargs):
+        # type: (Union[str, Dict[str, Any]], Any) -> Dict[str, Any]
         """
         Get the stored procedure identified by `id`.
 
@@ -357,15 +362,14 @@ class ScriptsClient(object):
         :raise `CosmosHttpResponseError`: If the given user defined function couldn't be retrieved.
 
         """
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
+        request_options = build_options(kwargs)
 
         return self.client_connection.ReadUserDefinedFunction(
-            udf_link=self._get_resource_link(udf, ScriptType.UserDefinedFunction), options=request_options
+            udf_link=self._get_resource_link(udf, ScriptType.UserDefinedFunction), options=request_options, **kwargs
         )
 
-    def create_user_defined_function(self, body, request_options=None):
-        # type: (Dict[str, Any], Dict[str, Any]) -> Dict[str, Any]
+    def create_user_defined_function(self, body, **kwargs):
+        # type: (Dict[str, Any], Any) -> Dict[str, Any]
         """ Create a user defined function in the container.
 
         :param body: A dict-like object representing the udf to create.
@@ -376,15 +380,14 @@ class ScriptsClient(object):
         To replace an existing udf, use the :func:`Container.scripts.replace_user_defined_function` method.
 
         """
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
+        request_options = build_options(kwargs)
 
         return self.client_connection.CreateUserDefinedFunction(
-            collection_link=self.container_link, udf=body, options=request_options
+            collection_link=self.container_link, udf=body, options=request_options, **kwargs
         )
 
-    def replace_user_defined_function(self, udf, body, request_options=None):
-        # type: (Union[str, Dict[str, Any]], Dict[str, Any], Dict[str, Any]) -> Dict[str, Any]
+    def replace_user_defined_function(self, udf, body, **kwargs):
+        # type: (Union[str, Dict[str, Any]], Dict[str, Any], Any) -> Dict[str, Any]
         """ Replaces the specified user defined function if it exists in the container.
 
         :param udf: The ID (name) or dict representing udf to be replaced.
@@ -395,15 +398,17 @@ class ScriptsClient(object):
             given id does not exist.
 
         """
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
+        request_options = build_options(kwargs)
 
         return self.client_connection.ReplaceUserDefinedFunction(
-            udf_link=self._get_resource_link(udf, ScriptType.UserDefinedFunction), udf=body, options=request_options
+            udf_link=self._get_resource_link(udf, ScriptType.UserDefinedFunction),
+            udf=body,
+            options=request_options,
+            **kwargs
         )
 
-    def delete_user_defined_function(self, udf, request_options=None):
-        # type: (Union[str, Dict[str, Any]], Dict[str, Any]) -> None
+    def delete_user_defined_function(self, udf, **kwargs):
+        # type: (Union[str, Dict[str, Any]], Any) -> None
         """ Delete the specified user defined function from the container.
 
         :param udf: The ID (name) or dict representing udf to be deleted.
@@ -412,9 +417,8 @@ class ScriptsClient(object):
             exist in the container, a `404` error is returned.
 
         """
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
+        request_options = build_options(kwargs)
 
         self.client_connection.DeleteUserDefinedFunction(
-            udf_link=self._get_resource_link(udf, ScriptType.UserDefinedFunction), options=request_options
+            udf_link=self._get_resource_link(udf, ScriptType.UserDefinedFunction), options=request_options, **kwargs
         )
