@@ -17,6 +17,7 @@ from .operations import Operations
 from .operations import WorkspacesOperations
 from .operations import UsagesOperations
 from .operations import VirtualMachineSizesOperations
+from .operations import QuotasOperations
 from .operations import MachineLearningComputeOperations
 from . import models
 
@@ -35,6 +36,8 @@ class AzureMachineLearningWorkspaces(SDKClient):
     :vartype usages: azure.mgmt.machinelearningservices.operations.UsagesOperations
     :ivar virtual_machine_sizes: VirtualMachineSizes operations
     :vartype virtual_machine_sizes: azure.mgmt.machinelearningservices.operations.VirtualMachineSizesOperations
+    :ivar quotas: Quotas operations
+    :vartype quotas: azure.mgmt.machinelearningservices.operations.QuotasOperations
     :ivar machine_learning_compute: MachineLearningCompute operations
     :vartype machine_learning_compute: azure.mgmt.machinelearningservices.operations.MachineLearningComputeOperations
 
@@ -64,6 +67,8 @@ class AzureMachineLearningWorkspaces(SDKClient):
         self.usages = UsagesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.virtual_machine_sizes = VirtualMachineSizesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.quotas = QuotasOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.machine_learning_compute = MachineLearningComputeOperations(
             self._client, self.config, self._serialize, self._deserialize)
