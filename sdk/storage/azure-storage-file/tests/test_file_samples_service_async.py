@@ -99,5 +99,5 @@ class TestFileServiceSamples(AsyncFileTestCase):
         file_service = FileServiceClient.from_connection_string(self.connection_string(storage_account, storage_account_key))
 
         # Get a share client to interact with a specific share
-        share = await file_service.get_share_client("fileshare")
+        share = file_service.get_share_client("fileshare")
         # [END get_share_client]

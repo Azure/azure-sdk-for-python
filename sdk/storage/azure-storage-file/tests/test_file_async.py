@@ -51,6 +51,7 @@ class AiohttpTestTransport(AioHttpTransport):
     """Workaround to vcrpy bug: https://github.com/kevin1024/vcrpy/pull/461
     """
     async def send(self, request, **config):
+        self._session_owner = True
         response = await super(AiohttpTestTransport, self).send(request, **config)
         if not isinstance(response.headers, CIMultiDictProxy):
             response.headers = CIMultiDictProxy(CIMultiDict(response.internal_response.headers))
@@ -60,7 +61,6 @@ class AiohttpTestTransport(AioHttpTransport):
 
 class StorageFileTestAsync(AsyncFileTestCase):
     def setUp(self):
-        super(StorageFileTestAsync, self).setUp()
         self.share_name = self.get_resource_name('utshare')
         self.short_byte_data = self.get_random_bytes(1024)
         self.remote_share_name = None
@@ -166,7 +166,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
     @AsyncFileTestCase.await_prepared_test
-    async def test_make_file_url_with_protocol(self):
+    async def test_make_file_url_with_protocol(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
         url = self._account_url(storage_account.name).replace('https', 'http')
@@ -184,7 +184,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
     @AsyncFileTestCase.await_prepared_test
-    async def test_make_file_url_with_sas(self):
+    async def test_make_file_url_with_sas(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
         sas = '?sv=2015-04-05&st=2015-04-29T22%3A18%3A26Z&se=2015-04-30T02%3A23%3A26Z&sr=b&sp=rw&sip=168.1.5.60-168.1.5.70&spr=https&sig=Z%2FRHIX5Xcg0Mq2rqI3OlWTjEg2tYkboXr1P9ZUXDtkk%3D'
@@ -483,6 +483,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
     @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
     @AsyncFileTestCase.await_prepared_test
     async def test_set_file_metadata_with_upper_case_async(self, resource_group, location, storage_account, storage_account_key):
+        fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
         # Arrange
         metadata = {'hello': 'world', 'number': '42', 'UP': 'UPval'}
         file_client = await self._create_file(fsc)
@@ -761,10 +762,10 @@ class StorageFileTestAsync(AsyncFileTestCase):
     @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
     @StorageAccountPreparer(name_prefix='remotestorage', playback_fake_resource=FAKE_STORAGE)
     @AsyncFileTestCase.await_prepared_test
-    async def test_copy_file_async_private_file_async(self, resource_group, location, storage_account, storage_account_key, remote_storage_account, remote_storage_account_key):
+    async def test_copy_file_async_private_file_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
-        fsc2 = FileServiceClient(self._account_url(remote_storage_account.name), credential=remote_storage_account, transport=AiohttpTestTransport())
+        fsc2 = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
         await self._create_remote_share(fsc2)
         source_file = await self._create_remote_file(fsc2)
 
@@ -784,13 +785,12 @@ class StorageFileTestAsync(AsyncFileTestCase):
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
-    @StorageAccountPreparer(name_prefix='remotestorage', playback_fake_resource=FAKE_STORAGE)
     @AsyncFileTestCase.await_prepared_test
-    async def test_copy_file_async_private_file_with_sas_async(self, resource_group, location, storage_account, storage_account_key, remote_storage_account, remote_storage_account_key):
+    async def test_copy_file_async_private_file_with_sas_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
         data = b'12345678' * 1024 * 1024
-        fsc2 = FileServiceClient(self._account_url(remote_storage_account.name), credential=remote_storage_account_key, transport=AiohttpTestTransport())
+        fsc2 = FileServiceClient(self._account_url(storage_account.name), credential=storage_account, transport=AiohttpTestTransport())
         await self._create_remote_share(fsc2)
         source_file = await self._create_remote_file(fsc2, file_data=data)
         sas_token = source_file.generate_shared_access_signature(
@@ -820,9 +820,8 @@ class StorageFileTestAsync(AsyncFileTestCase):
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
-    @StorageAccountPreparer(name_prefix='remotestorage', playback_fake_resource=FAKE_STORAGE)
     @AsyncFileTestCase.await_prepared_test
-    async def test_abort_copy_file_async(self, resource_group, location, storage_account, storage_account_key, remote_storage_account, remote_storage_account_key):
+    async def test_abort_copy_file_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
         data = b'12345678' * 1024 * 1024
@@ -980,7 +979,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         await file_client.upload_file(data, max_connections=2, raw_response_hook=callback)
 
         # Assert
-        await self.asser_file_equal(file_client, data)
+        await self.assert_file_equal(file_client, data)
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
@@ -1010,7 +1009,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         assert 'etag' in response
 
         # Assert
-        await self.asser_file_equal(file_client, data[1024:])
+        await self.assert_file_equal(file_client, data[1024:])
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
@@ -1041,7 +1040,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         assert 'etag' in response
 
         # Assert
-        await self.asser_file_equal(file_client, data[index:index + count])
+        await self.assert_file_equal(file_client, data[index:index + count])
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
@@ -1073,7 +1072,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
             assert 'etag' in response
 
         # Assert
-        await self.asser_file_equal(file_client, data)
+        await self.assert_file_equal(file_client, data)
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
@@ -1112,7 +1111,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
             assert 'etag' in response
 
         # Assert
-        await self.asser_file_equal(file_client, data)
+        await self.assert_file_equal(file_client, data)
         self.assert_upload_progress(
             len(data),
             fsc._config.max_range_size,
@@ -1149,7 +1148,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
             assert 'etag' in response
 
         # Assert
-        await self.asser_file_equal(file_client, data[:file_size])
+        await self.assert_file_equal(file_client, data[:file_size])
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
@@ -1180,7 +1179,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
             await file_client.upload_file(non_seekable_file, length=file_size, max_connections=1)
 
         # Assert
-        await self.asser_file_equal(file_client, data[:file_size])
+        await self.assert_file_equal(file_client, data[:file_size])
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
@@ -1217,7 +1216,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
             await file_client.upload_file(stream, max_connections=2, raw_response_hook=callback)
 
         # Assert
-        await self.asser_file_equal(file_client, data[:file_size])
+        await self.assert_file_equal(file_client, data[:file_size])
         self.assert_upload_progress(
             len(data),
             fsc._config.max_range_size,
@@ -1251,7 +1250,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
             await file_client.upload_file(stream, length=file_size, max_connections=4)
 
         # Assert
-        await self.asser_file_equal(file_client, data[:file_size])
+        await self.assert_file_equal(file_client, data[:file_size])
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
@@ -1289,7 +1288,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
 
 
         # Assert
-        await self.asser_file_equal(file_client, data[:file_size])
+        await self.assert_file_equal(file_client, data[:file_size])
         self.assert_upload_progress(
             file_size,
             fsc._config.max_range_size,
@@ -1316,7 +1315,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         await file_client.upload_file(text)
 
         # Assert
-        await self.asser_file_equal(file_client, data)
+        await self.assert_file_equal(file_client, data)
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
@@ -1339,7 +1338,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         await file_client.upload_file(text, encoding='UTF-16')
 
         # Assert
-        await self.asser_file_equal(file_client, data)
+        await self.assert_file_equal(file_client, data)
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
@@ -1366,7 +1365,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         await file_client.upload_file(data)
 
         # Assert
-        await self.asser_file_equal(file_client, encoded_data)
+        await self.assert_file_equal(file_client, encoded_data)
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
