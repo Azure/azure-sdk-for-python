@@ -81,7 +81,7 @@ class UserClient(object):
         return self._properties
 
     @distributed_trace
-    def read_all_permissions(self, max_item_count=None, feed_options=None, response_hook=None, **kwargs):
+    def list_permissions(self, max_item_count=None, feed_options=None, response_hook=None, **kwargs):
         # type: (int, Dict[str, Any], Optional[Callable]) -> Iterable[Dict[str, Any]]
         """ List all permission for the user.
 

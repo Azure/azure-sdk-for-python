@@ -206,7 +206,7 @@ class ContainerClient(object):
         return result
 
     @distributed_trace
-    def read_all_items(
+    def list_items(
         self,
         max_item_count=None,
         session_token=None,
@@ -666,7 +666,7 @@ class ContainerClient(object):
         return Offer(offer_throughput=data["content"]["offerThroughput"], properties=data)
 
     @distributed_trace
-    def read_all_conflicts(self, max_item_count=None, feed_options=None, response_hook=None, **kwargs):
+    def list_conflicts(self, max_item_count=None, feed_options=None, response_hook=None, **kwargs):
         # type: (int, Dict[str, Any], Optional[Callable]) -> Iterable[Dict[str, Any]]
         """ List all conflicts in the container.
 

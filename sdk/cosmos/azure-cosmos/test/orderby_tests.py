@@ -94,7 +94,7 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
         self.assertGreaterEqual(len(partition_key_ranges), 5)
         
         # sanity check: read documents after creation
-        queried_docs = list(self.created_collection.read_all_items())
+        queried_docs = list(self.created_collection.list_items())
         self.assertEqual(
             len(queried_docs),
             len(self.document_definitions),

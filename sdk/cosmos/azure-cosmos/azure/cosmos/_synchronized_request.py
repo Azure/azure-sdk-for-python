@@ -128,7 +128,7 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
             connection_timeout=connection_timeout,
             connection_verify=kwargs.pop("connection_verify", ca_certs),
             connection_cert=kwargs.pop("connection_cert", cert_files),
-
+            **kwargs
         )
     else:
         response = pipeline_client._pipeline.run(
@@ -136,7 +136,8 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
             stream=is_media_stream,
             connection_timeout=connection_timeout,
             # If SSL is disabled, verify = false
-            connection_verify=kwargs.pop("connection_verify", is_ssl_enabled)
+            connection_verify=kwargs.pop("connection_verify", is_ssl_enabled),
+            **kwargs
         )
 
     response = response.http_response

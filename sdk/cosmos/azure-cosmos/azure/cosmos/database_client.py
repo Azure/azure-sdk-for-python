@@ -310,7 +310,7 @@ class DatabaseClient(object):
         return ContainerClient(self.client_connection, self.database_link, id_value)
 
     @distributed_trace
-    def read_all_containers(
+    def list_containers(
         self,
         max_item_count=None,
         session_token=None,
@@ -490,7 +490,7 @@ class DatabaseClient(object):
         )
 
     @distributed_trace
-    def read_all_users(self, max_item_count=None, feed_options=None, response_hook=None, **kwargs):
+    def list_users(self, max_item_count=None, feed_options=None, response_hook=None, **kwargs):
         # type: (int, Dict[str, Any], Optional[Callable]) -> Iterable[Dict[str, Any]]
         """ List all users in the container.
 

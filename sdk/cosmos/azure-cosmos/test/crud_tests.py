@@ -103,14 +103,14 @@ class CRUDTests(unittest.TestCase):
                                                  connection_policy=self.connectionPolicy)
     def test_database_crud(self):
         # read databases.
-        databases = list(self.client.read_all_databases())
+        databases = list(self.client.list_databases())
         # create a database.
         before_create_databases_count = len(databases)
         database_id = str(uuid.uuid4())
         created_db = self.client.create_database(database_id)
         self.assertEqual(created_db.id, database_id)
         # Read databases after creation.
-        databases = list(self.client.read_all_databases())
+        databases = list(self.client.list_databases())
         self.assertEqual(len(databases),
                          before_create_databases_count + 1,
                          'create should increase the number of databases')
@@ -184,7 +184,7 @@ class CRUDTests(unittest.TestCase):
 
     def test_collection_crud(self):
         created_db = self.databaseForTest
-        collections = list(created_db.read_all_containers())
+        collections = list(created_db.list_containers())
         # create a collection
         before_create_collections_count = len(collections)
         collection_id = 'test_collection_crud ' + str(uuid.uuid4())
@@ -204,7 +204,7 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual('consistent', created_properties['indexingPolicy']['indexingMode'])
 
         # read collections after creation
-        collections = list(created_db.read_all_containers())
+        collections = list(created_db.list_containers())
         self.assertEqual(len(collections),
                          before_create_collections_count + 1,
                          'create should increase the number of collections')
@@ -436,7 +436,7 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(read_document.get('key'), created_document.get('key'))
 
         # Read document feed doesn't require partitionKey as it's always a cross partition query
-        documentlist = list(created_collection.read_all_items())
+        documentlist = list(created_collection.list_items())
         self.assertEqual(1, len(documentlist))
 
         # replace document
@@ -458,7 +458,7 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(upserted_document.get('id'), document_definition.get('id'))
         self.assertEqual(upserted_document.get('key'), document_definition.get('key'))
 
-        documentlist = list(created_collection.read_all_items())
+        documentlist = list(created_collection.list_items())
         self.assertEqual(2, len(documentlist))
 
         # delete document
@@ -692,7 +692,7 @@ class CRUDTests(unittest.TestCase):
         )
 
         # Read conflict feed doesn't requires partitionKey to be specified as it's a cross partition thing
-        conflictlist = list(created_collection.read_all_conflicts())
+        conflictlist = list(created_collection.list_conflicts())
         self.assertEqual(0, len(conflictlist))
 
         # delete conflict here will return resource not found(404) since there is no conflict here
@@ -734,7 +734,7 @@ class CRUDTests(unittest.TestCase):
         # create collection
         created_collection = self.configs.create_multi_partition_collection_if_not_exist(self.client)
         # read documents
-        documents = list(created_collection.read_all_items())
+        documents = list(created_collection.list_items())
         # create a document
         before_create_documents_count = len(documents)
 
@@ -755,7 +755,7 @@ class CRUDTests(unittest.TestCase):
                                            created_collection.create_item,
                                            duplicated_definition_with_id)
         # read documents after creation
-        documents = list(created_collection.read_all_items())
+        documents = list(created_collection.list_items())
         self.assertEqual(
             len(documents),
             before_create_documents_count + 1,
@@ -907,7 +907,7 @@ class CRUDTests(unittest.TestCase):
         created_collection = self.configs.create_multi_partition_collection_if_not_exist(self.client)
 
         # read documents and check count
-        documents = list(created_collection.read_all_items())
+        documents = list(created_collection.list_items())
         before_create_documents_count = len(documents)
 
         # create document definition
@@ -924,7 +924,7 @@ class CRUDTests(unittest.TestCase):
                          document_definition['id'])
 
         # read documents after creation and verify updated count
-        documents = list(created_collection.read_all_items())
+        documents = list(created_collection.list_items())
         self.assertEqual(
             len(documents),
             before_create_documents_count + 1,
@@ -951,7 +951,7 @@ class CRUDTests(unittest.TestCase):
                          'document id should stay the same')
 
         # read documents after upsert and verify count doesn't increases again
-        documents = list(created_collection.read_all_items())
+        documents = list(created_collection.list_items())
         self.assertEqual(
             len(documents),
             before_create_documents_count + 1,
@@ -968,7 +968,7 @@ class CRUDTests(unittest.TestCase):
                          'document id should be same')
 
         # read documents after upsert and verify count increases
-        documents = list(created_collection.read_all_items())
+        documents = list(created_collection.list_items())
         self.assertEqual(
             len(documents),
             before_create_documents_count + 2,
@@ -979,7 +979,7 @@ class CRUDTests(unittest.TestCase):
         created_collection.delete_item(item=new_document, partition_key=new_document['id'])
 
         # read documents after delete and verify count is same as original
-        documents = list(created_collection.read_all_items())
+        documents = list(created_collection.list_items())
         self.assertEqual(
             len(documents),
             before_create_documents_count,
@@ -1042,14 +1042,14 @@ class CRUDTests(unittest.TestCase):
         # create database
         db = self.databaseForTest
         # list users
-        users = list(db.read_all_users())
+        users = list(db.list_users())
         before_create_count = len(users)
         # create user
         user_id = 'new user' + str(uuid.uuid4())
         user = db.create_user(body={'id': user_id})
         self.assertEqual(user.id, user_id, 'user id error')
         # list users after creation
-        users = list(db.read_all_users())
+        users = list(db.list_users())
         self.assertEqual(len(users), before_create_count + 1)
         # query users
         results = list(db.query_users(
@@ -1086,7 +1086,7 @@ class CRUDTests(unittest.TestCase):
         db = self.databaseForTest
 
         # read users and check count
-        users = list(db.read_all_users())
+        users = list(db.list_users())
         before_create_count = len(users)
 
         # create user using Upsert API
@@ -1097,7 +1097,7 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(user.id, user_id, 'user id error')
 
         # read users after creation and verify updated count
-        users = list(db.read_all_users())
+        users = list(db.list_users())
         self.assertEqual(len(users), before_create_count + 1)
 
         # Should replace the user since it already exists, there is no public property to change here
@@ -1110,7 +1110,7 @@ class CRUDTests(unittest.TestCase):
                          'user id should remain same')
 
         # read users after upsert and verify count doesn't increases again
-        users = list(db.read_all_users())
+        users = list(db.list_users())
         self.assertEqual(len(users), before_create_count + 1)
 
         user_properties = user.read()
@@ -1124,7 +1124,7 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(new_user.id, user.id, 'user id error')
 
         # read users after upsert and verify count increases
-        users = list(db.read_all_users())
+        users = list(db.list_users())
         self.assertEqual(len(users), before_create_count + 2)
 
         # delete users
@@ -1132,7 +1132,7 @@ class CRUDTests(unittest.TestCase):
         db.delete_user(new_user.id)
 
         # read users after delete and verify count remains the same
-        users = list(db.read_all_users())
+        users = list(db.list_users())
         self.assertEqual(len(users), before_create_count)
 
     def test_permission_crud(self):
@@ -1142,7 +1142,7 @@ class CRUDTests(unittest.TestCase):
         # create user
         user = db.create_user(body={'id': 'new user' + str(uuid.uuid4())})
         # list permissions
-        permissions = list(user.read_all_permissions())
+        permissions = list(user.list_permissions())
         before_create_count = len(permissions)
         permission = {
             'id': 'new permission',
@@ -1155,7 +1155,7 @@ class CRUDTests(unittest.TestCase):
                          'new permission',
                          'permission id error')
         # list permissions after creation
-        permissions = list(user.read_all_permissions())
+        permissions = list(user.list_permissions())
         self.assertEqual(len(permissions), before_create_count + 1)
         # query permissions
         results = list(user.query_permissions(
@@ -1195,7 +1195,7 @@ class CRUDTests(unittest.TestCase):
         user = db.create_user(body={'id': 'new user' + str(uuid.uuid4())})
 
         # read permissions and check count
-        permissions = list(user.read_all_permissions())
+        permissions = list(user.list_permissions())
         before_create_count = len(permissions)
 
         permission_definition = {
@@ -1213,7 +1213,7 @@ class CRUDTests(unittest.TestCase):
                          'permission id error')
 
         # read permissions after creation and verify updated count
-        permissions = list(user.read_all_permissions())
+        permissions = list(user.list_permissions())
         self.assertEqual(len(permissions), before_create_count + 1)
 
         # update permission mode
@@ -1232,7 +1232,7 @@ class CRUDTests(unittest.TestCase):
                          'permissionMode should change')
 
         # read permissions and verify count doesn't increases again
-        permissions = list(user.read_all_permissions())
+        permissions = list(user.list_permissions())
         self.assertEqual(len(permissions), before_create_count + 1)
 
         # update permission id
@@ -1255,7 +1255,7 @@ class CRUDTests(unittest.TestCase):
                          'permission resource should be same')
 
         # read permissions and verify count increases
-        permissions = list(user.read_all_permissions())
+        permissions = list(user.list_permissions())
         self.assertEqual(len(permissions), before_create_count + 2)
 
         # delete permissions
@@ -1263,7 +1263,7 @@ class CRUDTests(unittest.TestCase):
         user.delete_permission(new_permission.id)
 
         # read permissions and verify count remains the same
-        permissions = list(user.read_all_permissions())
+        permissions = list(user.list_permissions())
         self.assertEqual(len(permissions), before_create_count)
 
     def test_authorization(self):
@@ -1352,7 +1352,7 @@ class CRUDTests(unittest.TestCase):
         client = cosmos_client.CosmosClient(CRUDTests.host, {}, "Session", connection_policy=CRUDTests.connectionPolicy)
         self.__AssertHTTPFailureWithStatus(StatusCodes.UNAUTHORIZED,
                                            list,
-                                           client.read_all_databases())
+                                           client.list_databases())
         # Client with master key.
         client = cosmos_client.CosmosClient(CRUDTests.host,
                                             CRUDTests.masterKey,
@@ -1378,7 +1378,7 @@ class CRUDTests(unittest.TestCase):
                                            db.delete_container,
                                            success_coll1)
         # 3. Success-- Use Col1 Permission to Read All Docs
-        success_documents = list(success_coll1.read_all_items())
+        success_documents = list(success_coll1.list_items())
         self.assertTrue(success_documents != None,
                         'error reading documents')
         self.assertEqual(len(success_documents),
@@ -1982,7 +1982,7 @@ class CRUDTests(unittest.TestCase):
 
         # Validate QueryIterable by converting it to a list.
         resources = __create_resources(self.client)
-        results = resources['coll'].read_all_items(max_item_count=2)
+        results = resources['coll'].list_items(max_item_count=2)
         docs = list(iter(results))
         self.assertEqual(3,
                          len(docs),
@@ -1993,7 +1993,7 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(resources['doc3']['id'], docs[2]['id'])
 
         # Validate QueryIterable iterator with 'for'.
-        results = resources['coll'].read_all_items(max_item_count=2)
+        results = resources['coll'].list_items(max_item_count=2)
         counter = 0
         # test QueryIterable with 'for'.
         for doc in iter(results):
@@ -2013,7 +2013,7 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(counter, 3)
 
         # Get query results page by page.
-        results = resources['coll'].read_all_items(max_item_count=2)
+        results = resources['coll'].list_items(max_item_count=2)
         page_iter = results.by_page()
         first_block = list(next(page_iter))
         self.assertEqual(2, len(first_block), 'First block should have 2 entries.')
@@ -2385,7 +2385,7 @@ class CRUDTests(unittest.TestCase):
         collection_id2 = 'SampleCollection ' + uuid_string
 
         # Verify that no collections exist
-        collections = list(created_db.read_all_containers())
+        collections = list(created_db.list_containers())
         number_of_existing_collections = len(collections)
 
         # create 2 collections with different casing of IDs
@@ -2401,7 +2401,7 @@ class CRUDTests(unittest.TestCase):
             partition_key=PartitionKey(path='/id', kind='Hash')
         )
 
-        collections = list(created_db.read_all_containers())
+        collections = list(created_db.list_containers())
 
         # verify if a total of 2 collections got created
         self.assertEqual(len(collections), number_of_existing_collections + 2)

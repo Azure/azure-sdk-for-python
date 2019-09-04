@@ -239,7 +239,7 @@ class CosmosClient(object):
         return DatabaseClient(self.client_connection, id_value)
 
     @distributed_trace
-    def read_all_databases(
+    def list_databases(
         self,
         max_item_count=None,
         session_token=None,
