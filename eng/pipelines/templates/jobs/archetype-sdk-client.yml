@@ -63,7 +63,7 @@ jobs:
           CoverageArg: ''
         Windows_Python35:
           OSName: 'Windows'
-          OSVmImage: 'vs2017-win2016'
+          OSVmImage: 'windows-2019'
           PythonVersion: '3.5'
           CoverageArg: ''
         MacOS_Python27:
