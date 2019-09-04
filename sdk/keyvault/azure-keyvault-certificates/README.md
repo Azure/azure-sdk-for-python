@@ -102,9 +102,9 @@ Before creating a certificate, a management policy for the certificate can be cr
 ```
 
 ### Retrieve a Certificate
-`get_certificate` retrieves a certificate previously stored in the Key Vault.
+`get_certificate_with_policy` retrieves a certificate previously stored in the Key Vault without having to specify version.
 ```python
-    certificate = certificate_client.get_certificate(name="cert-name")
+    certificate = certificate_client.get_certificate_with_policy(name="cert-name")
 
     print(certificate.name)
     print(certificate.version)
@@ -151,7 +151,7 @@ For example, if you try to retrieve a certificate after it is deleted a `404` er
 ```python
 from azure.core.exceptions import ResourceNotFoundError
 try:
-    certificate_client.get_certificate(name="deleted_certificate")
+    certificate_client.get_certificate(name="deleted_certificate", version="deleted_certificate_version")
 except ResourceNotFoundError as e:
     print(e.message)
 
@@ -181,7 +181,7 @@ client = CertificateClient(vault_url=url, credential=credential, config=config)
 The logger can also be enabled per operation.
 
  ```python
-certificate = certificate_client.get_certificate(name="cert-name", logging_enable=True)
+certificate = certificate_client.get_certificate_with_policy(name="cert-name", logging_enable=True)
 ```
 
 ## Next steps

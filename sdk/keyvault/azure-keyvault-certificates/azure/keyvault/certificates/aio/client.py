@@ -137,16 +137,55 @@ class CertificateClient(AsyncKeyVaultClientBase):
         )
 
     @distributed_trace_async
-    async def get_certificate(
+    async def get_certificate_with_policy(
         self,
         name: str,
-        version: Optional[str] = None,
         **kwargs: "**Any"
+    ) -> Certificate:
+        """Gets information about a certificate, which includes information about the
+        certificate's policy.
+
+
+        Gets information about a specific certificate. This operation requires
+        the certificates/get permission. Does not accept the version of the certificate
+        as a parameter.
+
+        :param name: The name of the certificate in the given
+         vault.
+        :type name: str
+        :returns: An instance of Certificate
+        :rtype: ~azure.security.keyvault.certificates._models.Certificate
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
+
+        Example:
+            .. literalinclude:: ../tests/test_examples_certificates_async.py
+                :start-after: [START get_certificate]
+                :end-before: [END get_certificate]
+                :language: python
+                :caption: Get a certificate
+                :dedent: 8
+        """
+        bundle = await self._client.get_certificate(
+            vault_base_url=self.vault_url,
+            certificate_name=name,
+            certificate_version="",
+            **kwargs
+        )
+        return Certificate._from_certificate_bundle(certificate_bundle=bundle)
+
+    @distributed_trace_async
+    async def get_certificate(
+            self,
+            name: str,
+            version: str,
+            **kwargs: "**Any"
     ) -> Certificate:
         """Gets information about a certificate.
 
         Gets information about a specific certificate. This operation requires
-        the certificates/get permission.
+        the certificates/get permission. If you wish to not specify a version or to
+        get the certificate's policy as well, use the get_certificate_with_policy function.
 
         :param name: The name of the certificate in the given
          vault.
@@ -166,9 +205,6 @@ class CertificateClient(AsyncKeyVaultClientBase):
                 :caption: Get a certificate
                 :dedent: 8
         """
-        if version is None:
-            version = ""
-
         bundle = await self._client.get_certificate(
             vault_base_url=self.vault_url,
             certificate_name=name,

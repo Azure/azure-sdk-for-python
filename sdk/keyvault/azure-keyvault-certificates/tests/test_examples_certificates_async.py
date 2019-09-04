@@ -60,7 +60,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         # [START get_certificate]
 
         # get the latest version of a certificate
-        certificate = await certificate_client.get_certificate(name=cert_name)
+        certificate = await certificate_client.get_certificate_with_policy(name=cert_name)
 
         print(certificate.id)
         print(certificate.name)

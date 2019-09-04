@@ -205,7 +205,7 @@ class CertificateClientTests(KeyVaultTestCase):
         self.assertEqual((await client.get_certificate_operation(name=cert_name)).status.lower(), 'completed')
 
         # get certificate
-        cert = await client.get_certificate(name=cert_name)
+        cert = await client.get_certificate_with_policy(name=cert_name)
         self._validate_certificate_bundle(
             cert=cert, vault=client.vault_url,
             cert_name=cert_name,
@@ -236,7 +236,7 @@ class CertificateClientTests(KeyVaultTestCase):
 
         # get certificate returns not found
         try:
-            await client.get_certificate(name=cert_name)
+            await client.get_certificate(name=cert_name, version=deleted_cert_bundle.version)
             self.fail('Get should fail')
         except Exception as ex:
             if not hasattr(ex, 'message') or 'not found' not in ex.message.lower():

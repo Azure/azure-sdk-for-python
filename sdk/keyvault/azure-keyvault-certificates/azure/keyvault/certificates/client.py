@@ -144,20 +144,20 @@ class CertificateClient(KeyVaultClientBase):
 
 
     @distributed_trace
-    def get_certificate(self, name, version=None, **kwargs):
-        # type: (str, Optional[str], **Any) -> Certificate
-        """Gets information about a certificate.
+    def get_certificate_with_policy(self, name, **kwargs):
+        # type: (str, **Any) -> Certificate
+        """Gets information about a certificate, which includes information about the
+        certificate's policy.
 
         Gets information about a specific certificate. This operation requires
-        the certificates/get permission.
+        the certificates/get permission. Does not accept the version of the certificate
+        as a parameter.
 
         :param name: The name of the certificate in the given
          vault.
         :type name: str
-        :param version: The version of the certificate.
-        :type version: str
         :returns: An instance of Certificate
-        :rtype: ~azure.security.keyvault.certificates._models.Certificate
+        :rtype: ~azure.keyvault.certificates.models.Certificate
         :raises:
          :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
 
@@ -172,7 +172,43 @@ class CertificateClient(KeyVaultClientBase):
         bundle = self._client.get_certificate(
             vault_base_url=self.vault_url,
             certificate_name=name,
-            certificate_version=version or "",
+            certificate_version="",
+            **kwargs
+        )
+        return Certificate._from_certificate_bundle(certificate_bundle=bundle)
+
+    @distributed_trace
+    def get_certificate(self, name, version, **kwargs):
+        # type: (str, str, **Any) -> Certificate
+        """Gets information about a certificate, which does not include the policy.
+        Version must be specified.
+
+        Gets information about a specific certificate. This operation requires
+        the certificates/get permission. If you wish to not specify a version or to
+        get the certificate's policy as well, use the get_certificate_with_policy function.
+
+        :param name: The name of the certificate in the given
+         vault.
+        :type name: str
+        :param version: The version of the certificate.
+        :type version: str
+        :returns: An instance of Certificate
+        :rtype: ~azure.keyvault.certificates.models.Certificate
+        :raises:
+         :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
+
+        Example:
+            .. literalinclude:: ../tests/test_examples_certificates.py
+                :start-after: [START get_certificate]
+                :end-before: [END get_certificate]
+                :language: python
+                :caption: Get a certificate
+                :dedent: 8
+        """
+        bundle = self._client.get_certificate(
+            vault_base_url=self.vault_url,
+            certificate_name=name,
+            certificate_version=version,
             **kwargs
         )
         return Certificate._from_certificate_bundle(certificate_bundle=bundle)
