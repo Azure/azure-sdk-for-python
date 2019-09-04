@@ -102,16 +102,16 @@ class ContainerClient(object):
     @distributed_trace
     def read(
         self,
-        session_token=None,
-        initial_headers=None,
-        populate_query_metrics=None,
-        populate_partition_key_range_statistics=None,
-        populate_quota_info=None,
-        request_options=None,
-        response_hook=None,
-        **kwargs
+        session_token=None,  # type: Optional[str]
+        initial_headers=None,  # type: Optional[Dict[str, str]]
+        populate_query_metrics=None,  # type: Optional[bool]
+        populate_partition_key_range_statistics=None,  # type: Optional[bool]
+        populate_quota_info=None,  # type: Optional[bool]
+        request_options=None,  # type: Optional[Dict[str, Any]]
+        response_hook=None,  # type: Optional[Callable]
+        **kwargs  # type: Any
     ):
-        # type: (str, Dict[str, str], bool, bool, bool, Dict[str, Any], Optional[Callable]) -> Container
+        # type: (...) -> Container
         """ Read the container properties
 
         :param session_token: Token for use with Session consistency.
@@ -153,13 +153,13 @@ class ContainerClient(object):
         self,
         item,  # type: Union[str, Dict[str, Any]]
         partition_key,  # type: Any
-        session_token=None,  # type: str
-        initial_headers=None,  # type:   # type: Dict[str, str]
-        populate_query_metrics=None,  # type: bool
-        post_trigger_include=None,  # type: str
-        request_options=None,  # type: Dict[str, Any]
+        session_token=None,  # type: Optional[str]
+        initial_headers=None,  # type: Optional[Dict[str, str]]
+        populate_query_metrics=None,  # type: Optional[bool]
+        post_trigger_include=None,  # type: Optioanl[str]
+        request_options=None,  # type: Optional[Dict[str, Any]]
         response_hook=None,  # type: Optional[Callable]
-        **kwargs
+        **kwargs  # type: Any
     ):
         # type: (...) -> Dict[str, str]
         """
@@ -208,15 +208,15 @@ class ContainerClient(object):
     @distributed_trace
     def list_items(
         self,
-        max_item_count=None,
-        session_token=None,
-        initial_headers=None,
-        populate_query_metrics=None,
-        feed_options=None,
-        response_hook=None,
-        **kwargs
+        max_item_count=None,  # type: Optional[int]
+        session_token=None,  # type: Optional[str]
+        initial_headers=None,  # type: Optional[Dict[str, str]]
+        populate_query_metrics=None,  # type: Optional[bool]
+        feed_options=None,  # type: Optional[Dict[str, Any]]
+        response_hook=None,  # type: Optional[Callable]
+        **kwargs  # type: Any
     ):
-        # type: (int, str, Dict[str, str], bool, Dict[str, Any], Optional[Callable]) -> Iterable[Dict[str, Any]]
+        # type: (...) -> Iterable[Dict[str, Any]]
         """ List all items in the container.
 
         :param max_item_count: Max number of items to be returned in the enumeration operation.
@@ -299,17 +299,17 @@ class ContainerClient(object):
     def query_items(
         self,
         query,  # type: str
-        parameters=None,  # type: List
-        partition_key=None,  # type: Any
-        enable_cross_partition_query=None,  # type: bool
-        max_item_count=None,  # type: int
-        session_token=None,  # type: str
-        initial_headers=None,  # type: Dict[str, str]
-        enable_scan_in_query=None,  # type: bool
-        populate_query_metrics=None,  # type: bool
-        feed_options=None,  # type: Dict[str, Any]
+        parameters=None,  # type: Optional[List[str]]
+        partition_key=None,  # type: Optional[Any]
+        enable_cross_partition_query=None,  # type: Optional[bool]
+        max_item_count=None,  # type: Optional[int]
+        session_token=None,  # type: Optional[str]
+        initial_headers=None,  # type: Optional[Dict[str, str]]
+        enable_scan_in_query=None,  # type: Optional[bool]
+        populate_query_metrics=None,  # type: Optional[bool]
+        feed_options=None,  # type: Optional[Dict[str, Any]]
         response_hook=None,  # type: Optional[Callable]
-        **kwargs
+        **kwargs  # type: Any
     ):
         # type: (...) -> Iterable[Dict[str, Any]]
         """Return all results matching the given `query`.
@@ -396,7 +396,7 @@ class ContainerClient(object):
         post_trigger_include=None,  # type: str
         request_options=None,  # type: Dict[str, Any]
         response_hook=None,  # type: Optional[Callable]
-        **kwargs
+        **kwargs  # type: Any
     ):
         # type: (...) -> Dict[str, str]
         """ Replaces the specified item if it exists in the container.
@@ -451,7 +451,7 @@ class ContainerClient(object):
         post_trigger_include=None,  # type: str
         request_options=None,  # type: Dict[str, Any]
         response_hook=None,  # type: Optional[Callable]
-        **kwargs
+        **kwargs  # type: Any
     ):
         # type: (...) -> Dict[str, str]
         """ Insert or update the specified item.
@@ -506,7 +506,7 @@ class ContainerClient(object):
         indexing_directive=None,  # type: Any
         request_options=None,  # type: Dict[str, Any]
         response_hook=None,  # type: Optional[Callable]
-        **kwargs
+        **kwargs  # type: Any
     ):
         # type: (...) -> Dict[str, str]
         """ Create an item in the container.
@@ -566,7 +566,7 @@ class ContainerClient(object):
         post_trigger_include=None,  # type: str
         request_options=None,  # type: Dict[str, Any]
         response_hook=None,  # type: Optional[Callable]
-        **kwargs
+        **kwargs  # type: Any
     ):
         # type: (...) -> None
         """ Delete the specified item from the container.
@@ -609,7 +609,7 @@ class ContainerClient(object):
 
     @distributed_trace
     def read_offer(self, response_hook=None, **kwargs):
-        # type: (Optional[Callable]) -> Offer
+        # type: (Optional[Callable], Any) -> Offer
         """ Read the Offer object for this container.
 
         :param response_hook: a callable invoked with the response metadata
@@ -636,7 +636,7 @@ class ContainerClient(object):
 
     @distributed_trace
     def replace_throughput(self, throughput, response_hook=None, **kwargs):
-        # type: (int, Optional[Callable]) -> Offer
+        # type: (int, Optional[Callable], Any) -> Offer
         """ Replace the container's throughput
 
         :param throughput: The throughput to be set (an integer).
@@ -667,7 +667,7 @@ class ContainerClient(object):
 
     @distributed_trace
     def list_conflicts(self, max_item_count=None, feed_options=None, response_hook=None, **kwargs):
-        # type: (int, Dict[str, Any], Optional[Callable]) -> Iterable[Dict[str, Any]]
+        # type: (Optional[int], Optional[Dict[str, Any]], Optional[Callable], Any) -> Iterable[Dict[str, Any]]
         """ List all conflicts in the container.
 
         :param max_item_count: Max number of items to be returned in the enumeration operation.
@@ -691,16 +691,16 @@ class ContainerClient(object):
     @distributed_trace
     def query_conflicts(
         self,
-        query,
-        parameters=None,
-        enable_cross_partition_query=None,
-        partition_key=None,
-        max_item_count=None,
-        feed_options=None,
-        response_hook=None,
-        **kwargs
+        query,  # type: str
+        parameters=None,  # type: Optional[List[str]]
+        enable_cross_partition_query=None,  # type: Optional[bool]
+        partition_key=None,  # type: Optional[Any]
+        max_item_count=None,  # type: Optional[int]
+        feed_options=None,  # type: Optional[Dict[str, Any]]
+        response_hook=None,  # type: Optional[Callable]
+        **kwargs  # type: Any
     ):
-        # type: (str, List, bool, Any, int, Dict[str, Any], Optional[Callable]) -> Iterable[Dict[str, Any]]
+        # type: (...) -> Iterable[Dict[str, Any]]
         """Return all conflicts matching the given `query`.
 
         :param query: The Azure Cosmos DB SQL query to execute.
@@ -736,7 +736,7 @@ class ContainerClient(object):
 
     @distributed_trace
     def get_conflict(self, conflict, partition_key, request_options=None, response_hook=None, **kwargs):
-        # type: (Union[str, Dict[str, Any]], Any, Dict[str, Any], Optional[Callable]) -> Dict[str, str]
+        # type: (Union[str, Dict[str, Any]], Any, Dict[str, Any], Optional[Callable], Any) -> Dict[str, str]
         """ Get the conflict identified by `id`.
 
         :param conflict: The ID (name) or dict representing the conflict to retrieve.
@@ -761,7 +761,7 @@ class ContainerClient(object):
 
     @distributed_trace
     def delete_conflict(self, conflict, partition_key, request_options=None, response_hook=None, **kwargs):
-        # type: (Union[str, Dict[str, Any]], Any, Dict[str, Any], Optional[Callable]) -> None
+        # type: (Union[str, Dict[str, Any]], Any, Dict[str, Any], Optional[Callable], Any) -> None
         """ Delete the specified conflict from the container.
 
         :param conflict: The ID (name) or dict representing the conflict to be deleted.
