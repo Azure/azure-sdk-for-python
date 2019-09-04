@@ -72,6 +72,9 @@ class StorageAppendBlobTestAsync(StorageTestCase):
             loop = asyncio.get_event_loop()
             try:
                 loop.run_until_complete(self.bsc.delete_container(self.container_name))
+            except:
+                pass
+            try:
                 loop.run_until_complete(self.bs.delete_container(self.source_container_name))
             except:
                 pass

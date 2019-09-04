@@ -13,7 +13,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://oauthstoragename.blob.core.windows.net/utcontainer2ef420ee?restype=container
+    uri: https://storagename.blob.core.windows.net/utcontainer2ef420ee?restype=container
   response:
     body:
       string: ''
@@ -61,7 +61,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://oauthstoragename.blob.core.windows.net/utcontainersource2ef420ee?restype=container
+    uri: https://storagename.blob.core.windows.net/utcontainersource2ef420ee?restype=container
   response:
     body:
       string: ''
@@ -113,7 +113,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://oauthstoragename.blob.core.windows.net/utcontainersource2ef420ee/blob2ef420ee
+    uri: https://storagename.blob.core.windows.net/utcontainersource2ef420ee/blob2ef420ee
   response:
     body:
       string: ''
@@ -1314,7 +1314,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://oauthstoragename.blob.core.windows.net/utcontainersource2ef420ee/blob2ef420ee?comp=appendblock
+    uri: https://storagename.blob.core.windows.net/utcontainersource2ef420ee/blob2ef420ee?comp=appendblock
   response:
     body:
       string: ''
@@ -1370,7 +1370,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://oauthstoragename.blob.core.windows.net/utcontainer2ef420ee/blob2ef420ee
+    uri: https://storagename.blob.core.windows.net/utcontainer2ef420ee/blob2ef420ee
   response:
     body:
       string: ''
@@ -1427,7 +1427,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://oauthstoragename.blob.core.windows.net/utcontainer2ef420ee/blob2ef420ee?comp=appendblock
+    uri: https://storagename.blob.core.windows.net/utcontainer2ef420ee/blob2ef420ee?comp=appendblock
   response:
     body:
       string: ''
@@ -1481,7 +1481,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: HEAD
-    uri: https://oauthstoragename.blob.core.windows.net/utcontainer2ef420ee/blob2ef420ee
+    uri: https://storagename.blob.core.windows.net/utcontainer2ef420ee/blob2ef420ee
   response:
     body:
       string: ''
@@ -1555,7 +1555,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://oauthstoragename.blob.core.windows.net/utcontainer2ef420ee/blob2ef420ee?comp=appendblock
+    uri: https://storagename.blob.core.windows.net/utcontainer2ef420ee/blob2ef420ee?comp=appendblock
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>AppendPositionConditionNotMet</Code><Message>The

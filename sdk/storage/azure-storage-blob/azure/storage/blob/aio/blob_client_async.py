@@ -1639,11 +1639,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
                                     source_content_md5=None,  # type: Optional[bytearray]
                                     maxsize_condition=None,  # type: Optional[int]
                                     appendpos_condition=None,  # type: Optional[int]
-                                    lease=None, if_modified_since=None,
-                                    if_unmodified_since=None, if_match=None,
-                                    if_none_match=None, source_if_modified_since=None,
-                                    source_if_unmodified_since=None, source_if_match=None,
-                                    source_if_none_match=None, timeout=None):
+                                    **kwargs):
         # type: (...) -> Dict[str, Union[str, datetime, int]]
         """
         Creates a new block to be committed as part of a blob, where the contents are read from a source url.
@@ -1725,12 +1721,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             source_content_md5=source_content_md5,
             maxsize_condition=maxsize_condition,
             appendpos_condition=appendpos_condition,
-            lease=lease,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since, if_match=if_match,
-            if_none_match=if_none_match, source_if_modified_since=source_if_modified_since,
-            source_if_unmodified_since=source_if_unmodified_since, source_if_match=source_if_match,
-            source_if_none_match=source_if_none_match, timeout=timeout
+            **kwargs
         )
         try:
             return await self._client.append_blob.append_block_from_url(**options)  # type: ignore

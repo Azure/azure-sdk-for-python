@@ -23,7 +23,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://oauthstoragename.blob.core.windows.net/utcontainersourcea2401b63/bloba2401b63
+    uri: https://storagename.blob.core.windows.net/utcontainersourcea2401b63/bloba2401b63
   response:
     body:
       string: ''
@@ -1221,7 +1221,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://oauthstoragename.blob.core.windows.net/utcontainersourcea2401b63/bloba2401b63?comp=appendblock
+    uri: https://storagename.blob.core.windows.net/utcontainersourcea2401b63/bloba2401b63?comp=appendblock
   response:
     body:
       string: ''
@@ -1273,7 +1273,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: HEAD
-    uri: https://oauthstoragename.blob.core.windows.net/utcontainersourcea2401b63/bloba2401b63
+    uri: https://storagename.blob.core.windows.net/utcontainersourcea2401b63/bloba2401b63
   response:
     body:
       string: ''
@@ -1345,7 +1345,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://oauthstoragename.blob.core.windows.net/utcontainera2401b63/bloba2401b63
+    uri: https://storagename.blob.core.windows.net/utcontainera2401b63/bloba2401b63
   response:
     body:
       string: ''
@@ -1399,7 +1399,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://oauthstoragename.blob.core.windows.net/utcontainera2401b63/bloba2401b63?comp=appendblock
+    uri: https://storagename.blob.core.windows.net/utcontainera2401b63/bloba2401b63?comp=appendblock
   response:
     body:
       string: ''
@@ -1451,7 +1451,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: HEAD
-    uri: https://oauthstoragename.blob.core.windows.net/utcontainera2401b63/bloba2401b63
+    uri: https://storagename.blob.core.windows.net/utcontainera2401b63/bloba2401b63
   response:
     body:
       string: ''
@@ -1521,7 +1521,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://oauthstoragename.blob.core.windows.net/utcontainera2401b63/bloba2401b63
+    uri: https://storagename.blob.core.windows.net/utcontainera2401b63/bloba2401b63
   response:
     body:
       string: !!binary |
@@ -2745,7 +2745,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://oauthstoragename.blob.core.windows.net/utcontainera2401b63/bloba2401b63?comp=appendblock
+    uri: https://storagename.blob.core.windows.net/utcontainera2401b63/bloba2401b63?comp=appendblock
   response:
     body:
       string: ''

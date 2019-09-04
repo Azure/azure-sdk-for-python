@@ -13,7 +13,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://oauthstoragename.blob.core.windows.net/utcontainerad671f29?restype=container
+    uri: https://storagename.blob.core.windows.net/utcontainerad671f29?restype=container
   response:
     body:
       string: ''
@@ -61,7 +61,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://oauthstoragename.blob.core.windows.net/utcontainersourcead671f29?restype=container
+    uri: https://storagename.blob.core.windows.net/utcontainersourcead671f29?restype=container
   response:
     body:
       string: ''
@@ -113,7 +113,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://oauthstoragename.blob.core.windows.net/utcontainersourcead671f29/blobad671f29
+    uri: https://storagename.blob.core.windows.net/utcontainersourcead671f29/blobad671f29
   response:
     body:
       string: ''
@@ -1314,7 +1314,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://oauthstoragename.blob.core.windows.net/utcontainersourcead671f29/blobad671f29?comp=appendblock
+    uri: https://storagename.blob.core.windows.net/utcontainersourcead671f29/blobad671f29?comp=appendblock
   response:
     body:
       string: ''
@@ -1366,7 +1366,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: HEAD
-    uri: https://oauthstoragename.blob.core.windows.net/utcontainersourcead671f29/blobad671f29
+    uri: https://storagename.blob.core.windows.net/utcontainersourcead671f29/blobad671f29
   response:
     body:
       string: ''
@@ -1436,7 +1436,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://oauthstoragename.blob.core.windows.net/utcontainerad671f29/blobad671f29
+    uri: https://storagename.blob.core.windows.net/utcontainerad671f29/blobad671f29
   response:
     body:
       string: ''
@@ -1493,7 +1493,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://oauthstoragename.blob.core.windows.net/utcontainerad671f29/blobad671f29?comp=appendblock
+    uri: https://storagename.blob.core.windows.net/utcontainerad671f29/blobad671f29?comp=appendblock
   response:
     body:
       string: ''
@@ -1547,7 +1547,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: HEAD
-    uri: https://oauthstoragename.blob.core.windows.net/utcontainerad671f29/blobad671f29
+    uri: https://storagename.blob.core.windows.net/utcontainerad671f29/blobad671f29
   response:
     body:
       string: ''
@@ -1621,7 +1621,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://oauthstoragename.blob.core.windows.net/utcontainerad671f29/blobad671f29?comp=appendblock
+    uri: https://storagename.blob.core.windows.net/utcontainerad671f29/blobad671f29?comp=appendblock
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<Error><Code>CannotVerifyCopySource</Code><Message>Could

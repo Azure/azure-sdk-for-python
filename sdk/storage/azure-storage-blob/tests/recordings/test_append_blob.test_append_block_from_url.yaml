@@ -23,7 +23,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://oauthstoragename.blob.core.windows.net/utcontainersource80c3118a/blob80c3118a
+    uri: https://storagename.blob.core.windows.net/utcontainersource80c3118a/blob80c3118a
   response:
     body:
       string: ''
@@ -1221,7 +1221,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://oauthstoragename.blob.core.windows.net/utcontainersource80c3118a/blob80c3118a?comp=appendblock
+    uri: https://storagename.blob.core.windows.net/utcontainersource80c3118a/blob80c3118a?comp=appendblock
   response:
     body:
       string: ''
@@ -1277,7 +1277,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://oauthstoragename.blob.core.windows.net/utcontainer80c3118a/blob80c3118a
+    uri: https://storagename.blob.core.windows.net/utcontainer80c3118a/blob80c3118a
   response:
     body:
       string: ''
@@ -1329,7 +1329,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://oauthstoragename.blob.core.windows.net/utcontainer80c3118a/blob80c3118a?comp=appendblock
+    uri: https://storagename.blob.core.windows.net/utcontainer80c3118a/blob80c3118a?comp=appendblock
   response:
     body:
       string: ''
@@ -1387,7 +1387,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://oauthstoragename.blob.core.windows.net/utcontainer80c3118a/blob80c3118a?comp=appendblock
+    uri: https://storagename.blob.core.windows.net/utcontainer80c3118a/blob80c3118a?comp=appendblock
   response:
     body:
       string: ''
@@ -1439,7 +1439,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: HEAD
-    uri: https://oauthstoragename.blob.core.windows.net/utcontainer80c3118a/blob80c3118a
+    uri: https://storagename.blob.core.windows.net/utcontainer80c3118a/blob80c3118a
   response:
     body:
       string: ''
@@ -1509,7 +1509,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://oauthstoragename.blob.core.windows.net/utcontainer80c3118a/blob80c3118a
+    uri: https://storagename.blob.core.windows.net/utcontainer80c3118a/blob80c3118a
   response:
     body:
       string: !!binary |

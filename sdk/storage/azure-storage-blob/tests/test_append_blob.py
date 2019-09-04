@@ -54,7 +54,10 @@ class StorageAppendBlobTest(StorageTestCase):
         if not self.is_playback():
             try:
                 self.bsc.delete_container(self.container_name)
-                self.bs.delete_container(self.source_container_name)
+            except:
+                pass
+            try:
+                self.bsc.delete_container(self.source_container_name)
             except:
                 pass
 
