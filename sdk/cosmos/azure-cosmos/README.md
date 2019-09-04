@@ -68,9 +68,7 @@ from azure.cosmos import CosmosClient, Container, Database, PartitionKey, errors
 import os
 url = os.environ['ACCOUNT_URI']
 key = os.environ['ACCOUNT_KEY']
-client = CosmosClient(url, auth = {
-    'masterKey': key
-})
+client = CosmosClient(url, credential=key)
 ```
 
 ## Usage

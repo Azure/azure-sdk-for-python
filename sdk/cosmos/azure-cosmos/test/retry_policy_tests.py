@@ -70,7 +70,7 @@ class Test_retry_policy_tests(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
 
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, "Session", cls.connectionPolicy)
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, "Session", connection_policy=cls.connectionPolicy)
         cls.created_collection = test_config._test_config.create_single_partition_collection_if_not_exist(cls.client)
         cls.retry_after_in_milliseconds = 1000
 

@@ -62,7 +62,7 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
             
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, "Session", cls.connectionPolicy)
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, "Session", connection_policy=cls.connectionPolicy)
         cls.created_db = test_config._test_config.create_database_if_not_exist(cls.client)
         cls.created_collection = CrossPartitionTopOrderByTest.create_collection(cls.client, cls.created_db)
         cls.collection_link = cls.GetDocumentCollectionLink(cls.created_db, cls.created_collection)

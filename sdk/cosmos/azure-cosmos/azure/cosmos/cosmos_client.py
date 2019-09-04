@@ -47,15 +47,66 @@ def _parse_connection_str(conn_str, credential):
     return conn_settings
 
 
+def _build_auth(credential):
+    auth = {}
+    if isinstance(credential, six.string_types):
+        auth['masterKey'] = credential
+    elif isinstance(credential, dict):
+        if any(k for k in credential.keys() if k in ['masterKey', 'resourceTokens', 'permissionFeed']):
+            return credential  # Backwards compatible
+        auth['resourceTokens'] = credential
+    elif hasattr(credential, '__iter__'):
+        auth['permissionFeed'] = credential
+    else:
+        raise TypeError(
+            "Unrecognized credential type. Please supply the master key as str, "
+            "or a dictionary or resource tokens, or a list of permissions.")
+    return auth
+
+
+def _build_connection_policy(kwargs):
+    policy = kwargs.pop('connection_policy', None) or ConnectionPolicy()
+
+    # Connection config
+    policy.RequestTimeout = kwargs.pop('request_timeout', None) or \
+        kwargs.pop('connection_timeout', None) or \
+        policy.RequestTimeout
+    policy.MediaRequestTimeout = kwargs.pop('media_request_timeout', None) or policy.MediaRequestTimeout
+    policy.ConnectionMode = kwargs.pop('connection_mode', None) or policy.ConnectionMode
+    policy.MediaReadMode = kwargs.pop('media_read_mode', None) or policy.MediaReadMode
+    policy.ProxyConfiguration = kwargs.pop('proxy_config', None) or policy.ProxyConfiguration
+    policy.EnableEndpointDiscovery = kwargs.pop('enable_endpoint_discovery', None) or policy.EnableEndpointDiscovery
+    policy.PreferredLocations = kwargs.pop('preferred_locations', None) or policy.PreferredLocations
+    policy.UseMultipleWriteLocations = kwargs.pop('multiple_write_locations', None) or \
+        policy.UseMultipleWriteLocations
+
+    # SSL config
+    verify = kwargs.pop('connection_verify', None)
+    policy.DisableSSLVerification = not bool(verify if verify is not None else True)
+    ssl = kwargs.pop('ssl_config', None) or policy.SSLConfiguration
+    if ssl:
+        ssl.SSLCertFile = kwargs.pop('connection_cert', None) or ssl.SSLCertFile
+        ssl.SSLCaCerts = verify or ssl.SSLCaCerts
+        policy.SSLConfiguration = ssl
+
+    # Retry config
+    retry = kwargs.pop('retry_options', None) or policy.RetryOptions
+    retry._max_retry_attempt_count = kwargs.pop('retry_total', None) or retry._max_retry_attempt_count
+    retry._fixed_retry_interval_in_milliseconds = kwargs.pop('retry_fixed_interval', None) or \
+        retry._fixed_retry_interval_in_milliseconds
+    retry._max_wait_time_in_seconds = kwargs.pop('retry_backoff_max', None) or retry._max_wait_time_in_seconds
+    policy.RetryOptions = retry
+
+    return policy
+
+
 class CosmosClient(object):
     """
     Provides a client-side logical representation of an Azure Cosmos DB account.
     Use this client to configure and execute requests to the Azure Cosmos DB service.
     """
 
-    def __init__(
-        self, url, credential, consistency_level="Session", connection_policy=None
-    ):  # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs,line-too-long
+    def __init__(self, url, credential, consistency_level="Session", **kwargs):
         # type: (str, Dict[str, str], str, ConnectionPolicy) -> None
         """ Instantiate a new CosmosClient.
 
@@ -77,15 +128,10 @@ class CosmosClient(object):
             :name: create_client
 
         """
-        auth = {}
-        if isinstance(credential, dict):
-            auth['resourceTokens'] = credential
-        elif isinstance(credential, list):
-            auth['permissionFeed'] = credential
-        else:
-            auth['masterKey'] = credential
+        auth = _build_auth(credential) 
+        connection_policy = _build_connection_policy(kwargs)
         self.client_connection = CosmosClientConnection(
-            url, auth=auth, consistency_level=consistency_level, connection_policy=connection_policy
+            url, auth=auth, consistency_level=consistency_level, connection_policy=connection_policy, **kwargs
         )
 
     def __enter__(self):

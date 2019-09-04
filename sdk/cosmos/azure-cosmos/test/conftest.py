@@ -39,7 +39,7 @@ def teardown(request):
         masterKey = config.masterKey
         connectionPolicy = config.connectionPolicy
         try:
-            client = cosmos_client.CosmosClient(host, masterKey, "Session", connectionPolicy)
+            client = cosmos_client.CosmosClient(host, masterKey, "Session", connection_policy=connectionPolicy)
          # This is to soft-fail the teardown while cosmos tests are not running automatically
         except Exception:
             pass

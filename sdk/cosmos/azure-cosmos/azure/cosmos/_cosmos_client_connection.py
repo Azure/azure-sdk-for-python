@@ -81,7 +81,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
     _DefaultStringRangePrecision = -1
 
     def __init__(
-        self, url_connection, auth, connection_policy=None, consistency_level=documents.ConsistencyLevel.Session
+        self, url_connection, auth, connection_policy=None, consistency_level=documents.ConsistencyLevel.Session, **kwargs
     ):
         """
         :param str url_connection:
@@ -143,21 +143,21 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         self._useMultipleWriteLocations = False
         self._global_endpoint_manager = global_endpoint_manager._GlobalEndpointManager(self)
 
-        proxies = {}
+        proxies = kwargs.pop('proxies', {})
         if self.connection_policy.ProxyConfiguration and self.connection_policy.ProxyConfiguration.Host:
             host = connection_policy.ProxyConfiguration.Host
             url = six.moves.urllib.parse.urlparse(host)
             proxy = host if url.port else host + ":" + str(connection_policy.ProxyConfiguration.Port)
-            proxies = {url.scheme : proxy}
+            proxies.update({url.scheme : proxy})
 
         policies = [
-            HeadersPolicy(),
+            HeadersPolicy(**kwargs),
             ProxyPolicy(proxies=proxies),
-            UserAgentPolicy(base_user_agent=_utils.get_user_agent()),
+            UserAgentPolicy(base_user_agent=_utils.get_user_agent(), **kwargs),
             ContentDecodePolicy(),
-            CustomHookPolicy(),
+            CustomHookPolicy(**kwargs),
             DistributedTracingPolicy(),
-            NetworkTraceLoggingPolicy(),
+            NetworkTraceLoggingPolicy(**kwargs),
             ]
 
         self.pipeline_client = PipelineClient(url_connection, "empty-config", policies=policies)

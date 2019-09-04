@@ -49,7 +49,7 @@ class PartitionKeyTests(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, "Session", cls.connectionPolicy)
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, "Session", connection_policy=cls.connectionPolicy)
         cls.created_db = test_config._test_config.create_database_if_not_exist(cls.client)
         cls.created_collection = test_config._test_config.create_multi_partition_collection_with_custom_pk_if_not_exist(cls.client)
 

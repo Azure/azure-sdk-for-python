@@ -64,7 +64,8 @@ class AggregateQueryTestSequenceMeta(type):
                     "'masterKey' and 'host' at the top of this class to run the "
                     "tests.")
 
-            mcs.client = cosmos_client.CosmosClient(_config.host, _config.master_key, "Session", _config.connection_policy)
+            mcs.client = cosmos_client.CosmosClient(
+                _config.host, _config.master_key, "Session", connection_policy=_config.connection_policy)
             created_db = test_config._test_config.create_database_if_not_exist(mcs.client)
             mcs.created_collection = _create_collection(created_db)
 
