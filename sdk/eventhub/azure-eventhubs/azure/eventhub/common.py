@@ -202,6 +202,11 @@ class EventData(object):
 
     @property
     def system_properties(self):
+        """
+        Metadata set by the Event Hubs Service associated with the EventData
+
+        :rtype: dict
+        """
         return self._annotations
 
     @property

@@ -157,7 +157,7 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
 
     async def _receive(self, timeout_time=None, max_batch_size=None, **kwargs):
         last_exception = kwargs.get("last_exception")
-        data_batch = kwargs.get("data_batch")
+        data_batch = []
 
         await self._open()
         remaining_time = timeout_time - time.time()
@@ -225,9 +225,8 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
 
         timeout = timeout or self.client.config.receive_timeout
         max_batch_size = max_batch_size or min(self.client.config.max_batch_size, self.prefetch)
-        data_batch = []  # type: List[EventData]
 
-        return await self._receive_with_retry(timeout=timeout, max_batch_size=max_batch_size, data_batch=data_batch)
+        return await self._receive_with_retry(timeout=timeout, max_batch_size=max_batch_size)
 
     async def close(self, exception=None):
         # type: (Exception) -> None
