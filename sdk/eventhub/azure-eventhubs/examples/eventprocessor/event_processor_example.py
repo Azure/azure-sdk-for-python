@@ -18,12 +18,12 @@ async def do_operation(event):
 
 
 class MyPartitionProcessor(PartitionProcessor):
-    async def process_events(self, events, checkpoint_manager):
+    async def process_events(self, events, partition_context):
         if events:
             await asyncio.gather(*[do_operation(event) for event in events])
-            await checkpoint_manager.update_checkpoint(events[-1].offset, events[-1].sequence_number)
+            await partition_context.update_checkpoint(events[-1].offset, events[-1].sequence_number)
         else:
-            print("empty events received", "partition:", checkpoint_manager.partition_id)
+            print("empty events received", "partition:", partition_context.partition_id)
 
 
 if __name__ == '__main__':

@@ -4,9 +4,9 @@
 # -----------------------------------------------------------------------------------
 
 from .event_processor import EventProcessor
-from .checkpoint_manager import CheckpointManager
 from .partition_processor import PartitionProcessor, CloseReason
 from .partition_manager import PartitionManager, OwnershipLostError
+from .partition_context import PartitionContext
 
 __all__ = [
     'CloseReason',
@@ -14,4 +14,5 @@ __all__ = [
     'PartitionProcessor',
     'PartitionManager',
     'OwnershipLostError',
+    'PartitionContext',
 ]

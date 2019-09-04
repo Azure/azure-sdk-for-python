@@ -10,7 +10,7 @@ import logging
 
 from azure.eventhub import EventPosition, EventHubError
 from azure.eventhub.aio import EventHubClient
-from .checkpoint_manager import CheckpointManager
+from .partition_context import PartitionContext
 from .partition_manager import PartitionManager, OwnershipLostError
 from ._ownership_manager import OwnershipManager
 from .partition_processor import CloseReason, PartitionProcessor
@@ -36,10 +36,10 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
             from azure.eventhub.eventprocessor import EventProcessor, PartitionProcessor, Sqlite3PartitionManager
 
             class MyPartitionProcessor(object):
-                async def process_events(self, events, checkpoint_manager):
+                async def process_events(self, events, partition_context):
                     if events:
                         # do something sync or async to process the events
-                        await checkpoint_manager.update_checkpoint(events[-1].offset, events[-1].sequence_number)
+                        await partition_context.update_checkpoint(events[-1].offset, events[-1].sequence_number)
 
 
             client = EventHubClient.from_connection_string("<your connection string>", receive_timeout=5, retry_total=3)
@@ -167,7 +167,7 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
         eventhub_name = ownership["eventhub_name"]
         consumer_group_name = ownership["consumer_group_name"]
         owner_id = ownership["owner_id"]
-        checkpoint_manager = CheckpointManager(
+        partition_context = PartitionContext(
             eventhub_name,
             consumer_group_name,
             partition_id,
@@ -175,7 +175,7 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
             self._partition_manager
         )
         partition_processor.eventhub_name = ownership
-        partition_processor.checkpoint_manager = checkpoint_manager
+        partition_processor._partition_context = partition_context
         partition_consumer = self._eventhub_client.create_consumer(
             consumer_group_name,
             partition_id,
@@ -189,7 +189,7 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
                 owner_id, eventhub_name, partition_id, consumer_group_name, err
             )
             try:
-                await partition_processor.process_error(err, checkpoint_manager)
+                await partition_processor.process_error(err, partition_context)
             except Exception as err_again:  # pylint:disable=broad-except
                 log.error(
                     "PartitionProcessor of EventProcessor instance %r of eventhub %r partition %r consumer group %r"
@@ -204,7 +204,7 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
                 owner_id, eventhub_name, partition_id, consumer_group_name, reason
             )
             try:
-                await partition_processor.close(reason, checkpoint_manager)
+                await partition_processor.close(reason, partition_context)
             except Exception as err:  # pylint:disable=broad-except
                 log.error(
                     "PartitionProcessor of EventProcessor instance %r of eventhub %r partition %r consumer group %r"
@@ -217,7 +217,7 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
                 try:
                     await partition_processor.initialize()
                     events = await partition_consumer.receive(timeout=self._receive_timeout)
-                    await partition_processor.process_events(events, checkpoint_manager)
+                    await partition_processor.process_events(events, partition_context)
                 except asyncio.CancelledError:
                     log.info(
                         "PartitionProcessor of EventProcessor instance %r of eventhub %r partition %r consumer group %r"
