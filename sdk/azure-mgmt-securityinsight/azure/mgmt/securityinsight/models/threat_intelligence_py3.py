@@ -18,44 +18,44 @@ class ThreatIntelligence(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    :ivar confidence: Confidence (must be between 0 and 1)
+    :vartype confidence: float
     :ivar provider_name: Name of the provider from whom this Threat
      Intelligence information was received
     :vartype provider_name: str
-    :ivar threat_type: Threat type (e.g. "Botnet")
-    :vartype threat_type: str
-    :ivar threat_name: Threat name (e.g. "Jedobot malware")
-    :vartype threat_name: str
-    :ivar confidence: Confidence (must be between 0 and 1)
-    :vartype confidence: float
     :ivar report_link: Report link
     :vartype report_link: str
     :ivar threat_description: Threat description (free text)
     :vartype threat_description: str
+    :ivar threat_name: Threat name (e.g. "Jedobot malware")
+    :vartype threat_name: str
+    :ivar threat_type: Threat type (e.g. "Botnet")
+    :vartype threat_type: str
     """
 
     _validation = {
-        'provider_name': {'readonly': True},
-        'threat_type': {'readonly': True},
-        'threat_name': {'readonly': True},
         'confidence': {'readonly': True},
+        'provider_name': {'readonly': True},
         'report_link': {'readonly': True},
         'threat_description': {'readonly': True},
+        'threat_name': {'readonly': True},
+        'threat_type': {'readonly': True},
     }
 
     _attribute_map = {
-        'provider_name': {'key': 'providerName', 'type': 'str'},
-        'threat_type': {'key': 'threatType', 'type': 'str'},
-        'threat_name': {'key': 'threatName', 'type': 'str'},
         'confidence': {'key': 'confidence', 'type': 'float'},
+        'provider_name': {'key': 'providerName', 'type': 'str'},
         'report_link': {'key': 'reportLink', 'type': 'str'},
         'threat_description': {'key': 'threatDescription', 'type': 'str'},
+        'threat_name': {'key': 'threatName', 'type': 'str'},
+        'threat_type': {'key': 'threatType', 'type': 'str'},
     }
 
     def __init__(self, **kwargs) -> None:
         super(ThreatIntelligence, self).__init__(**kwargs)
-        self.provider_name = None
-        self.threat_type = None
-        self.threat_name = None
         self.confidence = None
+        self.provider_name = None
         self.report_link = None
         self.threat_description = None
+        self.threat_name = None
+        self.threat_type = None

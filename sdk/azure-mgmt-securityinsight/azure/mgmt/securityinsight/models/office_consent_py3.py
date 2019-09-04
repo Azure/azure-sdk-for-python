@@ -20,10 +20,10 @@ class OfficeConsent(Resource):
 
     :ivar id: Azure resource Id
     :vartype id: str
-    :ivar type: Azure resource type
-    :vartype type: str
     :ivar name: Azure resource name
     :vartype name: str
+    :ivar type: Azure resource type
+    :vartype type: str
     :param tenant_id: The tenantId of the Office365 with the consent.
     :type tenant_id: str
     :ivar tenant_name: The tenant name of the Office365 with the consent.
@@ -32,15 +32,15 @@ class OfficeConsent(Resource):
 
     _validation = {
         'id': {'readonly': True},
-        'type': {'readonly': True},
         'name': {'readonly': True},
+        'type': {'readonly': True},
         'tenant_name': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'tenant_id': {'key': 'properties.tenantId', 'type': 'str'},
         'tenant_name': {'key': 'properties.tenantName', 'type': 'str'},
     }

@@ -18,55 +18,55 @@ class GeoLocation(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    :ivar asn: Autonomous System Number
+    :vartype asn: int
+    :ivar city: City name
+    :vartype city: str
     :ivar country_code: The country code according to ISO 3166 format
     :vartype country_code: str
     :ivar country_name: Country name according to ISO 3166 Alpha 2: the
      lowercase of the English Short Name
     :vartype country_name: str
-    :ivar state: State name
-    :vartype state: str
-    :ivar city: City name
-    :vartype city: str
-    :ivar longitude: The latitude of the identified location, expressed as a
-     floating point number with range of - 90 to 90, with positive numbers
-     representing North and negative numbers representing South. Latitude and
-     longitude are derived from the city or postal code.
-    :vartype longitude: float
     :ivar latitude: The longitude of the identified location, expressed as a
      floating point number with range of -180 to 180, with positive numbers
      representing East and negative numbers representing West. Latitude and
      longitude are derived from the city or postal code.
     :vartype latitude: float
-    :ivar asn: Autonomous System Number
-    :vartype asn: int
+    :ivar longitude: The latitude of the identified location, expressed as a
+     floating point number with range of - 90 to 90, with positive numbers
+     representing North and negative numbers representing South. Latitude and
+     longitude are derived from the city or postal code.
+    :vartype longitude: float
+    :ivar state: State name
+    :vartype state: str
     """
 
     _validation = {
+        'asn': {'readonly': True},
+        'city': {'readonly': True},
         'country_code': {'readonly': True},
         'country_name': {'readonly': True},
-        'state': {'readonly': True},
-        'city': {'readonly': True},
-        'longitude': {'readonly': True},
         'latitude': {'readonly': True},
-        'asn': {'readonly': True},
+        'longitude': {'readonly': True},
+        'state': {'readonly': True},
     }
 
     _attribute_map = {
+        'asn': {'key': 'asn', 'type': 'int'},
+        'city': {'key': 'city', 'type': 'str'},
         'country_code': {'key': 'countryCode', 'type': 'str'},
         'country_name': {'key': 'countryName', 'type': 'str'},
-        'state': {'key': 'state', 'type': 'str'},
-        'city': {'key': 'city', 'type': 'str'},
-        'longitude': {'key': 'longitude', 'type': 'float'},
         'latitude': {'key': 'latitude', 'type': 'float'},
-        'asn': {'key': 'asn', 'type': 'int'},
+        'longitude': {'key': 'longitude', 'type': 'float'},
+        'state': {'key': 'state', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(GeoLocation, self).__init__(**kwargs)
+        self.asn = None
+        self.city = None
         self.country_code = None
         self.country_name = None
-        self.state = None
-        self.city = None
-        self.longitude = None
         self.latitude = None
-        self.asn = None
+        self.longitude = None
+        self.state = None

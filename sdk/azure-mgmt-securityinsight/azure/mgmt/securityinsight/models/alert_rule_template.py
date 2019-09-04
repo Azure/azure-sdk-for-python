@@ -16,8 +16,8 @@ class AlertRuleTemplate(Model):
     """Alert rule template.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: ScheduledAlertRuleTemplate, FilterAlertRuleTemplate,
-    FusionAlertRuleTemplate
+    sub-classes are: FilterAlertRuleTemplate, FusionAlertRuleTemplate,
+    ScheduledAlertRuleTemplate
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -26,10 +26,10 @@ class AlertRuleTemplate(Model):
 
     :ivar id: Azure resource Id
     :vartype id: str
-    :ivar type: Azure resource type
-    :vartype type: str
     :ivar name: Azure resource name
     :vartype name: str
+    :ivar type: Azure resource type
+    :vartype type: str
     :param etag: Etag of the alert rule.
     :type etag: str
     :param kind: Required. Constant filled by server.
@@ -38,27 +38,27 @@ class AlertRuleTemplate(Model):
 
     _validation = {
         'id': {'readonly': True},
-        'type': {'readonly': True},
         'name': {'readonly': True},
+        'type': {'readonly': True},
         'kind': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
     }
 
     _subtype_map = {
-        'kind': {'Scheduled': 'ScheduledAlertRuleTemplate', 'Filter': 'FilterAlertRuleTemplate', 'Fusion': 'FusionAlertRuleTemplate'}
+        'kind': {'Filter': 'FilterAlertRuleTemplate', 'Fusion': 'FusionAlertRuleTemplate', 'Scheduled': 'ScheduledAlertRuleTemplate'}
     }
 
     def __init__(self, **kwargs):
         super(AlertRuleTemplate, self).__init__(**kwargs)
         self.id = None
-        self.type = None
         self.name = None
+        self.type = None
         self.etag = kwargs.get('etag', None)
         self.kind = None

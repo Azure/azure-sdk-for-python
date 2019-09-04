@@ -20,13 +20,15 @@ class EntityQuery(Resource):
 
     :ivar id: Azure resource Id
     :vartype id: str
-    :ivar type: Azure resource type
-    :vartype type: str
     :ivar name: Azure resource name
     :vartype name: str
-    :param query_template: The template query string to be parsed and
-     formatted
-    :type query_template: str
+    :ivar type: Azure resource type
+    :vartype type: str
+    :param data_sources: List of the data sources that are required to run the
+     query
+    :type data_sources: list[str]
+    :param display_name: The query display name
+    :type display_name: str
     :param input_entity_type: The type of the query's source entity. Possible
      values include: 'Account', 'Host', 'File', 'AzureResource',
      'CloudApplication', 'DNS', 'FileHash', 'IP', 'Malware', 'Process',
@@ -41,36 +43,34 @@ class EntityQuery(Resource):
      constructed from the result
     :type output_entity_types: list[str or
      ~azure.mgmt.securityinsight.models.EntityType]
-    :param data_sources: List of the data sources that are required to run the
-     query
-    :type data_sources: list[str]
-    :param display_name: The query display name
-    :type display_name: str
+    :param query_template: The template query string to be parsed and
+     formatted
+    :type query_template: str
     """
 
     _validation = {
         'id': {'readonly': True},
-        'type': {'readonly': True},
         'name': {'readonly': True},
+        'type': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'query_template': {'key': 'properties.queryTemplate', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'data_sources': {'key': 'properties.dataSources', 'type': '[str]'},
+        'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'input_entity_type': {'key': 'properties.inputEntityType', 'type': 'str'},
         'input_fields': {'key': 'properties.inputFields', 'type': '[str]'},
         'output_entity_types': {'key': 'properties.outputEntityTypes', 'type': '[str]'},
-        'data_sources': {'key': 'properties.dataSources', 'type': '[str]'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
+        'query_template': {'key': 'properties.queryTemplate', 'type': 'str'},
     }
 
-    def __init__(self, *, query_template: str=None, input_entity_type=None, input_fields=None, output_entity_types=None, data_sources=None, display_name: str=None, **kwargs) -> None:
+    def __init__(self, *, data_sources=None, display_name: str=None, input_entity_type=None, input_fields=None, output_entity_types=None, query_template: str=None, **kwargs) -> None:
         super(EntityQuery, self).__init__(**kwargs)
-        self.query_template = query_template
+        self.data_sources = data_sources
+        self.display_name = display_name
         self.input_entity_type = input_entity_type
         self.input_fields = input_fields
         self.output_entity_types = output_entity_types
-        self.data_sources = data_sources
-        self.display_name = display_name
+        self.query_template = query_template

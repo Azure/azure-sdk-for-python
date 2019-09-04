@@ -22,34 +22,34 @@ class FilterAlertRuleTemplate(AlertRuleTemplate):
 
     :ivar id: Azure resource Id
     :vartype id: str
-    :ivar type: Azure resource type
-    :vartype type: str
     :ivar name: Azure resource name
     :vartype name: str
+    :ivar type: Azure resource type
+    :vartype type: str
     :param etag: Etag of the alert rule.
     :type etag: str
     :param kind: Required. Constant filled by server.
     :type kind: str
-    :param display_name: Required. The display name for alert rule template.
-    :type display_name: str
-    :param description: Required. The description of the alert rule template.
-    :type description: str
-    :param tactics: The tactics of the alert rule template
-    :type tactics: list[str or
-     ~azure.mgmt.securityinsight.models.AttackTactic]
+    :param alert_rules_created_by_template_count: Required. the number of
+     alert rules that were created by this template
+    :type alert_rules_created_by_template_count: int
     :ivar created_date_utc: Required. The time that this alert rule template
      has been added.
     :vartype created_date_utc: str
-    :param status: Required. The alert rule template status. Possible values
-     include: 'Installed', 'Available', 'NotAvailable'
-    :type status: str or ~azure.mgmt.securityinsight.models.TemplateStatus
+    :param description: Required. The description of the alert rule template.
+    :type description: str
+    :param display_name: Required. The display name for alert rule template.
+    :type display_name: str
     :param required_data_connectors: The required data connectors for this
      template
     :type required_data_connectors:
      list[~azure.mgmt.securityinsight.models.DataConnectorStatus]
-    :param alert_rules_created_by_template_count: Required. the number of
-     alert rules that were created by this template
-    :type alert_rules_created_by_template_count: int
+    :param status: Required. The alert rule template status. Possible values
+     include: 'Installed', 'Available', 'NotAvailable'
+    :type status: str or ~azure.mgmt.securityinsight.models.TemplateStatus
+    :param tactics: The tactics of the alert rule template
+    :type tactics: list[str or
+     ~azure.mgmt.securityinsight.models.AttackTactic]
     :param filter_product: Required. The filter product name for this template
      rule.
     :type filter_product: str
@@ -64,44 +64,44 @@ class FilterAlertRuleTemplate(AlertRuleTemplate):
 
     _validation = {
         'id': {'readonly': True},
-        'type': {'readonly': True},
         'name': {'readonly': True},
+        'type': {'readonly': True},
         'kind': {'required': True},
-        'display_name': {'required': True},
-        'description': {'required': True},
-        'created_date_utc': {'required': True, 'readonly': True},
-        'status': {'required': True},
         'alert_rules_created_by_template_count': {'required': True},
+        'created_date_utc': {'required': True, 'readonly': True},
+        'description': {'required': True},
+        'display_name': {'required': True},
+        'status': {'required': True},
         'filter_product': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'tactics': {'key': 'properties.tactics', 'type': '[AttackTactic]'},
-        'created_date_utc': {'key': 'properties.createdDateUTC', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'TemplateStatus'},
-        'required_data_connectors': {'key': 'properties.requiredDataConnectors', 'type': '[DataConnectorStatus]'},
         'alert_rules_created_by_template_count': {'key': 'properties.alertRulesCreatedByTemplateCount', 'type': 'int'},
+        'created_date_utc': {'key': 'properties.createdDateUTC', 'type': 'str'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'display_name': {'key': 'properties.displayName', 'type': 'str'},
+        'required_data_connectors': {'key': 'properties.requiredDataConnectors', 'type': '[DataConnectorStatus]'},
+        'status': {'key': 'properties.status', 'type': 'TemplateStatus'},
+        'tactics': {'key': 'properties.tactics', 'type': '[AttackTactic]'},
         'filter_product': {'key': 'properties.filterProduct', 'type': 'str'},
         'filter_severities': {'key': 'properties.filterSeverities', 'type': '[AlertSeverity]'},
         'filter_titles': {'key': 'properties.filterTitles', 'type': '[str]'},
     }
 
-    def __init__(self, *, display_name: str, description: str, status, alert_rules_created_by_template_count: int, filter_product: str, etag: str=None, tactics=None, required_data_connectors=None, filter_severities=None, filter_titles=None, **kwargs) -> None:
+    def __init__(self, *, alert_rules_created_by_template_count: int, description: str, display_name: str, status, filter_product: str, etag: str=None, required_data_connectors=None, tactics=None, filter_severities=None, filter_titles=None, **kwargs) -> None:
         super(FilterAlertRuleTemplate, self).__init__(etag=etag, **kwargs)
-        self.display_name = display_name
-        self.description = description
-        self.tactics = tactics
-        self.created_date_utc = None
-        self.status = status
-        self.required_data_connectors = required_data_connectors
         self.alert_rules_created_by_template_count = alert_rules_created_by_template_count
+        self.created_date_utc = None
+        self.description = description
+        self.display_name = display_name
+        self.required_data_connectors = required_data_connectors
+        self.status = status
+        self.tactics = tactics
         self.filter_product = filter_product
         self.filter_severities = filter_severities
         self.filter_titles = filter_titles

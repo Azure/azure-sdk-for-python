@@ -15,26 +15,26 @@ from msrest.serialization import Model
 class OperationDisplay(Model):
     """Properties of the operation.
 
+    :param description: Description of the operation
+    :type description: str
+    :param operation: Operation name
+    :type operation: str
     :param provider: Provider name
     :type provider: str
     :param resource: Resource name
     :type resource: str
-    :param operation: Operation name
-    :type operation: str
-    :param description: Description of the operation
-    :type description: str
     """
 
     _attribute_map = {
+        'description': {'key': 'description', 'type': 'str'},
+        'operation': {'key': 'operation', 'type': 'str'},
         'provider': {'key': 'provider', 'type': 'str'},
         'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
     }
 
-    def __init__(self, *, provider: str=None, resource: str=None, operation: str=None, description: str=None, **kwargs) -> None:
+    def __init__(self, *, description: str=None, operation: str=None, provider: str=None, resource: str=None, **kwargs) -> None:
         super(OperationDisplay, self).__init__(**kwargs)
+        self.description = description
+        self.operation = operation
         self.provider = provider
         self.resource = resource
-        self.operation = operation
-        self.description = description

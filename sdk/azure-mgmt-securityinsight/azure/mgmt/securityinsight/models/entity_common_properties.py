@@ -18,26 +18,26 @@ class EntityCommonProperties(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
+    :ivar additional_data: A bag of custom fields that should be part of the
+     entity and will be presented to the user.
+    :vartype additional_data: dict[str, object]
     :ivar friendly_name: The graph item display name which is a short humanly
      readable description of the graph item instance. This property is optional
      and might be system generated.
     :vartype friendly_name: str
-    :ivar additional_data: A bag of custom fields that should be part of the
-     entity and will be presented to the user.
-    :vartype additional_data: dict[str, object]
     """
 
     _validation = {
-        'friendly_name': {'readonly': True},
         'additional_data': {'readonly': True},
+        'friendly_name': {'readonly': True},
     }
 
     _attribute_map = {
-        'friendly_name': {'key': 'friendlyName', 'type': 'str'},
         'additional_data': {'key': 'additionalData', 'type': '{object}'},
+        'friendly_name': {'key': 'friendlyName', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(EntityCommonProperties, self).__init__(**kwargs)
-        self.friendly_name = None
         self.additional_data = None
+        self.friendly_name = None
