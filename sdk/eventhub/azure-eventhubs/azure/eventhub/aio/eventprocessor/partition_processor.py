@@ -4,7 +4,7 @@
 # -----------------------------------------------------------------------------------
 
 from typing import List
-from abc import ABC
+from abc import ABC, abstractmethod
 from enum import Enum
 from azure.eventhub import EventData
 from .checkpoint_manager import CheckpointManager
@@ -41,6 +41,7 @@ class PartitionProcessor(ABC):
 
         """
 
+    @abstractmethod
     async def process_events(self, events: List[EventData], checkpoint_manager: CheckpointManager):
         """Called when a batch of events have been received.
 
@@ -50,7 +51,6 @@ class PartitionProcessor(ABC):
         :type checkpoint_manager: ~azure.eventhub.CheckpointManager
 
         """
-        raise NotImplementedError
 
     async def process_error(self, error, checkpoint_manager: CheckpointManager):
         """Called when an error happens

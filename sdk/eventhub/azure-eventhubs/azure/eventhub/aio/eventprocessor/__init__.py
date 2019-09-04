@@ -7,14 +7,11 @@ from .event_processor import EventProcessor
 from .checkpoint_manager import CheckpointManager
 from .partition_processor import PartitionProcessor, CloseReason
 from .partition_manager import PartitionManager, OwnershipLostError
-from .sqlite3_partition_manager import Sqlite3PartitionManager
 
 __all__ = [
     'CloseReason',
     'EventProcessor',
     'PartitionProcessor',
     'PartitionManager',
-    'CheckpointManager',
-    'Sqlite3PartitionManager',
     'OwnershipLostError',
 ]

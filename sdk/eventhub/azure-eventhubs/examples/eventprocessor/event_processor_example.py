@@ -2,8 +2,8 @@ import asyncio
 import logging
 import os
 from azure.eventhub.aio import EventHubClient
-from azure.eventhub.eventprocessor import EventProcessor, PartitionProcessor
-from azure.eventhub.eventprocessor import Sqlite3PartitionManager
+from azure.eventhub.aio.eventprocessor import EventProcessor, PartitionProcessor
+from azure.eventhub.aio.eventprocessor.partitionmanagers import SamplePartitionManager
 
 RECEIVE_TIMEOUT = 5  # timeout in seconds for a receiving operation. 0 or None means no timeout
 RETRY_TOTAL = 3  # max number of retries for receive operations within the receive timeout. Actual number of retries clould be less if RECEIVE_TIMEOUT is too small
@@ -29,7 +29,7 @@ class MyPartitionProcessor(PartitionProcessor):
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
     client = EventHubClient.from_connection_string(CONNECTION_STR, receive_timeout=RECEIVE_TIMEOUT, retry_total=RETRY_TOTAL)
-    partition_manager = Sqlite3PartitionManager(db_filename="eventprocessor_test_db")
+    partition_manager = SamplePartitionManager(db_filename="eventprocessor_test_db")
     event_processor = EventProcessor(client, "$default", MyPartitionProcessor, partition_manager, polling_interval=1)
     try:
         loop.run_until_complete(event_processor.start())
