@@ -23,7 +23,7 @@ from .key import Key
 from .algorithms import Ps256, Ps384, Ps512, Rsa1_5, RsaOaep, RsaOaep256, Rs256, Rs384, Rs512
 
 
-class RsaKey(Key):
+class RsaKey(Key):  # pylint:disable=too-many-public-methods
     PUBLIC_KEY_DEFAULT_OPS = ["encrypt", "wrapKey", "verify"]
     PRIVATE_KEY_DEFAULT_OPS = ["encrypt", "decrypt", "wrapKey", "unwrapKey", "verify", "sign"]
 
