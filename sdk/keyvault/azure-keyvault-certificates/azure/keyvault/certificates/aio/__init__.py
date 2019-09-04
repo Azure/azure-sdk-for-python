@@ -5,7 +5,7 @@
 
 from .client import CertificateClient
 from ..enums import ActionType, JsonWebKeyCurveName, JsonWebKeyType, SecretContentType, KeyUsageType
-from ..models import AdministratorDetails, CertificatePolicy, Contact
+from ..models import AdministratorDetails, CertificatePolicy, Contact, KeyProperties, LifetimeAction
 
 __all__ = [
     "ActionType",
@@ -15,6 +15,8 @@ __all__ = [
     "Contact",
     "JsonWebKeyCurveName",
     "JsonWebKeyType",
+    "KeyProperties",
     "KeyUsageType",
+    "LifetimeAction",
     "SecretContentType"
 ]
