@@ -4,5 +4,17 @@
 # ------------------------------------
 
 from .client import CertificateClient
+from ..enums import ActionType, JsonWebKeyCurveName, JsonWebKeyType, SecretContentType, KeyUsageType
+from ..models import AdministratorDetails, CertificatePolicy, Contact
 
-__all__ = ["CertificateClient"]
+__all__ = [
+    "ActionType",
+    "AdministratorDetails",
+    "CertificateClient",
+    "CertificatePolicy",
+    "Contact",
+    "JsonWebKeyCurveName",
+    "JsonWebKeyType",
+    "KeyUsageType",
+    "SecretContentType"
+]
