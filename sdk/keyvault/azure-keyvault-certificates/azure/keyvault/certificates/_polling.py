@@ -8,6 +8,7 @@ import time
 
 from azure.core.exceptions import HttpResponseError
 from azure.core.polling import PollingMethod
+from azure.keyvault.certificates._shared import parse_vault_id
 
 logger = logging.getLogger(__name__)
 
@@ -25,7 +26,7 @@ class CreateCertificatePoller(PollingMethod):
         pending_certificate = self._command()
         self._status = pending_certificate.status.lower()
         if not self._certificate_id:
-            self._certificate_id = pending_certificate.id
+            self._certificate_id = parse_vault_id(pending_certificate.id)
 
     def initialize(self, client, initial_response, _):
         # type: (Any, Any, Callable) -> None
