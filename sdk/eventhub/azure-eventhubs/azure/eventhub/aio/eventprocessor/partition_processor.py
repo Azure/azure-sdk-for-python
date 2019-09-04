@@ -4,10 +4,10 @@
 # -----------------------------------------------------------------------------------
 
 from typing import List
-from abc import ABC
+from abc import ABC, abstractmethod
 from enum import Enum
 from azure.eventhub import EventData
-from .checkpoint_manager import CheckpointManager
+from .partition_context import PartitionContext
 
 
 class CloseReason(Enum):
@@ -25,10 +25,14 @@ class PartitionProcessor(ABC):
 
     """
 
-    async def initialize(self):
-        pass
+    async def initialize(self, partition_context: PartitionContext):
+        """
 
-    async def close(self, reason, checkpoint_manager: CheckpointManager):
+        :param partition_context: The context information of this partition.
+        :type partition_context: ~azure.eventhub.aio.eventprocessor.PartitionContext
+        """
+
+    async def close(self, reason, partition_context: PartitionContext):
         """Called when EventProcessor stops processing this PartitionProcessor.
 
         There are different reasons to trigger the PartitionProcessor to close.
@@ -36,28 +40,31 @@ class PartitionProcessor(ABC):
 
         :param reason: Reason for closing the PartitionProcessor.
         :type reason: ~azure.eventhub.eventprocessor.CloseReason
-        :param checkpoint_manager: Use its method update_checkpoint to update checkpoint to the data store
-        :type checkpoint_manager: ~azure.eventhub.CheckpointManager
+        :param partition_context: The context information of this partition.
+        Use its method update_checkpoint to save checkpoint to the data store.
+        :type partition_context: ~azure.eventhub.aio.eventprocessor.PartitionContext
 
         """
 
-    async def process_events(self, events: List[EventData], checkpoint_manager: CheckpointManager):
+    @abstractmethod
+    async def process_events(self, events: List[EventData], partition_context: PartitionContext):
         """Called when a batch of events have been received.
 
         :param events: Received events.
         :type events: list[~azure.eventhub.common.EventData]
-        :param checkpoint_manager: Use its method update_checkpoint to update checkpoint to the data store
-        :type checkpoint_manager: ~azure.eventhub.CheckpointManager
+        :param partition_context: The context information of this partition.
+        Use its method update_checkpoint to save checkpoint to the data store.
+        :type partition_context: ~azure.eventhub.aio.eventprocessor.PartitionContext
 
         """
-        raise NotImplementedError
 
-    async def process_error(self, error, checkpoint_manager: CheckpointManager):
+    async def process_error(self, error, partition_context: PartitionContext):
         """Called when an error happens
 
         :param error: The error that happens.
         :type error: Exception
-        :param checkpoint_manager: Use its method update_checkpoint to update checkpoint to the data store
-        :type checkpoint_manager: ~azure.eventhub.CheckpointManager
+        :param partition_context: The context information of this partition.
+        Use its method update_checkpoint to save checkpoint to the data store.
+        :type partition_context: ~azure.eventhub.aio.eventprocessor.PartitionContext
 
         """
