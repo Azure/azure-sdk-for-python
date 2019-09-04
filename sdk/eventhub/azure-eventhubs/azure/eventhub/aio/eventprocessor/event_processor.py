@@ -175,7 +175,6 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
             self._partition_manager
         )
         partition_processor.eventhub_name = ownership
-        partition_processor._partition_context = partition_context
         partition_consumer = self._eventhub_client.create_consumer(
             consumer_group_name,
             partition_id,

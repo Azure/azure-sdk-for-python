@@ -31,7 +31,6 @@ class PartitionProcessor(ABC):
         :param partition_context: The context information of this partition.
         :type partition_context: ~azure.eventhub.aio.eventprocessor.PartitionContext
         """
-        pass
 
     async def close(self, reason, partition_context: PartitionContext):
         """Called when EventProcessor stops processing this PartitionProcessor.
