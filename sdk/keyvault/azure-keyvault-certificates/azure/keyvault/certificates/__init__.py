@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from .client import CertificateClient
-from .enums import JsonWebKeyCurveName, JsonWebKeyType, SecretContentType, KeyUsageType
+from .enums import ActionType, JsonWebKeyCurveName, JsonWebKeyType, SecretContentType, KeyUsageType
 from .models import (
     AdministratorDetails,
     Certificate,
@@ -16,12 +16,11 @@ from .models import (
     Issuer,
     IssuerBase,
     KeyProperties,
-    LifetimeAction,
-    SecretContentType,
-    KeyUsageType
+    LifetimeAction
 )
 
 __all__ = [
+    "ActionType",
     "AdministratorDetails",
     "Certificate",
     "CertificateBase",

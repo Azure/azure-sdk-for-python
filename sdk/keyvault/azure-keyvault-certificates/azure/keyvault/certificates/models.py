@@ -643,7 +643,7 @@ class CertificatePolicy(object):
                 self.san_dns_names or
                 self.validity_in_months):
             if self.key_properties and self.key_properties.key_usage:
-                key_usage = [k.value if not type(k) == str else k for k in self.key_properties.key_usage]
+                key_usage = [k.value if not isinstance(k, str) else k for k in self.key_properties.key_usage]
             else:
                 key_usage = None
 
@@ -683,7 +683,8 @@ class CertificatePolicy(object):
 
         if self.content_type:
             secret_properties = models.SecretProperties(content_type=self.content_type.value
-                                                        if not type(self.content_type) == str else self.content_type)
+                                                        if not isinstance(self.content_type, str)
+                                                        else self.content_type)
         else:
             secret_properties = None
 
