@@ -3,7 +3,7 @@ import logging
 import os
 from azure.eventhub.aio import EventHubClient
 from azure.eventhub.eventprocessor import EventProcessor, PartitionProcessor
-from azure.ehplugin.partitionmanager.blobstorage.blobstoragepm import BlobPartitionManager
+from azure.eventhub.aio.partitionmanager.blobstorage import BlobPartitionManager
 from azure.storage.blob.aio import ContainerClient
 
 RECEIVE_TIMEOUT = 5  # timeout in seconds for a receiving operation. 0 or None means no timeout
