@@ -27,6 +27,8 @@ try:
     from ._models_py3 import EncryptionService
     from ._models_py3 import EncryptionServices
     from ._models_py3 import Endpoints
+    from ._models_py3 import ErrorResponse, ErrorResponseException
+    from ._models_py3 import ErrorResponseBody
     from ._models_py3 import FileServiceItems
     from ._models_py3 import FileServiceProperties
     from ._models_py3 import FileShare
@@ -94,6 +96,8 @@ except (SyntaxError, ImportError):
     from ._models import EncryptionService
     from ._models import EncryptionServices
     from ._models import Endpoints
+    from ._models import ErrorResponse, ErrorResponseException
+    from ._models import ErrorResponseBody
     from ._models import FileServiceItems
     from ._models import FileServiceProperties
     from ._models import FileShare
@@ -200,6 +204,8 @@ __all__ = [
     'EncryptionService',
     'EncryptionServices',
     'Endpoints',
+    'ErrorResponse', 'ErrorResponseException',
+    'ErrorResponseBody',
     'FileServiceItems',
     'FileServiceProperties',
     'FileShare',
