@@ -22,7 +22,7 @@
 """Create, read, update and delete items in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, Callable, Dict, List, Optional, Union, Iterable
+from typing import Any, Dict, List, Optional, Union, Iterable
 
 import six
 from azure.core.tracing.decorator import distributed_trace
