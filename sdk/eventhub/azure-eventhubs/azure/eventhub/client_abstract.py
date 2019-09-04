@@ -156,6 +156,7 @@ class EventHubClientAbstract(object):  # pylint:disable=too-many-instance-attrib
         self.debug = self.config.network_tracing
         self._is_iothub = False
         self._iothub_redirect_info = None
+        self._redirect_consumer = None
 
         log.info("%r: Created the Event Hub client", self.container_id)
 
@@ -176,8 +177,8 @@ class EventHubClientAbstract(object):  # pylint:disable=too-many-instance-attrib
             'iot_password': key,
             'username': username,
             'password': password}
-        client._is_iothub = True
-        client._redirect_consumer = client.create_consumer(consumer_group='$default',
+        client._is_iothub = True  # pylint: disable=protected-access
+        client._redirect_consumer = client.create_consumer(consumer_group='$default',  # pylint: disable=protected-access, no-member
                                                            partition_id='0',
                                                            event_position=EventPosition('-1'),
                                                            operation='/messages/events')

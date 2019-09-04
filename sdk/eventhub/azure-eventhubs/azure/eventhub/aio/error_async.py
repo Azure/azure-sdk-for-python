@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 import asyncio
-import time
 import logging
 
 from uamqp import errors, compat  # type: ignore

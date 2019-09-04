@@ -101,7 +101,7 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
                 return event_data
             except Exception as exception:  # pylint:disable=broad-except
                 last_exception = self._handle_exception(exception)
-                self.client._try_delay(retried_times=retried_times, last_exception=last_exception,
+                self.client._try_delay(retried_times=retried_times, last_exception=last_exception,  # pylint:disable=protected-access
                                        entity_name=self.name)
                 retried_times += 1
 

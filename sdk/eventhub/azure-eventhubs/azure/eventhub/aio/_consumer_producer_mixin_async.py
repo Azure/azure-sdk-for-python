@@ -94,8 +94,7 @@ class ConsumerProducerMixin(object):
             try:
                 if operation_need_param:
                     return await operation(timeout_time=timeout_time, last_exception=last_exception, **kwargs)
-                else:
-                    return await operation()
+                return await operation()
             except Exception as exception:  # pylint:disable=broad-except
                 last_exception = await self._handle_exception(exception)
                 await self.client._try_delay(retried_times=retried_times, last_exception=last_exception,
