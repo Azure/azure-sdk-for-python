@@ -14,7 +14,7 @@ from setuptools import find_packages, setup
 
 
 # Change the PACKAGE_NAME only to change folder and different name
-PACKAGE_NAME = "azure-eventhub-aio-partitionmanager-blobstorage"
+PACKAGE_NAME = "azure-eventhub-aio-eventprocessor-partitionmanagers-blobstorage"
 PACKAGE_PPRINT_NAME = "Event Hubs Event Procesor Partition Manager implementation with Blob Storage"
 
 # a-b-c => a/b/c

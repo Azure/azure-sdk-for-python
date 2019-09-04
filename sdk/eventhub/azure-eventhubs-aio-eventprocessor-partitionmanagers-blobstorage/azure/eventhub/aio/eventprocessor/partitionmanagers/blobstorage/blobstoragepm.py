@@ -6,7 +6,7 @@ from typing import Iterable, Dict, Any
 import logging
 from collections import defaultdict
 import asyncio
-from azure.eventhub.eventprocessor import PartitionManager, OwnershipLostError
+from azure.eventhub.aio.eventprocessor import PartitionManager, OwnershipLostError
 from azure.core.exceptions import ResourceModifiedError, ResourceExistsError, AzureError
 from azure.storage.blob.aio import ContainerClient
 
