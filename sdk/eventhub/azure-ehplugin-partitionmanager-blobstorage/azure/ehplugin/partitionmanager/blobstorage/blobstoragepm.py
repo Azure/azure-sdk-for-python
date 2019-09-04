@@ -17,8 +17,9 @@ UPLOAD_DATA = ""
 class BlobPartitionManager(PartitionManager):
     """An PartitionManager that uses Azure Blob Storage to store the partition ownership and checkpoint data.
 
-    This class implements the methods (list_ownership, claim_ownership, update_checkpoint) defined in class
+    This class implements methods list_ownership, claim_ownership, and update_checkpoint that are defined in class
     azure.eventhub.eventprocessor.PartitionManager of package azure-eventhub.
+
     """
     def __init__(self, container_client: ContainerClient):
         """
@@ -27,7 +28,7 @@ class BlobPartitionManager(PartitionManager):
         """
         self._container_client = container_client
         self._cached_ownership_dict = defaultdict(dict)  # type: Dict[str, Dict[str, Any]]
-        self._lock = asyncio.Lock()
+        self._lock = asyncio.Lock()  # TODO: consider locking every ownership/partition instead of whole thing.
 
     async def list_ownership(self, eventhub_name: str, consumer_group_name: str) -> Iterable[Dict[str, Any]]:
         async with self._lock:
@@ -38,7 +39,7 @@ class BlobPartitionManager(PartitionManager):
                                  " An empty ownership list is returned",
                                  eventhub_name, consumer_group_name, exc_info=azure_err)
                 return []
-            async for b in blobs:
+            async for b in blobs:  # TODO: consider running them concurrently
                 metadata = b.metadata
                 ownership = {
                     "eventhub_name": eventhub_name,
@@ -55,7 +56,7 @@ class BlobPartitionManager(PartitionManager):
     async def claim_ownership(self, ownership_list: Iterable[Dict[str, Any]]) -> Iterable[Dict[str, Any]]:
         result = []
         async with self._lock:
-            for ownership in ownership_list:
+            for ownership in ownership_list:  # TODO: consider claiming concurrently
                 metadata = {"owner_id": ownership["owner_id"]}
                 if "offset" in ownership:
                     metadata["offset"] = ownership["offset"]
