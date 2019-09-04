@@ -214,7 +214,7 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
         try:
             while True:
                 try:
-                    await partition_processor.initialize()
+                    await partition_processor.initialize(partition_context)
                     events = await partition_consumer.receive(timeout=self._receive_timeout)
                     await partition_processor.process_events(events, partition_context)
                 except asyncio.CancelledError:
