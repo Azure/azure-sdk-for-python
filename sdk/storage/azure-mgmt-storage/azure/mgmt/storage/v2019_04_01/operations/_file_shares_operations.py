@@ -11,6 +11,7 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
+from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
@@ -66,8 +67,7 @@ class FileSharesOperations(object):
         :return: An iterator like instance of FileShareItem
         :rtype:
          ~azure.mgmt.storage.v2019_04_01.models.FileShareItemPaged[~azure.mgmt.storage.v2019_04_01.models.FileShareItem]
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.storage.v2019_04_01.models.ErrorResponseException>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -114,7 +114,9 @@ class FileSharesOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                raise models.ErrorResponseException(self._deserialize, response)
+                exp = CloudError(response)
+                exp.request_id = response.headers.get('x-ms-request-id')
+                raise exp
 
             return response
 
@@ -161,8 +163,7 @@ class FileSharesOperations(object):
         :return: FileShare or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.storage.v2019_04_01.models.FileShare or
          ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.storage.v2019_04_01.models.ErrorResponseException>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         file_share = models.FileShare(metadata=metadata, share_quota=share_quota)
 
@@ -199,7 +200,9 @@ class FileSharesOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 201]:
-            raise models.ErrorResponseException(self._deserialize, response)
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
         deserialized = None
         if response.status_code == 200:
@@ -247,8 +250,7 @@ class FileSharesOperations(object):
         :return: FileShare or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.storage.v2019_04_01.models.FileShare or
          ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.storage.v2019_04_01.models.ErrorResponseException>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         file_share = models.FileShare(metadata=metadata, share_quota=share_quota)
 
@@ -285,7 +287,9 @@ class FileSharesOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
         deserialized = None
         if response.status_code == 200:
@@ -323,8 +327,7 @@ class FileSharesOperations(object):
         :return: FileShare or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.storage.v2019_04_01.models.FileShare or
          ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.storage.v2019_04_01.models.ErrorResponseException>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -355,7 +358,9 @@ class FileSharesOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
         deserialized = None
         if response.status_code == 200:
@@ -392,8 +397,7 @@ class FileSharesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.storage.v2019_04_01.models.ErrorResponseException>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = self.delete.metadata['url']
@@ -423,7 +427,9 @@ class FileSharesOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
-            raise models.ErrorResponseException(self._deserialize, response)
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)

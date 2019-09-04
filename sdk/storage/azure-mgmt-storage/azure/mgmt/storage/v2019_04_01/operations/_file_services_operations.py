@@ -11,6 +11,7 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
+from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
@@ -59,8 +60,7 @@ class FileServicesOperations(object):
         :return: FileServiceItems or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.storage.v2019_04_01.models.FileServiceItems or
          ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.storage.v2019_04_01.models.ErrorResponseException>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = self.list.metadata['url']
@@ -90,7 +90,9 @@ class FileServicesOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
         deserialized = None
         if response.status_code == 200:
@@ -128,8 +130,7 @@ class FileServicesOperations(object):
         :return: FileServiceProperties or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.storage.v2019_04_01.models.FileServiceProperties
          or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.storage.v2019_04_01.models.ErrorResponseException>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         parameters = models.FileServiceProperties(cors=cors)
 
@@ -166,7 +167,9 @@ class FileServicesOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
         deserialized = None
         if response.status_code == 200:
@@ -199,8 +202,7 @@ class FileServicesOperations(object):
         :return: FileServiceProperties or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.storage.v2019_04_01.models.FileServiceProperties
          or ~msrest.pipeline.ClientRawResponse
-        :raises:
-         :class:`ErrorResponseException<azure.mgmt.storage.v2019_04_01.models.ErrorResponseException>`
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         # Construct URL
         url = self.get_service_properties.metadata['url']
@@ -231,7 +233,9 @@ class FileServicesOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            raise models.ErrorResponseException(self._deserialize, response)
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
 
         deserialized = None
         if response.status_code == 200:
