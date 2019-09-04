@@ -75,9 +75,10 @@ async def run_sample():
 
         expires = datetime.datetime.utcnow() + datetime.timedelta(days=365)
 
-        updated_bank_certificate_operation = await client.create_certificate(name=bank_cert_name, expires=expires)
+        updated_bank_certificate_poller = await client.create_certificate(name=bank_cert_name, expires=expires)
+        await updated_bank_certificate_poller
         print(
-            "Certificate with name '{0}' was updated with expiration date '{1}'".format(updated_bank_certificate_operation.name, expires)
+            "Certificate with name '{0}' was updated with expiration date '{1}'".format(bank_cert_name, expires)
         )
 
         # You need to check all the different expiration dates your bank account certificate had previously. Lets print all the versions of this certificate.

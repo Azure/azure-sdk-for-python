@@ -567,7 +567,7 @@ class CertificatePolicy(object):
         issuer_name=None,  # type: Optional[str]
         certificate_type=None,  # type: Optional[str]
         certificate_transparency=None,  # type: Optional[bool]
-        **kwargs,  # type: **Any
+        **kwargs  # type: **Any
     ):
         # type: (...) -> None
         self._attributes = attributes

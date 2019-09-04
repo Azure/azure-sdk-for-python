@@ -599,7 +599,10 @@ class CertificateClientTests(KeyVaultTestCase):
         with open(os.path.abspath(os.path.join(dirname, "ca.crt")), "rt") as f:
             ca_cert = crypto.load_certificate(crypto.FILETYPE_PEM, f.read())
 
-        await client.create_certificate(name=cert_name, policy=CertificatePolicy._from_certificate_policy_bundle(cert_policy))
+        create_certificate_poller = await client.create_certificate(name=cert_name, policy=CertificatePolicy._from_certificate_policy_bundle(cert_policy))
+
+        # the poller will stop immediately because the issuer is `Unknown`
+        await create_certificate_poller
 
         certificate_operation = await client.get_certificate_operation(name=cert_name)
 
