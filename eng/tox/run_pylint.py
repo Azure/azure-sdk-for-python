@@ -37,7 +37,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    package_name = os.path.basename(args.target_package)
+    package_name = os.path.basename(os.path.abspath(args.target_package))
 
     if package_name not in PYLINT_ACCEPTABLE_FAILURES:
         try:
