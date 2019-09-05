@@ -24,9 +24,9 @@ if TYPE_CHECKING:
 class KeyClient(KeyVaultClientBase):
     """A high-level interface for managing a vault's keys.
 
+    :param str vault_url: URL of the vault the client will access
     :param credential: An object which can provide an access token for the vault, such as a credential from
         :mod:`azure.identity`
-    :param str vault_url: URL of the vault the client will access
 
     Example:
         .. literalinclude:: ../tests/test_samples_keys.py
@@ -41,6 +41,17 @@ class KeyClient(KeyVaultClientBase):
 
     def get_cryptography_client(self, key, **kwargs):
         # type: (Union[Key, str], **Any) -> CryptographyClient
+        """
+        Get a :class:`~azure.keyvault.keys.crypto.CryptographyClient` capable of performing cryptographic operations
+        with a key.
+
+        :param key:
+            Either a :class:`~azure.keyvault.keys.Key` instance as returned by
+            :func:`~azure.keyvault.keys.KeyClient.get_key`, or a string. If a string, the value must be the full
+            identifier of an Azure Key Vault key with a version.
+        :type key: str or :class:`~azure.keyvault.keys.Key`
+        :rtype: :class:`~azure.keyvault.keys.crypto.CryptographyClient`
+        """
 
         # the initializer requires a credential but won't actually use it in this case because we pass in this
         # KeyClient's generated client, whose pipeline (and auth policy) is fully configured
@@ -79,6 +90,7 @@ class KeyClient(KeyVaultClientBase):
         :type curve: ~azure.keyvault.keys.enums.KeyCurveName or str
         :returns: The created key
         :rtype: ~azure.keyvault.keys.models.Key
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys.py
@@ -134,6 +146,7 @@ class KeyClient(KeyVaultClientBase):
         :param dict tags: (optional) Application specific metadata in the form of key-value pairs
         :returns: The created key
         :rtype: ~azure.keyvault.keys.models.Key
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys.py
@@ -186,6 +199,7 @@ class KeyClient(KeyVaultClientBase):
         :param dict tags: (optional) Application specific metadata in the form of key-value pairs
         :returns: The created key
         :rtype: ~azure.keyvault.keys.models.Key
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys.py
@@ -218,7 +232,9 @@ class KeyClient(KeyVaultClientBase):
         :param str name: The name of the key to delete.
         :returns: The deleted key
         :rtype: ~azure.keyvault.keys.models.DeletedKey
-        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist
+        :raises:
+            :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
+            :class:`~azure.core.exceptions.HttpResponseError` for other errors
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys.py
@@ -240,7 +256,9 @@ class KeyClient(KeyVaultClientBase):
         :param str version: (optional) A specific version of the key to get. If not specified, gets the latest version
             of the key.
         :rtype: ~azure.keyvault.keys.models.Key
-        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist
+        :raises:
+            :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
+            :class:`~azure.core.exceptions.HttpResponseError` for other errors
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys.py
@@ -264,6 +282,9 @@ class KeyClient(KeyVaultClientBase):
         :param str name: The name of the key
         :returns: The deleted key
         :rtype: ~azure.keyvault.keys.models.DeletedKey
+        :raises:
+            :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
+            :class:`~azure.core.exceptions.HttpResponseError` for other errors
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys.py
@@ -362,6 +383,7 @@ class KeyClient(KeyVaultClientBase):
 
         :param str name: The name of the key
         :returns: None
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
             .. code-block:: python
@@ -389,6 +411,7 @@ class KeyClient(KeyVaultClientBase):
         :param str name: The name of the deleted key
         :returns: The recovered key
         :rtype: ~azure.keyvault.keys.models.Key
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys.py
@@ -431,7 +454,9 @@ class KeyClient(KeyVaultClientBase):
         :param dict tags: (optional) Application specific metadata in the form of key-value pairs
         :returns: The updated key
         :rtype: ~azure.keyvault.keys.models.Key
-        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist
+        :raises:
+            :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
+            :class:`~azure.core.exceptions.HttpResponseError` for other errors
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys.py
@@ -469,7 +494,9 @@ class KeyClient(KeyVaultClientBase):
         :param str name: The name of the key
         :returns: The raw bytes of the key backup
         :rtype: bytes
-        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist
+        :raises:
+            :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
+            :class:`~azure.core.exceptions.HttpResponseError` for other errors
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys.py
@@ -494,7 +521,9 @@ class KeyClient(KeyVaultClientBase):
         :param bytes backup: The raw bytes of the key backup
         :returns: The restored key
         :rtype: ~azure.keyvault.keys.models.Key
-        :raises: :class:`~azure.core.exceptions.ResourceExistsError` if the backed up key's name is already in use
+        :raises:
+            :class:`~azure.core.exceptions.ResourceExistsError` if the backed up key's name is already in use,
+            :class:`~azure.core.exceptions.HttpResponseError` for other errors
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys.py
@@ -533,6 +562,7 @@ class KeyClient(KeyVaultClientBase):
         :param dict tags: (optional) Application specific metadata in the form of key-value pairs
         :returns: The imported key
         :rtype: ~azure.keyvault.keys.models.Key
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         """
         if enabled is not None or not_before is not None or expires is not None:
