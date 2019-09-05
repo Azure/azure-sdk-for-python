@@ -16,7 +16,7 @@ except ImportError:
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
-    from typing import Any, FrozenSet, Optional, Union
+    from typing import Any, Optional, Union
     from azure.core.credentials import TokenCredential
     from .. import EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
     from .._internal import Key as _Key
@@ -46,8 +46,10 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         elif isinstance(key, str):
             self._key = None
             self._key_id = parse_vault_id(key)
-            self._allowed_ops = None  # type: Optional[FrozenSet]
-            self._get_key_forbidden = None  # type: Optional[bool]
+            self._keys_get_forbidden = None  # type: Optional[bool]
+
+            # will be replaced with actual permissions before any local operations are attempted, if we can get the key
+            self._allowed_ops = frozenset()
         else:
             raise ValueError("'key' must be a Key instance or a key ID string including a version")
 
@@ -75,12 +77,14 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         :rtype: :class:`~azure.keyvault.keys.models.Key` or None
         """
 
-        if not (self._key or self._get_key_forbidden):
+        if not (self._key or self._keys_get_forbidden):
             try:
                 self._key = await self._client.get_key(self._key_id.vault_url, self._key_id.name, self._key_id.version)
                 self._allowed_ops = frozenset(self._key.key_material.key_ops)
             except HttpResponseError as ex:
-                self._get_key_forbidden = ex.status_code == 403
+                # if we got a 403, we don't have keys/get permission and won't try to get the key again
+                # (other errors may be transient)
+                self._keys_get_forbidden = ex.status_code == 403
         return self._key
 
     async def _get_local_key(self) -> "Optional[_Key]":
