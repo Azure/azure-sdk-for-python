@@ -102,7 +102,7 @@ class DatabaseClient(object):
     def _get_properties(self):
         # type: () -> Dict[str, Any]
         if self._properties is None:
-            self.read()
+            self._properties = self.read()
         return self._properties
 
     @distributed_trace
@@ -131,7 +131,9 @@ class DatabaseClient(object):
         if populate_query_metrics is not None:
             request_options["populateQueryMetrics"] = populate_query_metrics
 
-        self._properties = self.client_connection.ReadDatabase(database_link, options=request_options, **kwargs)
+        self._properties = self.client_connection.ReadDatabase(
+            database_link, options=request_options, **kwargs
+        )  # type: Dict[str, Any]
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, self._properties)
@@ -581,15 +583,18 @@ class DatabaseClient(object):
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
 
-        user = self.client_connection.ReplaceUser(
+        replaced_user = self.client_connection.ReplaceUser(
             user_link=self._get_user_link(user), user=body, options=request_options, **kwargs
-        )
+        )  # type: Dict[str, str]
 
         if response_hook:
-            response_hook(self.client_connection.last_response_headers, user)
+            response_hook(self.client_connection.last_response_headers, replaced_user)
 
         return UserClient(
-            client_connection=self.client_connection, id=user["id"], database_link=self.database_link, properties=user
+            client_connection=self.client_connection,
+            id=replaced_user["id"],
+            database_link=self.database_link,
+            properties=replaced_user
         )
 
     @distributed_trace

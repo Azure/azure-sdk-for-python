@@ -38,7 +38,7 @@ __all__ = ("CosmosClient",)
 def _parse_connection_str(conn_str, credential):
     # type: (str, Optional[Any]) -> Dict[str, str]
     conn_str = conn_str.rstrip(";")
-    conn_settings = dict( # pylint: disable=consider-using-dict-comprehension
+    conn_settings = dict( # pylint: disable=consider-using-dict-comprehension  # type: ignore
         [s.split("=", 1) for s in conn_str.split(";")]
     )
     if 'AccountEndpoint' not in conn_settings:
@@ -111,7 +111,7 @@ class CosmosClient(object):
     """
 
     def __init__(self, url, credential, consistency_level="Session", **kwargs):
-        # type: (str, Dict[str, str], str, ConnectionPolicy) -> None
+        # type: (str, Any, str, ConnectionPolicy) -> None
         """ Instantiate a new CosmosClient.
 
         :param url: The URL of the Cosmos DB account.
@@ -158,7 +158,7 @@ class CosmosClient(object):
 
     @staticmethod
     def _get_database_link(database_or_id):
-        # type: (str) -> str
+        # type: (Union[DatabaseClient, str, Dict[str, str]]) -> str
         if isinstance(database_or_id, six.string_types):
             return "dbs/{}".format(database_or_id)
         try:
@@ -305,7 +305,7 @@ class CosmosClient(object):
             # (just returning a generator did not initiate the first network call, so
             # the headers were misleading)
             # This needs to change for "real" implementation
-            query = query if parameters is None else dict(query=query, parameters=parameters)
+            query = query if parameters is None else dict(query=query, parameters=parameters)  # type: ignore
             result = self.client_connection.QueryDatabases(query=query, options=feed_options, **kwargs)
         else:
             result = self.client_connection.ReadDatabases(options=feed_options, **kwargs)

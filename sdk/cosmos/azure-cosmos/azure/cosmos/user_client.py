@@ -56,12 +56,12 @@ class UserClient(object):
     def _get_properties(self):
         # type: () -> Dict[str, Any]
         if self._properties is None:
-            self.read()
+            self._properties = self.read()
         return self._properties
 
     @distributed_trace
     def read(self, **kwargs):
-        # type: (Any) -> UserClient
+        # type: (Any) -> Dict[str, Any]
         """
         Read user propertes.
 
@@ -159,7 +159,7 @@ class UserClient(object):
 
         permission = self.client_connection.ReadPermission(
             permission_link=self._get_permission_link(permission), options=request_options, **kwargs
-        )
+        )  # type: Dict[str, str]
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, permission)
@@ -254,7 +254,7 @@ class UserClient(object):
 
         permission = self.client_connection.ReplacePermission(
             permission_link=self._get_permission_link(permission), permission=body, options=request_options, **kwargs
-        )
+        )  # type: Dict[str, str]
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, permission)

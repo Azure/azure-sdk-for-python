@@ -63,12 +63,12 @@ class ContainerClient(object):
         self._properties = properties
         self.container_link = u"{}/colls/{}".format(database_link, self.id)
         self._is_system_key = None
-        self._scripts = None
+        self._scripts = None  # type: ScriptsClient
 
     def _get_properties(self):
         # type: () -> Dict[str, Any]
         if self._properties is None:
-            self.read()
+            self._properties = self.read()
         return self._properties
 
     @property
@@ -78,7 +78,7 @@ class ContainerClient(object):
             properties = self._get_properties()
             self._is_system_key = (
                 properties["partitionKey"]["systemKey"] if "systemKey" in properties["partitionKey"] else False
-            )
+            )  # type: bool
         return self._is_system_key
 
     @property
@@ -139,7 +139,9 @@ class ContainerClient(object):
             request_options["populateQuotaInfo"] = populate_quota_info
 
         collection_link = self.container_link
-        self._properties = self.client_connection.ReadContainer(collection_link, options=request_options, **kwargs)
+        self._properties = self.client_connection.ReadContainer(
+            collection_link, options=request_options, **kwargs
+        )  # type: Dict[str, Any]
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, self._properties)

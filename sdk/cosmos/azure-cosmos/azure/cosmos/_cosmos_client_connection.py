@@ -119,9 +119,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         self.connection_policy = connection_policy or ConnectionPolicy()
 
-        self.partition_resolvers = {}
+        self.partition_resolvers = {}  # type: Dict[str, Any]
 
-        self.partition_key_definition_cache = {}
+        self.partition_key_definition_cache = {}  # type: Dict[str, Any]
 
         self.default_headers = {
             http_constants.HttpHeaders.CacheControl: "no-cache",
@@ -143,7 +143,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             # via setter
             self.session = _session.Session(self.url_connection)
         else:
-            self.session = None
+            self.session = None  # type: ignore
 
         self._useMultipleWriteLocations = False
         self._global_endpoint_manager = global_endpoint_manager._GlobalEndpointManager(self)
