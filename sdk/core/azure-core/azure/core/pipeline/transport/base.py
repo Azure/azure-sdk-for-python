@@ -40,6 +40,8 @@ import xml.etree.ElementTree as ET
 from typing import (TYPE_CHECKING, Generic, TypeVar, cast, IO, List, Union, Any, Mapping, Dict, # pylint: disable=unused-import
                     Optional, Tuple, Callable, Iterator)
 
+from six.moves.http_client import HTTPConnection
+
 # This file is NOT using any "requests" HTTP implementation
 # However, the CaseInsensitiveDict is handy.
 # If one day we reach the point where "requests" can be skip totally,
@@ -79,6 +81,37 @@ def _urljoin(base_url, stub_url):
     parsed = urlparse(base_url)
     parsed = parsed._replace(path=parsed.path + '/' + stub_url)
     return parsed.geturl()
+
+
+class _HTTPSerializer(HTTPConnection):
+    """Hacking the stdlib HTTPConnection to serialize HTTP request as strings.
+    """
+    def __init__(self, *args, **kwargs):
+        self.skip_host = kwargs.pop("skip_host", True)
+        self.skip_accept_encoding = kwargs.pop("skip_accept_encoding", True)
+        self.buffer = b''
+        kwargs.setdefault("host", "fakehost")
+        super(_HTTPSerializer, self).__init__(*args, **kwargs)
+
+    def putheader(self, header, *values):
+        if self.skip_host and header == "Host":
+            return
+        if self.skip_accept_encoding and header == "Accept-Encoding":
+            return
+        super(_HTTPSerializer, self).putheader(header, *values)
+
+    def send(self, data):
+        self.buffer += data
+
+def _serialize_request(http_request):
+    serializer = _HTTPSerializer()
+    serializer.request(
+        method=http_request.method,
+        url=http_request.url,
+        body=http_request.body,
+        headers=http_request.headers
+    )
+    return serializer.buffer
 
 
 class HttpTransport(AbstractContextManager, ABC, Generic[HTTPRequestType, HTTPResponseType]): # type: ignore
@@ -244,6 +277,9 @@ class HttpRequest(object):
             self.headers['Content-Length'] = str(len(data))
         self.data = data
         self.files = None
+
+    def serialize(self):
+        return _serialize_request(self)
 
 
 class _HttpResponseBase(object):
