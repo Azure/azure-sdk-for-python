@@ -169,7 +169,7 @@ class PartitionKeyTests(unittest.TestCase):
         self.assertEqual(result, 1)
 
         # 3 previous items + 1 created from the sproc
-        items = list(created_container.list_items())
+        items = list(created_container.read_all_items())
         self.assertEqual(len(items), 4)
 
         created_container.delete_item(upserted_item['id'], partition_key=partition_key.NonePartitionKeyValue)
@@ -177,7 +177,7 @@ class PartitionKeyTests(unittest.TestCase):
         created_container.delete_item(document_created_by_sproc_id, partition_key=partition_key.NonePartitionKeyValue)
         created_container.delete_item(self.created_document['id'], partition_key=partition_key.NonePartitionKeyValue)
 
-        items = list(created_container.list_items())
+        items = list(created_container.read_all_items())
         self.assertEqual(len(items), 0)
 
     def test_multi_partition_collection_read_document_with_no_pk(self):

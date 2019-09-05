@@ -436,7 +436,7 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(read_document.get('key'), created_document.get('key'))
 
         # Read document feed doesn't require partitionKey as it's always a cross partition query
-        documentlist = list(created_collection.list_items())
+        documentlist = list(created_collection.read_all_items())
         self.assertEqual(1, len(documentlist))
 
         # replace document
@@ -458,7 +458,7 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(upserted_document.get('id'), document_definition.get('id'))
         self.assertEqual(upserted_document.get('key'), document_definition.get('key'))
 
-        documentlist = list(created_collection.list_items())
+        documentlist = list(created_collection.read_all_items())
         self.assertEqual(2, len(documentlist))
 
         # delete document
@@ -734,7 +734,7 @@ class CRUDTests(unittest.TestCase):
         # create collection
         created_collection = self.configs.create_multi_partition_collection_if_not_exist(self.client)
         # read documents
-        documents = list(created_collection.list_items())
+        documents = list(created_collection.read_all_items())
         # create a document
         before_create_documents_count = len(documents)
 
@@ -755,7 +755,7 @@ class CRUDTests(unittest.TestCase):
                                            created_collection.create_item,
                                            duplicated_definition_with_id)
         # read documents after creation
-        documents = list(created_collection.list_items())
+        documents = list(created_collection.read_all_items())
         self.assertEqual(
             len(documents),
             before_create_documents_count + 1,
@@ -905,7 +905,7 @@ class CRUDTests(unittest.TestCase):
         created_collection = self.configs.create_multi_partition_collection_if_not_exist(self.client)
 
         # read documents and check count
-        documents = list(created_collection.list_items())
+        documents = list(created_collection.read_all_items())
         before_create_documents_count = len(documents)
 
         # create document definition
@@ -922,7 +922,7 @@ class CRUDTests(unittest.TestCase):
                          document_definition['id'])
 
         # read documents after creation and verify updated count
-        documents = list(created_collection.list_items())
+        documents = list(created_collection.read_all_items())
         self.assertEqual(
             len(documents),
             before_create_documents_count + 1,
@@ -949,7 +949,7 @@ class CRUDTests(unittest.TestCase):
                          'document id should stay the same')
 
         # read documents after upsert and verify count doesn't increases again
-        documents = list(created_collection.list_items())
+        documents = list(created_collection.read_all_items())
         self.assertEqual(
             len(documents),
             before_create_documents_count + 1,
@@ -966,7 +966,7 @@ class CRUDTests(unittest.TestCase):
                          'document id should be same')
 
         # read documents after upsert and verify count increases
-        documents = list(created_collection.list_items())
+        documents = list(created_collection.read_all_items())
         self.assertEqual(
             len(documents),
             before_create_documents_count + 2,
@@ -977,7 +977,7 @@ class CRUDTests(unittest.TestCase):
         created_collection.delete_item(item=new_document, partition_key=new_document['id'])
 
         # read documents after delete and verify count is same as original
-        documents = list(created_collection.list_items())
+        documents = list(created_collection.read_all_items())
         self.assertEqual(
             len(documents),
             before_create_documents_count,
@@ -1376,7 +1376,7 @@ class CRUDTests(unittest.TestCase):
                                            db.delete_container,
                                            success_coll1)
         # 3. Success-- Use Col1 Permission to Read All Docs
-        success_documents = list(success_coll1.list_items())
+        success_documents = list(success_coll1.read_all_items())
         self.assertTrue(success_documents != None,
                         'error reading documents')
         self.assertEqual(len(success_documents),
@@ -1984,7 +1984,7 @@ class CRUDTests(unittest.TestCase):
 
         # Validate QueryIterable by converting it to a list.
         resources = __create_resources(self.client)
-        results = resources['coll'].list_items(max_item_count=2)
+        results = resources['coll'].read_all_items(max_item_count=2)
         docs = list(iter(results))
         self.assertEqual(3,
                          len(docs),
@@ -1995,7 +1995,7 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(resources['doc3']['id'], docs[2]['id'])
 
         # Validate QueryIterable iterator with 'for'.
-        results = resources['coll'].list_items(max_item_count=2)
+        results = resources['coll'].read_all_items(max_item_count=2)
         counter = 0
         # test QueryIterable with 'for'.
         for doc in iter(results):
@@ -2015,7 +2015,7 @@ class CRUDTests(unittest.TestCase):
         self.assertEqual(counter, 3)
 
         # Get query results page by page.
-        results = resources['coll'].list_items(max_item_count=2)
+        results = resources['coll'].read_all_items(max_item_count=2)
         page_iter = results.by_page()
         first_block = list(next(page_iter))
         self.assertEqual(2, len(first_block), 'First block should have 2 entries.')

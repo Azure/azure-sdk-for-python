@@ -29,7 +29,7 @@ from azure.core.tracing.decorator import distributed_trace
 
 from ._cosmos_client_connection import CosmosClientConnection
 from ._base import build_options
-from .database_client import DatabaseClient
+from .database import DatabaseProxy
 from .documents import ConnectionPolicy, DatabaseAccount
 
 __all__ = ("CosmosClient",)
@@ -39,7 +39,7 @@ def _parse_connection_str(conn_str, credential):
     # type: (str, Optional[Any]) -> Dict[str, str]
     conn_str = conn_str.rstrip(";")
     conn_settings = dict( # pylint: disable=consider-using-dict-comprehension  # type: ignore
-        [s.split("=", 1) for s in conn_str.split(";")]
+        s.split("=", 1) for s in conn_str.split(";")
     )
     if 'AccountEndpoint' not in conn_settings:
         raise ValueError("Connection string missing setting 'AccountEndpoint'.")
@@ -158,11 +158,11 @@ class CosmosClient(object):
 
     @staticmethod
     def _get_database_link(database_or_id):
-        # type: (Union[DatabaseClient, str, Dict[str, str]]) -> str
+        # type: (Union[DatabaseProxy, str, Dict[str, str]]) -> str
         if isinstance(database_or_id, six.string_types):
             return "dbs/{}".format(database_or_id)
         try:
-            return cast("DatabaseClient", database_or_id).database_link
+            return cast("DatabaseProxy", database_or_id).database_link
         except AttributeError:
             pass
         database_id = cast("Dict[str, str]", database_or_id)["id"]
@@ -176,7 +176,7 @@ class CosmosClient(object):
         offer_throughput=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
-        # type: (...) -> DatabaseClient
+        # type: (...) -> DatabaseProxy
         """Create a new database with the given ID (name).
 
         :param id: ID (name) of the database to create.
@@ -187,7 +187,7 @@ class CosmosClient(object):
         :param offer_throughput: The provisioned throughput for this offer.
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
-        :returns: A :class:`DatabaseClient` instance representing the new database.
+        :returns: A :class:`DatabaseProxy` instance representing the new database.
         :raises `CosmosHttpResponseError`: If database with the given ID already exists.
 
         .. literalinclude:: ../../examples/examples.py
@@ -210,26 +210,26 @@ class CosmosClient(object):
         result = self.client_connection.CreateDatabase(database=dict(id=id), options=request_options, **kwargs)
         if response_hook:
             response_hook(self.client_connection.last_response_headers)
-        return DatabaseClient(self.client_connection, id=result["id"], properties=result)
+        return DatabaseProxy(self.client_connection, id=result["id"], properties=result)
 
     def get_database_client(self, database):
-        # type: (Union[str, DatabaseClient, Dict[str, Any]]) -> DatabaseClient
+        # type: (Union[str, DatabaseProxy, Dict[str, Any]]) -> DatabaseProxy
         """
         Retrieve an existing database with the ID (name) `id`.
 
-        :param database: The ID (name), dict representing the properties or :class:`DatabaseClient`
+        :param database: The ID (name), dict representing the properties or :class:`DatabaseProxy`
             instance of the database to read.
-        :returns: A :class:`DatabaseClient` instance representing the retrieved database.
+        :returns: A :class:`DatabaseProxy` instance representing the retrieved database.
 
         """
-        if isinstance(database, DatabaseClient):
+        if isinstance(database, DatabaseProxy):
             id_value = database.id
         elif isinstance(database, Mapping):
             id_value = database["id"]
         else:
             id_value = database
 
-        return DatabaseClient(self.client_connection, id_value)
+        return DatabaseProxy(self.client_connection, id_value)
 
     @distributed_trace
     def list_databases(
@@ -316,7 +316,7 @@ class CosmosClient(object):
     @distributed_trace
     def delete_database(
         self,
-        database,  # type: Union[str, DatabaseClient, Dict[str, Any]]
+        database,  # type: Union[str, DatabaseProxy, Dict[str, Any]]
         populate_query_metrics=None,  # type: Optional[bool]
         **kwargs  # type: Any
     ):
@@ -324,7 +324,7 @@ class CosmosClient(object):
         """
         Delete the database with the given ID (name).
 
-        :param database: The ID (name), dict representing the properties or :class:`DatabaseClient`
+        :param database: The ID (name), dict representing the properties or :class:`DatabaseProxy`
             instance of the database to delete.
         :param session_token: Token for use with Session consistency.
         :param initial_headers: Initial headers to be sent as part of the request.

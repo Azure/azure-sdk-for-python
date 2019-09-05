@@ -480,7 +480,7 @@ class ConflictWorker(object):
         try:
             options['partitionKey'] = document['id']
             return client.ReplaceItem(collection_uri + "/docs/" + document['id'], document, options);
-        except (errors.CosmosResourceNotFoundError, errors.CosmosResourceModifiedError):
+        except (errors.CosmosResourceNotFoundError, errors.CosmosAccessConditionFailedError):
             # Lost synchronously or no document yet. No conflict is induced.
             return None
 
@@ -489,7 +489,7 @@ class ConflictWorker(object):
             options['partitionKey'] = document['id']
             client.DeleteItem(collection_uri + "/docs/" + document['id'], options)
             return document
-        except (errors.CosmosResourceNotFoundError, errors.CosmosResourceModifiedError):
+        except (errors.CosmosResourceNotFoundError, errors.CosmosAccessConditionFailedError):
             #Lost synchronously. No conflict is induced.
             return None
 

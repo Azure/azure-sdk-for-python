@@ -25,8 +25,7 @@ from azure.core.exceptions import (  # pylint: disable=unused-import
     AzureError,
     HttpResponseError,
     ResourceExistsError,
-    ResourceNotFoundError,
-    ResourceModifiedError
+    ResourceNotFoundError
 )
 from . import http_constants
 
@@ -64,5 +63,5 @@ class CosmosResourceExistsError(ResourceExistsError, CosmosHttpResponseError):
     """An error response with status code 409."""
 
 
-class CosmosResourceModifiedError(ResourceModifiedError, CosmosHttpResponseError):
+class CosmosAccessConditionFailedError(CosmosHttpResponseError):
     """An error response with status code 412."""

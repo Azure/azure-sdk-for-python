@@ -32,16 +32,16 @@ from ._base import build_options
 from .errors import CosmosResourceNotFoundError
 from .http_constants import StatusCodes
 from .offer import Offer
-from .scripts_client import ScriptsClient
+from .scripts import ScriptsProxy
 from .partition_key import NonePartitionKeyValue
 
-__all__ = ("ContainerClient",)
+__all__ = ("ContainerProxy",)
 
 # pylint: disable=protected-access
 # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
 
 
-class ContainerClient(object):
+class ContainerProxy(object):
     """ An Azure Cosmos DB container.
 
     A container in an Azure Cosmos DB SQL API database is a collection of documents,
@@ -63,7 +63,7 @@ class ContainerClient(object):
         self._properties = properties
         self.container_link = u"{}/colls/{}".format(database_link, self.id)
         self._is_system_key = None
-        self._scripts = None  # type: ScriptsClient
+        self._scripts = None  # type: ScriptsProxy
 
     def _get_properties(self):
         # type: () -> Dict[str, Any]
@@ -83,9 +83,9 @@ class ContainerClient(object):
 
     @property
     def scripts(self):
-        # type: () -> ScriptsClient
+        # type: () -> ScriptsProxy
         if self._scripts is None:
-            self._scripts = ScriptsClient(self.client_connection, self.container_link, self.is_system_key)
+            self._scripts = ScriptsProxy(self.client_connection, self.container_link, self.is_system_key)
         return self._scripts
 
     def _get_document_link(self, item_or_link):
@@ -198,7 +198,7 @@ class ContainerClient(object):
         return result
 
     @distributed_trace
-    def list_items(
+    def read_all_items(
         self,
         max_item_count=None,  # type: Optional[int]
         populate_query_metrics=None,  # type: Optional[bool]

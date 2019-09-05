@@ -68,7 +68,7 @@ _COMMON_OPTIONS = {
 
 def build_options(kwargs):
     # type: (Dict[str, Any]) -> Dict[str, Any]
-    options = kwargs.pop('request_options', None) or kwargs.pop('feed_options', {})
+    options = kwargs.pop('request_options', kwargs.pop('feed_options', {}))
     for key, value in _COMMON_OPTIONS.items():
         if key in kwargs:
             options[value] = kwargs.pop(key)

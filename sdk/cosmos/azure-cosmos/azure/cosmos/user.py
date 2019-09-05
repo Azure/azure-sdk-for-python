@@ -34,7 +34,7 @@ from ._base import build_options
 from .permission import Permission
 
 
-class UserClient(object):
+class UserProxy(object):
 
     def __init__(self, client_connection, id, database_link, properties=None):  # pylint: disable=redefined-builtin
         # type: (CosmosClientConnection, str, str, Dict[str, Any]) -> None
@@ -67,7 +67,7 @@ class UserClient(object):
 
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
-        :returns: A :class:`UserClient` instance representing the retrieved user.
+        :returns: A :class:`UserProxy` instance representing the retrieved user.
         :raise `CosmosHttpResponseError`: If the given user couldn't be retrieved.
 
         """
@@ -183,7 +183,7 @@ class UserClient(object):
         :returns: A dict representing the new permission.
         :raise `CosmosHttpResponseError`: If the given permission couldn't be created.
 
-        To update or replace an existing permision, use the :func:`UserClient.upsert_permission` method.
+        To update or replace an existing permision, use the :func:`UserProxy.upsert_permission` method.
 
         """
         request_options = build_options(kwargs)

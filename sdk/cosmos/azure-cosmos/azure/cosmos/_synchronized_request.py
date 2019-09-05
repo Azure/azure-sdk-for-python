@@ -158,7 +158,7 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
     if response.status_code == 409:
         raise errors.CosmosResourceExistsError(message=data, response=response)
     if response.status_code == 412:
-        raise errors.CosmosResourceModifiedError(message=data, response=response)
+        raise errors.CosmosAccessConditionFailedError(message=data, response=response)
     if response.status_code >= 400:
         raise errors.CosmosHttpResponseError(message=data, response=response)
 

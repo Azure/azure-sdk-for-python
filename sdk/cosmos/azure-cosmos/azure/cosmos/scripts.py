@@ -40,7 +40,7 @@ class ScriptType(object):
     UserDefinedFunction = "udfs"
 
 
-class ScriptsClient(object):
+class ScriptsProxy(object):
     def __init__(self, client_connection, container_link, is_system_key):
         # type: (CosmosClientConnection, str, bool) -> None
         self.client_connection = client_connection

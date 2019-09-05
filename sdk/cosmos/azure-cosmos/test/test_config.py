@@ -25,7 +25,7 @@ import uuid
 import azure.cosmos.documents as documents
 import azure.cosmos.errors as errors
 from azure.cosmos.http_constants import StatusCodes
-from azure.cosmos.database_client import DatabaseClient
+from azure.cosmos.database import DatabaseProxy
 from azure.cosmos.cosmos_client import CosmosClient
 from azure.cosmos.partition_key import PartitionKey
 from azure.cosmos.partition_key import NonePartitionKeyValue

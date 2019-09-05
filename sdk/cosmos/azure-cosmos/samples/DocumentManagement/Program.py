@@ -71,7 +71,7 @@ class ItemManagement:
         # NOTE: Use MaxItemCount on Options to control how many items come back per trip to the server
         #       Important to handle throttles whenever you are doing operations such as this that might
         #       result in a 429 (throttled request)
-        item_list = list(container.list_items(max_item_count=10))
+        item_list = list(container.read_all_items(max_item_count=10))
         
         print('Found {0} items'.format(item_list.__len__()))
         
