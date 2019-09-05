@@ -385,7 +385,6 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         :rtype: dict
 
         """
-        print("KWARGS", kwargs)
         if options is None:
             options = {}
 
