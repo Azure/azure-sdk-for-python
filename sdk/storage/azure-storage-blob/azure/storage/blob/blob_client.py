@@ -10,6 +10,9 @@ from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, IO, Iterable, AnyStr, Dict, List, Tuple,
     TYPE_CHECKING
 )
+
+from azure.storage.blob._generated.models import CpkInfo
+
 try:
     from urllib.parse import urlparse, quote, unquote
 except ImportError:
@@ -133,6 +136,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         except AttributeError:
             raise ValueError("Blob URL must be a string.")
         parsed_url = urlparse(blob_url.rstrip('/'))
+
+        self.protocol = parsed_url.scheme
+
         if not parsed_url.path and not (container and blob):
             raise ValueError("Please specify a container and blob name.")
         if not parsed_url.netloc:
@@ -370,6 +376,15 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         else:
             raise TypeError("Unsupported data type: {}".format(type(data)))
 
+        cpk = kwargs.pop('cpk', None)
+        cpk_info = None
+        if cpk:
+            if self.protocol.lower() != 'https':
+                raise ValueError("Customer provided encryption key must be used over HTTPS.")
+            cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
+                               encryption_algorithm=cpk.algorithm)
+        kwargs['cpk_info'] = cpk_info
+
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
         kwargs['lease_access_conditions'] = get_access_conditions(kwargs.pop('lease', None))
@@ -474,10 +489,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the resource does not exist, and fail the
             operation if it does exist.
-        :param int timeout:
-            The timeout parameter is expressed in seconds. This method may make
-            multiple calls to the Azure service and the timeout will apply to
-            each call individually.
         :param ~azure.storage.blob.models.PremiumPageBlobTier premium_page_blob_tier:
             A page blob tier value to set the blob to. The tier correlates to the size of the
             blob and number of allowed IOPS. This is only applicable to page blobs on
@@ -491,8 +502,17 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :param int max_connections:
             Maximum number of parallel connections to use when the blob size exceeds
             64MB.
+        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
+            As the encryption key itself is provided in the request,
+            a secure connection must be established to transfer the key.
         :param str encoding:
             Defaults to UTF-8.
+        :param int timeout:
+            The timeout parameter is expressed in seconds. This method may make
+            multiple calls to the Azure service and the timeout will apply to
+            each call individually.
         :returns: Blob-updated property dict (Etag and last modified)
         :rtype: dict[str, Any]
 
@@ -534,6 +554,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             if_match=kwargs.pop('if_match', None),
             if_none_match=kwargs.pop('if_none_match', None))
 
+        cpk = kwargs.pop('cpk', None)
+        cpk_info = None
+        if cpk:
+            if self.protocol.lower() != 'https':
+                raise ValueError("Customer provided encryption key must be used over HTTPS.")
+            cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
+                               encryption_algorithm=cpk.algorithm)
+
         options = {
             'service': self._client.blob,
             'config': self._config,
@@ -546,6 +574,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 'resolver': self.key_resolver_function},
             'lease_access_conditions': access_conditions,
             'modified_access_conditions': mod_conditions,
+            'cpk_info': cpk_info,
             'cls': deserialize_blob_stream,
             'timeout': kwargs.pop('timeout', None)}
         options.update(kwargs)
@@ -596,6 +625,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the resource does not exist, and fail the
             operation if it does exist.
+        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
+            As the encryption key itself is provided in the request,
+            a secure connection must be established to transfer the key.
         :param int timeout:
             The timeout parameter is expressed in seconds. This method may make
             multiple calls to the Azure service and the timeout will apply to
@@ -762,6 +796,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the resource does not exist, and fail the
             operation if it does exist.
+        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
+            As the encryption key itself is provided in the request,
+            a secure connection must be established to transfer the key.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: BlobProperties
@@ -775,12 +814,20 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 :dedent: 8
                 :caption: Getting the properties for a blob.
         """
+        # TODO: extract this out as _get_blob_properties_options
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         mod_conditions = ModifiedAccessConditions(
             if_modified_since=kwargs.pop('if_modified_since', None),
             if_unmodified_since=kwargs.pop('if_unmodified_since', None),
             if_match=kwargs.pop('if_match', None),
             if_none_match=kwargs.pop('if_none_match', None))
+        cpk = kwargs.pop('cpk', None)
+        cpk_info = None
+        if cpk:
+            if self.protocol.lower() != 'https':
+                raise ValueError("Customer provided encryption key must be used over HTTPS.")
+            cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
+                               encryption_algorithm=cpk.algorithm)
         try:
             blob_props = self._client.blob.get_properties(
                 timeout=kwargs.pop('timeout', None),
@@ -788,6 +835,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 lease_access_conditions=access_conditions,
                 modified_access_conditions=mod_conditions,
                 cls=deserialize_blob_properties,
+                cpk_info=cpk_info,
                 **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
@@ -877,11 +925,20 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             if_unmodified_since=kwargs.pop('if_unmodified_since', None),
             if_match=kwargs.pop('if_match', None),
             if_none_match=kwargs.pop('if_none_match', None))
+
+        cpk = kwargs.pop('cpk', None)
+        cpk_info = None
+        if cpk:
+            if self.protocol.lower() != 'https':
+                raise ValueError("Customer provided encryption key must be used over HTTPS.")
+            cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
+                               encryption_algorithm=cpk.algorithm)
         options = {
             'timeout': kwargs.pop('timeout', None),
             'lease_access_conditions': access_conditions,
             'modified_access_conditions': mod_conditions,
             'cls': return_response_headers,
+            'cpk_info': cpk_info,
             'headers': headers}
         options.update(kwargs)
         return options
@@ -921,6 +978,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the resource does not exist, and fail the
             operation if it does exist.
+        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
+            As the encryption key itself is provided in the request,
+            a secure connection must be established to transfer the key.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified)
@@ -960,6 +1022,15 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 blob_content_language=content_settings.content_language,
                 blob_content_disposition=content_settings.content_disposition
             )
+
+        cpk = kwargs.pop('cpk', None)
+        cpk_info = None
+        if cpk:
+            if self.protocol.lower() != 'https':
+                raise ValueError("Customer provided encryption key must be used over HTTPS.")
+            cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
+                               encryption_algorithm=cpk.algorithm)
+
         if premium_page_blob_tier:
             try:
                 headers['x-ms-access-tier'] = premium_page_blob_tier.value  # type: ignore
@@ -974,6 +1045,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             'lease_access_conditions': access_conditions,
             'modified_access_conditions': mod_conditions,
             'cls': return_response_headers,
+            'cpk_info': cpk_info,
             'headers': headers}
         options.update(kwargs)
         return options
@@ -1028,6 +1100,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the resource does not exist, and fail the
             operation if it does exist.
+        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
+            As the encryption key itself is provided in the request,
+            a secure connection must be established to transfer the key.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :param ~azure.storage.blob.models.PremiumPageBlobTier premium_page_blob_tier:
@@ -1071,6 +1148,15 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 blob_content_language=content_settings.content_language,
                 blob_content_disposition=content_settings.content_disposition
             )
+
+        cpk = kwargs.pop('cpk', None)
+        cpk_info = None
+        if cpk:
+            if self.protocol.lower() != 'https':
+                raise ValueError("Customer provided encryption key must be used over HTTPS.")
+            cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
+                               encryption_algorithm=cpk.algorithm)
+
         options = {
             'content_length': 0,
             'blob_http_headers': blob_headers,
@@ -1078,6 +1164,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             'lease_access_conditions': access_conditions,
             'modified_access_conditions': mod_conditions,
             'cls': return_response_headers,
+            'cpk_info': cpk_info,
             'headers': headers}
         options.update(kwargs)
         return options
@@ -1117,6 +1204,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the resource does not exist, and fail the
             operation if it does exist.
+        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
+            As the encryption key itself is provided in the request,
+            a secure connection must be established to transfer the key.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified).
@@ -1141,11 +1233,21 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             if_unmodified_since=kwargs.pop('if_unmodified_since', None),
             if_match=kwargs.pop('if_match', None),
             if_none_match=kwargs.pop('if_none_match', None))
+
+        cpk = kwargs.pop('cpk', None)
+        cpk_info = None
+        if cpk:
+            if self.protocol.lower() != 'https':
+                raise ValueError("Customer provided encryption key must be used over HTTPS.")
+            cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
+                               encryption_algorithm=cpk.algorithm)
+
         options = {
             'timeout': kwargs.pop('timeout', None),
             'lease_access_conditions': access_conditions,
             'modified_access_conditions': mod_conditions,
             'cls': return_response_headers,
+            'cpk_info': cpk_info,
             'headers': headers}
         options.update(kwargs)
         return options
@@ -1191,6 +1293,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
         :type lease: ~azure.storage.blob.lease.LeaseClient or str
+        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
+            As the encryption key itself is provided in the request,
+            a secure connection must be established to transfer the key.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Snapshot ID, Etag, and last modified).
@@ -1559,6 +1666,15 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 length, data = read_length(data)
         if isinstance(data, bytes):
             data = data[:length]
+
+        cpk = kwargs.pop('cpk', None)
+        cpk_info = None
+        if cpk:
+            if self.protocol.lower() != 'https':
+                raise ValueError("Customer provided encryption key must be used over HTTPS.")
+            cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
+                               encryption_algorithm=cpk.algorithm)
+
         options = {
             'block_id': block_id,
             'content_length': length,
@@ -1566,7 +1682,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             'transactional_content_md5': None,
             'timeout': kwargs.pop('timeout', None),
             'lease_access_conditions': access_conditions,
-            'validate_content': validate_content}
+            'validate_content': validate_content,
+            'cpk_info': cpk_info
+        }
         options.update(kwargs)
         return options
 
@@ -1602,6 +1720,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :type lease: ~azure.storage.blob.lease.LeaseClient or str
         :param str encoding:
             Defaults to UTF-8.
+        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
+            As the encryption key itself is provided in the request,
+            a secure connection must be established to transfer the key.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
@@ -1633,6 +1756,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         range_header = None
         if source_offset is not None:
             range_header, _ = validate_and_format_range_headers(source_offset, source_length)
+
+        cpk = kwargs.pop('cpk', None)
+        cpk_info = None
+        if cpk:
+            if self.protocol.lower() != 'https':
+                raise ValueError("Customer provided encryption key must be used over HTTPS.")
+            cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
+                               encryption_algorithm=cpk.algorithm)
         options = {
             'block_id': block_id,
             'content_length': 0,
@@ -1641,7 +1772,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             'source_content_md5': bytearray(source_content_md5) if source_content_md5 else None,
             'timeout': kwargs.pop('timeout', None),
             'lease_access_conditions': access_conditions,
-            'cls': return_response_headers}
+            'cls': return_response_headers,
+            'cpk_info': cpk_info
+        }
         options.update(kwargs)
         return options
 
@@ -1674,6 +1807,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
         :type lease: ~azure.storage.blob.lease.LeaseClient or str
+        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
+            As the encryption key itself is provided in the request,
+            a secure connection must be established to transfer the key.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
@@ -1770,6 +1908,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 blob_content_language=content_settings.content_language,
                 blob_content_disposition=content_settings.content_disposition
             )
+
+        cpk = kwargs.pop('cpk', None)
+        cpk_info = None
+        if cpk:
+            if self.protocol.lower() != 'https':
+                raise ValueError("Customer provided encryption key must be used over HTTPS.")
+            cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
+                               encryption_algorithm=cpk.algorithm)
         options = {
             'blocks': block_lookup,
             'blob_http_headers': blob_headers,
@@ -1777,7 +1923,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             'timeout': kwargs.pop('timeout', None),
             'modified_access_conditions': mod_conditions,
             'cls': return_response_headers,
-            'validate_content': validate_content}
+            'validate_content': validate_content,
+            'cpk_info': cpk_info}
         options.update(kwargs)
         return options
 
@@ -1832,6 +1979,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the resource does not exist, and fail the
             operation if it does exist.
+        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
+            As the encryption key itself is provided in the request,
+            a secure connection must be established to transfer the key.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified).
@@ -2309,6 +2461,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             source_if_match=kwargs.pop('source_if_match', None),
             source_if_none_match=kwargs.pop('source_if_none_match', None))
 
+        cpk = kwargs.pop('cpk', None)
+        cpk_info = None
+        if cpk:
+            if self.protocol.lower() != 'https':
+                raise ValueError("Customer provided encryption key must be used over HTTPS.")
+            cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
+                               encryption_algorithm=cpk.algorithm)
+
         options = {
             'source_url': source_url,
             'content_length': 0,
@@ -2320,6 +2480,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             'sequence_number_access_conditions': seq_conditions,
             'modified_access_conditions': mod_conditions,
             'source_modified_access_conditions': source_mod_conditions,
+            'cpk_info': cpk_info,
             'cls': return_response_headers}
         options.update(kwargs)
         return options
@@ -2407,6 +2568,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the resource does not exist, and fail the
             operation if it does exist.
+        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
+            As the encryption key itself is provided in the request,
+            a secure connection must be established to transfer the key.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         """
@@ -2551,6 +2717,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             if_unmodified_since=kwargs.pop('if_unmodified_since', None),
             if_match=kwargs.pop('if_match', None),
             if_none_match=kwargs.pop('if_none_match', None))
+
+        cpk = kwargs.pop('cpk', None)
+        cpk_info = None
+        if cpk:
+            if self.protocol.lower() != 'https':
+                raise ValueError("Customer provided encryption key must be used over HTTPS.")
+            cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
+                               encryption_algorithm=cpk.algorithm)
         options = {
             'body': data,
             'content_length': length,
@@ -2560,6 +2734,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             'append_position_access_conditions': append_conditions,
             'modified_access_conditions': mod_conditions,
             'validate_content': validate_content,
+            'cpk_info': cpk_info,
             'cls': return_response_headers}
         options.update(kwargs)
         return options
@@ -2626,6 +2801,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             operation if it does exist.
         :param str encoding:
             Defaults to UTF-8.
+        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
+            As the encryption key itself is provided in the request,
+            a secure connection must be established to transfer the key.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag, last modified, append offset, committed block count).
@@ -2685,18 +2865,27 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             source_if_match=kwargs.pop('source_if_match', None),
             source_if_none_match=kwargs.pop('source_if_none_match', None))
 
+        cpk = kwargs.pop('cpk', None)
+        cpk_info = None
+        if cpk:
+            if self.protocol.lower() != 'https':
+                raise ValueError("Customer provided encryption key must be used over HTTPS.")
+            cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
+                               encryption_algorithm=cpk.algorithm)
+
         options = {
             'source_url': copy_source_url,
             'content_length': 0,
             'source_range': source_range,
             'source_content_md5': source_content_md5,
-            'timeout': kwargs.pop('timeout', None),
             'transactional_content_md5': None,
             'lease_access_conditions': access_conditions,
             'append_position_access_conditions': append_conditions,
             'modified_access_conditions': mod_conditions,
             'source_modified_access_conditions': source_mod_conditions,
-            'cls': return_response_headers}
+            'cpk_info': cpk_info,
+            'cls': return_response_headers,
+            'timeout': kwargs.pop('timeout', None)}
         options.update(kwargs)
         return options
 
@@ -2779,6 +2968,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the source resource does not exist, and fail the
             operation if it does exist.
+        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
+            As the encryption key itself is provided in the request,
+            a secure connection must be established to transfer the key.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         """
