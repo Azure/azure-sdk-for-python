@@ -1494,16 +1494,13 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
 
     @distributed_trace_async
     async def upload_pages_from_url(self, source_url,  # type: str
-                              range_start,
-                              range_end,
-                              source_range_start,
-                              source_content_md5=None,
-                              source_if_modified_since=None,
-                              source_if_unmodified_since=None, source_if_match=None, source_if_none_match=None,
-                              lease=None, if_sequence_number_lte=None, if_sequence_number_lt=None,
-                              if_sequence_number_eq=None, if_modified_since=None, if_unmodified_since=None,
-                              if_match=None, if_none_match=None, timeout=None
-                              ):
+                                    range_start,  # type: int
+                                    range_end,  # type: int
+                                    source_range_start,  # type: int
+                                    source_content_md5=None,  # type: Optional[bytes]
+                                    **kwargs
+                                    ):
+        # type: (...) -> Dict[str, Any]
         """
         Updates a range of pages to a page blob where the contents are read from a URL.
 
@@ -1523,7 +1520,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :param int source_range_start:
             This indicates the start of the range of bytes(inclusive) that has to be taken from the copy source.
             The service will read the same number of bytes as the destination range (end_range-start_range).
-        :param str source_content_md5:
+        :param bytes source_content_md5:
             If given, the service will calculate the MD5 hash of the block content and compare against this value.
         :param datetime source_if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
@@ -1578,11 +1575,6 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the resource does not exist, and fail the
             operation if it does exist.
-        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
-            Encrypts the data on the service-side with the given key.
-            Use of customer-provided keys must be done over HTTPS.
-            As the encryption key itself is provided in the request,
-            a secure connection must be established to transfer the key.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         """
@@ -1593,14 +1585,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             range_end,
             source_range_start,
             source_content_md5=source_content_md5,
-            lease=lease,
-            if_sequence_number_lte=if_sequence_number_lte, if_sequence_number_lt=if_sequence_number_lt,
-            if_sequence_number_eq=if_sequence_number_eq,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since, if_match=if_match,
-            if_none_match=if_none_match, source_if_modified_since=source_if_modified_since,
-            source_if_unmodified_since=source_if_unmodified_since, source_if_match=source_if_match,
-            source_if_none_match=source_if_none_match, timeout=timeout
+            **kwargs
         )
         try:
             return await self._client.page_blob.upload_pages_from_url(**options)  # type: ignore
