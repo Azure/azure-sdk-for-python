@@ -334,26 +334,40 @@ class HttpResponse(_HttpResponseBase):
         is supported.
         """
 
+
+class HttpClientTransportResponse(HttpResponse):
+    """Create a HTTPResponse from an http.client response.
+
+    Body will NOT be read by the constructor. Call "body()" to load the body in memory if necessary.
+
+    :param HttpRequest request: The request.
+    :param httpclient_response: The object returned from an HTTP(S)Connection from http.client
+    """
+    def __init__(self, request, httpclient_response):
+        super(HttpClientTransportResponse, self).__init__(request, httpclient_response)
+        self.status_code = httpclient_response.status
+        self.headers = dict(httpclient_response.getheaders())
+        self.reason = httpclient_response.reason
+        self.content_type = self.headers.get('Content-Type')
+        self.data = None
+
+    def body(self):
+        if self.data is None:
+            self.data = self.internal_response.read()
+        return self.data
+
+
 class BytesIOSocket(object):
-    """Mocking the "makefile" of socket for HTTPResponse
+    """Mocking the "makefile" of socket for HTTPResponse.
+
+    This can be used to create a http.client.HTTPResponse object
+    based on bytes and not a real socket.
     """
     def __init__(self, bytes_data):
         self.bytes_data = bytes_data
 
     def makefile(self, mode):
         return BytesIO(self.bytes_data)
-
-class StdlibHttpResponse(HttpResponse):
-    def __init__(self, request, stdlib_response):
-        super(StdlibHttpResponse, self).__init__(request, stdlib_response)
-        self.status_code = stdlib_response.status
-        self.headers = dict(stdlib_response.getheaders())
-        self.reason = stdlib_response.reason
-        self.content_type = self.headers.get('Content-Type')
-        self.data = stdlib_response.read()
-
-    def body(self):
-        return self.data
 
 
 def _deserialize_response(http_response_as_bytes, http_request):
@@ -363,7 +377,8 @@ def _deserialize_response(http_response_as_bytes, http_request):
         method=http_request.method
     )
     response.begin()
-    return StdlibHttpResponse(http_request, response)
+    return HttpClientTransportResponse(http_request, response)
+
 
 class PipelineClientBase(object):
     """Base class for pipeline clients.
