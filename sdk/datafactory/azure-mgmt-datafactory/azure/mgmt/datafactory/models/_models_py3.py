@@ -504,7 +504,7 @@ class Dataset(Model):
     DynamicsEntityDataset, DocumentDbCollectionDataset, CustomDataset,
     CassandraTableDataset, AzureSqlDWTableDataset, AzureSqlMITableDataset,
     AzureSqlTableDataset, AzureTableDataset, AzureBlobDataset, BinaryDataset,
-    JsonDataset, DelimitedTextDataset, ParquetDataset, AvroDataset,
+    OrcDataset, JsonDataset, DelimitedTextDataset, ParquetDataset, AvroDataset,
     AmazonS3Dataset
 
     All required parameters must be populated in order to send to Azure.
@@ -555,7 +555,7 @@ class Dataset(Model):
     }
 
     _subtype_map = {
-        'type': {'GoogleAdWordsObject': 'GoogleAdWordsObjectDataset', 'AzureDataExplorerTable': 'AzureDataExplorerTableDataset', 'OracleServiceCloudObject': 'OracleServiceCloudObjectDataset', 'DynamicsAXResource': 'DynamicsAXResourceDataset', 'ResponsysObject': 'ResponsysObjectDataset', 'SalesforceMarketingCloudObject': 'SalesforceMarketingCloudObjectDataset', 'VerticaTable': 'VerticaTableDataset', 'NetezzaTable': 'NetezzaTableDataset', 'ZohoObject': 'ZohoObjectDataset', 'XeroObject': 'XeroObjectDataset', 'SquareObject': 'SquareObjectDataset', 'SparkObject': 'SparkObjectDataset', 'ShopifyObject': 'ShopifyObjectDataset', 'ServiceNowObject': 'ServiceNowObjectDataset', 'QuickBooksObject': 'QuickBooksObjectDataset', 'PrestoObject': 'PrestoObjectDataset', 'PhoenixObject': 'PhoenixObjectDataset', 'PaypalObject': 'PaypalObjectDataset', 'MarketoObject': 'MarketoObjectDataset', 'AzureMariaDBTable': 'AzureMariaDBTableDataset', 'MariaDBTable': 'MariaDBTableDataset', 'MagentoObject': 'MagentoObjectDataset', 'JiraObject': 'JiraObjectDataset', 'ImpalaObject': 'ImpalaObjectDataset', 'HubspotObject': 'HubspotObjectDataset', 'HiveObject': 'HiveObjectDataset', 'HBaseObject': 'HBaseObjectDataset', 'GreenplumTable': 'GreenplumTableDataset', 'GoogleBigQueryObject': 'GoogleBigQueryObjectDataset', 'EloquaObject': 'EloquaObjectDataset', 'DrillTable': 'DrillTableDataset', 'CouchbaseTable': 'CouchbaseTableDataset', 'ConcurObject': 'ConcurObjectDataset', 'AzurePostgreSqlTable': 'AzurePostgreSqlTableDataset', 'AmazonMWSObject': 'AmazonMWSObjectDataset', 'HttpFile': 'HttpDataset', 'AzureSearchIndex': 'AzureSearchIndexDataset', 'WebTable': 'WebTableDataset', 'SapTableResource': 'SapTableResourceDataset', 'RestResource': 'RestResourceDataset', 'SqlServerTable': 'SqlServerTableDataset', 'SapOpenHubTable': 'SapOpenHubTableDataset', 'SapHanaTable': 'SapHanaTableDataset', 'SapEccResource': 'SapEccResourceDataset', 'SapCloudForCustomerResource': 'SapCloudForCustomerResourceDataset', 'SapBwCube': 'SapBwCubeDataset', 'SybaseTable': 'SybaseTableDataset', 'SalesforceServiceCloudObject': 'SalesforceServiceCloudObjectDataset', 'SalesforceObject': 'SalesforceObjectDataset', 'MicrosoftAccessTable': 'MicrosoftAccessTableDataset', 'PostgreSqlTable': 'PostgreSqlTableDataset', 'MySqlTable': 'MySqlTableDataset', 'OdbcTable': 'OdbcTableDataset', 'InformixTable': 'InformixTableDataset', 'RelationalTable': 'RelationalTableDataset', 'Db2Table': 'Db2TableDataset', 'AmazonRedshiftTable': 'AmazonRedshiftTableDataset', 'AzureMySqlTable': 'AzureMySqlTableDataset', 'TeradataTable': 'TeradataTableDataset', 'OracleTable': 'OracleTableDataset', 'ODataResource': 'ODataResourceDataset', 'CosmosDbMongoDbApiCollection': 'CosmosDbMongoDbApiCollectionDataset', 'MongoDbV2Collection': 'MongoDbV2CollectionDataset', 'MongoDbCollection': 'MongoDbCollectionDataset', 'FileShare': 'FileShareDataset', 'Office365Table': 'Office365Dataset', 'AzureBlobFSFile': 'AzureBlobFSDataset', 'AzureDataLakeStoreFile': 'AzureDataLakeStoreDataset', 'CommonDataServiceForAppsEntity': 'CommonDataServiceForAppsEntityDataset', 'DynamicsCrmEntity': 'DynamicsCrmEntityDataset', 'DynamicsEntity': 'DynamicsEntityDataset', 'DocumentDbCollection': 'DocumentDbCollectionDataset', 'CustomDataset': 'CustomDataset', 'CassandraTable': 'CassandraTableDataset', 'AzureSqlDWTable': 'AzureSqlDWTableDataset', 'AzureSqlMITable': 'AzureSqlMITableDataset', 'AzureSqlTable': 'AzureSqlTableDataset', 'AzureTable': 'AzureTableDataset', 'AzureBlob': 'AzureBlobDataset', 'Binary': 'BinaryDataset', 'Json': 'JsonDataset', 'DelimitedText': 'DelimitedTextDataset', 'Parquet': 'ParquetDataset', 'Avro': 'AvroDataset', 'AmazonS3Object': 'AmazonS3Dataset'}
+        'type': {'GoogleAdWordsObject': 'GoogleAdWordsObjectDataset', 'AzureDataExplorerTable': 'AzureDataExplorerTableDataset', 'OracleServiceCloudObject': 'OracleServiceCloudObjectDataset', 'DynamicsAXResource': 'DynamicsAXResourceDataset', 'ResponsysObject': 'ResponsysObjectDataset', 'SalesforceMarketingCloudObject': 'SalesforceMarketingCloudObjectDataset', 'VerticaTable': 'VerticaTableDataset', 'NetezzaTable': 'NetezzaTableDataset', 'ZohoObject': 'ZohoObjectDataset', 'XeroObject': 'XeroObjectDataset', 'SquareObject': 'SquareObjectDataset', 'SparkObject': 'SparkObjectDataset', 'ShopifyObject': 'ShopifyObjectDataset', 'ServiceNowObject': 'ServiceNowObjectDataset', 'QuickBooksObject': 'QuickBooksObjectDataset', 'PrestoObject': 'PrestoObjectDataset', 'PhoenixObject': 'PhoenixObjectDataset', 'PaypalObject': 'PaypalObjectDataset', 'MarketoObject': 'MarketoObjectDataset', 'AzureMariaDBTable': 'AzureMariaDBTableDataset', 'MariaDBTable': 'MariaDBTableDataset', 'MagentoObject': 'MagentoObjectDataset', 'JiraObject': 'JiraObjectDataset', 'ImpalaObject': 'ImpalaObjectDataset', 'HubspotObject': 'HubspotObjectDataset', 'HiveObject': 'HiveObjectDataset', 'HBaseObject': 'HBaseObjectDataset', 'GreenplumTable': 'GreenplumTableDataset', 'GoogleBigQueryObject': 'GoogleBigQueryObjectDataset', 'EloquaObject': 'EloquaObjectDataset', 'DrillTable': 'DrillTableDataset', 'CouchbaseTable': 'CouchbaseTableDataset', 'ConcurObject': 'ConcurObjectDataset', 'AzurePostgreSqlTable': 'AzurePostgreSqlTableDataset', 'AmazonMWSObject': 'AmazonMWSObjectDataset', 'HttpFile': 'HttpDataset', 'AzureSearchIndex': 'AzureSearchIndexDataset', 'WebTable': 'WebTableDataset', 'SapTableResource': 'SapTableResourceDataset', 'RestResource': 'RestResourceDataset', 'SqlServerTable': 'SqlServerTableDataset', 'SapOpenHubTable': 'SapOpenHubTableDataset', 'SapHanaTable': 'SapHanaTableDataset', 'SapEccResource': 'SapEccResourceDataset', 'SapCloudForCustomerResource': 'SapCloudForCustomerResourceDataset', 'SapBwCube': 'SapBwCubeDataset', 'SybaseTable': 'SybaseTableDataset', 'SalesforceServiceCloudObject': 'SalesforceServiceCloudObjectDataset', 'SalesforceObject': 'SalesforceObjectDataset', 'MicrosoftAccessTable': 'MicrosoftAccessTableDataset', 'PostgreSqlTable': 'PostgreSqlTableDataset', 'MySqlTable': 'MySqlTableDataset', 'OdbcTable': 'OdbcTableDataset', 'InformixTable': 'InformixTableDataset', 'RelationalTable': 'RelationalTableDataset', 'Db2Table': 'Db2TableDataset', 'AmazonRedshiftTable': 'AmazonRedshiftTableDataset', 'AzureMySqlTable': 'AzureMySqlTableDataset', 'TeradataTable': 'TeradataTableDataset', 'OracleTable': 'OracleTableDataset', 'ODataResource': 'ODataResourceDataset', 'CosmosDbMongoDbApiCollection': 'CosmosDbMongoDbApiCollectionDataset', 'MongoDbV2Collection': 'MongoDbV2CollectionDataset', 'MongoDbCollection': 'MongoDbCollectionDataset', 'FileShare': 'FileShareDataset', 'Office365Table': 'Office365Dataset', 'AzureBlobFSFile': 'AzureBlobFSDataset', 'AzureDataLakeStoreFile': 'AzureDataLakeStoreDataset', 'CommonDataServiceForAppsEntity': 'CommonDataServiceForAppsEntityDataset', 'DynamicsCrmEntity': 'DynamicsCrmEntityDataset', 'DynamicsEntity': 'DynamicsEntityDataset', 'DocumentDbCollection': 'DocumentDbCollectionDataset', 'CustomDataset': 'CustomDataset', 'CassandraTable': 'CassandraTableDataset', 'AzureSqlDWTable': 'AzureSqlDWTableDataset', 'AzureSqlMITable': 'AzureSqlMITableDataset', 'AzureSqlTable': 'AzureSqlTableDataset', 'AzureTable': 'AzureTableDataset', 'AzureBlob': 'AzureBlobDataset', 'Binary': 'BinaryDataset', 'Orc': 'OrcDataset', 'Json': 'JsonDataset', 'DelimitedText': 'DelimitedTextDataset', 'Parquet': 'ParquetDataset', 'Avro': 'AvroDataset', 'AmazonS3Object': 'AmazonS3Dataset'}
     }
 
     def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, **kwargs) -> None:
@@ -655,7 +655,7 @@ class CopySource(Model):
     MicrosoftAccessSource, InformixSource, RelationalSource,
     CommonDataServiceForAppsSource, DynamicsCrmSource, DynamicsSource,
     DocumentDbCollectionSource, BlobSource, AzureTableSource, BinarySource,
-    JsonSource, DelimitedTextSource, ParquetSource, AvroSource
+    OrcSource, JsonSource, DelimitedTextSource, ParquetSource, AvroSource
 
     All required parameters must be populated in order to send to Azure.
 
@@ -690,7 +690,7 @@ class CopySource(Model):
     }
 
     _subtype_map = {
-        'type': {'AmazonRedshiftSource': 'AmazonRedshiftSource', 'GoogleAdWordsSource': 'GoogleAdWordsSource', 'OracleServiceCloudSource': 'OracleServiceCloudSource', 'DynamicsAXSource': 'DynamicsAXSource', 'ResponsysSource': 'ResponsysSource', 'SalesforceMarketingCloudSource': 'SalesforceMarketingCloudSource', 'VerticaSource': 'VerticaSource', 'NetezzaSource': 'NetezzaSource', 'ZohoSource': 'ZohoSource', 'XeroSource': 'XeroSource', 'SquareSource': 'SquareSource', 'SparkSource': 'SparkSource', 'ShopifySource': 'ShopifySource', 'ServiceNowSource': 'ServiceNowSource', 'QuickBooksSource': 'QuickBooksSource', 'PrestoSource': 'PrestoSource', 'PhoenixSource': 'PhoenixSource', 'PaypalSource': 'PaypalSource', 'MarketoSource': 'MarketoSource', 'AzureMariaDBSource': 'AzureMariaDBSource', 'MariaDBSource': 'MariaDBSource', 'MagentoSource': 'MagentoSource', 'JiraSource': 'JiraSource', 'ImpalaSource': 'ImpalaSource', 'HubspotSource': 'HubspotSource', 'HiveSource': 'HiveSource', 'HBaseSource': 'HBaseSource', 'GreenplumSource': 'GreenplumSource', 'GoogleBigQuerySource': 'GoogleBigQuerySource', 'EloquaSource': 'EloquaSource', 'DrillSource': 'DrillSource', 'CouchbaseSource': 'CouchbaseSource', 'ConcurSource': 'ConcurSource', 'AzurePostgreSqlSource': 'AzurePostgreSqlSource', 'AmazonMWSSource': 'AmazonMWSSource', 'HttpSource': 'HttpSource', 'AzureBlobFSSource': 'AzureBlobFSSource', 'AzureDataLakeStoreSource': 'AzureDataLakeStoreSource', 'Office365Source': 'Office365Source', 'CosmosDbMongoDbApiSource': 'CosmosDbMongoDbApiSource', 'MongoDbV2Source': 'MongoDbV2Source', 'MongoDbSource': 'MongoDbSource', 'CassandraSource': 'CassandraSource', 'WebSource': 'WebSource', 'TeradataSource': 'TeradataSource', 'OracleSource': 'OracleSource', 'AzureDataExplorerSource': 'AzureDataExplorerSource', 'AzureMySqlSource': 'AzureMySqlSource', 'HdfsSource': 'HdfsSource', 'FileSystemSource': 'FileSystemSource', 'SqlDWSource': 'SqlDWSource', 'SqlMISource': 'SqlMISource', 'AzureSqlSource': 'AzureSqlSource', 'SqlServerSource': 'SqlServerSource', 'SqlSource': 'SqlSource', 'RestSource': 'RestSource', 'SapTableSource': 'SapTableSource', 'SapOpenHubSource': 'SapOpenHubSource', 'SapHanaSource': 'SapHanaSource', 'SapEccSource': 'SapEccSource', 'SapCloudForCustomerSource': 'SapCloudForCustomerSource', 'SalesforceServiceCloudSource': 'SalesforceServiceCloudSource', 'SalesforceSource': 'SalesforceSource', 'ODataSource': 'ODataSource', 'SapBwSource': 'SapBwSource', 'SybaseSource': 'SybaseSource', 'PostgreSqlSource': 'PostgreSqlSource', 'MySqlSource': 'MySqlSource', 'OdbcSource': 'OdbcSource', 'Db2Source': 'Db2Source', 'MicrosoftAccessSource': 'MicrosoftAccessSource', 'InformixSource': 'InformixSource', 'RelationalSource': 'RelationalSource', 'CommonDataServiceForAppsSource': 'CommonDataServiceForAppsSource', 'DynamicsCrmSource': 'DynamicsCrmSource', 'DynamicsSource': 'DynamicsSource', 'DocumentDbCollectionSource': 'DocumentDbCollectionSource', 'BlobSource': 'BlobSource', 'AzureTableSource': 'AzureTableSource', 'BinarySource': 'BinarySource', 'JsonSource': 'JsonSource', 'DelimitedTextSource': 'DelimitedTextSource', 'ParquetSource': 'ParquetSource', 'AvroSource': 'AvroSource'}
+        'type': {'AmazonRedshiftSource': 'AmazonRedshiftSource', 'GoogleAdWordsSource': 'GoogleAdWordsSource', 'OracleServiceCloudSource': 'OracleServiceCloudSource', 'DynamicsAXSource': 'DynamicsAXSource', 'ResponsysSource': 'ResponsysSource', 'SalesforceMarketingCloudSource': 'SalesforceMarketingCloudSource', 'VerticaSource': 'VerticaSource', 'NetezzaSource': 'NetezzaSource', 'ZohoSource': 'ZohoSource', 'XeroSource': 'XeroSource', 'SquareSource': 'SquareSource', 'SparkSource': 'SparkSource', 'ShopifySource': 'ShopifySource', 'ServiceNowSource': 'ServiceNowSource', 'QuickBooksSource': 'QuickBooksSource', 'PrestoSource': 'PrestoSource', 'PhoenixSource': 'PhoenixSource', 'PaypalSource': 'PaypalSource', 'MarketoSource': 'MarketoSource', 'AzureMariaDBSource': 'AzureMariaDBSource', 'MariaDBSource': 'MariaDBSource', 'MagentoSource': 'MagentoSource', 'JiraSource': 'JiraSource', 'ImpalaSource': 'ImpalaSource', 'HubspotSource': 'HubspotSource', 'HiveSource': 'HiveSource', 'HBaseSource': 'HBaseSource', 'GreenplumSource': 'GreenplumSource', 'GoogleBigQuerySource': 'GoogleBigQuerySource', 'EloquaSource': 'EloquaSource', 'DrillSource': 'DrillSource', 'CouchbaseSource': 'CouchbaseSource', 'ConcurSource': 'ConcurSource', 'AzurePostgreSqlSource': 'AzurePostgreSqlSource', 'AmazonMWSSource': 'AmazonMWSSource', 'HttpSource': 'HttpSource', 'AzureBlobFSSource': 'AzureBlobFSSource', 'AzureDataLakeStoreSource': 'AzureDataLakeStoreSource', 'Office365Source': 'Office365Source', 'CosmosDbMongoDbApiSource': 'CosmosDbMongoDbApiSource', 'MongoDbV2Source': 'MongoDbV2Source', 'MongoDbSource': 'MongoDbSource', 'CassandraSource': 'CassandraSource', 'WebSource': 'WebSource', 'TeradataSource': 'TeradataSource', 'OracleSource': 'OracleSource', 'AzureDataExplorerSource': 'AzureDataExplorerSource', 'AzureMySqlSource': 'AzureMySqlSource', 'HdfsSource': 'HdfsSource', 'FileSystemSource': 'FileSystemSource', 'SqlDWSource': 'SqlDWSource', 'SqlMISource': 'SqlMISource', 'AzureSqlSource': 'AzureSqlSource', 'SqlServerSource': 'SqlServerSource', 'SqlSource': 'SqlSource', 'RestSource': 'RestSource', 'SapTableSource': 'SapTableSource', 'SapOpenHubSource': 'SapOpenHubSource', 'SapHanaSource': 'SapHanaSource', 'SapEccSource': 'SapEccSource', 'SapCloudForCustomerSource': 'SapCloudForCustomerSource', 'SalesforceServiceCloudSource': 'SalesforceServiceCloudSource', 'SalesforceSource': 'SalesforceSource', 'ODataSource': 'ODataSource', 'SapBwSource': 'SapBwSource', 'SybaseSource': 'SybaseSource', 'PostgreSqlSource': 'PostgreSqlSource', 'MySqlSource': 'MySqlSource', 'OdbcSource': 'OdbcSource', 'Db2Source': 'Db2Source', 'MicrosoftAccessSource': 'MicrosoftAccessSource', 'InformixSource': 'InformixSource', 'RelationalSource': 'RelationalSource', 'CommonDataServiceForAppsSource': 'CommonDataServiceForAppsSource', 'DynamicsCrmSource': 'DynamicsCrmSource', 'DynamicsSource': 'DynamicsSource', 'DocumentDbCollectionSource': 'DocumentDbCollectionSource', 'BlobSource': 'BlobSource', 'AzureTableSource': 'AzureTableSource', 'BinarySource': 'BinarySource', 'OrcSource': 'OrcSource', 'JsonSource': 'JsonSource', 'DelimitedTextSource': 'DelimitedTextSource', 'ParquetSource': 'ParquetSource', 'AvroSource': 'AvroSource'}
     }
 
     def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, **kwargs) -> None:
@@ -1540,8 +1540,8 @@ class CopySink(Model):
     SqlDWSink, SqlMISink, AzureSqlSink, SqlServerSink, SqlSink,
     DocumentDbCollectionSink, FileSystemSink, BlobSink, BinarySink,
     ParquetSink, AvroSink, AzureTableSink, AzureQueueSink,
-    SapCloudForCustomerSink, AzureMySqlSink, AzurePostgreSqlSink, JsonSink,
-    DelimitedTextSink
+    SapCloudForCustomerSink, AzureMySqlSink, AzurePostgreSqlSink, OrcSink,
+    JsonSink, DelimitedTextSink
 
     All required parameters must be populated in order to send to Azure.
 
@@ -1585,7 +1585,7 @@ class CopySink(Model):
     }
 
     _subtype_map = {
-        'type': {'CosmosDbMongoDbApiSink': 'CosmosDbMongoDbApiSink', 'SalesforceServiceCloudSink': 'SalesforceServiceCloudSink', 'SalesforceSink': 'SalesforceSink', 'AzureDataExplorerSink': 'AzureDataExplorerSink', 'CommonDataServiceForAppsSink': 'CommonDataServiceForAppsSink', 'DynamicsCrmSink': 'DynamicsCrmSink', 'DynamicsSink': 'DynamicsSink', 'MicrosoftAccessSink': 'MicrosoftAccessSink', 'InformixSink': 'InformixSink', 'OdbcSink': 'OdbcSink', 'AzureSearchIndexSink': 'AzureSearchIndexSink', 'AzureBlobFSSink': 'AzureBlobFSSink', 'AzureDataLakeStoreSink': 'AzureDataLakeStoreSink', 'OracleSink': 'OracleSink', 'SqlDWSink': 'SqlDWSink', 'SqlMISink': 'SqlMISink', 'AzureSqlSink': 'AzureSqlSink', 'SqlServerSink': 'SqlServerSink', 'SqlSink': 'SqlSink', 'DocumentDbCollectionSink': 'DocumentDbCollectionSink', 'FileSystemSink': 'FileSystemSink', 'BlobSink': 'BlobSink', 'BinarySink': 'BinarySink', 'ParquetSink': 'ParquetSink', 'AvroSink': 'AvroSink', 'AzureTableSink': 'AzureTableSink', 'AzureQueueSink': 'AzureQueueSink', 'SapCloudForCustomerSink': 'SapCloudForCustomerSink', 'AzureMySqlSink': 'AzureMySqlSink', 'AzurePostgreSqlSink': 'AzurePostgreSqlSink', 'JsonSink': 'JsonSink', 'DelimitedTextSink': 'DelimitedTextSink'}
+        'type': {'CosmosDbMongoDbApiSink': 'CosmosDbMongoDbApiSink', 'SalesforceServiceCloudSink': 'SalesforceServiceCloudSink', 'SalesforceSink': 'SalesforceSink', 'AzureDataExplorerSink': 'AzureDataExplorerSink', 'CommonDataServiceForAppsSink': 'CommonDataServiceForAppsSink', 'DynamicsCrmSink': 'DynamicsCrmSink', 'DynamicsSink': 'DynamicsSink', 'MicrosoftAccessSink': 'MicrosoftAccessSink', 'InformixSink': 'InformixSink', 'OdbcSink': 'OdbcSink', 'AzureSearchIndexSink': 'AzureSearchIndexSink', 'AzureBlobFSSink': 'AzureBlobFSSink', 'AzureDataLakeStoreSink': 'AzureDataLakeStoreSink', 'OracleSink': 'OracleSink', 'SqlDWSink': 'SqlDWSink', 'SqlMISink': 'SqlMISink', 'AzureSqlSink': 'AzureSqlSink', 'SqlServerSink': 'SqlServerSink', 'SqlSink': 'SqlSink', 'DocumentDbCollectionSink': 'DocumentDbCollectionSink', 'FileSystemSink': 'FileSystemSink', 'BlobSink': 'BlobSink', 'BinarySink': 'BinarySink', 'ParquetSink': 'ParquetSink', 'AvroSink': 'AvroSink', 'AzureTableSink': 'AzureTableSink', 'AzureQueueSink': 'AzureQueueSink', 'SapCloudForCustomerSink': 'SapCloudForCustomerSink', 'AzureMySqlSink': 'AzureMySqlSink', 'AzurePostgreSqlSink': 'AzurePostgreSqlSink', 'OrcSink': 'OrcSink', 'JsonSink': 'JsonSink', 'DelimitedTextSink': 'DelimitedTextSink'}
     }
 
     def __init__(self, *, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, max_concurrent_connections=None, **kwargs) -> None:
@@ -2712,11 +2712,12 @@ class ExecutionActivity(Activity):
     """Base class for all execution activities.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AzureFunctionActivity, DatabricksSparkPythonActivity,
-    DatabricksSparkJarActivity, DatabricksNotebookActivity,
-    DataLakeAnalyticsUSQLActivity, AzureMLUpdateResourceActivity,
-    AzureMLBatchExecutionActivity, GetMetadataActivity, WebActivity,
-    LookupActivity, AzureDataExplorerCommandActivity, DeleteActivity,
+    sub-classes are: ExecuteDataFlowActivity, AzureFunctionActivity,
+    DatabricksSparkPythonActivity, DatabricksSparkJarActivity,
+    DatabricksNotebookActivity, DataLakeAnalyticsUSQLActivity,
+    AzureMLUpdateResourceActivity, AzureMLBatchExecutionActivity,
+    GetMetadataActivity, WebActivity, LookupActivity,
+    AzureDataExplorerCommandActivity, DeleteActivity,
     SqlServerStoredProcedureActivity, CustomActivity,
     ExecuteSSISPackageActivity, HDInsightSparkActivity,
     HDInsightStreamingActivity, HDInsightMapReduceActivity,
@@ -2761,7 +2762,7 @@ class ExecutionActivity(Activity):
     }
 
     _subtype_map = {
-        'type': {'AzureFunctionActivity': 'AzureFunctionActivity', 'DatabricksSparkPython': 'DatabricksSparkPythonActivity', 'DatabricksSparkJar': 'DatabricksSparkJarActivity', 'DatabricksNotebook': 'DatabricksNotebookActivity', 'DataLakeAnalyticsU-SQL': 'DataLakeAnalyticsUSQLActivity', 'AzureMLUpdateResource': 'AzureMLUpdateResourceActivity', 'AzureMLBatchExecution': 'AzureMLBatchExecutionActivity', 'GetMetadata': 'GetMetadataActivity', 'WebActivity': 'WebActivity', 'Lookup': 'LookupActivity', 'AzureDataExplorerCommand': 'AzureDataExplorerCommandActivity', 'Delete': 'DeleteActivity', 'SqlServerStoredProcedure': 'SqlServerStoredProcedureActivity', 'Custom': 'CustomActivity', 'ExecuteSSISPackage': 'ExecuteSSISPackageActivity', 'HDInsightSpark': 'HDInsightSparkActivity', 'HDInsightStreaming': 'HDInsightStreamingActivity', 'HDInsightMapReduce': 'HDInsightMapReduceActivity', 'HDInsightPig': 'HDInsightPigActivity', 'HDInsightHive': 'HDInsightHiveActivity', 'Copy': 'CopyActivity'}
+        'type': {'ExecuteDataFlow': 'ExecuteDataFlowActivity', 'AzureFunctionActivity': 'AzureFunctionActivity', 'DatabricksSparkPython': 'DatabricksSparkPythonActivity', 'DatabricksSparkJar': 'DatabricksSparkJarActivity', 'DatabricksNotebook': 'DatabricksNotebookActivity', 'DataLakeAnalyticsU-SQL': 'DataLakeAnalyticsUSQLActivity', 'AzureMLUpdateResource': 'AzureMLUpdateResourceActivity', 'AzureMLBatchExecution': 'AzureMLBatchExecutionActivity', 'GetMetadata': 'GetMetadataActivity', 'WebActivity': 'WebActivity', 'Lookup': 'LookupActivity', 'AzureDataExplorerCommand': 'AzureDataExplorerCommandActivity', 'Delete': 'DeleteActivity', 'SqlServerStoredProcedure': 'SqlServerStoredProcedureActivity', 'Custom': 'CustomActivity', 'ExecuteSSISPackage': 'ExecuteSSISPackageActivity', 'HDInsightSpark': 'HDInsightSparkActivity', 'HDInsightStreaming': 'HDInsightStreamingActivity', 'HDInsightMapReduce': 'HDInsightMapReduceActivity', 'HDInsightPig': 'HDInsightPigActivity', 'HDInsightHive': 'HDInsightHiveActivity', 'Copy': 'CopyActivity'}
     }
 
     def __init__(self, *, name: str, additional_properties=None, description: str=None, depends_on=None, user_properties=None, linked_service_name=None, policy=None, **kwargs) -> None:
@@ -6638,6 +6639,72 @@ class CloudErrorException(HttpOperationError):
         super(CloudErrorException, self).__init__(deserialize, response, 'CloudError', *args)
 
 
+class CustomSetupBase(Model):
+    """The base definition of the custom setup.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: ComponentSetup, EnvironmentVariableSetup, CmdkeySetup
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Constant filled by server.
+    :type type: str
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'type': {'ComponentSetup': 'ComponentSetup', 'EnvironmentVariableSetup': 'EnvironmentVariableSetup', 'CmdkeySetup': 'CmdkeySetup'}
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(CustomSetupBase, self).__init__(**kwargs)
+        self.type = None
+
+
+class CmdkeySetup(CustomSetupBase):
+    """The custom setup of running cmdkey commands.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param target_name: Required. The server name of data source access.
+    :type target_name: object
+    :param user_name: Required. The user name of data source access.
+    :type user_name: object
+    :param password: Required. The password of data source access.
+    :type password: ~azure.mgmt.datafactory.models.SecretBase
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'target_name': {'required': True},
+        'user_name': {'required': True},
+        'password': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'target_name': {'key': 'typeProperties.targetName', 'type': 'object'},
+        'user_name': {'key': 'typeProperties.userName', 'type': 'object'},
+        'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
+    }
+
+    def __init__(self, *, target_name, user_name, password, **kwargs) -> None:
+        super(CmdkeySetup, self).__init__(**kwargs)
+        self.target_name = target_name
+        self.user_name = user_name
+        self.password = password
+        self.type = 'CmdkeySetup'
+
+
 class CommonDataServiceForAppsEntityDataset(Dataset):
     """The Common Data Service for Apps entity dataset.
 
@@ -6910,6 +6977,38 @@ class CommonDataServiceForAppsSource(CopySource):
         super(CommonDataServiceForAppsSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
         self.query = query
         self.type = 'CommonDataServiceForAppsSource'
+
+
+class ComponentSetup(CustomSetupBase):
+    """The custom setup of installing 3rd party components.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param component_name: Required. The name of the 3rd party component.
+    :type component_name: str
+    :param license_key: Required. The license key to activate the component.
+    :type license_key: ~azure.mgmt.datafactory.models.SecretBase
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'component_name': {'required': True},
+        'license_key': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'component_name': {'key': 'typeProperties.componentName', 'type': 'str'},
+        'license_key': {'key': 'typeProperties.licenseKey', 'type': 'SecretBase'},
+    }
+
+    def __init__(self, *, component_name: str, license_key, **kwargs) -> None:
+        super(ComponentSetup, self).__init__(**kwargs)
+        self.component_name = component_name
+        self.license_key = license_key
+        self.type = 'ComponentSetup'
 
 
 class ConcurLinkedService(LinkedService):
@@ -8206,6 +8305,40 @@ class DataFlow(Model):
         self.type = None
 
 
+class DataFlowDebugCommandPayload(Model):
+    """Structure of command payload.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param stream_name: Required. The stream name which is used for preview.
+    :type stream_name: str
+    :param row_limits: Row limits for preview response.
+    :type row_limits: int
+    :param columns: Array of column names.
+    :type columns: list[str]
+    :param expression: The expression which is used for preview.
+    :type expression: str
+    """
+
+    _validation = {
+        'stream_name': {'required': True},
+    }
+
+    _attribute_map = {
+        'stream_name': {'key': 'streamName', 'type': 'str'},
+        'row_limits': {'key': 'rowLimits', 'type': 'int'},
+        'columns': {'key': 'columns', 'type': '[str]'},
+        'expression': {'key': 'expression', 'type': 'str'},
+    }
+
+    def __init__(self, *, stream_name: str, row_limits: int=None, columns=None, expression: str=None, **kwargs) -> None:
+        super(DataFlowDebugCommandPayload, self).__init__(**kwargs)
+        self.stream_name = stream_name
+        self.row_limits = row_limits
+        self.columns = columns
+        self.expression = expression
+
+
 class DataFlowDebugCommandRequest(Model):
     """Request body structure for data flow expression preview.
 
@@ -8218,14 +8351,15 @@ class DataFlowDebugCommandRequest(Model):
     :type command_name: str or
      ~azure.mgmt.datafactory.models.DataFlowDebugCommandType
     :param command_payload: The command payload object.
-    :type command_payload: object
+    :type command_payload:
+     ~azure.mgmt.datafactory.models.DataFlowDebugCommandPayload
     """
 
     _attribute_map = {
         'session_id': {'key': 'sessionId', 'type': 'str'},
         'data_flow_name': {'key': 'dataFlowName', 'type': 'str'},
         'command_name': {'key': 'commandName', 'type': 'str'},
-        'command_payload': {'key': 'commandPayload', 'type': 'object'},
+        'command_payload': {'key': 'commandPayload', 'type': 'DataFlowDebugCommandPayload'},
     }
 
     def __init__(self, *, session_id: str=None, data_flow_name: str=None, command_name=None, command_payload=None, **kwargs) -> None:
@@ -8564,6 +8698,27 @@ class DataFlowSource(Transformation):
         super(DataFlowSource, self).__init__(additional_properties=additional_properties, name=name, description=description, **kwargs)
         self.dataset = dataset
         self.additional_properties = additional_properties
+
+
+class DataFlowStagingInfo(Model):
+    """Staging info for execute data flow activity.
+
+    :param linked_service: Staging linked service reference.
+    :type linked_service:
+     ~azure.mgmt.datafactory.models.LinkedServiceReference
+    :param folder_path: Folder path for staging blob.
+    :type folder_path: str
+    """
+
+    _attribute_map = {
+        'linked_service': {'key': 'linkedService', 'type': 'LinkedServiceReference'},
+        'folder_path': {'key': 'folderPath', 'type': 'str'},
+    }
+
+    def __init__(self, *, linked_service=None, folder_path: str=None, **kwargs) -> None:
+        super(DataFlowStagingInfo, self).__init__(**kwargs)
+        self.linked_service = linked_service
+        self.folder_path = folder_path
 
 
 class DataLakeAnalyticsUSQLActivity(ExecutionActivity):
@@ -10828,6 +10983,93 @@ class EntityReference(Model):
         super(EntityReference, self).__init__(**kwargs)
         self.type = type
         self.reference_name = reference_name
+
+
+class EnvironmentVariableSetup(CustomSetupBase):
+    """The custom setup of setting environment variable.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param variable_name: Required. The name of the environment variable.
+    :type variable_name: str
+    :param variable_value: Required. The value of the environment variable.
+    :type variable_value: str
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'variable_name': {'required': True},
+        'variable_value': {'required': True},
+    }
+
+    _attribute_map = {
+        'type': {'key': 'type', 'type': 'str'},
+        'variable_name': {'key': 'typeProperties.variableName', 'type': 'str'},
+        'variable_value': {'key': 'typeProperties.variableValue', 'type': 'str'},
+    }
+
+    def __init__(self, *, variable_name: str, variable_value: str, **kwargs) -> None:
+        super(EnvironmentVariableSetup, self).__init__(**kwargs)
+        self.variable_name = variable_name
+        self.variable_value = variable_value
+        self.type = 'EnvironmentVariableSetup'
+
+
+class ExecuteDataFlowActivity(ExecutionActivity):
+    """Execute data flow activity.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param name: Required. Activity name.
+    :type name: str
+    :param description: Activity description.
+    :type description: str
+    :param depends_on: Activity depends on condition.
+    :type depends_on: list[~azure.mgmt.datafactory.models.ActivityDependency]
+    :param user_properties: Activity user properties.
+    :type user_properties: list[~azure.mgmt.datafactory.models.UserProperty]
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param linked_service_name: Linked service reference.
+    :type linked_service_name:
+     ~azure.mgmt.datafactory.models.LinkedServiceReference
+    :param policy: Activity policy.
+    :type policy: ~azure.mgmt.datafactory.models.ActivityPolicy
+    :param data_flow: Required. Data flow reference.
+    :type data_flow: ~azure.mgmt.datafactory.models.DataFlowReference
+    :param staging: Staging info for execute data flow activity.
+    :type staging: ~azure.mgmt.datafactory.models.DataFlowStagingInfo
+    """
+
+    _validation = {
+        'name': {'required': True},
+        'type': {'required': True},
+        'data_flow': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'name': {'key': 'name', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'depends_on': {'key': 'dependsOn', 'type': '[ActivityDependency]'},
+        'user_properties': {'key': 'userProperties', 'type': '[UserProperty]'},
+        'type': {'key': 'type', 'type': 'str'},
+        'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
+        'policy': {'key': 'policy', 'type': 'ActivityPolicy'},
+        'data_flow': {'key': 'typeProperties.dataFlow', 'type': 'DataFlowReference'},
+        'staging': {'key': 'typeProperties.staging', 'type': 'DataFlowStagingInfo'},
+    }
+
+    def __init__(self, *, name: str, data_flow, additional_properties=None, description: str=None, depends_on=None, user_properties=None, linked_service_name=None, policy=None, staging=None, **kwargs) -> None:
+        super(ExecuteDataFlowActivity, self).__init__(additional_properties=additional_properties, name=name, description=description, depends_on=depends_on, user_properties=user_properties, linked_service_name=linked_service_name, policy=policy, **kwargs)
+        self.data_flow = data_flow
+        self.staging = staging
+        self.type = 'ExecuteDataFlow'
 
 
 class ExecutePipelineActivity(ControlActivity):
@@ -15756,6 +15998,10 @@ class IntegrationRuntimeSsisProperties(Model):
      values include: 'Standard', 'Enterprise'
     :type edition: str or
      ~azure.mgmt.datafactory.models.IntegrationRuntimeEdition
+    :param express_custom_setup_properties: Custom setup without script
+     properties for a SSIS integration runtime.
+    :type express_custom_setup_properties:
+     list[~azure.mgmt.datafactory.models.CustomSetupBase]
     """
 
     _attribute_map = {
@@ -15765,9 +16011,10 @@ class IntegrationRuntimeSsisProperties(Model):
         'custom_setup_script_properties': {'key': 'customSetupScriptProperties', 'type': 'IntegrationRuntimeCustomSetupScriptProperties'},
         'data_proxy_properties': {'key': 'dataProxyProperties', 'type': 'IntegrationRuntimeDataProxyProperties'},
         'edition': {'key': 'edition', 'type': 'str'},
+        'express_custom_setup_properties': {'key': 'expressCustomSetupProperties', 'type': '[CustomSetupBase]'},
     }
 
-    def __init__(self, *, additional_properties=None, catalog_info=None, license_type=None, custom_setup_script_properties=None, data_proxy_properties=None, edition=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, catalog_info=None, license_type=None, custom_setup_script_properties=None, data_proxy_properties=None, edition=None, express_custom_setup_properties=None, **kwargs) -> None:
         super(IntegrationRuntimeSsisProperties, self).__init__(**kwargs)
         self.additional_properties = additional_properties
         self.catalog_info = catalog_info
@@ -15775,6 +16022,7 @@ class IntegrationRuntimeSsisProperties(Model):
         self.custom_setup_script_properties = custom_setup_script_properties
         self.data_proxy_properties = data_proxy_properties
         self.edition = edition
+        self.express_custom_setup_properties = express_custom_setup_properties
 
 
 class IntegrationRuntimeStatus(Model):
@@ -19166,7 +19414,7 @@ class Office365LinkedService(LinkedService):
 
 
 class Office365Source(CopySource):
-    """A copy activity source for an Office365 service.
+    """A copy activity source for an Office 365 service.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -19202,6 +19450,10 @@ class Office365Source(CopySource):
     :param end_time: End time of the requested range for this dataset. Type:
      string (or Expression with resultType string).
     :type end_time: object
+    :param output_columns: The columns to be read out from the Office 365
+     table. Type: array of objects (or Expression with resultType array of
+     objects). Example: [ { "name": "Id" }, { "name": "CreatedDateTime" } ]
+    :type output_columns: object
     """
 
     _validation = {
@@ -19219,15 +19471,17 @@ class Office365Source(CopySource):
         'date_filter_column': {'key': 'dateFilterColumn', 'type': 'object'},
         'start_time': {'key': 'startTime', 'type': 'object'},
         'end_time': {'key': 'endTime', 'type': 'object'},
+        'output_columns': {'key': 'outputColumns', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, allowed_groups=None, user_scope_filter_uri=None, date_filter_column=None, start_time=None, end_time=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, allowed_groups=None, user_scope_filter_uri=None, date_filter_column=None, start_time=None, end_time=None, output_columns=None, **kwargs) -> None:
         super(Office365Source, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
         self.allowed_groups = allowed_groups
         self.user_scope_filter_uri = user_scope_filter_uri
         self.date_filter_column = date_filter_column
         self.start_time = start_time
         self.end_time = end_time
+        self.output_columns = output_columns
         self.type = 'Office365Source'
 
 
@@ -19907,6 +20161,66 @@ class OracleTableDataset(Dataset):
         self.type = 'OracleTable'
 
 
+class OrcDataset(Dataset):
+    """ORC dataset.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param description: Dataset description.
+    :type description: str
+    :param structure: Columns that define the structure of the dataset. Type:
+     array (or Expression with resultType array), itemType: DatasetDataElement.
+    :type structure: object
+    :param schema: Columns that define the physical type schema of the
+     dataset. Type: array (or Expression with resultType array), itemType:
+     DatasetSchemaDataElement.
+    :type schema: object
+    :param linked_service_name: Required. Linked service reference.
+    :type linked_service_name:
+     ~azure.mgmt.datafactory.models.LinkedServiceReference
+    :param parameters: Parameters for dataset.
+    :type parameters: dict[str,
+     ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :param annotations: List of tags that can be used for describing the
+     Dataset.
+    :type annotations: list[object]
+    :param folder: The folder that this Dataset is in. If not specified,
+     Dataset will appear at the root level.
+    :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param location: Required. The location of the ORC data storage.
+    :type location: ~azure.mgmt.datafactory.models.DatasetLocation
+    """
+
+    _validation = {
+        'linked_service_name': {'required': True},
+        'type': {'required': True},
+        'location': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'description': {'key': 'description', 'type': 'str'},
+        'structure': {'key': 'structure', 'type': 'object'},
+        'schema': {'key': 'schema', 'type': 'object'},
+        'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
+        'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
+        'folder': {'key': 'folder', 'type': 'DatasetFolder'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'typeProperties.location', 'type': 'DatasetLocation'},
+    }
+
+    def __init__(self, *, linked_service_name, location, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, **kwargs) -> None:
+        super(OrcDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
+        self.location = location
+        self.type = 'Orc'
+
+
 class OrcFormat(DatasetStorageFormat):
     """The data stored in Optimized Row Columnar (ORC) format.
 
@@ -19939,6 +20253,103 @@ class OrcFormat(DatasetStorageFormat):
     def __init__(self, *, additional_properties=None, serializer=None, deserializer=None, **kwargs) -> None:
         super(OrcFormat, self).__init__(additional_properties=additional_properties, serializer=serializer, deserializer=deserializer, **kwargs)
         self.type = 'OrcFormat'
+
+
+class OrcSink(CopySink):
+    """A copy activity ORC sink.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param write_batch_size: Write batch size. Type: integer (or Expression
+     with resultType integer), minimum: 0.
+    :type write_batch_size: object
+    :param write_batch_timeout: Write batch timeout. Type: string (or
+     Expression with resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type write_batch_timeout: object
+    :param sink_retry_count: Sink retry count. Type: integer (or Expression
+     with resultType integer).
+    :type sink_retry_count: object
+    :param sink_retry_wait: Sink retry wait. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type sink_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count
+     for the sink data store. Type: integer (or Expression with resultType
+     integer).
+    :type max_concurrent_connections: object
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param store_settings: ORC store settings.
+    :type store_settings: ~azure.mgmt.datafactory.models.StoreWriteSettings
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'write_batch_size': {'key': 'writeBatchSize', 'type': 'object'},
+        'write_batch_timeout': {'key': 'writeBatchTimeout', 'type': 'object'},
+        'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
+        'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'type': {'key': 'type', 'type': 'str'},
+        'store_settings': {'key': 'storeSettings', 'type': 'StoreWriteSettings'},
+    }
+
+    def __init__(self, *, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, max_concurrent_connections=None, store_settings=None, **kwargs) -> None:
+        super(OrcSink, self).__init__(additional_properties=additional_properties, write_batch_size=write_batch_size, write_batch_timeout=write_batch_timeout, sink_retry_count=sink_retry_count, sink_retry_wait=sink_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+        self.store_settings = store_settings
+        self.type = 'OrcSink'
+
+
+class OrcSource(CopySource):
+    """A copy activity ORC source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param source_retry_count: Source retry count. Type: integer (or
+     Expression with resultType integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression
+     with resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count
+     for the source data store. Type: integer (or Expression with resultType
+     integer).
+    :type max_concurrent_connections: object
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param store_settings: ORC store settings.
+    :type store_settings: ~azure.mgmt.datafactory.models.StoreReadSettings
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'type': {'key': 'type', 'type': 'str'},
+        'store_settings': {'key': 'storeSettings', 'type': 'StoreReadSettings'},
+    }
+
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, store_settings=None, **kwargs) -> None:
+        super(OrcSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+        self.store_settings = store_settings
+        self.type = 'OrcSource'
 
 
 class ParameterSpecification(Model):
@@ -27428,13 +27839,13 @@ class SubmitDataFlowForPreviewRequestDebugSettings(Model):
     :param parameters: Data flow parameters.
     :type parameters: dict[str, object]
     :param dataset_parameters: Parameters for dataset.
-    :type dataset_parameters: object
+    :type dataset_parameters: dict[str, dict[str, object]]
     """
 
     _attribute_map = {
         'source_settings': {'key': 'sourceSettings', 'type': 'object'},
         'parameters': {'key': 'parameters', 'type': '{object}'},
-        'dataset_parameters': {'key': 'datasetParameters', 'type': 'object'},
+        'dataset_parameters': {'key': 'datasetParameters', 'type': '{{object}}'},
     }
 
     def __init__(self, *, source_settings=None, parameters=None, dataset_parameters=None, **kwargs) -> None:
