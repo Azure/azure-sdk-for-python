@@ -170,26 +170,26 @@ class ActualTrafficConnectedResources(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar traffic_volume: The actual traffic volume between the actual traffic
-     start time to the actual traffic end time
-    :vartype traffic_volume: str
+    :ivar volume: The actual traffic volume between the actual traffic start
+     time to the actual traffic end time
+    :vartype volume: str
     :param connections_details:
     :type connections_details:
      list[~azure.mgmt.security.models.ConnectionDetails]
     """
 
     _validation = {
-        'traffic_volume': {'readonly': True},
+        'volume': {'readonly': True},
     }
 
     _attribute_map = {
-        'traffic_volume': {'key': 'trafficVolume', 'type': 'str'},
+        'volume': {'key': 'volume', 'type': 'str'},
         'connections_details': {'key': 'connectionsDetails', 'type': '[ConnectionDetails]'},
     }
 
     def __init__(self, **kwargs):
         super(ActualTrafficConnectedResources, self).__init__(**kwargs)
-        self.traffic_volume = None
+        self.volume = None
         self.connections_details = kwargs.get('connections_details', None)
 
 
@@ -1153,13 +1153,13 @@ class ConnectedResources(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar tcp_ports_count: The allowed connections tcp ports count
+    :ivar tcp_ports_count: The connections tcp ports count
     :vartype tcp_ports_count: int
-    :ivar udp_ports_count: The allowed connections udp ports count
+    :ivar udp_ports_count: The connections udp ports count
     :vartype udp_ports_count: int
-    :ivar tcp_ports: The allowed connections tcp ports
+    :ivar tcp_ports: The connections tcp ports
     :vartype tcp_ports: str
-    :ivar udp_ports: The allowed connections udp ports
+    :ivar udp_ports: The connections udp ports
     :vartype udp_ports: str
     """
 
@@ -2566,7 +2566,7 @@ class NetworkDataConnectableResource(Model):
     :ivar connectable_resource_id: The connectable resource id
     :vartype connectable_resource_id: str
     :param connection_type: The connection type between the extension resource
-     to the connectable resource Id. Possible values include: 'Azure vm'
+     to the connectable resource Id. Possible values include: 'Azure VM'
     :type connection_type: str or
      ~azure.mgmt.security.models.ConnectionTypeValues
     :ivar allowed_connections: The allowed connections details

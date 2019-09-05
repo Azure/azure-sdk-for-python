@@ -14,7 +14,7 @@ from enum import Enum
 
 class ConnectionTypeValues(str, Enum):
 
-    azurevm = "Azure vm"
+    azure_vm = "Azure VM"
 
 
 class TrafficDataState(str, Enum):
