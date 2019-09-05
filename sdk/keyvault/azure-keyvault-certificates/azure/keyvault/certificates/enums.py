@@ -15,8 +15,7 @@ class ActionType(str, Enum):
 class SecretContentType(str, Enum):
     """Content type of the secrets as specified in Certificate Policy"""
 
-    PKCS10 = 'application/x-pkcs12'
-    PKCS12 = 'application/x-pkcs12'
+    PFX = 'application/x-pkcs12'
     PEM = 'application/x-pem-file'
 
 

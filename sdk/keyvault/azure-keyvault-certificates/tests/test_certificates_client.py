@@ -514,13 +514,13 @@ class CertificateClientTests(KeyVaultTestCase):
 
         # get pending certiificate signing request
         create_certificate_poller = client.create_certificate(name=cert_name, policy=CertificatePolicy._from_certificate_policy_bundle(cert_policy))
+        create_certificate_poller.wait()
         pending_version_csr = client.get_pending_certificate_signing_request(name=cert_name)
         try:
             self.assertEqual(client.get_certificate_operation(name=cert_name).csr, pending_version_csr)
         except Exception as ex:
             pass
         finally:
-            create_certificate_poller.wait()
             client.delete_certificate(name=cert_name)
 
     @ResourceGroupPreparer()

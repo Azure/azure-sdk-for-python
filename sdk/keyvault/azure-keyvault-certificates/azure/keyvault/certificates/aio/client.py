@@ -105,7 +105,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
                                                                     ]),
                                        issuer_name="Self",
                                        lifetime_actions=lifetime_actions,
-                                       content_type=SecretContentType.PKCS12,
+                                       content_type=SecretContentType.PFX,
                                        subject_name="CN=DefaultPolicy",
                                        validity_in_months=12)
 
