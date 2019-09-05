@@ -56,9 +56,9 @@ class AiohttpTestTransport(AioHttpTransport):
         return response
 
 
-class StorageFileTestAsync(FileTestCase):
+class StorageFileAsyncTest(FileTestCase):
     def setUp(self):
-        super(StorageFileTestAsync, self).setUp()
+        super(StorageFileAsyncTest, self).setUp()
 
         url = self.get_file_url()
         credential = self.get_shared_key_credential()
@@ -107,7 +107,7 @@ class StorageFileTestAsync(FileTestCase):
             except:
                 pass
 
-        return super(StorageFileTestAsync, self).tearDown()
+        return super(StorageFileAsyncTest, self).tearDown()
 
     # --Helpers-----------------------------------------------------------------
     def _get_file_reference(self):
@@ -125,12 +125,20 @@ class StorageFileTestAsync(FileTestCase):
                 except:
                     pass
 
-    async def _create_file(self):
+    async def _create_file(self, file_name=None):
         await self._setup_share()
-        file_name = self._get_file_reference()
+        file_name = self._get_file_reference() if file_name is None else file_name
         share_client = self.fsc.get_share_client(self.share_name)
         file_client = share_client.get_file_client(file_name)
         await file_client.upload_file(self.short_byte_data)
+        return file_client
+
+    async def _create_empty_file(self, file_name=None, file_size=2048):
+        await self._setup_share()
+        file_name = self._get_file_reference() if file_name is None else file_name
+        share_client = self.fsc.get_share_client(self.share_name)
+        file_client = share_client.get_file_client(file_name)
+        await file_client.create_file(file_size)
         return file_client
 
     async def _create_remote_share(self):
@@ -637,6 +645,103 @@ class StorageFileTestAsync(FileTestCase):
     def test_update_range_with_md5_async(self):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_update_range_with_md5_async())
+
+    async def _test_update_range_from_file_url_when_source_file_does_not_have_enough_bytes(self):
+        # Arrange
+        source_file_name = 'testfile1'
+        source_file_client = await self._create_file(source_file_name)
+
+        destination_file_name = 'filetoupdate'
+        destination_file_client = await self._create_file(destination_file_name)
+
+        # generate SAS for the source file
+        sas_token_for_source_file = \
+            source_file_client.generate_shared_access_signature()
+
+        source_file_url = source_file_client.url + '?' + sas_token_for_source_file
+
+        # Act
+        with self.assertRaises(HttpResponseError):
+            # when the source file has less bytes than 2050, throw exception
+            await destination_file_client.upload_range_from_url(source_file_url, 0, 2049, 0)
+
+    @record
+    def test_update_range_from_file_url_when_source_file_does_not_have_enough_bytes_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_update_range_from_file_url_when_source_file_does_not_have_enough_bytes())
+
+    async def _test_update_range_from_file_url(self):
+        # Arrange
+        source_file_name = 'testfile'
+        source_file_client = await self._create_file(file_name=source_file_name)
+        data = b'abcdefghijklmnop' * 32
+        await source_file_client.upload_range(data, 0, 511)
+
+        destination_file_name = 'filetoupdate'
+        destination_file_client = await self._create_empty_file(file_name=destination_file_name)
+
+        # generate SAS for the source file
+        sas_token_for_source_file = \
+            source_file_client.generate_shared_access_signature(
+                                                          FilePermissions.READ,
+                                                          expiry=datetime.utcnow() + timedelta(hours=1))
+
+        source_file_url = source_file_client.url + '?' + sas_token_for_source_file
+        # Act
+        await destination_file_client.upload_range_from_url(source_file_url, 0, 511, 0)
+
+        # Assert
+        # To make sure the range of the file is actually updated
+        file_ranges = await destination_file_client.get_ranges()
+        file_content = await destination_file_client.download_file(offset=0, length=511)
+        file_content = await file_content.content_as_bytes()
+        self.assertEquals(1, len(file_ranges))
+        self.assertEquals(0, file_ranges[0].get('start'))
+        self.assertEquals(511, file_ranges[0].get('end'))
+        self.assertEquals(data, file_content)
+
+    @record
+    def test_update_range_from_file_url_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_update_range_from_file_url())
+
+    async def _test_update_big_range_from_file_url(self):
+        # Arrange
+        source_file_name = 'testfile1'
+        end = 1048575
+
+        source_file_client = await self._create_empty_file(file_name=source_file_name, file_size=1024 * 1024)
+        data = b'abcdefghijklmnop' * 65536
+        await source_file_client.upload_range(data, 0, end)
+
+        destination_file_name = 'filetoupdate1'
+        destination_file_client = await self._create_empty_file(file_name=destination_file_name, file_size=1024 * 1024)
+
+        # generate SAS for the source file
+        sas_token_for_source_file = \
+            source_file_client.generate_shared_access_signature(
+                                                          FilePermissions.READ,
+                                                          expiry=datetime.utcnow() + timedelta(hours=1))
+
+        source_file_url = source_file_client.url + '?' + sas_token_for_source_file
+
+        # Act
+        await destination_file_client.upload_range_from_url(source_file_url, 0, end, 0)
+
+        # Assert
+        # To make sure the range of the file is actually updated
+        file_ranges = await destination_file_client.get_ranges()
+        file_content = await destination_file_client.download_file(offset=0, length=end)
+        file_content = await file_content.content_as_bytes()
+        self.assertEquals(1, len(file_ranges))
+        self.assertEquals(0, file_ranges[0].get('start'))
+        self.assertEquals(end, file_ranges[0].get('end'))
+        self.assertEquals(data, file_content)
+
+    @record
+    def test_update_big_range_from_file_url_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_update_big_range_from_file_url())
 
     async def _test_clear_range_async(self):
         # Arrange
@@ -1262,7 +1367,7 @@ class StorageFileTestAsync(FileTestCase):
         # Act
         file_size = len(data)
         with open(INPUT_FILE_PATH, 'rb') as stream:
-            non_seekable_file = StorageFileTestAsync.NonSeekableFile(stream)
+            non_seekable_file = StorageFileAsyncTest.NonSeekableFile(stream)
             await file_client.upload_file(non_seekable_file, length=file_size, max_connections=1)
 
         # Assert
