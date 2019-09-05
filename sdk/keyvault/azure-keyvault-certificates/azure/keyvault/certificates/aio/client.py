@@ -791,8 +791,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         :rtype: str
         :raises: ~azure.core.exceptions.ResourceNotFoundError if the pending csr doesn't exist
         """
-        error_map = {404: ResourceNotFoundError},
-
+        error_map = {404: ResourceNotFoundError}
         vault_base_url = self.vault_url
         # Construct URL
         url = '/certificates/{certificate-name}/pending'
