@@ -14,6 +14,7 @@ from ._operations import Operations
 from ._replications_operations import ReplicationsOperations
 from ._webhooks_operations import WebhooksOperations
 from ._runs_operations import RunsOperations
+from ._task_runs_operations import TaskRunsOperations
 from ._tasks_operations import TasksOperations
 
 __all__ = [
@@ -22,5 +23,6 @@ __all__ = [
     'ReplicationsOperations',
     'WebhooksOperations',
     'RunsOperations',
+    'TaskRunsOperations',
     'TasksOperations',
 ]

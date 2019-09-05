@@ -18,6 +18,7 @@ from .operations import Operations
 from .operations import ReplicationsOperations
 from .operations import WebhooksOperations
 from .operations import RunsOperations
+from .operations import TaskRunsOperations
 from .operations import TasksOperations
 from . import models
 
@@ -38,6 +39,8 @@ class ContainerRegistryManagementClient(SDKClient):
     :vartype webhooks: azure.mgmt.containerregistry.v2019_06_01_preview.operations.WebhooksOperations
     :ivar runs: Runs operations
     :vartype runs: azure.mgmt.containerregistry.v2019_06_01_preview.operations.RunsOperations
+    :ivar task_runs: TaskRuns operations
+    :vartype task_runs: azure.mgmt.containerregistry.v2019_06_01_preview.operations.TaskRunsOperations
     :ivar tasks: Tasks operations
     :vartype tasks: azure.mgmt.containerregistry.v2019_06_01_preview.operations.TasksOperations
 
@@ -68,6 +71,8 @@ class ContainerRegistryManagementClient(SDKClient):
         self.webhooks = WebhooksOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.runs = RunsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.task_runs = TaskRunsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.tasks = TasksOperations(
             self._client, self.config, self._serialize, self._deserialize)

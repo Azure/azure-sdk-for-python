@@ -90,6 +90,19 @@ class RunPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(RunPaged, self).__init__(*args, **kwargs)
+class TaskRunPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`TaskRun <azure.mgmt.containerregistry.v2019_06_01_preview.models.TaskRun>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[TaskRun]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(TaskRunPaged, self).__init__(*args, **kwargs)
 class TaskPaged(Paged):
     """
     A paging container for iterating over a list of :class:`Task <azure.mgmt.containerregistry.v2019_06_01_preview.models.Task>` object

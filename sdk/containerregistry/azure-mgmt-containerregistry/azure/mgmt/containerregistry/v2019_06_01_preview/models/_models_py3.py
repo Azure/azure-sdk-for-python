@@ -2418,6 +2418,8 @@ class RunFilter(Model):
      'QuickRun', 'AutoBuild', 'AutoRun'
     :type run_type: str or
      ~azure.mgmt.containerregistry.v2019_06_01_preview.models.RunType
+    :param task_run_name: The name of task run associated with this run.
+    :type task_run_name: str
     :param status: The current status of the run. Possible values include:
      'Queued', 'Started', 'Running', 'Succeeded', 'Failed', 'Canceled',
      'Error', 'Timeout'
@@ -2441,6 +2443,7 @@ class RunFilter(Model):
     _attribute_map = {
         'run_id': {'key': 'runId', 'type': 'str'},
         'run_type': {'key': 'runType', 'type': 'str'},
+        'task_run_name': {'key': 'taskRunName', 'type': 'str'},
         'status': {'key': 'status', 'type': 'str'},
         'create_time': {'key': 'createTime', 'type': 'iso-8601'},
         'finish_time': {'key': 'finishTime', 'type': 'iso-8601'},
@@ -2449,10 +2452,11 @@ class RunFilter(Model):
         'task_name': {'key': 'taskName', 'type': 'str'},
     }
 
-    def __init__(self, *, run_id: str=None, run_type=None, status=None, create_time=None, finish_time=None, output_image_manifests: str=None, is_archive_enabled: bool=None, task_name: str=None, **kwargs) -> None:
+    def __init__(self, *, run_id: str=None, run_type=None, task_run_name: str=None, status=None, create_time=None, finish_time=None, output_image_manifests: str=None, is_archive_enabled: bool=None, task_name: str=None, **kwargs) -> None:
         super(RunFilter, self).__init__(**kwargs)
         self.run_id = run_id
         self.run_type = run_type
+        self.task_run_name = task_run_name
         self.status = status
         self.create_time = create_time
         self.finish_time = finish_time
@@ -3058,6 +3062,68 @@ class Task(Resource):
         self.credentials = credentials
 
 
+class TaskRun(Resource):
+    """TaskRun.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The resource ID.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource.
+    :vartype type: str
+    :param location: Required. The location of the resource. This cannot be
+     changed after the resource is created.
+    :type location: str
+    :param tags: The tags of the resource.
+    :type tags: dict[str, str]
+    :param identity: Identity for the resource.
+    :type identity:
+     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.IdentityProperties
+    :ivar provisioning_state: Possible values include: 'Creating', 'Updating',
+     'Deleting', 'Succeeded', 'Failed', 'Canceled'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.ProvisioningState
+    :param run_request:
+    :type run_request:
+     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.RunRequest
+    :param run_result:
+    :type run_result:
+     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Run
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'location': {'required': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'identity': {'key': 'identity', 'type': 'IdentityProperties'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'run_request': {'key': 'runRequest', 'type': 'RunRequest'},
+        'run_result': {'key': 'runResult', 'type': 'Run'},
+    }
+
+    def __init__(self, *, location: str, tags=None, identity=None, run_request=None, run_result=None, **kwargs) -> None:
+        super(TaskRun, self).__init__(location=location, tags=tags, **kwargs)
+        self.identity = identity
+        self.provisioning_state = None
+        self.run_request = run_request
+        self.run_result = run_result
+
+
 class TaskRunRequest(RunRequest):
     """The parameters for a task run request.
 
@@ -3094,6 +3160,32 @@ class TaskRunRequest(RunRequest):
         self.task_id = task_id
         self.override_task_step_properties = override_task_step_properties
         self.type = 'TaskRunRequest'
+
+
+class TaskRunUpdateParameters(Model):
+    """TaskRunUpdateParameters.
+
+    :param identity: Identity for the resource.
+    :type identity:
+     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.IdentityProperties
+    :param run_request:
+    :type run_request:
+     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.RunRequest
+    :param tags: The ARM resource tags.
+    :type tags: dict[str, str]
+    """
+
+    _attribute_map = {
+        'identity': {'key': 'identity', 'type': 'IdentityProperties'},
+        'run_request': {'key': 'runRequest', 'type': 'RunRequest'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+    }
+
+    def __init__(self, *, identity=None, run_request=None, tags=None, **kwargs) -> None:
+        super(TaskRunUpdateParameters, self).__init__(**kwargs)
+        self.identity = identity
+        self.run_request = run_request
+        self.tags = tags
 
 
 class TaskUpdateParameters(Model):

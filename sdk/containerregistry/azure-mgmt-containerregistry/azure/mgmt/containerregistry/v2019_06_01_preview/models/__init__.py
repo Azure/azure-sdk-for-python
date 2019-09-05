@@ -87,7 +87,9 @@ try:
     from ._models_py3 import StorageAccountProperties
     from ._models_py3 import Target
     from ._models_py3 import Task
+    from ._models_py3 import TaskRun
     from ._models_py3 import TaskRunRequest
+    from ._models_py3 import TaskRunUpdateParameters
     from ._models_py3 import TaskStepProperties
     from ._models_py3 import TaskStepUpdateParameters
     from ._models_py3 import TaskUpdateParameters
@@ -180,7 +182,9 @@ except (SyntaxError, ImportError):
     from ._models import StorageAccountProperties
     from ._models import Target
     from ._models import Task
+    from ._models import TaskRun
     from ._models import TaskRunRequest
+    from ._models import TaskRunUpdateParameters
     from ._models import TaskStepProperties
     from ._models import TaskStepUpdateParameters
     from ._models import TaskUpdateParameters
@@ -201,6 +205,7 @@ from ._paged_models import RegistryPaged
 from ._paged_models import ReplicationPaged
 from ._paged_models import RunPaged
 from ._paged_models import TaskPaged
+from ._paged_models import TaskRunPaged
 from ._paged_models import WebhookPaged
 from ._container_registry_management_client_enums import (
     ImportMode,
@@ -311,7 +316,9 @@ __all__ = [
     'StorageAccountProperties',
     'Target',
     'Task',
+    'TaskRun',
     'TaskRunRequest',
+    'TaskRunUpdateParameters',
     'TaskStepProperties',
     'TaskStepUpdateParameters',
     'TaskUpdateParameters',
@@ -332,6 +339,7 @@ __all__ = [
     'WebhookPaged',
     'EventPaged',
     'RunPaged',
+    'TaskRunPaged',
     'TaskPaged',
     'ImportMode',
     'SkuName',
