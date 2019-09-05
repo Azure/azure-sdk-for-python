@@ -15,7 +15,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Wed, 21 Aug 2019 22:39:55 GMT
+      - Wed, 04 Sep 2019 22:22:20 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
@@ -27,7 +27,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 21 Aug 2019 22:39:54 GMT
+      - Wed, 04 Sep 2019 22:22:25 GMT
       server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -38,7 +38,7 @@ interactions:
 - request:
     body: '<?xml version=''1.0'' encoding=''utf-8''?>
 
-      <SignedIdentifiers><SignedIdentifier><Id>testid</Id><AccessPolicy><Start>2019-08-21T22:34:56Z</Start><Expiry>2019-08-21T23:39:56Z</Expiry><Permission>r</Permission></AccessPolicy></SignedIdentifier></SignedIdentifiers>'
+      <SignedIdentifiers><SignedIdentifier><Id>testid</Id><AccessPolicy><Start>2019-09-04T22:17:26Z</Start><Expiry>2019-09-04T23:22:26Z</Expiry><Permission>r</Permission></AccessPolicy></SignedIdentifier></SignedIdentifiers>'
     headers:
       Accept:
       - '*/*'
@@ -53,7 +53,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-queue/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 21 Aug 2019 22:39:56 GMT
+      - Wed, 04 Sep 2019 22:22:26 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
@@ -65,7 +65,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 21 Aug 2019 22:39:54 GMT
+      - Wed, 04 Sep 2019 22:22:25 GMT
       server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -87,21 +87,21 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Wed, 21 Aug 2019 22:39:56 GMT
+      - Wed, 04 Sep 2019 22:22:26 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
     uri: https://pyacrstorage4ea015da.queue.core.windows.net/pythonqueue4ea015da?comp=acl
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><SignedIdentifiers><SignedIdentifier><Id>testid</Id><AccessPolicy><Start>2019-08-21T22:34:56.0000000Z</Start><Expiry>2019-08-21T23:39:56.0000000Z</Expiry><Permission>r</Permission></AccessPolicy></SignedIdentifier></SignedIdentifiers>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><SignedIdentifiers><SignedIdentifier><Id>testid</Id><AccessPolicy><Start>2019-09-04T22:17:26.0000000Z</Start><Expiry>2019-09-04T23:22:26.0000000Z</Expiry><Permission>r</Permission></AccessPolicy></SignedIdentifier></SignedIdentifiers>"
     headers:
       cache-control:
       - no-cache
       content-type:
       - application/xml
       date:
-      - Wed, 21 Aug 2019 22:39:54 GMT
+      - Wed, 04 Sep 2019 22:22:25 GMT
       server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:

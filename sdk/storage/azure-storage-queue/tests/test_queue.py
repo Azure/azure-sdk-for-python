@@ -119,7 +119,7 @@ class StorageQueueTest(QueueTestCase):
 
     @ResourceGroupPreparer()     
     @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
-    def test_delete_non_existing_queue(self):
+    def test_delete_non_existing_queue(self, resource_group, location, storage_account, storage_account_key):
         # Action
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)
         queue_client = self._get_queue_reference(qsc)

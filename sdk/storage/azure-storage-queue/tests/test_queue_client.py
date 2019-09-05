@@ -327,7 +327,7 @@ class StorageQueueClientTest(QueueTestCase):
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
-    def test_create_service_with_conn_str_succeeds_if_sec_with_primary(self):
+    def test_create_service_with_conn_str_succeeds_if_sec_with_primary(self, resource_group, location, storage_account, storage_account_key):
         for service_type in SERVICES.items():
             # Arrange
             conn_string = 'AccountName={};AccountKey={};{}=www.mydomain.com;{}=www-sec.mydomain.com;'.format(

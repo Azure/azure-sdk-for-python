@@ -15,7 +15,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Wed, 21 Aug 2019 22:47:07 GMT
+      - Wed, 04 Sep 2019 22:27:42 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
@@ -27,7 +27,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 21 Aug 2019 22:47:05 GMT
+      - Wed, 04 Sep 2019 22:27:42 GMT
       server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -38,10 +38,10 @@ interactions:
 - request:
     body: '<?xml version=''1.0'' encoding=''utf-8''?>
 
-      <QueueMessage><MessageText>{"EncryptedMessageContents": "e3MueRuWH7VLsSy2p+ihiMsVmUWiCuEHsB0Dhgd6dC4=",
-      "EncryptionData": {"WrappedContentKey": {"KeyId": "key2", "EncryptedKey": "mGlzCX2zfzz1AMBLu8n+MkIr2bV7FfPl0ZQBf9Ge9+T99DCDDugK+eMon3WeJsot2LrtL2xeoVyo2gzh4bKO9z33hRKuejgoWBv5op0ZHuDJ8rn6+BFp72ezzdrLiCcbz6eKq4EFI9Gi7aX622l12sFp2QODw5d3GFp+tatoTmm3+D2nLXEkGFW3p+z/ab3Usykf/E5VtnAqS8ICeHV1ZlyUxY203fvSk14QBxGPKNs34DQGwE7DkuHIp+0ujAQD+hvDrvemEv4DEeFcE+RIbeeXQfwxNlJ6s4ooElQYmLL7XvfzMNAPUVBNoc6NFBH4om5B51jL6xliphnFub0wUQ==",
+      <QueueMessage><MessageText>{"EncryptedMessageContents": "sgMHMJadmFjvT+JJYkD9hUYkyEAxpKM7jM+8QyUERHM=",
+      "EncryptionData": {"WrappedContentKey": {"KeyId": "key2", "EncryptedKey": "VShIwnhO98J/RuoxOySlm9SwYVDoyLUxXxk81WxxXYKiqSguaPuIvQMkZcmDQr8R/31w11nLFTe8Yy8wZyO2GsKx5c9HtGfCBENxmNsnBRpLitH/i/Fz8Xooic0bmiYJ2zyVD3TH5oPgGgXjHK5sK5CLMm4ZvlrRRzwmzDs7Q3sNgrchqB+nRFOc8TCbnIkE7X6vEeEow/KvOSDnqS+twYGGfNUBrhBbwNdzctUthE6MkduzPctLxM7w3HTIpdnUw6/rY7sp3f3Zax/7Y1rmm5w7YQr+jKpKpzwmpUyG4HpZrq7yErK4fKB4lx6PecHHD4AthdHkIDNgz5AOK0DaGg==",
       "Algorithm": "RSA"}, "EncryptionAgent": {"Protocol": "1.0", "EncryptionAlgorithm":
-      "AES_CBC_256"}, "ContentEncryptionIV": "shHZkWYP5ANqtcjLJsQkXA==", "KeyWrappingMetadata":
+      "AES_CBC_256"}, "ContentEncryptionIV": "fvQGL4tvhnvFAFd0IO7hNw==", "KeyWrappingMetadata":
       {"EncryptionLibrary": "Python 12.0.0b2"}}}</MessageText></QueueMessage>'
     headers:
       Accept:
@@ -57,22 +57,22 @@ interactions:
       User-Agent:
       - azsdk-python-storage-queue/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 21 Aug 2019 22:47:07 GMT
+      - Wed, 04 Sep 2019 22:27:42 GMT
       x-ms-version:
       - '2018-03-28'
     method: POST
     uri: https://pyacrstoragec74317a4.queue.core.windows.net/encryptionqueuec74317a4/messages
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>a4b302af-4ea6-49b1-8e12-31e428a7c3a9</MessageId><InsertionTime>Wed,
-        21 Aug 2019 22:47:06 GMT</InsertionTime><ExpirationTime>Wed, 28 Aug 2019 22:47:06
-        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAT7BxW3JY1QE=</PopReceipt><TimeNextVisible>Wed,
-        21 Aug 2019 22:47:06 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>6d9a4d03-0046-4b32-b3f1-377901664f7a</MessageId><InsertionTime>Wed,
+        04 Sep 2019 22:27:42 GMT</InsertionTime><ExpirationTime>Wed, 11 Sep 2019 22:27:42
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAYPff929j1QE=</PopReceipt><TimeNextVisible>Wed,
+        04 Sep 2019 22:27:42 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
     headers:
       content-type:
       - application/xml
       date:
-      - Wed, 21 Aug 2019 22:47:05 GMT
+      - Wed, 04 Sep 2019 22:27:42 GMT
       server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -96,20 +96,20 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Wed, 21 Aug 2019 22:47:07 GMT
+      - Wed, 04 Sep 2019 22:27:42 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
     uri: https://pyacrstoragec74317a4.queue.core.windows.net/encryptionqueuec74317a4/messages?peekonly=true
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>a4b302af-4ea6-49b1-8e12-31e428a7c3a9</MessageId><InsertionTime>Wed,
-        21 Aug 2019 22:47:06 GMT</InsertionTime><ExpirationTime>Wed, 28 Aug 2019 22:47:06
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>6d9a4d03-0046-4b32-b3f1-377901664f7a</MessageId><InsertionTime>Wed,
+        04 Sep 2019 22:27:42 GMT</InsertionTime><ExpirationTime>Wed, 11 Sep 2019 22:27:42
         GMT</ExpirationTime><DequeueCount>0</DequeueCount><MessageText>{\"EncryptedMessageContents\":
-        \"e3MueRuWH7VLsSy2p+ihiMsVmUWiCuEHsB0Dhgd6dC4=\", \"EncryptionData\": {\"WrappedContentKey\":
-        {\"KeyId\": \"key2\", \"EncryptedKey\": \"mGlzCX2zfzz1AMBLu8n+MkIr2bV7FfPl0ZQBf9Ge9+T99DCDDugK+eMon3WeJsot2LrtL2xeoVyo2gzh4bKO9z33hRKuejgoWBv5op0ZHuDJ8rn6+BFp72ezzdrLiCcbz6eKq4EFI9Gi7aX622l12sFp2QODw5d3GFp+tatoTmm3+D2nLXEkGFW3p+z/ab3Usykf/E5VtnAqS8ICeHV1ZlyUxY203fvSk14QBxGPKNs34DQGwE7DkuHIp+0ujAQD+hvDrvemEv4DEeFcE+RIbeeXQfwxNlJ6s4ooElQYmLL7XvfzMNAPUVBNoc6NFBH4om5B51jL6xliphnFub0wUQ==\",
+        \"sgMHMJadmFjvT+JJYkD9hUYkyEAxpKM7jM+8QyUERHM=\", \"EncryptionData\": {\"WrappedContentKey\":
+        {\"KeyId\": \"key2\", \"EncryptedKey\": \"VShIwnhO98J/RuoxOySlm9SwYVDoyLUxXxk81WxxXYKiqSguaPuIvQMkZcmDQr8R/31w11nLFTe8Yy8wZyO2GsKx5c9HtGfCBENxmNsnBRpLitH/i/Fz8Xooic0bmiYJ2zyVD3TH5oPgGgXjHK5sK5CLMm4ZvlrRRzwmzDs7Q3sNgrchqB+nRFOc8TCbnIkE7X6vEeEow/KvOSDnqS+twYGGfNUBrhBbwNdzctUthE6MkduzPctLxM7w3HTIpdnUw6/rY7sp3f3Zax/7Y1rmm5w7YQr+jKpKpzwmpUyG4HpZrq7yErK4fKB4lx6PecHHD4AthdHkIDNgz5AOK0DaGg==\",
         \"Algorithm\": \"RSA\"}, \"EncryptionAgent\": {\"Protocol\": \"1.0\", \"EncryptionAlgorithm\":
-        \"AES_CBC_256\"}, \"ContentEncryptionIV\": \"shHZkWYP5ANqtcjLJsQkXA==\", \"KeyWrappingMetadata\":
+        \"AES_CBC_256\"}, \"ContentEncryptionIV\": \"fvQGL4tvhnvFAFd0IO7hNw==\", \"KeyWrappingMetadata\":
         {\"EncryptionLibrary\": \"Python 12.0.0b2\"}}}</MessageText></QueueMessage></QueueMessagesList>"
     headers:
       cache-control:
@@ -117,7 +117,7 @@ interactions:
       content-type:
       - application/xml
       date:
-      - Wed, 21 Aug 2019 22:47:05 GMT
+      - Wed, 04 Sep 2019 22:27:42 GMT
       server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:

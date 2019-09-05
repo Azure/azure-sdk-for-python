@@ -56,8 +56,8 @@ class QueueServiceStatsTestAsync(AsyncQueueTestCase):
         response.http_response.text = lambda: SERVICE_UNAVAILABLE_RESP_BODY
 
     # --Test cases per service ---------------------------------------
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @ResourceGroupPreparer()     
+    @StorageAccountPreparer(name_prefix='pyacrstorage', sku='Standard_RAGRS')
     @AsyncQueueTestCase.await_prepared_test
     async def test_queue_service_stats_f(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -68,8 +68,8 @@ class QueueServiceStatsTestAsync(AsyncQueueTestCase):
         # Assert
         self._assert_stats_default(stats)
 
-    @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @ResourceGroupPreparer()     
+    @StorageAccountPreparer(name_prefix='pyacrstorage', sku='Standard_RAGRS')
     @AsyncQueueTestCase.await_prepared_test
     async def test_queue_service_stats_when_unavailable(self, resource_group, location, storage_account, storage_account_key):
         # Arrange        
