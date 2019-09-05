@@ -40,7 +40,8 @@ import xml.etree.ElementTree as ET
 from typing import (TYPE_CHECKING, Generic, TypeVar, cast, IO, List, Union, Any, Mapping, Dict, # pylint: disable=unused-import
                     Optional, Tuple, Callable, Iterator)
 
-from six.moves.http_client import HTTPConnection
+from six.moves.http_client import HTTPConnection, HTTPResponse as _HTTPResponse
+from io import BytesIO
 
 # This file is NOT using any "requests" HTTP implementation
 # However, the CaseInsensitiveDict is handy.
@@ -333,6 +334,36 @@ class HttpResponse(_HttpResponseBase):
         is supported.
         """
 
+class BytesIOSocket(object):
+    """Mocking the "makefile" of socket for HTTPResponse
+    """
+    def __init__(self, bytes_data):
+        self.bytes_data = bytes_data
+
+    def makefile(self, mode):
+        return BytesIO(self.bytes_data)
+
+class StdlibHttpResponse(HttpResponse):
+    def __init__(self, request, stdlib_response):
+        super(StdlibHttpResponse, self).__init__(request, stdlib_response)
+        self.status_code = stdlib_response.status
+        self.headers = dict(stdlib_response.getheaders())
+        self.reason = stdlib_response.reason
+        self.content_type = self.headers.get('Content-Type')
+        self.data = stdlib_response.read()
+
+    def body(self):
+        return self.data
+
+
+def _deserialize_response(http_response_as_bytes, http_request):
+    local_socket = BytesIOSocket(http_response_as_bytes)
+    response = _HTTPResponse(
+        local_socket,
+        method=http_request.method
+    )
+    response.begin()
+    return StdlibHttpResponse(http_request, response)
 
 class PipelineClientBase(object):
     """Base class for pipeline clients.
