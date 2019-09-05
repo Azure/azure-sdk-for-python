@@ -722,12 +722,11 @@ class StorageFileTest(FileTestCase):
 
     @ResourceGroupPreparer()     
     @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
-    @StorageAccountPreparer(name_prefix='remotepyacrstorage', playback_fake_resource=FAKE_STORAGE)
-    def test_copy_file_async_private_file(self, resource_group, location, storage_account, storage_account_key, remote_storage_account, remote_storage_account_key):
+    def test_copy_file_async_private_file(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)
-        fsc2 = FileServiceClient(self._account_url(remote_storage_account.name), max_range_size=4 * 1024, credential=remote_storage_account_key)
+        fsc2 = FileServiceClient(self._account_url(self._remote_account_details()[0]), max_range_size=4 * 1024, credential=self._remote_account_details()[1])
         self._create_remote_share(fsc2)
         source_file = self._create_remote_file(fsc2)
 
@@ -746,12 +745,11 @@ class StorageFileTest(FileTestCase):
 
     @ResourceGroupPreparer()     
     @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
-    @StorageAccountPreparer(name_prefix='remotepyacrstorage', playback_fake_resource=FAKE_STORAGE)
-    def test_copy_file_async_private_file_with_sas(self, resource_group, location, storage_account, storage_account_key, remote_storage_account, remote_storage_account_key):
+    def test_copy_file_async_private_file_with_sas(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)
-        fsc2 = FileServiceClient(self._account_url(remote_storage_account.name), credential=remote_storage_account_key)
+        fsc2 = FileServiceClient(self._account_url(self._remote_account_details()[0]), credential=self._remote_account_details()[1])
         data = b'12345678' * 1024 * 1024
         self._create_remote_share(fsc2)
         source_file = self._create_remote_file(fsc2, file_data=data)
@@ -779,13 +777,12 @@ class StorageFileTest(FileTestCase):
 
     @ResourceGroupPreparer()     
     @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
-    @StorageAccountPreparer(name_prefix='remotepyacrstorage', playback_fake_resource=FAKE_STORAGE)
-    def test_abort_copy_file(self, resource_group, location, storage_account, storage_account_key, remote_storage_account, remote_storage_account_key):
+    def test_abort_copy_file(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)
         data = b'12345678' * 1024 * 1024
-        fsc = FileServiceClient(self._account_url(remote_storage_account.name), credential=remote_storage_account_key)
+        fsc2 = FileServiceClient(self._account_url(self._remote_account_details()[0]), credential=self._remote_account_details()[1])
         self._create_remote_share(fsc2)
         source_file = self._create_remote_file(fsc2, file_data=data)
         sas_token = source_file.generate_shared_access_signature(

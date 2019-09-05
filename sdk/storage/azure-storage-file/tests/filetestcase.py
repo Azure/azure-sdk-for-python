@@ -168,6 +168,8 @@ class FileTestCase(AzureMgmtTestCase):
         except ImportError:
             return FakeTokenCredential('initial token')
 
+    def _remote_account_details(self):
+        return (self.settings.REMOTE_STORAGE_ACCOUNT_NAME, self.settings.REMOTE_STORAGE_ACCOUNT_KEY)
 
 class RetryCounter(object):
     def __init__(self):

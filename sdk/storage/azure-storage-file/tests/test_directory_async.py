@@ -386,14 +386,12 @@ class StorageDirectoryTest(AsyncFileTestCase):
         # Assert
         self.assertDictEqual(props.metadata, metadata)
 
-    #@ResourceGroupPreparer()
-    #@StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
     @AsyncFileTestCase.await_prepared_test
     async def test_list_subdirectories_and_files_async(self):
         # Arrange
-        storage_account = "amqptest"
-        storage_account_key = "skvWVnXywqHPhWtarJECmTzmyqEm5qNvFlGusrNQBdFm8jBMi46/WHVLECMesk/A5ApV4BeDhJlQLzZSTpDHOA=="
-        fsc = FileServiceClient(self._account_url(storage_account), credential=storage_account_key, transport=AiohttpTestTransport())
+        fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
         await self._setup(fsc)
         share_client = fsc.get_share_client(self.share_name)
         directory = await share_client.create_directory('dir1')

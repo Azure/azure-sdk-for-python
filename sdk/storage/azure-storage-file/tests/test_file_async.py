@@ -572,7 +572,6 @@ class StorageFileTestAsync(AsyncFileTestCase):
         file_client = await self._create_file(fsc)
 
         # Act
-        import ipdb; ipdb.set_trace()
         resp = await file_client.clear_range(0, 511)
 
         # Assert
@@ -1113,7 +1112,6 @@ class StorageFileTestAsync(AsyncFileTestCase):
 
         # Assert
         await self.assert_file_equal(file_client, data)
-        import ipdb; ipdb.set_trace()
         self.assert_upload_progress(
             len(data),
             fsc._config.max_range_size,
