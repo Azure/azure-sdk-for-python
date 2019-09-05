@@ -24,6 +24,7 @@
 
 """Document client class for the Azure Cosmos database service.
 """
+from typing import Dict, Any, Optional
 import six
 from azure.core.paging import ItemPaged
 from azure.core import PipelineClient
@@ -38,6 +39,7 @@ from azure.core.pipeline.policies.distributed_tracing import DistributedTracingP
 
 from . import _base as base
 from . import documents
+from .documents import ConnectionPolicy
 from . import _constants as constants
 from . import http_constants
 from . import _query_iterable as query_iterable
@@ -115,7 +117,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
                     id_ = resource_parts[-1]
                     self.resource_tokens[id_] = permission_feed["_token"]
 
-        self.connection_policy = connection_policy or documents.ConnectionPolicy()
+        self.connection_policy = connection_policy or ConnectionPolicy()
 
         self.partition_resolvers = {}
 
@@ -148,9 +150,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         proxies = kwargs.pop('proxies', {})
         if self.connection_policy.ProxyConfiguration and self.connection_policy.ProxyConfiguration.Host:
-            host = connection_policy.ProxyConfiguration.Host
+            host = self.connection_policy.ProxyConfiguration.Host
             url = six.moves.urllib.parse.urlparse(host)
-            proxy = host if url.port else host + ":" + str(connection_policy.ProxyConfiguration.Port)
+            proxy = host if url.port else host + ":" + str(self.connection_policy.ProxyConfiguration.Port)
             proxies.update({url.scheme : proxy})
 
         policies = [
@@ -233,7 +235,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         return self.partition_resolvers.get(base.TrimBeginningAndEndingSlashes(database_link))
 
-    def CreateDatabase(self, database, options=None):
+    def CreateDatabase(self, database, options=None, **kwargs):
         """Creates a database.
 
         :param dict database:
@@ -251,9 +253,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         CosmosClientConnection.__ValidateResource(database)
         path = "/dbs"
-        return self.Create(database, path, "dbs", None, None, options)
+        return self.Create(database, path, "dbs", None, None, options, **kwargs)
 
-    def ReadDatabase(self, database_link, options=None):
+    def ReadDatabase(self, database_link, options=None, **kwargs):
         """Reads a database.
 
         :param str database_link:
@@ -271,9 +273,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         path = base.GetPathFromLink(database_link)
         database_id = base.GetResourceIdOrFullNameFromLink(database_link)
-        return self.Read(path, "dbs", database_id, None, options)
+        return self.Read(path, "dbs", database_id, None, options, **kwargs)
 
-    def ReadDatabases(self, options=None):
+    def ReadDatabases(self, options=None, **kwargs):
         """Reads all databases.
 
         :param dict options:
@@ -288,9 +290,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         if options is None:
             options = {}
 
-        return self.QueryDatabases(None, options)
+        return self.QueryDatabases(None, options, **kwargs)
 
-    def QueryDatabases(self, query, options=None):
+    def QueryDatabases(self, query, options=None, **kwargs):
         """Queries databases.
 
         :param (str or dict) query:
@@ -307,7 +309,10 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         def fetch_fn(options):
             return (
-                self.__QueryFeed("/dbs", "dbs", "", lambda r: r["Databases"], lambda _, b: b, query, options),
+                self.__QueryFeed(
+                    "/dbs", "dbs", "", lambda r: r["Databases"],
+                    lambda _, b: b, query, options, **kwargs
+                ),
                 self.last_response_headers,
             )
 
@@ -315,7 +320,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable
         )
 
-    def ReadContainers(self, database_link, options=None):
+    def ReadContainers(self, database_link, options=None, **kwargs):
         """Reads all collections in a database.
 
         :param str database_link:
@@ -331,9 +336,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         if options is None:
             options = {}
 
-        return self.QueryContainers(database_link, None, options)
+        return self.QueryContainers(database_link, None, options, **kwargs)
 
-    def QueryContainers(self, database_link, query, options=None):
+    def QueryContainers(self, database_link, query, options=None, **kwargs):
         """Queries collections in a database.
 
         :param str database_link:
@@ -356,7 +361,8 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         def fetch_fn(options):
             return (
                 self.__QueryFeed(
-                    path, "colls", database_id, lambda r: r["DocumentCollections"], lambda _, body: body, query, options
+                    path, "colls", database_id, lambda r: r["DocumentCollections"],
+                    lambda _, body: body, query, options, **kwargs
                 ),
                 self.last_response_headers,
             )
@@ -365,7 +371,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable
         )
 
-    def CreateContainer(self, database_link, collection, options=None):
+    def CreateContainer(self, database_link, collection, options=None, **kwargs):
         """Creates a collection in a database.
 
         :param str database_link:
@@ -379,15 +385,16 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         :rtype: dict
 
         """
+        print("KWARGS", kwargs)
         if options is None:
             options = {}
 
         CosmosClientConnection.__ValidateResource(collection)
         path = base.GetPathFromLink(database_link, "colls")
         database_id = base.GetResourceIdOrFullNameFromLink(database_link)
-        return self.Create(collection, path, "colls", database_id, None, options)
+        return self.Create(collection, path, "colls", database_id, None, options, **kwargs)
 
-    def ReplaceContainer(self, collection_link, collection, options=None):
+    def ReplaceContainer(self, collection_link, collection, options=None, **kwargs):
         """Replaces a collection and return it.
 
         :param str collection_link:
@@ -409,9 +416,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         CosmosClientConnection.__ValidateResource(collection)
         path = base.GetPathFromLink(collection_link)
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
-        return self.Replace(collection, path, "colls", collection_id, None, options)
+        return self.Replace(collection, path, "colls", collection_id, None, options, **kwargs)
 
-    def ReadContainer(self, collection_link, options=None):
+    def ReadContainer(self, collection_link, options=None, **kwargs):
         """Reads a collection.
 
         :param str collection_link:
@@ -430,9 +437,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         path = base.GetPathFromLink(collection_link)
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
-        return self.Read(path, "colls", collection_id, None, options)
+        return self.Read(path, "colls", collection_id, None, options, **kwargs)
 
-    def CreateUser(self, database_link, user, options=None):
+    def CreateUser(self, database_link, user, options=None, **kwargs):
         """Creates a user.
 
         :param str database_link:
@@ -452,9 +459,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             options = {}
 
         database_id, path = self._GetDatabaseIdWithPathForUser(database_link, user)
-        return self.Create(user, path, "users", database_id, None, options)
+        return self.Create(user, path, "users", database_id, None, options, **kwargs)
 
-    def UpsertUser(self, database_link, user, options=None):
+    def UpsertUser(self, database_link, user, options=None, **kwargs):
         """Upserts a user.
 
         :param str database_link:
@@ -472,7 +479,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             options = {}
 
         database_id, path = self._GetDatabaseIdWithPathForUser(database_link, user)
-        return self.Upsert(user, path, "users", database_id, None, options)
+        return self.Upsert(user, path, "users", database_id, None, options, **kwargs)
 
     def _GetDatabaseIdWithPathForUser(self, database_link, user):  # pylint: disable=no-self-use
         CosmosClientConnection.__ValidateResource(user)
@@ -480,7 +487,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         database_id = base.GetResourceIdOrFullNameFromLink(database_link)
         return database_id, path
 
-    def ReadUser(self, user_link, options=None):
+    def ReadUser(self, user_link, options=None, **kwargs):
         """Reads a user.
 
         :param str user_link:
@@ -499,9 +506,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         path = base.GetPathFromLink(user_link)
         user_id = base.GetResourceIdOrFullNameFromLink(user_link)
-        return self.Read(path, "users", user_id, None, options)
+        return self.Read(path, "users", user_id, None, options, **kwargs)
 
-    def ReadUsers(self, database_link, options=None):
+    def ReadUsers(self, database_link, options=None, **kwargs):
         """Reads all users in a database.
 
         :params str database_link:
@@ -517,9 +524,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         if options is None:
             options = {}
 
-        return self.QueryUsers(database_link, None, options)
+        return self.QueryUsers(database_link, None, options, **kwargs)
 
-    def QueryUsers(self, database_link, query, options=None):
+    def QueryUsers(self, database_link, query, options=None, **kwargs):
         """Queries users in a database.
 
         :param str database_link:
@@ -542,7 +549,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         def fetch_fn(options):
             return (
-                self.__QueryFeed(path, "users", database_id, lambda r: r["Users"], lambda _, b: b, query, options),
+                self.__QueryFeed(path, "users", database_id, lambda r: r["Users"], lambda _, b: b, query, options, **kwargs),
                 self.last_response_headers,
             )
 
@@ -550,7 +557,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable
         )
 
-    def DeleteDatabase(self, database_link, options=None):
+    def DeleteDatabase(self, database_link, options=None, **kwargs):
         """Deletes a database.
 
         :param str database_link:
@@ -569,9 +576,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         path = base.GetPathFromLink(database_link)
         database_id = base.GetResourceIdOrFullNameFromLink(database_link)
-        return self.DeleteResource(path, "dbs", database_id, None, options)
+        return self.DeleteResource(path, "dbs", database_id, None, options, **kwargs)
 
-    def CreatePermission(self, user_link, permission, options=None):
+    def CreatePermission(self, user_link, permission, options=None, **kwargs):
         """Creates a permission for a user.
 
         :param str user_link:
@@ -591,9 +598,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             options = {}
 
         path, user_id = self._GetUserIdWithPathForPermission(permission, user_link)
-        return self.Create(permission, path, "permissions", user_id, None, options)
+        return self.Create(permission, path, "permissions", user_id, None, options, **kwargs)
 
-    def UpsertPermission(self, user_link, permission, options=None):
+    def UpsertPermission(self, user_link, permission, options=None, **kwargs):
         """Upserts a permission for a user.
 
         :param str user_link:
@@ -613,7 +620,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             options = {}
 
         path, user_id = self._GetUserIdWithPathForPermission(permission, user_link)
-        return self.Upsert(permission, path, "permissions", user_id, None, options)
+        return self.Upsert(permission, path, "permissions", user_id, None, options, **kwargs)
 
     def _GetUserIdWithPathForPermission(self, permission, user_link):  # pylint: disable=no-self-use
         CosmosClientConnection.__ValidateResource(permission)
@@ -621,7 +628,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         user_id = base.GetResourceIdOrFullNameFromLink(user_link)
         return path, user_id
 
-    def ReadPermission(self, permission_link, options=None):
+    def ReadPermission(self, permission_link, options=None, **kwargs):
         """Reads a permission.
 
         :param str permission_link:
@@ -640,9 +647,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         path = base.GetPathFromLink(permission_link)
         permission_id = base.GetResourceIdOrFullNameFromLink(permission_link)
-        return self.Read(path, "permissions", permission_id, None, options)
+        return self.Read(path, "permissions", permission_id, None, options, **kwargs)
 
-    def ReadPermissions(self, user_link, options=None):
+    def ReadPermissions(self, user_link, options=None, **kwargs):
         """Reads all permissions for a user.
 
         :param str user_link:
@@ -659,9 +666,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         if options is None:
             options = {}
 
-        return self.QueryPermissions(user_link, None, options)
+        return self.QueryPermissions(user_link, None, options, **kwargs)
 
-    def QueryPermissions(self, user_link, query, options=None):
+    def QueryPermissions(self, user_link, query, options=None, **kwargs):
         """Queries permissions for a user.
 
         :param str user_link:
@@ -685,7 +692,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         def fetch_fn(options):
             return (
                 self.__QueryFeed(
-                    path, "permissions", user_id, lambda r: r["Permissions"], lambda _, b: b, query, options
+                    path, "permissions", user_id, lambda r: r["Permissions"], lambda _, b: b, query, options, **kwargs
                 ),
                 self.last_response_headers,
             )
@@ -694,7 +701,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable
         )
 
-    def ReplaceUser(self, user_link, user, options=None):
+    def ReplaceUser(self, user_link, user, options=None, **kwargs):
         """Replaces a user and return it.
 
         :param str user_link:
@@ -715,9 +722,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         CosmosClientConnection.__ValidateResource(user)
         path = base.GetPathFromLink(user_link)
         user_id = base.GetResourceIdOrFullNameFromLink(user_link)
-        return self.Replace(user, path, "users", user_id, None, options)
+        return self.Replace(user, path, "users", user_id, None, options, **kwargs)
 
-    def DeleteUser(self, user_link, options=None):
+    def DeleteUser(self, user_link, options=None, **kwargs):
         """Deletes a user.
 
         :param str user_link:
@@ -736,9 +743,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         path = base.GetPathFromLink(user_link)
         user_id = base.GetResourceIdOrFullNameFromLink(user_link)
-        return self.DeleteResource(path, "users", user_id, None, options)
+        return self.DeleteResource(path, "users", user_id, None, options, **kwargs)
 
-    def ReplacePermission(self, permission_link, permission, options=None):
+    def ReplacePermission(self, permission_link, permission, options=None, **kwargs):
         """Replaces a permission and return it.
 
         :param str permission_link:
@@ -759,9 +766,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         CosmosClientConnection.__ValidateResource(permission)
         path = base.GetPathFromLink(permission_link)
         permission_id = base.GetResourceIdOrFullNameFromLink(permission_link)
-        return self.Replace(permission, path, "permissions", permission_id, None, options)
+        return self.Replace(permission, path, "permissions", permission_id, None, options, **kwargs)
 
-    def DeletePermission(self, permission_link, options=None):
+    def DeletePermission(self, permission_link, options=None, **kwargs):
         """Deletes a permission.
 
         :param str permission_link:
@@ -780,9 +787,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         path = base.GetPathFromLink(permission_link)
         permission_id = base.GetResourceIdOrFullNameFromLink(permission_link)
-        return self.DeleteResource(path, "permissions", permission_id, None, options)
+        return self.DeleteResource(path, "permissions", permission_id, None, options, **kwargs)
 
-    def ReadItems(self, collection_link, feed_options=None, response_hook=None):
+    def ReadItems(self, collection_link, feed_options=None, response_hook=None, **kwargs):
         """Reads all documents in a collection.
 
         :param str collection_link:
@@ -798,9 +805,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         if feed_options is None:
             feed_options = {}
 
-        return self.QueryItems(collection_link, None, feed_options, response_hook=response_hook)
+        return self.QueryItems(collection_link, None, feed_options, response_hook=response_hook, **kwargs)
 
-    def QueryItems(self, database_or_container_link, query, options=None, partition_key=None, response_hook=None):
+    def QueryItems(self, database_or_container_link, query, options=None, partition_key=None, response_hook=None, **kwargs):
         """Queries documents in a collection.
 
         :param str database_or_container_link:
@@ -848,6 +855,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
                     query,
                     options,
                     response_hook=response_hook,
+                    **kwargs
                 ),
                 self.last_response_headers,
             )
@@ -861,7 +869,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             page_iterator_class=query_iterable.QueryIterable
         )
 
-    def QueryItemsChangeFeed(self, collection_link, options=None, response_hook=None):
+    def QueryItemsChangeFeed(self, collection_link, options=None, response_hook=None, **kwargs):
         """Queries documents change feed in a collection.
 
         :param str collection_link:
@@ -884,11 +892,11 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             partition_key_range_id = options["partitionKeyRangeId"]
 
         return self._QueryChangeFeed(
-            collection_link, "Documents", options, partition_key_range_id, response_hook=response_hook
+            collection_link, "Documents", options, partition_key_range_id, response_hook=response_hook, **kwargs
         )
 
     def _QueryChangeFeed(
-        self, collection_link, resource_type, options=None, partition_key_range_id=None, response_hook=None
+        self, collection_link, resource_type, options=None, partition_key_range_id=None, response_hook=None, **kwargs
     ):
         """Queries change feed of a resource in a collection.
 
@@ -935,6 +943,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
                     options,
                     partition_key_range_id,
                     response_hook=response_hook,
+                    **kwargs
                 ),
                 self.last_response_headers,
             )
@@ -948,7 +957,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             page_iterator_class=query_iterable.QueryIterable
         )
 
-    def _ReadPartitionKeyRanges(self, collection_link, feed_options=None):
+    def _ReadPartitionKeyRanges(self, collection_link, feed_options=None, **kwargs):
         """Reads Partition Key Ranges.
 
         :param str collection_link:
@@ -964,9 +973,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         if feed_options is None:
             feed_options = {}
 
-        return self._QueryPartitionKeyRanges(collection_link, None, feed_options)
+        return self._QueryPartitionKeyRanges(collection_link, None, feed_options, **kwargs)
 
-    def _QueryPartitionKeyRanges(self, collection_link, query, options=None):
+    def _QueryPartitionKeyRanges(self, collection_link, query, options=None, **kwargs):
         """Queries Partition Key Ranges in a collection.
 
         :param str collection_link:
@@ -990,7 +999,8 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         def fetch_fn(options):
             return (
                 self.__QueryFeed(
-                    path, "pkranges", collection_id, lambda r: r["PartitionKeyRanges"], lambda _, b: b, query, options
+                    path, "pkranges", collection_id, lambda r: r["PartitionKeyRanges"],
+                    lambda _, b: b, query, options, **kwargs
                 ),
                 self.last_response_headers,
             )
@@ -999,7 +1009,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable
         )
 
-    def CreateItem(self, database_or_container_link, document, options=None):
+    def CreateItem(self, database_or_container_link, document, options=None, **kwargs):
         """Creates a document in a collection.
 
         :param str database_or_container_link:
@@ -1036,9 +1046,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         collection_id, document, path = self._GetContainerIdWithPathForItem(
             database_or_container_link, document, options
         )
-        return self.Create(document, path, "docs", collection_id, None, options)
+        return self.Create(document, path, "docs", collection_id, None, options, **kwargs)
 
-    def UpsertItem(self, database_or_container_link, document, options=None):
+    def UpsertItem(self, database_or_container_link, document, options=None, **kwargs):
         """Upserts a document in a collection.
 
         :param str database_or_container_link:
@@ -1075,7 +1085,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         collection_id, document, path = self._GetContainerIdWithPathForItem(
             database_or_container_link, document, options
         )
-        return self.Upsert(document, path, "docs", collection_id, None, options)
+        return self.Upsert(document, path, "docs", collection_id, None, options, **kwargs)
 
     PartitionResolverErrorMessage = (
         "Couldn't find any partition resolvers for the database link provided. "
@@ -1112,7 +1122,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
         return collection_id, document, path
 
-    def ReadItem(self, document_link, options=None):
+    def ReadItem(self, document_link, options=None, **kwargs):
         """Reads a document.
 
         :param str document_link:
@@ -1131,9 +1141,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         path = base.GetPathFromLink(document_link)
         document_id = base.GetResourceIdOrFullNameFromLink(document_link)
-        return self.Read(path, "docs", document_id, None, options)
+        return self.Read(path, "docs", document_id, None, options, **kwargs)
 
-    def ReadTriggers(self, collection_link, options=None):
+    def ReadTriggers(self, collection_link, options=None, **kwargs):
         """Reads all triggers in a collection.
 
         :param str collection_link:
@@ -1150,9 +1160,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         if options is None:
             options = {}
 
-        return self.QueryTriggers(collection_link, None, options)
+        return self.QueryTriggers(collection_link, None, options, **kwargs)
 
-    def QueryTriggers(self, collection_link, query, options=None):
+    def QueryTriggers(self, collection_link, query, options=None, **kwargs):
         """Queries triggers in a collection.
 
         :param str collection_link:
@@ -1176,7 +1186,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         def fetch_fn(options):
             return (
                 self.__QueryFeed(
-                    path, "triggers", collection_id, lambda r: r["Triggers"], lambda _, b: b, query, options
+                    path, "triggers", collection_id, lambda r: r["Triggers"], lambda _, b: b, query, options, **kwargs
                 ),
                 self.last_response_headers,
             )
@@ -1185,7 +1195,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable
         )
 
-    def CreateTrigger(self, collection_link, trigger, options=None):
+    def CreateTrigger(self, collection_link, trigger, options=None, **kwargs):
         """Creates a trigger in a collection.
 
         :param str collection_link:
@@ -1204,9 +1214,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             options = {}
 
         collection_id, path, trigger = self._GetContainerIdWithPathForTrigger(collection_link, trigger)
-        return self.Create(trigger, path, "triggers", collection_id, None, options)
+        return self.Create(trigger, path, "triggers", collection_id, None, options, **kwargs)
 
-    def UpsertTrigger(self, collection_link, trigger, options=None):
+    def UpsertTrigger(self, collection_link, trigger, options=None, **kwargs):
         """Upserts a trigger in a collection.
 
         :param str collection_link:
@@ -1225,7 +1235,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             options = {}
 
         collection_id, path, trigger = self._GetContainerIdWithPathForTrigger(collection_link, trigger)
-        return self.Upsert(trigger, path, "triggers", collection_id, None, options)
+        return self.Upsert(trigger, path, "triggers", collection_id, None, options, **kwargs)
 
     def _GetContainerIdWithPathForTrigger(self, collection_link, trigger):  # pylint: disable=no-self-use
         CosmosClientConnection.__ValidateResource(trigger)
@@ -1239,7 +1249,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
         return collection_id, path, trigger
 
-    def ReadTrigger(self, trigger_link, options=None):
+    def ReadTrigger(self, trigger_link, options=None, **kwargs):
         """Reads a trigger.
 
         :param str trigger_link:
@@ -1258,9 +1268,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         path = base.GetPathFromLink(trigger_link)
         trigger_id = base.GetResourceIdOrFullNameFromLink(trigger_link)
-        return self.Read(path, "triggers", trigger_id, None, options)
+        return self.Read(path, "triggers", trigger_id, None, options, **kwargs)
 
-    def ReadUserDefinedFunctions(self, collection_link, options=None):
+    def ReadUserDefinedFunctions(self, collection_link, options=None, **kwargs):
         """Reads all user defined functions in a collection.
 
         :param str collection_link:
@@ -1277,9 +1287,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         if options is None:
             options = {}
 
-        return self.QueryUserDefinedFunctions(collection_link, None, options)
+        return self.QueryUserDefinedFunctions(collection_link, None, options, **kwargs)
 
-    def QueryUserDefinedFunctions(self, collection_link, query, options=None):
+    def QueryUserDefinedFunctions(self, collection_link, query, options=None, **kwargs):
         """Queries user defined functions in a collection.
 
         :param str collection_link:
@@ -1303,7 +1313,8 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         def fetch_fn(options):
             return (
                 self.__QueryFeed(
-                    path, "udfs", collection_id, lambda r: r["UserDefinedFunctions"], lambda _, b: b, query, options
+                    path, "udfs", collection_id, lambda r: r["UserDefinedFunctions"],
+                    lambda _, b: b, query, options, **kwargs
                 ),
                 self.last_response_headers,
             )
@@ -1312,7 +1323,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable
         )
 
-    def CreateUserDefinedFunction(self, collection_link, udf, options=None):
+    def CreateUserDefinedFunction(self, collection_link, udf, options=None, **kwargs):
         """Creates a user defined function in a collection.
 
         :param str collection_link:
@@ -1331,9 +1342,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             options = {}
 
         collection_id, path, udf = self._GetContainerIdWithPathForUDF(collection_link, udf)
-        return self.Create(udf, path, "udfs", collection_id, None, options)
+        return self.Create(udf, path, "udfs", collection_id, None, options, **kwargs)
 
-    def UpsertUserDefinedFunction(self, collection_link, udf, options=None):
+    def UpsertUserDefinedFunction(self, collection_link, udf, options=None, **kwargs):
         """Upserts a user defined function in a collection.
 
         :param str collection_link:
@@ -1352,7 +1363,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             options = {}
 
         collection_id, path, udf = self._GetContainerIdWithPathForUDF(collection_link, udf)
-        return self.Upsert(udf, path, "udfs", collection_id, None, options)
+        return self.Upsert(udf, path, "udfs", collection_id, None, options, **kwargs)
 
     def _GetContainerIdWithPathForUDF(self, collection_link, udf):  # pylint: disable=no-self-use
         CosmosClientConnection.__ValidateResource(udf)
@@ -1366,7 +1377,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
         return collection_id, path, udf
 
-    def ReadUserDefinedFunction(self, udf_link, options=None):
+    def ReadUserDefinedFunction(self, udf_link, options=None, **kwargs):
         """Reads a user defined function.
 
         :param str udf_link:
@@ -1385,9 +1396,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         path = base.GetPathFromLink(udf_link)
         udf_id = base.GetResourceIdOrFullNameFromLink(udf_link)
-        return self.Read(path, "udfs", udf_id, None, options)
+        return self.Read(path, "udfs", udf_id, None, options, **kwargs)
 
-    def ReadStoredProcedures(self, collection_link, options=None):
+    def ReadStoredProcedures(self, collection_link, options=None, **kwargs):
         """Reads all store procedures in a collection.
 
         :param str collection_link:
@@ -1404,9 +1415,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         if options is None:
             options = {}
 
-        return self.QueryStoredProcedures(collection_link, None, options)
+        return self.QueryStoredProcedures(collection_link, None, options, **kwargs)
 
-    def QueryStoredProcedures(self, collection_link, query, options=None):
+    def QueryStoredProcedures(self, collection_link, query, options=None, **kwargs):
         """Queries stored procedures in a collection.
 
         :param str collection_link:
@@ -1430,7 +1441,8 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         def fetch_fn(options):
             return (
                 self.__QueryFeed(
-                    path, "sprocs", collection_id, lambda r: r["StoredProcedures"], lambda _, b: b, query, options
+                    path, "sprocs", collection_id, lambda r: r["StoredProcedures"],
+                    lambda _, b: b, query, options, **kwargs
                 ),
                 self.last_response_headers,
             )
@@ -1439,7 +1451,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable
         )
 
-    def CreateStoredProcedure(self, collection_link, sproc, options=None):
+    def CreateStoredProcedure(self, collection_link, sproc, options=None, **kwargs):
         """Creates a stored procedure in a collection.
 
         :param str collection_link:
@@ -1458,9 +1470,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             options = {}
 
         collection_id, path, sproc = self._GetContainerIdWithPathForSproc(collection_link, sproc)
-        return self.Create(sproc, path, "sprocs", collection_id, None, options)
+        return self.Create(sproc, path, "sprocs", collection_id, None, options, **kwargs)
 
-    def UpsertStoredProcedure(self, collection_link, sproc, options=None):
+    def UpsertStoredProcedure(self, collection_link, sproc, options=None, **kwargs):
         """Upserts a stored procedure in a collection.
 
         :param str collection_link:
@@ -1479,7 +1491,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             options = {}
 
         collection_id, path, sproc = self._GetContainerIdWithPathForSproc(collection_link, sproc)
-        return self.Upsert(sproc, path, "sprocs", collection_id, None, options)
+        return self.Upsert(sproc, path, "sprocs", collection_id, None, options, **kwargs)
 
     def _GetContainerIdWithPathForSproc(self, collection_link, sproc):  # pylint: disable=no-self-use
         CosmosClientConnection.__ValidateResource(sproc)
@@ -1492,7 +1504,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
         return collection_id, path, sproc
 
-    def ReadStoredProcedure(self, sproc_link, options=None):
+    def ReadStoredProcedure(self, sproc_link, options=None, **kwargs):
         """Reads a stored procedure.
 
         :param str sproc_link:
@@ -1511,9 +1523,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         path = base.GetPathFromLink(sproc_link)
         sproc_id = base.GetResourceIdOrFullNameFromLink(sproc_link)
-        return self.Read(path, "sprocs", sproc_id, None, options)
+        return self.Read(path, "sprocs", sproc_id, None, options, **kwargs)
 
-    def ReadConflicts(self, collection_link, feed_options=None):
+    def ReadConflicts(self, collection_link, feed_options=None, **kwargs):
         """Reads conflicts.
 
         :param str collection_link:
@@ -1529,9 +1541,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         if feed_options is None:
             feed_options = {}
 
-        return self.QueryConflicts(collection_link, None, feed_options)
+        return self.QueryConflicts(collection_link, None, feed_options, **kwargs)
 
-    def QueryConflicts(self, collection_link, query, options=None):
+    def QueryConflicts(self, collection_link, query, options=None, **kwargs):
         """Queries conflicts in a collection.
 
         :param str collection_link:
@@ -1555,7 +1567,8 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         def fetch_fn(options):
             return (
                 self.__QueryFeed(
-                    path, "conflicts", collection_id, lambda r: r["Conflicts"], lambda _, b: b, query, options
+                    path, "conflicts", collection_id, lambda r: r["Conflicts"],
+                    lambda _, b: b, query, options, **kwargs
                 ),
                 self.last_response_headers,
             )
@@ -1564,7 +1577,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable
         )
 
-    def ReadConflict(self, conflict_link, options=None):
+    def ReadConflict(self, conflict_link, options=None, **kwargs):
         """Reads a conflict.
 
         :param str conflict_link:
@@ -1582,9 +1595,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         path = base.GetPathFromLink(conflict_link)
         conflict_id = base.GetResourceIdOrFullNameFromLink(conflict_link)
-        return self.Read(path, "conflicts", conflict_id, None, options)
+        return self.Read(path, "conflicts", conflict_id, None, options, **kwargs)
 
-    def DeleteContainer(self, collection_link, options=None):
+    def DeleteContainer(self, collection_link, options=None, **kwargs):
         """Deletes a collection.
 
         :param str collection_link:
@@ -1603,9 +1616,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         path = base.GetPathFromLink(collection_link)
         collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
-        return self.DeleteResource(path, "colls", collection_id, None, options)
+        return self.DeleteResource(path, "colls", collection_id, None, options, **kwargs)
 
-    def ReplaceItem(self, document_link, new_document, options=None):
+    def ReplaceItem(self, document_link, new_document, options=None, **kwargs):
         """Replaces a document and returns it.
 
         :param str document_link:
@@ -1638,9 +1651,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         collection_link = base.GetItemContainerLink(document_link)
         options = self._AddPartitionKey(collection_link, new_document, options)
 
-        return self.Replace(new_document, path, "docs", document_id, None, options)
+        return self.Replace(new_document, path, "docs", document_id, None, options, **kwargs)
 
-    def DeleteItem(self, document_link, options=None):
+    def DeleteItem(self, document_link, options=None, **kwargs):
         """Deletes a document.
 
         :param str document_link:
@@ -1659,9 +1672,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         path = base.GetPathFromLink(document_link)
         document_id = base.GetResourceIdOrFullNameFromLink(document_link)
-        return self.DeleteResource(path, "docs", document_id, None, options)
+        return self.DeleteResource(path, "docs", document_id, None, options, **kwargs)
 
-    def CreateAttachment(self, document_link, attachment, options=None):
+    def CreateAttachment(self, document_link, attachment, options=None, **kwargs):
         """Creates an attachment in a document.
 
         :param str document_link:
@@ -1681,9 +1694,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             options = {}
 
         document_id, path = self._GetItemIdWithPathForAttachment(attachment, document_link)
-        return self.Create(attachment, path, "attachments", document_id, None, options)
+        return self.Create(attachment, path, "attachments", document_id, None, options, **kwargs)
 
-    def UpsertAttachment(self, document_link, attachment, options=None):
+    def UpsertAttachment(self, document_link, attachment, options=None, **kwargs):
         """Upserts an attachment in a document.
 
         :param str document_link:
@@ -1703,7 +1716,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             options = {}
 
         document_id, path = self._GetItemIdWithPathForAttachment(attachment, document_link)
-        return self.Upsert(attachment, path, "attachments", document_id, None, options)
+        return self.Upsert(attachment, path, "attachments", document_id, None, options, **kwargs)
 
     def _GetItemIdWithPathForAttachment(self, attachment, document_link):  # pylint: disable=no-self-use
         CosmosClientConnection.__ValidateResource(attachment)
@@ -1711,7 +1724,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         document_id = base.GetResourceIdOrFullNameFromLink(document_link)
         return document_id, path
 
-    def CreateAttachmentAndUploadMedia(self, document_link, readable_stream, options=None):
+    def CreateAttachmentAndUploadMedia(self, document_link, readable_stream, options=None, **kwargs):
         """Creates an attachment and upload media.
 
         :param str document_link:
@@ -1730,9 +1743,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             options = {}
 
         document_id, initial_headers, path = self._GetItemIdWithPathForAttachmentMedia(document_link, options)
-        return self.Create(readable_stream, path, "attachments", document_id, initial_headers, options)
+        return self.Create(readable_stream, path, "attachments", document_id, initial_headers, options, **kwargs)
 
-    def UpsertAttachmentAndUploadMedia(self, document_link, readable_stream, options=None):
+    def UpsertAttachmentAndUploadMedia(self, document_link, readable_stream, options=None, **kwargs):
         """Upserts an attachment and upload media.
 
         :param str document_link:
@@ -1751,7 +1764,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             options = {}
 
         document_id, initial_headers, path = self._GetItemIdWithPathForAttachmentMedia(document_link, options)
-        return self.Upsert(readable_stream, path, "attachments", document_id, initial_headers, options)
+        return self.Upsert(readable_stream, path, "attachments", document_id, initial_headers, options, **kwargs)
 
     def _GetItemIdWithPathForAttachmentMedia(self, document_link, options):
         initial_headers = dict(self.default_headers)
@@ -1769,7 +1782,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         document_id = base.GetResourceIdOrFullNameFromLink(document_link)
         return document_id, initial_headers, path
 
-    def ReadAttachment(self, attachment_link, options=None):
+    def ReadAttachment(self, attachment_link, options=None, **kwargs):
         """Reads an attachment.
 
         :param str attachment_link:
@@ -1788,9 +1801,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         path = base.GetPathFromLink(attachment_link)
         attachment_id = base.GetResourceIdOrFullNameFromLink(attachment_link)
-        return self.Read(path, "attachments", attachment_id, None, options)
+        return self.Read(path, "attachments", attachment_id, None, options, **kwargs)
 
-    def ReadAttachments(self, document_link, options=None):
+    def ReadAttachments(self, document_link, options=None, **kwargs):
         """Reads all attachments in a document.
 
         :param str document_link:
@@ -1807,9 +1820,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         if options is None:
             options = {}
 
-        return self.QueryAttachments(document_link, None, options)
+        return self.QueryAttachments(document_link, None, options, **kwargs)
 
-    def QueryAttachments(self, document_link, query, options=None):
+    def QueryAttachments(self, document_link, query, options=None, **kwargs):
         """Queries attachments in a document.
 
         :param str document_link:
@@ -1833,7 +1846,8 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         def fetch_fn(options):
             return (
                 self.__QueryFeed(
-                    path, "attachments", document_id, lambda r: r["Attachments"], lambda _, b: b, query, options
+                    path, "attachments", document_id, lambda r: r["Attachments"],
+                    lambda _, b: b, query, options, **kwargs
                 ),
                 self.last_response_headers,
             )
@@ -1911,7 +1925,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         self._UpdateSessionIfRequired(headers, result, self.last_response_headers)
         return result
 
-    def ReplaceAttachment(self, attachment_link, attachment, options=None):
+    def ReplaceAttachment(self, attachment_link, attachment, options=None, **kwargs):
         """Replaces an attachment and returns it.
 
         :param str attachment_link:
@@ -1932,9 +1946,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         CosmosClientConnection.__ValidateResource(attachment)
         path = base.GetPathFromLink(attachment_link)
         attachment_id = base.GetResourceIdOrFullNameFromLink(attachment_link)
-        return self.Replace(attachment, path, "attachments", attachment_id, None, options)
+        return self.Replace(attachment, path, "attachments", attachment_id, None, options, **kwargs)
 
-    def DeleteAttachment(self, attachment_link, options=None):
+    def DeleteAttachment(self, attachment_link, options=None, **kwargs):
         """Deletes an attachment.
 
         :param str attachment_link:
@@ -1953,9 +1967,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         path = base.GetPathFromLink(attachment_link)
         attachment_id = base.GetResourceIdOrFullNameFromLink(attachment_link)
-        return self.DeleteResource(path, "attachments", attachment_id, None, options)
+        return self.DeleteResource(path, "attachments", attachment_id, None, options, **kwargs)
 
-    def ReplaceTrigger(self, trigger_link, trigger, options=None):
+    def ReplaceTrigger(self, trigger_link, trigger, options=None, **kwargs):
         """Replaces a trigger and returns it.
 
         :param str trigger_link:
@@ -1982,9 +1996,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         path = base.GetPathFromLink(trigger_link)
         trigger_id = base.GetResourceIdOrFullNameFromLink(trigger_link)
-        return self.Replace(trigger, path, "triggers", trigger_id, None, options)
+        return self.Replace(trigger, path, "triggers", trigger_id, None, options, **kwargs)
 
-    def DeleteTrigger(self, trigger_link, options=None):
+    def DeleteTrigger(self, trigger_link, options=None, **kwargs):
         """Deletes a trigger.
 
         :param str trigger_link:
@@ -2003,9 +2017,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         path = base.GetPathFromLink(trigger_link)
         trigger_id = base.GetResourceIdOrFullNameFromLink(trigger_link)
-        return self.DeleteResource(path, "triggers", trigger_id, None, options)
+        return self.DeleteResource(path, "triggers", trigger_id, None, options, **kwargs)
 
-    def ReplaceUserDefinedFunction(self, udf_link, udf, options=None):
+    def ReplaceUserDefinedFunction(self, udf_link, udf, options=None, **kwargs):
         """Replaces a user defined function and returns it.
 
         :param str udf_link:
@@ -2032,9 +2046,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         path = base.GetPathFromLink(udf_link)
         udf_id = base.GetResourceIdOrFullNameFromLink(udf_link)
-        return self.Replace(udf, path, "udfs", udf_id, None, options)
+        return self.Replace(udf, path, "udfs", udf_id, None, options, **kwargs)
 
-    def DeleteUserDefinedFunction(self, udf_link, options=None):
+    def DeleteUserDefinedFunction(self, udf_link, options=None, **kwargs):
         """Deletes a user defined function.
 
         :param str udf_link:
@@ -2053,7 +2067,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         path = base.GetPathFromLink(udf_link)
         udf_id = base.GetResourceIdOrFullNameFromLink(udf_link)
-        return self.DeleteResource(path, "udfs", udf_id, None, options)
+        return self.DeleteResource(path, "udfs", udf_id, None, options, **kwargs)
 
     def ExecuteStoredProcedure(self, sproc_link, params, options=None, **kwargs):
         """Executes a store procedure.
@@ -2089,7 +2103,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         result, self.last_response_headers = self.__Post(path, request_params, params, headers, **kwargs)
         return result
 
-    def ReplaceStoredProcedure(self, sproc_link, sproc, options=None):
+    def ReplaceStoredProcedure(self, sproc_link, sproc, options=None, **kwargs):
         """Replaces a stored procedure and returns it.
 
         :param str sproc_link:
@@ -2116,9 +2130,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         path = base.GetPathFromLink(sproc_link)
         sproc_id = base.GetResourceIdOrFullNameFromLink(sproc_link)
-        return self.Replace(sproc, path, "sprocs", sproc_id, None, options)
+        return self.Replace(sproc, path, "sprocs", sproc_id, None, options, **kwargs)
 
-    def DeleteStoredProcedure(self, sproc_link, options=None):
+    def DeleteStoredProcedure(self, sproc_link, options=None, **kwargs):
         """Deletes a stored procedure.
 
         :param str sproc_link:
@@ -2137,9 +2151,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         path = base.GetPathFromLink(sproc_link)
         sproc_id = base.GetResourceIdOrFullNameFromLink(sproc_link)
-        return self.DeleteResource(path, "sprocs", sproc_id, None, options)
+        return self.DeleteResource(path, "sprocs", sproc_id, None, options, **kwargs)
 
-    def DeleteConflict(self, conflict_link, options=None):
+    def DeleteConflict(self, conflict_link, options=None, **kwargs):
         """Deletes a conflict.
 
         :param str conflict_link:
@@ -2158,9 +2172,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         path = base.GetPathFromLink(conflict_link)
         conflict_id = base.GetResourceIdOrFullNameFromLink(conflict_link)
-        return self.DeleteResource(path, "conflicts", conflict_id, None, options)
+        return self.DeleteResource(path, "conflicts", conflict_id, None, options, **kwargs)
 
-    def ReplaceOffer(self, offer_link, offer):
+    def ReplaceOffer(self, offer_link, offer, **kwargs):
         """Replaces an offer and returns it.
 
         :param str offer_link:
@@ -2176,9 +2190,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         CosmosClientConnection.__ValidateResource(offer)
         path = base.GetPathFromLink(offer_link)
         offer_id = base.GetResourceIdOrFullNameFromLink(offer_link)
-        return self.Replace(offer, path, "offers", offer_id, None, None)
+        return self.Replace(offer, path, "offers", offer_id, None, None, **kwargs)
 
-    def ReadOffer(self, offer_link):
+    def ReadOffer(self, offer_link, **kwargs):
         """Reads an offer.
 
         :param str offer_link:
@@ -2192,9 +2206,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         """
         path = base.GetPathFromLink(offer_link)
         offer_id = base.GetResourceIdOrFullNameFromLink(offer_link)
-        return self.Read(path, "offers", offer_id, None, {})
+        return self.Read(path, "offers", offer_id, None, {}, **kwargs)
 
-    def ReadOffers(self, options=None):
+    def ReadOffers(self, options=None, **kwargs):
         """Reads all offers.
 
         :param dict options:
@@ -2209,9 +2223,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         if options is None:
             options = {}
 
-        return self.QueryOffers(None, options)
+        return self.QueryOffers(None, options, **kwargs)
 
-    def QueryOffers(self, query, options=None):
+    def QueryOffers(self, query, options=None, **kwargs):
         """Query for all offers.
 
         :param (str or dict) query:
@@ -2229,7 +2243,9 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         def fetch_fn(options):
             return (
-                self.__QueryFeed("/offers", "offers", "", lambda r: r["Offers"], lambda _, b: b, query, options),
+                self.__QueryFeed(
+                    "/offers", "offers", "", lambda r: r["Offers"], lambda _, b: b, query, options, **kwargs
+                ),
                 self.last_response_headers,
             )
 
@@ -2533,7 +2549,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             **kwargs
         )
 
-    def QueryFeed(self, path, collection_id, query, options, partition_key_range_id=None):
+    def QueryFeed(self, path, collection_id, query, options, partition_key_range_id=None, **kwargs):
         """Query Feed for Document Collection resource.
 
         :param str path:
@@ -2559,6 +2575,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
                 query,
                 options,
                 partition_key_range_id,
+                **kwargs
             ),
             self.last_response_headers,
         )

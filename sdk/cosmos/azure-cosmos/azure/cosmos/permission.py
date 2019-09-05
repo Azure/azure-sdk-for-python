@@ -21,6 +21,7 @@
 
 """Represents a Permission object in the Azure Cosmos DB SQL API service.
 """
+from typing import Dict, Any
 
 from .documents import PermissionMode
 

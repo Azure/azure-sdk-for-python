@@ -22,7 +22,7 @@
 """Create, read, update and delete and execute scripts in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, List, Dict, Union, Iterable
+from typing import Any, List, Dict, Union, Iterable, Optional
 
 import six
 
@@ -148,7 +148,7 @@ class ScriptsClient(object):
         )
 
     def delete_stored_procedure(self, sproc, **kwargs):
-        # type: (Union[str, Dict[str, Any]], **kwargs) -> None
+        # type: (Union[str, Dict[str, Any]], Any) -> None
         """ Delete the specified stored procedure from the container.
 
         :param sproc: The ID (name) or dict representing stored procedure to be deleted.

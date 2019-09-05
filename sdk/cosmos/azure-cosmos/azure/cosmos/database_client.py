@@ -22,7 +22,7 @@
 """Create, read, update and delete containers in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, List, Dict, Mapping, Union, cast, Iterable
+from typing import Any, List, Dict, Mapping, Union, cast, Iterable, Optional
 
 import six
 from azure.core.tracing.decorator import distributed_trace
@@ -142,7 +142,7 @@ class DatabaseClient(object):
     def create_container(
         self,
         id,  # type: str  # pylint: disable=redefined-builtin
-        partition_key,  # type: PartitionKey
+        partition_key,  # type: Any
         indexing_policy=None,  # type: Optional[Dict[str, Any]]
         default_ttl=None,  # type: Optional[int]
         populate_query_metrics=None,  # type: Optional[bool]
@@ -356,7 +356,7 @@ class DatabaseClient(object):
     def replace_container(
         self,
         container,  # type: Union[str, ContainerClient, Dict[str, Any]]
-        partition_key,  # type: PartitionKey
+        partition_key,  # type: Any
         indexing_policy=None,  # type: Optional[Dict[str, Any]]
         default_ttl=None,  # type: Optional[int]
         conflict_resolution_policy=None,  # type: Optional[Dict[str, Any]]

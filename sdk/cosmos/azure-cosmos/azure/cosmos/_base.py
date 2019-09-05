@@ -30,6 +30,7 @@ import binascii
 
 import six
 from six.moves.urllib.parse import quote as urllib_quote
+from typing import Dict, Any
 
 from . import auth
 from . import documents

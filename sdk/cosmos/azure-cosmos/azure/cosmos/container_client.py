@@ -113,7 +113,7 @@ class ContainerClient(object):
         populate_quota_info=None,  # type: Optional[bool]
         **kwargs  # type: Any
     ):
-        # type: (...) -> Container
+        # type: (...) -> Dict[str, Any]
         """ Read the container properties
 
         :param session_token: Token for use with Session consistency.
@@ -126,7 +126,7 @@ class ContainerClient(object):
         :param response_hook: a callable invoked with the response metadata
         :raise `CosmosHttpResponseError`: Raised if the container couldn't be retrieved. This includes
             if the container does not exist.
-        :returns: :class:`Container` instance representing the retrieved container.
+        :returns: Dict representing the retrieved container.
 
         """
         request_options = build_options(kwargs)
@@ -152,7 +152,7 @@ class ContainerClient(object):
         item,  # type: Union[str, Dict[str, Any]]
         partition_key,  # type: Any
         populate_query_metrics=None,  # type: Optional[bool]
-        post_trigger_include=None,  # type: Optioanl[str]
+        post_trigger_include=None,  # type: Optional[str]
         **kwargs  # type: Any
     ):
         # type: (...) -> Dict[str, str]

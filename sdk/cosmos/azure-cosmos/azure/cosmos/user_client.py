@@ -24,7 +24,7 @@
 """Create, read, update and delete permissions in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, List, Dict, Union, cast, Iterable
+from typing import Any, List, Dict, Union, cast, Iterable, Optional
 
 import six
 from azure.core.tracing.decorator import distributed_trace
