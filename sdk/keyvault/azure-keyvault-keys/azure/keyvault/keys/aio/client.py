@@ -8,7 +8,7 @@ from typing import Any, AsyncIterable, Optional, Dict, List, Union
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.keyvault.keys.models import DeletedKey, JsonWebKey, Key, KeyBase, KeyOperationResult
+from azure.keyvault.keys.models import DeletedKey, JsonWebKey, Key, KeyBase
 from azure.keyvault.keys._shared import AsyncKeyVaultClientBase
 
 from ..crypto.aio import CryptographyClient
