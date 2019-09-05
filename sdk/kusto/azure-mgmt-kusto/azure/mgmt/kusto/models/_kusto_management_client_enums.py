@@ -77,6 +77,7 @@ class DataFormat(str, Enum):
     raw = "RAW"
     singlejson = "SINGLEJSON"
     avro = "AVRO"
+    tsve = "TSVE"
 
 
 class DatabasePrincipalRole(str, Enum):
