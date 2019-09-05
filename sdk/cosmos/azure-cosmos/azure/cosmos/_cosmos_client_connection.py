@@ -2458,12 +2458,12 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         return result
 
-    def __Get(self, path, request_params, headers, **kwargs):
+    def __Get(self, path, request_params, req_headers, **kwargs):
         """Azure Cosmos 'GET' http request.
 
         :params str url:
         :params str path:
-        :params dict headers:
+        :params dict req_headers:
 
         :return:
             Tuple of (result, headers).
@@ -2471,7 +2471,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             tuple of (dict, dict)
 
         """
-        request = self.pipeline_client.get(url=path, headers=headers)
+        request = self.pipeline_client.get(url=path, headers=req_headers)
         return synchronized_request.SynchronizedRequest(
             client=self,
             request_params=request_params,
@@ -2483,13 +2483,13 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             **kwargs
         )
 
-    def __Post(self, path, request_params, body, headers, **kwargs):
+    def __Post(self, path, request_params, body, req_headers, **kwargs):
         """Azure Cosmos 'POST' http request.
 
         :params str url:
         :params str path:
         :params (str, unicode, dict) body:
-        :params dict headers:
+        :params dict req_headers:
 
         :return:
             Tuple of (result, headers).
@@ -2497,7 +2497,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             tuple of (dict, dict)
 
         """
-        request = self.pipeline_client.post(url=path, headers=headers)
+        request = self.pipeline_client.post(url=path, headers=req_headers)
         return synchronized_request.SynchronizedRequest(
             client=self,
             request_params=request_params,
@@ -2509,13 +2509,13 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             **kwargs
         )
 
-    def __Put(self, path, request_params, body, headers, **kwargs):
+    def __Put(self, path, request_params, body, req_headers, **kwargs):
         """Azure Cosmos 'PUT' http request.
 
         :params str url:
         :params str path:
         :params (str, unicode, dict) body:
-        :params dict headers:
+        :params dict req_headers:
 
         :return:
             Tuple of (result, headers).
@@ -2523,7 +2523,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             tuple of (dict, dict)
 
         """
-        request = self.pipeline_client.put(url=path, headers=headers)
+        request = self.pipeline_client.put(url=path, headers=req_headers)
         return synchronized_request.SynchronizedRequest(
             client=self,
             request_params=request_params,
@@ -2535,12 +2535,12 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             **kwargs
         )
 
-    def __Delete(self, path, request_params, headers, **kwargs):
+    def __Delete(self, path, request_params, req_headers, **kwargs):
         """Azure Cosmos 'DELETE' http request.
 
         :params str url:
         :params str path:
-        :params dict headers:
+        :params dict req_headers:
 
         :return:
             Tuple of (result, headers).
@@ -2548,7 +2548,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             tuple of (dict, dict)
 
         """
-        request = self.pipeline_client.delete(url=path, headers=headers)
+        request = self.pipeline_client.delete(url=path, headers=req_headers)
         return synchronized_request.SynchronizedRequest(
             client=self,
             request_params=request_params,
@@ -2663,8 +2663,8 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         # Query operations will use ReadEndpoint even though it uses POST(for regular query operations)
         request_params = _request_object.RequestObject(typ, documents._OperationType.SqlQuery)
-        headers = base.GetHeaders(self, initial_headers, "post", path, id_, typ, options, partition_key_range_id)
-        result, self.last_response_headers = self.__Post(path, request_params, query, headers, **kwargs)
+        req_headers = base.GetHeaders(self, initial_headers, "post", path, id_, typ, options, partition_key_range_id)
+        result, self.last_response_headers = self.__Post(path, request_params, query, req_headers, **kwargs)
 
         if response_hook:
             response_hook(self.last_response_headers, result)

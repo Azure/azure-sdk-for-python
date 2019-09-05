@@ -1854,7 +1854,11 @@ class CRUDTests(unittest.TestCase):
         created_container = db.create_container(
             id='composite_index_spatial_index' + str(uuid.uuid4()),
             indexing_policy=indexing_policy,
-            partition_key=PartitionKey(path='/id', kind='Hash')
+            partition_key=PartitionKey(path='/id', kind='Hash'),
+            headers={"Foo":"bar"},
+            user_agent="blah",
+            user_agent_overwrite=True,
+            logging_enable=True
         )
         created_properties = created_container.read()
         read_indexing_policy = created_properties['indexingPolicy']
