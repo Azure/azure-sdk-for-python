@@ -3,7 +3,7 @@ import logging
 import os
 from azure.eventhub.aio import EventHubClient
 from azure.eventhub.aio.eventprocessor import EventProcessor, PartitionProcessor
-from azure.eventhub.aio.eventprocessor.partitionmanagers.blobstorage import BlobPartitionManager
+from azure.eventhub.extensions.checkpointerblobaio import BlobPartitionManager
 from azure.storage.blob.aio import ContainerClient
 
 RECEIVE_TIMEOUT = 5  # timeout in seconds for a receiving operation. 0 or None means no timeout
@@ -20,12 +20,12 @@ async def do_operation(event):
 
 
 class MyPartitionProcessor(PartitionProcessor):
-    async def process_events(self, events, checkpoint_manager):
+    async def process_events(self, events, partition_context):
         if events:
             await asyncio.gather(*[do_operation(event) for event in events])
-            await checkpoint_manager.update_checkpoint(events[-1].offset, events[-1].sequence_number)
+            await partition_context.update_checkpoint(events[-1].offset, events[-1].sequence_number)
         else:
-            print("empty events received", "partition:", checkpoint_manager.partition_id)
+            print("empty events received", "partition:", partition_context.partition_id)
 
 
 if __name__ == '__main__':
