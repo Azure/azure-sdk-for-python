@@ -16,6 +16,9 @@ SERVICE_UNAVAILABLE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageS
                                 '>unavailable</Status><LastSyncTime></LastSyncTime></GeoReplication' \
                                 '></StorageServiceStats> '
 
+SERVICE_LIVE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageServiceStats><GeoReplication><Status' \
+                                '>live</Status><LastSyncTime>Wed, 19 Jan 2021 22:28:43 GMT</LastSyncTime></GeoReplication' \
+                                '></StorageServiceStats> '
 
 # --Test Class -----------------------------------------------------------------
 class QueueServiceStatsTest(QueueTestCase):
@@ -38,6 +41,10 @@ class QueueServiceStatsTest(QueueTestCase):
     def override_response_body_with_unavailable_status(response):
         response.http_response.text = lambda: SERVICE_UNAVAILABLE_RESP_BODY
 
+    @staticmethod
+    def override_response_body_with_live_status(response):
+        response.http_response.text = lambda: SERVICE_LIVE_RESP_BODY
+
     # --Test cases per service ---------------------------------------
 
     @ResourceGroupPreparer()     
@@ -47,7 +54,7 @@ class QueueServiceStatsTest(QueueTestCase):
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)
 
         # Act
-        stats = qsc.get_service_stats()
+        stats = qsc.get_service_stats(raw_response_hook=self.override_response_body_with_live_status)
         print(stats.geo_replication)
         # Assert
         self._assert_stats_default(stats)
