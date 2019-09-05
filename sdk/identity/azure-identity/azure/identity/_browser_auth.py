@@ -51,8 +51,8 @@ class InteractiveBrowserCredential(ConfidentialClientCredential):
         )
 
     @wrap_exceptions
-    def get_token(self, *scopes):
-        # type: (str) -> AccessToken
+    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
+        # type: (*str, **Any) -> AccessToken
         """
         Request an access token for `scopes`. This will open a browser to a login page and listen on localhost for a
         request indicating authentication has completed.
