@@ -13,9 +13,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2019 19:52:20 GMT
+      - Thu, 05 Sep 2019 17:58:26 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
     uri: https://pyacrstorage1bed14dc.file.core.windows.net/utshare1bed14dc?restype=share
   response:
@@ -25,15 +25,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 29 Aug 2019 19:52:19 GMT
+      - Thu, 05 Sep 2019 17:58:25 GMT
       etag:
-      - '"0x8D72CBA66D1DA70"'
+      - '"0x8D7322AA69923B3"'
       last-modified:
-      - Thu, 29 Aug 2019 19:52:19 GMT
+      - Thu, 05 Sep 2019 17:58:26 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -53,11 +53,19 @@ interactions:
       x-ms-content-length:
       - '65546'
       x-ms-date:
-      - Thu, 29 Aug 2019 19:52:21 GMT
+      - Thu, 05 Sep 2019 17:58:26 GMT
+      x-ms-file-attributes:
+      - none
+      x-ms-file-creation-time:
+      - now
+      x-ms-file-last-write-time:
+      - now
+      x-ms-file-permission:
+      - inherit
       x-ms-type:
       - file
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
     uri: https://pyacrstorage1bed14dc.file.core.windows.net/utshare1bed14dc/file1bed14dc
   response:
@@ -67,17 +75,31 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 29 Aug 2019 19:52:19 GMT
+      - Thu, 05 Sep 2019 17:58:25 GMT
       etag:
-      - '"0x8D72CBA671102A8"'
+      - '"0x8D7322AA6D2FF81"'
       last-modified:
-      - Thu, 29 Aug 2019 19:52:20 GMT
+      - Thu, 05 Sep 2019 17:58:26 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-file-attributes:
+      - Archive
+      x-ms-file-change-time:
+      - '2019-09-05T17:58:26.5075585Z'
+      x-ms-file-creation-time:
+      - '2019-09-05T17:58:26.5075585Z'
+      x-ms-file-id:
+      - '13835128424026341376'
+      x-ms-file-last-write-time:
+      - '2019-09-05T17:58:26.5075585Z'
+      x-ms-file-parent-id:
+      - '0'
+      x-ms-file-permission-key:
+      - 3444015506203535569*9758017926486491231
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -149,11 +171,11 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2019 19:52:21 GMT
+      - Thu, 05 Sep 2019 17:58:27 GMT
       x-ms-range:
       - bytes=0-4095
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
       x-ms-write:
       - update
     method: PUT
@@ -167,17 +189,17 @@ interactions:
       content-md5:
       - CL76qmRkfhUDgTeMpwWvig==
       date:
-      - Thu, 29 Aug 2019 19:52:19 GMT
+      - Thu, 05 Sep 2019 17:58:25 GMT
       etag:
-      - '"0x8D72CBA67215952"'
+      - '"0x8D7322AA6E0E4BE"'
       last-modified:
-      - Thu, 29 Aug 2019 19:52:20 GMT
+      - Thu, 05 Sep 2019 17:58:26 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -249,11 +271,11 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2019 19:52:21 GMT
+      - Thu, 05 Sep 2019 17:58:27 GMT
       x-ms-range:
       - bytes=4096-8191
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
       x-ms-write:
       - update
     method: PUT
@@ -267,17 +289,17 @@ interactions:
       content-md5:
       - qmycSRwAUusyQYgxL8AGMA==
       date:
-      - Thu, 29 Aug 2019 19:52:19 GMT
+      - Thu, 05 Sep 2019 17:58:26 GMT
       etag:
-      - '"0x8D72CBA6731B001"'
+      - '"0x8D7322AA6ED6A21"'
       last-modified:
-      - Thu, 29 Aug 2019 19:52:20 GMT
+      - Thu, 05 Sep 2019 17:58:26 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -349,11 +371,11 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2019 19:52:21 GMT
+      - Thu, 05 Sep 2019 17:58:27 GMT
       x-ms-range:
       - bytes=8192-12287
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
       x-ms-write:
       - update
     method: PUT
@@ -367,17 +389,17 @@ interactions:
       content-md5:
       - LoFQ6HIDM/1rIMKDEWbdLw==
       date:
-      - Thu, 29 Aug 2019 19:52:20 GMT
+      - Thu, 05 Sep 2019 17:58:26 GMT
       etag:
-      - '"0x8D72CBA67403192"'
+      - '"0x8D7322AA7069C09"'
       last-modified:
-      - Thu, 29 Aug 2019 19:52:20 GMT
+      - Thu, 05 Sep 2019 17:58:26 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -449,11 +471,11 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2019 19:52:21 GMT
+      - Thu, 05 Sep 2019 17:58:27 GMT
       x-ms-range:
       - bytes=12288-16383
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
       x-ms-write:
       - update
     method: PUT
@@ -467,17 +489,17 @@ interactions:
       content-md5:
       - XaL2lg6vFbC1KAdQTIVyRQ==
       date:
-      - Thu, 29 Aug 2019 19:52:20 GMT
+      - Thu, 05 Sep 2019 17:58:26 GMT
       etag:
-      - '"0x8D72CBA674DA185"'
+      - '"0x8D7322AA71A0086"'
       last-modified:
-      - Thu, 29 Aug 2019 19:52:20 GMT
+      - Thu, 05 Sep 2019 17:58:26 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -549,11 +571,11 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2019 19:52:21 GMT
+      - Thu, 05 Sep 2019 17:58:27 GMT
       x-ms-range:
       - bytes=16384-20479
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
       x-ms-write:
       - update
     method: PUT
@@ -567,17 +589,17 @@ interactions:
       content-md5:
       - 6t1IRg7hhL3yM4rVk4JOnQ==
       date:
-      - Thu, 29 Aug 2019 19:52:20 GMT
+      - Thu, 05 Sep 2019 17:58:26 GMT
       etag:
-      - '"0x8D72CBA675C4A31"'
+      - '"0x8D7322AA727978C"'
       last-modified:
-      - Thu, 29 Aug 2019 19:52:20 GMT
+      - Thu, 05 Sep 2019 17:58:27 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -649,11 +671,11 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2019 19:52:22 GMT
+      - Thu, 05 Sep 2019 17:58:27 GMT
       x-ms-range:
       - bytes=20480-24575
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
       x-ms-write:
       - update
     method: PUT
@@ -667,17 +689,17 @@ interactions:
       content-md5:
       - 9J96j5zt17TYIw2EVKApZw==
       date:
-      - Thu, 29 Aug 2019 19:52:20 GMT
+      - Thu, 05 Sep 2019 17:58:26 GMT
       etag:
-      - '"0x8D72CBA676ACBCA"'
+      - '"0x8D7322AA734E068"'
       last-modified:
-      - Thu, 29 Aug 2019 19:52:20 GMT
+      - Thu, 05 Sep 2019 17:58:27 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -749,11 +771,11 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2019 19:52:22 GMT
+      - Thu, 05 Sep 2019 17:58:27 GMT
       x-ms-range:
       - bytes=24576-28671
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
       x-ms-write:
       - update
     method: PUT
@@ -767,17 +789,17 @@ interactions:
       content-md5:
       - YrGQL79nRin6epM/m9celw==
       date:
-      - Thu, 29 Aug 2019 19:52:20 GMT
+      - Thu, 05 Sep 2019 17:58:26 GMT
       etag:
-      - '"0x8D72CBA6779C2A8"'
+      - '"0x8D7322AA740A25C"'
       last-modified:
-      - Thu, 29 Aug 2019 19:52:20 GMT
+      - Thu, 05 Sep 2019 17:58:27 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -849,11 +871,11 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2019 19:52:22 GMT
+      - Thu, 05 Sep 2019 17:58:27 GMT
       x-ms-range:
       - bytes=28672-32767
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
       x-ms-write:
       - update
     method: PUT
@@ -867,17 +889,17 @@ interactions:
       content-md5:
       - pmviCQ3f5I7jGLgrnQ0MeQ==
       date:
-      - Thu, 29 Aug 2019 19:52:20 GMT
+      - Thu, 05 Sep 2019 17:58:26 GMT
       etag:
-      - '"0x8D72CBA6789F243"'
+      - '"0x8D7322AA753DFBE"'
       last-modified:
-      - Thu, 29 Aug 2019 19:52:20 GMT
+      - Thu, 05 Sep 2019 17:58:27 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -949,11 +971,11 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2019 19:52:22 GMT
+      - Thu, 05 Sep 2019 17:58:28 GMT
       x-ms-range:
       - bytes=32768-36863
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
       x-ms-write:
       - update
     method: PUT
@@ -967,17 +989,17 @@ interactions:
       content-md5:
       - H9BiT0rh4KyrhZgBc1zn6A==
       date:
-      - Thu, 29 Aug 2019 19:52:20 GMT
+      - Thu, 05 Sep 2019 17:58:26 GMT
       etag:
-      - '"0x8D72CBA6798E923"'
+      - '"0x8D7322AA75EDE43"'
       last-modified:
-      - Thu, 29 Aug 2019 19:52:20 GMT
+      - Thu, 05 Sep 2019 17:58:27 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -1049,11 +1071,11 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2019 19:52:22 GMT
+      - Thu, 05 Sep 2019 17:58:28 GMT
       x-ms-range:
       - bytes=36864-40959
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
       x-ms-write:
       - update
     method: PUT
@@ -1067,17 +1089,17 @@ interactions:
       content-md5:
       - oaILnsvaR8Qknty2T/JBQw==
       date:
-      - Thu, 29 Aug 2019 19:52:20 GMT
+      - Thu, 05 Sep 2019 17:58:26 GMT
       etag:
-      - '"0x8D72CBA67A8A37C"'
+      - '"0x8D7322AA76D5FD4"'
       last-modified:
-      - Thu, 29 Aug 2019 19:52:21 GMT
+      - Thu, 05 Sep 2019 17:58:27 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -1149,11 +1171,11 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2019 19:52:22 GMT
+      - Thu, 05 Sep 2019 17:58:28 GMT
       x-ms-range:
       - bytes=40960-45055
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
       x-ms-write:
       - update
     method: PUT
@@ -1167,17 +1189,17 @@ interactions:
       content-md5:
       - NxsmBp6eEyxENSz4Yqvu2g==
       date:
-      - Thu, 29 Aug 2019 19:52:20 GMT
+      - Thu, 05 Sep 2019 17:58:26 GMT
       etag:
-      - '"0x8D72CBA67B85DCC"'
+      - '"0x8D7322AA77A5A82"'
       last-modified:
-      - Thu, 29 Aug 2019 19:52:21 GMT
+      - Thu, 05 Sep 2019 17:58:27 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -1249,11 +1271,11 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2019 19:52:22 GMT
+      - Thu, 05 Sep 2019 17:58:28 GMT
       x-ms-range:
       - bytes=45056-49151
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
       x-ms-write:
       - update
     method: PUT
@@ -1267,17 +1289,17 @@ interactions:
       content-md5:
       - /w/6Wtp7972Yvxp5E5cQ4A==
       date:
-      - Thu, 29 Aug 2019 19:52:20 GMT
+      - Thu, 05 Sep 2019 17:58:27 GMT
       etag:
-      - '"0x8D72CBA67C6DF67"'
+      - '"0x8D7322AA7877C46"'
       last-modified:
-      - Thu, 29 Aug 2019 19:52:21 GMT
+      - Thu, 05 Sep 2019 17:58:27 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -1349,11 +1371,11 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2019 19:52:22 GMT
+      - Thu, 05 Sep 2019 17:58:28 GMT
       x-ms-range:
       - bytes=49152-53247
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
       x-ms-write:
       - update
     method: PUT
@@ -1367,17 +1389,17 @@ interactions:
       content-md5:
       - aj9CarPVtEg+dHVtfEUxrw==
       date:
-      - Thu, 29 Aug 2019 19:52:21 GMT
+      - Thu, 05 Sep 2019 17:58:27 GMT
       etag:
-      - '"0x8D72CBA67D73618"'
+      - '"0x8D7322AA793DA97"'
       last-modified:
-      - Thu, 29 Aug 2019 19:52:21 GMT
+      - Thu, 05 Sep 2019 17:58:27 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -1448,11 +1470,11 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2019 19:52:22 GMT
+      - Thu, 05 Sep 2019 17:58:28 GMT
       x-ms-range:
       - bytes=53248-57343
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
       x-ms-write:
       - update
     method: PUT
@@ -1466,17 +1488,17 @@ interactions:
       content-md5:
       - NJBr/EhP+B9JJ/mDuKbNSw==
       date:
-      - Thu, 29 Aug 2019 19:52:21 GMT
+      - Thu, 05 Sep 2019 17:58:27 GMT
       etag:
-      - '"0x8D72CBA67E67B27"'
+      - '"0x8D7322AA7A2AA5F"'
       last-modified:
-      - Thu, 29 Aug 2019 19:52:21 GMT
+      - Thu, 05 Sep 2019 17:58:27 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -1548,11 +1570,11 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2019 19:52:22 GMT
+      - Thu, 05 Sep 2019 17:58:28 GMT
       x-ms-range:
       - bytes=57344-61439
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
       x-ms-write:
       - update
     method: PUT
@@ -1566,17 +1588,17 @@ interactions:
       content-md5:
       - 0HhMXTtHtRV7FCTJRU091A==
       date:
-      - Thu, 29 Aug 2019 19:52:21 GMT
+      - Thu, 05 Sep 2019 17:58:27 GMT
       etag:
-      - '"0x8D72CBA67F57208"'
+      - '"0x8D7322AA7AF7DF1"'
       last-modified:
-      - Thu, 29 Aug 2019 19:52:21 GMT
+      - Thu, 05 Sep 2019 17:58:27 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -1648,11 +1670,11 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2019 19:52:23 GMT
+      - Thu, 05 Sep 2019 17:58:28 GMT
       x-ms-range:
       - bytes=61440-65535
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
       x-ms-write:
       - update
     method: PUT
@@ -1666,17 +1688,17 @@ interactions:
       content-md5:
       - rcsOCMVA9RDuacpxGgQlug==
       date:
-      - Thu, 29 Aug 2019 19:52:21 GMT
+      - Thu, 05 Sep 2019 17:58:27 GMT
       etag:
-      - '"0x8D72CBA68068C2D"'
+      - '"0x8D7322AA7BCEDE0"'
       last-modified:
-      - Thu, 29 Aug 2019 19:52:21 GMT
+      - Thu, 05 Sep 2019 17:58:28 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -1696,11 +1718,11 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2019 19:52:23 GMT
+      - Thu, 05 Sep 2019 17:58:28 GMT
       x-ms-range:
       - bytes=65536-65545
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
       x-ms-write:
       - update
     method: PUT
@@ -1714,17 +1736,17 @@ interactions:
       content-md5:
       - rY4HLvyoBmI/5P7kFQ425A==
       date:
-      - Thu, 29 Aug 2019 19:52:21 GMT
+      - Thu, 05 Sep 2019 17:58:27 GMT
       etag:
-      - '"0x8D72CBA681A65F3"'
+      - '"0x8D7322AA7C9C17A"'
       last-modified:
-      - Thu, 29 Aug 2019 19:52:21 GMT
+      - Thu, 05 Sep 2019 17:58:28 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -1740,11 +1762,11 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2019 19:52:23 GMT
+      - Thu, 05 Sep 2019 17:58:28 GMT
       x-ms-range:
       - bytes=0-33554431
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: GET
     uri: https://pyacrstorage1bed14dc.file.core.windows.net/utshare1bed14dc/file1bed14dc
   response:
@@ -2619,19 +2641,33 @@ interactions:
       content-type:
       - application/octet-stream
       date:
-      - Thu, 29 Aug 2019 19:52:21 GMT
+      - Thu, 05 Sep 2019 17:58:27 GMT
       etag:
-      - '"0x8D72CBA681A65F3"'
+      - '"0x8D7322AA7C9C17A"'
       last-modified:
-      - Thu, 29 Aug 2019 19:52:21 GMT
+      - Thu, 05 Sep 2019 17:58:28 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-file-attributes:
+      - Archive
+      x-ms-file-change-time:
+      - '2019-09-05T17:58:26.5075585Z'
+      x-ms-file-creation-time:
+      - '2019-09-05T17:58:26.5075585Z'
+      x-ms-file-id:
+      - '13835128424026341376'
+      x-ms-file-last-write-time:
+      - '2019-09-05T17:58:26.5075585Z'
+      x-ms-file-parent-id:
+      - '0'
+      x-ms-file-permission-key:
+      - 3444015506203535569*9758017926486491231
       x-ms-server-encrypted:
       - 'true'
       x-ms-type:
       - File
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 206
       message: Partial Content

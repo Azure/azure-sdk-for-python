@@ -4,12 +4,10 @@ interactions:
     headers:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Fri, 23 Aug 2019 03:06:00 GMT
+      - Thu, 05 Sep 2019 19:42:45 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
     uri: https://pyacrstorage522c108c.file.core.windows.net/share522c108c?restype=share
   response:
@@ -17,11 +15,11 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 23 Aug 2019 03:06:00 GMT
-      etag: '"0x8D72776D3D8B7E0"'
-      last-modified: Fri, 23 Aug 2019 03:06:01 GMT
+      date: Thu, 05 Sep 2019 19:42:43 GMT
+      etag: '"0x8D7323938EF37C8"'
+      last-modified: Thu, 05 Sep 2019 19:42:44 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-version: '2018-11-09'
+      x-ms-version: '2019-02-02'
     status:
       code: 201
       message: Created
@@ -38,12 +36,10 @@ interactions:
     headers:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Fri, 23 Aug 2019 03:06:01 GMT
+      - Thu, 05 Sep 2019 19:42:45 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: GET
     uri: https://pyacrstorage522c108c.file.core.windows.net/share522c108c?restype=share
   response:
@@ -51,14 +47,14 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 23 Aug 2019 03:06:00 GMT
-      etag: '"0x8D72776D3D8B7E0"'
-      last-modified: Fri, 23 Aug 2019 03:06:01 GMT
+      date: Thu, 05 Sep 2019 19:42:43 GMT
+      etag: '"0x8D7323938EF37C8"'
+      last-modified: Thu, 05 Sep 2019 19:42:44 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-has-immutability-policy: 'false'
       x-ms-has-legal-hold: 'false'
       x-ms-share-quota: '5120'
-      x-ms-version: '2018-11-09'
+      x-ms-version: '2019-02-02'
     status:
       code: 200
       message: OK

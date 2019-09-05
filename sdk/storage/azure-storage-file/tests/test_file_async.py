@@ -572,6 +572,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         file_client = await self._create_file(fsc)
 
         # Act
+        import ipdb; ipdb.set_trace()
         resp = await file_client.clear_range(0, 511)
 
         # Assert
@@ -790,7 +791,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
         data = b'12345678' * 1024 * 1024
-        fsc2 = FileServiceClient(self._account_url(storage_account.name), credential=storage_account, transport=AiohttpTestTransport())
+        fsc2 = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
         await self._create_remote_share(fsc2)
         source_file = await self._create_remote_file(fsc2, file_data=data)
         sas_token = source_file.generate_shared_access_signature(
@@ -1112,6 +1113,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
 
         # Assert
         await self.assert_file_equal(file_client, data)
+        import ipdb; ipdb.set_trace()
         self.assert_upload_progress(
             len(data),
             fsc._config.max_range_size,

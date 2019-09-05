@@ -13,9 +13,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2019 19:53:06 GMT
+      - Thu, 05 Sep 2019 18:00:06 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
     uri: https://pyacrstorage1d770f1d.file.core.windows.net/utshare1d770f1d?restype=share
   response:
@@ -25,15 +25,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 29 Aug 2019 19:53:05 GMT
+      - Thu, 05 Sep 2019 18:00:05 GMT
       etag:
-      - '"0x8D72CBA8203511C"'
+      - '"0x8D7322AE26C1D94"'
       last-modified:
-      - Thu, 29 Aug 2019 19:53:05 GMT
+      - Thu, 05 Sep 2019 18:00:06 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 201
       message: Created

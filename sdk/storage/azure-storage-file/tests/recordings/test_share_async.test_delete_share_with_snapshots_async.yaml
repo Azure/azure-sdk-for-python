@@ -4,12 +4,10 @@ interactions:
     headers:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Fri, 23 Aug 2019 03:05:09 GMT
+      - Thu, 05 Sep 2019 19:41:55 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
     uri: https://pyacrstorage792516bc.file.core.windows.net/share792516bc?restype=share
   response:
@@ -17,11 +15,11 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 23 Aug 2019 03:05:09 GMT
-      etag: '"0x8D72776B550F161"'
-      last-modified: Fri, 23 Aug 2019 03:05:09 GMT
+      date: Thu, 05 Sep 2019 19:41:53 GMT
+      etag: '"0x8D732391B32C5EC"'
+      last-modified: Thu, 05 Sep 2019 19:41:54 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-version: '2018-11-09'
+      x-ms-version: '2019-02-02'
     status:
       code: 201
       message: Created
@@ -38,12 +36,10 @@ interactions:
     headers:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Fri, 23 Aug 2019 03:05:10 GMT
+      - Thu, 05 Sep 2019 19:41:55 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
     uri: https://pyacrstorage792516bc.file.core.windows.net/share792516bc?restype=share&comp=snapshot
   response:
@@ -51,12 +47,12 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 23 Aug 2019 03:05:09 GMT
-      etag: '"0x8D72776B550F161"'
-      last-modified: Fri, 23 Aug 2019 03:05:09 GMT
+      date: Thu, 05 Sep 2019 19:41:54 GMT
+      etag: '"0x8D732391B32C5EC"'
+      last-modified: Thu, 05 Sep 2019 19:41:54 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-snapshot: '2019-08-23T03:05:10.0000000Z'
-      x-ms-version: '2018-11-09'
+      x-ms-snapshot: '2019-09-05T19:41:55.0000000Z'
+      x-ms-version: '2019-02-02'
     status:
       code: 201
       message: Created
@@ -73,25 +69,23 @@ interactions:
     headers:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Fri, 23 Aug 2019 03:05:10 GMT
+      - Thu, 05 Sep 2019 19:41:56 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: DELETE
     uri: https://pyacrstorage792516bc.file.core.windows.net/share792516bc?restype=share
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareHasSnapshots</Code><Message>The
-        share has snapshots and the operation requires no snapshots.\nRequestId:a79f5b3d-501a-013b-265f-593568000000\nTime:2019-08-23T03:05:10.4854399Z</Message></Error>"
+        share has snapshots and the operation requires no snapshots.\nRequestId:3db51d14-d01a-0056-3121-6469cf000000\nTime:2019-09-05T19:41:55.8639674Z</Message></Error>"
     headers:
       content-length: '250'
       content-type: application/xml
-      date: Fri, 23 Aug 2019 03:05:09 GMT
+      date: Thu, 05 Sep 2019 19:41:54 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: ShareHasSnapshots
-      x-ms-version: '2018-11-09'
+      x-ms-version: '2019-02-02'
     status:
       code: 409
       message: The share has snapshots and the operation requires no snapshots.
@@ -108,14 +102,12 @@ interactions:
     headers:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Fri, 23 Aug 2019 03:05:10 GMT
+      - Thu, 05 Sep 2019 19:41:56 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: DELETE
     uri: https://pyacrstorage792516bc.file.core.windows.net/share792516bc?restype=share
   response:
@@ -123,9 +115,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 23 Aug 2019 03:05:09 GMT
+      date: Thu, 05 Sep 2019 19:41:55 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-version: '2018-11-09'
+      x-ms-version: '2019-02-02'
     status:
       code: 202
       message: Accepted

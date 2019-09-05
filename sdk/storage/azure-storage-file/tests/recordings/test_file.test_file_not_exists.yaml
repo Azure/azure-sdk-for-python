@@ -13,9 +13,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2019 19:51:31 GMT
+      - Thu, 05 Sep 2019 17:59:06 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
     uri: https://pyacrstoragebd5b0c5c.file.core.windows.net/utsharebd5b0c5c?restype=share
   response:
@@ -25,15 +25,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 29 Aug 2019 19:51:32 GMT
+      - Thu, 05 Sep 2019 17:59:05 GMT
       etag:
-      - '"0x8D72CBA4AB83719"'
+      - '"0x8D7322ABE43BB85"'
       last-modified:
-      - Thu, 29 Aug 2019 19:51:32 GMT
+      - Thu, 05 Sep 2019 17:59:05 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -49,9 +49,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2019 19:51:34 GMT
+      - Thu, 05 Sep 2019 17:59:06 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: HEAD
     uri: https://pyacrstoragebd5b0c5c.file.core.windows.net/utsharebd5b0c5c/missingdir/filebd5b0c5c
   response:
@@ -59,7 +59,7 @@ interactions:
       string: ''
     headers:
       date:
-      - Thu, 29 Aug 2019 19:51:33 GMT
+      - Thu, 05 Sep 2019 17:59:06 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -67,7 +67,7 @@ interactions:
       x-ms-error-code:
       - ParentNotFound
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 404
       message: The specified parent path does not exist.

@@ -4,12 +4,10 @@ interactions:
     headers:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Fri, 23 Aug 2019 03:04:43 GMT
+      - Thu, 05 Sep 2019 19:41:24 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
     uri: https://pyacrstoragef70c142f.file.core.windows.net/sharef70c142f?restype=share
   response:
@@ -17,11 +15,11 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 23 Aug 2019 03:04:45 GMT
-      etag: '"0x8D72776A6B601C4"'
-      last-modified: Fri, 23 Aug 2019 03:04:45 GMT
+      date: Thu, 05 Sep 2019 19:41:23 GMT
+      etag: '"0x8D7323908EA869B"'
+      last-modified: Thu, 05 Sep 2019 19:41:24 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-version: '2018-11-09'
+      x-ms-version: '2019-02-02'
     status:
       code: 201
       message: Created
@@ -38,12 +36,10 @@ interactions:
     headers:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Fri, 23 Aug 2019 03:04:45 GMT
+      - Thu, 05 Sep 2019 19:41:24 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
     uri: https://pyacrstoragef70c142f.file.core.windows.net/sharef70c142f?restype=share&comp=snapshot
   response:
@@ -51,12 +47,12 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 23 Aug 2019 03:04:45 GMT
-      etag: '"0x8D72776A6B601C4"'
-      last-modified: Fri, 23 Aug 2019 03:04:45 GMT
+      date: Thu, 05 Sep 2019 19:41:25 GMT
+      etag: '"0x8D7323908EA869B"'
+      last-modified: Thu, 05 Sep 2019 19:41:24 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-snapshot: '2019-08-23T03:04:45.0000000Z'
-      x-ms-version: '2018-11-09'
+      x-ms-snapshot: '2019-09-05T19:41:25.0000000Z'
+      x-ms-version: '2019-02-02'
     status:
       code: 201
       message: Created

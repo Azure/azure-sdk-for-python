@@ -13,9 +13,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2019 19:58:57 GMT
+      - Thu, 05 Sep 2019 19:40:59 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
     uri: https://pyacrstorage62ad1111.file.core.windows.net/share62ad1111?restype=share
   response:
@@ -25,15 +25,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 29 Aug 2019 19:58:56 GMT
+      - Thu, 05 Sep 2019 19:40:58 GMT
       etag:
-      - '"0x8D72CBB53AC61ED"'
+      - '"0x8D73238F9CED2FB"'
       last-modified:
-      - Thu, 29 Aug 2019 19:58:57 GMT
+      - Thu, 05 Sep 2019 19:40:58 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -49,28 +49,28 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2019 19:58:58 GMT
+      - Thu, 05 Sep 2019 19:40:59 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: GET
     uri: https://pyacrstorage62ad1111.file.core.windows.net/share62ad1111?sharesnapshot=2017-07-19T06:53:46.0000000Z&restype=share
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareNotFound</Code><Message>The
-        specified share does not exist.\nRequestId:91b6a6d1-d01a-0064-51a4-5e54a8000000\nTime:2019-08-29T19:58:57.2268867Z</Message></Error>"
+        specified share does not exist.\nRequestId:821f98a0-201a-0125-6521-64ee90000000\nTime:2019-09-05T19:40:58.7673896Z</Message></Error>"
     headers:
       content-length:
       - '217'
       content-type:
       - application/xml
       date:
-      - Thu, 29 Aug 2019 19:58:56 GMT
+      - Thu, 05 Sep 2019 19:40:58 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
       - ShareNotFound
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 404
       message: The specified share does not exist.

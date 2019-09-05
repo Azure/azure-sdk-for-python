@@ -23,15 +23,15 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2019 19:54:50 GMT
+      - Thu, 05 Sep 2019 19:44:07 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
     uri: https://pyacrstorage5250160f.file.core.windows.net/?restype=service&comp=properties
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidXmlDocument</Code><Message>XML
-        specified is not syntactically valid.\nRequestId:38c33762-a01a-0036-33a3-5e2b65000000\nTime:2019-08-29T19:54:49.2022980Z</Message><LineNumber>0</LineNumber><LinePosition>0</LinePosition><Reason
+        specified is not syntactically valid.\nRequestId:7a2c1870-c01a-0062-5622-64c1ef000000\nTime:2019-09-05T19:44:07.4569176Z</Message><LineNumber>0</LineNumber><LinePosition>0</LinePosition><Reason
         /></Error>"
     headers:
       content-length:
@@ -39,13 +39,13 @@ interactions:
       content-type:
       - application/xml
       date:
-      - Thu, 29 Aug 2019 19:54:48 GMT
+      - Thu, 05 Sep 2019 19:44:06 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
       - InvalidXmlDocument
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 400
       message: XML specified is not syntactically valid.

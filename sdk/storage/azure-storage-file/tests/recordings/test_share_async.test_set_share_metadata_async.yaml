@@ -4,12 +4,10 @@ interactions:
     headers:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Fri, 23 Aug 2019 03:05:56 GMT
+      - Thu, 05 Sep 2019 19:42:37 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
     uri: https://pyacrstoragebc1812d8.file.core.windows.net/sharebc1812d8?restype=share
   response:
@@ -17,11 +15,11 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 23 Aug 2019 03:05:56 GMT
-      etag: '"0x8D72776D157BDEF"'
-      last-modified: Fri, 23 Aug 2019 03:05:56 GMT
+      date: Thu, 05 Sep 2019 19:42:38 GMT
+      etag: '"0x8D7323934D2796D"'
+      last-modified: Thu, 05 Sep 2019 19:42:37 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-version: '2018-11-09'
+      x-ms-version: '2019-02-02'
     status:
       code: 201
       message: Created
@@ -38,16 +36,14 @@ interactions:
     headers:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Fri, 23 Aug 2019 03:05:56 GMT
+      - Thu, 05 Sep 2019 19:42:38 GMT
       x-ms-meta-hello:
       - world
       x-ms-meta-number:
       - '42'
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
     uri: https://pyacrstoragebc1812d8.file.core.windows.net/sharebc1812d8?restype=share&comp=metadata
   response:
@@ -55,11 +51,11 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 23 Aug 2019 03:05:56 GMT
-      etag: '"0x8D72776D16B595D"'
-      last-modified: Fri, 23 Aug 2019 03:05:56 GMT
+      date: Thu, 05 Sep 2019 19:42:39 GMT
+      etag: '"0x8D73239362AA5A9"'
+      last-modified: Thu, 05 Sep 2019 19:42:39 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-version: '2018-11-09'
+      x-ms-version: '2019-02-02'
     status:
       code: 200
       message: OK
@@ -76,12 +72,10 @@ interactions:
     headers:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Fri, 23 Aug 2019 03:05:57 GMT
+      - Thu, 05 Sep 2019 19:42:40 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: GET
     uri: https://pyacrstoragebc1812d8.file.core.windows.net/sharebc1812d8?restype=share
   response:
@@ -89,16 +83,16 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 23 Aug 2019 03:05:56 GMT
-      etag: '"0x8D72776D16B595D"'
-      last-modified: Fri, 23 Aug 2019 03:05:56 GMT
+      date: Thu, 05 Sep 2019 19:42:39 GMT
+      etag: '"0x8D73239362AA5A9"'
+      last-modified: Thu, 05 Sep 2019 19:42:39 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-has-immutability-policy: 'false'
       x-ms-has-legal-hold: 'false'
       x-ms-meta-hello: world
       x-ms-meta-number: '42'
       x-ms-share-quota: '5120'
-      x-ms-version: '2018-11-09'
+      x-ms-version: '2019-02-02'
     status:
       code: 200
       message: OK

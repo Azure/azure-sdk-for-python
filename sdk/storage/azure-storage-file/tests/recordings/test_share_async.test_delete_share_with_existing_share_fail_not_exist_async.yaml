@@ -4,25 +4,23 @@ interactions:
     headers:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Fri, 23 Aug 2019 03:05:07 GMT
+      - Thu, 05 Sep 2019 19:41:32 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: DELETE
     uri: https://pyacrstorage933f1eed.file.core.windows.net/share933f1eed?restype=share
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareNotFound</Code><Message>The
-        specified share does not exist.\nRequestId:91ec30c1-e01a-00c7-425f-59d40a000000\nTime:2019-08-23T03:05:08.7319759Z</Message></Error>"
+        specified share does not exist.\nRequestId:f746970c-301a-0020-0121-64c407000000\nTime:2019-09-05T19:41:33.1565334Z</Message></Error>"
     headers:
       content-length: '217'
       content-type: application/xml
-      date: Fri, 23 Aug 2019 03:05:08 GMT
+      date: Thu, 05 Sep 2019 19:41:32 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: ShareNotFound
-      x-ms-version: '2018-11-09'
+      x-ms-version: '2019-02-02'
     status:
       code: 404
       message: The specified share does not exist.

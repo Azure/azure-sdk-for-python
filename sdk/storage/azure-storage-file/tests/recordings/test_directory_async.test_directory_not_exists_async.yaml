@@ -4,12 +4,10 @@ interactions:
     headers:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Fri, 23 Aug 2019 02:49:51 GMT
+      - Thu, 05 Sep 2019 17:51:37 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
     uri: https://pyacrstorage3e7115c0.file.core.windows.net/utshare3e7115c0?restype=share
   response:
@@ -17,11 +15,11 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 23 Aug 2019 02:49:51 GMT
-      etag: '"0x8D727749238443B"'
-      last-modified: Fri, 23 Aug 2019 02:49:51 GMT
+      date: Thu, 05 Sep 2019 17:51:36 GMT
+      etag: '"0x8D73229B2B3459A"'
+      last-modified: Thu, 05 Sep 2019 17:51:36 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-version: '2018-11-09'
+      x-ms-version: '2019-02-02'
     status:
       code: 201
       message: Created
@@ -38,25 +36,23 @@ interactions:
     headers:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Fri, 23 Aug 2019 02:49:52 GMT
+      - Thu, 05 Sep 2019 17:51:37 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: GET
     uri: https://pyacrstorage3e7115c0.file.core.windows.net/utshare3e7115c0/dir1?restype=directory
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ResourceNotFound</Code><Message>The
-        specified resource does not exist.\nRequestId:b2c15edb-501a-012e-745d-59472d000000\nTime:2019-08-23T02:49:51.9945779Z</Message></Error>"
+        specified resource does not exist.\nRequestId:98e8ff47-301a-0011-2212-64b12c000000\nTime:2019-09-05T17:51:37.0156234Z</Message></Error>"
     headers:
       content-length: '223'
       content-type: application/xml
-      date: Fri, 23 Aug 2019 02:49:51 GMT
+      date: Thu, 05 Sep 2019 17:51:36 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: ResourceNotFound
-      x-ms-version: '2018-11-09'
+      x-ms-version: '2019-02-02'
     status:
       code: 404
       message: The specified resource does not exist.

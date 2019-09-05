@@ -13,9 +13,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2019 19:54:21 GMT
+      - Thu, 05 Sep 2019 00:30:33 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
     uri: https://pyacrstoragea699174c.file.core.windows.net/fileshare?restype=share
   response:
@@ -25,15 +25,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 29 Aug 2019 19:54:20 GMT
+      - Thu, 05 Sep 2019 00:30:33 GMT
       etag:
-      - '"0x8D72CBAAE9F88F0"'
+      - '"0x8D7319843BF8514"'
       last-modified:
-      - Thu, 29 Aug 2019 19:54:20 GMT
+      - Thu, 05 Sep 2019 00:30:33 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -51,11 +51,11 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2019 19:54:21 GMT
+      - Thu, 05 Sep 2019 00:30:33 GMT
       x-ms-share-quota:
       - '1'
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
     uri: https://pyacrstoragea699174c.file.core.windows.net/fileshare?restype=share&comp=properties
   response:
@@ -65,15 +65,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 29 Aug 2019 19:54:20 GMT
+      - Thu, 05 Sep 2019 00:30:33 GMT
       etag:
-      - '"0x8D72CBAAED5EAC1"'
+      - '"0x8D7319843CC2D67"'
       last-modified:
-      - Thu, 29 Aug 2019 19:54:20 GMT
+      - Thu, 05 Sep 2019 00:30:33 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 200
       message: OK
@@ -91,11 +91,11 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2019 19:54:21 GMT
+      - Thu, 05 Sep 2019 00:30:33 GMT
       x-ms-meta-category:
       - test
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
     uri: https://pyacrstoragea699174c.file.core.windows.net/fileshare?restype=share&comp=metadata
   response:
@@ -105,15 +105,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 29 Aug 2019 19:54:20 GMT
+      - Thu, 05 Sep 2019 00:30:33 GMT
       etag:
-      - '"0x8D72CBAAEEB2449"'
+      - '"0x8D7319843D7C848"'
       last-modified:
-      - Thu, 29 Aug 2019 19:54:20 GMT
+      - Thu, 05 Sep 2019 00:30:33 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 200
       message: OK
@@ -129,9 +129,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2019 19:54:22 GMT
+      - Thu, 05 Sep 2019 00:30:34 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: GET
     uri: https://pyacrstoragea699174c.file.core.windows.net/fileshare?restype=share
   response:
@@ -141,11 +141,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 29 Aug 2019 19:54:20 GMT
+      - Thu, 05 Sep 2019 00:30:33 GMT
       etag:
-      - '"0x8D72CBAAEEB2449"'
+      - '"0x8D7319843D7C848"'
       last-modified:
-      - Thu, 29 Aug 2019 19:54:20 GMT
+      - Thu, 05 Sep 2019 00:30:33 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-has-immutability-policy:
@@ -157,7 +157,7 @@ interactions:
       x-ms-share-quota:
       - '1'
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 200
       message: OK
@@ -175,9 +175,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2019 19:54:22 GMT
+      - Thu, 05 Sep 2019 00:30:34 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: DELETE
     uri: https://pyacrstoragea699174c.file.core.windows.net/fileshare?restype=share
   response:
@@ -187,11 +187,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 29 Aug 2019 19:54:21 GMT
+      - Thu, 05 Sep 2019 00:30:33 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 202
       message: Accepted

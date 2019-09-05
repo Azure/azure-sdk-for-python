@@ -13,7 +13,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2019 19:58:16 GMT
+      - Thu, 05 Sep 2019 19:40:25 GMT
       x-ms-meta:
       - '{''hello'': ''world'', ''number'': ''42''}'
       x-ms-meta-hello:
@@ -21,7 +21,7 @@ interactions:
       x-ms-meta-number:
       - '42'
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
     uri: https://pyacrstoragef877141f.file.core.windows.net/sharef877141f?restype=share
   response:
@@ -31,15 +31,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 29 Aug 2019 19:58:14 GMT
+      - Thu, 05 Sep 2019 19:40:28 GMT
       etag:
-      - '"0x8D72CBB3ABB511B"'
+      - '"0x8D73238E8365D35"'
       last-modified:
-      - Thu, 29 Aug 2019 19:58:15 GMT
+      - Thu, 05 Sep 2019 19:40:29 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -55,28 +55,28 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2019 19:58:16 GMT
+      - Thu, 05 Sep 2019 19:40:30 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: GET
     uri: https://pyacrstoragef877141f.file.core.windows.net/?prefix=sharef877141f&include=metadata&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
         ServiceEndpoint=\"https://pyacrstoragef877141f.file.core.windows.net/\"><Prefix>sharef877141f</Prefix><Shares><Share><Name>sharef877141f</Name><Properties><Last-Modified>Thu,
-        29 Aug 2019 19:58:15 GMT</Last-Modified><Etag>\"0x8D72CBB3ABB511B\"</Etag><Quota>5120</Quota></Properties><Metadata><hello>world</hello><number>42</number></Metadata></Share></Shares><NextMarker
+        05 Sep 2019 19:40:29 GMT</Last-Modified><Etag>\"0x8D73238E8365D35\"</Etag><Quota>5120</Quota></Properties><Metadata><hello>world</hello><number>42</number></Metadata></Share></Shares><NextMarker
         /></EnumerationResults>"
     headers:
       content-type:
       - application/xml
       date:
-      - Thu, 29 Aug 2019 19:58:15 GMT
+      - Thu, 05 Sep 2019 19:40:29 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
       - chunked
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 200
       message: OK

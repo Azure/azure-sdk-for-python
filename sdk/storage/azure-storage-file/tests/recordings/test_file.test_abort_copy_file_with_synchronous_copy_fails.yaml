@@ -13,9 +13,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2019 19:49:46 GMT
+      - Thu, 05 Sep 2019 17:57:57 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
     uri: https://pyacrstoragebfcc180b.file.core.windows.net/utsharebfcc180b?restype=share
   response:
@@ -25,15 +25,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 29 Aug 2019 19:49:45 GMT
+      - Thu, 05 Sep 2019 17:58:04 GMT
       etag:
-      - '"0x8D72CBA0B296372"'
+      - '"0x8D7322A96C508DE"'
       last-modified:
-      - Thu, 29 Aug 2019 19:49:45 GMT
+      - Thu, 05 Sep 2019 17:57:59 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -53,11 +53,19 @@ interactions:
       x-ms-content-length:
       - '1024'
       x-ms-date:
-      - Thu, 29 Aug 2019 19:49:47 GMT
+      - Thu, 05 Sep 2019 17:58:06 GMT
+      x-ms-file-attributes:
+      - none
+      x-ms-file-creation-time:
+      - now
+      x-ms-file-last-write-time:
+      - now
+      x-ms-file-permission:
+      - inherit
       x-ms-type:
       - file
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
     uri: https://pyacrstoragebfcc180b.file.core.windows.net/utsharebfcc180b/filebfcc180b
   response:
@@ -67,40 +75,54 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 29 Aug 2019 19:49:45 GMT
+      - Thu, 05 Sep 2019 17:58:05 GMT
       etag:
-      - '"0x8D72CBA0B3E5C9B"'
+      - '"0x8D7322A9A642C92"'
       last-modified:
-      - Thu, 29 Aug 2019 19:49:46 GMT
+      - Thu, 05 Sep 2019 17:58:05 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-file-attributes:
+      - Archive
+      x-ms-file-change-time:
+      - '2019-09-05T17:58:05.6486034Z'
+      x-ms-file-creation-time:
+      - '2019-09-05T17:58:05.6486034Z'
+      x-ms-file-id:
+      - '13835128424026341376'
+      x-ms-file-last-write-time:
+      - '2019-09-05T17:58:05.6486034Z'
+      x-ms-file-parent-id:
+      - '0'
+      x-ms-file-permission-key:
+      - 14090134610133760067*7722229186749288653
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
 - request:
     body: !!binary |
-      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
+      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
     headers:
       Accept:
       - '*/*'
@@ -115,11 +137,11 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2019 19:49:47 GMT
+      - Thu, 05 Sep 2019 17:58:06 GMT
       x-ms-range:
       - bytes=0-1023
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
       x-ms-write:
       - update
     method: PUT
@@ -131,19 +153,19 @@ interactions:
       content-length:
       - '0'
       content-md5:
-      - mON1FQXWN34sxMRRlpqedg==
+      - n2/6hjxYzGDs2M1OFFC5yw==
       date:
-      - Thu, 29 Aug 2019 19:49:45 GMT
+      - Thu, 05 Sep 2019 17:58:05 GMT
       etag:
-      - '"0x8D72CBA0B52AB9B"'
+      - '"0x8D7322A9A817FD5"'
       last-modified:
-      - Thu, 29 Aug 2019 19:49:46 GMT
+      - Thu, 05 Sep 2019 17:58:05 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -163,9 +185,9 @@ interactions:
       x-ms-copy-source:
       - https://pyacrstoragebfcc180b.file.core.windows.net/utsharebfcc180b/filebfcc180b
       x-ms-date:
-      - Thu, 29 Aug 2019 19:49:47 GMT
+      - Thu, 05 Sep 2019 17:58:06 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
     uri: https://pyacrstoragebfcc180b.file.core.windows.net/utsharebfcc180b/targetfile
   response:
@@ -175,19 +197,19 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 29 Aug 2019 19:49:46 GMT
+      - Thu, 05 Sep 2019 17:58:06 GMT
       etag:
-      - '"0x8D72CBA0BE828CB"'
+      - '"0x8D7322A9B3E6EC9"'
       last-modified:
-      - Thu, 29 Aug 2019 19:49:47 GMT
+      - Thu, 05 Sep 2019 17:58:07 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-copy-id:
-      - bf9655d4-2f36-4329-9df9-98944fa038b8
+      - f0a76099-33a4-4434-a49d-66d52d97c917
       x-ms-copy-status:
       - success
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 202
       message: Accepted
@@ -207,28 +229,28 @@ interactions:
       x-ms-copy-action:
       - abort
       x-ms-date:
-      - Thu, 29 Aug 2019 19:49:48 GMT
+      - Thu, 05 Sep 2019 17:58:07 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
-    uri: https://pyacrstoragebfcc180b.file.core.windows.net/utsharebfcc180b/targetfile?copyid=bf9655d4-2f36-4329-9df9-98944fa038b8&comp=copy
+    uri: https://pyacrstoragebfcc180b.file.core.windows.net/utsharebfcc180b/targetfile?copyid=f0a76099-33a4-4434-a49d-66d52d97c917&comp=copy
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>NoPendingCopyOperation</Code><Message>There
-        is currently no pending copy operation.\nRequestId:f3dac7de-901a-0076-68a2-5ed068000000\nTime:2019-08-29T19:49:47.4435860Z</Message></Error>"
+        is currently no pending copy operation.\nRequestId:2685db23-a01a-00b3-4213-64caf1000000\nTime:2019-09-05T17:58:08.6127866Z</Message></Error>"
     headers:
       content-length:
       - '236'
       content-type:
       - application/xml
       date:
-      - Thu, 29 Aug 2019 19:49:46 GMT
+      - Thu, 05 Sep 2019 17:58:08 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
       - NoPendingCopyOperation
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 409
       message: There is currently no pending copy operation.

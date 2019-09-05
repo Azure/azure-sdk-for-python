@@ -4,12 +4,10 @@ interactions:
     headers:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Fri, 23 Aug 2019 03:05:54 GMT
+      - Thu, 05 Sep 2019 19:42:10 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
     uri: https://pyacrstorageaf571bc9.file.core.windows.net/listshare0af571bc9?restype=share
   response:
@@ -17,11 +15,11 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 23 Aug 2019 03:05:54 GMT
-      etag: '"0x8D72776D0402C4A"'
-      last-modified: Fri, 23 Aug 2019 03:05:54 GMT
+      date: Thu, 05 Sep 2019 19:42:09 GMT
+      etag: '"0x8D7323924415108"'
+      last-modified: Thu, 05 Sep 2019 19:42:09 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-version: '2018-11-09'
+      x-ms-version: '2019-02-02'
     status:
       code: 201
       message: Created
@@ -38,12 +36,10 @@ interactions:
     headers:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Fri, 23 Aug 2019 03:05:55 GMT
+      - Thu, 05 Sep 2019 19:42:10 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
     uri: https://pyacrstorageaf571bc9.file.core.windows.net/listshare1af571bc9?restype=share
   response:
@@ -51,11 +47,11 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 23 Aug 2019 03:05:54 GMT
-      etag: '"0x8D72776D04D9C31"'
-      last-modified: Fri, 23 Aug 2019 03:05:55 GMT
+      date: Thu, 05 Sep 2019 19:42:09 GMT
+      etag: '"0x8D732392449B70F"'
+      last-modified: Thu, 05 Sep 2019 19:42:09 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-version: '2018-11-09'
+      x-ms-version: '2019-02-02'
     status:
       code: 201
       message: Created
@@ -72,12 +68,10 @@ interactions:
     headers:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Fri, 23 Aug 2019 03:05:55 GMT
+      - Thu, 05 Sep 2019 19:42:10 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
     uri: https://pyacrstorageaf571bc9.file.core.windows.net/listshare2af571bc9?restype=share
   response:
@@ -85,11 +79,11 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 23 Aug 2019 03:05:54 GMT
-      etag: '"0x8D72776D05C6BEB"'
-      last-modified: Fri, 23 Aug 2019 03:05:55 GMT
+      date: Thu, 05 Sep 2019 19:42:09 GMT
+      etag: '"0x8D732392450BD32"'
+      last-modified: Thu, 05 Sep 2019 19:42:10 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-version: '2018-11-09'
+      x-ms-version: '2019-02-02'
     status:
       code: 201
       message: Created
@@ -106,12 +100,10 @@ interactions:
     headers:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Fri, 23 Aug 2019 03:05:55 GMT
+      - Thu, 05 Sep 2019 19:42:10 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
     uri: https://pyacrstorageaf571bc9.file.core.windows.net/listshare3af571bc9?restype=share
   response:
@@ -119,11 +111,11 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 23 Aug 2019 03:05:54 GMT
-      etag: '"0x8D72776D066CE06"'
-      last-modified: Fri, 23 Aug 2019 03:05:55 GMT
+      date: Thu, 05 Sep 2019 19:42:09 GMT
+      etag: '"0x8D7323924585FB5"'
+      last-modified: Thu, 05 Sep 2019 19:42:10 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-version: '2018-11-09'
+      x-ms-version: '2019-02-02'
     status:
       code: 201
       message: Created
@@ -142,26 +134,24 @@ interactions:
       - application/xml
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Fri, 23 Aug 2019 03:05:55 GMT
+      - Thu, 05 Sep 2019 19:42:10 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: GET
     uri: https://pyacrstorageaf571bc9.file.core.windows.net/?maxresults=2&include=&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://pyacrstorageaf571bc9.file.core.windows.net/\"><MaxResults>2</MaxResults><Shares><Share><Name>listshare0af571bc9</Name><Properties><Last-Modified>Fri,
-        23 Aug 2019 03:05:54 GMT</Last-Modified><Etag>\"0x8D72776D0402C4A\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>listshare1af571bc9</Name><Properties><Last-Modified>Fri,
-        23 Aug 2019 03:05:55 GMT</Last-Modified><Etag>\"0x8D72776D04D9C31\"</Etag><Quota>5120</Quota></Properties></Share></Shares><NextMarker>/pyacrstorageaf571bc9/listshare2af571bc9</NextMarker></EnumerationResults>"
+        ServiceEndpoint=\"https://pyacrstorageaf571bc9.file.core.windows.net/\"><MaxResults>2</MaxResults><Shares><Share><Name>listshare0af571bc9</Name><Properties><Last-Modified>Thu,
+        05 Sep 2019 19:42:09 GMT</Last-Modified><Etag>\"0x8D7323924415108\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>listshare1af571bc9</Name><Properties><Last-Modified>Thu,
+        05 Sep 2019 19:42:09 GMT</Last-Modified><Etag>\"0x8D732392449B70F\"</Etag><Quota>5120</Quota></Properties></Share></Shares><NextMarker>/pyacrstorageaf571bc9/listshare2af571bc9</NextMarker></EnumerationResults>"
     headers:
       content-type: application/xml
-      date: Fri, 23 Aug 2019 03:05:54 GMT
+      date: Thu, 05 Sep 2019 19:42:09 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
-      x-ms-version: '2018-11-09'
+      x-ms-version: '2019-02-02'
     status:
       code: 200
       message: OK
@@ -180,27 +170,25 @@ interactions:
       - application/xml
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Fri, 23 Aug 2019 03:05:55 GMT
+      - Thu, 05 Sep 2019 19:42:10 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: GET
     uri: https://pyacrstorageaf571bc9.file.core.windows.net/?marker=/pyacrstorageaf571bc9/listshare2af571bc9&maxresults=2&include=&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://pyacrstorageaf571bc9.file.core.windows.net/\"><Marker>/pyacrstorageaf571bc9/listshare2af571bc9</Marker><MaxResults>2</MaxResults><Shares><Share><Name>listshare2af571bc9</Name><Properties><Last-Modified>Fri,
-        23 Aug 2019 03:05:55 GMT</Last-Modified><Etag>\"0x8D72776D05C6BEB\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>listshare3af571bc9</Name><Properties><Last-Modified>Fri,
-        23 Aug 2019 03:05:55 GMT</Last-Modified><Etag>\"0x8D72776D066CE06\"</Etag><Quota>5120</Quota></Properties></Share></Shares><NextMarker
+        ServiceEndpoint=\"https://pyacrstorageaf571bc9.file.core.windows.net/\"><Marker>/pyacrstorageaf571bc9/listshare2af571bc9</Marker><MaxResults>2</MaxResults><Shares><Share><Name>listshare2af571bc9</Name><Properties><Last-Modified>Thu,
+        05 Sep 2019 19:42:10 GMT</Last-Modified><Etag>\"0x8D732392450BD32\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>listshare3af571bc9</Name><Properties><Last-Modified>Thu,
+        05 Sep 2019 19:42:10 GMT</Last-Modified><Etag>\"0x8D7323924585FB5\"</Etag><Quota>5120</Quota></Properties></Share></Shares><NextMarker
         /></EnumerationResults>"
     headers:
       content-type: application/xml
-      date: Fri, 23 Aug 2019 03:05:54 GMT
+      date: Thu, 05 Sep 2019 19:42:09 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
-      x-ms-version: '2018-11-09'
+      x-ms-version: '2019-02-02'
     status:
       code: 200
       message: OK

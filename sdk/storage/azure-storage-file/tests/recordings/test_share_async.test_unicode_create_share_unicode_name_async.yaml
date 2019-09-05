@@ -4,25 +4,23 @@ interactions:
     headers:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Fri, 23 Aug 2019 03:06:32 GMT
+      - Thu, 05 Sep 2019 19:43:06 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
     uri: https://pyacrstorage66a18ec.file.core.windows.net/%E5%95%8A%E9%BD%84%E4%B8%82%E7%8B%9B%E7%8B%9C?restype=share
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidResourceName</Code><Message>The
-        specifed resource name contains invalid characters.\nRequestId:58f2d76b-e01a-0013-2c5f-59b3d6000000\nTime:2019-08-23T03:06:33.0865180Z</Message></Error>"
+        specifed resource name contains invalid characters.\nRequestId:d55dd7da-f01a-00eb-6322-647f43000000\nTime:2019-09-05T19:43:06.1078373Z</Message></Error>"
     headers:
       content-length: '243'
       content-type: application/xml
-      date: Fri, 23 Aug 2019 03:06:32 GMT
+      date: Thu, 05 Sep 2019 19:43:05 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: InvalidResourceName
-      x-ms-version: '2018-11-09'
+      x-ms-version: '2019-02-02'
     status:
       code: 400
       message: The specifed resource name contains invalid characters.

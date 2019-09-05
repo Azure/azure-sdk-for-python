@@ -4,12 +4,10 @@ interactions:
     headers:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Fri, 23 Aug 2019 03:04:52 GMT
+      - Thu, 05 Sep 2019 19:41:26 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
     uri: https://pyacrstorage746821bb.file.core.windows.net/share746821bb?restype=share
   response:
@@ -17,11 +15,11 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 23 Aug 2019 03:04:52 GMT
-      etag: '"0x8D72776AB696B7B"'
-      last-modified: Fri, 23 Aug 2019 03:04:53 GMT
+      date: Thu, 05 Sep 2019 19:41:24 GMT
+      etag: '"0x8D7323909C253F4"'
+      last-modified: Thu, 05 Sep 2019 19:41:25 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-version: '2018-11-09'
+      x-ms-version: '2019-02-02'
     status:
       code: 201
       message: Created
@@ -38,25 +36,23 @@ interactions:
     headers:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Fri, 23 Aug 2019 03:04:53 GMT
+      - Thu, 05 Sep 2019 19:41:26 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
     uri: https://pyacrstorage746821bb.file.core.windows.net/share746821bb?restype=share
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareAlreadyExists</Code><Message>The
-        specified share already exists.\nRequestId:b74f9a5a-501a-0023-265f-59e9fc000000\nTime:2019-08-23T03:04:53.2552086Z</Message></Error>"
+        specified share already exists.\nRequestId:320e6ac9-e01a-000f-1a21-641c59000000\nTime:2019-09-05T19:41:25.4809873Z</Message></Error>"
     headers:
       content-length: '222'
       content-type: application/xml
-      date: Fri, 23 Aug 2019 03:04:53 GMT
+      date: Thu, 05 Sep 2019 19:41:24 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: ShareAlreadyExists
-      x-ms-version: '2018-11-09'
+      x-ms-version: '2019-02-02'
     status:
       code: 409
       message: The specified share already exists.

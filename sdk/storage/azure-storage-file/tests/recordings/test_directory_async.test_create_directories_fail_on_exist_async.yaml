@@ -4,12 +4,10 @@ interactions:
     headers:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Fri, 23 Aug 2019 02:49:21 GMT
+      - Thu, 05 Sep 2019 17:51:10 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
     uri: https://pyacrstorage5b431a6f.file.core.windows.net/utshare5b431a6f?restype=share
   response:
@@ -17,11 +15,11 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 23 Aug 2019 02:49:21 GMT
-      etag: '"0x8D72774802EBB31"'
-      last-modified: Fri, 23 Aug 2019 02:49:21 GMT
+      date: Thu, 05 Sep 2019 17:51:10 GMT
+      etag: '"0x8D73229A3100E0B"'
+      last-modified: Thu, 05 Sep 2019 17:51:10 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-version: '2018-11-09'
+      x-ms-version: '2019-02-02'
     status:
       code: 201
       message: Created
@@ -38,12 +36,18 @@ interactions:
     headers:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Fri, 23 Aug 2019 02:49:21 GMT
+      - Thu, 05 Sep 2019 17:51:11 GMT
+      x-ms-file-attributes:
+      - none
+      x-ms-file-creation-time:
+      - now
+      x-ms-file-last-write-time:
+      - now
+      x-ms-file-permission:
+      - inherit
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
     uri: https://pyacrstorage5b431a6f.file.core.windows.net/utshare5b431a6f/dir1?restype=directory
   response:
@@ -51,12 +55,19 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 23 Aug 2019 02:49:21 GMT
-      etag: '"0x8D72774803CA7BC"'
-      last-modified: Fri, 23 Aug 2019 02:49:21 GMT
+      date: Thu, 05 Sep 2019 17:51:10 GMT
+      etag: '"0x8D73229A32B54AB"'
+      last-modified: Thu, 05 Sep 2019 17:51:10 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-file-attributes: Directory
+      x-ms-file-change-time: '2019-09-05T17:51:10.8788395Z'
+      x-ms-file-creation-time: '2019-09-05T17:51:10.8788395Z'
+      x-ms-file-id: '13835128424026341376'
+      x-ms-file-last-write-time: '2019-09-05T17:51:10.8788395Z'
+      x-ms-file-parent-id: '0'
+      x-ms-file-permission-key: 1827141618293024965*8178652976956292940
       x-ms-request-server-encrypted: 'true'
-      x-ms-version: '2018-11-09'
+      x-ms-version: '2019-02-02'
     status:
       code: 201
       message: Created
@@ -73,25 +84,31 @@ interactions:
     headers:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Fri, 23 Aug 2019 02:49:21 GMT
+      - Thu, 05 Sep 2019 17:51:11 GMT
+      x-ms-file-attributes:
+      - none
+      x-ms-file-creation-time:
+      - now
+      x-ms-file-last-write-time:
+      - now
+      x-ms-file-permission:
+      - inherit
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
     uri: https://pyacrstorage5b431a6f.file.core.windows.net/utshare5b431a6f/dir1?restype=directory
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ResourceAlreadyExists</Code><Message>The
-        specified resource already exists.\nRequestId:6e57c29b-801a-003d-125d-594489000000\nTime:2019-08-23T02:49:21.7891369Z</Message></Error>"
+        specified resource already exists.\nRequestId:f87b785f-201a-007b-6d12-64c37b000000\nTime:2019-09-05T17:51:11.0213110Z</Message></Error>"
     headers:
       content-length: '228'
       content-type: application/xml
-      date: Fri, 23 Aug 2019 02:49:21 GMT
+      date: Thu, 05 Sep 2019 17:51:10 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: ResourceAlreadyExists
-      x-ms-version: '2018-11-09'
+      x-ms-version: '2019-02-02'
     status:
       code: 409
       message: The specified resource already exists.

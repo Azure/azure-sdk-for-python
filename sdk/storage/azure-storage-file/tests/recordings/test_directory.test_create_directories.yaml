@@ -13,9 +13,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2019 19:48:31 GMT
+      - Thu, 05 Sep 2019 17:50:07 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
     uri: https://pyacrstorage32270fb2.file.core.windows.net/utshare32270fb2?restype=share
   response:
@@ -25,15 +25,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 29 Aug 2019 19:48:30 GMT
+      - Thu, 05 Sep 2019 17:50:40 GMT
       etag:
-      - '"0x8D72CB9DE42E27B"'
+      - '"0x8D7322988185B4D"'
       last-modified:
-      - Thu, 29 Aug 2019 19:48:30 GMT
+      - Thu, 05 Sep 2019 17:50:25 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -51,9 +51,17 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2019 19:48:32 GMT
+      - Thu, 05 Sep 2019 17:50:41 GMT
+      x-ms-file-attributes:
+      - none
+      x-ms-file-creation-time:
+      - now
+      x-ms-file-last-write-time:
+      - now
+      x-ms-file-permission:
+      - inherit
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
     uri: https://pyacrstorage32270fb2.file.core.windows.net/utshare32270fb2/dir1?restype=directory
   response:
@@ -63,17 +71,31 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 29 Aug 2019 19:48:30 GMT
+      - Thu, 05 Sep 2019 17:50:40 GMT
       etag:
-      - '"0x8D72CB9DE5D7423"'
+      - '"0x8D73229913CD064"'
       last-modified:
-      - Thu, 29 Aug 2019 19:48:30 GMT
+      - Thu, 05 Sep 2019 17:50:40 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-file-attributes:
+      - Directory
+      x-ms-file-change-time:
+      - '2019-09-05T17:50:40.7944292Z'
+      x-ms-file-creation-time:
+      - '2019-09-05T17:50:40.7944292Z'
+      x-ms-file-id:
+      - '13835128424026341376'
+      x-ms-file-last-write-time:
+      - '2019-09-05T17:50:40.7944292Z'
+      x-ms-file-parent-id:
+      - '0'
+      x-ms-file-permission-key:
+      - 17455718473151321432*11161060501213086417
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 201
       message: Created

@@ -1523,6 +1523,7 @@ class StorageGetFileTest(AsyncFileTestCase):
     async def test_get_file_range_with_md5_async(self, resource_group, location, storage_account, storage_account_key):
         pytest.skip("TODO: Verify the x-ms-file-permission value.")
         # parallel tests introduce random order of requests, can only run live
+        pytest.skip("TODO: Verify the x-ms-file-permission value.")
         if not self.is_live:
             return
 
@@ -1559,7 +1560,7 @@ class StorageGetFileTest(AsyncFileTestCase):
     @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
     @AsyncFileTestCase.await_prepared_test
     async def test_get_file_server_encryption_async(self, resource_group, location, storage_account, storage_account_key):
-
+        pytest.skip("TODO: Verify the x-ms-file-permission value.")
         #Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name),
             credential=storage_account_key,

@@ -13,7 +13,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2019 19:57:52 GMT
+      - Thu, 05 Sep 2019 19:39:59 GMT
       x-ms-meta:
       - '{''hello'': ''world'', ''number'': ''42''}'
       x-ms-meta-hello:
@@ -21,7 +21,7 @@ interactions:
       x-ms-meta-number:
       - '42'
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
     uri: https://pyacrstoragef2fb0dd2.file.core.windows.net/sharef2fb0dd2?restype=share
   response:
@@ -31,15 +31,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 29 Aug 2019 19:57:50 GMT
+      - Thu, 05 Sep 2019 19:39:58 GMT
       etag:
-      - '"0x8D72CBB2C6AB7F5"'
+      - '"0x8D73238D690ECF0"'
       last-modified:
-      - Thu, 29 Aug 2019 19:57:51 GMT
+      - Thu, 05 Sep 2019 19:39:59 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -55,9 +55,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2019 19:57:52 GMT
+      - Thu, 05 Sep 2019 19:40:00 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: GET
     uri: https://pyacrstoragef2fb0dd2.file.core.windows.net/sharef2fb0dd2?restype=share
   response:
@@ -67,11 +67,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 29 Aug 2019 19:57:50 GMT
+      - Thu, 05 Sep 2019 19:39:58 GMT
       etag:
-      - '"0x8D72CBB2C6AB7F5"'
+      - '"0x8D73238D690ECF0"'
       last-modified:
-      - Thu, 29 Aug 2019 19:57:51 GMT
+      - Thu, 05 Sep 2019 19:39:59 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-has-immutability-policy:
@@ -85,7 +85,7 @@ interactions:
       x-ms-share-quota:
       - '5120'
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 200
       message: OK

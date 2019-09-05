@@ -13,9 +13,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2019 19:57:14 GMT
+      - Thu, 05 Sep 2019 19:39:30 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
     uri: https://pyacrstoragef92e1cc1.file.core.windows.net/sharef92e1cc1?restype=share
   response:
@@ -25,15 +25,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 29 Aug 2019 19:57:13 GMT
+      - Thu, 05 Sep 2019 19:39:29 GMT
       etag:
-      - '"0x8D72CBB161C0115"'
+      - '"0x8D73238C4C9FFC0"'
       last-modified:
-      - Thu, 29 Aug 2019 19:57:13 GMT
+      - Thu, 05 Sep 2019 19:39:29 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -51,28 +51,28 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2019 19:57:15 GMT
+      - Thu, 05 Sep 2019 19:39:30 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
     uri: https://pyacrstoragef92e1cc1.file.core.windows.net/sharef92e1cc1?restype=share
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareAlreadyExists</Code><Message>The
-        specified share already exists.\nRequestId:1e435bf1-201a-00a8-6ca3-5e80c1000000\nTime:2019-08-29T19:57:13.8555719Z</Message></Error>"
+        specified share already exists.\nRequestId:b2cc0c1f-d01a-0061-2a21-64b570000000\nTime:2019-09-05T19:39:29.8064956Z</Message></Error>"
     headers:
       content-length:
       - '222'
       content-type:
       - application/xml
       date:
-      - Thu, 29 Aug 2019 19:57:13 GMT
+      - Thu, 05 Sep 2019 19:39:29 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
       - ShareAlreadyExists
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 409
       message: The specified share already exists.

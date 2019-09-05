@@ -4,24 +4,22 @@ interactions:
     headers:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Fri, 23 Aug 2019 02:50:15 GMT
+      - Thu, 05 Sep 2019 17:51:43 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage11ad1942.file.core.windows.net/utshare11ad1942?restype=share
+    uri: https://amqptest.file.core.windows.net/utshare11ad1942?restype=share
   response:
     body:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 23 Aug 2019 02:50:14 GMT
-      etag: '"0x8D72774A01DEF7C"'
-      last-modified: Fri, 23 Aug 2019 02:50:15 GMT
+      date: Thu, 05 Sep 2019 17:51:42 GMT
+      etag: '"0x8D73229B614AB62"'
+      last-modified: Thu, 05 Sep 2019 17:51:42 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-version: '2018-11-09'
+      x-ms-version: '2019-02-02'
     status:
       code: 201
       message: Created
@@ -29,7 +27,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstorage11ad1942.file.core.windows.net
+        - amqptest.file.core.windows.net
         - /utshare11ad1942
         - restype=share
         - ''
@@ -38,25 +36,38 @@ interactions:
     headers:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Fri, 23 Aug 2019 02:50:15 GMT
+      - Thu, 05 Sep 2019 17:51:43 GMT
+      x-ms-file-attributes:
+      - none
+      x-ms-file-creation-time:
+      - now
+      x-ms-file-last-write-time:
+      - now
+      x-ms-file-permission:
+      - inherit
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage11ad1942.file.core.windows.net/utshare11ad1942/dir1?restype=directory
+    uri: https://amqptest.file.core.windows.net/utshare11ad1942/dir1?restype=directory
   response:
     body:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 23 Aug 2019 02:50:15 GMT
-      etag: '"0x8D72774A02903CD"'
-      last-modified: Fri, 23 Aug 2019 02:50:15 GMT
+      date: Thu, 05 Sep 2019 17:51:42 GMT
+      etag: '"0x8D73229B632D665"'
+      last-modified: Thu, 05 Sep 2019 17:51:42 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-file-attributes: Directory
+      x-ms-file-change-time: '2019-09-05T17:51:42.8047461Z'
+      x-ms-file-creation-time: '2019-09-05T17:51:42.8047461Z'
+      x-ms-file-id: '13835128424026341376'
+      x-ms-file-last-write-time: '2019-09-05T17:51:42.8047461Z'
+      x-ms-file-parent-id: '0'
+      x-ms-file-permission-key: 17360570244679638438*10967959146200238639
       x-ms-request-server-encrypted: 'true'
-      x-ms-version: '2018-11-09'
+      x-ms-version: '2019-02-02'
     status:
       code: 201
       message: Created
@@ -64,7 +75,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstorage11ad1942.file.core.windows.net
+        - amqptest.file.core.windows.net
         - /utshare11ad1942/dir1
         - restype=directory
         - ''
@@ -73,25 +84,38 @@ interactions:
     headers:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Fri, 23 Aug 2019 02:50:15 GMT
+      - Thu, 05 Sep 2019 17:51:43 GMT
+      x-ms-file-attributes:
+      - none
+      x-ms-file-creation-time:
+      - now
+      x-ms-file-last-write-time:
+      - now
+      x-ms-file-permission:
+      - inherit
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage11ad1942.file.core.windows.net/utshare11ad1942/dir1%2Fsubdir1?restype=directory
+    uri: https://amqptest.file.core.windows.net/utshare11ad1942/dir1%2Fsubdir1?restype=directory
   response:
     body:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 23 Aug 2019 02:50:15 GMT
-      etag: '"0x8D72774A03FC436"'
-      last-modified: Fri, 23 Aug 2019 02:50:15 GMT
+      date: Thu, 05 Sep 2019 17:51:42 GMT
+      etag: '"0x8D73229B64B6BF4"'
+      last-modified: Thu, 05 Sep 2019 17:51:42 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-file-attributes: Directory
+      x-ms-file-change-time: '2019-09-05T17:51:42.9658612Z'
+      x-ms-file-creation-time: '2019-09-05T17:51:42.9658612Z'
+      x-ms-file-id: '11529285414812647424'
+      x-ms-file-last-write-time: '2019-09-05T17:51:42.9658612Z'
+      x-ms-file-parent-id: '13835128424026341376'
+      x-ms-file-permission-key: 17360570244679638438*10967959146200238639
       x-ms-request-server-encrypted: 'true'
-      x-ms-version: '2018-11-09'
+      x-ms-version: '2019-02-02'
     status:
       code: 201
       message: Created
@@ -99,7 +123,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstorage11ad1942.file.core.windows.net
+        - amqptest.file.core.windows.net
         - /utshare11ad1942/dir1%2Fsubdir1
         - restype=directory
         - ''
@@ -108,64 +132,42 @@ interactions:
     headers:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-date:
-      - Fri, 23 Aug 2019 02:50:15 GMT
-      x-ms-version:
-      - '2018-11-09'
-    method: PUT
-    uri: https://pyacrstorage11ad1942.file.core.windows.net/utshare11ad1942/dir1%2Fsubdir2?restype=directory
-  response:
-    body:
-      string: ''
-    headers:
-      content-length: '0'
-      date: Fri, 23 Aug 2019 02:50:14 GMT
-      etag: '"0x8D72774A05EC380"'
-      last-modified: Fri, 23 Aug 2019 02:50:15 GMT
-      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-server-encrypted: 'true'
-      x-ms-version: '2018-11-09'
-    status:
-      code: 201
-      message: Created
-    url: !!python/object/new:yarl.URL
-      state: !!python/tuple
-      - !!python/object/new:urllib.parse.SplitResult
-        - https
-        - pyacrstorage11ad1942.file.core.windows.net
-        - /utshare11ad1942/dir1%2Fsubdir2
-        - restype=directory
-        - ''
-- request:
-    body: null
-    headers:
-      User-Agent:
-      - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-content-length:
       - '5'
       x-ms-date:
-      - Fri, 23 Aug 2019 02:50:15 GMT
+      - Thu, 05 Sep 2019 17:51:43 GMT
+      x-ms-file-attributes:
+      - none
+      x-ms-file-creation-time:
+      - now
+      x-ms-file-last-write-time:
+      - now
+      x-ms-file-permission:
+      - inherit
       x-ms-type:
       - file
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage11ad1942.file.core.windows.net/utshare11ad1942/dir1/file2
+    uri: https://amqptest.file.core.windows.net/utshare11ad1942/dir1/file2
   response:
     body:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 23 Aug 2019 02:50:15 GMT
-      etag: '"0x8D72774A05FFC38"'
-      last-modified: Fri, 23 Aug 2019 02:50:15 GMT
+      date: Thu, 05 Sep 2019 17:51:42 GMT
+      etag: '"0x8D73229B66A1D1B"'
+      last-modified: Thu, 05 Sep 2019 17:51:43 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-file-attributes: Archive
+      x-ms-file-change-time: '2019-09-05T17:51:43.1670043Z'
+      x-ms-file-creation-time: '2019-09-05T17:51:43.1670043Z'
+      x-ms-file-id: '13835093239654252544'
+      x-ms-file-last-write-time: '2019-09-05T17:51:43.1670043Z'
+      x-ms-file-parent-id: '13835128424026341376'
+      x-ms-file-permission-key: 3501246319223038625*10967959146200238639
       x-ms-request-server-encrypted: 'true'
-      x-ms-version: '2018-11-09'
+      x-ms-version: '2019-02-02'
     status:
       code: 201
       message: Created
@@ -173,7 +175,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstorage11ad1942.file.core.windows.net
+        - amqptest.file.core.windows.net
         - /utshare11ad1942/dir1/file2
         - ''
         - ''
@@ -182,25 +184,38 @@ interactions:
     headers:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Fri, 23 Aug 2019 02:50:15 GMT
+      - Thu, 05 Sep 2019 17:51:43 GMT
+      x-ms-file-attributes:
+      - none
+      x-ms-file-creation-time:
+      - now
+      x-ms-file-last-write-time:
+      - now
+      x-ms-file-permission:
+      - inherit
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage11ad1942.file.core.windows.net/utshare11ad1942/dir1%2Fsubdir3?restype=directory
+    uri: https://amqptest.file.core.windows.net/utshare11ad1942/dir1%2Fsubdir3?restype=directory
   response:
     body:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 23 Aug 2019 02:50:14 GMT
-      etag: '"0x8D72774A0604A62"'
-      last-modified: Fri, 23 Aug 2019 02:50:15 GMT
+      date: Thu, 05 Sep 2019 17:51:42 GMT
+      etag: '"0x8D73229B66AB977"'
+      last-modified: Thu, 05 Sep 2019 17:51:43 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-file-attributes: Directory
+      x-ms-file-change-time: '2019-09-05T17:51:43.1710071Z'
+      x-ms-file-creation-time: '2019-09-05T17:51:43.1710071Z'
+      x-ms-file-id: '13835163608398430208'
+      x-ms-file-last-write-time: '2019-09-05T17:51:43.1710071Z'
+      x-ms-file-parent-id: '13835128424026341376'
+      x-ms-file-permission-key: 17360570244679638438*10967959146200238639
       x-ms-request-server-encrypted: 'true'
-      x-ms-version: '2018-11-09'
+      x-ms-version: '2019-02-02'
     status:
       code: 201
       message: Created
@@ -208,7 +223,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstorage11ad1942.file.core.windows.net
+        - amqptest.file.core.windows.net
         - /utshare11ad1942/dir1%2Fsubdir3
         - restype=directory
         - ''
@@ -217,29 +232,42 @@ interactions:
     headers:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-content-length:
       - '5'
       x-ms-date:
-      - Fri, 23 Aug 2019 02:50:15 GMT
+      - Thu, 05 Sep 2019 17:51:43 GMT
+      x-ms-file-attributes:
+      - none
+      x-ms-file-creation-time:
+      - now
+      x-ms-file-last-write-time:
+      - now
+      x-ms-file-permission:
+      - inherit
       x-ms-type:
       - file
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage11ad1942.file.core.windows.net/utshare11ad1942/dir1/file1
+    uri: https://amqptest.file.core.windows.net/utshare11ad1942/dir1/file1
   response:
     body:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 23 Aug 2019 02:50:15 GMT
-      etag: '"0x8D72774A0626DA9"'
-      last-modified: Fri, 23 Aug 2019 02:50:15 GMT
+      date: Thu, 05 Sep 2019 17:51:42 GMT
+      etag: '"0x8D73229B66B55D8"'
+      last-modified: Thu, 05 Sep 2019 17:51:43 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-file-attributes: Archive
+      x-ms-file-change-time: '2019-09-05T17:51:43.1750104Z'
+      x-ms-file-creation-time: '2019-09-05T17:51:43.1750104Z'
+      x-ms-file-id: '13835075647468208128'
+      x-ms-file-last-write-time: '2019-09-05T17:51:43.1750104Z'
+      x-ms-file-parent-id: '13835128424026341376'
+      x-ms-file-permission-key: 3501246319223038625*10967959146200238639
       x-ms-request-server-encrypted: 'true'
-      x-ms-version: '2018-11-09'
+      x-ms-version: '2019-02-02'
     status:
       code: 201
       message: Created
@@ -247,7 +275,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstorage11ad1942.file.core.windows.net
+        - amqptest.file.core.windows.net
         - /utshare11ad1942/dir1/file1
         - ''
         - ''
@@ -256,29 +284,38 @@ interactions:
     headers:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-content-length:
-      - '5'
       x-ms-date:
-      - Fri, 23 Aug 2019 02:50:15 GMT
-      x-ms-type:
-      - file
+      - Thu, 05 Sep 2019 17:51:43 GMT
+      x-ms-file-attributes:
+      - none
+      x-ms-file-creation-time:
+      - now
+      x-ms-file-last-write-time:
+      - now
+      x-ms-file-permission:
+      - inherit
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
-    uri: https://pyacrstorage11ad1942.file.core.windows.net/utshare11ad1942/dir1/file3
+    uri: https://amqptest.file.core.windows.net/utshare11ad1942/dir1%2Fsubdir2?restype=directory
   response:
     body:
       string: ''
     headers:
       content-length: '0'
-      date: Fri, 23 Aug 2019 02:50:15 GMT
-      etag: '"0x8D72774A063311D"'
-      last-modified: Fri, 23 Aug 2019 02:50:15 GMT
+      date: Thu, 05 Sep 2019 17:51:42 GMT
+      etag: '"0x8D73229B66D2AE9"'
+      last-modified: Thu, 05 Sep 2019 17:51:43 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-file-attributes: Directory
+      x-ms-file-change-time: '2019-09-05T17:51:43.1870185Z'
+      x-ms-file-creation-time: '2019-09-05T17:51:43.1870185Z'
+      x-ms-file-id: '13835110831840296960'
+      x-ms-file-last-write-time: '2019-09-05T17:51:43.1870185Z'
+      x-ms-file-parent-id: '13835128424026341376'
+      x-ms-file-permission-key: 17360570244679638438*10967959146200238639
       x-ms-request-server-encrypted: 'true'
-      x-ms-version: '2018-11-09'
+      x-ms-version: '2019-02-02'
     status:
       code: 201
       message: Created
@@ -286,7 +323,59 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstorage11ad1942.file.core.windows.net
+        - amqptest.file.core.windows.net
+        - /utshare11ad1942/dir1%2Fsubdir2
+        - restype=directory
+        - ''
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-content-length:
+      - '5'
+      x-ms-date:
+      - Thu, 05 Sep 2019 17:51:43 GMT
+      x-ms-file-attributes:
+      - none
+      x-ms-file-creation-time:
+      - now
+      x-ms-file-last-write-time:
+      - now
+      x-ms-file-permission:
+      - inherit
+      x-ms-type:
+      - file
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://amqptest.file.core.windows.net/utshare11ad1942/dir1/file3
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Thu, 05 Sep 2019 17:51:42 GMT
+      etag: '"0x8D73229B66D2AE9"'
+      last-modified: Thu, 05 Sep 2019 17:51:43 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-file-attributes: Archive
+      x-ms-file-change-time: '2019-09-05T17:51:43.1870185Z'
+      x-ms-file-creation-time: '2019-09-05T17:51:43.1870185Z'
+      x-ms-file-id: '13835146016212385792'
+      x-ms-file-last-write-time: '2019-09-05T17:51:43.1870185Z'
+      x-ms-file-parent-id: '13835128424026341376'
+      x-ms-file-permission-key: 3501246319223038625*10967959146200238639
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2019-02-02'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - amqptest.file.core.windows.net
         - /utshare11ad1942/dir1/file3
         - ''
         - ''
@@ -300,27 +389,27 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Fri, 23 Aug 2019 02:50:15 GMT
+      - Thu, 05 Sep 2019 17:51:43 GMT
       x-ms-range:
       - bytes=0-4
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
       x-ms-write:
       - update
     method: PUT
-    uri: https://pyacrstorage11ad1942.file.core.windows.net/utshare11ad1942/dir1/file2?comp=range
+    uri: https://amqptest.file.core.windows.net/utshare11ad1942/dir1/file2?comp=range
   response:
     body:
       string: ''
     headers:
       content-length: '0'
       content-md5: /5zy1pDYiMszf2v0UmthMA==
-      date: Fri, 23 Aug 2019 02:50:15 GMT
-      etag: '"0x8D72774A068622D"'
-      last-modified: Fri, 23 Aug 2019 02:50:15 GMT
+      date: Thu, 05 Sep 2019 17:51:42 GMT
+      etag: '"0x8D73229B672AA2E"'
+      last-modified: Thu, 05 Sep 2019 17:51:43 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted: 'true'
-      x-ms-version: '2018-11-09'
+      x-ms-version: '2019-02-02'
     status:
       code: 201
       message: Created
@@ -328,7 +417,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstorage11ad1942.file.core.windows.net
+        - amqptest.file.core.windows.net
         - /utshare11ad1942/dir1/file2
         - comp=range
         - ''
@@ -342,27 +431,27 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Fri, 23 Aug 2019 02:50:15 GMT
+      - Thu, 05 Sep 2019 17:51:43 GMT
       x-ms-range:
       - bytes=0-4
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
       x-ms-write:
       - update
     method: PUT
-    uri: https://pyacrstorage11ad1942.file.core.windows.net/utshare11ad1942/dir1/file1?comp=range
+    uri: https://amqptest.file.core.windows.net/utshare11ad1942/dir1/file1?comp=range
   response:
     body:
       string: ''
     headers:
       content-length: '0'
       content-md5: idkDvDXe3nJP1SxRQ3/1/Q==
-      date: Fri, 23 Aug 2019 02:50:15 GMT
-      etag: '"0x8D72774A06A8570"'
-      last-modified: Fri, 23 Aug 2019 02:50:15 GMT
+      date: Thu, 05 Sep 2019 17:51:42 GMT
+      etag: '"0x8D73229B6736D9D"'
+      last-modified: Thu, 05 Sep 2019 17:51:43 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted: 'true'
-      x-ms-version: '2018-11-09'
+      x-ms-version: '2019-02-02'
     status:
       code: 201
       message: Created
@@ -370,7 +459,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstorage11ad1942.file.core.windows.net
+        - amqptest.file.core.windows.net
         - /utshare11ad1942/dir1/file1
         - comp=range
         - ''
@@ -384,27 +473,27 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Fri, 23 Aug 2019 02:50:15 GMT
+      - Thu, 05 Sep 2019 17:51:43 GMT
       x-ms-range:
       - bytes=0-4
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
       x-ms-write:
       - update
     method: PUT
-    uri: https://pyacrstorage11ad1942.file.core.windows.net/utshare11ad1942/dir1/file3?comp=range
+    uri: https://amqptest.file.core.windows.net/utshare11ad1942/dir1/file3?comp=range
   response:
     body:
       string: ''
     headers:
       content-length: '0'
       content-md5: eTafePeILBuqu8fUXcXaoA==
-      date: Fri, 23 Aug 2019 02:50:15 GMT
-      etag: '"0x8D72774A06CA8B7"'
-      last-modified: Fri, 23 Aug 2019 02:50:15 GMT
+      date: Thu, 05 Sep 2019 17:51:42 GMT
+      etag: '"0x8D73229B67409FE"'
+      last-modified: Thu, 05 Sep 2019 17:51:43 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted: 'true'
-      x-ms-version: '2018-11-09'
+      x-ms-version: '2019-02-02'
     status:
       code: 201
       message: Created
@@ -412,7 +501,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstorage11ad1942.file.core.windows.net
+        - amqptest.file.core.windows.net
         - /utshare11ad1942/dir1/file3
         - comp=range
         - ''
@@ -423,27 +512,26 @@ interactions:
       - application/xml
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
       x-ms-date:
-      - Fri, 23 Aug 2019 02:50:15 GMT
+      - Thu, 05 Sep 2019 17:51:43 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: GET
-    uri: https://pyacrstorage11ad1942.file.core.windows.net/utshare11ad1942/dir1?restype=directory&comp=list
+    uri: https://amqptest.file.core.windows.net/utshare11ad1942/dir1?restype=directory&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://pyacrstorage11ad1942.file.core.windows.net/\" ShareName=\"utshare11ad1942\"
+        ServiceEndpoint=\"https://amqptest.file.core.windows.net/\" ShareName=\"utshare11ad1942\"
         DirectoryPath=\"dir1\"><Entries><File><Name>file1</Name><Properties><Content-Length>5</Content-Length></Properties></File><File><Name>file2</Name><Properties><Content-Length>5</Content-Length></Properties></File><File><Name>file3</Name><Properties><Content-Length>5</Content-Length></Properties></File><Directory><Name>subdir1</Name><Properties
         /></Directory><Directory><Name>subdir2</Name><Properties /></Directory><Directory><Name>subdir3</Name><Properties
         /></Directory></Entries><NextMarker /></EnumerationResults>"
     headers:
       content-type: application/xml
-      date: Fri, 23 Aug 2019 02:50:15 GMT
+      date: Thu, 05 Sep 2019 17:51:42 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
-      x-ms-version: '2018-11-09'
+      vary: Origin
+      x-ms-version: '2019-02-02'
     status:
       code: 200
       message: OK
@@ -451,7 +539,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - pyacrstorage11ad1942.file.core.windows.net
+        - amqptest.file.core.windows.net
         - /utshare11ad1942/dir1
         - restype=directory&comp=list
         - ''

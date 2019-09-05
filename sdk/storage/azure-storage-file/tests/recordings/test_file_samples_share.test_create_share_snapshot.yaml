@@ -13,9 +13,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2019 19:54:24 GMT
+      - Thu, 05 Sep 2019 00:32:52 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
     uri: https://pyacrstoragea8c1488.file.core.windows.net/sharesnapshot?restype=share
   response:
@@ -25,15 +25,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 29 Aug 2019 19:54:23 GMT
+      - Thu, 05 Sep 2019 00:32:52 GMT
       etag:
-      - '"0x8D72CBAB09772AD"'
+      - '"0x8D7319896791695"'
       last-modified:
-      - Thu, 29 Aug 2019 19:54:23 GMT
+      - Thu, 05 Sep 2019 00:32:52 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -51,9 +51,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2019 19:54:24 GMT
+      - Thu, 05 Sep 2019 00:32:52 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
     uri: https://pyacrstoragea8c1488.file.core.windows.net/sharesnapshot?restype=share&comp=snapshot
   response:
@@ -63,17 +63,17 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 29 Aug 2019 19:54:23 GMT
+      - Thu, 05 Sep 2019 00:32:52 GMT
       etag:
-      - '"0x8D72CBAB09772AD"'
+      - '"0x8D7319896791695"'
       last-modified:
-      - Thu, 29 Aug 2019 19:54:23 GMT
+      - Thu, 05 Sep 2019 00:32:52 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-snapshot:
-      - '2019-08-29T19:54:23.0000000Z'
+      - '2019-09-05T00:32:52.0000000Z'
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -91,11 +91,11 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2019 19:54:25 GMT
+      - Thu, 05 Sep 2019 00:32:53 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: DELETE
     uri: https://pyacrstoragea8c1488.file.core.windows.net/sharesnapshot?restype=share
   response:
@@ -105,11 +105,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 29 Aug 2019 19:54:24 GMT
+      - Thu, 05 Sep 2019 00:32:52 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 202
       message: Accepted

@@ -13,9 +13,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2019 19:49:02 GMT
+      - Thu, 05 Sep 2019 17:50:25 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
     uri: https://pyacrstoraged53f13af.file.core.windows.net/utshared53f13af?restype=share
   response:
@@ -25,15 +25,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 29 Aug 2019 19:49:00 GMT
+      - Thu, 05 Sep 2019 17:50:28 GMT
       etag:
-      - '"0x8D72CB9F0CFE21C"'
+      - '"0x8D7322989181ABC"'
       last-modified:
-      - Thu, 29 Aug 2019 19:49:01 GMT
+      - Thu, 05 Sep 2019 17:50:27 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -49,28 +49,28 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2019 19:49:03 GMT
+      - Thu, 05 Sep 2019 17:50:28 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: GET
     uri: https://pyacrstoraged53f13af.file.core.windows.net/utshared53f13af/missing1%2Fmissing2?restype=directory
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ParentNotFound</Code><Message>The
-        specified parent path does not exist.\nRequestId:c2311662-c01a-008b-2ca2-5eef0a000000\nTime:2019-08-29T19:49:02.7479674Z</Message></Error>"
+        specified parent path does not exist.\nRequestId:ba95c0e4-501a-0116-6f12-642f00000000\nTime:2019-09-05T17:50:28.3729529Z</Message></Error>"
     headers:
       content-length:
       - '224'
       content-type:
       - application/xml
       date:
-      - Thu, 29 Aug 2019 19:49:01 GMT
+      - Thu, 05 Sep 2019 17:50:28 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
       - ParentNotFound
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 404
       message: The specified parent path does not exist.

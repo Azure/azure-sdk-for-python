@@ -13,9 +13,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2019 19:51:03 GMT
+      - Thu, 05 Sep 2019 17:59:00 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
     uri: https://pyacrstoragef2f4140d.file.core.windows.net/utsharef2f4140d?restype=share
   response:
@@ -25,15 +25,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 29 Aug 2019 19:51:02 GMT
+      - Thu, 05 Sep 2019 17:59:10 GMT
       etag:
-      - '"0x8D72CBA38C824E7"'
+      - '"0x8D7322ABFD77920"'
       last-modified:
-      - Thu, 29 Aug 2019 19:51:02 GMT
+      - Thu, 05 Sep 2019 17:59:08 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -51,28 +51,28 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2019 19:51:03 GMT
+      - Thu, 05 Sep 2019 17:59:11 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: DELETE
     uri: https://pyacrstoragef2f4140d.file.core.windows.net/utsharef2f4140d/filef2f4140d
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ResourceNotFound</Code><Message>The
-        specified resource does not exist.\nRequestId:a026aa07-e01a-003a-50a3-5ec594000000\nTime:2019-08-29T19:51:02.8550378Z</Message></Error>"
+        specified resource does not exist.\nRequestId:54bf53a7-a01a-0043-3a13-648222000000\nTime:2019-09-05T17:59:11.3202983Z</Message></Error>"
     headers:
       content-length:
       - '223'
       content-type:
       - application/xml
       date:
-      - Thu, 29 Aug 2019 19:51:02 GMT
+      - Thu, 05 Sep 2019 17:59:10 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
       - ResourceNotFound
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 404
       message: The specified resource does not exist.

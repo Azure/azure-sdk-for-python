@@ -13,9 +13,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2019 19:58:18 GMT
+      - Thu, 05 Sep 2019 19:40:24 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
     uri: https://pyacrstorage90471726.file.core.windows.net/share90471726?restype=share
   response:
@@ -25,15 +25,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 29 Aug 2019 19:58:16 GMT
+      - Thu, 05 Sep 2019 19:40:23 GMT
       etag:
-      - '"0x8D72CBB3BEA748C"'
+      - '"0x8D73238E5252B74"'
       last-modified:
-      - Thu, 29 Aug 2019 19:58:17 GMT
+      - Thu, 05 Sep 2019 19:40:24 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -51,9 +51,17 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2019 19:58:18 GMT
+      - Thu, 05 Sep 2019 19:40:24 GMT
+      x-ms-file-attributes:
+      - none
+      x-ms-file-creation-time:
+      - now
+      x-ms-file-last-write-time:
+      - now
+      x-ms-file-permission:
+      - inherit
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
     uri: https://pyacrstorage90471726.file.core.windows.net/share90471726/dir1?restype=directory
   response:
@@ -63,17 +71,31 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 29 Aug 2019 19:58:17 GMT
+      - Thu, 05 Sep 2019 19:40:23 GMT
       etag:
-      - '"0x8D72CBB3C1579AD"'
+      - '"0x8D73238E53B9F1F"'
       last-modified:
-      - Thu, 29 Aug 2019 19:58:17 GMT
+      - Thu, 05 Sep 2019 19:40:24 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-file-attributes:
+      - Directory
+      x-ms-file-change-time:
+      - '2019-09-05T19:40:24.1661727Z'
+      x-ms-file-creation-time:
+      - '2019-09-05T19:40:24.1661727Z'
+      x-ms-file-id:
+      - '13835128424026341376'
+      x-ms-file-last-write-time:
+      - '2019-09-05T19:40:24.1661727Z'
+      x-ms-file-parent-id:
+      - '0'
+      x-ms-file-permission-key:
+      - 13944922761317072175*12204041741741566630
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -91,9 +113,17 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2019 19:58:18 GMT
+      - Thu, 05 Sep 2019 19:40:24 GMT
+      x-ms-file-attributes:
+      - none
+      x-ms-file-creation-time:
+      - now
+      x-ms-file-last-write-time:
+      - now
+      x-ms-file-permission:
+      - inherit
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
     uri: https://pyacrstorage90471726.file.core.windows.net/share90471726/dir2?restype=directory
   response:
@@ -103,17 +133,31 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 29 Aug 2019 19:58:17 GMT
+      - Thu, 05 Sep 2019 19:40:23 GMT
       etag:
-      - '"0x8D72CBB3C24E5CC"'
+      - '"0x8D73238E5506367"'
       last-modified:
-      - Thu, 29 Aug 2019 19:58:17 GMT
+      - Thu, 05 Sep 2019 19:40:24 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-file-attributes:
+      - Directory
+      x-ms-file-change-time:
+      - '2019-09-05T19:40:24.3022695Z'
+      x-ms-file-creation-time:
+      - '2019-09-05T19:40:24.3022695Z'
+      x-ms-file-id:
+      - '11529285414812647424'
+      x-ms-file-last-write-time:
+      - '2019-09-05T19:40:24.3022695Z'
+      x-ms-file-parent-id:
+      - '0'
+      x-ms-file-permission-key:
+      - 13944922761317072175*12204041741741566630
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -131,9 +175,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2019 19:58:19 GMT
+      - Thu, 05 Sep 2019 19:40:25 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
     uri: https://pyacrstorage90471726.file.core.windows.net/share90471726?restype=share&comp=snapshot
   response:
@@ -143,17 +187,17 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 29 Aug 2019 19:58:17 GMT
+      - Thu, 05 Sep 2019 19:40:23 GMT
       etag:
-      - '"0x8D72CBB3BEA748C"'
+      - '"0x8D73238E5252B74"'
       last-modified:
-      - Thu, 29 Aug 2019 19:58:17 GMT
+      - Thu, 05 Sep 2019 19:40:24 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-snapshot:
-      - '2019-08-29T19:58:17.0000000Z'
+      - '2019-09-05T19:40:24.0000000Z'
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -171,9 +215,17 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2019 19:58:19 GMT
+      - Thu, 05 Sep 2019 19:40:25 GMT
+      x-ms-file-attributes:
+      - none
+      x-ms-file-creation-time:
+      - now
+      x-ms-file-last-write-time:
+      - now
+      x-ms-file-permission:
+      - inherit
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
     uri: https://pyacrstorage90471726.file.core.windows.net/share90471726/dir3?restype=directory
   response:
@@ -183,17 +235,31 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 29 Aug 2019 19:58:17 GMT
+      - Thu, 05 Sep 2019 19:40:23 GMT
       etag:
-      - '"0x8D72CBB3C7A685F"'
+      - '"0x8D73238E57BC10D"'
       last-modified:
-      - Thu, 29 Aug 2019 19:58:18 GMT
+      - Thu, 05 Sep 2019 19:40:24 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-file-attributes:
+      - Directory
+      x-ms-file-change-time:
+      - '2019-09-05T19:40:24.5864717Z'
+      x-ms-file-creation-time:
+      - '2019-09-05T19:40:24.5864717Z'
+      x-ms-file-id:
+      - '16140971433240035328'
+      x-ms-file-last-write-time:
+      - '2019-09-05T19:40:24.5864717Z'
+      x-ms-file-parent-id:
+      - '0'
+      x-ms-file-permission-key:
+      - 13944922761317072175*12204041741741566630
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -213,11 +279,19 @@ interactions:
       x-ms-content-length:
       - '4'
       x-ms-date:
-      - Thu, 29 Aug 2019 19:58:19 GMT
+      - Thu, 05 Sep 2019 19:40:25 GMT
+      x-ms-file-attributes:
+      - none
+      x-ms-file-creation-time:
+      - now
+      x-ms-file-last-write-time:
+      - now
+      x-ms-file-permission:
+      - inherit
       x-ms-type:
       - file
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
     uri: https://pyacrstorage90471726.file.core.windows.net/share90471726/file1
   response:
@@ -227,17 +301,31 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 29 Aug 2019 19:58:17 GMT
+      - Thu, 05 Sep 2019 19:40:23 GMT
       etag:
-      - '"0x8D72CBB3C88E9F5"'
+      - '"0x8D73238E5878303"'
       last-modified:
-      - Thu, 29 Aug 2019 19:58:18 GMT
+      - Thu, 05 Sep 2019 19:40:24 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-file-attributes:
+      - Archive
+      x-ms-file-change-time:
+      - '2019-09-05T19:40:24.6635267Z'
+      x-ms-file-creation-time:
+      - '2019-09-05T19:40:24.6635267Z'
+      x-ms-file-id:
+      - '10376363910205800448'
+      x-ms-file-last-write-time:
+      - '2019-09-05T19:40:24.6635267Z'
+      x-ms-file-parent-id:
+      - '0'
+      x-ms-file-permission-key:
+      - 143445638722765352*12204041741741566630
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -257,11 +345,11 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2019 19:58:19 GMT
+      - Thu, 05 Sep 2019 19:40:25 GMT
       x-ms-range:
       - bytes=0-3
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
       x-ms-write:
       - update
     method: PUT
@@ -275,17 +363,17 @@ interactions:
       content-md5:
       - jXd/OF09/siBXSD3SWAm3A==
       date:
-      - Thu, 29 Aug 2019 19:58:17 GMT
+      - Thu, 05 Sep 2019 19:40:24 GMT
       etag:
-      - '"0x8D72CBB3CA1CDBB"'
+      - '"0x8D73238E5936C0A"'
       last-modified:
-      - Thu, 29 Aug 2019 19:58:18 GMT
+      - Thu, 05 Sep 2019 19:40:24 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -301,29 +389,29 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2019 19:58:19 GMT
+      - Thu, 05 Sep 2019 19:40:25 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: GET
-    uri: https://pyacrstorage90471726.file.core.windows.net/share90471726?sharesnapshot=2019-08-29T19:58:17.0000000Z&restype=directory&comp=list
+    uri: https://pyacrstorage90471726.file.core.windows.net/share90471726?sharesnapshot=2019-09-05T19:40:24.0000000Z&restype=directory&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
         ServiceEndpoint=\"https://pyacrstorage90471726.file.core.windows.net/\" ShareName=\"share90471726\"
-        ShareSnapshot=\"2019-08-29T19:58:17.0000000Z\" DirectoryPath=\"\"><Entries><Directory><Name>dir1</Name><Properties
+        ShareSnapshot=\"2019-09-05T19:40:24.0000000Z\" DirectoryPath=\"\"><Entries><Directory><Name>dir1</Name><Properties
         /></Directory><Directory><Name>dir2</Name><Properties /></Directory></Entries><NextMarker
         /></EnumerationResults>"
     headers:
       content-type:
       - application/xml
       date:
-      - Thu, 29 Aug 2019 19:58:18 GMT
+      - Thu, 05 Sep 2019 19:40:24 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
       - chunked
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 200
       message: OK

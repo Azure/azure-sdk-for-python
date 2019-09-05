@@ -13,9 +13,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2019 19:48:31 GMT
+      - Thu, 05 Sep 2019 17:49:55 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
     uri: https://pyacrstorage641710fb.file.core.windows.net/utshare641710fb?restype=share
   response:
@@ -25,15 +25,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 29 Aug 2019 19:48:30 GMT
+      - Thu, 05 Sep 2019 17:49:53 GMT
       etag:
-      - '"0x8D72CB9DE8276E1"'
+      - '"0x8D7322975C22E00"'
       last-modified:
-      - Thu, 29 Aug 2019 19:48:30 GMT
+      - Thu, 05 Sep 2019 17:49:54 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -51,9 +51,17 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2019 19:48:32 GMT
+      - Thu, 05 Sep 2019 17:49:55 GMT
+      x-ms-file-attributes:
+      - none
+      x-ms-file-creation-time:
+      - now
+      x-ms-file-last-write-time:
+      - now
+      x-ms-file-permission:
+      - inherit
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
     uri: https://pyacrstorage641710fb.file.core.windows.net/utshare641710fb/dir1?restype=directory
   response:
@@ -63,17 +71,31 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 29 Aug 2019 19:48:30 GMT
+      - Thu, 05 Sep 2019 17:49:54 GMT
       etag:
-      - '"0x8D72CB9DE9443C3"'
+      - '"0x8D7322975D641C4"'
       last-modified:
-      - Thu, 29 Aug 2019 19:48:31 GMT
+      - Thu, 05 Sep 2019 17:49:54 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-file-attributes:
+      - Directory
+      x-ms-file-change-time:
+      - '2019-09-05T17:49:54.8238276Z'
+      x-ms-file-creation-time:
+      - '2019-09-05T17:49:54.8238276Z'
+      x-ms-file-id:
+      - '13835128424026341376'
+      x-ms-file-last-write-time:
+      - '2019-09-05T17:49:54.8238276Z'
+      x-ms-file-parent-id:
+      - '0'
+      x-ms-file-permission-key:
+      - 9419183066445573694*16892033583488137655
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -91,9 +113,17 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2019 19:48:32 GMT
+      - Thu, 05 Sep 2019 17:49:55 GMT
+      x-ms-file-attributes:
+      - none
+      x-ms-file-creation-time:
+      - now
+      x-ms-file-last-write-time:
+      - now
+      x-ms-file-permission:
+      - inherit
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
     uri: https://pyacrstorage641710fb.file.core.windows.net/utshare641710fb/dir1%2Fdir2?restype=directory
   response:
@@ -103,17 +133,31 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 29 Aug 2019 19:48:30 GMT
+      - Thu, 05 Sep 2019 17:49:54 GMT
       etag:
-      - '"0x8D72CB9DEA5AD1C"'
+      - '"0x8D7322975EFC374"'
       last-modified:
-      - Thu, 29 Aug 2019 19:48:31 GMT
+      - Thu, 05 Sep 2019 17:49:54 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-file-attributes:
+      - Directory
+      x-ms-file-change-time:
+      - '2019-09-05T17:49:54.9909876Z'
+      x-ms-file-creation-time:
+      - '2019-09-05T17:49:54.9909876Z'
+      x-ms-file-id:
+      - '11529285414812647424'
+      x-ms-file-last-write-time:
+      - '2019-09-05T17:49:54.9909876Z'
+      x-ms-file-parent-id:
+      - '13835128424026341376'
+      x-ms-file-permission-key:
+      - 9419183066445573694*16892033583488137655
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -131,9 +175,9 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2019 19:48:32 GMT
+      - Thu, 05 Sep 2019 17:49:55 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: DELETE
     uri: https://pyacrstorage641710fb.file.core.windows.net/utshare641710fb/dir1%2Fdir2?restype=directory
   response:
@@ -143,11 +187,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 29 Aug 2019 19:48:30 GMT
+      - Thu, 05 Sep 2019 17:49:54 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 202
       message: Accepted
@@ -163,28 +207,28 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2019 19:48:32 GMT
+      - Thu, 05 Sep 2019 17:49:55 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: GET
     uri: https://pyacrstorage641710fb.file.core.windows.net/utshare641710fb/dir1%2Fdir2?restype=directory
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ResourceNotFound</Code><Message>The
-        specified resource does not exist.\nRequestId:06fbb152-b01a-00ca-29a2-5ea3bb000000\nTime:2019-08-29T19:48:31.4673103Z</Message></Error>"
+        specified resource does not exist.\nRequestId:788c4a1e-901a-0137-7812-64da8c000000\nTime:2019-09-05T17:49:55.2047458Z</Message></Error>"
     headers:
       content-length:
       - '223'
       content-type:
       - application/xml
       date:
-      - Thu, 29 Aug 2019 19:48:31 GMT
+      - Thu, 05 Sep 2019 17:49:54 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
       - ResourceNotFound
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 404
       message: The specified resource does not exist.
