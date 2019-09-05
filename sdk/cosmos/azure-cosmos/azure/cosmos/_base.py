@@ -27,10 +27,10 @@ import datetime
 import json
 import uuid
 import binascii
+from typing import Dict, Any
 
 import six
 from six.moves.urllib.parse import quote as urllib_quote
-from typing import Dict, Any
 
 from . import auth
 from . import documents

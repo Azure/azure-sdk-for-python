@@ -549,7 +549,10 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         def fetch_fn(options):
             return (
-                self.__QueryFeed(path, "users", database_id, lambda r: r["Users"], lambda _, b: b, query, options, **kwargs),
+                self.__QueryFeed(
+                    path, "users", database_id, lambda r: r["Users"],
+                    lambda _, b: b, query, options, **kwargs
+                ),
                 self.last_response_headers,
             )
 
@@ -807,7 +810,15 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
 
         return self.QueryItems(collection_link, None, feed_options, response_hook=response_hook, **kwargs)
 
-    def QueryItems(self, database_or_container_link, query, options=None, partition_key=None, response_hook=None, **kwargs):
+    def QueryItems(
+        self,
+        database_or_container_link,
+        query,
+        options=None,
+        partition_key=None,
+        response_hook=None,
+        **kwargs
+    ):
         """Queries documents in a collection.
 
         :param str database_or_container_link:
