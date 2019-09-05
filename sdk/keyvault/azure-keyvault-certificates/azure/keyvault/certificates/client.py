@@ -75,9 +75,7 @@ class CertificateClient(KeyVaultClientBase):
         :param tags: Application specific metadata in the form of key-value pairs.
         :type tags: dict(str, str)
         :returns: The created CertificateOperation
-        :rtype: ~azure.security.keyvault.certificates._models.CertificateOperation
-        :raises:
-         :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
+        :rtype: ~azure.keyvault.certificates.models.CertificateOperation
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
@@ -114,7 +112,7 @@ class CertificateClient(KeyVaultClientBase):
                                                                     ]),
                                        issuer_name="Self",
                                        lifetime_actions=lifetime_actions,
-                                       content_type=SecretContentType.PFX,
+                                       content_type=SecretContentType.PKCS12,
                                        subject_name="CN=DefaultPolicy",
                                        validity_in_months=12)
 
@@ -158,8 +156,7 @@ class CertificateClient(KeyVaultClientBase):
         :type name: str
         :returns: An instance of Certificate
         :rtype: ~azure.keyvault.certificates.models.Certificate
-        :raises:
-         :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
+        :raises: ~azure.core.exceptions.ResourceNotFoundError if the certificate doesn't exist
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
@@ -173,6 +170,7 @@ class CertificateClient(KeyVaultClientBase):
             vault_base_url=self.vault_url,
             certificate_name=name,
             certificate_version="",
+            error_map={404: ResourceNotFoundError},
             **kwargs
         )
         return Certificate._from_certificate_bundle(certificate_bundle=bundle)
@@ -194,8 +192,7 @@ class CertificateClient(KeyVaultClientBase):
         :type version: str
         :returns: An instance of Certificate
         :rtype: ~azure.keyvault.certificates.models.Certificate
-        :raises:
-         :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
+        :raises: ~azure.core.exceptions.ResourceNotFoundError if the certificate doesn't exist
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
@@ -209,6 +206,7 @@ class CertificateClient(KeyVaultClientBase):
             vault_base_url=self.vault_url,
             certificate_name=name,
             certificate_version=version,
+            error_map={404: ResourceNotFoundError},
             **kwargs
         )
         return Certificate._from_certificate_bundle(certificate_bundle=bundle)
@@ -226,9 +224,8 @@ class CertificateClient(KeyVaultClientBase):
         :param name: The name of the certificate.
         :type name: str
         :returns: The deleted certificate
-        :rtype: ~azure.security.keyvault.certificates._models.DeletedCertificate
-        :raises:
-         :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
+        :rtype: ~azure.keyvault.certificates.models.DeletedCertificate
+        :raises: ~azure.core.exceptions.ResourceNotFoundError if the certificate doesn't exist
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
@@ -238,7 +235,12 @@ class CertificateClient(KeyVaultClientBase):
                 :caption: Delete a certificate
                 :dedent: 8
         """
-        bundle = self._client.delete_certificate(vault_base_url=self.vault_url, certificate_name=name, **kwargs)
+        bundle = self._client.delete_certificate(
+            vault_base_url=self.vault_url,
+            certificate_name=name,
+            error_map={404: ResourceNotFoundError},
+            **kwargs
+        )
         return DeletedCertificate._from_deleted_certificate_bundle(deleted_certificate_bundle=bundle)
 
     @distributed_trace
@@ -254,9 +256,8 @@ class CertificateClient(KeyVaultClientBase):
         :param name: The name of the certificate.
         :type name: str
         :return: The deleted certificate
-        :rtype: ~azure.security.keyvault.certificates._models.DeletedCertificate
-        :raises:
-         :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
+        :rtype: ~azure.keyvault.certificates.models.DeletedCertificate
+        :raises: ~azure.core.exceptions.ResourceNotFoundError if the deleted certificate doesn't exist
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
@@ -288,10 +289,14 @@ class CertificateClient(KeyVaultClientBase):
         :type name: str
         :return: None
         :rtype: None
-        :raises:
-         :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
+        :raises: ~azure.core.exceptions.ResourceNotFoundError if the deleted certificate doesn't exist
         """
-        self._client.purge_deleted_certificate(vault_base_url=self.vault_url, certificate_name=name, **kwargs)
+        self._client.purge_deleted_certificate(
+            vault_base_url=self.vault_url,
+            certificate_name=name,
+            error_map={404: ResourceNotFoundError},
+            **kwargs
+        )
 
     @distributed_trace
     def recover_deleted_certificate(self, name, **kwargs):
@@ -307,9 +312,8 @@ class CertificateClient(KeyVaultClientBase):
         :param name: The name of the deleted certificate
         :type name: str
         :return: The recovered certificate
-        :rtype ~azure.security.keyvault.certificates._models.Certificate
-        :raises:
-         :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
+        :rtype ~azure.keyvault.certificates.models.Certificate
+        :raises: ~azure.core.exceptions.ResourceNotFoundError if the deleted certificate doesn't exist
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys.py
@@ -322,6 +326,7 @@ class CertificateClient(KeyVaultClientBase):
         bundle = self._client.recover_deleted_certificate(
             vault_base_url=self.vault_url,
             certificate_name=name,
+            error_map={404: ResourceNotFoundError},
             **kwargs
         )
         return Certificate._from_certificate_bundle(certificate_bundle=bundle)
@@ -356,14 +361,14 @@ class CertificateClient(KeyVaultClientBase):
         :type password: str
         :param policy: The management policy for the certificate.
         :type policy:
-         ~azure.security.keyvault.v7_0.models.CertificatePolicy
+         ~azure.keyvault.certificates.models.CertificatePolicy
         :param enabled: Determines whether the object is enabled.
         :type enabled: bool
         :param tags: Application specific metadata in the form of key-value
          pairs.
         :type tags: dict[str, str]
         :returns: The imported Certificate
-        :rtype: ~azure.security.keyvault.certificates._models.Certificate
+        :rtype: ~azure.keyvault.certificates.models.Certificate
         """
         if enabled is not None:
             attributes = self._client.models.CertificateAttributes(
@@ -395,11 +400,15 @@ class CertificateClient(KeyVaultClientBase):
         :param name: The name of the certificate in a given key vault.
         :type name: str
         :return: The certificate policy
-        :rtype ~azure.security.keyvault.certificates._models.CertificatePolicy
-        :raises:
-         :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
+        :rtype ~azure.keyvault.certificates.models.CertificatePolicy
+        :raises: ~azure.core.exceptions.ResourceNotFoundError if the certificate doesn't exist
         """
-        bundle = self._client.get_certificate_policy(vault_base_url=self.vault_url, certificate_name=name, **kwargs)
+        bundle = self._client.get_certificate_policy(
+            vault_base_url=self.vault_url,
+            certificate_name=name,
+            error_map={404: ResourceNotFoundError},
+            **kwargs
+        )
         return CertificatePolicy._from_certificate_policy_bundle(certificate_policy_bundle=bundle)
 
     @distributed_trace
@@ -413,16 +422,16 @@ class CertificateClient(KeyVaultClientBase):
         :param name: The name of the certificate in the given vault.
         :type name: str
         :param policy: The policy for the certificate.
-        :type policy: ~azure.security.keyvault.certificates._models.CertificatePolicy
+        :type policy: ~azure.keyvault.certificates.models.CertificatePolicy
         :return: The certificate policy
-        :rtype: ~azure.security.keyvault.certificates._models.CertificatePolicy
-        :raises:
-         :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
+        :rtype: ~azure.keyvault.certificates.models.CertificatePolicy
+        :raises: ~azure.core.exceptions.ResourceNotFoundError if the certificate doesn't exist
         """
         bundle = self._client.update_certificate_policy(
             vault_base_url=self.vault_url,
             certificate_name=name,
             certificate_policy=policy._to_certificate_policy_bundle(),
+            error_map={404: ResourceNotFoundError},
             **kwargs
         )
         return CertificatePolicy._from_certificate_policy_bundle(certificate_policy_bundle=bundle)
@@ -453,9 +462,8 @@ class CertificateClient(KeyVaultClientBase):
         :param tags: Application specific metadata in the form of key-value pairs.
         :type tags: dict(str, str)
         :returns: The updated Certificate
-        :rtype: ~azure.security.keyvault.certificates._models.Certificate
-        :raises:
-         :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
+        :rtype: ~azure.keyvault.certificates.models.Certificate
+        :raises: ~azure.core.exceptions.ResourceNotFoundError if the certificate doesn't exist
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
@@ -478,6 +486,7 @@ class CertificateClient(KeyVaultClientBase):
             certificate_version=version or "",
             certificate_attributes=attributes,
             tags=tags,
+            error_map={404: ResourceNotFoundError},
             **kwargs
         )
         return Certificate._from_certificate_bundle(certificate_bundle=bundle)
@@ -495,8 +504,7 @@ class CertificateClient(KeyVaultClientBase):
         :type name: str
         :return: the backup blob containing the backed up certificate.
         :rtype: bytes
-        :raises:
-         :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
+        :raises: ~azure.core.exceptions.ResourceNotFoundError if the certificate doesn't exist
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
@@ -525,9 +533,9 @@ class CertificateClient(KeyVaultClientBase):
         :param backup: The backup blob associated with a certificate bundle.
         :type backup bytes
         :return: The restored Certificate
-        :rtype: ~azure.security.keyvault.certificates._models.Certificate
+        :rtype: ~azure.keyvault.certificates.models.Certificate
         :raises:
-         :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
+         ~azure.core.exceptions.ResourceExistsError if the backed up certificate's name is already in use
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
@@ -561,9 +569,7 @@ class CertificateClient(KeyVaultClientBase):
         :type include_pending: bool
         :return: An iterator like instance of DeletedCertificate
         :rtype:
-         typing.Generator[~azure.security.keyvault.certificates._models.DeletedCertificate]
-        :raises:
-         :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
+         typing.Generator[~azure.keyvault.certificates.models.DeletedCertificate]
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
@@ -599,9 +605,7 @@ class CertificateClient(KeyVaultClientBase):
         :type include_pending: bool
         :returns: An iterator like instance of CertificateBase
         :rtype:
-         typing.Generator[~azure.security.keyvault.certificates._models.CertificateBase]
-        :raises:
-         :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
+         typing.Generator[~azure.keyvault.certificates.models.CertificateBase]
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
@@ -633,9 +637,7 @@ class CertificateClient(KeyVaultClientBase):
         :type name: str
         :returns: An iterator like instance of CertificateBase
         :rtype:
-         typing.Generator[~azure.security.keyvault.certificates._models.CertificateBase]
-        :raises:
-         :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
+         typing.Generator[~azure.keyvault.certificates.models.CertificateBase]
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
@@ -655,18 +657,16 @@ class CertificateClient(KeyVaultClientBase):
 
     @distributed_trace
     def create_contacts(self, contacts, **kwargs):
-        # type: (Iterable[Contact], **Any) -> Iterable[Contact]
+        # type: (Iterable[Contact], **Any) -> List[Contact]
         """Sets the certificate contacts for the key vault.
 
         Sets the certificate contacts for the key vault. This
         operation requires the certificates/managecontacts permission.
 
         :param contacts: The contact list for the vault certificates.
-        :type contacts: list[~azure.keyvault.v7_0.models.Contact]
+        :type contacts: list[~azure.keyvault.certificates.models.Contact]
         :returns: The created list of contacts
-        :rtype: Iterator[~azure.security.keyvault.certificates._models.Contact]
-        :raises:
-         :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
+        :rtype: Iterator[~azure.keyvault.certificates.models.Contact]
         """
         contacts = self._client.set_certificate_contacts(
             vault_base_url=self.vault_url,
@@ -677,7 +677,7 @@ class CertificateClient(KeyVaultClientBase):
 
     @distributed_trace
     def get_contacts(self, **kwargs):
-        # type: (**Any) -> Iterable[Contact]
+        # type: (**Any) -> List[Contact]
         """Gets the certificate contacts for the key vault.
 
         Returns the set of certificate contact resources in the specified
@@ -685,23 +685,21 @@ class CertificateClient(KeyVaultClientBase):
         permission.
 
         :return: The certificate contacts for the key vault.
-        :rtype: Iterator[azure.security.keyvault.certificates._models.Contact]
+        :rtype: Iterator[azure.keyvault.certificates._models.Contact]
         """
         contacts = self._client.get_certificate_contacts(vault_base_url=self._vault_url, **kwargs)
         return [Contact._from_certificate_contacts_item(contact_item=item) for item in contacts.contact_list]
 
     @distributed_trace
     def delete_contacts(self, **kwargs):
-        # type: (**Any) -> Iterable[Contact]
+        # type: (**Any) -> List[Contact]
         """Deletes the certificate contacts for the key vault.
 
         Deletes the certificate contacts for the key vault certificate.
         This operation requires the certificates/managecontacts permission.
 
         :return: Contacts
-        :rtype: Iterator[~azure.security.certificates._models.Contact]
-        :raises:
-         :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
+        :rtype: Iterator[~azure.certificates._models.Contact]
         """
         contacts = self._client.delete_certificate_contacts(vault_base_url=self.vault_url, **kwargs)
         return [Contact._from_certificate_contacts_item(contact_item=item) for item in contacts.contact_list]
@@ -717,12 +715,16 @@ class CertificateClient(KeyVaultClientBase):
         :param name: The name of the certificate.
         :type name: str
         :returns: The created CertificateOperation
-        :rtype: ~azure.security.keyvault.v7_0.models.CertificateOperation
-        :raises:
-         :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
+        :rtype: ~azure.keyvault.certificates.models.CertificateOperation
+        :raises: ~azure.core.exceptions.ResourceNotFoundError if the certificate operation doesn't exist
         """
 
-        bundle = self._client.get_certificate_operation(vault_base_url=self.vault_url, certificate_name=name, **kwargs)
+        bundle = self._client.get_certificate_operation(
+            vault_base_url=self.vault_url,
+            certificate_name=name,
+            error_map={404: ResourceNotFoundError},
+            **kwargs
+        )
         return CertificateOperation._from_certificate_operation_bundle(certificate_operation_bundle=bundle)
 
     @distributed_trace
@@ -737,13 +739,13 @@ class CertificateClient(KeyVaultClientBase):
         :param name: The name of the certificate.
         :type name: str
         :return: The deleted CertificateOperation
-        :rtype: ~azure.security.keyvault.certificates._models.CertificateOperation
-        :raises:
-         :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
+        :rtype: ~azure.keyvault.certificates.models.CertificateOperation
+        :raises: ~azure.core.exceptions.ResourceNotFoundError if the certificate operation doesn't exist
         """
         bundle = self._client.delete_certificate_operation(
             vault_base_url=self.vault_url,
             certificate_name=name,
+            error_map={404: ResourceNotFoundError},
             **kwargs
         )
         return CertificateOperation._from_certificate_operation_bundle(certificate_operation_bundle=bundle)
@@ -759,14 +761,14 @@ class CertificateClient(KeyVaultClientBase):
         :param name: The name of the certificate.
         :type name: str
         :returns: The updated certificate operation
-        :rtype: ~azure.security.keyvault.certificates._models.CertificateOperation
-        :raises:
-         :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
+        :rtype: ~azure.keyvault.certificates.models.CertificateOperation
+        :raises: ~azure.core.exceptions.ResourceNotFoundError if the certificate operation doesn't exist
         """
         bundle = self._client.update_certificate_operation(
             vault_base_url=self.vault_url,
             certificate_name=name,
             cancellation_requested=True,
+            error_map={404: ResourceNotFoundError},
             **kwargs
         )
         return CertificateOperation._from_certificate_operation_bundle(certificate_operation_bundle=bundle)
@@ -795,9 +797,8 @@ class CertificateClient(KeyVaultClientBase):
         :param tags: Application specific metadata in the form of key-value pairs.
         :type tags: dict[str, str]
         :return: The merged certificate
-        :rtype: ~azure.security.keyvault.certificates._models.Certificate
-        :raises:
-         :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
+        :rtype: ~azure.keyvault.certificates.models.Certificate
+        :raises: ~azure.core.exceptions.ResourceNotFoundError if the create certificate operation doesn't exist
         """
         if enabled is not None:
             attributes = self._client.models.CertificateAttributes(
@@ -811,6 +812,7 @@ class CertificateClient(KeyVaultClientBase):
             x509_certificates=x509_certificates,
             certificate_attributes=attributes,
             tags=tags,
+            error_map={404: ResourceNotFoundError},
             **kwargs
         )
         return Certificate._from_certificate_bundle(certificate_bundle=bundle)
@@ -829,10 +831,9 @@ class CertificateClient(KeyVaultClientBase):
         :type custom_headers: dict
         :return: Base64 encoded pending certificate signing request (PKCS-10).
         :rtype: str
-        :raises:
-         :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
+        :raises: ~azure.core.exceptions.ResourceNotFoundError if the pending csr doesn't exist
         """
-        error_map = kwargs.pop('error_map', None)
+        error_map = {404: ResourceNotFoundError}
         vault_base_url = self.vault_url
         # Construct URL
         url = '/certificates/{certificate-name}/pending'
@@ -887,11 +888,15 @@ class CertificateClient(KeyVaultClientBase):
         :param name: The name of the issuer.
         :type name: str
         :return: The specified certificate issuer.
-        :rtype: ~azure.security.keyvault.certificates._models.Issuer
-        :raises:
-         :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
+        :rtype: ~azure.keyvault.certificates.models.Issuer
+        :raises: ~azure.core.exceptions.ResourceNotFoundError if the issuer doesn't exist
         """
-        issuer_bundle = self._client.get_certificate_issuer(vault_base_url=self.vault_url, issuer_name=name, **kwargs)
+        issuer_bundle = self._client.get_certificate_issuer(
+            vault_base_url=self.vault_url,
+            issuer_name=name,
+            error_map={404: ResourceNotFoundError},
+            **kwargs
+        )
         return Issuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
 
     @distributed_trace
@@ -928,9 +933,7 @@ class CertificateClient(KeyVaultClientBase):
         :param enabled: Determines whether the object is enabled.
         :type enabled: bool
         :returns: The created Issuer
-        :rtype: ~azure.security.keyvault.certificates._models.Issuer
-        :raises:
-         :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
+        :rtype: ~azure.keyvault.certificates.models.Issuer
         """
         if account_id or password:
             issuer_credentials = self._client.models.IssuerCredentials(account_id=account_id, password=password)
@@ -1000,9 +1003,8 @@ class CertificateClient(KeyVaultClientBase):
         :param enabled: Determines whether the issuer is enabled.
         :type enabled: bool
         :return: The updated issuer
-        :rtype: ~azure.security.keyvault.certificates._models.Issuer
-        :raises:
-         :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
+        :rtype: ~azure.keyvault.certificates.models.Issuer
+        :raises: ~azure.core.exceptions.ResourceNotFoundError if the issuer doesn't exist
         """
         if account_id or password:
             issuer_credentials = self._client.models.IssuerCredentials(account_id=account_id, password=password)
@@ -1035,6 +1037,7 @@ class CertificateClient(KeyVaultClientBase):
             credentials=issuer_credentials,
             organization_details=organization_details,
             attributes=issuer_attributes,
+            error_map={404: ResourceNotFoundError},
             **kwargs
         )
         return Issuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
@@ -1050,13 +1053,13 @@ class CertificateClient(KeyVaultClientBase):
         :param name: The name of the issuer.
         :type name: str
         :return: Issuer
-        :rtype: ~azure.security.keyvault.certificates._models.Issuer
-        :raises:
-         :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
+        :rtype: ~azure.keyvault.certificates.models.Issuer
+        :raises: ~azure.core.exceptions.ResourceNotFoundError if the issuer doesn't exist
         """
         issuer_bundle = self._client.delete_certificate_issuer(
             vault_base_url=self.vault_url,
             issuer_name=name,
+            error_map={404: ResourceNotFoundError},
             **kwargs
         )
         return Issuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
@@ -1071,9 +1074,7 @@ class CertificateClient(KeyVaultClientBase):
         permission.
 
         :return: An iterator like instance of Issuers
-        :rtype: Iterable[~azure.security.keyvault.certificates._models.Issuer]
-        :raises:
-         :class:`KeyVaultErrorException<azure.keyvault.v7_0.models.KeyVaultErrorException>`
+        :rtype: Iterable[~azure.keyvault.certificates.models.Issuer]
         """
         max_page_size = kwargs.pop("max_page_size", None)
         return self._client.get_certificate_issuers(

@@ -432,6 +432,7 @@ class CertificateClientTests(KeyVaultTestCase):
             cert_name=cert_name,
             cert_policy=cert_policy
         )
+
         self.assertEqual(await create_certificate_poller, 'cancelled')
 
         retrieved_operation = await client.get_certificate_operation(name=cert_name)

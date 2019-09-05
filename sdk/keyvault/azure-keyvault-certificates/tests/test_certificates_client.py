@@ -422,7 +422,6 @@ class CertificateClientTests(KeyVaultTestCase):
         # create certificate
         create_certificate_poller = client.create_certificate(name=cert_name, policy=CertificatePolicy._from_certificate_policy_bundle(cert_policy))
 
-
         # cancel certificate operation
         cancel_operation = client.cancel_certificate_operation(name=cert_name)
         self.assertTrue(hasattr(cancel_operation, 'cancellation_requested'))
