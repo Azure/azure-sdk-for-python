@@ -6,7 +6,7 @@
 import base64
 import uuid
 from functools import partial
-from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
+
 from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 
@@ -76,6 +76,7 @@ class CertificateClient(KeyVaultClientBase):
         :type tags: dict(str, str)
         :returns: The created CertificateOperation
         :rtype: ~azure.keyvault.certificates.models.CertificateOperation
+        :raises: ~azure.core.exceptions.HttpResponseError
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
@@ -156,7 +157,7 @@ class CertificateClient(KeyVaultClientBase):
         :type name: str
         :returns: An instance of Certificate
         :rtype: ~azure.keyvault.certificates.models.Certificate
-        :raises: ~azure.core.exceptions.ResourceNotFoundError if the certificate doesn't exist
+        :raises: ~azure.core.exceptions.HttpResponseError
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
@@ -170,7 +171,6 @@ class CertificateClient(KeyVaultClientBase):
             vault_base_url=self.vault_url,
             certificate_name=name,
             certificate_version="",
-            error_map={404: ResourceNotFoundError},
             **kwargs
         )
         return Certificate._from_certificate_bundle(certificate_bundle=bundle)
@@ -192,7 +192,7 @@ class CertificateClient(KeyVaultClientBase):
         :type version: str
         :returns: An instance of Certificate
         :rtype: ~azure.keyvault.certificates.models.Certificate
-        :raises: ~azure.core.exceptions.ResourceNotFoundError if the certificate doesn't exist
+        :raises: ~azure.core.exceptions.HttpResponseError
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
@@ -206,7 +206,6 @@ class CertificateClient(KeyVaultClientBase):
             vault_base_url=self.vault_url,
             certificate_name=name,
             certificate_version=version,
-            error_map={404: ResourceNotFoundError},
             **kwargs
         )
         return Certificate._from_certificate_bundle(certificate_bundle=bundle)
@@ -225,7 +224,7 @@ class CertificateClient(KeyVaultClientBase):
         :type name: str
         :returns: The deleted certificate
         :rtype: ~azure.keyvault.certificates.models.DeletedCertificate
-        :raises: ~azure.core.exceptions.ResourceNotFoundError if the certificate doesn't exist
+        :raises: ~azure.core.exceptions.HttpResponseError
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
@@ -238,7 +237,6 @@ class CertificateClient(KeyVaultClientBase):
         bundle = self._client.delete_certificate(
             vault_base_url=self.vault_url,
             certificate_name=name,
-            error_map={404: ResourceNotFoundError},
             **kwargs
         )
         return DeletedCertificate._from_deleted_certificate_bundle(deleted_certificate_bundle=bundle)
@@ -257,7 +255,7 @@ class CertificateClient(KeyVaultClientBase):
         :type name: str
         :return: The deleted certificate
         :rtype: ~azure.keyvault.certificates.models.DeletedCertificate
-        :raises: ~azure.core.exceptions.ResourceNotFoundError if the deleted certificate doesn't exist
+        :raises: ~azure.core.exceptions.HttpResponseError
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
@@ -270,7 +268,6 @@ class CertificateClient(KeyVaultClientBase):
         bundle = self._client.get_deleted_certificate(
             vault_base_url=self.vault_url,
             certificate_name=name,
-            error_map={404: ResourceNotFoundError},
             **kwargs
         )
         return DeletedCertificate._from_deleted_certificate_bundle(deleted_certificate_bundle=bundle)
@@ -289,12 +286,11 @@ class CertificateClient(KeyVaultClientBase):
         :type name: str
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.ResourceNotFoundError if the deleted certificate doesn't exist
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         self._client.purge_deleted_certificate(
             vault_base_url=self.vault_url,
             certificate_name=name,
-            error_map={404: ResourceNotFoundError},
             **kwargs
         )
 
@@ -313,7 +309,7 @@ class CertificateClient(KeyVaultClientBase):
         :type name: str
         :return: The recovered certificate
         :rtype ~azure.keyvault.certificates.models.Certificate
-        :raises: ~azure.core.exceptions.ResourceNotFoundError if the deleted certificate doesn't exist
+        :raises: ~azure.core.exceptions.HttpResponseError
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys.py
@@ -326,7 +322,6 @@ class CertificateClient(KeyVaultClientBase):
         bundle = self._client.recover_deleted_certificate(
             vault_base_url=self.vault_url,
             certificate_name=name,
-            error_map={404: ResourceNotFoundError},
             **kwargs
         )
         return Certificate._from_certificate_bundle(certificate_bundle=bundle)
@@ -369,6 +364,7 @@ class CertificateClient(KeyVaultClientBase):
         :type tags: dict[str, str]
         :returns: The imported Certificate
         :rtype: ~azure.keyvault.certificates.models.Certificate
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         if enabled is not None:
             attributes = self._client.models.CertificateAttributes(
@@ -401,12 +397,11 @@ class CertificateClient(KeyVaultClientBase):
         :type name: str
         :return: The certificate policy
         :rtype ~azure.keyvault.certificates.models.CertificatePolicy
-        :raises: ~azure.core.exceptions.ResourceNotFoundError if the certificate doesn't exist
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         bundle = self._client.get_certificate_policy(
             vault_base_url=self.vault_url,
             certificate_name=name,
-            error_map={404: ResourceNotFoundError},
             **kwargs
         )
         return CertificatePolicy._from_certificate_policy_bundle(certificate_policy_bundle=bundle)
@@ -425,13 +420,12 @@ class CertificateClient(KeyVaultClientBase):
         :type policy: ~azure.keyvault.certificates.models.CertificatePolicy
         :return: The certificate policy
         :rtype: ~azure.keyvault.certificates.models.CertificatePolicy
-        :raises: ~azure.core.exceptions.ResourceNotFoundError if the certificate doesn't exist
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         bundle = self._client.update_certificate_policy(
             vault_base_url=self.vault_url,
             certificate_name=name,
             certificate_policy=policy._to_certificate_policy_bundle(),
-            error_map={404: ResourceNotFoundError},
             **kwargs
         )
         return CertificatePolicy._from_certificate_policy_bundle(certificate_policy_bundle=bundle)
@@ -463,7 +457,7 @@ class CertificateClient(KeyVaultClientBase):
         :type tags: dict(str, str)
         :returns: The updated Certificate
         :rtype: ~azure.keyvault.certificates.models.Certificate
-        :raises: ~azure.core.exceptions.ResourceNotFoundError if the certificate doesn't exist
+        :raises: ~azure.core.exceptions.HttpResponseError
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
@@ -486,7 +480,6 @@ class CertificateClient(KeyVaultClientBase):
             certificate_version=version or "",
             certificate_attributes=attributes,
             tags=tags,
-            error_map={404: ResourceNotFoundError},
             **kwargs
         )
         return Certificate._from_certificate_bundle(certificate_bundle=bundle)
@@ -504,7 +497,7 @@ class CertificateClient(KeyVaultClientBase):
         :type name: str
         :return: the backup blob containing the backed up certificate.
         :rtype: bytes
-        :raises: ~azure.core.exceptions.ResourceNotFoundError if the certificate doesn't exist
+        :raises: ~azure.core.exceptions.HttpResponseError
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
@@ -517,7 +510,6 @@ class CertificateClient(KeyVaultClientBase):
         backup_result = self._client.backup_certificate(
             vault_base_url=self.vault_url,
             certificate_name=name,
-            error_map={404: ResourceNotFoundError},
             **kwargs
         )
         return backup_result.value
@@ -534,8 +526,7 @@ class CertificateClient(KeyVaultClientBase):
         :type backup bytes
         :return: The restored Certificate
         :rtype: ~azure.keyvault.certificates.models.Certificate
-        :raises:
-         ~azure.core.exceptions.ResourceExistsError if the backed up certificate's name is already in use
+        :raises: ~azure.core.exceptions.HttpResponseError
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
@@ -548,7 +539,6 @@ class CertificateClient(KeyVaultClientBase):
         bundle = self._client.restore_certificate(
             vault_base_url=self.vault_url,
             certificate_bundle_backup=backup,
-            error_map={409: ResourceExistsError},
             **kwargs
         )
         return Certificate._from_certificate_bundle(certificate_bundle=bundle)
@@ -570,6 +560,7 @@ class CertificateClient(KeyVaultClientBase):
         :return: An iterator like instance of DeletedCertificate
         :rtype:
          typing.Generator[~azure.keyvault.certificates.models.DeletedCertificate]
+        :raises: ~azure.core.exceptions.HttpResponseError
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
@@ -606,6 +597,7 @@ class CertificateClient(KeyVaultClientBase):
         :returns: An iterator like instance of CertificateBase
         :rtype:
          typing.Generator[~azure.keyvault.certificates.models.CertificateBase]
+        :raises: ~azure.core.exceptions.HttpResponseError
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
@@ -638,6 +630,7 @@ class CertificateClient(KeyVaultClientBase):
         :returns: An iterator like instance of CertificateBase
         :rtype:
          typing.Generator[~azure.keyvault.certificates.models.CertificateBase]
+        :raises: ~azure.core.exceptions.HttpResponseError
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
@@ -667,6 +660,7 @@ class CertificateClient(KeyVaultClientBase):
         :type contacts: list[~azure.keyvault.certificates.models.Contact]
         :returns: The created list of contacts
         :rtype: Iterator[~azure.keyvault.certificates.models.Contact]
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         contacts = self._client.set_certificate_contacts(
             vault_base_url=self.vault_url,
@@ -686,6 +680,7 @@ class CertificateClient(KeyVaultClientBase):
 
         :return: The certificate contacts for the key vault.
         :rtype: Iterator[azure.keyvault.certificates._models.Contact]
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         contacts = self._client.get_certificate_contacts(vault_base_url=self._vault_url, **kwargs)
         return [Contact._from_certificate_contacts_item(contact_item=item) for item in contacts.contact_list]
@@ -700,6 +695,7 @@ class CertificateClient(KeyVaultClientBase):
 
         :return: Contacts
         :rtype: Iterator[~azure.certificates._models.Contact]
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         contacts = self._client.delete_certificate_contacts(vault_base_url=self.vault_url, **kwargs)
         return [Contact._from_certificate_contacts_item(contact_item=item) for item in contacts.contact_list]
@@ -716,13 +712,12 @@ class CertificateClient(KeyVaultClientBase):
         :type name: str
         :returns: The created CertificateOperation
         :rtype: ~azure.keyvault.certificates.models.CertificateOperation
-        :raises: ~azure.core.exceptions.ResourceNotFoundError if the certificate operation doesn't exist
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
 
         bundle = self._client.get_certificate_operation(
             vault_base_url=self.vault_url,
             certificate_name=name,
-            error_map={404: ResourceNotFoundError},
             **kwargs
         )
         return CertificateOperation._from_certificate_operation_bundle(certificate_operation_bundle=bundle)
@@ -740,12 +735,11 @@ class CertificateClient(KeyVaultClientBase):
         :type name: str
         :return: The deleted CertificateOperation
         :rtype: ~azure.keyvault.certificates.models.CertificateOperation
-        :raises: ~azure.core.exceptions.ResourceNotFoundError if the certificate operation doesn't exist
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         bundle = self._client.delete_certificate_operation(
             vault_base_url=self.vault_url,
             certificate_name=name,
-            error_map={404: ResourceNotFoundError},
             **kwargs
         )
         return CertificateOperation._from_certificate_operation_bundle(certificate_operation_bundle=bundle)
@@ -762,13 +756,12 @@ class CertificateClient(KeyVaultClientBase):
         :type name: str
         :returns: The updated certificate operation
         :rtype: ~azure.keyvault.certificates.models.CertificateOperation
-        :raises: ~azure.core.exceptions.ResourceNotFoundError if the certificate operation doesn't exist
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         bundle = self._client.update_certificate_operation(
             vault_base_url=self.vault_url,
             certificate_name=name,
             cancellation_requested=True,
-            error_map={404: ResourceNotFoundError},
             **kwargs
         )
         return CertificateOperation._from_certificate_operation_bundle(certificate_operation_bundle=bundle)
@@ -798,7 +791,7 @@ class CertificateClient(KeyVaultClientBase):
         :type tags: dict[str, str]
         :return: The merged certificate
         :rtype: ~azure.keyvault.certificates.models.Certificate
-        :raises: ~azure.core.exceptions.ResourceNotFoundError if the create certificate operation doesn't exist
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         if enabled is not None:
             attributes = self._client.models.CertificateAttributes(
@@ -812,7 +805,6 @@ class CertificateClient(KeyVaultClientBase):
             x509_certificates=x509_certificates,
             certificate_attributes=attributes,
             tags=tags,
-            error_map={404: ResourceNotFoundError},
             **kwargs
         )
         return Certificate._from_certificate_bundle(certificate_bundle=bundle)
@@ -831,9 +823,9 @@ class CertificateClient(KeyVaultClientBase):
         :type custom_headers: dict
         :return: Base64 encoded pending certificate signing request (PKCS-10).
         :rtype: str
-        :raises: ~azure.core.exceptions.ResourceNotFoundError if the pending csr doesn't exist
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
-        error_map = {404: ResourceNotFoundError}
+        error_map = kwargs.pop("error_map", None)
         vault_base_url = self.vault_url
         # Construct URL
         url = '/certificates/{certificate-name}/pending'
@@ -889,12 +881,11 @@ class CertificateClient(KeyVaultClientBase):
         :type name: str
         :return: The specified certificate issuer.
         :rtype: ~azure.keyvault.certificates.models.Issuer
-        :raises: ~azure.core.exceptions.ResourceNotFoundError if the issuer doesn't exist
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         issuer_bundle = self._client.get_certificate_issuer(
             vault_base_url=self.vault_url,
             issuer_name=name,
-            error_map={404: ResourceNotFoundError},
             **kwargs
         )
         return Issuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
@@ -934,6 +925,7 @@ class CertificateClient(KeyVaultClientBase):
         :type enabled: bool
         :returns: The created Issuer
         :rtype: ~azure.keyvault.certificates.models.Issuer
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         if account_id or password:
             issuer_credentials = self._client.models.IssuerCredentials(account_id=account_id, password=password)
@@ -1004,7 +996,7 @@ class CertificateClient(KeyVaultClientBase):
         :type enabled: bool
         :return: The updated issuer
         :rtype: ~azure.keyvault.certificates.models.Issuer
-        :raises: ~azure.core.exceptions.ResourceNotFoundError if the issuer doesn't exist
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         if account_id or password:
             issuer_credentials = self._client.models.IssuerCredentials(account_id=account_id, password=password)
@@ -1037,7 +1029,6 @@ class CertificateClient(KeyVaultClientBase):
             credentials=issuer_credentials,
             organization_details=organization_details,
             attributes=issuer_attributes,
-            error_map={404: ResourceNotFoundError},
             **kwargs
         )
         return Issuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
@@ -1054,12 +1045,11 @@ class CertificateClient(KeyVaultClientBase):
         :type name: str
         :return: Issuer
         :rtype: ~azure.keyvault.certificates.models.Issuer
-        :raises: ~azure.core.exceptions.ResourceNotFoundError if the issuer doesn't exist
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         issuer_bundle = self._client.delete_certificate_issuer(
             vault_base_url=self.vault_url,
             issuer_name=name,
-            error_map={404: ResourceNotFoundError},
             **kwargs
         )
         return Issuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
@@ -1075,6 +1065,7 @@ class CertificateClient(KeyVaultClientBase):
 
         :return: An iterator like instance of Issuers
         :rtype: Iterable[~azure.keyvault.certificates.models.Issuer]
+        :raises: ~azure.core.exceptions.HttpResponseError
         """
         max_page_size = kwargs.pop("max_page_size", None)
         return self._client.get_certificate_issuers(

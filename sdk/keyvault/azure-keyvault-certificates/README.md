@@ -1,5 +1,14 @@
 # Azure Key Vault Certificates client library for Python
-Azure Key Vault is a cloud service that provides a secure management of certificates, which are built on top of keys and secrets and adds an automated renewal feature. The certificate client library allows you securely store and manage the life-cycle of your certificate, be notified about certificate life-cycle events, and supports automatic renewal with selected issuers. This library offers operations to create, retrieve, update, delete, purge, backup, restore, and list the certificates and its versions, and offers CRUD operations for the certificate issuers, contacts, and management policies of the certificates..
+Azure Key Vault helps solve the following problems:
+- Cryptographic key management (this library) - create, store, and control
+access to the keys used to encrypt your data
+- Secrets management
+([`azure-keyvault-secrets`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-secrets)) -
+securely store and control access to tokens, passwords, certificates, API keys,
+and other secrets
+- Certificate management
+([`azure-keyvault-certificates`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-certificates)) -
+create, manage, and deploy public and private SSL/TLS certificates
 
 [Source code][certificates_client_src] | [Package (PyPI)][pypi_package_certificates] | [API reference documentation][reference_docs] | [Product documentation][keyvault_docs] | [Samples][certificates_samples]
 ## Getting started
@@ -149,10 +158,10 @@ Key Vault clients raise exceptions defined in azure-core. For more detailed info
 
 For example, if you try to retrieve a certificate after it is deleted a `404` error is returned, indicating resource not found. In the following snippet, the error is handled gracefully by catching the exception and displaying additional information about the error.
 ```python
-from azure.core.exceptions import ResourceNotFoundError
+from azure.core.exceptions import HttpResponseError
 try:
     certificate_client.get_certificate(name="deleted_certificate", version="deleted_certificate_version")
-except ResourceNotFoundError as e:
+except HttpResponseError as e:
     print(e.message)
 
 Output: "certificate not found:deleted_certificate"

@@ -5,7 +5,6 @@
 from __future__ import print_function
 import functools
 
-from azure.core.exceptions import ResourceNotFoundError
 from devtools_testutils import ResourceGroupPreparer
 from certificates_preparer import VaultClientPreparer
 from certificates_test_case import KeyVaultTestCase
@@ -47,7 +46,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
                                         issuer_name='Self',
                                         subject_name='CN=*.microsoft.com',
                                         validity_in_months=24,
-                                        san_dns_names=['onedrive.microsoft.com', 'xbox.microsoft.com']
+                                        san_dns_names=['sdk.azure-int.net']
                                         )
 
         cert_name = "cert-name"
@@ -170,7 +169,6 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @VaultClientPreparer()
     def test_example_certificate_backup_restore(self, vault_client, **kwargs):
         from azure.keyvault.certificates import CertificatePolicy, KeyProperties, SecretContentType
-        import time
         certificate_client = vault_client.certificates
 
         # specify the certificate policy
@@ -182,7 +180,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
                                         issuer_name='Self',
                                         subject_name='CN=*.microsoft.com',
                                         validity_in_months=24,
-                                        san_dns_names=['onedrive.microsoft.com', 'xbox.microsoft.com']
+                                        san_dns_names=['sdk.azure-int.net']
                                         )
 
         cert_name = "cert-name"
@@ -216,6 +214,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @VaultClientPreparer(enable_soft_delete=True)
     def test_example_certificate_recover(self, vault_client, **kwargs):
         from azure.keyvault.certificates import CertificatePolicy, KeyProperties, SecretContentType
+        from azure.core.exceptions import HttpResponseError
         certificate_client = vault_client.certificates
 
         # specify the certificate policy
@@ -227,7 +226,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
                                         issuer_name='Self',
                                         subject_name='CN=*.microsoft.com',
                                         validity_in_months=24,
-                                        san_dns_names=['onedrive.microsoft.com', 'xbox.microsoft.com']
+                                        san_dns_names=['sdk.azure-int.net']
                                         )
 
         cert_name = "cert-name"
@@ -236,7 +235,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         certificate_client.delete_certificate(name=cert_name)
         self._poll_until_no_exception(
             functools.partial(certificate_client.get_deleted_certificate, cert_name),
-            ResourceNotFoundError
+            HttpResponseError
         )
         # [START get_deleted_certificate]
 

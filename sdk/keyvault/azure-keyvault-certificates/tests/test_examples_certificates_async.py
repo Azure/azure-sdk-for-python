@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from azure.core.exceptions import ResourceNotFoundError
 from devtools_testutils import ResourceGroupPreparer
 from certificates_async_preparer import AsyncVaultClientPreparer
 from certificates_async_test_case import AsyncKeyVaultTestCase
@@ -32,7 +31,6 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
     @AsyncVaultClientPreparer(enable_soft_delete=True)
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_certificate_crud_operations(self, vault_client, **kwargs):
-        import asyncio
         certificate_client = vault_client.certificates
         # [START create_certificate]
         from azure.keyvault.certificates import CertificatePolicy, KeyProperties, SecretContentType
@@ -217,6 +215,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
     @AsyncKeyVaultTestCase.await_prepared_test
     async def test_example_certificate_recover(self, vault_client, **kwargs):
         from azure.keyvault.certificates import CertificatePolicy, KeyProperties, SecretContentType
+        from azure.core.exceptions import HttpResponseError
         certificate_client = vault_client.certificates
 
         # specify the certificate policy
@@ -237,7 +236,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         await certificate_client.delete_certificate(name=cert_name)
         await self._poll_until_no_exception(
-            certificate_client.get_deleted_certificate, cert_name, expected_exception=ResourceNotFoundError
+            certificate_client.get_deleted_certificate, cert_name, expected_exception=HttpResponseError
         )
 
         # [START get_deleted_certificate]
