@@ -46,6 +46,12 @@ class QueryStringConstants(object):
     END_RK = 'erk'
     SIGNED_RESOURCE_TYPES = 'srt'
     SIGNED_SERVICES = 'ss'
+    SIGNED_OID = 'skoid'
+    SIGNED_TID = 'sktid'
+    SIGNED_KEY_START = 'skt'
+    SIGNED_KEY_EXPIRY = 'ske'
+    SIGNED_KEY_SERVICE = 'sks'
+    SIGNED_KEY_VERSION = 'skv'
 
     @staticmethod
     def to_list():
@@ -70,6 +76,12 @@ class QueryStringConstants(object):
             QueryStringConstants.END_RK,
             QueryStringConstants.SIGNED_RESOURCE_TYPES,
             QueryStringConstants.SIGNED_SERVICES,
+            QueryStringConstants.SIGNED_OID,
+            QueryStringConstants.SIGNED_TID,
+            QueryStringConstants.SIGNED_KEY_START,
+            QueryStringConstants.SIGNED_KEY_EXPIRY,
+            QueryStringConstants.SIGNED_KEY_SERVICE,
+            QueryStringConstants.SIGNED_KEY_VERSION,
         ]
 
 
