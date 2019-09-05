@@ -49,7 +49,7 @@ class CryptographyClient(KeyVaultClientBase):
         elif isinstance(key, six.text_type):
             self._key = None
             self._key_id = parse_vault_id(key)
-            self._get_key_forbidden = None  # type: Optional[bool]
+            self._keys_get_forbidden = None  # type: Optional[bool]
 
             # will be replaced with actual permissions before any local operations are attempted, if we can get the key
             self._allowed_ops = frozenset()
@@ -82,12 +82,14 @@ class CryptographyClient(KeyVaultClientBase):
         :rtype: :class:`~azure.keyvault.keys.models.Key` or ``None``
         """
 
-        if not (self._key or self._get_key_forbidden):
+        if not (self._key or self._keys_get_forbidden):
             try:
                 self._key = self._client.get_key(self._key_id.vault_url, self._key_id.name, self._key_id.version)
                 self._allowed_ops = frozenset(self._key.key_material.key_ops)
             except HttpResponseError as ex:
-                self._get_key_forbidden = ex.status_code == 403
+                # if we got a 403, we don't have keys/get permission and won't try to get the key again
+                # (other errors may be transient)
+                self._keys_get_forbidden = ex.status_code == 403
         return self._key
 
     def _get_local_key(self):
