@@ -12,8 +12,8 @@
 from .alert_rule_template import AlertRuleTemplate
 
 
-class FilterAlertRuleTemplate(AlertRuleTemplate):
-    """Represents filter alert rule template.
+class MicrosoftSecurityIncidentCreationAlertRuleTemplate(AlertRuleTemplate):
+    """Represents MicrosoftSecurityIncidentCreation rule template.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -26,8 +26,6 @@ class FilterAlertRuleTemplate(AlertRuleTemplate):
     :vartype name: str
     :ivar type: Azure resource type
     :vartype type: str
-    :param etag: Etag of the alert rule.
-    :type etag: str
     :param kind: Required. Constant filled by server.
     :type kind: str
     :param alert_rules_created_by_template_count: Required. the number of
@@ -50,16 +48,19 @@ class FilterAlertRuleTemplate(AlertRuleTemplate):
     :param tactics: The tactics of the alert rule template
     :type tactics: list[str or
      ~azure.mgmt.securityinsight.models.AttackTactic]
-    :param filter_product: Required. The filter product name for this template
-     rule.
-    :type filter_product: str
-    :param filter_severities: the alert’s severities on which the cases will
+    :param product_filter: Required. The alerts' productName on which the
+     cases will be generated. Possible values include: 'Microsoft Cloud App
+     Security', 'Azure Security Center', 'Azure Advanced Threat Protection',
+     'Azure Active Directory Identity Protection'
+    :type product_filter: str or
+     ~azure.mgmt.securityinsight.models.MicrosoftSecurityProductName
+    :param severities_filter: the alerts' severities on which the cases will
      be generated
-    :type filter_severities: list[str or
+    :type severities_filter: list[str or
      ~azure.mgmt.securityinsight.models.AlertSeverity]
-    :param filter_titles: the alert’s titles on which the cases will be
-     generated
-    :type filter_titles: list[str]
+    :param display_names_filter: the alerts' displayNames on which the cases
+     will be generated
+    :type display_names_filter: list[str]
     """
 
     _validation = {
@@ -72,29 +73,28 @@ class FilterAlertRuleTemplate(AlertRuleTemplate):
         'description': {'required': True},
         'display_name': {'required': True},
         'status': {'required': True},
-        'filter_product': {'required': True},
+        'product_filter': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'alert_rules_created_by_template_count': {'key': 'properties.alertRulesCreatedByTemplateCount', 'type': 'int'},
         'created_date_utc': {'key': 'properties.createdDateUTC', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'required_data_connectors': {'key': 'properties.requiredDataConnectors', 'type': '[DataConnectorStatus]'},
-        'status': {'key': 'properties.status', 'type': 'TemplateStatus'},
-        'tactics': {'key': 'properties.tactics', 'type': '[AttackTactic]'},
-        'filter_product': {'key': 'properties.filterProduct', 'type': 'str'},
-        'filter_severities': {'key': 'properties.filterSeverities', 'type': '[AlertSeverity]'},
-        'filter_titles': {'key': 'properties.filterTitles', 'type': '[str]'},
+        'status': {'key': 'properties.status', 'type': 'str'},
+        'tactics': {'key': 'properties.tactics', 'type': '[str]'},
+        'product_filter': {'key': 'properties.productFilter', 'type': 'str'},
+        'severities_filter': {'key': 'properties.severitiesFilter', 'type': '[str]'},
+        'display_names_filter': {'key': 'properties.displayNamesFilter', 'type': '[str]'},
     }
 
     def __init__(self, **kwargs):
-        super(FilterAlertRuleTemplate, self).__init__(**kwargs)
+        super(MicrosoftSecurityIncidentCreationAlertRuleTemplate, self).__init__(**kwargs)
         self.alert_rules_created_by_template_count = kwargs.get('alert_rules_created_by_template_count', None)
         self.created_date_utc = None
         self.description = kwargs.get('description', None)
@@ -102,7 +102,7 @@ class FilterAlertRuleTemplate(AlertRuleTemplate):
         self.required_data_connectors = kwargs.get('required_data_connectors', None)
         self.status = kwargs.get('status', None)
         self.tactics = kwargs.get('tactics', None)
-        self.filter_product = kwargs.get('filter_product', None)
-        self.filter_severities = kwargs.get('filter_severities', None)
-        self.filter_titles = kwargs.get('filter_titles', None)
-        self.kind = 'Filter'
+        self.product_filter = kwargs.get('product_filter', None)
+        self.severities_filter = kwargs.get('severities_filter', None)
+        self.display_names_filter = kwargs.get('display_names_filter', None)
+        self.kind = 'MicrosoftSecurityIncidentCreation'

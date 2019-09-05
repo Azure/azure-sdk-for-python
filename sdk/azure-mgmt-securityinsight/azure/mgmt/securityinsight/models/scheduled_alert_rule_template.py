@@ -26,22 +26,20 @@ class ScheduledAlertRuleTemplate(AlertRuleTemplate):
     :vartype name: str
     :ivar type: Azure resource type
     :vartype type: str
-    :param etag: Etag of the alert rule.
-    :type etag: str
     :param kind: Required. Constant filled by server.
     :type kind: str
     :param alert_rules_created_by_template_count: Required. the number of
      alert rules that were created by this template
     :type alert_rules_created_by_template_count: int
-    :ivar created_date_utc: Required. The time that this alert rule template
-     has been added.
+    :ivar created_date_utc: The time that this alert rule template has been
+     added.
     :vartype created_date_utc: str
     :param description: Required. The description of the alert rule template.
     :type description: str
     :param display_name: Required. The display name for alert rule template.
     :type display_name: str
-    :param required_data_connectors: Required. The required data connectors
-     for this template
+    :param required_data_connectors: The required data connectors for this
+     template
     :type required_data_connectors:
      list[~azure.mgmt.securityinsight.models.DataConnectorStatus]
     :param status: Required. The alert rule template status. Possible values
@@ -77,10 +75,9 @@ class ScheduledAlertRuleTemplate(AlertRuleTemplate):
         'type': {'readonly': True},
         'kind': {'required': True},
         'alert_rules_created_by_template_count': {'required': True},
-        'created_date_utc': {'required': True, 'readonly': True},
+        'created_date_utc': {'readonly': True},
         'description': {'required': True},
         'display_name': {'required': True},
-        'required_data_connectors': {'required': True},
         'status': {'required': True},
         'query': {'required': True},
         'query_frequency': {'required': True},
@@ -94,19 +91,18 @@ class ScheduledAlertRuleTemplate(AlertRuleTemplate):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'alert_rules_created_by_template_count': {'key': 'properties.alertRulesCreatedByTemplateCount', 'type': 'int'},
         'created_date_utc': {'key': 'properties.createdDateUTC', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'required_data_connectors': {'key': 'properties.requiredDataConnectors', 'type': '[DataConnectorStatus]'},
-        'status': {'key': 'properties.status', 'type': 'TemplateStatus'},
-        'tactics': {'key': 'properties.tactics', 'type': '[AttackTactic]'},
+        'status': {'key': 'properties.status', 'type': 'str'},
+        'tactics': {'key': 'properties.tactics', 'type': '[str]'},
         'query': {'key': 'properties.query', 'type': 'str'},
         'query_frequency': {'key': 'properties.queryFrequency', 'type': 'duration'},
         'query_period': {'key': 'properties.queryPeriod', 'type': 'duration'},
-        'severity': {'key': 'properties.severity', 'type': 'AlertSeverity'},
+        'severity': {'key': 'properties.severity', 'type': 'str'},
         'trigger_operator': {'key': 'properties.triggerOperator', 'type': 'TriggerOperator'},
         'trigger_threshold': {'key': 'properties.triggerThreshold', 'type': 'int'},
     }

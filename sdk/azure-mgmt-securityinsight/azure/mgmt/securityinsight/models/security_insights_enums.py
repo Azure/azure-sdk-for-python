@@ -20,7 +20,7 @@ class AggregationsKind(str, Enum):
 class AlertRuleKind(str, Enum):
 
     scheduled = "Scheduled"
-    filter = "Filter"
+    microsoft_security_incident_creation = "MicrosoftSecurityIncidentCreation"
     fusion = "Fusion"
 
 
@@ -53,6 +53,7 @@ class AttackTactic(str, Enum):
     collection = "Collection"
     exfiltration = "Exfiltration"
     command_and_control = "CommandAndControl"
+    impact = "Impact"
 
 
 class DataTypeStatus(str, Enum):
@@ -159,6 +160,14 @@ class FileHashAlgorithm(str, Enum):
     sha1 = "SHA1"  #: SHA1 hash type
     sha256 = "SHA256"  #: SHA256 hash type
     sha256_ac = "SHA256AC"  #: SHA256 Authenticode hash type
+
+
+class MicrosoftSecurityProductName(str, Enum):
+
+    microsoft_cloud_app_security = "Microsoft Cloud App Security"
+    azure_security_center = "Azure Security Center"
+    azure_advanced_threat_protection = "Azure Advanced Threat Protection"
+    azure_active_directory_identity_protection = "Azure Active Directory Identity Protection"
 
 
 class OSFamily(str, Enum):

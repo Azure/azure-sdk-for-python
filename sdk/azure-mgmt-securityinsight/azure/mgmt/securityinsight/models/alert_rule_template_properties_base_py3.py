@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class BaseAlertRuleTemplateProperties(Model):
+class AlertRuleTemplatePropertiesBase(Model):
     """Base alert rule template property bag.
 
     Variables are only populated by the server, and will be ignored when
@@ -50,12 +50,12 @@ class BaseAlertRuleTemplateProperties(Model):
         'description': {'key': 'description', 'type': 'str'},
         'display_name': {'key': 'displayName', 'type': 'str'},
         'required_data_connectors': {'key': 'requiredDataConnectors', 'type': '[DataConnectorStatus]'},
-        'status': {'key': 'status', 'type': 'TemplateStatus'},
-        'tactics': {'key': 'tactics', 'type': '[AttackTactic]'},
+        'status': {'key': 'status', 'type': 'str'},
+        'tactics': {'key': 'tactics', 'type': '[str]'},
     }
 
     def __init__(self, *, alert_rules_created_by_template_count: int=None, description: str=None, display_name: str=None, required_data_connectors=None, status=None, tactics=None, **kwargs) -> None:
-        super(BaseAlertRuleTemplateProperties, self).__init__(**kwargs)
+        super(AlertRuleTemplatePropertiesBase, self).__init__(**kwargs)
         self.alert_rules_created_by_template_count = alert_rules_created_by_template_count
         self.created_date_utc = None
         self.description = description

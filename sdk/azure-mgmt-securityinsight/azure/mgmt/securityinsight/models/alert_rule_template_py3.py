@@ -16,8 +16,8 @@ class AlertRuleTemplate(Model):
     """Alert rule template.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: FilterAlertRuleTemplate, FusionAlertRuleTemplate,
-    ScheduledAlertRuleTemplate
+    sub-classes are: MicrosoftSecurityIncidentCreationAlertRuleTemplate,
+    FusionAlertRuleTemplate, ScheduledAlertRuleTemplate
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -30,8 +30,6 @@ class AlertRuleTemplate(Model):
     :vartype name: str
     :ivar type: Azure resource type
     :vartype type: str
-    :param etag: Etag of the alert rule.
-    :type etag: str
     :param kind: Required. Constant filled by server.
     :type kind: str
     """
@@ -47,18 +45,16 @@ class AlertRuleTemplate(Model):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
     }
 
     _subtype_map = {
-        'kind': {'Filter': 'FilterAlertRuleTemplate', 'Fusion': 'FusionAlertRuleTemplate', 'Scheduled': 'ScheduledAlertRuleTemplate'}
+        'kind': {'MicrosoftSecurityIncidentCreation': 'MicrosoftSecurityIncidentCreationAlertRuleTemplate', 'Fusion': 'FusionAlertRuleTemplate', 'Scheduled': 'ScheduledAlertRuleTemplate'}
     }
 
-    def __init__(self, *, etag: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs) -> None:
         super(AlertRuleTemplate, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
-        self.etag = etag
         self.kind = None

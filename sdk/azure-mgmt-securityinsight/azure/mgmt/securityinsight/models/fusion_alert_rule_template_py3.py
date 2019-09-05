@@ -13,7 +13,7 @@ from .alert_rule_template_py3 import AlertRuleTemplate
 
 
 class FusionAlertRuleTemplate(AlertRuleTemplate):
-    """Represents fusion alert rule template.
+    """Represents Fusion alert rule template.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -26,32 +26,30 @@ class FusionAlertRuleTemplate(AlertRuleTemplate):
     :vartype name: str
     :ivar type: Azure resource type
     :vartype type: str
-    :param etag: Etag of the alert rule.
-    :type etag: str
     :param kind: Required. Constant filled by server.
     :type kind: str
-    :param alert_rules_created_by_template_count: Required. the number of
-     alert rules that were created by this template
+    :param alert_rules_created_by_template_count: the number of alert rules
+     that were created by this template
     :type alert_rules_created_by_template_count: int
-    :ivar created_date_utc: Required. The time that this alert rule template
-     has been added.
+    :ivar created_date_utc: The time that this alert rule template has been
+     added.
     :vartype created_date_utc: str
-    :param description: Required. The description of the alert rule template.
+    :param description: The description of the alert rule template.
     :type description: str
-    :param display_name: Required. The display name for alert rule template.
+    :param display_name: The display name for alert rule template.
     :type display_name: str
     :param required_data_connectors: The required data connectors for this
      template
     :type required_data_connectors:
      list[~azure.mgmt.securityinsight.models.DataConnectorStatus]
-    :param status: Required. The alert rule template status. Possible values
-     include: 'Installed', 'Available', 'NotAvailable'
+    :param status: The alert rule template status. Possible values include:
+     'Installed', 'Available', 'NotAvailable'
     :type status: str or ~azure.mgmt.securityinsight.models.TemplateStatus
     :param tactics: The tactics of the alert rule template
     :type tactics: list[str or
      ~azure.mgmt.securityinsight.models.AttackTactic]
-    :param severity: The severity for alerts created by this alert rule.
-     Possible values include: 'High', 'Medium', 'Low', 'Informational'
+    :param severity: Required. The severity for alerts created by this alert
+     rule. Possible values include: 'High', 'Medium', 'Low', 'Informational'
     :type severity: str or ~azure.mgmt.securityinsight.models.AlertSeverity
     """
 
@@ -60,31 +58,27 @@ class FusionAlertRuleTemplate(AlertRuleTemplate):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'kind': {'required': True},
-        'alert_rules_created_by_template_count': {'required': True},
-        'created_date_utc': {'required': True, 'readonly': True},
-        'description': {'required': True},
-        'display_name': {'required': True},
-        'status': {'required': True},
+        'created_date_utc': {'readonly': True},
+        'severity': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'alert_rules_created_by_template_count': {'key': 'properties.alertRulesCreatedByTemplateCount', 'type': 'int'},
         'created_date_utc': {'key': 'properties.createdDateUTC', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'required_data_connectors': {'key': 'properties.requiredDataConnectors', 'type': '[DataConnectorStatus]'},
-        'status': {'key': 'properties.status', 'type': 'TemplateStatus'},
-        'tactics': {'key': 'properties.tactics', 'type': '[AttackTactic]'},
-        'severity': {'key': 'properties.severity', 'type': 'AlertSeverity'},
+        'status': {'key': 'properties.status', 'type': 'str'},
+        'tactics': {'key': 'properties.tactics', 'type': '[str]'},
+        'severity': {'key': 'properties.severity', 'type': 'str'},
     }
 
-    def __init__(self, *, alert_rules_created_by_template_count: int, description: str, display_name: str, status, etag: str=None, required_data_connectors=None, tactics=None, severity=None, **kwargs) -> None:
-        super(FusionAlertRuleTemplate, self).__init__(etag=etag, **kwargs)
+    def __init__(self, *, severity, alert_rules_created_by_template_count: int=None, description: str=None, display_name: str=None, required_data_connectors=None, status=None, tactics=None, **kwargs) -> None:
+        super(FusionAlertRuleTemplate, self).__init__(**kwargs)
         self.alert_rules_created_by_template_count = alert_rules_created_by_template_count
         self.created_date_utc = None
         self.description = description
