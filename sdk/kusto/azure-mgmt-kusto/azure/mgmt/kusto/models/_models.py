@@ -1003,7 +1003,7 @@ class EventGridDataConnection(DataConnection):
     :param data_format: Required. The data format of the message. Optionally
      the data format can be added to each message. Possible values include:
      'MULTIJSON', 'JSON', 'CSV', 'TSV', 'SCSV', 'SOHSV', 'PSV', 'TXT', 'RAW',
-     'SINGLEJSON', 'AVRO'
+     'SINGLEJSON', 'AVRO', 'TSVE'
     :type data_format: str or ~azure.mgmt.kusto.models.DataFormat
     """
 
@@ -1078,7 +1078,7 @@ class EventHubDataConnection(DataConnection):
     :param data_format: The data format of the message. Optionally the data
      format can be added to each message. Possible values include: 'MULTIJSON',
      'JSON', 'CSV', 'TSV', 'SCSV', 'SOHSV', 'PSV', 'TXT', 'RAW', 'SINGLEJSON',
-     'AVRO'
+     'AVRO', 'TSVE'
     :type data_format: str or ~azure.mgmt.kusto.models.DataFormat
     :param event_system_properties: System properties of the event hub
     :type event_system_properties: list[str]
@@ -1152,7 +1152,7 @@ class IotHubDataConnection(DataConnection):
     :param data_format: The data format of the message. Optionally the data
      format can be added to each message. Possible values include: 'MULTIJSON',
      'JSON', 'CSV', 'TSV', 'SCSV', 'SOHSV', 'PSV', 'TXT', 'RAW', 'SINGLEJSON',
-     'AVRO'
+     'AVRO', 'TSVE'
     :type data_format: str or ~azure.mgmt.kusto.models.DataFormat
     :param event_system_properties: System properties of the iot hub
     :type event_system_properties: list[str]
