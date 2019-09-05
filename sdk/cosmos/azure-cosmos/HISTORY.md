@@ -1,4 +1,45 @@
 # Change Log azure-cosmos
+
+## Version 4.0.0b2:
+
+Version 4.0.0b2 is the second iteration in our efforts to build a more Python client library.
+For more information about this, and preview releases of other Azure SDK libraries, please visit https://aka.ms/azure-sdk-preview1-python.
+
+**Breaking changes**
+
+- The client connection has been adapted to consume the HTTP pipeline defined in `azure.core.pipeline`.
+- Interactive objects have now been renamed as "clients". This includes:
+    - `Database` -> `DatabaseClient`
+    - `User` -> `UserClient`
+    - `Container` -> `ContainerClient`
+    - `Scripts` -> `ScriptsClient`
+- The constructor of `CosmosClient` has been updated:
+    - The `auth` parameter has been renamed to `credential` and will now take an authentication type directly. This means the master key value, a dictionary of resource tokens, or a list of permissions can be passed in. However the old dictionary format is still supported.
+    - The `connection_policy` parameter has been made a keyword only parameter, and while it is still supported, each of the individual attributes of the policy can now be passed in as explicit keyword arguments:
+        - `request_timeout`
+        - `media_request_timeout`
+        - `connection_mode`
+        - `media_read_mode`
+        - `proxy_config`
+        - `enable_endpoint_discovery`
+        - `preferred_locations`
+        - `multiple_write_locations`
+- A new classmethod constructor has been added to `CosmosClient` to enable creation via a connection string retrieved from the Azure portal.
+- All `read_all` operations have been renamed to `list` operations:
+    - `Container.read_all_conflicts` -> `ContainerClient.list_conflicts`
+    - `Container.read_all_items` -> `ContainerClient.list_items`
+    - `CosmosClient.read_all_databases` -> `CosmosClient.list_database`
+    - `Database.read_all_containers` -> `DatabaseClient.list_containers`
+    - `Database.read_all_users` -> `DatabaseClient.list_users`
+    - `User.read_all_permissions` -> `UserClient.list_permissions`
+- All operations that take `request_options` or `feed_options` parameters, these have been moved to keyword only parameters. In addition, while these options dictionaries are still supported, each of the individual options within the dictionary are now supported as explicit keyword arguments.
+- The error heirarchy is now inherited from `azure.core.AzureError` instead of `CosmosError` which has been removed.
+    - `HTTPFailure` has been renamed to `CosmosHttpResponseError`
+    - `JSONParseFailure` has been removed and replaced by `azure.core.DecodeError`
+    - Added ` CosmosResourceNotFoundError` and `CosmosResourceExistsError` for specific conflict response codes.
+- `CosmosClient` can now be run in a context manager to handle closing the client connection.
+- Iterable responses (e.g. query responses and list responses) are now of type `azure.core.paging.ItemPaged`. The method `fetch_next_block` has been replaced by a secondary iterator, accessed by the `by_page` method.
+
 ## Version 4.0.0b1:
 
 Version 4.0.0b1 is the first preview of our efforts to create a user-friendly and Pythonic client library for Azure Cosmos. For more information about this, and preview releases of other Azure SDK libraries, please visit https://aka.ms/azure-sdk-preview1-python.

@@ -75,9 +75,9 @@ client = CosmosClient(url, credential=key)
 
 Once you've initialized a [CosmosClient][ref_cosmosclient], you can interact with the primary resource types in Cosmos DB:
 
-* [Database][ref_database]: A Cosmos DB account can contain multiple databases. When you create a database, you specify the API you'd like to use when interacting with its documents: SQL, MongoDB, Gremlin, Cassandra, or Azure Table. Use the [Database][ref_database] object to manage its containers.
+* [Database][ref_database]: A Cosmos DB account can contain multiple databases. When you create a database, you specify the API you'd like to use when interacting with its documents: SQL, MongoDB, Gremlin, Cassandra, or Azure Table. Use the [DatabaseClient][ref_database] object to manage its containers.
 
-* [Container][ref_container]: A container is a collection of JSON documents. You create (insert), read, update, and delete items in a container by using methods on the [Container][ref_container] object.
+* [Container][ref_container]: A container is a collection of JSON documents. You create (insert), read, update, and delete items in a container by using methods on the [ContainerClient][ref_container] object.
 
 * [Item][ref_item]: An Item is the dictionary-like representation of a JSON document stored in a container. Each Item you add to a container must include an `id` key with a value that uniquely identifies the item within the container.
 
@@ -106,6 +106,8 @@ try:
     database = client.create_database(database_name)
 except errors.CosmosResourceExistsError:
     database = client.get_database_client(database_name)
+except errors.CosmosHttpResponseError:
+    raise
 ```
 
 ### Create a container
@@ -135,7 +137,7 @@ container = database.get_container_client(container_name)
 
 ### Insert data
 
-To insert items into a container, pass a dictionary containing your data to [Container.upsert_item][ref_container_upsert_item]. Each item you add to a container must include an `id` key with a value that uniquely identifies the item within the container.
+To insert items into a container, pass a dictionary containing your data to [ContainerClient.upsert_item][ref_container_upsert_item]. Each item you add to a container must include an `id` key with a value that uniquely identifies the item within the container.
 
 This example inserts several items into the container, each with a unique `id`:
 
@@ -154,7 +156,7 @@ for i in range(1, 10):
 
 ### Delete data
 
-To delete items from a container, use [Container.delete_item][ref_container_delete_item]. The SQL API in Cosmos DB does not support the SQL `DELETE` statement.
+To delete items from a container, use [ContainerClient.delete_item][ref_container_delete_item]. The SQL API in Cosmos DB does not support the SQL `DELETE` statement.
 
 ```Python
 for item in container.query_items(query='SELECT * FROM products p WHERE p.productModel = "DISCONTINUED"',
@@ -164,7 +166,7 @@ for item in container.query_items(query='SELECT * FROM products p WHERE p.produc
 
 ### Query the database
 
-A Cosmos DB SQL API database supports querying the items in a container with [Container.query_items][ref_container_query_items] using SQL-like syntax.
+A Cosmos DB SQL API database supports querying the items in a container with [ContainerClient.query_items][ref_container_query_items] using SQL-like syntax.
 
 This example queries a container for items with a specific `id`:
 
@@ -182,7 +184,7 @@ for item in container.query_items(
 
 > NOTE: Although you can specify any value for the container name in the `FROM` clause, we recommend you use the container name for consistency.
 
-Perform parameterized queries by passing a dictionary containing the parameters and their values to [Container.query_items][ref_container_query_items]:
+Perform parameterized queries by passing a dictionary containing the parameters and their values to [ContainerClient.query_items][ref_container_query_items]:
 
 ```Python
 discontinued_items = container.query_items(
@@ -240,7 +242,7 @@ For example, if you try to create a container using an ID (name) that's already 
 try:
     database.create_container(id=container_name, partition_key=PartitionKey(path="/productName")
 except errors.CosmosResourceExistsError:
-    print("Error creating container.")
+    print("""Error creating container
 HTTP status code 409: The ID (name) provided for the container is already in use.
 The container name must be unique within the database.""")
 
