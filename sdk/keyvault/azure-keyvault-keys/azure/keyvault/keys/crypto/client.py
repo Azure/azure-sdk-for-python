@@ -17,7 +17,7 @@ except ImportError:
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
-    from typing import Any, FrozenSet, Optional, Union
+    from typing import Any, Optional, Union
     from azure.core.credentials import TokenCredential
     from . import EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
     from ._internal import Key as _Key
@@ -49,8 +49,10 @@ class CryptographyClient(KeyVaultClientBase):
         elif isinstance(key, six.text_type):
             self._key = None
             self._key_id = parse_vault_id(key)
-            self._allowed_ops = None  # type: Optional[FrozenSet]
             self._get_key_forbidden = None  # type: Optional[bool]
+
+            # will be replaced with actual permissions before any local operations are attempted, if we can get the key
+            self._allowed_ops = frozenset()
         else:
             raise ValueError("'key' must be a Key instance or a key ID string including a version")
 
