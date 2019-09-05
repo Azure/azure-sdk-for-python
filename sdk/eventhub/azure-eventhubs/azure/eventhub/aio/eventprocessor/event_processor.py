@@ -119,7 +119,14 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
         if not self._running:
             self._running = True
             while self._running:
-                claimed_ownership_list = await ownership_manager.claim_ownership()
+                try:
+                    claimed_ownership_list = await ownership_manager.claim_ownership()
+                except Exception as err:
+                    log.exception("An exception occurred during balancing and claiming ownership for eventhub %r "
+                                  "consumer group %r. Retrying after %r seconds",
+                                  self._eventhub_name, self._consumer_group_name, self._polling_interval, exc_info=err)
+                    await asyncio.sleep(self._polling_interval)
+                    continue
                 if claimed_ownership_list:
                     claimed_partition_ids = [x["partition_id"] for x in claimed_ownership_list]
                     to_cancel_list = self._tasks.keys() - claimed_partition_ids
