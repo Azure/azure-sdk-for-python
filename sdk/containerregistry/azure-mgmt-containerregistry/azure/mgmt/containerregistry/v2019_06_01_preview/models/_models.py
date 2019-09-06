@@ -3063,8 +3063,8 @@ class Task(Resource):
 
 
 class TaskRun(Resource):
-    """The taskrun that has the ARM resource and taskrun properties.
-    The taskrun will have the information of request and result of a run.
+    """The task run that has the ARM resource and properties.
+    The task run will have the information of request and result of a run.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -3093,7 +3093,7 @@ class TaskRun(Resource):
     :param run_request: The request (parameters) for the run
     :type run_request:
      ~azure.mgmt.containerregistry.v2019_06_01_preview.models.RunRequest
-    :ivar run_result: The run result of this taskrun
+    :ivar run_result: The result of this task run
     :vartype run_result:
      ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Run
     """
