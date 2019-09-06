@@ -53,7 +53,7 @@ pip install azure-keyvault-certificates
     }
     ```
 
-    > The `"vaultUri"` property is the `vault_url` used by `KeyClient`.
+    > The `"vaultUri"` property is the `vault_url` used by `CertificateClient`.
 
 ### Authenticate the client
 In order to interact with a Key Vault's certificates, you'll need an instance of the [CertificateClient][certificate_client_docs] 
@@ -91,7 +91,7 @@ following example shows a way to do this in Bash:
    export AZURE_TENANT_ID="tenant id"
   ```
 
-* Authorize the service principal to perform key operations in your Key Vault:
+* Authorize the service principal to perform certificate operations in your Key Vault:
     ```Bash
     az keyvault set-policy --name <your-key-vault-name> --spn $AZURE_CLIENT_ID --certificate-permissions backup create delete get import list purge recover restore update
     ```
