@@ -198,15 +198,20 @@ class StorageQueueEncryptionTest(QueueTestCase):
 
         binary_message = self.get_random_bytes(100)
         queue.enqueue_message(binary_message)
-        messages = queue.receive_messages()
-        list_result1 = next(messages)
+        messages = []
+        for m in queue.receive_messages():
+            messages.append(m)
+        list_result1 = messages[0]
 
         # Act
         binary_message = self.get_random_bytes(100)
         list_result1.content = binary_message
         queue.update_message(list_result1)
 
-        list_result2 = next(messages)
+        for m in queue.receive_messages():
+            messages.append(m)
+        list_result2 = messages[0]
+
 
         # Assert
         self.assertEqual(binary_message, list_result2.content)
