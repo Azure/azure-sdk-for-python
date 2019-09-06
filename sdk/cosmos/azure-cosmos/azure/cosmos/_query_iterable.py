@@ -93,7 +93,7 @@ class QueryIterable(PageIterator):
             self._did_a_call_already = False
         return None, block
 
-    def _fetch_next(self, *args):
+    def _fetch_next(self, *args):  # pylint: disable=unused-argument
         """Returns a block of results with respecting retry policy.
 
         This method only exists for backward compatibility reasons. (Because QueryIterable
