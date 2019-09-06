@@ -83,7 +83,7 @@ class UserProxy(object):
         if response_hook:
             response_hook(self.client_connection.last_response_headers, self._properties)
 
-        return self._properties
+        return cast('Dict[str, Any]', self._properties)
 
     @distributed_trace
     def list_permissions(self, max_item_count=None, **kwargs):
@@ -163,19 +163,19 @@ class UserProxy(object):
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
 
-        permission = self.client_connection.ReadPermission(
+        permission_resp = self.client_connection.ReadPermission(
             permission_link=self._get_permission_link(permission), options=request_options, **kwargs
         )  # type: Dict[str, str]
 
         if response_hook:
-            response_hook(self.client_connection.last_response_headers, permission)
+            response_hook(self.client_connection.last_response_headers, permission_resp)
 
         return Permission(
-            id=permission["id"],
+            id=permission_resp["id"],
             user_link=self.user_link,
-            permission_mode=permission["permissionMode"],
-            resource_link=permission["resource"],
-            properties=permission,
+            permission_mode=permission_resp["permissionMode"],
+            resource_link=permission_resp["resource"],
+            properties=permission_resp,
         )
 
     @distributed_trace
@@ -260,19 +260,19 @@ class UserProxy(object):
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
 
-        permission = self.client_connection.ReplacePermission(
+        permission_resp = self.client_connection.ReplacePermission(
             permission_link=self._get_permission_link(permission), permission=body, options=request_options, **kwargs
         )  # type: Dict[str, str]
 
         if response_hook:
-            response_hook(self.client_connection.last_response_headers, permission)
+            response_hook(self.client_connection.last_response_headers, permission_resp)
 
         return Permission(
-            id=permission["id"],
+            id=permission_resp["id"],
             user_link=self.user_link,
-            permission_mode=permission["permissionMode"],
-            resource_link=permission["resource"],
-            properties=permission,
+            permission_mode=permission_resp["permissionMode"],
+            resource_link=permission_resp["resource"],
+            properties=permission_resp,
         )
 
     @distributed_trace

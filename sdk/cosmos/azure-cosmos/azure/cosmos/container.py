@@ -22,7 +22,7 @@
 """Create, read, update and delete items in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, Dict, List, Optional, Union, Iterable  # pylint: disable=unused-import
+from typing import Any, Dict, List, Optional, Union, Iterable, cast  # pylint: disable=unused-import
 
 import six
 from azure.core.tracing.decorator import distributed_trace  # type: ignore
@@ -65,7 +65,7 @@ class ContainerProxy(object):
         self._properties = properties
         self.container_link = u"{}/colls/{}".format(database_link, self.id)
         self._is_system_key = None
-        self._scripts = None  # type: ScriptsProxy
+        self._scripts = None
 
     def _get_properties(self):
         # type: () -> Dict[str, Any]
@@ -80,8 +80,8 @@ class ContainerProxy(object):
             properties = self._get_properties()
             self._is_system_key = (
                 properties["partitionKey"]["systemKey"] if "systemKey" in properties["partitionKey"] else False
-            )  # type: bool
-        return self._is_system_key
+            )
+        return cast('bool', self._is_system_key)
 
     @property
     def scripts(self):
@@ -144,12 +144,12 @@ class ContainerProxy(object):
         collection_link = self.container_link
         self._properties = self.client_connection.ReadContainer(
             collection_link, options=request_options, **kwargs
-        )  # type: Dict[str, Any]
+        )
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, self._properties)
 
-        return self._properties
+        return cast('Dict[str, Any]', self._properties)
 
     @distributed_trace
     def read_item(

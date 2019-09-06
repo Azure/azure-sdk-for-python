@@ -38,7 +38,7 @@ __all__ = ("CosmosClient",)
 def _parse_connection_str(conn_str, credential):
     # type: (str, Optional[Any]) -> Dict[str, str]
     conn_str = conn_str.rstrip(";")
-    conn_settings = dict( # pylint: disable=consider-using-dict-comprehension  # type: ignore
+    conn_settings = dict(  # type: ignore  # pylint: disable=consider-using-dict-comprehension
         s.split("=", 1) for s in conn_str.split(";")
     )
     if 'AccountEndpoint' not in conn_settings:
@@ -56,7 +56,7 @@ def _build_auth(credential):
     elif isinstance(credential, dict):
         if any(k for k in credential.keys() if k in ['masterKey', 'resourceTokens', 'permissionFeed']):
             return credential  # Backwards compatible
-        auth['resourceTokens'] = credential
+        auth['resourceTokens'] = credential  # type: ignore
     elif hasattr(credential, '__iter__'):
         auth['permissionFeed'] = credential
     else:

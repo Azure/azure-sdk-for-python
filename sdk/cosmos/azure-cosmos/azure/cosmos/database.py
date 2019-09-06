@@ -134,12 +134,12 @@ class DatabaseProxy(object):
 
         self._properties = self.client_connection.ReadDatabase(
             database_link, options=request_options, **kwargs
-        )  # type: Dict[str, Any]
+        )
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, self._properties)
 
-        return self._properties
+        return cast('Dict[str, Any]', self._properties)
 
     @distributed_trace
     def create_container(
