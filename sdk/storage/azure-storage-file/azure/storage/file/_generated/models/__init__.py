@@ -25,6 +25,7 @@ try:
     from ._models_py3 import Range
     from ._models_py3 import RetentionPolicy
     from ._models_py3 import ShareItem
+    from ._models_py3 import SharePermission
     from ._models_py3 import ShareProperties
     from ._models_py3 import ShareStats
     from ._models_py3 import SignedIdentifier
@@ -47,6 +48,7 @@ except (SyntaxError, ImportError):
     from ._models import Range
     from ._models import RetentionPolicy
     from ._models import ShareItem
+    from ._models import SharePermission
     from ._models import ShareProperties
     from ._models import ShareStats
     from ._models import SignedIdentifier
@@ -77,6 +79,7 @@ __all__ = [
     'Range',
     'RetentionPolicy',
     'ShareItem',
+    'SharePermission',
     'ShareProperties',
     'ShareStats',
     'SignedIdentifier',
