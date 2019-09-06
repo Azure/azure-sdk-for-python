@@ -7,7 +7,7 @@ This article assumes you have code on `master` that is ready to publish:
 - Readme is accurate, etc.
 
 If you don't, and you are working with Management packages, start with this page:
-https://github.com/Azure/azure-sdk-for-python/wiki/Preparing-a-management-package-for-release
+https://github.com/Azure/azure-sdk-for-python/blob/master/doc/dev/mgmt/mgmt_release.md
 
 
 ## Python Package Index
