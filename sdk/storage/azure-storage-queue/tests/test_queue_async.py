@@ -63,9 +63,11 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
         queue = qsc.get_queue_client(queue_name)
         return queue
 
-    async def _create_queue(self, qsc, prefix=TEST_QUEUE_PREFIX):
+    async def _create_queue(self, qsc, prefix=TEST_QUEUE_PREFIX, queue_list = None):
         queue = self._get_queue_reference(qsc, prefix)
         created = await queue.create_queue()
+        if queue_list:
+            queue_list.append(created)
         return queue
 
     # --Test cases for queues ----------------------------------------------
@@ -174,9 +176,10 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
     async def test_list_queues_with_options(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key, transport=AiohttpTestTransport())
+        queue_list = []
         prefix = 'listqueue'
         for i in range(0, 4):
-            await self._create_queue(qsc, prefix + str(i))
+            await self._create_queue(qsc, prefix + str(i), queue_list)
 
         # Action
         generator1 =  qsc.list_queues(
@@ -201,6 +204,7 @@ class StorageQueueTestAsync(AsyncQueueTestCase):
         self.assertNotEqual('', queues1[0].name)
         # Asserts
         self.assertIsNotNone(queues2)
+        self.assertTrue(len(queue_list) - 3 <= len(queues2))
         self.assertIsNotNone(queues2[0])
         self.assertNotEqual('', queues2[0].name)
 
