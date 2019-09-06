@@ -684,36 +684,35 @@ class CorsRule(Model):
 class CpkInfo(Model):
     """Additional parameters for a set of operations.
 
-    :param x_ms_encryption_key: Optional. Specifies the encryption key to use
-     to encrypt the data provided in the request. If not specified, encryption
-     is performed with the root account encryption key.  For more information,
-     see Encryption at Rest for Azure Storage Services.
-    :type x_ms_encryption_key: str
-    :param x_ms_encryption_key_sha256: The SHA-256 hash of the provided
-     encryption key. Must be provided if the x-ms-encryption-key header is
-     provided.
-    :type x_ms_encryption_key_sha256: str
-    :param x_ms_encryption_algorithm: The algorithm used to produce the
-     encryption key hash. Currently, the only accepted value is "AES256". Must
-     be provided if the x-ms-encryption-key header is provided. Possible values
-     include: 'AES256'
-    :type x_ms_encryption_algorithm: str or
+    :param encryption_key: Optional. Specifies the encryption key to use to
+     encrypt the data provided in the request. If not specified, encryption is
+     performed with the root account encryption key.  For more information, see
+     Encryption at Rest for Azure Storage Services.
+    :type encryption_key: str
+    :param encryption_key_sha256: The SHA-256 hash of the provided encryption
+     key. Must be provided if the x-ms-encryption-key header is provided.
+    :type encryption_key_sha256: str
+    :param encryption_algorithm: The algorithm used to produce the encryption
+     key hash. Currently, the only accepted value is "AES256". Must be provided
+     if the x-ms-encryption-key header is provided. Possible values include:
+     'AES256'
+    :type encryption_algorithm: str or
      ~azure.storage.blob.models.EncryptionAlgorithmType
     """
 
     _attribute_map = {
-        'x_ms_encryption_key': {'key': '', 'type': 'str', 'xml': {'name': 'x_ms_encryption_key'}},
-        'x_ms_encryption_key_sha256': {'key': '', 'type': 'str', 'xml': {'name': 'x_ms_encryption_key_sha256'}},
-        'x_ms_encryption_algorithm': {'key': '', 'type': 'EncryptionAlgorithmType', 'xml': {'name': 'x_ms_encryption_algorithm'}},
+        'encryption_key': {'key': '', 'type': 'str', 'xml': {'name': 'encryption_key'}},
+        'encryption_key_sha256': {'key': '', 'type': 'str', 'xml': {'name': 'encryption_key_sha256'}},
+        'encryption_algorithm': {'key': '', 'type': 'EncryptionAlgorithmType', 'xml': {'name': 'encryption_algorithm'}},
     }
     _xml_map = {
     }
 
-    def __init__(self, *, x_ms_encryption_key: str=None, x_ms_encryption_key_sha256: str=None, x_ms_encryption_algorithm=None, **kwargs) -> None:
+    def __init__(self, *, encryption_key: str=None, encryption_key_sha256: str=None, encryption_algorithm=None, **kwargs) -> None:
         super(CpkInfo, self).__init__(**kwargs)
-        self.x_ms_encryption_key = x_ms_encryption_key
-        self.x_ms_encryption_key_sha256 = x_ms_encryption_key_sha256
-        self.x_ms_encryption_algorithm = x_ms_encryption_algorithm
+        self.encryption_key = encryption_key
+        self.encryption_key_sha256 = encryption_key_sha256
+        self.encryption_algorithm = encryption_algorithm
 
 
 class DataLakeStorageError(Model):

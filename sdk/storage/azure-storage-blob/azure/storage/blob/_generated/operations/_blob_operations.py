@@ -93,15 +93,15 @@ class BlobOperations(object):
         lease_id = None
         if lease_access_conditions is not None:
             lease_id = lease_access_conditions.lease_id
-        x_ms_encryption_key = None
+        encryption_key = None
         if cpk_info is not None:
-            x_ms_encryption_key = cpk_info.x_ms_encryption_key
-        x_ms_encryption_key_sha256 = None
+            encryption_key = cpk_info.encryption_key
+        encryption_key_sha256 = None
         if cpk_info is not None:
-            x_ms_encryption_key_sha256 = cpk_info.x_ms_encryption_key_sha256
-        x_ms_encryption_algorithm = None
+            encryption_key_sha256 = cpk_info.encryption_key_sha256
+        encryption_algorithm = None
         if cpk_info is not None:
-            x_ms_encryption_algorithm = cpk_info.x_ms_encryption_algorithm
+            encryption_algorithm = cpk_info.encryption_algorithm
         if_modified_since = None
         if modified_access_conditions is not None:
             if_modified_since = modified_access_conditions.if_modified_since
@@ -128,12 +128,6 @@ class BlobOperations(object):
             query_parameters['snapshot'] = self._serialize.query("snapshot", snapshot, 'str')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
-        if x_ms_encryption_key is not None:
-            query_parameters['x-ms-encryption-key'] = self._serialize.query("x_ms_encryption_key", x_ms_encryption_key, 'str')
-        if x_ms_encryption_key_sha256 is not None:
-            query_parameters['x-ms-encryption-key-sha256'] = self._serialize.query("x_ms_encryption_key_sha256", x_ms_encryption_key_sha256, 'str')
-        if x_ms_encryption_algorithm is not None:
-            query_parameters['x-ms-encryption-algorithm'] = self._serialize.query("x_ms_encryption_algorithm", x_ms_encryption_algorithm, 'EncryptionAlgorithmType')
 
         # Construct headers
         header_parameters = {}
@@ -149,6 +143,12 @@ class BlobOperations(object):
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
         if lease_id is not None:
             header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", lease_id, 'str')
+        if encryption_key is not None:
+            header_parameters['x-ms-encryption-key'] = self._serialize.header("encryption_key", encryption_key, 'str')
+        if encryption_key_sha256 is not None:
+            header_parameters['x-ms-encryption-key-sha256'] = self._serialize.header("encryption_key_sha256", encryption_key_sha256, 'str')
+        if encryption_algorithm is not None:
+            header_parameters['x-ms-encryption-algorithm'] = self._serialize.header("encryption_algorithm", encryption_algorithm, 'EncryptionAlgorithmType')
         if if_modified_since is not None:
             header_parameters['If-Modified-Since'] = self._serialize.header("if_modified_since", if_modified_since, 'rfc-1123')
         if if_unmodified_since is not None:
@@ -291,15 +291,15 @@ class BlobOperations(object):
         lease_id = None
         if lease_access_conditions is not None:
             lease_id = lease_access_conditions.lease_id
-        x_ms_encryption_key = None
+        encryption_key = None
         if cpk_info is not None:
-            x_ms_encryption_key = cpk_info.x_ms_encryption_key
-        x_ms_encryption_key_sha256 = None
+            encryption_key = cpk_info.encryption_key
+        encryption_key_sha256 = None
         if cpk_info is not None:
-            x_ms_encryption_key_sha256 = cpk_info.x_ms_encryption_key_sha256
-        x_ms_encryption_algorithm = None
+            encryption_key_sha256 = cpk_info.encryption_key_sha256
+        encryption_algorithm = None
         if cpk_info is not None:
-            x_ms_encryption_algorithm = cpk_info.x_ms_encryption_algorithm
+            encryption_algorithm = cpk_info.encryption_algorithm
         if_modified_since = None
         if modified_access_conditions is not None:
             if_modified_since = modified_access_conditions.if_modified_since
@@ -326,12 +326,6 @@ class BlobOperations(object):
             query_parameters['snapshot'] = self._serialize.query("snapshot", snapshot, 'str')
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
-        if x_ms_encryption_key is not None:
-            query_parameters['x-ms-encryption-key'] = self._serialize.query("x_ms_encryption_key", x_ms_encryption_key, 'str')
-        if x_ms_encryption_key_sha256 is not None:
-            query_parameters['x-ms-encryption-key-sha256'] = self._serialize.query("x_ms_encryption_key_sha256", x_ms_encryption_key_sha256, 'str')
-        if x_ms_encryption_algorithm is not None:
-            query_parameters['x-ms-encryption-algorithm'] = self._serialize.query("x_ms_encryption_algorithm", x_ms_encryption_algorithm, 'EncryptionAlgorithmType')
 
         # Construct headers
         header_parameters = {}
@@ -340,6 +334,12 @@ class BlobOperations(object):
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
         if lease_id is not None:
             header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", lease_id, 'str')
+        if encryption_key is not None:
+            header_parameters['x-ms-encryption-key'] = self._serialize.header("encryption_key", encryption_key, 'str')
+        if encryption_key_sha256 is not None:
+            header_parameters['x-ms-encryption-key-sha256'] = self._serialize.header("encryption_key_sha256", encryption_key_sha256, 'str')
+        if encryption_algorithm is not None:
+            header_parameters['x-ms-encryption-algorithm'] = self._serialize.header("encryption_algorithm", encryption_algorithm, 'EncryptionAlgorithmType')
         if if_modified_since is not None:
             header_parameters['If-Modified-Since'] = self._serialize.header("if_modified_since", if_modified_since, 'rfc-1123')
         if if_unmodified_since is not None:
@@ -730,7 +730,7 @@ class BlobOperations(object):
             header_parameters['If-Unmodified-Since'] = self._serialize.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
 
         # Construct and send request
-        request = self._client.patch(url, query_parameters, header_parameters)
+        request = self._client.head(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -1187,15 +1187,15 @@ class BlobOperations(object):
         lease_id = None
         if lease_access_conditions is not None:
             lease_id = lease_access_conditions.lease_id
-        x_ms_encryption_key = None
+        encryption_key = None
         if cpk_info is not None:
-            x_ms_encryption_key = cpk_info.x_ms_encryption_key
-        x_ms_encryption_key_sha256 = None
+            encryption_key = cpk_info.encryption_key
+        encryption_key_sha256 = None
         if cpk_info is not None:
-            x_ms_encryption_key_sha256 = cpk_info.x_ms_encryption_key_sha256
-        x_ms_encryption_algorithm = None
+            encryption_key_sha256 = cpk_info.encryption_key_sha256
+        encryption_algorithm = None
         if cpk_info is not None:
-            x_ms_encryption_algorithm = cpk_info.x_ms_encryption_algorithm
+            encryption_algorithm = cpk_info.encryption_algorithm
         if_modified_since = None
         if modified_access_conditions is not None:
             if_modified_since = modified_access_conditions.if_modified_since
@@ -1223,12 +1223,6 @@ class BlobOperations(object):
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
         query_parameters['comp'] = self._serialize.query("comp", comp, 'str')
-        if x_ms_encryption_key is not None:
-            query_parameters['x-ms-encryption-key'] = self._serialize.query("x_ms_encryption_key", x_ms_encryption_key, 'str')
-        if x_ms_encryption_key_sha256 is not None:
-            query_parameters['x-ms-encryption-key-sha256'] = self._serialize.query("x_ms_encryption_key_sha256", x_ms_encryption_key_sha256, 'str')
-        if x_ms_encryption_algorithm is not None:
-            query_parameters['x-ms-encryption-algorithm'] = self._serialize.query("x_ms_encryption_algorithm", x_ms_encryption_algorithm, 'EncryptionAlgorithmType')
 
         # Construct headers
         header_parameters = {}
@@ -1239,6 +1233,12 @@ class BlobOperations(object):
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
         if lease_id is not None:
             header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", lease_id, 'str')
+        if encryption_key is not None:
+            header_parameters['x-ms-encryption-key'] = self._serialize.header("encryption_key", encryption_key, 'str')
+        if encryption_key_sha256 is not None:
+            header_parameters['x-ms-encryption-key-sha256'] = self._serialize.header("encryption_key_sha256", encryption_key_sha256, 'str')
+        if encryption_algorithm is not None:
+            header_parameters['x-ms-encryption-algorithm'] = self._serialize.header("encryption_algorithm", encryption_algorithm, 'EncryptionAlgorithmType')
         if if_modified_since is not None:
             header_parameters['If-Modified-Since'] = self._serialize.header("if_modified_since", if_modified_since, 'rfc-1123')
         if if_unmodified_since is not None:
@@ -1812,15 +1812,15 @@ class BlobOperations(object):
          :class:`StorageErrorException<azure.storage.blob.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
-        x_ms_encryption_key = None
+        encryption_key = None
         if cpk_info is not None:
-            x_ms_encryption_key = cpk_info.x_ms_encryption_key
-        x_ms_encryption_key_sha256 = None
+            encryption_key = cpk_info.encryption_key
+        encryption_key_sha256 = None
         if cpk_info is not None:
-            x_ms_encryption_key_sha256 = cpk_info.x_ms_encryption_key_sha256
-        x_ms_encryption_algorithm = None
+            encryption_key_sha256 = cpk_info.encryption_key_sha256
+        encryption_algorithm = None
         if cpk_info is not None:
-            x_ms_encryption_algorithm = cpk_info.x_ms_encryption_algorithm
+            encryption_algorithm = cpk_info.encryption_algorithm
         if_modified_since = None
         if modified_access_conditions is not None:
             if_modified_since = modified_access_conditions.if_modified_since
@@ -1851,12 +1851,6 @@ class BlobOperations(object):
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
         query_parameters['comp'] = self._serialize.query("comp", comp, 'str')
-        if x_ms_encryption_key is not None:
-            query_parameters['x-ms-encryption-key'] = self._serialize.query("x_ms_encryption_key", x_ms_encryption_key, 'str')
-        if x_ms_encryption_key_sha256 is not None:
-            query_parameters['x-ms-encryption-key-sha256'] = self._serialize.query("x_ms_encryption_key_sha256", x_ms_encryption_key_sha256, 'str')
-        if x_ms_encryption_algorithm is not None:
-            query_parameters['x-ms-encryption-algorithm'] = self._serialize.query("x_ms_encryption_algorithm", x_ms_encryption_algorithm, 'EncryptionAlgorithmType')
 
         # Construct headers
         header_parameters = {}
@@ -1865,6 +1859,12 @@ class BlobOperations(object):
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
         if request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
+        if encryption_key is not None:
+            header_parameters['x-ms-encryption-key'] = self._serialize.header("encryption_key", encryption_key, 'str')
+        if encryption_key_sha256 is not None:
+            header_parameters['x-ms-encryption-key-sha256'] = self._serialize.header("encryption_key_sha256", encryption_key_sha256, 'str')
+        if encryption_algorithm is not None:
+            header_parameters['x-ms-encryption-algorithm'] = self._serialize.header("encryption_algorithm", encryption_algorithm, 'EncryptionAlgorithmType')
         if if_modified_since is not None:
             header_parameters['If-Modified-Since'] = self._serialize.header("if_modified_since", if_modified_since, 'rfc-1123')
         if if_unmodified_since is not None:
@@ -1895,7 +1895,6 @@ class BlobOperations(object):
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
                 'x-ms-request-server-encrypted': self._deserialize('bool', response.headers.get('x-ms-request-server-encrypted')),
-                'x-ms-encryption-key-sha256': self._deserialize('str', response.headers.get('x-ms-encryption-key-sha256')),
                 'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
             }
             return cls(response, None, response_headers)
