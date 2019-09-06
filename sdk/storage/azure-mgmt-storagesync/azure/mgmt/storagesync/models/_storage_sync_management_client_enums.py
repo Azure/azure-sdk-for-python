@@ -9,11 +9,25 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._configuration import StorageSyncManagementClientConfiguration
-from ._storage_sync_management_client import StorageSyncManagementClient
-__all__ = ['StorageSyncManagementClient', 'StorageSyncManagementClientConfiguration']
+from enum import Enum
 
-from .version import VERSION
 
-__version__ = VERSION
+class Reason(str, Enum):
 
+    registered = "Registered"
+    unregistered = "Unregistered"
+    warned = "Warned"
+    suspended = "Suspended"
+    deleted = "Deleted"
+
+
+class ChangeDetectionMode(str, Enum):
+
+    default = "Default"
+    recursive = "Recursive"
+
+
+class NameAvailabilityReason(str, Enum):
+
+    invalid = "Invalid"
+    already_exists = "AlreadyExists"
