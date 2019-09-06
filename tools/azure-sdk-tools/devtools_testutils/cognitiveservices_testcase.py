@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import time
 from collections import namedtuple
 from azure_devtools.scenario_tests import ReplayableTest
 from devtools_testutils import AzureTestCase
@@ -61,6 +62,7 @@ class CognitiveServicesAccountPreparer(AzureMgmtPreparer):
                     'properties': {}
                 }
             )
+            time.sleep(5)  # it takes a few seconds to create a cognitive services account
             self.resource = cogsci_account
             self.cogsci_key = self.client.accounts.list_keys(group.name, name).key1
         else:
