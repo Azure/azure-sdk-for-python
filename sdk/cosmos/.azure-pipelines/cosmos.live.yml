@@ -21,10 +21,10 @@ jobs:
       maxParallel: 1
       matrix:
         Windows_Python35:
-          OSVmImage: 'vs2017-win2016'
+          OSVmImage: 'windows-2019'
           PythonVersion: '3.5'
         Windows_Python27:
-          OSVmImage: 'vs2017-win2016'
+          OSVmImage: 'windows-2019'
           PythonVersion: '2.7'
 
     pool:
@@ -75,7 +75,7 @@ jobs:
             dir "$env:Temp\Azure Cosmos DB Emulator\SourceDir\Azure Cosmos DB Emulator"
             Write-Host "Starting Comsos DB Emulator"
             Start-Process "$env:Temp\Azure Cosmos DB Emulator\SourceDir\Azure Cosmos DB Emulator\CosmosDB.Emulator.exe" "/NoExplorer /NoUI" -Verb RunAs
-                              
+
       - task: UsePythonVersion@0
         displayName: 'Use Python $(PythonVersion)'
         inputs:

@@ -14,7 +14,7 @@ jobs:
           PythonVersion: '3.7'
         Windows_Python27:
           OSName: 'Windows'
-          OSVmImage: 'vs2017-win2016'
+          OSVmImage: 'windows-2019'
           PythonVersion: '2.7'
         Linux_Pypy3:
           OSName: 'Linux'
