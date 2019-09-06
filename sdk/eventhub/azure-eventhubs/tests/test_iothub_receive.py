@@ -14,7 +14,7 @@ def test_iothub_receive_sync(iot_connection_str, device_id):
     client = EventHubClient.from_connection_string(iot_connection_str, network_tracing=False)
     receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition("-1"), operation='/messages/events')
     try:
-        received = receiver.receive(timeout=5)
+        received = receiver.receive(timeout=10)
         assert len(received) == 0
     finally:
         receiver.close()
@@ -48,7 +48,7 @@ def test_iothub_receive_after_mgmt_ops_sync(iot_connection_str, device_id):
     assert partitions == ["0", "1", "2", "3"]
     receiver = client.create_consumer(consumer_group="$default", partition_id=partitions[0], event_position=EventPosition("-1"), operation='/messages/events')
     with receiver:
-        received = receiver.receive(timeout=5)
+        received = receiver.receive(timeout=10)
         assert len(received) == 0
 
 
@@ -57,7 +57,7 @@ def test_iothub_mgmt_ops_after_receive_sync(iot_connection_str, device_id):
     client = EventHubClient.from_connection_string(iot_connection_str, network_tracing=False)
     receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition("-1"), operation='/messages/events')
     with receiver:
-        received = receiver.receive(timeout=5)
+        received = receiver.receive(timeout=10)
         assert len(received) == 0
 
     partitions = client.get_partition_ids()

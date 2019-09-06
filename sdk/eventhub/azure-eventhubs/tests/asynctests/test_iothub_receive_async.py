@@ -16,7 +16,7 @@ async def pump(receiver, sleep=None):
     if sleep:
         await asyncio.sleep(sleep)
     async with receiver:
-        batch = await receiver.receive(timeout=3)
+        batch = await receiver.receive(timeout=10)
         messages += len(batch)
     return messages
 
@@ -67,7 +67,7 @@ async def test_iothub_receive_after_mgmt_ops_async(iot_connection_str, device_id
     assert partitions == ["0", "1", "2", "3"]
     receiver = client.create_consumer(consumer_group="$default", partition_id=partitions[0], event_position=EventPosition("-1"), operation='/messages/events')
     async with receiver:
-        received = await receiver.receive(timeout=5)
+        received = await receiver.receive(timeout=10)
         assert len(received) == 0
 
 
@@ -77,7 +77,7 @@ async def test_iothub_mgmt_ops_after_receive_async(iot_connection_str, device_id
     client = EventHubClient.from_connection_string(iot_connection_str, network_tracing=False)
     receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition("-1"), operation='/messages/events')
     async with receiver:
-        received = await receiver.receive(timeout=5)
+        received = await receiver.receive(timeout=10)
         assert len(received) == 0
 
     partitions = await client.get_partition_ids()

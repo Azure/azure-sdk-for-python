@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 import asyncio
-import time
 import logging
 
 from uamqp import errors, compat  # type: ignore
@@ -40,9 +39,9 @@ async def _handle_exception(exception, closable):  # pylint:disable=too-many-bra
     if isinstance(exception, asyncio.CancelledError):
         raise exception
     try:
-        name = closable.name
+        name = closable._name  # pylint: disable=protected-access
     except AttributeError:
-        name = closable.container_id
+        name = closable._container_id  # pylint: disable=protected-access
     if isinstance(exception, KeyboardInterrupt):  # pylint:disable=no-else-raise
         log.info("%r stops due to keyboard interrupt", name)
         await closable.close()

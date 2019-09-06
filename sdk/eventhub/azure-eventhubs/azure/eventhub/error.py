@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
-import time
 import logging
 import six
 
@@ -159,9 +158,9 @@ def _create_eventhub_exception(exception):
 
 def _handle_exception(exception, closable):  # pylint:disable=too-many-branches, too-many-statements
     try:  # closable is a producer/consumer object
-        name = closable.name
+        name = closable._name  # pylint: disable=protected-access
     except AttributeError:  # closable is an client object
-        name = closable.container_id
+        name = closable._container_id  # pylint: disable=protected-access
     if isinstance(exception, KeyboardInterrupt):  # pylint:disable=no-else-raise
         log.info("%r stops due to keyboard interrupt", name)
         closable.close()

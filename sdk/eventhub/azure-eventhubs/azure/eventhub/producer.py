@@ -40,7 +40,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
     to a partition.
 
     """
-    _timeout = b'com.microsoft:timeout'
+    _timeout_symbol = b'com.microsoft:timeout'
 
     def __init__(self, client, target, **kwargs):
         """
@@ -71,38 +71,38 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
 
         super(EventHubProducer, self).__init__()
         self._max_message_size_on_link = None
-        self.running = False
-        self.client = client
-        self.target = target
-        self.partition = partition
-        self.timeout = send_timeout
-        self.redirected = None
-        self.error = None
-        self.keep_alive = keep_alive
-        self.auto_reconnect = auto_reconnect
-        self.retry_policy = errors.ErrorPolicy(max_retries=self.client.config.max_retries, on_error=_error_handler)
-        self.reconnect_backoff = 1
-        self.name = "EHProducer-{}".format(uuid.uuid4())
-        self.unsent_events = None
+        self._running = False
+        self._client = client
+        self._target = target
+        self._partition = partition
+        self._timeout = send_timeout
+        self._redirected = None
+        self._error = None
+        self._keep_alive = keep_alive
+        self._auto_reconnect = auto_reconnect
+        self._retry_policy = errors.ErrorPolicy(max_retries=self._client._config.max_retries, on_error=_error_handler)  # pylint: disable=protected-access
+        self._reconnect_backoff = 1
+        self._name = "EHProducer-{}".format(uuid.uuid4())
+        self._unsent_events = None
         if partition:
-            self.target += "/Partitions/" + partition
-            self.name += "-partition{}".format(partition)
+            self._target += "/Partitions/" + partition
+            self._name += "-partition{}".format(partition)
         self._handler = None
         self._outcome = None
         self._condition = None
-        self._link_properties = {types.AMQPSymbol(self._timeout): types.AMQPLong(int(self.timeout * 1000))}
+        self._link_properties = {types.AMQPSymbol(self._timeout_symbol): types.AMQPLong(int(self._timeout * 1000))}
 
     def _create_handler(self):
         self._handler = SendClient(
-            self.target,
-            auth=self.client.get_auth(),
-            debug=self.client.config.network_tracing,
-            msg_timeout=self.timeout,
-            error_policy=self.retry_policy,
-            keep_alive_interval=self.keep_alive,
-            client_name=self.name,
+            self._target,
+            auth=self._client._get_auth(),  # pylint:disable=protected-access
+            debug=self._client._config.network_tracing,  # pylint:disable=protected-access
+            msg_timeout=self._timeout,
+            error_policy=self._retry_policy,
+            keep_alive_interval=self._keep_alive,
+            client_name=self._name,
             link_properties=self._link_properties,
-            properties=self.client._create_properties(self.client.config.user_agent))  # pylint: disable=protected-access
+            properties=self._client._create_properties(self._client._config.user_agent))  # pylint: disable=protected-access
 
     def _open(self):
         """
@@ -111,16 +111,16 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         context will be used to create a new handler before opening it.
 
         """
-        if not self.running and self.redirected:
-            self.client._process_redirect_uri(self.redirected)  # pylint: disable=protected-access
-            self.target = self.redirected.address
+        if not self._running and self._redirected:
+            self._client._process_redirect_uri(self._redirected)  # pylint: disable=protected-access
+            self._target = self._redirected.address
         super(EventHubProducer, self)._open()
 
     def _open_with_retry(self):
         return self._do_retryable_operation(self._open, operation_need_param=False)
 
     def _send_event_data(self, timeout_time=None, last_exception=None):
-        if self.unsent_events:
+        if self._unsent_events:
             self._open()
             remaining_time = timeout_time - time.time()
             if remaining_time <= 0.0:
@@ -128,12 +128,12 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
                     error = last_exception
                 else:
                     error = OperationTimeoutError("send operation timed out")
-                log.info("%r send operation timed out. (%r)", self.name, error)
+                log.info("%r send operation timed out. (%r)", self._name, error)
                 raise error
             self._handler._msg_timeout = remaining_time  # pylint: disable=protected-access
-            self._handler.queue_message(*self.unsent_events)
+            self._handler.queue_message(*self._unsent_events)
             self._handler.wait()
-            self.unsent_events = self._handler.pending_messages
+            self._unsent_events = self._handler.pending_messages
             if self._outcome != constants.MessageSendResult.Ok:
                 if self._outcome == constants.MessageSendResult.Timeout:
                     self._condition = OperationTimeoutError("send operation timed out")
@@ -233,7 +233,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
                     event_data = _set_partition_key(event_data, partition_key)
                 wrapper_event_data = EventDataBatch._from_batch(event_data, partition_key)  # pylint: disable=protected-access
         wrapper_event_data.message.on_send_complete = self._on_outcome
-        self.unsent_events = [wrapper_event_data.message]
+        self._unsent_events = [wrapper_event_data.message]
         self._send_event_data_with_retry(timeout=timeout)
 
     def close(self, exception=None):  # pylint:disable=useless-super-delegation
