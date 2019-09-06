@@ -660,6 +660,14 @@ class CertificateClient(AsyncKeyVaultClientBase):
         :returns: The created list of contacts
         :rtype: Iterator[~azure.keyvault.certificates.models.Contact]
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        Example:
+            .. literalinclude:: ../tests/test_examples_certificates_async.py
+                :start-after: [START create_contacts]
+                :end-before: [END create_contacts]
+                :language: python
+                :caption: Create contacts
+                :dedent: 8
         """
         contacts = await self._client.set_certificate_contacts(
             vault_base_url=self.vault_url,
@@ -683,6 +691,14 @@ class CertificateClient(AsyncKeyVaultClientBase):
         :return: The certificate contacts for the key vault.
         :rtype: Iterator[azure.keyvault.certificates.models.Contact]
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        Example:
+            .. literalinclude:: ../tests/test_examples_certificates_async.py
+                :start-after: [START get_contacts]
+                :end-before: [END get_contacts]
+                :language: python
+                :caption: Get contacts
+                :dedent: 8
         """
         contacts = await self._client.get_certificate_contacts(vault_base_url=self._vault_url, **kwargs)
         return [Contact._from_certificate_contacts_item(contact_item=item) for item in contacts.contact_list]
@@ -701,6 +717,14 @@ class CertificateClient(AsyncKeyVaultClientBase):
         :return: Contacts
         :rtype: Iterator[~azure.security.certificates._models.Contact]
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        Example:
+            .. literalinclude:: ../tests/test_examples_certificates_async.py
+                :start-after: [START delete_contacts]
+                :end-before: [END delete_contacts]
+                :language: python
+                :caption: Delete contacts
+                :dedent: 8
         """
         contacts = await self._client.delete_certificate_contacts(vault_base_url=self.vault_url, **kwargs)
         return [Contact._from_certificate_contacts_item(contact_item=item) for item in contacts.contact_list]
@@ -883,6 +907,14 @@ class CertificateClient(AsyncKeyVaultClientBase):
         :return: The specified certificate issuer.
         :rtype: ~azure.keyvault.certificates.models.Issuer
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        Example:
+            .. literalinclude:: ../tests/test_examples_certificates_async.py
+                :start-after: [START get_issuer]
+                :end-before: [END get_issuer]
+                :language: python
+                :caption: Get an issuer
+                :dedent: 8
         """
         issuer_bundle = await self._client.get_certificate_issuer(
             vault_base_url=self.vault_url,
@@ -926,6 +958,14 @@ class CertificateClient(AsyncKeyVaultClientBase):
         :returns: The created Issuer
         :rtype: ~azure.keyvault.certificates.models.Issuer
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        Example:
+            .. literalinclude:: ../tests/test_examples_certificates_async.py
+                :start-after: [START create_issuer]
+                :end-before: [END create_issuer]
+                :language: python
+                :caption: Create an issuer
+                :dedent: 8
         """
         if account_id or password:
             issuer_credentials = self._client.models.IssuerCredentials(account_id=account_id, password=password)
@@ -996,6 +1036,14 @@ class CertificateClient(AsyncKeyVaultClientBase):
         :return: The updated issuer
         :rtype: ~azure.keyvault.certificates.models.Issuer
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        Example:
+            .. literalinclude:: ../tests/test_examples_certificates_async.py
+                :start-after: [START update_issuer]
+                :end-before: [END update_issuer]
+                :language: python
+                :caption: Update an issuer
+                :dedent: 8
         """
         if account_id or password:
             issuer_credentials = self._client.models.IssuerCredentials(account_id=account_id, password=password)
@@ -1044,6 +1092,14 @@ class CertificateClient(AsyncKeyVaultClientBase):
         :return: Issuer
         :rtype: ~azure.keyvault.certificates.models.Issuer
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        Example:
+            .. literalinclude:: ../tests/test_examples_certificates_async.py
+                :start-after: [START delete_issuer]
+                :end-before: [END delete_issuer]
+                :language: python
+                :caption: Delete an issuer
+                :dedent: 8
         """
         issuer_bundle = await self._client.delete_certificate_issuer(
             vault_base_url=self.vault_url,
@@ -1063,6 +1119,14 @@ class CertificateClient(AsyncKeyVaultClientBase):
         :return: An iterator like instance of Issuers
         :rtype: Iterable[~azure.keyvault.certificates.models.Issuer]
         :raises: ~azure.core.exceptions.HttpResponseError
+
+        Example:
+            .. literalinclude:: ../tests/test_examples_certificates_async.py
+                :start-after: [START list_issuers]
+                :end-before: [END list_issuers]
+                :language: python
+                :caption: List issuers of a vault
+                :dedent: 8
         """
         max_page_size = kwargs.pop("max_page_size", None)
         return self._client.get_certificate_issuers(

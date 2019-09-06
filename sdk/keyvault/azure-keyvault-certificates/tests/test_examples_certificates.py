@@ -259,3 +259,139 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(recovered_certificate.name)
 
         # [END recover_deleted_certificate]
+
+    @ResourceGroupPreparer()
+    @VaultClientPreparer()
+    def test_example_contacts(self, vault_client, **kwargs):
+        from azure.keyvault.certificates import CertificatePolicy, Contact
+
+        certificate_client = vault_client.certificates
+
+        # [START create_contacts]
+
+        # Create a list of the contacts that you want to set for this key vault.
+        contact_list = [
+            Contact(email='admin@contoso.com',
+                    name='John Doe',
+                    phone='1111111111'),
+            Contact(email='admin2@contoso.com',
+                    name='John Doe2',
+                    phone='2222222222')
+        ]
+
+        contacts = certificate_client.create_contacts(contacts=contact_list)
+        for contact in contacts:
+            print(contact.name)
+            print(contact.email)
+            print(contact.phone)
+
+        # [END create_contacts]
+
+        # [START get_contacts]
+
+        contacts = certificate_client.get_contacts()
+
+        # Loop through the certificate contacts for this key vault.
+        for contact in contacts:
+            print(contact.name)
+            print(contact.email)
+            print(contact.phone)
+
+        # [END get_contacts]
+
+        # [START delete_contacts]
+
+        deleted_contacts = certificate_client.delete_contacts()
+
+        for deleted_contact in deleted_contacts:
+            print(deleted_contact.name)
+            print(deleted_contact.email)
+            print(deleted_contact.phone)
+
+        # [END delete_contacts]
+
+    @ResourceGroupPreparer()
+    @VaultClientPreparer()
+    def test_example_issuers(self, vault_client, **kwargs):
+        from azure.keyvault.certificates import AdministratorDetails, CertificatePolicy
+
+        certificate_client = vault_client.certificates
+
+        # [START create_issuer]
+
+        # First we specify the AdministratorDetails for a issuer.
+        admin_details = [AdministratorDetails(
+            first_name="John",
+            last_name="Doe",
+            email="admin@microsoft.com",
+            phone="4255555555"
+        )]
+
+        issuer = certificate_client.create_issuer(
+            name="issuer1",
+            provider="Test",
+            account_id="keyvaultuser",
+            admin_details=admin_details,
+            enabled=True
+        )
+
+        print(issuer.name)
+        print(issuer.provider)
+        print(issuer.account_id)
+
+        for admin_detail in issuer.admin_details:
+            print(admin_detail.first_name)
+            print(admin_detail.last_name)
+            print(admin_detail.email)
+            print(admin_detail.phone)
+
+        # [END create_issuer]
+
+        # [START get_issuer]
+
+        issuer = certificate_client.get_issuer(name="issuer1")
+
+        print(issuer.name)
+        print(issuer.provider)
+        print(issuer.account_id)
+
+        for admin_detail in issuer.admin_details:
+            print(admin_detail.first_name)
+            print(admin_detail.last_name)
+            print(admin_detail.email)
+            print(admin_detail.phone)
+
+        # [END get_issuer]
+
+        certificate_client.create_issuer(
+            name="issuer2",
+            provider="Test",
+            account_id="keyvaultuser",
+            enabled=True
+        )
+
+        # [START list_issuers]
+
+        issuers = certificate_client.list_issuers()
+
+        for issuer in issuers:
+            print(issuer.name)
+            print(issuer.provider)
+
+        # [END list_issuers]
+
+        # [START delete_issuer]
+
+        deleted_issuer = certificate_client.delete_issuer(name="issuer1")
+
+        print(deleted_issuer.name)
+        print(deleted_issuer.provider)
+        print(deleted_issuer.account_id)
+
+        for admin_detail in deleted_issuer.admin_details:
+            print(admin_detail.first_name)
+            print(admin_detail.last_name)
+            print(admin_detail.email)
+            print(admin_detail.phone)
+
+        # [END delete_issuer]

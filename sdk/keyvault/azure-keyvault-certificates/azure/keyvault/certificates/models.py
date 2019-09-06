@@ -1072,7 +1072,8 @@ class Issuer(IssuerBase):
         # type: (models.IssuerBundle) -> Issuer
         """Construct a Issuer from an autorest-generated IssuerBundle"""
         admin_details = []
-        admin_details_service = issuer_bundle.organization_details.admin_details
+        admin_details_service = (issuer_bundle.organization_details.admin_details
+                                 if issuer_bundle.organization_details else None)
         if admin_details_service:
             # pylint:disable=protected-access
             for admin_detail in admin_details_service:
