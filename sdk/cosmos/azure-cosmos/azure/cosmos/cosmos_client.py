@@ -25,7 +25,7 @@
 from typing import Any, Dict, Mapping, Optional, Union, cast, Iterable, List
 
 import six
-from azure.core.tracing.decorator import distributed_trace
+from azure.core.tracing.decorator import distributed_trace  # type: ignore
 
 from ._cosmos_client_connection import CosmosClientConnection
 from ._base import build_options
@@ -168,7 +168,7 @@ class CosmosClient(object):
         # type: (str, Optional[Any], str, Any) -> CosmosClient
         """
         Create CosmosClient from a connection string.
-        
+
         This can be retrieved from the Azure portal.For full list of optional keyword
         arguments, see the CosmosClient constructor.
 

@@ -26,16 +26,16 @@
 """
 from typing import Dict, Any, Optional
 import six
-from azure.core.paging import ItemPaged
-from azure.core import PipelineClient
-from azure.core.pipeline.policies import (
+from azure.core.paging import ItemPaged  # type: ignore
+from azure.core import PipelineClient  # type: ignore
+from azure.core.pipeline.policies import (  # type: ignore
     ContentDecodePolicy,
     HeadersPolicy,
     UserAgentPolicy,
     NetworkTraceLoggingPolicy,
     CustomHookPolicy,
     ProxyPolicy)
-from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
+from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy  # type: ignore
 
 from . import _base as base
 from . import documents

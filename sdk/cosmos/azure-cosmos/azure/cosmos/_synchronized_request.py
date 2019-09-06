@@ -26,7 +26,7 @@ import json
 
 from six.moves.urllib.parse import urlparse
 import six
-from azure.core.exceptions import DecodeError
+from azure.core.exceptions import DecodeError  # type: ignore
 
 from . import documents
 from . import errors

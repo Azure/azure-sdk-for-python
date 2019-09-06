@@ -21,7 +21,7 @@
 
 """Iterable query results in the Azure Cosmos database service.
 """
-from azure.core.paging import PageIterator
+from azure.core.paging import PageIterator  # type: ignore
 from azure.cosmos._execution_context import execution_dispatcher
 from azure.cosmos._execution_context import base_execution_context
 

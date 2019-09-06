@@ -21,7 +21,7 @@
 
 """PyCosmos Exceptions in the Azure Cosmos database service.
 """
-from azure.core.exceptions import (  # pylint: disable=unused-import
+from azure.core.exceptions import (  # pylint: disable=unused-import  # type: ignore
     AzureError,
     HttpResponseError,
     ResourceExistsError,

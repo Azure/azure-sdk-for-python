@@ -25,7 +25,7 @@
 from typing import Any, List, Dict, Mapping, Union, cast, Iterable, Optional
 
 import six
-from azure.core.tracing.decorator import distributed_trace
+from azure.core.tracing.decorator import distributed_trace  # type: ignore
 
 from ._cosmos_client_connection import CosmosClientConnection
 from ._base import build_options
