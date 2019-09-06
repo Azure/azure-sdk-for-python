@@ -3085,9 +3085,9 @@ class TaskRun(Resource):
     :param identity: Identity for the resource.
     :type identity:
      ~azure.mgmt.containerregistry.v2019_06_01_preview.models.IdentityProperties
-    :ivar provisioning_state: The privisioning state of this taskrun. Possible
-     values include: 'Creating', 'Updating', 'Deleting', 'Succeeded', 'Failed',
-     'Canceled'
+    :ivar provisioning_state: The provisioning state of this task run.
+     Possible values include: 'Creating', 'Updating', 'Deleting', 'Succeeded',
+     'Failed', 'Canceled'
     :vartype provisioning_state: str or
      ~azure.mgmt.containerregistry.v2019_06_01_preview.models.ProvisioningState
     :param run_request: The request (parameters) for the run
@@ -3166,7 +3166,7 @@ class TaskRunRequest(RunRequest):
 
 
 class TaskRunUpdateParameters(Model):
-    """The parameters for updating a taskrun.
+    """The parameters for updating a task run.
 
     :param identity: Identity for the resource.
     :type identity:
