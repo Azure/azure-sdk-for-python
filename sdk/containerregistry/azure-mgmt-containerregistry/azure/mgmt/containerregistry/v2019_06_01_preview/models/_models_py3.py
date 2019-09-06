@@ -3091,8 +3091,8 @@ class TaskRun(Resource):
     :param run_request:
     :type run_request:
      ~azure.mgmt.containerregistry.v2019_06_01_preview.models.RunRequest
-    :param run_result:
-    :type run_result:
+    :ivar run_result:
+    :vartype run_result:
      ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Run
     """
 
@@ -3102,6 +3102,7 @@ class TaskRun(Resource):
         'type': {'readonly': True},
         'location': {'required': True},
         'provisioning_state': {'readonly': True},
+        'run_result': {'readonly': True},
     }
 
     _attribute_map = {
@@ -3112,16 +3113,16 @@ class TaskRun(Resource):
         'tags': {'key': 'tags', 'type': '{str}'},
         'identity': {'key': 'identity', 'type': 'IdentityProperties'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'run_request': {'key': 'runRequest', 'type': 'RunRequest'},
-        'run_result': {'key': 'runResult', 'type': 'Run'},
+        'run_request': {'key': 'properties.runRequest', 'type': 'RunRequest'},
+        'run_result': {'key': 'properties.runResult', 'type': 'Run'},
     }
 
-    def __init__(self, *, location: str, tags=None, identity=None, run_request=None, run_result=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, identity=None, run_request=None, **kwargs) -> None:
         super(TaskRun, self).__init__(location=location, tags=tags, **kwargs)
         self.identity = identity
         self.provisioning_state = None
         self.run_request = run_request
-        self.run_result = run_result
+        self.run_result = None
 
 
 class TaskRunRequest(RunRequest):
@@ -3177,7 +3178,7 @@ class TaskRunUpdateParameters(Model):
 
     _attribute_map = {
         'identity': {'key': 'identity', 'type': 'IdentityProperties'},
-        'run_request': {'key': 'runRequest', 'type': 'RunRequest'},
+        'run_request': {'key': 'properties.runRequest', 'type': 'RunRequest'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
