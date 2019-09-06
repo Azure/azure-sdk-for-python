@@ -1580,10 +1580,10 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         """
 
         options = self._upload_pages_from_url_options(
-            source_url,
-            range_start,
-            range_end,
-            source_range_start,
+            source_url=source_url,
+            range_start=range_start,
+            range_end=range_end,
+            source_range_start=source_range_start,
             source_content_md5=source_content_md5,
             **kwargs
         )
