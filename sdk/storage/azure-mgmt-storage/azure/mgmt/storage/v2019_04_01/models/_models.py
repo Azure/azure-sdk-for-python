@@ -316,6 +316,8 @@ class BlobServiceProperties(Resource):
     :param automatic_snapshot_policy_enabled: Automatic Snapshot is enabled if
      set to true.
     :type automatic_snapshot_policy_enabled: bool
+    :param change_feed: The blob service properties for change feed events.
+    :type change_feed: ~azure.mgmt.storage.v2019_04_01.models.ChangeFeed
     """
 
     _validation = {
@@ -332,6 +334,7 @@ class BlobServiceProperties(Resource):
         'default_service_version': {'key': 'properties.defaultServiceVersion', 'type': 'str'},
         'delete_retention_policy': {'key': 'properties.deleteRetentionPolicy', 'type': 'DeleteRetentionPolicy'},
         'automatic_snapshot_policy_enabled': {'key': 'properties.automaticSnapshotPolicyEnabled', 'type': 'bool'},
+        'change_feed': {'key': 'properties.changeFeed', 'type': 'ChangeFeed'},
     }
 
     def __init__(self, **kwargs):
@@ -340,6 +343,24 @@ class BlobServiceProperties(Resource):
         self.default_service_version = kwargs.get('default_service_version', None)
         self.delete_retention_policy = kwargs.get('delete_retention_policy', None)
         self.automatic_snapshot_policy_enabled = kwargs.get('automatic_snapshot_policy_enabled', None)
+        self.change_feed = kwargs.get('change_feed', None)
+
+
+class ChangeFeed(Model):
+    """The blob service properties for change feed events.
+
+    :param enabled: Indicates whether change feed event logging is enabled for
+     the Blob service.
+    :type enabled: bool
+    """
+
+    _attribute_map = {
+        'enabled': {'key': 'enabled', 'type': 'bool'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ChangeFeed, self).__init__(**kwargs)
+        self.enabled = kwargs.get('enabled', None)
 
 
 class CheckNameAvailabilityResult(Model):
