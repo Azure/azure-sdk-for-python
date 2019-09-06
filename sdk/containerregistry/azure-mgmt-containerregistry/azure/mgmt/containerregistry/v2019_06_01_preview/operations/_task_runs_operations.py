@@ -43,7 +43,7 @@ class TaskRunsOperations(object):
 
     def get(
             self, resource_group_name, registry_name, task_run_name, custom_headers=None, raw=False, **operation_config):
-        """Gets the detailed information for a given run request.
+        """Gets the detailed information for a given task run.
 
         :param resource_group_name: The name of the resource group to which
          the container registry belongs.
@@ -162,7 +162,7 @@ class TaskRunsOperations(object):
 
     def create(
             self, resource_group_name, registry_name, task_run_name, task_run, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Creates a run request for a container registry with the specified
+        """Creates a task run for a container registry with the specified
         parameters.
 
         :param resource_group_name: The name of the resource group to which
@@ -257,14 +257,14 @@ class TaskRunsOperations(object):
 
     def delete(
             self, resource_group_name, registry_name, task_run_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Deletes a specified TaskRun resource.
+        """Deletes a specified task run resource.
 
         :param resource_group_name: The name of the resource group to which
          the container registry belongs.
         :type resource_group_name: str
         :param registry_name: The name of the container registry.
         :type registry_name: str
-        :param task_run_name: The Run Request name.
+        :param task_run_name: The task run name.
         :type task_run_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
