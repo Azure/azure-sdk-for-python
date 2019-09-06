@@ -1,14 +1,12 @@
-# -------------------------------------------------------------------------
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License. See License.txt in the project root for
-# license information.
-# --------------------------------------------------------------------------
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
 
 import asyncio
 import logging
 from typing import Any, Callable
 
-from azure.core import HttpResponseError
 from azure.core.polling import AsyncPollingMethod
 from azure.keyvault.certificates._shared import parse_vault_id
 
@@ -24,41 +22,32 @@ class CreateCertificatePollerAsync(AsyncPollingMethod):
         self.polling_interval = interval
         self.unknown_issuer = unknown_issuer
 
-    async def _update_status(self):
-        # type: () -> None
+    async def _update_status(self) -> None:
         pending_certificate = await self._command()
         self._status = pending_certificate.status.lower()
         if not self._certificate_id:
             self._certificate_id = parse_vault_id(pending_certificate.id)
 
-    def initialize(self, client, initial_response, _):
-        # type: (Any, Any, Callable) -> None
+    def initialize(self, client: Any, initial_response: Any, _: Callable) -> None:
         self._command = client
         self._status = initial_response
 
-    async def run(self):
-        # type: () -> None
+    async def run(self) -> None:
         try:
             while not self.finished():
                 await self._update_status()
-                if self._status != 'completed' and self._status != 'inprogress' and self._status != 'cancelled':
-                    raise HttpResponseError(
-                        'Unknown status \'{}\' for pending certificate {}'.format(self._status, self._certificate_id))
                 await asyncio.sleep(self.polling_interval)
         except Exception as e:
             logger.warning(str(e))
             raise
 
-    def finished(self):
-        # type: () -> bool
+    def finished(self) -> bool:
         if self.unknown_issuer:
             return True
-        return self._status == 'completed' or self._status == 'cancelled'
+        return self._status in ('completed', 'cancelled', 'failed')
 
-    def resource(self):
-        # type: () -> Any
+    def resource(self) -> Any:
         return self._status
 
-    def status(self):
-        # type: () -> str
+    def status(self) -> str:
         return self._status

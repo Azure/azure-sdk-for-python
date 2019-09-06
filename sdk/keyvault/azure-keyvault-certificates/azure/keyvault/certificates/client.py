@@ -75,7 +75,7 @@ class CertificateClient(KeyVaultClientBase):
         :param tags: Application specific metadata in the form of key-value pairs.
         :type tags: dict(str, str)
         :returns: The created CertificateOperation
-        :rtype: ~azure.keyvault.certificates.models.CertificateOperation
+        :rtype: ~azure.core.polling.LROPoller
         :raises: ~azure.core.exceptions.HttpResponseError
 
         Example:
@@ -117,7 +117,7 @@ class CertificateClient(KeyVaultClientBase):
                                        subject_name="CN=DefaultPolicy",
                                        validity_in_months=12)
 
-        self._client.create_certificate(
+        create_certificate_operation = self._client.create_certificate(
             vault_base_url=self.vault_url,
             certificate_name=name,
             certificate_policy=policy._to_certificate_policy_bundle(),
@@ -136,7 +136,7 @@ class CertificateClient(KeyVaultClientBase):
         create_certificate_polling = CreateCertificatePoller(unknown_issuer=(policy.issuer_name.lower() == 'unknown'))
         return LROPoller(
             command,
-            "inprogress",
+            create_certificate_operation.status.lower(),
             None,
             create_certificate_polling
         )
@@ -145,12 +145,12 @@ class CertificateClient(KeyVaultClientBase):
     @distributed_trace
     def get_certificate_with_policy(self, name, **kwargs):
         # type: (str, **Any) -> Certificate
-        """Gets information about a certificate, which includes information about the
-        certificate's policy.
+        """Gets a certificate and returns it's management policy as well.
 
-        Gets information about a specific certificate. This operation requires
-        the certificates/get permission. Does not accept the version of the certificate
-        as a parameter.
+
+        This operation requires the certificates/get permission. Does not accept the
+        version of the certificate as a parameter. If you wish to specify version, use
+        the get_certificate function and specify version.
 
         :param name: The name of the certificate in the given
          vault.
@@ -178,12 +178,10 @@ class CertificateClient(KeyVaultClientBase):
     @distributed_trace
     def get_certificate(self, name, version, **kwargs):
         # type: (str, str, **Any) -> Certificate
-        """Gets information about a certificate, which does not include the policy.
-        Version must be specified.
+        """Gets a certificate by version without returning it's management policy.
 
-        Gets information about a specific certificate. This operation requires
-        the certificates/get permission. If you wish to not specify a version or to
-        get the certificate's policy as well, use the get_certificate_with_policy function.
+        If you wish to not specify a version or to get the certificate's policy as well,
+        use the get_certificate_with_policy function.
 
         :param name: The name of the certificate in the given
          vault.

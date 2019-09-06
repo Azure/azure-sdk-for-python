@@ -212,7 +212,7 @@ create_certificate_result = await create_certificate_poller
 print(create_certificate_result)
 ```
 
-### Asynchronously list keys
+### Asynchronously list certificates
 This example lists all the certificates in the client's vault:
 ```python
 certificates = certificate_client.list_certificates()

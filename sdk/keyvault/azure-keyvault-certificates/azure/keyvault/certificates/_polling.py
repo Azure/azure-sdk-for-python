@@ -1,12 +1,10 @@
-# -------------------------------------------------------------------------
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License. See License.txt in the project root for
-# license information.
-# --------------------------------------------------------------------------
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
 import logging
 import time
 
-from azure.core.exceptions import HttpResponseError
 from azure.core.polling import PollingMethod
 from azure.keyvault.certificates._shared import parse_vault_id
 
@@ -38,9 +36,6 @@ class CreateCertificatePoller(PollingMethod):
         try:
             while not self.finished():
                 self._update_status()
-                if self._status != 'completed' and self._status != 'inprogress' and self._status != 'cancelled':
-                    raise HttpResponseError(
-                        'Unknown status \'{}\' for pending certificate {}'.format(self._status, self._certificate_id))
                 time.sleep(self.polling_interval)
         except Exception as e:
             logger.warning(str(e))
@@ -50,7 +45,7 @@ class CreateCertificatePoller(PollingMethod):
         # type: () -> bool
         if self.unknown_issuer:
             return True
-        return self._status != 'inprogress'
+        return self._status in ('completed', 'cancelled', 'failed')
 
     def resource(self):
         # type: () -> str
