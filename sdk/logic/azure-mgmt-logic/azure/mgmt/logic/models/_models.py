@@ -176,7 +176,7 @@ class ApiOperation(Resource):
 
 
 class ApiOperationAnnotation(Model):
-    """ApiOperationAnnotation.
+    """The Api Operation Annotation.
 
     :param status: Possible values include: 'NotSpecified', 'Preview',
      'Production'
@@ -263,7 +263,7 @@ class ApiOperationPropertiesDefinition(Model):
 
 
 class ApiReference(Resource):
-    """ApiReference.
+    """The Api reference.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -3532,11 +3532,11 @@ class IntegrationServiceEnvironmentSkuCapacity(Model):
 
 
 class IntegrationServiceEnvironmentSkuDefinition(Model):
-    """IntegrationServiceEnvironmentSkuDefinition.
+    """The integration service environment sku definition.
 
-    :param resource_type:
+    :param resource_type: The resource type.
     :type resource_type: str
-    :param sku:
+    :param sku: The sku.
     :type sku:
      ~azure.mgmt.logic.models.IntegrationServiceEnvironmentSkuDefinitionSku
     :param capacity: The sku capacity.
@@ -3558,7 +3558,7 @@ class IntegrationServiceEnvironmentSkuDefinition(Model):
 
 
 class IntegrationServiceEnvironmentSkuDefinitionSku(Model):
-    """IntegrationServiceEnvironmentSkuDefinitionSku.
+    """The sku.
 
     :param name: The sku name. Possible values include: 'NotSpecified',
      'Premium', 'Developer'
@@ -3584,7 +3584,7 @@ class IntegrationServiceEnvironmentSubnetNetworkHealth(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param outbound_network_dependencies:
+    :param outbound_network_dependencies: The outbound network dependencies.
     :type outbound_network_dependencies:
      list[~azure.mgmt.logic.models.IntegrationServiceEnvironmentNetworkDependency]
     :param outbound_network_health: The integration service environment
@@ -3616,7 +3616,7 @@ class IntegrationServiceEnvironmentSubnetNetworkHealth(Model):
 
 
 class IpAddress(Model):
-    """IpAddress.
+    """The ip address.
 
     :param address: The address.
     :type address: str
@@ -3894,7 +3894,7 @@ class NetworkConfiguration(Model):
     :param access_endpoint: The access endpoint.
     :type access_endpoint:
      ~azure.mgmt.logic.models.IntegrationServiceEnvironmentAccessEndpoint
-    :param subnets:
+    :param subnets: The subnets.
     :type subnets: list[~azure.mgmt.logic.models.ResourceReference]
     """
 
@@ -4468,7 +4468,7 @@ class SwaggerCustomDynamicList(Model):
     :param item_title_path: The path to an item property which defines the
      display name of the item.
     :type item_title_path: str
-    :param parameters:
+    :param parameters: The parameters.
     :type parameters: dict[str,
      ~azure.mgmt.logic.models.SwaggerCustomDynamicProperties]
     """
@@ -4795,7 +4795,7 @@ class SwaggerSchema(Model):
 
 
 class SwaggerXml(Model):
-    """SwaggerXml.
+    """The Swagger XML.
 
     :param name: The xml element or attribute name.
     :type name: str
@@ -5414,23 +5414,6 @@ class WorkflowRunActionRepetitionDefinition(Resource):
         self.repetition_indexes = kwargs.get('repetition_indexes', None)
 
 
-class WorkflowRunActionRepetitionDefinitionCollection(Model):
-    """A collection of workflow run action repetitions.
-
-    :param value:
-    :type value:
-     list[~azure.mgmt.logic.models.WorkflowRunActionRepetitionDefinition]
-    """
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[WorkflowRunActionRepetitionDefinition]'},
-    }
-
-    def __init__(self, **kwargs):
-        super(WorkflowRunActionRepetitionDefinitionCollection, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-
-
 class WorkflowRunFilter(Model):
     """The workflow run filter.
 
@@ -5943,7 +5926,7 @@ class WorkflowVersion(Resource):
 
 
 class WsdlService(Model):
-    """WsdlService.
+    """The WSDL service.
 
     :param qualified_name: The qualified name.
     :type qualified_name: str

@@ -148,7 +148,6 @@ try:
     from ._models_py3 import WorkflowRunAction
     from ._models_py3 import WorkflowRunActionFilter
     from ._models_py3 import WorkflowRunActionRepetitionDefinition
-    from ._models_py3 import WorkflowRunActionRepetitionDefinitionCollection
     from ._models_py3 import WorkflowRunFilter
     from ._models_py3 import WorkflowRunTrigger
     from ._models_py3 import WorkflowTrigger
@@ -314,7 +313,6 @@ except (SyntaxError, ImportError):
     from ._models import WorkflowRunAction
     from ._models import WorkflowRunActionFilter
     from ._models import WorkflowRunActionRepetitionDefinition
-    from ._models import WorkflowRunActionRepetitionDefinitionCollection
     from ._models import WorkflowRunFilter
     from ._models import WorkflowRunTrigger
     from ._models import WorkflowTrigger
@@ -551,7 +549,6 @@ __all__ = [
     'WorkflowRunAction',
     'WorkflowRunActionFilter',
     'WorkflowRunActionRepetitionDefinition',
-    'WorkflowRunActionRepetitionDefinitionCollection',
     'WorkflowRunFilter',
     'WorkflowRunTrigger',
     'WorkflowTrigger',
