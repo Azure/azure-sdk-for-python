@@ -431,9 +431,9 @@ class DirectoryClient(StorageAccountHostsMixin):
     def set_http_headers(self, file_attributes="none",  # type: Union[str, NTFSAttributes]
                          file_creation_time="preserve",  # type: Union[str, datetime]
                          file_last_write_time="preserve",  # type: Union[str, datetime]
-                         timeout=None,  # type: Optional[int]
                          file_permission=None,   # type: Optional[str]
                          file_permission_key=None,   # type: Optional[str]
+                         timeout=None,  # type: Optional[int]
                          **kwargs):  # type: ignore
         # type: (...) -> Dict[str, Any]
         """Sets HTTP headers on the directory.

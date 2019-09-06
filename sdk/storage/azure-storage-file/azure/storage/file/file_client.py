@@ -336,12 +336,12 @@ class FileClient(StorageAccountHostsMixin):
             self, size,  # type: int
             content_settings=None,  # type: Optional[ContentSettings]
             metadata=None,  # type: Optional[Dict[str, str]]
-            timeout=None,  # type: Optional[int]
             file_attributes="none",  # type: Union[str, NTFSAttributes]
             file_creation_time="now",  # type: Union[str, datetime]
             file_last_write_time="now",  # type: Union[str, datetime]
             file_permission=None,   # type: Optional[str]
             file_permission_key=None,  # type: Optional[str]
+            timeout=None,  # type: Optional[int]
             **kwargs  # type: Any
     ):
         # type: (...) -> Dict[str, Any]
@@ -410,15 +410,15 @@ class FileClient(StorageAccountHostsMixin):
         try:
             return self._client.file.create(  # type: ignore
                 file_content_length=size,
+                metadata=metadata,
                 file_attributes=_str(file_attributes),
                 file_creation_time=_datetime_to_str(file_creation_time),
                 file_last_write_time=_datetime_to_str(file_last_write_time),
-                timeout=timeout,
-                metadata=metadata,
                 file_permission=file_permission,
                 file_permission_key=file_permission_key,
                 file_http_headers=file_http_headers,
                 headers=headers,
+                timeout=timeout,
                 cls=return_response_headers,
                 **kwargs)
         except StorageErrorException as error:
@@ -429,17 +429,17 @@ class FileClient(StorageAccountHostsMixin):
             self, data, # type: Any
             length=None, # type: Optional[int]
             metadata=None,  # type: Optional[Dict[str, str]]
-            content_settings=None, # type: Optional[ContentSettings]
+            content_settings=None,  # type: Optional[ContentSettings]
             validate_content=False,  # type: bool
             max_connections=1,  # type: Optional[int]
-            timeout=None, # type: Optional[int]
-            encoding='UTF-8',  # type: str
             file_attributes="none",  # type: Union[str, NTFSAttributes]
             file_creation_time="now",  # type: Union[str, datetime]
             file_last_write_time="now",  # type: Union[str, datetime]
             file_permission=None,   # type: Optional[str]
             file_permission_key=None,  # type: Optional[str]
-            **kwargs # type: Any
+            encoding='UTF-8',  # type: str
+            timeout=None,  # type: Optional[int]
+            **kwargs  # type: Any
         ):
         # type: (...) -> Dict[str, Any]
         """Uploads a new file.
@@ -713,12 +713,12 @@ class FileClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def set_http_headers(self, content_settings,  # type: ContentSettings
-                         timeout=None,  # type: Optional[int]
                          file_attributes="preserve",  # type: Union[str, NTFSAttributes]
                          file_creation_time="preserve",  # type: Union[str, datetime]
                          file_last_write_time="preserve",  # type: Union[str, datetime]
                          file_permission=None,  # type: Optional[str]
                          file_permission_key=None,  # type: Optional[str]
+                         timeout=None,  # type: Optional[int]
                          **kwargs  # Any
                          ):  # type: ignore
         # type: (ContentSettings, Optional[int], Optional[Any]) -> Dict[str, Any]
@@ -765,15 +765,15 @@ class FileClient(StorageAccountHostsMixin):
         file_permission = _get_file_permission(file_permission, file_permission_key, 'preserve')
         try:
             return self._client.file.set_http_headers(  # type: ignore
-                timeout=timeout,
                 file_content_length=file_content_length,
                 file_http_headers=file_http_headers,
-                cls=return_response_headers,
                 file_attributes=_str(file_attributes),
                 file_creation_time=_datetime_to_str(file_creation_time),
                 file_last_write_time=_datetime_to_str(file_last_write_time),
                 file_permission=file_permission,
                 file_permission_key=file_permission_key,
+                timeout=timeout,
+                cls=return_response_headers,
                 **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
@@ -1044,11 +1044,13 @@ class FileClient(StorageAccountHostsMixin):
         """
         try:
             return self._client.file.set_http_headers( # type: ignore
-                timeout=timeout,
                 file_content_length=size,
+                file_attributes="preserve",
+                file_creation_time="preserve",
+                file_last_write_time="preserve",
+                file_permission="preserve",
                 cls=return_response_headers,
-                file_creation_time="preserve", # TODO: Verify these default values are correct
-                file_last_write_time="preserve", # TODO: Verify these default values are correct
+                timeout=timeout,
                 **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)

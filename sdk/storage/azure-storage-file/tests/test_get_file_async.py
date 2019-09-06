@@ -1481,7 +1481,6 @@ class StorageGetFileTest(FileTestCase):
 
     @record
     def test_get_file_range_with_md5_async(self):
-        pytest.skip("TODO: Verify the x-ms-file-permission value.")
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_file_range_with_md5_async())
 
