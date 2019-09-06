@@ -62,7 +62,7 @@ async def run_sample():
                                                                      key_type='RSA',
                                                                      key_size=2048,
                                                                      reuse_key=False),
-                                        content_type=SecretContentType.PFX,
+                                        content_type=SecretContentType.PKCS12,
                                         issuer_name='Self',
                                         subject_name='CN=*.microsoft.com',
                                         validity_in_months=24,
