@@ -42,6 +42,4 @@ start_time = time.time()
 with producer:
     event_data_batch = create_batch_data(producer)
     producer.send(event_data_batch)
-end_time = time.time()
-run_time = end_time - start_time
-print("Runtime: {} seconds".format(run_time))
+print("Runtime: {} seconds".format(time.time() - start_time))

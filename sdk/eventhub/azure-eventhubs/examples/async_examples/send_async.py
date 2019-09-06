@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------------------------
 
 """
-An example to show sending events asynchronously to an Event Hub with partition keys.
+An example to show sending individual events asynchronously to an Event Hub.
 """
 
 # pylint: disable=C0111
@@ -45,6 +45,4 @@ tasks = asyncio.gather(
     run(client))
 start_time = time.time()
 loop.run_until_complete(tasks)
-end_time = time.time()
-run_time = end_time - start_time
-print("Runtime: {} seconds".format(run_time))
+print("Runtime: {} seconds".format(time.time() - start_time))
