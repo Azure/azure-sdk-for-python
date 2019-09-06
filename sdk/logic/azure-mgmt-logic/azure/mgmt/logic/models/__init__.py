@@ -15,7 +15,6 @@ try:
     from ._models_py3 import ApiDeploymentParameterMetadataSet
     from ._models_py3 import ApiOperation
     from ._models_py3 import ApiOperationAnnotation
-    from ._models_py3 import ApiOperationListResult
     from ._models_py3 import ApiOperationPropertiesDefinition
     from ._models_py3 import ApiReference
     from ._models_py3 import ApiResourceBackendService
@@ -96,7 +95,6 @@ try:
     from ._models_py3 import IntegrationServiceEnvironmentSkuCapacity
     from ._models_py3 import IntegrationServiceEnvironmentSkuDefinition
     from ._models_py3 import IntegrationServiceEnvironmentSkuDefinitionSku
-    from ._models_py3 import IntegrationServiceEnvironmentSkuList
     from ._models_py3 import IntegrationServiceEnvironmentSubnetNetworkHealth
     from ._models_py3 import IpAddress
     from ._models_py3 import JsonSchema
@@ -107,7 +105,6 @@ try:
     from ._models_py3 import KeyVaultReference
     from ._models_py3 import ListKeyVaultKeysDefinition
     from ._models_py3 import ManagedApi
-    from ._models_py3 import ManagedApiListResult
     from ._models_py3 import NetworkConfiguration
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
@@ -184,7 +181,6 @@ except (SyntaxError, ImportError):
     from ._models import ApiDeploymentParameterMetadataSet
     from ._models import ApiOperation
     from ._models import ApiOperationAnnotation
-    from ._models import ApiOperationListResult
     from ._models import ApiOperationPropertiesDefinition
     from ._models import ApiReference
     from ._models import ApiResourceBackendService
@@ -265,7 +261,6 @@ except (SyntaxError, ImportError):
     from ._models import IntegrationServiceEnvironmentSkuCapacity
     from ._models import IntegrationServiceEnvironmentSkuDefinition
     from ._models import IntegrationServiceEnvironmentSkuDefinitionSku
-    from ._models import IntegrationServiceEnvironmentSkuList
     from ._models import IntegrationServiceEnvironmentSubnetNetworkHealth
     from ._models import IpAddress
     from ._models import JsonSchema
@@ -276,7 +271,6 @@ except (SyntaxError, ImportError):
     from ._models import KeyVaultReference
     from ._models import ListKeyVaultKeysDefinition
     from ._models import ManagedApi
-    from ._models import ManagedApiListResult
     from ._models import NetworkConfiguration
     from ._models import Operation
     from ._models import OperationDisplay
@@ -347,6 +341,7 @@ except (SyntaxError, ImportError):
     from ._models import X12SecuritySettings
     from ._models import X12ValidationOverride
     from ._models import X12ValidationSettings
+from ._paged_models import ApiOperationPaged
 from ._paged_models import AssemblyDefinitionPaged
 from ._paged_models import BatchConfigurationPaged
 from ._paged_models import ExpressionRootPaged
@@ -358,7 +353,9 @@ from ._paged_models import IntegrationAccountPartnerPaged
 from ._paged_models import IntegrationAccountSchemaPaged
 from ._paged_models import IntegrationAccountSessionPaged
 from ._paged_models import IntegrationServiceEnvironmentPaged
+from ._paged_models import IntegrationServiceEnvironmentSkuDefinitionPaged
 from ._paged_models import KeyVaultKeyPaged
+from ._paged_models import ManagedApiPaged
 from ._paged_models import OperationPaged
 from ._paged_models import RequestHistoryPaged
 from ._paged_models import WorkflowPaged
@@ -421,7 +418,6 @@ __all__ = [
     'ApiDeploymentParameterMetadataSet',
     'ApiOperation',
     'ApiOperationAnnotation',
-    'ApiOperationListResult',
     'ApiOperationPropertiesDefinition',
     'ApiReference',
     'ApiResourceBackendService',
@@ -502,7 +498,6 @@ __all__ = [
     'IntegrationServiceEnvironmentSkuCapacity',
     'IntegrationServiceEnvironmentSkuDefinition',
     'IntegrationServiceEnvironmentSkuDefinitionSku',
-    'IntegrationServiceEnvironmentSkuList',
     'IntegrationServiceEnvironmentSubnetNetworkHealth',
     'IpAddress',
     'JsonSchema',
@@ -513,7 +508,6 @@ __all__ = [
     'KeyVaultReference',
     'ListKeyVaultKeysDefinition',
     'ManagedApi',
-    'ManagedApiListResult',
     'NetworkConfiguration',
     'Operation',
     'OperationDisplay',
@@ -604,6 +598,9 @@ __all__ = [
     'IntegrationAccountCertificatePaged',
     'IntegrationAccountSessionPaged',
     'IntegrationServiceEnvironmentPaged',
+    'IntegrationServiceEnvironmentSkuDefinitionPaged',
+    'ManagedApiPaged',
+    'ApiOperationPaged',
     'OperationPaged',
     'WorkflowProvisioningState',
     'WorkflowState',

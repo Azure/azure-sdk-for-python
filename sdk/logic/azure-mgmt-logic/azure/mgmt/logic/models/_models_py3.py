@@ -200,26 +200,6 @@ class ApiOperationAnnotation(Model):
         self.revision = revision
 
 
-class ApiOperationListResult(Model):
-    """The list of managed API operations.
-
-    :param value: The api operation definitions for an API.
-    :type value: list[~azure.mgmt.logic.models.ApiOperation]
-    :param next_link: The URL to get the next set of results.
-    :type next_link: str
-    """
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[ApiOperation]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-    }
-
-    def __init__(self, *, value=None, next_link: str=None, **kwargs) -> None:
-        super(ApiOperationListResult, self).__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
 class ApiOperationPropertiesDefinition(Model):
     """The api operations properties.
 
@@ -638,17 +618,17 @@ class AS2AcknowledgementConnectionSettings(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param ignore_certificate_name_mismatch: Required. The value indicating
-     whether to ignore mismatch in certificate name.
+    :param ignore_certificate_name_mismatch: Required. Indicates whether to
+     ignore mismatch in certificate name.
     :type ignore_certificate_name_mismatch: bool
-    :param support_http_status_code_continue: Required. The value indicating
-     whether to support HTTP status code 'CONTINUE'.
+    :param support_http_status_code_continue: Required. Indicates whether to
+     support HTTP status code 'CONTINUE'.
     :type support_http_status_code_continue: bool
-    :param keep_http_connection_alive: Required. The value indicating whether
-     to keep the connection alive.
+    :param keep_http_connection_alive: Required. Indicates whether to keep the
+     connection alive.
     :type keep_http_connection_alive: bool
-    :param unfold_http_headers: Required. The value indicating whether to
-     unfold the HTTP headers.
+    :param unfold_http_headers: Required. Indicates whether to unfold the HTTP
+     headers.
     :type unfold_http_headers: bool
     """
 
@@ -2523,7 +2503,7 @@ class ErrorResponseException(HttpOperationError):
 
 
 class Expression(Model):
-    """Expression.
+    """The expression.
 
     :param text:
     :type text: str
@@ -2551,7 +2531,7 @@ class Expression(Model):
 
 
 class ExpressionRoot(Expression):
-    """ExpressionRoot.
+    """The expression root.
 
     :param text:
     :type text: str
@@ -3599,27 +3579,6 @@ class IntegrationServiceEnvironmentSkuDefinitionSku(Model):
         self.tier = tier
 
 
-class IntegrationServiceEnvironmentSkuList(Model):
-    """The list of integration service environment skus.
-
-    :param value: The list of integration service environment skus.
-    :type value:
-     list[~azure.mgmt.logic.models.IntegrationServiceEnvironmentSkuDefinition]
-    :param next_link: The URL to get the next set of results.
-    :type next_link: str
-    """
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[IntegrationServiceEnvironmentSkuDefinition]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-    }
-
-    def __init__(self, *, value=None, next_link: str=None, **kwargs) -> None:
-        super(IntegrationServiceEnvironmentSkuList, self).__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
 class IntegrationServiceEnvironmentSubnetNetworkHealth(Model):
     """The integration service environment subnet network health.
 
@@ -3924,26 +3883,6 @@ class ManagedApi(Resource):
     def __init__(self, *, location: str=None, tags=None, properties=None, **kwargs) -> None:
         super(ManagedApi, self).__init__(location=location, tags=tags, **kwargs)
         self.properties = properties
-
-
-class ManagedApiListResult(Model):
-    """The list of managed APIs.
-
-    :param value: The managed APIs.
-    :type value: list[~azure.mgmt.logic.models.ManagedApi]
-    :param next_link: The URL to get the next set of results.
-    :type next_link: str
-    """
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[ManagedApi]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-    }
-
-    def __init__(self, *, value=None, next_link: str=None, **kwargs) -> None:
-        super(ManagedApiListResult, self).__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
 
 
 class NetworkConfiguration(Model):
@@ -4441,7 +4380,7 @@ class RunActionCorrelation(RunCorrelation):
 
 
 class SetTriggerStateActionDefinition(Model):
-    """SetTriggerStateActionDefinition.
+    """The set trigger state action definition.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -4691,8 +4630,7 @@ class SwaggerCustomDynamicTreeParameter(Model):
     :type value: object
     :param parameter_reference: The parameter reference.
     :type parameter_reference: str
-    :param required: Gets or sets a value indicating whether the parameter is
-     required.
+    :param required: Indicates whether the parameter is required.
     :type required: bool
     """
 
@@ -4714,11 +4652,11 @@ class SwaggerCustomDynamicTreeParameter(Model):
 class SwaggerCustomDynamicTreeSettings(Model):
     """The swagger custom dynamic tree settings.
 
-    :param can_select_parent_nodes: Gets or sets a value indicating whether
-     parent nodes can be selected.
+    :param can_select_parent_nodes: Indicates whether parent nodes can be
+     selected.
     :type can_select_parent_nodes: bool
-    :param can_select_leaf_nodes: Gets or sets a value indicating whether leaf
-     nodes can be selected.
+    :param can_select_leaf_nodes: Indicates whether leaf nodes can be
+     selected.
     :type can_select_leaf_nodes: bool
     """
 
@@ -4784,8 +4722,8 @@ class SwaggerSchema(Model):
     :type all_of: list[~azure.mgmt.logic.models.SwaggerSchema]
     :param discriminator: The discriminator.
     :type discriminator: str
-    :param read_only: Gets or sets whether this property must be present in
-     the a request.
+    :param read_only: Indicates whether this property must be present in the a
+     request.
     :type read_only: bool
     :param xml: The xml representation format for a property.
     :type xml: ~azure.mgmt.logic.models.SwaggerXml
@@ -4793,7 +4731,7 @@ class SwaggerSchema(Model):
     :type external_docs: ~azure.mgmt.logic.models.SwaggerExternalDocumentation
     :param example: The example value.
     :type example: object
-    :param notification_url_extension: Gets or sets the notification url
+    :param notification_url_extension: Indicates the notification url
      extension. If this is set, the property's value should be a callback url
      for a webhook.
     :type notification_url_extension: bool
@@ -4865,11 +4803,11 @@ class SwaggerXml(Model):
     :type namespace: str
     :param prefix: The name prefix.
     :type prefix: str
-    :param attribute: Gets or sets a value indicating whether the property
-     should be an attribute instead of an element.
+    :param attribute: Indicates whether the property should be an attribute
+     instead of an element.
     :type attribute: bool
-    :param wrapped: Gets or sets a value indicating whether the array elements
-     are wrapped in a container element.
+    :param wrapped: Indicates whether the array elements are wrapped in a
+     container element.
     :type wrapped: bool
     :param extensions: The vendor extensions.
     :type extensions: dict[str, object]
@@ -4895,7 +4833,7 @@ class SwaggerXml(Model):
 
 
 class TrackingEvent(Model):
-    """TrackingEvent.
+    """The tracking event.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -4939,7 +4877,7 @@ class TrackingEvent(Model):
 
 
 class TrackingEventErrorInfo(Model):
-    """TrackingEventErrorInfo.
+    """The tracking event error info.
 
     :param message:
     :type message: str
@@ -4959,7 +4897,7 @@ class TrackingEventErrorInfo(Model):
 
 
 class TrackingEventsDefinition(Model):
-    """TrackingEventsDefinition.
+    """The tracking events definition.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -5779,7 +5717,7 @@ class WorkflowTriggerHistory(SubResource):
     :vartype inputs_link: ~azure.mgmt.logic.models.ContentLink
     :ivar outputs_link: Gets the link to output parameters.
     :vartype outputs_link: ~azure.mgmt.logic.models.ContentLink
-    :ivar fired: Gets a value indicating whether trigger was fired.
+    :ivar fired: The value indicating whether trigger was fired.
     :vartype fired: bool
     :ivar run: Gets the reference to workflow run.
     :vartype run: ~azure.mgmt.logic.models.ResourceReference

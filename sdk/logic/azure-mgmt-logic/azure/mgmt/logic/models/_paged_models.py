@@ -272,6 +272,45 @@ class IntegrationServiceEnvironmentPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(IntegrationServiceEnvironmentPaged, self).__init__(*args, **kwargs)
+class IntegrationServiceEnvironmentSkuDefinitionPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`IntegrationServiceEnvironmentSkuDefinition <azure.mgmt.logic.models.IntegrationServiceEnvironmentSkuDefinition>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[IntegrationServiceEnvironmentSkuDefinition]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(IntegrationServiceEnvironmentSkuDefinitionPaged, self).__init__(*args, **kwargs)
+class ManagedApiPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ManagedApi <azure.mgmt.logic.models.ManagedApi>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ManagedApi]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ManagedApiPaged, self).__init__(*args, **kwargs)
+class ApiOperationPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ApiOperation <azure.mgmt.logic.models.ApiOperation>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ApiOperation]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ApiOperationPaged, self).__init__(*args, **kwargs)
 class OperationPaged(Paged):
     """
     A paging container for iterating over a list of :class:`Operation <azure.mgmt.logic.models.Operation>` object
