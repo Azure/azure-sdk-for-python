@@ -16,7 +16,7 @@ from datetime import (
     timedelta,
     date,
 )
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, FakeStorageAccount
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.mgmt.storage.models import Endpoints
 from azure.core.exceptions import (
     HttpResponseError,
@@ -40,11 +40,6 @@ from queuetestcase import (
 
 # ------------------------------------------------------------------------------
 TEST_QUEUE_PREFIX = 'pythonqueue'
-
-FAKE_STORAGE = FakeStorageAccount(
-    name='pyacrstorage',
-    id='')
-
 # ------------------------------------------------------------------------------
 
 
@@ -55,14 +50,16 @@ class StorageQueueTest(QueueTestCase):
         queue = qsc.get_queue_client(queue_name)
         return queue
 
-    def _create_queue(self, qsc, prefix=TEST_QUEUE_PREFIX):
+    def _create_queue(self, qsc, prefix=TEST_QUEUE_PREFIX, queue_list = None):
         queue = self._get_queue_reference(qsc, prefix)
         created = queue.create_queue()
+        if queue_list is not None:
+            queue_list.append(created)
         return queue
 
     # --Test cases for queues ----------------------------------------------
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_queue(self, resource_group, location, storage_account, storage_account_key):
         # Action
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)
@@ -73,7 +70,7 @@ class StorageQueueTest(QueueTestCase):
         self.assertTrue(created)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_queue_fail_on_exist(self, resource_group, location, storage_account, storage_account_key):
         # Action
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)
@@ -86,7 +83,7 @@ class StorageQueueTest(QueueTestCase):
         self.assertTrue(created)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_queue_fail_on_exist_different_metadata(self, resource_group, location, storage_account, storage_account_key):
         # Action
         url = self._account_url(storage_account.name)
@@ -100,10 +97,9 @@ class StorageQueueTest(QueueTestCase):
         self.assertTrue(created)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_queue_with_options(self, resource_group, location, storage_account, storage_account_key):
         # Action
-        print(storage_account, self._account_url(storage_account.name))
         url = self._account_url(storage_account.name)
         qsc = QueueServiceClient(url, storage_account_key)
         queue_client = self._get_queue_reference(qsc)
@@ -118,7 +114,7 @@ class StorageQueueTest(QueueTestCase):
         self.assertEqual('blah', props.metadata['val2'])
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_delete_non_existing_queue(self, resource_group, location, storage_account, storage_account_key):
         # Action
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)
@@ -129,7 +125,7 @@ class StorageQueueTest(QueueTestCase):
             queue_client.delete_queue()
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_delete_existing_queue_fail_not_exist(self, resource_group, location, storage_account, storage_account_key):
         # Action
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)
@@ -142,7 +138,7 @@ class StorageQueueTest(QueueTestCase):
         self.assertIsNone(deleted)
 
     @ResourceGroupPreparer()    
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_list_queues(self, resource_group, location, storage_account, storage_account_key):
         # Action
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)
@@ -155,13 +151,14 @@ class StorageQueueTest(QueueTestCase):
         self.assertEqual(len(queues), 1)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_list_queues_with_options(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         prefix = 'listqueue'
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)
+        queue_list = []
         for i in range(0, 4):
-            self._create_queue(qsc, prefix + str(i))
+            self._create_queue(qsc, prefix + str(i), queue_list)
 
         # Action
         generator1 = qsc.list_queues(
@@ -183,11 +180,12 @@ class StorageQueueTest(QueueTestCase):
         assert generator1.location_mode is not None
         # Asserts
         self.assertIsNotNone(queues2)
+        self.assertTrue(len(queue_list) - 3 <= len(queues2))
         self.assertIsNotNone(queues2[0])
         self.assertNotEqual('', queues2[0].name)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_list_queues_with_metadata(self, resource_group, location, storage_account, storage_account_key):
         # Action
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)
@@ -208,7 +206,7 @@ class StorageQueueTest(QueueTestCase):
         self.assertEqual(listed_queue.metadata['val1'], 'test')
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_set_queue_metadata(self, resource_group, location, storage_account, storage_account_key):
         # Action
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)
@@ -223,7 +221,7 @@ class StorageQueueTest(QueueTestCase):
         self.assertDictEqual(metadata_from_response, metadata)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_get_queue_metadata_message_count(self, resource_group, location, storage_account, storage_account_key):
         # Action
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)
@@ -237,7 +235,7 @@ class StorageQueueTest(QueueTestCase):
         self.assertEqual(0, len(props.metadata))
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_queue_exists(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)
@@ -251,7 +249,7 @@ class StorageQueueTest(QueueTestCase):
         self.assertTrue(exists)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_queue_not_exists(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)
@@ -263,7 +261,7 @@ class StorageQueueTest(QueueTestCase):
         # Assert
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_put_message(self, resource_group, location, storage_account, storage_account_key):
         # Action.  No exception means pass. No asserts needed.
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)
@@ -283,7 +281,7 @@ class StorageQueueTest(QueueTestCase):
         self.assertEqual(u'message4', message.content)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_put_message_large_time_to_live(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)         
@@ -301,7 +299,7 @@ class StorageQueueTest(QueueTestCase):
             messages[0].insertion_time + timedelta(seconds=1024 * 1024 * 1024 - 3600))
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_put_message_infinite_time_to_live(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)         
@@ -316,7 +314,7 @@ class StorageQueueTest(QueueTestCase):
         self.assertEqual(messages[0].expiration_time.year, date.max.year)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_get_messages(self, resource_group, location, storage_account, storage_account_key):
         # Action
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)         
@@ -341,7 +339,7 @@ class StorageQueueTest(QueueTestCase):
         self.assertIsInstance(message.time_next_visible, datetime)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_get_messages_with_options(self, resource_group, location, storage_account, storage_account_key):
         # Action
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)         
@@ -369,7 +367,7 @@ class StorageQueueTest(QueueTestCase):
             self.assertNotEqual('', message.time_next_visible)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_peek_messages(self, resource_group, location, storage_account, storage_account_key):
         # Action
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)         
@@ -395,7 +393,7 @@ class StorageQueueTest(QueueTestCase):
         self.assertIsNone(message.time_next_visible)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_peek_messages_with_options(self, resource_group, location, storage_account, storage_account_key):
         # Action
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)         
@@ -421,7 +419,7 @@ class StorageQueueTest(QueueTestCase):
             self.assertIsNone(message.time_next_visible)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_clear_messages(self, resource_group, location, storage_account, storage_account_key):
         # Action
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)         
@@ -439,7 +437,7 @@ class StorageQueueTest(QueueTestCase):
         self.assertEqual(0, len(result))
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_delete_message(self, resource_group, location, storage_account, storage_account_key):
         # Action
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)         
@@ -460,7 +458,7 @@ class StorageQueueTest(QueueTestCase):
         assert len(messages) == 3
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_update_message(self, resource_group, location, storage_account, storage_account_key):
         # Action
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)         
@@ -495,7 +493,7 @@ class StorageQueueTest(QueueTestCase):
         self.assertIsNotNone(message.time_next_visible)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_update_message_content(self, resource_group, location, storage_account, storage_account_key):
         # Action
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)         
@@ -532,7 +530,7 @@ class StorageQueueTest(QueueTestCase):
         self.assertIsNotNone(message.time_next_visible)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_account_sas(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:
@@ -567,7 +565,7 @@ class StorageQueueTest(QueueTestCase):
         self.assertEqual(u'message1', message.content)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_token_credential(self, resource_group, location, storage_account, storage_account_key):
         if not self.is_live:
             return
@@ -590,7 +588,7 @@ class StorageQueueTest(QueueTestCase):
         self.assertIsNotNone(queues)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_sas_read(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:
@@ -623,7 +621,7 @@ class StorageQueueTest(QueueTestCase):
         self.assertEqual(u'message1', message.content)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_sas_add(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:
@@ -650,7 +648,7 @@ class StorageQueueTest(QueueTestCase):
         self.assertEqual(u'addedmessage', result.content)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_sas_update(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:
@@ -685,7 +683,7 @@ class StorageQueueTest(QueueTestCase):
         self.assertEqual(u'updatedmessage1', result.content)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_sas_process(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:
@@ -714,7 +712,7 @@ class StorageQueueTest(QueueTestCase):
         self.assertEqual(u'message1', message.content)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_sas_signed_identifier(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:
@@ -755,7 +753,7 @@ class StorageQueueTest(QueueTestCase):
         self.assertEqual(u'message1', message.content)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_get_queue_acl(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)         
@@ -770,7 +768,7 @@ class StorageQueueTest(QueueTestCase):
         self.assertEqual(len(acl), 0)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_get_queue_acl_iter(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)         
@@ -787,7 +785,7 @@ class StorageQueueTest(QueueTestCase):
         self.assertEqual(len(acl), 0)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_get_queue_acl_with_non_existing_queue(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)  
@@ -800,7 +798,7 @@ class StorageQueueTest(QueueTestCase):
             # Assert
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_set_queue_acl(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)         
@@ -816,7 +814,7 @@ class StorageQueueTest(QueueTestCase):
         self.assertIsNotNone(acl)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_set_queue_acl_with_empty_signed_identifiers(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)         
@@ -832,7 +830,7 @@ class StorageQueueTest(QueueTestCase):
         self.assertEqual(len(acl), 0)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_set_queue_acl_with_empty_signed_identifier(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)         
@@ -852,7 +850,7 @@ class StorageQueueTest(QueueTestCase):
         self.assertIsNone(acl['empty'].start)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_set_queue_acl_with_signed_identifiers(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)         
@@ -875,7 +873,7 @@ class StorageQueueTest(QueueTestCase):
         self.assertTrue('testid' in acl)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_set_queue_acl_too_many_ids(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)         
@@ -892,7 +890,7 @@ class StorageQueueTest(QueueTestCase):
             queue_client.set_queue_access_policy(identifiers)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_set_queue_acl_with_non_existing_queue(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)  
@@ -905,7 +903,7 @@ class StorageQueueTest(QueueTestCase):
             # Assert
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_unicode_create_queue_unicode_name(self, resource_group, location, storage_account, storage_account_key):
         # Action
         qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)
@@ -919,7 +917,7 @@ class StorageQueueTest(QueueTestCase):
             # Asserts
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_unicode_get_messages_unicode_data(self, resource_group, location, storage_account, storage_account_key):
         # Action
         pytest.skip("Uncomment after msrest fix")
@@ -940,7 +938,7 @@ class StorageQueueTest(QueueTestCase):
         self.assertIsInstance(message.time_next_visible, datetime)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_unicode_update_message_unicode_data(self, resource_group, location, storage_account, storage_account_key):
         # Action
         pytest.skip("Uncomment after msrest fix")

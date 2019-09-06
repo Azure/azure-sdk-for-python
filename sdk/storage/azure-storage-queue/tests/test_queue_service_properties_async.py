@@ -8,7 +8,7 @@
 import unittest
 import pytest
 import asyncio
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, FakeStorageAccount
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 from azure.core.exceptions import HttpResponseError
@@ -24,12 +24,6 @@ from azure.storage.queue.aio import (
 
 from asyncqueuetestcase import (
     AsyncQueueTestCase
-)
-
-
-FAKE_STORAGE = FakeStorageAccount(
-    name='pyacrstorage',
-    id=''
 )
 
 # ------------------------------------------------------------------------------
@@ -122,7 +116,7 @@ class QueueServicePropertiesTest(AsyncQueueTestCase):
     # --Test cases per service ---------------------------------------
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncQueueTestCase.await_prepared_test
     async def test_queue_service_properties(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -142,7 +136,7 @@ class QueueServicePropertiesTest(AsyncQueueTestCase):
 
     # --Test cases per feature ---------------------------------------
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncQueueTestCase.await_prepared_test
     async def test_set_logging(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -157,7 +151,7 @@ class QueueServicePropertiesTest(AsyncQueueTestCase):
         self._assert_logging_equal(received_props.logging, logging)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncQueueTestCase.await_prepared_test
     async def test_set_hour_metrics(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -172,7 +166,7 @@ class QueueServicePropertiesTest(AsyncQueueTestCase):
         self._assert_metrics_equal(received_props.hour_metrics, hour_metrics)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncQueueTestCase.await_prepared_test
     async def test_set_minute_metrics(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -188,7 +182,7 @@ class QueueServicePropertiesTest(AsyncQueueTestCase):
         self._assert_metrics_equal(received_props.minute_metrics, minute_metrics)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncQueueTestCase.await_prepared_test
     async def test_set_cors(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -219,7 +213,7 @@ class QueueServicePropertiesTest(AsyncQueueTestCase):
     # --Test cases for errors ---------------------------------------
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncQueueTestCase.await_prepared_test
     async def test_retention_no_days(self, resource_group, location, storage_account, storage_account_key):
         # Assert
@@ -229,7 +223,7 @@ class QueueServicePropertiesTest(AsyncQueueTestCase):
                           True, None)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncQueueTestCase.await_prepared_test
     async def test_too_many_cors_rules(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -243,7 +237,7 @@ class QueueServicePropertiesTest(AsyncQueueTestCase):
             await qsc.set_service_properties()
     
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncQueueTestCase.await_prepared_test
     async def test_retention_too_long(self, resource_group, location, storage_account, storage_account_key):
         # Arrange

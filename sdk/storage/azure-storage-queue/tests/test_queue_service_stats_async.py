@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 import unittest
 import asyncio
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, FakeStorageAccount
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.storage.queue.aio import QueueServiceClient
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
@@ -22,10 +22,6 @@ SERVICE_LIVE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageServiceS
                                 '>live</Status><LastSyncTime>Wed, 19 Jan 2021 22:28:43 GMT</LastSyncTime></GeoReplication' \
                                 '></StorageServiceStats> '
 
-FAKE_STORAGE = FakeStorageAccount(
-    name='pyacrstorage',
-    id=''
-)
 
 class AiohttpTestTransport(AioHttpTransport):
     """Workaround to vcrpy bug: https://github.com/kevin1024/vcrpy/pull/461

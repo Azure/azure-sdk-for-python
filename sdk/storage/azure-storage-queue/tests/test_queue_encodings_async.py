@@ -34,9 +34,6 @@ from asyncqueuetestcase import (
 
 # ------------------------------------------------------------------------------
 TEST_QUEUE_PREFIX = 'mytestqueue'
-FAKE_STORAGE = FakeStorageAccount(
-    name='pyacrstorage',
-    id='')
 
 # ------------------------------------------------------------------------------
 
@@ -84,7 +81,7 @@ class StorageQueueEncodingTestAsync(AsyncQueueTestCase):
 
     # --------------------------------------------------------------------------
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncQueueTestCase.await_prepared_test
     async def test_message_text_xml(self, resource_group, location, storage_account, storage_account_key):
         # Arrange.
@@ -96,7 +93,7 @@ class StorageQueueEncodingTestAsync(AsyncQueueTestCase):
         await self._validate_encoding(queue, message)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncQueueTestCase.await_prepared_test
     async def test_message_text_xml_whitespace(self, resource_group, location, storage_account, storage_account_key):
         # Arrange.
@@ -108,7 +105,7 @@ class StorageQueueEncodingTestAsync(AsyncQueueTestCase):
         await self._validate_encoding(queue, message)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncQueueTestCase.await_prepared_test
     async def test_message_text_xml_invalid_chars(self, resource_group, location, storage_account, storage_account_key):
         # Action.
@@ -121,7 +118,7 @@ class StorageQueueEncodingTestAsync(AsyncQueueTestCase):
             await queue.enqueue_message(message)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncQueueTestCase.await_prepared_test
     async def test_message_text_base64(self, resource_group, location, storage_account, storage_account_key):
         # Arrange.
@@ -140,7 +137,7 @@ class StorageQueueEncodingTestAsync(AsyncQueueTestCase):
         await self._validate_encoding(queue, message)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncQueueTestCase.await_prepared_test
     async def test_message_bytes_base64(self, resource_group, location, storage_account, storage_account_key):
         # Arrange.
@@ -159,7 +156,7 @@ class StorageQueueEncodingTestAsync(AsyncQueueTestCase):
         await self._validate_encoding(queue, message)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncQueueTestCase.await_prepared_test
     async def test_message_bytes_fails(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -175,7 +172,7 @@ class StorageQueueEncodingTestAsync(AsyncQueueTestCase):
         self.assertTrue(str(e.exception).startswith('Message content must be text'))
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncQueueTestCase.await_prepared_test
     async def test_message_text_fails(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -197,7 +194,7 @@ class StorageQueueEncodingTestAsync(AsyncQueueTestCase):
         self.assertTrue(str(e.exception).startswith('Message content must be bytes'))
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncQueueTestCase.await_prepared_test
     async def test_message_base64_decode_fails(self, resource_group, location, storage_account, storage_account_key):
         # Arrange

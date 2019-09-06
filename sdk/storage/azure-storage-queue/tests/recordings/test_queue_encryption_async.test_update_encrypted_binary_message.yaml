@@ -7,7 +7,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 05 Sep 2019 22:19:06 GMT
+      - Fri, 06 Sep 2019 21:59:24 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
@@ -17,7 +17,7 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 05 Sep 2019 22:19:04 GMT
+      date: Fri, 06 Sep 2019 21:59:22 GMT
       server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2018-03-28'
     status:
@@ -34,10 +34,10 @@ interactions:
 - request:
     body: '<?xml version=''1.0'' encoding=''utf-8''?>
 
-      <QueueMessage><MessageText>{"EncryptedMessageContents": "MOopg/Vj0ZkwMvood+RpfmYeV2wXmGOxficzV5aFJkkJtLFu60QtrvfkbheJC/rvTk9aG4dgI1ims/vc5KY42aHghbN4J2Q/u3m/zJgXXEgmkWjMf/qHDG5OCp3HAkfBizatAHr6zCmfU/NsHDljOb19gVRJYx847d8oi/SkL9j4/FR2IunUfaeKXtA2bRmO",
-      "EncryptionData": {"WrappedContentKey": {"KeyId": "key1", "EncryptedKey": "mkkjhZpDmw0k5XUS6y/OUDLGNMQkk8WE9+MG1gs4y1OcddYnwGE6HQ==",
+      <QueueMessage><MessageText>{"EncryptedMessageContents": "PasSmFm3fs+J68W2w7iinbjfhw3r7ljJp5Gm0EuNt16Nn0WEcQq/bpgTPfBvG3Uej+s5yzPiKhfkyeGntcwi8k/VURgThb6wwCR90ShljRgjiBdT5IApOS4GW5y978vBy9CFTPNcKgTBxIg5OQz8+ZA3K4u4jkq3X4x4ZMnIHmDoOg1uEOapoK2GNnmae0FB",
+      "EncryptionData": {"WrappedContentKey": {"KeyId": "key1", "EncryptedKey": "/6Kc8IEvIbDLc8RuYWrc9I4qd/EQH8NVdkSYmlPdgXiNzW3K0MN4HQ==",
       "Algorithm": "A256KW"}, "EncryptionAgent": {"Protocol": "1.0", "EncryptionAlgorithm":
-      "AES_CBC_256"}, "ContentEncryptionIV": "iSZYU84WIpZgQuPN7qrUzA==", "KeyWrappingMetadata":
+      "AES_CBC_256"}, "ContentEncryptionIV": "V4KFZdVGS+qMubbdi3ksSg==", "KeyWrappingMetadata":
       {"EncryptionLibrary": "Python 12.0.0b2"}}}</MessageText></QueueMessage>'
     headers:
       Accept:
@@ -49,20 +49,20 @@ interactions:
       User-Agent:
       - azsdk-python-storage-queue/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 05 Sep 2019 22:19:06 GMT
+      - Fri, 06 Sep 2019 21:59:24 GMT
       x-ms-version:
       - '2018-03-28'
     method: POST
     uri: https://pyacrstorage63fd1a91.queue.core.windows.net/encryptionqueue63fd1a91/messages
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>2f6a9d36-b4ae-43ae-835d-ce5e4e3cf862</MessageId><InsertionTime>Thu,
-        05 Sep 2019 22:19:05 GMT</InsertionTime><ExpirationTime>Thu, 12 Sep 2019 22:19:05
-        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAPin77Tdk1QE=</PopReceipt><TimeNextVisible>Thu,
-        05 Sep 2019 22:19:05 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>1da36b32-9918-495f-84b8-6f56e7d7b170</MessageId><InsertionTime>Fri,
+        06 Sep 2019 21:59:23 GMT</InsertionTime><ExpirationTime>Fri, 13 Sep 2019 21:59:23
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAMBamV/5k1QE=</PopReceipt><TimeNextVisible>Fri,
+        06 Sep 2019 21:59:23 GMT</TimeNextVisible></QueueMessage></QueueMessagesList>"
     headers:
       content-type: application/xml
-      date: Thu, 05 Sep 2019 22:19:04 GMT
+      date: Fri, 06 Sep 2019 21:59:22 GMT
       server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-ms-version: '2018-03-28'
@@ -87,27 +87,27 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 05 Sep 2019 22:19:06 GMT
+      - Fri, 06 Sep 2019 21:59:24 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
     uri: https://pyacrstorage63fd1a91.queue.core.windows.net/encryptionqueue63fd1a91/messages
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>2f6a9d36-b4ae-43ae-835d-ce5e4e3cf862</MessageId><InsertionTime>Thu,
-        05 Sep 2019 22:19:05 GMT</InsertionTime><ExpirationTime>Thu, 12 Sep 2019 22:19:05
-        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAA84fh/zdk1QE=</PopReceipt><TimeNextVisible>Thu,
-        05 Sep 2019 22:19:35 GMT</TimeNextVisible><DequeueCount>1</DequeueCount><MessageText>{\"EncryptedMessageContents\":
-        \"MOopg/Vj0ZkwMvood+RpfmYeV2wXmGOxficzV5aFJkkJtLFu60QtrvfkbheJC/rvTk9aG4dgI1ims/vc5KY42aHghbN4J2Q/u3m/zJgXXEgmkWjMf/qHDG5OCp3HAkfBizatAHr6zCmfU/NsHDljOb19gVRJYx847d8oi/SkL9j4/FR2IunUfaeKXtA2bRmO\",
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>1da36b32-9918-495f-84b8-6f56e7d7b170</MessageId><InsertionTime>Fri,
+        06 Sep 2019 21:59:23 GMT</InsertionTime><ExpirationTime>Fri, 13 Sep 2019 21:59:23
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAYJyMaf5k1QE=</PopReceipt><TimeNextVisible>Fri,
+        06 Sep 2019 21:59:53 GMT</TimeNextVisible><DequeueCount>1</DequeueCount><MessageText>{\"EncryptedMessageContents\":
+        \"PasSmFm3fs+J68W2w7iinbjfhw3r7ljJp5Gm0EuNt16Nn0WEcQq/bpgTPfBvG3Uej+s5yzPiKhfkyeGntcwi8k/VURgThb6wwCR90ShljRgjiBdT5IApOS4GW5y978vBy9CFTPNcKgTBxIg5OQz8+ZA3K4u4jkq3X4x4ZMnIHmDoOg1uEOapoK2GNnmae0FB\",
         \"EncryptionData\": {\"WrappedContentKey\": {\"KeyId\": \"key1\", \"EncryptedKey\":
-        \"mkkjhZpDmw0k5XUS6y/OUDLGNMQkk8WE9+MG1gs4y1OcddYnwGE6HQ==\", \"Algorithm\":
+        \"/6Kc8IEvIbDLc8RuYWrc9I4qd/EQH8NVdkSYmlPdgXiNzW3K0MN4HQ==\", \"Algorithm\":
         \"A256KW\"}, \"EncryptionAgent\": {\"Protocol\": \"1.0\", \"EncryptionAlgorithm\":
-        \"AES_CBC_256\"}, \"ContentEncryptionIV\": \"iSZYU84WIpZgQuPN7qrUzA==\", \"KeyWrappingMetadata\":
+        \"AES_CBC_256\"}, \"ContentEncryptionIV\": \"V4KFZdVGS+qMubbdi3ksSg==\", \"KeyWrappingMetadata\":
         {\"EncryptionLibrary\": \"Python 12.0.0b2\"}}}</MessageText></QueueMessage></QueueMessagesList>"
     headers:
       cache-control: no-cache
       content-type: application/xml
-      date: Thu, 05 Sep 2019 22:19:04 GMT
+      date: Fri, 06 Sep 2019 21:59:22 GMT
       server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-ms-version: '2018-03-28'
@@ -132,7 +132,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 05 Sep 2019 22:19:06 GMT
+      - Fri, 06 Sep 2019 21:59:24 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
@@ -144,7 +144,7 @@ interactions:
     headers:
       cache-control: no-cache
       content-type: application/xml
-      date: Thu, 05 Sep 2019 22:19:04 GMT
+      date: Fri, 06 Sep 2019 21:59:22 GMT
       server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-ms-version: '2018-03-28'
@@ -162,10 +162,10 @@ interactions:
 - request:
     body: '<?xml version=''1.0'' encoding=''utf-8''?>
 
-      <QueueMessage><MessageText>{"EncryptedMessageContents": "iOQ/+7dNmRuTunuq3ssTtj7GwXTHAbF6xvCMUT1cVbAemhE2VfXrOXlo/WjK8uniepGXQbImGr8KpXF+KAch0yw/tRDj1HRJuXOI7O80XtK/UmwPJXthQdVoLYenppzRw4R+jT5dRycE2eLkNAil93SCMnp5mflslO7KujIJ3YM+JscHyAjxl5mC01NhuZcD",
-      "EncryptionData": {"WrappedContentKey": {"KeyId": "key1", "EncryptedKey": "uNQ9r0gNBG4sEN5b3M9lBD25aqEWv//T5ykAlSxPSVS94tZYGBRF5A==",
+      <QueueMessage><MessageText>{"EncryptedMessageContents": "HP7ep7vRbdTG5/8xrXb/hi33clzLXcX0DxDaHeo8JS5DKVdF8qNzkuvr0M/NjUUig+6clgJwUNqYoFSnqK5SwobxhL/jB/+NNK47wl7w4Yt8+p/A8sBMpBOVsFXGoAgT9JC2CufXHzSI6AjjbVMy4eRDyDl9Gmjd87M712Xzklmj4ZW/lq585P/SxHabblMn",
+      "EncryptionData": {"WrappedContentKey": {"KeyId": "key1", "EncryptedKey": "p5EVnNuMVYEdjiV/oqI4oBFwxojf/UVxYn8eg4uQcy4dYlwuGVSAdQ==",
       "Algorithm": "A256KW"}, "EncryptionAgent": {"Protocol": "1.0", "EncryptionAlgorithm":
-      "AES_CBC_256"}, "ContentEncryptionIV": "/hm/GGgT3PtmgTIavsEHDQ==", "KeyWrappingMetadata":
+      "AES_CBC_256"}, "ContentEncryptionIV": "ZhQUvq0vLIiZtPMOImoMaQ==", "KeyWrappingMetadata":
       {"EncryptionLibrary": "Python 12.0.0b2"}}}</MessageText></QueueMessage>'
     headers:
       Content-Length:
@@ -175,20 +175,20 @@ interactions:
       User-Agent:
       - azsdk-python-storage-queue/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 05 Sep 2019 22:19:06 GMT
+      - Fri, 06 Sep 2019 21:59:24 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
-    uri: https://pyacrstorage63fd1a91.queue.core.windows.net/encryptionqueue63fd1a91/messages/2f6a9d36-b4ae-43ae-835d-ce5e4e3cf862?popreceipt=AgAAAAMAAAAAAAAA84fh/zdk1QE%3D&visibilitytimeout=0
+    uri: https://pyacrstorage63fd1a91.queue.core.windows.net/encryptionqueue63fd1a91/messages/1da36b32-9918-495f-84b8-6f56e7d7b170?popreceipt=AgAAAAMAAAAAAAAAYJyMaf5k1QE%3D&visibilitytimeout=0
   response:
     body:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 05 Sep 2019 22:19:04 GMT
+      date: Fri, 06 Sep 2019 21:59:22 GMT
       server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-popreceipt: AwAAAAMAAAAAAAAAAm4K7jdk1QEBAAAA
-      x-ms-time-next-visible: Thu, 05 Sep 2019 22:19:05 GMT
+      x-ms-popreceipt: AwAAAAMAAAAAAAAAxW22V/5k1QEBAAAA
+      x-ms-time-next-visible: Fri, 06 Sep 2019 21:59:23 GMT
       x-ms-version: '2018-03-28'
     status:
       code: 204
@@ -198,8 +198,8 @@ interactions:
       - !!python/object/new:urllib.parse.SplitResult
         - https
         - pyacrstorage63fd1a91.queue.core.windows.net
-        - /encryptionqueue63fd1a91/messages/2f6a9d36-b4ae-43ae-835d-ce5e4e3cf862
-        - popreceipt=AgAAAAMAAAAAAAAA84fh/zdk1QE%3D&visibilitytimeout=0
+        - /encryptionqueue63fd1a91/messages/1da36b32-9918-495f-84b8-6f56e7d7b170
+        - popreceipt=AgAAAAMAAAAAAAAAYJyMaf5k1QE%3D&visibilitytimeout=0
         - ''
 - request:
     body: null
@@ -211,27 +211,27 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 05 Sep 2019 22:19:06 GMT
+      - Fri, 06 Sep 2019 21:59:24 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
     uri: https://pyacrstorage63fd1a91.queue.core.windows.net/encryptionqueue63fd1a91/messages
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>2f6a9d36-b4ae-43ae-835d-ce5e4e3cf862</MessageId><InsertionTime>Thu,
-        05 Sep 2019 22:19:05 GMT</InsertionTime><ExpirationTime>Thu, 12 Sep 2019 22:19:05
-        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAApaXw/zdk1QE=</PopReceipt><TimeNextVisible>Thu,
-        05 Sep 2019 22:19:35 GMT</TimeNextVisible><DequeueCount>2</DequeueCount><MessageText>{\"EncryptedMessageContents\":
-        \"iOQ/+7dNmRuTunuq3ssTtj7GwXTHAbF6xvCMUT1cVbAemhE2VfXrOXlo/WjK8uniepGXQbImGr8KpXF+KAch0yw/tRDj1HRJuXOI7O80XtK/UmwPJXthQdVoLYenppzRw4R+jT5dRycE2eLkNAil93SCMnp5mflslO7KujIJ3YM+JscHyAjxl5mC01NhuZcD\",
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><QueueMessagesList><QueueMessage><MessageId>1da36b32-9918-495f-84b8-6f56e7d7b170</MessageId><InsertionTime>Fri,
+        06 Sep 2019 21:59:23 GMT</InsertionTime><ExpirationTime>Fri, 13 Sep 2019 21:59:23
+        GMT</ExpirationTime><PopReceipt>AgAAAAMAAAAAAAAAUWmdaf5k1QE=</PopReceipt><TimeNextVisible>Fri,
+        06 Sep 2019 21:59:53 GMT</TimeNextVisible><DequeueCount>2</DequeueCount><MessageText>{\"EncryptedMessageContents\":
+        \"HP7ep7vRbdTG5/8xrXb/hi33clzLXcX0DxDaHeo8JS5DKVdF8qNzkuvr0M/NjUUig+6clgJwUNqYoFSnqK5SwobxhL/jB/+NNK47wl7w4Yt8+p/A8sBMpBOVsFXGoAgT9JC2CufXHzSI6AjjbVMy4eRDyDl9Gmjd87M712Xzklmj4ZW/lq585P/SxHabblMn\",
         \"EncryptionData\": {\"WrappedContentKey\": {\"KeyId\": \"key1\", \"EncryptedKey\":
-        \"uNQ9r0gNBG4sEN5b3M9lBD25aqEWv//T5ykAlSxPSVS94tZYGBRF5A==\", \"Algorithm\":
+        \"p5EVnNuMVYEdjiV/oqI4oBFwxojf/UVxYn8eg4uQcy4dYlwuGVSAdQ==\", \"Algorithm\":
         \"A256KW\"}, \"EncryptionAgent\": {\"Protocol\": \"1.0\", \"EncryptionAlgorithm\":
-        \"AES_CBC_256\"}, \"ContentEncryptionIV\": \"/hm/GGgT3PtmgTIavsEHDQ==\", \"KeyWrappingMetadata\":
+        \"AES_CBC_256\"}, \"ContentEncryptionIV\": \"ZhQUvq0vLIiZtPMOImoMaQ==\", \"KeyWrappingMetadata\":
         {\"EncryptionLibrary\": \"Python 12.0.0b2\"}}}</MessageText></QueueMessage></QueueMessagesList>"
     headers:
       cache-control: no-cache
       content-type: application/xml
-      date: Thu, 05 Sep 2019 22:19:04 GMT
+      date: Fri, 06 Sep 2019 21:59:22 GMT
       server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-ms-version: '2018-03-28'
@@ -256,7 +256,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Thu, 05 Sep 2019 22:19:06 GMT
+      - Fri, 06 Sep 2019 21:59:24 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
@@ -268,7 +268,7 @@ interactions:
     headers:
       cache-control: no-cache
       content-type: application/xml
-      date: Thu, 05 Sep 2019 22:19:04 GMT
+      date: Fri, 06 Sep 2019 21:59:23 GMT
       server: Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-ms-version: '2018-03-28'

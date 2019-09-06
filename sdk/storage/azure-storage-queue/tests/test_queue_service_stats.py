@@ -55,7 +55,6 @@ class QueueServiceStatsTest(QueueTestCase):
 
         # Act
         stats = qsc.get_service_stats(raw_response_hook=self.override_response_body_with_live_status)
-        print(stats.geo_replication)
         # Assert
         self._assert_stats_default(stats)
 

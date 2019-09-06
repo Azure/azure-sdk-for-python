@@ -15,7 +15,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Wed, 04 Sep 2019 22:20:58 GMT
+      - Fri, 06 Sep 2019 21:52:03 GMT
       x-ms-version:
       - '2018-03-28'
     method: DELETE
@@ -23,14 +23,14 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>QueueNotFound</Code><Message>The
-        specified queue does not exist.\nRequestId:4e876382-c003-0069-196f-63d99b000000\nTime:2019-09-04T22:20:58.9065585Z</Message></Error>"
+        specified queue does not exist.\nRequestId:be149ee3-1003-006b-73fd-64db61000000\nTime:2019-09-06T21:52:02.2150641Z</Message></Error>"
     headers:
       content-length:
       - '217'
       content-type:
       - application/xml
       date:
-      - Wed, 04 Sep 2019 22:20:58 GMT
+      - Fri, 06 Sep 2019 21:52:01 GMT
       server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:

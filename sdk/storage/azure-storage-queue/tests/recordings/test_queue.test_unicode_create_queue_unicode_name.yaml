@@ -15,7 +15,7 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-date:
-      - Wed, 04 Sep 2019 22:22:13 GMT
+      - Fri, 06 Sep 2019 21:53:13 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
@@ -23,14 +23,14 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidResourceName</Code><Message>The
-        specifed resource name contains invalid characters.\nRequestId:2487d8f9-2003-0058-056f-630e71000000\nTime:2019-09-04T22:22:13.3836236Z</Message></Error>"
+        specifed resource name contains invalid characters.\nRequestId:bc6afec8-7003-006c-3bfd-645a7c000000\nTime:2019-09-06T21:53:12.7426667Z</Message></Error>"
     headers:
       content-length:
       - '243'
       content-type:
       - application/xml
       date:
-      - Wed, 04 Sep 2019 22:22:13 GMT
+      - Fri, 06 Sep 2019 21:53:12 GMT
       server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:

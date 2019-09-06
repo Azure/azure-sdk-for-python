@@ -85,10 +85,10 @@ class TestQueueAuthSamples(QueueTestCase):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:
             return
-        cs = self.connection_string(storage_account, storage_account_key)
+        connection_string = self.connection_string(storage_account, storage_account_key)
         # Instantiate a QueueServiceClient using a connection string
         from azure.storage.queue import QueueServiceClient
-        queue_service = QueueServiceClient.from_connection_string(cs)
+        queue_service = QueueServiceClient.from_connection_string(connection_string)
 
         # Create a SAS token to use for authentication of a client
         sas_token = queue_service.generate_shared_access_signature(
