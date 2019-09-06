@@ -14,6 +14,9 @@ class KeyVaultTestCase(AzureMgmtTestCase):
 
     def tearDown(self):
         super(KeyVaultTestCase, self).tearDown()
+        if self.is_live:
+            # write identifier to file
+            pass
 
     def _poll_until_no_exception(self, fn, expected_exception, max_retries=20, retry_delay=3):
         """polling helper for live tests because some operations take an unpredictable amount of time to complete"""
