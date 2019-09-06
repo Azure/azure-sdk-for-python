@@ -111,12 +111,13 @@ class ContainerManagement:
                 partition_key=partition_key,
                 indexing_policy=coll['indexingPolicy']
             )
+            properties = container.read()
             print('Container with id \'{0}\' created'.format(container.id))
-            print('IndexPolicy Mode - \'{0}\''.format(container.properties['indexingPolicy']['indexingMode']))
-            print('IndexPolicy Automatic - \'{0}\''.format(container.properties['indexingPolicy']['automatic']))
+            print('IndexPolicy Mode - \'{0}\''.format(properties['indexingPolicy']['indexingMode']))
+            print('IndexPolicy Automatic - \'{0}\''.format(properties['indexingPolicy']['automatic']))
             
         except errors.CosmosResourceExistsError:
-            print('A container with id \'{0}\' already exists'.format(container['id']))
+            print('A container with id \'{0}\' already exists'.format(coll['id']))
 
         print("\n2.3 Create Container - With custom offer throughput")
 
@@ -130,7 +131,7 @@ class ContainerManagement:
             print('Container with id \'{0}\' created'.format(container.id))
             
         except errors.CosmosResourceExistsError:
-            print('A container with id \'{0}\' already exists'.format(container.id))
+            print('A container with id \'{0}\' already exists'.format(coll['id']))
 
         print("\n2.4 Create Container - With Unique keys")
 
@@ -140,12 +141,13 @@ class ContainerManagement:
                 partition_key=partition_key,
                 unique_key_policy={'uniqueKeys': [{'paths': ['/field1/field2', '/field3']}]}
             )
-            unique_key_paths = container.properties['uniqueKeyPolicy']['uniqueKeys'][0]['paths']
+            properties = container.read()
+            unique_key_paths = properties['uniqueKeyPolicy']['uniqueKeys'][0]['paths']
             print('Container with id \'{0}\' created'.format(container.id))
             print('Unique Key Paths - \'{0}\', \'{1}\''.format(unique_key_paths[0], unique_key_paths[1]))
             
         except errors.CosmosResourceExistsError:
-            print('A container with id \'{0}\' already exists'.format(container.id))
+            print('A container with id \'container_unique_keys\' already exists')
 
         print("\n2.5 Create Collection - With Partition key V2 (Default)")
 
@@ -154,12 +156,12 @@ class ContainerManagement:
                 id="collection_partition_key_v2",
                 partition_key=PartitionKey(path='/id', kind='Hash')
             )
-
+            properties = container.read()
             print('Container with id \'{0}\' created'.format(container.id))
-            print('Partition Key - \'{0}\''.format(container.properties['partitionKey']))
+            print('Partition Key - \'{0}\''.format(properties['partitionKey']))
 
         except errors.CosmosResourceExistsError:
-            print('A container with id \'{0}\' already exists'.format(container.id))
+            print('A container with id \'collection_partition_key_v2\' already exists')
 
         print("\n2.6 Create Collection - With Partition key V1")
 
@@ -168,12 +170,12 @@ class ContainerManagement:
                 id="collection_partition_key_v1",
                 partition_key=PartitionKey(path='/id', kind='Hash', version=1)
             )
-
+            properties = container.read()
             print('Container with id \'{0}\' created'.format(container.id))
-            print('Partition Key - \'{0}\''.format(container.properties['partitionKey']))
+            print('Partition Key - \'{0}\''.format(properties['partitionKey']))
 
         except errors.CosmosResourceExistsError:
-            print('A container with id \'{0}\' already exists'.format(container.id))
+            print('A container with id \'collection_partition_key_v1\' already exists')
 
     @staticmethod
     def manage_offer_throughput(db, id):
@@ -250,7 +252,7 @@ def run_sample():
                 db = client.create_database(id=DATABASE_ID)
             
             except errors.CosmosResourceExistsError:
-                pass
+                db = client.get_database_client(DATABASE_ID)
             
             # query for a container            
             ContainerManagement.find_container(db, CONTAINER_ID)
