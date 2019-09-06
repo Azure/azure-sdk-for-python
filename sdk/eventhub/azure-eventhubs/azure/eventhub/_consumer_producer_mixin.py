@@ -80,7 +80,7 @@ class ConsumerProducerMixin(object):
 
         return _handle_exception(exception, self)
 
-    def _do_retryable_operation(self, operation, timeout=None, **kwargs):
+    def _do_retryable_operation(self, operation, timeout=100000, **kwargs):
         # pylint:disable=protected-access
         timeout_time = time.time() + (
             timeout if timeout else 100000)  # timeout equals to 0 means no timeout, set the value to be a large number.
