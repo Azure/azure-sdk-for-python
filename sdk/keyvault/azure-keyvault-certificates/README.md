@@ -1,14 +1,12 @@
 # Azure Key Vault Certificates client library for Python
 Azure Key Vault helps solve the following problems:
-- Cryptographic key management (this library) - create, store, and control
-access to the keys used to encrypt your data
+- Certificate management (this library) - create, manage, and deploy public and private SSL/TLS certificates
+- Cryptographic key management
+([`azure-keyvault-keys`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys)) - create, store, and control access to the keys used to encrypt your data
 - Secrets management
 ([`azure-keyvault-secrets`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-secrets)) -
 securely store and control access to tokens, passwords, certificates, API keys,
 and other secrets
-- Certificate management
-([`azure-keyvault-certificates`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-certificates)) -
-create, manage, and deploy public and private SSL/TLS certificates
 
 [Source code][certificates_client_src] | [Package (PyPI)][pypi_package_certificates] | [API reference documentation][reference_docs] | [Product documentation][keyvault_docs] | [Samples][certificates_samples]
 
