@@ -65,7 +65,7 @@ class ContainerProxy(object):
         self._properties = properties
         self.container_link = u"{}/colls/{}".format(database_link, self.id)
         self._is_system_key = None
-        self._scripts = None
+        self._scripts = None  # type: Optional[ScriptsProxy]
 
     def _get_properties(self):
         # type: () -> Dict[str, Any]
@@ -88,7 +88,7 @@ class ContainerProxy(object):
         # type: () -> ScriptsProxy
         if self._scripts is None:
             self._scripts = ScriptsProxy(self.client_connection, self.container_link, self.is_system_key)
-        return self._scripts
+        return cast('ScriptsProxy', self._scripts)
 
     def _get_document_link(self, item_or_link):
         # type: (Union[Dict[str, Any], str]) -> str
