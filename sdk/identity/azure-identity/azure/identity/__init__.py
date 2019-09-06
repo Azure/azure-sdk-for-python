@@ -19,15 +19,14 @@ class DefaultAzureCredential(ChainedTokenCredential):
     """
     A default credential capable of handling most Azure SDK authentication scenarios.
 
-    When environment variable configuration is present, it authenticates as a service principal using
-    :class:`azure.identity.EnvironmentCredential`.
+    The identity it uses depends on the environment. When an access token is needed, it requests one using these
+    identities in turn, stopping when one provides a token:
 
-    When environment configuration is not present, it authenticates with a managed identity using
-    :class:`azure.identity.ManagedIdentityCredential`.
-
-    On Windows, when environment variable configuration and managed identity are unavailable, it finally
-    attempts to authenticate with a token from the cache shared by Microsoft applications using
-    :class:`azure.identity.SharedTokenCacheCredential`.
+    1. A service principal configured by environment variables. See :class:`~azure.identity.EnvironmentCredential` for
+       more details.
+    2. An Azure managed identity. See :class:`~azure.identity.ManagedIdentityCredential` for more details.
+    3. On Windows only, the current user, using a token from the local cache shared by Microsoft applications. See
+       :class:`~azure.identity.SharedTokenCacheCredential` for more details.
     """
 
     def __init__(self, **kwargs):
