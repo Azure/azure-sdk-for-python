@@ -5,7 +5,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 05 Sep 2019 19:42:56 GMT
+      - Fri, 06 Sep 2019 18:11:10 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -15,9 +15,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 05 Sep 2019 19:42:55 GMT
-      etag: '"0x8D732393F7F18D6"'
-      last-modified: Thu, 05 Sep 2019 19:42:55 GMT
+      date: Fri, 06 Sep 2019 18:11:09 GMT
+      etag: '"0x8D732F5980F0352"'
+      last-modified: Fri, 06 Sep 2019 18:11:09 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2019-02-02'
     status:
@@ -37,7 +37,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 05 Sep 2019 19:42:56 GMT
+      - Fri, 06 Sep 2019 18:11:11 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -45,11 +45,11 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareNotFound</Code><Message>The
-        specified share does not exist.\nRequestId:b5c5cc44-201a-004a-2f22-64b650000000\nTime:2019-09-05T19:42:55.6483552Z</Message></Error>"
+        specified share does not exist.\nRequestId:0eac9e39-f01a-000e-41de-646db4000000\nTime:2019-09-06T18:11:09.6231941Z</Message></Error>"
     headers:
       content-length: '217'
       content-type: application/xml
-      date: Thu, 05 Sep 2019 19:42:55 GMT
+      date: Fri, 06 Sep 2019 18:11:09 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: ShareNotFound
       x-ms-version: '2019-02-02'

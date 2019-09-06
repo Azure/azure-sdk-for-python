@@ -5,7 +5,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 05 Sep 2019 19:41:52 GMT
+      - Fri, 06 Sep 2019 18:10:09 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -15,9 +15,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 05 Sep 2019 19:41:51 GMT
-      etag: '"0x8D7323919AEE2CB"'
-      last-modified: Thu, 05 Sep 2019 19:41:52 GMT
+      date: Fri, 06 Sep 2019 18:10:08 GMT
+      etag: '"0x8D732F573BE9B73"'
+      last-modified: Fri, 06 Sep 2019 18:10:08 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2019-02-02'
     status:
@@ -37,7 +37,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 05 Sep 2019 19:41:52 GMT
+      - Fri, 06 Sep 2019 18:10:10 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -47,11 +47,11 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 05 Sep 2019 19:41:51 GMT
-      etag: '"0x8D7323919AEE2CB"'
-      last-modified: Thu, 05 Sep 2019 19:41:52 GMT
+      date: Fri, 06 Sep 2019 18:10:08 GMT
+      etag: '"0x8D732F573BE9B73"'
+      last-modified: Fri, 06 Sep 2019 18:10:08 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-snapshot: '2019-09-05T19:41:52.0000000Z'
+      x-ms-snapshot: '2019-09-06T18:10:08.0000000Z'
       x-ms-version: '2019-02-02'
     status:
       code: 201
@@ -70,7 +70,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 05 Sep 2019 19:41:52 GMT
+      - Fri, 06 Sep 2019 18:10:10 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
@@ -78,11 +78,11 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareHasSnapshots</Code><Message>The
-        share has snapshots and the operation requires no snapshots.\nRequestId:8508a825-a01a-0021-4e21-649c9e000000\nTime:2019-09-05T19:41:52.3031932Z</Message></Error>"
+        share has snapshots and the operation requires no snapshots.\nRequestId:f2de82bd-b01a-013e-4cde-6458bf000000\nTime:2019-09-06T18:10:09.0635271Z</Message></Error>"
     headers:
       content-length: '250'
       content-type: application/xml
-      date: Thu, 05 Sep 2019 19:41:51 GMT
+      date: Fri, 06 Sep 2019 18:10:08 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: ShareHasSnapshots
       x-ms-version: '2019-02-02'
@@ -103,17 +103,17 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 05 Sep 2019 19:41:53 GMT
+      - Fri, 06 Sep 2019 18:10:10 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://pyacrstorage851111bc.file.core.windows.net/share851111bc?sharesnapshot=2019-09-05T19:41:52.0000000Z&restype=share
+    uri: https://pyacrstorage851111bc.file.core.windows.net/share851111bc?sharesnapshot=2019-09-06T18:10:08.0000000Z&restype=share
   response:
     body:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 05 Sep 2019 19:41:52 GMT
+      date: Fri, 06 Sep 2019 18:10:10 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2019-02-02'
     status:
@@ -125,6 +125,6 @@ interactions:
         - https
         - pyacrstorage851111bc.file.core.windows.net
         - /share851111bc
-        - sharesnapshot=2019-09-05T19:41:52.0000000Z&restype=share
+        - sharesnapshot=2019-09-06T18:10:08.0000000Z&restype=share
         - ''
 version: 1

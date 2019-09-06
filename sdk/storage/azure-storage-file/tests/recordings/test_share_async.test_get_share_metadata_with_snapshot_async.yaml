@@ -5,7 +5,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 05 Sep 2019 19:42:02 GMT
+      - Fri, 06 Sep 2019 18:10:03 GMT
       x-ms-meta:
       - '{''hello'': ''world'', ''number'': ''42''}'
       x-ms-meta-hello:
@@ -21,9 +21,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 05 Sep 2019 19:42:01 GMT
-      etag: '"0x8D732391F828F1B"'
-      last-modified: Thu, 05 Sep 2019 19:42:01 GMT
+      date: Fri, 06 Sep 2019 18:10:01 GMT
+      etag: '"0x8D732F570346217"'
+      last-modified: Fri, 06 Sep 2019 18:10:02 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2019-02-02'
     status:
@@ -43,7 +43,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 05 Sep 2019 19:42:02 GMT
+      - Fri, 06 Sep 2019 18:10:04 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -53,11 +53,11 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 05 Sep 2019 19:42:01 GMT
-      etag: '"0x8D732391F828F1B"'
-      last-modified: Thu, 05 Sep 2019 19:42:01 GMT
+      date: Fri, 06 Sep 2019 18:10:02 GMT
+      etag: '"0x8D732F570346217"'
+      last-modified: Fri, 06 Sep 2019 18:10:02 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-snapshot: '2019-09-05T19:42:01.0000000Z'
+      x-ms-snapshot: '2019-09-06T18:10:02.0000000Z'
       x-ms-version: '2019-02-02'
     status:
       code: 201
@@ -76,19 +76,19 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 05 Sep 2019 19:42:02 GMT
+      - Fri, 06 Sep 2019 18:10:04 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://pyacrstorageeec718b6.file.core.windows.net/shareeec718b6?sharesnapshot=2019-09-05T19:42:01.0000000Z&restype=share
+    uri: https://pyacrstorageeec718b6.file.core.windows.net/shareeec718b6?sharesnapshot=2019-09-06T18:10:02.0000000Z&restype=share
   response:
     body:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 05 Sep 2019 19:42:01 GMT
-      etag: '"0x8D732391F828F1B"'
-      last-modified: Thu, 05 Sep 2019 19:42:01 GMT
+      date: Fri, 06 Sep 2019 18:10:02 GMT
+      etag: '"0x8D732F570346217"'
+      last-modified: Fri, 06 Sep 2019 18:10:02 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-has-immutability-policy: 'false'
       x-ms-has-legal-hold: 'false'
@@ -105,6 +105,6 @@ interactions:
         - https
         - pyacrstorageeec718b6.file.core.windows.net
         - /shareeec718b6
-        - sharesnapshot=2019-09-05T19:42:01.0000000Z&restype=share
+        - sharesnapshot=2019-09-06T18:10:02.0000000Z&restype=share
         - ''
 version: 1

@@ -13,7 +13,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 05 Sep 2019 19:40:47 GMT
+      - Fri, 06 Sep 2019 18:09:10 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -25,11 +25,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 05 Sep 2019 19:40:47 GMT
+      - Fri, 06 Sep 2019 18:09:09 GMT
       etag:
-      - '"0x8D73238F32C7A65"'
+      - '"0x8D732F5506337C0"'
       last-modified:
-      - Thu, 05 Sep 2019 19:40:47 GMT
+      - Fri, 06 Sep 2019 18:09:09 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -51,7 +51,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 05 Sep 2019 19:40:48 GMT
+      - Fri, 06 Sep 2019 18:09:11 GMT
       x-ms-meta-hello:
       - world
       x-ms-meta-number:
@@ -67,11 +67,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 05 Sep 2019 19:40:47 GMT
+      - Fri, 06 Sep 2019 18:09:09 GMT
       etag:
-      - '"0x8D73238F33DDF2B"'
+      - '"0x8D732F550F24712"'
       last-modified:
-      - Thu, 05 Sep 2019 19:40:47 GMT
+      - Fri, 06 Sep 2019 18:09:10 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -91,7 +91,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 05 Sep 2019 19:40:48 GMT
+      - Fri, 06 Sep 2019 18:09:11 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -103,11 +103,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 05 Sep 2019 19:40:47 GMT
+      - Fri, 06 Sep 2019 18:09:09 GMT
       etag:
-      - '"0x8D73238F33DDF2B"'
+      - '"0x8D732F550F24712"'
       last-modified:
-      - Thu, 05 Sep 2019 19:40:47 GMT
+      - Fri, 06 Sep 2019 18:09:10 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-has-immutability-policy:

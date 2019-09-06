@@ -5,7 +5,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 05 Sep 2019 19:41:26 GMT
+      - Fri, 06 Sep 2019 18:09:40 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -15,9 +15,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 05 Sep 2019 19:41:24 GMT
-      etag: '"0x8D7323909C253F4"'
-      last-modified: Thu, 05 Sep 2019 19:41:25 GMT
+      date: Fri, 06 Sep 2019 18:09:39 GMT
+      etag: '"0x8D732F56226D716"'
+      last-modified: Fri, 06 Sep 2019 18:09:39 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2019-02-02'
     status:
@@ -37,7 +37,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 05 Sep 2019 19:41:26 GMT
+      - Fri, 06 Sep 2019 18:09:40 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -45,11 +45,11 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareAlreadyExists</Code><Message>The
-        specified share already exists.\nRequestId:320e6ac9-e01a-000f-1a21-641c59000000\nTime:2019-09-05T19:41:25.4809873Z</Message></Error>"
+        specified share already exists.\nRequestId:839ade00-801a-0021-70de-64eb06000000\nTime:2019-09-06T18:09:39.1623678Z</Message></Error>"
     headers:
       content-length: '222'
       content-type: application/xml
-      date: Thu, 05 Sep 2019 19:41:24 GMT
+      date: Fri, 06 Sep 2019 18:09:39 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: ShareAlreadyExists
       x-ms-version: '2019-02-02'

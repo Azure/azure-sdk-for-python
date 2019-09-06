@@ -5,7 +5,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 05 Sep 2019 17:51:46 GMT
+      - Fri, 06 Sep 2019 17:47:44 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -15,9 +15,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 05 Sep 2019 17:51:45 GMT
-      etag: '"0x8D73229B810B137"'
-      last-modified: Thu, 05 Sep 2019 17:51:45 GMT
+      date: Fri, 06 Sep 2019 17:47:50 GMT
+      etag: '"0x8D732F2564BB1DF"'
+      last-modified: Fri, 06 Sep 2019 17:47:50 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2019-02-02'
     status:
@@ -37,7 +37,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 05 Sep 2019 17:51:46 GMT
+      - Fri, 06 Sep 2019 17:47:52 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -45,11 +45,11 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ParentNotFound</Code><Message>The
-        specified parent path does not exist.\nRequestId:d3a6a8d1-a01a-0050-7112-64993f000000\nTime:2019-09-05T17:51:46.0064640Z</Message></Error>"
+        specified parent path does not exist.\nRequestId:894c2fe4-c01a-0012-43db-6461dd000000\nTime:2019-09-06T17:47:52.3511591Z</Message></Error>"
     headers:
       content-length: '224'
       content-type: application/xml
-      date: Thu, 05 Sep 2019 17:51:45 GMT
+      date: Fri, 06 Sep 2019 17:47:52 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: ParentNotFound
       x-ms-version: '2019-02-02'

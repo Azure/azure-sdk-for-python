@@ -5,7 +5,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 05 Sep 2019 19:41:47 GMT
+      - Fri, 06 Sep 2019 18:09:58 GMT
       x-ms-meta:
       - '{''hello'': ''world'', ''number'': ''42''}'
       x-ms-meta-hello:
@@ -21,9 +21,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 05 Sep 2019 19:41:46 GMT
-      etag: '"0x8D732391699BCE5"'
-      last-modified: Thu, 05 Sep 2019 19:41:46 GMT
+      date: Fri, 06 Sep 2019 18:09:57 GMT
+      etag: '"0x8D732F56D39CB40"'
+      last-modified: Fri, 06 Sep 2019 18:09:57 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2019-02-02'
     status:
@@ -43,7 +43,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 05 Sep 2019 19:41:47 GMT
+      - Fri, 06 Sep 2019 18:09:59 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -53,9 +53,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 05 Sep 2019 19:41:46 GMT
-      etag: '"0x8D732391699BCE5"'
-      last-modified: Thu, 05 Sep 2019 19:41:46 GMT
+      date: Fri, 06 Sep 2019 18:09:57 GMT
+      etag: '"0x8D732F56D39CB40"'
+      last-modified: Fri, 06 Sep 2019 18:09:57 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-has-immutability-policy: 'false'
       x-ms-has-legal-hold: 'false'

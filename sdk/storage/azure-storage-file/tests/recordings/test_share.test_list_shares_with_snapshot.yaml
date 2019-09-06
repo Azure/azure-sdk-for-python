@@ -13,7 +13,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 05 Sep 2019 19:40:29 GMT
+      - Fri, 06 Sep 2019 18:08:51 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -25,11 +25,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 05 Sep 2019 19:40:28 GMT
+      - Fri, 06 Sep 2019 18:08:50 GMT
       etag:
-      - '"0x8D73238E82CA5C5"'
+      - '"0x8D732F54519041F"'
       last-modified:
-      - Thu, 05 Sep 2019 19:40:29 GMT
+      - Fri, 06 Sep 2019 18:08:50 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -51,7 +51,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 05 Sep 2019 19:40:29 GMT
+      - Fri, 06 Sep 2019 18:08:51 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -63,15 +63,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 05 Sep 2019 19:40:28 GMT
+      - Fri, 06 Sep 2019 18:08:52 GMT
       etag:
-      - '"0x8D73238E82CA5C5"'
+      - '"0x8D732F54519041F"'
       last-modified:
-      - Thu, 05 Sep 2019 19:40:29 GMT
+      - Fri, 06 Sep 2019 18:08:50 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-snapshot:
-      - '2019-09-05T19:40:29.0000000Z'
+      - '2019-09-06T18:08:52.0000000Z'
       x-ms-version:
       - '2019-02-02'
     status:
@@ -91,7 +91,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 05 Sep 2019 19:40:30 GMT
+      - Fri, 06 Sep 2019 18:08:53 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -103,15 +103,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 05 Sep 2019 19:40:29 GMT
+      - Fri, 06 Sep 2019 18:08:52 GMT
       etag:
-      - '"0x8D73238E82CA5C5"'
+      - '"0x8D732F54519041F"'
       last-modified:
-      - Thu, 05 Sep 2019 19:40:29 GMT
+      - Fri, 06 Sep 2019 18:08:50 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-snapshot:
-      - '2019-09-05T19:40:30.0000000Z'
+      - '2019-09-06T18:08:53.0000000Z'
       x-ms-version:
       - '2019-02-02'
     status:
@@ -129,7 +129,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 05 Sep 2019 19:40:30 GMT
+      - Fri, 06 Sep 2019 18:08:53 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -137,16 +137,16 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://pyacrstorage6348110b.file.core.windows.net/\"><Shares><Share><Name>random6348110b</Name><Snapshot>2019-09-05T19:40:29.0000000Z</Snapshot><Properties><Last-Modified>Thu,
-        05 Sep 2019 19:40:29 GMT</Last-Modified><Etag>\"0x8D73238E82CA5C5\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>random6348110b</Name><Snapshot>2019-09-05T19:40:30.0000000Z</Snapshot><Properties><Last-Modified>Thu,
-        05 Sep 2019 19:40:29 GMT</Last-Modified><Etag>\"0x8D73238E82CA5C5\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>random6348110b</Name><Properties><Last-Modified>Thu,
-        05 Sep 2019 19:40:29 GMT</Last-Modified><Etag>\"0x8D73238E82CA5C5\"</Etag><Quota>5120</Quota></Properties></Share></Shares><NextMarker
+        ServiceEndpoint=\"https://pyacrstorage6348110b.file.core.windows.net/\"><Shares><Share><Name>random6348110b</Name><Snapshot>2019-09-06T18:08:52.0000000Z</Snapshot><Properties><Last-Modified>Fri,
+        06 Sep 2019 18:08:50 GMT</Last-Modified><Etag>\"0x8D732F54519041F\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>random6348110b</Name><Snapshot>2019-09-06T18:08:53.0000000Z</Snapshot><Properties><Last-Modified>Fri,
+        06 Sep 2019 18:08:50 GMT</Last-Modified><Etag>\"0x8D732F54519041F\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>random6348110b</Name><Properties><Last-Modified>Fri,
+        06 Sep 2019 18:08:50 GMT</Last-Modified><Etag>\"0x8D732F54519041F\"</Etag><Quota>5120</Quota></Properties></Share></Shares><NextMarker
         /></EnumerationResults>"
     headers:
       content-type:
       - application/xml
       date:
-      - Thu, 05 Sep 2019 19:40:29 GMT
+      - Fri, 06 Sep 2019 18:08:52 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -170,7 +170,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 05 Sep 2019 19:40:30 GMT
+      - Fri, 06 Sep 2019 18:08:53 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
@@ -184,7 +184,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 05 Sep 2019 19:40:29 GMT
+      - Fri, 06 Sep 2019 18:08:52 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:

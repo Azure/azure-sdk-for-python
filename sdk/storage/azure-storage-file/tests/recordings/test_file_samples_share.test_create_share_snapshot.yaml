@@ -13,7 +13,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 05 Sep 2019 00:32:52 GMT
+      - Fri, 06 Sep 2019 18:04:08 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -25,11 +25,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 05 Sep 2019 00:32:52 GMT
+      - Fri, 06 Sep 2019 18:04:07 GMT
       etag:
-      - '"0x8D7319896791695"'
+      - '"0x8D732F49C8D4D3D"'
       last-modified:
-      - Thu, 05 Sep 2019 00:32:52 GMT
+      - Fri, 06 Sep 2019 18:04:07 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -51,7 +51,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 05 Sep 2019 00:32:52 GMT
+      - Fri, 06 Sep 2019 18:04:09 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -63,15 +63,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 05 Sep 2019 00:32:52 GMT
+      - Fri, 06 Sep 2019 18:04:07 GMT
       etag:
-      - '"0x8D7319896791695"'
+      - '"0x8D732F49C8D4D3D"'
       last-modified:
-      - Thu, 05 Sep 2019 00:32:52 GMT
+      - Fri, 06 Sep 2019 18:04:07 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-snapshot:
-      - '2019-09-05T00:32:52.0000000Z'
+      - '2019-09-06T18:04:07.0000000Z'
       x-ms-version:
       - '2019-02-02'
     status:
@@ -91,7 +91,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 05 Sep 2019 00:32:53 GMT
+      - Fri, 06 Sep 2019 18:04:09 GMT
       x-ms-delete-snapshots:
       - include
       x-ms-version:
@@ -105,7 +105,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 05 Sep 2019 00:32:52 GMT
+      - Fri, 06 Sep 2019 18:04:09 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:

@@ -13,7 +13,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 05 Sep 2019 19:40:18 GMT
+      - Fri, 06 Sep 2019 18:08:52 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -25,11 +25,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 05 Sep 2019 19:40:17 GMT
+      - Fri, 06 Sep 2019 18:08:50 GMT
       etag:
-      - '"0x8D73238E1630514"'
+      - '"0x8D732F5457FCA69"'
       last-modified:
-      - Thu, 05 Sep 2019 19:40:17 GMT
+      - Fri, 06 Sep 2019 18:08:51 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -51,7 +51,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 05 Sep 2019 19:40:18 GMT
+      - Fri, 06 Sep 2019 18:08:52 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -63,11 +63,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 05 Sep 2019 19:40:17 GMT
+      - Fri, 06 Sep 2019 18:08:50 GMT
       etag:
-      - '"0x8D73238E1707510"'
+      - '"0x8D732F5458DAF9E"'
       last-modified:
-      - Thu, 05 Sep 2019 19:40:17 GMT
+      - Fri, 06 Sep 2019 18:08:51 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -89,7 +89,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 05 Sep 2019 19:40:18 GMT
+      - Fri, 06 Sep 2019 18:08:52 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -101,11 +101,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 05 Sep 2019 19:40:17 GMT
+      - Fri, 06 Sep 2019 18:08:50 GMT
       etag:
-      - '"0x8D73238E17C0FE1"'
+      - '"0x8D732F5459B46AD"'
       last-modified:
-      - Thu, 05 Sep 2019 19:40:17 GMT
+      - Fri, 06 Sep 2019 18:08:51 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -127,7 +127,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 05 Sep 2019 19:40:18 GMT
+      - Fri, 06 Sep 2019 18:08:52 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -139,11 +139,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 05 Sep 2019 19:40:17 GMT
+      - Fri, 06 Sep 2019 18:08:51 GMT
       etag:
-      - '"0x8D73238E187AABF"'
+      - '"0x8D732F545A81A3E"'
       last-modified:
-      - Thu, 05 Sep 2019 19:40:17 GMT
+      - Fri, 06 Sep 2019 18:08:51 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -163,7 +163,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 05 Sep 2019 19:40:18 GMT
+      - Fri, 06 Sep 2019 18:08:52 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -171,14 +171,14 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://pyacrstorage7d2b16cf.file.core.windows.net/\"><Prefix>listshare</Prefix><MaxResults>2</MaxResults><Shares><Share><Name>listshare07d2b16cf</Name><Properties><Last-Modified>Thu,
-        05 Sep 2019 19:40:17 GMT</Last-Modified><Etag>\"0x8D73238E1630514\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>listshare17d2b16cf</Name><Properties><Last-Modified>Thu,
-        05 Sep 2019 19:40:17 GMT</Last-Modified><Etag>\"0x8D73238E1707510\"</Etag><Quota>5120</Quota></Properties></Share></Shares><NextMarker>/pyacrstorage7d2b16cf/listshare27d2b16cf</NextMarker></EnumerationResults>"
+        ServiceEndpoint=\"https://pyacrstorage7d2b16cf.file.core.windows.net/\"><Prefix>listshare</Prefix><MaxResults>2</MaxResults><Shares><Share><Name>listshare07d2b16cf</Name><Properties><Last-Modified>Fri,
+        06 Sep 2019 18:08:51 GMT</Last-Modified><Etag>\"0x8D732F5457FCA69\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>listshare17d2b16cf</Name><Properties><Last-Modified>Fri,
+        06 Sep 2019 18:08:51 GMT</Last-Modified><Etag>\"0x8D732F5458DAF9E\"</Etag><Quota>5120</Quota></Properties></Share></Shares><NextMarker>/pyacrstorage7d2b16cf/listshare27d2b16cf</NextMarker></EnumerationResults>"
     headers:
       content-type:
       - application/xml
       date:
-      - Thu, 05 Sep 2019 19:40:17 GMT
+      - Fri, 06 Sep 2019 18:08:51 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:
@@ -200,7 +200,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 05 Sep 2019 19:40:18 GMT
+      - Fri, 06 Sep 2019 18:08:52 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -208,15 +208,15 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://pyacrstorage7d2b16cf.file.core.windows.net/\"><Prefix>listshare</Prefix><Marker>/pyacrstorage7d2b16cf/listshare27d2b16cf</Marker><MaxResults>2</MaxResults><Shares><Share><Name>listshare27d2b16cf</Name><Properties><Last-Modified>Thu,
-        05 Sep 2019 19:40:17 GMT</Last-Modified><Etag>\"0x8D73238E17C0FE1\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>listshare37d2b16cf</Name><Properties><Last-Modified>Thu,
-        05 Sep 2019 19:40:17 GMT</Last-Modified><Etag>\"0x8D73238E187AABF\"</Etag><Quota>5120</Quota></Properties></Share></Shares><NextMarker
+        ServiceEndpoint=\"https://pyacrstorage7d2b16cf.file.core.windows.net/\"><Prefix>listshare</Prefix><Marker>/pyacrstorage7d2b16cf/listshare27d2b16cf</Marker><MaxResults>2</MaxResults><Shares><Share><Name>listshare27d2b16cf</Name><Properties><Last-Modified>Fri,
+        06 Sep 2019 18:08:51 GMT</Last-Modified><Etag>\"0x8D732F5459B46AD\"</Etag><Quota>5120</Quota></Properties></Share><Share><Name>listshare37d2b16cf</Name><Properties><Last-Modified>Fri,
+        06 Sep 2019 18:08:51 GMT</Last-Modified><Etag>\"0x8D732F545A81A3E\"</Etag><Quota>5120</Quota></Properties></Share></Shares><NextMarker
         /></EnumerationResults>"
     headers:
       content-type:
       - application/xml
       date:
-      - Thu, 05 Sep 2019 19:40:17 GMT
+      - Fri, 06 Sep 2019 18:08:51 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:

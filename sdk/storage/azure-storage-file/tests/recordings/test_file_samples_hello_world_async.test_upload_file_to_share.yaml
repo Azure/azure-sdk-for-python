@@ -5,30 +5,148 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 05 Sep 2019 00:32:35 GMT
+      - Fri, 06 Sep 2019 18:04:02 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
     uri: https://pyacrstoragec321910.file.core.windows.net/share?restype=share
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>AuthenticationFailed</Code><Message>Server
-        failed to authenticate the request. Make sure the value of Authorization header
-        is formed correctly including the signature.\nRequestId:d65d5312-a01a-003d-3381-633311000000\nTime:2019-09-05T00:32:36.1121700Z</Message><AuthenticationErrorDetail>The
-        MAC signature found in the HTTP request 'yJ5T4aXS2u9ftJEvcRLqbxdAGLzRpaE3ZuE5+wCDN+0='
-        is not the same as any computed signature. Server used following string to
-        sign: 'PUT\n\n\n\n\napplication/octet-stream\n\n\n\n\n\n\nx-ms-client-request-id:a866bf28-cf74-11e9-a007-2816a845e8c6\nx-ms-date:Thu,
-        05 Sep 2019 00:32:35 GMT\nx-ms-version:2019-02-02\n/pyacrstoragec321910/share\nrestype:share'.</AuthenticationErrorDetail></Error>"
+      string: ''
     headers:
-      content-length: '753'
-      content-type: application/xml
-      date: Thu, 05 Sep 2019 00:32:35 GMT
-      server: Microsoft-HTTPAPI/2.0
-      x-ms-error-code: AuthenticationFailed
+      content-length: '0'
+      date: Fri, 06 Sep 2019 18:04:01 GMT
+      etag: '"0x8D732F499010A86"'
+      last-modified: Fri, 06 Sep 2019 18:04:01 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2019-02-02'
     status:
-      code: 403
-      message: Server failed to authenticate the request. Make sure the value of Authorization
-        header is formed correctly including the signature.
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstoragec321910.file.core.windows.net
+        - /share
+        - restype=share
+        - ''
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-content-length:
+      - '55'
+      x-ms-date:
+      - Fri, 06 Sep 2019 18:04:03 GMT
+      x-ms-file-attributes:
+      - none
+      x-ms-file-creation-time:
+      - now
+      x-ms-file-last-write-time:
+      - now
+      x-ms-file-permission:
+      - inherit
+      x-ms-type:
+      - file
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://pyacrstoragec321910.file.core.windows.net/share/myfile
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Fri, 06 Sep 2019 18:04:01 GMT
+      etag: '"0x8D732F499246019"'
+      last-modified: Fri, 06 Sep 2019 18:04:01 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-file-attributes: Archive
+      x-ms-file-change-time: '2019-09-06T18:04:01.8921497Z'
+      x-ms-file-creation-time: '2019-09-06T18:04:01.8921497Z'
+      x-ms-file-id: '13835128424026341376'
+      x-ms-file-last-write-time: '2019-09-06T18:04:01.8921497Z'
+      x-ms-file-parent-id: '0'
+      x-ms-file-permission-key: 16889856734242688962*4811035684962543436
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2019-02-02'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstoragec321910.file.core.windows.net
+        - /share/myfile
+        - ''
+        - ''
+- request:
+    body: Lorem ipsum dolor sit amet, consectetur adipiscing elit
+    headers:
+      Content-Length:
+      - '55'
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Fri, 06 Sep 2019 18:04:03 GMT
+      x-ms-range:
+      - bytes=0-54
+      x-ms-version:
+      - '2019-02-02'
+      x-ms-write:
+      - update
+    method: PUT
+    uri: https://pyacrstoragec321910.file.core.windows.net/share/myfile?comp=range
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      content-md5: /BCgjff6+jhxFmZGYJ4clQ==
+      date: Fri, 06 Sep 2019 18:04:01 GMT
+      etag: '"0x8D732F4992E4CF3"'
+      last-modified: Fri, 06 Sep 2019 18:04:01 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-server-encrypted: 'true'
+      x-ms-version: '2019-02-02'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - pyacrstoragec321910.file.core.windows.net
+        - /share/myfile
+        - comp=range
+        - ''
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Fri, 06 Sep 2019 18:04:03 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: DELETE
+    uri: https://pyacrstoragec321910.file.core.windows.net/share?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length: '0'
+      date: Fri, 06 Sep 2019 18:04:01 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version: '2019-02-02'
+    status:
+      code: 202
+      message: Accepted
     url: !!python/object/new:yarl.URL
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult

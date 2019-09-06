@@ -5,7 +5,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 05 Sep 2019 17:51:36 GMT
+      - Fri, 06 Sep 2019 17:47:54 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -15,9 +15,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 05 Sep 2019 17:51:34 GMT
-      etag: '"0x8D73229B1FF7711"'
-      last-modified: Thu, 05 Sep 2019 17:51:35 GMT
+      date: Fri, 06 Sep 2019 17:47:52 GMT
+      etag: '"0x8D732F2580D124C"'
+      last-modified: Fri, 06 Sep 2019 17:47:53 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2019-02-02'
     status:
@@ -37,7 +37,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 05 Sep 2019 17:51:36 GMT
+      - Fri, 06 Sep 2019 17:47:55 GMT
       x-ms-file-attributes:
       - none
       x-ms-file-creation-time:
@@ -55,17 +55,17 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 05 Sep 2019 17:51:35 GMT
-      etag: '"0x8D73229B20BDB50"'
-      last-modified: Thu, 05 Sep 2019 17:51:35 GMT
+      date: Fri, 06 Sep 2019 17:47:52 GMT
+      etag: '"0x8D732F258183D80"'
+      last-modified: Fri, 06 Sep 2019 17:47:53 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-file-attributes: Directory
-      x-ms-file-change-time: '2019-09-05T17:51:35.8383952Z'
-      x-ms-file-creation-time: '2019-09-05T17:51:35.8383952Z'
+      x-ms-file-change-time: '2019-09-06T17:47:53.7672576Z'
+      x-ms-file-creation-time: '2019-09-06T17:47:53.7672576Z'
       x-ms-file-id: '13835128424026341376'
-      x-ms-file-last-write-time: '2019-09-05T17:51:35.8383952Z'
+      x-ms-file-last-write-time: '2019-09-06T17:47:53.7672576Z'
       x-ms-file-parent-id: '0'
-      x-ms-file-permission-key: 5358565163493091299*2487768975230005354
+      x-ms-file-permission-key: 2111206479969241577*8473422679008501344
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2019-02-02'
     status:
@@ -85,7 +85,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 05 Sep 2019 17:51:36 GMT
+      - Fri, 06 Sep 2019 17:47:55 GMT
       x-ms-file-attributes:
       - none
       x-ms-file-creation-time:
@@ -107,17 +107,17 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 05 Sep 2019 17:51:35 GMT
-      etag: '"0x8D73229B2152BC9"'
-      last-modified: Thu, 05 Sep 2019 17:51:35 GMT
+      date: Fri, 06 Sep 2019 17:47:53 GMT
+      etag: '"0x8D732F25824268F"'
+      last-modified: Fri, 06 Sep 2019 17:47:53 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-file-attributes: Directory
-      x-ms-file-change-time: '2019-09-05T17:51:35.8994377Z'
-      x-ms-file-creation-time: '2019-09-05T17:51:35.8994377Z'
+      x-ms-file-change-time: '2019-09-06T17:47:53.8453135Z'
+      x-ms-file-creation-time: '2019-09-06T17:47:53.8453135Z'
       x-ms-file-id: '11529285414812647424'
-      x-ms-file-last-write-time: '2019-09-05T17:51:35.8994377Z'
+      x-ms-file-last-write-time: '2019-09-06T17:47:53.8453135Z'
       x-ms-file-parent-id: '13835128424026341376'
-      x-ms-file-permission-key: 5358565163493091299*2487768975230005354
+      x-ms-file-permission-key: 2111206479969241577*8473422679008501344
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2019-02-02'
     status:
@@ -137,7 +137,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 05 Sep 2019 17:51:36 GMT
+      - Fri, 06 Sep 2019 17:47:55 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -147,17 +147,17 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 05 Sep 2019 17:51:35 GMT
-      etag: '"0x8D73229B2152BC9"'
-      last-modified: Thu, 05 Sep 2019 17:51:35 GMT
+      date: Fri, 06 Sep 2019 17:47:53 GMT
+      etag: '"0x8D732F25824268F"'
+      last-modified: Fri, 06 Sep 2019 17:47:53 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-file-attributes: Directory
-      x-ms-file-change-time: '2019-09-05T17:51:35.8994377Z'
-      x-ms-file-creation-time: '2019-09-05T17:51:35.8994377Z'
+      x-ms-file-change-time: '2019-09-06T17:47:53.8453135Z'
+      x-ms-file-creation-time: '2019-09-06T17:47:53.8453135Z'
       x-ms-file-id: '11529285414812647424'
-      x-ms-file-last-write-time: '2019-09-05T17:51:35.8994377Z'
+      x-ms-file-last-write-time: '2019-09-06T17:47:53.8453135Z'
       x-ms-file-parent-id: '13835128424026341376'
-      x-ms-file-permission-key: 5358565163493091299*2487768975230005354
+      x-ms-file-permission-key: 2111206479969241577*8473422679008501344
       x-ms-meta-hello: world
       x-ms-meta-number: '42'
       x-ms-server-encrypted: 'true'

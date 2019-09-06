@@ -7,7 +7,7 @@ interactions:
       User-Agent:
       - TestApp/v1.0 azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 05 Sep 2019 17:54:47 GMT
+      - Fri, 06 Sep 2019 17:56:05 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -18,7 +18,7 @@ interactions:
         /></StorageServiceProperties>"
     headers:
       content-type: application/xml
-      date: Thu, 05 Sep 2019 17:54:47 GMT
+      date: Fri, 06 Sep 2019 17:56:04 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-ms-version: '2019-02-02'
@@ -41,7 +41,7 @@ interactions:
       User-Agent:
       - TestApp/v2.0 azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 05 Sep 2019 17:54:48 GMT
+      - Fri, 06 Sep 2019 17:56:06 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -52,7 +52,7 @@ interactions:
         /></StorageServiceProperties>"
     headers:
       content-type: application/xml
-      date: Thu, 05 Sep 2019 17:54:47 GMT
+      date: Fri, 06 Sep 2019 17:56:04 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-ms-version: '2019-02-02'

@@ -13,7 +13,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 05 Sep 2019 19:39:23 GMT
+      - Fri, 06 Sep 2019 18:08:17 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
@@ -21,14 +21,14 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareNotFound</Code><Message>The
-        specified share does not exist.\nRequestId:590db129-701a-0069-1221-6455a6000000\nTime:2019-09-05T19:39:23.3862635Z</Message></Error>"
+        specified share does not exist.\nRequestId:193497ba-001a-00c6-4ade-64d5f7000000\nTime:2019-09-06T18:08:18.0050592Z</Message></Error>"
     headers:
       content-length:
       - '217'
       content-type:
       - application/xml
       date:
-      - Thu, 05 Sep 2019 19:39:22 GMT
+      - Fri, 06 Sep 2019 18:08:17 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:

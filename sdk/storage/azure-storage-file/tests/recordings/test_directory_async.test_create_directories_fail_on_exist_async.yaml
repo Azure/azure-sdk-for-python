@@ -5,7 +5,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 05 Sep 2019 17:51:10 GMT
+      - Fri, 06 Sep 2019 17:47:35 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -15,9 +15,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 05 Sep 2019 17:51:10 GMT
-      etag: '"0x8D73229A3100E0B"'
-      last-modified: Thu, 05 Sep 2019 17:51:10 GMT
+      date: Fri, 06 Sep 2019 17:47:34 GMT
+      etag: '"0x8D732F24CC3178D"'
+      last-modified: Fri, 06 Sep 2019 17:47:34 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2019-02-02'
     status:
@@ -37,7 +37,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 05 Sep 2019 17:51:11 GMT
+      - Fri, 06 Sep 2019 17:47:36 GMT
       x-ms-file-attributes:
       - none
       x-ms-file-creation-time:
@@ -55,17 +55,17 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 05 Sep 2019 17:51:10 GMT
-      etag: '"0x8D73229A32B54AB"'
-      last-modified: Thu, 05 Sep 2019 17:51:10 GMT
+      date: Fri, 06 Sep 2019 17:47:34 GMT
+      etag: '"0x8D732F24CCEEA4F"'
+      last-modified: Fri, 06 Sep 2019 17:47:34 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-file-attributes: Directory
-      x-ms-file-change-time: '2019-09-05T17:51:10.8788395Z'
-      x-ms-file-creation-time: '2019-09-05T17:51:10.8788395Z'
+      x-ms-file-change-time: '2019-09-06T17:47:34.8317775Z'
+      x-ms-file-creation-time: '2019-09-06T17:47:34.8317775Z'
       x-ms-file-id: '13835128424026341376'
-      x-ms-file-last-write-time: '2019-09-05T17:51:10.8788395Z'
+      x-ms-file-last-write-time: '2019-09-06T17:47:34.8317775Z'
       x-ms-file-parent-id: '0'
-      x-ms-file-permission-key: 1827141618293024965*8178652976956292940
+      x-ms-file-permission-key: 14362502611446862223*12649197468587820550
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2019-02-02'
     status:
@@ -85,7 +85,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 05 Sep 2019 17:51:11 GMT
+      - Fri, 06 Sep 2019 17:47:36 GMT
       x-ms-file-attributes:
       - none
       x-ms-file-creation-time:
@@ -101,11 +101,11 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ResourceAlreadyExists</Code><Message>The
-        specified resource already exists.\nRequestId:f87b785f-201a-007b-6d12-64c37b000000\nTime:2019-09-05T17:51:11.0213110Z</Message></Error>"
+        specified resource already exists.\nRequestId:68f9e9fb-201a-0056-11db-6419df000000\nTime:2019-09-06T17:47:34.9063999Z</Message></Error>"
     headers:
       content-length: '228'
       content-type: application/xml
-      date: Thu, 05 Sep 2019 17:51:10 GMT
+      date: Fri, 06 Sep 2019 17:47:34 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: ResourceAlreadyExists
       x-ms-version: '2019-02-02'

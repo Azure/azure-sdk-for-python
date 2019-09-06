@@ -5,7 +5,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 05 Sep 2019 17:50:59 GMT
+      - Fri, 06 Sep 2019 17:47:23 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -15,9 +15,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 05 Sep 2019 17:50:58 GMT
-      etag: '"0x8D732299C2A89BE"'
-      last-modified: Thu, 05 Sep 2019 17:50:59 GMT
+      date: Fri, 06 Sep 2019 17:47:23 GMT
+      etag: '"0x8D732F246443018"'
+      last-modified: Fri, 06 Sep 2019 17:47:23 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2019-02-02'
     status:
@@ -37,7 +37,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 05 Sep 2019 17:51:00 GMT
+      - Fri, 06 Sep 2019 17:47:25 GMT
       x-ms-file-attributes:
       - none
       x-ms-file-creation-time:
@@ -55,17 +55,17 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 05 Sep 2019 17:50:58 GMT
-      etag: '"0x8D732299C6C4955"'
-      last-modified: Thu, 05 Sep 2019 17:50:59 GMT
+      date: Fri, 06 Sep 2019 17:47:25 GMT
+      etag: '"0x8D732F2475E91B9"'
+      last-modified: Fri, 06 Sep 2019 17:47:25 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-file-attributes: Directory
-      x-ms-file-change-time: '2019-09-05T17:50:59.5604821Z'
-      x-ms-file-creation-time: '2019-09-05T17:50:59.5604821Z'
+      x-ms-file-change-time: '2019-09-06T17:47:25.7068985Z'
+      x-ms-file-creation-time: '2019-09-06T17:47:25.7068985Z'
       x-ms-file-id: '13835128424026341376'
-      x-ms-file-last-write-time: '2019-09-05T17:50:59.5604821Z'
+      x-ms-file-last-write-time: '2019-09-06T17:47:25.7068985Z'
       x-ms-file-parent-id: '0'
-      x-ms-file-permission-key: 5144270317339351041*3440530809138876296
+      x-ms-file-permission-key: 11051726399254751638*17403237757919788575
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2019-02-02'
     status:

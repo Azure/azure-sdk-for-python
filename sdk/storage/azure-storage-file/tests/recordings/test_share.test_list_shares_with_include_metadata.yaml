@@ -13,7 +13,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 05 Sep 2019 19:40:25 GMT
+      - Fri, 06 Sep 2019 18:08:35 GMT
       x-ms-meta:
       - '{''hello'': ''world'', ''number'': ''42''}'
       x-ms-meta-hello:
@@ -31,11 +31,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 05 Sep 2019 19:40:28 GMT
+      - Fri, 06 Sep 2019 18:08:33 GMT
       etag:
-      - '"0x8D73238E8365D35"'
+      - '"0x8D732F53B796279"'
       last-modified:
-      - Thu, 05 Sep 2019 19:40:29 GMT
+      - Fri, 06 Sep 2019 18:08:34 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -55,7 +55,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 05 Sep 2019 19:40:30 GMT
+      - Fri, 06 Sep 2019 18:08:35 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -63,14 +63,14 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://pyacrstoragef877141f.file.core.windows.net/\"><Prefix>sharef877141f</Prefix><Shares><Share><Name>sharef877141f</Name><Properties><Last-Modified>Thu,
-        05 Sep 2019 19:40:29 GMT</Last-Modified><Etag>\"0x8D73238E8365D35\"</Etag><Quota>5120</Quota></Properties><Metadata><hello>world</hello><number>42</number></Metadata></Share></Shares><NextMarker
+        ServiceEndpoint=\"https://pyacrstoragef877141f.file.core.windows.net/\"><Prefix>sharef877141f</Prefix><Shares><Share><Name>sharef877141f</Name><Properties><Last-Modified>Fri,
+        06 Sep 2019 18:08:34 GMT</Last-Modified><Etag>\"0x8D732F53B796279\"</Etag><Quota>5120</Quota></Properties><Metadata><hello>world</hello><number>42</number></Metadata></Share></Shares><NextMarker
         /></EnumerationResults>"
     headers:
       content-type:
       - application/xml
       date:
-      - Thu, 05 Sep 2019 19:40:29 GMT
+      - Fri, 06 Sep 2019 18:08:33 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding:

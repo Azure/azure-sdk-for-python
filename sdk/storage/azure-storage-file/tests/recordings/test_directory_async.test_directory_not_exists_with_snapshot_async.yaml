@@ -5,7 +5,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 05 Sep 2019 17:51:43 GMT
+      - Fri, 06 Sep 2019 17:47:54 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -15,9 +15,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 05 Sep 2019 17:51:42 GMT
-      etag: '"0x8D73229B68CEA4E"'
-      last-modified: Thu, 05 Sep 2019 17:51:43 GMT
+      date: Fri, 06 Sep 2019 17:47:53 GMT
+      etag: '"0x8D732F257C8462E"'
+      last-modified: Fri, 06 Sep 2019 17:47:53 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2019-02-02'
     status:
@@ -37,7 +37,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 05 Sep 2019 17:51:44 GMT
+      - Fri, 06 Sep 2019 17:47:54 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -47,11 +47,11 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 05 Sep 2019 17:51:42 GMT
-      etag: '"0x8D73229B68CEA4E"'
-      last-modified: Thu, 05 Sep 2019 17:51:43 GMT
+      date: Fri, 06 Sep 2019 17:47:53 GMT
+      etag: '"0x8D732F257C8462E"'
+      last-modified: Fri, 06 Sep 2019 17:47:53 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-snapshot: '2019-09-05T17:51:43.0000000Z'
+      x-ms-snapshot: '2019-09-06T17:47:53.0000000Z'
       x-ms-version: '2019-02-02'
     status:
       code: 201
@@ -70,7 +70,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 05 Sep 2019 17:51:44 GMT
+      - Fri, 06 Sep 2019 17:47:54 GMT
       x-ms-file-attributes:
       - none
       x-ms-file-creation-time:
@@ -88,17 +88,17 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 05 Sep 2019 17:51:43 GMT
-      etag: '"0x8D73229B6DB4740"'
-      last-modified: Thu, 05 Sep 2019 17:51:43 GMT
+      date: Fri, 06 Sep 2019 17:47:53 GMT
+      etag: '"0x8D732F257DD2EE9"'
+      last-modified: Fri, 06 Sep 2019 17:47:53 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-file-attributes: Directory
-      x-ms-file-change-time: '2019-09-05T17:51:43.9086400Z'
-      x-ms-file-creation-time: '2019-09-05T17:51:43.9086400Z'
+      x-ms-file-change-time: '2019-09-06T17:47:53.3802217Z'
+      x-ms-file-creation-time: '2019-09-06T17:47:53.3802217Z'
       x-ms-file-id: '13835128424026341376'
-      x-ms-file-last-write-time: '2019-09-05T17:51:43.9086400Z'
+      x-ms-file-last-write-time: '2019-09-06T17:47:53.3802217Z'
       x-ms-file-parent-id: '0'
-      x-ms-file-permission-key: 12787474881348263904*15685222439827392617
+      x-ms-file-permission-key: 5127315775763292048*3457854786491844633
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2019-02-02'
     status:
@@ -118,19 +118,19 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 05 Sep 2019 17:51:44 GMT
+      - Fri, 06 Sep 2019 17:47:54 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://pyacrstorage9b981baa.file.core.windows.net/utshare9b981baa/dir1?restype=directory&sharesnapshot=2019-09-05T17:51:43.0000000Z
+    uri: https://pyacrstorage9b981baa.file.core.windows.net/utshare9b981baa/dir1?restype=directory&sharesnapshot=2019-09-06T17:47:53.0000000Z
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ResourceNotFound</Code><Message>The
-        specified resource does not exist.\nRequestId:c5d567ad-b01a-00e3-4712-64d5f9000000\nTime:2019-09-05T17:51:44.1167506Z</Message></Error>"
+        specified resource does not exist.\nRequestId:80314a73-601a-00ae-5edb-64131b000000\nTime:2019-09-06T17:47:53.4583910Z</Message></Error>"
     headers:
       content-length: '223'
       content-type: application/xml
-      date: Thu, 05 Sep 2019 17:51:43 GMT
+      date: Fri, 06 Sep 2019 17:47:53 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: ResourceNotFound
       x-ms-version: '2019-02-02'
@@ -143,6 +143,6 @@ interactions:
         - https
         - pyacrstorage9b981baa.file.core.windows.net
         - /utshare9b981baa/dir1
-        - restype=directory&sharesnapshot=2019-09-05T17:51:43.0000000Z
+        - restype=directory&sharesnapshot=2019-09-06T17:47:53.0000000Z
         - ''
 version: 1

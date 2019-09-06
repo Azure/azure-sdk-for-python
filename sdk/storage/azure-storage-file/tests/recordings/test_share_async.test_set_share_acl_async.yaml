@@ -5,7 +5,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 05 Sep 2019 19:42:37 GMT
+      - Fri, 06 Sep 2019 18:10:45 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -15,9 +15,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 05 Sep 2019 19:42:36 GMT
-      etag: '"0x8D732393498FC3B"'
-      last-modified: Thu, 05 Sep 2019 19:42:37 GMT
+      date: Fri, 06 Sep 2019 18:10:43 GMT
+      etag: '"0x8D732F58909555C"'
+      last-modified: Fri, 06 Sep 2019 18:10:44 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2019-02-02'
     status:
@@ -39,7 +39,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 05 Sep 2019 19:42:38 GMT
+      - Fri, 06 Sep 2019 18:10:45 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -49,9 +49,9 @@ interactions:
       string: ''
     headers:
       content-length: '0'
-      date: Thu, 05 Sep 2019 19:42:36 GMT
-      etag: '"0x8D73239349E1A1E"'
-      last-modified: Thu, 05 Sep 2019 19:42:37 GMT
+      date: Fri, 06 Sep 2019 18:10:44 GMT
+      etag: '"0x8D732F589168F0C"'
+      last-modified: Fri, 06 Sep 2019 18:10:44 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version: '2019-02-02'
     status:
@@ -73,7 +73,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 05 Sep 2019 19:42:38 GMT
+      - Fri, 06 Sep 2019 18:10:45 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -84,9 +84,9 @@ interactions:
         />"
     headers:
       content-type: application/xml
-      date: Thu, 05 Sep 2019 19:42:36 GMT
-      etag: '"0x8D73239349E1A1E"'
-      last-modified: Thu, 05 Sep 2019 19:42:37 GMT
+      date: Fri, 06 Sep 2019 18:10:44 GMT
+      etag: '"0x8D732F589168F0C"'
+      last-modified: Fri, 06 Sep 2019 18:10:44 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
       x-ms-version: '2019-02-02'
