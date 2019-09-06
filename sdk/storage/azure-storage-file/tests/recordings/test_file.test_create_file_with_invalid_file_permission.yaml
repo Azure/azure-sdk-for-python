@@ -15,11 +15,11 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 8191471e-c9f2-11e9-aacc-001a7dda7113
+      - 85dc6cb8-d03b-11e9-a909-001a7dda7113
       x-ms-content-length:
       - '1024'
       x-ms-date:
-      - Thu, 29 Aug 2019 00:18:20 GMT
+      - Fri, 06 Sep 2019 00:16:07 GMT
       x-ms-file-attributes:
       - none
       x-ms-file-creation-time:
@@ -33,26 +33,26 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://127.0.0.1:8888/utshare725b1688/file725b1688
+    uri: https://storagename.file.core.windows.net/utshare725b1688/file725b1688
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>FileInvalidPermission</Code><Message>The
-        specified file permission is not valid.\nRequestId:2c2d96f2-e01a-0043-61ff-5d7467000000\nTime:2019-08-29T00:18:20.8424712Z</Message></Error>"
+        specified file permission is not valid.\nRequestId:d40b5322-101a-001a-2148-64f3e4000000\nTime:2019-09-06T00:16:08.2941165Z</Message></Error>"
     headers:
       Content-Length:
       - '233'
       Content-Type:
       - application/xml
       Date:
-      - Thu, 29 Aug 2019 00:18:20 GMT
+      - Fri, 06 Sep 2019 00:16:07 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-client-request-id:
-      - 8191471e-c9f2-11e9-aacc-001a7dda7113
+      - 85dc6cb8-d03b-11e9-a909-001a7dda7113
       x-ms-error-code:
       - FileInvalidPermission
       x-ms-request-id:
-      - 2c2d96f2-e01a-0043-61ff-5d7467000000
+      - d40b5322-101a-001a-2148-64f3e4000000
       x-ms-version:
       - '2019-02-02'
     status:

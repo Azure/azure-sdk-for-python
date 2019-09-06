@@ -15,11 +15,11 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 8541871e-c9f2-11e9-8fc0-001a7dda7113
+      - 7e2c6438-d03b-11e9-854a-001a7dda7113
       x-ms-content-length:
       - '1024'
       x-ms-date:
-      - Thu, 29 Aug 2019 00:18:26 GMT
+      - Fri, 06 Sep 2019 00:15:54 GMT
       x-ms-file-attributes:
       - none
       x-ms-file-creation-time:
@@ -33,7 +33,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://127.0.0.1:8888/utshare5c361627/file5c361627
+    uri: https://storagename.file.core.windows.net/utshare5c361627/file5c361627
   response:
     body:
       string: ''
@@ -41,31 +41,31 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Thu, 29 Aug 2019 00:18:26 GMT
+      - Fri, 06 Sep 2019 00:15:54 GMT
       ETag:
-      - '"0x8D72C1669A8D4D2"'
+      - '"0x8D7325F62A800A3"'
       Last-Modified:
-      - Thu, 29 Aug 2019 00:18:26 GMT
+      - Fri, 06 Sep 2019 00:15:55 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-client-request-id:
-      - 8541871e-c9f2-11e9-8fc0-001a7dda7113
+      - 7e2c6438-d03b-11e9-854a-001a7dda7113
       x-ms-file-attributes:
       - Archive
       x-ms-file-change-time:
-      - '2019-08-29T00:18:26.9789394Z'
+      - '2019-09-06T00:15:55.4673827Z'
       x-ms-file-creation-time:
-      - '2019-08-29T00:18:26.9789394Z'
+      - '2019-09-06T00:15:55.4673827Z'
       x-ms-file-id:
       - '13835128424026341376'
       x-ms-file-last-write-time:
-      - '2019-08-29T00:18:26.9789394Z'
+      - '2019-09-06T00:15:55.4673827Z'
       x-ms-file-parent-id:
       - '0'
       x-ms-file-permission-key:
       - 16864655153240182536*4804112389554988934
       x-ms-request-id:
-      - 9bdaf78b-201a-0001-7eff-5dcde7000000
+      - 3a4670d1-a01a-0030-0348-642cf4000000
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
@@ -87,13 +87,13 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 8589c824-c9f2-11e9-8cbf-001a7dda7113
+      - 7e852ec0-d03b-11e9-aac9-001a7dda7113
       x-ms-date:
-      - Thu, 29 Aug 2019 00:18:27 GMT
+      - Fri, 06 Sep 2019 00:15:55 GMT
       x-ms-version:
       - '2019-02-02'
     method: HEAD
-    uri: https://127.0.0.1:8888/utshare5c361627/file5c361627
+    uri: https://storagename.file.core.windows.net/utshare5c361627/file5c361627
   response:
     body:
       string: ''
@@ -103,25 +103,25 @@ interactions:
       Content-Type:
       - application/xml; charset=utf-8
       Date:
-      - Thu, 29 Aug 2019 00:18:26 GMT
+      - Fri, 06 Sep 2019 00:15:54 GMT
       ETag:
-      - '"0x8D72C1669A8D4D2"'
+      - '"0x8D7325F62A800A3"'
       Last-Modified:
-      - Thu, 29 Aug 2019 00:18:26 GMT
+      - Fri, 06 Sep 2019 00:15:55 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-client-request-id:
-      - 8589c824-c9f2-11e9-8cbf-001a7dda7113
+      - 7e852ec0-d03b-11e9-aac9-001a7dda7113
       x-ms-file-attributes:
       - Archive
       x-ms-file-change-time:
-      - '2019-08-29T00:18:26.9789394Z'
+      - '2019-09-06T00:15:55.4673827Z'
       x-ms-file-creation-time:
-      - '2019-08-29T00:18:26.9789394Z'
+      - '2019-09-06T00:15:55.4673827Z'
       x-ms-file-id:
       - '13835128424026341376'
       x-ms-file-last-write-time:
-      - '2019-08-29T00:18:26.9789394Z'
+      - '2019-09-06T00:15:55.4673827Z'
       x-ms-file-parent-id:
       - '0'
       x-ms-file-permission-key:
@@ -131,7 +131,7 @@ interactions:
       x-ms-lease-status:
       - unlocked
       x-ms-request-id:
-      - 9bdaf78d-201a-0001-7fff-5dcde7000000
+      - 3a4670d9-a01a-0030-0a48-642cf4000000
       x-ms-server-encrypted:
       - 'true'
       x-ms-type:
