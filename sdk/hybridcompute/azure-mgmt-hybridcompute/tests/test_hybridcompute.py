@@ -5,6 +5,8 @@
 
 from devtools_testutils import AzureMgmtTestCase
 from azure.mgmt.hybridcompute import HybridComputeManagementClient
+from azure.mgmt.hybridcompute.models import ErrorResponseException
+
 
 class HybridComputeTests(AzureMgmtTestCase):
     def setUp(self):
@@ -29,3 +31,21 @@ class HybridComputeTests(AzureMgmtTestCase):
     def test_list_by_subscription(self):
         result = list(self.client.machines.list_by_subscription())
         self.assertEqual(len(result), 1449)
+
+    def test_delete(self):
+        resource_group_name = 'hybridrptest'
+        machine_name = 'fv-az467iqj4s_e2etest'
+
+        machine = self.client.machines.get(
+            resource_group_name,
+            machine_name
+        )
+        self.assertIsNotNone(machine)
+
+        self.client.machines.delete(
+            resource_group_name,
+            machine_name
+        )
+        with self.assertRaises(ErrorResponseException):
+            self.client.machines.get(resource_group_name,machine_name)
+
