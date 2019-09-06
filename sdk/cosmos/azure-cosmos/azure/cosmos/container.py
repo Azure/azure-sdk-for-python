@@ -42,7 +42,9 @@ __all__ = ("ContainerProxy",)
 
 
 class ContainerProxy(object):
-    """ An Azure Cosmos DB container.
+    """
+    An interface to interact with a specific DB Container.
+    This class should not be instantiated directly, use :func:`DatabaseProxy.get_container_client` method.
 
     A container in an Azure Cosmos DB SQL API database is a collection of documents,
     each of which represented as an Item.
@@ -114,7 +116,8 @@ class ContainerProxy(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> Dict[str, Any]
-        """ Read the container properties
+        """
+        Read the container properties
 
         :param session_token: Token for use with Session consistency.
         :param initial_headers: Initial headers to be sent as part of the request.
@@ -127,7 +130,7 @@ class ContainerProxy(object):
         :raise `CosmosHttpResponseError`: Raised if the container couldn't be retrieved. This includes
             if the container does not exist.
         :returns: Dict representing the retrieved container.
-
+        :rtype: dict[str, Any]
         """
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
@@ -159,7 +162,7 @@ class ContainerProxy(object):
     ):
         # type: (...) -> Dict[str, str]
         """
-        Get the item identified by `id`.
+        Get the item identified by `item`.
 
         :param item: The ID (name) or dict representing item to retrieve.
         :param partition_key: Partition key for the item to retrieve.
@@ -171,6 +174,7 @@ class ContainerProxy(object):
         :param response_hook: a callable invoked with the response metadata
         :returns: Dict representing the item to be retrieved.
         :raise `CosmosHttpResponseError`: If the given item couldn't be retrieved.
+        :rtype: dict[str, Any]
 
         .. literalinclude:: ../../examples/examples.py
             :start-after: [START update_item]
@@ -205,7 +209,8 @@ class ContainerProxy(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable[Dict[str, Any]]
-        """ List all items in the container.
+        """
+        List all items in the container.
 
         :param max_item_count: Max number of items to be returned in the enumeration operation.
         :param session_token: Token for use with Session consistency.
@@ -214,6 +219,7 @@ class ContainerProxy(object):
         :param feed_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
         :returns: An Iterable of items (dicts).
+        :rtype: Iterable[dict[str, Any]]
         """
         feed_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
@@ -242,19 +248,19 @@ class ContainerProxy(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable[Dict[str, Any]]
-        """ Get a sorted list of items that were changed, in the order in which they were modified.
+        """
+        Get a sorted list of items that were changed, in the order in which they were modified.
 
         :param partition_key_range_id: ChangeFeed requests can be executed against specific partition key ranges.
-        This is used to process the change feed in parallel across multiple consumers.
+            This is used to process the change feed in parallel across multiple consumers.
         :param is_start_from_beginning: Get whether change feed should start from
-            beginning (true) or from current (false).
-        By default it's start from current (false).
+            beginning (true) or from current (false). By default it's start from current (false).
         :param continuation: e_tag value to be used as continuation for reading change feed.
         :param max_item_count: Max number of items to be returned in the enumeration operation.
         :param feed_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
         :returns: An Iterable of items (dicts).
-
+        :rtype: Iterable[dict[str, Any]]
         """
         feed_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
@@ -290,14 +296,19 @@ class ContainerProxy(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable[Dict[str, Any]]
-        """Return all results matching the given `query`.
+        """
+        Return all results matching the given `query`.
+
+        You can use any value for the container name in the FROM clause, but typically the container name is used.
+        In the examples below, the container name is "products," and is aliased as "p" for easier referencing
+        in the WHERE clause.
 
         :param query: The Azure Cosmos DB SQL query to execute.
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
         :param partition_key: Specifies the partition key value for the item.
         :param enable_cross_partition_query: Allows sending of more than one request to
             execute the query in the Azure Cosmos DB service.
-        More than one request is necessary if the query is not scoped to single partition key value.
+            More than one request is necessary if the query is not scoped to single partition key value.
         :param max_item_count: Max number of items to be returned in the enumeration operation.
         :param session_token: Token for use with Session consistency.
         :param initial_headers: Initial headers to be sent as part of the request.
@@ -307,10 +318,7 @@ class ContainerProxy(object):
         :param feed_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
         :returns: An Iterable of items (dicts).
-
-        You can use any value for the container name in the FROM clause, but typically the container name is used.
-        In the examples below, the container name is "products," and is aliased as "p" for easier referencing
-        in the WHERE clause.
+        :rtype: Iterable[dict[str, Any]]
 
         .. literalinclude:: ../../examples/examples.py
             :start-after: [START query_items]
@@ -368,7 +376,8 @@ class ContainerProxy(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> Dict[str, str]
-        """ Replaces the specified item if it exists in the container.
+        """
+        Replaces the specified item if it exists in the container.
 
         :param item: The ID (name) or dict representing item to be replaced.
         :param body: A dict-like object representing the item to replace.
@@ -382,7 +391,7 @@ class ContainerProxy(object):
         :param response_hook: a callable invoked with the response metadata
         :returns: A dict representing the item after replace went through.
         :raise `CosmosHttpResponseError`: If the replace failed or the item with given id does not exist.
-
+        :rtype: dict[str, Any]
         """
         item_link = self._get_document_link(item)
         request_options = build_options(kwargs)
@@ -412,7 +421,9 @@ class ContainerProxy(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> Dict[str, str]
-        """ Insert or update the specified item.
+        """
+        Insert or update the specified item.
+        If the item already exists in the container, it is replaced. If it does not, it is inserted.
 
         :param body: A dict-like object representing the item to update or insert.
         :param session_token: Token for use with Session consistency.
@@ -425,9 +436,7 @@ class ContainerProxy(object):
         :param response_hook: a callable invoked with the response metadata
         :returns: A dict representing the upserted item.
         :raise `CosmosHttpResponseError`: If the given item could not be upserted.
-
-        If the item already exists in the container, it is replaced. If it does not, it is inserted.
-
+        :rtype: dict[str, Any]
         """
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
@@ -456,7 +465,9 @@ class ContainerProxy(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> Dict[str, str]
-        """ Create an item in the container.
+        """
+        Create an item in the container.
+        To update or replace an existing item, use the :func:`ContainerProxy.upsert_item` method.
 
         :param body: A dict-like object representing the item to create.
         :param session_token: Token for use with Session consistency.
@@ -470,9 +481,7 @@ class ContainerProxy(object):
         :param response_hook: a callable invoked with the response metadata
         :returns: A dict representing the new item.
         :raises `CosmosHttpResponseError`: If item with the given ID already exists.
-
-        To update or replace an existing item, use the :func:`Container.upsert_item` method.
-
+        :rtype: dict[str, Any]
         """
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
@@ -505,7 +514,8 @@ class ContainerProxy(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        """ Delete the specified item from the container.
+        """
+        Delete the specified item from the container.
 
         :param item: The ID (name) or dict representing item to be deleted.
         :param partition_key: Specifies the partition key value for the item.
@@ -519,7 +529,7 @@ class ContainerProxy(object):
         :param response_hook: a callable invoked with the response metadata
         :raises `CosmosHttpResponseError`: The item wasn't deleted successfully. If the item does not
             exist in the container, a `404` error is returned.
-
+        :rtype: None
         """
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
@@ -540,12 +550,13 @@ class ContainerProxy(object):
     @distributed_trace
     def read_offer(self, **kwargs):
         # type: (Any) -> Offer
-        """ Read the Offer object for this container.
+        """
+        Read the Offer object for this container.
 
         :param response_hook: a callable invoked with the response metadata
         :returns: Offer for the container.
         :raise CosmosHttpResponseError: If no offer exists for the container or if the offer could not be retrieved.
-
+        :rtype: ~azure.cosmos.offer.Offer
         """
         response_hook = kwargs.pop('response_hook', None)
         properties = self._get_properties()
@@ -568,13 +579,14 @@ class ContainerProxy(object):
     @distributed_trace
     def replace_throughput(self, throughput, **kwargs):
         # type: (int, Any) -> Offer
-        """ Replace the container's throughput
+        """
+        Replace the container's throughput
 
         :param throughput: The throughput to be set (an integer).
         :param response_hook: a callable invoked with the response metadata
         :returns: Offer for the container, updated with new throughput.
         :raise CosmosHttpResponseError: If no offer exists for the container or if the offer could not be updated.
-
+        :rtype: ~azure.cosmos.offer.Offer
         """
         response_hook = kwargs.pop('response_hook', None)
         properties = self._get_properties()
@@ -600,13 +612,14 @@ class ContainerProxy(object):
     @distributed_trace
     def list_conflicts(self, max_item_count=None, **kwargs):
         # type: (Optional[int], Any) -> Iterable[Dict[str, Any]]
-        """ List all conflicts in the container.
+        """
+        List all conflicts in the container.
 
         :param max_item_count: Max number of items to be returned in the enumeration operation.
         :param feed_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
         :returns: An Iterable of conflicts (dicts).
-
+        :rtype: Iterable[dict[str, Any]]
         """
         feed_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
@@ -631,19 +644,20 @@ class ContainerProxy(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable[Dict[str, Any]]
-        """Return all conflicts matching the given `query`.
+        """
+        Return all conflicts matching the given `query`.
 
         :param query: The Azure Cosmos DB SQL query to execute.
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
         :param partition_key: Specifies the partition key value for the item.
         :param enable_cross_partition_query: Allows sending of more than one request to execute
             the query in the Azure Cosmos DB service.
-        More than one request is necessary if the query is not scoped to single partition key value.
+            More than one request is necessary if the query is not scoped to single partition key value.
         :param max_item_count: Max number of items to be returned in the enumeration operation.
         :param feed_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
         :returns: An Iterable of conflicts (dicts).
-
+        :rtype: Iterable[dict[str, Any]]
         """
         feed_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
@@ -667,7 +681,8 @@ class ContainerProxy(object):
     @distributed_trace
     def get_conflict(self, conflict, partition_key, **kwargs):
         # type: (Union[str, Dict[str, Any]], Any, Any) -> Dict[str, str]
-        """ Get the conflict identified by `id`.
+        """
+        Get the conflict identified by `conflict`.
 
         :param conflict: The ID (name) or dict representing the conflict to retrieve.
         :param partition_key: Partition key for the conflict to retrieve.
@@ -675,7 +690,7 @@ class ContainerProxy(object):
         :param response_hook: a callable invoked with the response metadata
         :returns: A dict representing the retrieved conflict.
         :raise `CosmosHttpResponseError`: If the given conflict couldn't be retrieved.
-
+        :rtype: dict[str, Any]
         """
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
@@ -692,7 +707,8 @@ class ContainerProxy(object):
     @distributed_trace
     def delete_conflict(self, conflict, partition_key, **kwargs):
         # type: (Union[str, Dict[str, Any]], Any, Any) -> None
-        """ Delete the specified conflict from the container.
+        """
+        Delete the specified conflict from the container.
 
         :param conflict: The ID (name) or dict representing the conflict to be deleted.
         :param partition_key: Partition key for the conflict to delete.
@@ -700,7 +716,7 @@ class ContainerProxy(object):
         :param response_hook: a callable invoked with the response metadata
         :raises `CosmosHttpResponseError`: The conflict wasn't deleted successfully. If the conflict
             does not exist in the container, a `404` error is returned.
-
+        :rtype: None
         """
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)

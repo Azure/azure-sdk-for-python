@@ -108,30 +108,48 @@ class CosmosClient(object):
     """
     Provides a client-side logical representation of an Azure Cosmos DB account.
     Use this client to configure and execute requests to the Azure Cosmos DB service.
+
+    :param str url: The URL of the Cosmos DB account.
+    :param credential:
+        Can be the account key, or a dictionary of resource tokens.
+    :type credential: str or dict(str, str)
+    :param str consistency_level:
+        Consistency level to use for the session. The default value is "Session".
+
+    **Keyword arguments:**
+
+    *request_timeout* - The HTTP request timeout in seconds.
+    *media_request_timeout* - The media request timeout in seconds.
+    *connection_mode* - The connection mode for the client - currently only supports 'Gateway'.
+    *media_read_mode* - The mode for use with downloading attachment content - default value is `Buffered`.
+    *proxy_config* - Instance of ~azure.cosmos.documents.ProxyConfiguration
+    *ssl_config* - Instance of ~azure.cosmos.documents.SSLConfiguration
+    *connection_verify* - Whether to verify the connection, default value is True.
+    *connection_cert* - An alternative certificate to verify the connection.
+    *retry_total* - Maximum retry attempts.
+    *retry_backoff_max* - Maximum retry wait time in seconds.
+    *retry_fixed_interval* - Fixed retry interval in milliseconds.
+    *enable_endpoint_discovery* - Enable endpoint discovery for geo-replicated database accounts. Default is True.
+    *preferred_locations* - The preferred locations for geo-replicated database accounts.
+        When `enable_endpoint_discovery` is true and `preferred_locations` is non-empty,
+        the client will use this list to evaluate the final location, taking into consideration
+        the order specified in `preferred_locations` list. The locations in this list are specified
+        as the names of the azure Cosmos locations like, 'West US', 'East US', 'Central India'
+        and so on.
+    *connection_policy* - An instance of ~azure.cosmos.documents.ConnectionPolicy
+
+    .. literalinclude:: ../../examples/examples.py
+        :start-after: [START create_client]
+        :end-before: [END create_client]
+        :language: python
+        :dedent: 0
+        :caption: Create a new instance of the Cosmos DB client:
+        :name: create_client
     """
 
     def __init__(self, url, credential, consistency_level="Session", **kwargs):
-        # type: (str, Any, str, ConnectionPolicy) -> None
-        """ Instantiate a new CosmosClient.
-
-        :param url: The URL of the Cosmos DB account.
-        :param credential:
-            Contains 'masterKey' or 'resourceTokens', where
-            auth['masterKey'] is the default authorization key to use to
-            create the client, and auth['resourceTokens'] is the alternative
-            authorization key.
-        :param consistency_level: Consistency level to use for the session.
-        :param connection_policy: Connection policy to use for the session.
-
-        .. literalinclude:: ../../examples/examples.py
-            :start-after: [START create_client]
-            :end-before: [END create_client]
-            :language: python
-            :dedent: 0
-            :caption: Create a new instance of the Cosmos DB client:
-            :name: create_client
-
-        """
+        # type: (str, Any, str, Any) -> None
+        """ Instantiate a new CosmosClient."""
         auth = _build_auth(credential)
         connection_policy = _build_connection_policy(kwargs)
         self.client_connection = CosmosClientConnection(
@@ -148,6 +166,18 @@ class CosmosClient(object):
     @classmethod
     def from_connection_string(cls, conn_str, credential=None, consistency_level="Session", **kwargs):
         # type: (str, Optional[Any], str, Any) -> CosmosClient
+        """
+        Create CosmosClient from a connection string.
+        
+        This can be retrieved from the Azure portal.For full list of optional keyword
+        arguments, see the CosmosClient constructor.
+
+        :param str conn_str: The connection string.
+        :param credential: Alternative credentials to use instead of the key provided in the
+            connection string.
+        :type credential: str or dict(str, str)
+        :param str consistency_level: Consistency level to use for the session. The default value is "Session".
+        """
         settings = _parse_connection_str(conn_str, credential)
         return cls(
             url=settings['AccountEndpoint'],
@@ -177,18 +207,20 @@ class CosmosClient(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> DatabaseProxy
-        """Create a new database with the given ID (name).
+        """
+        Create a new database with the given ID (name).
 
         :param id: ID (name) of the database to create.
-        :param session_token: Token for use with Session consistency.
-        :param initial_headers: Initial headers to be sent as part of the request.
-        :param access_condition: Conditions Associated with the request.
-        :param populate_query_metrics: Enable returning query metrics in response headers.
-        :param offer_throughput: The provisioned throughput for this offer.
-        :param request_options: Dictionary of additional properties to be used for the request.
-        :param response_hook: a callable invoked with the response metadata
-        :returns: A :class:`DatabaseProxy` instance representing the new database.
-        :raises `CosmosHttpResponseError`: If database with the given ID already exists.
+        :param str session_token: Token for use with Session consistency.
+        :param dict(str, str) initial_headers: Initial headers to be sent as part of the request.
+        :param dict(str, str) access_condition: Conditions Associated with the request.
+        :param bool populate_query_metrics: Enable returning query metrics in response headers.
+        :param int offer_throughput: The provisioned throughput for this offer.
+        :param dict(str, Any) request_options: Dictionary of additional properties to be used for the request.
+        :param Callable response_hook: a callable invoked with the response metadata
+        :returns: A DatabaseProxy instance representing the new database.
+        :rtype: ~azure.cosmos.database.DatabaseProxy
+        :raises `CosmosResourceExistsError`: If database with the given ID already exists.
 
         .. literalinclude:: ../../examples/examples.py
             :start-after: [START create_database]
@@ -217,10 +249,11 @@ class CosmosClient(object):
         """
         Retrieve an existing database with the ID (name) `id`.
 
-        :param database: The ID (name), dict representing the properties or :class:`DatabaseProxy`
+        :param database: The ID (name), dict representing the properties or `DatabaseProxy`
             instance of the database to read.
-        :returns: A :class:`DatabaseProxy` instance representing the retrieved database.
-
+        :type database: str or dict(str, str) or ~azure.cosmos.database.DatabaseProxy
+        :returns: A `DatabaseProxy` instance representing the retrieved database.
+        :rtype: ~azure.cosmos.database.DatabaseProxy
         """
         if isinstance(database, DatabaseProxy):
             id_value = database.id
@@ -242,14 +275,14 @@ class CosmosClient(object):
         """
         List the databases in a Cosmos DB SQL database account.
 
-        :param max_item_count: Max number of items to be returned in the enumeration operation.
-        :param session_token: Token for use with Session consistency.
-        :param initial_headers: Initial headers to be sent as part of the request.
-        :param populate_query_metrics: Enable returning query metrics in response headers.
-        :param feed_options: Dictionary of additional properties to be used for the request.
-        :param response_hook: a callable invoked with the response metadata
+        :param int max_item_count: Max number of items to be returned in the enumeration operation.
+        :param str session_token: Token for use with Session consistency.
+        :param dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :param bool populate_query_metrics: Enable returning query metrics in response headers.
+        :param dict[str, str] feed_options: Dictionary of additional properties to be used for the request.
+        :param Callable response_hook: a callable invoked with the response metadata
         :returns: An Iterable of database properties (dicts).
-
+        :rtype: Iterable[dict[str, str]]
         """
         feed_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
@@ -277,18 +310,18 @@ class CosmosClient(object):
         """
         Query the databases in a Cosmos DB SQL database account.
 
-        :param query: The Azure Cosmos DB SQL query to execute.
-        :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
-        :param enable_cross_partition_query: Allow scan on the queries which couldn't be
+        :param str query: The Azure Cosmos DB SQL query to execute.
+        :param list[str] parameters: Optional array of parameters to the query. Ignored if no query is provided.
+        :param bool enable_cross_partition_query: Allow scan on the queries which couldn't be
             served as indexing was opted out on the requested paths.
-        :param max_item_count: Max number of items to be returned in the enumeration operation.
-        :param session_token: Token for use with Session consistency.
-        :param initial_headers: Initial headers to be sent as part of the request.
-        :param populate_query_metrics: Enable returning query metrics in response headers.
-        :param feed_options: Dictionary of additional properties to be used for the request.
-        :param response_hook: a callable invoked with the response metadata
+        :param int max_item_count: Max number of items to be returned in the enumeration operation.
+        :param str session_token: Token for use with Session consistency.
+        :param dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :param bool populate_query_metrics: Enable returning query metrics in response headers.
+        :param dict[str, Any] feed_options: Dictionary of additional properties to be used for the request.
+        :param Callable response_hook: a callable invoked with the response metadata
         :returns: An Iterable of database properties (dicts).
-
+        :rtype: Iterable[dict[str, str]]
         """
         feed_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
@@ -326,14 +359,15 @@ class CosmosClient(object):
 
         :param database: The ID (name), dict representing the properties or :class:`DatabaseProxy`
             instance of the database to delete.
-        :param session_token: Token for use with Session consistency.
-        :param initial_headers: Initial headers to be sent as part of the request.
-        :param access_condition: Conditions Associated with the request.
-        :param populate_query_metrics: Enable returning query metrics in response headers.
-        :param request_options: Dictionary of additional properties to be used for the request.
-        :param response_hook: a callable invoked with the response metadata
+        :type database: str or dict(str, str) or ~azure.cosmos.database.DatabaseProxy
+        :param str session_token: Token for use with Session consistency.
+        :param dict[str, str] initial_headers: Initial headers to be sent as part of the request.
+        :param dict[str, str] access_condition: Conditions Associated with the request.
+        :param bool populate_query_metrics: Enable returning query metrics in response headers.
+        :param dict[str, str] request_options: Dictionary of additional properties to be used for the request.
+        :param Callable response_hook: a callable invoked with the response metadata
         :raise CosmosHttpResponseError: If the database couldn't be deleted.
-
+        :rtype: None
         """
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
@@ -351,9 +385,9 @@ class CosmosClient(object):
         """
         Retrieve the database account information.
 
-        :param response_hook: a callable invoked with the response metadata
-        :returns: A :class:`DatabaseAccount` instance representing the Cosmos DB Database Account.
-
+        :param Callable response_hook: a callable invoked with the response metadata
+        :returns: A `DatabaseAccount` instance representing the Cosmos DB Database Account.
+        :rtype: ~azure.cosmos.documents.DatabaseAccount
         """
         response_hook = kwargs.pop('response_hook', None)
         result = self.client_connection.GetDatabaseAccount(**kwargs)

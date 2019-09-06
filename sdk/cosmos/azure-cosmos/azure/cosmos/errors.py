@@ -31,14 +31,12 @@ from . import http_constants
 
 
 class CosmosHttpResponseError(HttpResponseError):
-    """Raised when a HTTP request to the Azure Cosmos has failed.
-    """
+    """Raised when a HTTP request to the Azure Cosmos has failed."""
 
     def __init__(self, status_code=None, message=None, response=None, **kwargs):
         """
-        :param int status_code:
-        :param str message:
-
+        :param int status_code: HTTP response code.
+        :param str message: Error message.
         """
         self.headers = response.headers if response else {}
         self.sub_status = None

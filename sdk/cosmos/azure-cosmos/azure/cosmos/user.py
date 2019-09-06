@@ -35,6 +35,10 @@ from .permission import Permission
 
 
 class UserProxy(object):
+    """
+    An interface to interact with a specific user.
+    This class should not be instantiated directly, use :func:`DatabaseProxy.get_user_client` method.
+    """
 
     def __init__(self, client_connection, id, database_link, properties=None):  # pylint: disable=redefined-builtin
         # type: (CosmosClientConnection, str, str, Dict[str, Any]) -> None
@@ -69,7 +73,7 @@ class UserProxy(object):
         :param response_hook: a callable invoked with the response metadata
         :returns: A :class:`UserProxy` instance representing the retrieved user.
         :raise `CosmosHttpResponseError`: If the given user couldn't be retrieved.
-
+        :rtype: dict[str, Any]
         """
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
@@ -84,13 +88,14 @@ class UserProxy(object):
     @distributed_trace
     def list_permissions(self, max_item_count=None, **kwargs):
         # type: (Optional[int], Any) -> Iterable[Dict[str, Any]]
-        """ List all permission for the user.
+        """
+        List all permission for the user.
 
         :param max_item_count: Max number of permissions to be returned in the enumeration operation.
         :param feed_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
         :returns: An Iterable of permissions (dicts).
-
+        :rtype: Iterable[dict[str, Any]]
         """
         feed_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
@@ -113,7 +118,8 @@ class UserProxy(object):
         **kwargs
     ):
         # type: (str, Optional[List[str]], Optional[int], Any) -> Iterable[Dict[str, Any]]
-        """Return all permissions matching the given `query`.
+        """
+        Return all permissions matching the given `query`.
 
         :param query: The Azure Cosmos DB SQL query to execute.
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
@@ -121,7 +127,7 @@ class UserProxy(object):
         :param feed_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
         :returns: An Iterable of permissions (dicts).
-
+        :rtype: Iterable[dict[str, Any]]
         """
         feed_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
@@ -152,7 +158,7 @@ class UserProxy(object):
         :param response_hook: a callable invoked with the response metadata
         :returns: A dict representing the retrieved permission.
         :raise `CosmosHttpResponseError`: If the given permission couldn't be retrieved.
-
+        :rtype: dict[str, Any]
         """
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
@@ -175,16 +181,16 @@ class UserProxy(object):
     @distributed_trace
     def create_permission(self, body, **kwargs):
         # type: (Dict[str, Any], Any) -> Permission
-        """ Create a permission for the user.
+        """
+        Create a permission for the user.
+        To update or replace an existing permision, use the :func:`UserProxy.upsert_permission` method.
 
         :param body: A dict-like object representing the permission to create.
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
         :returns: A dict representing the new permission.
         :raise `CosmosHttpResponseError`: If the given permission couldn't be created.
-
-        To update or replace an existing permision, use the :func:`UserProxy.upsert_permission` method.
-
+        :rtype: dict[str, Any]
         """
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
@@ -207,15 +213,16 @@ class UserProxy(object):
     @distributed_trace
     def upsert_permission(self, body, **kwargs):
         # type: (Dict[str, Any], Any) -> Permission
-        """ Insert or update the specified permission.
+        """
+        Insert or update the specified permission.
+        If the permission already exists in the container, it is replaced. If it does not, it is inserted.
 
         :param body: A dict-like object representing the permission to update or insert.
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
         :returns: A dict representing the upserted permission.
         :raise `CosmosHttpResponseError`: If the given permission could not be upserted.
-
-        If the permission already exists in the container, it is replaced. If it does not, it is inserted.
+        :rtype: dict[str, Any]
         """
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
@@ -238,7 +245,8 @@ class UserProxy(object):
     @distributed_trace
     def replace_permission(self, permission, body, **kwargs):
         # type: (str, Dict[str, Any], Any) -> Permission
-        """ Replaces the specified permission if it exists for the user.
+        """
+        Replaces the specified permission if it exists for the user.
 
         :param permission: The ID (name), dict representing the properties or :class:`Permission`
             instance of the permission to be replaced.
@@ -247,7 +255,7 @@ class UserProxy(object):
         :param response_hook: a callable invoked with the response metadata
         :returns: A dict representing the permission after replace went through.
         :raise `CosmosHttpResponseError`: If the replace failed or the permission with given id does not exist.
-
+        :rtype: dict[str, Any]
         """
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
@@ -270,7 +278,8 @@ class UserProxy(object):
     @distributed_trace
     def delete_permission(self, permission, **kwargs):
         # type: (str, Any) -> None
-        """ Delete the specified permission from the user.
+        """
+        Delete the specified permission from the user.
 
         :param permission: The ID (name), dict representing the properties or :class:`Permission`
             instance of the permission to be replaced.
@@ -278,7 +287,7 @@ class UserProxy(object):
         :param response_hook: a callable invoked with the response metadata
         :raises `CosmosHttpResponseError`: The permission wasn't deleted successfully. If the permission does
             not exist for the user, a `404` error is returned.
-
+        :rtype: None
         """
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)

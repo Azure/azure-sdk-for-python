@@ -42,7 +42,9 @@ __all__ = ("DatabaseProxy",)
 
 
 class DatabaseProxy(object):
-    """ Represents an Azure Cosmos DB SQL API database.
+    """
+    An interface to interact with a specific database.
+    This class should not be instantiated directly, use :func:`CosmosClient.get_database_client` method.
 
     A database contains one or more containers, each of which can contain items,
     stored procedures, triggers, and user-defined functions.
@@ -109,18 +111,17 @@ class DatabaseProxy(object):
     def read(self, populate_query_metrics=None, **kwargs):
         # type: (Optional[bool], Any) -> Dict[str, Any]
         """
-        Read the database properties
+        Read the database properties.
 
         :param database: The ID (name), dict representing the properties or :class:`DatabaseProxy`
             instance of the database to read.
         :param session_token: Token for use with Session consistency.
         :param initial_headers: Initial headers to be sent as part of the request.
-        :param populate_query_metrics: Enable returning query metrics in response headers.
+        :param bool populate_query_metrics: Enable returning query metrics in response headers.
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
-        :returns: Dict[Str, Any]
+        :rtype: Dict[Str, Any]
         :raise `CosmosHttpResponseError`: If the given database couldn't be retrieved.
-
         """
         # TODO this helper function should be extracted from CosmosClient
         from .cosmos_client import CosmosClient
@@ -172,9 +173,9 @@ class DatabaseProxy(object):
         :param conflict_resolution_policy: The conflict resolution policy to apply to the container.
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
-        :returns: A :class:`ContainerProxy` instance representing the new container.
+        :returns: A `ContainerProxy` instance representing the new container.
         :raise CosmosHttpResponseError: The container creation failed.
-
+        :rtype: ~azure.cosmos.container.ContainerProxy
 
         .. literalinclude:: ../../examples/examples.py
             :start-after: [START create_container]
@@ -229,7 +230,8 @@ class DatabaseProxy(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        """ Delete the container
+        """
+        Delete the container
 
         :param container: The ID (name) of the container to delete. You can either
             pass in the ID of the container to delete, a :class:`ContainerProxy` instance or
@@ -241,7 +243,7 @@ class DatabaseProxy(object):
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
         :raise CosmosHttpResponseError: If the container couldn't be deleted.
-
+        :rtype: None
         """
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
@@ -255,10 +257,12 @@ class DatabaseProxy(object):
 
     def get_container_client(self, container):
         # type: (Union[str, ContainerProxy, Dict[str, Any]]) -> ContainerProxy
-        """ Get the specified `ContainerProxy`, or a container with specified ID (name).
+        """
+        Get the specified `ContainerProxy`, or a container with specified ID (name).
 
         :param container: The ID (name) of the container, a :class:`ContainerProxy` instance,
             or a dict representing the properties of the container to be retrieved.
+        :rtype: ~azure.cosmos.container.ContainerProxy
 
         .. literalinclude:: ../../examples/examples.py
             :start-after: [START get_container]
@@ -281,7 +285,8 @@ class DatabaseProxy(object):
     @distributed_trace
     def list_containers(self, max_item_count=None, populate_query_metrics=None, **kwargs):
         # type: (Optional[int], Optional[bool], Any) -> Iterable[Dict[str, Any]]
-        """ List the containers in the database.
+        """
+        List the containers in the database.
 
         :param max_item_count: Max number of items to be returned in the enumeration operation.
         :param session_token: Token for use with Session consistency.
@@ -290,6 +295,7 @@ class DatabaseProxy(object):
         :param feed_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
         :returns: An Iterable of container properties (dicts).
+        :rtype: Iterable[dict[str, Any]]
 
         .. literalinclude:: ../../examples/examples.py
             :start-after: [START list_containers]
@@ -324,7 +330,8 @@ class DatabaseProxy(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> Iterable[Dict[str, Any]]
-        """List properties for containers in the current database
+        """
+        List properties for containers in the current database.
 
         :param query: The Azure Cosmos DB SQL query to execute.
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
@@ -335,7 +342,7 @@ class DatabaseProxy(object):
         :param feed_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
         :returns: An Iterable of container properties (dicts).
-
+        :rtype: Iterable[dict[str, Any]]
         """
         feed_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
@@ -366,8 +373,8 @@ class DatabaseProxy(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> ContainerProxy
-        """ Reset the properties of the container. Property changes are persisted immediately.
-
+        """
+        Reset the properties of the container. Property changes are persisted immediately.
         Any properties not specified will be reset to their default values.
 
         :param container: The ID (name), dict representing the properties or
@@ -385,7 +392,8 @@ class DatabaseProxy(object):
         :param response_hook: a callable invoked with the response metadata
         :raise `CosmosHttpResponseError`: Raised if the container couldn't be replaced. This includes
             if the container with given id does not exist.
-        :returns: :class:`ContainerProxy` instance representing the container after replace completed.
+        :returns: A `ContainerProxy` instance representing the container after replace completed.
+        :rtype: ~azure.cosmos.container.ContainerProxy
 
         .. literalinclude:: ../../examples/examples.py
             :start-after: [START reset_container_properties]
@@ -429,13 +437,14 @@ class DatabaseProxy(object):
     @distributed_trace
     def list_users(self, max_item_count=None, **kwargs):
         # type: (Optional[int], Any) -> Iterable[Dict[str, Any]]
-        """ List all users in the container.
+        """
+        List all users in the container.
 
         :param max_item_count: Max number of users to be returned in the enumeration operation.
         :param feed_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
         :returns: An Iterable of user properties (dicts).
-
+        :rtype: Iterable[dict[str, Any]]
         """
         feed_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
@@ -452,7 +461,8 @@ class DatabaseProxy(object):
     @distributed_trace
     def query_users(self, query, parameters=None, max_item_count=None, **kwargs):
         # type: (str, Optional[List[str]], Optional[int], Any) -> Iterable[Dict[str, Any]]
-        """Return all users matching the given `query`.
+        """
+        Return all users matching the given `query`.
 
         :param query: The Azure Cosmos DB SQL query to execute.
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
@@ -460,7 +470,7 @@ class DatabaseProxy(object):
         :param feed_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
         :returns: An Iterable of user properties (dicts).
-
+        :rtype: Iterable[str, Any]
         """
         feed_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
@@ -480,13 +490,13 @@ class DatabaseProxy(object):
     def get_user_client(self, user):
         # type: (Union[str, UserProxy, Dict[str, Any]]) -> UserProxy
         """
-        Get the user identified by `id`.
+        Get the user identified by `user`.
 
         :param user: The ID (name), dict representing the properties or :class:`UserProxy`
             instance of the user to be retrieved.
-        :returns: A :class:`UserProxy` instance representing the retrieved user.
+        :returns: A `UserProxy` instance representing the retrieved user.
         :raise `CosmosHttpResponseError`: If the given user couldn't be retrieved.
-
+        :rtype: ~azure.cosmos.user.UserProxy
         """
         if isinstance(user, UserProxy):
             id_value = user.id
@@ -500,16 +510,17 @@ class DatabaseProxy(object):
     @distributed_trace
     def create_user(self, body, **kwargs):
         # type: (Dict[str, Any], Any) -> UserProxy
-        """ Create a user in the container.
+        """
+        Create a user in the container.
+        To update or replace an existing user, use the :func:`ContainerProxy.upsert_user` method.
 
         :param body: A dict-like object with an `id` key and value representing the user to be created.
         The user ID must be unique within the database, and consist of no more than 255 characters.
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
-        :returns: A :class:`UserProxy` instance representing the new user.
+        :returns: A `UserProxy` instance representing the new user.
         :raise `CosmosHttpResponseError`: If the given user couldn't be created.
-
-        To update or replace an existing user, use the :func:`ContainerProxy.upsert_user` method.
+        :rtype: ~azure.cosmos.user.UserProxy
 
         .. literalinclude:: ../../examples/examples.py
             :start-after: [START create_user]
@@ -536,16 +547,16 @@ class DatabaseProxy(object):
     @distributed_trace
     def upsert_user(self, body, **kwargs):
         # type: (Dict[str, Any], Any) -> UserProxy
-        """ Insert or update the specified user.
+        """
+        Insert or update the specified user.
+        If the user already exists in the container, it is replaced. If it does not, it is inserted.
 
         :param body: A dict-like object representing the user to update or insert.
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
-        :returns: A :class:`UserProxy` instance representing the upserted user.
+        :returns: A `UserProxy` instance representing the upserted user.
         :raise `CosmosHttpResponseError`: If the given user could not be upserted.
-
-        If the user already exists in the container, it is replaced. If it does not, it is inserted.
-
+        :rtype: ~azure.cosmos.user.UserProxy
         """
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
@@ -569,16 +580,17 @@ class DatabaseProxy(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> UserProxy
-        """ Replaces the specified user if it exists in the container.
+        """
+        Replaces the specified user if it exists in the container.
 
         :param user: The ID (name), dict representing the properties or :class:`UserProxy`
             instance of the user to be replaced.
         :param body: A dict-like object representing the user to replace.
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
-        :returns: A :class:`UserProxy` instance representing the user after replace went through.
+        :returns: A `UserProxy` instance representing the user after replace went through.
         :raise `CosmosHttpResponseError`: If the replace failed or the user with given id does not exist.
-
+        :rtype: ~azure.cosmos.user.UserProxy
         """
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
@@ -600,7 +612,8 @@ class DatabaseProxy(object):
     @distributed_trace
     def delete_user(self, user, **kwargs):
         # type: (Union[str, UserProxy, Dict[str, Any]], Any) -> None
-        """ Delete the specified user from the container.
+        """
+        Delete the specified user from the container.
 
         :param user: The ID (name), dict representing the properties or :class:`UserProxy`
             instance of the user to be deleted.
@@ -608,7 +621,7 @@ class DatabaseProxy(object):
         :param response_hook: a callable invoked with the response metadata
         :raises `CosmosHttpResponseError`: The user wasn't deleted successfully. If the user does not
             exist in the container, a `404` error is returned.
-
+        :rtype: None
         """
         request_options = build_options(kwargs)
         response_hook = kwargs.pop('response_hook', None)
@@ -622,12 +635,13 @@ class DatabaseProxy(object):
     @distributed_trace
     def read_offer(self, **kwargs):
         # type: (Any) -> Offer
-        """ Read the Offer object for this database.
+        """
+        Read the Offer object for this database.
 
         :param response_hook: a callable invoked with the response metadata
         :returns: Offer for the database.
         :raise CosmosHttpResponseError: If no offer exists for the database or if the offer could not be retrieved.
-
+        :rtype: ~azure.cosmos.offer.Offer
         """
         response_hook = kwargs.pop('response_hook', None)
         properties = self._get_properties()
@@ -650,13 +664,14 @@ class DatabaseProxy(object):
     @distributed_trace
     def replace_throughput(self, throughput, **kwargs):
         # type: (Optional[int], Any) -> Offer
-        """ Replace the database level throughput.
+        """
+        Replace the database level throughput.
 
         :param throughput: The throughput to be set (an integer).
         :param response_hook: a callable invoked with the response metadata
         :returns: Offer for the database, updated with new throughput.
         :raise CosmosHttpResponseError: If no offer exists for the database or if the offer could not be updated.
-
+        :rtype: ~azure.cosmos.offer.Offer
         """
         response_hook = kwargs.pop('response_hook', None)
         properties = self._get_properties()
