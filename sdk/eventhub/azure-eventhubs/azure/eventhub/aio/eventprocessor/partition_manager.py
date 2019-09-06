@@ -79,9 +79,6 @@ class PartitionManager(ABC):
         :raise: `OwnershipLostError`, `CheckpointError`
         """
 
-    async def close(self):
-        pass
-
 
 class OwnershipLostError(Exception):
     """Raises when update_checkpoint detects the ownership has been lost
