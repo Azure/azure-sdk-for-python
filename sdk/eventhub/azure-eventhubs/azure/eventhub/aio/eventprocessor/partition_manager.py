@@ -35,14 +35,13 @@ class PartitionManager(ABC):
                 etag
         """
 
-
     @abstractmethod
-    async def claim_ownership(self, partitions: Iterable[Dict[str, Any]]) -> Iterable[Dict[str, Any]]:
+    async def claim_ownership(self, ownership_list: Iterable[Dict[str, Any]]) -> Iterable[Dict[str, Any]]:
         """
         Tries to claim a list of specified ownership.
 
-        :param partitions: Iterable of dictionaries containing all the ownership to claim.
-        :type partitions: Iterable of dict
+        :param ownership_list: Iterable of dictionaries containing all the ownership to claim.
+        :type ownership_list: Iterable of dict
         :return: Iterable of dictionaries containing the following partition ownership information:
                 eventhub_name
                 consumer_group_name
@@ -54,7 +53,6 @@ class PartitionManager(ABC):
                 last_modified_time
                 etag
         """
-
 
     @abstractmethod
     async def update_checkpoint(self, eventhub_name, consumer_group_name, partition_id, owner_id,
