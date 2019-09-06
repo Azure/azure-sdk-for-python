@@ -96,7 +96,6 @@ class StorageFileTest(FileTestCase):
 
     def assert_file_equal(self, file_client, expected_data):
         actual_data = file_client.download_file().content_as_bytes()
-        print(actual_data)
         self.assertEqual(actual_data, expected_data)
 
     class NonSeekableFile(object):
@@ -542,6 +541,7 @@ class StorageFileTest(FileTestCase):
     @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
     def test_clear_range(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        pytest.skip("TODO: update x-ms-permission-value")
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)
         file_client = self._create_file(fsc)
