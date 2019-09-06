@@ -63,18 +63,18 @@ class QueryIterable(PageIterator):
         >>>     return result['Databases']
 
         """
+        if continuation_token:
+            raise ValueError("Continuation token not supported by Query iterator.")
         self._client = client
         self.retry_options = client.connection_policy.RetryOptions
         self._query = query
         self._options = options
-        if continuation_token:
-            self._options['continuation'] = continuation_token
         self._fetch_function = fetch_function
         self._collection_link = collection_link
         self._database_link = database_link
         self._partition_key = partition_key
         self._ex_context = self._create_execution_context()
-        super(QueryIterable, self).__init__(self._fetch_next, self._unpack, continuation_token=continuation_token)
+        super(QueryIterable, self).__init__(self._fetch_next, self._unpack)
 
     def _create_execution_context(self):
         """instantiates the internal query execution context based.
@@ -91,9 +91,9 @@ class QueryIterable(PageIterator):
     def _unpack(self, block):
         if block:
             self._did_a_call_already = False
-        return self._ex_context._continuation, block
+        return None, block
 
-    def _fetch_next(self, continuation):
+    def _fetch_next(self, *args):
         """Returns a block of results with respecting retry policy.
 
         This method only exists for backward compatibility reasons. (Because QueryIterable
@@ -104,7 +104,6 @@ class QueryIterable(PageIterator):
         :rtype:
             list
         """
-        self._ex_context._continuation = continuation
         block = self._ex_context.fetch_next_block()
         if not block:
             raise StopIteration
