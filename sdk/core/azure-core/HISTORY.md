@@ -3,7 +3,14 @@
 
 -------------------
 
-2019-08-XX Version 1.0.0b2
+2019-09-09 Version 1.0.0b3
+
+## Bug fixes
+
+-  Fix aiohttp auto-headers #6992
+-  Add tracing to policies module init  #6951
+
+2019-08-05 Version 1.0.0b2
 
 ## Breaking changes
 
