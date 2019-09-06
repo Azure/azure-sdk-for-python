@@ -3063,7 +3063,8 @@ class Task(Resource):
 
 
 class TaskRun(Resource):
-    """TaskRun.
+    """The taskrun that has the ARM resource and taskrun properties.
+    The taskrun will have the information of request and result of a run.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -3084,14 +3085,15 @@ class TaskRun(Resource):
     :param identity: Identity for the resource.
     :type identity:
      ~azure.mgmt.containerregistry.v2019_06_01_preview.models.IdentityProperties
-    :ivar provisioning_state: Possible values include: 'Creating', 'Updating',
-     'Deleting', 'Succeeded', 'Failed', 'Canceled'
+    :ivar provisioning_state: The privisioning state of this taskrun. Possible
+     values include: 'Creating', 'Updating', 'Deleting', 'Succeeded', 'Failed',
+     'Canceled'
     :vartype provisioning_state: str or
      ~azure.mgmt.containerregistry.v2019_06_01_preview.models.ProvisioningState
-    :param run_request:
+    :param run_request: The request (parameters) for the run
     :type run_request:
      ~azure.mgmt.containerregistry.v2019_06_01_preview.models.RunRequest
-    :ivar run_result:
+    :ivar run_result: The run result of this taskrun
     :vartype run_result:
      ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Run
     """
@@ -3164,12 +3166,12 @@ class TaskRunRequest(RunRequest):
 
 
 class TaskRunUpdateParameters(Model):
-    """TaskRunUpdateParameters.
+    """The parameters for updating a taskrun.
 
     :param identity: Identity for the resource.
     :type identity:
      ~azure.mgmt.containerregistry.v2019_06_01_preview.models.IdentityProperties
-    :param run_request:
+    :param run_request: The request (parameters) for the new run
     :type run_request:
      ~azure.mgmt.containerregistry.v2019_06_01_preview.models.RunRequest
     :param tags: The ARM resource tags.
