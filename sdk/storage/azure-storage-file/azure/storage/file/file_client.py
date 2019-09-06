@@ -26,13 +26,13 @@ from ._generated.version import VERSION
 from ._generated.models import StorageErrorException, FileHTTPHeaders
 from ._shared.uploads import IterStreamer, FileChunkUploader, upload_data_chunks
 from ._shared.downloads import StorageStreamDownloader
-from ._shared.shared_access_signature import FileSharedAccessSignature
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
 from ._shared.request_handlers import add_metadata_headers, get_length
 from ._shared.response_handlers import return_response_headers, process_storage_error
 from ._deserialize import deserialize_file_properties, deserialize_file_stream
 from ._polling import CloseHandles
 from .models import HandlesPaged
+from ._shared_access_signature import FileSharedAccessSignature
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -64,7 +64,7 @@ def _upload_file_helper(
         if size == 0:
             return response
 
-        return upload_data_chunks(
+        responses = upload_data_chunks(
             service=client,
             uploader_class=FileChunkUploader,
             total_size=size,
@@ -73,7 +73,9 @@ def _upload_file_helper(
             max_connections=max_connections,
             validate_content=validate_content,
             timeout=timeout,
-            **kwargs)
+            **kwargs
+        )
+        return sorted(responses, key=lambda r: r.get('last_modified'))[-1]
     except StorageErrorException as error:
         process_storage_error(error)
 
@@ -165,7 +167,7 @@ class FileClient(StorageAccountHostsMixin):
         self.directory_path = "/".join(self.file_path[:-1])
         self._query_str, credential = self._format_query_string(
             sas_token, credential, share_snapshot=self.snapshot)
-        super(FileClient, self).__init__(parsed_url, 'file', credential, **kwargs)
+        super(FileClient, self).__init__(parsed_url, service='file', credential=credential, **kwargs)
         self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline)
 
     def _format_url(self, hostname):
@@ -300,11 +302,11 @@ class FileClient(StorageAccountHostsMixin):
         else:
             file_path = None # type: ignore
         return sas.generate_file( # type: ignore
-            self.share_name,
-            file_path,
-            self.file_name,
-            permission,
-            expiry,
+            share_name=self.share_name,
+            directory_name=file_path,
+            file_name=self.file_name,
+            permission=permission,
+            expiry=expiry,
             start=start,
             policy_id=policy_id,
             ip=ip,
@@ -657,6 +659,8 @@ class FileClient(StorageAccountHostsMixin):
                 file_content_length=file_content_length,
                 file_http_headers=file_http_headers,
                 cls=return_response_headers,
+                file_creation_time="preserve", # TODO: Verify these default values are correct
+                file_last_write_time="preserve", # TODO: Verify these default values are correct
                 **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
@@ -853,6 +857,8 @@ class FileClient(StorageAccountHostsMixin):
                 timeout=timeout,
                 file_content_length=size,
                 cls=return_response_headers,
+                file_creation_time="preserve", # TODO: Verify these default values are correct
+                file_last_write_time="preserve", # TODO: Verify these default values are correct
                 **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)

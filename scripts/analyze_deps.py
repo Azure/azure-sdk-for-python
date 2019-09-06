@@ -89,7 +89,8 @@ def get_wheel_deps(wheel_dir):
 
                 requires = pkg_info.get_all('Requires-Dist')
                 for req in requires:
-                    req = re.sub(r'[\s\(\)]', '', req)
+                    req = req.split(';')[0] # Extras conditions appear after a semicolon
+                    req = re.sub(r'[\s\(\)]', '', req) # Version specifiers appear in parentheses
                     record_dep(dependencies, req, lib_name)
         except:
             print('Failed to parse METADATA from %s' % (whl_path))
@@ -242,18 +243,32 @@ if __name__ == '__main__':
             sys.exit(0)
 
     frozen = {}
+    overrides = {}
+    override_count = 0
     try:
         with io.open(frozen_filename, 'r', encoding='utf-8-sig') as frozen_file:
             for line in frozen_file:
-                req_name, spec = parse_req(line)
-                frozen[req_name] = [spec]
+                if line.startswith('#override'):
+                    _, lib_name, req_override = line.split(' ', 2)
+                    record_dep(overrides, req_override, lib_name)
+                    override_count += 1
+                elif not line.startswith('#'):
+                    req_name, spec = parse_req(line)
+                    frozen[req_name] = [spec]
     except:
         print('Unable to open shared_requirements.txt, shared requirements have not been validated')
 
     missing_reqs, new_reqs, changed_reqs = {}, {}, {}
+    non_overridden_reqs_count = 0
     if frozen:
         flat_deps = {req: sorted(dependencies[req].keys()) for req in dependencies}
         missing_reqs, new_reqs, changed_reqs = dict_compare(frozen, flat_deps)
+        if args.verbose and len(overrides) > 0:
+            print('\nThe following requirement overrides are in place:')
+            for overridden_req in overrides:
+                for spec in overrides[overridden_req]:
+                    libs = ', '.join(sorted(overrides[overridden_req][spec]))
+                    print('  * %s is allowed for %s' % (overridden_req + spec, libs))
         if args.verbose and len(missing_reqs) > 0:
             print('\nThe following requirements are frozen but do not exist in any current library:')
             for missing_req in missing_reqs:
@@ -269,17 +284,24 @@ if __name__ == '__main__':
                         for lib in libs:
                             print("  * %s" % (lib))
         if len(changed_reqs) > 0:
-            exitcode = 1
-            if args.verbose:
-                for changed_req in changed_reqs:
-                    [frozen_spec] = frozen[changed_req]
-                    for current_spec in dependencies[changed_req]:
-                        if frozen_spec == current_spec:
-                            continue
-                        libs = dependencies[changed_req][current_spec]
-                        print("\nThe following libraries declare requirement '%s' which does not match the frozen requirement '%s':" % (changed_req + current_spec, changed_req + frozen_spec))
-                        for lib in libs:
-                            print("  * %s" % (lib))
+            for changed_req in changed_reqs:
+                frozen_specs, current_specs = changed_reqs[changed_req]
+                unmatched_specs = set(current_specs) - set(frozen_specs)
+                override_specs = overrides.get(changed_req, [])
+
+                for spec in unmatched_specs:
+                    if spec in override_specs:
+                        non_overridden_libs = set(dependencies[changed_req][spec]) - set(override_specs[spec])
+                    else:
+                        non_overridden_libs = dependencies[changed_req][spec]
+
+                    if len(non_overridden_libs) > 0:
+                        exitcode = 1
+                        non_overridden_reqs_count += 1
+                        if args.verbose:
+                            print("\nThe following libraries declare requirement '%s' which does not match the frozen requirement '%s':" % (changed_req + spec, changed_req + frozen_specs[0]))
+                            for lib in non_overridden_libs:
+                                print("  * %s" % (lib))
 
     if args.out:
         external = [k for k in dependencies if k not in packages and not should_skip_lib(k)]
@@ -299,7 +321,10 @@ if __name__ == '__main__':
             'inconsistent': inconsistent,
             'missing_reqs': missing_reqs,
             'new_reqs': new_reqs,
+            'non_overridden_reqs_count': non_overridden_reqs_count,
             'ordered_deps': sorted(dependencies.keys(), key=display_order),
+            'override_count': override_count,
+            'overrides': overrides,
             'packages': packages,
             'repo_name': 'azure-sdk-for-python'
         })

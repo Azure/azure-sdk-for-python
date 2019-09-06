@@ -1175,6 +1175,37 @@ class StorageCommonBlobTest(StorageTestCase):
         # Assert
         self.assertEqual(self.byte_data, content)
 
+    def test_sas_access_blob_snapshot(self):
+        # SAS URL is calculated from storage key, so this test runs live only
+        if TestMode.need_recording_file(self.test_mode):
+            return
+
+        # Arrange
+        blob_name = self._create_block_blob()
+        blob_client = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob_snapshot = blob_client.create_snapshot()
+        blob_snapshot_client = self.bsc.get_blob_client(self.container_name, blob_name, snapshot=blob_snapshot)
+
+        token = blob_snapshot_client.generate_shared_access_signature(
+            permission=BlobPermissions.READ + BlobPermissions.DELETE,
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
+
+        service = BlobClient(blob_snapshot_client.url, credential=token)
+
+        # Act
+        snapshot_content = service.download_blob().content_as_bytes()
+
+        # Assert
+        self.assertEqual(self.byte_data, snapshot_content)
+
+        # Act
+        service.delete_blob()
+
+        # Assert
+        with self.assertRaises(ResourceNotFoundError):
+            service.get_blob_properties()
+
     @record
     def test_sas_signed_identifier(self):
         # SAS URL is calculated from storage key, so this test runs live only

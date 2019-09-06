@@ -4,11 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 
-import os
 import sys
-import uuid
-
-import pytest
 
 # Ignore async tests for Python < 3.5
 collect_ignore_glob = []

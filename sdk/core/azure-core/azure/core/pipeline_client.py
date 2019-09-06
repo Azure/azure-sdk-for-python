@@ -25,6 +25,11 @@
 # --------------------------------------------------------------------------
 
 import logging
+from .pipeline import Pipeline
+from .pipeline.transport.base import PipelineClientBase
+from .pipeline.policies import ContentDecodePolicy
+from .pipeline.transport import RequestsTransport
+from .pipeline.policies.distributed_tracing import DistributedTracingPolicy
 
 try:
     from typing import TYPE_CHECKING
@@ -44,13 +49,6 @@ if TYPE_CHECKING:
         Iterator,
         cast,
     )  # pylint: disable=unused-import
-
-from .pipeline import Pipeline
-from .pipeline.transport.base import PipelineClientBase
-from .pipeline.policies import ContentDecodePolicy
-from .pipeline.transport import RequestsTransport
-from .pipeline.policies.distributed_tracing import DistributedTracingPolicy
-
 
 _LOGGER = logging.getLogger(__name__)
 

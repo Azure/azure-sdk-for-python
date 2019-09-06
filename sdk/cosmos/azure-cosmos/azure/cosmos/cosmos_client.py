@@ -1,45 +1,38 @@
-﻿#The MIT License (MIT)
-#Copyright (c) 2014 Microsoft Corporation
+﻿# The MIT License (MIT)
+# Copyright (c) 2014 Microsoft Corporation
 
-#Permission is hereby granted, free of charge, to any person obtaining a copy
-#of this software and associated documentation files (the "Software"), to deal
-#in the Software without restriction, including without limitation the rights
-#to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-#copies of the Software, and to permit persons to whom the Software is
-#furnished to do so, subject to the following conditions:
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
 
-#The above copyright notice and this permission notice shall be included in all
-#copies or substantial portions of the Software.
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
 
-#THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-#IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-#FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-#AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-#LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-#OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-#SOFTWARE.
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 
 """Create, read, and delete databases in the Azure Cosmos DB SQL API service.
 """
 
+from typing import Any, Callable, Dict, Mapping, Optional, Union, cast
+
 import six
+
 from ._cosmos_client_connection import CosmosClientConnection
 from .database import Database
 from .documents import ConnectionPolicy, DatabaseAccount
 from ._query_iterable import QueryIterable
-from typing import (
-    Any,
-    Callable,
-    Dict,
-    Mapping,
-    Optional,
-    Union,
-    cast
-)
 
-__all__ = (
-    'CosmosClient',
-)
+__all__ = ("CosmosClient",)
+
 
 class CosmosClient:
     """
@@ -47,7 +40,9 @@ class CosmosClient:
     Use this client to configure and execute requests to the Azure Cosmos DB service.
     """
 
-    def __init__(self, url, auth, consistency_level="Session", connection_policy=None):
+    def __init__(
+        self, url, auth, consistency_level="Session", connection_policy=None
+    ):  # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs,line-too-long
         # type: (str, Dict[str, str], str, ConnectionPolicy) -> None
         """ Instantiate a new CosmosClient.
 
@@ -68,12 +63,9 @@ class CosmosClient:
             :caption: Create a new instance of the Cosmos DB client:
             :name: create_client
 
-        """ 
+        """
         self.client_connection = CosmosClientConnection(
-            url,
-            auth,
-            consistency_level=consistency_level,
-            connection_policy=connection_policy,
+            url, auth, consistency_level=consistency_level, connection_policy=connection_policy
         )
 
     @staticmethod
@@ -90,14 +82,14 @@ class CosmosClient:
 
     def create_database(
         self,
-        id,
+        id,  # pylint: disable=redefined-builtin
         session_token=None,
         initial_headers=None,
         access_condition=None,
         populate_query_metrics=None,
         offer_throughput=None,
         request_options=None,
-        response_hook=None
+        response_hook=None,
     ):
         # type: (str, str, Dict[str, str], Dict[str, str], bool, int, Dict[str, Any], Optional[Callable]) -> Database
         """Create a new database with the given ID (name).
@@ -124,7 +116,7 @@ class CosmosClient:
         """
 
         if not request_options:
-            request_options = {} # type: Dict[str, Any]
+            request_options = {}  # type: Dict[str, Any]
         if session_token:
             request_options["sessionToken"] = session_token
         if initial_headers:
@@ -141,29 +133,24 @@ class CosmosClient:
             response_hook(self.client_connection.last_response_headers)
         return Database(self.client_connection, id=result["id"], properties=result)
 
-    def get_database_client(
-        self,
-        database
-    ):
+    def get_database_client(self, database):
         # type: (Union[str, Database, Dict[str, Any]]) -> Database
         """
         Retrieve an existing database with the ID (name) `id`.
 
-        :param database: The ID (name), dict representing the properties or :class:`Database` instance of the database to read.
+        :param database: The ID (name), dict representing the properties or :class:`Database`
+            instance of the database to read.
         :returns: A :class:`Database` instance representing the retrieved database.
 
         """
         if isinstance(database, Database):
             id_value = database.id
         elif isinstance(database, Mapping):
-            id_value = database['id']
+            id_value = database["id"]
         else:
             id_value = database
 
-        return Database(
-            self.client_connection,
-            id_value
-        )
+        return Database(self.client_connection, id_value)
 
     def read_all_databases(
         self,
@@ -172,7 +159,7 @@ class CosmosClient:
         initial_headers=None,
         populate_query_metrics=None,
         feed_options=None,
-        response_hook=None
+        response_hook=None,
     ):
         # type: (int, str, Dict[str, str], bool, Dict[str, Any],  Optional[Callable]) -> QueryIterable
         """
@@ -188,7 +175,7 @@ class CosmosClient:
 
         """
         if not feed_options:
-            feed_options = {} # type: Dict[str, Any]
+            feed_options = {}  # type: Dict[str, Any]
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
         if session_token:
@@ -198,33 +185,32 @@ class CosmosClient:
         if populate_query_metrics is not None:
             feed_options["populateQueryMetrics"] = populate_query_metrics
 
-        result = self.client_connection.ReadDatabases(
-            options=feed_options
-        )
+        result = self.client_connection.ReadDatabases(options=feed_options)
         if response_hook:
             response_hook(self.client_connection.last_response_headers)
         return result
 
     def query_databases(
         self,
-        query=None,
-        parameters=None,
-        enable_cross_partition_query=None,
-        max_item_count=None,
-        session_token=None,
-        initial_headers=None,
-        populate_query_metrics=None,
-        feed_options=None,
-        response_hook=None
+        query=None,  # type: str
+        parameters=None,  # type: List[str]
+        enable_cross_partition_query=None,  # type: bool
+        max_item_count=None,  # type:  int
+        session_token=None,  # type: str
+        initial_headers=None,  # type: Dict[str,str]
+        populate_query_metrics=None,  # type: bool
+        feed_options=None,  # type: Dict[str, Any]
+        response_hook=None,  # type: Optional[Callable]
     ):
-        # type: (str, List[str], bool, int, str, Dict[str,str], bool, Dict[str, Any], Optional[Callable]) -> QueryIterable
+        # type: (...) -> QueryIterable
 
         """
         Query the databases in a Cosmos DB SQL database account.
 
         :param query: The Azure Cosmos DB SQL query to execute.
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
-        :param enable_cross_partition_query: Allow scan on the queries which couldn't be served as indexing was opted out on the requested paths.
+        :param enable_cross_partition_query: Allow scan on the queries which couldn't be
+            served as indexing was opted out on the requested paths.
         :param max_item_count: Max number of items to be returned in the enumeration operation.
         :param session_token: Token for use with Session consistency.
         :param initial_headers: Initial headers to be sent as part of the request.
@@ -235,7 +221,7 @@ class CosmosClient:
 
         """
         if not feed_options:
-            feed_options = {} # type: Dict[str, Any]
+            feed_options = {}  # type: Dict[str, Any]
         if enable_cross_partition_query is not None:
             feed_options["enableCrossPartitionQuery"] = enable_cross_partition_query
         if max_item_count is not None:
@@ -254,10 +240,7 @@ class CosmosClient:
             # the headers were misleading)
             # This needs to change for "real" implementation
             result = self.client_connection.QueryDatabases(
-                query=query
-                if parameters is None
-                else dict(query=query, parameters=parameters),
-                options=feed_options
+                query=query if parameters is None else dict(query=query, parameters=parameters), options=feed_options
             )
         else:
             result = self.client_connection.ReadDatabases(options=feed_options)
@@ -267,19 +250,20 @@ class CosmosClient:
 
     def delete_database(
         self,
-        database,
-        session_token=None,
-        initial_headers=None,
-        access_condition=None,
-        populate_query_metrics=None,
-        request_options=None, 
-        response_hook=None
+        database,  # type: Union[str, Database, Dict[str, Any]]
+        session_token=None,  # type: str
+        initial_headers=None,  # type: Dict[str, str]
+        access_condition=None,  # type:  Dict[str, str]
+        populate_query_metrics=None,  # type: bool
+        request_options=None,  # type: Dict[str, Any]
+        response_hook=None,  # type: Optional[Callable]
     ):
-        # type: (Union[str, Database, Dict[str, Any]], str, Dict[str, str], Dict[str, str], bool, Dict[str, Any], Optional[Callable]) -> None
+        # type: (...) -> None
         """
         Delete the database with the given ID (name).
 
-        :param database: The ID (name), dict representing the properties or :class:`Database` instance of the database to delete.
+        :param database: The ID (name), dict representing the properties or :class:`Database`
+            instance of the database to delete.
         :param session_token: Token for use with Session consistency.
         :param initial_headers: Initial headers to be sent as part of the request.
         :param access_condition: Conditions Associated with the request.
@@ -290,7 +274,7 @@ class CosmosClient:
 
         """
         if not request_options:
-            request_options = {} # type: Dict[str, Any]
+            request_options = {}  # type: Dict[str, Any]
         if session_token:
             request_options["sessionToken"] = session_token
         if initial_headers:
@@ -318,4 +302,3 @@ class CosmosClient:
         if response_hook:
             response_hook(self.client_connection.last_response_headers)
         return result
-

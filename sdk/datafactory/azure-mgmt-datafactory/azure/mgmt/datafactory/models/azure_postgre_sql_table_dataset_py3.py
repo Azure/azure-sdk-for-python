@@ -43,9 +43,17 @@ class AzurePostgreSqlTableDataset(Dataset):
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
-    :param table_name: The table name. Type: string (or Expression with
+    :param table_name: The table name of the Azure PostgreSQL database which
+     includes both schema and table. Type: string (or Expression with
      resultType string).
     :type table_name: object
+    :param table: The table name of the Azure PostgreSQL database. Type:
+     string (or Expression with resultType string).
+    :type table: object
+    :param azure_postgre_sql_table_dataset_schema: The schema name of the
+     Azure PostgreSQL database. Type: string (or Expression with resultType
+     string).
+    :type azure_postgre_sql_table_dataset_schema: object
     """
 
     _validation = {
@@ -64,9 +72,13 @@ class AzurePostgreSqlTableDataset(Dataset):
         'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
         'table_name': {'key': 'typeProperties.tableName', 'type': 'object'},
+        'table': {'key': 'typeProperties.table', 'type': 'object'},
+        'azure_postgre_sql_table_dataset_schema': {'key': 'typeProperties.schema', 'type': 'object'},
     }
 
-    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, **kwargs) -> None:
+    def __init__(self, *, linked_service_name, additional_properties=None, description: str=None, structure=None, schema=None, parameters=None, annotations=None, folder=None, table_name=None, table=None, azure_postgre_sql_table_dataset_schema=None, **kwargs) -> None:
         super(AzurePostgreSqlTableDataset, self).__init__(additional_properties=additional_properties, description=description, structure=structure, schema=schema, linked_service_name=linked_service_name, parameters=parameters, annotations=annotations, folder=folder, **kwargs)
         self.table_name = table_name
+        self.table = table
+        self.azure_postgre_sql_table_dataset_schema = azure_postgre_sql_table_dataset_schema
         self.type = 'AzurePostgreSqlTable'

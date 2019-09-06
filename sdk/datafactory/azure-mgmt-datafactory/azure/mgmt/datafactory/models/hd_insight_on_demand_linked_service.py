@@ -29,7 +29,7 @@ class HDInsightOnDemandLinkedService(LinkedService):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset.
+     linked service.
     :type annotations: list[object]
     :param type: Required. Constant filled by server.
     :type type: str
@@ -136,6 +136,14 @@ class HDInsightOnDemandLinkedService(LinkedService):
      cluster once it's up. Please refer to
      https://docs.microsoft.com/en-us/azure/hdinsight/hdinsight-hadoop-customize-cluster-linux?toc=%2Fen-us%2Fazure%2Fhdinsight%2Fr-server%2FTOC.json&bc=%2Fen-us%2Fazure%2Fbread%2Ftoc.json#understanding-script-actions.
     :type script_actions: list[~azure.mgmt.datafactory.models.ScriptAction]
+    :param virtual_network_id: The ARM resource ID for the vNet to which the
+     cluster should be joined after creation. Type: string (or Expression with
+     resultType string).
+    :type virtual_network_id: object
+    :param subnet_name: The ARM resource ID for the subnet in the vNet. If
+     virtualNetworkId was specified, then this property is required. Type:
+     string (or Expression with resultType string).
+    :type subnet_name: object
     """
 
     _validation = {
@@ -187,6 +195,8 @@ class HDInsightOnDemandLinkedService(LinkedService):
         'data_node_size': {'key': 'typeProperties.dataNodeSize', 'type': 'object'},
         'zookeeper_node_size': {'key': 'typeProperties.zookeeperNodeSize', 'type': 'object'},
         'script_actions': {'key': 'typeProperties.scriptActions', 'type': '[ScriptAction]'},
+        'virtual_network_id': {'key': 'typeProperties.virtualNetworkId', 'type': 'object'},
+        'subnet_name': {'key': 'typeProperties.subnetName', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
@@ -222,4 +232,6 @@ class HDInsightOnDemandLinkedService(LinkedService):
         self.data_node_size = kwargs.get('data_node_size', None)
         self.zookeeper_node_size = kwargs.get('zookeeper_node_size', None)
         self.script_actions = kwargs.get('script_actions', None)
+        self.virtual_network_id = kwargs.get('virtual_network_id', None)
+        self.subnet_name = kwargs.get('subnet_name', None)
         self.type = 'HDInsightOnDemand'

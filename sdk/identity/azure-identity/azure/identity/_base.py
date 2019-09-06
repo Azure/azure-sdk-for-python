@@ -24,7 +24,7 @@ if TYPE_CHECKING:
 class ClientSecretCredentialBase(object):
     """Sans I/O base for client secret credentials"""
 
-    def __init__(self, client_id, secret, tenant_id, **kwargs):
+    def __init__(self, client_id, secret, tenant_id, **kwargs):  # pylint:disable=unused-argument
         # type: (str, str, str, Mapping[str, Any]) -> None
         if not client_id:
             raise ValueError("client_id should be the id of an Azure Active Directory application")
@@ -41,7 +41,7 @@ class ClientSecretCredentialBase(object):
 class CertificateCredentialBase(object):
     """Sans I/O base for certificate credentials"""
 
-    def __init__(self, client_id, tenant_id, certificate_path, **kwargs):
+    def __init__(self, client_id, tenant_id, certificate_path, **kwargs):  # pylint:disable=unused-argument
         # type: (str, str, str, Mapping[str, Any]) -> None
         if not certificate_path:
             # TODO: support PFX

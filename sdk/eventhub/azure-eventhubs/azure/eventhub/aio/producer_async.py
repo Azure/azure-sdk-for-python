@@ -5,11 +5,11 @@
 import uuid
 import asyncio
 import logging
-from typing import Iterable, Union
+from typing import Iterable, Union, Any
 import time
 
-from uamqp import types, constants, errors
-from uamqp import SendClientAsync
+from uamqp import types, constants, errors  # type: ignore
+from uamqp import SendClientAsync  # type: ignore
 
 from azure.eventhub.common import EventData, EventDataBatch
 from azure.eventhub.error import _error_handler, OperationTimeoutError, EventDataError
@@ -20,7 +20,7 @@ from ._consumer_producer_mixin_async import ConsumerProducerMixin, _retry_decora
 log = logging.getLogger(__name__)
 
 
-class EventHubProducer(ConsumerProducerMixin):
+class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-instance-attributes
     """
     A producer responsible for transmitting EventData to a specific Event Hub,
     grouped together in batches. Depending on the options specified at creation, the producer may
@@ -94,11 +94,11 @@ class EventHubProducer(ConsumerProducerMixin):
             keep_alive_interval=self.keep_alive,
             client_name=self.name,
             link_properties=self._link_properties,
-            properties=self.client._create_properties(
-                self.client.config.user_agent),  # pylint: disable=protected-access
+            properties=self.client._create_properties(  # pylint: disable=protected-access
+                self.client.config.user_agent),
             loop=self.loop)
 
-    async def _open(self, timeout_time=None, **kwargs):
+    async def _open(self, timeout_time=None, **kwargs):  # pylint:disable=arguments-differ, unused-argument # TODO: to refactor
         """
         Open the EventHubProducer using the supplied connection.
         If the handler has previously been redirected, the redirect
@@ -106,7 +106,7 @@ class EventHubProducer(ConsumerProducerMixin):
 
         """
         if not self.running and self.redirected:
-            self.client._process_redirect_uri(self.redirected)
+            self.client._process_redirect_uri(self.redirected)  # pylint: disable=protected-access
             self.target = self.redirected.address
         await super(EventHubProducer, self)._open(timeout_time)
 
@@ -184,8 +184,9 @@ class EventHubProducer(ConsumerProducerMixin):
 
         return EventDataBatch(max_size=(max_size or self._max_message_size_on_link), partition_key=partition_key)
 
-    async def send(self, event_data, *, partition_key=None, timeout=None):
-        # type:(Union[EventData, EventDataBatch, Iterable[EventData]], Union[str, bytes], float) -> None
+    async def send(
+            self, event_data: Union[EventData, EventDataBatch, Iterable[EventData]],
+            *, partition_key: Union[str, bytes] = None, timeout: float = None):
         """
         Sends an event data and blocks until acknowledgement is
         received or operation times out.
@@ -222,18 +223,18 @@ class EventHubProducer(ConsumerProducerMixin):
             wrapper_event_data = event_data
         else:
             if isinstance(event_data, EventDataBatch):
-                if partition_key and not (partition_key == event_data._partition_key):  # pylint: disable=protected-access
+                if partition_key and partition_key != event_data._partition_key:  # pylint: disable=protected-access
                     raise EventDataError('The partition_key does not match the one of the EventDataBatch')
-                wrapper_event_data = event_data
+                wrapper_event_data = event_data  #type: ignore
             else:
                 if partition_key:
                     event_data = _set_partition_key(event_data, partition_key)
                 wrapper_event_data = EventDataBatch._from_batch(event_data, partition_key)  # pylint: disable=protected-access
         wrapper_event_data.message.on_send_complete = self._on_outcome
         self.unsent_events = [wrapper_event_data.message]
-        await self._send_event_data_with_retry(timeout=timeout)
+        await self._send_event_data_with_retry(timeout=timeout)  # pylint:disable=unexpected-keyword-arg # TODO: to refactor
 
-    async def close(self,  exception=None):
+    async def close(self, exception=None):
         # type: (Exception) -> None
         """
         Close down the handler. If the handler has already closed,

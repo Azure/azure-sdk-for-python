@@ -50,10 +50,11 @@ Use the [Azure Cloud Shell][azure_cloud_shell] snippet below to create/get clien
 
 * Grant the above mentioned application authorization to perform key operations on the keyvault:
     ```Bash
-    az keyvault set-policy --name <your-key-vault-name> --spn $AZURE_CLIENT_ID --key-permissions backup delete get list set
+    az keyvault set-policy --name <your-key-vault-name> --spn $AZURE_CLIENT_ID --key-permissions backup delete get list create
     ```
     > --key-permissions:
-    > Accepted values: backup, delete, get, list, purge, recover, restore, set
+    > Accepted values (management operations): backup, delete, get, list, purge, recover, restore, create, update, import
+    > Accepted values (cryptographic operations): decrypt, encrypt, unwrapKey, wrapKey, verify, sign
 
 * Use the above mentioned Key Vault name to retrieve details of your Vault which also contains your Key Vault URL:
     ```Bash
@@ -117,7 +118,6 @@ print(ec_key.key_material.kty)
 key = key_client.get_key("key-name")
 
 print(key.name)
-print(key.value)
 ```
 
 ### Update an existing Key
@@ -217,6 +217,7 @@ Key Vault clients raise exceptions defined in azure-core. For more detailed infr
 
 For example, if you try to retrieve a key after it is deleted a `404` error is returned, indicating resource not found. In the following snippet, the error is handled gracefully by catching the exception and displaying additional information about the error.
 ```python
+from azure.core.exceptions import ResourceNotFoundError
 try:
     key_client.get_key("deleted_key")
 except ResourceNotFoundError as e:

@@ -21,7 +21,6 @@ from azure.core.tracing.decorator import distributed_trace
 
 from ._shared import encode_base64
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
-from ._shared.shared_access_signature import BlobSharedAccessSignature
 from ._shared.encryption import generate_blob_encryption_data
 from ._shared.uploads import IterStreamer
 from ._shared.downloads import StorageStreamDownloader
@@ -46,6 +45,7 @@ from ._upload_helpers import (
     upload_page_blob)
 from .models import BlobType, BlobBlock
 from .lease import LeaseClient, get_access_conditions
+from ._shared_access_signature import BlobSharedAccessSignature
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -162,8 +162,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 self.snapshot = blob.snapshot # type: ignore
         except AttributeError:
             self.blob_name = blob or unquote(path_blob)
-        self._query_str, credential = self._format_query_string(sas_token, credential, self.snapshot)
-        super(BlobClient, self).__init__(parsed_url, 'blob', credential, **kwargs)
+        self._query_str, credential = self._format_query_string(sas_token, credential, snapshot=self.snapshot)
+        super(BlobClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
         self._client = AzureBlobStorage(self.url, pipeline=self._pipeline)
 
     def _format_url(self, hostname):
@@ -185,7 +185,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             snapshot=None,  # type: Optional[str]
             credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
-        ):
+        ):  # type: (...) -> BlobClient
         """
         Create BlobClient from a Connection String.
 
@@ -298,8 +298,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         return sas.generate_blob(
             self.container_name,
             self.blob_name,
-            permission,
-            expiry,
+            snapshot=self.snapshot,
+            permission=permission,
+            expiry=expiry,
             start=start,
             policy_id=policy_id,
             ip=ip,
@@ -2256,9 +2257,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :rtype: dict(str, Any)
         """
         options = self._upload_page_options(
-            page,
-            start_range,
-            end_range,
+            page=page,
+            start_range=start_range,
+            end_range=end_range,
             length=length,
             validate_content=validate_content,
             **kwargs)

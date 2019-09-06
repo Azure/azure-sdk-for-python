@@ -7,7 +7,7 @@
 import sys
 
 
-X_MS_VERSION = '2018-03-28'
+X_MS_VERSION = '2018-06-17'
 
 # Socket timeout in seconds
 DEFAULT_SOCKET_TIMEOUT = 20

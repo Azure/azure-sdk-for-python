@@ -19,6 +19,7 @@ try:
     from ._models_py3 import AutomaticOSUpgradeProperties
     from ._models_py3 import AvailabilitySet
     from ._models_py3 import AvailabilitySetUpdate
+    from ._models_py3 import BillingProfile
     from ._models_py3 import BootDiagnostics
     from ._models_py3 import BootDiagnosticsInstanceView
     from ._models_py3 import ComputeOperationValue
@@ -97,6 +98,7 @@ try:
     from ._models_py3 import RunCommandInputParameter
     from ._models_py3 import RunCommandParameterDefinition
     from ._models_py3 import RunCommandResult
+    from ._models_py3 import ScheduledEventsProfile
     from ._models_py3 import Sku
     from ._models_py3 import SshConfiguration
     from ._models_py3 import SshPublicKey
@@ -104,6 +106,7 @@ try:
     from ._models_py3 import SubResource
     from ._models_py3 import SubResourceReadOnly
     from ._models_py3 import TargetRegion
+    from ._models_py3 import TerminateNotificationProfile
     from ._models_py3 import ThrottledRequestsInput
     from ._models_py3 import UpdateResource
     from ._models_py3 import UpgradeOperationHistoricalStatusInfo
@@ -190,6 +193,7 @@ except (SyntaxError, ImportError):
     from ._models import AutomaticOSUpgradeProperties
     from ._models import AvailabilitySet
     from ._models import AvailabilitySetUpdate
+    from ._models import BillingProfile
     from ._models import BootDiagnostics
     from ._models import BootDiagnosticsInstanceView
     from ._models import ComputeOperationValue
@@ -268,6 +272,7 @@ except (SyntaxError, ImportError):
     from ._models import RunCommandInputParameter
     from ._models import RunCommandParameterDefinition
     from ._models import RunCommandResult
+    from ._models import ScheduledEventsProfile
     from ._models import Sku
     from ._models import SshConfiguration
     from ._models import SshPublicKey
@@ -275,6 +280,7 @@ except (SyntaxError, ImportError):
     from ._models import SubResource
     from ._models import SubResourceReadOnly
     from ._models import TargetRegion
+    from ._models import TerminateNotificationProfile
     from ._models import ThrottledRequestsInput
     from ._models import UpdateResource
     from ._models import UpgradeOperationHistoricalStatusInfo
@@ -390,11 +396,11 @@ from ._compute_management_client_enums import (
     ResourceIdentityType,
     MaintenanceOperationResultCodeTypes,
     HyperVGenerationType,
+    VirtualMachinePriorityTypes,
+    VirtualMachineEvictionPolicyTypes,
     UpgradeMode,
     OperatingSystemStateTypes,
     IPVersion,
-    VirtualMachinePriorityTypes,
-    VirtualMachineEvictionPolicyTypes,
     VirtualMachineScaleSetSkuScaleType,
     UpgradeState,
     UpgradeOperationInvoker,
@@ -419,6 +425,7 @@ __all__ = [
     'AutomaticOSUpgradeProperties',
     'AvailabilitySet',
     'AvailabilitySetUpdate',
+    'BillingProfile',
     'BootDiagnostics',
     'BootDiagnosticsInstanceView',
     'ComputeOperationValue',
@@ -497,6 +504,7 @@ __all__ = [
     'RunCommandInputParameter',
     'RunCommandParameterDefinition',
     'RunCommandResult',
+    'ScheduledEventsProfile',
     'Sku',
     'SshConfiguration',
     'SshPublicKey',
@@ -504,6 +512,7 @@ __all__ = [
     'SubResource',
     'SubResourceReadOnly',
     'TargetRegion',
+    'TerminateNotificationProfile',
     'ThrottledRequestsInput',
     'UpdateResource',
     'UpgradeOperationHistoricalStatusInfo',
@@ -618,11 +627,11 @@ __all__ = [
     'ResourceIdentityType',
     'MaintenanceOperationResultCodeTypes',
     'HyperVGenerationType',
+    'VirtualMachinePriorityTypes',
+    'VirtualMachineEvictionPolicyTypes',
     'UpgradeMode',
     'OperatingSystemStateTypes',
     'IPVersion',
-    'VirtualMachinePriorityTypes',
-    'VirtualMachineEvictionPolicyTypes',
     'VirtualMachineScaleSetSkuScaleType',
     'UpgradeState',
     'UpgradeOperationInvoker',

@@ -118,7 +118,7 @@ class DirectoryClient(StorageAccountHostsMixin):
 
         self._query_str, credential = self._format_query_string(
             sas_token, credential, share_snapshot=self.snapshot)
-        super(DirectoryClient, self).__init__(parsed_url, 'file', credential, **kwargs)
+        super(DirectoryClient, self).__init__(parsed_url, service='file', credential=credential, **kwargs)
         self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline)
 
     def _format_url(self, hostname):
@@ -168,6 +168,7 @@ class DirectoryClient(StorageAccountHostsMixin):
             account_url, share=share, directory_path=directory_path, credential=credential, **kwargs)
 
     def get_file_client(self, file_name, **kwargs):
+        # type: (str, Any) -> FileClient
         """Get a client to interact with a specific file.
 
         The file need not already exist.
@@ -185,6 +186,7 @@ class DirectoryClient(StorageAccountHostsMixin):
             _location_mode=self._location_mode, **kwargs)
 
     def get_subdirectory_client(self, directory_name, **kwargs):
+        # type: (str, Any) -> DirectoryClient
         """Get a client to interact with a specific subdirectory.
 
         The subdirectory need not already exist.
@@ -300,6 +302,7 @@ class DirectoryClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def list_handles(self, recursive=False, timeout=None, **kwargs):
+        # type: (bool, Optional[int], Any) -> ItemPaged
         """Lists opened handles on a directory or a file under the directory.
 
         :param bool recursive:

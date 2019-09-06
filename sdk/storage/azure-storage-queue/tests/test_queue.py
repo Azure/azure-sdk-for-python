@@ -840,7 +840,7 @@ class StorageQueueTest(QueueTestCase):
         queue_client.create_queue()
 
         # Act
-        queue_client.set_queue_access_policy(signed_identifiers={'empty': AccessPolicy()})
+        queue_client.set_queue_access_policy(signed_identifiers={'empty': None})
 
         # Assert
         acl = queue_client.get_queue_access_policy()

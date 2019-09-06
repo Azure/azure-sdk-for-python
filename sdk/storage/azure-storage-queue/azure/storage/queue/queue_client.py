@@ -18,7 +18,6 @@ import six
 
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
-from ._shared.shared_access_signature import QueueSharedAccessSignature
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
 from ._shared.request_handlers import add_metadata_headers, serialize_iso
 from ._shared.response_handlers import (
@@ -31,6 +30,7 @@ from ._generated import AzureQueueStorage
 from ._generated.models import StorageErrorException, SignedIdentifier
 from ._generated.models import QueueMessage as GenQueueMessage
 
+from ._shared_access_signature import QueueSharedAccessSignature
 from .models import QueueMessage, AccessPolicy, MessagesPaged
 
 if TYPE_CHECKING:
@@ -107,7 +107,7 @@ class QueueClient(StorageAccountHostsMixin):
         except AttributeError:
             self.queue_name = queue or unquote(path_queue)
         self._query_str, credential = self._format_query_string(sas_token, credential)
-        super(QueueClient, self).__init__(parsed_url, 'queue', credential, **kwargs)
+        super(QueueClient, self).__init__(parsed_url, service='queue', credential=credential, **kwargs)
 
         self._config.message_encode_policy = kwargs.get('message_encode_policy') or TextXMLEncodePolicy()
         self._config.message_decode_policy = kwargs.get('message_decode_policy') or TextXMLDecodePolicy()
@@ -168,7 +168,7 @@ class QueueClient(StorageAccountHostsMixin):
             policy_id=None,  # type: Optional[str]
             ip=None,  # type: Optional[str]
             protocol=None  # type: Optional[str]
-        ):
+        ):  # type: (...) -> str
         """Generates a shared access signature for the queue.
 
         Use the returned signature with the credential parameter of any Queue Service.
@@ -490,9 +490,9 @@ class QueueClient(StorageAccountHostsMixin):
                 :caption: Enqueue messages.
         """
         self._config.message_encode_policy.configure(
-            self.require_encryption,
-            self.key_encryption_key,
-            self.key_resolver_function)
+            require_encryption=self.require_encryption,
+            key_encryption_key=self.key_encryption_key,
+            resolver=self.key_resolver_function)
         content = self._config.message_encode_policy(content)
         new_message = GenQueueMessage(message_text=content)
 
@@ -554,9 +554,9 @@ class QueueClient(StorageAccountHostsMixin):
                 :caption: Receive messages from the queue.
         """
         self._config.message_decode_policy.configure(
-            self.require_encryption,
-            self.key_encryption_key,
-            self.key_resolver_function)
+            require_encryption=self.require_encryption,
+            key_encryption_key=self.key_encryption_key,
+            resolver=self.key_resolver_function)
         try:
             command = functools.partial(
                 self._client.messages.dequeue,
@@ -703,9 +703,9 @@ class QueueClient(StorageAccountHostsMixin):
         if max_messages and not 1 <= max_messages <= 32:
             raise ValueError("Number of messages to peek should be between 1 and 32")
         self._config.message_decode_policy.configure(
-            self.require_encryption,
-            self.key_encryption_key,
-            self.key_resolver_function)
+            require_encryption=self.require_encryption,
+            key_encryption_key=self.key_encryption_key,
+            resolver=self.key_resolver_function)
         try:
             messages = self._client.messages.peek(
                 number_of_messages=max_messages,

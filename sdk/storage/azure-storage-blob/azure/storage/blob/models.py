@@ -413,6 +413,7 @@ class BlobProperties(DictMixin):
         self.snapshot = kwargs.get('x-ms-snapshot')
         self.blob_type = BlobType(kwargs['x-ms-blob-type']) if kwargs.get('x-ms-blob-type') else None
         self.metadata = kwargs.get('metadata')
+        self.encrypted_metadata = kwargs.get('encrypted_metadata')
         self.last_modified = kwargs.get('Last-Modified')
         self.etag = kwargs.get('ETag')
         self.size = kwargs.get('Content-Length')
@@ -441,7 +442,8 @@ class BlobProperties(DictMixin):
         blob.etag = generated.properties.etag
         blob.deleted = generated.deleted
         blob.snapshot = generated.snapshot
-        blob.metadata = generated.metadata
+        blob.metadata = generated.metadata.additional_properties if generated.metadata else {}
+        blob.encrypted_metadata = generated.metadata.encrypted if generated.metadata else None
         blob.lease = LeaseProperties._from_generated(generated)  # pylint: disable=protected-access
         blob.copy = CopyProperties._from_generated(generated)  # pylint: disable=protected-access
         blob.last_modified = generated.properties.last_modified

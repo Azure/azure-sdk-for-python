@@ -56,7 +56,7 @@ async def _upload_file_helper(
         if size == 0:
             return response
 
-        return await upload_data_chunks(
+        responses = await upload_data_chunks(
             service=client,
             uploader_class=FileChunkUploader,
             total_size=size,
@@ -67,6 +67,7 @@ async def _upload_file_helper(
             timeout=timeout,
             **kwargs
         )
+        return sorted(responses, key=lambda r: r.get('last_modified'))[-1]
     except StorageErrorException as error:
         process_storage_error(error)
 
@@ -469,6 +470,8 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
                 file_content_length=file_content_length,
                 file_http_headers=file_http_headers,
                 cls=return_response_headers,
+                file_creation_time="preserve", # TODO: Verify these default values are correct
+                file_last_write_time="preserve", # TODO: Verify these default values are correct
                 **kwargs
             )
         except StorageErrorException as error:
@@ -663,13 +666,19 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         """
         try:
             return await self._client.file.set_http_headers(  # type: ignore
-                timeout=timeout, file_content_length=size, cls=return_response_headers, **kwargs
+                timeout=timeout,
+                file_content_length=size,
+                cls=return_response_headers,
+                file_creation_time="preserve", # TODO: Verify these default values are correct
+                file_last_write_time="preserve", # TODO: Verify these default values are correct
+                **kwargs
             )
         except StorageErrorException as error:
             process_storage_error(error)
 
     @distributed_trace
-    def list_handles(self, timeout=None, **kwargs) -> AsyncItemPaged:
+    def list_handles(self, timeout=None, **kwargs):
+        # type: (Optional[int], Any) -> AsyncItemPaged
         """Lists handles for file.
 
         :param int timeout:

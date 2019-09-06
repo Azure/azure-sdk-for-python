@@ -89,6 +89,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         self._loop = loop
 
     def get_directory_client(self, directory_path=None):
+        # type: (Optional[str]) -> DirectoryClient
         """Get a client to interact with the specified directory.
         The directory need not already exist.
 
@@ -103,6 +104,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
             _location_mode=self._location_mode, loop=self._loop)
 
     def get_file_client(self, file_path):
+        # type: (str) -> FileClient
         """Get a client to interact with the specified file.
         The file need not already exist.
 

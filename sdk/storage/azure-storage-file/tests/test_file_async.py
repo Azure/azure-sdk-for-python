@@ -403,6 +403,7 @@ class StorageFileTestAsync(FileTestCase):
 
     @record
     def test_resize_file_async(self):
+        pytest.skip("TODO: Verify the x-ms-file-permission value.")
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_resize_file_async())
 
@@ -423,6 +424,7 @@ class StorageFileTestAsync(FileTestCase):
 
     @record
     def test_set_file_properties_async(self):
+        pytest.skip("TODO: Verify the x-ms-file-permission value.")
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_set_file_properties_async())
 
@@ -1044,7 +1046,8 @@ class StorageFileTestAsync(FileTestCase):
             self.get_file_url(),
             share=self.share_name,
             file_path=file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY)
+            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            max_range_size=4 * 1024)
 
         # Act
         progress = []
@@ -1078,10 +1081,14 @@ class StorageFileTestAsync(FileTestCase):
             self.get_file_url(),
             share=self.share_name,
             file_path=file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY)
+            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            max_range_size=4 * 1024)
 
         # Act
-        await file_client.upload_file(data[index:], max_connections=2)
+        response = await file_client.upload_file(data[index:], max_connections=2)
+        assert isinstance(response, dict)
+        assert 'last_modified' in response
+        assert 'etag' in response
 
         # Assert
         await self.assertFileEqual(file_client, data[1024:])
@@ -1106,10 +1113,14 @@ class StorageFileTestAsync(FileTestCase):
             self.get_file_url(),
             share=self.share_name,
             file_path=file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY)
+            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            max_range_size=4 * 1024)
 
         # Act
-        await file_client.upload_file(data[index:], length=count, max_connections=2)
+        response = await file_client.upload_file(data[index:], length=count, max_connections=2)
+        assert isinstance(response, dict)
+        assert 'last_modified' in response
+        assert 'etag' in response
 
         # Assert
         await self.assertFileEqual(file_client, data[index:index + count])
@@ -1134,11 +1145,15 @@ class StorageFileTestAsync(FileTestCase):
             self.get_file_url(),
             share=self.share_name,
             file_path=file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY)
+            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            max_range_size=4 * 1024)
 
         # Act
         with open(INPUT_FILE_PATH, 'rb') as stream:
-            await file_client.upload_file(stream, max_connections=2)
+            response = await file_client.upload_file(stream, max_connections=2)
+            assert isinstance(response, dict)
+            assert 'last_modified' in response
+            assert 'etag' in response
 
         # Assert
         await self.assertFileEqual(file_client, data)
@@ -1175,7 +1190,10 @@ class StorageFileTestAsync(FileTestCase):
                 progress.append((current, total))
 
         with open(INPUT_FILE_PATH, 'rb') as stream:
-            await file_client.upload_file(stream, max_connections=2, raw_response_hook=callback)
+            response = await file_client.upload_file(stream, max_connections=2, raw_response_hook=callback)
+            assert isinstance(response, dict)
+            assert 'last_modified' in response
+            assert 'etag' in response
 
         # Assert
         await self.assertFileEqual(file_client, data)
@@ -1204,12 +1222,16 @@ class StorageFileTestAsync(FileTestCase):
             self.get_file_url(),
             share=self.share_name,
             file_path=file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY)
+            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            max_range_size=4 * 1024)
 
         # Act
         file_size = len(data)
         with open(INPUT_FILE_PATH, 'rb') as stream:
-            await file_client.upload_file(stream, max_connections=2)
+            response = await file_client.upload_file(stream, max_connections=2)
+            assert isinstance(response, dict)
+            assert 'last_modified' in response
+            assert 'etag' in response
 
         # Assert
         await self.assertFileEqual(file_client, data[:file_size])
@@ -1234,7 +1256,8 @@ class StorageFileTestAsync(FileTestCase):
             self.get_file_url(),
             share=self.share_name,
             file_path=file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY)
+            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            max_range_size=4 * 1024)
 
         # Act
         file_size = len(data)
