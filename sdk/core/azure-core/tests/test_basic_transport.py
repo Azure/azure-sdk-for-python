@@ -6,8 +6,9 @@
 from six.moves.http_client import HTTPConnection
 import time
 
-from azure.core.pipeline.transport import HttpRequest
-from azure.core.pipeline.transport.base import HttpClientTransportResponse, _deserialize_response
+from azure.core.pipeline.transport import HttpRequest, HttpResponse
+from azure.core.pipeline.transport.base import HttpClientTransportResponse, _deserialize_response, MultiPartHelper
+from azure.core.pipeline.policies import HeadersPolicy
 
 
 def test_http_request_serialization():
@@ -124,3 +125,114 @@ def test_response_deserialization():
         'x-ms-version': '2018-11-09'
     }
     assert response.text() == "I am groot"
+
+
+def test_multipart_send():
+
+    header_policy = HeadersPolicy({
+        'x-ms-date': 'Thu, 14 Jun 2018 16:46:54 GMT'
+    })
+
+    request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
+
+    req0 = HttpRequest("DELETE", "/container0/blob0")
+    req1 = HttpRequest("DELETE", "/container1/blob1")
+
+    helper = MultiPartHelper(request)
+    helper.requests = [
+        req0, req1
+    ]
+    helper.policies = [
+        header_policy
+    ]
+
+    helper.prepare_request()
+
+    assert request.body == (
+        b'--===============6566992931842418154==\n'
+        b'content-type: application/http\n'
+        b'\n'
+        b'DELETE /container0/blob0 HTTP/1.1\n'
+        b'x-ms-date: Thu, 14 Jun 2018 16:46:54 GMT\n\n\n'
+        b'--===============6566992931842418154==\n'
+        b'content-type: application/http\n'
+        b'\n'
+        b'DELETE /container1/blob1 HTTP/1.1\n'
+        b'x-ms-date: Thu, 14 Jun 2018 16:46:54 GMT\n\n\n'
+        b'--===============6566992931842418154==--\n'
+    )
+
+    print(request.body)
+    print(request.headers)
+
+def test_multipart_receive():
+
+    class MockResponse(HttpResponse):
+        def __init__(self, body, content_type):
+            super(MockResponse, self).__init__(None, None)
+            self._body = body
+            self.content_type = content_type
+
+        def body(self):
+            return self._body
+
+    class ResponsePolicy(object):
+        def on_response(self, request, response):
+            # type: (PipelineRequest, PipelineResponse) -> None
+            response.http_response.headers['x-ms-fun'] = 'true'
+
+    body_as_str = (
+        "--batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed\n"
+        "Content-Type: application/http\n"
+        "Content-ID: 0\n"
+        "\n"
+        "HTTP/1.1 202 Accepted\n"
+        "x-ms-request-id: 778fdc83-801e-0000-62ff-0334671e284f\n"
+        "x-ms-version: 2018-11-09\n"
+        "\n"
+        "--batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed\n"
+        "Content-Type: application/http\n"
+        "Content-ID: 2\n"
+        "\n"
+        "HTTP/1.1 404 The specified blob does not exist.\n"
+        "x-ms-error-code: BlobNotFound\n"
+        "x-ms-request-id: 778fdc83-801e-0000-62ff-0334671e2852\n"
+        "x-ms-version: 2018-11-09\n"
+        "Content-Length: 216\n"
+        "Content-Type: application/xml\n"
+        "\n"
+        '<?xml version="1.0" encoding="utf-8"?>\n'
+        "<Error><Code>BlobNotFound</Code><Message>The specified blob does not exist.\n"
+        "RequestId:778fdc83-801e-0000-62ff-0334671e2852\n"
+        "Time:2018-06-14T16:46:54.6040685Z</Message></Error>\n"
+        "--batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed--"
+    )
+
+    response = MockResponse(
+        body_as_str.encode('ascii'),
+        "multipart/mixed; boundary=batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed"
+    )
+
+
+    request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
+
+    req0 = HttpRequest("DELETE", "/container0/blob0")
+    req1 = HttpRequest("DELETE", "/container1/blob1")
+
+    helper = MultiPartHelper(request)
+    helper.requests = [
+        req0, req1
+    ]
+    helper.policies = [
+        ResponsePolicy()
+    ]
+
+    response = helper.parse_response(response)
+
+    res0 = response[0]
+    assert res0.status_code == 202
+    assert res0.headers['x-ms-fun'] == 'true'
+
+    res1 = response[1]
+    assert res1.status_code == 404
+    assert res1.headers['x-ms-fun'] == 'true'

@@ -48,7 +48,7 @@ from io import BytesIO
 # If one day we reach the point where "requests" can be skip totally,
 # might provide our own implementation
 from requests.structures import CaseInsensitiveDict
-from azure.core.pipeline import ABC, AbstractContextManager, PipelineRequest, PipelineResponse
+from azure.core.pipeline import ABC, AbstractContextManager, PipelineRequest, PipelineResponse, PipelineContext
 
 
 HTTPResponseType = TypeVar("HTTPResponseType")
@@ -583,3 +583,85 @@ class PipelineClientBase(object):
         """
         request = self._request('MERGE', url, params, headers, content, form_content, None)
         return request
+
+
+from email.message import Message
+from email import message_from_string
+
+
+class MultiPartHelper(object):
+    def __init__(
+        self,
+        main_request,  # type: HttpRequest
+    ):
+        self.main_request = main_request
+        self.requests = []  # type: List[HttpRequest]
+        self.policies = []  # type List[SansIOHTTPPolicy]
+
+    def prepare_request(self):
+        # Apply on_requests concurrently to all requests
+        import concurrent.futures
+
+        def prepare_requests(request):
+            context = PipelineContext(None)
+            pipeline_request = PipelineRequest(request, context)
+            for policy in self.policies:
+                policy.on_request(pipeline_request)
+
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            # List comprehension to raise exceptions if happened
+            [_ for _ in executor.map(prepare_requests, self.requests)]
+
+        # Update the main request with the body
+        main_message = Message()
+        main_message.add_header("Content-Type", "multipart/mixed")
+        for req in self.requests:
+            part_message = Message()
+            part_message.add_header('content-type', 'application/http')
+            part_message.set_payload(req.serialize())
+            main_message.attach(part_message)
+
+        full_message = main_message.as_bytes()
+        headers, _, body = full_message.split(b'\n', maxsplit=2)
+        self.main_request.set_bytes_body(body)
+        self.main_request.headers['Content-Type'] = 'multipart/mixed; boundary='+main_message.get_boundary()
+
+    def parse_response(self, response):
+        body_as_str = response.text()
+        # In order to use email.message parser, I need full HTTP bytes. Faking something to make the parser happy
+        http_body = (
+            'Content-Type: ' +
+            response.content_type +
+            '\n\n' +
+            body_as_str
+        )
+
+        message = message_from_string(http_body)  # type: Message
+
+        # Rebuild an HTTP response from pure string
+        responses = []
+        for request, raw_reponse in zip(self.requests, message.get_payload()):
+            responses.append(_deserialize_response(raw_reponse.get_payload().encode('ascii'), request))
+
+        # Apply on_response concurrently to all requests
+        import concurrent.futures
+
+        def parse_responses(response):
+            http_request = response.request
+            context = PipelineContext(None)
+            pipeline_request = PipelineRequest(http_request, context)
+            pipeline_response = PipelineResponse(
+                http_request,
+                response,
+                context=context
+            )
+
+            for policy in self.policies:
+                policy.on_response(pipeline_request, pipeline_response)
+
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            # List comprehension to raise exceptions if happened
+            [_ for _ in executor.map(parse_responses, responses)]
+
+        return responses
+
