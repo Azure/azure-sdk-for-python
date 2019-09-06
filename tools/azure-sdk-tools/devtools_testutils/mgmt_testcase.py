@@ -104,11 +104,22 @@ class AzureMgmtTestCase(ReplayableTest):
     def is_playback(self):
         return not self.is_live
 
+    def get_settings_value(key):
+        key_value = os.environ.get("AZURE_"+key, None)
+
+        if key_value and self._real_settings and getattr(self._real_settings, key) != key_value:
+            raise ValueError("You have both AZURE_{key} env variable and mgmt_settings_real.py for {key} to difference values".format(key=key))
+
+        if not key_value:
+            key_value = getattr(self.settings, key)
+        return key_value
+
     def _setup_scrubber(self):
-        constants_to_scrub = ['SUBSCRIPTION_ID', 'AD_DOMAIN', 'TENANT_ID', 'CLIENT_OID', 'ADLA_JOB_ID']
+        constants_to_scrub = ['SUBSCRIPTION_ID', 'TENANT_ID']#, 'CLIENT_OID', 'ADLA_JOB_ID', 'AD_DOMAIN']
         for key in constants_to_scrub:
-            if hasattr(self.settings, key) and hasattr(self._fake_settings, key):
-                self.scrubber.register_name_pair(getattr(self.settings, key),
+            key_value = self.get_settings_value(key)
+            if key_value and hasattr(self._fake_settings, key):
+                self.scrubber.register_name_pair(key_value,
                                                  getattr(self._fake_settings, key))
 
     def setUp(self):
@@ -141,9 +152,23 @@ class AzureMgmtTestCase(ReplayableTest):
                 **kwargs
             )
 
+        tenant_id = os.environ.get("AZURE_TENANT_ID", None)
+        client_id = os.environ.get("AZURE_CLIENT_ID", None)
+        secret = os.environ.get("AZURE_CLIENT_SECRET", None)
+
+        if tenant_id and client_id and secret and self.is_live:
+            from msrestazure.azure_active_directory import ServicePrincipalCredentials
+            credentials = ServicePrincipalCredentials(
+                tenant=tenant_id,
+                client_id=client_id,
+                secret=secret
+            )
+        else:
+            credentials = self.test_class_instance.settings.get_credentials()
+
         # Real client creation
         client = client_class(
-            credentials=self.settings.get_credentials(),
+            credentials=credentials,
             **kwargs
         )
         if self.is_playback():
@@ -160,9 +185,15 @@ class AzureMgmtTestCase(ReplayableTest):
                 **kwargs
             )
 
+        subscription_id = None
+        if self.is_live:
+            subscription_id = os.environ.get("AZURE_SUBSCRIPTION_ID", None)
+        if not subscription_id:
+            subscription_id = self.test_class_instance.settings.SUBSCRIPTION_ID            
+
         return self.create_basic_client(
             client_class,
-            subscription_id=self.settings.SUBSCRIPTION_ID,
+            subscription_id=subscription_id,
             **kwargs
         )
 
@@ -216,8 +247,6 @@ class AzureMgmtPreparer(AbstractPreparer):
         return self.resource_moniker
 
     def create_mgmt_client(self, client_class):
-        return client_class(
-            credentials=self.test_class_instance.settings.get_credentials(),
-            subscription_id=self.test_class_instance.settings.SUBSCRIPTION_ID,
-            **self.client_kwargs
+        return self.test_class_instance.create_mgmt_client(
+            client_class
         )
