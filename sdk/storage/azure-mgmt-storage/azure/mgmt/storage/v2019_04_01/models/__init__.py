@@ -32,7 +32,6 @@ try:
     from ._models_py3 import FileServiceProperties
     from ._models_py3 import FileShare
     from ._models_py3 import FileShareItem
-    from ._models_py3 import FileShareItems
     from ._models_py3 import GeoReplicationStats
     from ._models_py3 import Identity
     from ._models_py3 import ImmutabilityPolicy
@@ -101,7 +100,6 @@ except (SyntaxError, ImportError):
     from ._models import FileServiceProperties
     from ._models import FileShare
     from ._models import FileShareItem
-    from ._models import FileShareItems
     from ._models import GeoReplicationStats
     from ._models import Identity
     from ._models import ImmutabilityPolicy
@@ -148,6 +146,7 @@ except (SyntaxError, ImportError):
     from ._models import UsageName
     from ._models import VirtualNetworkRule
 from ._paged_models import BlobServicePropertiesPaged
+from ._paged_models import FileShareItemPaged
 from ._paged_models import ListContainerItemPaged
 from ._paged_models import OperationPaged
 from ._paged_models import SkuPaged
@@ -208,7 +207,6 @@ __all__ = [
     'FileServiceProperties',
     'FileShare',
     'FileShareItem',
-    'FileShareItems',
     'GeoReplicationStats',
     'Identity',
     'ImmutabilityPolicy',
@@ -260,6 +258,7 @@ __all__ = [
     'UsagePaged',
     'BlobServicePropertiesPaged',
     'ListContainerItemPaged',
+    'FileShareItemPaged',
     'ReasonCode',
     'SkuName',
     'SkuTier',

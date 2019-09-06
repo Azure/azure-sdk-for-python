@@ -103,7 +103,7 @@ class FileServicesOperations(object):
         return deserialized
     list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/fileServices'}
 
-    def put_service_properties(
+    def set_service_properties(
             self, resource_group_name, account_name, cors=None, custom_headers=None, raw=False, **operation_config):
         """Sets the properties of file services in storage accounts, including
         CORS (Cross-Origin Resource Sharing) rules. .
@@ -134,7 +134,7 @@ class FileServicesOperations(object):
         parameters = models.FileServiceProperties(cors=cors)
 
         # Construct URL
-        url = self.put_service_properties.metadata['url']
+        url = self.set_service_properties.metadata['url']
         path_format_arguments = {
             'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str', max_length=90, min_length=1, pattern=r'^[-\w\._\(\)]+$'),
             'accountName': self._serialize.url("account_name", account_name, 'str', max_length=24, min_length=3),
@@ -177,7 +177,7 @@ class FileServicesOperations(object):
             return client_raw_response
 
         return deserialized
-    put_service_properties.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/fileServices/{FileServicesName}'}
+    set_service_properties.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Storage/storageAccounts/{accountName}/fileServices/{FileServicesName}'}
 
     def get_service_properties(
             self, resource_group_name, account_name, custom_headers=None, raw=False, **operation_config):
