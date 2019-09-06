@@ -11,19 +11,27 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - a534008a-b639-11e9-842d-2816a845e8c6
+      - a3845e06-d048-11e9-926a-001a7dda7113
       x-ms-content-length:
       - '1024'
       x-ms-date:
-      - Sat, 03 Aug 2019 21:57:11 GMT
+      - Fri, 06 Sep 2019 01:50:01 GMT
+      x-ms-file-attributes:
+      - none
+      x-ms-file-creation-time:
+      - now
+      x-ms-file-last-write-time:
+      - now
+      x-ms-file-permission:
+      - Inherit
       x-ms-type:
       - file
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
     uri: https://storagename.file.core.windows.net/utshare8f720a9e/file8f720a9e
   response:
@@ -33,19 +41,35 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Sat, 03 Aug 2019 21:57:09 GMT
+      - Fri, 06 Sep 2019 01:50:00 GMT
       ETag:
-      - '"0x8D7185D890B4BAF"'
+      - '"0x8D7326C87C9693B"'
       Last-Modified:
-      - Sat, 03 Aug 2019 21:57:10 GMT
+      - Fri, 06 Sep 2019 01:50:01 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - a3845e06-d048-11e9-926a-001a7dda7113
+      x-ms-file-attributes:
+      - Archive
+      x-ms-file-change-time:
+      - '2019-09-06T01:50:01.2195131Z'
+      x-ms-file-creation-time:
+      - '2019-09-06T01:50:01.2195131Z'
+      x-ms-file-id:
+      - '13835128424026341376'
+      x-ms-file-last-write-time:
+      - '2019-09-06T01:50:01.2195131Z'
+      x-ms-file-parent-id:
+      - '0'
+      x-ms-file-permission-key:
+      - 4099112195243312672*10394889115079208622
       x-ms-request-id:
-      - 6fd19fcc-e01a-00c7-5746-4a18c1000000
+      - ea944704-c01a-0091-4255-643646000000
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -81,15 +105,15 @@ interactions:
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
-      - a5a55b08-b639-11e9-94bc-2816a845e8c6
+      - a39d86b4-d048-11e9-9572-001a7dda7113
       x-ms-date:
-      - Sat, 03 Aug 2019 21:57:11 GMT
+      - Fri, 06 Sep 2019 01:50:01 GMT
       x-ms-range:
       - bytes=0-1023
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
       x-ms-write:
       - update
     method: PUT
@@ -103,19 +127,21 @@ interactions:
       Content-MD5:
       - rwDDDNfjNUZE7Ee1SUu3JA==
       Date:
-      - Sat, 03 Aug 2019 21:57:10 GMT
+      - Fri, 06 Sep 2019 01:50:00 GMT
       ETag:
-      - '"0x8D7185D893D614E"'
+      - '"0x8D7326C87CFFA82"'
       Last-Modified:
-      - Sat, 03 Aug 2019 21:57:10 GMT
+      - Fri, 06 Sep 2019 01:50:01 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - a39d86b4-d048-11e9-9572-001a7dda7113
       x-ms-request-id:
-      - 6fd19fce-e01a-00c7-5846-4a18c1000000
+      - ea944705-c01a-0091-4355-643646000000
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -131,17 +157,25 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - a5c4990a-b639-11e9-a0a0-2816a845e8c6
+      - a3a3ec0a-d048-11e9-97d2-001a7dda7113
       x-ms-content-length:
       - '5'
       x-ms-date:
-      - Sat, 03 Aug 2019 21:57:12 GMT
+      - Fri, 06 Sep 2019 01:50:01 GMT
+      x-ms-file-attributes:
+      - preserve
+      x-ms-file-creation-time:
+      - preserve
+      x-ms-file-last-write-time:
+      - preserve
+      x-ms-file-permission:
+      - preserve
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
     uri: https://storagename.file.core.windows.net/utshare8f720a9e/file8f720a9e?comp=properties
   response:
@@ -151,19 +185,35 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Sat, 03 Aug 2019 21:57:10 GMT
+      - Fri, 06 Sep 2019 01:50:00 GMT
       ETag:
-      - '"0x8D7185D895448DA"'
+      - '"0x8D7326C87D664B0"'
       Last-Modified:
-      - Sat, 03 Aug 2019 21:57:11 GMT
+      - Fri, 06 Sep 2019 01:50:01 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - a3a3ec0a-d048-11e9-97d2-001a7dda7113
+      x-ms-file-attributes:
+      - Archive
+      x-ms-file-change-time:
+      - '2019-09-06T01:50:01.3045936Z'
+      x-ms-file-creation-time:
+      - '2019-09-06T01:50:01.2195131Z'
+      x-ms-file-id:
+      - '13835128424026341376'
+      x-ms-file-last-write-time:
+      - '2019-09-06T01:50:01.2195131Z'
+      x-ms-file-parent-id:
+      - '0'
+      x-ms-file-permission-key:
+      - 4099112195243312672*10394889115079208622
       x-ms-request-id:
-      - 6fd19fd0-e01a-00c7-5946-4a18c1000000
+      - ea944708-c01a-0091-4555-643646000000
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 200
       message: OK
@@ -177,15 +227,15 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - a5d9fee4-b639-11e9-9986-2816a845e8c6
+      - a3aa7afe-d048-11e9-96b9-001a7dda7113
       x-ms-date:
-      - Sat, 03 Aug 2019 21:57:12 GMT
+      - Fri, 06 Sep 2019 01:50:01 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: HEAD
     uri: https://storagename.file.core.windows.net/utshare8f720a9e/file8f720a9e
   response:
@@ -197,459 +247,37 @@ interactions:
       Content-Type:
       - application/xml; charset=utf-8
       Date:
-      - Sat, 03 Aug 2019 21:57:10 GMT
+      - Fri, 06 Sep 2019 01:50:00 GMT
       ETag:
-      - '"0x8D7185D895448DA"'
+      - '"0x8D7326C87D664B0"'
       Last-Modified:
-      - Sat, 03 Aug 2019 21:57:11 GMT
+      - Fri, 06 Sep 2019 01:50:01 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
+      x-ms-client-request-id:
+      - a3aa7afe-d048-11e9-96b9-001a7dda7113
+      x-ms-file-attributes:
+      - Archive
+      x-ms-file-change-time:
+      - '2019-09-06T01:50:01.3045936Z'
+      x-ms-file-creation-time:
+      - '2019-09-06T01:50:01.2195131Z'
+      x-ms-file-id:
+      - '13835128424026341376'
+      x-ms-file-last-write-time:
+      - '2019-09-06T01:50:01.2195131Z'
+      x-ms-file-parent-id:
+      - '0'
+      x-ms-file-permission-key:
+      - 4099112195243312672*10394889115079208622
       x-ms-request-id:
-      - 6fd19fd1-e01a-00c7-5a46-4a18c1000000
+      - ea944709-c01a-0091-4655-643646000000
       x-ms-server-encrypted:
       - 'true'
       x-ms-type:
       - File
       x-ms-version:
-      - '2018-11-09'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - 838852ae-b63a-11e9-b2f2-2816a845e8c6
-      x-ms-content-length:
-      - '1024'
-      x-ms-date:
-      - Sat, 03 Aug 2019 22:03:24 GMT
-      x-ms-type:
-      - file
-      x-ms-version:
-      - '2018-11-09'
-    method: PUT
-    uri: https://storagename.file.core.windows.net/utshare8f720a9e/file8f720a9e
-  response:
-    body:
-      string: ''
-    headers:
-      Content-Length:
-      - '0'
-      Date:
-      - Sat, 03 Aug 2019 22:03:23 GMT
-      ETag:
-      - '"0x8D7185E674392EC"'
-      Last-Modified:
-      - Sat, 03 Aug 2019 22:03:23 GMT
-      Server:
-      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - bbb4d2ca-401a-008e-3747-4a2ba1000000
-      x-ms-request-server-encrypted:
-      - 'true'
-      x-ms-version:
-      - '2018-11-09'
-    status:
-      code: 201
-      message: Created
-- request:
-    body: !!binary |
-      E9R7q/YlqZZbA6KiUwSTXi1v3ChjVxyqhpjQOwoy/SOpr5D6YYNV62uDmdiBLJWMrYulqyDjPETZ
-      z5gCDr8ujTBC4yn0gZK72Qj4eT5JRGc0g2yUFanXQc0ZCerSY5hV2pW53bgeviVSKvnuELcpCVOG
-      m8qw5bQVdM9O21LPZXTsXm2ietc3He2mlsNZKR/pwuuZxuY/bNyk9S+2gty/90jbq6e30mb8fsg+
-      5a2IeRGvQebEOWQkreZDwgtvRTaacDyNdMsaZsILwX4JGpLHATx8nUAfDnS43eR8mZzWZ+2zLKzh
-      K1I4nKdI5srOR2m/O6AJ0+kQum2CxAOT3pWgBdwvX9r3vyq1DsQi1/wb0JX17xUjlEPpuDQMGomm
-      IN+VxBkHWsNvIy8+QVuEws/lp46HFhTP3gj12z4sLKaT5m7ghw6UpFuKS+chYN10LFx7foyAp4HM
-      sbjxFCwIC+zoJfzKFR5T472A4ThCXdzU5JIySsX8c6tdutODnGoreJUjPOwrTrCZxjSH5iCa38nl
-      UF37jAApdKi4f1OKuu1xt6ZCXGEbGTaqUffszxRi26+Y5glVsk9Xbfyk6ariHE08k8EkfUmylY5u
-      4KpG5grIyMOM0Rx4HEa9QExFFfefsYC+A3cNRpC1o09wHiM2r/4rZbwot1SRByU6fHKiWGz4sqhA
-      veyjnF6+nK0fRLIjKziAxa+TL493rBuJu0/867bdualQM+uMB3qCsE/D7ChTXPCGoPBYNQ8JXocF
-      E7t6YTJkHbTNnzEb1Kjkw/gixrSjufwdwZJCr2kzbYus8i7lkuTq3ebFHD1b1w49F6er0G7daMrL
-      LC+mKlEEu2TU742MX3VpOPMAWCHSBdO1BMsGZy/+3jw0jVo5t4zQd4SzBMNh4UoQyJiq/KaiHAvV
-      bZqoteT19erP4grUi+EJHGo//h9l6OW+u4/kCTOiQ7N8FKn4WeR/I9KLWaeLOfEVRopCEXlSqvxR
-      /op8w3ivsxQ3JComHfKo74UCb2KwlcLcrd4Na8pfRiZrD7ou9gukH9TIIvWYSPjWmWlB6RTnz4td
-      llwagN+3AtmXHQ44csQgh+gNhin3tZ4a1ZHEu9vsaEOfrI8hwdpH/Uzem395iRjosXQ0OfucDgvI
-      Eh9q3Ndvw8C0sHpD+VmJwnlNeMXi5tl+guipOWDSuIZPflPzRzJ+C+ZxHJtU3rajWnqx8Dbn6GVQ
-      Q/6SCNViZdhps2xz/ZiXYRY5mkZUFVKB7UIwKmncQt7X3mdCTWtmUyEFCLl5fFkGICR8vb4yyfMb
-      f0Fd0Awkf6l4SxikqfVM1QOpJ/c8zDXgmcvJirG7DhtHqUF83mKautWn76AHZe+gbp5fyJsHaA==
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '1024'
-      Content-Type:
-      - application/octet-stream
-      User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      x-ms-client-request-id:
-      - 83c94812-b63a-11e9-854a-2816a845e8c6
-      x-ms-date:
-      - Sat, 03 Aug 2019 22:03:24 GMT
-      x-ms-range:
-      - bytes=0-1023
-      x-ms-version:
-      - '2018-11-09'
-      x-ms-write:
-      - update
-    method: PUT
-    uri: https://storagename.file.core.windows.net/utshare8f720a9e/file8f720a9e?comp=range
-  response:
-    body:
-      string: ''
-    headers:
-      Content-Length:
-      - '0'
-      Content-MD5:
-      - rwDDDNfjNUZE7Ee1SUu3JA==
-      Date:
-      - Sat, 03 Aug 2019 22:03:23 GMT
-      ETag:
-      - '"0x8D7185E67559794"'
-      Last-Modified:
-      - Sat, 03 Aug 2019 22:03:23 GMT
-      Server:
-      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - bbb4d2cc-401a-008e-3847-4a2ba1000000
-      x-ms-request-server-encrypted:
-      - 'true'
-      x-ms-version:
-      - '2018-11-09'
-    status:
-      code: 201
-      message: Created
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - 83dab614-b63a-11e9-b493-2816a845e8c6
-      x-ms-content-length:
-      - '5'
-      x-ms-date:
-      - Sat, 03 Aug 2019 22:03:24 GMT
-      x-ms-version:
-      - '2018-11-09'
-    method: PUT
-    uri: https://storagename.file.core.windows.net/utshare8f720a9e/file8f720a9e?comp=properties
-  response:
-    body:
-      string: ''
-    headers:
-      Content-Length:
-      - '0'
-      Date:
-      - Sat, 03 Aug 2019 22:03:23 GMT
-      ETag:
-      - '"0x8D7185E6765EE3E"'
-      Last-Modified:
-      - Sat, 03 Aug 2019 22:03:23 GMT
-      Server:
-      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - bbb4d2cd-401a-008e-3947-4a2ba1000000
-      x-ms-request-server-encrypted:
-      - 'true'
-      x-ms-version:
-      - '2018-11-09'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - 83eb4d54-b63a-11e9-85a1-2816a845e8c6
-      x-ms-date:
-      - Sat, 03 Aug 2019 22:03:24 GMT
-      x-ms-version:
-      - '2018-11-09'
-    method: HEAD
-    uri: https://storagename.file.core.windows.net/utshare8f720a9e/file8f720a9e
-  response:
-    body:
-      string: ''
-    headers:
-      Content-Length:
-      - '5'
-      Content-Type:
-      - application/xml; charset=utf-8
-      Date:
-      - Sat, 03 Aug 2019 22:03:23 GMT
-      ETag:
-      - '"0x8D7185E6765EE3E"'
-      Last-Modified:
-      - Sat, 03 Aug 2019 22:03:23 GMT
-      Server:
-      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
-      x-ms-request-id:
-      - bbb4d2ce-401a-008e-3a47-4a2ba1000000
-      x-ms-server-encrypted:
-      - 'true'
-      x-ms-type:
-      - File
-      x-ms-version:
-      - '2018-11-09'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - eac01aae-b63a-11e9-badf-2816a845e8c6
-      x-ms-content-length:
-      - '1024'
-      x-ms-date:
-      - Sat, 03 Aug 2019 22:06:17 GMT
-      x-ms-type:
-      - file
-      x-ms-version:
-      - '2018-11-09'
-    method: PUT
-    uri: https://storagename.file.core.windows.net/utshare8f720a9e/file8f720a9e
-  response:
-    body:
-      string: ''
-    headers:
-      Content-Length:
-      - '0'
-      Date:
-      - Sat, 03 Aug 2019 22:06:16 GMT
-      ETag:
-      - '"0x8D7185ECE76A724"'
-      Last-Modified:
-      - Sat, 03 Aug 2019 22:06:16 GMT
-      Server:
-      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - 230665cd-001a-00ab-6c47-4ab312000000
-      x-ms-request-server-encrypted:
-      - 'true'
-      x-ms-version:
-      - '2018-11-09'
-    status:
-      code: 201
-      message: Created
-- request:
-    body: !!binary |
-      E9R7q/YlqZZbA6KiUwSTXi1v3ChjVxyqhpjQOwoy/SOpr5D6YYNV62uDmdiBLJWMrYulqyDjPETZ
-      z5gCDr8ujTBC4yn0gZK72Qj4eT5JRGc0g2yUFanXQc0ZCerSY5hV2pW53bgeviVSKvnuELcpCVOG
-      m8qw5bQVdM9O21LPZXTsXm2ietc3He2mlsNZKR/pwuuZxuY/bNyk9S+2gty/90jbq6e30mb8fsg+
-      5a2IeRGvQebEOWQkreZDwgtvRTaacDyNdMsaZsILwX4JGpLHATx8nUAfDnS43eR8mZzWZ+2zLKzh
-      K1I4nKdI5srOR2m/O6AJ0+kQum2CxAOT3pWgBdwvX9r3vyq1DsQi1/wb0JX17xUjlEPpuDQMGomm
-      IN+VxBkHWsNvIy8+QVuEws/lp46HFhTP3gj12z4sLKaT5m7ghw6UpFuKS+chYN10LFx7foyAp4HM
-      sbjxFCwIC+zoJfzKFR5T472A4ThCXdzU5JIySsX8c6tdutODnGoreJUjPOwrTrCZxjSH5iCa38nl
-      UF37jAApdKi4f1OKuu1xt6ZCXGEbGTaqUffszxRi26+Y5glVsk9Xbfyk6ariHE08k8EkfUmylY5u
-      4KpG5grIyMOM0Rx4HEa9QExFFfefsYC+A3cNRpC1o09wHiM2r/4rZbwot1SRByU6fHKiWGz4sqhA
-      veyjnF6+nK0fRLIjKziAxa+TL493rBuJu0/867bdualQM+uMB3qCsE/D7ChTXPCGoPBYNQ8JXocF
-      E7t6YTJkHbTNnzEb1Kjkw/gixrSjufwdwZJCr2kzbYus8i7lkuTq3ebFHD1b1w49F6er0G7daMrL
-      LC+mKlEEu2TU742MX3VpOPMAWCHSBdO1BMsGZy/+3jw0jVo5t4zQd4SzBMNh4UoQyJiq/KaiHAvV
-      bZqoteT19erP4grUi+EJHGo//h9l6OW+u4/kCTOiQ7N8FKn4WeR/I9KLWaeLOfEVRopCEXlSqvxR
-      /op8w3ivsxQ3JComHfKo74UCb2KwlcLcrd4Na8pfRiZrD7ou9gukH9TIIvWYSPjWmWlB6RTnz4td
-      llwagN+3AtmXHQ44csQgh+gNhin3tZ4a1ZHEu9vsaEOfrI8hwdpH/Uzem395iRjosXQ0OfucDgvI
-      Eh9q3Ndvw8C0sHpD+VmJwnlNeMXi5tl+guipOWDSuIZPflPzRzJ+C+ZxHJtU3rajWnqx8Dbn6GVQ
-      Q/6SCNViZdhps2xz/ZiXYRY5mkZUFVKB7UIwKmncQt7X3mdCTWtmUyEFCLl5fFkGICR8vb4yyfMb
-      f0Fd0Awkf6l4SxikqfVM1QOpJ/c8zDXgmcvJirG7DhtHqUF83mKautWn76AHZe+gbp5fyJsHaA==
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '1024'
-      Content-Type:
-      - application/octet-stream
-      User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      x-ms-client-request-id:
-      - eb185400-b63a-11e9-b75b-2816a845e8c6
-      x-ms-date:
-      - Sat, 03 Aug 2019 22:06:18 GMT
-      x-ms-range:
-      - bytes=0-1023
-      x-ms-version:
-      - '2018-11-09'
-      x-ms-write:
-      - update
-    method: PUT
-    uri: https://storagename.file.core.windows.net/utshare8f720a9e/file8f720a9e?comp=range
-  response:
-    body:
-      string: ''
-    headers:
-      Content-Length:
-      - '0'
-      Content-MD5:
-      - rwDDDNfjNUZE7Ee1SUu3JA==
-      Date:
-      - Sat, 03 Aug 2019 22:06:16 GMT
-      ETag:
-      - '"0x8D7185ECEA38BB2"'
-      Last-Modified:
-      - Sat, 03 Aug 2019 22:06:16 GMT
-      Server:
-      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - 230665d0-001a-00ab-6d47-4ab312000000
-      x-ms-request-server-encrypted:
-      - 'true'
-      x-ms-version:
-      - '2018-11-09'
-    status:
-      code: 201
-      message: Created
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - eb373898-b63a-11e9-9555-2816a845e8c6
-      x-ms-content-length:
-      - '5'
-      x-ms-date:
-      - Sat, 03 Aug 2019 22:06:18 GMT
-      x-ms-version:
-      - '2018-11-09'
-    method: PUT
-    uri: https://storagename.file.core.windows.net/utshare8f720a9e/file8f720a9e?comp=properties
-  response:
-    body:
-      string: ''
-    headers:
-      Content-Length:
-      - '0'
-      Date:
-      - Sat, 03 Aug 2019 22:06:16 GMT
-      ETag:
-      - '"0x8D7185ECEC43905"'
-      Last-Modified:
-      - Sat, 03 Aug 2019 22:06:17 GMT
-      Server:
-      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - 230665d1-001a-00ab-6e47-4ab312000000
-      x-ms-request-server-encrypted:
-      - 'true'
-      x-ms-version:
-      - '2018-11-09'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - eb56c9f4-b63a-11e9-999b-2816a845e8c6
-      x-ms-date:
-      - Sat, 03 Aug 2019 22:06:18 GMT
-      x-ms-version:
-      - '2018-11-09'
-    method: HEAD
-    uri: https://storagename.file.core.windows.net/utshare8f720a9e/file8f720a9e
-  response:
-    body:
-      string: ''
-    headers:
-      Content-Length:
-      - '5'
-      Content-Type:
-      - application/xml; charset=utf-8
-      Date:
-      - Sat, 03 Aug 2019 22:06:16 GMT
-      ETag:
-      - '"0x8D7185ECEC43905"'
-      Last-Modified:
-      - Sat, 03 Aug 2019 22:06:17 GMT
-      Server:
-      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
-      x-ms-request-id:
-      - 230665d3-001a-00ab-6f47-4ab312000000
-      x-ms-server-encrypted:
-      - 'true'
-      x-ms-type:
-      - File
-      x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 200
       message: OK

@@ -1,3 +1,9 @@
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
+
 from datetime import datetime, timedelta
 
 _ERROR_TOO_MANY_FILE_PERMISSIONS = 'file_permission and file_permission_key should not be set at the same time'
@@ -8,8 +14,8 @@ _FILE_PERMISSION_TOO_LONG = 'Size of file_permission is too large. file_permissi
 def _get_file_permission(file_permission, file_permission_key, default_permission):
     # if file_permission and file_permission_key are both empty, then use the default_permission
     # value as file permission, file_permission size should be <= 8KB, else file permission_key should be used
-    empty_file_permission = file_permission is None or len(file_permission) == 0
-    empty_file_permission_key = file_permission_key is None or len(file_permission_key) == 0
+    empty_file_permission = not file_permission
+    empty_file_permission_key = not file_permission_key
     file_permission_size_too_big = False if file_permission is None \
         else len(str(file_permission).encode('utf-8')) > 8 * 1024
 
