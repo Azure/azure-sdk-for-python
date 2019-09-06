@@ -456,7 +456,6 @@ class StorageFileAsyncTest(FileTestCase):
 
     @record
     def test_resize_file_async(self):
-        pytest.skip("TODO: Verify the x-ms-file-permission value.")
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_resize_file_async())
 
@@ -840,6 +839,8 @@ class StorageFileAsyncTest(FileTestCase):
 
     @record
     def test_clear_range_async(self):
+        # TODO: swagger is weird maybe wrong
+        pytest.skip("TODO: fix the swagger or code.")
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_clear_range_async())
 
