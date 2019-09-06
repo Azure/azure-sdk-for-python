@@ -28,6 +28,7 @@ producer = client.create_producer(partition_id="1")
 event_list = []
 for i in range(1500):
     event_list.append(EventData('Hello World'))
+start_time = time.time()
 with producer:
-    start_time = time.time()
     producer.send(event_list)
+print("Runtime: {} seconds".format(time.time() - start_time))

@@ -6,9 +6,9 @@
 # --------------------------------------------------------------------------------------------
 
 """
-An example to show sending events to an Event Hub partition.
-This is just an example of sending EventData, not performance optimal.
-To have the best performance, send a batch EventData with one send() call.
+An example to show sending individual events to an Event Hub partition.
+Although this works, sending events in batches will get better performance.
+See 'send_list_of_event_data.py' and 'send_event_data_batch.py' for an example of batching.
 """
 
 # pylint: disable=C0111
@@ -26,10 +26,11 @@ KEY = os.environ['EVENT_HUB_SAS_KEY']
 client = EventHubClient(host=HOSTNAME, event_hub_path=EVENT_HUB, credential=EventHubSharedKeyCredential(USER, KEY),
                         network_tracing=False)
 producer = client.create_producer(partition_id="0")
+
 start_time = time.time()
 with producer:
-    # not performance optimal, but works. Please do send events in batch to get much better performance.
     for i in range(100):
         ed = EventData("msg")
         print("Sending message: {}".format(i))
-        producer.send(ed)  # please use batch_send for better performance. Refer to event_data_batch.py
+        producer.send(ed)
+print("Send 100 messages in {} seconds".format(time.time() - start_time))

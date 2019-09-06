@@ -80,11 +80,10 @@ class ConsumerProducerMixin(object):
 
         return _handle_exception(exception, self)
 
-    def _do_retryable_operation(self, operation, timeout=None, **kwargs):
+    def _do_retryable_operation(self, operation, timeout=100000, **kwargs):
         # pylint:disable=protected-access
-        if not timeout:
-            timeout = 100000  # timeout equals to 0 means no timeout, set the value to be a large number.
-        timeout_time = time.time() + timeout
+        timeout_time = time.time() + (
+            timeout if timeout else 100000)  # timeout equals to 0 means no timeout, set the value to be a large number.
         retried_times = 0
         last_exception = kwargs.pop('last_exception', None)
         operation_need_param = kwargs.pop('operation_need_param', True)
@@ -100,7 +99,7 @@ class ConsumerProducerMixin(object):
                                         timeout_time=timeout_time, entity_name=self._name)
                 retried_times += 1
 
-        log.info("%r has exhausted retry. Exception still occurs (%r)", self._name, last_exception)
+        log.info("%r operation has exhausted retry. Last exception: %r.", self._name, last_exception)
         raise last_exception
 
     def close(self, exception=None):
