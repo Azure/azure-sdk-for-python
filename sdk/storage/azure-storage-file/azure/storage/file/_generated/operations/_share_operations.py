@@ -293,9 +293,12 @@ class ShareOperations(object):
             return cls(response, None, response_headers)
     create_snapshot.metadata = {'url': '/{shareName}'}
 
-    def create_permission(self, timeout=None, cls=None, **kwargs):
+    def create_permission(self, share_permission, timeout=None, cls=None, **kwargs):
         """Create a permission (a security descriptor).
 
+        :param share_permission: A permission (a security descriptor) at the
+         share level.
+        :type share_permission: ~azure.storage.file.models.SharePermission
         :param timeout: The timeout parameter is expressed in seconds. For
          more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/Setting-Timeouts-for-File-Service-Operations?redirectedfrom=MSDN">Setting
@@ -327,10 +330,14 @@ class ShareOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
 
+        # Construct body
+        body_content = self._serialize.body(share_permission, 'SharePermission', is_xml=False)
+
         # Construct and send request
-        request = self._client.put(url, query_parameters, header_parameters)
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
@@ -363,8 +370,8 @@ class ShareOperations(object):
         :type timeout: int
         :param callable cls: A custom type or function that will be passed the
          direct response
-        :return: None or the result of cls(response)
-        :rtype: None
+        :return: SharePermission or the result of cls(response)
+        :rtype: ~azure.storage.file.models.SharePermission
         :raises:
          :class:`StorageErrorException<azure.storage.file.models.StorageErrorException>`
         """
@@ -387,6 +394,7 @@ class ShareOperations(object):
 
         # Construct headers
         header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
         if file_permission_key is not None:
             header_parameters['x-ms-file-permission-key'] = self._serialize.header("file_permission_key", file_permission_key, 'str')
         header_parameters['x-ms-version'] = self._serialize.header("self._config.version", self._config.version, 'str')
@@ -400,14 +408,21 @@ class ShareOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise models.StorageErrorException(response, self._deserialize)
 
-        if cls:
-            response_headers = {
+        header_dict = {}
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('SharePermission', response)
+            header_dict = {
                 'x-ms-request-id': self._deserialize('str', response.headers.get('x-ms-request-id')),
                 'x-ms-version': self._deserialize('str', response.headers.get('x-ms-version')),
                 'Date': self._deserialize('rfc-1123', response.headers.get('Date')),
                 'x-ms-error-code': self._deserialize('str', response.headers.get('x-ms-error-code')),
             }
-            return cls(response, None, response_headers)
+
+        if cls:
+            return cls(response, deserialized, header_dict)
+
+        return deserialized
     get_permission.metadata = {'url': '/{shareName}'}
 
     def set_quota(self, timeout=None, quota=None, cls=None, **kwargs):
