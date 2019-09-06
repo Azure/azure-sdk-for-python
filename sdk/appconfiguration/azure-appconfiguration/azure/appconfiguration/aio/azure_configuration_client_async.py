@@ -21,11 +21,12 @@ from ..utils import (
     prep_update_configuration_setting,
     quote_etag,
 )
-from .._generated.aio import ConfigurationClient
-from .._generated.aio._configuration_async import ConfigurationClientConfiguration
+from .._generated.aio import AzureAppConfiguration
+from .._generated.aio._configuration_async import AzureAppConfigurationConfiguration
 from ..azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
 from ..azure_appconfiguration_credential import AppConfigConnectionStringCredential
-from .._generated.models import ConfigurationSetting
+from .._generated.models import KeyValue
+from ..models import ConfigurationSetting
 from .._user_agent import USER_AGENT
 
 
@@ -41,7 +42,7 @@ class AzureAppConfigurationClient:
     """
     def __init__(self, base_url, credential, **kwargs):
         # type: (str, AppConfigConnectionStringCredential, Any) -> None
-        self.config = ConfigurationClientConfiguration(credential, **kwargs)
+        self.config = AzureAppConfigurationConfiguration(credential, **kwargs)
         self.config.user_agent_policy = UserAgentPolicy(
             base_user_agent=USER_AGENT, **kwargs
         )
@@ -51,8 +52,8 @@ class AzureAppConfigurationClient:
         if pipeline is None:
             pipeline = self._create_appconfig_pipeline(**kwargs)
 
-        self._impl = ConfigurationClient(
-            credential, base_url, pipeline=pipeline
+        self._impl = AzureAppConfiguration(
+            credentials=credential, base_url=base_url, pipeline=pipeline
         )
 
 
@@ -152,7 +153,12 @@ class AzureAppConfigurationClient:
         """
         labels = escape_and_tolist(labels)
         keys = escape_and_tolist(keys)
-        return self._impl.list_configuration_settings(label=labels, key=keys, **kwargs)
+        return self._impl.get_key_values(
+            label=labels,
+            key=keys,
+            cls=lambda objs: [ConfigurationSetting._from_key_value(x) for x in objs],
+            **kwargs
+        )
 
     @distributed_trace_async
     async def get_configuration_setting(self, key, label=None, **kwargs):
@@ -181,13 +187,13 @@ class AzureAppConfigurationClient:
             )
         """
         error_map = {404: ResourceNotFoundError}
-        return await self._impl.get_configuration_setting(
+        key_value = await self._impl.get_key_value(
             key=key,
             label=label,
-            accept_date_time=kwargs.get("accept_date_time"),
-            headers=kwargs.get("headers"),
             error_map=error_map,
+            **kwargs
         )
+        return ConfigurationSetting._from_key_value(key_value)
 
     @distributed_trace_async
     async def add_configuration_setting(self, configuration_setting, **kwargs):
@@ -216,15 +222,23 @@ class AzureAppConfigurationClient:
             )
             added_config_setting = await async_client.add_configuration_setting(config_setting)
         """
-        custom_headers = CaseInsensitiveDict(kwargs.get("headers"))
-        custom_headers["if-none-match"] = "*"
-        return await self._impl.create_or_update_configuration_setting(
-            configuration_setting=configuration_setting,
+        key_value = KeyValue(
             key=configuration_setting.key,
             label=configuration_setting.label,
+            content_type=configuration_setting.content_type,
+            value=configuration_setting.value,
+            tags=configuration_setting.tags
+        )
+        custom_headers = CaseInsensitiveDict(kwargs.get("headers"))
+        key_value_added = await self._impl.put_key_value(
+            entity=key_value,
+            key=key_value.key,
+            label=key_value.label,
+            if_none_match="*",
             headers=custom_headers,
             error_map={412: ResourceExistsError},
         )
+        return ConfigurationSetting._from_key_value(key_value_added)
 
     @distributed_trace_async
     async def update_configuration_setting(
@@ -257,23 +271,30 @@ class AzureAppConfigurationClient:
                 tags={"my updated tag": "my updated tag value"}
             )
         """
-        custom_headers = prep_update_configuration_setting(key, etag, **kwargs)
-        current_configuration_setting = await self.get_configuration_setting(key, label)
+        custom_headers = prep_update_configuration_setting(key, **kwargs)
+
+        key_value = await self._impl.get_key_value(
+            key=key,
+            label=label
+        )
+
         if value is not None:
-            current_configuration_setting.value = value
+            key_value.value = value
         content_type = kwargs.get("content_type")
         if content_type is not None:
-            current_configuration_setting.content_type = content_type
+            key_value.content_type = content_type
         tags = kwargs.get("tags")
         if tags is not None:
-            current_configuration_setting.tags = tags
-        return await self._impl.create_or_update_configuration_setting(
-            configuration_setting=current_configuration_setting,
+            key_value.tags = tags
+        key_value_updated = await self._impl.put_key_value(
+            entity=key_value,
             key=key,
             label=label,
+            if_match=etag,
             headers=custom_headers,
             error_map={404: ResourceNotFoundError, 412: ResourceModifiedError},
         )
+        return ConfigurationSetting._from_key_value(key_value_updated)
 
     @distributed_trace_async
     async def set_configuration_setting(
@@ -307,17 +328,24 @@ class AzureAppConfigurationClient:
             )
             returned_config_setting = await async_client.set_configuration_setting(config_setting)
         """
-        custom_headers = CaseInsensitiveDict(kwargs.get("headers"))
-        etag = configuration_setting.etag
-        if etag:
-            custom_headers["if-match"] = quote_etag(etag)
-        return await self._impl.create_or_update_configuration_setting(
-            configuration_setting=configuration_setting,
+        key_value = KeyValue(
             key=configuration_setting.key,
             label=configuration_setting.label,
+            content_type=configuration_setting.content_type,
+            value=configuration_setting.value,
+            tags=configuration_setting.tags
+        )
+        custom_headers = CaseInsensitiveDict(kwargs.get("headers"))
+        etag = configuration_setting.etag
+        key_value_set = await self._impl.put_key_value(
+            entity=key_value,
+            key=key_value.key,
+            label=key_value.label,
+            if_match=etag,
             headers=custom_headers,
             error_map={412: ResourceModifiedError},
         )
+        return ConfigurationSetting._from_key_value(key_value_set)
 
     @distributed_trace_async
     async def delete_configuration_setting(
@@ -348,17 +376,18 @@ class AzureAppConfigurationClient:
             )
         """
         custom_headers = CaseInsensitiveDict(kwargs.get("headers"))
-        if etag:
-            custom_headers["if-match"] = quote_etag(etag)
-        return await self._impl.delete_configuration_setting(
+        if_match = quote_etag(etag) if etag else None
+        key_value_deleted = await self._impl.delete_key_value(
             key=key,
             label=label,
+            if_match=if_match,
             headers=custom_headers,
             error_map={
                 404: ResourceNotFoundError,  # 404 doesn't happen actually. return None if no match
                 412: ResourceModifiedError,
             },
         )
+        return ConfigurationSetting._from_key_value(key_value_deleted)
 
     @distributed_trace
     def list_revisions(
@@ -404,4 +433,9 @@ class AzureAppConfigurationClient:
         """
         labels = escape_and_tolist(labels)
         keys = escape_and_tolist(keys)
-        return self._impl.list_revisions(label=labels, key=keys, **kwargs)
+        return self._impl.get_revisions(
+            label=labels,
+            key=keys,
+            cls=lambda objs: [ConfigurationSetting._from_key_value(x) for x in objs],
+            **kwargs
+        )

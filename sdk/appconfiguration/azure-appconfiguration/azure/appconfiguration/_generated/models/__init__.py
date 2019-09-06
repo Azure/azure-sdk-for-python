@@ -6,25 +6,28 @@
 # --------------------------------------------------------------------------
 
 try:
-    from ._models_py3 import ConfigurationSetting
-    from ._models_py3 import ConfigurationSettingList
+    from ._models_py3 import Error, ErrorException
     from ._models_py3 import Key
-    from ._models_py3 import KeyList
+    from ._models_py3 import KeyListResult
+    from ._models_py3 import KeyValue
+    from ._models_py3 import KeyValueListResult
     from ._models_py3 import Label
-    from ._models_py3 import LabelList
+    from ._models_py3 import LabelListResult
 except (SyntaxError, ImportError):
-    from ._models import ConfigurationSetting
-    from ._models import ConfigurationSettingList
+    from ._models import Error, ErrorException
     from ._models import Key
-    from ._models import KeyList
+    from ._models import KeyListResult
+    from ._models import KeyValue
+    from ._models import KeyValueListResult
     from ._models import Label
-    from ._models import LabelList
+    from ._models import LabelListResult
 
 __all__ = [
-    'ConfigurationSetting',
-    'ConfigurationSettingList',
+    'Error', 'ErrorException',
     'Key',
-    'KeyList',
+    'KeyListResult',
+    'KeyValue',
+    'KeyValueListResult',
     'Label',
-    'LabelList',
+    'LabelListResult',
 ]

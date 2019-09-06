@@ -10,7 +10,7 @@
 # --------------------------------------------------------------------------
 
 from .azure_appconfiguration_client import AzureAppConfigurationClient
-from ._generated.models import ConfigurationSetting
+from .models import ConfigurationSetting
 from .version import VERSION
 
 __version__ = VERSION
