@@ -6,9 +6,10 @@
 from six.moves.http_client import HTTPConnection
 import time
 
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
+from azure.core.pipeline.transport import HttpRequest, HttpResponse, RequestsTransport
 from azure.core.pipeline.transport.base import HttpClientTransportResponse, _deserialize_response, MultiPartHelper
 from azure.core.pipeline.policies import HeadersPolicy
+from azure.core.pipeline import Pipeline
 
 
 def test_http_request_serialization():
@@ -133,21 +134,20 @@ def test_multipart_send():
         'x-ms-date': 'Thu, 14 Jun 2018 16:46:54 GMT'
     })
 
-    request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
-
     req0 = HttpRequest("DELETE", "/container0/blob0")
     req1 = HttpRequest("DELETE", "/container1/blob1")
 
-    helper = MultiPartHelper(request)
-    helper.requests = [
-        req0, req1
-    ]
-    helper.policies = [
-        header_policy
-    ]
+    request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
+    request.set_multipart_mixed(
+        req0,
+        req1,
+        policies=[header_policy]
+    )
 
+    helper = MultiPartHelper(request)
     helper.prepare_request()
 
+    # FIXME Boundary is random, so need to improve this test with a regexp or something
     assert request.body == (
         b'--===============6566992931842418154==\n'
         b'content-type: application/http\n'
@@ -161,9 +161,6 @@ def test_multipart_send():
         b'x-ms-date: Thu, 14 Jun 2018 16:46:54 GMT\n\n\n'
         b'--===============6566992931842418154==--\n'
     )
-
-    print(request.body)
-    print(request.headers)
 
 def test_multipart_receive():
 
@@ -213,19 +210,17 @@ def test_multipart_receive():
         "multipart/mixed; boundary=batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed"
     )
 
-
-    request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
-
     req0 = HttpRequest("DELETE", "/container0/blob0")
     req1 = HttpRequest("DELETE", "/container1/blob1")
 
+    request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
+    request.set_multipart_mixed(
+        req0,
+        req1,
+        policies=[ResponsePolicy()]
+    )
+
     helper = MultiPartHelper(request)
-    helper.requests = [
-        req0, req1
-    ]
-    helper.policies = [
-        ResponsePolicy()
-    ]
 
     response = helper.parse_response(response)
 
@@ -236,3 +231,65 @@ def test_multipart_receive():
     res1 = response[1]
     assert res1.status_code == 404
     assert res1.headers['x-ms-fun'] == 'true'
+
+def test_pipeline_full_scenario():
+
+    # To get this test to zork, create a mocky.io:
+    # Content type: multipart/mixed; boundary=batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed
+    # Body:
+    """
+--batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed
+Content-Type: application/http
+Content-ID: 0
+
+HTTP/1.1 202 Accepted
+x-ms-request-id: 778fdc83-801e-0000-62ff-0334671e284f
+x-ms-version: 2018-11-09
+
+--batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed
+Content-Type: application/http
+Content-ID: 1
+
+HTTP/1.1 202 Accepted
+x-ms-request-id: 778fdc83-801e-0000-62ff-0334671e2851
+x-ms-version: 2018-11-09
+
+--batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed
+Content-Type: application/http
+Content-ID: 2
+
+HTTP/1.1 404 The specified blob does not exist.
+x-ms-error-code: BlobNotFound
+x-ms-request-id: 778fdc83-801e-0000-62ff-0334671e2852
+x-ms-version: 2018-11-09
+Content-Length: 216
+Content-Type: application/xml
+
+<?xml version="1.0" encoding="utf-8"?>
+<Error><Code>BlobNotFound</Code><Message>The specified blob does not exist.
+RequestId:778fdc83-801e-0000-62ff-0334671e2852
+Time:2018-06-14T16:46:54.6040685Z</Message></Error>
+--batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed--
+"""
+
+    header_policy = HeadersPolicy({
+        'x-ms-date': 'Thu, 14 Jun 2018 16:46:54 GMT'
+    })
+
+    req0 = HttpRequest("DELETE", "/container0/blob0")
+    req1 = HttpRequest("DELETE", "/container1/blob1")
+    req2 = HttpRequest("DELETE", "/container2/blob2")
+
+    request = HttpRequest("GET", "http://www.mocky.io/v2/5d72e4892f0000ce9c7d4ec1")
+    request.set_multipart_mixed(
+        req0,
+        req1,
+        req2,
+        policies=[header_policy]
+    )
+
+    with Pipeline(RequestsTransport(), policies=[]) as pipeline:
+        response = pipeline.run(request)
+
+    assert len(response.context['MULTIPART_RESPONSE']) == 3
+    assert response.context['MULTIPART_RESPONSE'][2].status_code == 404

@@ -156,6 +156,7 @@ class HttpRequest(object):
         self.headers = CaseInsensitiveDict(headers)
         self.files = files
         self.data = data
+        self.multipart_mixed_info = None
 
     def __repr__(self):
         return '<HttpRequest [%s]>' % (self.method)
@@ -278,6 +279,12 @@ class HttpRequest(object):
             self.headers['Content-Length'] = str(len(data))
         self.data = data
         self.files = None
+
+    def set_multipart_mixed(self, *requests, **kwargs):
+        self.multipart_mixed_info = (
+            requests,
+            kwargs.pop("policies", [])
+        )
 
     def serialize(self):
         return _serialize_request(self)
@@ -595,8 +602,8 @@ class MultiPartHelper(object):
         main_request,  # type: HttpRequest
     ):
         self.main_request = main_request
-        self.requests = []  # type: List[HttpRequest]
-        self.policies = []  # type List[SansIOHTTPPolicy]
+        self.requests = self.main_request.multipart_mixed_info[0]  # type: List[HttpRequest]
+        self.policies = self.main_request.multipart_mixed_info[1]  # type: List[SansIOHTTPPolicy]
 
     def prepare_request(self):
         # Apply on_requests concurrently to all requests

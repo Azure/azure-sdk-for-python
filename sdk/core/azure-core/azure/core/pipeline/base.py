@@ -147,7 +147,19 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
         :return: The PipelineResponse object
         :rtype: ~azure.core.pipeline.PipelineResponse
         """
+        multipart_helper = None
+        if request.multipart_mixed_info:
+            from .transport.base import MultiPartHelper
+            multipart_helper = MultiPartHelper(request)
+            multipart_helper.prepare_request()
+
         context = PipelineContext(self._transport, **kwargs)
         pipeline_request = PipelineRequest(request, context) # type: PipelineRequest
         first_node = self._impl_policies[0] if self._impl_policies else _TransportRunner(self._transport)
-        return first_node.send(pipeline_request)  # type: ignore
+        response = first_node.send(pipeline_request)  # type: ignore
+
+        if multipart_helper:
+            part_responses = multipart_helper.parse_response(response.http_response)
+            response.context['MULTIPART_RESPONSE'] = part_responses
+
+        return response
