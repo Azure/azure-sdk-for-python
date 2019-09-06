@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # -----------------------------------------------------------------------------------
 
-from typing import Callable, Dict
+from typing import Callable, Dict, Type
 import uuid
 import asyncio
 import logging
@@ -32,33 +32,52 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
         .. code-block:: python
 
             import asyncio
+            import logging
+            import os
             from azure.eventhub.aio import EventHubClient
-            from azure.eventhub.eventprocessor import EventProcessor, PartitionProcessor, Sqlite3PartitionManager
+            from azure.eventhub.aio.eventprocessor import EventProcessor, PartitionProcessor
+            from azure.eventhub.aio.eventprocessor import SamplePartitionManager
 
-            class MyPartitionProcessor(object):
+            RECEIVE_TIMEOUT = 5  # timeout in seconds for a receiving operation. 0 or None means no timeout
+            RETRY_TOTAL = 3  # max number of retries for receive operations within the receive timeout.
+                             # Actual number of retries clould be less if RECEIVE_TIMEOUT is too small
+            CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
+
+            logging.basicConfig(level=logging.INFO)
+
+            async def do_operation(event):
+                # do some sync or async operations. If the operation is i/o bound, async will have better performance
+                print(event)
+
+
+            class MyPartitionProcessor(PartitionProcessor):
                 async def process_events(self, events, partition_context):
                     if events:
-                        # do something sync or async to process the events
+                        await asyncio.gather(*[do_operation(event) for event in events])
                         await partition_context.update_checkpoint(events[-1].offset, events[-1].sequence_number)
 
+            async def main():
+                client = EventHubClient.from_connection_string(CONNECTION_STR, receive_timeout=RECEIVE_TIMEOUT,
+                                                               retry_total=RETRY_TOTAL)
+                partition_manager = SamplePartitionManager(db_filename=":memory:")  # a filename to persist checkpoint
+                try:
+                    event_processor = EventProcessor(client, "$default", MyPartitionProcessor,
+                                                     partition_manager, polling_interval=10)
+                    asyncio.create_task(event_processor.start())
+                    await asyncio.sleep(60)
+                    await event_processor.stop()
+                finally:
+                    await partition_manager.close()
 
-            client = EventHubClient.from_connection_string("<your connection string>", receive_timeout=5, retry_total=3)
-            partition_manager = Sqlite3PartitionManager()
-            try:
-                event_processor = EventProcessor(client, "$default", MyPartitionProcessor, partition_manager)
-                asyncio.ensure_future(event_processor.start())
-                await asyncio.sleep(100)  # allow it to run 100 seconds
-                await event_processor.stop()
-            finally:
-                await partition_manager.close()
+            if __name__ == '__main__':
+                asyncio.get_event_loop().run_until_complete(main())
 
     """
     def __init__(
             self, eventhub_client: EventHubClient, consumer_group_name: str,
-            partition_processor_factory: Callable[..., PartitionProcessor],
+            partition_processor_type: Type[PartitionProcessor],
             partition_manager: PartitionManager, *,
             initial_event_position: EventPosition = EventPosition("-1"), polling_interval: float = 10.0
-
     ):
         """
         Instantiate an EventProcessor.
@@ -68,23 +87,23 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
         :param consumer_group_name: The name of the consumer group this event processor is associated with. Events will
          be read only in the context of this group.
         :type consumer_group_name: str
-        :param partition_processor_factory: A callable(type or function) object that creates an instance of a class
-         implementing the ~azure.eventhub.eventprocessor.PartitionProcessor.
-        :type partition_processor_factory: callable object
+        :param partition_processor_type: A subclass type of ~azure.eventhub.eventprocessor.PartitionProcessor.
+        :type partition_processor_type: type
         :param partition_manager: Interacts with the storage system, dealing with ownership and checkpoints.
-         For preview 2, sample Sqlite3PartitionManager is provided.
+         For an easy start, SamplePartitionManager comes with the package.
         :type partition_manager: Class implementing the ~azure.eventhub.eventprocessor.PartitionManager.
-        :param initial_event_position: The offset to start a partition consumer if the partition has no checkpoint yet.
-        :type initial_event_position: int or str
+        :param initial_event_position: The event position to start a partition consumer.
+        if the partition has no checkpoint yet. This will be replaced by "reset" checkpoint in the near future.
+        :type initial_event_position: EventPosition
         :param polling_interval: The interval between any two pollings of balancing and claiming
-        :type float
+        :type polling_interval: float
 
         """
 
         self._consumer_group_name = consumer_group_name
         self._eventhub_client = eventhub_client
         self._eventhub_name = eventhub_client.eh_name
-        self._partition_processor_factory = partition_processor_factory
+        self._partition_processor_factory = partition_processor_type
         self._partition_manager = partition_manager
         self._initial_event_position = initial_event_position  # will be replaced by reset event position in preview 4
         self._polling_interval = polling_interval
