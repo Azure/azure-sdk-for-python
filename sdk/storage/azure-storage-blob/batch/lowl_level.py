@@ -41,3 +41,18 @@ async def send_multipart_stuff()
 
     delete0_response = list_of_responses[0]
 
+
+
+# High level scenario
+
+from azure.storage.blob import StorageServiceClient
+
+batch_client = BlobBatchClient.from_connection_string(conn_str="my_connection_string")
+
+container_client = batch_client.get_container_client("container0")
+container_client.delete_blobs(
+    "blob1",
+    "blob2",
+    "blob3",
+    include_snapshots="all"
+)
