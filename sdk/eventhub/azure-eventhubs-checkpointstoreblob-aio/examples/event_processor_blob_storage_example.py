@@ -3,7 +3,7 @@ import logging
 import os
 from azure.eventhub.aio import EventHubClient
 from azure.eventhub.aio.eventprocessor import EventProcessor, PartitionProcessor
-from azure.eventhub.extensions.checkpointerblobaio import BlobPartitionManager
+from azure.eventhub.extensions.checkpointstoreblobaio import BlobPartitionManager
 from azure.storage.blob.aio import ContainerClient
 
 RECEIVE_TIMEOUT = 5  # timeout in seconds for a receiving operation. 0 or None means no timeout
@@ -33,7 +33,7 @@ if __name__ == '__main__':
     client = EventHubClient.from_connection_string(CONNECTION_STR, receive_timeout=RECEIVE_TIMEOUT, retry_total=RETRY_TOTAL)
     container_client = ContainerClient.from_connection_string(STORAGE_CONNECTION_STR, container="eventprocessor")
     partition_manager = BlobPartitionManager(container_client=container_client)
-    event_processor = EventProcessor(client, "$default", MyPartitionProcessor, partition_manager, polling_interval=5)
+    event_processor = EventProcessor(client, "$default", MyPartitionProcessor, partition_manager, polling_interval=10)
     try:
         loop.run_until_complete(event_processor.start())
     except KeyboardInterrupt:

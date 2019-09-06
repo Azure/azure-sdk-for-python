@@ -16,11 +16,11 @@ if sys.version_info < (3, 5, 3):
     raise RuntimeError('Only python 3.5.3 or above is supported')
 
 # Change the PACKAGE_NAME only to change folder and different name
-PACKAGE_NAME = "azure-eventhub-checkpointerblob-aio"
+PACKAGE_NAME = "azure-eventhub-checkpointstoreblob-aio"
 PACKAGE_PPRINT_NAME = "Event Hubs checkpointer implementation with Blob Storage"
 
-package_folder_path = "azure/eventhub/extensions/checkpointerblobaio"
-namespace_name = "azure.eventhub.extensions.checkpointerblobaio"
+package_folder_path = "azure/eventhub/extensions/checkpointstoreblobaio"
+namespace_name = "azure.eventhub.extensions.checkpointstoreblobaio"
 
 # Version extraction inspired from 'requests'
 with open(os.path.join(package_folder_path, '__init__.py'), 'r') as fd:
