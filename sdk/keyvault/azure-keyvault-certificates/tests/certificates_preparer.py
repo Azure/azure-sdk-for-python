@@ -60,9 +60,6 @@ class VaultClientPreparer(AzureMgmtPreparer):
         playback_fake_resource=None,
         client_kwargs=None,
     ):
-        # incorporate a unicode integer representation of run identifier into key vault name for uniqueness
-        name_prefix += ''.join(str(ord(c)) for c in os.environ['RUN_IDENTIFIER'])[:10]
-
         super(VaultClientPreparer, self).__init__(
             name_prefix,
             24,
