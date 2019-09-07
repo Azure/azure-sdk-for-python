@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # -----------------------------------------------------------------------------------
 
-from typing import Callable, Dict, Type
+from typing import Dict, Type
 import uuid
 import asyncio
 import logging
