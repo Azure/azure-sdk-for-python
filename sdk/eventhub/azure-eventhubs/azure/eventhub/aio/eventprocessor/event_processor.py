@@ -138,7 +138,7 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
             while self._running:
                 try:
                     claimed_ownership_list = await ownership_manager.claim_ownership()
-                except Exception as err:
+                except Exception as err:  # pylint:disable=broad-except
                     log.warning("An exception (%r) occurred during balancing and claiming ownership for eventhub %r "
                                 "consumer group %r. Retrying after %r seconds",
                                 err, self._eventhub_name, self._consumer_group_name, self._polling_interval)
