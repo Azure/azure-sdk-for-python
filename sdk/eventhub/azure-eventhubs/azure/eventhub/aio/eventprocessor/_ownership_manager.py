@@ -24,7 +24,7 @@ class OwnershipManager(object):
     """
     def __init__(
             self, eventhub_client: EventHubClient, consumer_group_name: str, owner_id: str,
-            partition_manager: PartitionManager, ownership_timeout: int
+            partition_manager: PartitionManager, ownership_timeout: float
     ):
         self.cached_parition_ids = []  # type: List[str]
         self.eventhub_client = eventhub_client
@@ -86,7 +86,7 @@ class OwnershipManager(object):
             self.eventhub_name, self.consumer_group_name
         )
         now = time.time()
-        ownership_dict = dict((x["partition_id"], x) for x in ownership_list)  # put the list to dict for fast lookup
+        ownership_dict = {x["partition_id"]: x for x in ownership_list}  # put the list to dict for fast lookup
         not_owned_partition_ids = [pid for pid in all_partition_ids if pid not in ownership_dict]
         timed_out_partition_ids = [ownership["partition_id"] for ownership in ownership_list
                                    if ownership["last_modified_time"] + self.ownership_timeout < now]
@@ -100,6 +100,8 @@ class OwnershipManager(object):
 
         # calculate expected count per owner
         all_partition_count = len(all_partition_ids)
+        # owners_count is the number of active owners. If self.owner_id is not yet among the active owners,
+        # then plus 1 to include self. This will make owners_count >= 1.
         owners_count = len(active_ownership_by_owner) + \
                        (0 if self.owner_id in active_ownership_by_owner else 1)
         expected_count_per_owner = all_partition_count // owners_count
@@ -109,7 +111,6 @@ class OwnershipManager(object):
         to_claim = active_ownership_self
         if len(active_ownership_self) > most_count_allowed_per_owner:  # needs to abandon a partition
             to_claim.pop()  # abandon one partition if owned too many
-            # TODO: Release an ownership immediately so other EventProcessors won't need to wait it to timeout
         elif len(active_ownership_self) < expected_count_per_owner:
             # Either claims an inactive partition, or steals from other owners
             if claimable_partition_ids:  # claim an inactive partition if there is

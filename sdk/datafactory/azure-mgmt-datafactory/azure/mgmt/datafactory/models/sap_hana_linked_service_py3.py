@@ -29,10 +29,13 @@ class SapHanaLinkedService(LinkedService):
     :type parameters: dict[str,
      ~azure.mgmt.datafactory.models.ParameterSpecification]
     :param annotations: List of tags that can be used for describing the
-     Dataset.
+     linked service.
     :type annotations: list[object]
     :param type: Required. Constant filled by server.
     :type type: str
+    :param connection_string: SAP HANA ODBC connection string. Type: string,
+     SecureString or AzureKeyVaultSecretReference.
+    :type connection_string: object
     :param server: Required. Host name of the SAP HANA server. Type: string
      (or Expression with resultType string).
     :type server: object
@@ -63,6 +66,7 @@ class SapHanaLinkedService(LinkedService):
         'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
         'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
+        'connection_string': {'key': 'typeProperties.connectionString', 'type': 'object'},
         'server': {'key': 'typeProperties.server', 'type': 'object'},
         'authentication_type': {'key': 'typeProperties.authenticationType', 'type': 'str'},
         'user_name': {'key': 'typeProperties.userName', 'type': 'object'},
@@ -70,8 +74,9 @@ class SapHanaLinkedService(LinkedService):
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
-    def __init__(self, *, server, additional_properties=None, connect_via=None, description: str=None, parameters=None, annotations=None, authentication_type=None, user_name=None, password=None, encrypted_credential=None, **kwargs) -> None:
+    def __init__(self, *, server, additional_properties=None, connect_via=None, description: str=None, parameters=None, annotations=None, connection_string=None, authentication_type=None, user_name=None, password=None, encrypted_credential=None, **kwargs) -> None:
         super(SapHanaLinkedService, self).__init__(additional_properties=additional_properties, connect_via=connect_via, description=description, parameters=parameters, annotations=annotations, **kwargs)
+        self.connection_string = connection_string
         self.server = server
         self.authentication_type = authentication_type
         self.user_name = user_name
