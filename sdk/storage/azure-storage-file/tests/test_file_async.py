@@ -568,6 +568,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
     @AsyncFileTestCase.await_prepared_test
     async def test_clear_range_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        pytest.skip("x-ms-permission value")
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
         file_client = await self._create_file(fsc)
 
@@ -765,7 +766,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
     async def test_copy_file_async_private_file_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
-        fsc2 = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
+        fsc2 = FileServiceClient(self._account_url(self._remote_account_details()[0]), credential=self._remote_account_details()[1], transport=AiohttpTestTransport())
         await self._create_remote_share(fsc2)
         source_file = await self._create_remote_file(fsc2)
 
@@ -790,7 +791,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
         data = b'12345678' * 1024 * 1024
-        fsc2 = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
+        fsc2 = FileServiceClient(self._account_url(self._remote_account_details()[0]), credential=self._remote_account_details()[1], transport=AiohttpTestTransport())
         await self._create_remote_share(fsc2)
         source_file = await self._create_remote_file(fsc2, file_data=data)
         sas_token = source_file.generate_shared_access_signature(
@@ -812,7 +813,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
 
         # Assert
         self.assertTrue(copy_resp['copy_status'] in ['success', 'pending'])
-        await self._wait_for_async_copy(self.share_name, target_file_name) 
+        await self._wait_for_async_copy(self.share_name, target_file_name, fsc) 
 
         content = await file_client.download_file()
         actual_data = await content.content_as_bytes()
@@ -825,7 +826,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
         data = b'12345678' * 1024 * 1024
-        fsc2 = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
+        fsc2 = FileServiceClient(self._account_url(self._remote_account_details()[0]), credential=self._remote_account_details()[0], transport=AiohttpTestTransport())
         await self._create_remote_share(fsc2)
         source_file = await self._create_remote_file(fsc2, file_data=data)
         sas_token = source_file.generate_shared_access_signature(
