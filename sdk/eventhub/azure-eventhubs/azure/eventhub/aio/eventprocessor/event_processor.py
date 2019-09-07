@@ -254,7 +254,7 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
                         await close(CloseReason.SHUTDOWN)
                     else:
                         await close(CloseReason.OWNERSHIP_LOST)
-                    break
+                    raise
                 except EventHubError as eh_err:
                     await process_error(eh_err)
                     await close(CloseReason.EVENTHUB_EXCEPTION)
