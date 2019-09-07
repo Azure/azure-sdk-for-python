@@ -69,11 +69,11 @@ class SamplePartitionManager(PartitionManager):
         finally:
             cursor.close()
 
-    async def claim_ownership(self, partitions):
+    async def claim_ownership(self, ownership_list):
         result = []
         cursor = self.conn.cursor()
         try:
-            for p in partitions:
+            for p in ownership_list:
                 cursor.execute("select etag from " + _check_table_name(self.ownership_table) +
                                     " where "+ " and ".join([field+"=?" for field in self.primary_keys]),
                                     tuple(p.get(field) for field in self.primary_keys))
@@ -91,7 +91,7 @@ class SamplePartitionManager(PartitionManager):
                         logger.info("EventProcessor %r failed to claim partition %r "
                                     "because it was claimed by another EventProcessor at the same time. "
                                     "The Sqlite3 exception is %r", p["owner_id"], p["partition_id"], op_err)
-                        break
+                        continue
                     else:
                         result.append(p)
                 else:
@@ -114,7 +114,7 @@ class SamplePartitionManager(PartitionManager):
                                     "because it was claimed by another EventProcessor at the same time", p["owner_id"],
                                     p["partition_id"])
             self.conn.commit()
-            return partitions
+            return result
         finally:
             cursor.close()
 
