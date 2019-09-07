@@ -43,15 +43,20 @@ class SqlServerTableDataset(Dataset):
     :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
     :param type: Required. Constant filled by server.
     :type type: str
-    :param table_name: Required. The table name of the SQL Server dataset.
-     Type: string (or Expression with resultType string).
+    :param table_name: This property will be retired. Please consider using
+     schema + table properties instead.
     :type table_name: object
+    :param sql_server_table_dataset_schema: The schema name of the SQL Server
+     dataset. Type: string (or Expression with resultType string).
+    :type sql_server_table_dataset_schema: object
+    :param table: The table name of the SQL Server dataset. Type: string (or
+     Expression with resultType string).
+    :type table: object
     """
 
     _validation = {
         'linked_service_name': {'required': True},
         'type': {'required': True},
-        'table_name': {'required': True},
     }
 
     _attribute_map = {
@@ -65,9 +70,13 @@ class SqlServerTableDataset(Dataset):
         'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
         'table_name': {'key': 'typeProperties.tableName', 'type': 'object'},
+        'sql_server_table_dataset_schema': {'key': 'typeProperties.schema', 'type': 'object'},
+        'table': {'key': 'typeProperties.table', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
         super(SqlServerTableDataset, self).__init__(**kwargs)
         self.table_name = kwargs.get('table_name', None)
+        self.sql_server_table_dataset_schema = kwargs.get('sql_server_table_dataset_schema', None)
+        self.table = kwargs.get('table', None)
         self.type = 'SqlServerTable'

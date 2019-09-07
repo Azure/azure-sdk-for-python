@@ -62,17 +62,17 @@ def pump(receiver, duration):
                 iteration += 1
                 if size == 0:
                     print("{}: No events received, queue size {}, delivered {}".format(
-                        receiver.partition,
+                        receiver._partition,
                         receiver.queue_size,
                         total))
                 elif iteration >= 5:
                     iteration = 0
                     print("{}: total received {}, last sn={}, last offset={}".format(
-                                receiver.partition,
+                                receiver._partition,
                                 total,
                                 batch[-1].sequence_number,
                                 batch[-1].offset))
-            print("{}: Total received {}".format(receiver.partition, total))
+            print("{}: Total received {}".format(receiver._partition, total))
         except Exception as e:
             print("EventHubConsumer failed: {}".format(e))
             raise

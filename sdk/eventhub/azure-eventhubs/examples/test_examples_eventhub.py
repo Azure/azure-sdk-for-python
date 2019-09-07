@@ -4,13 +4,8 @@
 # license information.
 #--------------------------------------------------------------------------
 
-import pytest
-import datetime
-import os
 import time
 import logging
-
-from azure.eventhub import EventHubError
 
 
 def create_eventhub_client(live_eventhub_config):

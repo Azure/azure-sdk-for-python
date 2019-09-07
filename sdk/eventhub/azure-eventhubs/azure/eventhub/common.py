@@ -201,6 +201,15 @@ class EventData(object):
         self.message.application_properties = properties
 
     @property
+    def system_properties(self):
+        """
+        Metadata set by the Event Hubs Service associated with the EventData
+
+        :rtype: dict
+        """
+        return self._annotations
+
+    @property
     def body(self):
         """
         The body of the event data object.
@@ -308,7 +317,7 @@ class EventDataBatch(object):
             raise TypeError('event_data should be type of EventData')
 
         if self._partition_key:
-            if event_data.partition_key and not event_data.partition_key == self._partition_key:
+            if event_data.partition_key and event_data.partition_key != self._partition_key:
                 raise EventDataError('The partition_key of event_data does not match the one of the EventDataBatch')
             if not event_data.partition_key:
                 event_data._set_partition_key(self._partition_key)  # pylint:disable=protected-access
