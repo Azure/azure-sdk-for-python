@@ -2229,11 +2229,20 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             if_none_match=kwargs.pop('if_none_match', None))
         if size is None:
             raise ValueError("A content length must be specified for a Page Blob.")
+
+        cpk = kwargs.pop('cpk', None)
+        cpk_info = None
+        if cpk:
+            if self.protocol.lower() != 'https':
+                raise ValueError("Customer provided encryption key must be used over HTTPS.")
+            cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
+                               encryption_algorithm=cpk.algorithm)
         options = {
             'blob_content_length': size,
             'timeout': kwargs.pop('timeout', None),
             'lease_access_conditions': access_conditions,
             'modified_access_conditions': mod_conditions,
+            'cpk_info': cpk_info,
             'cls': return_response_headers}
         options.update(kwargs)
         return options
@@ -2273,6 +2282,10 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the resource does not exist, and fail the
             operation if it does exist.
+        :param ~azure.storage.blob.models.PremiumPageBlobTier premium_page_blob_tier:
+            A page blob tier value to set the blob to. The tier correlates to the size of the
+            blob and number of allowed IOPS. This is only applicable to page blobs on
+            premium storage accounts.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified).
@@ -2318,6 +2331,14 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             if_unmodified_since=kwargs.pop('if_unmodified_since', None),
             if_match=kwargs.pop('if_match', None),
             if_none_match=kwargs.pop('if_none_match', None))
+
+        cpk = kwargs.pop('cpk', None)
+        cpk_info = None
+        if cpk:
+            if self.protocol.lower() != 'https':
+                raise ValueError("Customer provided encryption key must be used over HTTPS.")
+            cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
+                               encryption_algorithm=cpk.algorithm)
         options = {
             'body': page[:length],
             'content_length': length,
@@ -2328,6 +2349,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             'sequence_number_access_conditions': seq_conditions,
             'modified_access_conditions': mod_conditions,
             'validate_content': validate_content,
+            'cpk_info': cpk_info,
             'cls': return_response_headers}
         options.update(kwargs)
         return options
@@ -2399,6 +2421,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             header to write the page only if the blob's ETag value does not
             match the value specified. If the values are identical, the Blob
             service fails.
+        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
+            As the encryption key itself is provided in the request,
+            a secure connection must be established to transfer the key.
         :param str encoding:
             Defaults to UTF-8.
         :param int timeout:
@@ -2609,6 +2636,15 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         if end_range is None or end_range % 512 != 511:
             raise ValueError("end_range must be an integer that aligns with 512 page size")
         content_range = 'bytes={0}-{1}'.format(start_range, end_range)
+
+        cpk = kwargs.pop('cpk', None)
+        cpk_info = None
+        if cpk:
+            if self.protocol.lower() != 'https':
+                raise ValueError("Customer provided encryption key must be used over HTTPS.")
+            cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
+                               encryption_algorithm=cpk.algorithm)
+
         options = {
             'content_length': 0,
             'timeout': kwargs.pop('timeout', None),
@@ -2616,6 +2652,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             'lease_access_conditions': access_conditions,
             'sequence_number_access_conditions': seq_conditions,
             'modified_access_conditions': mod_conditions,
+            'cpk_info': cpk_info,
             'cls': return_response_headers}
         options.update(kwargs)
         return options
@@ -2669,6 +2706,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             header to write the page only if the blob's ETag value does not
             match the value specified. If the values are identical, the Blob
             service fails.
+        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
+            As the encryption key itself is provided in the request,
+            a secure connection must be established to transfer the key.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified).

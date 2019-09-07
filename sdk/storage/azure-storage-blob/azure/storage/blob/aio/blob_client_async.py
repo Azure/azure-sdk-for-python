@@ -1454,6 +1454,10 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the resource does not exist, and fail the
             operation if it does exist.
+        :param ~azure.storage.blob.models.PremiumPageBlobTier premium_page_blob_tier:
+            A page blob tier value to set the blob to. The tier correlates to the size of the
+            blob and number of allowed IOPS. This is only applicable to page blobs on
+            premium storage accounts.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified).
@@ -1532,6 +1536,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             header to write the page only if the blob's ETag value does not
             match the value specified. If the values are identical, the Blob
             service fails.
+        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
+            As the encryption key itself is provided in the request,
+            a secure connection must be established to transfer the key.
         :param str encoding:
             Defaults to UTF-8.
         :param int timeout:
@@ -1705,6 +1714,10 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             header to write the page only if the blob's ETag value does not
             match the value specified. If the values are identical, the Blob
             service fails.
+        :param ~azure.storage.blob.models.PremiumPageBlobTier premium_page_blob_tier:
+            A page blob tier value to set the blob to. The tier correlates to the size of the
+            blob and number of allowed IOPS. This is only applicable to page blobs on
+            premium storage accounts.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified).

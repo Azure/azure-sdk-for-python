@@ -432,6 +432,8 @@ class BlobProperties(DictMixin):
         self.remaining_retention_days = None
         self.creation_time = kwargs.get('x-ms-creation-time')
         self.archive_status = kwargs.get('x-ms-archive-status')
+        self.encryption_key_sha256 = kwargs.get('x-ms-encryption-key-sha256')
+        self.request_server_encrypted = kwargs.get('x-ms-server-encrypted')
 
     @classmethod
     def _from_generated(cls, generated):
