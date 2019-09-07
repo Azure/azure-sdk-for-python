@@ -77,14 +77,14 @@ async def test_load_balancer_abandon():
 
     event_processor = EventProcessor(MockEventHubClient(), "$default", TestPartitionProcessor,
                                       partition_manager, polling_interval=0.5)
-    asyncio.get_running_loop().create_task(event_processor.start())
+    asyncio.ensure_future(event_processor.start())
     await asyncio.sleep(5)
 
     ep_list = []
     for _ in range(2):
         ep = EventProcessor(MockEventHubClient(), "$default", TestPartitionProcessor,
                                       partition_manager, polling_interval=0.5)
-        asyncio.get_running_loop().create_task(ep.start())
+        asyncio.ensure_future(ep.start())
         ep_list.append(ep)
     await asyncio.sleep(5)
     assert len(event_processor._tasks) == 2
