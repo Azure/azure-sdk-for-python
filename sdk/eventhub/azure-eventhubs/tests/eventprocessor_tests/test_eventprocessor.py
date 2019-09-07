@@ -29,21 +29,21 @@ async def test_loadbalancer_balance(connstr_senders):
 
     event_processor1 = EventProcessor(eventhub_client, "$default", LoadBalancerPartitionProcessor,
                                      partition_manager, polling_interval=1)
-    asyncio.create_task(event_processor1.start())
+    asyncio.ensure_future(event_processor1.start())
     await asyncio.sleep(5)
     assert len(event_processor1._tasks) == 2  # event_processor1 claims two partitions
 
     event_processor2 = EventProcessor(eventhub_client, "$default", LoadBalancerPartitionProcessor,
                                      partition_manager, polling_interval=1)
 
-    asyncio.create_task(event_processor2.start())
+    asyncio.ensure_future(event_processor2.start())
     await asyncio.sleep(5)
     assert len(event_processor1._tasks) == 1  # two event processors balance. So each has 1 task
     assert len(event_processor2._tasks) == 1
 
     event_processor3 = EventProcessor(eventhub_client, "$default", LoadBalancerPartitionProcessor,
                                       partition_manager, polling_interval=1)
-    asyncio.create_task(event_processor3.start())
+    asyncio.ensure_future(event_processor3.start())
     await asyncio.sleep(5)
     assert len(event_processor3._tasks) == 0
     await event_processor3.stop()
@@ -107,7 +107,7 @@ async def test_loadbalancer_list_ownership_error(connstr_senders):
 
     event_processor = EventProcessor(eventhub_client, "$default", LoadBalancerPartitionProcessor,
                                      partition_manager, polling_interval=1)
-    asyncio.create_task(event_processor.start())
+    asyncio.ensure_future(event_processor.start())
     await asyncio.sleep(5)
     assert event_processor._running is True
     assert len(event_processor._tasks) == 0
@@ -158,7 +158,7 @@ async def test_partition_processor(connstr_senders):
 
     event_processor = EventProcessor(eventhub_client, "$default", TestPartitionProcessor,
                                       partition_manager, polling_interval=1)
-    asyncio.create_task(event_processor.start())
+    asyncio.ensure_future(event_processor.start())
     await asyncio.sleep(10)
     await event_processor.stop()
     assert partition_processor1 is not None and partition_processor2 is not None
@@ -198,7 +198,7 @@ async def test_partition_processor_process_events_error(connstr_senders):
 
     event_processor = EventProcessor(eventhub_client, "$default", ErrorPartitionProcessor,
                                       partition_manager, polling_interval=1)
-    asyncio.create_task(event_processor.start())
+    asyncio.ensure_future(event_processor.start())
     await asyncio.sleep(10)
     await event_processor.stop()
 
@@ -233,7 +233,7 @@ async def test_partition_processor_process_eventhub_consumer_error():
 
     event_processor = EventProcessor(eventhub_client, "$default", TestPartitionProcessor,
                                       partition_manager, polling_interval=1)
-    asyncio.create_task(event_processor.start())
+    asyncio.ensure_future(event_processor.start())
     await asyncio.sleep(5)
     await event_processor.stop()
 
@@ -270,7 +270,7 @@ async def test_partition_processor_process_error_close_error():
 
     event_processor = EventProcessor(eventhub_client, "$default", TestPartitionProcessor,
                                       partition_manager, polling_interval=1)
-    asyncio.create_task(event_processor.start())
+    asyncio.ensure_future(event_processor.start())
     await asyncio.sleep(5)
     await event_processor.stop()
 
@@ -306,6 +306,6 @@ async def test_partition_processor_process_update_checkpoint_error(connstr_sende
 
     event_processor = EventProcessor(eventhub_client, "$default", TestPartitionProcessor,
                                       partition_manager, polling_interval=1)
-    asyncio.create_task(event_processor.start())
+    asyncio.ensure_future(event_processor.start())
     await asyncio.sleep(10)
     await event_processor.stop()

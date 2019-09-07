@@ -14,6 +14,7 @@ from .partition_context import PartitionContext
 from .partition_manager import PartitionManager, OwnershipLostError
 from ._ownership_manager import OwnershipManager
 from .partition_processor import CloseReason, PartitionProcessor
+from .utils import get_running_loop
 
 log = logging.getLogger(__name__)
 
@@ -182,7 +183,7 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
         for ownership in to_claim_ownership_list:
             partition_id = ownership["partition_id"]
             if partition_id not in self._tasks:
-                self._tasks[partition_id] = asyncio.create_task(self._receive(ownership))
+                self._tasks[partition_id] = get_running_loop().create_task(self._receive(ownership))
 
     async def _receive(self, ownership):
         log.info("start ownership, %r", ownership)
