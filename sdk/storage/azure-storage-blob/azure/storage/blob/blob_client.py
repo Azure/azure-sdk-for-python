@@ -10,9 +10,6 @@ from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, IO, Iterable, AnyStr, Dict, List, Tuple,
     TYPE_CHECKING
 )
-
-from azure.storage.blob._generated.models import CpkInfo
-
 try:
     from urllib.parse import urlparse, quote, unquote
 except ImportError:
@@ -40,7 +37,8 @@ from ._generated.models import (
     SourceModifiedAccessConditions,
     ModifiedAccessConditions,
     SequenceNumberAccessConditions,
-    StorageErrorException)
+    StorageErrorException,
+    CpkInfo)
 from ._deserialize import deserialize_blob_properties, deserialize_blob_stream
 from ._upload_helpers import (
     upload_block_blob,
@@ -334,7 +332,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         except StorageErrorException as error:
             process_storage_error(error)
 
-    def _upload_blob_options(
+    def _upload_blob_options(  # pylint:disable=too-many-statements
             self, data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
             blob_type=BlobType.BlockBlob,  # type: Union[str, BlobType]
             overwrite=False,  # type: bool
