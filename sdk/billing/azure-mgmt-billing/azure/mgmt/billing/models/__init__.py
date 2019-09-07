@@ -80,6 +80,9 @@ try:
     from .participants_py3 import Participants
     from .agreement_py3 import Agreement
     from .agreement_list_result_py3 import AgreementListResult
+    from .validation_result_properties_py3 import ValidationResultProperties
+    from .validate_transfer_response_py3 import ValidateTransferResponse
+    from .validate_transfer_list_response_py3 import ValidateTransferListResponse
     from .line_of_credit_py3 import LineOfCredit
 except (SyntaxError, ImportError):
     from .azure_plan import AzurePlan
@@ -152,6 +155,9 @@ except (SyntaxError, ImportError):
     from .participants import Participants
     from .agreement import Agreement
     from .agreement_list_result import AgreementListResult
+    from .validation_result_properties import ValidationResultProperties
+    from .validate_transfer_response import ValidateTransferResponse
+    from .validate_transfer_list_response import ValidateTransferListResponse
     from .line_of_credit import LineOfCredit
 from .invoice_section_with_create_sub_permission_paged import InvoiceSectionWithCreateSubPermissionPaged
 from .payment_method_paged import PaymentMethodPaged
@@ -258,6 +264,9 @@ __all__ = [
     'Participants',
     'Agreement',
     'AgreementListResult',
+    'ValidationResultProperties',
+    'ValidateTransferResponse',
+    'ValidateTransferListResponse',
     'LineOfCredit',
     'InvoiceSectionWithCreateSubPermissionPaged',
     'PaymentMethodPaged',

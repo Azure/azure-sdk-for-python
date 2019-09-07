@@ -73,6 +73,8 @@ class Product(Resource):
     :ivar customer_display_name: Display name of customer to which this
      product belongs.
     :vartype customer_display_name: str
+    :ivar reseller: Reseller for this product.
+    :vartype reseller: ~azure.mgmt.billing.models.Reseller
     """
 
     _validation = {
@@ -97,6 +99,7 @@ class Product(Resource):
         'billing_profile_display_name': {'readonly': True},
         'customer_id': {'readonly': True},
         'customer_display_name': {'readonly': True},
+        'reseller': {'readonly': True},
     }
 
     _attribute_map = {
@@ -123,6 +126,7 @@ class Product(Resource):
         'billing_profile_display_name': {'key': 'properties.billingProfileDisplayName', 'type': 'str'},
         'customer_id': {'key': 'properties.customerId', 'type': 'str'},
         'customer_display_name': {'key': 'properties.customerDisplayName', 'type': 'str'},
+        'reseller': {'key': 'properties.reseller', 'type': 'Reseller'},
     }
 
     def __init__(self, **kwargs):
@@ -147,3 +151,4 @@ class Product(Resource):
         self.billing_profile_display_name = None
         self.customer_id = None
         self.customer_display_name = None
+        self.reseller = None
