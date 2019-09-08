@@ -111,9 +111,72 @@ class NetworkDataOperations(object):
         return deserialized
     list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Security/networkData'}
 
-    def get(
+    def get_resource_collection(
             self, resource_id, expand=None, custom_headers=None, raw=False, **operation_config):
         """Get the network data collection on your scanned resource.
+
+        :param resource_id: The identifier of the resource.
+        :type resource_id: str
+        :param expand: expand whether you want to get more information about
+         the network data (ports and connections details). Possible values
+         include: 'true', 'false'
+        :type expand: str or ~azure.mgmt.security.models.ExpandValues
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: NetworkData or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.security.models.NetworkData or
+         ~msrest.pipeline.ClientRawResponse
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        # Construct URL
+        url = self.get_resource_collection.metadata['url']
+        path_format_arguments = {
+            'resourceId': self._serialize.url("resource_id", resource_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        if expand is not None:
+            query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            exp = CloudError(response)
+            exp.request_id = response.headers.get('x-ms-request-id')
+            raise exp
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('NetworkData', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_resource_collection.metadata = {'url': '/{resourceId}/providers/Microsoft.Security/NetworkData'}
+
+    def get(
+            self, resource_id, expand=None, custom_headers=None, raw=False, **operation_config):
+        """Get the network data on your scanned resource.
 
         :param resource_id: The identifier of the resource.
         :type resource_id: str
@@ -172,67 +235,4 @@ class NetworkDataOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/{resourceId}/providers/Microsoft.Security/NetworkData'}
-
-    def get1(
-            self, resource_id, expand=None, custom_headers=None, raw=False, **operation_config):
-        """Get the network data on your scanned resource.
-
-        :param resource_id: The identifier of the resource.
-        :type resource_id: str
-        :param expand: expand whether you want to get more information about
-         the network data (ports and connections details). Possible values
-         include: 'true', 'false'
-        :type expand: str or ~azure.mgmt.security.models.ExpandValues
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: NetworkData or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.security.models.NetworkData or
-         ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
-        # Construct URL
-        url = self.get1.metadata['url']
-        path_format_arguments = {
-            'resourceId': self._serialize.url("resource_id", resource_id, 'str')
-        }
-        url = self._client.format_url(url, **path_format_arguments)
-
-        # Construct parameters
-        query_parameters = {}
-        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
-        if expand is not None:
-            query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
-
-        # Construct headers
-        header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
-        if custom_headers:
-            header_parameters.update(custom_headers)
-        if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
-
-        # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters)
-        response = self._client.send(request, stream=False, **operation_config)
-
-        if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
-
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize('NetworkData', response)
-
-        if raw:
-            client_raw_response = ClientRawResponse(deserialized, response)
-            return client_raw_response
-
-        return deserialized
-    get1.metadata = {'url': '/{resourceId}/providers/Microsoft.Security/NetworkData/default'}
+    get.metadata = {'url': '/{resourceId}/providers/Microsoft.Security/NetworkData/default'}
