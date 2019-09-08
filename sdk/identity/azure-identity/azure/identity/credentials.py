@@ -328,6 +328,10 @@ class SharedTokenCacheCredential(object):
 
             cache = WindowsTokenCache(cache_location=os.environ["LOCALAPPDATA"] + "/.IdentityService/msal.cache")
 
+            # prevent writing to the shared cache
+            # TODO: seperating deserializing access tokens from caching them would make this cleaner
+            cache.add = lambda *_: None
+
         self._client = self._get_auth_client(cache)
 
     @wrap_exceptions
