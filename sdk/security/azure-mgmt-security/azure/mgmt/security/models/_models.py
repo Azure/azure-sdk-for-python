@@ -2614,8 +2614,9 @@ class NetworkDataConnectableResourceActualTraffic(Model):
     :vartype start_time: datetime
     :ivar end_time: The UTC end time of the actual traffic time range
     :vartype end_time: datetime
-    :param traffic_data_state: Indicate whether the Azure monitor agent is
-     installed on the vm. Possible values include: 'Available', 'Not available'
+    :param traffic_data_state: Indicate whether the network traffic data is
+     collect on the Azure resource. Possible values include: 'Available', 'Not
+     available'
     :type traffic_data_state: str or
      ~azure.mgmt.security.models.TrafficDataState
     :param inbound_connected_resources:

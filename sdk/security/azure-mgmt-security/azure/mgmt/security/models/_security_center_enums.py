@@ -19,8 +19,8 @@ class ConnectionTypeValues(str, Enum):
 
 class TrafficDataState(str, Enum):
 
-    available = "Available"  #: The Azure monitor agent is installed on the vm
-    notavailable = "Not available"  #: the Azure monitor agent is not installed on the vm
+    available = "Available"  #: The network traffic data is collect on the Azure resource
+    notavailable = "Not available"  #: the network traffic data is not collect on the Azure resource
 
 
 class ResourceStatus(str, Enum):
