@@ -236,9 +236,16 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
                 )
 
         try:
+            try:
+                await partition_processor.initialize(partition_context)
+            except Exception as err:  # pylint:disable=broad-except
+                log.warning(
+                    "PartitionProcessor of EventProcessor instance %r of eventhub %r partition %r consumer group %r"
+                    " has an error during running initialize(). The exception is %r.",
+                    owner_id, eventhub_name, partition_id, consumer_group_name, err
+                )
             while True:
                 try:
-                    await partition_processor.initialize(partition_context)
                     events = await partition_consumer.receive()
                     await partition_processor.process_events(events, partition_context)
                 except asyncio.CancelledError:

@@ -241,12 +241,15 @@ async def test_partition_processor_process_eventhub_consumer_error():
 @pytest.mark.asyncio
 async def test_partition_processor_process_error_close_error():
     class TestPartitionProcessor(PartitionProcessor):
+        async def initialize(self, partition_context):
+            raise RuntimeError("initialize error")
+
         async def process_events(self, events, partition_context):
-            raise RuntimeError("process_error")
+            raise RuntimeError("process_events error")
 
         async def process_error(self, error, partition_context):
             assert isinstance(error, RuntimeError)
-            raise RuntimeError("error from process_error")
+            raise RuntimeError("process_error error")
 
         async def close(self, reason, partition_context):
             assert reason == CloseReason.PROCESS_EVENTS_ERROR
