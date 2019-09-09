@@ -5027,39 +5027,18 @@ class FunctionEnvelope(ProxyOnlyResource):
         self.test_data = kwargs.get('test_data', None)
 
 
-class FunctionSecrets(ProxyOnlyResource):
+class FunctionSecrets(Model):
     """Function secrets.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource Name.
-    :vartype name: str
-    :param kind: Kind of resource.
-    :type kind: str
-    :ivar type: Resource type.
-    :vartype type: str
     :param key: Secret key.
     :type key: str
     :param trigger_url: Trigger URL.
     :type trigger_url: str
     """
 
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'key': {'key': 'properties.key', 'type': 'str'},
-        'trigger_url': {'key': 'properties.trigger_url', 'type': 'str'},
+        'key': {'key': 'key', 'type': 'str'},
+        'trigger_url': {'key': 'trigger_url', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
