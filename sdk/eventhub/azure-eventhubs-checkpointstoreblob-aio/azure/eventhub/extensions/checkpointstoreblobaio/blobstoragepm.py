@@ -8,7 +8,7 @@ from collections import defaultdict
 import asyncio
 from azure.eventhub.aio.eventprocessor import PartitionManager, OwnershipLostError  # type: ignore
 from azure.core.exceptions import ResourceModifiedError, ResourceExistsError  # type: ignore
-from azure.storage.blob.aio import ContainerClient  # type: ignore
+from azure.storage.blob.aio import ContainerClient, BlobClient  # type: ignore
 
 logger = logging.getLogger(__name__)
 UPLOAD_DATA = ""
@@ -27,10 +27,18 @@ class BlobPartitionManager(PartitionManager):
         :param container_client: The Azure Blob Storage Container client.
         """
         self._container_client = container_client
+        self._cached_blob_clients = defaultdict()  # type:Dict[str, BlobClient]
         self._cached_ownership_dict = defaultdict(dict)  # type: Dict[str, Dict[str, Any]]
         # lock each partition for list_ownership, claim_ownership and update_checkpoint etag doesn't get out of sync
         # when the three methods are running concurrently
         self._cached_ownership_locks = defaultdict(asyncio.Lock)  # type:Dict[str, asyncio.Lock]
+
+    def _get_blob_client(self, blob_name):
+        result = self._cached_blob_clients.get(blob_name)
+        if not result:
+            result = self._container_client.get_blob_client(blob_name)
+            self._cached_blob_clients[blob_name] = result
+        return result
 
     async def _upload_blob(self, ownership, metadata):
         etag = ownership.get("etag")
@@ -39,12 +47,12 @@ class BlobPartitionManager(PartitionManager):
         else:
             etag_match = {"if_none_match": '*'}
         partition_id = ownership["partition_id"]
-        blob_client = await self._container_client.upload_blob(
-            name=partition_id, data=UPLOAD_DATA, overwrite=True, metadata=metadata, **etag_match
+        uploaded_blob_properties = await self._get_blob_client(partition_id).upload_blob(
+            data=UPLOAD_DATA, overwrite=True, metadata=metadata, **etag_match
         )
-        uploaded_blob_properties = await blob_client.get_blob_properties()
-        ownership["etag"] = uploaded_blob_properties.etag
-        ownership["last_modified_time"] = uploaded_blob_properties.last_modified.timestamp()
+        ownership["etag"] = uploaded_blob_properties["etag"]
+        ownership["last_modified_time"] = uploaded_blob_properties["last_modified"].timestamp()
+        ownership.update(metadata)
 
     async def list_ownership(self, eventhub_name: str, consumer_group_name: str) -> Iterable[Dict[str, Any]]:
         try:
@@ -56,7 +64,7 @@ class BlobPartitionManager(PartitionManager):
         async for b in blobs:
             async with self._cached_ownership_locks[b.name]:
                 if b.name not in self._cached_ownership_dict \
-                        or b.last_modified.timestamp() >= self._cached_ownership_dict[b.name].get("last_modified_time"):
+                        or b.last_modified.timestamp() > self._cached_ownership_dict[b.name].get("last_modified_time"):
                     metadata = b.metadata
                     ownership = {
                         "eventhub_name": eventhub_name,
