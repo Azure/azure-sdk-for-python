@@ -266,7 +266,7 @@ class DeviceCodeCredential(PublicClientCredential):
     """
 
     def __init__(self, client_id, prompt_callback=None, **kwargs):
-        # type: (str, Optional[Callable[[str, str], None]], Any) -> None
+        # type: (str, Optional[Callable[[str, str, str], None]], Any) -> None
         self._timeout = kwargs.pop("timeout", None)  # type: Optional[int]
         self._prompt_callback = prompt_callback
         super(DeviceCodeCredential, self).__init__(client_id=client_id, **kwargs)
