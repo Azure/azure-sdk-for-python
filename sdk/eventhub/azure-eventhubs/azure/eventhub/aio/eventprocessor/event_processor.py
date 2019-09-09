@@ -182,7 +182,7 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
     def _create_tasks_for_claimed_ownership(self, to_claim_ownership_list):
         for ownership in to_claim_ownership_list:
             partition_id = ownership["partition_id"]
-            if partition_id not in self._tasks:
+            if partition_id not in self._tasks or self._tasks[partition_id].done():
                 self._tasks[partition_id] = get_running_loop().create_task(self._receive(ownership))
 
     async def _receive(self, ownership):
