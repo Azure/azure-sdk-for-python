@@ -232,7 +232,7 @@ class StorageFileTest(FileTestCase):
             credential=self.settings.STORAGE_ACCOUNT_KEY)
 
         # Act
-        resp = file_client.create_file(1024)
+        resp = file_client.create_file(1024, file_attributes="hidden")
 
         # Assert
         props = file_client.get_file_properties()

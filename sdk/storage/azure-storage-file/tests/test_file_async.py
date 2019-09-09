@@ -321,11 +321,15 @@ class StorageFileAsyncTest(FileTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_file_with_metadata_async())
 
-    async def test_create_file_when_file_permission_is_too_long(self):
+    async def _test_create_file_when_file_permission_is_too_long(self):
         file_client = await self._get_file_client()
         permission = str(self.get_random_bytes(8 * 1024 + 1))
         with self.assertRaises(ValueError):
             await file_client.create_file(1024, file_permission=permission)
+
+    def test_create_file_when_file_permission_is_too_long_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_create_file_when_file_permission_is_too_long())
 
     async def _test_create_file_with_invalid_file_permission(self):
         # Arrange

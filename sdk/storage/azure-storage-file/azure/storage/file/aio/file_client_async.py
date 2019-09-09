@@ -171,8 +171,9 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             The timeout parameter is expressed in seconds.
         :param file_attributes:
             The file system attributes for files and directories.
-            If not set, indicates preservation of existing values.
-            Here is an example for when the var type is str: 'Temporary|Archive'
+            If not set, the default value would be "None" and the attributes will be set to "Archive".
+            Here is an example for when the var type is str: 'Temporary|Archive'.
+            file_attributes value is not case sensitive.
         :type file_attributes: str or :class:`~azure.storage.file.models.NTFSAttributes`
         :param file_creation_time: Creation time for the file
             Default value: Now.
@@ -280,8 +281,9 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             Defaults to UTF-8.
         :param file_attributes:
             The file system attributes for files and directories.
-            If not set, indicates preservation of existing values.
-            Here is an example for when the var type is str: 'Temporary|Archive'
+            If not set, the default value would be "None" and the attributes will be set to "Archive".
+            Here is an example for when the var type is str: 'Temporary|Archive'.
+            file_attributes value is not case sensitive.
         :type file_attributes: str or :class:`~azure.storage.file.models.NTFSAttributes`
         :param file_creation_time: Creation time for the file
             Default value: Now.
