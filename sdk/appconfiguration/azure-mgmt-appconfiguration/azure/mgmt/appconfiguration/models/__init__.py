@@ -34,7 +34,7 @@ except (SyntaxError, ImportError):
 from ._paged_models import ApiKeyPaged
 from ._paged_models import ConfigurationStorePaged
 from ._paged_models import OperationDefinitionPaged
-from ._app_configuration_management_client_enums import (
+from ._app_configuration_management_cliet_enums import (
     ProvisioningState,
 )
 

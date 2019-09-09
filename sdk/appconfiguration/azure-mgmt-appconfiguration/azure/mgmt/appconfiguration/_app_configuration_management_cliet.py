@@ -12,17 +12,17 @@
 from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 
-from ._configuration import AppConfigurationManagementClientConfiguration
+from ._configuration import AppConfigurationManagementClietConfiguration
 from .operations import ConfigurationStoresOperations
 from .operations import Operations
 from . import models
 
 
-class AppConfigurationManagementClient(SDKClient):
-    """AppConfigurationManagementClient
+class AppConfigurationManagementCliet(SDKClient):
+    """AppConfigurationManagementCliet
 
     :ivar config: Configuration for client.
-    :vartype config: AppConfigurationManagementClientConfiguration
+    :vartype config: AppConfigurationManagementClietConfiguration
 
     :ivar configuration_stores: ConfigurationStores operations
     :vartype configuration_stores: azure.mgmt.appconfiguration.operations.ConfigurationStoresOperations
@@ -40,8 +40,8 @@ class AppConfigurationManagementClient(SDKClient):
     def __init__(
             self, credentials, subscription_id, base_url=None):
 
-        self.config = AppConfigurationManagementClientConfiguration(credentials, subscription_id, base_url)
-        super(AppConfigurationManagementClient, self).__init__(self.config.credentials, self.config)
+        self.config = AppConfigurationManagementClietConfiguration(credentials, subscription_id, base_url)
+        super(AppConfigurationManagementCliet, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self.api_version = '2019-02-01-preview'

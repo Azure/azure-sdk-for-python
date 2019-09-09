@@ -9,9 +9,9 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._configuration import AppConfigurationManagementClientConfiguration
-from ._app_configuration_management_client import AppConfigurationManagementClient
-__all__ = ['AppConfigurationManagementClient', 'AppConfigurationManagementClientConfiguration']
+from ._configuration import AppConfigurationManagementClietConfiguration
+from ._app_configuration_management_cliet import AppConfigurationManagementCliet
+__all__ = ['AppConfigurationManagementCliet', 'AppConfigurationManagementClietConfiguration']
 
 from .version import VERSION
 
