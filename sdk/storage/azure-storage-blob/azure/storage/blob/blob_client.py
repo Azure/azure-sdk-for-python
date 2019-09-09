@@ -134,7 +134,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         except AttributeError:
             raise ValueError("Blob URL must be a string.")
         parsed_url = urlparse(blob_url.rstrip('/'))
-        self.account_name = parsed_url.hostname.split('.')[0]
+
         if not parsed_url.path and not (container and blob):
             raise ValueError("Please specify a container and blob name.")
         if not parsed_url.netloc:
@@ -229,6 +229,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             policy_id=None,  # type: Optional[str]
             ip=None,  # type: Optional[str]
             protocol=None,  # type: Optional[str]
+            account_name=None,  # type: Optional[str]
             cache_control=None,  # type: Optional[str]
             content_disposition=None,  # type: Optional[str]
             content_encoding=None,  # type: Optional[str]
@@ -277,6 +278,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             restricts the request to those IP addresses.
         :param str protocol:
             Specifies the protocol permitted for a request made. The default value is https.
+        :param str account_name:
+            Specifies the account_name when using oauth token as credential. If you use oauth token as credential.
         :param str cache_control:
             Response header value for Cache-Control when resource is accessed
             using this shared access signature.
@@ -301,7 +304,11 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         :rtype: str
         """
         if user_delegation_key is not None:
-            sas = BlobSharedAccessSignature(self.account_name, user_delegation_key=user_delegation_key)
+            if not hasattr(self.credential, 'account_name') and not account_name:
+                raise ValueError("No account_name available. Please provide account_name parameter.")
+
+            account_name = self.credential.account_name if hasattr(self.credential, 'account_name') else account_name
+            sas = BlobSharedAccessSignature(account_name, user_delegation_key=user_delegation_key)
         else:
             if not hasattr(self.credential, 'account_key') or not self.credential.account_key:
                 raise ValueError("No account SAS key available.")
