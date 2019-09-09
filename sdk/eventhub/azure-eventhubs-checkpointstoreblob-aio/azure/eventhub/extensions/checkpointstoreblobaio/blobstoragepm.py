@@ -22,9 +22,10 @@ class BlobPartitionManager(PartitionManager):
 
     """
     def __init__(self, container_client: ContainerClient):
-        """
+        """Create a BlobPartitionManager
 
-        :param container_client: The Azure Blob Storage Container client.
+        :param container_client: The Azure Blob Storage Container client that is used to save checkpoint data to Azure
+        Blob Storage Container.
         """
         self._container_client = container_client
         self._cached_blob_clients = defaultdict()  # type:Dict[str, BlobClient]
@@ -64,7 +65,7 @@ class BlobPartitionManager(PartitionManager):
         async for b in blobs:
             async with self._cached_ownership_locks[b.name]:
                 if b.name not in self._cached_ownership_dict \
-                        or b.last_modified.timestamp() >= self._cached_ownership_dict[b.name].get("last_modified_time"):
+                        or b.last_modified.timestamp() > self._cached_ownership_dict[b.name].get("last_modified_time"):
                     metadata = b.metadata
                     ownership = {
                         "eventhub_name": eventhub_name,
