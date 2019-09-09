@@ -454,19 +454,15 @@ class Workspace(Resource):
      'Deleting', 'ProvisioningAccount'
     :type provisioning_state: str or
      ~azure.mgmt.loganalytics.models.EntityStatus
-    :param source: The source of the workspace.  Source defines where the
-     workspace was created. 'Azure' implies it was created in Azure.
-     'External' implies it was created via the Operational Insights Portal.
-     This value is set on the service side and read-only on the client side.
-    :type source: str
-    :param customer_id: The ID associated with the workspace.  Setting this
-     value at creation time allows the workspace being created to be linked to
-     an existing workspace.
-    :type customer_id: str
-    :param portal_url: The URL of the Operational Insights portal for this
-     workspace.  This value is set on the service side and read-only on the
-     client side.
-    :type portal_url: str
+    :ivar source: This is a read-only legacy property. It is always set to
+     'Azure' by the service. Kept here for backward compatibility.
+    :vartype source: str
+    :ivar customer_id: This is a read-only property. Represents the ID
+     associated with the workspace.
+    :vartype customer_id: str
+    :ivar portal_url: This is a legacy property and is not used anymore. Kept
+     here for backward compatibility.
+    :vartype portal_url: str
     :param sku: The SKU of the workspace.
     :type sku: ~azure.mgmt.loganalytics.models.Sku
     :param retention_in_days: The workspace data retention in days. -1 means
@@ -481,6 +477,9 @@ class Workspace(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'source': {'readonly': True},
+        'customer_id': {'readonly': True},
+        'portal_url': {'readonly': True},
         'retention_in_days': {'maximum': 730, 'minimum': -1},
     }
 
@@ -499,12 +498,12 @@ class Workspace(Resource):
         'e_tag': {'key': 'eTag', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str=None, tags=None, provisioning_state=None, source: str=None, customer_id: str=None, portal_url: str=None, sku=None, retention_in_days: int=None, e_tag: str=None, **kwargs) -> None:
+    def __init__(self, *, location: str=None, tags=None, provisioning_state=None, sku=None, retention_in_days: int=None, e_tag: str=None, **kwargs) -> None:
         super(Workspace, self).__init__(location=location, tags=tags, **kwargs)
         self.provisioning_state = provisioning_state
-        self.source = source
-        self.customer_id = customer_id
-        self.portal_url = portal_url
+        self.source = None
+        self.customer_id = None
+        self.portal_url = None
         self.sku = sku
         self.retention_in_days = retention_in_days
         self.e_tag = e_tag
