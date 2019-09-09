@@ -1,6 +1,7 @@
 from azure.mgmt.reservations import AzureReservationAPI
+from azure.mgmt.reservations.models import *
 from devtools_testutils import AzureMgmtTestCase
-from azure.mgmt.reservations.azure_reservation_api_enums import (
+from azure.mgmt.reservations.models import (
     ReservedResourceType,
     InstanceFlexibility,
     AppliedScopeType
