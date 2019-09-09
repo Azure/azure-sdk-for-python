@@ -894,6 +894,27 @@ class StorageShareTest(FileTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_shared_access_share_async())
 
+    async def _test_create_permission_for_share(self):
+        user_given_permission = "O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-" \
+                                "1604012920-1887927527-513D:AI(A;;FA;;;SY)(A;;FA;;;BA)(A;;0x1200a9;;;" \
+                                "S-1-5-21-397955417-626881126-188441444-3053964)"
+        share_client = await self._create_share()
+        permission_key = await share_client.create_permission_for_share(user_given_permission)
+        self.assertIsNotNone(permission_key)
+
+        server_returned_permission = await share_client.get_permission_for_share(permission_key)
+        self.assertIsNotNone(server_returned_permission)
+
+        permission_key2 = await share_client.create_permission_for_share(server_returned_permission)
+        # the permission key obtained from user_given_permission should be the same as the permission key obtained from
+        # server returned permission
+        self.assertEquals(permission_key, permission_key2)
+
+    @record
+    def test_create_permission_for_share_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_create_permission_for_share())
+
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()
