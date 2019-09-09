@@ -19,18 +19,18 @@ import logging
 import ast
 import textwrap
 import io
+import re
 
 logging.getLogger().setLevel(logging.INFO)
 
 OMITTED_CI_PACKAGES = ["azure-mgmt-documentdb", "azure-servicemanagement-legacy"]
-
 MANAGEMENT_PACKAGE_IDENTIFIERS = [
     "mgmt",
     "azure-cognitiveservices",
     "azure-servicefabric",
     "azure-nspkg",
 ]
-
+MAJOR_VERSION_REGEX = re.compile("Python\s\:\:\s(?<languageClassifier>[\d])[\.\d]*'")
 
 def log_file(file_location, is_error=False):
     with open(file_location, "r") as file:
@@ -69,7 +69,8 @@ def clean_coverage(coverage_dir):
         else:
             raise
 
-def parse_setup_classifers(setup_filename):
+def parse_setup_classifers(setup_path):
+    setup_filename = os.path.join(setup_path, 'setup.py')
     mock_setup = textwrap.dedent('''\
     def setup(*args, **kwargs):
         __setup_calls__.append((args, kwargs))
@@ -102,11 +103,25 @@ def parse_setup_classifers(setup_filename):
     classifiers = kwargs['classifiers']
     return classifiers
 
-def filter_for_compatibility(package_set):
-    for pkg in package_set:
-        print(parse_setup_classifers(pkg))
+def parse_major_classifiers(classifier_set):
+    major_versions = []
+    for classifier in classifier_set:
+        result = re.search()
+        if result and result.group('languageClassifier'):
+            major_versions.append(result.group('languageClassifier'))
+    return set(major_versions)
 
-    return []
+def filter_for_compatibility(package_set):
+    running_major_version = sys.version_info[0]
+    collected_packages = []
+    for pkg in package_set:
+        pkg_classifiers = parse_setup_classifers(pkg)
+        supported_major_versions = parse_major_classifiers(pkg_classifiers)
+
+        if running_major_version in supported_major_versions:
+            collected_packages.append(pkg)
+
+    return collected_packages
 
 # this function is where a glob string gets translated to a list of packages
 # It is called by both BUILD (package) and TEST. In the future, this function will be the central location
