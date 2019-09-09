@@ -4,6 +4,9 @@
 # ------------------------------------
 
 
+AZURE_CLI_CLIENT_ID = "04b07795-8ddb-461a-bbee-02f9e1bf7b46"
+
+
 class EnvironmentVariables:
     AZURE_CLIENT_ID = "AZURE_CLIENT_ID"
     AZURE_CLIENT_SECRET = "AZURE_CLIENT_SECRET"
