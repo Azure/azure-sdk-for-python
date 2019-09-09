@@ -98,6 +98,7 @@ try:
     from ._models_py3 import RunCommandInputParameter
     from ._models_py3 import RunCommandParameterDefinition
     from ._models_py3 import RunCommandResult
+    from ._models_py3 import ScaleInPolicy
     from ._models_py3 import ScheduledEventsProfile
     from ._models_py3 import Sku
     from ._models_py3 import SshConfiguration
@@ -272,6 +273,7 @@ except (SyntaxError, ImportError):
     from ._models import RunCommandInputParameter
     from ._models import RunCommandParameterDefinition
     from ._models import RunCommandResult
+    from ._models import ScaleInPolicy
     from ._models import ScheduledEventsProfile
     from ._models import Sku
     from ._models import SshConfiguration
@@ -399,6 +401,7 @@ from ._compute_management_client_enums import (
     VirtualMachinePriorityTypes,
     VirtualMachineEvictionPolicyTypes,
     UpgradeMode,
+    VirtualMachineScaleSetScaleInRules,
     OperatingSystemStateTypes,
     IPVersion,
     VirtualMachineScaleSetSkuScaleType,
@@ -504,6 +507,7 @@ __all__ = [
     'RunCommandInputParameter',
     'RunCommandParameterDefinition',
     'RunCommandResult',
+    'ScaleInPolicy',
     'ScheduledEventsProfile',
     'Sku',
     'SshConfiguration',
@@ -630,6 +634,7 @@ __all__ = [
     'VirtualMachinePriorityTypes',
     'VirtualMachineEvictionPolicyTypes',
     'UpgradeMode',
+    'VirtualMachineScaleSetScaleInRules',
     'OperatingSystemStateTypes',
     'IPVersion',
     'VirtualMachineScaleSetSkuScaleType',
