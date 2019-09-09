@@ -96,11 +96,18 @@ class StorageFileTest(FileTestCase):
     def _get_file_reference(self):
         return self.get_resource_name(TEST_FILE_PREFIX)
 
-    def _create_file(self):
-        file_name = self._get_file_reference()
+    def _create_file(self, file_name=None):
+        file_name = self._get_file_reference() if file_name is None else file_name
         share_client = self.fsc.get_share_client(self.share_name)
         file_client = share_client.get_file_client(file_name)
         file_client.upload_file(self.short_byte_data)
+        return file_client
+
+    def _create_empty_file(self, file_name=None, file_size=2048):
+        file_name = self._get_file_reference() if file_name is None else file_name
+        share_client = self.fsc.get_share_client(self.share_name)
+        file_client = share_client.get_file_client(file_name)
+        file_client.create_file(file_size)
         return file_client
 
     def _create_remote_share(self):
@@ -511,6 +518,89 @@ class StorageFileTest(FileTestCase):
         file_client.upload_range(data, 0, 511, validate_content=True)
 
         # Assert
+
+    @record
+    def test_update_range_from_file_url_when_source_file_does_not_have_enough_bytes(self):
+        # Arrange
+        source_file_name = 'testfile1'
+        source_file_client = self._create_file(source_file_name)
+
+        destination_file_name = 'filetoupdate'
+        destination_file_client = self._create_file(destination_file_name)
+
+        # generate SAS for the source file
+        sas_token_for_source_file = \
+            source_file_client.generate_shared_access_signature()
+
+        source_file_url = source_file_client.url + '?' + sas_token_for_source_file
+
+        # Act
+        with self.assertRaises(HttpResponseError):
+            # when the source file has less bytes than 2050, throw exception
+            destination_file_client.upload_range_from_url(source_file_url, 0, 2049, 0)
+
+    @record
+    def test_update_range_from_file_url(self):
+        # Arrange
+        source_file_name = 'testfile'
+        source_file_client = self._create_file(file_name=source_file_name)
+        data = b'abcdefghijklmnop' * 32
+        source_file_client.upload_range(data, 0, 511)
+
+        destination_file_name = 'filetoupdate'
+        destination_file_client = self._create_empty_file(file_name=destination_file_name)
+
+        # generate SAS for the source file
+        sas_token_for_source_file = \
+            source_file_client.generate_shared_access_signature(
+                                                          FilePermissions.READ,
+                                                          expiry=datetime.utcnow() + timedelta(hours=1))
+
+        source_file_url = source_file_client.url + '?' + sas_token_for_source_file
+        # Act
+        destination_file_client.upload_range_from_url(source_file_url, 0, 511, 0)
+
+        # Assert
+        # To make sure the range of the file is actually updated
+        file_ranges = destination_file_client.get_ranges()
+        file_content = destination_file_client.download_file(offset=0, length=511).content_as_bytes()
+        self.assertEquals(1, len(file_ranges))
+        self.assertEquals(0, file_ranges[0].get('start'))
+        self.assertEquals(511, file_ranges[0].get('end'))
+        self.assertEquals(data, file_content)
+
+    @record
+    def test_update_big_range_from_file_url(self):
+        # Arrange
+        source_file_name = 'testfile1'
+        end = 1048575
+
+        source_file_client = self._create_empty_file(file_name=source_file_name, file_size=1024 * 1024)
+        data = b'abcdefghijklmnop' * 65536
+        source_file_client.upload_range(data, 0, end)
+
+        destination_file_name = 'filetoupdate1'
+        destination_file_client = self._create_empty_file(file_name=destination_file_name, file_size=1024 * 1024)
+
+        # generate SAS for the source file
+        sas_token_for_source_file = \
+            source_file_client.generate_shared_access_signature(
+                                                          FilePermissions.READ,
+                                                          expiry=datetime.utcnow() + timedelta(hours=1))
+
+        source_file_url = source_file_client.url + '?' + sas_token_for_source_file
+
+        # Act
+        destination_file_client.upload_range_from_url(source_file_url, 0, end, 0)
+
+        # Assert
+        # To make sure the range of the file is actually updated
+        file_ranges = destination_file_client.get_ranges()
+        file_content = destination_file_client.download_file(offset=0, length=end).content_as_bytes()
+        self.assertEquals(1, len(file_ranges))
+        self.assertEquals(0, file_ranges[0].get('start'))
+        self.assertEquals(end, file_ranges[0].get('end'))
+        self.assertEquals(data, file_content)
 
     @record
     def test_clear_range(self):

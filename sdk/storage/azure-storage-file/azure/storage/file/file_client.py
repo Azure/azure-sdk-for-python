@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
+# pylint: disable=too-many-lines
 import functools
 from io import BytesIO
 from typing import ( # pylint: disable=unused-import
@@ -750,6 +750,83 @@ class FileClient(StorageAccountHostsMixin):
                 validate_content=validate_content,
                 cls=return_response_headers,
                 **kwargs)
+        except StorageErrorException as error:
+            process_storage_error(error)
+
+    @staticmethod
+    def _upload_range_from_url_options(source_url,  # type: str
+                                       range_start,  # type: int
+                                       range_end,  # type: int
+                                       source_range_start,  # type: int
+                                       **kwargs
+                                       ):
+        # type: (...) -> Dict[str, Any]
+
+        if range_start is None or range_end is None or source_range_start is None:
+            raise ValueError("start_range must be specified")
+
+        # Format range
+        destination_range = 'bytes={0}-{1}'.format(range_start, range_end)
+        source_range = 'bytes={0}-{1}'.format(source_range_start, source_range_start + (range_end - range_start))
+
+        options = {
+            'copy_source': source_url,
+            'content_length': 0,
+            'source_range': source_range,
+            'range': destination_range,
+            'timeout': kwargs.pop('timeout', None),
+            'cls': return_response_headers}
+        options.update(kwargs)
+        return options
+
+    @distributed_trace
+    def upload_range_from_url(self, source_url,  # type: str
+                              range_start,  # type: int
+                              range_end,  # type: int
+                              source_range_start,  # type: int
+                              **kwargs  # type: Any
+                              ):
+        # type: (str, int, int, int, **Any) -> Dict[str, Any]
+        '''
+        Writes the bytes from one Azure File endpoint into the specified range of another Azure File endpoint.
+
+        :param int range_start:
+            Start of byte range to use for updating a section of the file.
+            The range can be up to 4 MB in size.
+            The start_range and end_range params are inclusive.
+            Ex: start_range=0, end_range=511 will download first 512 bytes of file.
+        :param int range_end:
+            End of byte range to use for updating a section of the file.
+            The range can be up to 4 MB in size.
+            The start_range and end_range params are inclusive.
+            Ex: start_range=0, end_range=511 will download first 512 bytes of file.
+        :param str source_url:
+            A URL of up to 2 KB in length that specifies an Azure file or blob.
+            The value should be URL-encoded as it would appear in a request URI.
+            If the source is in another account, the source must either be public
+            or must be authenticated via a shared access signature. If the source
+            is public, no authentication is required.
+            Examples:
+            https://myaccount.file.core.windows.net/myshare/mydir/myfile
+            https://otheraccount.file.core.windows.net/myshare/mydir/myfile?sastoken
+        :param int source_range_start:
+            Start of byte range to use for updating a section of the file.
+            The range can be up to 4 MB in size.
+            The start_range and end_range params are inclusive.
+            Ex: start_range=0, end_range=511 will download first 512 bytes of file.
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
+        '''
+
+        options = self._upload_range_from_url_options(
+            source_url=source_url,
+            range_start=range_start,
+            range_end=range_end,
+            source_range_start=source_range_start,
+            **kwargs
+        )
+        try:
+            return self._client.file.upload_range_from_url(**options)  # type: ignore
         except StorageErrorException as error:
             process_storage_error(error)
 
