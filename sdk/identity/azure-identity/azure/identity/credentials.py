@@ -317,10 +317,19 @@ class DeviceCodeCredential(PublicClientCredential):
 
 
 class SharedTokenCacheCredential(object):
-    """Authenticates using tokens in the local cache shared between Microsoft applications."""
+    """
+    Authenticates using tokens in the local cache shared between Microsoft applications.
 
-    def __init__(self, **kwargs):  # pylint:disable=unused-argument
-        # type: (**Any) -> None
+    :param str username:
+        Username (typically an email address) of the user to authenticate as. This is required because the local cache
+        may contain tokens for multiple identities.
+    """
+
+    def __init__(self, username, **kwargs):  # pylint:disable=unused-argument
+        # type: (str, **Any) -> None
+
+        self._username = username
+
         cache = None
 
         if sys.platform.startswith("win") and "LOCALAPPDATA" in os.environ:
@@ -332,7 +341,10 @@ class SharedTokenCacheCredential(object):
             # TODO: seperating deserializing access tokens from caching them would make this cleaner
             cache.add = lambda *_: None
 
-        self._client = self._get_auth_client(cache)
+        if cache:
+            self._client = self._get_auth_client(cache)  # type: Optional[AuthnClientBase]
+        else:
+            self._client = None
 
     @wrap_exceptions
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
@@ -351,9 +363,9 @@ class SharedTokenCacheCredential(object):
         if not self._client:
             raise ClientAuthenticationError(message="Shared token cache unavailable")
 
-        token = self._client.get_cached_token(scopes) or self._client.obtain_token_by_refresh_token(scopes)
+        token = self._client.obtain_token_by_refresh_token(scopes, self._username)
         if not token:
-            raise ClientAuthenticationError(message="No cached token found for '{}'".format(scopes))
+            raise ClientAuthenticationError(message="No cached token found for '{}'".format(self._username))
 
         return token
 
@@ -364,8 +376,8 @@ class SharedTokenCacheCredential(object):
 
     @staticmethod
     def _get_auth_client(cache):
-        # type: (Optional[msal_extensions.FileTokenCache]) -> Optional[AuthnClientBase]
-        return AuthnClient(Endpoints.AAD_OAUTH2_V2_FORMAT.format("common"), cache=cache) if cache else None
+        # type: (msal_extensions.FileTokenCache) -> AuthnClientBase
+        return AuthnClient(Endpoints.AAD_OAUTH2_V2_FORMAT.format("common"), cache=cache)
 
 
 class UsernamePasswordCredential(PublicClientCredential):

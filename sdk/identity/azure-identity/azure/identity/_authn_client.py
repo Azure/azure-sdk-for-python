@@ -56,12 +56,13 @@ class AuthnClientBase(ABC):
                 return AccessToken(token["secret"], expires_on)
         return None
 
-    def get_refresh_tokens(self, scopes):
-        """Yields all refresh tokens in the cache except those which have a scope (which is unexpected) that isn't a
-        superset of ``scopes``. This is only used by SharedTokenCredential, which explains why there's no validation of
-        the token's owner--all tokens come from the current user's cache."""
+    def get_refresh_tokens(self, scopes, account):
+        """Yields all an account's cached refresh tokens except those which have a scope (which is unexpected) that
+        isn't a superset of ``scopes``."""
 
-        for token in self._cache.find(TokenCache.CredentialType.REFRESH_TOKEN):
+        for token in self._cache.find(
+            TokenCache.CredentialType.REFRESH_TOKEN, query={"home_account_id": account.get("home_account_id")}
+        ):
             if "target" in token and not all((scope in token["target"] for scope in scopes)):
                 continue
             yield token
@@ -80,7 +81,7 @@ class AuthnClientBase(ABC):
         pass
 
     @abc.abstractmethod
-    def obtain_token_by_refresh_token(self, scopes):
+    def obtain_token_by_refresh_token(self, scopes, username):
         pass
 
     def _deserialize_and_cache_token(self, response, scopes, request_time):
@@ -199,21 +200,31 @@ class AuthnClient(AuthnClientBase):
         token = self._deserialize_and_cache_token(response=response, scopes=scopes, request_time=request_time)
         return token
 
-    def obtain_token_by_refresh_token(self, scopes):
-        # type: (Iterable[str]) -> Optional[AccessToken]
+    def obtain_token_by_refresh_token(self, scopes, username):
+        # type: (Iterable[str], str) -> Optional[AccessToken]
         """Acquire an access token using a cached refresh token. Returns ``None`` when that fails, or the cache has no
         refresh token. This is only used by SharedTokenCacheCredential and isn't robust enough for anything else."""
 
-        # these tokens come from the user-specific shared token cache, so all belong to the current user
-        for token in self.get_refresh_tokens(scopes):
-            # TODO: lacking a good way to know a priori that a given token will work, we try them all
-            request = self.get_refresh_token_grant_request(token, scopes)
-            request_time = int(time.time())
-            response = self._pipeline.run(request, stream=False)
-            try:
-                return self._deserialize_and_cache_token(response=response, scopes=scopes, request_time=request_time)
-            except ClientAuthenticationError:
-                continue
+        # find account matching username
+        accounts = self._cache.find(TokenCache.CredentialType.ACCOUNT, query={"username": username})
+        for account in accounts:
+            # try each refresh token that might work, return the first access token acquired
+            for token in self.get_refresh_tokens(scopes, account):
+                # currently we only support login.microsoftonline.com, which has an alias login.windows.net
+                # TODO: this must change to support sovereign clouds
+                environment = account.get("environment")
+                if not environment or (environment not in self._auth_url and environment != "login.windows.net"):
+                    continue
+
+                request = self.get_refresh_token_grant_request(token, scopes)
+                request_time = int(time.time())
+                response = self._pipeline.run(request, stream=False)
+                try:
+                    return self._deserialize_and_cache_token(
+                        response=response, scopes=scopes, request_time=request_time
+                    )
+                except ClientAuthenticationError:
+                    continue
 
         return None
 

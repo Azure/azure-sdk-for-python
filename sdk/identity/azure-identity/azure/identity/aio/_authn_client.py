@@ -5,6 +5,7 @@
 import time
 from typing import Any, Dict, Iterable, Mapping, Optional
 
+from msal import TokenCache
 from azure.core import Configuration
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
@@ -62,20 +63,30 @@ class AsyncAuthnClient(AuthnClientBase):  # pylint:disable=async-client-bad-name
         token = self._deserialize_and_cache_token(response=response, scopes=scopes, request_time=request_time)
         return token
 
-    async def obtain_token_by_refresh_token(self, scopes: Iterable[str]) -> Optional[AccessToken]:
+    async def obtain_token_by_refresh_token(self, scopes: Iterable[str], username: str) -> Optional[AccessToken]:
         """Acquire an access token using a cached refresh token. Returns ``None`` when that fails, or the cache has no
         refresh token. This is only used by SharedTokenCacheCredential and isn't robust enough for anything else."""
 
-        # these tokens come from the user-specific shared token cache, so all belong to the current user
-        for token in self.get_refresh_tokens(scopes):
-            # TODO: lacking a good way to know a priori that a given token will work, we try them all
-            request = self.get_refresh_token_grant_request(token, scopes)
-            request_time = int(time.time())
-            response = await self._pipeline.run(request, stream=False)
-            try:
-                return self._deserialize_and_cache_token(response=response, scopes=scopes, request_time=request_time)
-            except ClientAuthenticationError:
-                continue
+        # find account matching username
+        accounts = self._cache.find(TokenCache.CredentialType.ACCOUNT, query={"username": username})
+        for account in accounts:
+            # try each refresh token that might work, return the first access token acquired
+            for token in self.get_refresh_tokens(scopes, account):
+                # currently we only support login.microsoftonline.com, which has an alias login.windows.net
+                # TODO: this must change to support sovereign clouds
+                environment = account.get("environment")
+                if not environment or (environment not in self._auth_url and environment != "login.windows.net"):
+                    continue
+
+                request = self.get_refresh_token_grant_request(token, scopes)
+                request_time = int(time.time())
+                response = await self._pipeline.run(request, stream=False)
+                try:
+                    return self._deserialize_and_cache_token(
+                        response=response, scopes=scopes, request_time=request_time
+                    )
+                except ClientAuthenticationError:
+                    continue
 
         return None
 

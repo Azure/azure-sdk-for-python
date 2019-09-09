@@ -198,7 +198,13 @@ class ChainedTokenCredential(SyncChainedTokenCredential):
 
 
 class SharedTokenCacheCredential(SyncSharedTokenCacheCredential):
-    """Authenticates using tokens in the local cache shared between Microsoft applications."""
+    """
+    Authenticates using tokens in the local cache shared between Microsoft applications.
+
+    :param str username:
+        Username (typically an email address) of the user to authenticate as. This is required because the local cache
+        may contain tokens for multiple identities.
+    """
 
     @wrap_exceptions
     async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
@@ -216,12 +222,12 @@ class SharedTokenCacheCredential(SyncSharedTokenCacheCredential):
         if not self._client:
             raise ClientAuthenticationError(message="Shared token cache unavailable")
 
-        token = self._client.get_cached_token(scopes) or await self._client.obtain_token_by_refresh_token(scopes)
+        token = await self._client.obtain_token_by_refresh_token(scopes, self._username)
         if not token:
-            raise ClientAuthenticationError(message="No cached token found for '{}'".format(scopes))
+            raise ClientAuthenticationError(message="No cached token found for '{}'".format(self._username))
 
         return token
 
     @staticmethod
-    def _get_auth_client(cache: "Optional[msal_extensions.FileTokenCache]") -> "Optional[AuthnClientBase]":
-        return AsyncAuthnClient(Endpoints.AAD_OAUTH2_V2_FORMAT.format("common"), cache=cache) if cache else None
+    def _get_auth_client(cache: "msal_extensions.FileTokenCache") -> "AuthnClientBase":
+        return AsyncAuthnClient(Endpoints.AAD_OAUTH2_V2_FORMAT.format("common"), cache=cache)

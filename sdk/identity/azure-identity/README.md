@@ -95,10 +95,10 @@ for more information.
 
 ### Single sign-on
 During local development on Windows, `DefaultAzureCredential` can authenticate
-without configuration using a single sign-on shared with Microsoft applications,
-for example Visual Studio 2019. To authenticate this way, sign in with the
-application and use `DefaultAzureCredential` without setting configuration
-environment variables.
+using a single sign-on shared with Microsoft applications, for example Visual
+Studio 2019. Because you may have multiple signed in identities, to
+authenticate this way you must set the environment variable `AZURE_USERNAME`
+with your desired identity's username (typically an email address).
 
 ## Environment variables
 
