@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b3 (2019-09-09)
+## 1.0.0b3 (2019-09-10)
 ### New features:
 - `SharedTokenCacheCredential` authenticates with tokens stored in a local
 cache shared by Microsoft applications. This enables Azure SDK clients to
