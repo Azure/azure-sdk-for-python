@@ -2017,9 +2017,6 @@ class CRUDTests(unittest.TestCase):
         # Get query results page by page.
         results = resources['coll'].read_all_items(max_item_count=2)
 
-        with self.assertRaises(ValueError):
-            page_iter = results.by_page(continuation_token="foo")
-
         page_iter = results.by_page()
         first_block = list(next(page_iter))
         self.assertEqual(2, len(first_block), 'First block should have 2 entries.')
