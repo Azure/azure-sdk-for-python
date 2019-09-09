@@ -218,13 +218,6 @@ if __name__ == '__main__':
                     print('    * %s' % (lib))
 
     exitcode = 0
-    if inconsistent:
-        if not args.verbose:
-            print('\n\nIncompatible dependency versions detected in libraries, run this script with --verbose for details')
-        else:
-            print('\n')
-    else:
-        print('\n\nAll library dependencies verified, no incompatible versions detected')
 
     frozen_filename = os.path.join(base_dir, 'shared_requirements.txt')
     if args.freeze:
@@ -256,9 +249,7 @@ if __name__ == '__main__':
                     frozen[req_name] = [spec]
     except:
         print('Unable to open shared_requirements.txt, shared requirements have not been validated')
-        if inconsistent:
-            exitcode = 1
-
+        
     missing_reqs, new_reqs, changed_reqs = {}, {}, {}
     non_overridden_reqs_count = 0
     if frozen:
@@ -303,6 +294,14 @@ if __name__ == '__main__':
                             print("\nThe following libraries declare requirement '%s' which does not match the frozen requirement '%s':" % (changed_req + spec, changed_req + frozen_specs[0]))
                             for lib in non_overridden_libs:
                                 print("  * %s" % (lib))
+    elif inconsistent:
+        exitcode = 1
+        if not args.verbose:
+            print('\n\nIncompatible dependency versions detected in libraries, run this script with --verbose for details')
+        else:
+            print('\n')
+    else:
+        print('\n\nAll library dependencies verified, no incompatible versions detected')
 
     if args.out:
         external = [k for k in dependencies if k not in packages and not should_skip_lib(k)]
