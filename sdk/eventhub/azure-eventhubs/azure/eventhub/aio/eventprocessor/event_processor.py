@@ -145,12 +145,12 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
                     await asyncio.sleep(self._polling_interval)
                     continue
 
-                to_cancel_list = self._tasks.keys()
                 if claimed_ownership_list:
                     claimed_partition_ids = [x["partition_id"] for x in claimed_ownership_list]
                     to_cancel_list = self._tasks.keys() - claimed_partition_ids
                     self._create_tasks_for_claimed_ownership(claimed_ownership_list)
                 else:
+                    to_cancel_list = set(self._tasks.keys())
                     log.info("EventProcessor %r hasn't claimed an ownership. It keeps claiming.", self._id)
                 if to_cancel_list:
                     self._cancel_tasks_for_partitions(to_cancel_list)
