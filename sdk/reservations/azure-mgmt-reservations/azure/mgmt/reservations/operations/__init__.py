@@ -9,12 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .reservation_order_operations import ReservationOrderOperations
-from .reservation_operations import ReservationOperations
-from .operation_operations import OperationOperations
+from ._reservation_operations import ReservationOperations
+from ._reservation_order_operations import ReservationOrderOperations
+from ._operation_operations import OperationOperations
+from ._azure_reservation_api_operations import AzureReservationAPIOperationsMixin
 
 __all__ = [
-    'ReservationOrderOperations',
     'ReservationOperations',
+    'ReservationOrderOperations',
     'OperationOperations',
+    'AzureReservationAPIOperationsMixin',
 ]
