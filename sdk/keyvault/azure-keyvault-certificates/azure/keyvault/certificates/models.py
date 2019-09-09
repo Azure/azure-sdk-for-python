@@ -327,7 +327,7 @@ class Certificate(CertificateBase):
         # type: () -> CertificatePolicy
         """The management policy of the certificate.
 
-        :rtype: CertificatePolicy
+        :rtype: ~azure.keyvault.certificates.CertificatePolicy
         """
         return self._policy
 
@@ -348,25 +348,25 @@ class CertificateOperation(object):
     :param cert_operation_id: The certificate id.
     :type cert_operation_id: str
     :param issuer_name: Name of the operation's issuer object or reserved names;
-    for example, 'Self' or 'Unknown
+        for example, 'Self' or 'Unknown
     :type issuer_name: str
     :param certificate_type: Type of certificate requested from the issuer provider.
     :type certificate_type: str
     :param certificate_transparency: Indicates if the certificate this operation is
-    running for is published to certificate transparency logs.
+        running for is published to certificate transparency logs.
     :type certificate_transparency: bool
     :param csr: The certificate signing request (CSR) that is being used in the certificate
-    operation.
+        operation.
     :type csr: bytearray
     :param cancellation_requested: Indicates if cancellation was requested on the certificate
-    operation.
+        operation.
     :type cancellation_requested: bool
     :param status: Status of the certificate operation.
     :type status: str
     :param status_details: The status details of the certificate operation
     :type status_details: str
     :param error: Error encountered, if any, during the certificate operation.
-    :type ~azure.keyvault.certificates.Error
+    :type error: ~azure.keyvault.certificates.Error
     :param target: Location which contains the result of the certificate operation.
     :type target: str
     :param request_id: Identifier for the certificate operation.
@@ -526,31 +526,31 @@ class CertificatePolicy(object):
     :param key_properties: Properties of the key backing the certificate.
     :type key_properties: ~azure.keyvault.certificates.models.KeyProperties
     :param content_type: The media type (MIME type) of the secret backing the certificate.
-    :type content_type: ~azure.keyvault.certificates.SecretContentType or str
+    :type content_type: ~azure.keyvault.certificates.enums.SecretContentType or str
     :param subject_name: The subject name of the certificate. Should be a valid X509
-    distinguished name.
+        distinguished name.
     :type subject_name: str
     :param validity_in_months: The duration that the certificate is valid in months.
     :type validity_in_months: int
     :param lifetime_actions: Actions that will be performed by Key Vault over the lifetime
-    of a certificate
+        of a certificate
     :type lifetime_actions: Iterable[~azure.keyvault.certificates.LifetimeAction]
     :param issuer_name: Name of the referenced issuer object or reserved names; for example,
-    'Self' or 'Unknown"
+        'Self' or 'Unknown"
     :type issuer_name: str
     :param certificate_type: Type of certificate to be requested from the issuer provider.
     :type certificate_type: str
     :param certificate_transparency: Indicates if the certificates generated under this policy
-    should be published to certificate transparency logs.
+        should be published to certificate transparency logs.
     :type certificate_transparency: bool
     :param san_emails: Subject alternative emails of the X509 object. Only one out of san_emails,
-    san_dns_names, and san_upns may be set.
+        san_dns_names, and san_upns may be set.
     :type san_emails: Iterable[str]
     :param san_dns_names: Subject alternative DNS names of the X509 object. Only one out of
-    san_emails, san_dns_names, and san_upns may be set.
+        san_emails, san_dns_names, and san_upns may be set.
     :type san_dns_names: Iterable[str]
     :param san_upns: Subject alternative user principal names. Only one out of san_emails,
-    san_dns_names, and san_upns may be set.
+        san_dns_names, and san_upns may be set.
     :type san_upns: Iterable[str]
     """
     # pylint:disable=too-many-instance-attributes
@@ -780,19 +780,19 @@ class CertificatePolicy(object):
 
     @property
     def key_properties(self):
-        # type: () -> models.KeyProperties
+        # type: () -> KeyProperties
         """Properties of the key backing the certificate.
 
-        :rtype: KeyProperties
+        :rtype: ~azure.keyvault.certificates.models.KeyProperties
         """
         return self._key_properties
 
     @property
     def content_type(self):
-        # type: () -> models.SecretContentType
+        # type: () -> SecretContentType
         """The media type (MIME type).
 
-        :rtype: SecretContentType
+        :rtype: ~azure.keyvault.certificates.enums.SecretContentType
         """
         return self._content_type
 
@@ -844,7 +844,7 @@ class CertificatePolicy(object):
         """Actions and their triggers that will be performed by Key Vault over
         the lifetime of the certificate.
 
-        :rtype: list[LifetimeAction]
+        :rtype: list[~azure.keyvault.certificates.models.LifetimeAction]
         """
         return self._lifetime_actions
 
@@ -1117,7 +1117,7 @@ class Issuer(IssuerBase):
     @property
     def account_id(self):
         # type: () -> str
-        """THe username/ account name/ account id.
+        """The username/ account name/ account id.
 
         :rtype: str
         """
@@ -1143,7 +1143,7 @@ class Issuer(IssuerBase):
         # type: () -> List[AdministratorDetails]
         """Details of the organization administrator of this issuer.
 
-        :rtype: List[AdministratorDetails]
+        :rtype: List[~azure.keyvault.certificates.models.AdministratorDetails]
         """
         return self._admin_details
 
@@ -1154,21 +1154,21 @@ class KeyProperties(object):
     :param exportable: Indicates if the private key can be exported.
     :type exportable: bool
     :param key_type: The type of key pair to be used for the certificate.
-    Possible values include: 'EC', 'EC-HSM', 'RSA', 'RSA-HSM', 'oct'
-    :type str or ~azure.keyvault.certificates.enums.JsonWebKeyType
+        Possible values include: 'EC', 'EC-HSM', 'RSA', 'RSA-HSM', 'oct'
+    :type key_type: str or ~azure.keyvault.certificates.enums.JsonWebKeyType
     :param key_size: The key size in bits. For example: 2048, 3072, or 4096
-    for RSA.
+        for RSA.
     :type key_size: int
     :param reuse_key: Indicates if the same key pair will be used on certificate
-    renewal.
+        renewal.
     :type reuse_key: bool
     :param curve: Elliptic curve name. For valid values, see JsonWebKeyCurveName.
-    Possible values include: 'P-256', 'P-384', 'P-521', 'P-256K'
+        Possible values include: 'P-256', 'P-384', 'P-521', 'P-256K'
     :type curve: str or ~azure.keyvault.certificates.enums.JsonWebKeyCurveName
     :param ekus: The enhanced key usages.
     :type ekus: list[str]
     :param key_usage: List of key usages.
-    :type key_usage: list[str or ~azure.keyvault.certificates.KeyUsageType]
+    :type key_usage: list[str or ~azure.keyvault.certificates.enums.KeyUsageType]
     """
     def __init__(
         self,
@@ -1200,10 +1200,10 @@ class KeyProperties(object):
 
     @property
     def key_type(self):
-        # type: () -> models.JsonWebKeyType
+        # type: () -> JsonWebKeyType
         """The type of key pair to be used for the certificate.
 
-        :rtype: models.JsonWebKeyType
+        :rtype: ~azure.keyvault.certificates.enums.JsonWebKeyType
         """
         return self._key_type
 
@@ -1227,10 +1227,10 @@ class KeyProperties(object):
 
     @property
     def curve(self):
-        # type: () -> models.JsonWebKeyCurveName
+        # type: () -> JsonWebKeyCurveName
         """Elliptic curve name.
 
-        :rtype: models.JsonWebKeyCurveName
+        :rtype: ~azure.keyvault.certificates.enums.JsonWebKeyCurveName
         """
         return self._curve
 
@@ -1248,7 +1248,7 @@ class KeyProperties(object):
         # type: () -> list[KeyUsageType]
         """List of key usages.
 
-        :rtype: list[KeyUsageType]
+        :rtype: list[~azure.keyvault.certificates.enums.KeyUsageType]
         """
         return self._key_usage
 
@@ -1258,14 +1258,14 @@ class LifetimeAction(object):
     lifetime of a certificate.
 
     :param action_type: The type of the action. Possible values include: 'EmailContacts',
-    'AutoRenew'
+        'AutoRenew'
     :type action_type: str or ~azure.keyvault.certificates.enums.ActionType
     :param lifetime_percentage: Percentage of lifetime at which to trigger. Value
-    should be between 1 and 99.
+        should be between 1 and 99.
     :type lifetime_percentage: int
     :param days_before_expiry: Days before expiry to attempt renewal. Value should be between
-    1 and validity_in_months multiplied by 27. I.e., if validity_in_months is 36, then value
-    should be between 1 and 972 (36 * 27).
+        1 and validity_in_months multiplied by 27. I.e., if validity_in_months is 36, then value
+        should be between 1 and 972 (36 * 27).
     :type days_before_expiry: int
     """
 
@@ -1299,7 +1299,7 @@ class LifetimeAction(object):
         """The type of the action that will be executed.
         Valid values are "EmailContacts" and "AutoRenew"
 
-        :rtype: str or models.ActionType
+        :rtype: str or ~azure.keyvault.certificates.enums.ActionType
         """
         return self._action_type
 
@@ -1325,10 +1325,10 @@ class DeletedCertificate(Certificate):
     :param deleted_date: The time when the certificate was deleted, in UTC
     :type deleted_date: datetime
     :param recovery_id: The url of the recovery object, used to identify and
-    recover the deleted certificate.
+        recover the deleted certificate.
     :type recovery_id: str
     :param scheduled_purge_date: The time when the certificate is scheduled to
-    be purged, in UTC
+        be purged, in UTC
     :type scheduled_purge_date: datetime
     """
 

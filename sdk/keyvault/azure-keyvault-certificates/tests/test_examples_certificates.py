@@ -192,7 +192,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # backup certificate
         certificate_backup = certificate_client.backup_certificate(name=cert_name)
 
-        # returns the raw byte sof the backed up certificate
+        # returns the raw bytes of the backed up certificate
         print(certificate_backup)
 
         # [END backup_certificate]
