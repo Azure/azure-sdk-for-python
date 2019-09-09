@@ -5,13 +5,16 @@
 
 from .event_processor import EventProcessor
 from .partition_processor import PartitionProcessor, CloseReason
-from .partition_manager import PartitionManager
-from .sqlite3_partition_manager import Sqlite3PartitionManager
+from .partition_manager import PartitionManager, OwnershipLostError
+from .partition_context import PartitionContext
+from .sample_partition_manager import SamplePartitionManager
 
 __all__ = [
     'CloseReason',
     'EventProcessor',
     'PartitionProcessor',
     'PartitionManager',
-    'Sqlite3PartitionManager',
+    'OwnershipLostError',
+    'PartitionContext',
+    'SamplePartitionManager',
 ]

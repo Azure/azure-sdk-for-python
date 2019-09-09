@@ -34,15 +34,14 @@ class PartitionManager(ABC):
                 last_modified_time
                 etag
         """
-        pass
 
     @abstractmethod
-    async def claim_ownership(self, partitions: Iterable[Dict[str, Any]]) -> Iterable[Dict[str, Any]]:
+    async def claim_ownership(self, ownership_list: Iterable[Dict[str, Any]]) -> Iterable[Dict[str, Any]]:
         """
         Tries to claim a list of specified ownership.
 
-        :param partitions: Iterable of dictionaries containing all the ownership to claim.
-        :type partitions: Iterable of dict
+        :param ownership_list: Iterable of dictionaries containing all the ownership to claim.
+        :type ownership_list: Iterable of dict
         :return: Iterable of dictionaries containing the following partition ownership information:
                 eventhub_name
                 consumer_group_name
@@ -54,13 +53,13 @@ class PartitionManager(ABC):
                 last_modified_time
                 etag
         """
-        pass
 
     @abstractmethod
     async def update_checkpoint(self, eventhub_name, consumer_group_name, partition_id, owner_id,
                                 offset, sequence_number) -> None:
         """
-        Updates the checkpoint using the given information for the associated partition and consumer group in the chosen storage service.
+        Updates the checkpoint using the given information for the associated partition and
+        consumer group in the chosen storage service.
 
         :param eventhub_name: The name of the specific Event Hub the ownership are associated with, relative to
          the Event Hubs namespace that contains it.
@@ -73,11 +72,15 @@ class PartitionManager(ABC):
         :type owner_id: str
         :param offset: The offset of the ~azure.eventhub.EventData the new checkpoint will be associated with.
         :type offset: str
-        :param sequence_number: The sequence_number of the ~azure.eventhub.EventData the new checkpoint will be associated with.
+        :param sequence_number: The sequence_number of the ~azure.eventhub.EventData the new checkpoint
+        will be associated with.
         :type sequence_number: int
-        :return:
+        :return: None
+        :raise: `OwnershipLostError`, `CheckpointError`
         """
-        pass
 
-    async def close(self):
-        pass
+
+class OwnershipLostError(Exception):
+    """Raises when update_checkpoint detects the ownership has been lost
+
+    """
