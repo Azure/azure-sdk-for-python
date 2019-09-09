@@ -64,7 +64,7 @@ class BlobPartitionManager(PartitionManager):
         async for b in blobs:
             async with self._cached_ownership_locks[b.name]:
                 if b.name not in self._cached_ownership_dict \
-                        or b.last_modified.timestamp() > self._cached_ownership_dict[b.name].get("last_modified_time"):
+                        or b.last_modified.timestamp() >= self._cached_ownership_dict[b.name].get("last_modified_time"):
                     metadata = b.metadata
                     ownership = {
                         "eventhub_name": eventhub_name,
