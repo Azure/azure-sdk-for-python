@@ -4,13 +4,11 @@
 # license information.
 #--------------------------------------------------------------------------
 
-import os
 import asyncio
 import pytest
-import time
 
 from azure.eventhub.aio import EventHubClient
-from azure.eventhub import EventData, EventPosition, EventHubError
+from azure.eventhub import EventPosition
 
 
 async def pump(receiver, sleep=None):
@@ -18,25 +16,16 @@ async def pump(receiver, sleep=None):
     if sleep:
         await asyncio.sleep(sleep)
     async with receiver:
-        batch = await receiver.receive(timeout=1)
+        batch = await receiver.receive(timeout=10)
         messages += len(batch)
     return messages
-
-
-async def get_partitions(iot_connection_str):
-    client = EventHubClient.from_connection_string(iot_connection_str, network_tracing=False)
-    receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition("-1"), prefetch=1000, operation='/messages/events')
-    async with receiver:
-        partitions = await client.get_properties()
-        return partitions["partition_ids"]
 
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
 async def test_iothub_receive_multiple_async(iot_connection_str):
-    pytest.skip("This will get AuthenticationError. We're investigating...")
-    partitions = await get_partitions(iot_connection_str)
     client = EventHubClient.from_connection_string(iot_connection_str, network_tracing=False)
+    partitions = await client.get_partition_ids()
     receivers = []
     for p in partitions:
         receivers.append(client.create_consumer(consumer_group="$default", partition_id=p, event_position=EventPosition("-1"), prefetch=10, operation='/messages/events'))
@@ -44,3 +33,53 @@ async def test_iothub_receive_multiple_async(iot_connection_str):
 
     assert isinstance(outputs[0], int) and outputs[0] <= 10
     assert isinstance(outputs[1], int) and outputs[1] <= 10
+
+
+@pytest.mark.liveTest
+@pytest.mark.asyncio
+async def test_iothub_get_properties_async(iot_connection_str, device_id):
+    client = EventHubClient.from_connection_string(iot_connection_str, network_tracing=False)
+    properties = await client.get_properties()
+    assert properties["partition_ids"] == ["0", "1", "2", "3"]
+
+
+@pytest.mark.liveTest
+@pytest.mark.asyncio
+async def test_iothub_get_partition_ids_async(iot_connection_str, device_id):
+    client = EventHubClient.from_connection_string(iot_connection_str, network_tracing=False)
+    partitions = await client.get_partition_ids()
+    assert partitions == ["0", "1", "2", "3"]
+
+
+@pytest.mark.liveTest
+@pytest.mark.asyncio
+async def test_iothub_get_partition_properties_async(iot_connection_str, device_id):
+    client = EventHubClient.from_connection_string(iot_connection_str, network_tracing=False)
+    partition_properties = await client.get_partition_properties("0")
+    assert partition_properties["id"] == "0"
+
+
+@pytest.mark.liveTest
+@pytest.mark.asyncio
+async def test_iothub_receive_after_mgmt_ops_async(iot_connection_str, device_id):
+    client = EventHubClient.from_connection_string(iot_connection_str, network_tracing=False)
+    partitions = await client.get_partition_ids()
+    assert partitions == ["0", "1", "2", "3"]
+    receiver = client.create_consumer(consumer_group="$default", partition_id=partitions[0], event_position=EventPosition("-1"), operation='/messages/events')
+    async with receiver:
+        received = await receiver.receive(timeout=10)
+        assert len(received) == 0
+
+
+@pytest.mark.liveTest
+@pytest.mark.asyncio
+async def test_iothub_mgmt_ops_after_receive_async(iot_connection_str, device_id):
+    client = EventHubClient.from_connection_string(iot_connection_str, network_tracing=False)
+    receiver = client.create_consumer(consumer_group="$default", partition_id="0", event_position=EventPosition("-1"), operation='/messages/events')
+    async with receiver:
+        received = await receiver.receive(timeout=10)
+        assert len(received) == 0
+
+    partitions = await client.get_partition_ids()
+    assert partitions == ["0", "1", "2", "3"]
+

@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 import asyncio
-import time
 import logging
 
 from uamqp import errors, compat  # type: ignore
@@ -36,19 +35,19 @@ def _create_eventhub_exception(exception):
     return error
 
 
-async def _handle_exception(exception, retry_count, max_retries, closable, timeout_time=None):  # pylint:disable=too-many-branches, too-many-statements
+async def _handle_exception(exception, closable):  # pylint:disable=too-many-branches, too-many-statements
     if isinstance(exception, asyncio.CancelledError):
         raise exception
     try:
-        name = closable.name
+        name = closable._name  # pylint: disable=protected-access
     except AttributeError:
-        name = closable.container_id
+        name = closable._container_id  # pylint: disable=protected-access
     if isinstance(exception, KeyboardInterrupt):  # pylint:disable=no-else-raise
         log.info("%r stops due to keyboard interrupt", name)
-        closable.close()
+        await closable.close()
         raise exception
     elif isinstance(exception, EventHubError):
-        closable.close()
+        await closable.close()
         raise exception
     elif isinstance(exception, (
             errors.MessageAccepted,
@@ -64,10 +63,6 @@ async def _handle_exception(exception, retry_count, max_retries, closable, timeo
     elif isinstance(exception, errors.MessageException):
         log.info("%r Event data send error (%r)", name, exception)
         error = EventDataSendError(str(exception), exception)
-        raise error
-    elif retry_count >= max_retries:
-        error = _create_eventhub_exception(exception)
-        log.info("%r has exhausted retry. Exception still occurs (%r)", name, exception)
         raise error
     else:
         if isinstance(exception, errors.AuthenticationException):
@@ -95,20 +90,4 @@ async def _handle_exception(exception, retry_count, max_retries, closable, timeo
         else:
             if hasattr(closable, "_close_connection"):
                 await closable._close_connection()  # pylint:disable=protected-access
-        # start processing retry delay
-        try:
-            backoff_factor = closable.client.config.backoff_factor
-            backoff_max = closable.client.config.backoff_max
-        except AttributeError:
-            backoff_factor = closable.config.backoff_factor
-            backoff_max = closable.config.backoff_max
-        backoff = backoff_factor * 2 ** retry_count
-        if backoff <= backoff_max and (timeout_time is None or time.time() + backoff <= timeout_time):  # pylint:disable=no-else-return
-            await asyncio.sleep(backoff)
-            log.info("%r has an exception (%r). Retrying...", format(name), exception)
-            return _create_eventhub_exception(exception)
-        else:
-            error = _create_eventhub_exception(exception)
-            log.info("%r operation has timed out. Last exception before timeout is (%r)", name, error)
-            raise error
-        # end of processing retry delay
+        return _create_eventhub_exception(exception)
