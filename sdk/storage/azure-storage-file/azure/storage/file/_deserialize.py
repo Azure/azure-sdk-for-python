@@ -46,9 +46,19 @@ def deserialize_file_stream(response, obj, headers):
     return response.location_mode, obj
 
 
-def _deserialize_permission(response):
+def deserialize_permission(response, obj, headers):
     '''
     Extracts out file permission
     '''
 
-    return response.body
+    return obj.permission
+
+
+def deserialize_permission_key(response, obj, headers):
+    '''
+    Extracts out file permission key
+    '''
+
+    if response is None or headers is None:
+        return None
+    return headers.get('x-ms-file-permission-key', None)

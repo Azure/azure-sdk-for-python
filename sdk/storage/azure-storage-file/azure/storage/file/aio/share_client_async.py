@@ -24,7 +24,7 @@ from .._generated.models import (
     StorageErrorException,
     SignedIdentifier,
     DeleteSnapshotsOptionType)
-from .._deserialize import deserialize_share_properties
+from .._deserialize import deserialize_share_properties, deserialize_permission
 from ..share_client import ShareClient as ShareClientBase
 from .directory_client_async import DirectoryClient
 from .file_client_async import FileClient
@@ -458,11 +458,37 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
             name_starts_with=name_starts_with, marker=marker, timeout=timeout, **kwargs)
 
     @distributed_trace_async
+    async def create_permission_for_share(self, file_permission,  # type: str
+                                          timeout=None,  # type: Optional[int]
+                                          **kwargs  # type: Any
+                                          ):
+        # type: (...) -> str
+        """
+        Create a permission(a security descriptor) at the share level.
+        This 'permission' can be used for the files/directories in the share.
+        If a 'permission' already exists, it shall return the key of it, else
+        creates a new permission at the share level and return its key.
+
+        :param str file_permission:
+            File permission, a Portable SDDL
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns a file permission key
+        :rtype str
+        """
+        options = self._create_permission_for_share_options(file_permission, timeout=timeout, **kwargs)
+        try:
+            return await self._client.share.create_permission(**options)
+        except StorageErrorException as error:
+            process_storage_error(error)
+
+    @distributed_trace_async
     async def get_permission_for_share(  # type: ignore
             self, file_permission_key,  # type: str
             timeout=None,  # type: Optional[int]
             **kwargs  # type: Any
     ):
+        # type: (...) -> str
         """
         Get a permission(a security descriptor) for a given key.
         This 'permission' can be used for the files/directories in the share.
@@ -477,6 +503,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         try:
             return await self._client.share.get_permission(  # type: ignore
                 file_permission_key=file_permission_key,
+                cls=deserialize_permission,
                 timeout=timeout,
                 **kwargs)
         except StorageErrorException as error:
