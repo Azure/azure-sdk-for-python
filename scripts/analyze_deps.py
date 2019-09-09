@@ -301,8 +301,16 @@ if __name__ == '__main__':
                             print("\nThe following libraries declare requirement '%s' which does not match the frozen requirement '%s':" % (changed_req + spec, changed_req + frozen_specs[0]))
                             for lib in non_overridden_libs:
                                 print("  * %s" % (lib))
+        if exitcode == 0:
+            if args.verbose:
+                print('')
+            print('All library dependencies validated against frozen requirements')
+        elif not args.verbose:
+            print('Library dependencies do not match frozen requirements, run this script with --verbose for details')
     elif inconsistent:
         exitcode = 1
+    
+    if exitcode == 1:
         if not args.verbose:
             print('\nIncompatible dependency versions detected in libraries, run this script with --verbose for details')
     else:
@@ -333,12 +341,5 @@ if __name__ == '__main__':
             'packages': packages,
             'repo_name': 'azure-sdk-for-python'
         })
-
-    if exitcode == 0:
-        if args.verbose:
-            print('')
-        print('All library dependencies validated against frozen requirements')
-    elif not args.verbose:
-        print('Library dependencies do not match frozen requirements, run this script with --verbose for details')
 
     sys.exit(exitcode)
