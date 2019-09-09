@@ -223,7 +223,6 @@ if __name__ == '__main__':
             print('\n\nIncompatible dependency versions detected in libraries, run this script with --verbose for details')
         else:
             print('\n')
-        exitcode = 1
     else:
         print('\n\nAll library dependencies verified, no incompatible versions detected')
 
@@ -257,6 +256,8 @@ if __name__ == '__main__':
                     frozen[req_name] = [spec]
     except:
         print('Unable to open shared_requirements.txt, shared requirements have not been validated')
+        if inconsistent:
+            exitcode = 1
 
     missing_reqs, new_reqs, changed_reqs = {}, {}, {}
     non_overridden_reqs_count = 0
