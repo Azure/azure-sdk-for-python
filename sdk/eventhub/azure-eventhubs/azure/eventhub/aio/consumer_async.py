@@ -93,6 +93,7 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
 
     async def __anext__(self):
         retried_times = 0
+        last_exception = None
         while retried_times < self._client._config.max_retries:  # pylint:disable=protected-access
             try:
                 await self._open()
@@ -108,6 +109,8 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
                 await self._client._try_delay(retried_times=retried_times, last_exception=last_exception,  # pylint:disable=protected-access
                                               entity_name=self._name)
                 retried_times += 1
+        log.info("%r operation has exhausted retry. Last exception: %r.", self._name, last_exception)
+        raise last_exception
 
     def _create_handler(self):
         alt_creds = {

@@ -15,7 +15,7 @@ parameters:
       PythonVersion: '3.7'
     Windows_Python27:
       OSName: 'Windows'
-      OSVmImage: 'vs2017-win2016'
+      OSVmImage: 'windows-2019'
       PythonVersion: '2.7'
 
 jobs:
@@ -37,7 +37,7 @@ jobs:
         parameters:
           BuildTargetingString: ${{ parameters.BuildTargetingString }}
           ServiceDirectory: ${{ parameters.ServiceDirectory }}
-          AdditionalTestArgs: '--disablecov'
+          CoverageArg: '--disablecov'
           EnvVars: ${{ parameters.EnvVars }}
           BeforeTestSteps: ${{ parameters.BeforeTestSteps }}
           PythonVersion: $(PythonVersion)

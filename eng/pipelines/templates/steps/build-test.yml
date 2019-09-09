@@ -6,10 +6,12 @@ parameters:
   PythonVersion: ''
   OSName: ''
   BeforeTestSteps: []
-  AdditionalTestSteps: []
+  CoverageArg: ''
   BuildTargetingString: 'azure-*'
   ToxTestEnv: ""
+  RunCoverage: ne(variables['CoverageArg'], '--disablecov')
   RunMyPy: and(ne(variables['PythonVersion'], '2.7'), ne(variables['PythonVersion'], 'pypy3'))
+  RunPylint: eq(variables['PythonVersion'], '3.7')
 
 steps:
   - powershell: |
@@ -35,7 +37,7 @@ steps:
   - script: |
       pip install pathlib twine codecov beautifulsoup4 tox tox-monorepo
     displayName: 'Prep Environment'
-
+    
   - ${{ parameters.BeforeTestSteps }}
 
   - task: PythonScript@0
@@ -45,6 +47,7 @@ steps:
       arguments: >-
         "${{ parameters.BuildTargetingString }}" 
         ${{ parameters.AdditionalTestArgs }} 
+        ${{ parameters.CoverageArg }} 
         --mark_arg="${{ parameters.TestMarkArgument }}" 
         --service="${{ parameters.ServiceDirectory }}" 
         --toxenv="${{ parameters.ToxTestEnv }}"
@@ -67,6 +70,7 @@ steps:
         --toxenv="lint"
         --disablecov
     env: ${{ parameters.EnvVars }}
+    condition: and(succeededOrFailed(), ${{ parameters.RunPylint }})
 
   - task: PythonScript@0
     displayName: 'Run MyPy'
@@ -81,4 +85,6 @@ steps:
     env: ${{ parameters.EnvVars }}
     condition: and(succeededOrFailed(), ${{ parameters.RunMyPy }})
   
-  - ${{ parameters.AdditionalTestSteps }}
+  - template: publish-coverage.yml
+    parameters: 
+      RunCoverage: ${{ parameters.RunCoverage }}

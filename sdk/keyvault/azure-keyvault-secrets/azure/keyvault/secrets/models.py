@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from ._shared import parse_vault_id
 try:
     from typing import TYPE_CHECKING
 except ImportError:
@@ -9,18 +10,16 @@ except ImportError:
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
+    from typing import Any, Dict, Optional
     from datetime import datetime
-    from typing import Any, Dict, Mapping, Optional
     from ._shared._generated.v7_0 import models as _models
-
-from ._shared import parse_vault_id
 
 
 class SecretAttributes(object):
     """A secret's id and attributes."""
 
     def __init__(self, attributes, vault_id, **kwargs):
-        # type: (_models.SecretAttributes, str, Mapping[str, Any]) -> None
+        # type: (_models.SecretAttributes, str, **Any) -> None
         self._attributes = attributes
         self._id = vault_id
         self._vault_id = parse_vault_id(vault_id)
@@ -199,8 +198,16 @@ class Secret(SecretAttributes):
 class DeletedSecret(SecretAttributes):
     """A deleted secret's attributes, as well as when it will be purged, if soft-delete is enabled for its vault."""
 
-    def __init__(self, attributes, vault_id, deleted_date=None, recovery_id=None, scheduled_purge_date=None, **kwargs):
-        # type: (_models.SecretAttributes, str, Optional[datetime], Optional[str], Optional[datetime], Mapping[str, Any]) -> None
+    def __init__(
+        self,
+        attributes,  # type: _models.SecretAttributes
+        vault_id,  # type: str
+        deleted_date=None,  # type: Optional[datetime]
+        recovery_id=None,  # type: Optional[str]
+        scheduled_purge_date=None,  # type: Optional[datetime]
+        **kwargs  # type: **Any
+    ):
+        # type: (...) -> None
         super(DeletedSecret, self).__init__(attributes, vault_id, **kwargs)
         self._deleted_date = deleted_date
         self._recovery_id = recovery_id

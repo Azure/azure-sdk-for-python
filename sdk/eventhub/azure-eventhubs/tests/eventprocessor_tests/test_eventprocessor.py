@@ -77,14 +77,14 @@ async def test_load_balancer_abandon():
 
     event_processor = EventProcessor(MockEventHubClient(), "$default", TestPartitionProcessor,
                                       partition_manager, polling_interval=0.5)
-    asyncio.get_running_loop().create_task(event_processor.start())
+    asyncio.ensure_future(event_processor.start())
     await asyncio.sleep(5)
 
     ep_list = []
     for _ in range(2):
         ep = EventProcessor(MockEventHubClient(), "$default", TestPartitionProcessor,
                                       partition_manager, polling_interval=0.5)
-        asyncio.get_running_loop().create_task(ep.start())
+        asyncio.ensure_future(ep.start())
         ep_list.append(ep)
     await asyncio.sleep(5)
     assert len(event_processor._tasks) == 2
@@ -241,12 +241,15 @@ async def test_partition_processor_process_eventhub_consumer_error():
 @pytest.mark.asyncio
 async def test_partition_processor_process_error_close_error():
     class TestPartitionProcessor(PartitionProcessor):
+        async def initialize(self, partition_context):
+            raise RuntimeError("initialize error")
+
         async def process_events(self, events, partition_context):
-            raise RuntimeError("process_error")
+            raise RuntimeError("process_events error")
 
         async def process_error(self, error, partition_context):
             assert isinstance(error, RuntimeError)
-            raise RuntimeError("error from process_error")
+            raise RuntimeError("process_error error")
 
         async def close(self, reason, partition_context):
             assert reason == CloseReason.PROCESS_EVENTS_ERROR

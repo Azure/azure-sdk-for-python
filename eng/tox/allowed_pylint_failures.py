@@ -127,6 +127,7 @@ PYLINT_ACCEPTABLE_FAILURES = [
     "azure-mgmt-sql",
     "azure-mgmt-sqlvirtualmachine",
     "azure-mgmt-storage",
+    "azure-mgmt-storagecache",
     "azure-mgmt-storagesync",
     "azure-mgmt-subscription",
     "azure-template",
