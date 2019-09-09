@@ -183,21 +183,24 @@ if __name__ == '__main__':
         packages, dependencies = get_lib_deps(base_dir)
 
     if args.verbose:
-        print('Packages analyzed:')
+        print('Packages analyzed')
+        print('=================')
         for package in sorted(packages.keys()):
             info = packages[package]
             print("%s %s" % (package, info['version']))
             print("  from %s" % (info['source']))
 
-        print('\n\nRequirements discovered:')
+        print('\n\nRequirements discovered')
+        print('=======================')
         for requirement in sorted(dependencies.keys()):
             specs = dependencies[requirement]
             libs = []
-            print('\n%s' % (requirement))
+            print('%s' % (requirement))
             for spec in specs.keys():
                 print('%s' % (spec if spec else '(empty)'))
                 for lib in specs[spec]:
                     print('  * %s' % (lib))
+            print('')
 
     inconsistent = []
     for requirement in sorted(dependencies.keys()):
@@ -206,16 +209,21 @@ if __name__ == '__main__':
         if num_specs == 1:
             continue
 
+        if not inconsistent and args.verbose:
+            print('\nInconsistencies detected')
+            print('========================')
+
         inconsistent.append(requirement)
         if args.verbose:
-            print("\n\nRequirement '%s' has %s unique specifiers:" % (requirement, num_specs))
+            print("Requirement '%s' has %s unique specifiers:" % (requirement, num_specs))
             for spec in sorted(specs.keys()):
                 libs = specs[spec]
                 friendly_spec = '(none)' if spec == '' else spec
-                print("\n  '%s'" % (friendly_spec))
+                print("  '%s'" % (friendly_spec))
                 print('  ' + ('-' * (len(friendly_spec) + 2)))
                 for lib in sorted(libs):
                     print('    * %s' % (lib))
+                print('')
 
     frozen_filename = os.path.join(base_dir, 'shared_requirements.txt')
     if args.freeze:
@@ -296,11 +304,9 @@ if __name__ == '__main__':
     elif inconsistent:
         exitcode = 1
         if not args.verbose:
-            print('\n\nIncompatible dependency versions detected in libraries, run this script with --verbose for details')
-        else:
-            print('\n')
+            print('\nIncompatible dependency versions detected in libraries, run this script with --verbose for details')
     else:
-        print('\n\nAll library dependencies verified, no incompatible versions detected')
+        print('\nAll library dependencies verified, no incompatible versions detected')
 
     if args.out:
         external = [k for k in dependencies if k not in packages and not should_skip_lib(k)]
@@ -329,6 +335,8 @@ if __name__ == '__main__':
         })
 
     if exitcode == 0:
+        if args.verbose:
+            print('')
         print('All library dependencies validated against frozen requirements')
     elif not args.verbose:
         print('Library dependencies do not match frozen requirements, run this script with --verbose for details')
