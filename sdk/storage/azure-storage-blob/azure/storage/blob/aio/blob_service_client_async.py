@@ -115,7 +115,8 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
     @distributed_trace_async
     async def get_user_delegation_key(self, key_start_time,  # type: datetime
                                       key_expiry_time,  # type: datetime
-                                      timeout=None  # type: Optional[int]
+                                      timeout=None,  # type: Optional[int]
+                                      **kwargs  # type: Any
                                       ):
         # type: (datetime, datetime, Optional[int]) -> UserDelegationKey
         """

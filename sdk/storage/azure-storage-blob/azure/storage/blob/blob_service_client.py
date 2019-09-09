@@ -10,10 +10,6 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING
 )
 
-from ._generated.models import KeyInfo
-from ._shared.parser import _to_utc_datetime
-from ._shared.response_handlers import parse_to_internal_user_delegation_key
-
 try:
     from urllib.parse import urlparse
 except ImportError:
@@ -25,9 +21,11 @@ from azure.core.tracing.decorator import distributed_trace
 from ._shared.shared_access_signature import SharedAccessSignature
 from ._shared.models import LocationMode, Services, UserDelegationKey
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
-from ._shared.response_handlers import return_response_headers, process_storage_error
+from ._shared.parser import _to_utc_datetime
+from ._shared.response_handlers import return_response_headers, process_storage_error, \
+    parse_to_internal_user_delegation_key
 from ._generated import AzureBlobStorage
-from ._generated.models import StorageErrorException, StorageServiceProperties
+from ._generated.models import StorageErrorException, StorageServiceProperties, KeyInfo
 from .container_client import ContainerClient
 from .blob_client import BlobClient
 from .models import ContainerProperties, ContainerPropertiesPaged
@@ -231,7 +229,8 @@ class BlobServiceClient(StorageAccountHostsMixin):
     @distributed_trace
     def get_user_delegation_key(self, key_start_time,  # type: datetime
                                 key_expiry_time,  # type: datetime
-                                timeout=None  # type: Optional[int]
+                                timeout=None,  # type: Optional[int]
+                                **kwargs  # type: Any
                                 ):
         # type: (datetime, datetime, Optional[int]) -> UserDelegationKey
         """
