@@ -26,11 +26,6 @@ revamped configuration API. Static `create_config` methods have been renamed
   , and the
   [Azure Identity documentation](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md)
   for more information
- - This version of the library requires `azure-core` 1.0.0b2
-  - If you later want to revert to a version requiring azure-core 1.0.0b1,
-  of this or another Azure SDK library, you must explicitly install azure-core
-  1.0.0b1 as well. For example:
-  `pip install azure-core==1.0.0b1 azure-keyvault-keys==4.0.0b1`
 
 ### New Features:
 - Added support for HTTP challenge based authentication, allowing clients to
