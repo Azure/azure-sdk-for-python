@@ -2505,11 +2505,11 @@ class ErrorResponseException(HttpOperationError):
 class Expression(Model):
     """The expression.
 
-    :param text:
+    :param text: The text.
     :type text: str
     :param value:
     :type value: object
-    :param subexpressions:
+    :param subexpressions: The sub expressions.
     :type subexpressions: list[~azure.mgmt.logic.models.Expression]
     :param error:
     :type error: ~azure.mgmt.logic.models.AzureResourceErrorInfo
@@ -2533,11 +2533,11 @@ class Expression(Model):
 class ExpressionRoot(Expression):
     """The expression root.
 
-    :param text:
+    :param text: The text.
     :type text: str
     :param value:
     :type value: object
-    :param subexpressions:
+    :param subexpressions: The sub expressions.
     :type subexpressions: list[~azure.mgmt.logic.models.Expression]
     :param error:
     :type error: ~azure.mgmt.logic.models.AzureResourceErrorInfo
@@ -4384,7 +4384,7 @@ class SetTriggerStateActionDefinition(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param source: Required.
+    :param source: Required. The source.
     :type source: ~azure.mgmt.logic.models.WorkflowTrigger
     """
 
@@ -4837,21 +4837,21 @@ class TrackingEvent(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param event_level: Required. Possible values include: 'LogAlways',
-     'Critical', 'Error', 'Warning', 'Informational', 'Verbose'
+    :param event_level: Required. The event level. Possible values include:
+     'LogAlways', 'Critical', 'Error', 'Warning', 'Informational', 'Verbose'
     :type event_level: str or ~azure.mgmt.logic.models.EventLevel
-    :param event_time: Required.
+    :param event_time: Required. The event time.
     :type event_time: datetime
-    :param record_type: Required. Possible values include: 'NotSpecified',
-     'Custom', 'AS2Message', 'AS2MDN', 'X12Interchange', 'X12FunctionalGroup',
-     'X12TransactionSet', 'X12InterchangeAcknowledgment',
+    :param record_type: Required. The record type. Possible values include:
+     'NotSpecified', 'Custom', 'AS2Message', 'AS2MDN', 'X12Interchange',
+     'X12FunctionalGroup', 'X12TransactionSet', 'X12InterchangeAcknowledgment',
      'X12FunctionalGroupAcknowledgment', 'X12TransactionSetAcknowledgment',
      'EdifactInterchange', 'EdifactFunctionalGroup', 'EdifactTransactionSet',
      'EdifactInterchangeAcknowledgment',
      'EdifactFunctionalGroupAcknowledgment',
      'EdifactTransactionSetAcknowledgment'
     :type record_type: str or ~azure.mgmt.logic.models.TrackingRecordType
-    :param error:
+    :param error: The error.
     :type error: ~azure.mgmt.logic.models.TrackingEventErrorInfo
     """
 
@@ -4879,9 +4879,9 @@ class TrackingEvent(Model):
 class TrackingEventErrorInfo(Model):
     """The tracking event error info.
 
-    :param message:
+    :param message: The message.
     :type message: str
-    :param code:
+    :param code: The code.
     :type code: str
     """
 
@@ -4901,13 +4901,13 @@ class TrackingEventsDefinition(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param source_type: Required.
+    :param source_type: Required. The source type.
     :type source_type: str
-    :param track_events_options: Possible values include: 'None',
-     'DisableSourceInfoEnrich'
+    :param track_events_options: The track events options. Possible values
+     include: 'None', 'DisableSourceInfoEnrich'
     :type track_events_options: str or
      ~azure.mgmt.logic.models.TrackEventsOperationOptions
-    :param events: Required.
+    :param events: Required. The events.
     :type events: list[~azure.mgmt.logic.models.TrackingEvent]
     """
 

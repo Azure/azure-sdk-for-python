@@ -363,7 +363,7 @@ class WorkflowTriggersOperations(object):
         :type workflow_name: str
         :param trigger_name: The workflow trigger name.
         :type trigger_name: str
-        :param source:
+        :param source: The source.
         :type source: ~azure.mgmt.logic.models.WorkflowTrigger
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
