@@ -4,10 +4,10 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from azure.storage.file._shared import sign_string
-from azure.storage.file._shared.constants import X_MS_VERSION
-from azure.storage.file._shared.shared_access_signature import SharedAccessSignature, _str, _SharedAccessHelper, \
-    QueryStringConstants
+from ._shared import sign_string
+from ._shared.constants import X_MS_VERSION
+from ._shared.shared_access_signature import SharedAccessSignature, _SharedAccessHelper, QueryStringConstants
+from ._shared.parser import _str
 
 
 class FileSharedAccessSignature(SharedAccessSignature):

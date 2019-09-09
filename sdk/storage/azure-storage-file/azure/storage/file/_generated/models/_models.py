@@ -594,6 +594,32 @@ class ShareItem(Model):
         self.metadata = kwargs.get('metadata', None)
 
 
+class SharePermission(Model):
+    """A permission (a security descriptor) at the share level.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param permission: Required. The permission in the Security Descriptor
+     Definition Language (SDDL).
+    :type permission: str
+    """
+
+    _validation = {
+        'permission': {'required': True},
+    }
+
+    _attribute_map = {
+        'permission': {'key': 'permission', 'type': 'str', 'xml': {'name': 'permission'}},
+    }
+
+    _xml_map = {
+    }
+
+    def __init__(self, **kwargs):
+        super(SharePermission, self).__init__(**kwargs)
+        self.permission = kwargs.get('permission', None)
+
+
 class ShareProperties(Model):
     """Properties of a share.
 
