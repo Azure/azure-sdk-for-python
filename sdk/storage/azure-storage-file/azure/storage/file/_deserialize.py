@@ -46,7 +46,7 @@ def deserialize_file_stream(response, obj, headers):
     return response.location_mode, obj
 
 
-def deserialize_permission(response, obj, headers):
+def deserialize_permission(response, obj, headers):  # pylint: disable=unused-argument
     '''
     Extracts out file permission
     '''
@@ -54,7 +54,7 @@ def deserialize_permission(response, obj, headers):
     return obj.permission
 
 
-def deserialize_permission_key(response, obj, headers):
+def deserialize_permission_key(response, obj, headers):  # pylint: disable=unused-argument
     '''
     Extracts out file permission key
     '''

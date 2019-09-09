@@ -238,8 +238,7 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
 
     @distributed_trace_async
     async def upload_file(
-        self,
-        data,  # type: Any
+        self, data,  # type: Any
         length=None,  # type: Optional[int]
         metadata=None,  # type: Optional[Dict[str, str]]
         content_settings=None,  # type: Optional[ContentSettings]
@@ -250,8 +249,8 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         file_last_write_time="now",  # type: Union[str, datetime]
         file_permission=None,  # type: Optional[str]
         file_permission_key=None,  # type: Optional[str]
-        timeout=None,  # type: Optional[int]
         encoding="UTF-8",  # type: str
+        timeout=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
         # type: (...) -> Dict[str, Any]

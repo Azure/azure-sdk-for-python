@@ -25,8 +25,8 @@ def _get_file_permission(file_permission, file_permission_key, default_permissio
     if empty_file_permission:
         if empty_file_permission_key:
             return default_permission
-        else:
-            return None
+
+        return None
 
     if empty_file_permission_key:
         return file_permission
@@ -46,4 +46,3 @@ def _parse_datetime_from_str(string_datetime):
 
 def _datetime_to_str(datetime_obj):
     return datetime_obj if isinstance(datetime_obj, str) else datetime_obj.isoformat() + '0Z'
-

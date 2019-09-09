@@ -11,9 +11,6 @@ from typing import ( # pylint: disable=unused-import
     TYPE_CHECKING
 )
 
-from ._parser import _get_file_permission, _datetime_to_str
-from ._shared.parser import _str
-
 try:
     from urllib.parse import urlparse, quote, unquote
 except ImportError:
@@ -33,9 +30,11 @@ from ._shared.downloads import StorageStreamDownloader
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
 from ._shared.request_handlers import add_metadata_headers, get_length
 from ._shared.response_handlers import return_response_headers, process_storage_error
+from ._shared.parser import _str
+from ._parser import _get_file_permission, _datetime_to_str
 from ._deserialize import deserialize_file_properties, deserialize_file_stream
 from ._polling import CloseHandles
-from .models import HandlesPaged, NTFSAttributes
+from .models import HandlesPaged, NTFSAttributes  # pylint: disable=unused-import
 from ._shared_access_signature import FileSharedAccessSignature
 
 if TYPE_CHECKING:
@@ -426,8 +425,8 @@ class FileClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def upload_file(
-            self, data, # type: Any
-            length=None, # type: Optional[int]
+            self, data,  # type: Any
+            length=None,  # type: Optional[int]
             metadata=None,  # type: Optional[Dict[str, str]]
             content_settings=None,  # type: Optional[ContentSettings]
             validate_content=False,  # type: bool
@@ -435,9 +434,9 @@ class FileClient(StorageAccountHostsMixin):
             file_attributes="none",  # type: Union[str, NTFSAttributes]
             file_creation_time="now",  # type: Union[str, datetime]
             file_last_write_time="now",  # type: Union[str, datetime]
-            file_permission=None,   # type: Optional[str]
+            file_permission=None,  # type: Optional[str]
             file_permission_key=None,  # type: Optional[str]
-            encoding='UTF-8',  # type: str
+            encoding="UTF-8",  # type: str
             timeout=None,  # type: Optional[int]
             **kwargs  # type: Any
         ):

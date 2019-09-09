@@ -9,9 +9,6 @@ from typing import (  # pylint: disable=unused-import
     Optional, Union, Any, Dict, TYPE_CHECKING
 )
 
-from ._parser import _get_file_permission, _datetime_to_str
-from ._shared.parser import _str
-
 try:
     from urllib.parse import urlparse, quote, unquote
 except ImportError:
@@ -29,10 +26,12 @@ from ._generated.models import StorageErrorException
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
 from ._shared.request_handlers import add_metadata_headers
 from ._shared.response_handlers import return_response_headers, process_storage_error
+from ._shared.parser import _str
+from ._parser import _get_file_permission, _datetime_to_str
 from ._deserialize import deserialize_directory_properties
 from ._polling import CloseHandles
 from .file_client import FileClient
-from .models import DirectoryPropertiesPaged, HandlesPaged, NTFSAttributes
+from .models import DirectoryPropertiesPaged, HandlesPaged, NTFSAttributes  # pylint: disable=unused-import
 
 if TYPE_CHECKING:
     from .models import ShareProperties, DirectoryProperties, ContentSettings
