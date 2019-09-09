@@ -474,7 +474,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
         if cpk:
-            if self.protocol.lower() != 'https':
+            if self.scheme.lower() != 'https':
                 raise ValueError("Customer provided encryption key must be used over HTTPS.")
             cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                                encryption_algorithm=cpk.algorithm)

@@ -134,9 +134,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         except AttributeError:
             raise ValueError("Blob URL must be a string.")
         parsed_url = urlparse(blob_url.rstrip('/'))
-
-        self.protocol = parsed_url.scheme
-
         if not parsed_url.path and not (container and blob):
             raise ValueError("Please specify a container and blob name.")
         if not parsed_url.netloc:
@@ -377,7 +374,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
         if cpk:
-            if self.protocol.lower() != 'https':
+            if self.scheme.lower() != 'https':
                 raise ValueError("Customer provided encryption key must be used over HTTPS.")
             cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                                encryption_algorithm=cpk.algorithm)
@@ -555,7 +552,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
         if cpk:
-            if self.protocol.lower() != 'https':
+            if self.scheme.lower() != 'https':
                 raise ValueError("Customer provided encryption key must be used over HTTPS.")
             cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                                encryption_algorithm=cpk.algorithm)
@@ -822,7 +819,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
         if cpk:
-            if self.protocol.lower() != 'https':
+            if self.scheme.lower() != 'https':
                 raise ValueError("Customer provided encryption key must be used over HTTPS.")
             cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                                encryption_algorithm=cpk.algorithm)
@@ -927,7 +924,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
         if cpk:
-            if self.protocol.lower() != 'https':
+            if self.scheme.lower() != 'https':
                 raise ValueError("Customer provided encryption key must be used over HTTPS.")
             cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                                encryption_algorithm=cpk.algorithm)
@@ -1024,7 +1021,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
         if cpk:
-            if self.protocol.lower() != 'https':
+            if self.scheme.lower() != 'https':
                 raise ValueError("Customer provided encryption key must be used over HTTPS.")
             cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                                encryption_algorithm=cpk.algorithm)
@@ -1150,7 +1147,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
         if cpk:
-            if self.protocol.lower() != 'https':
+            if self.scheme.lower() != 'https':
                 raise ValueError("Customer provided encryption key must be used over HTTPS.")
             cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                                encryption_algorithm=cpk.algorithm)
@@ -1235,7 +1232,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
         if cpk:
-            if self.protocol.lower() != 'https':
+            if self.scheme.lower() != 'https':
                 raise ValueError("Customer provided encryption key must be used over HTTPS.")
             cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                                encryption_algorithm=cpk.algorithm)
@@ -1668,7 +1665,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
         if cpk:
-            if self.protocol.lower() != 'https':
+            if self.scheme.lower() != 'https':
                 raise ValueError("Customer provided encryption key must be used over HTTPS.")
             cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                                encryption_algorithm=cpk.algorithm)
@@ -1758,7 +1755,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
         if cpk:
-            if self.protocol.lower() != 'https':
+            if self.scheme.lower() != 'https':
                 raise ValueError("Customer provided encryption key must be used over HTTPS.")
             cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                                encryption_algorithm=cpk.algorithm)
@@ -1910,7 +1907,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
         if cpk:
-            if self.protocol.lower() != 'https':
+            if self.scheme.lower() != 'https':
                 raise ValueError("Customer provided encryption key must be used over HTTPS.")
             cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                                encryption_algorithm=cpk.algorithm)
@@ -2233,7 +2230,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
         if cpk:
-            if self.protocol.lower() != 'https':
+            if self.scheme.lower() != 'https':
                 raise ValueError("Customer provided encryption key must be used over HTTPS.")
             cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                                encryption_algorithm=cpk.algorithm)
@@ -2335,7 +2332,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
         if cpk:
-            if self.protocol.lower() != 'https':
+            if self.scheme.lower() != 'https':
                 raise ValueError("Customer provided encryption key must be used over HTTPS.")
             cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                                encryption_algorithm=cpk.algorithm)
@@ -2489,7 +2486,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
         if cpk:
-            if self.protocol.lower() != 'https':
+            if self.scheme.lower() != 'https':
                 raise ValueError("Customer provided encryption key must be used over HTTPS.")
             cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                                encryption_algorithm=cpk.algorithm)
@@ -2640,7 +2637,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
         if cpk:
-            if self.protocol.lower() != 'https':
+            if self.scheme.lower() != 'https':
                 raise ValueError("Customer provided encryption key must be used over HTTPS.")
             cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                                encryption_algorithm=cpk.algorithm)
@@ -2761,7 +2758,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
         if cpk:
-            if self.protocol.lower() != 'https':
+            if self.scheme.lower() != 'https':
                 raise ValueError("Customer provided encryption key must be used over HTTPS.")
             cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                                encryption_algorithm=cpk.algorithm)
@@ -2908,7 +2905,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         cpk = kwargs.pop('cpk', None)
         cpk_info = None
         if cpk:
-            if self.protocol.lower() != 'https':
+            if self.scheme.lower() != 'https':
                 raise ValueError("Customer provided encryption key must be used over HTTPS.")
             cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                                encryption_algorithm=cpk.algorithm)
