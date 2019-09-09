@@ -29,7 +29,7 @@ from ._shared.request_handlers import (
     validate_and_format_range_headers)
 from ._shared.response_handlers import return_response_headers, process_storage_error
 from ._generated import AzureBlobStorage
-from ._generated.models import (
+from ._generated.models import ( # pylint: disable=unused-import
     DeleteSnapshotsOptionType,
     BlobHTTPHeaders,
     BlockLookupList,
