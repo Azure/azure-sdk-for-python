@@ -12,8 +12,6 @@ import sys
 from io import open
 from setuptools import find_packages, setup
 
-if sys.version_info < (3, 5, 3):
-    raise RuntimeError('Only python 3.5.3 or above is supported')
 
 # Change the PACKAGE_NAME only to change folder and different name
 PACKAGE_NAME = "azure-eventhub-checkpointstoreblob-aio"
@@ -65,6 +63,7 @@ setup(
     ],
     zip_safe=False,
     packages=find_packages(exclude=exclude_packages),
+    python_requires=">=3.5.3",
     install_requires=[
         'azure-storage-blob<13.0.0,>=12.0.0b2',
         'azure-eventhub<6.0.0,>=5.0.0b2',
