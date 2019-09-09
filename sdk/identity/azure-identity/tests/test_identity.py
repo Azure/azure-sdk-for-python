@@ -11,7 +11,7 @@ import uuid
 try:
     from unittest.mock import Mock, patch
 except ImportError:  # python < 3.3
-    from mock import Mock, patch
+    from mock import Mock, patch  # type: ignore
 
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
@@ -236,8 +236,45 @@ def test_imds_credential_retries():
         assert mock_send.call_count == 2 + total_retries
 
 
-def test_default_credential():
-    DefaultAzureCredential()
+@patch("azure.identity.SharedTokenCacheCredential")
+def test_default_credential_shared_cache_use(mock_credential):
+    mock_credential.supported = Mock(return_value=False)
+
+    # unsupported platform -> default credential shouldn't use shared cache
+    credential = DefaultAzureCredential()
+    assert mock_credential.call_count == 0
+    assert mock_credential.supported.call_count == 1
+    mock_credential.supported.reset_mock()
+
+    # unsupported platform, $AZURE_USERNAME set, $AZURE_PASSWORD not set -> default credential shouldn't use shared cache
+    credential = DefaultAzureCredential()
+    assert mock_credential.call_count == 0
+    assert mock_credential.supported.call_count == 1
+
+    mock_credential.supported = Mock(return_value=True)
+
+    # supported platform, $AZURE_USERNAME not set -> default credential shouldn't use shared cache
+    credential = DefaultAzureCredential()
+    assert mock_credential.call_count == 0
+    assert mock_credential.supported.call_count == 1
+    mock_credential.supported.reset_mock()
+
+    # supported platform, $AZURE_USERNAME and $AZURE_PASSWORD set -> default credential shouldn't use shared cache
+    # (EnvironmentCredential should be used when both variables are set)
+    with patch.dict("os.environ", {"AZURE_USERNAME": "foo@bar.com", "AZURE_PASSWORD": "***"}):
+        credential = DefaultAzureCredential()
+        assert mock_credential.call_count == 0
+
+    # supported platform, $AZURE_USERNAME set, $AZURE_PASSWORD not set -> default credential should use shared cache
+    with patch.dict("os.environ", {"AZURE_USERNAME": "foo@bar.com"}):
+        expected_token = AccessToken("***", 42)
+        mock_credential.return_value = Mock(get_token=lambda *_: expected_token)
+
+        credential = DefaultAzureCredential()
+        assert mock_credential.call_count == 1
+
+        token = credential.get_token("scope")
+        assert token == expected_token
 
 
 def test_device_code_credential():
@@ -252,7 +289,12 @@ def test_device_code_credential():
             # expected requests: discover tenant, start device code flow, poll for completion
             mock_response(json_payload={"authorization_endpoint": "https://a/b", "token_endpoint": "https://a/b"}),
             mock_response(
-                json_payload={"device_code": "_", "user_code": user_code, "verification_uri": verification_uri, "expires_in": expires_in}
+                json_payload={
+                    "device_code": "_",
+                    "user_code": user_code,
+                    "verification_uri": verification_uri,
+                    "expires_in": expires_in,
+                }
             ),
             mock_response(
                 json_payload={
@@ -291,7 +333,7 @@ def test_device_code_credential_timeout():
     )
 
     credential = DeviceCodeCredential(
-        client_id="_", prompt_callback=Mock(), transport=transport, timeout=0.1, instance_discovery=False
+        client_id="_", prompt_callback=Mock(), transport=transport, timeout=0.01, instance_discovery=False
     )
 
     with pytest.raises(ClientAuthenticationError) as ex:
@@ -348,8 +390,8 @@ def test_interactive_credential_timeout():
     )
 
     # mock local server blocks long enough to exceed the timeout
-    timeout = 1
-    server_instance = Mock(wait_for_redirect=functools.partial(time.sleep, timeout + 1))
+    timeout = 0.01
+    server_instance = Mock(wait_for_redirect=functools.partial(time.sleep, timeout + 0.01))
     server_class = Mock(return_value=server_instance)
 
     credential = InteractiveBrowserCredential(

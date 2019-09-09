@@ -6,7 +6,7 @@ import asyncio
 import json
 import os
 import time
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 import uuid
 
 import pytest
@@ -280,5 +280,43 @@ async def test_managed_identity_cloud_shell(monkeypatch):
     assert ex.value.message is success_message
 
 
-def test_default_credential():
-    DefaultAzureCredential()
+@pytest.mark.asyncio
+async def test_default_credential_shared_cache_use():
+    with patch("azure.identity.aio.SharedTokenCacheCredential") as mock_credential:
+        mock_credential.supported = Mock(return_value=False)
+
+        # unsupported platform -> default credential shouldn't use shared cache
+        credential = DefaultAzureCredential()
+        assert mock_credential.call_count == 0
+        assert mock_credential.supported.call_count == 1
+        mock_credential.supported.reset_mock()
+
+        # unsupported platform, $AZURE_USERNAME set, $AZURE_PASSWORD not set -> default credential shouldn't use shared cache
+        credential = DefaultAzureCredential()
+        assert mock_credential.call_count == 0
+        assert mock_credential.supported.call_count == 1
+
+        mock_credential.supported = Mock(return_value=True)
+
+        # supported platform, $AZURE_USERNAME not set -> default credential shouldn't use shared cache
+        credential = DefaultAzureCredential()
+        assert mock_credential.call_count == 0
+        assert mock_credential.supported.call_count == 1
+        mock_credential.supported.reset_mock()
+
+        # supported platform, $AZURE_USERNAME and $AZURE_PASSWORD set -> default credential shouldn't use shared cache
+        # (EnvironmentCredential should be used when both variables are set)
+        with patch.dict("os.environ", {"AZURE_USERNAME": "foo@bar.com", "AZURE_PASSWORD": "***"}):
+            credential = DefaultAzureCredential()
+            assert mock_credential.call_count == 0
+
+        # supported platform, $AZURE_USERNAME set, $AZURE_PASSWORD not set -> default credential should use shared cache
+        with patch.dict("os.environ", {"AZURE_USERNAME": "foo@bar.com"}):
+            expected_token = AccessToken("***", 42)
+            mock_credential.return_value=Mock(get_token=asyncio.coroutine(lambda *_: expected_token))
+
+            credential = DefaultAzureCredential()
+            assert mock_credential.call_count == 1
+
+            token = await credential.get_token("scope")
+            assert token == expected_token
