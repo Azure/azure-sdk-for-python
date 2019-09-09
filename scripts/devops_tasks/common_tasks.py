@@ -30,7 +30,7 @@ MANAGEMENT_PACKAGE_IDENTIFIERS = [
     "azure-servicefabric",
     "azure-nspkg",
 ]
-MAJOR_VERSION_REGEX = re.compile("Python\s\:\:\s(?<languageClassifier>[\d])[\.\d]*'")
+MAJOR_VERSION_REGEX = re.compile("Python\s\:\:\s(?P<languageClassifier>[\d])[\.\d]*'")
 
 def log_file(file_location, is_error=False):
     with open(file_location, "r") as file:
@@ -106,7 +106,7 @@ def parse_setup_classifers(setup_path):
 def parse_major_classifiers(classifier_set):
     major_versions = []
     for classifier in classifier_set:
-        result = re.search()
+        result = re.search(MAJOR_VERSION_REGEX, classifier)
         if result and result.group('languageClassifier'):
             major_versions.append(result.group('languageClassifier'))
     return set(major_versions)
@@ -154,6 +154,8 @@ def process_glob_string(glob_string, target_root_dir):
 
         pkg_set_ci_filtered = filter_for_compatibility(allowed_package_set)
         logging.info("Target packages after ci compatibility filter: {}".format(list(set(allowed_package_set) - set(pkg_set_ci_filtered))))
+        
+        exit(1)
         return sorted(pkg_set_ci_filtered)
 
 def remove_omitted_packages(collected_directories):
