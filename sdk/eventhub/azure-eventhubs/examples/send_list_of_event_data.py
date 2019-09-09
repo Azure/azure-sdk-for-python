@@ -6,16 +6,14 @@
 # --------------------------------------------------------------------------------------------
 
 """
-An example to show sending individual events to an Event Hub partition.
-Although this works, sending events in batches will get better performance.
-See 'send_list_of_event_data.py' and 'send_event_data_batch.py' for an example of batching.
+An example to show batch sending events to an Event Hub.
 """
 
 # pylint: disable=C0111
 
 import time
 import os
-from azure.eventhub import EventHubClient, EventData, EventHubSharedKeyCredential
+from azure.eventhub import EventData, EventHubClient, EventHubSharedKeyCredential
 
 
 HOSTNAME = os.environ['EVENT_HUB_HOSTNAME']  # <mynamespace>.servicebus.windows.net
@@ -25,12 +23,12 @@ KEY = os.environ['EVENT_HUB_SAS_KEY']
 
 client = EventHubClient(host=HOSTNAME, event_hub_path=EVENT_HUB, credential=EventHubSharedKeyCredential(USER, KEY),
                         network_tracing=False)
-producer = client.create_producer(partition_id="0")
+producer = client.create_producer(partition_id="1")
 
+event_list = []
+for i in range(1500):
+    event_list.append(EventData('Hello World'))
 start_time = time.time()
 with producer:
-    for i in range(100):
-        ed = EventData("msg")
-        print("Sending message: {}".format(i))
-        producer.send(ed)
-print("Send 100 messages in {} seconds".format(time.time() - start_time))
+    producer.send(event_list)
+print("Runtime: {} seconds".format(time.time() - start_time))

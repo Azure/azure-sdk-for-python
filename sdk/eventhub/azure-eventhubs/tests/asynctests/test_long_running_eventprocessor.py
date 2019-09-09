@@ -13,7 +13,7 @@ import pytest
 from logging.handlers import RotatingFileHandler
 
 from azure.eventhub.aio import EventHubClient
-from azure.eventhub.eventprocessor import EventProcessor, PartitionProcessor, Sqlite3PartitionManager
+from azure.eventhub.aio.eventprocessor import EventProcessor, PartitionProcessor, SamplePartitionManager
 from azure.eventhub import EventData
 
 
@@ -44,23 +44,23 @@ logger = get_logger("eph_test_async.log", logging.INFO)
 
 
 class MyEventProcessor(PartitionProcessor):
-    async def close(self, reason):
+    async def close(self, reason, partition_context):
         logger.info("PartitionProcessor closed (reason {}, id {})".format(
             reason,
-            self._checkpoint_manager.partition_id
+            partition_context.partition_id
         ))
 
-    async def process_events(self, events):
+    async def process_events(self, events, partition_context):
         if events:
             event = events[-1]
             print("Processing id {}, offset {}, sq_number {})".format(
-                self._checkpoint_manager.partition_id,
+                partition_context.partition_id,
                 event.offset,
                 event.sequence_number))
-            await self._checkpoint_manager.update_checkpoint(event.offset, event.sequence_number)
+            await partition_context.update_checkpoint(event.offset, event.sequence_number)
 
-    async def process_error(self, error):
-        logger.info("Event Processor Error for partition {}, {!r}".format(self._checkpoint_manager.partition_id, error))
+    async def process_error(self, error, partition_context):
+        logger.info("Event Processor Error for partition {}, {!r}".format(partition_context.partition_id, error))
 
 
 async def wait_and_close(host, duration):
@@ -133,7 +133,7 @@ async def test_long_running_eph(live_eventhub):
         client,
         live_eventhub['consumer_group'],
         MyEventProcessor,
-        Sqlite3PartitionManager()
+        SamplePartitionManager()
     )
 
     tasks = asyncio.gather(

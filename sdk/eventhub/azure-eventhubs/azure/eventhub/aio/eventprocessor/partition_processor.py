@@ -6,27 +6,33 @@
 from typing import List
 from abc import ABC, abstractmethod
 from enum import Enum
-from .checkpoint_manager import CheckpointManager
-
 from azure.eventhub import EventData
+from .partition_context import PartitionContext
 
 
 class CloseReason(Enum):
     SHUTDOWN = 0  # user call EventProcessor.stop()
     OWNERSHIP_LOST = 1  # lose the ownership of a partition.
     EVENTHUB_EXCEPTION = 2  # Exception happens during receiving events
+    PROCESS_EVENTS_ERROR = 3  # Exception happens during process_events
 
 
 class PartitionProcessor(ABC):
     """
     PartitionProcessor processes events received from the Azure Event Hubs service. A single instance of a class
-    implementing this abstract class will be created for every partition the associated ~azure.eventhub.eventprocessor.EventProcessor owns.
+    implementing this abstract class will be created for every partition the associated
+    ~azure.eventhub.eventprocessor.EventProcessor owns.
 
     """
-    def __init__(self, checkpoint_manager: CheckpointManager):
-        self._checkpoint_manager = checkpoint_manager
 
-    async def close(self, reason):
+    async def initialize(self, partition_context: PartitionContext):
+        """
+
+        :param partition_context: The context information of this partition.
+        :type partition_context: ~azure.eventhub.aio.eventprocessor.PartitionContext
+        """
+
+    async def close(self, reason, partition_context: PartitionContext):
         """Called when EventProcessor stops processing this PartitionProcessor.
 
         There are different reasons to trigger the PartitionProcessor to close.
@@ -34,25 +40,31 @@ class PartitionProcessor(ABC):
 
         :param reason: Reason for closing the PartitionProcessor.
         :type reason: ~azure.eventhub.eventprocessor.CloseReason
+        :param partition_context: The context information of this partition.
+        Use its method update_checkpoint to save checkpoint to the data store.
+        :type partition_context: ~azure.eventhub.aio.eventprocessor.PartitionContext
 
         """
-        pass
 
     @abstractmethod
-    async def process_events(self, events: List[EventData]):
+    async def process_events(self, events: List[EventData], partition_context: PartitionContext):
         """Called when a batch of events have been received.
 
         :param events: Received events.
         :type events: list[~azure.eventhub.common.EventData]
+        :param partition_context: The context information of this partition.
+        Use its method update_checkpoint to save checkpoint to the data store.
+        :type partition_context: ~azure.eventhub.aio.eventprocessor.PartitionContext
 
         """
-        pass
 
-    async def process_error(self, error):
+    async def process_error(self, error, partition_context: PartitionContext):
         """Called when an error happens
 
         :param error: The error that happens.
         :type error: Exception
+        :param partition_context: The context information of this partition.
+        Use its method update_checkpoint to save checkpoint to the data store.
+        :type partition_context: ~azure.eventhub.aio.eventprocessor.PartitionContext
 
         """
-        pass
