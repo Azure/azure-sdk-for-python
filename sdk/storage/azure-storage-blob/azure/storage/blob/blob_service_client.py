@@ -11,7 +11,8 @@ from typing import (  # pylint: disable=unused-import
 )
 
 from ._generated.models import KeyInfo
-from ._shared.parser import _to_utc_datetime, _parse_to_internal_user_delegation_key
+from ._shared.parser import _to_utc_datetime
+from ._shared.response_handlers import parse_to_internal_user_delegation_key
 
 try:
     from urllib.parse import urlparse
@@ -252,7 +253,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
-        return _parse_to_internal_user_delegation_key(user_delegation_key)  # type: ignore
+        return parse_to_internal_user_delegation_key(user_delegation_key)  # type: ignore
 
     @distributed_trace
     def get_account_information(self, **kwargs): # type: ignore

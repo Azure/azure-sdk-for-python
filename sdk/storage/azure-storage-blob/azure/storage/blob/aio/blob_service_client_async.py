@@ -18,7 +18,8 @@ from .._shared.models import LocationMode
 from .._shared.policies_async import ExponentialRetry
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._shared.response_handlers import return_response_headers, process_storage_error
-from .._shared.parser import _parse_to_internal_user_delegation_key, _to_utc_datetime
+from .._shared.parser import _to_utc_datetime
+from .._shared.response_handlers import parse_to_internal_user_delegation_key
 from .._generated.aio import AzureBlobStorage
 from .._generated.models import StorageErrorException, StorageServiceProperties, KeyInfo
 from ..blob_service_client import BlobServiceClient as BlobServiceClientBase
@@ -136,7 +137,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         except StorageErrorException as error:
             process_storage_error(error)
 
-        return _parse_to_internal_user_delegation_key(user_delegation_key)  # type: ignore
+        return parse_to_internal_user_delegation_key(user_delegation_key)  # type: ignore
 
     @distributed_trace_async
     async def get_account_information(self, **kwargs): # type: ignore
