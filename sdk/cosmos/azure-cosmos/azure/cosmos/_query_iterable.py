@@ -89,8 +89,11 @@ class QueryIterable(PageIterator):
         )
 
     def _unpack(self, block):
-        continuation = self._client.last_response_headers.get('etag') if self._client.last_response_headers else None
-        if block and not continuation:
+        continuation = None
+        if self._client.last_response_headers:
+            continuation = self._client.last_response_headers.get("x-ms-continuation") or \
+                self._client.last_response_headers.get('etag')
+        if block:
             self._did_a_call_already = False
         return continuation, block
 
