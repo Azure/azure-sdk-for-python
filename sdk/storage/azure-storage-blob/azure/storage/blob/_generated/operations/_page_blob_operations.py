@@ -110,15 +110,15 @@ class PageBlobOperations(object):
         lease_id = None
         if lease_access_conditions is not None:
             lease_id = lease_access_conditions.lease_id
-        x_ms_encryption_key = None
+        encryption_key = None
         if cpk_info is not None:
-            x_ms_encryption_key = cpk_info.x_ms_encryption_key
-        x_ms_encryption_key_sha256 = None
+            encryption_key = cpk_info.encryption_key
+        encryption_key_sha256 = None
         if cpk_info is not None:
-            x_ms_encryption_key_sha256 = cpk_info.x_ms_encryption_key_sha256
-        x_ms_encryption_algorithm = None
+            encryption_key_sha256 = cpk_info.encryption_key_sha256
+        encryption_algorithm = None
         if cpk_info is not None:
-            x_ms_encryption_algorithm = cpk_info.x_ms_encryption_algorithm
+            encryption_algorithm = cpk_info.encryption_algorithm
         if_modified_since = None
         if modified_access_conditions is not None:
             if_modified_since = modified_access_conditions.if_modified_since
@@ -143,12 +143,6 @@ class PageBlobOperations(object):
         query_parameters = {}
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
-        if x_ms_encryption_key is not None:
-            query_parameters['x-ms-encryption-key'] = self._serialize.query("x_ms_encryption_key", x_ms_encryption_key, 'str')
-        if x_ms_encryption_key_sha256 is not None:
-            query_parameters['x-ms-encryption-key-sha256'] = self._serialize.query("x_ms_encryption_key_sha256", x_ms_encryption_key_sha256, 'str')
-        if x_ms_encryption_algorithm is not None:
-            query_parameters['x-ms-encryption-algorithm'] = self._serialize.query("x_ms_encryption_algorithm", x_ms_encryption_algorithm, 'EncryptionAlgorithmType')
 
         # Construct headers
         header_parameters = {}
@@ -176,6 +170,12 @@ class PageBlobOperations(object):
             header_parameters['x-ms-blob-content-disposition'] = self._serialize.header("blob_content_disposition", blob_content_disposition, 'str')
         if lease_id is not None:
             header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", lease_id, 'str')
+        if encryption_key is not None:
+            header_parameters['x-ms-encryption-key'] = self._serialize.header("encryption_key", encryption_key, 'str')
+        if encryption_key_sha256 is not None:
+            header_parameters['x-ms-encryption-key-sha256'] = self._serialize.header("encryption_key_sha256", encryption_key_sha256, 'str')
+        if encryption_algorithm is not None:
+            header_parameters['x-ms-encryption-algorithm'] = self._serialize.header("encryption_algorithm", encryption_algorithm, 'EncryptionAlgorithmType')
         if if_modified_since is not None:
             header_parameters['If-Modified-Since'] = self._serialize.header("if_modified_since", if_modified_since, 'rfc-1123')
         if if_unmodified_since is not None:
@@ -260,15 +260,15 @@ class PageBlobOperations(object):
         lease_id = None
         if lease_access_conditions is not None:
             lease_id = lease_access_conditions.lease_id
-        x_ms_encryption_key = None
+        encryption_key = None
         if cpk_info is not None:
-            x_ms_encryption_key = cpk_info.x_ms_encryption_key
-        x_ms_encryption_key_sha256 = None
+            encryption_key = cpk_info.encryption_key
+        encryption_key_sha256 = None
         if cpk_info is not None:
-            x_ms_encryption_key_sha256 = cpk_info.x_ms_encryption_key_sha256
-        x_ms_encryption_algorithm = None
+            encryption_key_sha256 = cpk_info.encryption_key_sha256
+        encryption_algorithm = None
         if cpk_info is not None:
-            x_ms_encryption_algorithm = cpk_info.x_ms_encryption_algorithm
+            encryption_algorithm = cpk_info.encryption_algorithm
         if_sequence_number_less_than_or_equal_to = None
         if sequence_number_access_conditions is not None:
             if_sequence_number_less_than_or_equal_to = sequence_number_access_conditions.if_sequence_number_less_than_or_equal_to
@@ -306,12 +306,6 @@ class PageBlobOperations(object):
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
         query_parameters['comp'] = self._serialize.query("comp", comp, 'str')
-        if x_ms_encryption_key is not None:
-            query_parameters['x-ms-encryption-key'] = self._serialize.query("x_ms_encryption_key", x_ms_encryption_key, 'str')
-        if x_ms_encryption_key_sha256 is not None:
-            query_parameters['x-ms-encryption-key-sha256'] = self._serialize.query("x_ms_encryption_key_sha256", x_ms_encryption_key_sha256, 'str')
-        if x_ms_encryption_algorithm is not None:
-            query_parameters['x-ms-encryption-algorithm'] = self._serialize.query("x_ms_encryption_algorithm", x_ms_encryption_algorithm, 'EncryptionAlgorithmType')
 
         # Construct headers
         header_parameters = {}
@@ -329,6 +323,12 @@ class PageBlobOperations(object):
         header_parameters['x-ms-page-write'] = self._serialize.header("page_write", page_write, 'str')
         if lease_id is not None:
             header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", lease_id, 'str')
+        if encryption_key is not None:
+            header_parameters['x-ms-encryption-key'] = self._serialize.header("encryption_key", encryption_key, 'str')
+        if encryption_key_sha256 is not None:
+            header_parameters['x-ms-encryption-key-sha256'] = self._serialize.header("encryption_key_sha256", encryption_key_sha256, 'str')
+        if encryption_algorithm is not None:
+            header_parameters['x-ms-encryption-algorithm'] = self._serialize.header("encryption_algorithm", encryption_algorithm, 'EncryptionAlgorithmType')
         if if_sequence_number_less_than_or_equal_to is not None:
             header_parameters['x-ms-if-sequence-number-le'] = self._serialize.header("if_sequence_number_less_than_or_equal_to", if_sequence_number_less_than_or_equal_to, 'long')
         if if_sequence_number_less_than is not None:
@@ -373,7 +373,7 @@ class PageBlobOperations(object):
             return cls(response, None, response_headers)
     upload_pages.metadata = {'url': '/{containerName}/{blob}'}
 
-    def clear_pages(self, content_length, timeout=None, range=None, request_id=None, lease_access_conditions=None, sequence_number_access_conditions=None, modified_access_conditions=None, cls=None, **kwargs):
+    def clear_pages(self, content_length, timeout=None, range=None, request_id=None, lease_access_conditions=None, cpk_info=None, sequence_number_access_conditions=None, modified_access_conditions=None, cls=None, **kwargs):
         """The Clear Pages operation clears a set of pages from a page blob.
 
         :param content_length: The length of the request.
@@ -394,6 +394,8 @@ class PageBlobOperations(object):
          operation
         :type lease_access_conditions:
          ~azure.storage.blob.models.LeaseAccessConditions
+        :param cpk_info: Additional parameters for the operation
+        :type cpk_info: ~azure.storage.blob.models.CpkInfo
         :param sequence_number_access_conditions: Additional parameters for
          the operation
         :type sequence_number_access_conditions:
@@ -413,6 +415,15 @@ class PageBlobOperations(object):
         lease_id = None
         if lease_access_conditions is not None:
             lease_id = lease_access_conditions.lease_id
+        encryption_key = None
+        if cpk_info is not None:
+            encryption_key = cpk_info.encryption_key
+        encryption_key_sha256 = None
+        if cpk_info is not None:
+            encryption_key_sha256 = cpk_info.encryption_key_sha256
+        encryption_algorithm = None
+        if cpk_info is not None:
+            encryption_algorithm = cpk_info.encryption_algorithm
         if_sequence_number_less_than_or_equal_to = None
         if sequence_number_access_conditions is not None:
             if_sequence_number_less_than_or_equal_to = sequence_number_access_conditions.if_sequence_number_less_than_or_equal_to
@@ -462,6 +473,12 @@ class PageBlobOperations(object):
         header_parameters['x-ms-page-write'] = self._serialize.header("page_write", page_write, 'str')
         if lease_id is not None:
             header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", lease_id, 'str')
+        if encryption_key is not None:
+            header_parameters['x-ms-encryption-key'] = self._serialize.header("encryption_key", encryption_key, 'str')
+        if encryption_key_sha256 is not None:
+            header_parameters['x-ms-encryption-key-sha256'] = self._serialize.header("encryption_key_sha256", encryption_key_sha256, 'str')
+        if encryption_algorithm is not None:
+            header_parameters['x-ms-encryption-algorithm'] = self._serialize.header("encryption_algorithm", encryption_algorithm, 'EncryptionAlgorithmType')
         if if_sequence_number_less_than_or_equal_to is not None:
             header_parameters['x-ms-if-sequence-number-le'] = self._serialize.header("if_sequence_number_less_than_or_equal_to", if_sequence_number_less_than_or_equal_to, 'long')
         if if_sequence_number_less_than is not None:
@@ -558,15 +575,15 @@ class PageBlobOperations(object):
          :class:`StorageErrorException<azure.storage.blob.models.StorageErrorException>`
         """
         error_map = kwargs.pop('error_map', None)
-        x_ms_encryption_key = None
+        encryption_key = None
         if cpk_info is not None:
-            x_ms_encryption_key = cpk_info.x_ms_encryption_key
-        x_ms_encryption_key_sha256 = None
+            encryption_key = cpk_info.encryption_key
+        encryption_key_sha256 = None
         if cpk_info is not None:
-            x_ms_encryption_key_sha256 = cpk_info.x_ms_encryption_key_sha256
-        x_ms_encryption_algorithm = None
+            encryption_key_sha256 = cpk_info.encryption_key_sha256
+        encryption_algorithm = None
         if cpk_info is not None:
-            x_ms_encryption_algorithm = cpk_info.x_ms_encryption_algorithm
+            encryption_algorithm = cpk_info.encryption_algorithm
         lease_id = None
         if lease_access_conditions is not None:
             lease_id = lease_access_conditions.lease_id
@@ -619,12 +636,6 @@ class PageBlobOperations(object):
         if timeout is not None:
             query_parameters['timeout'] = self._serialize.query("timeout", timeout, 'int', minimum=0)
         query_parameters['comp'] = self._serialize.query("comp", comp, 'str')
-        if x_ms_encryption_key is not None:
-            query_parameters['x-ms-encryption-key'] = self._serialize.query("x_ms_encryption_key", x_ms_encryption_key, 'str')
-        if x_ms_encryption_key_sha256 is not None:
-            query_parameters['x-ms-encryption-key-sha256'] = self._serialize.query("x_ms_encryption_key_sha256", x_ms_encryption_key_sha256, 'str')
-        if x_ms_encryption_algorithm is not None:
-            query_parameters['x-ms-encryption-algorithm'] = self._serialize.query("x_ms_encryption_algorithm", x_ms_encryption_algorithm, 'EncryptionAlgorithmType')
 
         # Construct headers
         header_parameters = {}
@@ -640,6 +651,12 @@ class PageBlobOperations(object):
         if request_id is not None:
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
         header_parameters['x-ms-page-write'] = self._serialize.header("page_write", page_write, 'str')
+        if encryption_key is not None:
+            header_parameters['x-ms-encryption-key'] = self._serialize.header("encryption_key", encryption_key, 'str')
+        if encryption_key_sha256 is not None:
+            header_parameters['x-ms-encryption-key-sha256'] = self._serialize.header("encryption_key_sha256", encryption_key_sha256, 'str')
+        if encryption_algorithm is not None:
+            header_parameters['x-ms-encryption-algorithm'] = self._serialize.header("encryption_algorithm", encryption_algorithm, 'EncryptionAlgorithmType')
         if lease_id is not None:
             header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", lease_id, 'str')
         if if_sequence_number_less_than_or_equal_to is not None:
@@ -942,7 +959,7 @@ class PageBlobOperations(object):
         return deserialized
     get_page_ranges_diff.metadata = {'url': '/{containerName}/{blob}'}
 
-    def resize(self, blob_content_length, timeout=None, request_id=None, lease_access_conditions=None, modified_access_conditions=None, cls=None, **kwargs):
+    def resize(self, blob_content_length, timeout=None, request_id=None, lease_access_conditions=None, cpk_info=None, modified_access_conditions=None, cls=None, **kwargs):
         """Resize the Blob.
 
         :param blob_content_length: This header specifies the maximum size for
@@ -962,6 +979,8 @@ class PageBlobOperations(object):
          operation
         :type lease_access_conditions:
          ~azure.storage.blob.models.LeaseAccessConditions
+        :param cpk_info: Additional parameters for the operation
+        :type cpk_info: ~azure.storage.blob.models.CpkInfo
         :param modified_access_conditions: Additional parameters for the
          operation
         :type modified_access_conditions:
@@ -977,6 +996,15 @@ class PageBlobOperations(object):
         lease_id = None
         if lease_access_conditions is not None:
             lease_id = lease_access_conditions.lease_id
+        encryption_key = None
+        if cpk_info is not None:
+            encryption_key = cpk_info.encryption_key
+        encryption_key_sha256 = None
+        if cpk_info is not None:
+            encryption_key_sha256 = cpk_info.encryption_key_sha256
+        encryption_algorithm = None
+        if cpk_info is not None:
+            encryption_algorithm = cpk_info.encryption_algorithm
         if_modified_since = None
         if modified_access_conditions is not None:
             if_modified_since = modified_access_conditions.if_modified_since
@@ -1013,6 +1041,12 @@ class PageBlobOperations(object):
             header_parameters['x-ms-client-request-id'] = self._serialize.header("request_id", request_id, 'str')
         if lease_id is not None:
             header_parameters['x-ms-lease-id'] = self._serialize.header("lease_id", lease_id, 'str')
+        if encryption_key is not None:
+            header_parameters['x-ms-encryption-key'] = self._serialize.header("encryption_key", encryption_key, 'str')
+        if encryption_key_sha256 is not None:
+            header_parameters['x-ms-encryption-key-sha256'] = self._serialize.header("encryption_key_sha256", encryption_key_sha256, 'str')
+        if encryption_algorithm is not None:
+            header_parameters['x-ms-encryption-algorithm'] = self._serialize.header("encryption_algorithm", encryption_algorithm, 'EncryptionAlgorithmType')
         if if_modified_since is not None:
             header_parameters['If-Modified-Since'] = self._serialize.header("if_modified_since", if_modified_since, 'rfc-1123')
         if if_unmodified_since is not None:

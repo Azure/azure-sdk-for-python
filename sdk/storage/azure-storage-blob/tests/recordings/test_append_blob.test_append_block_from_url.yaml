@@ -17,9 +17,9 @@ interactions:
       x-ms-blob-type:
       - AppendBlob
       x-ms-client-request-id:
-      - 5dddcbc6-cb7b-11e9-9452-001a7dda7113
+      - 74be8f46-d292-11e9-bdf7-001a7dda7113
       x-ms-date:
-      - Fri, 30 Aug 2019 23:10:32 GMT
+      - Sun, 08 Sep 2019 23:43:27 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -31,17 +31,17 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Fri, 30 Aug 2019 23:10:32 GMT
+      - Sun, 08 Sep 2019 23:43:27 GMT
       ETag:
-      - '"0x8D72D9F4226FAF0"'
+      - '"0x8D734B65926BCFC"'
       Last-Modified:
-      - Fri, 30 Aug 2019 23:10:32 GMT
+      - Sun, 08 Sep 2019 23:43:28 GMT
       Server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-client-request-id:
-      - 5dddcbc6-cb7b-11e9-9452-001a7dda7113
+      - 74be8f46-d292-11e9-bdf7-001a7dda7113
       x-ms-request-id:
-      - 49730188-701e-005f-6f88-5fe7c8000000
+      - a0db2b43-101e-0047-169f-66f960000000
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
@@ -1211,13 +1211,13 @@ interactions:
       Content-Length:
       - '65536'
       Content-Type:
-      - application/xml; charset=utf-8
+      - application/octet-stream
       User-Agent:
       - azsdk-python-storage-blob/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
-      - 5e05c2c0-cb7b-11e9-a58e-001a7dda7113
+      - 74fd4ed0-d292-11e9-921e-001a7dda7113
       x-ms-date:
-      - Fri, 30 Aug 2019 23:10:33 GMT
+      - Sun, 08 Sep 2019 23:43:28 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -1229,11 +1229,11 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Fri, 30 Aug 2019 23:10:32 GMT
+      - Sun, 08 Sep 2019 23:43:28 GMT
       ETag:
-      - '"0x8D72D9F423D9450"'
+      - '"0x8D734B6594EDEC2"'
       Last-Modified:
-      - Fri, 30 Aug 2019 23:10:33 GMT
+      - Sun, 08 Sep 2019 23:43:28 GMT
       Server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-blob-append-offset:
@@ -1241,11 +1241,11 @@ interactions:
       x-ms-blob-committed-block-count:
       - '1'
       x-ms-client-request-id:
-      - 5e05c2c0-cb7b-11e9-a58e-001a7dda7113
+      - 74fd4ed0-d292-11e9-921e-001a7dda7113
       x-ms-content-crc64:
       - UyN0g5X5nPA=
       x-ms-request-id:
-      - 497301cb-701e-005f-2788-5fe7c8000000
+      - a0db2b53-101e-0047-239f-66f960000000
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
@@ -1271,9 +1271,9 @@ interactions:
       x-ms-blob-type:
       - AppendBlob
       x-ms-client-request-id:
-      - 5e13d392-cb7b-11e9-b1b2-001a7dda7113
+      - 752821e6-d292-11e9-a491-001a7dda7113
       x-ms-date:
-      - Fri, 30 Aug 2019 23:10:33 GMT
+      - Sun, 08 Sep 2019 23:43:28 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -1285,17 +1285,17 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Fri, 30 Aug 2019 23:10:32 GMT
+      - Sun, 08 Sep 2019 23:43:28 GMT
       ETag:
-      - '"0x8D72D9F42450FC3"'
+      - '"0x8D734B65968A7FA"'
       Last-Modified:
-      - Fri, 30 Aug 2019 23:10:33 GMT
+      - Sun, 08 Sep 2019 23:43:28 GMT
       Server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-client-request-id:
-      - 5e13d392-cb7b-11e9-b1b2-001a7dda7113
+      - 752821e6-d292-11e9-a491-001a7dda7113
       x-ms-request-id:
-      - 4973020b-701e-005f-6188-5fe7c8000000
+      - a0db2b7b-101e-0047-4a9f-66f960000000
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
@@ -1319,11 +1319,11 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 5e1a5d7a-cb7b-11e9-9e4d-001a7dda7113
+      - 753f3900-d292-11e9-aae9-001a7dda7113
       x-ms-copy-source:
-      - https://emilydevtest.blob.core.windows.net/utcontainersource80c3118a/blob80c3118a?se=2019-08-31T00%3A10%3A33Z&sp=rd&sv=2019-02-02&sr=b&sig=kyMABiJ3hFUwg0qDOZ4DlleoXmHrKou3ZSpjPsGmeI4%3D
+      - https://emilystageaccount.blob.core.windows.net/utcontainersource80c3118a/blob80c3118a?se=2019-09-09T00%3A43%3A28Z&sp=rd&sv=2019-02-02&sr=b&sig=FAM7exDgIb8xcVwrzjKQnpGG8ew%2BB/OcmLMeW%2B5Lg%2B0%3D
       x-ms-date:
-      - Fri, 30 Aug 2019 23:10:33 GMT
+      - Sun, 08 Sep 2019 23:43:28 GMT
       x-ms-source-range:
       - bytes=0-4095
       x-ms-version:
@@ -1339,11 +1339,11 @@ interactions:
       Content-MD5:
       - MtRQZduQ7kx9FG+oxmqLmg==
       Date:
-      - Fri, 30 Aug 2019 23:10:32 GMT
+      - Sun, 08 Sep 2019 23:43:28 GMT
       ETag:
-      - '"0x8D72D9F425B5AFB"'
+      - '"0x8D734B659824A90"'
       Last-Modified:
-      - Fri, 30 Aug 2019 23:10:33 GMT
+      - Sun, 08 Sep 2019 23:43:28 GMT
       Server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-blob-append-offset:
@@ -1351,9 +1351,9 @@ interactions:
       x-ms-blob-committed-block-count:
       - '1'
       x-ms-client-request-id:
-      - 5e1a5d7a-cb7b-11e9-9e4d-001a7dda7113
+      - 753f3900-d292-11e9-aae9-001a7dda7113
       x-ms-request-id:
-      - 4973021e-701e-005f-7288-5fe7c8000000
+      - a0db2b84-101e-0047-539f-66f960000000
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
@@ -1377,11 +1377,11 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 5e312ac0-cb7b-11e9-afd1-001a7dda7113
+      - 7559e0e6-d292-11e9-ade7-001a7dda7113
       x-ms-copy-source:
-      - https://emilydevtest.blob.core.windows.net/utcontainersource80c3118a/blob80c3118a?se=2019-08-31T00%3A10%3A33Z&sp=rd&sv=2019-02-02&sr=b&sig=kyMABiJ3hFUwg0qDOZ4DlleoXmHrKou3ZSpjPsGmeI4%3D
+      - https://emilystageaccount.blob.core.windows.net/utcontainersource80c3118a/blob80c3118a?se=2019-09-09T00%3A43%3A28Z&sp=rd&sv=2019-02-02&sr=b&sig=FAM7exDgIb8xcVwrzjKQnpGG8ew%2BB/OcmLMeW%2B5Lg%2B0%3D
       x-ms-date:
-      - Fri, 30 Aug 2019 23:10:33 GMT
+      - Sun, 08 Sep 2019 23:43:28 GMT
       x-ms-source-range:
       - bytes=4096-65535
       x-ms-version:
@@ -1397,11 +1397,11 @@ interactions:
       Content-MD5:
       - k35jQp5JZBD2ebIjkqSYtQ==
       Date:
-      - Fri, 30 Aug 2019 23:10:32 GMT
+      - Sun, 08 Sep 2019 23:43:28 GMT
       ETag:
-      - '"0x8D72D9F4269B582"'
+      - '"0x8D734B6599CFE89"'
       Last-Modified:
-      - Fri, 30 Aug 2019 23:10:33 GMT
+      - Sun, 08 Sep 2019 23:43:28 GMT
       Server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-blob-append-offset:
@@ -1409,9 +1409,9 @@ interactions:
       x-ms-blob-committed-block-count:
       - '2'
       x-ms-client-request-id:
-      - 5e312ac0-cb7b-11e9-afd1-001a7dda7113
+      - 7559e0e6-d292-11e9-ade7-001a7dda7113
       x-ms-request-id:
-      - 4973026d-701e-005f-3c88-5fe7c8000000
+      - a0db2ba7-101e-0047-769f-66f960000000
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
@@ -1433,9 +1433,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 5e3ee728-cb7b-11e9-aedd-001a7dda7113
+      - 7574285c-d292-11e9-b4f7-001a7dda7113
       x-ms-date:
-      - Fri, 30 Aug 2019 23:10:33 GMT
+      - Sun, 08 Sep 2019 23:43:28 GMT
       x-ms-version:
       - '2019-02-02'
     method: HEAD
@@ -1451,15 +1451,13 @@ interactions:
       Content-Type:
       - application/xml; charset=utf-8
       Date:
-      - Fri, 30 Aug 2019 23:10:32 GMT
+      - Sun, 08 Sep 2019 23:43:28 GMT
       ETag:
-      - '"0x8D72D9F4269B582"'
+      - '"0x8D734B6599CFE89"'
       Last-Modified:
-      - Fri, 30 Aug 2019 23:10:33 GMT
+      - Sun, 08 Sep 2019 23:43:28 GMT
       Server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
       x-ms-access-tier:
       - Hot
       x-ms-access-tier-inferred:
@@ -1469,19 +1467,17 @@ interactions:
       x-ms-blob-type:
       - AppendBlob
       x-ms-client-request-id:
-      - 5e3ee728-cb7b-11e9-aedd-001a7dda7113
+      - 7574285c-d292-11e9-b4f7-001a7dda7113
       x-ms-creation-time:
-      - Fri, 30 Aug 2019 23:10:33 GMT
+      - Sun, 08 Sep 2019 23:43:28 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
       - unlocked
       x-ms-request-id:
-      - 49730282-701e-005f-4f88-5fe7c8000000
+      - a0db2bbe-101e-0047-0d9f-66f960000000
       x-ms-server-encrypted:
       - 'true'
-      x-ms-tag-count:
-      - '0'
       x-ms-version:
       - '2019-02-02'
     status:
@@ -1491,7 +1487,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/xml, application/octet-stream, text/plain
+      - application/xml
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -1501,9 +1497,9 @@ interactions:
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 5e45e85c-cb7b-11e9-97fa-001a7dda7113
+      - 758a9c26-d292-11e9-9068-001a7dda7113
       x-ms-date:
-      - Fri, 30 Aug 2019 23:10:33 GMT
+      - Sun, 08 Sep 2019 23:43:29 GMT
       x-ms-range:
       - bytes=0-33554431
       x-ms-version:
@@ -2673,33 +2669,29 @@ interactions:
       Content-Type:
       - application/xml; charset=utf-8
       Date:
-      - Fri, 30 Aug 2019 23:10:32 GMT
+      - Sun, 08 Sep 2019 23:43:28 GMT
       ETag:
-      - '"0x8D72D9F4269B582"'
+      - '"0x8D734B6599CFE89"'
       Last-Modified:
-      - Fri, 30 Aug 2019 23:10:33 GMT
+      - Sun, 08 Sep 2019 23:43:28 GMT
       Server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
       x-ms-blob-committed-block-count:
       - '2'
       x-ms-blob-type:
       - AppendBlob
       x-ms-client-request-id:
-      - 5e45e85c-cb7b-11e9-97fa-001a7dda7113
+      - 758a9c26-d292-11e9-9068-001a7dda7113
       x-ms-creation-time:
-      - Fri, 30 Aug 2019 23:10:33 GMT
+      - Sun, 08 Sep 2019 23:43:28 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
       - unlocked
       x-ms-request-id:
-      - 497302c1-701e-005f-0688-5fe7c8000000
+      - a0db2bcb-101e-0047-199f-66f960000000
       x-ms-server-encrypted:
       - 'true'
-      x-ms-tag-count:
-      - '0'
       x-ms-version:
       - '2019-02-02'
     status:
