@@ -62,7 +62,7 @@ configuration:
 
 |credential class|identity|configuration
 |-|-|-
-|`DefaultAzureCredential`|service principal, managed identity, user|none for managed identity or [single sign-on](#single-sign-on); [environment variables](#environment-variables) for service principal or user authentication
+|`DefaultAzureCredential`|service principal, managed identity, user|none for managed identity, [environment variables](#environment-variables) for service principal or user authentication
 |`ManagedIdentityCredential`|managed identity|none
 |`EnvironmentCredential`|service principal|[environment variables](#environment-variables)
 |`ClientSecretCredential`|service principal|constructor parameters
