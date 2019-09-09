@@ -39,6 +39,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
     be created to allow event data to be automatically routed to an available partition or specific
     to a partition.
 
+    Please use the method `create_producer` on `EventHubClient` for creating `EventHubProducer`.
     """
     _timeout_symbol = b'com.microsoft:timeout'
 
