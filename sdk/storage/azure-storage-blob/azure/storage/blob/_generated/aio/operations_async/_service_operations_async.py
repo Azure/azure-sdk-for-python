@@ -540,7 +540,7 @@ class ServiceOperations:
         # Construct body
 
         # Construct and send request
-        request = self._client.get(url, query_parameters, header_parameters, stream_content=body)
+        request = self._client.post(url, query_parameters, header_parameters, stream_content=body)
         pipeline_response = await self._client._pipeline.run(request, stream=True, **kwargs)
         response = pipeline_response.http_response
 
