@@ -217,13 +217,11 @@ if __name__ == '__main__':
                 for lib in sorted(libs):
                     print('    * %s' % (lib))
 
-    exitcode = 0
-
     frozen_filename = os.path.join(base_dir, 'shared_requirements.txt')
     if args.freeze:
-        if exitcode != 0:
+        if inconsistent:
             print('Unable to freeze requirements due to incompatible dependency versions')
-            sys.exit(exitcode)
+            sys.exit(1)
         else:
             with io.open(frozen_filename, 'w', encoding='utf-8') as frozen_file:
                 for requirement in sorted(dependencies.keys()):
@@ -249,9 +247,10 @@ if __name__ == '__main__':
                     frozen[req_name] = [spec]
     except:
         print('Unable to open shared_requirements.txt, shared requirements have not been validated')
-        
+
     missing_reqs, new_reqs, changed_reqs = {}, {}, {}
     non_overridden_reqs_count = 0
+    exitcode = 0
     if frozen:
         flat_deps = {req: sorted(dependencies[req].keys()) for req in dependencies}
         missing_reqs, new_reqs, changed_reqs = dict_compare(frozen, flat_deps)
