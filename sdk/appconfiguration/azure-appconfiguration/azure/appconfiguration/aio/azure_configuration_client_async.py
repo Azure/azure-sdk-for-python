@@ -40,7 +40,7 @@ class AzureAppConfigurationClient:
 
     """
     def __init__(self, base_url, credential, **kwargs):
-
+        # type: (str, AppConfigConnectionStringCredential, Any) -> None
         self.config = ConfigurationClientConfiguration(credential, **kwargs)
         self.config.user_agent_policy = UserAgentPolicy(
             base_user_agent=USER_AGENT, **kwargs

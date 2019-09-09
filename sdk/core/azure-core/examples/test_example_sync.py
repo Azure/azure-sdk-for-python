@@ -40,7 +40,8 @@ def test_example_requests():
     config = Configuration()
     policies = [
         UserAgentPolicy("myuseragent"),
-        RedirectPolicy()
+        RedirectPolicy(),
+        RetryPolicy()
     ]
     # [START requests]
     from azure.core.pipeline.transport import RequestsTransport

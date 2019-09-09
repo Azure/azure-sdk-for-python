@@ -29,10 +29,10 @@ jobs:
     pool:
       vmImage: 'ubuntu-16.04'
 
-      steps:
-      - template: ../steps/analyze.yml
+    steps:
+    - template: ../steps/analyze.yml
 
-  - job: 'Generic_Tests'
+  - job: 'Test'
     variables:
     - template: ../variables/globals.yml
 
@@ -47,27 +47,37 @@ jobs:
           OSName: 'Linux'
           OSVmImage: 'ubuntu-16.04'
           PythonVersion: '2.7'
-        Linux_Python35:
-          OSName: 'Linux'
-          OSVmImage: 'ubuntu-16.04'
-          PythonVersion: '3.5'
-        Linux_Python36:
-          OSName: 'Linux'
-          OSVmImage: 'ubuntu-16.04'
-          PythonVersion: '3.6'
+          CoverageArg: ''
         Linux_Python37:
           OSName: 'Linux'
           OSVmImage: 'ubuntu-16.04'
           PythonVersion: '3.7'
-        Windows_Python35:
-          OSName: 'Windows'
-          OSVmImage: 'vs2017-win2016'
+          CoverageArg: ''
+        Linux_Python36:
+          OSName: 'Linux'
+          OSVmImage: 'ubuntu-16.04'
+          PythonVersion: '3.6'
+          CoverageArg: '--disablecov'
+        Linux_Python35:
+          OSName: 'Linux'
+          OSVmImage: 'ubuntu-16.04'
           PythonVersion: '3.5'
-        MacOS_Python27:
+          CoverageArg: '--disablecov'
+        Linux_PyPy3:
+          OSName: 'Linux'
+          OSVmImage: 'ubuntu-16.04'
+          PythonVersion: 'pypy3'
+          CoverageArg: '--disablecov'
+        Windows_Python27:
+          OSName: 'Windows'
+          OSVmImage: 'windows-2019'
+          PythonVersion: '2.7'
+          CoverageArg: '--disablecov'
+        MacOS_Python35:
           OSName: 'MacOS'
           OSVmImage: 'macOS-10.13'
-          PythonVersion: '2.7'
-
+          PythonVersion: '3.5'
+          CoverageArg: '--disablecov'
     pool:
       vmImage: '$(OSVmImage)'
 
@@ -80,46 +90,10 @@ jobs:
         PythonVersion: $(PythonVersion)
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
+        CoverageArg: $(CoverageArg)
         BeforeTestSteps: 
           - task: DownloadPipelineArtifact@0
             inputs:
               artifactName: 'artifacts' 
               targetPath: $(Build.ArtifactStagingDirectory)
-        ToxTestEnv: "whl,sdist"  
-    - template: ../steps/publish-coverage.yml
-
-  # Run PyPy tests without coverage
-  - job: 'Test_PyPy'
-
-    variables:
-    - template: ../variables/globals.yml
-    - name: OSName
-      value: 'Linux'
-    - name: PythonVersion
-      value: 'pypy3'
-    - name: OSVmImage
-      value: ubuntu-16.04
-
-    dependsOn:
-      - 'Build'
-
-    timeoutInMinutes: 240
-    
-    pool:
-      vmImage: $(OSVmImage)
-
-    steps:
-      - template: ../steps/test-nightly.yml
-        parameters:
-          AdditionalTestArgs: '--disablecov --wheel_dir="$(Build.ArtifactStagingDirectory)"'
-          ServiceDirectory: ${{ parameters.ServiceDirectory }}
-          TestMarkArgument: ${{ parameters.TestMarkArgument }}
-          OSName: $(OSName)
-          PythonVersion: $(PythonVersion)
-          BuildTargetingString: ${{ parameters.BuildTargetingString }}
-          BeforeTestSteps: 
-            - task: DownloadPipelineArtifact@0
-              inputs:
-                artifactName: 'artifacts' 
-                targetPath: $(Build.ArtifactStagingDirectory)
-          ToxTestEnv: "whl,sdist"
+        ToxTestEnv: "whl,sdist"
