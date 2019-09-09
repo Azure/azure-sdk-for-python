@@ -40,6 +40,12 @@ class SettingKind(str, Enum):
     alert_suppression_setting = "AlertSuppressionSetting"
 
 
+class ValueType(str, Enum):
+
+    ip_cidr = "IpCidr"  #: An IP range in CIDR format (e.g. '192.168.0.1/8').
+    string = "String"  #: Any string value.
+
+
 class SecuritySolutionStatus(str, Enum):
 
     enabled = "Enabled"
