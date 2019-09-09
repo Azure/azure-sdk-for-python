@@ -35,6 +35,8 @@ def _get_file_permission(file_permission, file_permission_key, default_permissio
 
 
 def _parse_datetime_from_str(string_datetime):
+    if not string_datetime:
+        return None
     dt, _, us = string_datetime.partition(".")
     dt = datetime.strptime(dt, "%Y-%m-%dT%H:%M:%S")
     us = int(us[:-2])  # microseconds
