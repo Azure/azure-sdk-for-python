@@ -37,7 +37,8 @@ from ._generated.models import (
     SourceModifiedAccessConditions,
     ModifiedAccessConditions,
     SequenceNumberAccessConditions,
-    StorageErrorException)
+    StorageErrorException,
+    UserDelegationKey)
 from ._deserialize import deserialize_blob_properties, deserialize_blob_stream
 from ._upload_helpers import (
     upload_block_blob,
@@ -233,8 +234,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             content_encoding=None,  # type: Optional[str]
             content_language=None,  # type: Optional[str]
             content_type=None,  # type: Optional[str]
-            user_delegation_key=None
-        ):
+            user_delegation_key=None  # type: Optional[UserDelegationKey]
+            ):
         # type: (...) -> Any
         """
         Generates a shared access signature for the blob.

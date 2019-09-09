@@ -1264,9 +1264,8 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertEqual(self.byte_data, blob_response.content)
         self.assertTrue(container_response.ok)
 
+    @record
     def test_get_user_delegation_key(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
         # Act
         token_credential = self.generate_oauth_token()
 
