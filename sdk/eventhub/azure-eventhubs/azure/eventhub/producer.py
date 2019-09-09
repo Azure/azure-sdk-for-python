@@ -12,6 +12,11 @@ from typing import Iterable, Union
 from uamqp import types, constants, errors  # type: ignore
 from uamqp import SendClient  # type: ignore
 
+from azure.core.tracing.context import tracing_context
+from azure.core.settings import settings
+from opencensus.trace.span import SpanKind
+from opencensus.trace.status import Status
+
 from azure.eventhub.common import EventData, EventDataBatch
 from azure.eventhub.error import _error_handler, OperationTimeoutError, EventDataError
 from ._consumer_producer_mixin import ConsumerProducerMixin
@@ -218,6 +223,15 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
                 :caption: Sends an event data and blocks until acknowledgement is received or operation times out.
 
         """
+        # Tracing code
+        parent_span = tracing_context.current_span.get()
+        wrapper_class = settings.tracing_implementation()
+        if parent_span is None and wrapper_class is not None:
+            current_span_instance = wrapper_class.get_current_span()
+            parent_span = wrapper_class(current_span_instance)
+
+        child = parent_span.span(name="Azure.EventHubs.send")
+        child.span_instance.span_kind = SpanKind.CLIENT
 
         self._check_closed()
         if isinstance(event_data, EventData):
@@ -235,7 +249,19 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
                 wrapper_event_data = EventDataBatch._from_batch(event_data, partition_key)  # pylint: disable=protected-access
         wrapper_event_data.message.on_send_complete = self._on_outcome
         self._unsent_events = [wrapper_event_data.message]
-        self._send_event_data_with_retry(timeout=timeout)
+
+        # Start current span and set metadata
+        child.start()
+        child.add_attribute("component", "eventhubs")
+        child.add_attribute("message_bus.destination", self._client._address.path)
+        child.add_attribute("peer.address", self._client._address.hostname)
+
+        try:
+            self._send_event_data_with_retry(timeout=timeout)
+        except Exception as err:
+            child.span_instance.status = Status.from_exception(err)
+        finally:
+            child.finish()
 
     def close(self, exception=None):  # pylint:disable=useless-super-delegation
         # type:(Exception) -> None
