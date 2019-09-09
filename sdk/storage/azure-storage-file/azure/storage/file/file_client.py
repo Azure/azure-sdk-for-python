@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
+# pylint: disable=too-many-lines
 import functools
 from io import BytesIO
 from typing import ( # pylint: disable=unused-import
@@ -784,8 +784,9 @@ class FileClient(StorageAccountHostsMixin):
                               range_start,  # type: int
                               range_end,  # type: int
                               source_range_start,  # type: int
-                              **kwargs
+                              **kwargs  # type: Any
                               ):
+        # type: (str, int, int, int, **Any) -> Dict[str, Any]
         '''
         Writes the bytes from one Azure File endpoint into the specified range of another Azure File endpoint.
 
@@ -818,10 +819,10 @@ class FileClient(StorageAccountHostsMixin):
         '''
 
         options = self._upload_range_from_url_options(
-            source_url,
-            range_start,
-            range_end,
-            source_range_start,
+            source_url=source_url,
+            range_start=range_start,
+            range_end=range_end,
+            source_range_start=source_range_start,
             **kwargs
         )
         try:
