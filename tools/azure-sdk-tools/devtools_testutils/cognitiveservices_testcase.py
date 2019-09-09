@@ -65,6 +65,7 @@ class CognitiveServicesAccountPreparer(AzureMgmtPreparer):
             time.sleep(5)  # it takes a few seconds to create a cognitive services account
             self.resource = cogsci_account
             self.cogsci_key = self.client.accounts.list_keys(group.name, name).key1
+            # FIXME: LuisAuthoringClient and LuisRuntimeClient need authoring key from ARM API (coming soon-ish)
         else:
             self.resource = FakeCognitiveServicesAccount("https://{}.api.cognitive.microsoft.com".format(self.location))
             self.cogsci_key = 'ZmFrZV9hY29jdW50X2tleQ=='
