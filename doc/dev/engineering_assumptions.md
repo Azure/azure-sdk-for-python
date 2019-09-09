@@ -1,6 +1,11 @@
 ## Engineering System Assumptions, Gotchas, and Minutiae
 
-1. All wheels are generated with `--universal` flag passed to `bdist_wheel`. We do not currently allow non-universal packages to be shipped out of this repository.
+1. All wheels are generated with influence from `setup.cfg` at the built package root. This means that for most of our packages, the `universal` flag is set within the `setup.cfg`.
+
+```
+[bdist_wheel]
+universal=1
+```
 
 ## Build
 

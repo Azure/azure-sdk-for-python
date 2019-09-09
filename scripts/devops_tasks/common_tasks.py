@@ -16,6 +16,9 @@ import errno
 import shutil
 import sys
 import logging
+import ast
+import textwrap
+import io
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -34,9 +37,7 @@ def log_file(file_location, is_error=False):
         for line in file:
             sys.stdout.write(line)
         sys.stdout.write("\n")
-        # CI consistently sees outputs in the wrong location. Trying this to see if it helps
         sys.stdout.flush()
-
 
 
 def read_file(file_location):
@@ -68,6 +69,44 @@ def clean_coverage(coverage_dir):
         else:
             raise
 
+def parse_setup_classifers(setup_filename):
+    mock_setup = textwrap.dedent('''\
+    def setup(*args, **kwargs):
+        __setup_calls__.append((args, kwargs))
+    ''')
+    parsed_mock_setup = ast.parse(mock_setup, filename=setup_filename)
+    with io.open(setup_filename, 'r', encoding='utf-8-sig') as setup_file:
+        parsed = ast.parse(setup_file.read())
+        for index, node in enumerate(parsed.body[:]):
+            if (
+                not isinstance(node, ast.Expr) or
+                not isinstance(node.value, ast.Call) or
+                not hasattr(node.value.func, 'id') or
+                node.value.func.id != 'setup'
+            ):
+                continue
+            parsed.body[index:index] = parsed_mock_setup.body
+            break
+
+    fixed = ast.fix_missing_locations(parsed)
+    codeobj = compile(fixed, setup_filename, 'exec')
+    local_vars = {}
+    global_vars = {'__setup_calls__': []}
+    current_dir = os.getcwd()
+    working_dir = os.path.dirname(setup_filename)
+    os.chdir(working_dir)
+    exec(codeobj, global_vars, local_vars)
+    os.chdir(current_dir)
+    _, kwargs = global_vars['__setup_calls__'][0]
+
+    classifiers = kwargs['classifiers']
+    return classifiers
+
+def filter_for_compatibility(package_set):
+    for pkg in package_set:
+        print(parse_setup_classifers(pkg))
+
+    return []
 
 # this function is where a glob string gets translated to a list of packages
 # It is called by both BUILD (package) and TEST. In the future, this function will be the central location
@@ -91,12 +130,16 @@ def process_glob_string(glob_string, target_root_dir):
     # if we have individually queued this specific package, it's obvious that we want to build it specifically
     # in this case, do not honor the omission list
     if len(collected_directories) == 1:
-        return collected_directories
+        return filter_for_compatibility(collected_directories)
     # however, if there are multiple packages being built, we should honor the omission list and NOT build the omitted
     # packages
     else:
-        return sorted(remove_omitted_packages(collected_directories))
+        allowed_package_set = remove_omitted_packages(collected_directories)
+        logging.info("Target packages after filtering by omission list: {}".format(allowed_package_set))
 
+        pkg_set_ci_filtered = filter_for_compatibility(allowed_package_set)
+        logging.info("Target packages after ci compatibility filter: {}".format(list(set(allowed_package_set) - set(pkg_set_ci_filtered))))
+        return sorted(pkg_set_ci_filtered)
 
 def remove_omitted_packages(collected_directories):
     return [
