@@ -12,6 +12,19 @@
 from msrest.paging import Paged
 
 
+class ReservationResponsePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ReservationResponse <azure.mgmt.reservations.models.ReservationResponse>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ReservationResponse]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ReservationResponsePaged, self).__init__(*args, **kwargs)
 class ReservationOrderResponsePaged(Paged):
     """
     A paging container for iterating over a list of :class:`ReservationOrderResponse <azure.mgmt.reservations.models.ReservationOrderResponse>` object
@@ -25,3 +38,16 @@ class ReservationOrderResponsePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(ReservationOrderResponsePaged, self).__init__(*args, **kwargs)
+class OperationResponsePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`OperationResponse <azure.mgmt.reservations.models.OperationResponse>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[OperationResponse]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(OperationResponsePaged, self).__init__(*args, **kwargs)
