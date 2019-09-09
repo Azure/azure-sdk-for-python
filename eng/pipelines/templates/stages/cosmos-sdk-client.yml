@@ -10,7 +10,7 @@ stages:
       - template: ../jobs/archetype-sdk-client.yml
         parameters:
           ServiceDirectory: ${{ parameters.ServiceDirectory }}
-          # Skip emulator tests in this run
+          # Skip emulator tests in the CI run
           TestMarkArgument: not cosmosEmulator
 
       # TODO: Refactor into a template?
@@ -43,7 +43,3 @@ stages:
               PythonVersion: $(PythonVersion)
               OSName: $(OSName)
               ToxTestEnv: 'whl,sdist'
-              
-
-
-
