@@ -106,8 +106,6 @@ try:
     database = client.create_database(database_name)
 except errors.CosmosResourceExistsError:
     database = client.get_database_client(database_name)
-except errors.CosmosHttpResponseError:
-    raise
 ```
 
 ### Create a container

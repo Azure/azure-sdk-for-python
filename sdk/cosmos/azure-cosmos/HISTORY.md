@@ -25,7 +25,7 @@ Version 4.0.0b2 is the second iteration in our efforts to build a more Pythonic 
         - `multiple_write_locations`
 - A new classmethod constructor has been added to `CosmosClient` to enable creation via a connection string retrieved from the Azure portal.
 - Some `read_all` operations have been renamed to `list` operations:
-    - `CosmosClient.read_all_databases` -> `CosmosClient.list_database`
+    - `CosmosClient.read_all_databases` -> `CosmosClient.list_databases`
     - `Container.read_all_conflicts` -> `ContainerProxy.list_conflicts`
     - `Database.read_all_containers` -> `DatabaseProxy.list_containers`
     - `Database.read_all_users` -> `DatabaseProxy.list_users`
