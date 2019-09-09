@@ -25,7 +25,7 @@ class QueryTest(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
         
-        cls.client = cosmos_client.CosmosClient(cls.host, {'masterKey': cls.masterKey}, connection_policy=cls.connectionPolicy)
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, connection_policy=cls.connectionPolicy)
         cls.created_db = cls.config.create_database_if_not_exist(cls.client)
 
     def test_first_and_last_slashes_trimmed_for_query_string (self):
@@ -56,7 +56,7 @@ class QueryTest(unittest.TestCase):
         iter_list = list(query_iterable)
         self.assertEqual(len(iter_list), 0)
         self.assertTrue('etag' in created_collection.client_connection.last_response_headers)
-        self.assertNotEquals(created_collection.client_connection.last_response_headers['etag'], '')
+        self.assertNotEqual(created_collection.client_connection.last_response_headers['etag'], '')
 
         # Read change feed from beginning should return an empty list
         query_iterable = created_collection.query_items_change_feed(
@@ -67,7 +67,7 @@ class QueryTest(unittest.TestCase):
         self.assertEqual(len(iter_list), 0)
         self.assertTrue('etag' in created_collection.client_connection.last_response_headers)
         continuation1 = created_collection.client_connection.last_response_headers['etag']
-        self.assertNotEquals(continuation1, '')
+        self.assertNotEqual(continuation1, '')
 
         # Create a document. Read change feed should return be able to read that document
         document_definition = {'pk': 'pk', 'id':'doc1'}
@@ -81,8 +81,8 @@ class QueryTest(unittest.TestCase):
         self.assertEqual(iter_list[0]['id'], 'doc1')
         self.assertTrue('etag' in created_collection.client_connection.last_response_headers)
         continuation2 = created_collection.client_connection.last_response_headers['etag']
-        self.assertNotEquals(continuation2, '')
-        self.assertNotEquals(continuation2, continuation1)
+        self.assertNotEqual(continuation2, '')
+        self.assertNotEqual(continuation2, continuation1)
 
         # Create two new documents. Verify that change feed contains the 2 new documents
         # with page size 1 and page size 100
@@ -105,7 +105,7 @@ class QueryTest(unittest.TestCase):
                 actual_ids += item['id'] + '.'    
             self.assertEqual(actual_ids, expected_ids)
 
-            # verify fetch_next_block
+            # verify by_page
             # the options is not copied, therefore it need to be restored
             query_iterable = created_collection.query_items_change_feed(
                 partition_key_range_id=pkRangeId,
@@ -115,19 +115,16 @@ class QueryTest(unittest.TestCase):
             count = 0
             expected_count = 2
             all_fetched_res = []
-            while (True):
-                fetched_res = query_iterable.fetch_next_block()
-                self.assertEquals(len(fetched_res), min(pageSize, expected_count - count))
+            for page in query_iterable.by_page():
+                fetched_res = list(page)
+                self.assertEqual(len(fetched_res), min(pageSize, expected_count - count))
                 count += len(fetched_res)
                 all_fetched_res.extend(fetched_res)
-                if len(fetched_res) == 0:
-                    break
+
             actual_ids = ''
             for item in all_fetched_res:
                 actual_ids += item['id'] + '.'
             self.assertEqual(actual_ids, expected_ids)
-            # verify there's no more results
-            self.assertEquals(query_iterable.fetch_next_block(), [])
 
         # verify reading change feed from the beginning
         query_iterable = created_collection.query_items_change_feed(
@@ -138,7 +135,7 @@ class QueryTest(unittest.TestCase):
         it = query_iterable.__iter__()
         for i in range(0, len(expected_ids)):
             doc = next(it)
-            self.assertEquals(doc['id'], expected_ids[i])
+            self.assertEqual(doc['id'], expected_ids[i])
         self.assertTrue('etag' in created_collection.client_connection.last_response_headers)
         continuation3 = created_collection.client_connection.last_response_headers['etag']
 
@@ -203,11 +200,10 @@ class QueryTest(unittest.TestCase):
         self.count = 0
         self.OriginalExecuteFunction = retry_utility.ExecuteFunction
         retry_utility.ExecuteFunction = self._MockExecuteFunction
-        block = query_iterable.fetch_next_block()
-        while block:
-            block = query_iterable.fetch_next_block()
+        for block in query_iterable.by_page():
+            assert len(list(block)) != 0
         retry_utility.ExecuteFunction = self.OriginalExecuteFunction
-        self.assertEquals(self.count, expected_count)
+        self.assertEqual(self.count, expected_count)
         self.count = 0
 
     def _MockExecuteFunction(self, function, *args, **kwargs):

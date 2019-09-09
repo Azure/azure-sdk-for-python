@@ -97,7 +97,7 @@ class ItemManagement:
             # python 3 compatible: convert data from byte to unicode string
             data = data.decode('utf-8')
         data = json.loads(data)
-        created_collection = db.get_container_client(data['id'])
+        created_collection = db.get_container_client("mycoll")
 
         # Create a document in the non partitioned collection using the rest API and older version
         resource_url = base_url_split[0] + ":" + base_url_split[1] + ":" + base_url_split[2].split("/")[0] \
@@ -122,7 +122,7 @@ class ItemManagement:
             data = data.decode('utf-8')
         data = json.loads(data)
         created_document = data
-        return created_collection, created_document
+        return created_collection, "SaledOrder0"
 
     @staticmethod
     def get_authorization(client, verb, resource_id_or_fullname, resource_type, headers):
@@ -162,7 +162,7 @@ class ItemManagement:
         print('\n1.2 Reading Item by Id\n')
 
         # Note that Reads require a partition key to be spcified.
-        response = container.read_item(id=doc_id, partition_key=partition_key.NonePartitionKeyValue)
+        response = container.read_item(doc_id, partition_key=partition_key.NonePartitionKeyValue)
 
         print('Item read by Id {0}'.format(doc_id))
         print('Account Number: {0}'.format(response.get('account_number')))
@@ -175,7 +175,7 @@ class ItemManagement:
         # NOTE: Use MaxItemCount on Options to control how many items come back per trip to the server
         #       Important to handle throttles whenever you are doing operations such as this that might
         #       result in a 429 (throttled request)
-        item_list = list(container.list_items(max_item_count=10))
+        item_list = list(container.read_all_items(max_item_count=10))
 
         print('Found {0} items'.format(item_list.__len__()))
 
@@ -201,7 +201,7 @@ class ItemManagement:
     def ReplaceItem(container, doc_id):
         print('\n1.5 Replace an Item\n')
 
-        read_item = container.read_item(id=doc_id, partition_key=partition_key.NonePartitionKeyValue)
+        read_item = container.read_item(doc_id, partition_key=partition_key.NonePartitionKeyValue)
         read_item['subtotal'] = read_item['subtotal'] + 1
         response = container.replace_item(item=read_item, body=read_item)
 
@@ -211,7 +211,7 @@ class ItemManagement:
     def UpsertItem(container, doc_id):
         print('\n1.6 Upserting an item\n')
 
-        read_item = container.read_item(id=doc_id, partition_key=partition_key.NonePartitionKeyValue)
+        read_item = container.read_item(doc_id, partition_key=partition_key.NonePartitionKeyValue)
         read_item['subtotal'] = read_item['subtotal'] + 1
         response = container.upsert_item(body=read_item)
 
@@ -285,26 +285,19 @@ def run_sample():
             # setup database for this sample
             try:
                 db = client.create_database(id=DATABASE_ID)
-
-            except errors.HTTPFailure as e:
-                if e.status_code == 409:
-                    pass
-                else:
-                    raise errors.HTTPFailure(e.status_code)
+            except errors.CosmosResourceExistsError:
+                db = client.get_database_client(DATABASE_ID)
 
             # setup container for this sample
             try:
                 container, document = ItemManagement.CreateNonPartitionedCollection(db)
                 print('Container with id \'{0}\' created'.format(CONTAINER_ID))
 
-            except errors.HTTPFailure as e:
-                if e.status_code == 409:
-                    print('Container with id \'{0}\' was found'.format(CONTAINER_ID))
-                else:
-                    raise errors.HTTPFailure(e.status_code)
+            except errors.CosmosResourceExistsError:
+                print('Container with id \'{0}\' was found'.format(CONTAINER_ID))
 
             # Read Item created in non partitioned collection using older API version
-            ItemManagement.ReadItem(container, document['id'])
+            ItemManagement.ReadItem(container, document)
             ItemManagement.CreateItems(container)
             ItemManagement.ReadItems(container)
             ItemManagement.QueryItems(container, 'SalesOrder1')
@@ -315,14 +308,10 @@ def run_sample():
             # cleanup database after sample
             try:
                 client.delete_database(db)
+            except errors.CosmosResourceNotFoundError:
+                pass
 
-            except errors.CosmosError as e:
-                if e.status_code == 404:
-                    pass
-                else:
-                    raise errors.HTTPFailure(e.status_code)
-
-        except errors.HTTPFailure as e:
+        except errors.CosmosHttpResponseError as e:
             print('\nrun_sample has caught an error. {0}'.format(e.message))
 
         finally:

@@ -19,19 +19,27 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+# pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
+
 """Create, read, update and delete permissions in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, List, Dict, Union, cast
+from typing import Any, List, Dict, Union, cast, Iterable, Optional
 
 import six
-from azure.core.tracing.decorator import distributed_trace
+from azure.core.tracing.decorator import distributed_trace  # type: ignore
 
 from ._cosmos_client_connection import CosmosClientConnection
+from ._base import build_options
 from .permission import Permission
 
 
-class User:
+class UserProxy(object):
+    """
+    An interface to interact with a specific user.
+    This class should not be instantiated directly, use :func:`DatabaseProxy.get_user_client` method.
+    """
+
     def __init__(self, client_connection, id, database_link, properties=None):  # pylint: disable=redefined-builtin
         # type: (CosmosClientConnection, str, str, Dict[str, Any]) -> None
         self.client_connection = client_connection
@@ -52,44 +60,45 @@ class User:
     def _get_properties(self):
         # type: () -> Dict[str, Any]
         if self._properties is None:
-            self.read()
+            self._properties = self.read()
         return self._properties
 
     @distributed_trace
-    def read(self, request_options=None, response_hook=None, **kwargs):
-        # type: (Dict[str, Any], Optional[Callable]) -> User
+    def read(self, **kwargs):
+        # type: (Any) -> Dict[str, Any]
         """
         Read user propertes.
 
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
-        :returns: A :class:`User` instance representing the retrieved user.
-        :raise `HTTPFailure`: If the given user couldn't be retrieved.
-
+        :returns: A :class:`UserProxy` instance representing the retrieved user.
+        :raise `CosmosHttpResponseError`: If the given user couldn't be retrieved.
+        :rtype: dict[str, Any]
         """
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
+        request_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
 
         self._properties = self.client_connection.ReadUser(user_link=self.user_link, options=request_options, **kwargs)
 
         if response_hook:
             response_hook(self.client_connection.last_response_headers, self._properties)
 
-        return self._properties
+        return cast('Dict[str, Any]', self._properties)
 
     @distributed_trace
-    def read_all_permissions(self, max_item_count=None, feed_options=None, response_hook=None, **kwargs):
-        # type: (int, Dict[str, Any], Optional[Callable]) -> QueryIterable
-        """ List all permission for the user.
+    def list_permissions(self, max_item_count=None, **kwargs):
+        # type: (Optional[int], Any) -> Iterable[Dict[str, Any]]
+        """
+        List all permission for the user.
 
         :param max_item_count: Max number of permissions to be returned in the enumeration operation.
         :param feed_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
         :returns: An Iterable of permissions (dicts).
-
+        :rtype: Iterable[dict[str, Any]]
         """
-        if not feed_options:
-            feed_options = {}  # type: Dict[str, Any]
+        feed_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
@@ -106,12 +115,11 @@ class User:
         query,
         parameters=None,
         max_item_count=None,
-        feed_options=None,
-        response_hook=None,
         **kwargs
     ):
-        # type: (str, List, int, Dict[str, Any], Optional[Callable]) -> QueryIterable
-        """Return all permissions matching the given `query`.
+        # type: (str, Optional[List[str]], Optional[int], Any) -> Iterable[Dict[str, Any]]
+        """
+        Return all permissions matching the given `query`.
 
         :param query: The Azure Cosmos DB SQL query to execute.
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
@@ -119,10 +127,10 @@ class User:
         :param feed_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
         :returns: An Iterable of permissions (dicts).
-
+        :rtype: Iterable[dict[str, Any]]
         """
-        if not feed_options:
-            feed_options = {}  # type: Dict[str, Any]
+        feed_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
 
@@ -139,8 +147,8 @@ class User:
         return result
 
     @distributed_trace
-    def get_permission(self, permission, request_options=None, response_hook=None, **kwargs):
-        # type: (str, Dict[str, Any], Optional[Callable]) -> Permission
+    def get_permission(self, permission, **kwargs):
+        # type: (str, Any) -> Permission
         """
         Get the permission identified by `id`.
 
@@ -149,43 +157,43 @@ class User:
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
         :returns: A dict representing the retrieved permission.
-        :raise `HTTPFailure`: If the given permission couldn't be retrieved.
-
+        :raise `CosmosHttpResponseError`: If the given permission couldn't be retrieved.
+        :rtype: dict[str, Any]
         """
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
+        request_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
 
-        permission = self.client_connection.ReadPermission(
+        permission_resp = self.client_connection.ReadPermission(
             permission_link=self._get_permission_link(permission), options=request_options, **kwargs
-        )
+        )  # type: Dict[str, str]
 
         if response_hook:
-            response_hook(self.client_connection.last_response_headers, permission)
+            response_hook(self.client_connection.last_response_headers, permission_resp)
 
         return Permission(
-            id=permission["id"],
+            id=permission_resp["id"],
             user_link=self.user_link,
-            permission_mode=permission["permissionMode"],
-            resource_link=permission["resource"],
-            properties=permission,
+            permission_mode=permission_resp["permissionMode"],
+            resource_link=permission_resp["resource"],
+            properties=permission_resp,
         )
 
     @distributed_trace
-    def create_permission(self, body, request_options=None, response_hook=None, **kwargs):
-        # type: (Dict[str, Any], Dict[str, Any], Optional[Callable]) -> Permission
-        """ Create a permission for the user.
+    def create_permission(self, body, **kwargs):
+        # type: (Dict[str, Any], Any) -> Permission
+        """
+        Create a permission for the user.
+        To update or replace an existing permision, use the :func:`UserProxy.upsert_permission` method.
 
         :param body: A dict-like object representing the permission to create.
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
         :returns: A dict representing the new permission.
-        :raise `HTTPFailure`: If the given permission couldn't be created.
-
-        To update or replace an existing permision, use the :func:`User.upsert_permission` method.
-
+        :raise `CosmosHttpResponseError`: If the given permission couldn't be created.
+        :rtype: dict[str, Any]
         """
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
+        request_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
 
         permission = self.client_connection.CreatePermission(
             user_link=self.user_link, permission=body, options=request_options, **kwargs
@@ -203,21 +211,21 @@ class User:
         )
 
     @distributed_trace
-    def upsert_permission(self, body, request_options=None, response_hook=None, **kwargs):
-        # type: (Dict[str, Any], Dict[str, Any], Optional[Callable]) -> Permission
-        """ Insert or update the specified permission.
+    def upsert_permission(self, body, **kwargs):
+        # type: (Dict[str, Any], Any) -> Permission
+        """
+        Insert or update the specified permission.
+        If the permission already exists in the container, it is replaced. If it does not, it is inserted.
 
         :param body: A dict-like object representing the permission to update or insert.
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
         :returns: A dict representing the upserted permission.
-        :raise `HTTPFailure`: If the given permission could not be upserted.
-
-        If the permission already exists in the container, it is replaced. If it does not, it is inserted.
+        :raise `CosmosHttpResponseError`: If the given permission could not be upserted.
+        :rtype: dict[str, Any]
         """
-
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
+        request_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
 
         permission = self.client_connection.UpsertPermission(
             user_link=self.user_link, permission=body, options=request_options, **kwargs
@@ -235,9 +243,10 @@ class User:
         )
 
     @distributed_trace
-    def replace_permission(self, permission, body, request_options=None, response_hook=None, **kwargs):
-        # type: (str, Dict[str, Any], Dict[str, Any], Optional[Callable]) -> Permission
-        """ Replaces the specified permission if it exists for the user.
+    def replace_permission(self, permission, body, **kwargs):
+        # type: (str, Dict[str, Any], Any) -> Permission
+        """
+        Replaces the specified permission if it exists for the user.
 
         :param permission: The ID (name), dict representing the properties or :class:`Permission`
             instance of the permission to be replaced.
@@ -245,43 +254,43 @@ class User:
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
         :returns: A dict representing the permission after replace went through.
-        :raise `HTTPFailure`: If the replace failed or the permission with given id does not exist.
-
+        :raise `CosmosHttpResponseError`: If the replace failed or the permission with given id does not exist.
+        :rtype: dict[str, Any]
         """
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
+        request_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
 
-        permission = self.client_connection.ReplacePermission(
+        permission_resp = self.client_connection.ReplacePermission(
             permission_link=self._get_permission_link(permission), permission=body, options=request_options, **kwargs
-        )
+        )  # type: Dict[str, str]
 
         if response_hook:
-            response_hook(self.client_connection.last_response_headers, permission)
+            response_hook(self.client_connection.last_response_headers, permission_resp)
 
         return Permission(
-            id=permission["id"],
+            id=permission_resp["id"],
             user_link=self.user_link,
-            permission_mode=permission["permissionMode"],
-            resource_link=permission["resource"],
-            properties=permission,
+            permission_mode=permission_resp["permissionMode"],
+            resource_link=permission_resp["resource"],
+            properties=permission_resp,
         )
 
     @distributed_trace
-    def delete_permission(self, permission, request_options=None, response_hook=None, **kwargs):
-        # type: (str, Dict[str, Any], Optional[Callable]) -> None
-        """ Delete the specified permission from the user.
+    def delete_permission(self, permission, **kwargs):
+        # type: (str, Any) -> None
+        """
+        Delete the specified permission from the user.
 
         :param permission: The ID (name), dict representing the properties or :class:`Permission`
             instance of the permission to be replaced.
         :param request_options: Dictionary of additional properties to be used for the request.
         :param response_hook: a callable invoked with the response metadata
-        :raises `HTTPFailure`: The permission wasn't deleted successfully. If the permission does
+        :raises `CosmosHttpResponseError`: The permission wasn't deleted successfully. If the permission does
             not exist for the user, a `404` error is returned.
-
+        :rtype: None
         """
-
-        if not request_options:
-            request_options = {}  # type: Dict[str, Any]
+        request_options = build_options(kwargs)
+        response_hook = kwargs.pop('response_hook', None)
 
         result = self.client_connection.DeletePermission(
             permission_link=self._get_permission_link(permission), options=request_options, **kwargs

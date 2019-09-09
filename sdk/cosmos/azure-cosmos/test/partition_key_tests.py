@@ -49,7 +49,7 @@ class PartitionKeyTests(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.client = cosmos_client.CosmosClient(cls.host, {'masterKey': cls.masterKey}, "Session", cls.connectionPolicy)
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, "Session", connection_policy=cls.connectionPolicy)
         cls.created_db = test_config._test_config.create_database_if_not_exist(cls.client)
         cls.created_collection = test_config._test_config.create_multi_partition_collection_with_custom_pk_if_not_exist(cls.client)
 
@@ -128,25 +128,25 @@ class PartitionKeyTests(unittest.TestCase):
 
         # Pass partitionKey.Empty as partition key to access documents from a single partition collection with v 2018-12-31 SDK
         read_item = created_container.read_item(self.created_document['id'], partition_key=partition_key.NonePartitionKeyValue)
-        self.assertEquals(read_item['id'], self.created_document['id'])
+        self.assertEqual(read_item['id'], self.created_document['id'])
 
         document_definition = {'id': str(uuid.uuid4())}
         created_item = created_container.create_item(body=document_definition)
-        self.assertEquals(created_item['id'], document_definition['id'])
+        self.assertEqual(created_item['id'], document_definition['id'])
 
         read_item = created_container.read_item(created_item['id'], partition_key=partition_key.NonePartitionKeyValue)
-        self.assertEquals(read_item['id'], created_item['id'])
+        self.assertEqual(read_item['id'], created_item['id'])
 
         document_definition_for_replace = {'id': str(uuid.uuid4())}
         replaced_item = created_container.replace_item(created_item['id'], body=document_definition_for_replace)
-        self.assertEquals(replaced_item['id'], document_definition_for_replace['id'])
+        self.assertEqual(replaced_item['id'], document_definition_for_replace['id'])
 
         upserted_item = created_container.upsert_item(body=document_definition)
-        self.assertEquals(upserted_item['id'], document_definition['id'])
+        self.assertEqual(upserted_item['id'], document_definition['id'])
 
         # one document was created during setup, one with create (which was replaced) and one with upsert
         items = list(created_container.query_items("SELECT * from c", partition_key=partition_key.NonePartitionKeyValue))
-        self.assertEquals(len(items), 3)
+        self.assertEqual(len(items), 3)
 
         document_created_by_sproc_id = 'testDoc'
         sproc = {
@@ -170,7 +170,7 @@ class PartitionKeyTests(unittest.TestCase):
 
         # 3 previous items + 1 created from the sproc
         items = list(created_container.read_all_items())
-        self.assertEquals(len(items), 4)
+        self.assertEqual(len(items), 4)
 
         created_container.delete_item(upserted_item['id'], partition_key=partition_key.NonePartitionKeyValue)
         created_container.delete_item(replaced_item['id'], partition_key=partition_key.NonePartitionKeyValue)
@@ -178,13 +178,13 @@ class PartitionKeyTests(unittest.TestCase):
         created_container.delete_item(self.created_document['id'], partition_key=partition_key.NonePartitionKeyValue)
 
         items = list(created_container.read_all_items())
-        self.assertEquals(len(items), 0)
+        self.assertEqual(len(items), 0)
 
     def test_multi_partition_collection_read_document_with_no_pk(self):
         document_definition = {'id': str(uuid.uuid4())}
         self.created_collection.create_item(body=document_definition)
         read_item = self.created_collection.read_item(item=document_definition['id'], partition_key=partition_key.NonePartitionKeyValue)
-        self.assertEquals(read_item['id'], document_definition['id'])
+        self.assertEqual(read_item['id'], document_definition['id'])
         self.created_collection.delete_item(item=document_definition['id'], partition_key=partition_key.NonePartitionKeyValue)
 
     def test_hash_v2_partition_key_definition(self):
@@ -193,7 +193,7 @@ class PartitionKeyTests(unittest.TestCase):
             partition_key=partition_key.PartitionKey(path="/id", kind="Hash")
         )
         created_container_properties = created_container.read()
-        self.assertEquals(created_container_properties['partitionKey']['version'], 2)
+        self.assertEqual(created_container_properties['partitionKey']['version'], 2)
         self.created_db.delete_container(created_container)
 
         created_container = self.created_db.create_container(
@@ -201,7 +201,7 @@ class PartitionKeyTests(unittest.TestCase):
             partition_key=partition_key.PartitionKey(path="/id", kind="Hash", version=2)
         )
         created_container_properties = created_container.read()
-        self.assertEquals(created_container_properties['partitionKey']['version'], 2)
+        self.assertEqual(created_container_properties['partitionKey']['version'], 2)
         self.created_db.delete_container(created_container)
 
     def test_hash_v1_partition_key_definition(self):
@@ -210,5 +210,5 @@ class PartitionKeyTests(unittest.TestCase):
             partition_key=partition_key.PartitionKey(path="/id", kind="Hash", version=1)
         )
         created_container_properties = created_container.read()
-        self.assertEquals(created_container_properties['partitionKey']['version'], 1)
+        self.assertEqual(created_container_properties['partitionKey']['version'], 1)
         self.created_db.delete_container(created_container)
