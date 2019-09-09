@@ -264,7 +264,7 @@ class EHNamespace(TrackedResource):
     :ivar service_bus_endpoint: Endpoint you can use to perform Service Bus
      operations.
     :vartype service_bus_endpoint: str
-    :param cluster_arm_id: Cluster ARM ID of the Namspace.
+    :param cluster_arm_id: Cluster ARM ID of the Namespace.
     :type cluster_arm_id: str
     :ivar metric_id: Identifier for Azure Insights metrics.
     :vartype metric_id: str
@@ -431,9 +431,9 @@ class ErrorResponseException(HttpOperationError):
 class Identity(Model):
     """Properties to configure Identity for Bring your Own Keys.
 
-    :param principal_id: ObjectId from the Keyvalut
+    :param principal_id: ObjectId from the KeyVault
     :type principal_id: str
-    :param tenant_id: TenantId from the Keyvalut
+    :param tenant_id: TenantId from the KeyVault
     :type tenant_id: str
     :param type: Enumerates the possible value Identity type, which currently
      supports only 'SystemAssigned'. Possible values include: 'SystemAssigned'.
