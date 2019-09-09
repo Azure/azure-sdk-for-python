@@ -1,4 +1,5 @@
 # Release History
+
 ## 5.0.0b3 (2019-09-10)
 
 **New features**
@@ -12,7 +13,7 @@
 
 **Breaking changes**
 
-- Removed constructor method of `PartitionProcessor`. For initialization please implement the method `initialize` .
+- Removed constructor method of `PartitionProcessor`. For initialization please implement the method `initialize`.
 - Replaced `CheckpointManager` by `PartitionContext`.
     - `PartitionContext` has partition context information and method `update_checkpoint`.
 - Updated all methods of `PartitionProcessor` to include `PartitionContext` as part of the arguments.
