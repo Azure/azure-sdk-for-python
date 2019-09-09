@@ -3,8 +3,8 @@
 
 **New features**
 - `EventProcessor` has a load balancer that balances load among multiple EventProcessors automatically
-- In addition to `SamplePartitionManager`, A new `PartitionManager` implementation that uses Azure Blob Storage is added
-to centrally store the checkpoint data for event processors. It's not packaged separately as a plug-in to this package.
+- A new `PartitionManager` implementation that uses Azure Blob Storage is added
+to centrally store the checkpoint data for event processors. It's packaged separately as a plug-in to this package.
 Refer to [Azure Blob Storage Partition Manager](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhubs-checkpointstoreblob-aio) for details.
 
 **Breaking changes**
