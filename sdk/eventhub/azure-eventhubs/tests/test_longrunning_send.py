@@ -61,12 +61,12 @@ def send(sender, args):
                     total += 1
                 except ValueError:
                     sender.send(batch, timeout=0)
-                    print("Sent total {} of partition {}".format(total, sender.partition))
+                    print("Sent total {} of partition {}".format(total, sender._partition))
                     batch = sender.create_batch()
     except Exception as err:
-        print("Partition {} send failed {}".format(sender.partition, err))
+        print("Partition {} send failed {}".format(sender._partition, err))
         raise
-    print("Sent total {} of partition {}".format(total, sender.partition))
+    print("Sent total {} of partition {}".format(total, sender._partition))
 
 
 @pytest.mark.liveTest

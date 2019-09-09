@@ -23,7 +23,7 @@ OWNER_LEVEL = 0
 
 class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
     """
-    An EventProcessor constantly receives events from all partitions of the Event Hub in the context of a given
+    An EventProcessor constantly receives events from multiple partitions of the Event Hub in the context of a given
     consumer group. The received data will be sent to PartitionProcessor to be processed.
 
     It provides the user a convenient way to receive events from multiple partitions and save checkpoints.

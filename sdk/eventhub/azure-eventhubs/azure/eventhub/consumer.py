@@ -33,6 +33,7 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
     group to be actively reading events from the partition.  These non-exclusive consumers are
     sometimes referred to as "Non-Epoch Consumers."
 
+    Please use the method `create_consumer` on `EventHubClient` for creating `EventHubConsumer`.
     """
     _timeout = 0
     _epoch_symbol = b'com.microsoft:epoch'
