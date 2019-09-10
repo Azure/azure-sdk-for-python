@@ -104,6 +104,9 @@ class KeyListResult(Model):
 class KeyValue(Model):
     """KeyValue.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param key:
     :type key: str
     :param label:
@@ -112,15 +115,21 @@ class KeyValue(Model):
     :type content_type: str
     :param value:
     :type value: str
-    :param last_modified:
-    :type last_modified: datetime
+    :ivar last_modified:
+    :vartype last_modified: datetime
     :param tags:
     :type tags: dict[str, str]
-    :param locked:
-    :type locked: bool
-    :param etag:
-    :type etag: str
+    :ivar locked:
+    :vartype locked: bool
+    :ivar etag:
+    :vartype etag: str
     """
+
+    _validation = {
+        'last_modified': {'readonly': True},
+        'locked': {'readonly': True},
+        'etag': {'readonly': True},
+    }
 
     _attribute_map = {
         'key': {'key': 'key', 'type': 'str'},
@@ -139,10 +148,10 @@ class KeyValue(Model):
         self.label = kwargs.get('label', None)
         self.content_type = kwargs.get('content_type', None)
         self.value = kwargs.get('value', None)
-        self.last_modified = kwargs.get('last_modified', None)
+        self.last_modified = None
         self.tags = kwargs.get('tags', None)
-        self.locked = kwargs.get('locked', None)
-        self.etag = kwargs.get('etag', None)
+        self.locked = None
+        self.etag = None
 
 
 class KeyValueListResult(Model):

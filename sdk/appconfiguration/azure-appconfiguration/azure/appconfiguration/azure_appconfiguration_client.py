@@ -22,7 +22,6 @@ from .azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
 from .azure_appconfiguration_credential import AppConfigConnectionStringCredential
 from .utils import (
     get_endpoint_from_connection_string,
-    escape_and_tolist,
     prep_update_configuration_setting,
     quote_etag,
 )
@@ -117,8 +116,8 @@ class AzureAppConfigurationClient:
         :type keys: list[str]
         :param accept_date_time: filter out ConfigurationSetting created after this datetime
         :type accept_date_time: datetime
-        :param fields: specify which fields to include in the results. Leave None to include all fields
-        :type fields: list[str]
+        :param select: specify which fields to include in the results. Leave None to include all fields
+        :type select: list[str]
         :param dict kwargs: if "headers" exists, its value (a dict) will be added to the http request header
         :return: An iterator of :class:`ConfigurationSetting`
         :rtype: :class:`azure.core.paging.ItemPaged[ConfigurationSetting]`
@@ -142,8 +141,6 @@ class AzureAppConfigurationClient:
             for item in filtered_listed:
                 pass  # do something
         """
-        labels = escape_and_tolist(labels)
-        keys = escape_and_tolist(keys)
         return self._impl.get_key_values(
             label=labels,
             key=keys,
@@ -268,13 +265,14 @@ class AzureAppConfigurationClient:
         )
 
         if key_value is None:
-            return None
+            raise ResourceNotFoundError()
 
         if value is not None:
             key_value.value = value
         content_type = kwargs.get("content_type")
         if content_type is not None:
             key_value.content_type = content_type
+        if_match = quote_etag(etag) if etag else None
         tags = kwargs.get("tags")
         if tags is not None:
             key_value.tags = tags
@@ -282,7 +280,7 @@ class AzureAppConfigurationClient:
             entity=key_value,
             key=key,
             label=label,
-            if_match=etag,
+            if_match=if_match,
             headers=custom_headers,
             error_map={404: ResourceNotFoundError, 412: ResourceModifiedError},
         )
@@ -328,11 +326,12 @@ class AzureAppConfigurationClient:
         )
         custom_headers = CaseInsensitiveDict(kwargs.get("headers"))
         etag = configuration_setting.etag
+        if_match = quote_etag(etag) if etag else None
         key_value_set = self._impl.put_key_value(
             entity=key_value,
             key=key_value.key,
             label=key_value.label,
-            if_match=etag,
+            if_match=if_match,
             headers=custom_headers,
             error_map={412: ResourceModifiedError},
         )
@@ -395,8 +394,8 @@ class AzureAppConfigurationClient:
         :type keys: list[str]
         :param accept_date_time: filter out ConfigurationSetting created after this datetime
         :type accept_date_time: datetime
-        :param fields: specify which fields to include in the results. Leave None to include all fields
-        :type fields: list[str]
+        :param select: specify which fields to include in the results. Leave None to include all fields
+        :type select: list[str]
         :param dict kwargs: if "headers" exists, its value (a dict) will be added to the http request header
         :return: An iterator of :class:`ConfigurationSetting`
         :rtype: :class:`azure.core.paging.ItemPaged[ConfigurationSetting]`
@@ -420,8 +419,6 @@ class AzureAppConfigurationClient:
             for item in filtered_revisions:
                 pass  # do something
         """
-        labels = escape_and_tolist(labels)
-        keys = escape_and_tolist(keys)
         return self._impl.get_revisions(
             label=labels,
             key=keys,
