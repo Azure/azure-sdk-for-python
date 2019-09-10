@@ -1,6 +1,26 @@
 # Change Log azure-storage-file
 
 
+## Version 12.0.0b3:
+
+**New features**
+- Added upload_range_from_url API to write the bytes from one Azure File endpoint into the specified range of another Azure File endpoint.
+- Added set_http_headers for directory_client, create_permission_for_share and get_permission_for_share APIs.
+- Added optional parameters for smb properties related parameters for create_file*, create_directory* related APIs and set_http_headers API.
+- Updated get_properties for directory and file so that the response has SMB properties.
+
+**Dependency updates**
+- Adopted [azure-core](https://pypi.org/project/azure-core/) 1.0.0b3
+  - If you later want to revert to previous versions of azure-storage-file, or another Azure SDK
+  library requiring azure-core 1.0.0b1 or azure-core 1.0.0b2, you must explicitly install
+  the specific version of azure-core as well. For example:
+
+  `pip install azure-core==1.0.0b2 azure-storage-file==12.0.0b2`
+
+**Fixes and improvements**
+- Fix where content-type was being added in the request when not mentioned explicitly.
+
+
 ## Version 12.0.0b2:
 
 **Breaking changes**

@@ -192,6 +192,15 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         # Assert
         self.assertTrue(exists)
 
+    def _generate_oauth_token(self):
+        from azure.identity.aio import ClientSecretCredential
+
+        return ClientSecretCredential(
+            self.settings.ACTIVE_DIRECTORY_APPLICATION_ID,
+            self.settings.ACTIVE_DIRECTORY_APPLICATION_SECRET,
+            self.settings.ACTIVE_DIRECTORY_TENANT_ID
+        )
+
     @record
     def test_blob_exists(self):
         loop = asyncio.get_event_loop()
@@ -1137,26 +1146,27 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_copy_blob_with_existing_blob())
 
-    async def _test_copy_blob_with_external_blob_fails(self):
-        # Arrange
-        await self._setup()
-        source_blob = "http://www.gutenberg.org/files/59466/59466-0.txt"
-        copied_blob = self.bsc.get_blob_client(self.container_name, '59466-0.txt')
-
-        # Act
-        copy = await copied_blob.start_copy_from_url(source_blob)
-        self.assertEqual(copy['copy_status'], 'pending')
-        props = await self._wait_for_async_copy(copied_blob)
-
-        # Assert
-        self.assertEqual(props.copy.status_description, '500 InternalServerError "Copy failed."')
-        self.assertEqual(props.copy.status, 'failed')
-        self.assertIsNotNone(props.copy.id)
-
-    @record
-    def test_copy_blob_with_external_blob_fails(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_copy_blob_with_external_blob_fails())
+    # TODO: external copy was supported since 2019-02-02
+    # async def _test_copy_blob_with_external_blob_fails(self):
+    #     # Arrange
+    #     await self._setup()
+    #     source_blob = "http://www.gutenberg.org/files/59466/59466-0.txt"
+    #     copied_blob = self.bsc.get_blob_client(self.container_name, '59466-0.txt')
+    #
+    #     # Act
+    #     copy = await copied_blob.start_copy_from_url(source_blob)
+    #     self.assertEqual(copy['copy_status'], 'pending')
+    #     props = await self._wait_for_async_copy(copied_blob)
+    #
+    #     # Assert
+    #     self.assertEqual(props.copy.status_description, '500 InternalServerError "Copy failed."')
+    #     self.assertEqual(props.copy.status, 'failed')
+    #     self.assertIsNotNone(props.copy.id)
+    #
+    # @record
+    # def test_copy_blob_with_external_blob_fails(self):
+    #     loop = asyncio.get_event_loop()
+    #     loop.run_until_complete(self._test_copy_blob_with_external_blob_fails())
 
     async def _test_copy_blob_async_private_blob_no_sas(self):
         # Arrange
@@ -1620,14 +1630,51 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_account_sas())
 
+    async def _test_get_user_delegation_key(self):
+        # TODO: figure out why recording does not work
+        pytest.skip("Current Framework Cannot Support OAUTH")
+        if TestMode.need_recording_file(self.test_mode):
+            return
+        # Act
+        token_credential = self._generate_oauth_token()
+
+        # Action 1: make sure token works
+        service = BlobServiceClient(self._get_oauth_account_url(), credential=token_credential)
+
+        start = datetime.utcnow()
+        expiry = datetime.utcnow() + timedelta(hours=1)
+        user_delegation_key_1 = await service.get_user_delegation_key(key_start_time=start, key_expiry_time=expiry)
+        user_delegation_key_2 = await service.get_user_delegation_key(key_start_time=start, key_expiry_time=expiry)
+
+        # Assert key1 is valid
+        self.assertIsNotNone(user_delegation_key_1.signed_oid)
+        self.assertIsNotNone(user_delegation_key_1.signed_tid)
+        self.assertIsNotNone(user_delegation_key_1.signed_start)
+        self.assertIsNotNone(user_delegation_key_1.signed_expiry)
+        self.assertIsNotNone(user_delegation_key_1.signed_version)
+        self.assertIsNotNone(user_delegation_key_1.signed_service)
+        self.assertIsNotNone(user_delegation_key_1.value)
+
+        # Assert key1 and key2 are equal, since they have the exact same start and end times
+        self.assertEqual(user_delegation_key_1.signed_oid, user_delegation_key_2.signed_oid)
+        self.assertEqual(user_delegation_key_1.signed_tid, user_delegation_key_2.signed_tid)
+        self.assertEqual(user_delegation_key_1.signed_start, user_delegation_key_2.signed_start)
+        self.assertEqual(user_delegation_key_1.signed_expiry, user_delegation_key_2.signed_expiry)
+        self.assertEqual(user_delegation_key_1.signed_version, user_delegation_key_2.signed_version)
+        self.assertEqual(user_delegation_key_1.signed_service, user_delegation_key_2.signed_service)
+        self.assertEqual(user_delegation_key_1.value, user_delegation_key_2.value)
+
+    def test_get_user_delegation_key_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_get_user_delegation_key())
+
     async def _test_token_credential(self):
-        pytest.skip("")
+        pytest.skip("Current Framework Cannot Support OAUTH")
         if TestMode.need_recording_file(self.test_mode):
             return
 
         await self._setup()
-        token_credential = self.generate_oauth_token()
-        get_token = token_credential.get_token
+        token_credential = self._generate_oauth_token()
 
         # Action 1: make sure token works
         service = BlobServiceClient(self._get_oauth_account_url(), credential=token_credential, transport=AiohttpTestTransport())
@@ -1647,6 +1694,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
 
     @record
     def test_token_credential(self):
+        pytest.skip("not set up to use async azure-identity")
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_token_credential())
 

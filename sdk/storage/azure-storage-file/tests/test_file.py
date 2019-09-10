@@ -8,7 +8,6 @@
 import base64
 import os
 import unittest
-import time
 from datetime import datetime, timedelta
 
 import requests
@@ -24,8 +23,8 @@ from azure.storage.file import (
     AccessPolicy,
     ResourceTypes,
     AccountPermissions,
-    StorageErrorCode
-)
+    StorageErrorCode,
+    NTFSAttributes)
 from filetestcase import (
     FileTestCase,
     TestMode,
@@ -96,11 +95,24 @@ class StorageFileTest(FileTestCase):
     def _get_file_reference(self):
         return self.get_resource_name(TEST_FILE_PREFIX)
 
-    def _create_file(self):
-        file_name = self._get_file_reference()
+    def _create_file(self, file_name=None):
+        file_name = self._get_file_reference() if file_name is None else file_name
         share_client = self.fsc.get_share_client(self.share_name)
         file_client = share_client.get_file_client(file_name)
         file_client.upload_file(self.short_byte_data)
+        return file_client
+
+    def _create_empty_file(self, file_name=None, file_size=2048):
+        file_name = self._get_file_reference() if file_name is None else file_name
+        share_client = self.fsc.get_share_client(self.share_name)
+        file_client = share_client.get_file_client(file_name)
+        file_client.create_file(file_size)
+        return file_client
+
+    def _get_file_client(self):
+        file_name = self._get_file_reference()
+        share_client = self.fsc.get_share_client(self.share_name)
+        file_client = share_client.get_file_client(file_name)
         return file_client
 
     def _create_remote_share(self):
@@ -220,7 +232,7 @@ class StorageFileTest(FileTestCase):
             credential=self.settings.STORAGE_ACCOUNT_KEY)
 
         # Act
-        resp = file_client.create_file(1024)
+        resp = file_client.create_file(1024, file_attributes="hidden")
 
         # Assert
         props = file_client.get_file_properties()
@@ -248,6 +260,36 @@ class StorageFileTest(FileTestCase):
         self.assertEqual(props.etag, resp['etag'])
         self.assertEqual(props.last_modified, resp['last_modified'])
         self.assertDictEqual(props.metadata, metadata)
+
+    def test_create_file_when_file_permission_is_too_long(self):
+        file_client = self._get_file_client()
+        permission = str(self.get_random_bytes(8 * 1024 + 1))
+        with self.assertRaises(ValueError):
+            file_client.create_file(1024, file_permission=permission)
+
+    @record
+    def test_create_file_with_invalid_file_permission(self):
+        # Arrange
+        file_name = self._get_file_client()
+
+        with self.assertRaises(HttpResponseError):
+            file_name.create_file(1024, file_permission="abcde")
+
+    @record
+    def test_create_file_will_set_all_smb_properties(self):
+        # Arrange
+        file_client = self._get_file_client()
+
+        # Act
+        file_client.create_file(1024)
+        file_properties = file_client.get_file_properties()
+
+        # Assert
+        self.assertIsNotNone(file_properties)
+        self.assertIsNotNone(file_properties.change_time)
+        self.assertIsNotNone(file_properties.creation_time)
+        self.assertIsNotNone(file_properties.file_attributes)
+        self.assertIsNotNone(file_properties.last_write_time)
 
     @record
     def test_file_exists(self):
@@ -343,6 +385,40 @@ class StorageFileTest(FileTestCase):
         properties = file_client.get_file_properties()
         self.assertEqual(properties.content_settings.content_language, content_settings.content_language)
         self.assertEqual(properties.content_settings.content_disposition, content_settings.content_disposition)
+        self.assertIsNotNone(properties.last_write_time)
+        self.assertIsNotNone(properties.creation_time)
+        self.assertIsNotNone(properties.permission_key)
+
+    @record
+    def test_set_file_properties_with_file_permission(self):
+        # Arrange
+        file_client = self._create_file()
+        properties_on_creation = file_client.get_file_properties()
+
+        content_settings = ContentSettings(
+            content_language='spanish',
+            content_disposition='inline')
+
+        ntfs_attributes = NTFSAttributes(archive=True, temporary=True)
+        last_write_time = properties_on_creation.last_write_time + timedelta(hours=3)
+        creation_time = properties_on_creation.creation_time + timedelta(hours=3)
+
+        # Act
+        file_client.set_http_headers(
+            content_settings=content_settings,
+            file_attributes=ntfs_attributes,
+            file_last_write_time=last_write_time,
+            file_creation_time=creation_time,
+        )
+
+        # Assert
+        properties = file_client.get_file_properties()
+        self.assertEquals(properties.content_settings.content_language, content_settings.content_language)
+        self.assertEquals(properties.content_settings.content_disposition, content_settings.content_disposition)
+        self.assertEquals(properties.creation_time, creation_time)
+        self.assertEquals(properties.last_write_time, last_write_time)
+        self.assertIn("Archive", properties.file_attributes)
+        self.assertIn("Temporary", properties.file_attributes)
 
     @record
     def test_get_file_properties(self):
@@ -511,8 +587,93 @@ class StorageFileTest(FileTestCase):
         # Assert
 
     @record
+    def test_update_range_from_file_url_when_source_file_does_not_have_enough_bytes(self):
+        # Arrange
+        source_file_name = 'testfile1'
+        source_file_client = self._create_file(source_file_name)
+
+        destination_file_name = 'filetoupdate'
+        destination_file_client = self._create_file(destination_file_name)
+
+        # generate SAS for the source file
+        sas_token_for_source_file = \
+            source_file_client.generate_shared_access_signature()
+
+        source_file_url = source_file_client.url + '?' + sas_token_for_source_file
+
+        # Act
+        with self.assertRaises(HttpResponseError):
+            # when the source file has less bytes than 2050, throw exception
+            destination_file_client.upload_range_from_url(source_file_url, 0, 2049, 0)
+
+    @record
+    def test_update_range_from_file_url(self):
+        # Arrange
+        source_file_name = 'testfile'
+        source_file_client = self._create_file(file_name=source_file_name)
+        data = b'abcdefghijklmnop' * 32
+        source_file_client.upload_range(data, 0, 511)
+
+        destination_file_name = 'filetoupdate'
+        destination_file_client = self._create_empty_file(file_name=destination_file_name)
+
+        # generate SAS for the source file
+        sas_token_for_source_file = \
+            source_file_client.generate_shared_access_signature(
+                                                          FilePermissions.READ,
+                                                          expiry=datetime.utcnow() + timedelta(hours=1))
+
+        source_file_url = source_file_client.url + '?' + sas_token_for_source_file
+        # Act
+        destination_file_client.upload_range_from_url(source_file_url, 0, 511, 0)
+
+        # Assert
+        # To make sure the range of the file is actually updated
+        file_ranges = destination_file_client.get_ranges()
+        file_content = destination_file_client.download_file(offset=0, length=511).content_as_bytes()
+        self.assertEquals(1, len(file_ranges))
+        self.assertEquals(0, file_ranges[0].get('start'))
+        self.assertEquals(511, file_ranges[0].get('end'))
+        self.assertEquals(data, file_content)
+
+    @record
+    def test_update_big_range_from_file_url(self):
+        # Arrange
+        source_file_name = 'testfile1'
+        end = 1048575
+
+        source_file_client = self._create_empty_file(file_name=source_file_name, file_size=1024 * 1024)
+        data = b'abcdefghijklmnop' * 65536
+        source_file_client.upload_range(data, 0, end)
+
+        destination_file_name = 'filetoupdate1'
+        destination_file_client = self._create_empty_file(file_name=destination_file_name, file_size=1024 * 1024)
+
+        # generate SAS for the source file
+        sas_token_for_source_file = \
+            source_file_client.generate_shared_access_signature(
+                                                          FilePermissions.READ,
+                                                          expiry=datetime.utcnow() + timedelta(hours=1))
+
+        source_file_url = source_file_client.url + '?' + sas_token_for_source_file
+
+        # Act
+        destination_file_client.upload_range_from_url(source_file_url, 0, end, 0)
+
+        # Assert
+        # To make sure the range of the file is actually updated
+        file_ranges = destination_file_client.get_ranges()
+        file_content = destination_file_client.download_file(offset=0, length=end).content_as_bytes()
+        self.assertEquals(1, len(file_ranges))
+        self.assertEquals(0, file_ranges[0].get('start'))
+        self.assertEquals(end, file_ranges[0].get('end'))
+        self.assertEquals(data, file_content)
+
+    @record
     def test_clear_range(self):
         # Arrange
+        # TODO: update swagger and fix this test
+        pytest.skip("TODO: fix swagger!")
         file_client = self._create_file()
 
         # Act
@@ -802,6 +963,21 @@ class StorageFileTest(FileTestCase):
         self.assertEqual(content, data)
 
     @record
+    def test_file_unicode_data_and_file_attributes(self):
+        # Arrange
+        file_client = self._get_file_client()
+
+        # Act
+        data = u'hello world啊齄丂狛狜'.encode('utf-8')
+        file_client.upload_file(data, file_attributes=NTFSAttributes(temporary=True))
+
+        # Assert
+        content = file_client.download_file().content_as_bytes()
+        properties = file_client.get_file_properties()
+        self.assertEqual(content, data)
+        self.assertIn('Temporary', properties.file_attributes)
+
+    @record
     def test_unicode_get_file_binary_data(self):
         # Arrange
         base64_data = 'AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/wABAgMEBQYHCAkKCwwNDg8QERITFBUWFxgZGhscHR4fICEiIyQlJicoKSorLC0uLzAxMjM0NTY3ODk6Ozw9Pj9AQUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVpbXF1eX2BhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ent8fX5/gIGCg4SFhoeIiYqLjI2Oj5CRkpOUlZaXmJmam5ydnp+goaKjpKWmp6ipqqusra6vsLGys7S1tre4ubq7vL2+v8DBwsPExcbHyMnKy8zNzs/Q0dLT1NXW19jZ2tvc3d7f4OHi4+Tl5ufo6err7O3u7/Dx8vP09fb3+Pn6+/z9/v8AAQIDBAUGBwgJCgsMDQ4PEBESExQVFhcYGRobHB0eHyAhIiMkJSYnKCkqKywtLi8wMTIzNDU2Nzg5Ojs8PT4/QEFCQ0RFRkdISUpLTE1OT1BRUlNUVVZXWFlaW1xdXl9gYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXp7fH1+f4CBgoOEhYaHiImKi4yNjo+QkZKTlJWWl5iZmpucnZ6foKGio6SlpqeoqaqrrK2ur7CxsrO0tba3uLm6u7y9vr/AwcLDxMXGx8jJysvMzc7P0NHS09TV1tfY2drb3N3e3+Dh4uPk5ebn6Onq6+zt7u/w8fLz9PX29/j5+vv8/f7/AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/w=='
@@ -833,7 +1009,8 @@ class StorageFileTest(FileTestCase):
             self.get_file_url(),
             share=self.share_name,
             file_path=file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY)
+            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            max_range_size=4 * 1024)
 
         # Act
         progress = []
@@ -843,7 +1020,10 @@ class StorageFileTest(FileTestCase):
             if current is not None:
                 progress.append((current, total))
 
-        file_client.upload_file(data, max_connections=2, raw_response_hook=callback)
+        response = file_client.upload_file(data, max_connections=2, raw_response_hook=callback)
+        assert isinstance(response, dict)
+        assert 'last_modified' in response
+        assert 'etag' in response
 
         # Assert
         self.assertFileEqual(file_client, data)
@@ -861,10 +1041,14 @@ class StorageFileTest(FileTestCase):
             self.get_file_url(),
             share=self.share_name,
             file_path=file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY)
+            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            max_range_size=4 * 1024)
 
         # Act
-        file_client.upload_file(data[index:], max_connections=2)
+        response = file_client.upload_file(data[index:], max_connections=2)
+        assert isinstance(response, dict)
+        assert 'last_modified' in response
+        assert 'etag' in response
 
         # Assert
         self.assertFileEqual(file_client, data[1024:])
@@ -883,10 +1067,14 @@ class StorageFileTest(FileTestCase):
             self.get_file_url(),
             share=self.share_name,
             file_path=file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY)
+            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            max_range_size=4 * 1024)
 
         # Act
-        file_client.upload_file(data[index:], length=count, max_connections=2)
+        response = file_client.upload_file(data[index:], length=count, max_connections=2)
+        assert isinstance(response, dict)
+        assert 'last_modified' in response
+        assert 'etag' in response
 
         # Assert
         self.assertFileEqual(file_client, data[index:index + count])
@@ -905,11 +1093,15 @@ class StorageFileTest(FileTestCase):
             self.get_file_url(),
             share=self.share_name,
             file_path=file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY)
+            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            max_range_size=4 * 1024)
 
         # Act
         with open(INPUT_FILE_PATH, 'rb') as stream:
-            file_client.upload_file(stream, max_connections=2)
+            response = file_client.upload_file(stream, max_connections=2)
+            assert isinstance(response, dict)
+            assert 'last_modified' in response
+            assert 'etag' in response
 
         # Assert
         self.assertFileEqual(file_client, data)
@@ -940,7 +1132,10 @@ class StorageFileTest(FileTestCase):
                 progress.append((current, total))
 
         with open(INPUT_FILE_PATH, 'rb') as stream:
-            file_client.upload_file(stream, max_connections=2, raw_response_hook=callback)
+            response = file_client.upload_file(stream, max_connections=2, raw_response_hook=callback)
+            assert isinstance(response, dict)
+            assert 'last_modified' in response
+            assert 'etag' in response
 
         # Assert
         self.assertFileEqual(file_client, data)
@@ -963,12 +1158,16 @@ class StorageFileTest(FileTestCase):
             self.get_file_url(),
             share=self.share_name,
             file_path=file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY)
+            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            max_range_size=4 * 1024)
 
         # Act
         file_size = len(data)
         with open(INPUT_FILE_PATH, 'rb') as stream:
-            file_client.upload_file(stream, max_connections=2)
+            response = file_client.upload_file(stream, max_connections=2)
+            assert isinstance(response, dict)
+            assert 'last_modified' in response
+            assert 'etag' in response
 
         # Assert
         self.assertFileEqual(file_client, data[:file_size])
@@ -987,7 +1186,8 @@ class StorageFileTest(FileTestCase):
             self.get_file_url(),
             share=self.share_name,
             file_path=file_name,
-            credential=self.settings.STORAGE_ACCOUNT_KEY)
+            credential=self.settings.STORAGE_ACCOUNT_KEY,
+            max_range_size=4 * 1024)
 
         # Act
         file_size = len(data)

@@ -102,4 +102,7 @@ aiohttp>=3.0
 aiodns>=2.0
 python-dateutil>=2.8.0
 six>=1.6
+#override azure-storage-blob azure-core<2.0.0,>=1.0.0b3
+#override azure-storage-queue azure-core<2.0.0,>=1.0.0b3
+#override azure-storage-file azure-core<2.0.0,>=1.0.0b3
 #override azure-cosmos azure-core<2.0.0,>=1.0.0b3

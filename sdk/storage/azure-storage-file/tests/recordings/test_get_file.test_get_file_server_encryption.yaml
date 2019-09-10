@@ -9,19 +9,19 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - d5ec2952-b636-11e9-a1cf-2816a845e8c6
+      - ca37df5e-d052-11e9-afa6-001a7dda7113
       x-ms-date:
-      - Sat, 03 Aug 2019 21:37:04 GMT
+      - Fri, 06 Sep 2019 03:02:41 GMT
       x-ms-range:
       - bytes=0-1024
       x-ms-range-get-content-md5:
       - 'true'
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: GET
     uri: https://storagename.file.core.windows.net/utsharea628128b/utdira628128b/bytefilea628128b
   response:
@@ -57,23 +57,37 @@ interactions:
       Content-Type:
       - application/xml; charset=utf-8
       Date:
-      - Sat, 03 Aug 2019 21:37:03 GMT
+      - Fri, 06 Sep 2019 03:02:40 GMT
       ETag:
-      - '"0x8D7185AB95E7D29"'
+      - '"0x8D73276AE59CBC6"'
       Last-Modified:
-      - Sat, 03 Aug 2019 21:37:03 GMT
+      - Fri, 06 Sep 2019 03:02:40 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
+      x-ms-client-request-id:
+      - ca37df5e-d052-11e9-afa6-001a7dda7113
+      x-ms-file-attributes:
+      - Archive
+      x-ms-file-change-time:
+      - '2019-09-06T03:02:40.8524386Z'
+      x-ms-file-creation-time:
+      - '2019-09-06T03:02:40.8524386Z'
+      x-ms-file-id:
+      - '13835093239654252544'
+      x-ms-file-last-write-time:
+      - '2019-09-06T03:02:40.8524386Z'
+      x-ms-file-parent-id:
+      - '13835128424026341376'
+      x-ms-file-permission-key:
+      - 4099112195243312672*10394889115079208622
       x-ms-request-id:
-      - dc380793-b01a-009b-7743-4ae938000000
+      - eec90236-e01a-003f-515f-649b57000000
       x-ms-server-encrypted:
       - 'true'
       x-ms-type:
       - File
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 206
       message: Partial Content
