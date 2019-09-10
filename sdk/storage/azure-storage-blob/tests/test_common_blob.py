@@ -1265,6 +1265,67 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertTrue(container_response.ok)
 
     @record
+    def test_get_user_delegation_key(self):
+        # Act
+        token_credential = self.generate_oauth_token()
+
+        # Action 1: make sure token works
+        service = BlobServiceClient(self._get_oauth_account_url(), credential=token_credential)
+
+        start = datetime.utcnow()
+        expiry = datetime.utcnow() + timedelta(hours=1)
+        user_delegation_key_1 = service.get_user_delegation_key(key_start_time=start, key_expiry_time=expiry)
+        user_delegation_key_2 = service.get_user_delegation_key(key_start_time=start, key_expiry_time=expiry)
+
+        # Assert key1 is valid
+        self.assertIsNotNone(user_delegation_key_1.signed_oid)
+        self.assertIsNotNone(user_delegation_key_1.signed_tid)
+        self.assertIsNotNone(user_delegation_key_1.signed_start)
+        self.assertIsNotNone(user_delegation_key_1.signed_expiry)
+        self.assertIsNotNone(user_delegation_key_1.signed_version)
+        self.assertIsNotNone(user_delegation_key_1.signed_service)
+        self.assertIsNotNone(user_delegation_key_1.value)
+
+        # Assert key1 and key2 are equal, since they have the exact same start and end times
+        self.assertEqual(user_delegation_key_1.signed_oid, user_delegation_key_2.signed_oid)
+        self.assertEqual(user_delegation_key_1.signed_tid, user_delegation_key_2.signed_tid)
+        self.assertEqual(user_delegation_key_1.signed_start, user_delegation_key_2.signed_start)
+        self.assertEqual(user_delegation_key_1.signed_expiry, user_delegation_key_2.signed_expiry)
+        self.assertEqual(user_delegation_key_1.signed_version, user_delegation_key_2.signed_version)
+        self.assertEqual(user_delegation_key_1.signed_service, user_delegation_key_2.signed_service)
+        self.assertEqual(user_delegation_key_1.value, user_delegation_key_2.value)
+
+    def test_user_delegation_sas_for_blob(self):
+        # SAS URL is calculated from storage key, so this test runs live only
+        if TestMode.need_recording_file(self.test_mode):
+            return
+
+        # Arrange
+        token_credential = self.generate_oauth_token()
+        service_client = BlobServiceClient(self._get_oauth_account_url(), credential=token_credential)
+        user_delegation_key = service_client.get_user_delegation_key(datetime.utcnow(),
+                                                                     datetime.utcnow() + timedelta(hours=1))
+
+        container_client = service_client.create_container(self.get_resource_name('oauthcontainer'))
+        blob_client = container_client.get_blob_client(self.get_resource_name('oauthblob'))
+        blob_client.upload_blob(self.byte_data, length=len(self.byte_data))
+
+        token = blob_client.generate_shared_access_signature(
+            permission=BlobPermissions.READ,
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            user_delegation_key=user_delegation_key,
+            account_name='emilydevtest',
+        )
+
+        # Act
+        # Use the generated identity sas
+        new_blob_client = BlobClient(blob_client.url, credential=token)
+        content = new_blob_client.download_blob()
+
+        # Assert
+        self.assertEqual(self.byte_data, b"".join(list(content)))
+
+    @record
     def test_token_credential(self):
         token_credential = self.generate_oauth_token()
         get_token = token_credential.get_token

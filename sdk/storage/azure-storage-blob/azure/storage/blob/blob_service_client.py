@@ -9,6 +9,7 @@ from typing import (  # pylint: disable=unused-import
     Union, Optional, Any, Iterable, Dict, List,
     TYPE_CHECKING
 )
+
 try:
     from urllib.parse import urlparse
 except ImportError:
@@ -18,11 +19,13 @@ from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 
 from ._shared.shared_access_signature import SharedAccessSignature
-from ._shared.models import LocationMode, Services
+from ._shared.models import LocationMode, Services, UserDelegationKey
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
-from ._shared.response_handlers import return_response_headers, process_storage_error
+from ._shared.parser import _to_utc_datetime
+from ._shared.response_handlers import return_response_headers, process_storage_error, \
+    parse_to_internal_user_delegation_key
 from ._generated import AzureBlobStorage
-from ._generated.models import StorageErrorException, StorageServiceProperties
+from ._generated.models import StorageErrorException, StorageServiceProperties, KeyInfo
 from .container_client import ContainerClient
 from .blob_client import BlobClient
 from .models import ContainerProperties, ContainerPropertiesPaged
@@ -222,6 +225,36 @@ class BlobServiceClient(StorageAccountHostsMixin):
             ip=ip,
             protocol=protocol
         ) # type: ignore
+
+    @distributed_trace
+    def get_user_delegation_key(self, key_start_time,  # type: datetime
+                                key_expiry_time,  # type: datetime
+                                timeout=None,  # type: Optional[int]
+                                **kwargs  # type: Any
+                                ):
+        # type: (datetime, datetime, Optional[int]) -> UserDelegationKey
+        """
+        Obtain a user delegation key for the purpose of signing SAS tokens.
+        A token credential must be present on the service object for this request to succeed.
+
+        :param datetime key_start_time:
+            A DateTime value. Indicates when the key becomes valid.
+        :param datetime key_expiry_time:
+            A DateTime value. Indicates when the key stops being valid.
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
+        :return: The user delegation key.
+        :rtype: ~azure.storage.blob._shared.models.UserDelegationKey
+        """
+        key_info = KeyInfo(start=_to_utc_datetime(key_start_time), expiry=_to_utc_datetime(key_expiry_time))
+        try:
+            user_delegation_key = self._client.service.get_user_delegation_key(key_info=key_info,
+                                                                               timeout=timeout,
+                                                                               **kwargs)  # type: ignore
+        except StorageErrorException as error:
+            process_storage_error(error)
+
+        return parse_to_internal_user_delegation_key(user_delegation_key)  # type: ignore
 
     @distributed_trace
     def get_account_information(self, **kwargs): # type: ignore

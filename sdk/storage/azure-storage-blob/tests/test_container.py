@@ -24,6 +24,7 @@ from azure.storage.blob import (
     AccessPolicy
 )
 
+from azure.identity import ClientSecretCredential
 from testcase import StorageTestCase, TestMode, record, LogCaptured
 
 #------------------------------------------------------------------------------
@@ -70,6 +71,14 @@ class StorageContainerTest(StorageTestCase):
         except ResourceExistsError:
             pass
         return container
+
+    def _generate_oauth_token(self):
+
+        return ClientSecretCredential(
+            self.settings.ACTIVE_DIRECTORY_APPLICATION_ID,
+            self.settings.ACTIVE_DIRECTORY_APPLICATION_SECRET,
+            self.settings.ACTIVE_DIRECTORY_TENANT_ID
+        )
 
     #--Test cases for containers -----------------------------------------
     @record
@@ -1068,6 +1077,35 @@ class StorageContainerTest(StorageTestCase):
             # delete container
             container.delete_container()
 
+    def test_user_delegation_sas_for_container(self):
+        # SAS URL is calculated from storage key, so this test runs live only
+        if TestMode.need_recording_file(self.test_mode):
+            return
+
+        # Arrange
+        token_credential = self.generate_oauth_token()
+        service_client = BlobServiceClient(self._get_oauth_account_url(), credential=token_credential)
+        user_delegation_key = service_client.get_user_delegation_key(datetime.utcnow(),
+                                                                     datetime.utcnow() + timedelta(hours=1))
+
+        container_client = service_client.create_container(self.get_resource_name('oauthcontainer'))
+        token = container_client.generate_shared_access_signature(
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            permission=ContainerPermissions.READ,
+            user_delegation_key=user_delegation_key,
+            account_name='emilydevtest'
+        )
+
+        blob_client = container_client.get_blob_client(self.get_resource_name('oauthblob'))
+        blob_content = self.get_random_text_data(1024)
+        blob_client.upload_blob(blob_content, length=len(blob_content))
+
+        # Act
+        new_blob_client = BlobClient(blob_client.url, credential=token)
+        content = new_blob_client.download_blob()
+
+        # Assert
+        self.assertEqual(blob_content, b"".join(list(content)).decode('utf-8'))
 
 #------------------------------------------------------------------------------
 if __name__ == '__main__':

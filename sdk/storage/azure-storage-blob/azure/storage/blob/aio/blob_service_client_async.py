@@ -18,8 +18,10 @@ from .._shared.models import LocationMode
 from .._shared.policies_async import ExponentialRetry
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._shared.response_handlers import return_response_headers, process_storage_error
+from .._shared.parser import _to_utc_datetime
+from .._shared.response_handlers import parse_to_internal_user_delegation_key
 from .._generated.aio import AzureBlobStorage
-from .._generated.models import StorageErrorException, StorageServiceProperties
+from .._generated.models import StorageErrorException, StorageServiceProperties, KeyInfo
 from ..blob_service_client import BlobServiceClient as BlobServiceClientBase
 from .container_client_async import ContainerClient
 from .blob_client_async import BlobClient
@@ -109,6 +111,36 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
             **kwargs)
         self._client = AzureBlobStorage(url=self.url, pipeline=self._pipeline, loop=loop)
         self._loop = loop
+
+    @distributed_trace_async
+    async def get_user_delegation_key(self, key_start_time,  # type: datetime
+                                      key_expiry_time,  # type: datetime
+                                      timeout=None,  # type: Optional[int]
+                                      **kwargs  # type: Any
+                                      ):
+        # type: (datetime, datetime, Optional[int]) -> UserDelegationKey
+        """
+        Obtain a user delegation key for the purpose of signing SAS tokens.
+        A token credential must be present on the service object for this request to succeed.
+
+        :param datetime key_start_time:
+            A DateTime value. Indicates when the key becomes valid.
+        :param datetime key_expiry_time:
+            A DateTime value. Indicates when the key stops being valid.
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
+        :return: The user delegation key.
+        :rtype: ~azure.storage.blob._shared.models.UserDelegationKey
+        """
+        key_info = KeyInfo(start=_to_utc_datetime(key_start_time), expiry=_to_utc_datetime(key_expiry_time))
+        try:
+            user_delegation_key = await self._client.service.get_user_delegation_key(key_info=key_info,
+                                                                                     timeout=timeout,
+                                                                                     **kwargs)  # type: ignore
+        except StorageErrorException as error:
+            process_storage_error(error)
+
+        return parse_to_internal_user_delegation_key(user_delegation_key)  # type: ignore
 
     @distributed_trace_async
     async def get_account_information(self, **kwargs): # type: ignore
