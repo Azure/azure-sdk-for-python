@@ -217,13 +217,16 @@ Using an `EventHubConsumer` to consume events like in the previous examples puts
 
 The `EventProcessor` will delegate the processing of events to a `PartitionProcessor` that you provide, allowing you to focus on business logic while the processor holds responsibility for managing the underlying consumer operations including checkpointing and load balancing.
 
-While load balancing is a feature we will be adding in the next update, you can see how to use the `EventProcessor` in the below example, where we use an in memory `PartitionManager` that does checkpointing in memory.
+You can see how to use the `EventProcessor` in the below example, where we use an in memory `PartitionManager` that does checkpointing in memory.
+
+[Azure Blob Storage Partition Manager](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhubs-checkpointstoreblob-aio) is another `PartitionManager` implementation that allows multiple EventProcessors to share the load balancing and checkpoint data in a central storage.
+
 
 ```python
 import asyncio
 
 from azure.eventhub.aio import EventHubClient
-from azure.eventhub.eventprocessor import EventProcessor, PartitionProcessor, Sqlite3PartitionManager
+from azure.eventhub.aio.eventprocessor import EventProcessor, PartitionProcessor, SamplePartitionManager
 
 connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
 
@@ -232,24 +235,16 @@ async def do_operation(event):
     print(event)
 
 class MyPartitionProcessor(PartitionProcessor):
-    def __init__(self, checkpoint_manager):
-        super(MyPartitionProcessor, self).__init__(checkpoint_manager)
-
-    async def process_events(self, events):
+    async def process_events(self, events, partition_context):
         if events:
             await asyncio.gather(*[do_operation(event) for event in events])
-            await self._checkpoint_manager.update_checkpoint(events[-1].offset, events[-1].sequence_number)
-
-def partition_processor_factory(checkpoint_manager):
-    return MyPartitionProcessor(checkpoint_manager)
+            await partition_context.update_checkpoint(events[-1].offset, events[-1].sequence_number)
 
 async def main():
     client = EventHubClient.from_connection_string(connection_str, receive_timeout=5, retry_total=3)
-    partition_manager = Sqlite3PartitionManager()  # in-memory PartitionManager
+    partition_manager = SamplePartitionManager()  # in-memory PartitionManager.
     try:
         event_processor = EventProcessor(client, "$default", MyPartitionProcessor, partition_manager)
-        # You can also define a callable object for creating PartitionProcessor like below:
-        # event_processor = EventProcessor(client, "$default", partition_processor_factory, partition_manager)
         asyncio.ensure_future(event_processor.start())
         await asyncio.sleep(60)
         await event_processor.stop()
@@ -273,6 +268,7 @@ The Event Hubs APIs generate the following exceptions.
 - **EventDataError:** The EventData to be sent fails data validation. 
 For instance, this error is raised if you try to send an EventData that is already sent.
 - **EventDataSendError:** The Eventhubs service responds with an error when an EventData is sent.
+- **OperationTimeoutError:** EventHubConsumer.send() times out.
 - **EventHubError:** All other Eventhubs related errors. It is also the root error class of all the above mentioned errors.
 
 ## Next steps

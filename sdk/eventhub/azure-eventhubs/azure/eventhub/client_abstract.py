@@ -10,23 +10,20 @@ import uuid
 import time
 import functools
 from abc import abstractmethod
-try:
-    from urlparse import urlparse
-    from urllib import unquote_plus, urlencode, quote_plus
-except ImportError:
-    from urllib.parse import urlparse, unquote_plus, urlencode, quote_plus
+from typing import Dict, Union, Any, TYPE_CHECKING
 
-try:
-    from typing import TYPE_CHECKING
-except ImportError:
-    TYPE_CHECKING = False
-if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
-    from typing import Union, Any
-
-from azure.eventhub import __version__
+from azure.eventhub import __version__, EventPosition
 from azure.eventhub.configuration import _Configuration
 from .common import EventHubSharedKeyCredential, EventHubSASTokenCredential, _Address
+
+try:
+    from urlparse import urlparse  # type: ignore
+    from urllib import urlencode, quote_plus  # type: ignore
+except ImportError:
+    from urllib.parse import urlparse, urlencode, quote_plus
+
+if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential  # type: ignore
 
 log = logging.getLogger(__name__)
 MAX_USER_AGENT_LENGTH = 512
@@ -87,7 +84,7 @@ def _build_uri(address, entity):
     return address
 
 
-class EventHubClientAbstract(object):
+class EventHubClientAbstract(object):  # pylint:disable=too-many-instance-attributes
     """
     The EventHubClientAbstract class defines a high level interface for sending
     events to and receiving events from the Azure Event Hubs service.
@@ -136,29 +133,32 @@ class EventHubClientAbstract(object):
          queued. Default value is 60 seconds. If set to 0, there will be no timeout.
         :type send_timeout: float
         """
-        self.container_id = "eventhub.pysdk-" + str(uuid.uuid4())[:8]
-        self.address = _Address()
-        self.address.hostname = host
-        self.address.path = "/" + event_hub_path if event_hub_path else ""
-        self._auth_config = {}
-        self.credential = credential
-        if isinstance(credential, EventHubSharedKeyCredential):
-            self.username = credential.policy
-            self.password = credential.key
-            self._auth_config['username'] = self.username
-            self._auth_config['password'] = self.password
-
-        self.host = host
         self.eh_name = event_hub_path
-        self.keep_alive = kwargs.get("keep_alive", 30)
-        self.auto_reconnect = kwargs.get("auto_reconnect", True)
-        self.mgmt_target = "amqps://{}/{}".format(self.host, self.eh_name)
-        self.auth_uri = "sb://{}{}".format(self.address.hostname, self.address.path)
-        self.get_auth = functools.partial(self._create_auth)
-        self.config = _Configuration(**kwargs)
-        self.debug = self.config.network_tracing
+        self._host = host
+        self._container_id = "eventhub.pysdk-" + str(uuid.uuid4())[:8]
+        self._address = _Address()
+        self._address.hostname = host
+        self._address.path = "/" + event_hub_path if event_hub_path else ""
+        self._auth_config = {}  # type:Dict[str,str]
+        self._credential = credential
+        if isinstance(credential, EventHubSharedKeyCredential):
+            self._username = credential.policy
+            self._password = credential.key
+            self._auth_config['username'] = self._username
+            self._auth_config['password'] = self._password
 
-        log.info("%r: Created the Event Hub client", self.container_id)
+        self._keep_alive = kwargs.get("keep_alive", 30)
+        self._auto_reconnect = kwargs.get("auto_reconnect", True)
+        self._mgmt_target = "amqps://{}/{}".format(self._host, self.eh_name)
+        self._auth_uri = "sb://{}{}".format(self._address.hostname, self._address.path)
+        self._get_auth = functools.partial(self._create_auth)
+        self._config = _Configuration(**kwargs)
+        self._debug = self._config.network_tracing
+        self._is_iothub = False
+        self._iothub_redirect_info = None
+        self._redirect_consumer = None
+
+        log.info("%r: Created the Event Hub client", self._container_id)
 
     @classmethod
     def _from_iothub_connection_string(cls, conn_str, **kwargs):
@@ -177,6 +177,11 @@ class EventHubClientAbstract(object):
             'iot_password': key,
             'username': username,
             'password': password}
+        client._is_iothub = True  # pylint: disable=protected-access
+        client._redirect_consumer = client.create_consumer(consumer_group='$default',  # pylint: disable=protected-access, no-member
+                                                           partition_id='0',
+                                                           event_position=EventPosition('-1'),
+                                                           operation='/messages/events')
         return client
 
     @abstractmethod
@@ -212,11 +217,13 @@ class EventHubClientAbstract(object):
     def _process_redirect_uri(self, redirect):
         redirect_uri = redirect.address.decode('utf-8')
         auth_uri, _, _ = redirect_uri.partition("/ConsumerGroups")
-        self.address = urlparse(auth_uri)
-        self.host = self.address.hostname
-        self.auth_uri = "sb://{}{}".format(self.address.hostname, self.address.path)
-        self.eh_name = self.address.path.lstrip('/')
-        self.mgmt_target = redirect_uri
+        self._address = urlparse(auth_uri)
+        self._host = self._address.hostname
+        self.eh_name = self._address.path.lstrip('/')
+        self._auth_uri = "sb://{}{}".format(self._address.hostname, self._address.path)
+        self._mgmt_target = redirect_uri
+        if self._is_iothub:
+            self._iothub_redirect_info = redirect
 
     @classmethod
     def from_connection_string(cls, conn_str, **kwargs):
@@ -266,9 +273,9 @@ class EventHubClientAbstract(object):
                 :caption: Create an EventHubClient from a connection string.
 
         """
-        event_hub_path = kwargs.get("event_hub_path", None)
+        event_hub_path = kwargs.pop("event_hub_path", None)
         is_iot_conn_str = conn_str.lstrip().lower().startswith("hostname")
-        if not is_iot_conn_str:
+        if not is_iot_conn_str:  # pylint:disable=no-else-return
             address, policy, key, entity = _parse_conn_str(conn_str)
             entity = event_hub_path or entity
             left_slash_pos = address.find("//")
@@ -276,15 +283,6 @@ class EventHubClientAbstract(object):
                 host = address[left_slash_pos + 2:]
             else:
                 host = address
-            kwargs.pop("event_hub_path", None)
             return cls(host, entity, EventHubSharedKeyCredential(policy, key), **kwargs)
         else:
             return cls._from_iothub_connection_string(conn_str, **kwargs)
-
-    @abstractmethod
-    def create_consumer(self, consumer_group, partition_id, event_position, **kwargs):
-        pass
-
-    @abstractmethod
-    def create_producer(self, partition_id=None, operation=None, send_timeout=None):
-        pass

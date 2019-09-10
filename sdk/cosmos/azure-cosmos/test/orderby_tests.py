@@ -22,6 +22,7 @@
 import unittest
 import uuid
 import pytest
+from azure.core.paging import ItemPaged
 import azure.cosmos.documents as documents
 from azure.cosmos.partition_key import PartitionKey
 import azure.cosmos.cosmos_client as cosmos_client
@@ -61,7 +62,7 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
             
-        cls.client = cosmos_client.CosmosClient(cls.host, {'masterKey': cls.masterKey}, "Session", cls.connectionPolicy)
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, "Session", connection_policy=cls.connectionPolicy)
         cls.created_db = test_config._test_config.create_database_if_not_exist(cls.client)
         cls.created_collection = CrossPartitionTopOrderByTest.create_collection(cls.client, cls.created_db)
         cls.collection_link = cls.GetDocumentCollectionLink(cls.created_db, cls.created_collection)
@@ -431,8 +432,15 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
             collection_id = base.GetResourceIdOrFullNameFromLink(self.collection_link)
             def fetch_fn(options):
                 return self.client.client_connection.QueryFeed(path, collection_id, query, options, r['id'])
-            docResultsIterable = query_iterable.QueryIterable(self.client.client_connection, query, options, fetch_fn, self.collection_link)
-            
+            docResultsIterable = ItemPaged(
+                self.client.client_connection,
+                query,
+                options,
+                fetch_function=fetch_fn,
+                collection_link=self.collection_link,
+                page_iterator_class=query_iterable.QueryIterable
+            )
+
             docs = list(docResultsIterable)
             self.assertFalse(r['id'] in docs_by_partition_key_range_id)
             docs_by_partition_key_range_id[r['id']] = docs
@@ -448,7 +456,8 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
             max_item_count=page_size
         )
         
-        self.assertTrue(isinstance(result_iterable, query_iterable.QueryIterable))
+        self.assertTrue(isinstance(result_iterable, ItemPaged))
+        self.assertEqual(result_iterable._page_iterator_class, query_iterable.QueryIterable)
         
         ######################################
         # test next() behavior
@@ -466,14 +475,15 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
         self.assertRaises(StopIteration, invokeNext)
 
         ######################################
-        # test fetch_next_block() behavior
+        # test by_page() behavior
         ######################################
         results = {}
         cnt = 0
-        while True:
-            fetched_res = result_iterable.fetch_next_block()
+        page_iter = result_iterable.by_page()
+        for page in page_iter:
+            fetched_res = list(page)
             fetched_size = len(fetched_res)
-            
+
             for item in fetched_res:
                 self.assertEqual(item['id'], expected_ordered_ids[cnt])
                 results[cnt] = item
@@ -487,12 +497,14 @@ class CrossPartitionTopOrderByTest(unittest.TestCase):
                 else:
                     #cnt > expected_number_of_results
                     self.fail("more results than expected")
+
         
         # validate the number of collected results
         self.assertEqual(len(results), len(expected_ordered_ids))
         
         # no more results will be returned
-        self.assertEqual(result_iterable.fetch_next_block(), [])
+        with self.assertRaises(StopIteration):
+            next(page_iter)
 
     @classmethod
     def create_collection(self, client, created_db):

@@ -6,18 +6,16 @@ from __future__ import unicode_literals
 
 import logging
 import datetime
+import time
 import functools
-try:
-    from urlparse import urlparse
-    from urllib import unquote_plus, urlencode, quote_plus
-except ImportError:
-    from urllib.parse import urlparse, unquote_plus, urlencode, quote_plus
-from typing import Any, List, Dict
+import threading
 
-import uamqp
-from uamqp import Message
-from uamqp import authentication
-from uamqp import constants
+from typing import Any, List, Dict, Union, TYPE_CHECKING
+
+import uamqp  # type: ignore
+from uamqp import Message  # type: ignore
+from uamqp import authentication  # type: ignore
+from uamqp import constants  # type: ignore
 
 from azure.eventhub.producer import EventHubProducer
 from azure.eventhub.consumer import EventHubConsumer
@@ -27,6 +25,8 @@ from .common import EventHubSASTokenCredential, EventHubSharedKeyCredential
 from ._connection_manager import get_connection_manager
 from .error import _handle_exception
 
+if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential  # type: ignore
 
 log = logging.getLogger(__name__)
 
@@ -47,7 +47,9 @@ class EventHubClient(EventHubClientAbstract):
     """
 
     def __init__(self, host, event_hub_path, credential, **kwargs):
-        super(EventHubClient, self).__init__(host, event_hub_path, credential, **kwargs)
+        # type:(str, str, Union[EventHubSharedKeyCredential, EventHubSASTokenCredential, TokenCredential], Any) -> None
+        super(EventHubClient, self).__init__(host=host, event_hub_path=event_hub_path, credential=credential, **kwargs)
+        self._lock = threading.RLock()
         self._conn_manager = get_connection_manager(**kwargs)
 
     def __enter__(self):
@@ -66,55 +68,68 @@ class EventHubClient(EventHubClientAbstract):
         :param password: The shared access key.
         :type password: str
         """
-        http_proxy = self.config.http_proxy
-        transport_type = self.config.transport_type
-        auth_timeout = self.config.auth_timeout
+        http_proxy = self._config.http_proxy
+        transport_type = self._config.transport_type
+        auth_timeout = self._config.auth_timeout
 
         # TODO: the following code can be refactored to create auth from classes directly instead of using if-else
-        if isinstance(self.credential, EventHubSharedKeyCredential):
+        if isinstance(self._credential, EventHubSharedKeyCredential):  # pylint:disable=no-else-return
             username = username or self._auth_config['username']
             password = password or self._auth_config['password']
             if "@sas.root" in username:
                 return authentication.SASLPlain(
-                    self.host, username, password, http_proxy=http_proxy, transport_type=transport_type)
+                    self._host, username, password, http_proxy=http_proxy, transport_type=transport_type)
             return authentication.SASTokenAuth.from_shared_access_key(
-                self.auth_uri, username, password, timeout=auth_timeout, http_proxy=http_proxy,
+                self._auth_uri, username, password, timeout=auth_timeout, http_proxy=http_proxy,
                 transport_type=transport_type)
 
-        elif isinstance(self.credential, EventHubSASTokenCredential):
-            token = self.credential.get_sas_token()
+        elif isinstance(self._credential, EventHubSASTokenCredential):
+            token = self._credential.get_sas_token()
             try:
                 expiry = int(parse_sas_token(token)['se'])
             except (KeyError, TypeError, IndexError):
                 raise ValueError("Supplied SAS token has no valid expiry value.")
             return authentication.SASTokenAuth(
-                self.auth_uri, self.auth_uri, token,
+                self._auth_uri, self._auth_uri, token,
                 expires_at=expiry,
                 timeout=auth_timeout,
                 http_proxy=http_proxy,
                 transport_type=transport_type)
 
         else:  # Azure credential
-            get_jwt_token = functools.partial(self.credential.get_token,
+            get_jwt_token = functools.partial(self._credential.get_token,
                                               'https://eventhubs.azure.net//.default')
-            return authentication.JWTTokenAuth(self.auth_uri, self.auth_uri,
+            return authentication.JWTTokenAuth(self._auth_uri, self._auth_uri,
                                                get_jwt_token, http_proxy=http_proxy,
                                                transport_type=transport_type)
-
-    def _handle_exception(self, exception, retry_count, max_retries):
-        _handle_exception(exception, retry_count, max_retries, self)
 
     def _close_connection(self):
         self._conn_manager.reset_connection_if_broken()
 
+    def _try_delay(self, retried_times, last_exception, timeout_time=None, entity_name=None):
+        entity_name = entity_name or self._container_id
+        backoff = self._config.backoff_factor * 2 ** retried_times
+        if backoff <= self._config.backoff_max and (
+                timeout_time is None or time.time() + backoff <= timeout_time):  # pylint:disable=no-else-return
+            time.sleep(backoff)
+            log.info("%r has an exception (%r). Retrying...", format(entity_name), last_exception)
+        else:
+            log.info("%r operation has timed out. Last exception before timeout is (%r)",
+                     entity_name, last_exception)
+            raise last_exception
+
     def _management_request(self, mgmt_msg, op_type):
-        max_retries = self.config.max_retries
-        retry_count = 0
-        while retry_count <= self.config.max_retries:
-            mgmt_auth = self._create_auth()
-            mgmt_client = uamqp.AMQPClient(self.mgmt_target)
+        alt_creds = {
+            "username": self._auth_config.get("iot_username"),
+            "password": self._auth_config.get("iot_password")
+        }
+
+        retried_times = 0
+        while retried_times <= self._config.max_retries:
+            mgmt_auth = self._create_auth(**alt_creds)
+            mgmt_client = uamqp.AMQPClient(self._mgmt_target)
             try:
-                conn = self._conn_manager.get_connection(self.host, mgmt_auth)
+                conn = self._conn_manager.get_connection(self._host, mgmt_auth)  #pylint:disable=assignment-from-none
                 mgmt_client.open(connection=conn)
                 response = mgmt_client.mgmt_request(
                     mgmt_msg,
@@ -123,11 +138,24 @@ class EventHubClient(EventHubClientAbstract):
                     status_code_field=b'status-code',
                     description_fields=b'status-description')
                 return response
-            except Exception as exception:
-                self._handle_exception(exception, retry_count, max_retries)
-                retry_count += 1
+            except Exception as exception:  # pylint: disable=broad-except
+                last_exception = _handle_exception(exception, self)
+                self._try_delay(retried_times=retried_times, last_exception=last_exception)
+                retried_times += 1
             finally:
                 mgmt_client.close()
+
+    def _iothub_redirect(self):
+        with self._lock:
+            if self._is_iothub and not self._iothub_redirect_info:
+                if not self._redirect_consumer:
+                    self._redirect_consumer = self.create_consumer(consumer_group='$default',
+                                                                   partition_id='0',
+                                                                   event_position=EventPosition('-1'),
+                                                                   operation='/messages/events')
+                with self._redirect_consumer:
+                    self._redirect_consumer._open_with_retry()  # pylint: disable=protected-access
+                self._redirect_consumer = None
 
     def get_properties(self):
         # type:() -> Dict[str, Any]
@@ -142,6 +170,8 @@ class EventHubClient(EventHubClientAbstract):
         :rtype: dict
         :raises: ~azure.eventhub.ConnectError
         """
+        if self._is_iothub and not self._iothub_redirect_info:
+            self._iothub_redirect()
         mgmt_msg = Message(application_properties={'name': self.eh_name})
         response = self._management_request(mgmt_msg, op_type=b'com.microsoft:eventhub')
         output = {}
@@ -181,6 +211,8 @@ class EventHubClient(EventHubClientAbstract):
         :rtype: dict
         :raises: ~azure.eventhub.ConnectError
         """
+        if self._is_iothub and not self._iothub_redirect_info:
+            self._iothub_redirect()
         mgmt_msg = Message(application_properties={'name': self.eh_name,
                                                    'partition': partition})
         response = self._management_request(mgmt_msg, op_type=b'com.microsoft:partition')
@@ -228,14 +260,13 @@ class EventHubClient(EventHubClientAbstract):
                 :caption: Add a consumer to the client for a particular consumer group and partition.
 
         """
-        owner_level = kwargs.get("owner_level", None)
-        operation = kwargs.get("operation", None)
-        prefetch = kwargs.get("prefetch", None)
+        owner_level = kwargs.get("owner_level")
+        operation = kwargs.get("operation")
+        prefetch = kwargs.get("prefetch") or self._config.prefetch
 
-        prefetch = prefetch or self.config.prefetch
-        path = self.address.path + operation if operation else self.address.path
+        path = self._address.path + operation if operation else self._address.path
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
-            self.address.hostname, path, consumer_group, partition_id)
+            self._address.hostname, path, consumer_group, partition_id)
         handler = EventHubConsumer(
             self, source_url, event_position=event_position, owner_level=owner_level,
             prefetch=prefetch)
@@ -268,14 +299,15 @@ class EventHubClient(EventHubClientAbstract):
 
         """
 
-        target = "amqps://{}{}".format(self.address.hostname, self.address.path)
+        target = "amqps://{}{}".format(self._address.hostname, self._address.path)
         if operation:
             target = target + operation
-        send_timeout = self.config.send_timeout if send_timeout is None else send_timeout
+        send_timeout = self._config.send_timeout if send_timeout is None else send_timeout
 
         handler = EventHubProducer(
             self, target, partition=partition_id, send_timeout=send_timeout)
         return handler
 
     def close(self):
+        # type:() -> None
         self._conn_manager.close_connection()

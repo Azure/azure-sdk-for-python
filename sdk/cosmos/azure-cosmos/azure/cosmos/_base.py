@@ -27,6 +27,7 @@ import datetime
 import json
 import uuid
 import binascii
+from typing import Dict, Any
 
 import six
 from six.moves.urllib.parse import quote as urllib_quote
@@ -38,6 +39,45 @@ from . import http_constants
 from . import _runtime_constants
 
 # pylint: disable=protected-access
+
+_COMMON_OPTIONS = {
+    'initial_headers': 'initialHeaders',
+    'pre_trigger_include': 'preTriggerInclude',
+    'post_trigger_include': 'postTriggerInclude',
+    'max_item_count': 'maxItemCount',
+    'access_condition': 'accessCondition',
+    'indexing_directive': 'indexingDirective',
+    'consistency_level': 'consistencyLevel',
+    'session_token': 'sessionToken',
+    'enable_scan_in_query': 'enableScanInQuery',
+    'resource_token_expiry_seconds': 'resourceTokenExpirySeconds',
+    'offer_type': 'offerType',
+    'offer_throughput': 'offerThroughput',
+    'partition_key': 'partitionKey',
+    'enable_cross_partition_query': 'enableCrossPartitionQuery',
+    'populate_query_metrics': 'populateQueryMetrics',
+    'enable_script_logging': 'enableScriptLogging',
+    'offer_enable_ru_per_minute_throughput': 'offerEnableRUPerMinuteThroughput',
+    'disable_ru_per_minute_usage': 'disableRUPerMinuteUsage',
+    'change_feed': 'changeFeed',
+    'continuation': 'continuation',
+    'is_start_from_beginning': 'isStartFromBeginning',
+    'populate_partition_key_range_statistics': 'populatePartitionKeyRangeStatistics',
+    'populate_quota_info': 'populateQuotaInfo'
+}
+
+def build_options(kwargs):
+    # type: (Dict[str, Any]) -> Dict[str, Any]
+    options = kwargs.pop('request_options', kwargs.pop('feed_options', {}))
+    for key, value in _COMMON_OPTIONS.items():
+        if key in kwargs:
+            options[value] = kwargs.pop(key)
+
+    if 'if_match' in kwargs:
+        options['accessCondition'] = {'type': 'IfMatch', 'condition': kwargs.pop('if_match')}
+    if 'if_none_match' in kwargs:
+        options['accessCondition'] = {'type': 'IfNoneMatch', 'condition': kwargs.pop('if_none_match')}
+    return options
 
 
 def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches

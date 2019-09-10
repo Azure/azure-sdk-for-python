@@ -92,11 +92,8 @@ class ContainerManagement:
             db.create_container(id=id, partition_key=partition_key)
             print('Container with id \'{0}\' created'.format(id))
 
-        except errors.HTTPFailure as e:
-            if e.status_code == 409:
-               print('A container with id \'{0}\' already exists'.format(id))
-            else: 
-                raise errors.HTTPFailure(e.status_code)               
+        except errors.CosmosResourceExistsError:
+            print('A container with id \'{0}\' already exists'.format(id))               
 
         print("\n2.2 Create Container - With custom index policy")
         
@@ -114,15 +111,13 @@ class ContainerManagement:
                 partition_key=partition_key,
                 indexing_policy=coll['indexingPolicy']
             )
+            properties = container.read()
             print('Container with id \'{0}\' created'.format(container.id))
-            print('IndexPolicy Mode - \'{0}\''.format(container.properties['indexingPolicy']['indexingMode']))
-            print('IndexPolicy Automatic - \'{0}\''.format(container.properties['indexingPolicy']['automatic']))
+            print('IndexPolicy Mode - \'{0}\''.format(properties['indexingPolicy']['indexingMode']))
+            print('IndexPolicy Automatic - \'{0}\''.format(properties['indexingPolicy']['automatic']))
             
-        except errors.CosmosError as e:
-            if e.status_code == 409:
-               print('A container with id \'{0}\' already exists'.format(container['id']))
-            else: 
-                raise errors.HTTPFailure(e.status_code) 
+        except errors.CosmosResourceExistsError:
+            print('A container with id \'{0}\' already exists'.format(coll['id']))
 
         print("\n2.3 Create Container - With custom offer throughput")
 
@@ -135,11 +130,8 @@ class ContainerManagement:
             )
             print('Container with id \'{0}\' created'.format(container.id))
             
-        except errors.HTTPFailure as e:
-            if e.status_code == 409:
-               print('A container with id \'{0}\' already exists'.format(container.id))
-            else: 
-                raise errors.HTTPFailure(e.status_code)
+        except errors.CosmosResourceExistsError:
+            print('A container with id \'{0}\' already exists'.format(coll['id']))
 
         print("\n2.4 Create Container - With Unique keys")
 
@@ -149,15 +141,13 @@ class ContainerManagement:
                 partition_key=partition_key,
                 unique_key_policy={'uniqueKeys': [{'paths': ['/field1/field2', '/field3']}]}
             )
-            unique_key_paths = container.properties['uniqueKeyPolicy']['uniqueKeys'][0]['paths']
+            properties = container.read()
+            unique_key_paths = properties['uniqueKeyPolicy']['uniqueKeys'][0]['paths']
             print('Container with id \'{0}\' created'.format(container.id))
             print('Unique Key Paths - \'{0}\', \'{1}\''.format(unique_key_paths[0], unique_key_paths[1]))
             
-        except errors.HTTPFailure as e:
-            if e.status_code == 409:
-               print('A container with id \'{0}\' already exists'.format(container.id))
-            else: 
-                raise errors.HTTPFailure(e.status_code)
+        except errors.CosmosResourceExistsError:
+            print('A container with id \'container_unique_keys\' already exists')
 
         print("\n2.5 Create Collection - With Partition key V2 (Default)")
 
@@ -166,15 +156,12 @@ class ContainerManagement:
                 id="collection_partition_key_v2",
                 partition_key=PartitionKey(path='/id', kind='Hash')
             )
-
+            properties = container.read()
             print('Container with id \'{0}\' created'.format(container.id))
-            print('Partition Key - \'{0}\''.format(container.properties['partitionKey']))
+            print('Partition Key - \'{0}\''.format(properties['partitionKey']))
 
-        except errors.CosmosError as e:
-            if e.status_code == 409:
-                print('A container with id \'{0}\' already exists'.format(container.id))
-            else:
-                raise errors.HTTPFailure(e.status_code)
+        except errors.CosmosResourceExistsError:
+            print('A container with id \'collection_partition_key_v2\' already exists')
 
         print("\n2.6 Create Collection - With Partition key V1")
 
@@ -183,15 +170,12 @@ class ContainerManagement:
                 id="collection_partition_key_v1",
                 partition_key=PartitionKey(path='/id', kind='Hash', version=1)
             )
-
+            properties = container.read()
             print('Container with id \'{0}\' created'.format(container.id))
-            print('Partition Key - \'{0}\''.format(container.properties['partitionKey']))
+            print('Partition Key - \'{0}\''.format(properties['partitionKey']))
 
-        except errors.CosmosError as e:
-            if e.status_code == 409:
-                print('A container with id \'{0}\' already exists'.format(container.id))
-            else:
-                raise errors.HTTPFailure(e.status_code)
+        except errors.CosmosResourceExistsError:
+            print('A container with id \'collection_partition_key_v1\' already exists')
 
     @staticmethod
     def manage_offer_throughput(db, id):
@@ -211,11 +195,8 @@ class ContainerManagement:
             
             print('Found Offer \'{0}\' for Container \'{1}\' and its throughput is \'{2}\''.format(offer.properties['id'], container.id, offer.properties['content']['offerThroughput']))
 
-        except errors.HTTPFailure as e:
-            if e.status_code == 404:
-                print('A container with id \'{0}\' does not exist'.format(id))
-            else: 
-                raise errors.HTTPFailure(e.status_code)
+        except errors.CosmosResourceExistsError:
+            print('A container with id \'{0}\' does not exist'.format(id))
 
         print("\n3.2 Change Offer Throughput of Container")
                            
@@ -233,11 +214,8 @@ class ContainerManagement:
             container = db.get_container_client(id)
             print('Container with id \'{0}\' was found, it\'s link is {1}'.format(container.id, container.container_link))
 
-        except errors.HTTPFailure as e:
-            if e.status_code == 404:
-               print('A container with id \'{0}\' does not exist'.format(id))
-            else: 
-                raise errors.HTTPFailure(e.status_code)    
+        except errors.CosmosResourceNotFoundError:
+            print('A container with id \'{0}\' does not exist'.format(id))   
     
     @staticmethod
     def list_Containers(db):
@@ -245,7 +223,7 @@ class ContainerManagement:
         
         print('Containers:')
         
-        containers = list(db.read_all_containers())
+        containers = list(db.list_containers())
         
         if not containers:
             return
@@ -262,11 +240,8 @@ class ContainerManagement:
 
             print('Container with id \'{0}\' was deleted'.format(id))
 
-        except errors.HTTPFailure as e:
-            if e.status_code == 404:
-               print('A container with id \'{0}\' does not exist'.format(id))
-            else: 
-                raise errors.HTTPFailure(e.status_code)   
+        except errors.CosmosResourceNotFoundError:
+            print('A container with id \'{0}\' does not exist'.format(id))
 
 def run_sample():
 
@@ -276,11 +251,8 @@ def run_sample():
             try:
                 db = client.create_database(id=DATABASE_ID)
             
-            except errors.HTTPFailure as e:
-                if e.status_code == 409:
-                   pass
-                else: 
-                    raise errors.HTTPFailure(e.status_code)
+            except errors.CosmosResourceExistsError:
+                db = client.get_database_client(DATABASE_ID)
             
             # query for a container            
             ContainerManagement.find_container(db, CONTAINER_ID)
@@ -304,13 +276,10 @@ def run_sample():
             try:
                 client.delete_database(db)
             
-            except errors.CosmosError as e:
-                if e.status_code == 404:
-                   pass
-                else: 
-                    raise errors.HTTPFailure(e.status_code)
+            except errors.CosmosResourceNotFoundError:
+                pass
 
-        except errors.HTTPFailure as e:
+        except errors.CosmosHttpResponseError as e:
             print('\nrun_sample has caught an error. {0}'.format(e.message))
         
         finally:

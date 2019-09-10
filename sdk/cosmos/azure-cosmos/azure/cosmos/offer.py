@@ -21,6 +21,7 @@
 
 """Represents an offer in the Azure Cosmos DB SQL API service.
 """
+from typing import Dict, Any
 
 
 class Offer(object):

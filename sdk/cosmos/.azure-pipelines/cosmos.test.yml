@@ -4,6 +4,10 @@ pr:
   branches:
     include:
     - master
+    - feature/*
+    - hotfix/*
+    - release/*
+    - restapi*
   paths:
     include:
     - sdk/cosmos
@@ -16,10 +20,10 @@ jobs:
     strategy:
       matrix:
         Windows_Python35:
-          OSVmImage: 'vs2017-win2016'
+          OSVmImage: 'windows-2019'
           PythonVersion: '3.5'
         Windows_Python27:
-          OSVmImage: 'vs2017-win2016'
+          OSVmImage: 'windows-2019'
           PythonVersion: '2.7'
 
     pool:

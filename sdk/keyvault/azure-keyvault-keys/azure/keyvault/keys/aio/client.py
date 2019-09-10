@@ -3,12 +3,12 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from datetime import datetime
-from typing import Any, AsyncIterable, Mapping, Optional, Dict, List, Union
+from typing import Any, AsyncIterable, Optional, Dict, List, Union
 
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.keyvault.keys.models import DeletedKey, JsonWebKey, Key, KeyBase, KeyOperationResult
+from azure.keyvault.keys.models import DeletedKey, JsonWebKey, Key, KeyBase
 from azure.keyvault.keys._shared import AsyncKeyVaultClientBase
 
 from ..crypto.aio import CryptographyClient
@@ -50,7 +50,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         expires: Optional[datetime] = None,
         not_before: Optional[datetime] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs: Mapping[str, Any]
+        **kwargs: "**Any"
     ) -> Key:
         """Create a key. If ``name`` is already in use, create a new version of the key. Requires the keys/create
         permission.
@@ -107,7 +107,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         expires: Optional[datetime] = None,
         not_before: Optional[datetime] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs: Mapping[str, Any]
+        **kwargs: "**Any"
     ) -> Key:
         """Create a new RSA key. If ``name`` is already in use, create a new version of the key. Requires the
         keys/create permission.
@@ -157,7 +157,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         expires: Optional[datetime] = None,
         not_before: Optional[datetime] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs: Mapping[str, Any]
+        **kwargs: "**Any"
     ) -> Key:
         """Create a new elliptic curve key. If ``name`` is already in use, create a new version of the key. Requires
         the keys/create permission.
@@ -198,7 +198,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         )
 
     @distributed_trace_async
-    async def delete_key(self, name: str, **kwargs: Mapping[str, Any]) -> DeletedKey:
+    async def delete_key(self, name: str, **kwargs: "**Any") -> DeletedKey:
         """Delete all versions of a key and its cryptographic material. Requires the keys/delete permission.
 
         :param str name: The name of the key to delete.
@@ -218,7 +218,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         return DeletedKey._from_deleted_key_bundle(bundle)
 
     @distributed_trace_async
-    async def get_key(self, name: str, version: Optional[str] = None, **kwargs: Mapping[str, Any]) -> Key:
+    async def get_key(self, name: str, version: Optional[str] = None, **kwargs: "**Any") -> Key:
         """Get a key's attributes and, if it's an asymmetric key, its public material. Requires the keys/get permission.
 
         :param str name: The name of the key to get.
@@ -244,7 +244,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         return Key._from_key_bundle(bundle)
 
     @distributed_trace_async
-    async def get_deleted_key(self, name: str, **kwargs: Mapping[str, Any]) -> DeletedKey:
+    async def get_deleted_key(self, name: str, **kwargs: "**Any") -> DeletedKey:
         """Get a deleted key. This is only possible in a vault with soft-delete enabled. Requires the keys/get
         permission.
 
@@ -266,7 +266,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         return DeletedKey._from_deleted_key_bundle(bundle)
 
     @distributed_trace
-    def list_deleted_keys(self, **kwargs: Mapping[str, Any]) -> AsyncIterable[DeletedKey]:
+    def list_deleted_keys(self, **kwargs: "**Any") -> AsyncIterable[DeletedKey]:
         """List all deleted keys, including the public part of each. This is only possible in a vault with soft-delete
         enabled. Requires the keys/list permission.
 
@@ -290,7 +290,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         )
 
     @distributed_trace
-    def list_keys(self, **kwargs: Mapping[str, Any]) -> AsyncIterable[KeyBase]:
+    def list_keys(self, **kwargs: "**Any") -> AsyncIterable[KeyBase]:
         """List identifiers, attributes, and tags of all keys in the vault. Requires the keys/list permission.
 
         :returns: An iterator of keys without their cryptographic material or version information
@@ -313,7 +313,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         )
 
     @distributed_trace
-    def list_key_versions(self, name: str, **kwargs: Mapping[str, Any]) -> AsyncIterable[KeyBase]:
+    def list_key_versions(self, name: str, **kwargs: "**Any") -> AsyncIterable[KeyBase]:
         """List the identifiers, attributes, and tags of a key's versions. Requires the keys/list permission.
 
         :param str name: The name of the key
@@ -338,7 +338,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         )
 
     @distributed_trace_async
-    async def purge_deleted_key(self, name: str, **kwargs: Mapping[str, Any]) -> None:
+    async def purge_deleted_key(self, name: str, **kwargs: "**Any") -> None:
         """Permanently delete the specified key. This is only possible in vaults with soft-delete enabled. If a vault
         does not have soft-delete enabled, :func:`delete_key` is permanent, and this method will return an error.
 
@@ -358,7 +358,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         await self._client.purge_deleted_key(self.vault_url, name, **kwargs)
 
     @distributed_trace_async
-    async def recover_deleted_key(self, name: str, **kwargs: Mapping[str, Any]) -> Key:
+    async def recover_deleted_key(self, name: str, **kwargs: "**Any") -> Key:
         """Recover a deleted key to its latest version. This is only possible in vaults with soft-delete enabled. If a
         vault does not have soft-delete enabled, :func:`delete_key` is permanent, and this method will return an error.
         Attempting to recover an non-deleted key will also return an error.
@@ -390,7 +390,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         not_before: Optional[datetime] = None,
         expires: Optional[datetime] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs: Mapping[str, Any]
+        **kwargs: "**Any"
     ) -> Key:
         """Change attributes of a key. Cannot change a key's cryptographic material. Requires the keys/update
         permission.
@@ -433,7 +433,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         return Key._from_key_bundle(bundle)
 
     @distributed_trace_async
-    async def backup_key(self, name: str, **kwargs: Mapping[str, Any]) -> bytes:
+    async def backup_key(self, name: str, **kwargs: "**Any") -> bytes:
         """Back up a key in a protected form that can't be used outside Azure Key Vault. This is intended to allow
         copying a key from one vault to another. Requires the key/backup permission.
 
@@ -459,7 +459,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         return backup_result.value
 
     @distributed_trace_async
-    async def restore_key(self, backup: bytes, **kwargs: Mapping[str, Any]) -> Key:
+    async def restore_key(self, backup: bytes, **kwargs: "**Any") -> Key:
         """Restore a key backup to the vault. This imports all versions of the key, with its name, attributes, and
         access control policies. Requires the keys/restore permission.
 
@@ -492,7 +492,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         not_before: Optional[datetime] = None,
         expires: Optional[datetime] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs: Mapping[str, Any]
+        **kwargs: "**Any"
     ) -> Key:
         """Import an externally created key. If ``name`` is already in use, import the key as a new version. Requires
         the keys/import permission.
@@ -517,75 +517,3 @@ class KeyClient(AsyncKeyVaultClientBase):
             self.vault_url, name, key=key, hsm=hsm, key_attributes=attributes, tags=tags, **kwargs
         )
         return Key._from_key_bundle(bundle)
-
-    @distributed_trace_async
-    async def wrap_key(
-        self, name: str, algorithm: str, value: bytes, version: Optional[str] = None, **kwargs: Mapping[str, Any]
-    ) -> KeyOperationResult:
-        """Wraps a symmetric key using a specified key.
-
-        The WRAP operation supports encryption of a symmetric key using a key
-        encryption key that has previously been stored in an Azure Key Vault.
-        The WRAP operation is only strictly necessary for symmetric keys stored
-        in Azure Key Vault since protection with an asymmetric key can be
-        performed using the public portion of the key. This operation is
-        supported for asymmetric keys as a convenience for callers that have a
-        key-reference but do not have access to the public key material. This
-        operation requires the keys/wrapKey permission.
-
-        :param name: The name of the key.
-        :type name: str
-        :param version: The version of the key.
-        :type version: str
-        :param algorithm: algorithm identifier. Possible values include:
-         'RSA-OAEP', 'RSA-OAEP-256', 'RSA1_5'
-        :type algorithm: str or
-         ~azure.keyvault.keys.models.JsonWebKeyEncryptionAlgorithm
-        :param value:
-        :type value: bytes
-        :returns: The wrapped symmetric key.
-        :rtype: ~azure.keyvault.keys._models.KeyOperationResult
-
-        """
-        if version is None:
-            version = ""
-
-        bundle = await self._client.wrap_key(
-            self.vault_url, name, key_version=version, algorithm=algorithm, value=value, **kwargs
-        )
-        return KeyOperationResult(id=bundle.kid, value=bundle.result)
-
-    @distributed_trace_async
-    async def unwrap_key(
-        self, name: str, algorithm: str, value: bytes, version: Optional[str] = None, **kwargs: Mapping[str, Any]
-    ) -> KeyOperationResult:
-        """Unwraps a symmetric key using the specified key that was initially used
-        for wrapping that key.
-
-        The UNWRAP operation supports decryption of a symmetric key using the
-        target key encryption key. This operation is the reverse of the WRAP
-        operation. The UNWRAP operation applies to asymmetric and symmetric
-        keys stored in Azure Key Vault since it uses the private portion of the
-        key. This operation requires the keys/unwrapKey permission.
-
-        :param name: The name of the key.
-        :type name: str
-        :param version: The version of the key.
-        :type version: str
-        :param algorithm: algorithm identifier. Possible values include:
-         'RSA-OAEP', 'RSA-OAEP-256', 'RSA1_5'
-        :type algorithm: str or
-         ~azure.keyvault.keys.models.JsonWebKeyEncryptionAlgorithm
-        :param value:
-        :type value: bytes
-        :returns: The unwrapped symmetric key.
-        :rtype: ~azure.keyvault.keys._models.KeyOperationResult
-
-        """
-        if version is None:
-            version = ""
-
-        bundle = await self._client.unwrap_key(
-            self.vault_url, name, key_version=version, algorithm=algorithm, value=value, **kwargs
-        )
-        return KeyOperationResult(id=bundle.kid, value=bundle.result)

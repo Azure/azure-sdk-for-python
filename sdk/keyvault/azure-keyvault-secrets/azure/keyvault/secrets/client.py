@@ -2,7 +2,11 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from datetime import datetime
+from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
+from azure.core.tracing.decorator import distributed_trace
+
+from ._shared import KeyVaultClientBase
+from .models import Secret, DeletedSecret, SecretAttributes
 
 try:
     from typing import TYPE_CHECKING
@@ -11,14 +15,9 @@ except ImportError:
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import
-    from typing import Any, Dict, Mapping, Optional
+    from typing import Any, Dict, Optional
+    from datetime import datetime
     from azure.core.paging import ItemPaged
-
-from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
-from azure.core.tracing.decorator import distributed_trace
-
-from ._shared import KeyVaultClientBase
-from .models import Secret, DeletedSecret, SecretAttributes
 
 
 class SecretClient(KeyVaultClientBase):
@@ -41,7 +40,7 @@ class SecretClient(KeyVaultClientBase):
 
     @distributed_trace
     def get_secret(self, name, version=None, **kwargs):
-        # type: (str, str, Mapping[str, Any]) -> Secret
+        # type: (str, str, **Any) -> Secret
         """Get a secret. Requires the secrets/get permission.
 
         :param str name: The name of the secret
@@ -58,15 +57,27 @@ class SecretClient(KeyVaultClientBase):
                 :dedent: 8
         """
         bundle = self._client.get_secret(
-            self._vault_url, name, version or "", error_map={404: ResourceNotFoundError}, **kwargs
+            vault_base_url=self._vault_url,
+            secret_name=name,
+            secret_version=version or "",
+            error_map={404: ResourceNotFoundError},
+            **kwargs
         )
         return Secret._from_secret_bundle(bundle)
 
     @distributed_trace
     def set_secret(
-        self, name, value, content_type=None, enabled=None, not_before=None, expires=None, tags=None, **kwargs
+        self,
+        name,  # type: str
+        value,  # type: str
+        content_type=None,  # type: Optional[str]
+        enabled=None,  # type: Optional[bool]
+        not_before=None,  # type: Optional[datetime]
+        expires=None,  # type: Optional[datetime]
+        tags=None,  # type: Optional[Dict[str, str]]
+        **kwargs  # type:  **Any
     ):
-        # type: (str, str, Optional[str], Optional[bool], Optional[datetime], Optional[datetime], Optional[Dict[str, str]], Mapping[str, Any]) -> Secret
+        # type: (...) -> Secret
         """Set a secret value. Create a new secret if ``name`` is not in use. If it is, create a new version of the
         secret.
 
@@ -93,15 +104,29 @@ class SecretClient(KeyVaultClientBase):
         else:
             attributes = None
         bundle = self._client.set_secret(
-            self.vault_url, name, value, secret_attributes=attributes, content_type=content_type, tags=tags, **kwargs
+            vault_base_url=self.vault_url,
+            secret_name=name,
+            value=value,
+            secret_attributes=attributes,
+            content_type=content_type,
+            tags=tags,
+            **kwargs
         )
         return Secret._from_secret_bundle(bundle)
 
     @distributed_trace
     def update_secret(
-        self, name, version=None, content_type=None, enabled=None, not_before=None, expires=None, tags=None, **kwargs
+        self,
+        name,  # type: str
+        version=None,  # type: Optional[str]
+        content_type=None,  # type: Optional[str]
+        enabled=None,  # type: Optional[bool]
+        not_before=None,  # type: Optional[datetime]
+        expires=None,  # type: Optional[datetime]
+        tags=None,  # type: Optional[Dict[str, str]]
+        **kwargs  # type: **Any
     ):
-        # type: (str, Optional[str], Optional[str], Optional[bool], Optional[datetime], Optional[datetime], Optional[Dict[str, str]], Mapping[str, Any]) -> SecretAttributes
+        # type: (...) -> SecretAttributes
         """Update a secret's attributes, such as its tags or whether it's enabled. Requires the secrets/set permission.
 
         **This method can't change a secret's value.** Use :func:`set_secret` to change values.
@@ -143,7 +168,7 @@ class SecretClient(KeyVaultClientBase):
 
     @distributed_trace
     def list_secrets(self, **kwargs):
-        # type: (Mapping[str, Any]) -> ItemPaged[SecretAttributes]
+        # type: (**Any) -> ItemPaged[SecretAttributes]
         """List the latest identifier and attributes of all secrets in the vault, not including their values. Requires
         the secrets/list permission.
 
@@ -169,7 +194,7 @@ class SecretClient(KeyVaultClientBase):
 
     @distributed_trace
     def list_secret_versions(self, name, **kwargs):
-        # type: (str, Mapping[str, Any]) -> ItemPaged[SecretAttributes]
+        # type: (str, **Any) -> ItemPaged[SecretAttributes]
         """List all versions of a secret, including their identifiers and attributes but not their values. Requires the
         secrets/list permission.
 
@@ -197,7 +222,7 @@ class SecretClient(KeyVaultClientBase):
 
     @distributed_trace
     def backup_secret(self, name, **kwargs):
-        # type: (str, Mapping[str, Any]) -> bytes
+        # type: (str, **Any) -> bytes
         """Get a backup of all versions of a secret. Requires the secrets/backup permission.
 
         :param str name: Name of the secret
@@ -221,7 +246,7 @@ class SecretClient(KeyVaultClientBase):
 
     @distributed_trace
     def restore_secret(self, backup, **kwargs):
-        # type: (bytes, Mapping[str, Any]) -> SecretAttributes
+        # type: (bytes, **Any) -> SecretAttributes
         """Restore a backed up secret. Requires the secrets/restore permission.
 
         :param bytes backup: The raw bytes of the secret backup
@@ -243,7 +268,7 @@ class SecretClient(KeyVaultClientBase):
 
     @distributed_trace
     def delete_secret(self, name, **kwargs):
-        # type: (str, Mapping[str, Any]) -> DeletedSecret
+        # type: (str, **Any) -> DeletedSecret
         """Delete all versions of a secret. Requires the secrets/delete permission.
 
         :param str name: Name of the secret
@@ -264,7 +289,7 @@ class SecretClient(KeyVaultClientBase):
 
     @distributed_trace
     def get_deleted_secret(self, name, **kwargs):
-        # type: (str, Mapping[str, Any]) -> DeletedSecret
+        # type: (str, **Any) -> DeletedSecret
         """Get a deleted secret. This is only possible in vaults with soft-delete enabled. Requires the secrets/get
         permission.
 
@@ -286,7 +311,7 @@ class SecretClient(KeyVaultClientBase):
 
     @distributed_trace
     def list_deleted_secrets(self, **kwargs):
-        # type: (Mapping[str, Any]) -> ItemPaged[DeletedSecret]
+        # type: (**Any) -> ItemPaged[DeletedSecret]
         """Lists all deleted secrets. This is only possible in vaults with soft-delete enabled. Requires the
         secrets/list permission.
 
@@ -312,7 +337,7 @@ class SecretClient(KeyVaultClientBase):
 
     @distributed_trace
     def purge_deleted_secret(self, name, **kwargs):
-        # type: (str, Mapping[str, Any]) -> None
+        # type: (str, **Any) -> None
         """Permanently delete a secret. This is only possible in vaults with soft-delete enabled. If a vault
         doesn't have soft-delete enabled, :func:`delete_secret` is permanent, and this method will return an error.
 
@@ -333,7 +358,7 @@ class SecretClient(KeyVaultClientBase):
 
     @distributed_trace
     def recover_deleted_secret(self, name, **kwargs):
-        # type: (str, Mapping[str, Any]) -> SecretAttributes
+        # type: (str, **Any) -> SecretAttributes
         """Recover a deleted secret to its latest version. This is only possible in vaults with soft-delete enabled.
         Requires the secrets/recover permission.
 

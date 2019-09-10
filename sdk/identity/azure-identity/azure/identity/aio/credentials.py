@@ -6,16 +6,25 @@
 Credentials for asynchronous Azure SDK authentication.
 """
 import os
-from typing import Any, Mapping, Optional, Union
+from typing import TYPE_CHECKING, Any, Mapping, Optional, Union
 
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 
 from ._authn_client import AsyncAuthnClient
+from ._internal import wrap_exceptions
 from ._managed_identity import ImdsCredential, MsiCredential
 from .._base import ClientSecretCredentialBase, CertificateCredentialBase
 from .._constants import Endpoints, EnvironmentVariables
-from ..credentials import ChainedTokenCredential as SyncChainedTokenCredential
+from ..credentials import (
+    ChainedTokenCredential as SyncChainedTokenCredential,
+    SharedTokenCacheCredential as SyncSharedTokenCacheCredential,
+)
+
+if TYPE_CHECKING:
+    # pylint:disable=unused-import,ungrouped-imports
+    import msal_extensions
+    from ._authn_client import AuthnClientBase
 
 # pylint:disable=too-few-public-methods
 
@@ -33,7 +42,7 @@ class ClientSecretCredential(ClientSecretCredentialBase):
         super(ClientSecretCredential, self).__init__(client_id, secret, tenant_id, **kwargs)
         self._client = AsyncAuthnClient(Endpoints.AAD_OAUTH2_V2_FORMAT.format(tenant_id), **kwargs)
 
-    async def get_token(self, *scopes: str) -> AccessToken:
+    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:  # pylint:disable=unused-argument
         """
         Asynchronously request an access token for `scopes`.
 
@@ -61,7 +70,7 @@ class CertificateCredential(CertificateCredentialBase):
         super(CertificateCredential, self).__init__(client_id, tenant_id, certificate_path, **kwargs)
         self._client = AsyncAuthnClient(Endpoints.AAD_OAUTH2_V2_FORMAT.format(tenant_id), **kwargs)
 
-    async def get_token(self, *scopes: str) -> AccessToken:
+    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:  # pylint:disable=unused-argument
         """
         Asynchronously request an access token for `scopes`.
 
@@ -116,7 +125,7 @@ class EnvironmentCredential:
                 **kwargs
             )
 
-    async def get_token(self, *scopes: str) -> AccessToken:
+    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:  # pylint:disable=unused-argument
         """
         Asynchronously request an access token for `scopes`.
 
@@ -126,7 +135,7 @@ class EnvironmentCredential:
         """
         if not self._credential:
             raise ClientAuthenticationError(message="Incomplete environment configuration.")
-        return await self._credential.get_token(*scopes)
+        return await self._credential.get_token(*scopes, **kwargs)
 
 
 class ManagedIdentityCredential(object):
@@ -147,7 +156,7 @@ class ManagedIdentityCredential(object):
     def __init__(self, client_id: Optional[str] = None, **kwargs: Any) -> None:
         pass
 
-    async def get_token(self, *scopes: str) -> AccessToken:  # pylint:disable=unused-argument,no-self-use
+    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:  # pylint:disable=unused-argument,no-self-use
         """
         Asynchronously request an access token for `scopes`.
 
@@ -167,7 +176,7 @@ class ChainedTokenCredential(SyncChainedTokenCredential):
     :type credentials: :class:`azure.core.credentials.TokenCredential`
     """
 
-    async def get_token(self, *scopes: str) -> AccessToken:
+    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:  # pylint:disable=unused-argument
         """
         Asynchronously request a token from each credential, in order, returning the first token
         received. If none provides a token, raises :class:`azure.core.exceptions.ClientAuthenticationError`
@@ -179,10 +188,46 @@ class ChainedTokenCredential(SyncChainedTokenCredential):
         history = []
         for credential in self.credentials:
             try:
-                return await credential.get_token(*scopes)
+                return await credential.get_token(*scopes, **kwargs)
             except ClientAuthenticationError as ex:
                 history.append((credential, ex.message))
             except Exception as ex:  # pylint: disable=broad-except
                 history.append((credential, str(ex)))
         error_message = self._get_error_message(history)
         raise ClientAuthenticationError(message=error_message)
+
+
+class SharedTokenCacheCredential(SyncSharedTokenCacheCredential):
+    """
+    Authenticates using tokens in the local cache shared between Microsoft applications.
+
+    :param str username:
+        Username (typically an email address) of the user to authenticate as. This is required because the local cache
+        may contain tokens for multiple identities.
+    """
+
+    @wrap_exceptions
+    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
+        """
+        Get an access token for `scopes` from the shared cache. If no access token is cached, attempt to acquire one
+        using a cached refresh token.
+
+        :param str scopes: desired scopes for the token
+        :rtype: :class:`azure.core.credentials.AccessToken`
+        :raises:
+            :class:`azure.core.exceptions.ClientAuthenticationError` when the cache is unavailable or no access token
+            can be acquired from it
+        """
+
+        if not self._client:
+            raise ClientAuthenticationError(message="Shared token cache unavailable")
+
+        token = await self._client.obtain_token_by_refresh_token(scopes, self._username)
+        if not token:
+            raise ClientAuthenticationError(message="No cached token found for '{}'".format(self._username))
+
+        return token
+
+    @staticmethod
+    def _get_auth_client(cache: "msal_extensions.FileTokenCache") -> "AuthnClientBase":
+        return AsyncAuthnClient(Endpoints.AAD_OAUTH2_V2_FORMAT.format("common"), cache=cache)

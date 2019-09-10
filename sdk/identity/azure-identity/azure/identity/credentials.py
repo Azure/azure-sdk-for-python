@@ -6,6 +6,7 @@
 Credentials for Azure SDK authentication.
 """
 import os
+import sys
 import time
 
 from azure.core.credentials import AccessToken
@@ -23,9 +24,11 @@ except ImportError:
     TYPE_CHECKING = False
 
 if TYPE_CHECKING:
-    # pylint:disable=unused-import
+    # pylint:disable=unused-import,ungrouped-imports
     from typing import Any, Callable, Dict, Mapping, Optional, Union
     from azure.core.credentials import TokenCredential
+    import msal_extensions
+    from ._authn_client import AuthnClientBase
 
     EnvironmentCredentialTypes = Union["CertificateCredential", "ClientSecretCredential", "UsernamePasswordCredential"]
 
@@ -46,8 +49,8 @@ class ClientSecretCredential(ClientSecretCredentialBase):
         super(ClientSecretCredential, self).__init__(client_id, secret, tenant_id, **kwargs)
         self._client = AuthnClient(Endpoints.AAD_OAUTH2_V2_FORMAT.format(tenant_id), **kwargs)
 
-    def get_token(self, *scopes):
-        # type (*str) -> AccessToken
+    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
+        # type: (*str, **Any) -> AccessToken
         """
         Request an access token for `scopes`.
 
@@ -76,8 +79,8 @@ class CertificateCredential(CertificateCredentialBase):
         self._client = AuthnClient(Endpoints.AAD_OAUTH2_V2_FORMAT.format(tenant_id), **kwargs)
         super(CertificateCredential, self).__init__(client_id, tenant_id, certificate_path, **kwargs)
 
-    def get_token(self, *scopes):
-        # type (*str) -> AccessToken
+    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
+        # type: (*str, **Any) -> AccessToken
         """
         Request an access token for `scopes`.
 
@@ -141,8 +144,8 @@ class EnvironmentCredential:
                 **kwargs
             )
 
-    def get_token(self, *scopes):
-        # type (*str) -> AccessToken
+    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
+        # type: (*str, **Any) -> AccessToken
         """
         Request an access token for `scopes`.
 
@@ -152,7 +155,7 @@ class EnvironmentCredential:
         """
         if not self._credential:
             raise ClientAuthenticationError(message="Incomplete environment configuration.")
-        return self._credential.get_token(*scopes)
+        return self._credential.get_token(*scopes, **kwargs)
 
 
 class ManagedIdentityCredential(object):
@@ -174,8 +177,8 @@ class ManagedIdentityCredential(object):
         # type: (Optional[str], Any) -> None
         pass
 
-    def get_token(self, *scopes):  # pylint:disable=unused-argument,no-self-use
-        # type (*str) -> AccessToken
+    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument,no-self-use
+        # type: (*str, **Any) -> AccessToken
         """
         Request an access token for `scopes`.
 
@@ -201,8 +204,8 @@ class ChainedTokenCredential(object):
             raise ValueError("at least one credential is required")
         self.credentials = credentials
 
-    def get_token(self, *scopes):
-        # type (*str) -> AccessToken
+    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
+        # type: (*str, **Any) -> AccessToken
         """
         Request a token from each chained credential, in order, returning the first token received.
         If none provides a token, raises :class:`azure.core.exceptions.ClientAuthenticationError` with an
@@ -214,7 +217,7 @@ class ChainedTokenCredential(object):
         history = []
         for credential in self.credentials:
             try:
-                return credential.get_token(*scopes)
+                return credential.get_token(*scopes, **kwargs)
             except ClientAuthenticationError as ex:
                 history.append((credential, ex.message))
             except Exception as ex:  # pylint: disable=broad-except
@@ -263,14 +266,14 @@ class DeviceCodeCredential(PublicClientCredential):
     """
 
     def __init__(self, client_id, prompt_callback=None, **kwargs):
-        # type: (str, Optional[Callable[[str, str], None]], Any) -> None
+        # type: (str, Optional[Callable[[str, str, str], None]], Any) -> None
         self._timeout = kwargs.pop("timeout", None)  # type: Optional[int]
         self._prompt_callback = prompt_callback
         super(DeviceCodeCredential, self).__init__(client_id=client_id, **kwargs)
 
     @wrap_exceptions
-    def get_token(self, *scopes):
-        # type (*str) -> AccessToken
+    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
+        # type: (*str, **Any) -> AccessToken
         """
         Request an access token for `scopes`. This credential won't cache the token. Each call begins a new
         authentication flow.
@@ -313,6 +316,70 @@ class DeviceCodeCredential(PublicClientCredential):
         return token
 
 
+class SharedTokenCacheCredential(object):
+    """
+    Authenticates using tokens in the local cache shared between Microsoft applications.
+
+    :param str username:
+        Username (typically an email address) of the user to authenticate as. This is required because the local cache
+        may contain tokens for multiple identities.
+    """
+
+    def __init__(self, username, **kwargs):  # pylint:disable=unused-argument
+        # type: (str, **Any) -> None
+
+        self._username = username
+
+        cache = None
+
+        if sys.platform.startswith("win") and "LOCALAPPDATA" in os.environ:
+            from msal_extensions.token_cache import WindowsTokenCache
+
+            cache = WindowsTokenCache(cache_location=os.environ["LOCALAPPDATA"] + "/.IdentityService/msal.cache")
+
+            # prevent writing to the shared cache
+            # TODO: seperating deserializing access tokens from caching them would make this cleaner
+            cache.add = lambda *_: None
+
+        if cache:
+            self._client = self._get_auth_client(cache)  # type: Optional[AuthnClientBase]
+        else:
+            self._client = None
+
+    @wrap_exceptions
+    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
+        # type (*str, **Any) -> AccessToken
+        """
+        Get an access token for `scopes` from the shared cache. If no access token is cached, attempt to acquire one
+        using a cached refresh token.
+
+        :param str scopes: desired scopes for the token
+        :rtype: :class:`azure.core.credentials.AccessToken`
+        :raises:
+            :class:`azure.core.exceptions.ClientAuthenticationError` when the cache is unavailable or no access token
+            can be acquired from it
+        """
+
+        if not self._client:
+            raise ClientAuthenticationError(message="Shared token cache unavailable")
+
+        token = self._client.obtain_token_by_refresh_token(scopes, self._username)
+        if not token:
+            raise ClientAuthenticationError(message="No cached token found for '{}'".format(self._username))
+
+        return token
+
+    @staticmethod
+    def supported():
+        # type: () -> bool
+        return sys.platform.startswith("win")
+
+    @staticmethod
+    def _get_auth_client(cache):
+        # type: (msal_extensions.FileTokenCache) -> AuthnClientBase
+        return AuthnClient(Endpoints.AAD_OAUTH2_V2_FORMAT.format("common"), cache=cache)
+
+
 class UsernamePasswordCredential(PublicClientCredential):
     """
     Authenticates a user with a username and password. In general, Microsoft doesn't recommend this kind of
@@ -342,8 +409,8 @@ class UsernamePasswordCredential(PublicClientCredential):
         self._password = password
 
     @wrap_exceptions
-    def get_token(self, *scopes):
-        # type (*str) -> AccessToken
+    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
+        # type: (*str, **Any) -> AccessToken
         """
         Request an access token for `scopes`.
 

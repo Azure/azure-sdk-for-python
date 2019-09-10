@@ -1,6 +1,5 @@
 import datetime
 import os
-import pytz
 import asyncio
 from azure.keyvault.secrets.aio import SecretClient
 from azure.identity.aio import DefaultAzureCredential
@@ -19,7 +18,7 @@ from azure.core.exceptions import HttpResponseError
 #    https://pypi.python.org/pypi/azure-identity/
 #
 # 4. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL.
-# How to do this - https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-secrets#createget-credentials)
+# How to do this - https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys#createget-credentials)
 #
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates the basic CRUD operations on a vault(secret) resource for Azure Key Vault
@@ -45,7 +44,7 @@ async def run_sample():
         # Let's create a secret holding bank account credentials valid for 1 year.
         # if the secret already exists in the key vault, then a new version of the secret is created.
         print("\n1. Create Secret")
-        expires = datetime.datetime.now(pytz.timezone("America/New_York")) + datetime.timedelta(days=365)
+        expires = datetime.datetime.utcnow() + datetime.timedelta(days=365)
         secret = await client.set_secret("helloWorldSecretName", "helloWorldSecretValue", expires=expires)
         print("Secret with name '{0}' created with value '{1}'".format(secret.name, secret.value))
         print("Secret with name '{0}' expires on '{1}'".format(secret.name, secret.expires))
