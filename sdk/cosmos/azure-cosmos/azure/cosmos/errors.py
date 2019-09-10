@@ -21,45 +21,45 @@
 
 """PyCosmos Exceptions in the Azure Cosmos database service.
 """
+from azure.core.exceptions import (  # type: ignore  # pylint: disable=unused-import
+    AzureError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError
+)
 from . import http_constants
 
 
-class CosmosError(Exception):
-    """Base class for all Azure Cosmos errors.
-    """
+class CosmosHttpResponseError(HttpResponseError):
+    """Raised when a HTTP request to the Azure Cosmos has failed."""
 
-
-class HTTPFailure(CosmosError):
-    """Raised when a HTTP request to the Azure Cosmos has failed.
-    """
-
-    def __init__(self, status_code, message="", headers=None):
+    def __init__(self, status_code=None, message=None, response=None, **kwargs):
         """
-        :param int status_code:
-        :param str message:
-
+        :param int status_code: HTTP response code.
+        :param str message: Error message.
         """
-        if headers is None:
-            headers = {}
-
-        self.status_code = status_code
-        self.headers = headers
+        self.headers = response.headers if response else {}
         self.sub_status = None
-        self._http_error_message = message
+        self.http_error_message = message
+        status = status_code or (int(response.status_code) if response else 0)
+
         if http_constants.HttpHeaders.SubStatus in self.headers:
             self.sub_status = int(self.headers[http_constants.HttpHeaders.SubStatus])
-            CosmosError.__init__(
-                self, "Status code: %d Sub-status: %d\n%s" % (self.status_code, self.sub_status, message)
-            )
+            formatted_message = "Status code: %d Sub-status: %d\n%s" % (status, self.sub_status, str(message))
         else:
-            CosmosError.__init__(self, "Status code: %d\n%s" % (self.status_code, message))
+            formatted_message = "Status code: %d\n%s" % (status, str(message))
+
+        super(CosmosHttpResponseError, self).__init__(message=formatted_message, response=response, **kwargs)
+        self.status_code = status
 
 
-class JSONParseFailure(CosmosError):
-    """Raised when fails to parse JSON message.
-    """
+class CosmosResourceNotFoundError(ResourceNotFoundError, CosmosHttpResponseError):
+    """An error response with status code 404."""
 
 
-class UnexpectedDataType(CosmosError):
-    """Raised when unexpected data type is provided as parameter.
-    """
+class CosmosResourceExistsError(ResourceExistsError, CosmosHttpResponseError):
+    """An error response with status code 409."""
+
+
+class CosmosAccessConditionFailedError(CosmosHttpResponseError):
+    """An error response with status code 412."""

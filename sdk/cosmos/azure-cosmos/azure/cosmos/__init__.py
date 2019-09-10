@@ -19,9 +19,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from .container import Container
+from .container import ContainerProxy
 from .cosmos_client import CosmosClient
-from .database import Database
+from .database import DatabaseProxy
+from .user import UserProxy
+from .scripts import ScriptsProxy
 from .documents import (
     ConsistencyLevel,
     DataType,
@@ -35,17 +37,16 @@ from .documents import (
 )
 from .partition_key import PartitionKey
 from .permission import Permission
-from .scripts import Scripts
-from .user import User
+from .version import VERSION
 
 __all__ = (
-    "Container",
     "CosmosClient",
-    "Database",
+    "DatabaseProxy",
+    "ContainerProxy",
     "PartitionKey",
     "Permission",
-    "Scripts",
-    "User",
+    "ScriptsProxy",
+    "UserProxy",
     "ConsistencyLevel",
     "DataType",
     "IndexKind",
@@ -56,3 +57,4 @@ __all__ = (
     "TriggerOperation",
     "TriggerType",
 )
+__version__ = VERSION

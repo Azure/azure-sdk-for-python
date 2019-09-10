@@ -90,7 +90,7 @@ futures
 mock
 typing
 msal~=0.4.1
-msal_extensions~=0.1.1
+msal-extensions~=0.1.1
 msrest>=0.5.0
 msrestazure<2.0.0,>=0.4.32
 requests>=2.18.4
@@ -104,3 +104,4 @@ six>=1.6
 #override azure-storage-blob azure-core<2.0.0,>=1.0.0b3
 #override azure-storage-queue azure-core<2.0.0,>=1.0.0b3
 #override azure-storage-file azure-core<2.0.0,>=1.0.0b3
+#override azure-cosmos azure-core<2.0.0,>=1.0.0b3

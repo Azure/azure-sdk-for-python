@@ -62,12 +62,14 @@ def distributed_trace(func=None, name_of_span=None):
             child = parent_span.span(name=name)
             child.start()
             common.set_span_contexts(child)
-            ans = func(*args, **kwargs) # type: ignore
-            child.finish()
-            common.set_span_contexts(parent_span)
-            if orig_wrapped_span is None and passed_in_parent is None and original_span_instance is None:
-                parent_span.finish()
-            common.set_span_contexts(orig_wrapped_span, span_instance=original_span_instance)
+            try:
+                ans = func(*args, **kwargs) # type: ignore
+            finally:
+                child.finish()
+                common.set_span_contexts(parent_span)
+                if orig_wrapped_span is None and passed_in_parent is None and original_span_instance is None:
+                    parent_span.finish()
+                common.set_span_contexts(orig_wrapped_span, span_instance=original_span_instance)
         else:
             ans = func(*args, **kwargs) # type: ignore
         return ans

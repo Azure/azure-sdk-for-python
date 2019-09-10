@@ -128,7 +128,8 @@ class _PartitionKeyRangeDocumentProduerComparator(object):
         )
 
 
-class _OrderByHelper:
+class _OrderByHelper(object):
+
     @staticmethod
     def getTypeOrd(orderby_item):
         """Returns the ordinal of the value of the item pair in the dictionary.
