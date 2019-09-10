@@ -58,13 +58,11 @@ class CertificateClient(AsyncKeyVaultClientBase):
         If this is the first version, the certificate resource is created. This
         operation requires the certificates/create permission.
 
-        :param name: The name of the certificate.
-        :type name: str
+        :param str name: The name of the certificate.
         :param policy: The management policy for the certificate.
         :type policy:
          ~azure.keyvault.certificates.models.CertificatePolicy
-        :param enabled: Determines whether the object is enabled.
-        :type enabled: bool
+        :param bool enabled: Determines whether the object is enabled.
         :param tags: Application specific metadata in the form of key-value pairs.
         :type tags: dict(str, str)
         :returns: The created CertificateOperation
@@ -147,9 +145,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         version of the certificate as a parameter. If you wish to specify version, use
         the get_certificate function and specify version.
 
-        :param name: The name of the certificate in the given
-         vault.
-        :type name: str
+        :param str name: The name of the certificate in the given vault.
         :returns: An instance of Certificate
         :rtype: ~azure.keyvault.certificates.models.Certificate
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -182,11 +178,8 @@ class CertificateClient(AsyncKeyVaultClientBase):
         If you wish to not specify a version or to get the certificate's policy as well,
         use the get_certificate_with_policy function.
 
-        :param name: The name of the certificate in the given
-         vault.
-        :type name: str
-        :param version: The version of the certificate.
-        :type version: str
+        :param str name: The name of the certificate in the given vault.
+        :param str version: The version of the certificate.
         :returns: An instance of Certificate
         :rtype: ~azure.keyvault.certificates.models.Certificate
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -216,8 +209,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         of a certificate object. This operation requires the
         certificates/delete permission.
 
-        :param name: The name of the certificate.
-        :type name: str
+        :param str name: The name of the certificate.
         :returns: The deleted certificate
         :rtype: ~azure.keyvault.certificates.models.DeletedCertificate
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -246,8 +238,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         current deletion recovery level. This operaiton requires the certificates/
         get permission.
 
-        :param name: The name of the certificate.
-        :type name: str
+        :param str name: The name of the certificate.
         :return: The deleted certificate
         :rtype: ~azure.keyvault.certificates.models.DeletedCertificate
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -276,8 +267,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         level does not specified 'Purgeable'. This operation requires the
         certificate/purge permission.
 
-        :param name: The name of the certificate
-        :type name: str
+        :param str name: The name of the certificate
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -298,10 +288,9 @@ class CertificateClient(AsyncKeyVaultClientBase):
         interval (available in the deleted certificate's attributes). This operation
         requires the certificates/recover permission.
 
-        :param name: The name of the deleted certificate
-        :type name: str
+        :param str name: The name of the deleted certificate
         :return: The recovered certificate
-        :rtype ~azure.keyvault.certificates.models.Certificate
+        :rtype: ~azure.keyvault.certificates.models.Certificate
         :raises: ~azure.core.exceptions.HttpResponseError
 
         Example:
@@ -338,21 +327,16 @@ class CertificateClient(AsyncKeyVaultClientBase):
         contain the key as well as x509 certificates. This operation requires
         the certificates/import permission.
 
-        :param name: The name of the certificate.
-        :type name: str
-        :param certificate_bytes: Bytes of the ertificate object to import.
-        This certificate needs to contain the private key.
-        :type certificate_bytes: str
-        :param password: If the private key in base64EncodedCertificate is
-         encrypted, the password used for encryption.
-        :type password: str
+        :param str name: The name of the certificate.
+        :param bytes certificate_bytes: Bytes of the certificate object to import.
+            This certificate needs to contain the private key.
+        :param str password: If the private key in the passed in certificate is encrypted,
+            it is the password used for encryption.
         :param policy: The management policy for the certificate.
         :type policy:
          ~azure.keyvault.certificates.models.CertificatePolicy
-        :param enabled: Determines whether the object is enabled.
-        :type enabled: bool
-        :param tags: Application specific metadata in the form of key-value
-         pairs.
+        :param bool enabled: Determines whether the object is enabled.
+        :param tags: Application specific metadata in the form of key-value pairs.
         :type tags: dict[str, str]
         :returns: The imported Certificate
         :rtype: ~azure.keyvault.certificates.models.Certificate
@@ -384,10 +368,9 @@ class CertificateClient(AsyncKeyVaultClientBase):
         Returns the specified certificate policy resources in the key
         vault. This operation requires the certificates/get permission.
 
-        :param name: The name of the certificate in a given key vault.
-        :type name: str
+        :param str name: The name of the certificate in a given key vault.
         :return: The certificate policy
-        :rtype ~azure.keyvault.certificates.models.CertificatePolicy
+        :rtype: ~azure.keyvault.certificates.models.CertificatePolicy
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         bundle = await self._client.get_certificate_policy(
@@ -409,8 +392,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         Set specified members in the certificate policy. Leaves others as null.
         This operation requries the certificates/update permission.
 
-        :param name: The name of the certificate in the given vault.
-        :type name: str
+        :param str name: The name of the certificate in the given vault.
         :param policy: The policy for the certificate.
         :type policy: ~azure.keyvault.certificates.models.CertificatePolicy
         :return: The certificate policy
@@ -440,13 +422,9 @@ class CertificateClient(AsyncKeyVaultClientBase):
         given certificate; the only elements updated are the certificate's
         attributes. This operation requires the certificates/update permission.
 
-        :param name: The name of the certificate in the given key
-         vault.
-        :type name: str
-        :param version: The version of the certificate.
-        :type version: str
-        :param enabled: Determines whether the object is enabled.
-        :type enabled: bool
+        :param str name: The name of the certificate in the given key vault.
+        :param str version: The version of the certificate.
+        :param bool enabled: Determines whether the object is enabled.
         :param tags: Application specific metadata in the form of key-value pairs.
         :type tags: dict(str, str)
         :returns: The updated Certificate
@@ -486,8 +464,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         to the client. All versions of the certificate will be downloaded.
         This operation requires the certificates/backup permission.
 
-        :param name: The name of the certificate.
-        :type name: str
+        :param str name: The name of the certificate.
         :return: the backup blob containing the backed up certificate.
         :rtype: bytes
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -514,8 +491,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         Restores a backed up certificate, and all its versions, to a vault.
         this operation requires the certificates/restore permission.
 
-        :param backup: The backup blob associated with a certificate bundle.
-        :type backup bytes
+        :param bytes backup: The backup blob associated with a certificate bundle.
         :return: The restored Certificate
         :rtype: ~azure.keyvault.certificates.models.Certificate
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -549,12 +525,11 @@ class CertificateClient(AsyncKeyVaultClientBase):
         deletion-specific information. This operation requires the certificates/get/list
         permission. This operation can only be enabled on soft-delete enabled vaults.
 
-        :param include_pending: Specifies whether to include certificates which are not
-        completely provisioned.
-        :type include_pending: bool
+        :param bool include_pending: Specifies whether to include certificates which are not
+            completely provisioned.
         :return: An iterator like instance of DeletedCertificate
         :rtype:
-         typing.Generator[~azure.keyvault.certificates.models.DeletedCertificate]
+         ~azure.core.paging.ItemPaged[~azure.keyvault.certificates.models.DeletedCertificate]
         :raises: ~azure.core.exceptions.HttpResponseError
 
         Example:
@@ -586,12 +561,11 @@ class CertificateClient(AsyncKeyVaultClientBase):
         in the key vault. This operation requires the
         certificates/list permission.
 
-        :param include_pending: Specifies whether to include certificates
+        :param bool include_pending: Specifies whether to include certificates
          which are not completely provisioned.
-        :type include_pending: bool
         :returns: An iterator like instance of CertificateBase
         :rtype:
-         typing.Generator[~azure.keyvault.certificates.models.CertificateBase]
+         ~azure.core.paging.ItemPaged[~azure.keyvault.certificates.models.CertificateBase]
         :raises: ~azure.core.exceptions.HttpResponseError
 
         Example:
@@ -619,11 +593,10 @@ class CertificateClient(AsyncKeyVaultClientBase):
         certificate in the key vault. This operation requires the
         certificates/list permission.
 
-        :param name: The name of the certificate.
-        :type name: str
+        :param str name: The name of the certificate.
         :returns: An iterator like instance of CertificateBase
         :rtype:
-         typing.Generator[~azure.keyvault.certificates.models.CertificateBase]
+         ~azure.core.paging.ItemPaged[~azure.keyvault.certificates.models.CertificateBase]
         :raises: ~azure.core.exceptions.HttpResponseError
 
         Example:
@@ -656,7 +629,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         :param contacts: The contact list for the vault certificates.
         :type contacts: list[~azure.keyvault.certificates.models.Contact]
         :returns: The created list of contacts
-        :rtype: Iterator[~azure.keyvault.certificates.models.Contact]
+        :rtype: list[~azure.keyvault.certificates.models.Contact]
         :raises: ~azure.core.exceptions.HttpResponseError
 
         Example:
@@ -687,7 +660,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         permission.
 
         :return: The certificate contacts for the key vault.
-        :rtype: Iterator[azure.keyvault.certificates.models.Contact]
+        :rtype: list[azure.keyvault.certificates.models.Contact]
         :raises: ~azure.core.exceptions.HttpResponseError
 
         Example:
@@ -713,7 +686,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         This operation requires the certificates/managecontacts permission.
 
         :return: Contacts
-        :rtype: Iterator[~azure.security.certificates._models.Contact]
+        :rtype: list[~azure.keyvault.certificates.models.Contact]
         :raises: ~azure.core.exceptions.HttpResponseError
 
         Example:
@@ -734,10 +707,9 @@ class CertificateClient(AsyncKeyVaultClientBase):
         Gets the creation operation associated with a specified certificate.
         This operation requires the certificates/get permission.
 
-        :param name: The name of the certificate.
-        :type name: str
+        :param str name: The name of the certificate.
         :returns: The created CertificateOperation
-        :rtype: ~azure.security.keyvault.certificates.models.CertificateOperation
+        :rtype: ~azure.keyvault.certificates.models.CertificateOperation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
 
@@ -756,8 +728,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         the process of being created. The certificate is no longer created.
         This operation requires the certificates/update permission.
 
-        :param name: The name of the certificate.
-        :type name: str
+        :param str name: The name of the certificate.
         :return: The deleted CertificateOperation
         :rtype: ~azure.keyvault.certificates.models.CertificateOperation
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -771,14 +742,13 @@ class CertificateClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def cancel_certificate_operation(self, name: str, **kwargs: "**Any") -> CertificateOperation:
-        """Updates a certificate operation.
+        """Cancels a certificate operation.
 
-        Updates a certificate creation operation that is already in progress.
+        Cancels a certificate creation operation that is already in progress.
         This operation requires the certificates/update permission.
 
-        :param name: The name of the certificate.
-        :type name: str
-        :returns: The updated certificate operation
+        :param str name: The name of the certificate.
+        :returns: The cancelled certificate operation
         :rtype: ~azure.keyvault.certificates.models.CertificateOperation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
@@ -797,10 +767,10 @@ class CertificateClient(AsyncKeyVaultClientBase):
             custom_headers: Optional[Dict[str, str]] = None,
             **kwargs: "**Any") -> str:
         """Gets the Base64 pending certificate signing request (PKCS-10).
-        :param name: The name of the certificate
-        :type name: str
+
+        :param str name: The name of the certificate
         :param custom_headers: headers that will be added to the request
-        :type custom_headers: dict
+        :type custom_headers: dict[str, str]
         :return: Base64 encoded pending certificate signing request (PKCS-10).
         :rtype: str
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -864,13 +834,14 @@ class CertificateClient(AsyncKeyVaultClientBase):
 
         Performs the merging of a certificate or certificate chain with a key pair currently
         available in the service. This operation requires the certificates/create permission.
+        Make sure when creating the certificate to merge using create_certificate that you set
+        it's issuer to 'Unknown'. This way Key Vault knows that the certificate will not be signed
+        by an issuer known to it.
 
-        :param name: The name of the certificate
-        :type name: str
+        :param str name: The name of the certificate
         :param x509_certificates: The certificate or the certificate chain to merge.
         :type x509_certificates: list[bytearray]
-        :param enabled: Determines whether the object is enabled.
-        :type enabled: bool
+        :param bool enabled: Determines whether the object is enabled.
         :param tags: Application specific metadata in the form of key-value pairs.
         :type tags: dict[str, str]
         :return: The merged certificate operation
@@ -900,8 +871,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         Returns the specified certificate issuer resources in the key vault.
         This operation requires the certificates/manageissuers/getissuers permission.
 
-        :param name: The name of the issuer.
-        :type name: str
+        :param str name: The name of the issuer.
         :return: The specified certificate issuer.
         :rtype: ~azure.keyvault.certificates.models.Issuer
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -939,20 +909,14 @@ class CertificateClient(AsyncKeyVaultClientBase):
         certificate issuer. This operation requires the certificates/setissuers
         permission.
 
-        :param name: The name of the issuer.
-        :type name: str
-        :param provider: The issuer provider.
-        :type provider: str
-        :param account_id: The user name/account name/account id.
-        :type account_id: str
-        :param password: The password/secret/account key.
-        :type password: str
-        :param organization_id: Id of the organization.
-        :type organization_id: str
+        :param str name: The name of the issuer.
+        :param str provider: The issuer provider.
+        :param str account_id: The user name/account name/account id.
+        :param str password: The password/secret/account key.
+        :param str organization_id: Id of the organization.
         :param admin_details: Details of the organization administrators of the certificate issuer.
-        :type admin_details: ~azure.keyvault.certificates.models.AdministratorDetails
-        :param enabled: Determines whether the object is enabled.
-        :type enabled: bool
+        :type admin_details: list[~azure.keyvault.certificates.models.AdministratorDetails]
+        :param bool enabled: Determines whether the object is enabled.
         :returns: The created Issuer
         :rtype: ~azure.keyvault.certificates.models.Issuer
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -1015,33 +979,19 @@ class CertificateClient(AsyncKeyVaultClientBase):
         """Updates the specified certificate issuer.
 
         Performs an update on the specified certificate issuer entity.
-        THis operation requires the certificates/setissuers permission.
+        This operation requires the certificates/setissuers permission.
 
-        :param name: The name of the issuer.
-        :type name: str
-        :param provider: The issuer provider.
-        :type provider: str
-        :param account_id: The username / account name / account key.
-        :type account_id: str
-        :param password: The password / secret / account key.
-        :type password: str
-        :param organization_id: Id of the organization
-        :type organization_id: str
+        :param str name: The name of the issuer.
+        :param str provider: The issuer provider.
+        :param str account_id: The username / account name / account key.
+        :param str password: The password / secret / account key.
+        :param str organization_id: Id of the organization
         :param admin_details: Details of the organization administrators of the certificate issuer.
-        :type admin_details: ~azure.keyvault.certificates.models.AdministratorDetails
-        :param enabled: Determines whether the issuer is enabled.
-        :type enabled: bool
+        :type admin_details: list[~azure.keyvault.certificates.models.AdministratorDetails]
+        :param bool enabled: Determines whether the issuer is enabled.
         :return: The updated issuer
         :rtype: ~azure.keyvault.certificates.models.Issuer
         :raises: ~azure.core.exceptions.HttpResponseError
-
-        Example:
-            .. literalinclude:: ../tests/test_examples_certificates_async.py
-                :start-after: [START update_issuer]
-                :end-before: [END update_issuer]
-                :language: python
-                :caption: Update an issuer
-                :dedent: 8
         """
         if account_id or password:
             issuer_credentials = self._client.models.IssuerCredentials(account_id=account_id, password=password)
@@ -1085,8 +1035,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         Permanently removes the specified certificate issuer from the vault.
         This operation requires the certificates/manageissuers/deleteissuers permission.
 
-        :param name: The name of the issuer.
-        :type name: str
+        :param str name: The name of the issuer.
         :return: Issuer
         :rtype: ~azure.keyvault.certificates.models.Issuer
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -1115,7 +1064,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         permission.
 
         :return: An iterator like instance of Issuers
-        :rtype: Iterable[~azure.keyvault.certificates.models.Issuer]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.certificates.models.Issuer]
         :raises: ~azure.core.exceptions.HttpResponseError
 
         Example:
