@@ -337,8 +337,8 @@ class CertificateClient(KeyVaultClientBase):
         :param str name: The name of the certificate.
         :param bytes certificate_bytes: Bytes of the certificate object to import. This certificate
             needs to contain the private key.
-        :param str password: If the private key in base64EncodedCertificate is
-            encrypted, the password used for encryption.
+        :param str password: If the private key in the passed in certificate is encrypted, it is the
+            password used for encryption.
         :param policy: The management policy for the certificate.
         :type policy:
          ~azure.keyvault.certificates.models.CertificatePolicy
@@ -535,7 +535,7 @@ class CertificateClient(KeyVaultClientBase):
             completely provisioned.
         :return: An iterator like instance of DeletedCertificate
         :rtype:
-         Generator[~azure.keyvault.certificates.models.DeletedCertificate]
+         ~azure.core.paging.ItemPaged[~azure.keyvault.certificates.models.DeletedCertificate]
         :raises: ~azure.core.exceptions.HttpResponseError
 
         Example:
@@ -571,7 +571,7 @@ class CertificateClient(KeyVaultClientBase):
             which are not completely provisioned.
         :returns: An iterator like instance of CertificateBase
         :rtype:
-         Generator[~azure.keyvault.certificates.models.CertificateBase]
+         ~azure.core.paging.ItemPaged[~azure.keyvault.certificates.models.CertificateBase]
         :raises: ~azure.core.exceptions.HttpResponseError
 
         Example:
@@ -603,7 +603,7 @@ class CertificateClient(KeyVaultClientBase):
         :param str name: The name of the certificate.
         :returns: An iterator like instance of CertificateBase
         :rtype:
-         Generator[~azure.keyvault.certificates.models.CertificateBase]
+         ~azure.core.paging.ItemPaged[~azure.keyvault.certificates.models.CertificateBase]
         :raises: ~azure.core.exceptions.HttpResponseError
 
         Example:
@@ -633,7 +633,7 @@ class CertificateClient(KeyVaultClientBase):
         :param contacts: The contact list for the vault certificates.
         :type contacts: list[~azure.keyvault.certificates.models.Contact]
         :returns: The created list of contacts
-        :rtype: Iterator[~azure.keyvault.certificates.models.Contact]
+        :rtype: list[~azure.keyvault.certificates.models.Contact]
         :raises: ~azure.core.exceptions.HttpResponseError
 
         Example:
@@ -661,7 +661,7 @@ class CertificateClient(KeyVaultClientBase):
         permission.
 
         :return: The certificate contacts for the key vault.
-        :rtype: Iterator[~azure.keyvault.certificates.models.Contact]
+        :rtype: list[~azure.keyvault.certificates.models.Contact]
         :raises: ~azure.core.exceptions.HttpResponseError
 
         Example:
@@ -684,7 +684,7 @@ class CertificateClient(KeyVaultClientBase):
         This operation requires the certificates/managecontacts permission.
 
         :return: Contacts
-        :rtype: Iterator[~azure.keyvault.certificates.models.Contact]
+        :rtype: list[~azure.keyvault.certificates.models.Contact]
         :raises: ~azure.core.exceptions.HttpResponseError
 
         Example:
@@ -918,7 +918,7 @@ class CertificateClient(KeyVaultClientBase):
         :param str password: The password/secret/account key.
         :param str organization_id: Id of the organization.
         :param admin_details: Details of the organization administrators of the certificate issuer.
-        :type admin_details: Iterable[~azure.keyvault.certificates.models.AdministratorDetails]
+        :type admin_details: list[~azure.keyvault.certificates.models.AdministratorDetails]
         :param bool enabled: Determines whether the object is enabled.
         :returns: The created Issuer
         :rtype: ~azure.keyvault.certificates.models.Issuer
@@ -991,7 +991,7 @@ class CertificateClient(KeyVaultClientBase):
         :param str password: The password / secret / account key.
         :param str organization_id: Id of the organization
         :param admin_details: Details of the organization administrators of the certificate issuer.
-        :type admin_details: Iterable[~azure.keyvault.certificates.models.AdministratorDetails]
+        :type admin_details: list[~azure.keyvault.certificates.models.AdministratorDetails]
         :param bool enabled: Determines whether the issuer is enabled.
         :return: The updated issuer
         :rtype: ~azure.keyvault.certificates.models.Issuer
@@ -1070,7 +1070,7 @@ class CertificateClient(KeyVaultClientBase):
         permission.
 
         :return: An iterator like instance of Issuers
-        :rtype: Iterable[~azure.keyvault.certificates.models.Issuer]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.certificates.models.Issuer]
         :raises: ~azure.core.exceptions.HttpResponseError
 
         Example:

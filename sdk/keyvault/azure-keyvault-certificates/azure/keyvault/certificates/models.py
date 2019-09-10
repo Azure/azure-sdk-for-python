@@ -1007,7 +1007,7 @@ class Issuer(IssuerBase):
     :param str password: The password / secret / account key.
     :param str organization_id: The ID of the organization.
     :param admin_details: Details of the organization administrator.
-    :type admin_details: List[~azure.keyvault.certificates.AdministratorDetails]
+    :type admin_details: list[~azure.keyvault.certificates.AdministratorDetails]
     """
     def __init__(
         self,
@@ -1105,7 +1105,7 @@ class Issuer(IssuerBase):
         # type: () -> List[AdministratorDetails]
         """Details of the organization administrator of this issuer.
 
-        :rtype: List[~azure.keyvault.certificates.models.AdministratorDetails]
+        :rtype: list[~azure.keyvault.certificates.models.AdministratorDetails]
         """
         return self._admin_details
 
