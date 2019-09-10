@@ -24,4 +24,4 @@ Build CI for `azure-sdk-for-python` essentially builds and tests packages in one
 
 ### So when do they run?
 
-A standard pull request will option #1. On a nightly cadence, the `python - client` build installs the entire world and tests in _both_ methodologies outlined above.
+A standard pull request will option target the `Individual Packages` option. On a nightly cadence, the `python - client` build installs the entire world and tests in _both_ methodologies outlined above.
