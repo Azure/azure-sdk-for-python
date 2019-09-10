@@ -46,7 +46,7 @@ parser.add_argument(
     "--disabledevelop",
     dest="develop_mode_disabled",
     default=False,
-    action="store_true"
+    action="store_true",
     help="Add this argument if you would prefer to install the package with a simple `pip install` versus `pip install -e`",
 )
 
