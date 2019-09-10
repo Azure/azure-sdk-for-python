@@ -22,14 +22,10 @@ if TYPE_CHECKING:
 class AdministratorDetails(object):
     """Details of the organization administrator of the certificate issuer.
 
-    :param first_name: First name of the issuer.
-    :type first_name: str
-    :param last_name: Last name of the issuer.
-    :type last_name: str
-    :param email: email of the issuer.
-    :type email: str
-    :param phone: phone number of the issuer.
-    :type phone: str
+    :param str first_name: First name of the issuer.
+    :param str last_name: Last name of the issuer.
+    :param str email: email of the issuer.
+    :param str phone: phone number of the issuer.
     """
 
     def __init__(self, first_name=None, last_name=None, email=None, phone=None):
@@ -78,10 +74,8 @@ class AdministratorDetails(object):
 class Error(object):
     """The key vault server error.
 
-    :param code: The error code.
-    :type code: str
-    :param message: The error message.
-    :type message: str
+    :param str code: The error code.
+    :param str message: The error message.
     :param inner_error: The error object itself
     :type inner_error: ~azure.keyvault.certificates.Error
     """
@@ -125,10 +119,8 @@ class CertificateBase(object):
 
     :param attributes: The certificate management attributes.
     :type attributes: ~azure.keyvault.certificates.CertificateAttributes
-    :param cert_id: The certificate id.
-    :type cert_id: str
-    :param thumbprint: Thumpbrint of the certificate
-    :type thumbprint: bytes
+    :param str cert_id: The certificate id.
+    :param bytes thumbprint: Thumpbrint of the certificate
     """
     def __init__(self, attributes=None, cert_id=None, thumbprint=None, **kwargs):
         # type: (Optional[models.CertificateAttributes], Optional[str], Optional[bytes], **Any) -> None
@@ -263,18 +255,13 @@ class Certificate(CertificateBase):
 
     :param policy: The management policy for the certificate.
     :type policy: ~azure.keyvault.certificates.CertificatePolicy
-    :param cert_id: The certificate id.
-    :type cert_id: str
-    :param thumbprint: Thumpbrint of the certificate
-    :type thumbprint: bytes
-    :param key_id: The key id.
-    :type key_id: str
-    :param secret_id: The secret id.
-    :type secret_id: str
+    :paramstr cert_id: The certificate id.
+    :param bytes thumbprint: Thumpbrint of the certificate
+    :param str key_id: The key id.
+    :param str secret_id: The secret id.
     :param attributes: The certificate attributes.
     :type attributes: ~azure.keyvault.certificates.CertificateAttributes
-    :param cer: CER contents of the X509 certificate.
-    :type cer: bytearray
+    :param bytearray cer: CER contents of the X509 certificate.
     """
     def __init__(
         self,
@@ -345,32 +332,22 @@ class CertificateOperation(object):
     # pylint:disable=too-many-instance-attributes
     """A certificate operation is returned in case of asynchronous requests.
 
-    :param cert_operation_id: The certificate id.
-    :type cert_operation_id: str
-    :param issuer_name: Name of the operation's issuer object or reserved names;
+    :param str cert_operation_id: The certificate id.
+    :param str issuer_name: Name of the operation's issuer object or reserved names;
         for example, 'Self' or 'Unknown
-    :type issuer_name: str
-    :param certificate_type: Type of certificate requested from the issuer provider.
-    :type certificate_type: str
-    :param certificate_transparency: Indicates if the certificate this operation is
+    :param str certificate_type: Type of certificate requested from the issuer provider.
+    :param bool certificate_transparency: Indicates if the certificate this operation is
         running for is published to certificate transparency logs.
-    :type certificate_transparency: bool
-    :param csr: The certificate signing request (CSR) that is being used in the certificate
+    :param bytearray csr: The certificate signing request (CSR) that is being used in the certificate
         operation.
-    :type csr: bytearray
-    :param cancellation_requested: Indicates if cancellation was requested on the certificate
+    :param bool cancellation_requested: Indicates if cancellation was requested on the certificate
         operation.
-    :type cancellation_requested: bool
-    :param status: Status of the certificate operation.
-    :type status: str
-    :param status_details: The status details of the certificate operation
-    :type status_details: str
+    :param str status: Status of the certificate operation.
+    :param str status_details: The status details of the certificate operation
     :param error: Error encountered, if any, during the certificate operation.
     :type error: ~azure.keyvault.certificates.Error
-    :param target: Location which contains the result of the certificate operation.
-    :type target: str
-    :param request_id: Identifier for the certificate operation.
-    :type request_id: str
+    :param str target: Location which contains the result of the certificate operation.
+    :param str request_id: Identifier for the certificate operation.
     """
     def __init__(
         self,
@@ -521,28 +498,22 @@ class CertificatePolicy(object):
 
     :param attributes: the certificate attributes.
     :type attributes: ~azure.keyvault.certificates.models.CertificateAttributes
-    :param cert_policy_id: The certificate id.
-    :type cert_policy_id: str
+    :param str cert_policy_id: The certificate id.
     :param key_properties: Properties of the key backing the certificate.
     :type key_properties: ~azure.keyvault.certificates.models.KeyProperties
     :param content_type: The media type (MIME type) of the secret backing the certificate.
     :type content_type: ~azure.keyvault.certificates.enums.SecretContentType or str
-    :param subject_name: The subject name of the certificate. Should be a valid X509
+    :param str subject_name: The subject name of the certificate. Should be a valid X509
         distinguished name.
-    :type subject_name: str
-    :param validity_in_months: The duration that the certificate is valid in months.
-    :type validity_in_months: int
+    :param int validity_in_months: The duration that the certificate is valid in months.
     :param lifetime_actions: Actions that will be performed by Key Vault over the lifetime
         of a certificate
     :type lifetime_actions: Iterable[~azure.keyvault.certificates.LifetimeAction]
-    :param issuer_name: Name of the referenced issuer object or reserved names; for example,
+    :param str issuer_name: Name of the referenced issuer object or reserved names; for example,
         'Self' or 'Unknown"
-    :type issuer_name: str
-    :param certificate_type: Type of certificate to be requested from the issuer provider.
-    :type certificate_type: str
-    :param certificate_transparency: Indicates if the certificates generated under this policy
+    :param str certificate_type: Type of certificate to be requested from the issuer provider.
+    :param bool certificate_transparency: Indicates if the certificates generated under this policy
         should be published to certificate transparency logs.
-    :type certificate_transparency: bool
     :param san_emails: Subject alternative emails of the X509 object. Only one out of san_emails,
         san_dns_names, and san_upns may be set.
     :type san_emails: Iterable[str]
@@ -935,12 +906,9 @@ class CertificatePolicy(object):
 class Contact(object):
     """The contact information for the vault certificates.
 
-    :param email: Email address of a contact for the certificate.
-    :type email: str
-    :param name: Name of a contact for the certificate.
-    :type name: str
-    :param phone: phone number of a contact for the certificate.
-    :type phone: str
+    :param str email: Email address of a contact for the certificate.
+    :param str name: Name of a contact for the certificate.
+    :param str phone: phone number of a contact for the certificate.
     """
 
     def __init__(self, email=None, name=None, phone=None):
@@ -985,8 +953,7 @@ class Contact(object):
 class IssuerBase(object):
     """The base for the issuer containing the issuer metadata.
 
-    :param issuer_id: the ID of the issuer.
-    :type issuer_id: str
+    :param str issuer_id: the ID of the issuer.
     """
     def __init__(self, issuer_id=None, provider=None):
         # type: (Optional[str], Optional[str]) -> None
@@ -1034,16 +1001,11 @@ class Issuer(IssuerBase):
 
     :param attributes: Attributes of the issuer object. Only populated by server.
     :type attributes: ~azure.keyvault.v7_0.models.IssuerAttributes
-    :param provider: The issuer provider.
-    :type provider: str
-    :param issuer_id: The ID of the issuer.
-    :type issuer_id: str
-    :param account_id: The username / account name / account id.
-    :type account_id: str
-    :param password: The password / secret / account key.
-    :type password: str
-    :param organization_id: The ID of the organization.
-    :type organization_id: str
+    :param str provider: The issuer provider.
+    :param str issuer_id: The ID of the issuer.
+    :param str account_id: The username / account name / account id.
+    :param str password: The password / secret / account key.
+    :param str organization_id: The ID of the organization.
     :param admin_details: Details of the organization administrator.
     :type admin_details: List[~azure.keyvault.certificates.AdministratorDetails]
     """
@@ -1151,17 +1113,14 @@ class Issuer(IssuerBase):
 class KeyProperties(object):
     """Properties of the key pair backing a certificate.
 
-    :param exportable: Indicates if the private key can be exported.
-    :type exportable: bool
+    :param bool exportable: Indicates if the private key can be exported.
     :param key_type: The type of key pair to be used for the certificate.
         Possible values include: 'EC', 'EC-HSM', 'RSA', 'RSA-HSM', 'oct'
     :type key_type: str or ~azure.keyvault.certificates.enums.JsonWebKeyType
-    :param key_size: The key size in bits. For example: 2048, 3072, or 4096
+    :param int key_size: The key size in bits. For example: 2048, 3072, or 4096
         for RSA.
-    :type key_size: int
-    :param reuse_key: Indicates if the same key pair will be used on certificate
+    :param bool reuse_key: Indicates if the same key pair will be used on certificate
         renewal.
-    :type reuse_key: bool
     :param curve: Elliptic curve name. For valid values, see JsonWebKeyCurveName.
         Possible values include: 'P-256', 'P-384', 'P-521', 'P-256K'
     :type curve: str or ~azure.keyvault.certificates.enums.JsonWebKeyCurveName
@@ -1260,13 +1219,11 @@ class LifetimeAction(object):
     :param action_type: The type of the action. Possible values include: 'EmailContacts',
         'AutoRenew'
     :type action_type: str or ~azure.keyvault.certificates.enums.ActionType
-    :param lifetime_percentage: Percentage of lifetime at which to trigger. Value
+    :param int lifetime_percentage: Percentage of lifetime at which to trigger. Value
         should be between 1 and 99.
-    :type lifetime_percentage: int
-    :param days_before_expiry: Days before expiry to attempt renewal. Value should be between
+    :param int days_before_expiry: Days before expiry to attempt renewal. Value should be between
         1 and validity_in_months multiplied by 27. I.e., if validity_in_months is 36, then value
         should be between 1 and 972 (36 * 27).
-    :type days_before_expiry: int
     """
 
     def __init__(self, action_type, lifetime_percentage=None, days_before_expiry=None):
@@ -1310,26 +1267,18 @@ class DeletedCertificate(Certificate):
 
     :param attributes: The certificate attributes
     :type attributes: ~azure.keyvault.certifictaes.CertificateAttributes
-    :param cert_id: The certificate id.
-    :type cert_id: str
-    :param thumbprint: Thumbprint of the certificate.
-    :type thumbprint: bytes
-    :param key_id: The key id.
-    :type key_id: str
-    :param secret_id: The secret id.
-    :type secret_id: str
+    :param str cert_id: The certificate id.
+    :param bytes thumbprint: Thumbprint of the certificate.
+    :param str key_id: The key id.
+    :param str secret_id: The secret id.
     :param policy: The management policy of the deleted certificate.
     :type policy: ~azure.keyvault.certificates.CertificatePolicy
-    :param cer: CER contents of the X509 certificate.
-    :type cer: bytearray
-    :param deleted_date: The time when the certificate was deleted, in UTC
-    :type deleted_date: datetime
-    :param recovery_id: The url of the recovery object, used to identify and
+    :param bytearray cer: CER contents of the X509 certificate.
+    :param datetime deleted_date: The time when the certificate was deleted, in UTC
+    :param str recovery_id: The url of the recovery object, used to identify and
         recover the deleted certificate.
-    :type recovery_id: str
-    :param scheduled_purge_date: The time when the certificate is scheduled to
+    :param datetime scheduled_purge_date: The time when the certificate is scheduled to
         be purged, in UTC
-    :type scheduled_purge_date: datetime
     """
 
     def __init__(
