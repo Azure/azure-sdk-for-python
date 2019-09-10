@@ -2,4 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-VERSION = "1.0.0b3"
+from .exception_wrapper import wrap_exceptions
+
+__all__ = ["wrap_exceptions"]
