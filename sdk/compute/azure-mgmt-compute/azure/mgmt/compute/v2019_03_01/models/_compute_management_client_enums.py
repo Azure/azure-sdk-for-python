@@ -310,6 +310,13 @@ class UpgradeMode(str, Enum):
     rolling = "Rolling"
 
 
+class VirtualMachineScaleSetScaleInRules(str, Enum):
+
+    default = "Default"
+    oldest_vm = "OldestVM"
+    newest_vm = "NewestVM"
+
+
 class OperatingSystemStateTypes(str, Enum):
 
     generalized = "Generalized"
