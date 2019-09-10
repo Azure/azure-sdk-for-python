@@ -80,7 +80,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
             ] = resourceThrottle_retry_policy.cummulative_wait_time_in_milliseconds
 
             return result
-        except errors.HTTPFailure as e:
+        except errors.CosmosHttpResponseError as e:
             retry_policy = None
             if e.status_code == StatusCodes.FORBIDDEN and e.sub_status == SubStatusCodes.WRITE_FORBIDDEN:
                 retry_policy = endpointDiscovery_retry_policy

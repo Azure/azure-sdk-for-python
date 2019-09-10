@@ -29,7 +29,7 @@ import threading
 from . import _base
 from . import http_constants
 from ._vector_session_token import VectorSessionToken
-from .errors import HTTPFailure
+from .errors import CosmosHttpResponseError
 
 
 class SessionContainer(object):
@@ -196,15 +196,15 @@ class SessionContainer(object):
                     id_ = tokens[0]
                     sessionToken = VectorSessionToken.create(tokens[1])
                     if sessionToken is None:
-                        raise HTTPFailure(
-                            http_constants.StatusCodes.INTERNAL_SERVER_ERROR,
-                            "Could not parse the received session token: %s" % tokens[1],
+                        raise CosmosHttpResponseError(
+                            status_code=http_constants.StatusCodes.INTERNAL_SERVER_ERROR,
+                            message="Could not parse the received session token: %s" % tokens[1],
                         )
                     id_to_sessionlsn[id_] = sessionToken
         return id_to_sessionlsn
 
 
-class Session:
+class Session(object):
     """
     State of a Azure Cosmos session. This session object
     can be shared across clients within the same process
