@@ -146,6 +146,14 @@ class CassandraKeyspaceGetResults(ARMResourceProperties):
     :param cassandra_keyspace_get_results_id: Required. Name of the Cosmos DB
      Cassandra keyspace
     :type cassandra_keyspace_get_results_id: str
+    :ivar _rid: A system generated property. A unique identifier.
+    :vartype _rid: str
+    :ivar _ts: A system generated property that denotes the last updated
+     timestamp of the resource.
+    :vartype _ts: object
+    :ivar _etag: A system generated property representing the resource etag
+     required for optimistic concurrency control.
+    :vartype _etag: str
     """
 
     _validation = {
@@ -153,6 +161,9 @@ class CassandraKeyspaceGetResults(ARMResourceProperties):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'cassandra_keyspace_get_results_id': {'required': True},
+        '_rid': {'readonly': True},
+        '_ts': {'readonly': True},
+        '_etag': {'readonly': True},
     }
 
     _attribute_map = {
@@ -162,11 +173,17 @@ class CassandraKeyspaceGetResults(ARMResourceProperties):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'cassandra_keyspace_get_results_id': {'key': 'properties.id', 'type': 'str'},
+        '_rid': {'key': 'properties._rid', 'type': 'str'},
+        '_ts': {'key': 'properties._ts', 'type': 'object'},
+        '_etag': {'key': 'properties._etag', 'type': 'str'},
     }
 
     def __init__(self, *, cassandra_keyspace_get_results_id: str, location: str=None, tags=None, **kwargs) -> None:
         super(CassandraKeyspaceGetResults, self).__init__(location=location, tags=tags, **kwargs)
         self.cassandra_keyspace_get_results_id = cassandra_keyspace_get_results_id
+        self._rid = None
+        self._ts = None
+        self._etag = None
 
 
 class CassandraKeyspaceResource(Model):
@@ -308,6 +325,14 @@ class CassandraTableGetResults(ARMResourceProperties):
     :type default_ttl: int
     :param schema: Schema of the Cosmos DB Cassandra table
     :type schema: ~azure.mgmt.cosmosdb.models.CassandraSchema
+    :ivar _rid: A system generated property. A unique identifier.
+    :vartype _rid: str
+    :ivar _ts: A system generated property that denotes the last updated
+     timestamp of the resource.
+    :vartype _ts: object
+    :ivar _etag: A system generated property representing the resource etag
+     required for optimistic concurrency control.
+    :vartype _etag: str
     """
 
     _validation = {
@@ -315,6 +340,9 @@ class CassandraTableGetResults(ARMResourceProperties):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'cassandra_table_get_results_id': {'required': True},
+        '_rid': {'readonly': True},
+        '_ts': {'readonly': True},
+        '_etag': {'readonly': True},
     }
 
     _attribute_map = {
@@ -326,6 +354,9 @@ class CassandraTableGetResults(ARMResourceProperties):
         'cassandra_table_get_results_id': {'key': 'properties.id', 'type': 'str'},
         'default_ttl': {'key': 'properties.defaultTtl', 'type': 'int'},
         'schema': {'key': 'properties.schema', 'type': 'CassandraSchema'},
+        '_rid': {'key': 'properties._rid', 'type': 'str'},
+        '_ts': {'key': 'properties._ts', 'type': 'object'},
+        '_etag': {'key': 'properties._etag', 'type': 'str'},
     }
 
     def __init__(self, *, cassandra_table_get_results_id: str, location: str=None, tags=None, default_ttl: int=None, schema=None, **kwargs) -> None:
@@ -333,6 +364,9 @@ class CassandraTableGetResults(ARMResourceProperties):
         self.cassandra_table_get_results_id = cassandra_table_get_results_id
         self.default_ttl = default_ttl
         self.schema = schema
+        self._rid = None
+        self._ts = None
+        self._etag = None
 
 
 class CassandraTableResource(Model):
@@ -1777,6 +1811,14 @@ class MongoDBCollectionGetResults(ARMResourceProperties):
     :type shard_key: dict[str, str]
     :param indexes: List of index keys
     :type indexes: list[~azure.mgmt.cosmosdb.models.MongoIndex]
+    :ivar _rid: A system generated property. A unique identifier.
+    :vartype _rid: str
+    :ivar _ts: A system generated property that denotes the last updated
+     timestamp of the resource.
+    :vartype _ts: object
+    :ivar _etag: A system generated property representing the resource etag
+     required for optimistic concurrency control.
+    :vartype _etag: str
     """
 
     _validation = {
@@ -1784,6 +1826,9 @@ class MongoDBCollectionGetResults(ARMResourceProperties):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'mongo_db_collection_get_results_id': {'required': True},
+        '_rid': {'readonly': True},
+        '_ts': {'readonly': True},
+        '_etag': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1795,6 +1840,9 @@ class MongoDBCollectionGetResults(ARMResourceProperties):
         'mongo_db_collection_get_results_id': {'key': 'properties.id', 'type': 'str'},
         'shard_key': {'key': 'properties.shardKey', 'type': '{str}'},
         'indexes': {'key': 'properties.indexes', 'type': '[MongoIndex]'},
+        '_rid': {'key': 'properties._rid', 'type': 'str'},
+        '_ts': {'key': 'properties._ts', 'type': 'object'},
+        '_etag': {'key': 'properties._etag', 'type': 'str'},
     }
 
     def __init__(self, *, mongo_db_collection_get_results_id: str, location: str=None, tags=None, shard_key=None, indexes=None, **kwargs) -> None:
@@ -1802,6 +1850,9 @@ class MongoDBCollectionGetResults(ARMResourceProperties):
         self.mongo_db_collection_get_results_id = mongo_db_collection_get_results_id
         self.shard_key = shard_key
         self.indexes = indexes
+        self._rid = None
+        self._ts = None
+        self._etag = None
 
 
 class MongoDBCollectionResource(Model):
@@ -1907,6 +1958,14 @@ class MongoDBDatabaseGetResults(ARMResourceProperties):
     :param mongo_db_database_get_results_id: Required. Name of the Cosmos DB
      MongoDB database
     :type mongo_db_database_get_results_id: str
+    :ivar _rid: A system generated property. A unique identifier.
+    :vartype _rid: str
+    :ivar _ts: A system generated property that denotes the last updated
+     timestamp of the resource.
+    :vartype _ts: object
+    :ivar _etag: A system generated property representing the resource etag
+     required for optimistic concurrency control.
+    :vartype _etag: str
     """
 
     _validation = {
@@ -1914,6 +1973,9 @@ class MongoDBDatabaseGetResults(ARMResourceProperties):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'mongo_db_database_get_results_id': {'required': True},
+        '_rid': {'readonly': True},
+        '_ts': {'readonly': True},
+        '_etag': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1923,11 +1985,17 @@ class MongoDBDatabaseGetResults(ARMResourceProperties):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'mongo_db_database_get_results_id': {'key': 'properties.id', 'type': 'str'},
+        '_rid': {'key': 'properties._rid', 'type': 'str'},
+        '_ts': {'key': 'properties._ts', 'type': 'object'},
+        '_etag': {'key': 'properties._etag', 'type': 'str'},
     }
 
     def __init__(self, *, mongo_db_database_get_results_id: str, location: str=None, tags=None, **kwargs) -> None:
         super(MongoDBDatabaseGetResults, self).__init__(location=location, tags=tags, **kwargs)
         self.mongo_db_database_get_results_id = mongo_db_database_get_results_id
+        self._rid = None
+        self._ts = None
+        self._etag = None
 
 
 class MongoDBDatabaseResource(Model):
@@ -2764,6 +2832,14 @@ class TableGetResults(ARMResourceProperties):
     :type tags: dict[str, str]
     :param table_get_results_id: Required. Name of the Cosmos DB table
     :type table_get_results_id: str
+    :ivar _rid: A system generated property. A unique identifier.
+    :vartype _rid: str
+    :ivar _ts: A system generated property that denotes the last updated
+     timestamp of the resource.
+    :vartype _ts: object
+    :ivar _etag: A system generated property representing the resource etag
+     required for optimistic concurrency control.
+    :vartype _etag: str
     """
 
     _validation = {
@@ -2771,6 +2847,9 @@ class TableGetResults(ARMResourceProperties):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'table_get_results_id': {'required': True},
+        '_rid': {'readonly': True},
+        '_ts': {'readonly': True},
+        '_etag': {'readonly': True},
     }
 
     _attribute_map = {
@@ -2780,11 +2859,17 @@ class TableGetResults(ARMResourceProperties):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'table_get_results_id': {'key': 'properties.id', 'type': 'str'},
+        '_rid': {'key': 'properties._rid', 'type': 'str'},
+        '_ts': {'key': 'properties._ts', 'type': 'object'},
+        '_etag': {'key': 'properties._etag', 'type': 'str'},
     }
 
     def __init__(self, *, table_get_results_id: str, location: str=None, tags=None, **kwargs) -> None:
         super(TableGetResults, self).__init__(location=location, tags=tags, **kwargs)
         self.table_get_results_id = table_get_results_id
+        self._rid = None
+        self._ts = None
+        self._etag = None
 
 
 class TableResource(Model):
