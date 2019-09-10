@@ -138,7 +138,7 @@ class CosmosClient(object):
         and so on.
     *connection_policy* - An instance of ~azure.cosmos.documents.ConnectionPolicy
 
-    .. literalinclude:: ../../examples/examples.py
+    .. literalinclude:: ../../samples/examples.py
         :start-after: [START create_client]
         :end-before: [END create_client]
         :language: python
@@ -222,7 +222,7 @@ class CosmosClient(object):
         :rtype: ~azure.cosmos.database.DatabaseProxy
         :raises `CosmosResourceExistsError`: If database with the given ID already exists.
 
-        .. literalinclude:: ../../examples/examples.py
+        .. literalinclude:: ../../samples/examples.py
             :start-after: [START create_database]
             :end-before: [END create_database]
             :language: python

@@ -177,7 +177,7 @@ class DatabaseProxy(object):
         :raise CosmosHttpResponseError: The container creation failed.
         :rtype: ~azure.cosmos.container.ContainerProxy
 
-        .. literalinclude:: ../../examples/examples.py
+        .. literalinclude:: ../../samples/examples.py
             :start-after: [START create_container]
             :end-before: [END create_container]
             :language: python
@@ -185,7 +185,7 @@ class DatabaseProxy(object):
             :caption: Create a container with default settings:
             :name: create_container
 
-        .. literalinclude:: ../../examples/examples.py
+        .. literalinclude:: ../../samples/examples.py
             :start-after: [START create_container_with_settings]
             :end-before: [END create_container_with_settings]
             :language: python
@@ -264,7 +264,7 @@ class DatabaseProxy(object):
             or a dict representing the properties of the container to be retrieved.
         :rtype: ~azure.cosmos.container.ContainerProxy
 
-        .. literalinclude:: ../../examples/examples.py
+        .. literalinclude:: ../../samples/examples.py
             :start-after: [START get_container]
             :end-before: [END get_container]
             :language: python
@@ -297,7 +297,7 @@ class DatabaseProxy(object):
         :returns: An Iterable of container properties (dicts).
         :rtype: Iterable[dict[str, Any]]
 
-        .. literalinclude:: ../../examples/examples.py
+        .. literalinclude:: ../../samples/examples.py
             :start-after: [START list_containers]
             :end-before: [END list_containers]
             :language: python
@@ -395,7 +395,7 @@ class DatabaseProxy(object):
         :returns: A `ContainerProxy` instance representing the container after replace completed.
         :rtype: ~azure.cosmos.container.ContainerProxy
 
-        .. literalinclude:: ../../examples/examples.py
+        .. literalinclude:: ../../samples/examples.py
             :start-after: [START reset_container_properties]
             :end-before: [END reset_container_properties]
             :language: python
@@ -522,7 +522,7 @@ class DatabaseProxy(object):
         :raise `CosmosHttpResponseError`: If the given user couldn't be created.
         :rtype: ~azure.cosmos.user.UserProxy
 
-        .. literalinclude:: ../../examples/examples.py
+        .. literalinclude:: ../../samples/examples.py
             :start-after: [START create_user]
             :end-before: [END create_user]
             :language: python
