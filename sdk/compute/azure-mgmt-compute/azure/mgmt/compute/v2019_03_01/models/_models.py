@@ -3664,6 +3664,39 @@ class RunCommandResult(Model):
         self.value = kwargs.get('value', None)
 
 
+class ScaleInPolicy(Model):
+    """Describes a scale-in policy for a virtual machine scale set.
+
+    :param rules: The rules to be followed when scaling-in a virtual machine
+     scale set. <br><br> Possible values are: <br><br> **Default** When a
+     virtual machine scale set is scaled in, the scale set will first be
+     balanced across zones if it is a zonal scale set. Then, it will be
+     balanced across Fault Domains as far as possible. Within each Fault
+     Domain, the virtual machines chosen for removal will be the newest ones
+     that are not protected from scale-in. <br><br> **OldestVM** When a virtual
+     machine scale set is being scaled-in, the oldest virtual machines that are
+     not protected from scale-in will be chosen for removal. For zonal virtual
+     machine scale sets, the scale set will first be balanced across zones.
+     Within each zone, the oldest virtual machines that are not protected will
+     be chosen for removal. <br><br> **NewestVM** When a virtual machine scale
+     set is being scaled-in, the newest virtual machines that are not protected
+     from scale-in will be chosen for removal. For zonal virtual machine scale
+     sets, the scale set will first be balanced across zones. Within each zone,
+     the newest virtual machines that are not protected will be chosen for
+     removal. <br><br>
+    :type rules: list[str or
+     ~azure.mgmt.compute.v2019_03_01.models.VirtualMachineScaleSetScaleInRules]
+    """
+
+    _attribute_map = {
+        'rules': {'key': 'rules', 'type': '[str]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ScaleInPolicy, self).__init__(**kwargs)
+        self.rules = kwargs.get('rules', None)
+
+
 class ScheduledEventsProfile(Model):
     """ScheduledEventsProfile.
 
@@ -5160,6 +5193,11 @@ class VirtualMachineScaleSet(Resource):
      attaching managed data disks with UltraSSD_LRS storage account type.
     :type additional_capabilities:
      ~azure.mgmt.compute.v2019_03_01.models.AdditionalCapabilities
+    :param scale_in_policy: Specifies the scale-in policy that decides which
+     virtual machines are chosen for removal when a Virtual Machine Scale Set
+     is scaled-in.
+    :type scale_in_policy:
+     ~azure.mgmt.compute.v2019_03_01.models.ScaleInPolicy
     :param identity: The identity of the virtual machine scale set, if
      configured.
     :type identity:
@@ -5196,6 +5234,7 @@ class VirtualMachineScaleSet(Resource):
         'platform_fault_domain_count': {'key': 'properties.platformFaultDomainCount', 'type': 'int'},
         'proximity_placement_group': {'key': 'properties.proximityPlacementGroup', 'type': 'SubResource'},
         'additional_capabilities': {'key': 'properties.additionalCapabilities', 'type': 'AdditionalCapabilities'},
+        'scale_in_policy': {'key': 'properties.scaleInPolicy', 'type': 'ScaleInPolicy'},
         'identity': {'key': 'identity', 'type': 'VirtualMachineScaleSetIdentity'},
         'zones': {'key': 'zones', 'type': '[str]'},
     }
@@ -5215,6 +5254,7 @@ class VirtualMachineScaleSet(Resource):
         self.platform_fault_domain_count = kwargs.get('platform_fault_domain_count', None)
         self.proximity_placement_group = kwargs.get('proximity_placement_group', None)
         self.additional_capabilities = kwargs.get('additional_capabilities', None)
+        self.scale_in_policy = kwargs.get('scale_in_policy', None)
         self.identity = kwargs.get('identity', None)
         self.zones = kwargs.get('zones', None)
 
@@ -6136,6 +6176,11 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
      attaching managed data disks with UltraSSD_LRS storage account type.
     :type additional_capabilities:
      ~azure.mgmt.compute.v2019_03_01.models.AdditionalCapabilities
+    :param scale_in_policy: Specifies the scale-in policy that decides which
+     virtual machines are chosen for removal when a Virtual Machine Scale Set
+     is scaled-in.
+    :type scale_in_policy:
+     ~azure.mgmt.compute.v2019_03_01.models.ScaleInPolicy
     :param identity: The identity of the virtual machine scale set, if
      configured.
     :type identity:
@@ -6151,6 +6196,7 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
         'overprovision': {'key': 'properties.overprovision', 'type': 'bool'},
         'single_placement_group': {'key': 'properties.singlePlacementGroup', 'type': 'bool'},
         'additional_capabilities': {'key': 'properties.additionalCapabilities', 'type': 'AdditionalCapabilities'},
+        'scale_in_policy': {'key': 'properties.scaleInPolicy', 'type': 'ScaleInPolicy'},
         'identity': {'key': 'identity', 'type': 'VirtualMachineScaleSetIdentity'},
     }
 
@@ -6163,6 +6209,7 @@ class VirtualMachineScaleSetUpdate(UpdateResource):
         self.overprovision = kwargs.get('overprovision', None)
         self.single_placement_group = kwargs.get('single_placement_group', None)
         self.additional_capabilities = kwargs.get('additional_capabilities', None)
+        self.scale_in_policy = kwargs.get('scale_in_policy', None)
         self.identity = kwargs.get('identity', None)
 
 
