@@ -272,3 +272,29 @@ class GalleryApplicationVersionPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(GalleryApplicationVersionPaged, self).__init__(*args, **kwargs)
+class DiskPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Disk <azure.mgmt.compute.v2019_03_01.models.Disk>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Disk]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(DiskPaged, self).__init__(*args, **kwargs)
+class SnapshotPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Snapshot <azure.mgmt.compute.v2019_03_01.models.Snapshot>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Snapshot]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(SnapshotPaged, self).__init__(*args, **kwargs)
