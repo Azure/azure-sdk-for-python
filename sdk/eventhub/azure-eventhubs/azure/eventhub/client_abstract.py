@@ -258,7 +258,7 @@ class EventHubClientAbstract(object):  # pylint:disable=too-many-instance-attrib
          will return as soon as service returns no new events. Default value is the same as prefetch.
         :type max_batch_size: int
         :param receive_timeout: The timeout in seconds to receive a batch of events from an Event Hub.
-         Default value is 0 seconds.
+         Default value is 0 seconds, meaning there is no timeout.
         :type receive_timeout: float
         :param send_timeout: The timeout in seconds for an individual event to be sent from the time that it is
          queued. Default value is 60 seconds. If set to 0, there will be no timeout.

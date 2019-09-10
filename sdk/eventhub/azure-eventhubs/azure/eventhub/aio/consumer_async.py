@@ -52,8 +52,8 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         :param prefetch: The number of events to prefetch from the service
          for processing. Default is 300.
         :type prefetch: int
-        :param owner_level: The priority of the exclusive consumer. It will an exclusive
-         consumer if owner_level is set.
+        :param owner_level: The priority of the exclusive consumer. An exclusive
+         consumer will be created if owner_level is set.
         :type owner_level: int
         :param loop: An event loop.
         """

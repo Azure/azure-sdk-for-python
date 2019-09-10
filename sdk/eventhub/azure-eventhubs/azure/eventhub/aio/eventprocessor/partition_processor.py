@@ -21,12 +21,12 @@ class PartitionProcessor(ABC):
     """
     PartitionProcessor processes events received from the Azure Event Hubs service. A single instance of a class
     implementing this abstract class will be created for every partition the associated
-    ~azure.eventhub.eventprocessor.EventProcessor owns.
+    ~azure.eventhub.aio.eventprocessor.EventProcessor owns.
 
     """
 
     async def initialize(self, partition_context: PartitionContext):
-        """
+        """Called when EventProcessor creates this PartitionProcessor.
 
         :param partition_context: The context information of this partition.
         :type partition_context: ~azure.eventhub.aio.eventprocessor.PartitionContext
@@ -59,7 +59,7 @@ class PartitionProcessor(ABC):
         """
 
     async def process_error(self, error, partition_context: PartitionContext):
-        """Called when an error happens
+        """Called when an error happens when receiving or processing events
 
         :param error: The error that happens.
         :type error: Exception

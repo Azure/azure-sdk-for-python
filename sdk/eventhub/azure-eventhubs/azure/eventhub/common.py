@@ -39,7 +39,6 @@ def parse_sas_token(sas_token):
 class EventData(object):
     """
     The EventData class is a holder of event content.
-    Acts as a wrapper to an uamqp.message.Message object.
 
     Example:
         .. literalinclude:: ../examples/test_examples_eventhub.py
@@ -262,9 +261,18 @@ class EventData(object):
 
 class EventDataBatch(object):
     """
-    The EventDataBatch class is a holder of a batch of event data within max size bytes.
-    Use ~azure.eventhub.Producer.create_batch method to create an EventDataBatch object.
-    Do not instantiate an EventDataBatch object directly.
+    It's much faster to send EventData in a batch than individually. But putting too much EventData in one batch
+    may exceed the frame size limit of the event hub.
+    EventDataBatch helps you build the maximum allowed size batch of EventData to improve performance
+    within the size limit
+
+    Use create_batch method of ~azure.eventhub.EventHubProducer or ~azure.eventhub.aio.EventHubProducer
+    to create an EventDataBatch object. It retrieves the frame size limit from the service.
+    Use method EventDataBatch.try_add to build the list until a ValueError is raised,
+    and use send method of ~azure.eventhub.EventHubProducer or ~azure.eventhub.aio.EventHubProducer
+    to send out the EventData batch to EventHub
+
+    Do not instantiate an EventDataBatch object using its constructor.
     """
 
     def __init__(self, max_size=None, partition_key=None):
@@ -307,8 +315,9 @@ class EventDataBatch(object):
     def try_add(self, event_data):
         """
         The message size is a sum up of body, properties, header, etc.
-        :param event_data:
-        :return:
+        :param event_data: ~azure.eventhub.EventData
+        :return: None
+        :raise: ValueError, when exceeding the size limit.
         """
         if event_data is None:
             log.warning("event_data is None when calling EventDataBatch.try_add. Ignored")
