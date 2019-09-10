@@ -57,7 +57,7 @@ from azure.storage.blob.aio import ContainerClient
 container_client = ContainerClient.from_connection_string("my_storageacount_connection_string", container="mycontainer")
 ```
 For other ways of creating a `ContainerClient`
-Go to [Blob Storage library](#https://github.com/Azure/azure-sdk-for-python/tree/eventhubs_preview3/sdk/storage/azure-storage-blob) for more details about 
+Go to [Blob Storage library](https://github.com/Azure/azure-sdk-for-python/tree/eventhubs_preview3/sdk/storage/azure-storage-blob) for more details about 
 
 ### Create an `EventHubClient`
 The easiest way to create a `ContainerClient` is to use a connection string.
@@ -65,7 +65,7 @@ The easiest way to create a `ContainerClient` is to use a connection string.
 from azure.eventhub.aio import EventHubClient
 eventhub_client = EventHubClient.from_connection_string("my_eventhub_namespace_connection_string", event_hub_path="myeventhub")
 ```
-For other ways of creating a `EventHubClient`, refer to [EventHubs library](#https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhubs) for more details.
+For other ways of creating a `EventHubClient`, refer to [EventHubs library](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhubs) for more details.
 
 ### Consume events using an `EventProcessor` that uses a `BlobPartitionManager` to do checkpointing
 ```python
