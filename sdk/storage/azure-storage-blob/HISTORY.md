@@ -6,8 +6,8 @@
 **New features**
 - Added SAS support for snapshot and identity.
 - Distributed tracing framework OpenCensus is now supported.
-- Added support for append block from URL for append blobs.
-- Added support for update page from URL for page blobs.
+- Added support for append_block_from_url API for append blobs.
+- Added support for upload_pages_from_url API for page blobs.
 - Added support for client provided encryption key to numerous APIs.
 
 **Dependency updates**

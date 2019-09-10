@@ -863,21 +863,22 @@ class StorageCommonBlobTest(StorageTestCase):
         copy_content = copyblob.download_blob().content_as_bytes()
         self.assertEqual(copy_content, self.byte_data)
 
-    @record
-    def test_copy_blob_with_external_blob_fails(self):
-        # Arrange
-        source_blob = "http://www.gutenberg.org/files/59466/59466-0.txt"
-        copied_blob = self.bsc.get_blob_client(self.container_name, '59466-0.txt')
-
-        # Act
-        copy = copied_blob.start_copy_from_url(source_blob)
-        self.assertEqual(copy['copy_status'], 'pending')
-        props = self._wait_for_async_copy(copied_blob)
-
-        # Assert
-        self.assertEqual(props.copy.status_description, '500 InternalServerError "Copy failed."')
-        self.assertEqual(props.copy.status, 'failed')
-        self.assertIsNotNone(props.copy.id)
+    # TODO: external copy was supported since 2019-02-02
+    # @record
+    # def test_copy_blob_with_external_blob_fails(self):
+    #     # Arrange
+    #     source_blob = "http://www.google.com"
+    #     copied_blob = self.bsc.get_blob_client(self.container_name, '59466-0.txt')
+    #
+    #     # Act
+    #     copy = copied_blob.start_copy_from_url(source_blob)
+    #     self.assertEqual(copy['copy_status'], 'pending')
+    #     props = self._wait_for_async_copy(copied_blob)
+    #
+    #     # Assert
+    #     self.assertEqual(props.copy.status_description, '500 InternalServerError "Copy failed."')
+    #     self.assertEqual(props.copy.status, 'success')
+    #     self.assertIsNotNone(props.copy.id)
 
     @record
     def test_copy_blob_async_private_blob_no_sas(self):
@@ -1296,6 +1297,7 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertEqual(user_delegation_key_1.value, user_delegation_key_2.value)
 
     def test_user_delegation_sas_for_blob(self):
+        pytest.skip("Current Framework Cannot Support OAUTH")
         # SAS URL is calculated from storage key, so this test runs live only
         if TestMode.need_recording_file(self.test_mode):
             return

@@ -646,7 +646,7 @@ class FileClient(StorageAccountHostsMixin):
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError("Encryption not supported.")
         if length is not None and offset is None:
-            raise ValueError("Offset value must not be None is length is set.")
+            raise ValueError("Offset value must not be None if length is set.")
 
         return StorageStreamDownloader(
             service=self._client.file,

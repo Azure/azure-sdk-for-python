@@ -1146,26 +1146,27 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_copy_blob_with_existing_blob())
 
-    async def _test_copy_blob_with_external_blob_fails(self):
-        # Arrange
-        await self._setup()
-        source_blob = "http://www.gutenberg.org/files/59466/59466-0.txt"
-        copied_blob = self.bsc.get_blob_client(self.container_name, '59466-0.txt')
-
-        # Act
-        copy = await copied_blob.start_copy_from_url(source_blob)
-        self.assertEqual(copy['copy_status'], 'pending')
-        props = await self._wait_for_async_copy(copied_blob)
-
-        # Assert
-        self.assertEqual(props.copy.status_description, '500 InternalServerError "Copy failed."')
-        self.assertEqual(props.copy.status, 'failed')
-        self.assertIsNotNone(props.copy.id)
-
-    @record
-    def test_copy_blob_with_external_blob_fails(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_copy_blob_with_external_blob_fails())
+    # TODO: external copy was supported since 2019-02-02
+    # async def _test_copy_blob_with_external_blob_fails(self):
+    #     # Arrange
+    #     await self._setup()
+    #     source_blob = "http://www.gutenberg.org/files/59466/59466-0.txt"
+    #     copied_blob = self.bsc.get_blob_client(self.container_name, '59466-0.txt')
+    #
+    #     # Act
+    #     copy = await copied_blob.start_copy_from_url(source_blob)
+    #     self.assertEqual(copy['copy_status'], 'pending')
+    #     props = await self._wait_for_async_copy(copied_blob)
+    #
+    #     # Assert
+    #     self.assertEqual(props.copy.status_description, '500 InternalServerError "Copy failed."')
+    #     self.assertEqual(props.copy.status, 'failed')
+    #     self.assertIsNotNone(props.copy.id)
+    #
+    # @record
+    # def test_copy_blob_with_external_blob_fails(self):
+    #     loop = asyncio.get_event_loop()
+    #     loop.run_until_complete(self._test_copy_blob_with_external_blob_fails())
 
     async def _test_copy_blob_async_private_blob_no_sas(self):
         # Arrange
@@ -1631,6 +1632,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
 
     async def _test_get_user_delegation_key(self):
         # TODO: figure out why recording does not work
+        pytest.skip("Current Framework Cannot Support OAUTH")
         if TestMode.need_recording_file(self.test_mode):
             return
         # Act
@@ -1667,6 +1669,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop.run_until_complete(self._test_get_user_delegation_key())
 
     async def _test_token_credential(self):
+        pytest.skip("Current Framework Cannot Support OAUTH")
         if TestMode.need_recording_file(self.test_mode):
             return
 
@@ -1691,6 +1694,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
 
     @record
     def test_token_credential(self):
+        pytest.skip("not set up to use async azure-identity")
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_token_credential())
 
