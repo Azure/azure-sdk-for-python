@@ -19,6 +19,8 @@ from .operations import ReplicationsOperations
 from .operations import WebhooksOperations
 from .operations import RunsOperations
 from .operations import TasksOperations
+from .operations import ScopeMapsOperations
+from .operations import TokensOperations
 from . import models
 
 
@@ -40,6 +42,10 @@ class ContainerRegistryManagementClient(SDKClient):
     :vartype runs: azure.mgmt.containerregistry.v2019_06_01_preview.operations.RunsOperations
     :ivar tasks: Tasks operations
     :vartype tasks: azure.mgmt.containerregistry.v2019_06_01_preview.operations.TasksOperations
+    :ivar scope_maps: ScopeMaps operations
+    :vartype scope_maps: azure.mgmt.containerregistry.v2019_06_01_preview.operations.ScopeMapsOperations
+    :ivar tokens: Tokens operations
+    :vartype tokens: azure.mgmt.containerregistry.v2019_06_01_preview.operations.TokensOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -70,4 +76,8 @@ class ContainerRegistryManagementClient(SDKClient):
         self.runs = RunsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.tasks = TasksOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.scope_maps = ScopeMapsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.tokens = TokensOperations(
             self._client, self.config, self._serialize, self._deserialize)
