@@ -23,7 +23,7 @@ OWNER_LEVEL = 0
 
 class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
     """
-    An EventProcessor constantly receives events from all partitions of the Event Hub in the context of a given
+    An EventProcessor constantly receives events from multiple partitions of the Event Hub in the context of a given
     consumer group. The received data will be sent to PartitionProcessor to be processed.
 
     It provides the user a convenient way to receive events from multiple partitions and save checkpoints.
@@ -90,11 +90,13 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
         :type consumer_group_name: str
         :param partition_processor_type: A subclass type of ~azure.eventhub.eventprocessor.PartitionProcessor.
         :type partition_processor_type: type
-        :param partition_manager: Interacts with the storage system, dealing with ownership and checkpoints.
-         For an easy start, SamplePartitionManager comes with the package.
-        :type partition_manager: Class implementing the ~azure.eventhub.eventprocessor.PartitionManager.
+        :param partition_manager: Interacts with the data storage that stores ownership and checkpoints data.
+         ~azure.eventhub.aio.eventprocessor.SamplePartitionManager demonstrates the basic usage of `PartitionManager`
+          which stores data in memory or a file.
+         Users can either use the provided `PartitionManager` plug-ins or develop their own `PartitionManager`.
+        :type partition_manager: Subclass of ~azure.eventhub.eventprocessor.PartitionManager.
         :param initial_event_position: The event position to start a partition consumer.
-        if the partition has no checkpoint yet. This will be replaced by "reset" checkpoint in the near future.
+        if the partition has no checkpoint yet. This could be replaced by "reset" checkpoint in the near future.
         :type initial_event_position: EventPosition
         :param polling_interval: The interval between any two pollings of balancing and claiming
         :type polling_interval: float
@@ -119,13 +121,8 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
     async def start(self):
         """Start the EventProcessor.
 
-        1. Calls the OwnershipManager to keep claiming and balancing ownership of partitions in an
-        infinitely loop until self.stop() is called.
-        2. Cancels tasks for partitions that are no longer owned by this EventProcessor
-        3. Creates tasks for partitions that are newly claimed by this EventProcessor
-        4. Keeps tasks running for partitions that haven't changed ownership
-        5. Each task repeatedly calls EvenHubConsumer.receive() to retrieve events and
-        call user defined partition processor
+        The EventProcessor will try to claim and balance partition ownership with other `EventProcessor`
+         and asynchronously start receiving EventData from EventHub and processing events.
 
         :return: None
 
@@ -145,12 +142,12 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
                     await asyncio.sleep(self._polling_interval)
                     continue
 
-                to_cancel_list = self._tasks.keys()
                 if claimed_ownership_list:
                     claimed_partition_ids = [x["partition_id"] for x in claimed_ownership_list]
                     to_cancel_list = self._tasks.keys() - claimed_partition_ids
                     self._create_tasks_for_claimed_ownership(claimed_ownership_list)
                 else:
+                    to_cancel_list = set(self._tasks.keys())
                     log.info("EventProcessor %r hasn't claimed an ownership. It keeps claiming.", self._id)
                 if to_cancel_list:
                     self._cancel_tasks_for_partitions(to_cancel_list)
@@ -158,10 +155,13 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
                 await asyncio.sleep(self._polling_interval)
 
     async def stop(self):
-        """Stop claiming ownership and all the partition consumers owned by this EventProcessor
+        """Stop the EventProcessor.
 
-        This method stops claiming ownership of owned partitions and cancels tasks that are running
-        EventHubConsumer.receive() for the partitions owned by this EventProcessor.
+        The EventProcessor will stop receiving events from EventHubs and release the ownership of the partitions
+        it is working on.
+        Other running EventProcessor will take over these released partitions.
+
+        A stopped EventProcessor can be restarted by calling method `start` again.
 
         :return: None
 
@@ -182,7 +182,7 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
     def _create_tasks_for_claimed_ownership(self, to_claim_ownership_list):
         for ownership in to_claim_ownership_list:
             partition_id = ownership["partition_id"]
-            if partition_id not in self._tasks:
+            if partition_id not in self._tasks or self._tasks[partition_id].done():
                 self._tasks[partition_id] = get_running_loop().create_task(self._receive(ownership))
 
     async def _receive(self, ownership):
