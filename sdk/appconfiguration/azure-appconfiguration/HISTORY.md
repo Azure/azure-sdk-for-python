@@ -1,4 +1,8 @@
 
-v1.0.0 (preview)
+
+# Release History
+
 -------------------
+
+## 2019-09-09 Version 1.0.0b3
 - New azure app configuration
