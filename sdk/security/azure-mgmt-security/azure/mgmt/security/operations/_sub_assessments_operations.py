@@ -39,7 +39,7 @@ class SubAssessmentsOperations(object):
 
         self.config = config
 
-    def list(
+    def list_all(
             self, scope, custom_headers=None, raw=False, **operation_config):
         """Get security sub-assessments on all your scanned resources inside a
         subscription scope.
@@ -61,7 +61,7 @@ class SubAssessmentsOperations(object):
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
-                url = self.list.metadata['url']
+                url = self.list_all.metadata['url']
                 path_format_arguments = {
                     'scope': self._serialize.url("scope", scope, 'str')
                 }
@@ -108,9 +108,9 @@ class SubAssessmentsOperations(object):
         deserialized = models.SecuritySubAssessmentPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/{scope}/providers/Microsoft.Security/subAssessments'}
+    list_all.metadata = {'url': '/{scope}/providers/Microsoft.Security/subAssessments'}
 
-    def list1(
+    def list(
             self, scope, assessment_name, custom_headers=None, raw=False, **operation_config):
         """Get security sub-assessments on all your scanned resources inside a
         scope.
@@ -135,7 +135,7 @@ class SubAssessmentsOperations(object):
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
-                url = self.list1.metadata['url']
+                url = self.list.metadata['url']
                 path_format_arguments = {
                     'scope': self._serialize.url("scope", scope, 'str'),
                     'assessmentName': self._serialize.url("assessment_name", assessment_name, 'str')
@@ -183,7 +183,7 @@ class SubAssessmentsOperations(object):
         deserialized = models.SecuritySubAssessmentPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list1.metadata = {'url': '/{scope}/providers/Microsoft.Security/assessments/{assessmentName}/subAssessments'}
+    list.metadata = {'url': '/{scope}/providers/Microsoft.Security/assessments/{assessmentName}/subAssessments'}
 
     def get(
             self, scope, assessment_name, sub_assessment_name, custom_headers=None, raw=False, **operation_config):
