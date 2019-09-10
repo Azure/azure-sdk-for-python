@@ -4,6 +4,7 @@ parameters:
   MaxParallel: 0
   BeforeTestSteps: []
   BuildTargetingString: 'azure-*'
+  TestMarkArgument: ''
   Matrix:
     Linux_Python35:
       OSName: 'Linux'
@@ -43,3 +44,4 @@ jobs:
           PythonVersion: $(PythonVersion)
           OSName: $(OSName)
           ToxTestEnv: "whl"
+          TestMarkArgument: ${{ parameters.TestMarkArgument }}
