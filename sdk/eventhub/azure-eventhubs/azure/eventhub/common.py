@@ -264,7 +264,8 @@ class EventDataBatch(object):
     Sending events in batch get better performance than sending individual events.
     EventDataBatch helps you create the maximum allowed size batch of `EventData` to improve sending performance.
 
-    Use `try_add` method to add events until the maximum batch size limit in bytes has been reached - a `ValueError` will be raised.
+    Use `try_add` method to add events until the maximum batch size limit in bytes has been reached -
+    a `ValueError` will be raised.
     Use `send` method of ~azure.eventhub.EventHubProducer or ~azure.eventhub.aio.EventHubProducer for sending.
 
     Please use the `create_batch` method of `EventHubProducer`
