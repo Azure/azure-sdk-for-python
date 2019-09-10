@@ -62,7 +62,7 @@ container = database.get_container_client(container_name)
 # [START list_containers]
 database = client.get_database_client(database_name)
 for container in database.list_containers():
-    print(f"Container ID: {container.id}")
+    print("Container ID: {}".format(container.id))
 # [END list_containers]
 
 # Insert new items by defining a dict and calling Container.upsert_item
@@ -131,7 +131,7 @@ database.replace_container(container, partition_key=PartitionKey(path='/productN
 
 # Display the new TTL setting for the container
 container_props = database.get_container_client(container_name).read()
-print(f"New container TTL: {json.dumps(container_props['defaultTtl'])}")
+print("New container TTL: {}".format(json.dumps(container_props['defaultTtl'])))
 # [END reset_container_properties]
 
 # Create a user in the database.
@@ -141,5 +141,5 @@ try:
 except errors.CosmosResourceExistsError:
     print("A user with that ID already exists.")
 except errors.CosmosHttpResponseError as failure:
-    print(f"Failed to create user. Status code:{failure.status_code}")
+    print("Failed to create user. Status code:{}".format(failure.status_code))
 # [END create_user]
