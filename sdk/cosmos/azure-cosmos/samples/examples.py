@@ -70,7 +70,7 @@ for container in database.list_containers():
 container = database.get_container_client(container_name)
 for i in range(1, 10):
     container.upsert_item(
-        dict(id=f"item{i}", productName="Widget", productModel=f"Model {i}")
+        dict(id="item{}".format(i), productName="Widget", productModel="Model {}".format(i))
     )
 # [END upsert_items]
 
