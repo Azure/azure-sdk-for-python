@@ -9,11 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._configuration import ApplicationClientConfiguration
-from ._application_client import ApplicationClient
-__all__ = ['ApplicationClient', 'ApplicationClientConfiguration']
+from ._applications_operations import ApplicationsOperations
+from ._application_definitions_operations import ApplicationDefinitionsOperations
 
-from ..version import VERSION
-
-__version__ = VERSION
-
+__all__ = [
+    'ApplicationsOperations',
+    'ApplicationDefinitionsOperations',
+]
