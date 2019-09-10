@@ -30,7 +30,7 @@ setup(
     long_description_content_type="text/markdown",
     license="MIT License",
     author="Microsoft Corporation",
-    author_email="azurekeyvault@microsoft.com",
+    author_email="azpysdkhelp@microsoft.com",
     url="https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault",
     classifiers=[
         "Development Status :: 5 - Production/Stable",
