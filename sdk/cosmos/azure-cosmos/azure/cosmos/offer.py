@@ -24,7 +24,7 @@
 from typing import Dict, Any
 
 
-class Offer(dict):
+class Offer(object):
     """ Represents a offer in an Azure Cosmos DB SQL API container.
 
     To read and update offers use the associated methods on the :class:`Container`.

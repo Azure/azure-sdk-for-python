@@ -26,8 +26,11 @@
 """
 from typing import Dict, Any, Optional
 import six
+import requests
+from requests.adapters import HTTPAdapter
 from azure.core.paging import ItemPaged  # type: ignore
 from azure.core import PipelineClient  # type: ignore
+from azure.core.pipeline.transport import RequestsTransport
 from azure.core.pipeline.policies import (  # type: ignore
     ContentDecodePolicy,
     HeadersPolicy,
@@ -148,6 +151,16 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         self._useMultipleWriteLocations = False
         self._global_endpoint_manager = global_endpoint_manager._GlobalEndpointManager(self)
 
+        # creating a requests session used for connection pooling and re-used by all requests
+        requests_session = requests.Session()
+
+        transport = None
+        if self.connection_policy.ConnectionRetryConfiguration is not None:
+            adapter = HTTPAdapter(max_retries=self.connection_policy.ConnectionRetryConfiguration)
+            requests_session.mount('http://', adapter)
+            requests_session.mount('https://', adapter)
+            transport = RequestsTransport(session=requests_session)
+
         proxies = kwargs.pop('proxies', {})
         if self.connection_policy.ProxyConfiguration and self.connection_policy.ProxyConfiguration.Host:
             host = self.connection_policy.ProxyConfiguration.Host
@@ -165,7 +178,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             NetworkTraceLoggingPolicy(**kwargs),
             ]
 
-        self.pipeline_client = PipelineClient(url_connection, "empty-config", policies=policies)
+        self.pipeline_client = PipelineClient(url_connection, "empty-config", transport=transport, policies=policies)
 
         # Query compatibility mode.
         # Allows to specify compatibility mode used by client when making query requests. Should be removed when
