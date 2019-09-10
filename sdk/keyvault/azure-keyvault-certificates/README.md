@@ -83,7 +83,7 @@ service principal:
     ```
 
 * Use the output to set **AZURE_CLIENT_ID** (appId), **AZURE_CLIENT_SECRET**
-(password) and **AZURE_TENANT_ID** (tenant) environment variables. The
+(password), and **AZURE_TENANT_ID** (tenant) environment variables. The
 following example shows a way to do this in Bash:
   ```Bash
    export AZURE_CLIENT_ID="generated app id"
@@ -114,7 +114,7 @@ certificate_client = CertificateClient(vault_url=<your-vault-url>, credential=cr
 With a `CertificateClient` you can get certificates from the vault, create new certificates and 
 new versions of existing certificates, update certificate metadata, and delete certificates. You 
 can also manage certificate issuers, contacts, and management policies of certificates. This is 
-illustrated in the [examples](#examples) below..
+illustrated in the [examples](#examples) below.
 
 ### Certificate
   A certificate is the fundamental resource within Azure KeyVault. From a developer's perspective, 
@@ -135,7 +135,6 @@ This section contains code snippets covering common tasks:
 * [Update an existing Certificate](#update-an-existing-certificate)
 * [Delete a Certificate](#delete-a-certificate)
 * [List Certificates](#list-certificates)
-* 
 
 ### Create a Certificate
 `create_certificate` creates a Certificate to be stored in the Azure Key Vault. If a certificate with 
@@ -155,6 +154,15 @@ having to specify version.
 ```python
 certificate = certificate_client.get_certificate_with_policy(name="cert-name")
 
+print(certificate.name)
+print(certificate.version)
+print(certificate.policy.id)
+```
+
+`get_certificate` retrieves a certificate based on the certificate name and the version of the certificate.
+Version is required.
+```python
+certificate = certificate_client.get_certificate(name="cert-name", version="cert-version")
 print(certificate.name)
 print(certificate.version)
 ```
@@ -313,7 +321,7 @@ additional questions or comments.
 [pip]: https://pypi.org/project/pip/
 [pypi_package_certificates]: https://pypi.org/project/azure-keyvault-certificates/
 [reference_docs]: https://azure.github.io/azure-sdk-for-python/ref/azure.keyvault.certificates.html
-[certificates_client_src]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault/azure/keyvault/certificates
+[certificates_client_src]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-certificates/azure/keyvault/certificates
 [certificates_samples]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-certificates/samples
 [soft_delete]: https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete
 [test_example_certificates]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-certificates/tests/test_examples_certificates.py
