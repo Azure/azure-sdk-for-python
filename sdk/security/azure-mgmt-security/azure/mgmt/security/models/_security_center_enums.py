@@ -40,6 +40,12 @@ class SettingKind(str, Enum):
     alert_suppression_setting = "AlertSuppressionSetting"
 
 
+class ValueType(str, Enum):
+
+    ip_cidr = "IpCidr"  #: An IP range in CIDR format (e.g. '192.168.0.1/8').
+    string = "String"  #: Any string value.
+
+
 class SecuritySolutionStatus(str, Enum):
 
     enabled = "Enabled"
@@ -148,6 +154,20 @@ class State(str, Enum):
     failed = "Failed"  #: At least one supported regulatory compliance control in the given standard has a state of failed
     skipped = "Skipped"  #: All supported regulatory compliance controls in the given standard have a state of skipped
     unsupported = "Unsupported"  #: No supported regulatory compliance data for the given standard
+
+
+class SubAssessmentStatusCode(str, Enum):
+
+    healthy = "Healthy"  #: The resource is healthy
+    unhealthy = "Unhealthy"  #: The resource has a security issue that needs to be addressed
+    not_applicable = "NotApplicable"  #: Assessment for this resource did not happen
+
+
+class Severity(str, Enum):
+
+    low = "Low"
+    medium = "Medium"
+    high = "High"
 
 
 class ConnectionType(str, Enum):
