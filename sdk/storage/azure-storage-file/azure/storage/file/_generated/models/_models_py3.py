@@ -609,10 +609,7 @@ class SharePermission(Model):
     }
 
     _attribute_map = {
-         'permission': {'key': 'permission', 'type': 'str', 'xml': {'name': 'permission'}},
-    }
-
-    _xml_map = {
+         'permission': {'key': 'permission', 'type': 'str'},
     }
 
     def __init__(self, *, permission: str, **kwargs) -> None:
