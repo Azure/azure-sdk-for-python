@@ -697,7 +697,7 @@ class StorageAppendBlobTestAsync(StorageTestCase):
             await destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
                                                                 source_range_start=0,
                                                                 source_range_end=LARGE_BLOB_SIZE - 1,
-                                                                if_modified_since=source_properties.get(
+                                                                if_modified_since=destination_blob_properties.get(
                                                                     'last_modified'))
 
     @record
@@ -739,7 +739,7 @@ class StorageAppendBlobTestAsync(StorageTestCase):
             await destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
                                                                 source_range_start=0,
                                                                 source_range_end=LARGE_BLOB_SIZE - 1,
-                                                                if_unmodified_since=source_properties.get(
+                                                                if_unmodified_since=destination_blob_properties.get(
                                                                     'last_modified') - timedelta(minutes=15))
 
     @record
