@@ -4,8 +4,6 @@
 ## Version 12.0.0b3:
 
 **New features**
-- Added FileSmbProperties REST Parity.
-- Added support for PutRangeThroughURL.
 - Added upload_range_from_url API to write the bytes from one Azure File endpoint into the specified range of another Azure File endpoint.
 - Added set_http_headers for directory_client, create_permission_for_share and get_permission_for_share APIs.
 - Added optional parameters for smb properties related parameters for create_file*, create_directory* related APIs and set_http_headers API.
