@@ -1,7 +1,7 @@
 # Azure EventHubs Checkpoint Store client library for Python using Storage Blobs
 
-Azure EventHubs Checkpoint Store can be used for storing checkpoints while processing events from Azure Event Hubs. 
-This Checkpoint Store package uses Storage Blobs as a persistent store for maintaining checkpoints and partition ownership information that can be plugged in to `EventProcessor`
+Azure EventHubs Checkpoint Store is used for storing checkpoints while processing events from Azure Event Hubs.
+This Checkpoint Store package works as a plug-in package to `EventProcessor`. It uses Azure Storage Blob as the persistent store for maintaining checkpoints and partition ownership information.
 
 [Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhubs-checkpointstoreblob-aio) | [Package (PyPi)](https://pypi.org/project/azure-eventhub-checkpointstoreblobaio/) | [API reference documentation](https://azure.github.io/azure-sdk-for-python/) | [Azure Eventhubs documentation](https://docs.microsoft.com/en-us/azure/event-hubs/) | [Azure Storage documentation](https://docs.microsoft.com/en-us/azure/storage/)
 
@@ -20,7 +20,7 @@ $ pip install --pre azure-eventhub-checkpointstoreblobaio
 
 - **Event Hubs namespace with an Event Hub:** To interact with Azure Event Hubs, you'll also need to have a namespace and Event Hub  available.  If you are not familiar with creating Azure resources, you may wish to follow the step-by-step guide for [creating an Event Hub using the Azure portal](https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-create).  There, you can also find detailed instructions for using the Azure CLI, Azure PowerShell, or Azure Resource Manager (ARM) templates to create an Event Hub.
 
-- **Azure Storage Account:** You'll need to have an Azure Storage Account and create a Azure Blob Storage Block Container to store the checkpoint data with blobs. [creating an Azure Block Blob Storage Account](https://docs.microsoft.com/en-us/azure/storage/blobs/storage-blob-create-account-block-blob)
+- **Azure Storage Account:** You'll need to have an Azure Storage Account and create a Azure Blob Storage Block Container to store the checkpoint data with blobs. You may follow the guide [creating an Azure Block Blob Storage Account](https://docs.microsoft.com/en-us/azure/storage/blobs/storage-blob-create-account-block-blob).
 
 ## Key concepts
 
@@ -40,8 +40,8 @@ mechanism, checkpointing enables both failover resiliency and event stream repla
 ### Offsets & sequence numbers
 Both offset & sequence number refer to the position of an event within a partition. You can think of them as a 
 client-side cursor. The offset is a byte numbering of the event. The offset/sequence number enables an event consumer 
-(reader) to specify a point in the event stream from which they want to begin reading events. You can specify the a 
-timestamp such that you receive events that were enqueued only after the given timestamp. Consumers are responsible for 
+(reader) to specify a point in the event stream from which they want to begin reading events. You can specify a 
+timestamp such that you receive events enqueued only after the given timestamp. Consumers are responsible for 
 storing their own offset values outside of the Event Hubs service. Within a partition, each event includes an offset, 
 sequence number and the timestamp of when it was enqueued.
 
@@ -56,8 +56,7 @@ The easiest way to create a `ContainerClient` is to use a connection string.
 from azure.storage.blob.aio import ContainerClient
 container_client = ContainerClient.from_connection_string("my_storageacount_connection_string", container="mycontainer")
 ```
-For other ways of creating a `ContainerClient`
-Go to [Blob Storage library](#https://github.com/Azure/azure-sdk-for-python/tree/eventhubs_preview3/sdk/storage/azure-storage-blob) for more details about 
+For other ways of creating a `ContainerClient`, go to [Blob Storage library](https://github.com/Azure/azure-sdk-for-python/tree/eventhubs_preview3/sdk/storage/azure-storage-blob) for more details.
 
 ### Create an `EventHubClient`
 The easiest way to create a `ContainerClient` is to use a connection string.
@@ -65,7 +64,7 @@ The easiest way to create a `ContainerClient` is to use a connection string.
 from azure.eventhub.aio import EventHubClient
 eventhub_client = EventHubClient.from_connection_string("my_eventhub_namespace_connection_string", event_hub_path="myeventhub")
 ```
-For other ways of creating a `EventHubClient`, refer to [EventHubs library](#https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhubs) for more details.
+For other ways of creating a `EventHubClient`, refer to [EventHubs library](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhubs) for more details.
 
 ### Consume events using an `EventProcessor` that uses a `BlobPartitionManager` to do checkpointing
 ```python
