@@ -332,16 +332,16 @@ class AzureAppConfigurationOperationsMixin(object):
         if accept_datetime is not None:
             header_parameters['Accept-Datetime'] = self._serialize.header("accept_datetime", accept_datetime, 'str')
         if if_match is not None:
-            header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
+            header_parameters['if-match'] = self._serialize.header("if_match", if_match, 'str')
         if if_none_match is not None:
-            header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
+            header_parameters['if-none-match'] = self._serialize.header("if_none_match", if_none_match, 'str')
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 304, 404, 412]:
+        if response.status_code not in [200, 304, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise models.ErrorException(response, self._deserialize)
 
@@ -406,9 +406,9 @@ class AzureAppConfigurationOperationsMixin(object):
         if self._config.sync_token is not None:
             header_parameters['Sync-Token'] = self._serialize.header("self._config.sync_token", self._config.sync_token, 'str')
         if if_match is not None:
-            header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
+            header_parameters['if-match'] = self._serialize.header("if_match", if_match, 'str')
         if if_none_match is not None:
-            header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
+            header_parameters['if-none-match'] = self._serialize.header("if_none_match", if_none_match, 'str')
 
         # Construct body
         if entity is not None:
@@ -421,7 +421,7 @@ class AzureAppConfigurationOperationsMixin(object):
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 412]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise models.ErrorException(response, self._deserialize)
 
@@ -479,14 +479,14 @@ class AzureAppConfigurationOperationsMixin(object):
         if self._config.sync_token is not None:
             header_parameters['Sync-Token'] = self._serialize.header("self._config.sync_token", self._config.sync_token, 'str')
         if if_match is not None:
-            header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
+            header_parameters['if-match'] = self._serialize.header("if_match", if_match, 'str')
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 204, 412]:
+        if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise models.ErrorException(response, self._deserialize)
 
@@ -555,16 +555,16 @@ class AzureAppConfigurationOperationsMixin(object):
         if accept_datetime is not None:
             header_parameters['Accept-Datetime'] = self._serialize.header("accept_datetime", accept_datetime, 'str')
         if if_match is not None:
-            header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
+            header_parameters['if-match'] = self._serialize.header("if_match", if_match, 'str')
         if if_none_match is not None:
-            header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
+            header_parameters['if-none-match'] = self._serialize.header("if_none_match", if_none_match, 'str')
 
         # Construct and send request
         request = self._client.head(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 304, 404, 412]:
+        if response.status_code not in [200, 304, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -753,16 +753,16 @@ class AzureAppConfigurationOperationsMixin(object):
         if self._config.sync_token is not None:
             header_parameters['Sync-Token'] = self._serialize.header("self._config.sync_token", self._config.sync_token, 'str')
         if if_match is not None:
-            header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
+            header_parameters['if-match'] = self._serialize.header("if_match", if_match, 'str')
         if if_none_match is not None:
-            header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
+            header_parameters['if-none-match'] = self._serialize.header("if_none_match", if_none_match, 'str')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 404, 412]:
+        if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise models.ErrorException(response, self._deserialize)
 
@@ -823,16 +823,16 @@ class AzureAppConfigurationOperationsMixin(object):
         if self._config.sync_token is not None:
             header_parameters['Sync-Token'] = self._serialize.header("self._config.sync_token", self._config.sync_token, 'str')
         if if_match is not None:
-            header_parameters['If-Match'] = self._serialize.header("if_match", if_match, 'str')
+            header_parameters['if-match'] = self._serialize.header("if_match", if_match, 'str')
         if if_none_match is not None:
-            header_parameters['If-None-Match'] = self._serialize.header("if_none_match", if_none_match, 'str')
+            header_parameters['if-none-match'] = self._serialize.header("if_none_match", if_none_match, 'str')
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
         pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 404, 412]:
+        if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise models.ErrorException(response, self._deserialize)
 

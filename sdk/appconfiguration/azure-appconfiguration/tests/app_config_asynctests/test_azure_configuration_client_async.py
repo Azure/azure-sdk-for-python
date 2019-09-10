@@ -182,18 +182,17 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
 
     def test_get_non_existing_configuration_setting(self):
         compare_kv = self.test_config_setting
-        with pytest.raises(ResourceNotFoundError):
-            self.get_config_client().get_configuration_setting(
-                compare_kv.key, compare_kv.label + "a"
-            )
+        get_kv = self.get_config_client().get_configuration_setting(
+            compare_kv.key, compare_kv.label + "a")
+        assert get_kv is None
 
     # method: delete_configuration_setting
     def test_delete_with_key_no_label(self):
         to_delete_kv = self.test_config_setting_no_label
         self.get_config_client().delete_configuration_setting(to_delete_kv.key)
         self.to_delete.remove(to_delete_kv)
-        with pytest.raises(ResourceNotFoundError):
-            self.get_config_client().get_configuration_setting(to_delete_kv.key)
+        get_kv = self.get_config_client().get_configuration_setting(to_delete_kv.key)
+        assert get_kv is None
 
     def test_delete_with_key_label(self):
         to_delete_kv = self.test_config_setting
@@ -201,10 +200,9 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
             to_delete_kv.key, label=to_delete_kv.label
         )
         self.to_delete.remove(to_delete_kv)
-        with pytest.raises(ResourceNotFoundError):
-            self.get_config_client().get_configuration_setting(
-                to_delete_kv.key, label=to_delete_kv.label
-            )
+        get_kv = self.get_config_client().get_configuration_setting(
+            to_delete_kv.key, label=to_delete_kv.label)
+        assert get_kv is None
 
     def test_delete_non_existing(self):
         deleted_kv = self.get_config_client().delete_configuration_setting(
@@ -219,8 +217,8 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
         )
         self.to_delete.remove(to_delete_kv)
         assert deleted_kv is not None
-        with pytest.raises(ResourceNotFoundError):
-            self.get_config_client().get_configuration_setting(to_delete_kv.key)
+        get_kv = self.get_config_client().get_configuration_setting(to_delete_kv.key)
+        assert get_kv is None
 
     def test_delete_wrong_etag(self):
         to_delete_kv = self.test_config_setting_no_label
@@ -342,7 +340,7 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
 
     def test_list_configuration_settings_only_accept_time(self):
         exclude_today = self.get_config_client().list_configuration_settings(
-            accept_date_time=datetime.datetime.today() + datetime.timedelta(days=-1)
+            accept_datetime=datetime.datetime.today() + datetime.timedelta(days=-1)
         )
         all_inclusive = self.get_config_client().list_configuration_settings()
         assert len(list(all_inclusive)) > len(list(exclude_today))

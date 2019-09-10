@@ -267,6 +267,9 @@ class AzureAppConfigurationClient:
             label=label
         )
 
+        if key_value is None:
+            return None
+
         if value is not None:
             key_value.value = value
         content_type = kwargs.get("content_type")

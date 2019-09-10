@@ -54,6 +54,8 @@ class ConfigurationSetting(Model):
     def _from_key_value(cls, key_value):
         # type: (_models.KeyValue) -> ConfigurationSetting
         """Construct a DeletedKey from an autorest-generated DeletedKeyBundle"""
+        if key_value is None:
+            return None
         return cls(
             key=key_value.key,
             label=key_value.label,
