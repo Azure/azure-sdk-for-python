@@ -3,7 +3,6 @@ trigger: none
 jobs:
   - template: ../../eng/pipelines/templates/jobs/archetype-sdk-tests.yml
     parameters:
-      MaxParallel: 1
       Matrix:
         Linux_Python35:
           OSName: 'Linux'
