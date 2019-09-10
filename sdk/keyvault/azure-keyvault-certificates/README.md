@@ -160,7 +160,7 @@ print(certificate.policy.id)
 ```
 
 `get_certificate` retrieves a certificate based on the certificate name and the version of the certificate.
-Version is required 
+Version is required.
 ```python
 certificate = certificate_client.get_certificate(name="cert-name", version="cert-version")
 print(certificate.name)
