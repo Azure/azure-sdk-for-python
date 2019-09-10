@@ -126,8 +126,8 @@ class NetworkDataOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: NetworkData or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.security.models.NetworkData or
+        :return: NetworkDataList or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.security.models.NetworkDataList or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -165,7 +165,7 @@ class NetworkDataOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('NetworkData', response)
+            deserialized = self._deserialize('NetworkDataList', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)

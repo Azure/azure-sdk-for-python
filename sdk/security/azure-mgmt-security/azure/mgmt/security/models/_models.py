@@ -2861,6 +2861,34 @@ class NetworkDataConnectableResourceUnusedPorts(Model):
         self.outbound_connected_resources = kwargs.get('outbound_connected_resources', None)
 
 
+class NetworkDataList(Model):
+    """List of network data.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar value:
+    :vartype value: list[~azure.mgmt.security.models.NetworkData]
+    :ivar next_link: The URI to fetch the next page.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+        'next_link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[NetworkData]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(NetworkDataList, self).__init__(**kwargs)
+        self.value = None
+        self.next_link = None
+
+
 class Operation(Model):
     """Possible operation in the REST API of Microsoft.Security.
 

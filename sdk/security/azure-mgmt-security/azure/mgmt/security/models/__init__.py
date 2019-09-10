@@ -76,6 +76,7 @@ try:
     from ._models_py3 import NetworkDataConnectableResourceActualTraffic
     from ._models_py3 import NetworkDataConnectableResourceAllowedConnections
     from ._models_py3 import NetworkDataConnectableResourceUnusedPorts
+    from ._models_py3 import NetworkDataList
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import PathRecommendation
@@ -174,6 +175,7 @@ except (SyntaxError, ImportError):
     from ._models import NetworkDataConnectableResourceActualTraffic
     from ._models import NetworkDataConnectableResourceAllowedConnections
     from ._models import NetworkDataConnectableResourceUnusedPorts
+    from ._models import NetworkDataList
     from ._models import Operation
     from ._models import OperationDisplay
     from ._models import PathRecommendation
@@ -323,6 +325,7 @@ __all__ = [
     'NetworkDataConnectableResourceActualTraffic',
     'NetworkDataConnectableResourceAllowedConnections',
     'NetworkDataConnectableResourceUnusedPorts',
+    'NetworkDataList',
     'Operation',
     'OperationDisplay',
     'PathRecommendation',
