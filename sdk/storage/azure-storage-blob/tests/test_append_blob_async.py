@@ -698,7 +698,7 @@ class StorageAppendBlobTestAsync(StorageTestCase):
                                                                 source_range_start=0,
                                                                 source_range_end=LARGE_BLOB_SIZE - 1,
                                                                 if_modified_since=source_properties.get(
-                                                                    'last_modified'))
+                                                                    'last_modified') + timedelta(minutes=15))
 
     @record
     def test_append_block_from_url_with_if_modified_async(self):
@@ -722,7 +722,7 @@ class StorageAppendBlobTestAsync(StorageTestCase):
         resp = await destination_blob_client. \
             append_block_from_url(source_blob_client.url + '?' + sas,
                                   source_range_start=0, source_range_end=LARGE_BLOB_SIZE - 1,
-                                  if_unmodified_since=source_properties.get('last_modified'))
+                                  if_unmodified_since=source_properties.get('last_modified') + timedelta(minutes=15))
         self.assertEqual(resp.get('blob_append_offset'), '0')
         self.assertEqual(resp.get('blob_committed_block_count'), 1)
         self.assertIsNotNone(resp.get('etag'))

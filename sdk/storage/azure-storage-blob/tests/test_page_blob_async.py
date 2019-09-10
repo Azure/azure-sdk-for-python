@@ -758,7 +758,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
                                                                    SOURCE_BLOB_SIZE - 1,
                                                                    0,
                                                                    if_unmodified_since=source_properties.get(
-                                                                       'last_modified'))
+                                                                       'last_modified') + timedelta(minutes=15))
         self.assertIsNotNone(resp.get('etag'))
         self.assertIsNotNone(resp.get('last_modified'))
 

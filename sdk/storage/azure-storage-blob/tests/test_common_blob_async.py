@@ -1691,6 +1691,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
 
     @record
     def test_token_credential(self):
+        pytest.skip("not set up to use async azure-identity")
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_token_credential())
 
