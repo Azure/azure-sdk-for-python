@@ -1,6 +1,24 @@
 # Change Log azure-storage-file
 
 
+## Version 12.0.0b3:
+
+**New features**
+- Added FileSmbProperties REST Parity.
+- Added support for AppendBlockFromURL, PutPageFromURL, PutRangeThroughURL.
+
+**Dependency updates**
+- Adopted [azure-core](https://pypi.org/project/azure-core/) 1.0.0b3
+  - If you later want to revert to previous versions of azure-storage-file, or another Azure SDK
+  library requiring azure-core 1.0.0b1 or azure-core 1.0.0b2, you must explicitly install azure-core
+  the specific version of azure-core as well. For example:
+
+  `pip install azure-core==1.0.0b2 azure-storage-file==12.0.0b2`
+
+**Fixes and improvements**
+- Fix where content-type was being added in the request when not mentioned explicitly.
+
+
 ## Version 12.0.0b2:
 
 **Breaking changes**
