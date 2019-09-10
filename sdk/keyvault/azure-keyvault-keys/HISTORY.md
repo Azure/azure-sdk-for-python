@@ -1,6 +1,6 @@
 # Release History
 
-## 4.0.0b3 (2019-09-10)
+## 4.0.0b3 (2019-09-11)
 ### Breaking changes:
 - `CryptographyClient` methods `wrap` and `unwrap` are renamed `wrap_key` and
 `unwrap_key`, respectively.

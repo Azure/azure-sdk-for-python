@@ -1,5 +1,5 @@
 # Release History
-## 4.0.0b3 (2019-09-10)
+## 4.0.0b3 (2019-09-11)
 This release includes only internal changes.
 
 ## 4.0.0b2 (2019-08-06)
