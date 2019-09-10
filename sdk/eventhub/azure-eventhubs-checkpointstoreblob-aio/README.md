@@ -46,7 +46,26 @@ storing their own offset values outside of the Event Hubs service. Within a part
 sequence number and the timestamp of when it was enqueued.
 
 ## Examples
-### 
+- [Create an Azure Storage Blobs `ContainerClient`](#create-an-azure-storage-blobs-containerclient)
+- [Create an Azure EventHubs `EventHubClient`](#create-an-eventhubclient)
+- [Consume events using an `EventProessor` that uses a `BlobPartitionManager`](#consume-events-using-an-eventprocessor-that-uses-a-blobpartitionmanager-to-do-checkpointing)
+
+### Create an Azure Storage Blobs `ContainerClient`
+The easiest way to create a `ContainerClient` is to use a connection string.
+```python
+from azure.storage.blob.aio import ContainerClient
+container_client = ContainerClient.from_connection_string("my_storageacount_connection_string", container="mycontainer")
+```
+For other ways of creating a `ContainerClient`
+Go to [Blob Storage library](#https://github.com/Azure/azure-sdk-for-python/tree/eventhubs_preview3/sdk/storage/azure-storage-blob) for more details about 
+
+### Create an `EventHubClient`
+The easiest way to create a `ContainerClient` is to use a connection string.
+```python
+from azure.eventhub.aio import EventHubClient
+eventhub_client = EventHubClient.from_connection_string("my_eventhub_namespace_connection_string", event_hub_path="myeventhub")
+```
+For other ways of creating a `EventHubClient`, refer to [EventHubs library](#https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhubs) for more details.
 
 ### Consume events using an `EventProcessor` that uses a `BlobPartitionManager` to do checkpointing
 ```python
