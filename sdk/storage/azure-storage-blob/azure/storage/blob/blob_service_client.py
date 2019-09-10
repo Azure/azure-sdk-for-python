@@ -248,7 +248,9 @@ class BlobServiceClient(StorageAccountHostsMixin):
         """
         key_info = KeyInfo(start=_to_utc_datetime(key_start_time), expiry=_to_utc_datetime(key_expiry_time))
         try:
-            user_delegation_key = self._client.service.get_user_delegation_key(key_info=key_info, timeout=timeout)
+            user_delegation_key = self._client.service.get_user_delegation_key(key_info=key_info,
+                                                                               timeout=timeout,
+                                                                               **kwargs)  # type: ignore
         except StorageErrorException as error:
             process_storage_error(error)
 
