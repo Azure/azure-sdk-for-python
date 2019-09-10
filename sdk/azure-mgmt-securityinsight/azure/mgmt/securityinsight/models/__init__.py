@@ -22,12 +22,12 @@ try:
     from .alert_rule_py3 import AlertRule
     from .alert_rule_kind1_py3 import AlertRuleKind1
     from .alert_rule_template_py3 import AlertRuleTemplate
+    from .data_connector_status_py3 import DataConnectorStatus
+    from .alert_rule_template_properties_base_py3 import AlertRuleTemplatePropertiesBase
     from .aws_cloud_trail_data_connector_data_types_logs_py3 import AwsCloudTrailDataConnectorDataTypesLogs
     from .aws_cloud_trail_data_connector_data_types_py3 import AwsCloudTrailDataConnectorDataTypes
     from .aws_cloud_trail_data_connector_py3 import AwsCloudTrailDataConnector
     from .azure_resource_entity_py3 import AzureResourceEntity
-    from .data_connector_status_py3 import DataConnectorStatus
-    from .alert_rule_template_properties_base_py3 import AlertRuleTemplatePropertiesBase
     from .user_info_py3 import UserInfo
     from .bookmark_py3 import Bookmark
     from .case_py3 import Case
@@ -53,9 +53,6 @@ try:
     from .entity_query_py3 import EntityQuery
     from .file_entity_py3 import FileEntity
     from .file_hash_entity_py3 import FileHashEntity
-    from .microsoft_security_incident_creation_alert_rule_py3 import MicrosoftSecurityIncidentCreationAlertRule
-    from .microsoft_security_incident_creation_alert_rule_template_py3 import MicrosoftSecurityIncidentCreationAlertRuleTemplate
-    from .microsoft_security_incident_creation_alert_rule_common_properties_py3 import MicrosoftSecurityIncidentCreationAlertRuleCommonProperties
     from .fusion_alert_rule_py3 import FusionAlertRule
     from .fusion_alert_rule_template_py3 import FusionAlertRuleTemplate
     from .geo_location_py3 import GeoLocation
@@ -67,6 +64,9 @@ try:
     from .mcas_data_connector_py3 import MCASDataConnector
     from .mdatp_data_connector_py3 import MDATPDataConnector
     from .malware_entity_py3 import MalwareEntity
+    from .microsoft_security_incident_creation_alert_rule_py3 import MicrosoftSecurityIncidentCreationAlertRule
+    from .microsoft_security_incident_creation_alert_rule_common_properties_py3 import MicrosoftSecurityIncidentCreationAlertRuleCommonProperties
+    from .microsoft_security_incident_creation_alert_rule_template_py3 import MicrosoftSecurityIncidentCreationAlertRuleTemplate
     from .office_consent_py3 import OfficeConsent
     from .office_data_connector_data_types_exchange_py3 import OfficeDataConnectorDataTypesExchange
     from .office_data_connector_data_types_share_point_py3 import OfficeDataConnectorDataTypesSharePoint
@@ -80,8 +80,8 @@ try:
     from .resource_py3 import Resource
     from .resource_with_etag_py3 import ResourceWithEtag
     from .scheduled_alert_rule_py3 import ScheduledAlertRule
-    from .scheduled_alert_rule_template_py3 import ScheduledAlertRuleTemplate
     from .scheduled_alert_rule_common_properties_py3 import ScheduledAlertRuleCommonProperties
+    from .scheduled_alert_rule_template_py3 import ScheduledAlertRuleTemplate
     from .security_alert_properties_confidence_reasons_item_py3 import SecurityAlertPropertiesConfidenceReasonsItem
     from .security_alert_py3 import SecurityAlert
     from .security_group_entity_py3 import SecurityGroupEntity
@@ -106,12 +106,12 @@ except (SyntaxError, ImportError):
     from .alert_rule import AlertRule
     from .alert_rule_kind1 import AlertRuleKind1
     from .alert_rule_template import AlertRuleTemplate
+    from .data_connector_status import DataConnectorStatus
+    from .alert_rule_template_properties_base import AlertRuleTemplatePropertiesBase
     from .aws_cloud_trail_data_connector_data_types_logs import AwsCloudTrailDataConnectorDataTypesLogs
     from .aws_cloud_trail_data_connector_data_types import AwsCloudTrailDataConnectorDataTypes
     from .aws_cloud_trail_data_connector import AwsCloudTrailDataConnector
     from .azure_resource_entity import AzureResourceEntity
-    from .data_connector_status import DataConnectorStatus
-    from .alert_rule_template_properties_base import AlertRuleTemplatePropertiesBase
     from .user_info import UserInfo
     from .bookmark import Bookmark
     from .case import Case
@@ -137,9 +137,6 @@ except (SyntaxError, ImportError):
     from .entity_query import EntityQuery
     from .file_entity import FileEntity
     from .file_hash_entity import FileHashEntity
-    from .microsoft_security_incident_creation_alert_rule import MicrosoftSecurityIncidentCreationAlertRule
-    from .microsoft_security_incident_creation_alert_rule_template import MicrosoftSecurityIncidentCreationAlertRuleTemplate
-    from .microsoft_security_incident_creation_alert_rule_common_properties import MicrosoftSecurityIncidentCreationAlertRuleCommonProperties
     from .fusion_alert_rule import FusionAlertRule
     from .fusion_alert_rule_template import FusionAlertRuleTemplate
     from .geo_location import GeoLocation
@@ -151,6 +148,9 @@ except (SyntaxError, ImportError):
     from .mcas_data_connector import MCASDataConnector
     from .mdatp_data_connector import MDATPDataConnector
     from .malware_entity import MalwareEntity
+    from .microsoft_security_incident_creation_alert_rule import MicrosoftSecurityIncidentCreationAlertRule
+    from .microsoft_security_incident_creation_alert_rule_common_properties import MicrosoftSecurityIncidentCreationAlertRuleCommonProperties
+    from .microsoft_security_incident_creation_alert_rule_template import MicrosoftSecurityIncidentCreationAlertRuleTemplate
     from .office_consent import OfficeConsent
     from .office_data_connector_data_types_exchange import OfficeDataConnectorDataTypesExchange
     from .office_data_connector_data_types_share_point import OfficeDataConnectorDataTypesSharePoint
@@ -164,8 +164,8 @@ except (SyntaxError, ImportError):
     from .resource import Resource
     from .resource_with_etag import ResourceWithEtag
     from .scheduled_alert_rule import ScheduledAlertRule
-    from .scheduled_alert_rule_template import ScheduledAlertRuleTemplate
     from .scheduled_alert_rule_common_properties import ScheduledAlertRuleCommonProperties
+    from .scheduled_alert_rule_template import ScheduledAlertRuleTemplate
     from .security_alert_properties_confidence_reasons_item import SecurityAlertPropertiesConfidenceReasonsItem
     from .security_alert import SecurityAlert
     from .security_group_entity import SecurityGroupEntity
@@ -191,11 +191,11 @@ from .entity_query_paged import EntityQueryPaged
 from .security_insights_enums import (
     AggregationsKind,
     AlertRuleKind,
-    TriggerOperator,
-    AlertSeverity,
-    AttackTactic,
     DataTypeStatus,
     TemplateStatus,
+    AttackTactic,
+    TriggerOperator,
+    AlertSeverity,
     CloseReason,
     CaseSeverity,
     CaseStatus,
@@ -204,8 +204,8 @@ from .security_insights_enums import (
     EntityKind,
     EntityType,
     FileHashAlgorithm,
-    MicrosoftSecurityProductName,
     OSFamily,
+    MicrosoftSecurityProductName,
     ElevationToken,
     RegistryHive,
     RegistryValueKind,
@@ -231,12 +231,12 @@ __all__ = [
     'AlertRule',
     'AlertRuleKind1',
     'AlertRuleTemplate',
+    'DataConnectorStatus',
+    'AlertRuleTemplatePropertiesBase',
     'AwsCloudTrailDataConnectorDataTypesLogs',
     'AwsCloudTrailDataConnectorDataTypes',
     'AwsCloudTrailDataConnector',
     'AzureResourceEntity',
-    'DataConnectorStatus',
-    'AlertRuleTemplatePropertiesBase',
     'UserInfo',
     'Bookmark',
     'Case',
@@ -262,9 +262,6 @@ __all__ = [
     'EntityQuery',
     'FileEntity',
     'FileHashEntity',
-    'MicrosoftSecurityIncidentCreationAlertRule',
-    'MicrosoftSecurityIncidentCreationAlertRuleTemplate',
-    'MicrosoftSecurityIncidentCreationAlertRuleCommonProperties',
     'FusionAlertRule',
     'FusionAlertRuleTemplate',
     'GeoLocation',
@@ -276,6 +273,9 @@ __all__ = [
     'MCASDataConnector',
     'MDATPDataConnector',
     'MalwareEntity',
+    'MicrosoftSecurityIncidentCreationAlertRule',
+    'MicrosoftSecurityIncidentCreationAlertRuleCommonProperties',
+    'MicrosoftSecurityIncidentCreationAlertRuleTemplate',
     'OfficeConsent',
     'OfficeDataConnectorDataTypesExchange',
     'OfficeDataConnectorDataTypesSharePoint',
@@ -289,8 +289,8 @@ __all__ = [
     'Resource',
     'ResourceWithEtag',
     'ScheduledAlertRule',
-    'ScheduledAlertRuleTemplate',
     'ScheduledAlertRuleCommonProperties',
+    'ScheduledAlertRuleTemplate',
     'SecurityAlertPropertiesConfidenceReasonsItem',
     'SecurityAlert',
     'SecurityGroupEntity',
@@ -315,11 +315,11 @@ __all__ = [
     'EntityQueryPaged',
     'AggregationsKind',
     'AlertRuleKind',
-    'TriggerOperator',
-    'AlertSeverity',
-    'AttackTactic',
     'DataTypeStatus',
     'TemplateStatus',
+    'AttackTactic',
+    'TriggerOperator',
+    'AlertSeverity',
     'CloseReason',
     'CaseSeverity',
     'CaseStatus',
@@ -328,8 +328,8 @@ __all__ = [
     'EntityKind',
     'EntityType',
     'FileHashAlgorithm',
-    'MicrosoftSecurityProductName',
     'OSFamily',
+    'MicrosoftSecurityProductName',
     'ElevationToken',
     'RegistryHive',
     'RegistryValueKind',

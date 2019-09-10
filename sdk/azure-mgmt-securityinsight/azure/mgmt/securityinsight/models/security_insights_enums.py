@@ -24,20 +24,17 @@ class AlertRuleKind(str, Enum):
     fusion = "Fusion"
 
 
-class TriggerOperator(str, Enum):
+class DataTypeStatus(str, Enum):
 
-    greater_than = "GreaterThan"
-    less_than = "LessThan"
-    equal = "Equal"
-    not_equal = "NotEqual"
+    exist = "Exist"
+    not_exist = "NotExist"
 
 
-class AlertSeverity(str, Enum):
+class TemplateStatus(str, Enum):
 
-    high = "High"  #: High severity
-    medium = "Medium"  #: Medium severity
-    low = "Low"  #: Low severity
-    informational = "Informational"  #: Informational severity
+    installed = "Installed"  #: Alert rule template installed. and can not use more then once
+    available = "Available"  #: Alert rule template is available.
+    not_available = "NotAvailable"  #: Alert rule template is not available
 
 
 class AttackTactic(str, Enum):
@@ -56,17 +53,20 @@ class AttackTactic(str, Enum):
     impact = "Impact"
 
 
-class DataTypeStatus(str, Enum):
+class TriggerOperator(str, Enum):
 
-    exist = "Exist"
-    not_exist = "NotExist"
+    greater_than = "GreaterThan"
+    less_than = "LessThan"
+    equal = "Equal"
+    not_equal = "NotEqual"
 
 
-class TemplateStatus(str, Enum):
+class AlertSeverity(str, Enum):
 
-    installed = "Installed"  #: Alert rule template installed. and can not use more then once
-    available = "Available"  #: Alert rule template is available.
-    not_available = "NotAvailable"  #: Alert rule template is not available
+    high = "High"  #: High severity
+    medium = "Medium"  #: Medium severity
+    low = "Low"  #: Low severity
+    informational = "Informational"  #: Informational severity
 
 
 class CloseReason(str, Enum):
@@ -162,20 +162,20 @@ class FileHashAlgorithm(str, Enum):
     sha256_ac = "SHA256AC"  #: SHA256 Authenticode hash type
 
 
-class MicrosoftSecurityProductName(str, Enum):
-
-    microsoft_cloud_app_security = "Microsoft Cloud App Security"
-    azure_security_center = "Azure Security Center"
-    azure_advanced_threat_protection = "Azure Advanced Threat Protection"
-    azure_active_directory_identity_protection = "Azure Active Directory Identity Protection"
-
-
 class OSFamily(str, Enum):
 
     linux = "Linux"  #: Host with Linux operating system.
     windows = "Windows"  #: Host with Windows operating system.
     android = "Android"  #: Host with Android operating system.
     ios = "IOS"  #: Host with IOS operating system.
+
+
+class MicrosoftSecurityProductName(str, Enum):
+
+    microsoft_cloud_app_security = "Microsoft Cloud App Security"
+    azure_security_center = "Azure Security Center"
+    azure_advanced_threat_protection = "Azure Advanced Threat Protection"
+    azure_active_directory_identity_protection = "Azure Active Directory Identity Protection"
 
 
 class ElevationToken(str, Enum):

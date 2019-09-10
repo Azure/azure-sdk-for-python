@@ -33,7 +33,7 @@ class ScheduledAlertRuleTemplate(AlertRuleTemplate):
     :type alert_rules_created_by_template_count: int
     :ivar created_date_utc: The time that this alert rule template has been
      added.
-    :vartype created_date_utc: str
+    :vartype created_date_utc: datetime
     :param description: Required. The description of the alert rule template.
     :type description: str
     :param display_name: Required. The display name for alert rule template.
@@ -93,7 +93,7 @@ class ScheduledAlertRuleTemplate(AlertRuleTemplate):
         'type': {'key': 'type', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'alert_rules_created_by_template_count': {'key': 'properties.alertRulesCreatedByTemplateCount', 'type': 'int'},
-        'created_date_utc': {'key': 'properties.createdDateUTC', 'type': 'str'},
+        'created_date_utc': {'key': 'properties.createdDateUTC', 'type': 'iso-8601'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'required_data_connectors': {'key': 'properties.requiredDataConnectors', 'type': '[DataConnectorStatus]'},

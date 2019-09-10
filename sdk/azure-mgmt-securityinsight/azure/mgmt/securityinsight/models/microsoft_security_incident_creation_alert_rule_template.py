@@ -33,7 +33,7 @@ class MicrosoftSecurityIncidentCreationAlertRuleTemplate(AlertRuleTemplate):
     :type alert_rules_created_by_template_count: int
     :ivar created_date_utc: Required. The time that this alert rule template
      has been added.
-    :vartype created_date_utc: str
+    :vartype created_date_utc: datetime
     :param description: Required. The description of the alert rule template.
     :type description: str
     :param display_name: Required. The display name for alert rule template.
@@ -48,6 +48,9 @@ class MicrosoftSecurityIncidentCreationAlertRuleTemplate(AlertRuleTemplate):
     :param tactics: The tactics of the alert rule template
     :type tactics: list[str or
      ~azure.mgmt.securityinsight.models.AttackTactic]
+    :param display_names_filter: the alerts' displayNames on which the cases
+     will be generated
+    :type display_names_filter: list[str]
     :param product_filter: Required. The alerts' productName on which the
      cases will be generated. Possible values include: 'Microsoft Cloud App
      Security', 'Azure Security Center', 'Azure Advanced Threat Protection',
@@ -58,9 +61,6 @@ class MicrosoftSecurityIncidentCreationAlertRuleTemplate(AlertRuleTemplate):
      be generated
     :type severities_filter: list[str or
      ~azure.mgmt.securityinsight.models.AlertSeverity]
-    :param display_names_filter: the alerts' displayNames on which the cases
-     will be generated
-    :type display_names_filter: list[str]
     """
 
     _validation = {
@@ -82,15 +82,15 @@ class MicrosoftSecurityIncidentCreationAlertRuleTemplate(AlertRuleTemplate):
         'type': {'key': 'type', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'alert_rules_created_by_template_count': {'key': 'properties.alertRulesCreatedByTemplateCount', 'type': 'int'},
-        'created_date_utc': {'key': 'properties.createdDateUTC', 'type': 'str'},
+        'created_date_utc': {'key': 'properties.createdDateUTC', 'type': 'iso-8601'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'required_data_connectors': {'key': 'properties.requiredDataConnectors', 'type': '[DataConnectorStatus]'},
         'status': {'key': 'properties.status', 'type': 'str'},
         'tactics': {'key': 'properties.tactics', 'type': '[str]'},
+        'display_names_filter': {'key': 'properties.displayNamesFilter', 'type': '[str]'},
         'product_filter': {'key': 'properties.productFilter', 'type': 'str'},
         'severities_filter': {'key': 'properties.severitiesFilter', 'type': '[str]'},
-        'display_names_filter': {'key': 'properties.displayNamesFilter', 'type': '[str]'},
     }
 
     def __init__(self, **kwargs):
@@ -102,7 +102,7 @@ class MicrosoftSecurityIncidentCreationAlertRuleTemplate(AlertRuleTemplate):
         self.required_data_connectors = kwargs.get('required_data_connectors', None)
         self.status = kwargs.get('status', None)
         self.tactics = kwargs.get('tactics', None)
+        self.display_names_filter = kwargs.get('display_names_filter', None)
         self.product_filter = kwargs.get('product_filter', None)
         self.severities_filter = kwargs.get('severities_filter', None)
-        self.display_names_filter = kwargs.get('display_names_filter', None)
         self.kind = 'MicrosoftSecurityIncidentCreation'

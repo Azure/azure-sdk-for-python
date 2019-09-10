@@ -36,7 +36,7 @@ class FusionAlertRule(AlertRule):
      disabled.
     :type enabled: bool
     :ivar last_modified_utc: The last time that this alert has been modified.
-    :vartype last_modified_utc: str
+    :vartype last_modified_utc: datetime
     :ivar severity: The severity for alerts created by this alert rule.
      Possible values include: 'High', 'Medium', 'Low', 'Informational'
     :vartype severity: str or ~azure.mgmt.securityinsight.models.AlertSeverity
@@ -63,7 +63,7 @@ class FusionAlertRule(AlertRule):
         'description': {'key': 'properties.description', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'enabled': {'key': 'properties.enabled', 'type': 'bool'},
-        'last_modified_utc': {'key': 'properties.lastModifiedUtc', 'type': 'str'},
+        'last_modified_utc': {'key': 'properties.lastModifiedUtc', 'type': 'iso-8601'},
         'severity': {'key': 'properties.severity', 'type': 'str'},
         'tactics': {'key': 'properties.tactics', 'type': '[str]'},
     }

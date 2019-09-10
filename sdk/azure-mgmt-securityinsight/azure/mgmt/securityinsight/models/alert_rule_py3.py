@@ -16,8 +16,8 @@ class AlertRule(Model):
     """Alert rule.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: MicrosoftSecurityIncidentCreationAlertRule,
-    FusionAlertRule, ScheduledAlertRule
+    sub-classes are: FusionAlertRule,
+    MicrosoftSecurityIncidentCreationAlertRule, ScheduledAlertRule
 
     All required parameters must be populated in order to send to Azure.
 
@@ -37,7 +37,7 @@ class AlertRule(Model):
     }
 
     _subtype_map = {
-        'kind': {'MicrosoftSecurityIncidentCreation': 'MicrosoftSecurityIncidentCreationAlertRule', 'Fusion': 'FusionAlertRule', 'Scheduled': 'ScheduledAlertRule'}
+        'kind': {'Fusion': 'FusionAlertRule', 'MicrosoftSecurityIncidentCreation': 'MicrosoftSecurityIncidentCreationAlertRule', 'Scheduled': 'ScheduledAlertRule'}
     }
 
     def __init__(self, *, etag: str=None, **kwargs) -> None:

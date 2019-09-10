@@ -17,6 +17,9 @@ class MicrosoftSecurityIncidentCreationAlertRuleCommonProperties(Model):
 
     All required parameters must be populated in order to send to Azure.
 
+    :param display_names_filter: the alerts' displayNames on which the cases
+     will be generated
+    :type display_names_filter: list[str]
     :param product_filter: Required. The alerts' productName on which the
      cases will be generated. Possible values include: 'Microsoft Cloud App
      Security', 'Azure Security Center', 'Azure Advanced Threat Protection',
@@ -27,9 +30,6 @@ class MicrosoftSecurityIncidentCreationAlertRuleCommonProperties(Model):
      be generated
     :type severities_filter: list[str or
      ~azure.mgmt.securityinsight.models.AlertSeverity]
-    :param display_names_filter: the alerts' displayNames on which the cases
-     will be generated
-    :type display_names_filter: list[str]
     """
 
     _validation = {
@@ -37,13 +37,13 @@ class MicrosoftSecurityIncidentCreationAlertRuleCommonProperties(Model):
     }
 
     _attribute_map = {
+        'display_names_filter': {'key': 'displayNamesFilter', 'type': '[str]'},
         'product_filter': {'key': 'productFilter', 'type': 'str'},
         'severities_filter': {'key': 'severitiesFilter', 'type': '[str]'},
-        'display_names_filter': {'key': 'displayNamesFilter', 'type': '[str]'},
     }
 
-    def __init__(self, *, product_filter, severities_filter=None, display_names_filter=None, **kwargs) -> None:
+    def __init__(self, *, product_filter, display_names_filter=None, severities_filter=None, **kwargs) -> None:
         super(MicrosoftSecurityIncidentCreationAlertRuleCommonProperties, self).__init__(**kwargs)
+        self.display_names_filter = display_names_filter
         self.product_filter = product_filter
         self.severities_filter = severities_filter
-        self.display_names_filter = display_names_filter

@@ -23,7 +23,7 @@ class AlertRuleTemplatePropertiesBase(Model):
     :type alert_rules_created_by_template_count: int
     :ivar created_date_utc: The time that this alert rule template has been
      added.
-    :vartype created_date_utc: str
+    :vartype created_date_utc: datetime
     :param description: The description of the alert rule template.
     :type description: str
     :param display_name: The display name for alert rule template.
@@ -46,7 +46,7 @@ class AlertRuleTemplatePropertiesBase(Model):
 
     _attribute_map = {
         'alert_rules_created_by_template_count': {'key': 'alertRulesCreatedByTemplateCount', 'type': 'int'},
-        'created_date_utc': {'key': 'createdDateUTC', 'type': 'str'},
+        'created_date_utc': {'key': 'createdDateUTC', 'type': 'iso-8601'},
         'description': {'key': 'description', 'type': 'str'},
         'display_name': {'key': 'displayName', 'type': 'str'},
         'required_data_connectors': {'key': 'requiredDataConnectors', 'type': '[DataConnectorStatus]'},

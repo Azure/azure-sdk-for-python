@@ -16,8 +16,9 @@ class AlertRuleTemplate(Model):
     """Alert rule template.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: MicrosoftSecurityIncidentCreationAlertRuleTemplate,
-    FusionAlertRuleTemplate, ScheduledAlertRuleTemplate
+    sub-classes are: FusionAlertRuleTemplate,
+    MicrosoftSecurityIncidentCreationAlertRuleTemplate,
+    ScheduledAlertRuleTemplate
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -49,7 +50,7 @@ class AlertRuleTemplate(Model):
     }
 
     _subtype_map = {
-        'kind': {'MicrosoftSecurityIncidentCreation': 'MicrosoftSecurityIncidentCreationAlertRuleTemplate', 'Fusion': 'FusionAlertRuleTemplate', 'Scheduled': 'ScheduledAlertRuleTemplate'}
+        'kind': {'Fusion': 'FusionAlertRuleTemplate', 'MicrosoftSecurityIncidentCreation': 'MicrosoftSecurityIncidentCreationAlertRuleTemplate', 'Scheduled': 'ScheduledAlertRuleTemplate'}
     }
 
     def __init__(self, **kwargs) -> None:

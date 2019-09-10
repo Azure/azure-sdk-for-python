@@ -55,7 +55,7 @@ class ScheduledAlertRule(AlertRule):
     :type enabled: bool
     :ivar last_modified_utc: The last time that this alert rule has been
      modified.
-    :vartype last_modified_utc: str
+    :vartype last_modified_utc: datetime
     :param suppression_duration: Required. The suppression (in ISO 8601
      duration format) to wait since last time this alert rule been triggered.
     :type suppression_duration: timedelta
@@ -89,7 +89,7 @@ class ScheduledAlertRule(AlertRule):
         'description': {'key': 'properties.description', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
         'enabled': {'key': 'properties.enabled', 'type': 'bool'},
-        'last_modified_utc': {'key': 'properties.lastModifiedUtc', 'type': 'str'},
+        'last_modified_utc': {'key': 'properties.lastModifiedUtc', 'type': 'iso-8601'},
         'suppression_duration': {'key': 'properties.suppressionDuration', 'type': 'duration'},
         'suppression_enabled': {'key': 'properties.suppressionEnabled', 'type': 'bool'},
         'tactics': {'key': 'properties.tactics', 'type': '[str]'},
