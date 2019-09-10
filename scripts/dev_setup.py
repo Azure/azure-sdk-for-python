@@ -42,6 +42,14 @@ parser.add_argument(
     default="",
     help="Comma separated list of targeted packages. Used to limit the number of packages that dependencies will be installed for.",
 )
+parser.add_argument(
+    "--disabledevelop",
+    dest="develop_mode_disabled",
+    default=False,
+    help="Add this argument if you would prefer to install the package with a simple `pip install` versus `pip install -e`",
+)
+
+
 args = parser.parse_args()
 
 packages = {
@@ -122,9 +130,13 @@ for package_name in content_packages:
             "install -r dev_requirements.txt",
             os.path.join(packages[package_name], package_name),
         )
+
+    mode_arg = "" if args.develop_mode_disabled else "-e"
+
     pip_command(
-        "install --ignore-requires-python -e {}".format(
-            os.path.join(packages[package_name], package_name)
+        "install --ignore-requires-python {} {}".format(
+            os.path.join(packages[package_name], package_name),
+            mode_arg
         )
     )
 
