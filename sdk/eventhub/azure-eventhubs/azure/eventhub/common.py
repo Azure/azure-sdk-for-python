@@ -261,18 +261,14 @@ class EventData(object):
 
 class EventDataBatch(object):
     """
-    It's much faster to send EventData in a batch than individually. But putting too much EventData in one batch
-    may exceed the frame size limit of the event hub.
-    EventDataBatch helps you build the maximum allowed size batch of EventData to improve performance
-    within the size limit
+    Sending events in batch get better performance than sending individual events.
+    EventDataBatch helps you create the maximum allowed size batch of `EventData` to improve sending performance.
 
-    Use create_batch method of ~azure.eventhub.EventHubProducer or ~azure.eventhub.aio.EventHubProducer
-    to create an EventDataBatch object. It retrieves the frame size limit from the service.
-    Use method EventDataBatch.try_add to build the list until a ValueError is raised,
-    and use send method of ~azure.eventhub.EventHubProducer or ~azure.eventhub.aio.EventHubProducer
-    to send out the EventData batch to EventHub
+    Use `try_add` method to add events until the maximum batch size limit in bytes has been reached - a `ValueError` will be raised.
+    Use `send` method of ~azure.eventhub.EventHubProducer or ~azure.eventhub.aio.EventHubProducer for sending.
 
-    Do not instantiate an EventDataBatch object using its constructor.
+    Please use the `create_batch` method of `EventHubProducer`
+    to create an `EventDataBatch` object instead of instantiating an `EventDataBatch` object directly.
     """
 
     def __init__(self, max_size=None, partition_key=None):

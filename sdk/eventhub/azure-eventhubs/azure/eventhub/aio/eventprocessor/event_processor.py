@@ -91,9 +91,9 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
         :param partition_processor_type: A subclass type of ~azure.eventhub.eventprocessor.PartitionProcessor.
         :type partition_processor_type: type
         :param partition_manager: Interacts with the data storage that stores ownership and checkpoints data.
-         ~azure.eventhub.aio.eventprocessor.SamplePartitionManager can be used to save data in memory or to a file.
-         More sophisticated partition managers are / will be provided as plug-ins. Users can also develop their own
-         partition managers.
+         ~azure.eventhub.aio.eventprocessor.SamplePartitionManager demonstrates the basic usage of `PartitionManager`
+          which stores data in memory or a file.
+         Users can either use the provided `PartitionManager` plug-ins or develop their own `PartitionManager`.
         :type partition_manager: Subclass of ~azure.eventhub.eventprocessor.PartitionManager.
         :param initial_event_position: The event position to start a partition consumer.
         if the partition has no checkpoint yet. This could be replaced by "reset" checkpoint in the near future.
@@ -119,10 +119,10 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
         return 'EventProcessor: id {}'.format(self._id)
 
     async def start(self):
-        """Start the EventProcessor
+        """Start the EventProcessor.
 
-        This EventProcessor will then start to balance partition ownership with other EventProcessors
-         and asynchronously start to receive EventData from EventHub and process events.
+        The EventProcessor will try to claim and balance partition ownership with other `EventProcessor`
+         and asynchronously start receiving EventData from EventHub and processing events.
 
         :return: None
 
@@ -155,13 +155,13 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
                 await asyncio.sleep(self._polling_interval)
 
     async def stop(self):
-        """Stop the EventProcessor
+        """Stop the EventProcessor.
 
-        This EventProcessor will stop receiving events from EventHubs and release the ownership of the partitions
+        The EventProcessor will stop receiving events from EventHubs and release the ownership of the partitions
         it is working on.
-        If other EventProcessors are still working, they will take over these partitions.
+        Other running EventProcessor will take over these released partitions.
 
-        A stopped EventProcessor can be restarted by calling method start() again.
+        A stopped EventProcessor can be restarted by calling method `start` again.
 
         :return: None
 

@@ -109,6 +109,8 @@ partition_ids = client.get_partition_ids()
 
 Publish events to an Event Hub.
 
+#### Send a single event or an array of events
+
 ```python
 from azure.eventhub import EventHubClient, EventData
 
@@ -124,6 +126,34 @@ try:
 
  	with producer:
  	    producer.send(event_list)
+except:
+	raise
+finally:
+    pass
+```
+
+#### Send a batch of events
+
+Use the `create_batch` method on `EventHubProcuer` to create an `EventDataBatch` object which can then be sent using the `send` method. Events may be added to the `EventDataBatch` using the `try_add` method until the maximum batch size limit in bytes has been reached.
+```python
+from azure.eventhub import EventHubClient, EventData
+
+try:
+    connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
+    event_hub_path = '<< NAME OF THE EVENT HUB >>'
+    client = EventHubClient.from_connection_string(connection_str, event_hub_path)
+    producer = client.create_producer(partition_id="0")
+
+    event_data_batch = producer.create_batch(max_size=10000)
+    can_add = True
+    while can_add:
+        try:
+            event_data_batch.try_add(EventData('Message inside EventBatchData'))
+        except ValueError:
+            can_add = False  # EventDataBatch object reaches max_size.
+
+    with producer:
+        producer.send(event_data_batch)
 except:
 	raise
 finally:
@@ -159,6 +189,7 @@ finally:
 
 Publish events to an Event Hub asynchronously.
 
+#### Send a single event or an array of events
 ```python
 from azure.eventhub.aio import EventHubClient
 from azure.eventhub import EventData
@@ -174,7 +205,37 @@ try:
  		event_list.append(EventData(b"A single event"))
 
 	async with producer:
-		await producer.send(event_list)
+		await producer.send(event_list)  # Send a list of events
+		await producer.send(EventData(b"A single event"))  # Send a single event
+except:
+	raise
+finally:
+    pass
+```
+
+#### Send a batch of events
+
+Use the `create_batch` method on `EventHubProcuer` to create an `EventDataBatch` object which can then be sent using the `send` method. Events may be added to the `EventDataBatch` using the `try_add` method until the maximum batch size limit in bytes has been reached.
+```python
+from azure.eventhub.aio import EventHubClient
+from azure.eventhub import EventData
+
+try:
+    connection_str = '<< CONNECTION STRING FOR THE EVENT HUBS NAMESPACE >>'
+    event_hub_path = '<< NAME OF THE EVENT HUB >>'
+    client = EventHubClient.from_connection_string(connection_str, event_hub_path)
+    producer = client.create_producer(partition_id="0")
+
+    event_data_batch = await producer.create_batch(max_size=10000)
+    can_add = True
+    while can_add:
+        try:
+            event_data_batch.try_add(EventData('Message inside EventBatchData'))
+        except ValueError:
+            can_add = False  # EventDataBatch object reaches max_size.
+
+    async with producer:
+        await producer.send(event_data_batch)
 except:
 	raise
 finally:
@@ -213,9 +274,11 @@ Using an `EventHubConsumer` to consume events like in the previous examples puts
 
 The `EventProcessor` will delegate the processing of events to a `PartitionProcessor` that you provide, allowing you to focus on business logic while the processor holds responsibility for managing the underlying consumer operations including checkpointing and load balancing.
 
+Load balancing is typically useful when running multiple instances of `EventProcessor` across multiple processes or even machines. It is recommended to store checkpoints to a persistent store when running in production. Search pypi with the prefix `azure-eventhubs-checkpoint` to find packages that support persistent storage of checkpoints.
+
 You can see how to use the `EventProcessor` in the below example, where we use an in memory `PartitionManager` that does checkpointing in memory.
 
-[Azure Blob Storage Partition Manager](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhubs-checkpointstoreblob-aio) is another `PartitionManager` implementation that allows multiple EventProcessors to share the load balancing and checkpoint data in a central storage.
+[Azure Blob Storage Partition Manager](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhubs-checkpointstoreblob-aio) is one of the `PartitionManager` implementation we provide that applies Azure Blob Storage as the persistent store.
 
 
 ```python
