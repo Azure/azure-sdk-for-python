@@ -176,7 +176,7 @@ class ContainerProxy(object):
         :raise `CosmosHttpResponseError`: If the given item couldn't be retrieved.
         :rtype: dict[str, Any]
 
-        .. literalinclude:: ../../examples/examples.py
+        .. literalinclude:: ../../samples/examples.py
             :start-after: [START update_item]
             :end-before: [END update_item]
             :language: python
@@ -320,7 +320,7 @@ class ContainerProxy(object):
         :returns: An Iterable of items (dicts).
         :rtype: Iterable[dict[str, Any]]
 
-        .. literalinclude:: ../../examples/examples.py
+        .. literalinclude:: ../../samples/examples.py
             :start-after: [START query_items]
             :end-before: [END query_items]
             :language: python
@@ -328,7 +328,7 @@ class ContainerProxy(object):
             :caption: Get all products that have not been discontinued:
             :name: query_items
 
-        .. literalinclude:: ../../examples/examples.py
+        .. literalinclude:: ../../samples/examples.py
             :start-after: [START query_items_param]
             :end-before: [END query_items_param]
             :language: python
