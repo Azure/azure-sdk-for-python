@@ -260,6 +260,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
             self._send_event_data_with_retry(timeout=timeout)
         except Exception as err:
             child.span_instance.status = Status.from_exception(err)
+            raise
         finally:
             child.finish()
 
