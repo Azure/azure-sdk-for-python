@@ -22,13 +22,6 @@ try:
 except ImportError:
     pass
 
-PACKAGES = []
-# Do an empty package on Python 3 and not python_requires, since not everybody is ready
-# https://github.com/Azure/azure-sdk-for-python/issues/3447
-# https://github.com/Azure/azure-sdk-for-python/issues/3481
-if sys.version_info[0] < 3:
-    PACKAGES = ["azure.keyvault"]
-
 setup(
     name="azure-keyvault-nspkg",
     version="3.0.0",
