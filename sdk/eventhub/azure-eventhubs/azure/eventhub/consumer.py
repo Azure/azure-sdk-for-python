@@ -33,6 +33,7 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
     group to be actively reading events from the partition.  These non-exclusive consumers are
     sometimes referred to as "Non-Epoch Consumers."
 
+    Please use the method `create_consumer` on `EventHubClient` for creating `EventHubConsumer`.
     """
     _timeout = 0
     _epoch_symbol = b'com.microsoft:epoch'
@@ -50,8 +51,8 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         :param prefetch: The number of events to prefetch from the service
          for processing. Default is 300.
         :type prefetch: int
-        :param owner_level: The priority of the exclusive consumer. It will an exclusive
-         consumer if owner_level is set.
+        :param owner_level: The priority of the exclusive consumer. An exclusive
+         consumer will be created if owner_level is set.
         :type owner_level: int
         """
         event_position = kwargs.get("event_position", None)
