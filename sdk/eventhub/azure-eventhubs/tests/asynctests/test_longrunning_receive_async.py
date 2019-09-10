@@ -72,7 +72,7 @@ async def pump(_pid, receiver, _args, _dl):
                                 total,
                                 batch[-1].sequence_number,
                                 batch[-1].offset))
-            print("{}: Total received {}".format(receiver.partition, total))
+            print("{}: Total received {}".format(receiver._partition, total))
     except Exception as e:
         print("Partition {} receiver failed: {}".format(_pid, e))
         raise
