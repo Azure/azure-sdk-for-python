@@ -1632,6 +1632,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
 
     async def _test_get_user_delegation_key(self):
         # TODO: figure out why recording does not work
+        pytest.skip("Current Framework Cannot Support OAUTH")
         if TestMode.need_recording_file(self.test_mode):
             return
         # Act
@@ -1668,6 +1669,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
         loop.run_until_complete(self._test_get_user_delegation_key())
 
     async def _test_token_credential(self):
+        pytest.skip("Current Framework Cannot Support OAUTH")
         if TestMode.need_recording_file(self.test_mode):
             return
 

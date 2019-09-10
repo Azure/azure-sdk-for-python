@@ -1297,6 +1297,7 @@ class StorageCommonBlobTest(StorageTestCase):
         self.assertEqual(user_delegation_key_1.value, user_delegation_key_2.value)
 
     def test_user_delegation_sas_for_blob(self):
+        pytest.skip("Current Framework Cannot Support OAUTH")
         # SAS URL is calculated from storage key, so this test runs live only
         if TestMode.need_recording_file(self.test_mode):
             return

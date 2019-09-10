@@ -1079,6 +1079,7 @@ class StorageContainerTest(StorageTestCase):
 
     def test_user_delegation_sas_for_container(self):
         # SAS URL is calculated from storage key, so this test runs live only
+        pytest.skip("Current Framework Cannot Support OAUTH")
         if TestMode.need_recording_file(self.test_mode):
             return
 
