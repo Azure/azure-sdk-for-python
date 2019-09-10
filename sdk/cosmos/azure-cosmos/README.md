@@ -79,7 +79,7 @@ Once you've initialized a [CosmosClient][ref_cosmosclient], you can interact wit
 
 * [Container][ref_container]: A container is a collection of JSON documents. You create (insert), read, update, and delete items in a container by using methods on the [ContainerProxy][ref_container] object.
 
-* [Item][ref_item]: An Item is the dictionary-like representation of a JSON document stored in a container. Each Item you add to a container must include an `id` key with a value that uniquely identifies the item within the container.
+* Item: An Item is the dictionary-like representation of a JSON document stored in a container. Each Item you add to a container must include an `id` key with a value that uniquely identifies the item within the container.
 
 For more information about these resources, see [Working with Azure Cosmos databases, containers and items][cosmos_resources].
 
@@ -271,16 +271,15 @@ For more extensive documentation on the Cosmos DB service, see the [Azure Cosmos
 [cosmos_sql_queries]: https://docs.microsoft.com/azure/cosmos-db/how-to-sql-query
 [cosmos_ttl]: https://docs.microsoft.com/azure/cosmos-db/time-to-live
 [python]: https://www.python.org/downloads/
-[ref_container_delete_item]: http://cosmosproto.westus.azurecontainer.io/#azure.cosmos.Container.delete_item
-[ref_container_query_items]: http://cosmosproto.westus.azurecontainer.io/#azure.cosmos.Container.query_items
-[ref_container_upsert_item]: http://cosmosproto.westus.azurecontainer.io/#azure.cosmos.Container.upsert_item
-[ref_container]: http://cosmosproto.westus.azurecontainer.io/#azure.cosmos.Container
-[ref_cosmos_sdk]: http://cosmosproto.westus.azurecontainer.io
-[ref_cosmosclient_create_database]: http://cosmosproto.westus.azurecontainer.io/#azure.cosmos.CosmosClient.create_database
-[ref_cosmosclient]: http://cosmosproto.westus.azurecontainer.io/#azure.cosmos.CosmosClient
-[ref_database]: http://cosmosproto.westus.azurecontainer.io/#azure.cosmos.Database
-[ref_httpfailure]: https://docs.microsoft.com/python/api/azure-cosmos/azure.cosmos.errors.CosmosHttpResponseError
-[ref_item]: http://cosmosproto.westus.azurecontainer.io/#azure.cosmos.Item
+[ref_container_delete_item]: https://azure.github.io/azure-sdk-for-python/ref/azure.cosmos.container.html#azure.cosmos.container.ContainerProxy.delete_item
+[ref_container_query_items]: https://azure.github.io/azure-sdk-for-python/ref/azure.cosmos.container.html#azure.cosmos.container.ContainerProxy.query_items
+[ref_container_upsert_item]: https://azure.github.io/azure-sdk-for-python/ref/azure.cosmos.container.html#azure.cosmos.container.ContainerProxy.upsert_item
+[ref_container]: https://azure.github.io/azure-sdk-for-python/ref/azure.cosmos.container.html
+[ref_cosmos_sdk]: https://azure.github.io/azure-sdk-for-python/ref/azure.cosmos.html
+[ref_cosmosclient_create_database]: https://azure.github.io/azure-sdk-for-python/ref/azure.cosmos.cosmos_client.html#azure.cosmos.cosmos_client.CosmosClient.create_database
+[ref_cosmosclient]: https://azure.github.io/azure-sdk-for-python/ref/azure.cosmos.cosmos_client.html
+[ref_database]: https://azure.github.io/azure-sdk-for-python/ref/azure.cosmos.database.html
+[ref_httpfailure]: https://azure.github.io/azure-sdk-for-python/ref/azure.cosmos.errors.html#azure.cosmos.errors.CosmosHttpResponseError
 [sample_database_mgmt]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cosmos/azure-cosmos/samples/DatabaseManagement
 [sample_document_mgmt]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cosmos/azure-cosmos/samples/DocumentManagement
 [sample_examples_misc]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cosmos/azure-cosmos/samples/examples.py
