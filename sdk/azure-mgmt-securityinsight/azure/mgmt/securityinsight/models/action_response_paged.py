@@ -12,16 +12,16 @@
 from msrest.paging import Paged
 
 
-class ActionPaged(Paged):
+class ActionResponsePaged(Paged):
     """
-    A paging container for iterating over a list of :class:`Action <azure.mgmt.securityinsight.models.Action>` object
+    A paging container for iterating over a list of :class:`ActionResponse <azure.mgmt.securityinsight.models.ActionResponse>` object
     """
 
     _attribute_map = {
         'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[Action]'}
+        'current_page': {'key': 'value', 'type': '[ActionResponse]'}
     }
 
     def __init__(self, *args, **kwargs):
 
-        super(ActionPaged, self).__init__(*args, **kwargs)
+        super(ActionResponsePaged, self).__init__(*args, **kwargs)

@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_py3 import Resource
+from .resource import Resource
 
 
-class Action(Resource):
+class ActionResponse(Resource):
     """Action for alert rule.
 
     Variables are only populated by the server, and will be ignored when
@@ -26,8 +26,8 @@ class Action(Resource):
     :vartype type: str
     :param etag: Etag of the action.
     :type etag: str
-    :param trigger_uri: The uri for the action to trigger.
-    :type trigger_uri: str
+    :param workflow_id: The workflow id of the playbook.
+    :type workflow_id: str
     """
 
     _validation = {
@@ -41,10 +41,10 @@ class Action(Resource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
-        'trigger_uri': {'key': 'properties.triggerUri', 'type': 'str'},
+        'workflow_id': {'key': 'properties.workflowId', 'type': 'str'},
     }
 
-    def __init__(self, *, etag: str=None, trigger_uri: str=None, **kwargs) -> None:
-        super(Action, self).__init__(**kwargs)
-        self.etag = etag
-        self.trigger_uri = trigger_uri
+    def __init__(self, **kwargs):
+        super(ActionResponse, self).__init__(**kwargs)
+        self.etag = kwargs.get('etag', None)
+        self.workflow_id = kwargs.get('workflow_id', None)

@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource import Resource
+from .resource_py3 import Resource
 
 
-class Action(Resource):
+class ActionRequest(Resource):
     """Action for alert rule.
 
     Variables are only populated by the server, and will be ignored when
@@ -44,7 +44,7 @@ class Action(Resource):
         'trigger_uri': {'key': 'properties.triggerUri', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs):
-        super(Action, self).__init__(**kwargs)
-        self.etag = kwargs.get('etag', None)
-        self.trigger_uri = kwargs.get('trigger_uri', None)
+    def __init__(self, *, etag: str=None, trigger_uri: str=None, **kwargs) -> None:
+        super(ActionRequest, self).__init__(**kwargs)
+        self.etag = etag
+        self.trigger_uri = trigger_uri

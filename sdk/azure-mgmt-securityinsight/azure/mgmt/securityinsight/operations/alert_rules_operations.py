@@ -342,8 +342,8 @@ class AlertRulesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: Action or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.securityinsight.models.Action or
+        :return: ActionResponse or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.securityinsight.models.ActionResponse or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
@@ -385,7 +385,7 @@ class AlertRulesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Action', response)
+            deserialized = self._deserialize('ActionResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
@@ -419,12 +419,12 @@ class AlertRulesOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: Action or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.securityinsight.models.Action or
+        :return: ActionResponse or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.securityinsight.models.ActionResponse or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
-        action = models.Action(etag=etag, trigger_uri=trigger_uri)
+        action = models.ActionRequest(etag=etag, trigger_uri=trigger_uri)
 
         # Construct URL
         url = self.create_or_update_action.metadata['url']
@@ -454,7 +454,7 @@ class AlertRulesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(action, 'Action')
+        body_content = self._serialize.body(action, 'ActionRequest')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -468,9 +468,9 @@ class AlertRulesOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Action', response)
+            deserialized = self._deserialize('ActionResponse', response)
         if response.status_code == 201:
-            deserialized = self._deserialize('Action', response)
+            deserialized = self._deserialize('ActionResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
