@@ -238,7 +238,7 @@ class MyPartitionProcessor(PartitionProcessor):
 
 async def main():
     client = EventHubClient.from_connection_string(connection_str, receive_timeout=5, retry_total=3)
-    partition_manager = SamplePartitionManager()  # in-memory PartitionManager.
+    partition_manager = SamplePartitionManager()  # in-memory or file based PartitionManager
     try:
         event_processor = EventProcessor(client, "$default", MyPartitionProcessor, partition_manager)
         asyncio.ensure_future(event_processor.start())
