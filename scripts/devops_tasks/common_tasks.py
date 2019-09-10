@@ -9,7 +9,6 @@
 # package targeting during release.
 
 import glob
-from pathlib import Path
 from subprocess import check_call, CalledProcessError
 import os
 import errno
@@ -30,7 +29,6 @@ MANAGEMENT_PACKAGE_IDENTIFIERS = [
     "azure-servicefabric",
     "azure-nspkg",
 ]
-MAJOR_VERSION_REGEX = re.compile("Python\s\:\:\s(?P<languageClassifier>[\d])[\.\d]*'")
 
 def log_file(file_location, is_error=False):
     with open(file_location, "r") as file:
@@ -103,20 +101,34 @@ def parse_setup_classifers(setup_path):
     classifiers = kwargs['classifiers']
     return classifiers
 
-def parse_major_classifiers(classifier_set):
+
+def parse_major_classifiers(classifier_set, owning_package_location):
     major_versions = []
     for classifier in classifier_set:
-        result = re.search(MAJOR_VERSION_REGEX, classifier)
-        if result and result.group('languageClassifier'):
-            major_versions.append(result.group('languageClassifier'))
-    return set(major_versions)
+
+        # this is a really good use case for a regex. 
+        if "Python" in classifier:
+            version_string_array = classifier.split("::")
+
+            if len(version_string_array) == 3:
+                version_string = version_string_array[2]
+                major_version = version_string.strip().split('.')[0]
+                if major_version:
+                    major_versions.append(major_version)
+
+    if len(major_versions) == 0:
+        logging.error("None of the package specifiers for package {} were recognized. Erroring.".format(os.path.basename(owning_package_location)))
+        exit(1)
+
+    return list(set(major_versions))
 
 def filter_for_compatibility(package_set):
-    running_major_version = sys.version_info[0]
+    running_major_version = str(sys.version_info[0])
     collected_packages = []
+
     for pkg in package_set:
         pkg_classifiers = parse_setup_classifers(pkg)
-        supported_major_versions = parse_major_classifiers(pkg_classifiers)
+        supported_major_versions = parse_major_classifiers(pkg_classifiers, pkg)
 
         if running_major_version in supported_major_versions:
             collected_packages.append(pkg)
@@ -153,9 +165,8 @@ def process_glob_string(glob_string, target_root_dir):
         logging.info("Target packages after filtering by omission list: {}".format(allowed_package_set))
 
         pkg_set_ci_filtered = filter_for_compatibility(allowed_package_set)
-        logging.info("Target packages after ci compatibility filter: {}".format(list(set(allowed_package_set) - set(pkg_set_ci_filtered))))
+        logging.info("Package(s) omitted by CI filter: {}".format(list(set(allowed_package_set) - set(pkg_set_ci_filtered))))
         
-        exit(1)
         return sorted(pkg_set_ci_filtered)
 
 def remove_omitted_packages(collected_directories):

@@ -61,8 +61,7 @@ if __name__ == "__main__":
             "bdist_wheel",
             "-d",
             args.distribution_directory,
-        ],
-        args.target_setup
+        ]
     )
 
     discovered_wheels = [
