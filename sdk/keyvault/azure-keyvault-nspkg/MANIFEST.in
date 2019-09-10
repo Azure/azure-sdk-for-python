@@ -1,3 +1,2 @@
 include *.md
 include azure/__init__.py
-include azure/keyvault/__init__.py
