@@ -26,11 +26,13 @@ class PartitionProcessor(ABC):
     """
 
     async def initialize(self, partition_context: PartitionContext):
-        """Called when EventProcessor creates this PartitionProcessor.
+        """This method will be called when `EventProcessor` creates a `PartitionProcessor`.
 
         :param partition_context: The context information of this partition.
         :type partition_context: ~azure.eventhub.aio.eventprocessor.PartitionContext
         """
+
+        # Please put the code for initialization of PartitionProcessor here.
 
     async def close(self, reason, partition_context: PartitionContext):
         """Called when EventProcessor stops processing this PartitionProcessor.
@@ -46,6 +48,8 @@ class PartitionProcessor(ABC):
 
         """
 
+        # Please put the code for closing PartitionProcessor here.
+
     @abstractmethod
     async def process_events(self, events: List[EventData], partition_context: PartitionContext):
         """Called when a batch of events have been received.
@@ -58,6 +62,8 @@ class PartitionProcessor(ABC):
 
         """
 
+        # Please put the code for processing events here.
+
     async def process_error(self, error, partition_context: PartitionContext):
         """Called when an error happens when receiving or processing events
 
@@ -68,3 +74,5 @@ class PartitionProcessor(ABC):
         :type partition_context: ~azure.eventhub.aio.eventprocessor.PartitionContext
 
         """
+
+        # Please put the code for processing error here.
