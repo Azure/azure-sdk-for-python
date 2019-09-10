@@ -19,8 +19,8 @@ class ConnectionTypeValues(str, Enum):
 
 class TrafficDataState(str, Enum):
 
-    available = "Available"  #: The network traffic data is collect on the Azure resource
-    notavailable = "Not available"  #: the network traffic data is not collect on the Azure resource
+    available = "Available"  #: The network traffic data is collected on the Azure resource
+    notavailable = "Not available"  #: the network traffic data is not collected on the Azure resource
 
 
 class ResourceStatus(str, Enum):
@@ -49,6 +49,12 @@ class SettingKind(str, Enum):
 
     data_export_setting = "DataExportSetting"
     alert_suppression_setting = "AlertSuppressionSetting"
+
+
+class ValueType(str, Enum):
+
+    ip_cidr = "IpCidr"  #: An IP range in CIDR format (e.g. '192.168.0.1/8').
+    string = "String"  #: Any string value.
 
 
 class SecuritySolutionStatus(str, Enum):
