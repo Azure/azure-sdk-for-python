@@ -3,6 +3,18 @@
 Release History
 ===============
 
+5.0.0 (2019-09-10)
+++++++++++++++++++
+
+**Features**
+
+- Model Subscription has a new parameter managed_by_tenants
+
+**Breaking changes**
+
+- Model TenantIdDescription no longer has parameter domains
+- Model TenantIdDescription no longer has parameter display_name
+
 4.0.0 (2019-09-03)
 ++++++++++++++++++
 
