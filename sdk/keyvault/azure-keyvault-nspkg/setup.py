@@ -24,7 +24,7 @@ except ImportError:
 
 setup(
     name="azure-keyvault-nspkg",
-    version="3.0.0",
+    version="1.0.0",
     description="Microsoft Azure Key Vault Namespace Package [Internal]",
     long_description=open("README.md", "r").read(),
     long_description_content_type="text/markdown",
@@ -45,6 +45,6 @@ setup(
         "License :: OSI Approved :: MIT License",
     ],
     zip_safe=False,
-    packages=PACKAGES,
+    packages=["azure.keyvault"],
     install_requires=["azure-nspkg>=3.0.0"],
 )
