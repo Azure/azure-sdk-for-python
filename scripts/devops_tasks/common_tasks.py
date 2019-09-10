@@ -19,6 +19,15 @@ import ast
 import textwrap
 import io
 import re
+import pdb
+
+# ssumes the presence of setuptools
+from pkg_resources import parse_version
+
+# this assumes the presence of "packaging"
+from packaging.specifiers import SpecifierSet
+from packaging.version import Version
+
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -67,7 +76,7 @@ def clean_coverage(coverage_dir):
         else:
             raise
 
-def parse_setup_classifers(setup_path):
+def parse_setup_requires(setup_path):
     setup_filename = os.path.join(setup_path, 'setup.py')
     mock_setup = textwrap.dedent('''\
     def setup(*args, **kwargs):
@@ -98,39 +107,23 @@ def parse_setup_classifers(setup_path):
     os.chdir(current_dir)
     _, kwargs = global_vars['__setup_calls__'][0]
 
-    classifiers = kwargs['classifiers']
-    return classifiers
+    try:
+        python_requires = kwargs['python_requires']
+    # most do not define this, fall back to what we define as universal
+    except KeyError as e:
+        python_requires = ">=2.7"
 
-
-def parse_major_classifiers(classifier_set, owning_package_location):
-    major_versions = []
-    for classifier in classifier_set:
-
-        # this is a really good use case for a regex. 
-        if "Python" in classifier:
-            version_string_array = classifier.split("::")
-
-            if len(version_string_array) == 3:
-                version_string = version_string_array[2]
-                major_version = version_string.strip().split('.')[0]
-                if major_version:
-                    major_versions.append(major_version)
-
-    if len(major_versions) == 0:
-        logging.error("None of the package specifiers for package {} were recognized. Erroring.".format(os.path.basename(owning_package_location)))
-        exit(1)
-
-    return list(set(major_versions))
+    return python_requires
 
 def filter_for_compatibility(package_set):
-    running_major_version = str(sys.version_info[0])
     collected_packages = []
+    v = sys.version_info
+    running_major_version = Version(".".join([str(v[0]), str(v[1]), str(v[2])]))
 
     for pkg in package_set:
-        pkg_classifiers = parse_setup_classifers(pkg)
-        supported_major_versions = parse_major_classifiers(pkg_classifiers, pkg)
+        spec_set = SpecifierSet(parse_setup_requires(pkg))
 
-        if running_major_version in supported_major_versions:
+        if running_major_version in spec_set:
             collected_packages.append(pkg)
 
     return collected_packages
@@ -175,7 +168,6 @@ def remove_omitted_packages(collected_directories):
         for package_dir in collected_directories
         if os.path.basename(package_dir) not in OMITTED_CI_PACKAGES
     ]
-
 
 def run_check_call(
     command_array,
