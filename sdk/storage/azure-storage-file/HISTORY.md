@@ -6,6 +6,10 @@
 **New features**
 - Added FileSmbProperties REST Parity.
 - Added support for PutRangeThroughURL.
+- Added upload_range_from_url API to write the bytes from one Azure File endpoint into the specified range of another Azure File endpoint.
+- Added set_http_headers for directory_client, create_permission_for_share and get_permission_for_share APIs.
+- Added optional parameters for smb properties related parameters for create_file*, create_directory* related APIs and set_http_headers API.
+- Updated get_properties for directory and file so that the response has SMB properties.
 
 **Dependency updates**
 - Adopted [azure-core](https://pypi.org/project/azure-core/) 1.0.0b3
