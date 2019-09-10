@@ -27,7 +27,7 @@ with open(os.path.join(PACKAGE_FOLDER_PATH, 'version.py'), 'r') as fd:
 
 with open("README.md", encoding="utf-8") as f:
     README = f.read()
-with open("changelog.md", encoding="utf-8") as f:
+with open("HISTORY.md", encoding="utf-8") as f:
     HISTORY = f.read()
 
 setup(
@@ -73,6 +73,7 @@ setup(
       'azure-core<2.0.0,>=1.0.0b3'
     ],
     extras_require={
+      ":python_version<'3.4'": ['enum34>=1.0.4'],
       ":python_version<'3.0'": ["azure-nspkg"],
       ":python_version<'3.5'": ["typing"]
     },
