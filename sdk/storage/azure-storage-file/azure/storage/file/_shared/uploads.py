@@ -340,7 +340,7 @@ class FileChunkUploader(_ChunkUploader):  # pylint: disable=abstract-method
 
     def _upload_chunk(self, chunk_offset, chunk_data):
         chunk_end = chunk_offset + len(chunk_data) - 1
-        self.service.upload_range(
+        response = self.service.upload_range(
             chunk_data,
             chunk_offset,
             chunk_end,
@@ -348,7 +348,7 @@ class FileChunkUploader(_ChunkUploader):  # pylint: disable=abstract-method
             upload_stream_current=self.progress_total,
             **self.request_options
         )
-        return 'bytes={0}-{1}'.format(chunk_offset, chunk_end)
+        return 'bytes={0}-{1}'.format(chunk_offset, chunk_end), response
 
 
 class SubStream(IOBase):

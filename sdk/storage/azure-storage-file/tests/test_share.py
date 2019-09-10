@@ -745,6 +745,22 @@ class StorageShareTest(FileTestCase):
         self.assertEqual(data, response.content)
         self._delete_shares()
 
+    @record
+    def test_create_permission_for_share(self):
+        user_given_permission = "O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-" \
+                                "1604012920-1887927527-513D:AI(A;;FA;;;SY)(A;;FA;;;BA)(A;;0x1200a9;;;" \
+                                "S-1-5-21-397955417-626881126-188441444-3053964)"
+        share_client = self._create_share()
+        permission_key = share_client.create_permission_for_share(user_given_permission)
+        self.assertIsNotNone(permission_key)
+
+        server_returned_permission = share_client.get_permission_for_share(permission_key)
+        self.assertIsNotNone(server_returned_permission)
+
+        permission_key2 = share_client.create_permission_for_share(server_returned_permission)
+        # the permission key obtained from user_given_permission should be the same as the permission key obtained from
+        # server returned permission
+        self.assertEquals(permission_key, permission_key2)
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':

@@ -44,3 +44,21 @@ def deserialize_file_stream(response, obj, headers):
     file_properties = deserialize_file_properties(response, obj, headers)
     obj.properties = file_properties
     return response.location_mode, obj
+
+
+def deserialize_permission(response, obj, headers):  # pylint: disable=unused-argument
+    '''
+    Extracts out file permission
+    '''
+
+    return obj.permission
+
+
+def deserialize_permission_key(response, obj, headers):  # pylint: disable=unused-argument
+    '''
+    Extracts out file permission key
+    '''
+
+    if response is None or headers is None:
+        return None
+    return headers.get('x-ms-file-permission-key', None)

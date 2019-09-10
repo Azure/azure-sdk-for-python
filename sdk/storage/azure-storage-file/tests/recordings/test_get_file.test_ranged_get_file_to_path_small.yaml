@@ -9,17 +9,17 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - f9aac24a-b636-11e9-88b6-2816a845e8c6
+      - d9705c42-d052-11e9-ace5-001a7dda7113
       x-ms-date:
-      - Sat, 03 Aug 2019 21:38:04 GMT
+      - Fri, 06 Sep 2019 03:03:06 GMT
       x-ms-range:
       - bytes=1-4
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: GET
     uri: https://storagename.file.core.windows.net/utsharedd0c1381/utdirdd0c1381/bytefiledd0c1381
   response:
@@ -36,23 +36,37 @@ interactions:
       Content-Type:
       - application/xml; charset=utf-8
       Date:
-      - Sat, 03 Aug 2019 21:38:03 GMT
+      - Fri, 06 Sep 2019 03:03:06 GMT
       ETag:
-      - '"0x8D7185ADD1C3130"'
+      - '"0x8D73276BD96950A"'
       Last-Modified:
-      - Sat, 03 Aug 2019 21:38:03 GMT
+      - Fri, 06 Sep 2019 03:03:06 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
+      x-ms-client-request-id:
+      - d9705c42-d052-11e9-ace5-001a7dda7113
+      x-ms-file-attributes:
+      - Archive
+      x-ms-file-change-time:
+      - '2019-09-06T03:03:06.4186331Z'
+      x-ms-file-creation-time:
+      - '2019-09-06T03:03:06.4186331Z'
+      x-ms-file-id:
+      - '13835093239654252544'
+      x-ms-file-last-write-time:
+      - '2019-09-06T03:03:06.4186331Z'
+      x-ms-file-parent-id:
+      - '13835128424026341376'
+      x-ms-file-permission-key:
+      - 4099112195243312672*10394889115079208622
       x-ms-request-id:
-      - d2f403d7-e01a-000b-1a43-4a7c74000000
+      - f140364c-901a-00d1-495f-64317e000000
       x-ms-server-encrypted:
       - 'true'
       x-ms-type:
       - File
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 206
       message: Partial Content
