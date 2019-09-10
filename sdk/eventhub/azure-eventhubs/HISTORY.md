@@ -18,7 +18,7 @@
     - `PartitionContext` has partition context information and method `update_checkpoint`.
 - Updated all methods of `PartitionProcessor` to include `PartitionContext` as part of the arguments.
 - Updated accessibility of class members in `EventHub/EventHubConsumer/EventHubProducer`to be private.
-
+- Moved `azure.eventhub.eventprocessor` under `aio` package, which now becomes `azure.eventhub.aio.eventprocessor`.
 
 ## 5.0.0b2 (2019-08-06)
 
