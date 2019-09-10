@@ -135,8 +135,8 @@ for package_name in content_packages:
 
     pip_command(
         "install --ignore-requires-python {} {}".format(
-            os.path.join(packages[package_name], package_name),
-            mode_arg
+            mode_arg,
+            os.path.join(packages[package_name], package_name)
         )
     )
 
