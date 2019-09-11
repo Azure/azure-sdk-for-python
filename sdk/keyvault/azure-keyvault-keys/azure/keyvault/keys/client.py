@@ -67,16 +67,16 @@ class KeyClient(KeyVaultClientBase):
 
         :param str name: The name of the new key. Key Vault will generate the key's version.
         :param key_type: The type of key to create
-        :type key_type: str or ~azure.keyvault.keys.enums.JsonWebKeyType
+        :type key_type: str or ~azure.keyvault.keys.enums.KeyType
         :param int size: (optional) RSA key size in bits, for example 2048, 3072, or 4096.
         :param key_operations: (optional) Allowed key operations
-        :type key_operations: list(str or ~azure.keyvault.keys.enums.JsonWebKeyOperation)
+        :type key_operations: list(str or ~azure.keyvault.keys.enums.KeyOperation)
         :param bool enabled: (optional) Whether the key is enabled for use
         :param expires: (optional) Expiry date of the key in UTC
         :param datetime.datetime not_before: (optional) Not before date of the key in UTC
         :param dict tags: (optional) Application specific metadata in the form of key-value pairs
         :param curve: (optional) Elliptic curve name. Defaults to the NIST P-256 elliptic curve.
-        :type curve: ~azure.keyvault.keys.enums.JsonWebKeyCurveName or str
+        :type curve: ~azure.keyvault.keys.enums.KeyCurveName or str
         :returns: The created key
         :rtype: ~azure.keyvault.keys.models.Key
 
@@ -127,7 +127,7 @@ class KeyClient(KeyVaultClientBase):
         :param bool hsm: Whether to create a hardware key (HSM) or software key
         :param int size: (optional) Key size in bits, for example 2048, 3072, or 4096
         :param key_operations: (optional) Allowed key operations
-        :type key_operations: list(str or ~azure.keyvault.keys.enums.JsonWebKeyOperation)
+        :type key_operations: list(str or ~azure.keyvault.keys.enums.KeyOperation)
         :param bool enabled: (optional) Whether the key is enabled for use
         :param expires: (optional) Expiry date of the key in UTC
         :param datetime.datetime not_before: (optional) Not before date of the key in UTC
@@ -177,9 +177,9 @@ class KeyClient(KeyVaultClientBase):
         :param str name: The name for the new key. Key Vault will generate the key's version.
         :param bool hsm: Whether to create as a hardware key (HSM) or software key.
         :param curve: (optional) Elliptic curve name. Defaults to the NIST P-256 elliptic curve.
-        :type curve: ~azure.keyvault.keys.enums.JsonWebKeyCurveName or str
+        :type curve: ~azure.keyvault.keys.enums.KeyCurveName or str
         :param key_operations: (optional) Allowed key operations
-        :type key_operations: list(~azure.keyvault.keys.enums.JsonWebKeyOperation)
+        :type key_operations: list(~azure.keyvault.keys.enums.KeyOperation)
         :param bool enabled: (optional) Whether the key is enabled for use
         :param datetime.datetime expires: (optional) Expiry date of the key in UTC
         :param datetime.datetime not_before: (optional) Not before date of the key in UTC
@@ -424,7 +424,7 @@ class KeyClient(KeyVaultClientBase):
         :param str name: The name of key to update
         :param str version: (optional) The version of the key to update
         :param key_operations: (optional) Allowed key operations
-        :type key_operations: list(str or ~azure.keyvault.keys.enums.JsonWebKeyOperation)
+        :type key_operations: list(str or ~azure.keyvault.keys.enums.KeyOperation)
         :param bool enabled: (optional) Whether the key is enabled for use
         :param datetime.datetime expires: (optional) Expiry date of the key in UTC
         :param datetime.datetime not_before: (optional) Not before date of the key in UTC
