@@ -14,7 +14,6 @@ stages:
           # Skip emulator tests in the CI run
           TestMarkArgument: not cosmosEmulator
 
-      # TODO: Refactor into a template?
       - job: Emulator
         strategy:
           matrix:
