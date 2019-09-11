@@ -2,10 +2,10 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.tracing.decorator import distributed_trace
 
 from ._shared import KeyVaultClientBase
+from ._shared.exceptions import error_map
 from .crypto import CryptographyClient
 from .models import Key, KeyBase, DeletedKey
 
@@ -244,7 +244,7 @@ class KeyClient(KeyVaultClientBase):
                 :caption: Delete a key
                 :dedent: 8
         """
-        bundle = self._client.delete_key(self.vault_url, name, error_map={404: ResourceNotFoundError}, **kwargs)
+        bundle = self._client.delete_key(self.vault_url, name, error_map=error_map, **kwargs)
         return DeletedKey._from_deleted_key_bundle(bundle)
 
     @distributed_trace
@@ -268,9 +268,7 @@ class KeyClient(KeyVaultClientBase):
                 :caption: Get a key
                 :dedent: 8
         """
-        bundle = self._client.get_key(
-            self.vault_url, name, key_version=version or "", error_map={404: ResourceNotFoundError}, **kwargs
-        )
+        bundle = self._client.get_key(self.vault_url, name, key_version=version or "", error_map=error_map, **kwargs)
         return Key._from_key_bundle(bundle)
 
     @distributed_trace
@@ -295,7 +293,7 @@ class KeyClient(KeyVaultClientBase):
                 :dedent: 8
         """
         # TODO: which exception is raised when soft-delete is not enabled
-        bundle = self._client.get_deleted_key(self.vault_url, name, error_map={404: ResourceNotFoundError}, **kwargs)
+        bundle = self._client.get_deleted_key(self.vault_url, name, error_map=error_map, **kwargs)
         return DeletedKey._from_deleted_key_bundle(bundle)
 
     @distributed_trace
@@ -393,11 +391,7 @@ class KeyClient(KeyVaultClientBase):
                 key_client.purge_deleted_key("key-name")
 
         """
-        self._client.purge_deleted_key(
-            vault_base_url=self.vault_url,
-            key_name=name,
-            **kwargs
-        )
+        self._client.purge_deleted_key(vault_base_url=self.vault_url, key_name=name, **kwargs)
 
     @distributed_trace
     def recover_deleted_key(self, name, **kwargs):
@@ -421,11 +415,7 @@ class KeyClient(KeyVaultClientBase):
                 :caption: Recover a deleted key
                 :dedent: 8
         """
-        bundle = self._client.recover_deleted_key(
-            vault_base_url=self.vault_url,
-            key_name=name,
-            **kwargs
-        )
+        bundle = self._client.recover_deleted_key(vault_base_url=self.vault_url, key_name=name, **kwargs)
         return Key._from_key_bundle(bundle)
 
     @distributed_trace
@@ -477,7 +467,7 @@ class KeyClient(KeyVaultClientBase):
             key_ops=key_operations,
             tags=tags,
             key_attributes=attributes,
-            error_map={404: ResourceNotFoundError},
+            error_map=error_map,
             **kwargs
         )
         return Key._from_key_bundle(bundle)
@@ -506,7 +496,7 @@ class KeyClient(KeyVaultClientBase):
                 :caption: Get a key backup
                 :dedent: 8
         """
-        backup_result = self._client.backup_key(self.vault_url, name, error_map={404: ResourceNotFoundError}, **kwargs)
+        backup_result = self._client.backup_key(self.vault_url, name, error_map=error_map, **kwargs)
         return backup_result.value
 
     @distributed_trace
@@ -533,7 +523,7 @@ class KeyClient(KeyVaultClientBase):
                 :caption: Restore a key backup
                 :dedent: 8
         """
-        bundle = self._client.restore_key(self.vault_url, backup, error_map={409: ResourceExistsError}, **kwargs)
+        bundle = self._client.restore_key(self.vault_url, backup, error_map=error_map, **kwargs)
         return Key._from_key_bundle(bundle)
 
     @distributed_trace

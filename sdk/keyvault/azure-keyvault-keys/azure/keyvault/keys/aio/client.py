@@ -5,12 +5,12 @@
 from datetime import datetime
 from typing import Any, AsyncIterable, Optional, Dict, List, Union
 
-from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.keyvault.keys.models import DeletedKey, JsonWebKey, Key, KeyBase
 from azure.keyvault.keys._shared import AsyncKeyVaultClientBase
 
+from .._shared.exceptions import error_map
 from ..crypto.aio import CryptographyClient
 
 
@@ -62,7 +62,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         expires: Optional[datetime] = None,
         not_before: Optional[datetime] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs: "**Any"
+        **kwargs: "**Any",
     ) -> Key:
         """Create a key. If ``name`` is already in use, create a new version of the key. Requires the keys/create
         permission.
@@ -120,7 +120,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         expires: Optional[datetime] = None,
         not_before: Optional[datetime] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs: "**Any"
+        **kwargs: "**Any",
     ) -> Key:
         """Create a new RSA key. If ``name`` is already in use, create a new version of the key. Requires the
         keys/create permission.
@@ -171,7 +171,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         expires: Optional[datetime] = None,
         not_before: Optional[datetime] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs: "**Any"
+        **kwargs: "**Any",
     ) -> Key:
         """Create a new elliptic curve key. If ``name`` is already in use, create a new version of the key. Requires
         the keys/create permission.
@@ -231,7 +231,7 @@ class KeyClient(AsyncKeyVaultClientBase):
                 :caption: Delete a key
                 :dedent: 8
         """
-        bundle = await self._client.delete_key(self.vault_url, name, error_map={404: ResourceNotFoundError}, **kwargs)
+        bundle = await self._client.delete_key(self.vault_url, name, error_map=error_map, **kwargs)
         return DeletedKey._from_deleted_key_bundle(bundle)
 
     @distributed_trace_async
@@ -257,9 +257,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         if version is None:
             version = ""
 
-        bundle = await self._client.get_key(
-            self.vault_url, name, version, error_map={404: ResourceNotFoundError}, **kwargs
-        )
+        bundle = await self._client.get_key(self.vault_url, name, version, error_map=error_map, **kwargs)
         return Key._from_key_bundle(bundle)
 
     @distributed_trace_async
@@ -282,9 +280,7 @@ class KeyClient(AsyncKeyVaultClientBase):
                 :caption: Get a deleted key
                 :dedent: 8
         """
-        bundle = await self._client.get_deleted_key(
-            self.vault_url, name, error_map={404: ResourceNotFoundError}, **kwargs
-        )
+        bundle = await self._client.get_deleted_key(self.vault_url, name, error_map=error_map, **kwargs)
         return DeletedKey._from_deleted_key_bundle(bundle)
 
     @distributed_trace
@@ -308,7 +304,7 @@ class KeyClient(AsyncKeyVaultClientBase):
             self.vault_url,
             maxresults=max_results,
             cls=lambda objs: [DeletedKey._from_deleted_key_item(x) for x in objs],
-            **kwargs
+            **kwargs,
         )
 
     @distributed_trace
@@ -328,10 +324,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         """
         max_results = kwargs.get("max_page_size")
         return self._client.get_keys(
-            self.vault_url,
-            maxresults=max_results,
-            cls=lambda objs: [KeyBase._from_key_item(x) for x in objs],
-            **kwargs
+            self.vault_url, maxresults=max_results, cls=lambda objs: [KeyBase._from_key_item(x) for x in objs], **kwargs
         )
 
     @distributed_trace
@@ -356,7 +349,7 @@ class KeyClient(AsyncKeyVaultClientBase):
             name,
             maxresults=max_results,
             cls=lambda objs: [KeyBase._from_key_item(x) for x in objs],
-            **kwargs
+            **kwargs,
         )
 
     @distributed_trace_async
@@ -414,7 +407,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         not_before: Optional[datetime] = None,
         expires: Optional[datetime] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs: "**Any"
+        **kwargs: "**Any",
     ) -> Key:
         """Change attributes of a key. Cannot change a key's cryptographic material. Requires the keys/update
         permission.
@@ -453,7 +446,7 @@ class KeyClient(AsyncKeyVaultClientBase):
             key_ops=key_operations,
             tags=tags,
             key_attributes=attributes,
-            error_map={404: ResourceNotFoundError},
+            error_map=error_map,
             **kwargs,
         )
         return Key._from_key_bundle(bundle)
@@ -481,9 +474,7 @@ class KeyClient(AsyncKeyVaultClientBase):
                 :caption: Get a key backup
                 :dedent: 8
         """
-        backup_result = await self._client.backup_key(
-            self.vault_url, name, error_map={404: ResourceNotFoundError}, **kwargs
-        )
+        backup_result = await self._client.backup_key(self.vault_url, name, error_map=error_map, **kwargs)
         return backup_result.value
 
     @distributed_trace_async
@@ -509,7 +500,7 @@ class KeyClient(AsyncKeyVaultClientBase):
                 :caption: Restore a key backup
                 :dedent: 8
         """
-        bundle = await self._client.restore_key(self.vault_url, backup, error_map={409: ResourceExistsError}, **kwargs)
+        bundle = await self._client.restore_key(self.vault_url, backup, error_map=error_map, **kwargs)
         return Key._from_key_bundle(bundle)
 
     @distributed_trace_async
@@ -522,7 +513,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         not_before: Optional[datetime] = None,
         expires: Optional[datetime] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs: "**Any"
+        **kwargs: "**Any",
     ) -> Key:
         """Import an externally created key. If ``name`` is already in use, import the key as a new version. Requires
         the keys/import permission.
