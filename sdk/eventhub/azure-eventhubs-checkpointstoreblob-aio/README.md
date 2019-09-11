@@ -3,7 +3,7 @@
 Azure EventHubs Checkpoint Store is used for storing checkpoints while processing events from Azure Event Hubs.
 This Checkpoint Store package works as a plug-in package to `EventProcessor`. It uses Azure Storage Blob as the persistent store for maintaining checkpoints and partition ownership information.
 
-[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhubs-checkpointstoreblob-aio) | [Package (PyPi)](https://pypi.org/project/azure-eventhub-checkpointstoreblob-aio/) | [API reference documentation](https://azure.github.io/azure-sdk-for-python/) | [Azure Eventhubs documentation](http://azure.github.io/azure-sdk-for-python/ref/azure.eventhub.extensions.html) | [Azure Storage documentation](https://docs.microsoft.com/en-us/azure/storage/)
+[Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhubs-checkpointstoreblob-aio) | [Package (PyPi)](https://pypi.org/project/azure-eventhub-checkpointstoreblob-aio/) | [API reference documentation](http://azure.github.io/azure-sdk-for-python/ref/azure.eventhub.extensions.html) | [Azure Eventhubs documentation](http://azure.github.io/azure-sdk-for-python/ref/azure.eventhub.html) | [Azure Storage documentation](https://docs.microsoft.com/en-us/azure/storage/)
 
 ## Getting started
 
