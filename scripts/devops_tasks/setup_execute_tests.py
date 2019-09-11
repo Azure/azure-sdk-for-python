@@ -253,6 +253,9 @@ if __name__ == "__main__":
     targeted_packages = process_glob_string(args.glob_string, target_dir)
     extended_pytest_args = []
 
+    if len(targeted_packages) == 0:
+        exit(0) 
+
     # common argument handling
     if args.disablecov:
         extended_pytest_args.append("--no-cov")
