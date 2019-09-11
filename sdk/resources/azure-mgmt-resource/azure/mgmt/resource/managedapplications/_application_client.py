@@ -12,105 +12,43 @@
 from msrest.service_client import SDKClient
 from msrest import Serializer, Deserializer
 
-from azure.profiles import KnownProfiles, ProfileDefinition
-from azure.profiles.multiapiclient import MultiApiClientMixin
 from ._configuration import ApplicationClientConfiguration
+from .operations import ApplicationsOperations
+from .operations import ApplicationDefinitionsOperations
+from . import models
 
 
-
-class ApplicationClient(MultiApiClientMixin, SDKClient):
+class ApplicationClient(SDKClient):
     """ARM applications
-
-    This ready contains multiple API versions, to help you deal with all Azure clouds
-    (Azure Stack, Azure Government, Azure China, etc.).
-    By default, uses latest API version available on public Azure.
-    For production, you should stick a particular api-version and/or profile.
-    The profile sets a mapping between the operation group and an API version.
-    The api-version parameter sets the default API version if the operation
-    group is not described in the profile.
 
     :ivar config: Configuration for client.
     :vartype config: ApplicationClientConfiguration
 
+    :ivar applications: Applications operations
+    :vartype applications: azure.mgmt.resource.managedapplications.operations.ApplicationsOperations
+    :ivar application_definitions: ApplicationDefinitions operations
+    :vartype application_definitions: azure.mgmt.resource.managedapplications.operations.ApplicationDefinitionsOperations
+
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param subscription_id: Subscription credentials which uniquely identify
-     Microsoft Azure subscription. The subscription ID forms part of the URI
-     for every service call.
+    :param subscription_id: The ID of the target subscription.
     :type subscription_id: str
-    :param str api_version: API version to use if no profile is provided, or if
-     missing in profile.
     :param str base_url: Service URL
-    :param profile: A profile definition, from KnownProfiles to dict.
-    :type profile: azure.profiles.KnownProfiles
     """
 
-    DEFAULT_API_VERSION = '2018-06-01'
-    _PROFILE_TAG = "azure.mgmt.resource.managedapplications.ApplicationClient"
-    LATEST_PROFILE = ProfileDefinition({
-        _PROFILE_TAG: {
-            None: DEFAULT_API_VERSION,
-        }},
-        _PROFILE_TAG + " latest"
-    )
+    def __init__(
+            self, credentials, subscription_id, base_url=None):
 
-    def __init__(self, credentials, subscription_id, api_version=None, base_url=None, profile=KnownProfiles.default):
         self.config = ApplicationClientConfiguration(credentials, subscription_id, base_url)
-        super(ApplicationClient, self).__init__(
-            credentials,
-            self.config,
-            api_version=api_version,
-            profile=profile
-        )
+        super(ApplicationClient, self).__init__(self.config.credentials, self.config)
 
-    @classmethod
-    def _models_dict(cls, api_version):
-        return {k: v for k, v in cls.models(api_version).__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        self.api_version = '2018-06-01'
+        self._serialize = Serializer(client_models)
+        self._deserialize = Deserializer(client_models)
 
-    @classmethod
-    def models(cls, api_version=DEFAULT_API_VERSION):
-        """Module depends on the API version:
-
-           * 2017-09-01: :mod:`v2017_09_01.models<azure.mgmt.resource.managedapplications.v2017_09_01.models>`
-           * 2018-06-01: :mod:`v2018_06_01.models<azure.mgmt.resource.managedapplications.v2018_06_01.models>`
-        """
-        if api_version == '2017-09-01':
-            from .v2017_09_01 import models
-            return models
-        elif api_version == '2018-06-01':
-            from .v2018_06_01 import models
-            return models
-        raise NotImplementedError("APIVersion {} is not available".format(api_version))
-
-    @property
-    def application_definitions(self):
-        """Instance depends on the API version:
-
-           * 2017-09-01: :class:`ApplicationDefinitionsOperations<azure.mgmt.resource.managedapplications.v2017_09_01.operations.ApplicationDefinitionsOperations>`
-           * 2018-06-01: :class:`ApplicationDefinitionsOperations<azure.mgmt.resource.managedapplications.v2018_06_01.operations.ApplicationDefinitionsOperations>`
-        """
-        api_version = self._get_api_version('application_definitions')
-        if api_version == '2017-09-01':
-            from .v2017_09_01.operations import ApplicationDefinitionsOperations as OperationClass
-        elif api_version == '2018-06-01':
-            from .v2018_06_01.operations import ApplicationDefinitionsOperations as OperationClass
-        else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
-
-    @property
-    def applications(self):
-        """Instance depends on the API version:
-
-           * 2017-09-01: :class:`ApplicationsOperations<azure.mgmt.resource.managedapplications.v2017_09_01.operations.ApplicationsOperations>`
-           * 2018-06-01: :class:`ApplicationsOperations<azure.mgmt.resource.managedapplications.v2018_06_01.operations.ApplicationsOperations>`
-        """
-        api_version = self._get_api_version('applications')
-        if api_version == '2017-09-01':
-            from .v2017_09_01.operations import ApplicationsOperations as OperationClass
-        elif api_version == '2018-06-01':
-            from .v2018_06_01.operations import ApplicationsOperations as OperationClass
-        else:
-            raise NotImplementedError("APIVersion {} is not available".format(api_version))
-        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        self.applications = ApplicationsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.application_definitions = ApplicationDefinitionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)

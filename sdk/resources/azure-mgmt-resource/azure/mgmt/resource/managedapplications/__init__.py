@@ -13,7 +13,7 @@ from ._configuration import ApplicationClientConfiguration
 from ._application_client import ApplicationClient
 __all__ = ['ApplicationClient', 'ApplicationClientConfiguration']
 
-from ..version import VERSION
+from .version import VERSION
 
 __version__ = VERSION
 
