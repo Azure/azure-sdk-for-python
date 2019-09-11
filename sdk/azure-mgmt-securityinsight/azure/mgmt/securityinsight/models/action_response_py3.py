@@ -26,7 +26,7 @@ class ActionResponse(Resource):
     :vartype type: str
     :param etag: Etag of the action.
     :type etag: str
-    :param workflow_id: The workflow id of the playbook.
+    :param workflow_id: The name of the logic app's workflow.
     :type workflow_id: str
     """
 

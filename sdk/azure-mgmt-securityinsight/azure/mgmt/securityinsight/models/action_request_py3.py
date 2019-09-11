@@ -26,7 +26,7 @@ class ActionRequest(Resource):
     :vartype type: str
     :param etag: Etag of the action.
     :type etag: str
-    :param trigger_uri: Logic App Callback URL.
+    :param trigger_uri: Logic App Callback URL for this specific workflow.
     :type trigger_uri: str
     """
 
