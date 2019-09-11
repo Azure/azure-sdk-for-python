@@ -9,17 +9,17 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .operations import Operations
-from .namespaces_operations import NamespacesOperations
-from .disaster_recovery_configs_operations import DisasterRecoveryConfigsOperations
-from .migration_configs_operations import MigrationConfigsOperations
-from .queues_operations import QueuesOperations
-from .topics_operations import TopicsOperations
-from .subscriptions_operations import SubscriptionsOperations
-from .rules_operations import RulesOperations
-from .regions_operations import RegionsOperations
-from .premium_messaging_regions_operations import PremiumMessagingRegionsOperations
-from .event_hubs_operations import EventHubsOperations
+from ._operations import Operations
+from ._namespaces_operations import NamespacesOperations
+from ._disaster_recovery_configs_operations import DisasterRecoveryConfigsOperations
+from ._migration_configs_operations import MigrationConfigsOperations
+from ._queues_operations import QueuesOperations
+from ._topics_operations import TopicsOperations
+from ._subscriptions_operations import SubscriptionsOperations
+from ._rules_operations import RulesOperations
+from ._regions_operations import RegionsOperations
+from ._premium_messaging_regions_operations import PremiumMessagingRegionsOperations
+from ._event_hubs_operations import EventHubsOperations
 
 __all__ = [
     'Operations',
