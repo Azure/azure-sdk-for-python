@@ -56,7 +56,7 @@ The easiest way to create a `ContainerClient` is to use a connection string.
 from azure.storage.blob.aio import ContainerClient
 container_client = ContainerClient.from_connection_string("my_storageacount_connection_string", container="mycontainer")
 ```
-For other ways of creating a `ContainerClient`, go to [Blob Storage library](https://github.com/Azure/azure-sdk-for-python/tree/eventhubs_preview3/sdk/storage/azure-storage-blob) for more details.
+For other ways of creating a `ContainerClient`, go to [Blob Storage library](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-blob) for more details.
 
 ### Create an `EventHubClient`
 The easiest way to create a `EventHubClient` is to use a connection string.
