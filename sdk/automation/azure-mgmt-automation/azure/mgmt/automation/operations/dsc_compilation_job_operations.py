@@ -95,7 +95,7 @@ class DscCompilationJobOperations(object):
         :type resource_group_name: str
         :param automation_account_name: The name of the automation account.
         :type automation_account_name: str
-        :param compilation_job_name: The the DSC configuration Id.
+        :param compilation_job_name: The DSC configuration Id.
         :type compilation_job_name: str
         :param parameters: The parameters supplied to the create compilation
          job operation.
@@ -151,7 +151,7 @@ class DscCompilationJobOperations(object):
         :type resource_group_name: str
         :param automation_account_name: The name of the automation account.
         :type automation_account_name: str
-        :param compilation_job_name: The the DSC configuration Id.
+        :param compilation_job_name: The DSC configuration Id.
         :type compilation_job_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
