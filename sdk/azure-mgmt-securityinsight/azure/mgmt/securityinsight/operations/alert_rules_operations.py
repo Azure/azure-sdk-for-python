@@ -412,7 +412,7 @@ class AlertRulesOperations(object):
         :type action_id: str
         :param etag: Etag of the action.
         :type etag: str
-        :param trigger_uri: The uri for the action to trigger.
+        :param trigger_uri: Logic App Callback URL.
         :type trigger_uri: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
