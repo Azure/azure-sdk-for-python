@@ -8,7 +8,10 @@ interactions:
       - gzip, deflate
       Connection:
       - keep-alive
+      Content-Length:
+      - '0'
       User-Agent:
+<<<<<<< HEAD
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
@@ -16,19 +19,65 @@ interactions:
       - 52862a0c-d9a6-11e9-8b5c-001a7dda7113
       x-ms-date:
       - Tue, 17 Sep 2019 23:53:18 GMT
+=======
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Wed, 11 Sep 2019 21:42:21 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://pyacrstorage553610c6.file.core.windows.net/utshare553610c6?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Wed, 11 Sep 2019 21:42:20 GMT
+      etag:
+      - '"0x8D73700ECE79FBE"'
+      last-modified:
+      - Wed, 11 Sep 2019 21:42:21 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Wed, 11 Sep 2019 21:42:22 GMT
+>>>>>>> Migrate Files to Devtools Framework
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://storagename.file.core.windows.net/utshare553610c6/dir1?restype=directory
+    uri: https://pyacrstorage553610c6.file.core.windows.net/utshare553610c6/dir1?restype=directory
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ResourceNotFound</Code><Message>The
+<<<<<<< HEAD
         specified resource does not exist.\nRequestId:2ace7c89-001a-00a1-1eb3-6d8889000000\nTime:2019-09-17T23:53:18.4491485Z</Message></Error>"
+=======
+        specified resource does not exist.\nRequestId:194939bc-401a-00b8-71e9-68b627000000\nTime:2019-09-11T21:42:21.1395663Z</Message></Error>"
+>>>>>>> Migrate Files to Devtools Framework
     headers:
-      Content-Length:
+      content-length:
       - '223'
-      Content-Type:
+      content-type:
       - application/xml
+<<<<<<< HEAD
       Date:
       - Tue, 17 Sep 2019 23:53:17 GMT
       Server:
@@ -37,6 +86,14 @@ interactions:
       - ResourceNotFound
       x-ms-request-id:
       - 2ace7c89-001a-00a1-1eb3-6d8889000000
+=======
+      date:
+      - Wed, 11 Sep 2019 21:42:20 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code:
+      - ResourceNotFound
+>>>>>>> Migrate Files to Devtools Framework
       x-ms-version:
       - '2019-02-02'
     status:

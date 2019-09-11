@@ -11,35 +11,29 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - bc92f6a4-b636-11e9-ad2a-2816a845e8c6
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Sat, 03 Aug 2019 21:36:21 GMT
+      - Wed, 11 Sep 2019 21:24:32 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
-    uri: https://storagename.file.core.windows.net/myshare?restype=share
+    uri: https://pyacrstorage36af1540.file.core.windows.net/myshare?restype=share
   response:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
-      Date:
-      - Sat, 03 Aug 2019 21:36:21 GMT
-      ETag:
-      - '"0x8D7185AA0590A0D"'
-      Last-Modified:
-      - Sat, 03 Aug 2019 21:36:21 GMT
-      Server:
+      date:
+      - Wed, 11 Sep 2019 21:24:31 GMT
+      etag:
+      - '"0x8D736FE6FBD5711"'
+      last-modified:
+      - Wed, 11 Sep 2019 21:24:32 GMT
+      server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - 1492ba45-301a-00ce-2343-4a024f000000
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -53,43 +47,35 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - bce0b3c6-b636-11e9-96b0-2816a845e8c6
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Sat, 03 Aug 2019 21:36:22 GMT
+      - Wed, 11 Sep 2019 21:24:33 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: GET
-    uri: https://storagename.file.core.windows.net/myshare?restype=share
+    uri: https://pyacrstorage36af1540.file.core.windows.net/myshare?restype=share
   response:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
-      Date:
-      - Sat, 03 Aug 2019 21:36:21 GMT
-      ETag:
-      - '"0x8D7185AA0590A0D"'
-      Last-Modified:
-      - Sat, 03 Aug 2019 21:36:21 GMT
-      Server:
+      date:
+      - Wed, 11 Sep 2019 21:24:31 GMT
+      etag:
+      - '"0x8D736FE6FBD5711"'
+      last-modified:
+      - Wed, 11 Sep 2019 21:24:32 GMT
+      server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
       x-ms-has-immutability-policy:
       - 'false'
       x-ms-has-legal-hold:
       - 'false'
-      x-ms-request-id:
-      - 1492ba48-301a-00ce-2443-4a024f000000
       x-ms-share-quota:
       - '5120'
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 200
       message: OK
@@ -105,31 +91,25 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
-      content-type:
-      - application/xml; charset=utf-8
-      x-ms-client-request-id:
-      - bcf1fd5c-b636-11e9-bcd3-2816a845e8c6
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Sat, 03 Aug 2019 21:36:22 GMT
+      - Wed, 11 Sep 2019 21:24:33 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: DELETE
-    uri: https://storagename.file.core.windows.net/myshare?restype=share
+    uri: https://pyacrstorage36af1540.file.core.windows.net/myshare?restype=share
   response:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
-      Date:
-      - Sat, 03 Aug 2019 21:36:21 GMT
-      Server:
+      date:
+      - Wed, 11 Sep 2019 21:24:32 GMT
+      server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - 1492ba49-301a-00ce-2543-4a024f000000
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 202
       message: Accepted

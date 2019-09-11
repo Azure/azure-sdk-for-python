@@ -3,6 +3,7 @@ interactions:
     body: null
     headers:
       User-Agent:
+<<<<<<< HEAD
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
@@ -10,14 +11,20 @@ interactions:
       - a53cf30c-d9a9-11e9-b566-001a7dda7113
       x-ms-date:
       - Wed, 18 Sep 2019 00:17:05 GMT
+=======
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Wed, 11 Sep 2019 22:03:46 GMT
+>>>>>>> Migrate Files to Devtools Framework
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://storagename.file.core.windows.net/share522c108c?restype=share
+    uri: https://pyacrstorage522c108c.file.core.windows.net/share522c108c?restype=share
   response:
     body:
       string: ''
     headers:
+<<<<<<< HEAD
       ? !!python/object/new:multidict._istr.istr
       - Content-Length
       : '0'
@@ -34,6 +41,13 @@ interactions:
       - Server
       : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id: e592c0a1-201a-00eb-67b6-6d2b06000000
+=======
+      content-length: '0'
+      date: Wed, 11 Sep 2019 22:03:44 GMT
+      etag: '"0x8D73703EA321926"'
+      last-modified: Wed, 11 Sep 2019 22:03:44 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+>>>>>>> Migrate Files to Devtools Framework
       x-ms-version: '2019-02-02'
     status:
       code: 201
@@ -42,7 +56,11 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
+<<<<<<< HEAD
         - emilydevtest.file.core.windows.net
+=======
+        - pyacrstorage522c108c.file.core.windows.net
+>>>>>>> Migrate Files to Devtools Framework
         - /share522c108c
         - restype=share
         - ''
@@ -50,6 +68,7 @@ interactions:
     body: null
     headers:
       User-Agent:
+<<<<<<< HEAD
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
@@ -57,14 +76,20 @@ interactions:
       - a544b5e8-d9a9-11e9-9839-001a7dda7113
       x-ms-date:
       - Wed, 18 Sep 2019 00:17:05 GMT
+=======
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Wed, 11 Sep 2019 22:03:46 GMT
+>>>>>>> Migrate Files to Devtools Framework
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://storagename.file.core.windows.net/share522c108c?restype=share
+    uri: https://pyacrstorage522c108c.file.core.windows.net/share522c108c?restype=share
   response:
     body:
       string: ''
     headers:
+<<<<<<< HEAD
       ? !!python/object/new:multidict._istr.istr
       - Content-Length
       : '0'
@@ -83,6 +108,15 @@ interactions:
       x-ms-has-immutability-policy: 'false'
       x-ms-has-legal-hold: 'false'
       x-ms-request-id: e592c0a3-201a-00eb-68b6-6d2b06000000
+=======
+      content-length: '0'
+      date: Wed, 11 Sep 2019 22:03:44 GMT
+      etag: '"0x8D73703EA321926"'
+      last-modified: Wed, 11 Sep 2019 22:03:44 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-has-immutability-policy: 'false'
+      x-ms-has-legal-hold: 'false'
+>>>>>>> Migrate Files to Devtools Framework
       x-ms-share-quota: '5120'
       x-ms-version: '2019-02-02'
     status:
@@ -92,7 +126,11 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
+<<<<<<< HEAD
         - emilydevtest.file.core.windows.net
+=======
+        - pyacrstorage522c108c.file.core.windows.net
+>>>>>>> Migrate Files to Devtools Framework
         - /share522c108c
         - restype=share
         - ''

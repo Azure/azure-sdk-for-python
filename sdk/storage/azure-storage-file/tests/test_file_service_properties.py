@@ -8,32 +8,26 @@
 import unittest
 
 from azure.core.exceptions import HttpResponseError
-
 from azure.storage.file import (
     FileServiceClient,
     Metrics,
     CorsRule,
     RetentionPolicy,
 )
-
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, FakeStorageAccount
 from filetestcase import (
     FileTestCase,
-    record,
-    not_for_emulator,
 )
 
 
 # ------------------------------------------------------------------------------
 
+FAKE_STORAGE = FakeStorageAccount(
+    name='pyacrstorage',
+    id='')
+
 
 class FileServicePropertiesTest(FileTestCase):
-    def setUp(self):
-        super(FileServicePropertiesTest, self).setUp()
-
-        url = self.get_file_url()
-        credential = self.get_shared_key_credential()
-        self.fsc = FileServiceClient(url, credential=credential)
-
     # --Helpers-----------------------------------------------------------------
     def _assert_metrics_equal(self, metrics1, metrics2):
         if metrics1 is None or metrics2 is None:
@@ -66,50 +60,58 @@ class FileServicePropertiesTest(FileTestCase):
         self.assertEqual(ret1.days, ret2.days)
 
     # --Test cases per service ---------------------------------------
-    @record
-    def test_file_service_properties(self):
+    @ResourceGroupPreparer()               
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    def test_file_service_properties(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
 
         # Act
-        resp = self.fsc.set_service_properties(
+        resp = fsc.set_service_properties(
             hour_metrics=Metrics(), minute_metrics=Metrics(), cors=list())
 
         # Assert
         self.assertIsNone(resp)
-        props = self.fsc.get_service_properties()
+        props = fsc.get_service_properties()
         self._assert_metrics_equal(props.hour_metrics, Metrics())
         self._assert_metrics_equal(props.minute_metrics, Metrics())
         self._assert_cors_equal(props.cors, list())
 
     # --Test cases per feature ---------------------------------------
-    @record
-    def test_set_hour_metrics(self):
+    @ResourceGroupPreparer()               
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    def test_set_hour_metrics(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
         hour_metrics = Metrics(enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5))
 
         # Act
-        self.fsc.set_service_properties(hour_metrics=hour_metrics)
+        fsc.set_service_properties(hour_metrics=hour_metrics)
 
         # Assert
-        received_props = self.fsc.get_service_properties()
+        received_props = fsc.get_service_properties()
         self._assert_metrics_equal(received_props.hour_metrics, hour_metrics)
 
-    @record
-    def test_set_minute_metrics(self):
+    @ResourceGroupPreparer()               
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    def test_set_minute_metrics(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
         minute_metrics = Metrics(enabled=True, include_apis=True,
                                  retention_policy=RetentionPolicy(enabled=True, days=5))
 
         # Act
-        self.fsc.set_service_properties(minute_metrics=minute_metrics)
+        fsc.set_service_properties(minute_metrics=minute_metrics)
 
         # Assert
-        received_props = self.fsc.get_service_properties()
+        received_props = fsc.get_service_properties()
         self._assert_metrics_equal(received_props.minute_metrics, minute_metrics)
 
-    @record
-    def test_set_cors(self):
+    @ResourceGroupPreparer()               
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    def test_set_cors(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
         cors_rule1 = CorsRule(['www.xyz.com'], ['GET'])
 
         allowed_origins = ['www.xyz.com', "www.ab.com", "www.bc.com"]
@@ -127,33 +129,32 @@ class FileServicePropertiesTest(FileTestCase):
         cors = [cors_rule1, cors_rule2]
 
         # Act
-        self.fsc.set_service_properties(cors=cors)
+        fsc.set_service_properties(cors=cors)
 
         # Assert
-        received_props = self.fsc.get_service_properties()
+        received_props = fsc.get_service_properties()
         self._assert_cors_equal(received_props.cors, cors)
 
     # --Test cases for errors ---------------------------------------
-    @record
-    def test_retention_no_days(self):
+    @ResourceGroupPreparer()               
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    def test_retention_no_days(self, resource_group, location, storage_account, storage_account_key):
         # Assert
+        fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
         self.assertRaises(ValueError,
                           RetentionPolicy,
                           True, None)
 
-    @record
-    def test_too_many_cors_rules(self):
+    @ResourceGroupPreparer()               
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    def test_too_many_cors_rules(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
         cors = []
         for i in range(0, 6):
             cors.append(CorsRule(['www.xyz.com'], ['GET']))
 
         # Assert
         self.assertRaises(HttpResponseError,
-                          self.fsc.set_service_properties,
+                          fsc.set_service_properties,
                           None, None, cors)
-
-
-# ------------------------------------------------------------------------------
-if __name__ == '__main__':
-    unittest.main()

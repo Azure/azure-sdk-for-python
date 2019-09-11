@@ -11,6 +11,7 @@ import asyncio
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, FakeStorageAccount
 from azure.storage.file.aio import (
     FileServiceClient,
     Metrics,
@@ -18,13 +19,13 @@ from azure.storage.file.aio import (
     RetentionPolicy,
 )
 
-from filetestcase import (
-    FileTestCase,
-    TestMode,
-    record,
-    not_for_emulator,
+from asyncfiletestcase import (
+    AsyncFileTestCase
 )
 
+FAKE_STORAGE = FakeStorageAccount(
+    name='pyacrstorage',
+    id='')
 
 # ------------------------------------------------------------------------------
 class AiohttpTestTransport(AioHttpTransport):
@@ -38,14 +39,7 @@ class AiohttpTestTransport(AioHttpTransport):
         return response
 
 
-class FileServicePropertiesTest(FileTestCase):
-    def setUp(self):
-        super(FileServicePropertiesTest, self).setUp()
-
-        url = self.get_file_url()
-        credential = self.get_shared_key_credential()
-        self.fsc = FileServiceClient(url, credential=credential, transport=AiohttpTestTransport())
-
+class FileServicePropertiesTest(AsyncFileTestCase):
     # --Helpers-----------------------------------------------------------------
     def _assert_metrics_equal(self, metrics1, metrics2):
         if metrics1 is None or metrics2 is None:
@@ -78,61 +72,61 @@ class FileServicePropertiesTest(FileTestCase):
         self.assertEqual(ret1.days, ret2.days)
 
     # --Test cases per service ---------------------------------------
-    async def _test_file_service_properties_async(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @AsyncFileTestCase.await_prepared_test
+    async def test_file_service_properties_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-
+        fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
         # Act
-        resp = await self.fsc.set_service_properties(
+        resp = await fsc.set_service_properties(
             hour_metrics=Metrics(), minute_metrics=Metrics(), cors=list())
 
         # Assert
         self.assertIsNone(resp)
-        props = await self.fsc.get_service_properties()
+        props = await fsc.get_service_properties()
         self._assert_metrics_equal(props.hour_metrics, Metrics())
         self._assert_metrics_equal(props.minute_metrics, Metrics())
         self._assert_cors_equal(props.cors, list())
 
-    @record
-    def test_file_service_properties_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_file_service_properties_async())
-
     # --Test cases per feature ---------------------------------------
-    async def _test_set_hour_metrics_async(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @AsyncFileTestCase.await_prepared_test
+    async def test_set_hour_metrics_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
         hour_metrics = Metrics(enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5))
 
         # Act
-        await self.fsc.set_service_properties(hour_metrics=hour_metrics)
+        await fsc.set_service_properties(hour_metrics=hour_metrics)
 
         # Assert
-        received_props = await self.fsc.get_service_properties()
+        received_props = await fsc.get_service_properties()
         self._assert_metrics_equal(received_props.hour_metrics, hour_metrics)
 
-    @record
-    def test_set_hour_metrics_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_set_hour_metrics_async())
-
-    async def _test_set_minute_metrics_async(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @AsyncFileTestCase.await_prepared_test
+    async def test_set_minute_metrics_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
         minute_metrics = Metrics(enabled=True, include_apis=True,
                                  retention_policy=RetentionPolicy(enabled=True, days=5))
 
         # Act
-        await self.fsc.set_service_properties(minute_metrics=minute_metrics)
+        await fsc.set_service_properties(minute_metrics=minute_metrics)
 
         # Assert
-        received_props = await self.fsc.get_service_properties()
+        received_props = await fsc.get_service_properties()
         self._assert_metrics_equal(received_props.minute_metrics, minute_metrics)
 
-    @record
-    def test_set_minute_metrics_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_set_minute_metrics_async())
-
-    async def _test_set_cors_async(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @AsyncFileTestCase.await_prepared_test
+    async def test_set_cors_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
         cors_rule1 = CorsRule(['www.xyz.com'], ['GET'])
 
         allowed_origins = ['www.xyz.com', "www.ab.com", "www.bc.com"]
@@ -150,36 +144,25 @@ class FileServicePropertiesTest(FileTestCase):
         cors = [cors_rule1, cors_rule2]
 
         # Act
-        await self.fsc.set_service_properties(cors=cors)
+        await fsc.set_service_properties(cors=cors)
 
         # Assert
-        received_props = await self.fsc.get_service_properties()
+        received_props = await fsc.get_service_properties()
         self._assert_cors_equal(received_props.cors, cors)
 
-    @record
-    def test_set_cors_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_set_cors_async())
 
     # --Test cases for errors ---------------------------------------
 
-
-    async def _test_too_many_cors_rules_async(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @AsyncFileTestCase.await_prepared_test
+    async def test_too_many_cors_rules_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
         cors = []
         for i in range(0, 6):
             cors.append(CorsRule(['www.xyz.com'], ['GET']))
 
         # Assert
         with self.assertRaises(HttpResponseError):
-            await self.fsc.set_service_properties(None, None, cors)       
-
-    @record
-    def test_too_many_cors_rules_async(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_too_many_cors_rules_async())
-
-
-# ------------------------------------------------------------------------------
-if __name__ == '__main__':
-    unittest.main()
+            await fsc.set_service_properties(None, None, cors)

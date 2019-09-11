@@ -11,6 +11,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
+<<<<<<< HEAD
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
@@ -18,6 +19,11 @@ interactions:
       - a26c3e2e-d9a9-11e9-a7be-001a7dda7113
       x-ms-date:
       - Wed, 18 Sep 2019 00:17:00 GMT
+=======
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Wed, 11 Sep 2019 22:00:38 GMT
+>>>>>>> Migrate Files to Devtools Framework
       x-ms-meta:
       - '{''hello'': ''world'', ''number'': ''42''}'
       x-ms-meta-hello:
@@ -27,13 +33,14 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://storagename.file.core.windows.net/sharef877141f?restype=share
+    uri: https://pyacrstoragef877141f.file.core.windows.net/sharef877141f?restype=share
   response:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
+<<<<<<< HEAD
       Date:
       - Wed, 18 Sep 2019 00:17:00 GMT
       ETag:
@@ -44,6 +51,16 @@ interactions:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id:
       - 4e2aa381-d01a-00b2-72b6-6dac85000000
+=======
+      date:
+      - Wed, 11 Sep 2019 22:00:37 GMT
+      etag:
+      - '"0x8D737037A73794E"'
+      last-modified:
+      - Wed, 11 Sep 2019 22:00:37 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+>>>>>>> Migrate Files to Devtools Framework
       x-ms-version:
       - '2019-02-02'
     status:
@@ -59,6 +76,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
+<<<<<<< HEAD
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
@@ -66,13 +84,19 @@ interactions:
       - a2845980-d9a9-11e9-9b96-001a7dda7113
       x-ms-date:
       - Wed, 18 Sep 2019 00:17:01 GMT
+=======
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Wed, 11 Sep 2019 22:00:38 GMT
+>>>>>>> Migrate Files to Devtools Framework
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://storagename.file.core.windows.net/?prefix=sharef877141f&include=metadata&comp=list
+    uri: https://pyacrstoragef877141f.file.core.windows.net/?prefix=sharef877141f&include=metadata&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
+<<<<<<< HEAD
         ServiceEndpoint=\"https://storagename.file.core.windows.net/\"><Prefix>sharef877141f</Prefix><Shares><Share><Name>sharef877141f</Name><Properties><Last-Modified>Wed,
         18 Sep 2019 00:17:00 GMT</Last-Modified><Etag>\"0x8D73BCD86A87E48\"</Etag><Quota>5120</Quota></Properties><Metadata><hello>world</hello><number>42</number></Metadata></Share></Shares><NextMarker
         /></EnumerationResults>"
@@ -125,16 +149,31 @@ interactions:
       Date:
       - Wed, 18 Sep 2019 00:17:00 GMT
       Server:
+=======
+        ServiceEndpoint=\"https://pyacrstoragef877141f.file.core.windows.net/\"><Prefix>sharef877141f</Prefix><Shares><Share><Name>sharef877141f</Name><Properties><Last-Modified>Wed,
+        11 Sep 2019 22:00:37 GMT</Last-Modified><Etag>\"0x8D737037A73794E\"</Etag><Quota>5120</Quota></Properties><Metadata><hello>world</hello><number>42</number></Metadata></Share></Shares><NextMarker
+        /></EnumerationResults>"
+    headers:
+      content-type:
+      - application/xml
+      date:
+      - Wed, 11 Sep 2019 22:00:37 GMT
+      server:
+>>>>>>> Migrate Files to Devtools Framework
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      Transfer-Encoding:
+      transfer-encoding:
       - chunked
+<<<<<<< HEAD
       x-ms-request-id:
       - 4e2aa385-d01a-00b2-74b6-6dac85000000
+=======
+>>>>>>> Migrate Files to Devtools Framework
       x-ms-version:
       - '2019-02-02'
     status:
       code: 200
       message: OK
+<<<<<<< HEAD
 - request:
     body: null
     headers:
@@ -177,4 +216,6 @@ interactions:
     status:
       code: 202
       message: Accepted
+=======
+>>>>>>> Migrate Files to Devtools Framework
 version: 1

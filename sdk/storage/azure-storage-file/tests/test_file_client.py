@@ -7,6 +7,7 @@ import unittest
 import platform
 
 from azure.core.exceptions import AzureError
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, FakeStorageAccount
 from azure.storage.file import (
     VERSION,
     FileServiceClient,
@@ -15,13 +16,14 @@ from azure.storage.file import (
     FileClient)
 
 from filetestcase import (
-    FileTestCase,
-    record,
-    TestMode
+    FileTestCase
 )
 #from azure.storage.common import TokenCredential
 
 # ------------------------------------------------------------------------------
+FAKE_STORAGE = FakeStorageAccount(
+    name='pyacrstorage',
+    id='')
 SERVICES = {
     FileServiceClient: 'file',
     ShareClient: 'file',
@@ -36,42 +38,44 @@ _CONNECTION_ENDPOINTS_SECONDARY = {'file': 'FileSecondaryEndpoint'}
 class StorageFileClientTest(FileTestCase):
     def setUp(self):
         super(StorageFileClientTest, self).setUp()
-        self.account_name = self.settings.STORAGE_ACCOUNT_NAME
-        self.account_key = self.settings.STORAGE_ACCOUNT_KEY
         self.sas_token = '?sv=2015-04-05&st=2015-04-29T22%3A18%3A26Z&se=2015-04-30T02%3A23%3A26Z&sr=b&sp=rw&sip=168.1.5.60-168.1.5.70&spr=https&sig=Z%2FRHIX5Xcg0Mq2rqI3OlWTjEg2tYkboXr1P9ZUXDtkk%3D'
         self.token_credential = self.generate_oauth_token()
 
     # --Helpers-----------------------------------------------------------------
-    def validate_standard_account_endpoints(self, service, service_type, protocol='https'):
+    def validate_standard_account_endpoints(self, service, service_type, account_name, key, protocol='https'):
         self.assertIsNotNone(service)
-        self.assertEqual(service.credential.account_name, self.account_name)
-        self.assertEqual(service.credential.account_key, self.account_key)
+        self.assertEqual(service.credential.account_name, account_name)
+        self.assertEqual(service.credential.account_key, key)
         self.assertTrue(service.primary_endpoint.startswith('{}://{}.{}.core.windows.net/'.format(
-            protocol, self.account_name, service_type)))
+            protocol, account_name, service_type)))
         self.assertTrue(service.secondary_endpoint.startswith('{}://{}-secondary.{}.core.windows.net/'.format(
-            protocol, self.account_name, service_type)))
+            protocol, account_name, service_type)))
 
     # --Direct Parameters Test Cases --------------------------------------------
-    def test_create_service_with_key(self):
+    @ResourceGroupPreparer()          
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    def test_create_service_with_key(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
 
         for client, url in SERVICES.items():
             # Act
             service = client(
-                self.get_file_url(), credential=self.account_key,
+                self._account_url(storage_account.name), credential=storage_account_key,
                 share='foo', directory_path='bar', file_path='baz')
 
             # Assert
-            self.validate_standard_account_endpoints(service, url)
+            self.validate_standard_account_endpoints(service, url, storage_account.name, storage_account_key)
             self.assertEqual(service.scheme, 'https')
 
-    def test_create_service_with_sas(self):
+    @ResourceGroupPreparer()          
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    def test_create_service_with_sas(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
 
         for service_type in SERVICES:
             # Act
             service = service_type(
-                self.get_file_url(), credential=self.sas_token,
+                self._account_url(storage_account.name), credential=self.sas_token,
                 share='foo', directory_path='bar', file_path='baz')
 
             # Assert
@@ -79,59 +83,68 @@ class StorageFileClientTest(FileTestCase):
             self.assertIsNone(service.credential)
             self.assertTrue(service.url.endswith(self.sas_token))
 
-    def test_create_service_with_token(self):
+    @ResourceGroupPreparer()          
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    def test_create_service_with_token(self, resource_group, location, storage_account, storage_account_key):
         for service_type in SERVICES:
             # Act
             # token credential is not available for FileService
             with self.assertRaises(ValueError):
-                service_type(self.get_file_url(), credential=self.token_credential,
+                service_type(self._account_url(storage_account.name), credential=self.token_credential,
                              share='foo', directory_path='bar', file_path='baz')
 
-    def test_create_service_china(self):
+    @ResourceGroupPreparer()          
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    def test_create_service_china(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        url = self.get_file_url().replace('core.windows.net', 'core.chinacloudapi.cn')
+        url = self._account_url(storage_account.name).replace('core.windows.net', 'core.chinacloudapi.cn')
         for service_type in SERVICES.items():
             # Act
             service = service_type[0](
-                url, credential=self.account_key,
+                url, credential=storage_account_key,
                 share='foo', directory_path='bar', file_path='baz')
 
             # Assert
             self.assertIsNotNone(service)
-            self.assertEqual(service.credential.account_name, self.account_name)
-            self.assertEqual(service.credential.account_key, self.account_key)
+            self.assertEqual(service.credential.account_name, storage_account.name)
+            self.assertEqual(service.credential.account_key, storage_account_key)
             self.assertEqual(service.primary_hostname, '{}.{}.core.chinacloudapi.cn'.format(
-                self.account_name, service_type[1]))
+                storage_account.name, service_type[1]))
             self.assertEqual(service.secondary_hostname,
-                             '{}-secondary.{}.core.chinacloudapi.cn'.format(self.account_name, service_type[1]))
+                             '{}-secondary.{}.core.chinacloudapi.cn'.format(storage_account.name, service_type[1]))
 
-    def test_create_service_protocol(self):
+    @ResourceGroupPreparer()          
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    def test_create_service_protocol(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        url = self.get_file_url().replace('https', 'http')
+        url = self._account_url(storage_account.name).replace('https', 'http')
         for service_type in SERVICES.items():
             # Act
             service = service_type[0](
-                url, credential=self.account_key, share='foo', directory_path='bar', file_path='baz')
+                url, credential=storage_account_key, share='foo', directory_path='bar', file_path='baz')
 
             # Assert
-            self.validate_standard_account_endpoints(service, service_type[1], protocol='http')
+            self.validate_standard_account_endpoints(service, service_type[1], storage_account.name, storage_account_key,  protocol='http')
             self.assertEqual(service.scheme, 'http')
 
-
-    def test_create_service_empty_key(self):
+    @ResourceGroupPreparer()          
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    def test_create_service_empty_key(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         for service_type in SERVICES:
             # Act
             # Passing an empty key to create account should fail.
             with self.assertRaises(ValueError) as e:
                 service_type(
-                    self.get_file_url(), share='foo', directory_path='bar', file_path='baz')
+                    self._account_url(storage_account.name), share='foo', directory_path='bar', file_path='baz')
 
             self.assertEqual(
                 str(e.exception),
                 'You need to provide either an account key or SAS token when creating a storage service.')
 
-    def test_create_service_missing_arguments(self):
+    @ResourceGroupPreparer()          
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    def test_create_service_missing_arguments(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
 
         for service_type in SERVICES:
@@ -139,28 +152,31 @@ class StorageFileClientTest(FileTestCase):
             with self.assertRaises(ValueError):
                 service_type(None)
 
-    def test_create_service_with_socket_timeout(self):
+    @ResourceGroupPreparer()          
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    def test_create_service_with_socket_timeout(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
 
         for service_type in SERVICES.items():
             # Act
             default_service = service_type[0](
-                self.get_file_url(), credential=self.account_key,
+                self._account_url(storage_account.name), credential=storage_account_key,
                 share='foo', directory_path='bar', file_path='baz')
             service = service_type[0](
-                self.get_file_url(), credential=self.account_key, connection_timeout=22,
+                self._account_url(storage_account.name), credential=storage_account_key, connection_timeout=22,
                 share='foo', directory_path='bar', file_path='baz')
 
             # Assert
-            self.validate_standard_account_endpoints(service, service_type[1])
+            self.validate_standard_account_endpoints(service, service_type[1], storage_account.name, storage_account_key)
             assert service._client._client._pipeline._transport.connection_config.timeout == 22
             assert default_service._client._client._pipeline._transport.connection_config.timeout in [20, (20, 2000)]
 
     # --Connection String Test Cases --------------------------------------------
-
-    def test_create_service_with_connection_string_key(self):
+    @ResourceGroupPreparer()          
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    def test_create_service_with_connection_string_key(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        conn_string = 'AccountName={};AccountKey={};'.format(self.account_name, self.account_key)
+        conn_string = 'AccountName={};AccountKey={};'.format(storage_account.name, storage_account_key)
 
         for service_type in SERVICES.items():
             # Act
@@ -168,12 +184,14 @@ class StorageFileClientTest(FileTestCase):
                 conn_string, share='foo', directory_path='bar', file_path='baz')
 
             # Assert
-            self.validate_standard_account_endpoints(service, service_type[1])
+            self.validate_standard_account_endpoints(service, service_type[1], storage_account.name, storage_account_key)
             self.assertEqual(service.scheme, 'https')
 
-    def test_create_service_with_connection_string_sas(self):
+    @ResourceGroupPreparer()          
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    def test_create_service_with_connection_string_sas(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        conn_string = 'AccountName={};SharedAccessSignature={};'.format(self.account_name, self.sas_token)
+        conn_string = 'AccountName={};SharedAccessSignature={};'.format(storage_account.name, self.sas_token)
 
         for service_type in SERVICES.items():
             # Act
@@ -185,10 +203,12 @@ class StorageFileClientTest(FileTestCase):
             self.assertIsNone(service.credential)
             self.assertTrue(service.url.endswith(self.sas_token))
 
-    def test_create_service_with_connection_string_endpoint_protocol(self):
+    @ResourceGroupPreparer()          
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    def test_create_service_with_connection_string_endpoint_protocol(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         conn_string = 'AccountName={};AccountKey={};DefaultEndpointsProtocol=http;EndpointSuffix=core.chinacloudapi.cn;'.format(
-            self.account_name, self.account_key)
+            storage_account.name, storage_account_key)
 
         for service_type in SERVICES.items():
             # Act
@@ -197,14 +217,16 @@ class StorageFileClientTest(FileTestCase):
 
             # Assert
             self.assertIsNotNone(service)
-            self.assertEqual(service.credential.account_name, self.account_name)
-            self.assertEqual(service.credential.account_key, self.account_key)
-            self.assertEqual(service.primary_hostname, '{}.{}.core.chinacloudapi.cn'.format(self.account_name, service_type[1]))
+            self.assertEqual(service.credential.account_name, storage_account.name)
+            self.assertEqual(service.credential.account_key, storage_account_key)
+            self.assertEqual(service.primary_hostname, '{}.{}.core.chinacloudapi.cn'.format(storage_account.name, service_type[1]))
             self.assertEqual(service.secondary_hostname,
-                             '{}-secondary.{}.core.chinacloudapi.cn'.format(self.account_name, service_type[1]))
+                             '{}-secondary.{}.core.chinacloudapi.cn'.format(storage_account.name, service_type[1]))
             self.assertEqual(service.scheme, 'http')
 
-    def test_create_service_with_connection_string_emulated(self):
+    @ResourceGroupPreparer()          
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    def test_create_service_with_connection_string_emulated(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         for service_type in SERVICES.items():
             conn_string = 'UseDevelopmentStorage=true;'
@@ -214,11 +236,13 @@ class StorageFileClientTest(FileTestCase):
                 service_type[0].from_connection_string(
                     conn_string, share='foo', directory_path='bar', file_path='baz')
 
-    def test_create_service_with_connection_string_fails_if_secondary_without_primary(self):
+    @ResourceGroupPreparer()          
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    def test_create_service_with_conn_str_fails_if_sec_without_prim(self, resource_group, location, storage_account, storage_account_key):
         for service_type in SERVICES.items():
             # Arrange
             conn_string = 'AccountName={};AccountKey={};{}=www.mydomain.com;'.format(
-                self.account_name, self.account_key, _CONNECTION_ENDPOINTS_SECONDARY.get(service_type[1]))
+                storage_account.name, storage_account_key, _CONNECTION_ENDPOINTS_SECONDARY.get(service_type[1]))
 
             # Act
 
@@ -227,11 +251,13 @@ class StorageFileClientTest(FileTestCase):
                 service_type[0].from_connection_string(
                     conn_string, share='foo', directory_path='bar', file_path='baz')
 
-    def test_create_service_with_connection_string_succeeds_if_secondary_with_primary(self):
+    @ResourceGroupPreparer()          
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    def test_create_service_with_conn_str_succeeds_if_sec_with_prim(self, resource_group, location, storage_account, storage_account_key):
         for service_type in SERVICES.items():
             # Arrange
             conn_string = 'AccountName={};AccountKey={};{}=www.mydomain.com;{}=www-sec.mydomain.com;'.format(
-                self.account_name, self.account_key,
+                storage_account.name, storage_account_key,
                 _CONNECTION_ENDPOINTS.get(service_type[1]),
                 _CONNECTION_ENDPOINTS_SECONDARY.get(service_type[1]))
 
@@ -241,19 +267,21 @@ class StorageFileClientTest(FileTestCase):
 
             # Assert
             self.assertIsNotNone(service)
-            self.assertEqual(service.credential.account_name, self.account_name)
-            self.assertEqual(service.credential.account_key, self.account_key)
+            self.assertEqual(service.credential.account_name, storage_account.name)
+            self.assertEqual(service.credential.account_key, storage_account_key)
             self.assertEqual(service.primary_hostname, 'www.mydomain.com')
             self.assertEqual(service.secondary_hostname, 'www-sec.mydomain.com')
 
-    def test_client_request_id_echo(self):
+    @ResourceGroupPreparer()          
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    def test_client_request_id_echo(self, resource_group, location, storage_account, storage_account_key):
         # client request id is different for every request, so it will never match the recorded one
-        if TestMode.need_recording_file(self.test_mode):
+        if not self.is_live:
             return
 
         # Arrange
+        service = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
         request_id_header_name = 'x-ms-client-request-id'
-        service = FileServiceClient(self.get_file_url(), credential=self.account_key)
 
         # Act make the client request ID slightly different
         def callback(response):
@@ -272,9 +300,10 @@ class StorageFileClientTest(FileTestCase):
         # Assert the client request ID validation is not throwing when the ID is not echoed
         service.get_service_properties(raw_response_hook=callback)
 
-    @record
-    def test_user_agent_default(self):
-        service = FileServiceClient(self.get_file_url(), credential=self.account_key)
+    @ResourceGroupPreparer()          
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    def test_user_agent_default(self, resource_group, location, storage_account, storage_account_key):
+        service = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
 
         def callback(response):
             self.assertTrue('User-Agent' in response.http_request.headers)
@@ -287,11 +316,12 @@ class StorageFileClientTest(FileTestCase):
 
         service.get_service_properties(raw_response_hook=callback)
 
-    @record
-    def test_user_agent_custom(self):
+    @ResourceGroupPreparer()          
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    def test_user_agent_custom(self, resource_group, location, storage_account, storage_account_key):
         custom_app = "TestApp/v1.0"
         service = FileServiceClient(
-            self.get_file_url(), credential=self.account_key, user_agent=custom_app)
+            self._account_url(storage_account.name), credential=storage_account_key, user_agent=custom_app)
 
         def callback1(response):
             self.assertTrue('User-Agent' in response.http_request.headers)
@@ -315,9 +345,10 @@ class StorageFileClientTest(FileTestCase):
 
         service.get_service_properties(raw_response_hook=callback2, user_agent="TestApp/v2.0")
 
-    @record
-    def test_user_agent_append(self):
-        service = FileServiceClient(self.get_file_url(), credential=self.account_key)
+    @ResourceGroupPreparer()          
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    def test_user_agent_append(self, resource_group, location, storage_account, storage_account_key):
+        service = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
 
         def callback(response):
             self.assertTrue('User-Agent' in response.http_request.headers)

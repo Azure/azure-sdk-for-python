@@ -3,6 +3,7 @@ interactions:
     body: null
     headers:
       User-Agent:
+<<<<<<< HEAD
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
@@ -10,14 +11,20 @@ interactions:
       - 4f6d4a08-d9a6-11e9-ab88-001a7dda7113
       x-ms-date:
       - Tue, 17 Sep 2019 23:53:13 GMT
+=======
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Wed, 11 Sep 2019 21:43:52 GMT
+>>>>>>> Migrate Files to Devtools Framework
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://storagename.file.core.windows.net/utsharee15b18a9?restype=share
+    uri: https://pyacrstoragee15b18a9.file.core.windows.net/utsharee15b18a9?restype=share
   response:
     body:
       string: ''
     headers:
+<<<<<<< HEAD
       ? !!python/object/new:multidict._istr.istr
       - Content-Length
       : '0'
@@ -34,6 +41,13 @@ interactions:
       - Server
       : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id: 18273163-701a-00ab-19b3-6d2c3e000000
+=======
+      content-length: '0'
+      date: Wed, 11 Sep 2019 21:43:50 GMT
+      etag: '"0x8D73701229EA0E4"'
+      last-modified: Wed, 11 Sep 2019 21:43:51 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+>>>>>>> Migrate Files to Devtools Framework
       x-ms-version: '2019-02-02'
     status:
       code: 201
@@ -42,7 +56,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - emilydevtest.file.core.windows.net
+        - pyacrstoragee15b18a9.file.core.windows.net
         - /utsharee15b18a9
         - restype=share
         - ''
@@ -50,6 +64,7 @@ interactions:
     body: null
     headers:
       User-Agent:
+<<<<<<< HEAD
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
@@ -57,13 +72,19 @@ interactions:
       - 4f783df6-d9a6-11e9-a3c2-001a7dda7113
       x-ms-date:
       - Tue, 17 Sep 2019 23:53:13 GMT
+=======
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Wed, 11 Sep 2019 21:43:52 GMT
+>>>>>>> Migrate Files to Devtools Framework
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://storagename.file.core.windows.net/utsharee15b18a9/missing1%2Fmissing2?restype=directory
+    uri: https://pyacrstoragee15b18a9.file.core.windows.net/utsharee15b18a9/missing1%2Fmissing2?restype=directory
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ParentNotFound</Code><Message>The
+<<<<<<< HEAD
         specified parent path does not exist.\nRequestId:18273166-701a-00ab-1ab3-6d2c3e000000\nTime:2019-09-17T23:53:13.1788904Z</Message></Error>"
     headers:
       ? !!python/object/new:multidict._istr.istr
@@ -80,6 +101,15 @@ interactions:
       : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: ParentNotFound
       x-ms-request-id: 18273166-701a-00ab-1ab3-6d2c3e000000
+=======
+        specified parent path does not exist.\nRequestId:3af4a9c1-401a-008c-14ea-68a059000000\nTime:2019-09-11T21:43:51.2571710Z</Message></Error>"
+    headers:
+      content-length: '224'
+      content-type: application/xml
+      date: Wed, 11 Sep 2019 21:43:50 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code: ParentNotFound
+>>>>>>> Migrate Files to Devtools Framework
       x-ms-version: '2019-02-02'
     status:
       code: 404
@@ -88,7 +118,7 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
-        - emilydevtest.file.core.windows.net
+        - pyacrstoragee15b18a9.file.core.windows.net
         - /utsharee15b18a9/missing1%2Fmissing2
         - restype=directory
         - ''

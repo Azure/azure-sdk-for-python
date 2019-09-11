@@ -11,6 +11,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
+<<<<<<< HEAD
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
@@ -18,16 +19,22 @@ interactions:
       - 9d14645e-d9a9-11e9-8e60-001a7dda7113
       x-ms-date:
       - Wed, 18 Sep 2019 00:16:51 GMT
+=======
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Wed, 11 Sep 2019 21:59:33 GMT
+>>>>>>> Migrate Files to Devtools Framework
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://storagename.file.core.windows.net/sharee1af13bc?restype=share
+    uri: https://pyacrstoragee1af13bc.file.core.windows.net/sharee1af13bc?restype=share
   response:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
+<<<<<<< HEAD
       Date:
       - Wed, 18 Sep 2019 00:16:51 GMT
       ETag:
@@ -38,6 +45,16 @@ interactions:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id:
       - 8dc2459b-e01a-0096-36b6-6d5a25000000
+=======
+      date:
+      - Wed, 11 Sep 2019 21:59:32 GMT
+      etag:
+      - '"0x8D7370353CFC778"'
+      last-modified:
+      - Wed, 11 Sep 2019 21:59:32 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+>>>>>>> Migrate Files to Devtools Framework
       x-ms-version:
       - '2019-02-02'
     status:
@@ -55,6 +72,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
+<<<<<<< HEAD
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
@@ -62,27 +80,40 @@ interactions:
       - 9d32d400-d9a9-11e9-a247-001a7dda7113
       x-ms-date:
       - Wed, 18 Sep 2019 00:16:52 GMT
+=======
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Wed, 11 Sep 2019 21:59:33 GMT
+>>>>>>> Migrate Files to Devtools Framework
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://storagename.file.core.windows.net/sharee1af13bc?restype=share
+    uri: https://pyacrstoragee1af13bc.file.core.windows.net/sharee1af13bc?restype=share
   response:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
+<<<<<<< HEAD
       Date:
       - Wed, 18 Sep 2019 00:16:51 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id:
       - 8dc2459e-e01a-0096-37b6-6d5a25000000
+=======
+      date:
+      - Wed, 11 Sep 2019 21:59:32 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+>>>>>>> Migrate Files to Devtools Framework
       x-ms-version:
       - '2019-02-02'
     status:
       code: 202
       message: Accepted
+<<<<<<< HEAD
 - request:
     body: null
     headers:
@@ -125,4 +156,6 @@ interactions:
     status:
       code: 200
       message: OK
+=======
+>>>>>>> Migrate Files to Devtools Framework
 version: 1

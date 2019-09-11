@@ -11,6 +11,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
+<<<<<<< HEAD
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
@@ -18,19 +19,29 @@ interactions:
       - 9d8a60ba-d9a9-11e9-a35c-001a7dda7113
       x-ms-date:
       - Wed, 18 Sep 2019 00:16:52 GMT
+=======
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Wed, 11 Sep 2019 21:59:57 GMT
+>>>>>>> Migrate Files to Devtools Framework
       x-ms-version:
       - '2019-02-02'
     method: DELETE
-    uri: https://storagename.file.core.windows.net/share34c61566?restype=share
+    uri: https://pyacrstorage34c61566.file.core.windows.net/share34c61566?restype=share
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareNotFound</Code><Message>The
+<<<<<<< HEAD
         specified share does not exist.\nRequestId:eb7f6815-501a-0048-5eb6-6d4ec3000000\nTime:2019-09-18T00:16:52.7836673Z</Message></Error>"
+=======
+        specified share does not exist.\nRequestId:57e4fe57-e01a-00e4-0aec-68f702000000\nTime:2019-09-11T21:59:56.1761819Z</Message></Error>"
+>>>>>>> Migrate Files to Devtools Framework
     headers:
-      Content-Length:
+      content-length:
       - '217'
-      Content-Type:
+      content-type:
       - application/xml
+<<<<<<< HEAD
       Date:
       - Wed, 18 Sep 2019 00:16:52 GMT
       Server:
@@ -39,11 +50,20 @@ interactions:
       - ShareNotFound
       x-ms-request-id:
       - eb7f6815-501a-0048-5eb6-6d4ec3000000
+=======
+      date:
+      - Wed, 11 Sep 2019 21:59:55 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code:
+      - ShareNotFound
+>>>>>>> Migrate Files to Devtools Framework
       x-ms-version:
       - '2019-02-02'
     status:
       code: 404
       message: The specified share does not exist.
+<<<<<<< HEAD
 - request:
     body: null
     headers:
@@ -86,4 +106,6 @@ interactions:
     status:
       code: 200
       message: OK
+=======
+>>>>>>> Migrate Files to Devtools Framework
 version: 1

@@ -7,26 +7,27 @@
 # --------------------------------------------------------------------------
 
 import asyncio
-try:
-    import settings_real as settings
-except ImportError:
-    import file_settings_fake as settings
 
-from filetestcase import (
-    FileTestCase,
-    TestMode,
-    record
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, FakeStorageAccount
+from asyncfiletestcase import (
+    AsyncFileTestCase
 )
 
+FAKE_STORAGE = FakeStorageAccount(
+    name='pyacrstorage',
+    id='')
 
-class TestFileServiceSamples(FileTestCase):
 
-    connection_string = settings.CONNECTION_STRING
+class TestFileServiceSamples(AsyncFileTestCase):
 
-    async def _test_file_service_properties(self):
+
+    @ResourceGroupPreparer()               
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @AsyncFileTestCase.await_prepared_test
+    async def test_file_service_properties(self, resource_group, location, storage_account, storage_account_key):
         # Instantiate the FileServiceClient from a connection string
         from azure.storage.file.aio import FileServiceClient
-        file_service = FileServiceClient.from_connection_string(self.connection_string)
+        file_service = FileServiceClient.from_connection_string(self.connection_string(storage_account, storage_account_key))
 
         # [START set_service_properties]
         # Create service properties
@@ -61,16 +62,13 @@ class TestFileServiceSamples(FileTestCase):
         properties = await file_service.get_service_properties()
         # [END get_service_properties]
 
-    def test_file_service_properties(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_file_service_properties())
-
-    async def _test_share_operations(self):
+    @ResourceGroupPreparer()               
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @AsyncFileTestCase.await_prepared_test
+    async def test_share_operations(self, resource_group, location, storage_account, storage_account_key):
         # Instantiate the FileServiceClient from a connection string
         from azure.storage.file.aio import FileServiceClient
-        file_service = FileServiceClient.from_connection_string(self.connection_string)
+        file_service = FileServiceClient.from_connection_string(self.connection_string(storage_account, storage_account_key))
 
         # [START fsc_create_shares]
         await file_service.create_share(share_name="testshare")
@@ -92,23 +90,14 @@ class TestFileServiceSamples(FileTestCase):
             await file_service.delete_share(share_name="testshare")
             # [END fsc_delete_shares]
 
-    def test_share_operations(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_share_operations())
-
-    async def _test_get_share_client(self):
+    @ResourceGroupPreparer()               
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @AsyncFileTestCase.await_prepared_test
+    async def test_get_share_client(self, resource_group, location, storage_account, storage_account_key):
         # [START get_share_client]
         from azure.storage.file.aio import FileServiceClient
-        file_service = FileServiceClient.from_connection_string(self.connection_string)
+        file_service = FileServiceClient.from_connection_string(self.connection_string(storage_account, storage_account_key))
 
         # Get a share client to interact with a specific share
-        share = await file_service.get_share_client("fileshare")
+        share = file_service.get_share_client("fileshare")
         # [END get_share_client]
-
-    def test_get_share_client(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_get_share_client())

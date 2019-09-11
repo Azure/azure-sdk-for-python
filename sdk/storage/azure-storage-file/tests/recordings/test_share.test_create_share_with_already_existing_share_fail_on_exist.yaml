@@ -11,6 +11,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
+<<<<<<< HEAD
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
@@ -18,16 +19,22 @@ interactions:
       - 9bee1eca-d9a9-11e9-bd55-001a7dda7113
       x-ms-date:
       - Wed, 18 Sep 2019 00:16:50 GMT
+=======
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Wed, 11 Sep 2019 21:59:32 GMT
+>>>>>>> Migrate Files to Devtools Framework
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://storagename.file.core.windows.net/sharef92e1cc1?restype=share
+    uri: https://pyacrstoragef92e1cc1.file.core.windows.net/sharef92e1cc1?restype=share
   response:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
+<<<<<<< HEAD
       Date:
       - Wed, 18 Sep 2019 00:16:49 GMT
       ETag:
@@ -38,6 +45,16 @@ interactions:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id:
       - c8219a3a-201a-000f-2cb6-6d2598000000
+=======
+      date:
+      - Wed, 11 Sep 2019 21:59:31 GMT
+      etag:
+      - '"0x8D7370353224F59"'
+      last-modified:
+      - Wed, 11 Sep 2019 21:59:31 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+>>>>>>> Migrate Files to Devtools Framework
       x-ms-version:
       - '2019-02-02'
     status:
@@ -55,6 +72,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
+<<<<<<< HEAD
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
@@ -62,19 +80,29 @@ interactions:
       - 9c073f82-d9a9-11e9-b98d-001a7dda7113
       x-ms-date:
       - Wed, 18 Sep 2019 00:16:50 GMT
+=======
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Wed, 11 Sep 2019 21:59:32 GMT
+>>>>>>> Migrate Files to Devtools Framework
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://storagename.file.core.windows.net/sharef92e1cc1?restype=share
+    uri: https://pyacrstoragef92e1cc1.file.core.windows.net/sharef92e1cc1?restype=share
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareAlreadyExists</Code><Message>The
+<<<<<<< HEAD
         specified share already exists.\nRequestId:c8219a3c-201a-000f-2db6-6d2598000000\nTime:2019-09-18T00:16:50.1296567Z</Message></Error>"
+=======
+        specified share already exists.\nRequestId:9ad389f0-e01a-000f-19ec-681c59000000\nTime:2019-09-11T21:59:31.6112069Z</Message></Error>"
+>>>>>>> Migrate Files to Devtools Framework
     headers:
-      Content-Length:
+      content-length:
       - '222'
-      Content-Type:
+      content-type:
       - application/xml
+<<<<<<< HEAD
       Date:
       - Wed, 18 Sep 2019 00:16:49 GMT
       Server:
@@ -83,11 +111,20 @@ interactions:
       - ShareAlreadyExists
       x-ms-request-id:
       - c8219a3c-201a-000f-2db6-6d2598000000
+=======
+      date:
+      - Wed, 11 Sep 2019 21:59:31 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code:
+      - ShareAlreadyExists
+>>>>>>> Migrate Files to Devtools Framework
       x-ms-version:
       - '2019-02-02'
     status:
       code: 409
       message: The specified share already exists.
+<<<<<<< HEAD
 - request:
     body: null
     headers:
@@ -173,4 +210,6 @@ interactions:
     status:
       code: 202
       message: Accepted
+=======
+>>>>>>> Migrate Files to Devtools Framework
 version: 1

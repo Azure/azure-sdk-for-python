@@ -6,26 +6,24 @@
 # license information.
 # --------------------------------------------------------------------------
 
-try:
-    import settings_real as settings
-except ImportError:
-    import file_settings_fake as settings
-
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, FakeStorageAccount
 from filetestcase import (
-    FileTestCase,
-    record
+    FileTestCase
 )
+
+FAKE_STORAGE = FakeStorageAccount(
+    name='pyacrstorage',
+    id='')
 
 
 class TestFileServiceSamples(FileTestCase):
 
-    connection_string = settings.CONNECTION_STRING
-
-    @record
-    def test_file_service_properties(self):
+    @ResourceGroupPreparer()               
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    def test_file_service_properties(self, resource_group, location, storage_account, storage_account_key):
         # Instantiate the FileServiceClient from a connection string
         from azure.storage.file import FileServiceClient
-        file_service = FileServiceClient.from_connection_string(self.connection_string)
+        file_service = FileServiceClient.from_connection_string(self.connection_string(storage_account, storage_account_key))
 
         # [START set_service_properties]
         # Create service properties
@@ -60,11 +58,12 @@ class TestFileServiceSamples(FileTestCase):
         properties = file_service.get_service_properties()
         # [END get_service_properties]
 
-    @record
-    def test_share_operations(self):
+    @ResourceGroupPreparer()               
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    def test_share_operations(self, resource_group, location, storage_account, storage_account_key):
         # Instantiate the FileServiceClient from a connection string
         from azure.storage.file import FileServiceClient
-        file_service = FileServiceClient.from_connection_string(self.connection_string)
+        file_service = FileServiceClient.from_connection_string(self.connection_string(storage_account, storage_account_key))
 
         # [START fsc_create_shares]
         file_service.create_share(share_name="testshare")
@@ -84,11 +83,12 @@ class TestFileServiceSamples(FileTestCase):
             file_service.delete_share(share_name="testshare")
             # [END fsc_delete_shares]
 
-    @record
-    def test_get_share_client(self):
+    @ResourceGroupPreparer()               
+    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    def test_get_share_client(self, resource_group, location, storage_account, storage_account_key):
         # [START get_share_client]
         from azure.storage.file import FileServiceClient
-        file_service = FileServiceClient.from_connection_string(self.connection_string)
+        file_service = FileServiceClient.from_connection_string(self.connection_string(storage_account, storage_account_key))
 
         # Get a share client to interact with a specific share
         share = file_service.get_share_client("fileshare")

@@ -3,6 +3,7 @@ interactions:
     body: null
     headers:
       User-Agent:
+<<<<<<< HEAD
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
@@ -10,14 +11,20 @@ interactions:
       - a790dfe6-d9a9-11e9-8b0e-001a7dda7113
       x-ms-date:
       - Wed, 18 Sep 2019 00:17:09 GMT
+=======
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Wed, 11 Sep 2019 22:03:47 GMT
+>>>>>>> Migrate Files to Devtools Framework
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: https://storagename.file.core.windows.net/share4f8f160b?restype=share
+    uri: https://pyacrstorage4f8f160b.file.core.windows.net/share4f8f160b?restype=share
   response:
     body:
       string: ''
     headers:
+<<<<<<< HEAD
       ? !!python/object/new:multidict._istr.istr
       - Content-Length
       : '0'
@@ -34,6 +41,13 @@ interactions:
       - Server
       : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id: 6e4eb5ac-701a-0070-4fb6-6dea03000000
+=======
+      content-length: '0'
+      date: Wed, 11 Sep 2019 22:03:46 GMT
+      etag: '"0x8D73703EB39606A"'
+      last-modified: Wed, 11 Sep 2019 22:03:46 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+>>>>>>> Migrate Files to Devtools Framework
       x-ms-version: '2019-02-02'
     status:
       code: 201
@@ -42,7 +56,11 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
+<<<<<<< HEAD
         - emilydevtest.file.core.windows.net
+=======
+        - pyacrstorage4f8f160b.file.core.windows.net
+>>>>>>> Migrate Files to Devtools Framework
         - /share4f8f160b
         - restype=share
         - ''
@@ -50,6 +68,7 @@ interactions:
     body: null
     headers:
       User-Agent:
+<<<<<<< HEAD
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
@@ -57,13 +76,19 @@ interactions:
       - a79acfb4-d9a9-11e9-aadd-001a7dda7113
       x-ms-date:
       - Wed, 18 Sep 2019 00:17:09 GMT
+=======
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Wed, 11 Sep 2019 22:03:48 GMT
+>>>>>>> Migrate Files to Devtools Framework
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: https://storagename.file.core.windows.net/share4f8f160b?sharesnapshot=2017-07-19T06:53:46.0000000Z&restype=share
+    uri: https://pyacrstorage4f8f160b.file.core.windows.net/share4f8f160b?sharesnapshot=2017-07-19T06:53:46.0000000Z&restype=share
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareNotFound</Code><Message>The
+<<<<<<< HEAD
         specified share does not exist.\nRequestId:6e4eb5af-701a-0070-50b6-6dea03000000\nTime:2019-09-18T00:17:09.5249298Z</Message></Error>"
     headers:
       ? !!python/object/new:multidict._istr.istr
@@ -80,6 +105,15 @@ interactions:
       : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: ShareNotFound
       x-ms-request-id: 6e4eb5af-701a-0070-50b6-6dea03000000
+=======
+        specified share does not exist.\nRequestId:3de4e40d-501a-008f-21ec-687e2a000000\nTime:2019-09-11T22:03:46.8481477Z</Message></Error>"
+    headers:
+      content-length: '217'
+      content-type: application/xml
+      date: Wed, 11 Sep 2019 22:03:46 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code: ShareNotFound
+>>>>>>> Migrate Files to Devtools Framework
       x-ms-version: '2019-02-02'
     status:
       code: 404
@@ -88,7 +122,11 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
+<<<<<<< HEAD
         - emilydevtest.file.core.windows.net
+=======
+        - pyacrstorage4f8f160b.file.core.windows.net
+>>>>>>> Migrate Files to Devtools Framework
         - /share4f8f160b
         - sharesnapshot=2017-07-19T06:53:46.0000000Z&restype=share
         - ''
