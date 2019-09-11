@@ -59,7 +59,6 @@ if __name__ == "__main__":
             "python",
             os.path.join(args.target_setup, "setup.py"),
             "bdist_wheel",
-            "--universal",
             "-d",
             args.distribution_directory,
         ]

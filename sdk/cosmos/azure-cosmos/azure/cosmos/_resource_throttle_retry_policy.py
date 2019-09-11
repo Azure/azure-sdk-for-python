@@ -36,7 +36,7 @@ class ResourceThrottleRetryPolicy(object):
     def ShouldRetry(self, exception):
         """Returns true if should retry based on the passed-in exception.
 
-        :param (errors.HTTPFailure instance) exception:
+        :param (errors.CosmosHttpResponseError instance) exception:
 
         :rtype:
             boolean

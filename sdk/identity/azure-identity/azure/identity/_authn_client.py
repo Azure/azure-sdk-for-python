@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import abc
 import calendar
 import time
 
@@ -14,6 +15,12 @@ from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import ContentDecodePolicy, NetworkTraceLoggingPolicy, ProxyPolicy, RetryPolicy
 from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
 from azure.core.pipeline.transport import RequestsTransport
+from azure.identity._constants import AZURE_CLI_CLIENT_ID
+
+try:
+    ABC = abc.ABC
+except AttributeError:  # Python 2.7, abc exists, but not ABC
+    ABC = abc.ABCMeta("ABC", (object,), {"__slots__": ()})  # type: ignore
 
 try:
     from typing import TYPE_CHECKING
@@ -29,7 +36,7 @@ if TYPE_CHECKING:
     from azure.core.pipeline.policies import HTTPPolicy
 
 
-class AuthnClientBase(object):
+class AuthnClientBase(ABC):
     """Sans I/O authentication client methods"""
 
     def __init__(self, auth_url, **kwargs):  # pylint:disable=unused-argument
@@ -38,20 +45,48 @@ class AuthnClientBase(object):
             raise ValueError("auth_url should be the URL of an OAuth endpoint")
         super(AuthnClientBase, self).__init__()
         self._auth_url = auth_url
-        self._cache = TokenCache()
+        self._cache = kwargs.get("cache") or TokenCache()  # type: TokenCache
 
     def get_cached_token(self, scopes):
         # type: (Iterable[str]) -> Optional[AccessToken]
-        tokens = self._cache.find(TokenCache.CredentialType.ACCESS_TOKEN, list(scopes))
+        tokens = self._cache.find(TokenCache.CredentialType.ACCESS_TOKEN, target=list(scopes))
         for token in tokens:
-            if all((scope in token["target"] for scope in scopes)):
-                expires_on = int(token["expires_on"])
-                if expires_on - 300 > int(time.time()):
-                    return AccessToken(token["secret"], expires_on)
+            expires_on = int(token["expires_on"])
+            if expires_on - 300 > int(time.time()):
+                return AccessToken(token["secret"], expires_on)
         return None
+
+    def get_refresh_tokens(self, scopes, account):
+        """Yields all an account's cached refresh tokens except those which have a scope (which is unexpected) that
+        isn't a superset of ``scopes``."""
+
+        for token in self._cache.find(
+            TokenCache.CredentialType.REFRESH_TOKEN, query={"home_account_id": account.get("home_account_id")}
+        ):
+            if "target" in token and not all((scope in token["target"] for scope in scopes)):
+                continue
+            yield token
+
+    def get_refresh_token_grant_request(self, refresh_token, scopes):
+        data = {
+            "grant_type": "refresh_token",
+            "refresh_token": refresh_token["secret"],
+            "scope": " ".join(scopes),
+            "client_id": AZURE_CLI_CLIENT_ID,  # TODO: first-party app for SDK?
+        }
+        return self._prepare_request(form_data=data)
+
+    @abc.abstractmethod
+    def request_token(self, scopes, method, headers, form_data, params, **kwargs):
+        pass
+
+    @abc.abstractmethod
+    def obtain_token_by_refresh_token(self, scopes, username):
+        pass
 
     def _deserialize_and_cache_token(self, response, scopes, request_time):
         # type: (PipelineResponse, Iterable[str], int) -> AccessToken
+        """Deserialize and cache an access token from an AAD response"""
 
         # ContentDecodePolicy sets this, and should have raised if it couldn't deserialize the response
         payload = response.context[ContentDecodePolicy.CONTEXT_NAME]
@@ -164,6 +199,34 @@ class AuthnClient(AuthnClientBase):
         response = self._pipeline.run(request, stream=False, **kwargs)
         token = self._deserialize_and_cache_token(response=response, scopes=scopes, request_time=request_time)
         return token
+
+    def obtain_token_by_refresh_token(self, scopes, username):
+        # type: (Iterable[str], str) -> Optional[AccessToken]
+        """Acquire an access token using a cached refresh token. Returns ``None`` when that fails, or the cache has no
+        refresh token. This is only used by SharedTokenCacheCredential and isn't robust enough for anything else."""
+
+        # find account matching username
+        accounts = self._cache.find(TokenCache.CredentialType.ACCOUNT, query={"username": username})
+        for account in accounts:
+            # try each refresh token that might work, return the first access token acquired
+            for token in self.get_refresh_tokens(scopes, account):
+                # currently we only support login.microsoftonline.com, which has an alias login.windows.net
+                # TODO: this must change to support sovereign clouds
+                environment = account.get("environment")
+                if not environment or (environment not in self._auth_url and environment != "login.windows.net"):
+                    continue
+
+                request = self.get_refresh_token_grant_request(token, scopes)
+                request_time = int(time.time())
+                response = self._pipeline.run(request, stream=False)
+                try:
+                    return self._deserialize_and_cache_token(
+                        response=response, scopes=scopes, request_time=request_time
+                    )
+                except ClientAuthenticationError:
+                    continue
+
+        return None
 
     @staticmethod
     def _create_config(**kwargs):

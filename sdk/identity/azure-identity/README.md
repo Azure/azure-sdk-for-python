@@ -62,7 +62,7 @@ configuration:
 
 |credential class|identity|configuration
 |-|-|-
-|`DefaultAzureCredential`|service principal, managed identity or user|none for managed identity; [environment variables](#environment-variables) for service principal or user authentication
+|`DefaultAzureCredential`|service principal, managed identity, user|none for managed identity, [environment variables](#environment-variables) for service principal or user authentication
 |`ManagedIdentityCredential`|managed identity|none
 |`EnvironmentCredential`|service principal|[environment variables](#environment-variables)
 |`ClientSecretCredential`|service principal|constructor parameters
@@ -92,6 +92,13 @@ Authenticating as a managed identity requires no configuration, but does
 require platform support. See the
 [managed identity documentation](https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/services-support-managed-identities)
 for more information.
+
+### Single sign-on
+During local development on Windows, `DefaultAzureCredential` can authenticate
+using a single sign-on shared with Microsoft applications, for example Visual
+Studio 2019. Because you may have multiple signed in identities, to
+authenticate this way you must set the environment variable `AZURE_USERNAME`
+with your desired identity's username (typically an email address).
 
 ## Environment variables
 

@@ -10,6 +10,9 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING
 )
 
+from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.storage.blob._generated.models import CpkInfo
+
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._shared.policies_async import ExponentialRetry
 from .._shared.downloads_async import StorageStreamDownloader
@@ -114,6 +117,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         self._client = AzureBlobStorage(url=self.url, pipeline=self._pipeline, loop=loop)
         self._loop = loop
 
+    @distributed_trace_async
     async def get_account_information(self, **kwargs): # type: ignore
         # type: (Optional[int]) -> Dict[str, str]
         """Gets information related to the storage account in which the blob resides.
@@ -129,6 +133,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace_async
     async def upload_blob(
             self, data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
             blob_type=BlobType.BlockBlob,  # type: Union[str, BlobType]
@@ -194,10 +199,6 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the resource does not exist, and fail the
             operation if it does exist.
-        :param int timeout:
-            The timeout parameter is expressed in seconds. This method may make
-            multiple calls to the Azure service and the timeout will apply to
-            each call individually.
         :param ~azure.storage.blob.models.PremiumPageBlobTier premium_page_blob_tier:
             A page blob tier value to set the blob to. The tier correlates to the size of the
             blob and number of allowed IOPS. This is only applicable to page blobs on
@@ -211,8 +212,17 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :param int max_connections:
             Maximum number of parallel connections to use when the blob size exceeds
             64MB.
+        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
+            As the encryption key itself is provided in the request,
+            a secure connection must be established to transfer the key.
         :param str encoding:
             Defaults to UTF-8.
+        :param int timeout:
+            The timeout parameter is expressed in seconds. This method may make
+            multiple calls to the Azure service and the timeout will apply to
+            each call individually.
         :returns: Blob-updated property dict (Etag and last modified)
         :rtype: dict[str, Any]
 
@@ -240,6 +250,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             return await upload_page_blob(**options)
         return await upload_append_blob(**options)
 
+    @distributed_trace_async
     async def download_blob(self, offset=None, length=None, validate_content=False, **kwargs):
         # type: (Optional[int], Optional[int], bool, Any) -> Iterable[bytes]
         """Downloads a blob to a stream with automatic chunking.
@@ -284,6 +295,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the resource does not exist, and fail the
             operation if it does exist.
+        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
+            As the encryption key itself is provided in the request,
+            a secure connection must be established to transfer the key.
         :param int timeout:
             The timeout parameter is expressed in seconds. This method may make
             multiple calls to the Azure service and the timeout will apply to
@@ -312,6 +328,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         await downloader.setup(extra_properties=extra_properties)
         return downloader
 
+    @distributed_trace_async
     async def delete_blob(self, delete_snapshots=False, **kwargs):
         # type: (bool, Any) -> None
         """Marks the specified blob for deletion.
@@ -374,6 +391,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace_async
     async def undelete_blob(self, **kwargs):
         # type: (Any) -> None
         """Restores soft-deleted blobs or snapshots.
@@ -398,6 +416,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace_async
     async def get_blob_properties(self, **kwargs):
         # type: (Any) -> BlobProperties
         """Returns all user-defined metadata, standard HTTP properties, and
@@ -428,6 +447,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the resource does not exist, and fail the
             operation if it does exist.
+        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
+            As the encryption key itself is provided in the request,
+            a secure connection must be established to transfer the key.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: BlobProperties
@@ -447,6 +471,13 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             if_unmodified_since=kwargs.pop('if_unmodified_since', None),
             if_match=kwargs.pop('if_match', None),
             if_none_match=kwargs.pop('if_none_match', None))
+        cpk = kwargs.pop('cpk', None)
+        cpk_info = None
+        if cpk:
+            if self.scheme.lower() != 'https':
+                raise ValueError("Customer provided encryption key must be used over HTTPS.")
+            cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
+                               encryption_algorithm=cpk.algorithm)
         try:
             blob_props = await self._client.blob.get_properties(
                 timeout=kwargs.pop('timeout', None),
@@ -454,6 +485,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
                 lease_access_conditions=access_conditions,
                 modified_access_conditions=mod_conditions,
                 cls=deserialize_blob_properties,
+                cpk_info=cpk_info,
                 **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)
@@ -461,6 +493,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         blob_props.container = self.container_name
         return blob_props # type: ignore
 
+    @distributed_trace_async
     async def set_http_headers(self, content_settings=None, **kwargs):
         # type: (Optional[ContentSettings], Any) -> None
         """Sets system properties on the blob.
@@ -505,6 +538,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace_async
     async def set_blob_metadata(self, metadata=None, **kwargs):
         # type: (Optional[Dict[str, str]], Any) -> Dict[str, Union[str, datetime]]
         """Sets user-defined metadata for the blob as one or more name-value pairs.
@@ -539,6 +573,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the resource does not exist, and fail the
             operation if it does exist.
+        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
+            As the encryption key itself is provided in the request,
+            a secure connection must be established to transfer the key.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified)
@@ -549,6 +588,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace_async
     async def create_page_blob(  # type: ignore
             self, size,  # type: int
             content_settings=None,  # type: Optional[ContentSettings]
@@ -598,6 +638,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the resource does not exist, and fail the
             operation if it does exist.
+        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
+            As the encryption key itself is provided in the request,
+            a secure connection must be established to transfer the key.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :param ~azure.storage.blob.models.PremiumPageBlobTier premium_page_blob_tier:
@@ -619,6 +664,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace_async
     async def create_append_blob(self, content_settings=None, metadata=None, **kwargs):
         # type: (Optional[ContentSettings], Optional[Dict[str, str]], Any) -> Dict[str, Union[str, datetime]]
         """Creates a new Append Blob.
@@ -653,6 +699,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the resource does not exist, and fail the
             operation if it does exist.
+        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
+            As the encryption key itself is provided in the request,
+            a secure connection must be established to transfer the key.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified).
@@ -667,6 +718,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace_async
     async def create_snapshot(self, metadata=None, **kwargs):
         # type: (Optional[Dict[str, str]], Any) -> Dict[str, Union[str, datetime]]
         """Creates a snapshot of the blob.
@@ -707,6 +759,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
         :type lease: ~azure.storage.blob.aio.lease_async.LeaseClient or str
+        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
+            As the encryption key itself is provided in the request,
+            a secure connection must be established to transfer the key.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Snapshot ID, Etag, and last modified).
@@ -726,6 +783,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace_async
     async def start_copy_from_url(self, source_url, metadata=None, incremental_copy=False, **kwargs):
         # type: (str, Optional[Dict[str, str]], bool, Any) -> Any
         """Copies a blob asynchronously.
@@ -877,6 +935,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace_async
     async def abort_copy(self, copy_id, **kwargs):
         # type: (Union[str, BlobProperties], Any) -> None
         """Abort an ongoing copy operation.
@@ -904,6 +963,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace_async
     async def acquire_lease(self, lease_duration=-1, lease_id=None, **kwargs):
         # type: (int, Optional[str], Optional[int], Any) -> LeaseClient
         """Requests a new lease.
@@ -958,6 +1018,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         await lease.acquire(lease_duration=lease_duration, **kwargs)
         return lease
 
+    @distributed_trace_async
     async def set_standard_blob_tier(self, standard_blob_tier, **kwargs):
         # type: (Union[str, StandardBlobTier], Any) -> None
         """This operation sets the tier on a block blob.
@@ -993,6 +1054,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace_async
     async def stage_block(
             self, block_id,  # type: str
             data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
@@ -1024,6 +1086,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :type lease: ~azure.storage.blob.aio.lease_async.LeaseClient or str
         :param str encoding:
             Defaults to UTF-8.
+        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
+            As the encryption key itself is provided in the request,
+            a secure connection must be established to transfer the key.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
@@ -1039,6 +1106,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace_async
     async def stage_block_from_url(
             self, block_id,  # type: str
             source_url,  # type: str
@@ -1067,6 +1135,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             Required if the blob has an active lease. Value can be a LeaseClient object
             or the lease ID as a string.
         :type lease: ~azure.storage.blob.aio.lease_async.LeaseClient or str
+        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
+            As the encryption key itself is provided in the request,
+            a secure connection must be established to transfer the key.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None
@@ -1083,6 +1156,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace_async
     async def get_block_list(self, block_list_type="committed", **kwargs):
         # type: (Optional[str], Any) -> Tuple[List[BlobBlock], List[BlobBlock]]
         """The Get Block List operation retrieves the list of blocks that have
@@ -1113,6 +1187,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             process_storage_error(error)
         return self._get_block_list_result(blocks)
 
+    @distributed_trace_async
     async def commit_block_list( # type: ignore
             self, block_list,  # type: List[BlobBlock]
             content_settings=None,  # type: Optional[ContentSettings]
@@ -1163,6 +1238,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the resource does not exist, and fail the
             operation if it does exist.
+        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
+            As the encryption key itself is provided in the request,
+            a secure connection must be established to transfer the key.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified).
@@ -1179,6 +1259,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace_async
     async def set_premium_page_blob_tier(self, premium_page_blob_tier, **kwargs):
         # type: (Union[str, PremiumPageBlobTier], Optional[int], Optional[Union[LeaseClient, str]], **Any) -> None
         """Sets the page blob tiers on the blob. This API is only supported for page blobs on premium accounts.
@@ -1210,6 +1291,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace_async
     async def get_page_ranges( # type: ignore
             self, start_range=None, # type: Optional[int]
             end_range=None, # type: Optional[int]
@@ -1284,6 +1366,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             process_storage_error(error)
         return self._get_page_ranges_result(ranges)
 
+    @distributed_trace_async
     async def set_sequence_number( # type: ignore
             self, sequence_number_action,  # type: Union[str, SequenceNumberAction]
             sequence_number=None,  # type: Optional[str]
@@ -1336,6 +1419,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace_async
     async def resize_blob(self, size, **kwargs):
         # type: (int, Any) -> Dict[str, Union[str, datetime]]
         """Resizes a page blob to the specified size.
@@ -1370,6 +1454,10 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the resource does not exist, and fail the
             operation if it does exist.
+        :param ~azure.storage.blob.models.PremiumPageBlobTier premium_page_blob_tier:
+            A page blob tier value to set the blob to. The tier correlates to the size of the
+            blob and number of allowed IOPS. This is only applicable to page blobs on
+            premium storage accounts.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified).
@@ -1381,6 +1469,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace_async
     async def upload_page( # type: ignore
             self, page,  # type: bytes
             start_range,  # type: int
@@ -1447,6 +1536,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             header to write the page only if the blob's ETag value does not
             match the value specified. If the values are identical, the Blob
             service fails.
+        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
+            As the encryption key itself is provided in the request,
+            a secure connection must be established to transfer the key.
         :param str encoding:
             Defaults to UTF-8.
         :param int timeout:
@@ -1455,9 +1549,9 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :rtype: dict(str, Any)
         """
         options = self._upload_page_options(
-            page,
-            start_range,
-            end_range,
+            page=page,
+            start_range=start_range,
+            end_range=end_range,
             length=length,
             validate_content=validate_content,
             **kwargs)
@@ -1466,6 +1560,112 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace_async
+    async def upload_pages_from_url(self, source_url,  # type: str
+                                    range_start,  # type: int
+                                    range_end,  # type: int
+                                    source_range_start,  # type: int
+                                    source_content_md5=None,  # type: Optional[bytes]
+                                    **kwargs
+                                    ):
+        # type: (...) -> Dict[str, Any]
+        """
+        Updates a range of pages to a page blob where the contents are read from a URL.
+
+        :param str source_url:
+            The URL of the source data. It can point to any Azure Blob or File, that is either public or has a
+            shared access signature attached.
+        :param int range_start:
+            Start of byte range to use for writing to a section of the blob.
+            Pages must be aligned with 512-byte boundaries, the start offset
+            must be a modulus of 512 and the end offset must be a modulus of
+            512-1. Examples of valid byte ranges are 0-511, 512-1023, etc.
+        :param int range_end:
+            End of byte range to use for writing to a section of the blob.
+            Pages must be aligned with 512-byte boundaries, the start offset
+            must be a modulus of 512 and the end offset must be a modulus of
+            512-1. Examples of valid byte ranges are 0-511, 512-1023, etc.
+        :param int source_range_start:
+            This indicates the start of the range of bytes(inclusive) that has to be taken from the copy source.
+            The service will read the same number of bytes as the destination range (end_range-start_range).
+        :param bytes source_content_md5:
+            If given, the service will calculate the MD5 hash of the block content and compare against this value.
+        :param datetime source_if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only
+            if the source resource has been modified since the specified time.
+        :param datetime source_if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the source resource has not been modified since the specified date/time.
+        :param str source_if_match:
+            An ETag value, or the wildcard character (*). Specify this header to perform
+            the operation only if the source resource's ETag matches the value specified.
+        :param str source_if_none_match:
+            An ETag value, or the wildcard character (*). Specify this header
+            to perform the operation only if the source resource's ETag does not match
+            the value specified. Specify the wildcard character (*) to perform
+            the operation only if the source resource does not exist, and fail the
+            operation if it does exist.
+        :param str lease:
+            Required if the blob has an active lease.
+        :param int if_sequence_number_lte:
+            If the blob's sequence number is less than or equal to
+            the specified value, the request proceeds; otherwise it fails.
+        :param int if_sequence_number_lt:
+            If the blob's sequence number is less than the specified
+            value, the request proceeds; otherwise it fails.
+        :param int if_sequence_number_eq:
+            If the blob's sequence number is equal to the specified
+            value, the request proceeds; otherwise it fails.
+        :param datetime if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only
+            if the resource has been modified since the specified time.
+        :param datetime if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the resource has not been modified since the specified date/time.
+        :param str if_match:
+            An ETag value, or the wildcard character (*). Specify this header to perform
+            the operation only if the resource's ETag matches the value specified.
+        :param str if_none_match:
+            An ETag value, or the wildcard character (*). Specify this header
+            to perform the operation only if the resource's ETag does not match
+            the value specified. Specify the wildcard character (*) to perform
+            the operation only if the resource does not exist, and fail the
+            operation if it does exist.
+        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
+            As the encryption key itself is provided in the request,
+            a secure connection must be established to transfer the key.
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
+        """
+
+        options = self._upload_pages_from_url_options(
+            source_url=source_url,
+            range_start=range_start,
+            range_end=range_end,
+            source_range_start=source_range_start,
+            source_content_md5=source_content_md5,
+            **kwargs
+        )
+        try:
+            return await self._client.page_blob.upload_pages_from_url(**options)  # type: ignore
+        except StorageErrorException as error:
+            process_storage_error(error)
+
+    @distributed_trace_async
     async def clear_page(self, start_range, end_range, **kwargs):
         # type: (int, int) -> Dict[str, Union[str, datetime]]
         """Clears a range of pages.
@@ -1514,6 +1714,10 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             header to write the page only if the blob's ETag value does not
             match the value specified. If the values are identical, the Blob
             service fails.
+        :param ~azure.storage.blob.models.PremiumPageBlobTier premium_page_blob_tier:
+            A page blob tier value to set the blob to. The tier correlates to the size of the
+            blob and number of allowed IOPS. This is only applicable to page blobs on
+            premium storage accounts.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag and last modified).
@@ -1525,6 +1729,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace_async
     async def append_block( # type: ignore
             self, data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
             length=None,  # type: Optional[int]
@@ -1586,6 +1791,11 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             operation if it does exist.
         :param str encoding:
             Defaults to UTF-8.
+        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
+            As the encryption key itself is provided in the request,
+            a secure connection must be established to transfer the key.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: Blob-updated property dict (Etag, last modified, append offset, committed block count).
@@ -1601,5 +1811,106 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         )
         try:
             return await self._client.append_blob.append_block(**options)  # type: ignore
+        except StorageErrorException as error:
+            process_storage_error(error)
+
+    @distributed_trace_async()
+    async def append_block_from_url(self, copy_source_url,  # type: str
+                                    source_range_start=None,  # type Optional[int]
+                                    source_range_end=None,  # type Optional[int]
+                                    source_content_md5=None,  # type: Optional[bytearray]
+                                    maxsize_condition=None,  # type: Optional[int]
+                                    appendpos_condition=None,  # type: Optional[int]
+                                    **kwargs):
+        # type: (...) -> Dict[str, Union[str, datetime, int]]
+        """
+        Creates a new block to be committed as part of a blob, where the contents are read from a source url.
+
+        :param str copy_source_url:
+            The URL of the source data. It can point to any Azure Blob or File, that is either public or has a
+            shared access signature attached.
+        :param int source_range_start:
+            This indicates the start of the range of bytes(inclusive) that has to be taken from the copy source.
+        :param int source_range_end:
+            This indicates the end of the range of bytes(inclusive) that has to be taken from the copy source.
+        :param bytearray source_content_md5:
+            If given, the service will calculate the MD5 hash of the block content and compare against this value.
+        :param int maxsize_condition:
+            Optional conditional header. The max length in bytes permitted for
+            the append blob. If the Append Block operation would cause the blob
+            to exceed that limit or if the blob size is already greater than the
+            value specified in this header, the request will fail with
+            MaxBlobSizeConditionNotMet error (HTTP status code 412 - Precondition Failed).
+        :param int appendpos_condition:
+            Optional conditional header, used only for the Append Block operation.
+            A number indicating the byte offset to compare. Append Block will
+            succeed only if the append position is equal to this number. If it
+            is not, the request will fail with the
+            AppendPositionConditionNotMet error
+            (HTTP status code 412 - Precondition Failed).
+        :param ~azure.storage.blob.lease.LeaseClient or str lease:
+            Required if the blob has an active lease. Value can be a LeaseClient object
+            or the lease ID as a string.
+        :param datetime if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only
+            if the resource has been modified since the specified time.
+        :param datetime if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the resource has not been modified since the specified date/time.
+        :param str if_match:
+            An ETag value, or the wildcard character (*). Specify this header to perform
+            the operation only if the resource's ETag matches the value specified.
+        :param str if_none_match:
+            An ETag value, or the wildcard character (*). Specify this header
+            to perform the operation only if the resource's ETag does not match
+            the value specified. Specify the wildcard character (*) to perform
+            the operation only if the resource does not exist, and fail the
+            operation if it does exist.
+        :param datetime source_if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only
+            if the source resource has been modified since the specified time.
+        :param datetime source_if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the source resource has not been modified since the specified date/time.
+        :param str source_if_match:
+            An ETag value, or the wildcard character (*). Specify this header to perform
+            the operation only if the source resource's ETag matches the value specified.
+        :param str source_if_none_match:
+            An ETag value, or the wildcard character (*). Specify this header
+            to perform the operation only if the source resource's ETag does not match
+            the value specified. Specify the wildcard character (*) to perform
+            the operation only if the source resource does not exist, and fail the
+            operation if it does exist.
+        :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
+            Encrypts the data on the service-side with the given key.
+            Use of customer-provided keys must be done over HTTPS.
+            As the encryption key itself is provided in the request,
+            a secure connection must be established to transfer the key.
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
+        """
+        options = self._append_block_from_url_options(
+            copy_source_url,
+            source_range_start=source_range_start,
+            source_range_end=source_range_end,
+            source_content_md5=source_content_md5,
+            maxsize_condition=maxsize_condition,
+            appendpos_condition=appendpos_condition,
+            **kwargs
+        )
+        try:
+            return await self._client.append_blob.append_block_from_url(**options)  # type: ignore
         except StorageErrorException as error:
             process_storage_error(error)

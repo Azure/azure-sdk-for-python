@@ -8,8 +8,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is
 # regenerated.
 # --------------------------------------------------------------------------
-# pylint: skip-file
 
 from ._azure_blob_storage_async import AzureBlobStorage
-from ._configuration_async import AzureBlobStorageConfiguration
-__all__ = ['AzureBlobStorage', 'AzureBlobStorageConfiguration']
+__all__ = ['AzureBlobStorage']

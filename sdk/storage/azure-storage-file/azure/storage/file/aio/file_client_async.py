@@ -14,6 +14,8 @@ from azure.core.async_paging import AsyncItemPaged
 
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
+from .._parser import _datetime_to_str, _get_file_permission
+from .._shared.parser import _str
 
 from .._generated.aio import AzureFileStorage
 from .._generated.version import VERSION
@@ -31,7 +33,7 @@ from .models import HandlesPaged
 
 if TYPE_CHECKING:
     from datetime import datetime
-    from ..models import ShareProperties, FilePermissions, ContentSettings, FileProperties
+    from ..models import ShareProperties, ContentSettings, FileProperties, NTFSAttributes
     from .._generated.models import HandleItem
 
 
@@ -45,18 +47,30 @@ async def _upload_file_helper(
     timeout,
     max_connections,
     file_settings,
+    file_attributes="none",
+    file_creation_time="now",
+    file_last_write_time="now",
+    file_permission=None,
+    file_permission_key=None,
     **kwargs
 ):
     try:
         if size is None or size < 0:
             raise ValueError("A content size must be specified for a File.")
         response = await client.create_file(
-            size, content_settings=content_settings, metadata=metadata, timeout=timeout, **kwargs
+            size, content_settings=content_settings, metadata=metadata,
+            file_attributes=file_attributes,
+            file_creation_time=file_creation_time,
+            file_last_write_time=file_last_write_time,
+            file_permission=file_permission,
+            file_permission_key=file_permission_key,
+            timeout=timeout,
+            **kwargs
         )
         if size == 0:
             return response
 
-        return await upload_data_chunks(
+        responses = await upload_data_chunks(
             service=client,
             uploader_class=FileChunkUploader,
             total_size=size,
@@ -67,6 +81,7 @@ async def _upload_file_helper(
             timeout=timeout,
             **kwargs
         )
+        return sorted(responses, key=lambda r: r.get('last_modified'))[-1]
     except StorageErrorException as error:
         process_storage_error(error)
 
@@ -132,6 +147,11 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         size,  # type: int
         content_settings=None,  # type: Optional[ContentSettings]
         metadata=None,  # type: Optional[Dict[str, str]]
+        file_attributes="none",  # type: Union[str, NTFSAttributes]
+        file_creation_time="now",  # type: Union[str, datetime]
+        file_last_write_time="now",  # type: Union[str, datetime]
+        file_permission=None,  # type: Optional[str]
+        file_permission_key=None,  # type: Optional[str]
         timeout=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
@@ -149,6 +169,29 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         :type metadata: dict(str, str)
         :param int timeout:
             The timeout parameter is expressed in seconds.
+        :param file_attributes:
+            The file system attributes for files and directories.
+            If not set, the default value would be "None" and the attributes will be set to "Archive".
+            Here is an example for when the var type is str: 'Temporary|Archive'.
+            file_attributes value is not case sensitive.
+        :type file_attributes: str or :class:`~azure.storage.file.models.NTFSAttributes`
+        :param file_creation_time: Creation time for the file
+            Default value: Now.
+        :type file_creation_time: str or datetime
+        :param file_last_write_time: Last write time for the file
+            Default value: Now.
+        :type file_last_write_time: str or datetime
+        :param file_permission: If specified the permission (security
+            descriptor) shall be set for the directory/file. This header can be
+            used if Permission size is <= 8KB, else x-ms-file-permission-key
+            header shall be used. Default value: Inherit. If SDDL is specified as
+            input, it must have owner, group and dacl. Note: Only one of the
+            x-ms-file-permission or x-ms-file-permission-key should be specified.
+        :type file_permission: str
+        :param file_permission_key: Key of the permission to be set for the
+            directory/file. Note: Only one of the x-ms-file-permission or
+            x-ms-file-permission-key should be specified.
+        :type file_permission_key: str
         :returns: File-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
 
@@ -175,13 +218,19 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
                 file_content_language=content_settings.content_language,
                 file_content_disposition=content_settings.content_disposition,
             )
+        file_permission = _get_file_permission(file_permission, file_permission_key, 'Inherit')
         try:
             return await self._client.file.create(  # type: ignore
                 file_content_length=size,
-                timeout=timeout,
                 metadata=metadata,
+                file_attributes=_str(file_attributes),
+                file_creation_time=_datetime_to_str(file_creation_time),
+                file_last_write_time=_datetime_to_str(file_last_write_time),
+                file_permission=file_permission,
+                file_permission_key=file_permission_key,
                 file_http_headers=file_http_headers,
                 headers=headers,
+                timeout=timeout,
                 cls=return_response_headers,
                 **kwargs
             )
@@ -190,15 +239,19 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
 
     @distributed_trace_async
     async def upload_file(
-        self,
-        data,  # type: Any
+        self, data,  # type: Any
         length=None,  # type: Optional[int]
         metadata=None,  # type: Optional[Dict[str, str]]
         content_settings=None,  # type: Optional[ContentSettings]
         validate_content=False,  # type: bool
         max_connections=1,  # type: Optional[int]
-        timeout=None,  # type: Optional[int]
+        file_attributes="none",  # type: Union[str, NTFSAttributes]
+        file_creation_time="now",  # type: Union[str, datetime]
+        file_last_write_time="now",  # type: Union[str, datetime]
+        file_permission=None,  # type: Optional[str]
+        file_permission_key=None,  # type: Optional[str]
         encoding="UTF-8",  # type: str
+        timeout=None,  # type: Optional[int]
         **kwargs  # type: Any
     ):
         # type: (...) -> Dict[str, Any]
@@ -226,6 +279,30 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             The timeout parameter is expressed in seconds.
         :param str encoding:
             Defaults to UTF-8.
+        :param file_attributes:
+            The file system attributes for files and directories.
+            If not set, the default value would be "None" and the attributes will be set to "Archive".
+            Here is an example for when the var type is str: 'Temporary|Archive'.
+            file_attributes value is not case sensitive.
+        :type file_attributes: str or :class:`~azure.storage.file.models.NTFSAttributes`
+        :param file_creation_time: Creation time for the file
+            Default value: Now.
+        :type file_creation_time: str or datetime
+        :param file_last_write_time: Last write time for the file
+            Default value: Now.
+        :type file_last_write_time: str or datetime
+        :param file_permission: If specified the permission (security
+            descriptor) shall be set for the directory/file. This header can be
+            used if Permission size is <= 8KB, else x-ms-file-permission-key
+            header shall be used. Default value: Inherit. If SDDL is specified as
+            input, it must have owner, group and dacl. Note: Only one of the
+            x-ms-file-permission or x-ms-file-permission-key should be specified.
+        :type file_permission: str
+        :param file_permission_key: Key of the permission to be set for the
+            directory/file. Note: Only one of the x-ms-file-permission or
+            x-ms-file-permission-key should be specified.
+        :type file_permission_key: str
+
         :returns: File-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
 
@@ -265,6 +342,11 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             timeout,
             max_connections,
             self._config,
+            file_attributes=file_attributes,
+            file_creation_time=file_creation_time,
+            file_last_write_time=file_last_write_time,
+            file_permission=file_permission,
+            file_permission_key=file_permission_key,
             **kwargs
         )
 
@@ -378,7 +460,7 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError("Encryption not supported.")
         if length is not None and offset is None:
-            raise ValueError("Offset value must not be None is length is set.")
+            raise ValueError("Offset value must not be None if length is set.")
 
         downloader = StorageStreamDownloader(
             service=self._client.file,
@@ -443,7 +525,15 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         return file_props  # type: ignore
 
     @distributed_trace_async
-    async def set_http_headers(self, content_settings, timeout=None, **kwargs):  # type: ignore
+    async def set_http_headers(self, content_settings,  # type: ContentSettings
+                               file_attributes="preserve",  # type: Union[str, NTFSAttributes]
+                               file_creation_time="preserve",  # type: Union[str, datetime]
+                               file_last_write_time="preserve",  # type: Union[str, datetime]
+                               file_permission=None,  # type: Optional[str]
+                               file_permission_key=None,  # type: Optional[str]
+                               timeout=None,  # type: Optional[int]
+                               **kwargs  # Any
+                               ):  # type: ignore
         # type: (ContentSettings, Optional[int], Optional[Any]) -> Dict[str, Any]
         """Sets HTTP headers on the file.
 
@@ -451,6 +541,28 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             ContentSettings object used to set file properties.
         :param int timeout:
             The timeout parameter is expressed in seconds.
+        :param file_attributes:
+            The file system attributes for files and directories.
+            If not set, indicates preservation of existing values.
+            Here is an example for when the var type is str: 'Temporary|Archive'
+        :type file_attributes: str or :class:`~azure.storage.file.models.NTFSAttributes`
+        :param file_creation_time: Creation time for the file
+            Default value: Now.
+        :type file_creation_time: str or datetime
+        :param file_last_write_time: Last write time for the file
+            Default value: Now.
+        :type file_last_write_time: str or datetime
+        :param file_permission: If specified the permission (security
+            descriptor) shall be set for the directory/file. This header can be
+            used if Permission size is <= 8KB, else x-ms-file-permission-key
+            header shall be used. Default value: Inherit. If SDDL is specified as
+            input, it must have owner, group and dacl. Note: Only one of the
+            x-ms-file-permission or x-ms-file-permission-key should be specified.
+        :type file_permission: str
+        :param file_permission_key: Key of the permission to be set for the
+            directory/file. Note: Only one of the x-ms-file-permission or
+            x-ms-file-permission-key should be specified.
+        :type file_permission_key: str
         :returns: File-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
@@ -463,11 +575,17 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
             file_content_language=content_settings.content_language,
             file_content_disposition=content_settings.content_disposition,
         )
+        file_permission = _get_file_permission(file_permission, file_permission_key, 'preserve')
         try:
             return await self._client.file.set_http_headers(  # type: ignore
-                timeout=timeout,
                 file_content_length=file_content_length,
                 file_http_headers=file_http_headers,
+                file_attributes=_str(file_attributes),
+                file_creation_time=_datetime_to_str(file_creation_time),
+                file_last_write_time=_datetime_to_str(file_last_write_time),
+                file_permission=file_permission,
+                file_permission_key=file_permission_key,
+                timeout=timeout,
                 cls=return_response_headers,
                 **kwargs
             )
@@ -558,6 +676,57 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
                 cls=return_response_headers,
                 **kwargs
             )
+        except StorageErrorException as error:
+            process_storage_error(error)
+
+    @distributed_trace_async
+    async def upload_range_from_url(self, source_url,  # type: str
+                                    range_start,  # type: int
+                                    range_end,  # type: int
+                                    source_range_start,  # type: int
+                                    **kwargs  # type: Any
+                                    ):
+        # type: (str, int, int, int, **Any) -> Dict[str, Any]
+        '''
+        Writes the bytes from one Azure File endpoint into the specified range of another Azure File endpoint.
+
+        :param int range_start:
+            Start of byte range to use for updating a section of the file.
+            The range can be up to 4 MB in size.
+            The start_range and end_range params are inclusive.
+            Ex: start_range=0, end_range=511 will download first 512 bytes of file.
+        :param int range_end:
+            End of byte range to use for updating a section of the file.
+            The range can be up to 4 MB in size.
+            The start_range and end_range params are inclusive.
+            Ex: start_range=0, end_range=511 will download first 512 bytes of file.
+        :param str source_url:
+            A URL of up to 2 KB in length that specifies an Azure file or blob.
+            The value should be URL-encoded as it would appear in a request URI.
+            If the source is in another account, the source must either be public
+            or must be authenticated via a shared access signature. If the source
+            is public, no authentication is required.
+            Examples:
+            https://myaccount.file.core.windows.net/myshare/mydir/myfile
+            https://otheraccount.file.core.windows.net/myshare/mydir/myfile?sastoken
+        :param int source_range_start:
+            Start of byte range to use for updating a section of the file.
+            The range can be up to 4 MB in size.
+            The start_range and end_range params are inclusive.
+            Ex: start_range=0, end_range=511 will download first 512 bytes of file.
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
+        '''
+
+        options = self._upload_range_from_url_options(
+            source_url=source_url,
+            range_start=range_start,
+            range_end=range_end,
+            source_range_start=source_range_start,
+            **kwargs
+        )
+        try:
+            return await self._client.file.upload_range_from_url(**options)  # type: ignore
         except StorageErrorException as error:
             process_storage_error(error)
 
@@ -663,13 +832,21 @@ class FileClient(AsyncStorageAccountHostsMixin, FileClientBase):
         """
         try:
             return await self._client.file.set_http_headers(  # type: ignore
-                timeout=timeout, file_content_length=size, cls=return_response_headers, **kwargs
+                file_content_length=size,
+                file_attributes="preserve",
+                file_creation_time="preserve",
+                file_last_write_time="preserve",
+                file_permission="preserve",
+                cls=return_response_headers,
+                timeout=timeout,
+                **kwargs
             )
         except StorageErrorException as error:
             process_storage_error(error)
 
     @distributed_trace
-    def list_handles(self, timeout=None, **kwargs) -> AsyncItemPaged:
+    def list_handles(self, timeout=None, **kwargs):
+        # type: (Optional[int], Any) -> AsyncItemPaged
         """Lists handles for file.
 
         :param int timeout:

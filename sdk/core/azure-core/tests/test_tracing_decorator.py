@@ -67,6 +67,10 @@ class MockClient:
     def check_name_is_different(self):
         time.sleep(0.001)
 
+    @distributed_trace
+    def raising_exception(self):
+        raise ValueError("Something went horribly wrong here")
+
 
 def random_function():
     pass
@@ -188,3 +192,24 @@ class TestDecorator(object):
             assert parent.children[2].children[0].span_data.name == "MockClient.make_request"
             assert parent.children[3].span_data.name == "MockClient.make_request"
             assert not parent.children[3].children
+
+    def test_span_with_exception(self):
+        """Assert that if an exception is raised, the next sibling method is actually a sibling span.
+        """
+        with ContextHelper():
+            exporter = MockExporter()
+            trace = tracer_module.Tracer(sampler=AlwaysOnSampler(), exporter=exporter)
+            with trace.span("overall"):
+                client = MockClient()
+                try:
+                    client.raising_exception()
+                except:
+                    pass
+                client.get_foo()
+            trace.finish()
+            exporter.build_tree()
+            parent = exporter.root
+            assert len(parent.children) == 3
+            assert parent.children[0].span_data.name == "MockClient.__init__"
+            assert parent.children[1].span_data.name == "MockClient.raising_exception"
+            assert parent.children[2].span_data.name == "MockClient.get_foo"

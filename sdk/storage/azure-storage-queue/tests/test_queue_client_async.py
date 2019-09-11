@@ -9,15 +9,14 @@ import platform
 import asyncio
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.storage.queue import VERSION
 from azure.storage.queue.aio import (
     QueueServiceClient,
     QueueClient
 )
-from queuetestcase import (
-    QueueTestCase,
-    record,
-    TestMode
+from asyncqueuetestcase import (
+    AsyncQueueTestCase,
 )
 
 # ------------------------------------------------------------------------------
@@ -25,7 +24,6 @@ SERVICES = {
     QueueServiceClient: 'queue',
     QueueClient: 'queue',
 }
-
 _CONNECTION_ENDPOINTS = {'queue': 'QueueEndpoint'}
 
 _CONNECTION_ENDPOINTS_SECONDARY = {'queue': 'QueueSecondaryEndpoint'}
@@ -42,113 +40,126 @@ class AiohttpTestTransport(AioHttpTransport):
         return response
 
 
-class StorageQueueClientTestAsync(QueueTestCase):
+class StorageQueueClientTestAsync(AsyncQueueTestCase):
     def setUp(self):
         super(StorageQueueClientTestAsync, self).setUp()
-        self.account_name = self.settings.STORAGE_ACCOUNT_NAME
-        self.account_key = self.settings.STORAGE_ACCOUNT_KEY
         self.sas_token = '?sv=2015-04-05&st=2015-04-29T22%3A18%3A26Z&se=2015-04-30T02%3A23%3A26Z&sr=b&sp=rw&sip=168.1.5.60-168.1.5.70&spr=https&sig=Z%2FRHIX5Xcg0Mq2rqI3OlWTjEg2tYkboXr1P9ZUXDtkk%3D'
         self.token_credential = self.generate_oauth_token()
-        self.connection_string = self.settings.CONNECTION_STRING
 
     # --Helpers-----------------------------------------------------------------
-    def validate_standard_account_endpoints(self, service, url_type):
+    def validate_standard_account_endpoints(self, service, url_type, storage_account, storage_account_key):
         self.assertIsNotNone(service)
-        self.assertEqual(service.credential.account_name, self.account_name)
-        self.assertEqual(service.credential.account_key, self.account_key)
-        self.assertTrue('{}.{}.core.windows.net'.format(self.account_name, url_type) in service.url)
-        self.assertTrue('{}-secondary.{}.core.windows.net'.format(self.account_name, url_type) in service.secondary_endpoint)
+        self.assertEqual(service.credential.account_name, storage_account.name)
+        self.assertEqual(service.credential.account_key, storage_account_key)
+        self.assertTrue('{}.{}.core.windows.net'.format(storage_account.name, url_type) in service.url)
+        self.assertTrue('{}-secondary.{}.core.windows.net'.format(storage_account.name, url_type) in service.secondary_endpoint)
 
     # --Direct Parameters Test Cases --------------------------------------------
-    def test_create_service_with_key(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_create_service_with_key(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
 
         for client, url in SERVICES.items():
             # Act
             service = client(
-                self._get_queue_url(), credential=self.account_key, queue='foo', transport=AiohttpTestTransport())
+                self._account_url(storage_account.name), credential=storage_account_key, queue='foo', transport=AiohttpTestTransport())
 
             # Assert
-            self.validate_standard_account_endpoints(service, url)
+            self.validate_standard_account_endpoints(service, url, storage_account, storage_account_key)
             self.assertEqual(service.scheme, 'https')
 
-    def test_create_service_with_connection_string(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_create_service_with_connection_string(self, resource_group, location, storage_account, storage_account_key):
 
         for service_type in SERVICES.items():
             # Act
             service = service_type[0].from_connection_string(
-                self.connection_string, queue="test")
+                self.connection_string(storage_account, storage_account_key), queue="test")
 
             # Assert
-            self.validate_standard_account_endpoints(service, service_type[1])
+            self.validate_standard_account_endpoints(service, service_type[1], storage_account, storage_account_key)
             self.assertEqual(service.scheme, 'https')
 
-    def test_create_service_with_sas(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_create_service_with_sas(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
 
         for service_type in SERVICES:
             # Act
             service = service_type(
-                self._get_queue_url(), credential=self.sas_token, queue='foo')
+                self._account_url(storage_account.name), credential=self.sas_token, queue='foo')
 
             # Assert
             self.assertIsNotNone(service)
-            self.assertTrue(service.url.startswith('https://' + self.account_name + '.queue.core.windows.net'))
+            self.assertTrue(service.url.startswith('https://' + storage_account.name + '.queue.core.windows.net'))
             self.assertTrue(service.url.endswith(self.sas_token))
             self.assertIsNone(service.credential)
 
-    def test_create_service_with_token(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_create_service_with_token(self, resource_group, location, storage_account, storage_account_key):
         for service_type in SERVICES:
             # Act
             service = service_type(
-                self._get_queue_url(), credential=self.token_credential, queue='foo')
+                self._account_url(storage_account.name), credential=self.token_credential, queue='foo')
 
             # Assert
             self.assertIsNotNone(service)
-            self.assertTrue(service.url.startswith('https://' + self.account_name + '.queue.core.windows.net'))
+            self.assertTrue(service.url.startswith('https://' + storage_account.name + '.queue.core.windows.net'))
             self.assertEqual(service.credential, self.token_credential)
             self.assertFalse(hasattr(service.credential, 'account_key'))
             self.assertTrue(hasattr(service.credential, 'get_token'))
 
-    def test_create_service_with_token_and_http(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_create_service_with_token_and_http(self, resource_group, location, storage_account, storage_account_key):
         for service_type in SERVICES:
             # Act
             with self.assertRaises(ValueError):
-                url = self._get_queue_url().replace('https', 'http')
+                url = self._account_url(storage_account.name).replace('https', 'http')
                 service_type(url, credential=self.token_credential, queue='foo')
 
-    def test_create_service_china(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_create_service_china(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
 
         for service_type in SERVICES.items():
             # Act
-            url = self._get_queue_url().replace('core.windows.net', 'core.chinacloudapi.cn')
+            url = self._account_url(storage_account.name).replace('core.windows.net', 'core.chinacloudapi.cn')
             service = service_type[0](
-                url, credential=self.account_key, queue='foo')
+                url, credential=storage_account_key, queue='foo')
 
             # Assert
             self.assertIsNotNone(service)
-            self.assertEqual(service.credential.account_name, self.account_name)
-            self.assertEqual(service.credential.account_key, self.account_key)
+            self.assertEqual(service.credential.account_name, storage_account.name)
+            self.assertEqual(service.credential.account_key, storage_account_key)
             self.assertTrue(service.primary_endpoint.startswith(
-                'https://{}.{}.core.chinacloudapi.cn'.format(self.account_name, service_type[1])))
+                'https://{}.{}.core.chinacloudapi.cn'.format(storage_account.name, service_type[1])))
             self.assertTrue(service.secondary_endpoint.startswith(
-                'https://{}-secondary.{}.core.chinacloudapi.cn'.format(self.account_name, service_type[1])))
+                'https://{}-secondary.{}.core.chinacloudapi.cn'.format(storage_account.name, service_type[1])))
 
-    def test_create_service_protocol(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_create_service_protocol(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
 
         for service_type in SERVICES.items():
             # Act
-            url = self._get_queue_url().replace('https', 'http')
+            url = self._account_url(storage_account.name).replace('https', 'http')
             service = service_type[0](
-                url, credential=self.account_key, queue='foo')
+                url, credential=storage_account_key, queue='foo')
 
             # Assert
-            self.validate_standard_account_endpoints(service, service_type[1])
+            self.validate_standard_account_endpoints(service, service_type[1], storage_account, storage_account_key)
             self.assertEqual(service.scheme, 'http')
 
-    def test_create_service_empty_key(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_create_service_empty_key(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         QUEUE_SERVICES = [QueueServiceClient, QueueClient]
 
@@ -160,7 +171,9 @@ class StorageQueueClientTestAsync(QueueTestCase):
             self.assertEqual(
                 str(e.exception), "You need to provide either a SAS token or an account key to authenticate.")
 
-    def test_create_service_missing_arguments(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_create_service_missing_arguments(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
 
         for service_type in SERVICES:
@@ -169,39 +182,44 @@ class StorageQueueClientTestAsync(QueueTestCase):
                 service = service_type(None)
                 # Assert
 
-    def test_create_service_with_socket_timeout(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_create_service_with_socket_timeout(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
 
         for service_type in SERVICES.items():
             # Act
             default_service = service_type[0](
-                self._get_queue_url(), credential=self.account_key, queue='foo')
+                self._account_url(storage_account.name), credential=storage_account_key, queue='foo')
             service = service_type[0](
-                self._get_queue_url(), credential=self.account_key,
+                self._account_url(storage_account.name), credential=storage_account_key,
                 queue='foo', connection_timeout=22)
 
             # Assert
-            self.validate_standard_account_endpoints(service, service_type[1])
+            self.validate_standard_account_endpoints(service, service_type[1], storage_account, storage_account_key)
             assert service._client._client._pipeline._transport.connection_config.timeout == 22
             assert default_service._client._client._pipeline._transport.connection_config.timeout in [20, (20, 2000)]
 
     # --Connection String Test Cases --------------------------------------------
-
-    def test_create_service_with_connection_string_key(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_create_service_with_connection_string_key(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        conn_string = 'AccountName={};AccountKey={};'.format(self.account_name, self.account_key)
+        conn_string = 'AccountName={};AccountKey={};'.format(storage_account.name, storage_account_key)
 
         for service_type in SERVICES.items():
             # Act
             service = service_type[0].from_connection_string(conn_string, queue='foo')
 
             # Assert
-            self.validate_standard_account_endpoints(service, service_type[1])
+            self.validate_standard_account_endpoints(service, service_type[1], storage_account, storage_account_key)
             self.assertEqual(service.scheme, 'https')
 
-    def test_create_service_with_connection_string_sas(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_create_service_with_connection_string_sas(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        conn_string = 'AccountName={};SharedAccessSignature={};'.format(self.account_name, self.sas_token)
+        conn_string = 'AccountName={};SharedAccessSignature={};'.format(storage_account.name, self.sas_token)
 
         for service_type in SERVICES:
             # Act
@@ -209,14 +227,16 @@ class StorageQueueClientTestAsync(QueueTestCase):
 
             # Assert
             self.assertIsNotNone(service)
-            self.assertTrue(service.url.startswith('https://' + self.account_name + '.queue.core.windows.net'))
+            self.assertTrue(service.url.startswith('https://' + storage_account.name + '.queue.core.windows.net'))
             self.assertTrue(service.url.endswith(self.sas_token))
             self.assertIsNone(service.credential)
 
-    def test_create_service_with_connection_string_endpoint_protocol(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_create_service_with_conn_str_endpoint_protocol(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         conn_string = 'AccountName={};AccountKey={};DefaultEndpointsProtocol=http;EndpointSuffix=core.chinacloudapi.cn;'.format(
-            self.account_name, self.account_key)
+            storage_account.name, storage_account_key)
 
         for service_type in SERVICES.items():
             # Act
@@ -224,63 +244,71 @@ class StorageQueueClientTestAsync(QueueTestCase):
 
             # Assert
             self.assertIsNotNone(service)
-            self.assertEqual(service.credential.account_name, self.account_name)
-            self.assertEqual(service.credential.account_key, self.account_key)
+            self.assertEqual(service.credential.account_name, storage_account.name)
+            self.assertEqual(service.credential.account_key, storage_account_key)
             self.assertTrue(
                 service.primary_endpoint.startswith(
-                    'http://{}.{}.core.chinacloudapi.cn/'.format(self.account_name, service_type[1])))
+                    'http://{}.{}.core.chinacloudapi.cn/'.format(storage_account.name, service_type[1])))
             self.assertTrue(
                 service.secondary_endpoint.startswith(
-                    'http://{}-secondary.{}.core.chinacloudapi.cn'.format(self.account_name, service_type[1])))
+                    'http://{}-secondary.{}.core.chinacloudapi.cn'.format(storage_account.name, service_type[1])))
             self.assertEqual(service.scheme, 'http')
 
-    def test_create_service_with_connection_string_emulated(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_create_service_with_connection_string_emulated(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         for service_type in SERVICES.items():
-            conn_string = 'UseDevelopmentStorage=true;'.format(self.account_name, self.account_key)
+            conn_string = 'UseDevelopmentStorage=true;'.format(storage_account.name, storage_account_key)
 
             # Act
             with self.assertRaises(ValueError):
                 service = service_type[0].from_connection_string(conn_string, queue="foo")
 
-    def test_create_service_with_connection_string_custom_domain(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_create_service_with_connection_string_custom_domain(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         for service_type in SERVICES.items():
             conn_string = 'AccountName={};AccountKey={};QueueEndpoint=www.mydomain.com;'.format(
-                self.account_name, self.account_key)
+                storage_account.name, storage_account_key)
 
             # Act
             service = service_type[0].from_connection_string(conn_string, queue="foo")
 
             # Assert
             self.assertIsNotNone(service)
-            self.assertEqual(service.credential.account_name, self.account_name)
-            self.assertEqual(service.credential.account_key, self.account_key)
+            self.assertEqual(service.credential.account_name, storage_account.name)
+            self.assertEqual(service.credential.account_key, storage_account_key)
             self.assertTrue(service.primary_endpoint.startswith('https://www.mydomain.com/'))
-            self.assertTrue(service.secondary_endpoint.startswith('https://' + self.account_name + '-secondary.queue.core.windows.net'))
+            self.assertTrue(service.secondary_endpoint.startswith('https://' + storage_account.name + '-secondary.queue.core.windows.net'))
 
-    def test_create_service_with_connection_string_custom_domain_trailing_slash(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_create_serv_with_cs_custom_dmn_trlng_slash(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         for service_type in SERVICES.items():
             conn_string = 'AccountName={};AccountKey={};QueueEndpoint=www.mydomain.com/;'.format(
-                self.account_name, self.account_key)
+                storage_account.name, storage_account_key)
 
             # Act
             service = service_type[0].from_connection_string(conn_string, queue="foo")
 
             # Assert
             self.assertIsNotNone(service)
-            self.assertEqual(service.credential.account_name, self.account_name)
-            self.assertEqual(service.credential.account_key, self.account_key)
+            self.assertEqual(service.credential.account_name, storage_account.name)
+            self.assertEqual(service.credential.account_key, storage_account_key)
             self.assertTrue(service.primary_endpoint.startswith('https://www.mydomain.com/'))
-            self.assertTrue(service.secondary_endpoint.startswith('https://' + self.account_name + '-secondary.queue.core.windows.net'))
+            self.assertTrue(service.secondary_endpoint.startswith('https://' + storage_account.name + '-secondary.queue.core.windows.net'))
 
 
-    def test_create_service_with_connection_string_custom_domain_secondary_override(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_create_service_with_cs_custom_dmn_sec_override(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         for service_type in SERVICES.items():
             conn_string = 'AccountName={};AccountKey={};QueueEndpoint=www.mydomain.com/;'.format(
-                self.account_name, self.account_key)
+                storage_account.name, storage_account_key)
 
             # Act
             service = service_type[0].from_connection_string(
@@ -288,17 +316,18 @@ class StorageQueueClientTestAsync(QueueTestCase):
 
             # Assert
             self.assertIsNotNone(service)
-            self.assertEqual(service.credential.account_name, self.account_name)
-            self.assertEqual(service.credential.account_key, self.account_key)
+            self.assertEqual(service.credential.account_name, storage_account.name)
+            self.assertEqual(service.credential.account_key, storage_account_key)
             self.assertTrue(service.primary_endpoint.startswith('https://www.mydomain.com/'))
             self.assertTrue(service.secondary_endpoint.startswith('https://www-sec.mydomain.com/'))
 
-
-    def test_create_service_with_connection_string_fails_if_secondary_without_primary(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_create_service_with_cs_fails_if_sec_without_prim(self, resource_group, location, storage_account, storage_account_key):
         for service_type in SERVICES.items():
             # Arrange
             conn_string = 'AccountName={};AccountKey={};{}=www.mydomain.com;'.format(
-                self.account_name, self.account_key,
+                storage_account.name, storage_account_key,
                 _CONNECTION_ENDPOINTS_SECONDARY.get(service_type[1]))
 
             # Act
@@ -307,12 +336,14 @@ class StorageQueueClientTestAsync(QueueTestCase):
             with self.assertRaises(ValueError):
                 service = service_type[0].from_connection_string(conn_string, queue="foo")
 
-    def test_create_service_with_connection_string_succeeds_if_secondary_with_primary(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_create_service_with_cs_succeeds_if_sec_with_prim(self, resource_group, location, storage_account, storage_account_key):
         for service_type in SERVICES.items():
             # Arrange
             conn_string = 'AccountName={};AccountKey={};{}=www.mydomain.com;{}=www-sec.mydomain.com;'.format(
-                self.account_name,
-                self.account_key,
+                storage_account.name,
+                storage_account_key,
                 _CONNECTION_ENDPOINTS.get(service_type[1]),
                 _CONNECTION_ENDPOINTS_SECONDARY.get(service_type[1]))
 
@@ -321,14 +352,17 @@ class StorageQueueClientTestAsync(QueueTestCase):
 
             # Assert
             self.assertIsNotNone(service)
-            self.assertEqual(service.credential.account_name, self.account_name)
-            self.assertEqual(service.credential.account_key, self.account_key)
+            self.assertEqual(service.credential.account_name, storage_account.name)
+            self.assertEqual(service.credential.account_key, storage_account_key)
             self.assertTrue(service.primary_endpoint.startswith('https://www.mydomain.com/'))
             self.assertTrue(service.secondary_endpoint.startswith('https://www-sec.mydomain.com/'))
 
-    async def _test_request_callback_signed_header(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncQueueTestCase.await_prepared_test
+    async def test_request_callback_signed_header(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        service = QueueServiceClient(self._get_queue_url(), credential=self.account_key)
+        service = QueueServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
         name = self.get_resource_name('cont')
 
         # Act
@@ -343,14 +377,12 @@ class StorageQueueClientTestAsync(QueueTestCase):
         finally:
             await service.delete_queue(name)
 
-    @record
-    def test_request_callback_signed_header(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_request_callback_signed_header())
-
-    async def _test_response_callback(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncQueueTestCase.await_prepared_test
+    async def test_response_callback(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        service = QueueServiceClient(self._get_queue_url(), credential=self.account_key, transport=AiohttpTestTransport())
+        service = QueueServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
         name = self.get_resource_name('cont')
         queue = service.get_queue_client(name)
 
@@ -363,13 +395,11 @@ class StorageQueueClientTestAsync(QueueTestCase):
         exists = await queue.get_queue_properties(raw_response_hook=callback)
         self.assertTrue(exists)
 
-    @record
-    def test_response_callback(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_response_callback())
-
-    async def _test_user_agent_default(self):
-        service = QueueServiceClient(self._get_queue_url(), credential=self.account_key, transport=AiohttpTestTransport())
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncQueueTestCase.await_prepared_test
+    async def test_user_agent_default(self, resource_group, location, storage_account, storage_account_key):
+        service = QueueServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
 
         def callback(response):
             self.assertTrue('User-Agent' in response.http_request.headers)
@@ -382,15 +412,13 @@ class StorageQueueClientTestAsync(QueueTestCase):
 
         await service.get_service_properties(raw_response_hook=callback)
 
-    @record
-    def test_user_agent_default(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_user_agent_default())
-
-    async def _test_user_agent_custom(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncQueueTestCase.await_prepared_test
+    async def test_user_agent_custom(self, resource_group, location, storage_account, storage_account_key):
         custom_app = "TestApp/v1.0"
         service = QueueServiceClient(
-            self._get_queue_url(), credential=self.account_key, user_agent=custom_app, transport=AiohttpTestTransport())
+            self._account_url(storage_account.name), credential=storage_account_key, user_agent=custom_app, transport=AiohttpTestTransport())
 
         def callback(response):
             self.assertTrue('User-Agent' in response.http_request.headers)
@@ -414,13 +442,11 @@ class StorageQueueClientTestAsync(QueueTestCase):
 
         await service.get_service_properties(raw_response_hook=callback, user_agent="TestApp/v2.0")
 
-    @record
-    def test_user_agent_custom(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_user_agent_custom())
-
-    async def _test_user_agent_append(self):
-        service = QueueServiceClient(self._get_queue_url(), credential=self.account_key, transport=AiohttpTestTransport())
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncQueueTestCase.await_prepared_test
+    async def test_user_agent_append(self, resource_group, location, storage_account, storage_account_key):
+        service = QueueServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
 
         def callback(response):
             self.assertTrue('User-Agent' in response.http_request.headers)
@@ -434,10 +460,6 @@ class StorageQueueClientTestAsync(QueueTestCase):
         custom_headers = {'User-Agent': 'customer_user_agent'}
         await service.get_service_properties(raw_response_hook=callback, headers=custom_headers)
 
-    @record
-    def test_user_agent_append(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_user_agent_append())
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
     unittest.main()
