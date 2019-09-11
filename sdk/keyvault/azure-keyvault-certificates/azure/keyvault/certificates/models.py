@@ -8,7 +8,7 @@ from datetime import datetime
 
 from ._shared import parse_vault_id
 from ._shared._generated.v7_0 import models
-from .enums import ActionType, KeyUsageType, JsonWebKeyCurveName, JsonWebKeyType, SecretContentType
+from .enums import ActionType, KeyUsageType, KeyCurveName, KeyType, SecretContentType
 
 try:
     from typing import TYPE_CHECKING
@@ -703,11 +703,11 @@ class CertificatePolicy(object):
 
             key_properties = KeyProperties(
                 exportable=certificate_policy_bundle.key_properties.exportable,
-                key_type=(JsonWebKeyType(certificate_policy_bundle.key_properties.key_type)
+                key_type=(KeyType(certificate_policy_bundle.key_properties.key_type)
                           if certificate_policy_bundle.key_properties.key_type else None),
                 key_size=certificate_policy_bundle.key_properties.key_size,
                 reuse_key=certificate_policy_bundle.key_properties.reuse_key,
-                curve=(JsonWebKeyCurveName(certificate_policy_bundle.key_properties.curve)
+                curve=(KeyCurveName(certificate_policy_bundle.key_properties.curve)
                        if certificate_policy_bundle.key_properties.curve else None),
                 ekus=(certificate_policy_bundle.x509_certificate_properties.ekus
                       if certificate_policy_bundle.x509_certificate_properties else None),
@@ -1116,14 +1116,14 @@ class KeyProperties(object):
     :param bool exportable: Indicates if the private key can be exported.
     :param key_type: The type of key pair to be used for the certificate.
         Possible values include: 'EC', 'EC-HSM', 'RSA', 'RSA-HSM', 'oct'
-    :type key_type: str or ~azure.keyvault.certificates.enums.JsonWebKeyType
+    :type key_type: str or ~azure.keyvault.certificates.enums.KeyType
     :param int key_size: The key size in bits. For example: 2048, 3072, or 4096
         for RSA.
     :param bool reuse_key: Indicates if the same key pair will be used on certificate
         renewal.
-    :param curve: Elliptic curve name. For valid values, see JsonWebKeyCurveName.
+    :param curve: Elliptic curve name. For valid values, see KeyCurveName.
         Possible values include: 'P-256', 'P-384', 'P-521', 'P-256K'
-    :type curve: str or ~azure.keyvault.certificates.enums.JsonWebKeyCurveName
+    :type curve: str or ~azure.keyvault.certificates.enums.KeyCurveName
     :param ekus: The enhanced key usages.
     :type ekus: list[str]
     :param key_usage: List of key usages.
@@ -1132,10 +1132,10 @@ class KeyProperties(object):
     def __init__(
         self,
         exportable=None,  # type: Optional[bool]
-        key_type=None,  # type: Optional[JsonWebKeyType]
+        key_type=None,  # type: Optional[KeyType]
         key_size=None,  # type: Optional[str]
         reuse_key=None,  # type: Optional[bool]
-        curve=None,  # type: Optional[JsonWebKeyCurveName]
+        curve=None,  # type: Optional[KeyCurveName]
         ekus=None,  # type: Optional[list[str]]
         key_usage=None  # type: Optional[list[KeyUsageType]]
     ):
@@ -1159,10 +1159,10 @@ class KeyProperties(object):
 
     @property
     def key_type(self):
-        # type: () -> JsonWebKeyType
+        # type: () -> KeyType
         """The type of key pair to be used for the certificate.
 
-        :rtype: ~azure.keyvault.certificates.enums.JsonWebKeyType
+        :rtype: ~azure.keyvault.certificates.enums.KeyType
         """
         return self._key_type
 
@@ -1186,10 +1186,10 @@ class KeyProperties(object):
 
     @property
     def curve(self):
-        # type: () -> JsonWebKeyCurveName
+        # type: () -> KeyCurveName
         """Elliptic curve name.
 
-        :rtype: ~azure.keyvault.certificates.enums.JsonWebKeyCurveName
+        :rtype: ~azure.keyvault.certificates.enums.KeyCurveName
         """
         return self._curve
 

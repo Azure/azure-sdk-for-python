@@ -33,7 +33,7 @@ class KeyUsageType(str, Enum):
     decipher_only = "decipherOnly"
 
 
-class JsonWebKeyType(str, Enum):
+class KeyType(str, Enum):
     """Supported key types"""
 
     ec = "EC"  #: Elliptic Curve
@@ -43,7 +43,7 @@ class JsonWebKeyType(str, Enum):
     oct = "oct"  #: Octet sequence (used to represent symmetric keys)
 
 
-class JsonWebKeyCurveName(str, Enum):
+class KeyCurveName(str, Enum):
     """Supported elliptic curves"""
 
     p_256 = "P-256"  #: The NIST P-256 elliptic curve, AKA SECG curve SECP256R1.
