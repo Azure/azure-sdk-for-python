@@ -43,7 +43,7 @@ class PartitionProcessor(ABC):
         :param reason: Reason for closing the PartitionProcessor.
         :type reason: ~azure.eventhub.eventprocessor.CloseReason
         :param partition_context: The context information of this partition.
-        Use its method update_checkpoint to save checkpoint to the data store.
+         Use its method update_checkpoint to save checkpoint to the data store.
         :type partition_context: ~azure.eventhub.aio.eventprocessor.PartitionContext
 
         """
@@ -57,7 +57,7 @@ class PartitionProcessor(ABC):
         :param events: Received events.
         :type events: list[~azure.eventhub.common.EventData]
         :param partition_context: The context information of this partition.
-        Use its method update_checkpoint to save checkpoint to the data store.
+         Use its method update_checkpoint to save checkpoint to the data store.
         :type partition_context: ~azure.eventhub.aio.eventprocessor.PartitionContext
 
         """
@@ -70,7 +70,7 @@ class PartitionProcessor(ABC):
         :param error: The error that happens.
         :type error: Exception
         :param partition_context: The context information of this partition.
-        Use its method update_checkpoint to save checkpoint to the data store.
+         Use its method update_checkpoint to save checkpoint to the data store.
         :type partition_context: ~azure.eventhub.aio.eventprocessor.PartitionContext
 
         """

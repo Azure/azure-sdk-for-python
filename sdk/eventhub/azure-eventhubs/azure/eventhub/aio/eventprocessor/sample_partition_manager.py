@@ -39,7 +39,7 @@ class SamplePartitionManager(PartitionManager):
         """
 
         :param db_filename: name of file that saves the sql data.
-        Sqlite3 will run in memory without a file when db_filename is ":memory:".
+         Sqlite3 will run in memory without a file when db_filename is ":memory:".
         :param ownership_table: The table name of the sqlite3 database.
         """
         super(SamplePartitionManager, self).__init__()
