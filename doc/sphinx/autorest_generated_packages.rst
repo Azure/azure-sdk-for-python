@@ -31,6 +31,7 @@
   ./ref/azure.data.appconfiguration.rst
   ./ref/azure.eventgrid.rst
   ./ref/azure.eventhub.rst
+  ./ref/azure.eventhub.extensions.rst
   ./ref/azure.graphrbac.rst
   ./ref/azure.identity.rst
   ./ref/azure.keyvault.keys.rst
