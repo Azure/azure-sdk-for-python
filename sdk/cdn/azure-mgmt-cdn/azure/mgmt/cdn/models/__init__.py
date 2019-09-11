@@ -22,7 +22,6 @@ try:
     from .delivery_rule_action_py3 import DeliveryRuleAction
     from .delivery_rule_py3 import DeliveryRule
     from .endpoint_properties_update_parameters_delivery_policy_py3 import EndpointPropertiesUpdateParametersDeliveryPolicy
-    from .endpoint_properties_update_parameters_web_application_firewall_policy_link_py3 import EndpointPropertiesUpdateParametersWebApplicationFirewallPolicyLink
     from .endpoint_update_parameters_py3 import EndpointUpdateParameters
     from .remote_address_match_condition_parameters_py3 import RemoteAddressMatchConditionParameters
     from .delivery_rule_remote_address_condition_py3 import DeliveryRuleRemoteAddressCondition
@@ -50,11 +49,15 @@ try:
     from .delivery_rule_is_device_condition_py3 import DeliveryRuleIsDeviceCondition
     from .url_redirect_action_parameters_py3 import UrlRedirectActionParameters
     from .url_redirect_action_py3 import UrlRedirectAction
+    from .url_rewrite_action_parameters_py3 import UrlRewriteActionParameters
+    from .url_rewrite_action_py3 import UrlRewriteAction
     from .header_action_parameters_py3 import HeaderActionParameters
     from .delivery_rule_request_header_action_py3 import DeliveryRuleRequestHeaderAction
     from .delivery_rule_response_header_action_py3 import DeliveryRuleResponseHeaderAction
     from .cache_expiration_action_parameters_py3 import CacheExpirationActionParameters
     from .delivery_rule_cache_expiration_action_py3 import DeliveryRuleCacheExpirationAction
+    from .cache_key_query_string_action_parameters_py3 import CacheKeyQueryStringActionParameters
+    from .delivery_rule_cache_key_query_string_action_py3 import DeliveryRuleCacheKeyQueryStringAction
     from .purge_parameters_py3 import PurgeParameters
     from .load_parameters_py3 import LoadParameters
     from .origin_py3 import Origin
@@ -82,23 +85,6 @@ try:
     from .tracked_resource_py3 import TrackedResource
     from .proxy_resource_py3 import ProxyResource
     from .error_response_py3 import ErrorResponse, ErrorResponseException
-    from .policy_settings_py3 import PolicySettings
-    from .rate_limit_rule_py3 import RateLimitRule
-    from .rate_limit_rule_list_py3 import RateLimitRuleList
-    from .match_condition_py3 import MatchCondition
-    from .action_type_py3 import ActionType
-    from .custom_rule_py3 import CustomRule
-    from .custom_rule_list_py3 import CustomRuleList
-    from .managed_rule_override_py3 import ManagedRuleOverride
-    from .managed_rule_group_override_py3 import ManagedRuleGroupOverride
-    from .managed_rule_set_py3 import ManagedRuleSet
-    from .managed_rule_set_list_py3 import ManagedRuleSetList
-    from .cdn_endpoint_py3 import CdnEndpoint
-    from .cdn_web_application_firewall_policy_py3 import CdnWebApplicationFirewallPolicy
-    from .cdn_web_application_firewall_policy_patch_parameters_py3 import CdnWebApplicationFirewallPolicyPatchParameters
-    from .managed_rule_definition_py3 import ManagedRuleDefinition
-    from .managed_rule_group_definition_py3 import ManagedRuleGroupDefinition
-    from .managed_rule_set_definition_py3 import ManagedRuleSetDefinition
 except (SyntaxError, ImportError):
     from .sku import Sku
     from .profile import Profile
@@ -112,7 +98,6 @@ except (SyntaxError, ImportError):
     from .delivery_rule_action import DeliveryRuleAction
     from .delivery_rule import DeliveryRule
     from .endpoint_properties_update_parameters_delivery_policy import EndpointPropertiesUpdateParametersDeliveryPolicy
-    from .endpoint_properties_update_parameters_web_application_firewall_policy_link import EndpointPropertiesUpdateParametersWebApplicationFirewallPolicyLink
     from .endpoint_update_parameters import EndpointUpdateParameters
     from .remote_address_match_condition_parameters import RemoteAddressMatchConditionParameters
     from .delivery_rule_remote_address_condition import DeliveryRuleRemoteAddressCondition
@@ -140,11 +125,15 @@ except (SyntaxError, ImportError):
     from .delivery_rule_is_device_condition import DeliveryRuleIsDeviceCondition
     from .url_redirect_action_parameters import UrlRedirectActionParameters
     from .url_redirect_action import UrlRedirectAction
+    from .url_rewrite_action_parameters import UrlRewriteActionParameters
+    from .url_rewrite_action import UrlRewriteAction
     from .header_action_parameters import HeaderActionParameters
     from .delivery_rule_request_header_action import DeliveryRuleRequestHeaderAction
     from .delivery_rule_response_header_action import DeliveryRuleResponseHeaderAction
     from .cache_expiration_action_parameters import CacheExpirationActionParameters
     from .delivery_rule_cache_expiration_action import DeliveryRuleCacheExpirationAction
+    from .cache_key_query_string_action_parameters import CacheKeyQueryStringActionParameters
+    from .delivery_rule_cache_key_query_string_action import DeliveryRuleCacheKeyQueryStringAction
     from .purge_parameters import PurgeParameters
     from .load_parameters import LoadParameters
     from .origin import Origin
@@ -172,23 +161,6 @@ except (SyntaxError, ImportError):
     from .tracked_resource import TrackedResource
     from .proxy_resource import ProxyResource
     from .error_response import ErrorResponse, ErrorResponseException
-    from .policy_settings import PolicySettings
-    from .rate_limit_rule import RateLimitRule
-    from .rate_limit_rule_list import RateLimitRuleList
-    from .match_condition import MatchCondition
-    from .action_type import ActionType
-    from .custom_rule import CustomRule
-    from .custom_rule_list import CustomRuleList
-    from .managed_rule_override import ManagedRuleOverride
-    from .managed_rule_group_override import ManagedRuleGroupOverride
-    from .managed_rule_set import ManagedRuleSet
-    from .managed_rule_set_list import ManagedRuleSetList
-    from .cdn_endpoint import CdnEndpoint
-    from .cdn_web_application_firewall_policy import CdnWebApplicationFirewallPolicy
-    from .cdn_web_application_firewall_policy_patch_parameters import CdnWebApplicationFirewallPolicyPatchParameters
-    from .managed_rule_definition import ManagedRuleDefinition
-    from .managed_rule_group_definition import ManagedRuleGroupDefinition
-    from .managed_rule_set_definition import ManagedRuleSetDefinition
 from .profile_paged import ProfilePaged
 from .resource_usage_paged import ResourceUsagePaged
 from .endpoint_paged import EndpointPaged
@@ -196,8 +168,6 @@ from .origin_paged import OriginPaged
 from .custom_domain_paged import CustomDomainPaged
 from .operation_paged import OperationPaged
 from .edge_node_paged import EdgeNodePaged
-from .cdn_web_application_firewall_policy_paged import CdnWebApplicationFirewallPolicyPaged
-from .managed_rule_set_definition_paged import ManagedRuleSetDefinitionPaged
 from .cdn_management_client_enums import (
     SkuName,
     ProfileResourceState,
@@ -219,6 +189,7 @@ from .cdn_management_client_enums import (
     DestinationProtocol,
     HeaderAction,
     CacheBehavior,
+    QueryStringBehavior,
     OriginResourceState,
     CustomDomainResourceState,
     CustomHttpsProvisioningState,
@@ -226,15 +197,6 @@ from .cdn_management_client_enums import (
     ProtocolType,
     CertificateType,
     ResourceType,
-    PolicyEnabledState,
-    PolicyMode,
-    CustomRuleEnabledState,
-    MatchVariable,
-    Operator,
-    Action,
-    ManagedRuleEnabledState,
-    ProvisioningState,
-    PolicyResourceState,
 )
 
 __all__ = [
@@ -250,7 +212,6 @@ __all__ = [
     'DeliveryRuleAction',
     'DeliveryRule',
     'EndpointPropertiesUpdateParametersDeliveryPolicy',
-    'EndpointPropertiesUpdateParametersWebApplicationFirewallPolicyLink',
     'EndpointUpdateParameters',
     'RemoteAddressMatchConditionParameters',
     'DeliveryRuleRemoteAddressCondition',
@@ -278,11 +239,15 @@ __all__ = [
     'DeliveryRuleIsDeviceCondition',
     'UrlRedirectActionParameters',
     'UrlRedirectAction',
+    'UrlRewriteActionParameters',
+    'UrlRewriteAction',
     'HeaderActionParameters',
     'DeliveryRuleRequestHeaderAction',
     'DeliveryRuleResponseHeaderAction',
     'CacheExpirationActionParameters',
     'DeliveryRuleCacheExpirationAction',
+    'CacheKeyQueryStringActionParameters',
+    'DeliveryRuleCacheKeyQueryStringAction',
     'PurgeParameters',
     'LoadParameters',
     'Origin',
@@ -310,23 +275,6 @@ __all__ = [
     'TrackedResource',
     'ProxyResource',
     'ErrorResponse', 'ErrorResponseException',
-    'PolicySettings',
-    'RateLimitRule',
-    'RateLimitRuleList',
-    'MatchCondition',
-    'ActionType',
-    'CustomRule',
-    'CustomRuleList',
-    'ManagedRuleOverride',
-    'ManagedRuleGroupOverride',
-    'ManagedRuleSet',
-    'ManagedRuleSetList',
-    'CdnEndpoint',
-    'CdnWebApplicationFirewallPolicy',
-    'CdnWebApplicationFirewallPolicyPatchParameters',
-    'ManagedRuleDefinition',
-    'ManagedRuleGroupDefinition',
-    'ManagedRuleSetDefinition',
     'ProfilePaged',
     'ResourceUsagePaged',
     'EndpointPaged',
@@ -334,8 +282,6 @@ __all__ = [
     'CustomDomainPaged',
     'OperationPaged',
     'EdgeNodePaged',
-    'CdnWebApplicationFirewallPolicyPaged',
-    'ManagedRuleSetDefinitionPaged',
     'SkuName',
     'ProfileResourceState',
     'OptimizationType',
@@ -356,6 +302,7 @@ __all__ = [
     'DestinationProtocol',
     'HeaderAction',
     'CacheBehavior',
+    'QueryStringBehavior',
     'OriginResourceState',
     'CustomDomainResourceState',
     'CustomHttpsProvisioningState',
@@ -363,13 +310,4 @@ __all__ = [
     'ProtocolType',
     'CertificateType',
     'ResourceType',
-    'PolicyEnabledState',
-    'PolicyMode',
-    'CustomRuleEnabledState',
-    'MatchVariable',
-    'Operator',
-    'Action',
-    'ManagedRuleEnabledState',
-    'ProvisioningState',
-    'PolicyResourceState',
 ]
