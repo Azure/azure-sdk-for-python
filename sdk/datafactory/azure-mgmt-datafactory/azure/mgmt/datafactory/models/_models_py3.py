@@ -6923,6 +6923,10 @@ class CommonDataServiceForAppsSink(CopySink):
      values from input dataset (except key fields) during write operation.
      Default is false. Type: boolean (or Expression with resultType boolean).
     :type ignore_null_values: object
+    :param alternate_key_name: The logical name of the alternate key which
+     will be used when upserting records. Type: string (or Expression with
+     resultType string).
+    :type alternate_key_name: object
     """
 
     _validation = {
@@ -6940,13 +6944,15 @@ class CommonDataServiceForAppsSink(CopySink):
         'type': {'key': 'type', 'type': 'str'},
         'write_behavior': {'key': 'writeBehavior', 'type': 'str'},
         'ignore_null_values': {'key': 'ignoreNullValues', 'type': 'object'},
+        'alternate_key_name': {'key': 'alternateKeyName', 'type': 'object'},
     }
 
     write_behavior = "Upsert"
 
-    def __init__(self, *, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, max_concurrent_connections=None, ignore_null_values=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, max_concurrent_connections=None, ignore_null_values=None, alternate_key_name=None, **kwargs) -> None:
         super(CommonDataServiceForAppsSink, self).__init__(additional_properties=additional_properties, write_batch_size=write_batch_size, write_batch_timeout=write_batch_timeout, sink_retry_count=sink_retry_count, sink_retry_wait=sink_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
         self.ignore_null_values = ignore_null_values
+        self.alternate_key_name = alternate_key_name
         self.type = 'CommonDataServiceForAppsSink'
 
 
@@ -9965,6 +9971,10 @@ class DynamicsCrmSink(CopySink):
      values from input dataset (except key fields) during write operation.
      Default is false. Type: boolean (or Expression with resultType boolean).
     :type ignore_null_values: object
+    :param alternate_key_name: The logical name of the alternate key which
+     will be used when upserting records. Type: string (or Expression with
+     resultType string).
+    :type alternate_key_name: object
     """
 
     _validation = {
@@ -9982,13 +9992,15 @@ class DynamicsCrmSink(CopySink):
         'type': {'key': 'type', 'type': 'str'},
         'write_behavior': {'key': 'writeBehavior', 'type': 'str'},
         'ignore_null_values': {'key': 'ignoreNullValues', 'type': 'object'},
+        'alternate_key_name': {'key': 'alternateKeyName', 'type': 'object'},
     }
 
     write_behavior = "Upsert"
 
-    def __init__(self, *, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, max_concurrent_connections=None, ignore_null_values=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, max_concurrent_connections=None, ignore_null_values=None, alternate_key_name=None, **kwargs) -> None:
         super(DynamicsCrmSink, self).__init__(additional_properties=additional_properties, write_batch_size=write_batch_size, write_batch_timeout=write_batch_timeout, sink_retry_count=sink_retry_count, sink_retry_wait=sink_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
         self.ignore_null_values = ignore_null_values
+        self.alternate_key_name = alternate_key_name
         self.type = 'DynamicsCrmSink'
 
 
@@ -10233,6 +10245,10 @@ class DynamicsSink(CopySink):
      from input dataset (except key fields) during write operation. Default is
      false. Type: boolean (or Expression with resultType boolean).
     :type ignore_null_values: object
+    :param alternate_key_name: The logical name of the alternate key which
+     will be used when upserting records. Type: string (or Expression with
+     resultType string).
+    :type alternate_key_name: object
     """
 
     _validation = {
@@ -10250,13 +10266,15 @@ class DynamicsSink(CopySink):
         'type': {'key': 'type', 'type': 'str'},
         'write_behavior': {'key': 'writeBehavior', 'type': 'str'},
         'ignore_null_values': {'key': 'ignoreNullValues', 'type': 'object'},
+        'alternate_key_name': {'key': 'alternateKeyName', 'type': 'object'},
     }
 
     write_behavior = "Upsert"
 
-    def __init__(self, *, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, max_concurrent_connections=None, ignore_null_values=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, write_batch_size=None, write_batch_timeout=None, sink_retry_count=None, sink_retry_wait=None, max_concurrent_connections=None, ignore_null_values=None, alternate_key_name=None, **kwargs) -> None:
         super(DynamicsSink, self).__init__(additional_properties=additional_properties, write_batch_size=write_batch_size, write_batch_timeout=write_batch_timeout, sink_retry_count=sink_retry_count, sink_retry_wait=sink_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
         self.ignore_null_values = ignore_null_values
+        self.alternate_key_name = alternate_key_name
         self.type = 'DynamicsSink'
 
 
