@@ -22,7 +22,6 @@ jobs:
         displayName: 'Install All Packages'
         inputs:
           scriptPath: 'scripts/dev_setup.py'
-          arguments: '--disabledevelop'
 
       - powershell: |
           cd $(Build.SourcesDirectory)/doc/sphinx
