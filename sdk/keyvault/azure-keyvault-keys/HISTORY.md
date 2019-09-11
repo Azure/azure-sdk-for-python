@@ -1,5 +1,9 @@
 # Release History
 
+## 4.0.0b4
+- Enums 'JsonWebKeyCurveName', 'JsonWebKeyOperation', and 'JsonWebKeyType' have
+been renamed to 'KeyCurveName', 'KeyOperation', and 'KeyType', respectively.
+
 ## 4.0.0b3 (2019-09-11)
 ### Breaking changes:
 - `CryptographyClient` methods `wrap` and `unwrap` are renamed `wrap_key` and
