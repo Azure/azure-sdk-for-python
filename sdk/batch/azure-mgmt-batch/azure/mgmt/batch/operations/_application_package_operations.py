@@ -41,7 +41,9 @@ class ApplicationPackageOperations(object):
 
     def activate(
             self, resource_group_name, account_name, application_name, version_name, format, custom_headers=None, raw=False, **operation_config):
-        """Activates the specified application package.
+        """Activates the specified application package. This should be done after
+        the `ApplicationPackage` was created and uploaded. This needs to be
+        done before an `ApplicationPackage` can be used on Pools or Tasks.
 
         :param resource_group_name: The name of the resource group that
          contains the Batch account.
@@ -118,7 +120,10 @@ class ApplicationPackageOperations(object):
 
     def create(
             self, resource_group_name, account_name, application_name, version_name, custom_headers=None, raw=False, **operation_config):
-        """Creates an application package record.
+        """Creates an application package record. The record contains the SAS
+        where the package should be uploaded to.  Once it is uploaded the
+        `ApplicationPackage` needs to be activated using
+        `ApplicationPackageActive` before it can be used.
 
         :param resource_group_name: The name of the resource group that
          contains the Batch account.
