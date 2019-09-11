@@ -23,7 +23,7 @@ jobs:
         inputs:
           scriptPath: 'scripts/dev_setup.py'
           arguments: '--exceptionlist=azure-eventhubs-checkpointstoreblob-aio'
-=
+
       - powershell: |
           cd $(Build.SourcesDirectory)/doc/sphinx
           pip install -r requirements.txt
