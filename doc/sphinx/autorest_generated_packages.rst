@@ -4,6 +4,7 @@
   :caption: Developer Documentation
 
   ref/azure.common
+  ./ref/azure.appconfiguration.rst
   ./ref/azure.applicationinsights.rst
   ./ref/azure.batch.rst
   ./ref/azure.cognitiveservices.anomalydetector.rst
