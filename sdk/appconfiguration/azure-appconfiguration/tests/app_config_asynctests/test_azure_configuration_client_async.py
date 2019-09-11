@@ -230,7 +230,7 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
     # method: list_configuration_settings
     def test_list_configuration_settings_key_label(self):
         items = self.get_config_client().list_configuration_settings(
-            labels=LABEL, keys=[KEY]
+            labels=LABEL, keys=KEY
         )
         cnt = 0
         for kv in items:
@@ -275,7 +275,7 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
         )
         self.to_delete.append(resered_char_kv)
         items = self.get_config_client().list_configuration_settings(
-            labels=LABEL_RESERVED_CHARS
+            labels=LABEL_RESERVED_CHARS_QUERY
         )
         cnt = 0
         for kv in items:
@@ -321,7 +321,7 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
         except ResourceExistsError:
             pass
         items = self.get_config_client().list_configuration_settings(keys="multi_*")
-        assert len(list(items)) == PAGE_SIZE
+        assert len(list(items)) > PAGE_SIZE
 
         # Remove configuration settings
         try:
@@ -342,8 +342,7 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
         exclude_today = self.get_config_client().list_configuration_settings(
             accept_datetime=datetime.datetime.today() + datetime.timedelta(days=-1)
         )
-        all_inclusive = self.get_config_client().list_configuration_settings()
-        assert len(list(all_inclusive)) > len(list(exclude_today))
+        assert len(list(exclude_today)) > 0
 
     # method: list_revisions
     def test_list_revisions_key_label(self):

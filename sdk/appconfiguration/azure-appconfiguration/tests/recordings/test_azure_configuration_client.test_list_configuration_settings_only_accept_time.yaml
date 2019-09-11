@@ -3,19 +3,19 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - application/vnd.microsoft.appconfig.kvset+json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-appconfiguration/1.0.0b2 Python/3.7.2 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-appconfiguration/1.0.0b3 Python/3.7.2 (Windows-10-10.0.18362-SP0)
       x-ms-content-sha256:
       - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
       x-ms-date:
-      - Aug, 19 2019 18:30:13 GMT
+      - Sep, 11 2019 19:58:12 GMT
     method: GET
-    uri: https://xyazconfig.azconfig.io/kv?label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309&key=PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309
+    uri: https://xyazconfig.azconfig.io/kv?key=PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307&label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307&api-version=1.0
   response:
     body:
       string: '{"items":[]}'
@@ -40,30 +40,26 @@ interactions:
         x-ms-retry-after, x-ms-request-id, WWW-Authenticate
       connection:
       - keep-alive
-      content-length:
-      - '12'
       content-type:
-      - application/json; charset=utf-8
+      - application/vnd.microsoft.appconfig.kvset+json; charset=utf-8
       date:
-      - Mon, 19 Aug 2019 18:30:13 GMT
+      - Wed, 11 Sep 2019 19:58:12 GMT
       server:
       - nginx/1.13.12
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       transfer-encoding:
       - chunked
-      vary:
-      - Accept-Encoding
     status:
       code: 200
       message: OK
 - request:
-    body: '{"key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309", "label":
-      "test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309", "content_type": "test content
+    body: '{"key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307", "label":
+      "test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307", "content_type": "test content
       type", "value": "test value", "tags": {"tag1": "tag1", "tag2": "tag2"}}'
     headers:
       Accept:
-      - application/json
+      - application/vnd.microsoft.appconfig.kv+json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -73,19 +69,19 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - azsdk-python-appconfiguration/1.0.0b2 Python/3.7.2 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-appconfiguration/1.0.0b3 Python/3.7.2 (Windows-10-10.0.18362-SP0)
       if-none-match:
       - '*'
       x-ms-content-sha256:
-      - 5b/E4qQlXHTRod+n+f+xjK6c/tRVR8uxoC62FjvGJPw=
+      - EcLyYD77Lx3X8vN5w0ia+MCOL2LvXC3UWqvYFJlqycw=
       x-ms-date:
-      - Aug, 19 2019 18:30:13 GMT
+      - Sep, 11 2019 19:58:12 GMT
     method: PUT
-    uri: https://xyazconfig.azconfig.io/kv/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309?label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309
+    uri: https://xyazconfig.azconfig.io/kv/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307?label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307&api-version=1.0
   response:
     body:
-      string: '{"etag":"fhRxWpJ9trciwcujdJNZEf7GYI0","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:14+00:00"}'
+      string: '{"etag":"Ief8H5fSN4aP8wlShQZ7Mo3hfjT","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:13+00:00"}'
     headers:
       access-control-allow-credentials:
       - 'true'
@@ -107,26 +103,22 @@ interactions:
         x-ms-retry-after, x-ms-request-id, WWW-Authenticate
       connection:
       - keep-alive
-      content-length:
-      - '315'
       content-type:
-      - application/json; charset=utf-8
+      - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
       date:
-      - Mon, 19 Aug 2019 18:30:13 GMT
+      - Wed, 11 Sep 2019 19:58:12 GMT
       etag:
-      - W/"fhRxWpJ9trciwcujdJNZEf7GYI0"
+      - '"Ief8H5fSN4aP8wlShQZ7Mo3hfjT"'
       last-modified:
-      - Mon, 19 Aug 2019 18:30:14 GMT
+      - Wed, 11 Sep 2019 19:58:13 GMT
       server:
       - nginx/1.13.12
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=MzotMSM0Mzg4ODc=;sn=438887
+      - zAJw6V16=MzotMSM1NDU5NTk=;sn=545959
       transfer-encoding:
       - chunked
-      vary:
-      - Accept-Encoding
     status:
       code: 200
       message: OK
@@ -134,23 +126,23 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - application/vnd.microsoft.appconfig.kvset+json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-appconfiguration/1.0.0b2 Python/3.7.2 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-appconfiguration/1.0.0b3 Python/3.7.2 (Windows-10-10.0.18362-SP0)
       x-ms-content-sha256:
       - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
       x-ms-date:
-      - Aug, 19 2019 18:30:13 GMT
+      - Sep, 11 2019 19:58:12 GMT
     method: GET
-    uri: https://xyazconfig.azconfig.io/kv?label=&key=PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309
+    uri: https://xyazconfig.azconfig.io/kv?key=PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307&api-version=1.0
   response:
     body:
-      string: '{"items":[{"etag":"fhRxWpJ9trciwcujdJNZEf7GYI0","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:14+00:00"}]}'
+      string: '{"items":[{"etag":"Ief8H5fSN4aP8wlShQZ7Mo3hfjT","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:13+00:00"}]}'
     headers:
       access-control-allow-credentials:
       - 'true'
@@ -172,22 +164,18 @@ interactions:
         x-ms-retry-after, x-ms-request-id, WWW-Authenticate
       connection:
       - keep-alive
-      content-length:
-      - '327'
       content-type:
-      - application/json; charset=utf-8
+      - application/vnd.microsoft.appconfig.kvset+json; charset=utf-8
       date:
-      - Mon, 19 Aug 2019 18:30:13 GMT
+      - Wed, 11 Sep 2019 19:58:12 GMT
       server:
       - nginx/1.13.12
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=MzotMSM0Mzg4ODc=;sn=438887
+      - zAJw6V16=MzotMSM1NDU5NTk=;sn=545959
       transfer-encoding:
       - chunked
-      vary:
-      - Accept-Encoding
     status:
       code: 200
       message: OK
@@ -195,7 +183,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - application/vnd.microsoft.appconfig.kv+json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -203,13 +191,13 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-appconfiguration/1.0.0b2 Python/3.7.2 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-appconfiguration/1.0.0b3 Python/3.7.2 (Windows-10-10.0.18362-SP0)
       x-ms-content-sha256:
       - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
       x-ms-date:
-      - Aug, 19 2019 18:30:13 GMT
+      - Sep, 11 2019 19:58:12 GMT
     method: DELETE
-    uri: https://xyazconfig.azconfig.io/kv/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309
+    uri: https://xyazconfig.azconfig.io/kv/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307?api-version=1.0
   response:
     body:
       string: ''
@@ -235,9 +223,9 @@ interactions:
       connection:
       - keep-alive
       content-type:
-      - application/json; charset=utf-8
+      - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
       date:
-      - Mon, 19 Aug 2019 18:30:13 GMT
+      - Wed, 11 Sep 2019 19:58:12 GMT
       server:
       - nginx/1.13.12
       strict-transport-security:
@@ -246,12 +234,12 @@ interactions:
       code: 204
       message: No Content
 - request:
-    body: '{"key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309", "content_type":
+    body: '{"key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307", "content_type":
       "test content type", "value": "test value", "tags": {"tag1": "tag1", "tag2":
       "tag2"}}'
     headers:
       Accept:
-      - application/json
+      - application/vnd.microsoft.appconfig.kv+json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -261,19 +249,19 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - azsdk-python-appconfiguration/1.0.0b2 Python/3.7.2 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-appconfiguration/1.0.0b3 Python/3.7.2 (Windows-10-10.0.18362-SP0)
       if-none-match:
       - '*'
       x-ms-content-sha256:
-      - 4rt07HteiPg5NxofrgzMmlQPTVbo1no7aKxDSI5uUU4=
+      - +3/XuxD/uR+SCQeoaX82t+gpnjgQq8JZfIthH1zy0+g=
       x-ms-date:
-      - Aug, 19 2019 18:30:13 GMT
+      - Sep, 11 2019 19:58:12 GMT
     method: PUT
-    uri: https://xyazconfig.azconfig.io/kv/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309
+    uri: https://xyazconfig.azconfig.io/kv/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307?api-version=1.0
   response:
     body:
-      string: '{"etag":"c8zYxctPfGV27ePFGd37mxNf7CX","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:14+00:00"}'
+      string: '{"etag":"wGewoxgJNKGCT8L6HgINhg1oI4R","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:13+00:00"}'
     headers:
       access-control-allow-credentials:
       - 'true'
@@ -295,26 +283,22 @@ interactions:
         x-ms-retry-after, x-ms-request-id, WWW-Authenticate
       connection:
       - keep-alive
-      content-length:
-      - '269'
       content-type:
-      - application/json; charset=utf-8
+      - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
       date:
-      - Mon, 19 Aug 2019 18:30:14 GMT
+      - Wed, 11 Sep 2019 19:58:12 GMT
       etag:
-      - W/"c8zYxctPfGV27ePFGd37mxNf7CX"
+      - '"wGewoxgJNKGCT8L6HgINhg1oI4R"'
       last-modified:
-      - Mon, 19 Aug 2019 18:30:14 GMT
+      - Wed, 11 Sep 2019 19:58:13 GMT
       server:
       - nginx/1.13.12
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=MzotMSM0Mzg4ODg=;sn=438888
+      - zAJw6V16=MzotMSM1NDU5NjA=;sn=545960
       transfer-encoding:
       - chunked
-      vary:
-      - Accept-Encoding
     status:
       code: 200
       message: OK
@@ -322,24 +306,124 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - application/vnd.microsoft.appconfig.kvset+json
+      Accept-Datetime:
+      - '2019-09-10 12:58:12.788728'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-appconfiguration/1.0.0b2 Python/3.7.2 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-appconfiguration/1.0.0b3 Python/3.7.2 (Windows-10-10.0.18362-SP0)
       x-ms-content-sha256:
       - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
       x-ms-date:
-      - Aug, 19 2019 18:30:13 GMT
+      - Sep, 11 2019 19:58:12 GMT
     method: GET
-    uri: https://xyazconfig.azconfig.io/kv
+    uri: https://xyazconfig.azconfig.io/kv?api-version=1.0
   response:
     body:
-      string: '{"items":[{"etag":"c8zYxctPfGV27ePFGd37mxNf7CX","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:14+00:00"},{"etag":"fhRxWpJ9trciwcujdJNZEf7GYI0","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:14+00:00"},{"etag":"ZzjD5T8t1ftozEUZtwXNhiusa3L","key":"complex-setting","label":"beta","content_type":"application/json","value":"{\"endpointUri\":\"https://beta.endpoint.com\",\"name\":\"beta-name\",\"numberOfInstances\":1}","tags":{},"locked":false,"last_modified":"2019-07-03T20:36:22+00:00"},{"etag":"rGHl0Mkvx9WLfz0xnna0Nb4u03B","key":"complex-setting","label":"production","content_type":"application/json","value":"{\"endpointUri\":\"https://production.endpoint.com\",\"name\":\"production-name\",\"numberOfInstances\":2}","tags":{},"locked":false,"last_modified":"2019-07-03T20:36:22+00:00"},{"etag":"2eZKh9xvWMFhAkxFKQb7ZBQxPgY","key":"connection-string","label":"beta","content_type":null,"value":"https://beta-storage.core.windows.net","tags":{},"locked":false,"last_modified":"2019-07-03T20:36:22+00:00"},{"etag":"qlaAu25jqmRgsb2u6ME3D68i3bL","key":"connection-string","label":"production","content_type":null,"value":"https://production-storage.core.windows.net","tags":{},"locked":false,"last_modified":"2019-07-03T20:36:22+00:00"},{"etag":"VvsHe4UFh0aT2QrdnTx3vDm2bG5","key":"test2","label":null,"content_type":"testtype","value":"bbb","tags":{"tag1":"value1","tag2":"value2"},"locked":false,"last_modified":"2019-08-19T18:09:25+00:00"}]}'
+      string: '{"items":[{"etag":"OFCU8FrLTS5L9b9t6K980EVTJNV","key":"multi_0test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_0","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:40+00:00"},{"etag":"nWXQnwspGkE2O9ZANioN7r0nZpd","key":"multi_100test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_100","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:47+00:00"},{"etag":"3CLb4rR6OPDqazBq0k2xhvGGuGj","key":"multi_10test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_10","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:41+00:00"},{"etag":"6S9r3hQHqWESJQsoAWbwRF8c0c4","key":"multi_11test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_11","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:41+00:00"},{"etag":"MozdQEHIM9ZGZl0W4mIIXT7Wfx9","key":"multi_12test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_12","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:41+00:00"},{"etag":"Bygggw4bKfwJFyJlObWRiT8Y3r9","key":"multi_13test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_13","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:41+00:00"},{"etag":"i7LOnTyaiVPgKQBdrZt4bPYnCIr","key":"multi_14test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_14","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:41+00:00"},{"etag":"snySPXZmepIW3c0FoWDYdUIGzfD","key":"multi_15test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_15","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:41+00:00"},{"etag":"wtrpB0Biovw3eo6UfH0XziTUV0C","key":"multi_16test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_16","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:41+00:00"},{"etag":"4TvKMli6EPkvVmNiOpB3uv3xlEd","key":"multi_17test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_17","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:41+00:00"},{"etag":"t5CD8I4LHG6GpJaA5hG1Ch1Hnla","key":"multi_18test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_18","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:41+00:00"},{"etag":"c0zqUycoSDoHouTND9N9TWGsgHt","key":"multi_19test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_19","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:41+00:00"},{"etag":"19HSXjHdmqEb8yR0Hd7zEHdHnqu","key":"multi_1test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_1","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:40+00:00"},{"etag":"RlylixFBeY5D0VHNg0VbTLBcaFq","key":"multi_20test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_20","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:42+00:00"},{"etag":"rKCvzjP2YDT63Vugli5tBy9WIdN","key":"multi_21test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_21","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:42+00:00"},{"etag":"23Qxm5QPeuvqpYhidsSH6ogVhpC","key":"multi_22test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_22","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:42+00:00"},{"etag":"d8UopvDyibKJGNviwBPXiIbpKP2","key":"multi_23test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_23","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:42+00:00"},{"etag":"j2Vf2ou5zefJFTlswZ0O7dTcrYp","key":"multi_24test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_24","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:42+00:00"},{"etag":"Iqq1yrXGnCPkGmvegmi74wvt1Ik","key":"multi_25test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_25","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:42+00:00"},{"etag":"PTeJ8BwQzYCuyKPghqdaKo5cSoZ","key":"multi_26test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_26","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:42+00:00"},{"etag":"W3nCApTJrsQKCMWGgYiWEXzQerz","key":"multi_27test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_27","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:42+00:00"},{"etag":"YYbGcNsQtBZv0sadKqVJy6vJkZ9","key":"multi_28test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_28","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:42+00:00"},{"etag":"Hdllprt7286DY5C4rVse2o6uPYi","key":"multi_29test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_29","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:42+00:00"},{"etag":"VEDAxcofshdb5F3NatXMTXYrK8F","key":"multi_2test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_2","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:40+00:00"},{"etag":"xxdDUGtjxy2eBKTM4dhA2dPxbsi","key":"multi_30test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_30","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:42+00:00"},{"etag":"szwkvO5q2JfYWgiJ1W9lYtNWarL","key":"multi_31test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_31","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:42+00:00"},{"etag":"KoOQMvXmU7JNXtfar3CmhIa2Q70","key":"multi_32test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_32","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:42+00:00"},{"etag":"aSylc8CSrtN6JChQxBeNKAtgTam","key":"multi_33test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_33","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:42+00:00"},{"etag":"pr4DkxoBVAMmlVA8rFV9Auqf7cH","key":"multi_34test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_34","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:42+00:00"},{"etag":"DET2J7UYcDrWSPhcwMQidA6Gf1l","key":"multi_35test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_35","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:43+00:00"},{"etag":"uqKQVsmwfJ7IAhAAJ0kvsh4TQ7Z","key":"multi_36test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_36","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:43+00:00"},{"etag":"PkQECinLCGOQLv00p0AjGJ8gLMH","key":"multi_37test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_37","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:43+00:00"},{"etag":"cJ6TjXhkHCSFY4DaSE0O4mOtXsg","key":"multi_38test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_38","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:43+00:00"},{"etag":"avfKVMcDiAsKGHyVFeJfIUHnVpI","key":"multi_39test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_39","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:43+00:00"},{"etag":"u4TDP6HLRmrdJoXgDN3GBHO05Ga","key":"multi_3test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_3","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:40+00:00"},{"etag":"g30ITPE6mvVBG7YqMn9B7BF900n","key":"multi_40test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_40","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:43+00:00"},{"etag":"7S4T31t4IEuJNOSAMQQgTkrOHr9","key":"multi_41test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_41","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:43+00:00"},{"etag":"RDqP45CsBZi7QrjIO1iFVSMsTor","key":"multi_42test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_42","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:43+00:00"},{"etag":"r6eyNsi7D20SGYF8aGIplHX7lpX","key":"multi_43test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_43","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:43+00:00"},{"etag":"aMIvFlazzokDmRFeQcRA0Asvb7X","key":"multi_44test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_44","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:43+00:00"},{"etag":"Bze2wusFH71GbAjBrgqwrzMpS6Y","key":"multi_45test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_45","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:43+00:00"},{"etag":"4cn1RqWLTMfpOcA3FWTY34sucxf","key":"multi_46test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_46","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:43+00:00"},{"etag":"MQlwBTMIpnIeSUS6II6Pt4KGM0m","key":"multi_47test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_47","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:43+00:00"},{"etag":"575i6OZdNe0JLhmojxC5KfGXc80","key":"multi_48test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_48","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:44+00:00"},{"etag":"6uaat8zdwVAKwv2DxbbfHfXiX5g","key":"multi_49test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_49","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:44+00:00"},{"etag":"McEu74wFjX2uLG8kmPAhcoBeR9e","key":"multi_4test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_4","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:40+00:00"},{"etag":"1goUzeMdLslCPRlGQp8gAiNMPgT","key":"multi_50test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_50","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:44+00:00"},{"etag":"w7PXVpJ6EWRuFyoYoxsFfOxgDXZ","key":"multi_51test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_51","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:44+00:00"},{"etag":"A4RYwSusdP2jDPr6Y0DxC1pa2oz","key":"multi_52test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_52","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:44+00:00"},{"etag":"ZwpF6KKEA6RXdp1nWgLC6fejX9N","key":"multi_53test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_53","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:44+00:00"},{"etag":"W48o2WEnYxJiYe68tuATxJkzFzb","key":"multi_54test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_54","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:44+00:00"},{"etag":"h1GX5e5COvfpWLs7uaUsWYuDsIe","key":"multi_55test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_55","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:44+00:00"},{"etag":"XOqNQ5Hn5EUK8zzUsLfHU8AW1F8","key":"multi_56test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_56","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:44+00:00"},{"etag":"Ue8vGEGmFH254w2gPFFwjB0pSsy","key":"multi_57test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_57","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:44+00:00"},{"etag":"gpzjB9E0fottERAsBd971jTiB5x","key":"multi_58test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_58","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:44+00:00"},{"etag":"XValJ47z3L7fVFxQTuM5lINSpr2","key":"multi_59test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_59","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:44+00:00"},{"etag":"E0HDHREidZ7FFYFNep33ciDnesq","key":"multi_5test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_5","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:40+00:00"},{"etag":"rW7q1vQFwMmAbskNOS5ezDEryrf","key":"multi_60test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_60","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:44+00:00"},{"etag":"nCDgtyadjY9qECWuJBmNc3oh9U7","key":"multi_61test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_61","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:44+00:00"},{"etag":"HvlZ0dRWbuJWp9q5yyKmSJy59XP","key":"multi_62test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_62","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:45+00:00"},{"etag":"B58F6bbbC51QjFPzpv10Aux5hwu","key":"multi_63test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_63","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:45+00:00"},{"etag":"lD6hvwwuEnd4WIY4QdXlnYhCFxf","key":"multi_64test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_64","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:45+00:00"},{"etag":"utagyonQ3mkqFff8Pc1gBVEVNYi","key":"multi_65test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_65","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:45+00:00"},{"etag":"cFPEjgIxLWgRBD1KTB150rTZlh0","key":"multi_66test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_66","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:45+00:00"},{"etag":"nidLWj9YRlmEGAZ30EAff7tN6sw","key":"multi_67test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_67","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:45+00:00"},{"etag":"KPYLrJqjlTjlx1FKmKbEb6U8E8o","key":"multi_68test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_68","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:45+00:00"},{"etag":"k0RlVDvhbGxP1b8Sd98YijCG9nJ","key":"multi_69test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_69","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:45+00:00"},{"etag":"kj9xIvwj0UB257nMiIyL5zW97Kf","key":"multi_6test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_6","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:41+00:00"},{"etag":"U1qLV4y4X9q5ekQdjBpEJWcScC7","key":"multi_70test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_70","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:45+00:00"},{"etag":"FC2IgNxVs7v0knij3wdQ07Cyvpn","key":"multi_71test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_71","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:45+00:00"},{"etag":"ZODGBVGvHWHuYSiYVeyrM8U4woL","key":"multi_72test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_72","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:45+00:00"},{"etag":"a2aFUF4fYvPPBT1oHnhGU9tZOgX","key":"multi_73test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_73","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:45+00:00"},{"etag":"ZaiuXo2DQ7PM4PGBRJW6Xbh1qHg","key":"multi_74test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_74","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:45+00:00"},{"etag":"fuQTo7rPoCO0mnRPTjOMKSwgmwF","key":"multi_75test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_75","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:45+00:00"},{"etag":"xmE4o1JGxciktrigoyJcHQ3cLis","key":"multi_76test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_76","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:46+00:00"},{"etag":"x9hqSIVRGCzFkWsrE4mELudOBzH","key":"multi_77test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_77","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:46+00:00"},{"etag":"USPCCbyBQk3UBDPw9OGJfXBUmj4","key":"multi_78test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_78","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:46+00:00"},{"etag":"aAEA8kUjtiURCnEklKCNyntqTP7","key":"multi_79test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_79","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:46+00:00"},{"etag":"eO5SS4xxQRI6TzgCl2XtkS8IK3r","key":"multi_7test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_7","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:41+00:00"},{"etag":"DffXcZXxNoMIw7YDowLGdFR1RDx","key":"multi_80test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_80","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:46+00:00"},{"etag":"dVELgKpLvl4lbWFQyIdnN2sr9jw","key":"multi_81test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_81","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:46+00:00"},{"etag":"CxNXj3WQ1mnna7kuGptLMJwbhoc","key":"multi_82test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_82","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:46+00:00"},{"etag":"C5LG1y3cVDaD3sYnr74dIUal8iU","key":"multi_83test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_83","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:46+00:00"},{"etag":"Qs4snzc7DGYATdRjRhv3I8fDWn8","key":"multi_84test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_84","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:46+00:00"},{"etag":"hzh0UiTDOkQYCYX1lAwqiejas8S","key":"multi_85test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_85","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:46+00:00"},{"etag":"jljiytWTPtg5yPEzbiHZXW5qonk","key":"multi_86test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_86","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:46+00:00"},{"etag":"YR7sjjYC5bqEONiLJHuj6AQumYE","key":"multi_87test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_87","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:46+00:00"},{"etag":"g8JWOPWncC74JV8321MMJbAHWek","key":"multi_88test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_88","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:46+00:00"},{"etag":"FeDNi6hjkisQzSsoogdui1kBw3c","key":"multi_89test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_89","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:46+00:00"},{"etag":"azMZDW3WidnjbE7DvXZkt8rrxgS","key":"multi_8test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_8","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:41+00:00"},{"etag":"ae92jfVAIrIUMNzWjW19iSrdd8f","key":"multi_90test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_90","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:47+00:00"},{"etag":"pnkl4igERdhrLR6a3HSRYKH7VqC","key":"multi_91test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_91","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:47+00:00"},{"etag":"0Itudl0VaHz9IPAvrx0DqP3Frts","key":"multi_92test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_92","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:47+00:00"},{"etag":"lhY7VrlpFlaTn83AliiZR4LFN7a","key":"multi_93test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_93","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:47+00:00"},{"etag":"RxnbjrMFpjnArK7Oi0zMnmxWIRy","key":"multi_94test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_94","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:47+00:00"},{"etag":"HPM5vDKjrp0UuNqwD2gtHQWh0mo","key":"multi_95test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_95","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:47+00:00"},{"etag":"UtS93OWgYcX8Rbsss1foSFCkyIa","key":"multi_96test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_96","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:47+00:00"},{"etag":"WuWFHVPeuu9oB1jnlJ29YRe3kL4","key":"multi_97test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_97","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:47+00:00"},{"etag":"9Lo79mLD8oabrqbE7sBZSdlCLR2","key":"multi_98test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_98","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:47+00:00"},{"etag":"8FRMHn3BuFSqtPRO9i41vYBPnq2","key":"multi_99test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_99","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:47+00:00"}],"@nextLink":"/kv?api-version=1.0&after=bXVsdGlfOTl0ZXN0X2tleV9hNmFmODk1Mi01NGE2LTExZTktYjYwMC0yODE2YTg0ZDAzMDkKbXVsdGlfbGFiZWxfOTk%3D"}'
     headers:
       access-control-allow-credentials:
       - 'true'
@@ -361,88 +445,23 @@ interactions:
         x-ms-retry-after, x-ms-request-id, WWW-Authenticate
       connection:
       - keep-alive
-      content-length:
-      - '1839'
       content-type:
-      - application/json; charset=utf-8
+      - application/vnd.microsoft.appconfig.kvset+json; charset=utf-8
       date:
-      - Mon, 19 Aug 2019 18:30:14 GMT
-      server:
-      - nginx/1.13.12
-      strict-transport-security:
-      - max-age=15724800; includeSubDomains
-      sync-token:
-      - zAJw6V16=MzotMSM0Mzg4ODg=;sn=438888
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-DateTime:
-      - '2019-08-18T11:30:13.937289Z'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-appconfiguration/1.0.0b2 Python/3.7.2 (Windows-10-10.0.18362-SP0)
-      x-ms-content-sha256:
-      - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
-      x-ms-date:
-      - Aug, 19 2019 18:30:13 GMT
-    method: GET
-    uri: https://xyazconfig.azconfig.io/kv
-  response:
-    body:
-      string: '{"items":[{"etag":"ZzjD5T8t1ftozEUZtwXNhiusa3L","key":"complex-setting","label":"beta","content_type":"application/json","value":"{\"endpointUri\":\"https://beta.endpoint.com\",\"name\":\"beta-name\",\"numberOfInstances\":1}","tags":{},"locked":false,"last_modified":"2019-07-03T20:36:22+00:00"},{"etag":"rGHl0Mkvx9WLfz0xnna0Nb4u03B","key":"complex-setting","label":"production","content_type":"application/json","value":"{\"endpointUri\":\"https://production.endpoint.com\",\"name\":\"production-name\",\"numberOfInstances\":2}","tags":{},"locked":false,"last_modified":"2019-07-03T20:36:22+00:00"},{"etag":"2eZKh9xvWMFhAkxFKQb7ZBQxPgY","key":"connection-string","label":"beta","content_type":null,"value":"https://beta-storage.core.windows.net","tags":{},"locked":false,"last_modified":"2019-07-03T20:36:22+00:00"},{"etag":"qlaAu25jqmRgsb2u6ME3D68i3bL","key":"connection-string","label":"production","content_type":null,"value":"https://production-storage.core.windows.net","tags":{},"locked":false,"last_modified":"2019-07-03T20:36:22+00:00"},{"etag":"EtI8ojDtRMN2qNgqn62Ko1pM3AX","key":"test2","label":null,"content_type":"testtype","value":"bbb","tags":{"tag1":"value1","tag2":"value2"},"locked":false,"last_modified":"2019-08-14T15:56:13+00:00"}]}'
-    headers:
-      access-control-allow-credentials:
-      - 'true'
-      access-control-allow-headers:
-      - DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since,
-        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-content-sha256,
-        x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token,
-        x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime,
-        x-ms-retry-after, x-ms-request-id, WWW-Authenticate
-      access-control-allow-methods:
-      - GET, PUT, POST, DELETE, PATCH, OPTIONS
-      access-control-allow-origin:
-      - '*'
-      access-control-expose-headers:
-      - DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since,
-        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-content-sha256,
-        x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token,
-        x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime,
-        x-ms-retry-after, x-ms-request-id, WWW-Authenticate
-      connection:
-      - keep-alive
-      content-length:
-      - '1253'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 19 Aug 2019 18:30:14 GMT
+      - Wed, 11 Sep 2019 19:58:12 GMT
       link:
-      - </kv>; rel="original"
+      - </kv?api-version=1.0&after=bXVsdGlfOTl0ZXN0X2tleV9hNmFmODk1Mi01NGE2LTExZTktYjYwMC0yODE2YTg0ZDAzMDkKbXVsdGlfbGFiZWxfOTk%3D>;
+        rel="next",</kv?api-version=1.0>; rel="original"
       memento-datetime:
-      - Sun, 18 Aug 2019 11:30:13 GMT
+      - Tue, 10 Sep 2019 12:58:12 GMT
       server:
       - nginx/1.13.12
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=MzotMSM0Mzg4ODg=;sn=438888
+      - zAJw6V16=MzotMSM1NDU5NjA=;sn=545960
       transfer-encoding:
       - chunked
-      vary:
-      - Accept-Encoding
     status:
       code: 200
       message: OK
@@ -450,25 +469,25 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - application/vnd.microsoft.appconfig.kvset+json
+      Accept-Datetime:
+      - '2019-09-10 12:58:12.788728'
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
-      Content-Length:
-      - '0'
       User-Agent:
-      - azsdk-python-appconfiguration/1.0.0b2 Python/3.7.2 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-appconfiguration/1.0.0b3 Python/3.7.2 (Windows-10-10.0.18362-SP0)
       x-ms-content-sha256:
       - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
       x-ms-date:
-      - Aug, 19 2019 18:30:14 GMT
-    method: DELETE
-    uri: https://xyazconfig.azconfig.io/kv/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309?label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309
+      - Sep, 11 2019 19:58:12 GMT
+    method: GET
+    uri: https://xyazconfig.azconfig.io/kv?api-version=1.0&after=bXVsdGlfOTl0ZXN0X2tleV9hNmFmODk1Mi01NGE2LTExZTktYjYwMC0yODE2YTg0ZDAzMDkKbXVsdGlfbGFiZWxfOTk%3D
   response:
     body:
-      string: '{"etag":"fhRxWpJ9trciwcujdJNZEf7GYI0","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:14+00:00"}'
+      string: '{"items":[{"etag":"kxzsZwDeLrKhHmKcukjfhypsmj9","key":"multi_9test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"multi_label_9","content_type":null,"value":"multi
+        value","tags":{},"locked":false,"last_modified":"2019-09-09T19:47:41+00:00"}]}'
     headers:
       access-control-allow-credentials:
       - 'true'
@@ -490,26 +509,23 @@ interactions:
         x-ms-retry-after, x-ms-request-id, WWW-Authenticate
       connection:
       - keep-alive
-      content-length:
-      - '315'
       content-type:
-      - application/json; charset=utf-8
+      - application/vnd.microsoft.appconfig.kvset+json; charset=utf-8
       date:
-      - Mon, 19 Aug 2019 18:30:14 GMT
-      etag:
-      - W/"fhRxWpJ9trciwcujdJNZEf7GYI0"
-      last-modified:
-      - Mon, 19 Aug 2019 18:30:14 GMT
+      - Wed, 11 Sep 2019 19:58:13 GMT
+      link:
+      - </kv?api-version=1.0&after=bXVsdGlfOTl0ZXN0X2tleV9hNmFmODk1Mi01NGE2LTExZTktYjYwMC0yODE2YTg0ZDAzMDkKbXVsdGlfbGFiZWxfOTk%3D>;
+        rel="original"
+      memento-datetime:
+      - Tue, 10 Sep 2019 12:58:12 GMT
       server:
       - nginx/1.13.12
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=MzotMSM0Mzg4ODk=;sn=438889
+      - zAJw6V16=MzotMSM1NDU5NjA=;sn=545960
       transfer-encoding:
       - chunked
-      vary:
-      - Accept-Encoding
     status:
       code: 200
       message: OK
@@ -517,7 +533,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - application/vnd.microsoft.appconfig.kv+json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -525,17 +541,17 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-appconfiguration/1.0.0b2 Python/3.7.2 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-appconfiguration/1.0.0b3 Python/3.7.2 (Windows-10-10.0.18362-SP0)
       x-ms-content-sha256:
       - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
       x-ms-date:
-      - Aug, 19 2019 18:30:14 GMT
+      - Sep, 11 2019 19:58:12 GMT
     method: DELETE
-    uri: https://xyazconfig.azconfig.io/kv/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309
+    uri: https://xyazconfig.azconfig.io/kv/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307?label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307&api-version=1.0
   response:
     body:
-      string: '{"etag":"c8zYxctPfGV27ePFGd37mxNf7CX","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:14+00:00"}'
+      string: '{"etag":"Ief8H5fSN4aP8wlShQZ7Mo3hfjT","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:13+00:00"}'
     headers:
       access-control-allow-credentials:
       - 'true'
@@ -557,26 +573,85 @@ interactions:
         x-ms-retry-after, x-ms-request-id, WWW-Authenticate
       connection:
       - keep-alive
-      content-length:
-      - '269'
       content-type:
-      - application/json; charset=utf-8
+      - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
       date:
-      - Mon, 19 Aug 2019 18:30:14 GMT
+      - Wed, 11 Sep 2019 19:58:13 GMT
       etag:
-      - W/"c8zYxctPfGV27ePFGd37mxNf7CX"
+      - '"Ief8H5fSN4aP8wlShQZ7Mo3hfjT"'
       last-modified:
-      - Mon, 19 Aug 2019 18:30:14 GMT
+      - Wed, 11 Sep 2019 19:58:13 GMT
       server:
       - nginx/1.13.12
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=MzotMSM0Mzg4OTA=;sn=438890
+      - zAJw6V16=MzotMSM1NDU5NjE=;sn=545961
       transfer-encoding:
       - chunked
-      vary:
-      - Accept-Encoding
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/vnd.microsoft.appconfig.kv+json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-appconfiguration/1.0.0b3 Python/3.7.2 (Windows-10-10.0.18362-SP0)
+      x-ms-content-sha256:
+      - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
+      x-ms-date:
+      - Sep, 11 2019 19:58:13 GMT
+    method: DELETE
+    uri: https://xyazconfig.azconfig.io/kv/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307?api-version=1.0
+  response:
+    body:
+      string: '{"etag":"wGewoxgJNKGCT8L6HgINhg1oI4R","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:13+00:00"}'
+    headers:
+      access-control-allow-credentials:
+      - 'true'
+      access-control-allow-headers:
+      - DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since,
+        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-content-sha256,
+        x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token,
+        x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime,
+        x-ms-retry-after, x-ms-request-id, WWW-Authenticate
+      access-control-allow-methods:
+      - GET, PUT, POST, DELETE, PATCH, OPTIONS
+      access-control-allow-origin:
+      - '*'
+      access-control-expose-headers:
+      - DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since,
+        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-content-sha256,
+        x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token,
+        x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime,
+        x-ms-retry-after, x-ms-request-id, WWW-Authenticate
+      connection:
+      - keep-alive
+      content-type:
+      - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
+      date:
+      - Wed, 11 Sep 2019 19:58:13 GMT
+      etag:
+      - '"wGewoxgJNKGCT8L6HgINhg1oI4R"'
+      last-modified:
+      - Wed, 11 Sep 2019 19:58:13 GMT
+      server:
+      - nginx/1.13.12
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+      sync-token:
+      - zAJw6V16=MzotMSM1NDU5NjI=;sn=545962
+      transfer-encoding:
+      - chunked
     status:
       code: 200
       message: OK

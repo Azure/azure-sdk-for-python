@@ -25,6 +25,7 @@ LABEL_UUID = "1d7b2b28-549e-11e9-b51c-2816a84d0307"
 KEY = "PYTHON_UNIT_" + KEY_UUID
 LABEL = "test_label1_" + LABEL_UUID
 LABEL_RESERVED_CHARS = "test_label2_*, \\" + LABEL_UUID  # contains reserved chars *,\
+LABEL_RESERVED_CHARS_QUERY = "test_label2_\*\, \\\\" + LABEL_UUID  # contains reserved chars *,\
 TEST_CONTENT_TYPE = "test content type"
 TEST_VALUE = "test value"
 

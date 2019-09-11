@@ -3,19 +3,19 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - application/vnd.microsoft.appconfig.kvset+json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-appconfiguration/1.0.0b2 Python/3.7.2 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-appconfiguration/1.0.0b3 Python/3.7.2 (Windows-10-10.0.18362-SP0)
       x-ms-content-sha256:
       - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
       x-ms-date:
-      - Aug, 19 2019 18:30:57 GMT
+      - Sep, 11 2019 19:58:58 GMT
     method: GET
-    uri: https://xyazconfig.azconfig.io/kv?label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309&key=PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309
+    uri: https://xyazconfig.azconfig.io/kv?key=PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307&label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307&api-version=1.0
   response:
     body:
       string: '{"items":[]}'
@@ -40,30 +40,26 @@ interactions:
         x-ms-retry-after, x-ms-request-id, WWW-Authenticate
       connection:
       - keep-alive
-      content-length:
-      - '12'
       content-type:
-      - application/json; charset=utf-8
+      - application/vnd.microsoft.appconfig.kvset+json; charset=utf-8
       date:
-      - Mon, 19 Aug 2019 18:30:58 GMT
+      - Wed, 11 Sep 2019 19:58:59 GMT
       server:
       - nginx/1.13.12
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       transfer-encoding:
       - chunked
-      vary:
-      - Accept-Encoding
     status:
       code: 200
       message: OK
 - request:
-    body: '{"key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309", "label":
-      "test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309", "content_type": "test content
+    body: '{"key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307", "label":
+      "test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307", "content_type": "test content
       type", "value": "test value", "tags": {"tag1": "tag1", "tag2": "tag2"}}'
     headers:
       Accept:
-      - application/json
+      - application/vnd.microsoft.appconfig.kv+json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -73,19 +69,19 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - azsdk-python-appconfiguration/1.0.0b2 Python/3.7.2 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-appconfiguration/1.0.0b3 Python/3.7.2 (Windows-10-10.0.18362-SP0)
       if-none-match:
       - '*'
       x-ms-content-sha256:
-      - 5b/E4qQlXHTRod+n+f+xjK6c/tRVR8uxoC62FjvGJPw=
+      - EcLyYD77Lx3X8vN5w0ia+MCOL2LvXC3UWqvYFJlqycw=
       x-ms-date:
-      - Aug, 19 2019 18:30:58 GMT
+      - Sep, 11 2019 19:58:58 GMT
     method: PUT
-    uri: https://xyazconfig.azconfig.io/kv/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309?label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309
+    uri: https://xyazconfig.azconfig.io/kv/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307?label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307&api-version=1.0
   response:
     body:
-      string: '{"etag":"SmUdYRQIWCtd0lleboOn0Xv1A21","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:58+00:00"}'
+      string: '{"etag":"BKuih3JupWj6ETyz6uTtdwU8vPd","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:59+00:00"}'
     headers:
       access-control-allow-credentials:
       - 'true'
@@ -107,26 +103,22 @@ interactions:
         x-ms-retry-after, x-ms-request-id, WWW-Authenticate
       connection:
       - keep-alive
-      content-length:
-      - '315'
       content-type:
-      - application/json; charset=utf-8
+      - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
       date:
-      - Mon, 19 Aug 2019 18:30:58 GMT
+      - Wed, 11 Sep 2019 19:58:59 GMT
       etag:
-      - W/"SmUdYRQIWCtd0lleboOn0Xv1A21"
+      - '"BKuih3JupWj6ETyz6uTtdwU8vPd"'
       last-modified:
-      - Mon, 19 Aug 2019 18:30:58 GMT
+      - Wed, 11 Sep 2019 19:58:59 GMT
       server:
       - nginx/1.13.12
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=MzotMSM0MzkyNjA=;sn=439260
+      - zAJw6V16=MzotMSM1NDYzMzI=;sn=546332
       transfer-encoding:
       - chunked
-      vary:
-      - Accept-Encoding
     status:
       code: 200
       message: OK
@@ -134,23 +126,23 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - application/vnd.microsoft.appconfig.kvset+json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-appconfiguration/1.0.0b2 Python/3.7.2 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-appconfiguration/1.0.0b3 Python/3.7.2 (Windows-10-10.0.18362-SP0)
       x-ms-content-sha256:
       - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
       x-ms-date:
-      - Aug, 19 2019 18:30:58 GMT
+      - Sep, 11 2019 19:58:59 GMT
     method: GET
-    uri: https://xyazconfig.azconfig.io/kv?label=&key=PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309
+    uri: https://xyazconfig.azconfig.io/kv?key=PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307&api-version=1.0
   response:
     body:
-      string: '{"items":[{"etag":"SmUdYRQIWCtd0lleboOn0Xv1A21","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:58+00:00"}]}'
+      string: '{"items":[{"etag":"BKuih3JupWj6ETyz6uTtdwU8vPd","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:59+00:00"}]}'
     headers:
       access-control-allow-credentials:
       - 'true'
@@ -172,22 +164,18 @@ interactions:
         x-ms-retry-after, x-ms-request-id, WWW-Authenticate
       connection:
       - keep-alive
-      content-length:
-      - '327'
       content-type:
-      - application/json; charset=utf-8
+      - application/vnd.microsoft.appconfig.kvset+json; charset=utf-8
       date:
-      - Mon, 19 Aug 2019 18:30:58 GMT
+      - Wed, 11 Sep 2019 19:58:59 GMT
       server:
       - nginx/1.13.12
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=MzotMSM0MzkyNjA=;sn=439260
+      - zAJw6V16=MzotMSM1NDYzMzI=;sn=546332
       transfer-encoding:
       - chunked
-      vary:
-      - Accept-Encoding
     status:
       code: 200
       message: OK
@@ -195,7 +183,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - application/vnd.microsoft.appconfig.kv+json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -203,13 +191,13 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-appconfiguration/1.0.0b2 Python/3.7.2 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-appconfiguration/1.0.0b3 Python/3.7.2 (Windows-10-10.0.18362-SP0)
       x-ms-content-sha256:
       - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
       x-ms-date:
-      - Aug, 19 2019 18:30:58 GMT
+      - Sep, 11 2019 19:58:59 GMT
     method: DELETE
-    uri: https://xyazconfig.azconfig.io/kv/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309
+    uri: https://xyazconfig.azconfig.io/kv/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307?api-version=1.0
   response:
     body:
       string: ''
@@ -235,9 +223,9 @@ interactions:
       connection:
       - keep-alive
       content-type:
-      - application/json; charset=utf-8
+      - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
       date:
-      - Mon, 19 Aug 2019 18:30:58 GMT
+      - Wed, 11 Sep 2019 19:58:59 GMT
       server:
       - nginx/1.13.12
       strict-transport-security:
@@ -246,12 +234,12 @@ interactions:
       code: 204
       message: No Content
 - request:
-    body: '{"key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309", "content_type":
+    body: '{"key": "PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307", "content_type":
       "test content type", "value": "test value", "tags": {"tag1": "tag1", "tag2":
       "tag2"}}'
     headers:
       Accept:
-      - application/json
+      - application/vnd.microsoft.appconfig.kv+json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -261,19 +249,19 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - azsdk-python-appconfiguration/1.0.0b2 Python/3.7.2 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-appconfiguration/1.0.0b3 Python/3.7.2 (Windows-10-10.0.18362-SP0)
       if-none-match:
       - '*'
       x-ms-content-sha256:
-      - 4rt07HteiPg5NxofrgzMmlQPTVbo1no7aKxDSI5uUU4=
+      - +3/XuxD/uR+SCQeoaX82t+gpnjgQq8JZfIthH1zy0+g=
       x-ms-date:
-      - Aug, 19 2019 18:30:58 GMT
+      - Sep, 11 2019 19:58:59 GMT
     method: PUT
-    uri: https://xyazconfig.azconfig.io/kv/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309
+    uri: https://xyazconfig.azconfig.io/kv/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307?api-version=1.0
   response:
     body:
-      string: '{"etag":"5xbzNPy7pBbXqDGDZ3u7qnVi9ti","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:58+00:00"}'
+      string: '{"etag":"FyIR22yQgt7OWfUoUYL0nFl0W48","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:59+00:00"}'
     headers:
       access-control-allow-credentials:
       - 'true'
@@ -295,26 +283,22 @@ interactions:
         x-ms-retry-after, x-ms-request-id, WWW-Authenticate
       connection:
       - keep-alive
-      content-length:
-      - '269'
       content-type:
-      - application/json; charset=utf-8
+      - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
       date:
-      - Mon, 19 Aug 2019 18:30:58 GMT
+      - Wed, 11 Sep 2019 19:58:59 GMT
       etag:
-      - W/"5xbzNPy7pBbXqDGDZ3u7qnVi9ti"
+      - '"FyIR22yQgt7OWfUoUYL0nFl0W48"'
       last-modified:
-      - Mon, 19 Aug 2019 18:30:58 GMT
+      - Wed, 11 Sep 2019 19:58:59 GMT
       server:
       - nginx/1.13.12
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=MzotMSM0MzkyNjE=;sn=439261
+      - zAJw6V16=MzotMSM1NDYzMzM=;sn=546333
       transfer-encoding:
       - chunked
-      vary:
-      - Accept-Encoding
     status:
       code: 200
       message: OK
@@ -322,125 +306,127 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - application/vnd.microsoft.appconfig.kvset+json
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-appconfiguration/1.0.0b2 Python/3.7.2 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-appconfiguration/1.0.0b3 Python/3.7.2 (Windows-10-10.0.18362-SP0)
       x-ms-content-sha256:
       - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
       x-ms-date:
-      - Aug, 19 2019 18:30:58 GMT
+      - Sep, 11 2019 19:58:59 GMT
     method: GET
-    uri: https://xyazconfig.azconfig.io/revisions?key=PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309
+    uri: https://xyazconfig.azconfig.io/revisions?key=PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307&api-version=1.0
   response:
     body:
-      string: '{"items":[{"etag":"5xbzNPy7pBbXqDGDZ3u7qnVi9ti","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:58+00:00"},{"etag":"SmUdYRQIWCtd0lleboOn0Xv1A21","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:58+00:00"},{"etag":"yeycEKKo9VEVBPnYEZS7pTnEaEu","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:58+00:00"},{"etag":"d88Jj1LuWZO2J277SVW7DLuWrdH","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:57+00:00"},{"etag":"77goWcMfq6DUXChSzL7mwv9yoog","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:57+00:00"},{"etag":"gwJ7zTAV3Ev5Roc2VZ7icKlyFoG","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:57+00:00"},{"etag":"owH3fdGamfA8qB8K33ya5VS69HN","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:56+00:00"},{"etag":"k7VIpLdggDcPtsMysqICReQfe5l","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:56+00:00"},{"etag":"bkxKUG8q0Hhr0IDFgq6iFN3ZAfz","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label2_*,
-        \\1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":null,"value":"test
-        value","tags":{},"locked":false,"last_modified":"2019-08-19T18:30:55+00:00"},{"etag":"SsztpssmeFhdBtbJsph8MlwKttG","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:55+00:00"},{"etag":"J3R2GxbBKwk6DNafT2iJ8GBSb0L","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:55+00:00"},{"etag":"2XGwITwgj3v2LhJqrfCTv7369rF","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:54+00:00"},{"etag":"pyXMLjgdKEE9OPqG3nUIz6rD6tD","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:54+00:00"},{"etag":"EjH2mK8LtUgsBfTBUuiy9W9LNBv","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:54+00:00"},{"etag":"KbxeGKquAOtWS6YUsZo5zSSEanb","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:53+00:00"},{"etag":"NXtQDCUSG6c65vWopDRyTwz0H6S","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:53+00:00"},{"etag":"WH2EwewDhEAHry5c6BlCsHOSptY","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:53+00:00"},{"etag":"G5TBf0mR1rj3nzqfMfski2kIZIt","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:52+00:00"},{"etag":"5y8HM1skA77if66tx7iQ4VrFOnv","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:52+00:00"},{"etag":"bHHWO7wq69gqbxgDYCqa9YRm6iK","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:37+00:00"},{"etag":"2Yr0iLtZdmppAOTjXz55CASgIxu","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:37+00:00"},{"etag":"mozPcD8qT354rlveIess6l7YpPs","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:36+00:00"},{"etag":"JEgyrBTOGlwPKnYugjUbmEysK19","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:36+00:00"},{"etag":"kF1xBGmPywm2LodEPD03QIJfQtt","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:35+00:00"},{"etag":"bW213qQnAwOkPMeYQ8Z71d1pa0u","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:35+00:00"},{"etag":"LTYTyPq2VoKQk0AVvz9n9fvKPCh","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:35+00:00"},{"etag":"DlXlsrIaQCHiSIwVsuubYGx4wf8","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:34+00:00"},{"etag":"TxBVDTuLBGjRZIV2TUjCaC4YL1x","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:34+00:00"},{"etag":"iGXnViNSoGw26jW85lPqY41ArI6","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:34+00:00"},{"etag":"Kf8BuQxYsmFHMfmrLPAiJJkaqek","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:33+00:00"},{"etag":"BogZO4qey3cPT7TAg0zFXShK369","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:33+00:00"},{"etag":"bVVwKR7ZZruj0cETgoeYzo4akwu","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:32+00:00"},{"etag":"YZa6W3RYicqaQ4LlHCT23zshb1E","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:32+00:00"},{"etag":"I6Z7DcBtVzCo9BJzuLmBPlwTLsN","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:32+00:00"},{"etag":"Wcju7ypXKMWVom3zXEJvWV7AUYa","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:32+00:00"},{"etag":"GKScCYR7rKMKR5UqWA8fVqArWmb","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:31+00:00"},{"etag":"DZXLCSM12zhadmSB6x3D4xJ4EuM","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:31+00:00"},{"etag":"i1wKTXr259SP0QhItmBcovQ6qE9","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:30+00:00"},{"etag":"BIIw4dvd4UoOo9ENRwXCcRwp6xt","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:30+00:00"},{"etag":"oAWNgMAFRAiRI1TOM9DYuyCoc8p","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:30+00:00"},{"etag":"1uaYtzOZRSdMMgV0bqGV8KUrctK","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:29+00:00"},{"etag":"hJ87WQKeCcJuqwBqMXVMorT9xsy","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:29+00:00"},{"etag":"Hsiw8HDk8vA91PRn2RioVt7Digv","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:29+00:00"},{"etag":"XWcplvTlSzfaf4T0HHaV0rYlnLp","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:28+00:00"},{"etag":"BuQE2V7mZNbehGkuHQQHkUWCrAs","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:28+00:00"},{"etag":"pqxZ1pq2QJuDPyjvmUzAxd09Jzp","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:27+00:00"},{"etag":"bQSBNdnnkczMY3t2HmNCej05Uvm","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:27+00:00"},{"etag":"1JWqRkv88NyK7IwIKAzzXFCZ5op","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:27+00:00"},{"etag":"sdcz109rMo8h8jzB6h6FS5G6AMk","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:26+00:00"},{"etag":"y2hG0SmiUzcj4cUH0QcYdjr0TsB","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:26+00:00"},{"etag":"F6eexmzYqXMrlFgftSRrjzFk3Nq","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:26+00:00"},{"etag":"OzXtYihfoDUiNkwcUQJZWKYwiM5","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:25+00:00"},{"etag":"SHYfSgxtyINpGBIdDm4nnGQjGFS","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:25+00:00"},{"etag":"xm9nzAfcDPnfypKaE33cerAQFbv","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"updated_value","tags":{"a":"b","c":"d"},"locked":false,"last_modified":"2019-08-19T18:30:25+00:00"},{"etag":"zh7Y8mqSUJo2vCac7j7fGKKvcoC","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:24+00:00"},{"etag":"jzJTSzzntjl3UzA6J8Qd3C1g3HX","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:24+00:00"},{"etag":"LNB68u2DpDkNDeG1ku3ZxBYTdMf","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"updated_value","tags":{"a":"b","c":"d"},"locked":false,"last_modified":"2019-08-19T18:30:24+00:00"},{"etag":"6voiGQ7wvq6WqJkZIZN8AoApdnJ","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:24+00:00"},{"etag":"PBigK3zOXqF1hmiCVMzFbOPmun4","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:23+00:00"},{"etag":"EzwdsMShKHClmoE60GE0qUxIvc7","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:23+00:00"},{"etag":"mFrroYvwPrhL9SSVZtG5LnaGwIx","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:23+00:00"},{"etag":"l6tpFD6rpoLkWyMsqQleQrFVDuf","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test valuea","tags":{"a":"b","c":"d"},"locked":false,"last_modified":"2019-08-19T18:30:22+00:00"},{"etag":"n7nyVplpwo3XTMNivPmyijjgZxi","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:22+00:00"},{"etag":"gJ984Emk8ziB2Y45AiQX0PkPEre","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:22+00:00"},{"etag":"kCxsBOtL3tOUk0pmWgfCNqgfUez","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:21+00:00"},{"etag":"q63WQWTWsfDmE7centRoExYXrX1","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:21+00:00"},{"etag":"PHGEvVvWYDbjwHHSiiNEp6R1IG7","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:21+00:00"},{"etag":"vBK03qEvh3BlwvzVToT4gKgoBLp","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:21+00:00"},{"etag":"45eYQjOh28S7w4pBTfil4Jkf1nn","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:20+00:00"},{"etag":"Ocxj1OFYcbHSVhhKEmAn4MYVe47","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:20+00:00"},{"etag":"EAW2cDMF6FgHI3YbfxHLI5pb2yz","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:19+00:00"},{"etag":"tM1lEBWKlIJQsR9WsnKNXdDTkqe","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:19+00:00"},{"etag":"FTbYzQjNKESggafsIoW9knHlSqn","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:18+00:00"},{"etag":"zey4ZyJusbeyHEXBgyXqxqyeX5W","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:18+00:00"},{"etag":"8P5Ys4qyjoBmTRdwPzAIsob2sH7","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:18+00:00"},{"etag":"Vd2SmES8opMEkQaTHn7wH4MLO86","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:18+00:00"},{"etag":"HRqLtjIw8O9dMrTJo9SpSUhlQM5","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:17+00:00"},{"etag":"lZHynOYVwpoeIqQVbz7zGrtWr40","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:17+00:00"},{"etag":"EVTFP2dcQ6fAKqHubrxYBD7XlRC","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label2_*,
-        \\1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":null,"value":"test
-        value","tags":{},"locked":false,"last_modified":"2019-08-19T18:30:16+00:00"},{"etag":"2WNmYIWYt3Deees1AUttOfRxunK","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:16+00:00"},{"etag":"SBFoi0Dg8PQxwXogjOklgLHDqrv","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:16+00:00"},{"etag":"2JqJ7WyTY8IxUGQ1cHf8ggJ6yxa","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:16+00:00"},{"etag":"qVnND0IRdP6fgznt88nRrRJpbiq","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:15+00:00"},{"etag":"wGEq26ixYBm0heJg2VcGHSS4C11","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:15+00:00"},{"etag":"hElW219kYOzdbBtNwZpgLqg4wkt","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:15+00:00"},{"etag":"c8zYxctPfGV27ePFGd37mxNf7CX","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:14+00:00"},{"etag":"fhRxWpJ9trciwcujdJNZEf7GYI0","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:14+00:00"},{"etag":"MvmbDEbFOfDENREzyo9VsBEOEF0","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:13+00:00"},{"etag":"JqMs55OASfbNISN4f0hvkV823UJ","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:13+00:00"},{"etag":"lz2OUcIAIrCsgP0MmNawpvQih4A","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:29:58+00:00"},{"etag":"uZ5lgx1fuOha9FAy89DSBT6eaDh","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:29:58+00:00"},{"etag":"L9zb3KCsWlCnxFF5vjjy3KfnxFs","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:29:57+00:00"},{"etag":"i53Eb3MKdICn0jlOg3Uuh5qBeiz","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:29:57+00:00"},{"etag":"3xbK256SVI5iwkr1gaoooawP2rV","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:29:57+00:00"},{"etag":"9LCh3prEiHseVoUcfNmdxskmIat","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:29:56+00:00"},{"etag":"IbaLD1UqxmIzyBciEVH0IMvzawy","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:29:56+00:00"},{"etag":"c73AjYjQMBhrOqU7XqChZHjSxAW","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:29:56+00:00"},{"etag":"GWJdn3764PSY6bxbk20MAJOU2bZ","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:29:55+00:00"},{"etag":"G8csW4OBz53odTu4gETk06PmMlZ","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:29:55+00:00"},{"etag":"xN1bytz0w3shURWV03CJHq9J87z","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:29:55+00:00"}],"@nextLink":"/revisions?key=PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309&after=MTU2NjIzOTM5NQ%3D%3D"}'
+      string: '{"items":[{"etag":"FyIR22yQgt7OWfUoUYL0nFl0W48","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:59+00:00"},{"etag":"BKuih3JupWj6ETyz6uTtdwU8vPd","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:59+00:00"},{"etag":"JpYZgKohqKE7okhL5EJLejeK6jY","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:58+00:00"},{"etag":"Dk0QFDARm8vpKtJ2gAEpTLNGWvA","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:58+00:00"},{"etag":"nWQwN7ewLJn2LfYxTg1z2AiANgY","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:58+00:00"},{"etag":"Gb1HINBdQJGEekHOLSS2Apv5ARP","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:57+00:00"},{"etag":"bYtI2G9FoMqzQjz5uqrqUNTIVcs","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:57+00:00"},{"etag":"1pra0ntwxejUvJ1qG82KxzH8SpX","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:57+00:00"},{"etag":"xfy08kIEshqMS6Etll9l0Up14tS","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label2_*,
+        \\1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":null,"value":"test
+        value","tags":{},"locked":false,"last_modified":"2019-09-11T19:58:56+00:00"},{"etag":"XKiokJToBE5d9zpTPwkrpRC5Iqk","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:56+00:00"},{"etag":"CbsIxwKwfbYYR2v4xeNOTwPGoco","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:56+00:00"},{"etag":"ectavp8RPGaSCphaiqndVB6ypE9","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:55+00:00"},{"etag":"EHoAXcvjXKuotb9r5gyETbOx2wQ","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:55+00:00"},{"etag":"nfAScuB9lLBte7Jd7VPRuenPIQ1","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:54+00:00"},{"etag":"Vb3YP8q23IR0d41XGZlkA8Msm44","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:54+00:00"},{"etag":"H4RZ89mUN2SOr0GaxTpkTlfyYCG","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:54+00:00"},{"etag":"llHTWiwUlt5svkMwWV7K8Hy91sP","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:53+00:00"},{"etag":"xw6l1aGmhANW9sb69R7hpoAehj6","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:53+00:00"},{"etag":"YyG1TDt4Ieph2A2lHJcGcMyqKk7","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:53+00:00"},{"etag":"o9PUd8RWHjHkq7N8MbtVX2ERv68","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:37+00:00"},{"etag":"SL1c2O1Z3bTkJPwBnPZBvvcxnT2","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:37+00:00"},{"etag":"XjMLFUYAjoMLwJAKVEShqLMRvjJ","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:36+00:00"},{"etag":"a62muqiYE9HTXpAh53KmOP4vYQo","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:36+00:00"},{"etag":"37e9Y4MEDmLFHYtlW6NLaP8tbzR","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:36+00:00"},{"etag":"KrY6HM2KpARRKxQ1vhk7GA4FErg","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:35+00:00"},{"etag":"E5DJ2YKTYGB9wNXtJz3cInnMH0r","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:35+00:00"},{"etag":"eRxFzV3zb4DngawhbYlrx1Jecgj","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:35+00:00"},{"etag":"ABOoXZjQ5vGvfA1PeYzusbr1dpY","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:34+00:00"},{"etag":"WWzP6n7bYydRnbh6Xv9dTI19QLZ","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:34+00:00"},{"etag":"NcaQLLWXTFpc9Jv2XgjYij4Zmwa","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:33+00:00"},{"etag":"0FOqsQqeAHmoLShQAZtCTjN87EN","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:33+00:00"},{"etag":"scjDSjf8S7sl6pjdJ33tp8ojjvP","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:33+00:00"},{"etag":"PStzIUFDuWCfoEokkdsTGkk8vyg","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:32+00:00"},{"etag":"00WX4zfkjEMZmZKS9mHATexZhkd","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:32+00:00"},{"etag":"EGWi5OIi1OVw2Y2064Uv1RVyTCs","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:32+00:00"},{"etag":"qP87qu3miw9DGWLmF91MHAg1riY","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:31+00:00"},{"etag":"R2rYZOonIiJDUPRObg036IHjJDK","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:31+00:00"},{"etag":"tLhY2jkJ0E1A9PFm6UoJdddsOOv","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:30+00:00"},{"etag":"KIACyPVMljMQk4oglBVEVcGWdgb","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:30+00:00"},{"etag":"pXjTdzCyo0QQ3Fy8qixfugvl0XR","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:30+00:00"},{"etag":"O940hq20QZ0D6FCyQnTnV71Oa4b","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:30+00:00"},{"etag":"2t2z83YoK2DdtdHjVRT83UcW1bt","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:29+00:00"},{"etag":"aRCT5SuWlwvyujOLV0QjK6XpWwW","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:29+00:00"},{"etag":"h7Uf3qMC48AULxiW9Wv2KEUK6T9","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:28+00:00"},{"etag":"DfXOMpeSH32lEtEkRjDUk7wF0D2","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:28+00:00"},{"etag":"1fNkZo0XSYwZuJzu1BqmJ9KwwrN","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:28+00:00"},{"etag":"qD5n3YSaK8qPJEonxXTRs9PHDyM","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:27+00:00"},{"etag":"Mnj0NZx8qcwmq3yXYPS7eF9Gd1b","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:27+00:00"},{"etag":"lCsTbVdH3NeXrKYEgnsHqfPJdfL","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:27+00:00"},{"etag":"EXBTQ9uiPbymUWrmy6N8Rt3G34W","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:26+00:00"},{"etag":"LZOf8u6enTV1fvDIWGRsqQ3UfOI","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:26+00:00"},{"etag":"Z2iQ3OCoemNi8yNCywiIbqsM26b","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:25+00:00"},{"etag":"Hl5M8paAlHAaHlCc8bo7swQ0OYQ","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:25+00:00"},{"etag":"BtKm5a3fHiBKyBo8u4sx3N0gHOk","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"updated_value","tags":{"a":"b","c":"d"},"locked":false,"last_modified":"2019-09-11T19:58:25+00:00"},{"etag":"Os7E8ZmRhxl9h9JPiAjPcWpAvQX","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:24+00:00"},{"etag":"IadKRFQmrpl5yJoo0qs5jvXxNxm","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:24+00:00"},{"etag":"vdfb3yVyX2YfFkEdZU4o9PXN2IT","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"updated_value","tags":{"a":"b","c":"d"},"locked":false,"last_modified":"2019-09-11T19:58:24+00:00"},{"etag":"VIKEuxlHiH8SMsD0r7b5WBXgNkJ","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:24+00:00"},{"etag":"i7mdPKgnsNjnz9pBHXSVKox2Xc9","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:23+00:00"},{"etag":"lUjJlbt4IK3JtC3jhsMQzKl2eRW","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:23+00:00"},{"etag":"WUWQ7xsJqCxF6xf6g3IsqcblEZ8","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:23+00:00"},{"etag":"ZcVNRHKmWgELukRZmzbIzaRyc7B","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test valuea","tags":{"a":"b","c":"d"},"locked":false,"last_modified":"2019-09-11T19:58:22+00:00"},{"etag":"jkG31IfB6Le3DLZQ1ia0wYZtlAL","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:22+00:00"},{"etag":"Jvwza79FLnscuxBQBk9s0BP7Bh4","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:22+00:00"},{"etag":"cteky8BzOzJaO763Yjn5xi0DS8g","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:21+00:00"},{"etag":"rLGll7YsLoh1b1DwlDBrxlAn4ZZ","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:21+00:00"},{"etag":"XTc5q4beb5QTcwM6QC3gJcON5Ru","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:21+00:00"},{"etag":"neNnBAPCGGxwdCMexlOHUHOxCJy","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:20+00:00"},{"etag":"vd1O6GOrxpor6kDUl6T8aLC6mT1","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:20+00:00"},{"etag":"mTW91OOzhFM46u8NPxcosmlZW2J","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:20+00:00"},{"etag":"XwRVzSqICs1tx3AptkhZxyFcYT1","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:19+00:00"},{"etag":"GPzeFVcj3r2uYFKKuy8Lxb2s1aa","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:19+00:00"},{"etag":"vNnjXEMILgi56xpId3m7ZhBFvNm","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:18+00:00"},{"etag":"zDBWqTaHuAd70YKd7rdWxnuNjuR","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:18+00:00"},{"etag":"EqWtwQuSsoiYaHLPkloi6WiJVcF","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:17+00:00"},{"etag":"v5VwJdXBnJ8kbQlqUX9XcNXl7oA","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:17+00:00"},{"etag":"Epac9ev9s7zYabOnN7Uv287FnaL","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:16+00:00"},{"etag":"avBJ5gIRrtvZjFLqhmNhHRVcuar","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:16+00:00"},{"etag":"TKYLdqvM4foLMuRbhSKsu3vk1vD","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label2_*,
+        \\1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":null,"value":"test
+        value","tags":{},"locked":false,"last_modified":"2019-09-11T19:58:15+00:00"},{"etag":"ci9B32ZS7BoNtzcDEF1XeAEEHeK","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:15+00:00"},{"etag":"A9dbfxDSs0wt6RoI5Tw7EYMFjmK","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:15+00:00"},{"etag":"rgIaw6Uvy8LykZwLciHJcyEhEGj","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:15+00:00"},{"etag":"OGD6fb7ryeqe3acGnVduBfbnCkj","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:14+00:00"},{"etag":"mqkw2tQekGxrf5sU4pCe05wgdG0","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:14+00:00"},{"etag":"44N726exDRfkK0gN3cYQd59UmJF","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:14+00:00"},{"etag":"wGewoxgJNKGCT8L6HgINhg1oI4R","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:13+00:00"},{"etag":"Ief8H5fSN4aP8wlShQZ7Mo3hfjT","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:13+00:00"},{"etag":"DTKK4cYCMIK7WpuftH6IkcD4iTb","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:12+00:00"},{"etag":"k2xko9fDhxBysKq6h4stWEVuqcZ","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:12+00:00"},{"etag":"cmkvO1XIqNhSUkLBYdZYEUmmRG8","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:57:55+00:00"},{"etag":"M4XzkkefNgzCBvEwdRo4rzuqsg8","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:57:55+00:00"},{"etag":"0nea3VF6412P0tGe0cZcR2CsCtf","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:57:55+00:00"},{"etag":"YXDRiQYFaGhEmiBfrObog6L7UCw","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:57:55+00:00"},{"etag":"YChQyxdczL1KZaPfOR1ydbKmIzt","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:57:54+00:00"},{"etag":"nf5BOyvRe5sOxxqFQeTZax9iFJ2","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:57:54+00:00"},{"etag":"za0J7tu10rPZNoeE0JuT6YNX2AL","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:57:53+00:00"},{"etag":"BcmtQAKDhyWZlGIFwq8HaPH4Fhz","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:57:53+00:00"},{"etag":"a8Cjz7f2bkddaSuIPoe6ezt9QEw","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:57:53+00:00"},{"etag":"RG3z86HyTZpDwNCUYBNCL8ZtFaN","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:57:52+00:00"},{"etag":"ViWnvJIysbujD6SL9Z7QT9Ho6Cu","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:57:52+00:00"}],"@nextLink":"/revisions?key=PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307&api-version=1.0&after=MTU2ODIzMTg3Mg%3D%3D"}'
     headers:
+      accept-ranges:
+      - items
       access-control-allow-credentials:
       - 'true'
       access-control-allow-headers:
@@ -461,25 +447,21 @@ interactions:
         x-ms-retry-after, x-ms-request-id, WWW-Authenticate
       connection:
       - keep-alive
-      content-length:
-      - '29414'
       content-type:
-      - application/json; charset=utf-8
+      - application/vnd.microsoft.appconfig.kvset+json; charset=utf-8
       date:
-      - Mon, 19 Aug 2019 18:30:58 GMT
+      - Wed, 11 Sep 2019 19:58:59 GMT
       link:
-      - </revisions?key=PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309&after=MTU2NjIzOTM5NQ%3D%3D>;
+      - </revisions?key=PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307&api-version=1.0&after=MTU2ODIzMTg3Mg%3D%3D>;
         rel="next"
       server:
       - nginx/1.13.12
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=MzotMSM0MzkyNjE=;sn=439261
+      - zAJw6V16=MzotMSM1NDYzMzM=;sn=546333
       transfer-encoding:
       - chunked
-      vary:
-      - Accept-Encoding
     status:
       code: 200
       message: OK
@@ -487,7 +469,165 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - application/vnd.microsoft.appconfig.kvset+json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-appconfiguration/1.0.0b3 Python/3.7.2 (Windows-10-10.0.18362-SP0)
+      x-ms-content-sha256:
+      - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
+      x-ms-date:
+      - Sep, 11 2019 19:58:59 GMT
+    method: GET
+    uri: https://xyazconfig.azconfig.io/revisions?key=PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307&api-version=1.0&after=MTU2ODIzMTg3Mg%3D%3D
+  response:
+    body:
+      string: '{"items":[{"etag":"FyIR22yQgt7OWfUoUYL0nFl0W48","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:59+00:00"},{"etag":"BKuih3JupWj6ETyz6uTtdwU8vPd","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:59+00:00"},{"etag":"JpYZgKohqKE7okhL5EJLejeK6jY","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:58+00:00"},{"etag":"Dk0QFDARm8vpKtJ2gAEpTLNGWvA","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:58+00:00"},{"etag":"nWQwN7ewLJn2LfYxTg1z2AiANgY","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:58+00:00"},{"etag":"Gb1HINBdQJGEekHOLSS2Apv5ARP","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:57+00:00"},{"etag":"bYtI2G9FoMqzQjz5uqrqUNTIVcs","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:57+00:00"},{"etag":"1pra0ntwxejUvJ1qG82KxzH8SpX","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:57+00:00"},{"etag":"xfy08kIEshqMS6Etll9l0Up14tS","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label2_*,
+        \\1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":null,"value":"test
+        value","tags":{},"locked":false,"last_modified":"2019-09-11T19:58:56+00:00"},{"etag":"XKiokJToBE5d9zpTPwkrpRC5Iqk","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:56+00:00"},{"etag":"CbsIxwKwfbYYR2v4xeNOTwPGoco","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:56+00:00"},{"etag":"ectavp8RPGaSCphaiqndVB6ypE9","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:55+00:00"},{"etag":"EHoAXcvjXKuotb9r5gyETbOx2wQ","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:55+00:00"},{"etag":"nfAScuB9lLBte7Jd7VPRuenPIQ1","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:54+00:00"},{"etag":"Vb3YP8q23IR0d41XGZlkA8Msm44","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:54+00:00"},{"etag":"H4RZ89mUN2SOr0GaxTpkTlfyYCG","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:54+00:00"},{"etag":"llHTWiwUlt5svkMwWV7K8Hy91sP","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:53+00:00"},{"etag":"xw6l1aGmhANW9sb69R7hpoAehj6","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:53+00:00"},{"etag":"YyG1TDt4Ieph2A2lHJcGcMyqKk7","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:53+00:00"},{"etag":"o9PUd8RWHjHkq7N8MbtVX2ERv68","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:37+00:00"},{"etag":"SL1c2O1Z3bTkJPwBnPZBvvcxnT2","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:37+00:00"},{"etag":"XjMLFUYAjoMLwJAKVEShqLMRvjJ","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:36+00:00"},{"etag":"a62muqiYE9HTXpAh53KmOP4vYQo","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:36+00:00"},{"etag":"37e9Y4MEDmLFHYtlW6NLaP8tbzR","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:36+00:00"},{"etag":"KrY6HM2KpARRKxQ1vhk7GA4FErg","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:35+00:00"},{"etag":"E5DJ2YKTYGB9wNXtJz3cInnMH0r","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:35+00:00"},{"etag":"eRxFzV3zb4DngawhbYlrx1Jecgj","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:35+00:00"},{"etag":"ABOoXZjQ5vGvfA1PeYzusbr1dpY","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:34+00:00"},{"etag":"WWzP6n7bYydRnbh6Xv9dTI19QLZ","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:34+00:00"},{"etag":"NcaQLLWXTFpc9Jv2XgjYij4Zmwa","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:33+00:00"},{"etag":"0FOqsQqeAHmoLShQAZtCTjN87EN","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:33+00:00"},{"etag":"scjDSjf8S7sl6pjdJ33tp8ojjvP","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:33+00:00"},{"etag":"PStzIUFDuWCfoEokkdsTGkk8vyg","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:32+00:00"},{"etag":"00WX4zfkjEMZmZKS9mHATexZhkd","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:32+00:00"},{"etag":"EGWi5OIi1OVw2Y2064Uv1RVyTCs","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:32+00:00"},{"etag":"qP87qu3miw9DGWLmF91MHAg1riY","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:31+00:00"},{"etag":"R2rYZOonIiJDUPRObg036IHjJDK","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:31+00:00"},{"etag":"tLhY2jkJ0E1A9PFm6UoJdddsOOv","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:30+00:00"},{"etag":"KIACyPVMljMQk4oglBVEVcGWdgb","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:30+00:00"},{"etag":"pXjTdzCyo0QQ3Fy8qixfugvl0XR","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:30+00:00"},{"etag":"O940hq20QZ0D6FCyQnTnV71Oa4b","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:30+00:00"},{"etag":"2t2z83YoK2DdtdHjVRT83UcW1bt","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:29+00:00"},{"etag":"aRCT5SuWlwvyujOLV0QjK6XpWwW","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:29+00:00"},{"etag":"h7Uf3qMC48AULxiW9Wv2KEUK6T9","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:28+00:00"},{"etag":"DfXOMpeSH32lEtEkRjDUk7wF0D2","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:28+00:00"},{"etag":"1fNkZo0XSYwZuJzu1BqmJ9KwwrN","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:28+00:00"},{"etag":"qD5n3YSaK8qPJEonxXTRs9PHDyM","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:27+00:00"},{"etag":"Mnj0NZx8qcwmq3yXYPS7eF9Gd1b","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:27+00:00"},{"etag":"lCsTbVdH3NeXrKYEgnsHqfPJdfL","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:27+00:00"},{"etag":"EXBTQ9uiPbymUWrmy6N8Rt3G34W","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:26+00:00"},{"etag":"LZOf8u6enTV1fvDIWGRsqQ3UfOI","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:26+00:00"},{"etag":"Z2iQ3OCoemNi8yNCywiIbqsM26b","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:25+00:00"},{"etag":"Hl5M8paAlHAaHlCc8bo7swQ0OYQ","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:25+00:00"},{"etag":"BtKm5a3fHiBKyBo8u4sx3N0gHOk","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"updated_value","tags":{"a":"b","c":"d"},"locked":false,"last_modified":"2019-09-11T19:58:25+00:00"},{"etag":"Os7E8ZmRhxl9h9JPiAjPcWpAvQX","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:24+00:00"},{"etag":"IadKRFQmrpl5yJoo0qs5jvXxNxm","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:24+00:00"},{"etag":"vdfb3yVyX2YfFkEdZU4o9PXN2IT","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"updated_value","tags":{"a":"b","c":"d"},"locked":false,"last_modified":"2019-09-11T19:58:24+00:00"},{"etag":"VIKEuxlHiH8SMsD0r7b5WBXgNkJ","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:24+00:00"},{"etag":"i7mdPKgnsNjnz9pBHXSVKox2Xc9","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:23+00:00"},{"etag":"lUjJlbt4IK3JtC3jhsMQzKl2eRW","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:23+00:00"},{"etag":"WUWQ7xsJqCxF6xf6g3IsqcblEZ8","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:23+00:00"},{"etag":"ZcVNRHKmWgELukRZmzbIzaRyc7B","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test valuea","tags":{"a":"b","c":"d"},"locked":false,"last_modified":"2019-09-11T19:58:22+00:00"},{"etag":"jkG31IfB6Le3DLZQ1ia0wYZtlAL","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:22+00:00"},{"etag":"Jvwza79FLnscuxBQBk9s0BP7Bh4","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:22+00:00"},{"etag":"cteky8BzOzJaO763Yjn5xi0DS8g","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:21+00:00"},{"etag":"rLGll7YsLoh1b1DwlDBrxlAn4ZZ","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:21+00:00"},{"etag":"XTc5q4beb5QTcwM6QC3gJcON5Ru","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:21+00:00"},{"etag":"neNnBAPCGGxwdCMexlOHUHOxCJy","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:20+00:00"},{"etag":"vd1O6GOrxpor6kDUl6T8aLC6mT1","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:20+00:00"},{"etag":"mTW91OOzhFM46u8NPxcosmlZW2J","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:20+00:00"},{"etag":"XwRVzSqICs1tx3AptkhZxyFcYT1","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:19+00:00"},{"etag":"GPzeFVcj3r2uYFKKuy8Lxb2s1aa","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:19+00:00"},{"etag":"vNnjXEMILgi56xpId3m7ZhBFvNm","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:18+00:00"},{"etag":"zDBWqTaHuAd70YKd7rdWxnuNjuR","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:18+00:00"},{"etag":"EqWtwQuSsoiYaHLPkloi6WiJVcF","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:17+00:00"},{"etag":"v5VwJdXBnJ8kbQlqUX9XcNXl7oA","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:17+00:00"},{"etag":"Epac9ev9s7zYabOnN7Uv287FnaL","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:16+00:00"},{"etag":"avBJ5gIRrtvZjFLqhmNhHRVcuar","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:16+00:00"},{"etag":"TKYLdqvM4foLMuRbhSKsu3vk1vD","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label2_*,
+        \\1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":null,"value":"test
+        value","tags":{},"locked":false,"last_modified":"2019-09-11T19:58:15+00:00"},{"etag":"ci9B32ZS7BoNtzcDEF1XeAEEHeK","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:15+00:00"},{"etag":"A9dbfxDSs0wt6RoI5Tw7EYMFjmK","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:15+00:00"},{"etag":"rgIaw6Uvy8LykZwLciHJcyEhEGj","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:15+00:00"},{"etag":"OGD6fb7ryeqe3acGnVduBfbnCkj","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:14+00:00"},{"etag":"mqkw2tQekGxrf5sU4pCe05wgdG0","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:14+00:00"},{"etag":"44N726exDRfkK0gN3cYQd59UmJF","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:14+00:00"},{"etag":"wGewoxgJNKGCT8L6HgINhg1oI4R","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:13+00:00"},{"etag":"Ief8H5fSN4aP8wlShQZ7Mo3hfjT","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:13+00:00"},{"etag":"DTKK4cYCMIK7WpuftH6IkcD4iTb","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:12+00:00"},{"etag":"k2xko9fDhxBysKq6h4stWEVuqcZ","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:12+00:00"},{"etag":"cmkvO1XIqNhSUkLBYdZYEUmmRG8","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:57:55+00:00"},{"etag":"M4XzkkefNgzCBvEwdRo4rzuqsg8","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:57:55+00:00"},{"etag":"0nea3VF6412P0tGe0cZcR2CsCtf","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:57:55+00:00"},{"etag":"YXDRiQYFaGhEmiBfrObog6L7UCw","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:57:55+00:00"},{"etag":"YChQyxdczL1KZaPfOR1ydbKmIzt","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:57:54+00:00"},{"etag":"nf5BOyvRe5sOxxqFQeTZax9iFJ2","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:57:54+00:00"},{"etag":"za0J7tu10rPZNoeE0JuT6YNX2AL","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:57:53+00:00"},{"etag":"BcmtQAKDhyWZlGIFwq8HaPH4Fhz","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:57:53+00:00"},{"etag":"a8Cjz7f2bkddaSuIPoe6ezt9QEw","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:57:53+00:00"}]}'
+    headers:
+      accept-ranges:
+      - items
+      access-control-allow-credentials:
+      - 'true'
+      access-control-allow-headers:
+      - DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since,
+        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-content-sha256,
+        x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token,
+        x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime,
+        x-ms-retry-after, x-ms-request-id, WWW-Authenticate
+      access-control-allow-methods:
+      - GET, PUT, POST, DELETE, PATCH, OPTIONS
+      access-control-allow-origin:
+      - '*'
+      access-control-expose-headers:
+      - DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since,
+        Cache-Control, Content-Type, Authorization, x-ms-client-request-id, x-ms-content-sha256,
+        x-ms-date, host, Accept, Accept-Datetime, Date, If-Match, If-None-Match, Sync-Token,
+        x-ms-return-client-request-id, ETag, Last-Modified, Link, Memento-Datetime,
+        x-ms-retry-after, x-ms-request-id, WWW-Authenticate
+      connection:
+      - keep-alive
+      content-type:
+      - application/vnd.microsoft.appconfig.kvset+json; charset=utf-8
+      date:
+      - Wed, 11 Sep 2019 19:58:59 GMT
+      server:
+      - nginx/1.13.12
+      strict-transport-security:
+      - max-age=15724800; includeSubDomains
+      sync-token:
+      - zAJw6V16=MzotMSM1NDYzMzM=;sn=546333
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/vnd.microsoft.appconfig.kv+json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -495,17 +635,17 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-appconfiguration/1.0.0b2 Python/3.7.2 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-appconfiguration/1.0.0b3 Python/3.7.2 (Windows-10-10.0.18362-SP0)
       x-ms-content-sha256:
       - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
       x-ms-date:
-      - Aug, 19 2019 18:30:58 GMT
+      - Sep, 11 2019 19:58:59 GMT
     method: DELETE
-    uri: https://xyazconfig.azconfig.io/kv/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309?label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309
+    uri: https://xyazconfig.azconfig.io/kv/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307?label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307&api-version=1.0
   response:
     body:
-      string: '{"etag":"SmUdYRQIWCtd0lleboOn0Xv1A21","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:58+00:00"}'
+      string: '{"etag":"BKuih3JupWj6ETyz6uTtdwU8vPd","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0307","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:59+00:00"}'
     headers:
       access-control-allow-credentials:
       - 'true'
@@ -527,26 +667,22 @@ interactions:
         x-ms-retry-after, x-ms-request-id, WWW-Authenticate
       connection:
       - keep-alive
-      content-length:
-      - '315'
       content-type:
-      - application/json; charset=utf-8
+      - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
       date:
-      - Mon, 19 Aug 2019 18:30:58 GMT
+      - Wed, 11 Sep 2019 19:58:59 GMT
       etag:
-      - W/"SmUdYRQIWCtd0lleboOn0Xv1A21"
+      - '"BKuih3JupWj6ETyz6uTtdwU8vPd"'
       last-modified:
-      - Mon, 19 Aug 2019 18:30:58 GMT
+      - Wed, 11 Sep 2019 19:58:59 GMT
       server:
       - nginx/1.13.12
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=MzotMSM0MzkyNjI=;sn=439262
+      - zAJw6V16=MzotMSM1NDYzMzQ=;sn=546334
       transfer-encoding:
       - chunked
-      vary:
-      - Accept-Encoding
     status:
       code: 200
       message: OK
@@ -554,7 +690,7 @@ interactions:
     body: null
     headers:
       Accept:
-      - application/json
+      - application/vnd.microsoft.appconfig.kv+json
       Accept-Encoding:
       - gzip, deflate
       Connection:
@@ -562,17 +698,17 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-appconfiguration/1.0.0b2 Python/3.7.2 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-appconfiguration/1.0.0b3 Python/3.7.2 (Windows-10-10.0.18362-SP0)
       x-ms-content-sha256:
       - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
       x-ms-date:
-      - Aug, 19 2019 18:30:58 GMT
+      - Sep, 11 2019 19:58:59 GMT
     method: DELETE
-    uri: https://xyazconfig.azconfig.io/kv/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309
+    uri: https://xyazconfig.azconfig.io/kv/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307?api-version=1.0
   response:
     body:
-      string: '{"etag":"5xbzNPy7pBbXqDGDZ3u7qnVi9ti","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-08-19T18:30:58+00:00"}'
+      string: '{"etag":"FyIR22yQgt7OWfUoUYL0nFl0W48","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0307","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-11T19:58:59+00:00"}'
     headers:
       access-control-allow-credentials:
       - 'true'
@@ -594,26 +730,22 @@ interactions:
         x-ms-retry-after, x-ms-request-id, WWW-Authenticate
       connection:
       - keep-alive
-      content-length:
-      - '269'
       content-type:
-      - application/json; charset=utf-8
+      - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
       date:
-      - Mon, 19 Aug 2019 18:30:58 GMT
+      - Wed, 11 Sep 2019 19:58:59 GMT
       etag:
-      - W/"5xbzNPy7pBbXqDGDZ3u7qnVi9ti"
+      - '"FyIR22yQgt7OWfUoUYL0nFl0W48"'
       last-modified:
-      - Mon, 19 Aug 2019 18:30:58 GMT
+      - Wed, 11 Sep 2019 19:58:59 GMT
       server:
       - nginx/1.13.12
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=MzotMSM0MzkyNjM=;sn=439263
+      - zAJw6V16=MzotMSM1NDYzMzU=;sn=546335
       transfer-encoding:
       - chunked
-      vary:
-      - Accept-Encoding
     status:
       code: 200
       message: OK
