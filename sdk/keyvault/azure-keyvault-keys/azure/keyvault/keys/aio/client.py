@@ -204,7 +204,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         :param str name: The name of the key to delete.
         :returns: The deleted key
         :rtype: ~azure.keyvault.keys.models.DeletedKey
-        :raises: ~azure.core.exceptions.ResourceNotFoundError if the key doesn't exist
+        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys_async.py
@@ -225,7 +225,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         :param str version: (optional) A specific version of the key to get. If not specified, gets the latest version
             of the key.
         :rtype: ~azure.keyvault.keys.models.Key
-        :raises: ~azure.core.exceptions.ResourceNotFoundError if the key doesn't exist
+        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys_async.py
@@ -405,7 +405,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         :param dict tags: (optional) Application specific metadata in the form of key-value pairs
         :returns: The updated key
         :rtype: ~azure.keyvault.keys.models.Key
-        :raises: ~azure.core.exceptions.ResourceNotFoundError if the key doesn't exist
+        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys_async.py
@@ -443,7 +443,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         :param str name: The name of the key
         :returns: The raw bytes of the key backup
         :rtype: bytes
-        :raises: ~azure.core.exceptions.ResourceNotFoundError if the key doesn't exist
+        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys_async.py
@@ -469,7 +469,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         :param bytes backup: The raw bytes of the key backup
         :returns: The restored key
         :rtype: ~azure.keyvault.keys.models.Key
-        :raises: ~azure.core.exceptions.ResourceExistsError if the backed up key's name is already in use
+        :raises: :class:`~azure.core.exceptions.ResourceExistsError` if the backed up key's name is already in use
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys_async.py
