@@ -23,6 +23,7 @@ jobs:
   - job: 'Test'
     variables:
       skipComponentGovernanceDetection: true
+      CoverageArg: --disablecov
 
     timeoutInMinutes: 120
     strategy:
@@ -38,7 +39,7 @@ jobs:
         parameters:
           BuildTargetingString: ${{ parameters.BuildTargetingString }}
           ServiceDirectory: ${{ parameters.ServiceDirectory }}
-          CoverageArg: '--disablecov'
+          CoverageArg: $(CoverageArg)
           EnvVars: ${{ parameters.EnvVars }}
           BeforeTestSteps: ${{ parameters.BeforeTestSteps }}
           PythonVersion: $(PythonVersion)
