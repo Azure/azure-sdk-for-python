@@ -1,6 +1,6 @@
 # Release History
 
-## 4.0.0b3 (2019-09-10)
+## 4.0.0b3 (2019-09-11)
 Version 4.0.0b3 is the first preview of our efforts to create a user-friendly and Pythonic client library for Azure Key Vault.
 For more information about preview releases of other Azure SDK libraries, please visit https://aka.ms/azure-sdk-preview1-python.
 
