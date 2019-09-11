@@ -73,7 +73,7 @@ class PartitionManager(ABC):
         :param offset: The offset of the ~azure.eventhub.EventData the new checkpoint will be associated with.
         :type offset: str
         :param sequence_number: The sequence_number of the ~azure.eventhub.EventData the new checkpoint
-        will be associated with.
+         will be associated with.
         :type sequence_number: int
         :return: None
         :raise: `OwnershipLostError`

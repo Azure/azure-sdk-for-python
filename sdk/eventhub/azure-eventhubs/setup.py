@@ -43,14 +43,6 @@ exclude_packages = [
         'azure',
     ]
 
-if sys.version_info < (3, 5, 3):
-    exclude_packages.extend([
-        '*.aio',
-        '*.aio.*',
-        '*.eventprocessor',
-        '*.eventprocessor.*'
-    ])
-
 setup(
     name=PACKAGE_NAME,
     version=version,
