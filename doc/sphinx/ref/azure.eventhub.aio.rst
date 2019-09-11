@@ -1,6 +1,13 @@
 azure.eventhub.aio package
 ==========================
 
+Subpackages
+-----------
+
+.. toctree::
+
+   azure.eventhub.aio.eventprocessor
+
 Submodules
 ----------
 
@@ -16,6 +23,14 @@ azure.eventhub.aio.consumer\_async module
 -----------------------------------------
 
 .. automodule:: azure.eventhub.aio.consumer_async
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+azure.eventhub.aio.error\_async module
+--------------------------------------
+
+.. automodule:: azure.eventhub.aio.error_async
    :members:
    :undoc-members:
    :show-inheritance:
