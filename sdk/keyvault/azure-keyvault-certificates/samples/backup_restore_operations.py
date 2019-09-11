@@ -61,7 +61,7 @@ try:
     # The storage account certificate is no longer in use, so you can delete it.
     client.delete_certificate(name=cert_name)
     # To ensure certificate is deleted on the server side.
-    time.sleep(30)
+    time.sleep(20)
     print("Deleted Certificate with name '{0}'".format(cert_name))
 
     # Even though the certificate is deleted, it can still be recovered so its name cannot be reused.
@@ -70,7 +70,7 @@ try:
     print("\nPurging certificate...")
     client.purge_deleted_certificate(name=cert_name)
     # To ensure certificate is purged on the server side.
-    time.sleep(30)
+    time.sleep(20)
     print("Purged Certificate with name '{0}'".format(cert_name))
 
     # In future, if the certificate is required again, we can use the backup value to restore it in the Key Vault.
