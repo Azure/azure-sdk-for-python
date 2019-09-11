@@ -39,7 +39,7 @@ class CommentsOperations(object):
 
     def list_by_case(
             self, resource_group_name, operational_insights_resource_provider, workspace_name, case_id, filter=None, orderby=None, top=None, skip_token=None, custom_headers=None, raw=False, **operation_config):
-        """Gets all case comments.
+        """Gets all case comments (deprecated, will be replaced in the future).
 
         :param resource_group_name: The name of the resource group within the
          user's subscription. The name is case insensitive.
