@@ -402,11 +402,62 @@ class CheckNameAvailabilityResult(Model):
 
 
 class CloudError(Model):
-    """CloudError.
+    """An error response from the Storage service.
+
+    :param error:
+    :type error: ~azure.mgmt.storage.v2019_04_01.models.CloudErrorBody
     """
 
     _attribute_map = {
+        'error': {'key': 'error', 'type': 'CloudErrorBody'},
     }
+
+    def __init__(self, *, error=None, **kwargs) -> None:
+        super(CloudError, self).__init__(**kwargs)
+        self.error = error
+
+
+class CloudErrorException(HttpOperationError):
+    """Server responsed with exception of type: 'CloudError'.
+
+    :param deserialize: A deserializer
+    :param response: Server response to be deserialized.
+    """
+
+    def __init__(self, deserialize, response, *args):
+
+        super(CloudErrorException, self).__init__(deserialize, response, 'CloudError', *args)
+
+
+class CloudErrorBody(Model):
+    """An error response from the Storage service.
+
+    :param code: An identifier for the error. Codes are invariant and are
+     intended to be consumed programmatically.
+    :type code: str
+    :param message: A message describing the error, intended to be suitable
+     for display in a user interface.
+    :type message: str
+    :param target: The target of the particular error. For example, the name
+     of the property in error.
+    :type target: str
+    :param details: A list of additional details about the error.
+    :type details: list[~azure.mgmt.storage.v2019_04_01.models.CloudErrorBody]
+    """
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+        'details': {'key': 'details', 'type': '[CloudErrorBody]'},
+    }
+
+    def __init__(self, *, code: str=None, message: str=None, target: str=None, details=None, **kwargs) -> None:
+        super(CloudErrorBody, self).__init__(**kwargs)
+        self.code = code
+        self.message = message
+        self.target = target
+        self.details = details
 
 
 class CorsRule(Model):
@@ -746,66 +797,6 @@ class Endpoints(Model):
         self.file = None
         self.web = None
         self.dfs = None
-
-
-class ErrorResponse(Model):
-    """An error response from the Storage service.
-
-    :param error:
-    :type error: ~azure.mgmt.storage.v2019_04_01.models.ErrorResponseBody
-    """
-
-    _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorResponseBody'},
-    }
-
-    def __init__(self, *, error=None, **kwargs) -> None:
-        super(ErrorResponse, self).__init__(**kwargs)
-        self.error = error
-
-
-class ErrorResponseException(HttpOperationError):
-    """Server responsed with exception of type: 'ErrorResponse'.
-
-    :param deserialize: A deserializer
-    :param response: Server response to be deserialized.
-    """
-
-    def __init__(self, deserialize, response, *args):
-
-        super(ErrorResponseException, self).__init__(deserialize, response, 'ErrorResponse', *args)
-
-
-class ErrorResponseBody(Model):
-    """An error response from the Storage service.
-
-    :param code: An identifier for the error. Codes are invariant and are
-     intended to be consumed programmatically.
-    :type code: str
-    :param message: A message describing the error, intended to be suitable
-     for display in a user interface.
-    :type message: str
-    :param target: The target of the particular error. For example, the name
-     of the property in error.
-    :type target: str
-    :param details: A list of additional details about the error.
-    :type details:
-     list[~azure.mgmt.storage.v2019_04_01.models.ErrorResponseBody]
-    """
-
-    _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorResponseBody]'},
-    }
-
-    def __init__(self, *, code: str=None, message: str=None, target: str=None, details=None, **kwargs) -> None:
-        super(ErrorResponseBody, self).__init__(**kwargs)
-        self.code = code
-        self.message = message
-        self.target = target
-        self.details = details
 
 
 class FileServiceItems(Model):
