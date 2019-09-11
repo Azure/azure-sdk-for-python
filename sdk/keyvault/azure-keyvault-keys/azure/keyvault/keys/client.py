@@ -70,7 +70,7 @@ class KeyClient(KeyVaultClientBase):
         not_before=None,  # type: Optional[datetime]
         tags=None,  # type: Optional[Dict[str, str]]
         curve=None,  # type: Optional[str]
-        **kwargs  # type: **Any
+        **kwargs  # type: Any
     ):
         # type: (...) -> Key
         """Create a key. If ``name`` is already in use, create a new version of the key. Requires the keys/create
@@ -129,7 +129,7 @@ class KeyClient(KeyVaultClientBase):
         expires=None,  # type: Optional[datetime]
         not_before=None,  # type: Optional[datetime]
         tags=None,  # type: Optional[Dict[str, str]]
-        **kwargs  # type: **Any
+        **kwargs  # type: Any
     ):
         # type: (...) -> Key
         """Create a new RSA key. If ``name`` is already in use, create a new version of the key. Requires the
@@ -181,7 +181,7 @@ class KeyClient(KeyVaultClientBase):
         expires=None,  # type: Optional[datetime]
         not_before=None,  # type: Optional[datetime]
         tags=None,  # type: Optional[Dict[str, str]]
-        **kwargs  # type: **Any
+        **kwargs  # type: Any
     ):
         # type: (...) -> Key
         """Create a new elliptic curve key. If ``name`` is already in use, create a new version of the key. Requires
@@ -428,7 +428,7 @@ class KeyClient(KeyVaultClientBase):
         expires=None,  # type: Optional[datetime]
         not_before=None,  # type: Optional[datetime]
         tags=None,  # type: Optional[Dict[str, str]]
-        **kwargs  # type: **Any
+        **kwargs  # type: Any
     ):
         # type: (...) -> Key
         """Change attributes of a key. Cannot change a key's cryptographic material. Requires the keys/update
@@ -536,7 +536,7 @@ class KeyClient(KeyVaultClientBase):
         not_before=None,  # type: Optional[datetime]
         expires=None,  # type: Optional[datetime]
         tags=None,  # type: Optional[Dict[str, str]]
-        **kwargs  # type: **Any
+        **kwargs  # type: Any
     ):
         # type: (...) -> Key
         """Import an externally created key. If ``name`` is already in use, import the key as a new version. Requires
