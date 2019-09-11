@@ -122,8 +122,24 @@ class OpenCensusSpan(object):
         else:
             self._span_instance.add_attribute(self._http_status_code, 504)
 
+    def get_trace_parent(self):
+        return self.to_header()['traceparent']
+
     @classmethod
-    def link(cls, headers):
+    def link(cls, traceparent):
+        # type: (str) -> None
+        """
+        Given a dictionary, extracts the context and links the context to the current tracer.
+
+        :param headers: A key value pair dictionary
+        :type headers: dict
+        """
+        cls.link_from_headers({
+            'traceparent': traceparent
+        })
+
+    @classmethod
+    def link_from_headers(cls, headers):
         # type: (Dict[str, str]) -> None
         """
         Given a dictionary, extracts the context and links the context to the current tracer.

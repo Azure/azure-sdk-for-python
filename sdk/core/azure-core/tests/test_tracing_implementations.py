@@ -97,7 +97,7 @@ class TestOpencensusWrapper(unittest.TestCase):
             trace = tracer_module.Tracer(sampler=AlwaysOnSampler())
             og_header = {"traceparent": "00-2578531519ed94423ceae67588eff2c9-231ebdc614cb9ddd-01"}
             wrapped_class = OpenCensusSpan()
-            OpenCensusSpan.link(og_header)
+            OpenCensusSpan.link_from_headers(og_header)
             assert len(wrapped_class.span_instance.links) == 1
             link = wrapped_class.span_instance.links[0]
             assert link.trace_id == "2578531519ed94423ceae67588eff2c9"

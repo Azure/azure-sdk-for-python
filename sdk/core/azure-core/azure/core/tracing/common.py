@@ -62,43 +62,58 @@ def set_span_contexts(wrapped_span, span_instance=None):
     # type: (Union[AbstractSpan, None], Optional[AbstractSpan]) -> None
     """
     Set the sdk context and the implementation context. `span_instance` will be used to set the implementation context
-    if passed in else will use `wrapped_span.span_instance`.
+    ONLY if wrapped_span is None. Otherwise, will use internal implementation span.
 
     :param wrapped_span: The `AbstractSpan` to set as the sdk context
     :type wrapped_span: `azure.core.tracing.abstract_span.AbstractSpan`
-    :param span_instance: The span to set as the current span for the implementation context
+    :param span_instance: The span to set as the current span for the implementation context if wrapped_span is None.
     """
+    span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
+    if span_impl_type is None:
+        return
+
+    # Store the current wrapped span into our SDK context
     tracing_context.current_span.set(wrapped_span)
-    impl_wrapper = settings.tracing_implementation()
-    if wrapped_span is not None:
-        span_instance = wrapped_span.span_instance
-    if impl_wrapper is not None:
-        impl_wrapper.set_current_span(span_instance)
+    if wrapped_span is None:
+        span_impl_type.set_current_span(span_instance)
+    else:
+        span_impl_type.set_current_span(wrapped_span.span_instance)
 
 
-def get_parent_span(parent_span):
+def get_parent_span(parent_span=None):
     # type: (Any) -> Optional[AbstractSpan]
     """
     Returns the current span so that the function's span will be its child. It will create a new span if there is
     no current span in any of the context.
 
+    The only possiblity to get None is if there is no tracing plugin available.
+
+    Algorithm is:
+    - Return a SDK span if parent_span exists
+    - ELSE return the SDK current span if exists
+    - ELSE return the a new SDK span based on implementation if exists
+    - ELSE creates a new implementation and SDK span and return it
+
+    If this method creates a span, it will NOT store it in SDK context.
+
     :param parent_span: The parent_span arg that the user passes into the top level function
     :returns: the parent_span of the function to be traced
     :rtype: `azure.core.tracing.abstract_span.AbstractSpan`
     """
-    wrapper_class = settings.tracing_implementation()
-    if wrapper_class is None:
+    span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
+    if span_impl_type is None:
         return None
 
-    orig_wrapped_span = tracing_context.current_span.get()
-    # parent span is given, get from my context, get from the implementation context or make our own
-    parent_span = orig_wrapped_span if parent_span is None else wrapper_class(parent_span)
-    if parent_span is None:
-        current_span = wrapper_class.get_current_span()
-        parent_span = (
-            wrapper_class(span=current_span)
-            if current_span
-            else wrapper_class(name="azure-sdk-for-python-first_parent_span")
-        )
+    if parent_span is not None:
+        return span_impl_type(parent_span)  # This span is NOT stored in SDK context yet.
 
-    return parent_span
+    orig_wrapped_span = tracing_context.current_span.get()  # type: AbstractSpan
+    if orig_wrapped_span is not None:
+        return orig_wrapped_span
+
+    current_span = span_impl_type.get_current_span()
+    if current_span is not None:
+        return span_impl_type(current_span)
+
+    # Everything is None, SDK has no span and customer didn't create one. Create the base one for the customer
+    return span_impl_type(name="azure-sdk-for-python-first_parent_span")

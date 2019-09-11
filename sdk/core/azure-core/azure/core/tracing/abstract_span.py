@@ -73,6 +73,21 @@ class AbstractSpan(Protocol):
         :type response: HttpResponse
         """
 
+    def get_trace_parent(self):
+        # type: () -> str
+        """Return traceparent string as defined in W3C trace context specification.
+
+        Example:
+        Value = 00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01
+        base16(version) = 00
+        base16(trace-id) = 4bf92f3577b34da6a3ce929d0e0e4736
+        base16(parent-id) = 00f067aa0ba902b7
+        base16(trace-flags) = 01  // sampled
+
+        :return: a traceparent string
+        :rtype: str
+        """
+
     @property
     def span_instance(self):
         # type: () -> Any
@@ -81,7 +96,17 @@ class AbstractSpan(Protocol):
         """
 
     @classmethod
-    def link(cls, headers):
+    def link(cls, traceparent):
+        # type: (Dict[str, str]) -> None
+        """
+        Given a traceparent, extracts the context and links the context to the current tracer.
+
+        :param traceparent: A string representing a traceparent
+        :type headers: str
+        """
+
+    @classmethod
+    def link_from_headers(cls, headers):
         # type: (Dict[str, str]) -> None
         """
         Given a dictionary, extracts the context and links the context to the current tracer.
