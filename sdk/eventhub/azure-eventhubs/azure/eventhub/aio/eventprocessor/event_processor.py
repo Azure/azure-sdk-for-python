@@ -8,6 +8,10 @@ import uuid
 import asyncio
 import logging
 
+from azure.core.tracing.common import get_parent_span
+from opencensus.trace.span import SpanKind
+from opencensus.trace.status import Status
+
 from azure.eventhub import EventPosition, EventHubError
 from azure.eventhub.aio import EventHubClient
 from .partition_context import PartitionContext
@@ -247,7 +251,32 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
             while True:
                 try:
                     events = await partition_consumer.receive()
-                    await partition_processor.process_events(events, partition_context)
+
+                    # Tracing
+                    parent_span = get_parent_span()
+                    if parent_span:
+                        child = parent_span.span(name="Azure.EventHubs.process")
+                        child.span_instance.span_kind = SpanKind.SERVER
+
+                        for event_data in events:
+                            if event_data.application_properties:
+                                traceparent = event_data.application_properties.get(b"Diagnostic-Id", None).decode('ascii')
+                                if traceparent:
+                                    child.link(traceparent)
+
+                        child.start()
+                        self._eventhub_client._add_span_request_attributes(child)
+
+                        try:
+                            await partition_processor.process_events(events, partition_context)
+                        except Exception as err:
+                            if parent_span:
+                                child.span_instance.status = Status.from_exception(err)
+                            raise
+                        finally:
+                            if parent_span:
+                                child.finish()
+
                 except asyncio.CancelledError:
                     log.info(
                         "PartitionProcessor of EventProcessor instance %r of eventhub %r partition %r consumer group %r"

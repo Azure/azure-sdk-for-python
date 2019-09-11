@@ -12,6 +12,10 @@ from typing import List
 from uamqp import types, errors  # type: ignore
 from uamqp import ReceiveClient, Source  # type: ignore
 
+from azure.core.tracing.common import get_parent_span
+from opencensus.trace.span import SpanKind
+from opencensus.trace.status import Status
+
 from azure.eventhub.common import EventData, EventPosition
 from azure.eventhub.error import _error_handler
 from ._consumer_producer_mixin import ConsumerProducerMixin
@@ -173,6 +177,14 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
             event_data = EventData._from_message(message)  # pylint:disable=protected-access
             self._offset = EventPosition(event_data.offset)
             data_batch.append(event_data)
+
+            # Tracing
+            current_span = get_parent_span()
+            if current_span and event_data.application_properties:
+                traceparent = event_data.application_properties.get(b"Diagnostic-Id", None).decode('ascii')
+                if traceparent:
+                    current_span.link(traceparent)
+
         return data_batch
 
     def _receive_with_retry(self, timeout=None, max_batch_size=None, **kwargs):
@@ -219,12 +231,29 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
                 :caption: Receive events from the EventHub.
 
         """
+        # Tracing code
+        parent_span = get_parent_span()
+        if parent_span:
+            child = parent_span.span(name="Azure.EventHubs.receive")
+            child.span_instance.span_kind = SpanKind.CLIENT
+
+            child.start()
+            self._client._add_span_request_attributes(child)
+
         self._check_closed()
 
         timeout = timeout or self._client._config.receive_timeout  # pylint:disable=protected-access
         max_batch_size = max_batch_size or min(self._client._config.max_batch_size, self._prefetch)  # pylint:disable=protected-access
 
-        return self._receive_with_retry(timeout=timeout, max_batch_size=max_batch_size)
+        try:
+            return self._receive_with_retry(timeout=timeout, max_batch_size=max_batch_size)
+        except Exception as err:
+            if parent_span:
+                child.span_instance.status = Status.from_exception(err)
+            raise
+        finally:
+            if parent_span:
+                child.finish()
 
     def close(self, exception=None):
         # type:(Exception) -> None

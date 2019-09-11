@@ -12,8 +12,7 @@ from typing import Iterable, Union
 from uamqp import types, constants, errors  # type: ignore
 from uamqp import SendClient  # type: ignore
 
-from azure.core.tracing.context import tracing_context
-from azure.core.settings import settings
+from azure.core.tracing.common import get_parent_span
 from opencensus.trace.span import SpanKind
 from opencensus.trace.status import Status
 
@@ -224,20 +223,25 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
 
         """
         # Tracing code
-        parent_span = tracing_context.current_span.get()
-        wrapper_class = settings.tracing_implementation()
-        if parent_span is None and wrapper_class is not None:
-            current_span_instance = wrapper_class.get_current_span()
-            parent_span = wrapper_class(current_span_instance)
+        parent_span = get_parent_span()
+        if parent_span:
+            child = parent_span.span(name="Azure.EventHubs.send")
+            child.span_instance.span_kind = SpanKind.CLIENT
 
-        child = parent_span.span(name="Azure.EventHubs.send")
-        child.span_instance.span_kind = SpanKind.CLIENT
+        def trace_message(message):
+            message_span = child.span(name="Azure.EventHubs.message")
+            message_span.start()
+            app_prop = dict(message.application_properties)
+            app_prop.setdefault(b"Diagnostic-Id", message_span.get_trace_parent().encode('ascii'))
+            message.application_properties = app_prop
+            message_span.finish()
 
         self._check_closed()
         if isinstance(event_data, EventData):
             if partition_key:
                 event_data._set_partition_key(partition_key)  # pylint: disable=protected-access
             wrapper_event_data = event_data
+            trace_message(wrapper_event_data)
         else:
             if isinstance(event_data, EventDataBatch):  # The partition_key in the param will be omitted.
                 if partition_key and partition_key != event_data._partition_key:  # pylint: disable=protected-access
@@ -247,22 +251,24 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
                 if partition_key:
                     event_data = _set_partition_key(event_data, partition_key)
                 wrapper_event_data = EventDataBatch._from_batch(event_data, partition_key)  # pylint: disable=protected-access
+            for internal_message in wrapper_event_data.message._body_gen:
+                trace_message(internal_message)
         wrapper_event_data.message.on_send_complete = self._on_outcome
         self._unsent_events = [wrapper_event_data.message]
 
-        # Start current span and set metadata
-        child.start()
-        child.add_attribute("component", "eventhubs")
-        child.add_attribute("message_bus.destination", self._client._address.path)
-        child.add_attribute("peer.address", self._client._address.hostname)
-
+        if parent_span:
+            # Start current span and set metadata
+            child.start()
+            self._client._add_span_request_attributes(child)
         try:
             self._send_event_data_with_retry(timeout=timeout)
         except Exception as err:
-            child.span_instance.status = Status.from_exception(err)
+            if parent_span:
+                child.span_instance.status = Status.from_exception(err)
             raise
         finally:
-            child.finish()
+            if parent_span:
+                child.finish()
 
     def close(self, exception=None):  # pylint:disable=useless-super-delegation
         # type:(Exception) -> None

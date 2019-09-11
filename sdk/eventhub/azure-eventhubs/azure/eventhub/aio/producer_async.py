@@ -11,6 +11,10 @@ import time
 from uamqp import types, constants, errors  # type: ignore
 from uamqp import SendClientAsync  # type: ignore
 
+from azure.core.tracing.common import get_parent_span
+from opencensus.trace.span import SpanKind
+from opencensus.trace.status import Status
+
 from azure.eventhub.common import EventData, EventDataBatch
 from azure.eventhub.error import _error_handler, OperationTimeoutError, EventDataError
 from ..producer import _error, _set_partition_key
@@ -213,12 +217,26 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
                 :caption: Sends an event data and blocks until acknowledgement is received or operation times out.
 
         """
+        # Tracing code
+        parent_span = get_parent_span()
+        if parent_span:
+            child = parent_span.span(name="Azure.EventHubs.send")
+            child.span_instance.span_kind = SpanKind.CLIENT
+
+        def trace_message(message):
+            message_span = child.span(name="Azure.EventHubs.message")
+            message_span.start()
+            app_prop = dict(message.application_properties)
+            app_prop.setdefault(b"Diagnostic-Id", message_span.get_trace_parent().encode('ascii'))
+            message.application_properties = app_prop
+            message_span.finish()
 
         self._check_closed()
         if isinstance(event_data, EventData):
             if partition_key:
                 event_data._set_partition_key(partition_key)  # pylint: disable=protected-access
             wrapper_event_data = event_data
+            trace_message(wrapper_event_data)
         else:
             if isinstance(event_data, EventDataBatch):
                 if partition_key and partition_key != event_data._partition_key:  # pylint: disable=protected-access
@@ -228,9 +246,25 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
                 if partition_key:
                     event_data = _set_partition_key(event_data, partition_key)
                 wrapper_event_data = EventDataBatch._from_batch(event_data, partition_key)  # pylint: disable=protected-access
+            for internal_message in wrapper_event_data.message._body_gen:
+                trace_message(internal_message)
+
         wrapper_event_data.message.on_send_complete = self._on_outcome
         self._unsent_events = [wrapper_event_data.message]
-        await self._send_event_data_with_retry(timeout=timeout)  # pylint:disable=unexpected-keyword-arg # TODO: to refactor
+
+        if parent_span:
+            # Start current span and set metadata
+            child.start()
+            self._client._add_span_request_attributes(child)
+        try:
+            await self._send_event_data_with_retry(timeout=timeout)  # pylint:disable=unexpected-keyword-arg # TODO: to refactor
+        except Exception as err:
+            if parent_span:
+                child.span_instance.status = Status.from_exception(err)
+            raise
+        finally:
+            if parent_span:
+                child.finish()
 
     async def close(self, exception=None):
         # type: (Exception) -> None
