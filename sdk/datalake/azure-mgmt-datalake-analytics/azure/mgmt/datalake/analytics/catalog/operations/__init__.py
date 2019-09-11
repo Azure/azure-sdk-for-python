@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .catalog_operations import CatalogOperations
+from ._catalog_operations import CatalogOperations
 
 __all__ = [
     'CatalogOperations',

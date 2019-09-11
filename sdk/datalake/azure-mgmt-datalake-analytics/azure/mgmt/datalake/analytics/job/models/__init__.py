@@ -10,69 +10,69 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .job_inner_error_py3 import JobInnerError
-    from .job_error_details_py3 import JobErrorDetails
-    from .job_state_audit_record_py3 import JobStateAuditRecord
-    from .job_properties_py3 import JobProperties
-    from .job_information_py3 import JobInformation
-    from .job_relationship_properties_py3 import JobRelationshipProperties
-    from .job_information_basic_py3 import JobInformationBasic
-    from .job_resource_py3 import JobResource
-    from .job_statistics_vertex_py3 import JobStatisticsVertex
-    from .resource_usage_statistics_py3 import ResourceUsageStatistics
-    from .job_statistics_vertex_stage_py3 import JobStatisticsVertexStage
-    from .job_statistics_py3 import JobStatistics
-    from .job_data_path_py3 import JobDataPath
-    from .diagnostics_py3 import Diagnostics
-    from .usql_job_properties_py3 import USqlJobProperties
-    from .hive_job_properties_py3 import HiveJobProperties
-    from .scope_job_resource_py3 import ScopeJobResource
-    from .scope_job_properties_py3 import ScopeJobProperties
-    from .job_pipeline_run_information_py3 import JobPipelineRunInformation
-    from .job_pipeline_information_py3 import JobPipelineInformation
-    from .job_recurrence_information_py3 import JobRecurrenceInformation
-    from .create_job_properties_py3 import CreateJobProperties
-    from .base_job_parameters_py3 import BaseJobParameters
-    from .create_job_parameters_py3 import CreateJobParameters
-    from .create_scope_job_parameters_py3 import CreateScopeJobParameters
-    from .create_usql_job_properties_py3 import CreateUSqlJobProperties
-    from .create_scope_job_properties_py3 import CreateScopeJobProperties
-    from .build_job_parameters_py3 import BuildJobParameters
-    from .update_job_parameters_py3 import UpdateJobParameters
+    from ._models_py3 import BaseJobParameters
+    from ._models_py3 import BuildJobParameters
+    from ._models_py3 import CreateJobParameters
+    from ._models_py3 import CreateJobProperties
+    from ._models_py3 import CreateScopeJobParameters
+    from ._models_py3 import CreateScopeJobProperties
+    from ._models_py3 import CreateUSqlJobProperties
+    from ._models_py3 import Diagnostics
+    from ._models_py3 import HiveJobProperties
+    from ._models_py3 import JobDataPath
+    from ._models_py3 import JobErrorDetails
+    from ._models_py3 import JobInformation
+    from ._models_py3 import JobInformationBasic
+    from ._models_py3 import JobInnerError
+    from ._models_py3 import JobPipelineInformation
+    from ._models_py3 import JobPipelineRunInformation
+    from ._models_py3 import JobProperties
+    from ._models_py3 import JobRecurrenceInformation
+    from ._models_py3 import JobRelationshipProperties
+    from ._models_py3 import JobResource
+    from ._models_py3 import JobStateAuditRecord
+    from ._models_py3 import JobStatistics
+    from ._models_py3 import JobStatisticsVertex
+    from ._models_py3 import JobStatisticsVertexStage
+    from ._models_py3 import ResourceUsageStatistics
+    from ._models_py3 import ScopeJobProperties
+    from ._models_py3 import ScopeJobResource
+    from ._models_py3 import UpdateJobParameters
+    from ._models_py3 import USqlJobProperties
 except (SyntaxError, ImportError):
-    from .job_inner_error import JobInnerError
-    from .job_error_details import JobErrorDetails
-    from .job_state_audit_record import JobStateAuditRecord
-    from .job_properties import JobProperties
-    from .job_information import JobInformation
-    from .job_relationship_properties import JobRelationshipProperties
-    from .job_information_basic import JobInformationBasic
-    from .job_resource import JobResource
-    from .job_statistics_vertex import JobStatisticsVertex
-    from .resource_usage_statistics import ResourceUsageStatistics
-    from .job_statistics_vertex_stage import JobStatisticsVertexStage
-    from .job_statistics import JobStatistics
-    from .job_data_path import JobDataPath
-    from .diagnostics import Diagnostics
-    from .usql_job_properties import USqlJobProperties
-    from .hive_job_properties import HiveJobProperties
-    from .scope_job_resource import ScopeJobResource
-    from .scope_job_properties import ScopeJobProperties
-    from .job_pipeline_run_information import JobPipelineRunInformation
-    from .job_pipeline_information import JobPipelineInformation
-    from .job_recurrence_information import JobRecurrenceInformation
-    from .create_job_properties import CreateJobProperties
-    from .base_job_parameters import BaseJobParameters
-    from .create_job_parameters import CreateJobParameters
-    from .create_scope_job_parameters import CreateScopeJobParameters
-    from .create_usql_job_properties import CreateUSqlJobProperties
-    from .create_scope_job_properties import CreateScopeJobProperties
-    from .build_job_parameters import BuildJobParameters
-    from .update_job_parameters import UpdateJobParameters
-from .job_information_basic_paged import JobInformationBasicPaged
-from .job_pipeline_information_paged import JobPipelineInformationPaged
-from .job_recurrence_information_paged import JobRecurrenceInformationPaged
-from .data_lake_analytics_job_management_client_enums import (
+    from ._models import BaseJobParameters
+    from ._models import BuildJobParameters
+    from ._models import CreateJobParameters
+    from ._models import CreateJobProperties
+    from ._models import CreateScopeJobParameters
+    from ._models import CreateScopeJobProperties
+    from ._models import CreateUSqlJobProperties
+    from ._models import Diagnostics
+    from ._models import HiveJobProperties
+    from ._models import JobDataPath
+    from ._models import JobErrorDetails
+    from ._models import JobInformation
+    from ._models import JobInformationBasic
+    from ._models import JobInnerError
+    from ._models import JobPipelineInformation
+    from ._models import JobPipelineRunInformation
+    from ._models import JobProperties
+    from ._models import JobRecurrenceInformation
+    from ._models import JobRelationshipProperties
+    from ._models import JobResource
+    from ._models import JobStateAuditRecord
+    from ._models import JobStatistics
+    from ._models import JobStatisticsVertex
+    from ._models import JobStatisticsVertexStage
+    from ._models import ResourceUsageStatistics
+    from ._models import ScopeJobProperties
+    from ._models import ScopeJobResource
+    from ._models import UpdateJobParameters
+    from ._models import USqlJobProperties
+from ._paged_models import JobInformationBasicPaged
+from ._paged_models import JobPipelineInformationPaged
+from ._paged_models import JobRecurrenceInformationPaged
+from ._data_lake_analytics_job_management_client_enums import (
     SeverityTypes,
     JobType,
     JobState,
@@ -82,35 +82,35 @@ from .data_lake_analytics_job_management_client_enums import (
 )
 
 __all__ = [
-    'JobInnerError',
-    'JobErrorDetails',
-    'JobStateAuditRecord',
-    'JobProperties',
-    'JobInformation',
-    'JobRelationshipProperties',
-    'JobInformationBasic',
-    'JobResource',
-    'JobStatisticsVertex',
-    'ResourceUsageStatistics',
-    'JobStatisticsVertexStage',
-    'JobStatistics',
-    'JobDataPath',
-    'Diagnostics',
-    'USqlJobProperties',
-    'HiveJobProperties',
-    'ScopeJobResource',
-    'ScopeJobProperties',
-    'JobPipelineRunInformation',
-    'JobPipelineInformation',
-    'JobRecurrenceInformation',
-    'CreateJobProperties',
     'BaseJobParameters',
-    'CreateJobParameters',
-    'CreateScopeJobParameters',
-    'CreateUSqlJobProperties',
-    'CreateScopeJobProperties',
     'BuildJobParameters',
+    'CreateJobParameters',
+    'CreateJobProperties',
+    'CreateScopeJobParameters',
+    'CreateScopeJobProperties',
+    'CreateUSqlJobProperties',
+    'Diagnostics',
+    'HiveJobProperties',
+    'JobDataPath',
+    'JobErrorDetails',
+    'JobInformation',
+    'JobInformationBasic',
+    'JobInnerError',
+    'JobPipelineInformation',
+    'JobPipelineRunInformation',
+    'JobProperties',
+    'JobRecurrenceInformation',
+    'JobRelationshipProperties',
+    'JobResource',
+    'JobStateAuditRecord',
+    'JobStatistics',
+    'JobStatisticsVertex',
+    'JobStatisticsVertexStage',
+    'ResourceUsageStatistics',
+    'ScopeJobProperties',
+    'ScopeJobResource',
     'UpdateJobParameters',
+    'USqlJobProperties',
     'JobInformationBasicPaged',
     'JobPipelineInformationPaged',
     'JobRecurrenceInformationPaged',
