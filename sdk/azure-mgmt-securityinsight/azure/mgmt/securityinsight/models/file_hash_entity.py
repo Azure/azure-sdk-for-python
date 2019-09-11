@@ -22,53 +22,53 @@ class FileHashEntity(Entity):
 
     :ivar id: Azure resource Id
     :vartype id: str
-    :ivar name: Azure resource name
-    :vartype name: str
     :ivar type: Azure resource type
     :vartype type: str
+    :ivar name: Azure resource name
+    :vartype name: str
     :param kind: Required. Constant filled by server.
     :type kind: str
-    :ivar additional_data: A bag of custom fields that should be part of the
-     entity and will be presented to the user.
-    :vartype additional_data: dict[str, object]
     :ivar friendly_name: The graph item display name which is a short humanly
      readable description of the graph item instance. This property is optional
      and might be system generated.
     :vartype friendly_name: str
+    :ivar additional_data: A bag of custom fields that should be part of the
+     entity and will be presented to the user.
+    :vartype additional_data: dict[str, object]
+    :ivar hash_value: The file hash value.
+    :vartype hash_value: str
     :ivar algorithm: The hash algorithm type. Possible values include:
      'Unknown', 'MD5', 'SHA1', 'SHA256', 'SHA256AC'
     :vartype algorithm: str or
      ~azure.mgmt.securityinsight.models.FileHashAlgorithm
-    :ivar hash_value: The file hash value.
-    :vartype hash_value: str
     """
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'readonly': True},
         'type': {'readonly': True},
+        'name': {'readonly': True},
         'kind': {'required': True},
-        'additional_data': {'readonly': True},
         'friendly_name': {'readonly': True},
-        'algorithm': {'readonly': True},
+        'additional_data': {'readonly': True},
         'hash_value': {'readonly': True},
+        'algorithm': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'additional_data': {'key': 'properties.additionalData', 'type': '{object}'},
         'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
-        'algorithm': {'key': 'properties.algorithm', 'type': 'str'},
+        'additional_data': {'key': 'properties.additionalData', 'type': '{object}'},
         'hash_value': {'key': 'properties.hashValue', 'type': 'str'},
+        'algorithm': {'key': 'properties.algorithm', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(FileHashEntity, self).__init__(**kwargs)
-        self.additional_data = None
         self.friendly_name = None
-        self.algorithm = None
+        self.additional_data = None
         self.hash_value = None
+        self.algorithm = None
         self.kind = 'FileHash'

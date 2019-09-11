@@ -22,19 +22,19 @@ class CloudApplicationEntity(Entity):
 
     :ivar id: Azure resource Id
     :vartype id: str
-    :ivar name: Azure resource name
-    :vartype name: str
     :ivar type: Azure resource type
     :vartype type: str
+    :ivar name: Azure resource name
+    :vartype name: str
     :param kind: Required. Constant filled by server.
     :type kind: str
-    :ivar additional_data: A bag of custom fields that should be part of the
-     entity and will be presented to the user.
-    :vartype additional_data: dict[str, object]
     :ivar friendly_name: The graph item display name which is a short humanly
      readable description of the graph item instance. This property is optional
      and might be system generated.
     :vartype friendly_name: str
+    :ivar additional_data: A bag of custom fields that should be part of the
+     entity and will be presented to the user.
+    :vartype additional_data: dict[str, object]
     :ivar app_id: The technical identifier of the application.
     :vartype app_id: int
     :ivar app_name: The name of the related cloud application.
@@ -47,11 +47,11 @@ class CloudApplicationEntity(Entity):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'readonly': True},
         'type': {'readonly': True},
+        'name': {'readonly': True},
         'kind': {'required': True},
-        'additional_data': {'readonly': True},
         'friendly_name': {'readonly': True},
+        'additional_data': {'readonly': True},
         'app_id': {'readonly': True},
         'app_name': {'readonly': True},
         'instance_name': {'readonly': True},
@@ -59,11 +59,11 @@ class CloudApplicationEntity(Entity):
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'additional_data': {'key': 'properties.additionalData', 'type': '{object}'},
         'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
+        'additional_data': {'key': 'properties.additionalData', 'type': '{object}'},
         'app_id': {'key': 'properties.appId', 'type': 'int'},
         'app_name': {'key': 'properties.appName', 'type': 'str'},
         'instance_name': {'key': 'properties.instanceName', 'type': 'str'},
@@ -71,8 +71,8 @@ class CloudApplicationEntity(Entity):
 
     def __init__(self, **kwargs) -> None:
         super(CloudApplicationEntity, self).__init__(**kwargs)
-        self.additional_data = None
         self.friendly_name = None
+        self.additional_data = None
         self.app_id = None
         self.app_name = None
         self.instance_name = None

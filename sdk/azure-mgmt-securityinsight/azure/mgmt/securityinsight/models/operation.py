@@ -15,18 +15,18 @@ from msrest.serialization import Model
 class Operation(Model):
     """Operation provided by provider.
 
-    :param display: Properties of the operation
-    :type display: ~azure.mgmt.securityinsight.models.OperationDisplay
     :param name: Name of the operation
     :type name: str
+    :param display: Properties of the operation
+    :type display: ~azure.mgmt.securityinsight.models.OperationDisplay
     """
 
     _attribute_map = {
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
         'name': {'key': 'name', 'type': 'str'},
+        'display': {'key': 'display', 'type': 'OperationDisplay'},
     }
 
     def __init__(self, **kwargs):
         super(Operation, self).__init__(**kwargs)
-        self.display = kwargs.get('display', None)
         self.name = kwargs.get('name', None)
+        self.display = kwargs.get('display', None)

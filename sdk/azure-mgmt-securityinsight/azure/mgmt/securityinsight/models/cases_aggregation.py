@@ -22,10 +22,10 @@ class CasesAggregation(Aggregations):
 
     :ivar id: Azure resource Id
     :vartype id: str
-    :ivar name: Azure resource name
-    :vartype name: str
     :ivar type: Azure resource type
     :vartype type: str
+    :ivar name: Azure resource name
+    :vartype name: str
     :param kind: Required. Constant filled by server.
     :type kind: str
     :param aggregation_by_severity: Aggregations results by case severity.
@@ -38,15 +38,15 @@ class CasesAggregation(Aggregations):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'readonly': True},
         'type': {'readonly': True},
+        'name': {'readonly': True},
         'kind': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'aggregation_by_severity': {'key': 'properties.aggregationBySeverity', 'type': 'CasesAggregationBySeverityProperties'},
         'aggregation_by_status': {'key': 'properties.aggregationByStatus', 'type': 'CasesAggregationByStatusProperties'},

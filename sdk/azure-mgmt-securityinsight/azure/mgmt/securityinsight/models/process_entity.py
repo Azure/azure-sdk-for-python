@@ -22,88 +22,88 @@ class ProcessEntity(Entity):
 
     :ivar id: Azure resource Id
     :vartype id: str
-    :ivar name: Azure resource name
-    :vartype name: str
     :ivar type: Azure resource type
     :vartype type: str
+    :ivar name: Azure resource name
+    :vartype name: str
     :param kind: Required. Constant filled by server.
     :type kind: str
-    :ivar additional_data: A bag of custom fields that should be part of the
-     entity and will be presented to the user.
-    :vartype additional_data: dict[str, object]
     :ivar friendly_name: The graph item display name which is a short humanly
      readable description of the graph item instance. This property is optional
      and might be system generated.
     :vartype friendly_name: str
-    :ivar account_entity_id: The account entity id running the processes.
-    :vartype account_entity_id: str
+    :ivar additional_data: A bag of custom fields that should be part of the
+     entity and will be presented to the user.
+    :vartype additional_data: dict[str, object]
+    :ivar process_id: The process ID
+    :vartype process_id: str
     :ivar command_line: The command line used to create the process
     :vartype command_line: str
-    :ivar creation_time_utc: The time when the process started to run
-    :vartype creation_time_utc: datetime
     :param elevation_token: The elevation token associated with the process.
      Possible values include: 'Default', 'Full', 'Limited'
     :type elevation_token: str or
      ~azure.mgmt.securityinsight.models.ElevationToken
+    :ivar creation_time_utc: The time when the process started to run
+    :vartype creation_time_utc: datetime
+    :ivar image_file_entity_id: Image file entity id
+    :vartype image_file_entity_id: str
+    :ivar account_entity_id: The account entity id running the processes.
+    :vartype account_entity_id: str
+    :ivar parent_process_entity_id: The parent process entity id.
+    :vartype parent_process_entity_id: str
     :ivar host_entity_id: The host entity id on which the process was running
     :vartype host_entity_id: str
     :ivar host_logon_session_entity_id: The session entity id in which the
      process was running
     :vartype host_logon_session_entity_id: str
-    :ivar image_file_entity_id: Image file entity id
-    :vartype image_file_entity_id: str
-    :ivar parent_process_entity_id: The parent process entity id.
-    :vartype parent_process_entity_id: str
-    :ivar process_id: The process ID
-    :vartype process_id: str
     """
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'readonly': True},
         'type': {'readonly': True},
+        'name': {'readonly': True},
         'kind': {'required': True},
-        'additional_data': {'readonly': True},
         'friendly_name': {'readonly': True},
-        'account_entity_id': {'readonly': True},
+        'additional_data': {'readonly': True},
+        'process_id': {'readonly': True},
         'command_line': {'readonly': True},
         'creation_time_utc': {'readonly': True},
+        'image_file_entity_id': {'readonly': True},
+        'account_entity_id': {'readonly': True},
+        'parent_process_entity_id': {'readonly': True},
         'host_entity_id': {'readonly': True},
         'host_logon_session_entity_id': {'readonly': True},
-        'image_file_entity_id': {'readonly': True},
-        'parent_process_entity_id': {'readonly': True},
-        'process_id': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'additional_data': {'key': 'properties.additionalData', 'type': '{object}'},
         'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
-        'account_entity_id': {'key': 'properties.accountEntityId', 'type': 'str'},
+        'additional_data': {'key': 'properties.additionalData', 'type': '{object}'},
+        'process_id': {'key': 'properties.processId', 'type': 'str'},
         'command_line': {'key': 'properties.commandLine', 'type': 'str'},
-        'creation_time_utc': {'key': 'properties.creationTimeUtc', 'type': 'iso-8601'},
         'elevation_token': {'key': 'properties.elevationToken', 'type': 'ElevationToken'},
+        'creation_time_utc': {'key': 'properties.creationTimeUtc', 'type': 'iso-8601'},
+        'image_file_entity_id': {'key': 'properties.imageFileEntityId', 'type': 'str'},
+        'account_entity_id': {'key': 'properties.accountEntityId', 'type': 'str'},
+        'parent_process_entity_id': {'key': 'properties.parentProcessEntityId', 'type': 'str'},
         'host_entity_id': {'key': 'properties.hostEntityId', 'type': 'str'},
         'host_logon_session_entity_id': {'key': 'properties.hostLogonSessionEntityId', 'type': 'str'},
-        'image_file_entity_id': {'key': 'properties.imageFileEntityId', 'type': 'str'},
-        'parent_process_entity_id': {'key': 'properties.parentProcessEntityId', 'type': 'str'},
-        'process_id': {'key': 'properties.processId', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(ProcessEntity, self).__init__(**kwargs)
-        self.additional_data = None
         self.friendly_name = None
-        self.account_entity_id = None
+        self.additional_data = None
+        self.process_id = None
         self.command_line = None
-        self.creation_time_utc = None
         self.elevation_token = kwargs.get('elevation_token', None)
+        self.creation_time_utc = None
+        self.image_file_entity_id = None
+        self.account_entity_id = None
+        self.parent_process_entity_id = None
         self.host_entity_id = None
         self.host_logon_session_entity_id = None
-        self.image_file_entity_id = None
-        self.parent_process_entity_id = None
-        self.process_id = None
         self.kind = 'Process'

@@ -22,19 +22,19 @@ class IpEntity(Entity):
 
     :ivar id: Azure resource Id
     :vartype id: str
-    :ivar name: Azure resource name
-    :vartype name: str
     :ivar type: Azure resource type
     :vartype type: str
+    :ivar name: Azure resource name
+    :vartype name: str
     :param kind: Required. Constant filled by server.
     :type kind: str
-    :ivar additional_data: A bag of custom fields that should be part of the
-     entity and will be presented to the user.
-    :vartype additional_data: dict[str, object]
     :ivar friendly_name: The graph item display name which is a short humanly
      readable description of the graph item instance. This property is optional
      and might be system generated.
     :vartype friendly_name: str
+    :ivar additional_data: A bag of custom fields that should be part of the
+     entity and will be presented to the user.
+    :vartype additional_data: dict[str, object]
     :ivar address: The IP address as string, e.g. 127.0.0.1 (either in Ipv4 or
      Ipv6)
     :vartype address: str
@@ -48,22 +48,22 @@ class IpEntity(Entity):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'readonly': True},
         'type': {'readonly': True},
+        'name': {'readonly': True},
         'kind': {'required': True},
-        'additional_data': {'readonly': True},
         'friendly_name': {'readonly': True},
+        'additional_data': {'readonly': True},
         'address': {'readonly': True},
         'threat_intelligence': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'additional_data': {'key': 'properties.additionalData', 'type': '{object}'},
         'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
+        'additional_data': {'key': 'properties.additionalData', 'type': '{object}'},
         'address': {'key': 'properties.address', 'type': 'str'},
         'location': {'key': 'properties.location', 'type': 'GeoLocation'},
         'threat_intelligence': {'key': 'properties.threatIntelligence', 'type': '[ThreatIntelligence]'},
@@ -71,8 +71,8 @@ class IpEntity(Entity):
 
     def __init__(self, **kwargs):
         super(IpEntity, self).__init__(**kwargs)
-        self.additional_data = None
         self.friendly_name = None
+        self.additional_data = None
         self.address = None
         self.location = kwargs.get('location', None)
         self.threat_intelligence = None

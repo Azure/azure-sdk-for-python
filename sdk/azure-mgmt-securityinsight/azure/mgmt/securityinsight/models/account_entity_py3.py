@@ -22,102 +22,102 @@ class AccountEntity(Entity):
 
     :ivar id: Azure resource Id
     :vartype id: str
-    :ivar name: Azure resource name
-    :vartype name: str
     :ivar type: Azure resource type
     :vartype type: str
+    :ivar name: Azure resource name
+    :vartype name: str
     :param kind: Required. Constant filled by server.
     :type kind: str
-    :ivar additional_data: A bag of custom fields that should be part of the
-     entity and will be presented to the user.
-    :vartype additional_data: dict[str, object]
     :ivar friendly_name: The graph item display name which is a short humanly
      readable description of the graph item instance. This property is optional
      and might be system generated.
     :vartype friendly_name: str
+    :ivar additional_data: A bag of custom fields that should be part of the
+     entity and will be presented to the user.
+    :vartype additional_data: dict[str, object]
+    :ivar account_name: The name of the account. This field should hold only
+     the name without any domain added to it, i.e. administrator.
+    :vartype account_name: str
+    :ivar nt_domain: The NetBIOS domain name as it appears in the alert format
+     – domain\\username. Examples: NT AUTHORITY.
+    :vartype nt_domain: str
+    :ivar upn_suffix: The user principal name suffix for the account, in some
+     cases it is also the domain name. Examples: contoso.com.
+    :vartype upn_suffix: str
+    :ivar sid: The account security identifier, e.g. S-1-5-18.
+    :vartype sid: str
     :ivar aad_tenant_id: The Azure Active Directory tenant id.
     :vartype aad_tenant_id: str
     :ivar aad_user_id: The Azure Active Directory user id.
     :vartype aad_user_id: str
-    :ivar account_name: The name of the account. This field should hold only
-     the name without any domain added to it, i.e. administrator.
-    :vartype account_name: str
-    :ivar display_name: The display name of the account.
-    :vartype display_name: str
-    :ivar host_entity_id: The Host entity id that contains the account in case
-     it is a local account (not domain joined)
-    :vartype host_entity_id: str
+    :ivar puid: The Azure Active Directory Passport User ID.
+    :vartype puid: str
     :ivar is_domain_joined: Determines whether this is a domain account.
     :vartype is_domain_joined: bool
-    :ivar nt_domain: The NetBIOS domain name as it appears in the alert format
-     – domain\\username. Examples: NT AUTHORITY.
-    :vartype nt_domain: str
+    :ivar display_name: The display name of the account.
+    :vartype display_name: str
     :ivar object_guid: The objectGUID attribute is a single-value attribute
      that is the unique identifier for the object, assigned by active
      directory.
     :vartype object_guid: str
-    :ivar puid: The Azure Active Directory Passport User ID.
-    :vartype puid: str
-    :ivar sid: The account security identifier, e.g. S-1-5-18.
-    :vartype sid: str
-    :ivar upn_suffix: The user principal name suffix for the account, in some
-     cases it is also the domain name. Examples: contoso.com.
-    :vartype upn_suffix: str
+    :ivar host_entity_id: The Host entity id that contains the account in case
+     it is a local account (not domain joined)
+    :vartype host_entity_id: str
     """
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'readonly': True},
         'type': {'readonly': True},
+        'name': {'readonly': True},
         'kind': {'required': True},
-        'additional_data': {'readonly': True},
         'friendly_name': {'readonly': True},
+        'additional_data': {'readonly': True},
+        'account_name': {'readonly': True},
+        'nt_domain': {'readonly': True},
+        'upn_suffix': {'readonly': True},
+        'sid': {'readonly': True},
         'aad_tenant_id': {'readonly': True},
         'aad_user_id': {'readonly': True},
-        'account_name': {'readonly': True},
-        'display_name': {'readonly': True},
-        'host_entity_id': {'readonly': True},
-        'is_domain_joined': {'readonly': True},
-        'nt_domain': {'readonly': True},
-        'object_guid': {'readonly': True},
         'puid': {'readonly': True},
-        'sid': {'readonly': True},
-        'upn_suffix': {'readonly': True},
+        'is_domain_joined': {'readonly': True},
+        'display_name': {'readonly': True},
+        'object_guid': {'readonly': True},
+        'host_entity_id': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'additional_data': {'key': 'properties.additionalData', 'type': '{object}'},
         'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
+        'additional_data': {'key': 'properties.additionalData', 'type': '{object}'},
+        'account_name': {'key': 'properties.accountName', 'type': 'str'},
+        'nt_domain': {'key': 'properties.ntDomain', 'type': 'str'},
+        'upn_suffix': {'key': 'properties.upnSuffix', 'type': 'str'},
+        'sid': {'key': 'properties.sid', 'type': 'str'},
         'aad_tenant_id': {'key': 'properties.aadTenantId', 'type': 'str'},
         'aad_user_id': {'key': 'properties.aadUserId', 'type': 'str'},
-        'account_name': {'key': 'properties.accountName', 'type': 'str'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'host_entity_id': {'key': 'properties.hostEntityId', 'type': 'str'},
-        'is_domain_joined': {'key': 'properties.isDomainJoined', 'type': 'bool'},
-        'nt_domain': {'key': 'properties.ntDomain', 'type': 'str'},
-        'object_guid': {'key': 'properties.objectGuid', 'type': 'str'},
         'puid': {'key': 'properties.puid', 'type': 'str'},
-        'sid': {'key': 'properties.sid', 'type': 'str'},
-        'upn_suffix': {'key': 'properties.upnSuffix', 'type': 'str'},
+        'is_domain_joined': {'key': 'properties.isDomainJoined', 'type': 'bool'},
+        'display_name': {'key': 'properties.displayName', 'type': 'str'},
+        'object_guid': {'key': 'properties.objectGuid', 'type': 'str'},
+        'host_entity_id': {'key': 'properties.hostEntityId', 'type': 'str'},
     }
 
     def __init__(self, **kwargs) -> None:
         super(AccountEntity, self).__init__(**kwargs)
-        self.additional_data = None
         self.friendly_name = None
+        self.additional_data = None
+        self.account_name = None
+        self.nt_domain = None
+        self.upn_suffix = None
+        self.sid = None
         self.aad_tenant_id = None
         self.aad_user_id = None
-        self.account_name = None
-        self.display_name = None
-        self.host_entity_id = None
-        self.is_domain_joined = None
-        self.nt_domain = None
-        self.object_guid = None
         self.puid = None
-        self.sid = None
-        self.upn_suffix = None
+        self.is_domain_joined = None
+        self.display_name = None
+        self.object_guid = None
+        self.host_entity_id = None
         self.kind = 'Account'

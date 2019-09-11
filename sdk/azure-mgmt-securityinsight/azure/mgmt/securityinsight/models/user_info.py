@@ -20,28 +20,28 @@ class UserInfo(Model):
 
     All required parameters must be populated in order to send to Azure.
 
+    :param object_id: Required. The object id of the user.
+    :type object_id: str
     :ivar email: The email of the user.
     :vartype email: str
     :ivar name: The name of the user.
     :vartype name: str
-    :param object_id: Required. The object id of the user.
-    :type object_id: str
     """
 
     _validation = {
+        'object_id': {'required': True},
         'email': {'readonly': True},
         'name': {'readonly': True},
-        'object_id': {'required': True},
     }
 
     _attribute_map = {
+        'object_id': {'key': 'objectId', 'type': 'str'},
         'email': {'key': 'email', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
-        'object_id': {'key': 'objectId', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(UserInfo, self).__init__(**kwargs)
+        self.object_id = kwargs.get('object_id', None)
         self.email = None
         self.name = None
-        self.object_id = kwargs.get('object_id', None)

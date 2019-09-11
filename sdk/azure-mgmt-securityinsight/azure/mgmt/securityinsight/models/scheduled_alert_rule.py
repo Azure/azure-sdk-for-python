@@ -22,24 +22,25 @@ class ScheduledAlertRule(AlertRule):
 
     :ivar id: Azure resource Id
     :vartype id: str
-    :ivar name: Azure resource name
-    :vartype name: str
     :ivar type: Azure resource type
     :vartype type: str
+    :ivar name: Azure resource name
+    :vartype name: str
     :param etag: Etag of the alert rule.
     :type etag: str
     :param kind: Required. Constant filled by server.
     :type kind: str
-    :param description: Required. The description of the alert rule.
-    :type description: str
     :param display_name: Required. The display name for alerts created by this
      alert rule.
     :type display_name: str
+    :param description: Required. The description of the alert rule.
+    :type description: str
+    :param severity: Required. The severity for alerts created by this alert
+     rule. Possible values include: 'High', 'Medium', 'Low', 'Informational'
+    :type severity: str or ~azure.mgmt.securityinsight.models.AlertSeverity
     :param enabled: Required. Determines whether this alert rule is enabled or
      disabled.
     :type enabled: bool
-    :ivar last_modified_utc: The last time that this alert has been modified.
-    :vartype last_modified_utc: str
     :param query: Required. The query that creates alerts for this rule.
     :type query: str
     :param query_frequency: Required. The frequency (in ISO 8601 duration
@@ -48,15 +49,6 @@ class ScheduledAlertRule(AlertRule):
     :param query_period: Required. The period (in ISO 8601 duration format)
      that this alert rule looks at.
     :type query_period: timedelta
-    :param severity: Required. The severity for alerts created by this alert
-     rule. Possible values include: 'High', 'Medium', 'Low', 'Informational'
-    :type severity: str or ~azure.mgmt.securityinsight.models.AlertSeverity
-    :param suppression_duration: Required. The suppression (in ISO 8601
-     duration format) to wait since last time this alert rule been triggered.
-    :type suppression_duration: timedelta
-    :param suppression_enabled: Required. Determines whether the suppression
-     for this alert rule is enabled or disabled.
-    :type suppression_enabled: bool
     :param trigger_operator: Required. The operation against the threshold
      that triggers alert rule. Possible values include: 'GreaterThan',
      'LessThan', 'Equal', 'NotEqual'
@@ -65,59 +57,67 @@ class ScheduledAlertRule(AlertRule):
     :param trigger_threshold: Required. The threshold triggers this alert
      rule.
     :type trigger_threshold: int
+    :param suppression_enabled: Required. Determines whether the suppression
+     for this alert rule is enabled or disabled.
+    :type suppression_enabled: bool
+    :param suppression_duration: Required. The suppression (in ISO 8601
+     duration format) to wait since last time this alert rule been triggered.
+    :type suppression_duration: timedelta
+    :ivar last_modified_utc: The last time that this alert has been modified.
+    :vartype last_modified_utc: str
     """
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'readonly': True},
         'type': {'readonly': True},
+        'name': {'readonly': True},
         'kind': {'required': True},
-        'description': {'required': True},
         'display_name': {'required': True},
+        'description': {'required': True},
+        'severity': {'required': True},
         'enabled': {'required': True},
-        'last_modified_utc': {'readonly': True},
         'query': {'required': True},
         'query_frequency': {'required': True},
         'query_period': {'required': True},
-        'severity': {'required': True},
-        'suppression_duration': {'required': True},
-        'suppression_enabled': {'required': True},
         'trigger_operator': {'required': True},
         'trigger_threshold': {'required': True},
+        'suppression_enabled': {'required': True},
+        'suppression_duration': {'required': True},
+        'last_modified_utc': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
         'display_name': {'key': 'properties.displayName', 'type': 'str'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'severity': {'key': 'properties.severity', 'type': 'AlertSeverity'},
         'enabled': {'key': 'properties.enabled', 'type': 'bool'},
-        'last_modified_utc': {'key': 'properties.lastModifiedUtc', 'type': 'str'},
         'query': {'key': 'properties.query', 'type': 'str'},
         'query_frequency': {'key': 'properties.queryFrequency', 'type': 'duration'},
         'query_period': {'key': 'properties.queryPeriod', 'type': 'duration'},
-        'severity': {'key': 'properties.severity', 'type': 'AlertSeverity'},
-        'suppression_duration': {'key': 'properties.suppressionDuration', 'type': 'duration'},
-        'suppression_enabled': {'key': 'properties.suppressionEnabled', 'type': 'bool'},
         'trigger_operator': {'key': 'properties.triggerOperator', 'type': 'TriggerOperator'},
         'trigger_threshold': {'key': 'properties.triggerThreshold', 'type': 'int'},
+        'suppression_enabled': {'key': 'properties.suppressionEnabled', 'type': 'bool'},
+        'suppression_duration': {'key': 'properties.suppressionDuration', 'type': 'duration'},
+        'last_modified_utc': {'key': 'properties.lastModifiedUtc', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(ScheduledAlertRule, self).__init__(**kwargs)
-        self.description = kwargs.get('description', None)
         self.display_name = kwargs.get('display_name', None)
+        self.description = kwargs.get('description', None)
+        self.severity = kwargs.get('severity', None)
         self.enabled = kwargs.get('enabled', None)
-        self.last_modified_utc = None
         self.query = kwargs.get('query', None)
         self.query_frequency = kwargs.get('query_frequency', None)
         self.query_period = kwargs.get('query_period', None)
-        self.severity = kwargs.get('severity', None)
-        self.suppression_duration = kwargs.get('suppression_duration', None)
-        self.suppression_enabled = kwargs.get('suppression_enabled', None)
         self.trigger_operator = kwargs.get('trigger_operator', None)
         self.trigger_threshold = kwargs.get('trigger_threshold', None)
+        self.suppression_enabled = kwargs.get('suppression_enabled', None)
+        self.suppression_duration = kwargs.get('suppression_duration', None)
+        self.last_modified_utc = None
         self.kind = 'Scheduled'

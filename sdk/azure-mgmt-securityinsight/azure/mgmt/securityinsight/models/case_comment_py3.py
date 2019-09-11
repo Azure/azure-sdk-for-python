@@ -22,38 +22,38 @@ class CaseComment(Resource):
 
     :ivar id: Azure resource Id
     :vartype id: str
-    :ivar name: Azure resource name
-    :vartype name: str
     :ivar type: Azure resource type
     :vartype type: str
-    :ivar created_time_utc: The time the comment was created
-    :vartype created_time_utc: datetime
+    :ivar name: Azure resource name
+    :vartype name: str
     :param message: Required. The comment message
     :type message: str
+    :ivar created_time_utc: The time the comment was created
+    :vartype created_time_utc: datetime
     :ivar user_info: Describes the user that created the comment
     :vartype user_info: ~azure.mgmt.securityinsight.models.UserInfo
     """
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'readonly': True},
         'type': {'readonly': True},
-        'created_time_utc': {'readonly': True},
+        'name': {'readonly': True},
         'message': {'required': True},
+        'created_time_utc': {'readonly': True},
         'user_info': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'created_time_utc': {'key': 'properties.createdTimeUtc', 'type': 'iso-8601'},
+        'name': {'key': 'name', 'type': 'str'},
         'message': {'key': 'properties.message', 'type': 'str'},
+        'created_time_utc': {'key': 'properties.createdTimeUtc', 'type': 'iso-8601'},
         'user_info': {'key': 'properties.userInfo', 'type': 'UserInfo'},
     }
 
     def __init__(self, *, message: str, **kwargs) -> None:
         super(CaseComment, self).__init__(**kwargs)
-        self.created_time_utc = None
         self.message = message
+        self.created_time_utc = None
         self.user_info = None

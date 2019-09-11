@@ -15,20 +15,20 @@ from msrest.serialization import Model
 class OfficeDataConnectorDataTypes(Model):
     """The available data types for office data connector.
 
-    :param exchange: Exchange data type connection.
-    :type exchange:
-     ~azure.mgmt.securityinsight.models.OfficeDataConnectorDataTypesExchange
     :param share_point: SharePoint data type connection.
     :type share_point:
      ~azure.mgmt.securityinsight.models.OfficeDataConnectorDataTypesSharePoint
+    :param exchange: Exchange data type connection.
+    :type exchange:
+     ~azure.mgmt.securityinsight.models.OfficeDataConnectorDataTypesExchange
     """
 
     _attribute_map = {
-        'exchange': {'key': 'exchange', 'type': 'OfficeDataConnectorDataTypesExchange'},
         'share_point': {'key': 'sharePoint', 'type': 'OfficeDataConnectorDataTypesSharePoint'},
+        'exchange': {'key': 'exchange', 'type': 'OfficeDataConnectorDataTypesExchange'},
     }
 
-    def __init__(self, *, exchange=None, share_point=None, **kwargs) -> None:
+    def __init__(self, *, share_point=None, exchange=None, **kwargs) -> None:
         super(OfficeDataConnectorDataTypes, self).__init__(**kwargs)
-        self.exchange = exchange
         self.share_point = share_point
+        self.exchange = exchange

@@ -16,7 +16,7 @@ class Settings(Model):
     """The Setting.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: ToggleSettings, UebaSettings
+    sub-classes are: UebaSettings, ToggleSettings
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -25,10 +25,10 @@ class Settings(Model):
 
     :ivar id: Azure resource Id
     :vartype id: str
-    :ivar name: Azure resource name
-    :vartype name: str
     :ivar type: Azure resource type
     :vartype type: str
+    :ivar name: Azure resource name
+    :vartype name: str
     :param etag: Etag of the alert rule.
     :type etag: str
     :param kind: Required. Constant filled by server.
@@ -37,27 +37,27 @@ class Settings(Model):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'readonly': True},
         'type': {'readonly': True},
+        'name': {'readonly': True},
         'kind': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
     }
 
     _subtype_map = {
-        'kind': {'ToggleSettings': 'ToggleSettings', 'UebaSettings': 'UebaSettings'}
+        'kind': {'UebaSettings': 'UebaSettings', 'ToggleSettings': 'ToggleSettings'}
     }
 
     def __init__(self, **kwargs):
         super(Settings, self).__init__(**kwargs)
         self.id = None
-        self.name = None
         self.type = None
+        self.name = None
         self.etag = kwargs.get('etag', None)
         self.kind = None

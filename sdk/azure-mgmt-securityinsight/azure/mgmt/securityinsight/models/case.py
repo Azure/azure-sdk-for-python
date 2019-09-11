@@ -22,104 +22,104 @@ class Case(Resource):
 
     :ivar id: Azure resource Id
     :vartype id: str
-    :ivar name: Azure resource name
-    :vartype name: str
     :ivar type: Azure resource type
     :vartype type: str
+    :ivar name: Azure resource name
+    :vartype name: str
     :param etag: Etag of the alert rule.
     :type etag: str
-    :ivar case_number: a sequential number
-    :vartype case_number: int
+    :ivar last_updated_time_utc: The last time the case was updated
+    :vartype last_updated_time_utc: datetime
+    :ivar created_time_utc: The time the case was created
+    :vartype created_time_utc: datetime
+    :param end_time_utc: The end time of the case
+    :type end_time_utc: datetime
+    :param start_time_utc: Required. The start time of the case
+    :type start_time_utc: datetime
+    :param labels: List of labels relevant to this case
+    :type labels: list[str]
+    :param description: The description of the case
+    :type description: str
+    :param title: Required. The title of the case
+    :type title: str
+    :param owner: Describes a user that the case is assigned to
+    :type owner: ~azure.mgmt.securityinsight.models.UserInfo
+    :param severity: Required. The severity of the case. Possible values
+     include: 'Critical', 'High', 'Medium', 'Low', 'Informational'
+    :type severity: str or ~azure.mgmt.securityinsight.models.CaseSeverity
+    :param status: Required. The status of the case. Possible values include:
+     'Draft', 'New', 'InProgress', 'Closed'
+    :type status: str or ~azure.mgmt.securityinsight.models.CaseStatus
     :param close_reason: The reason the case was closed. Possible values
      include: 'Resolved', 'Dismissed', 'TruePositive', 'FalsePositive', 'Other'
     :type close_reason: str or ~azure.mgmt.securityinsight.models.CloseReason
     :param closed_reason_text: the case close reason details
     :type closed_reason_text: str
-    :ivar created_time_utc: The time the case was created
-    :vartype created_time_utc: datetime
-    :param description: The description of the case
-    :type description: str
-    :param end_time_utc: The end time of the case
-    :type end_time_utc: datetime
-    :param labels: List of labels relevant to this case
-    :type labels: list[str]
-    :ivar last_comment: the last comment in the case
-    :vartype last_comment: str
-    :ivar last_updated_time_utc: The last time the case was updated
-    :vartype last_updated_time_utc: datetime
-    :param owner: Describes a user that the case is assigned to
-    :type owner: ~azure.mgmt.securityinsight.models.UserInfo
     :ivar related_alert_ids: List of related alert identifiers
     :vartype related_alert_ids: list[str]
-    :param severity: Required. The severity of the case. Possible values
-     include: 'Critical', 'High', 'Medium', 'Low', 'Informational'
-    :type severity: str or ~azure.mgmt.securityinsight.models.CaseSeverity
-    :param start_time_utc: Required. The start time of the case
-    :type start_time_utc: datetime
-    :param status: Required. The status of the case. Possible values include:
-     'Draft', 'New', 'InProgress', 'Closed'
-    :type status: str or ~azure.mgmt.securityinsight.models.CaseStatus
-    :param title: Required. The title of the case
-    :type title: str
+    :ivar case_number: a sequential number
+    :vartype case_number: int
+    :ivar last_comment: the last comment in the case
+    :vartype last_comment: str
     :ivar total_comments: the number of total comments in the case
     :vartype total_comments: int
     """
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'readonly': True},
         'type': {'readonly': True},
-        'case_number': {'readonly': True},
-        'created_time_utc': {'readonly': True},
-        'last_comment': {'readonly': True},
+        'name': {'readonly': True},
         'last_updated_time_utc': {'readonly': True},
-        'related_alert_ids': {'readonly': True},
-        'severity': {'required': True},
+        'created_time_utc': {'readonly': True},
         'start_time_utc': {'required': True},
-        'status': {'required': True},
         'title': {'required': True},
+        'severity': {'required': True},
+        'status': {'required': True},
+        'related_alert_ids': {'readonly': True},
+        'case_number': {'readonly': True},
+        'last_comment': {'readonly': True},
         'total_comments': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
-        'case_number': {'key': 'properties.caseNumber', 'type': 'int'},
+        'last_updated_time_utc': {'key': 'properties.lastUpdatedTimeUtc', 'type': 'iso-8601'},
+        'created_time_utc': {'key': 'properties.createdTimeUtc', 'type': 'iso-8601'},
+        'end_time_utc': {'key': 'properties.endTimeUtc', 'type': 'iso-8601'},
+        'start_time_utc': {'key': 'properties.startTimeUtc', 'type': 'iso-8601'},
+        'labels': {'key': 'properties.labels', 'type': '[str]'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'title': {'key': 'properties.title', 'type': 'str'},
+        'owner': {'key': 'properties.owner', 'type': 'UserInfo'},
+        'severity': {'key': 'properties.severity', 'type': 'str'},
+        'status': {'key': 'properties.status', 'type': 'str'},
         'close_reason': {'key': 'properties.closeReason', 'type': 'str'},
         'closed_reason_text': {'key': 'properties.closedReasonText', 'type': 'str'},
-        'created_time_utc': {'key': 'properties.createdTimeUtc', 'type': 'iso-8601'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'end_time_utc': {'key': 'properties.endTimeUtc', 'type': 'iso-8601'},
-        'labels': {'key': 'properties.labels', 'type': '[str]'},
-        'last_comment': {'key': 'properties.lastComment', 'type': 'str'},
-        'last_updated_time_utc': {'key': 'properties.lastUpdatedTimeUtc', 'type': 'iso-8601'},
-        'owner': {'key': 'properties.owner', 'type': 'UserInfo'},
         'related_alert_ids': {'key': 'properties.relatedAlertIds', 'type': '[str]'},
-        'severity': {'key': 'properties.severity', 'type': 'str'},
-        'start_time_utc': {'key': 'properties.startTimeUtc', 'type': 'iso-8601'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'title': {'key': 'properties.title', 'type': 'str'},
+        'case_number': {'key': 'properties.caseNumber', 'type': 'int'},
+        'last_comment': {'key': 'properties.lastComment', 'type': 'str'},
         'total_comments': {'key': 'properties.totalComments', 'type': 'int'},
     }
 
     def __init__(self, **kwargs):
         super(Case, self).__init__(**kwargs)
         self.etag = kwargs.get('etag', None)
-        self.case_number = None
+        self.last_updated_time_utc = None
+        self.created_time_utc = None
+        self.end_time_utc = kwargs.get('end_time_utc', None)
+        self.start_time_utc = kwargs.get('start_time_utc', None)
+        self.labels = kwargs.get('labels', None)
+        self.description = kwargs.get('description', None)
+        self.title = kwargs.get('title', None)
+        self.owner = kwargs.get('owner', None)
+        self.severity = kwargs.get('severity', None)
+        self.status = kwargs.get('status', None)
         self.close_reason = kwargs.get('close_reason', None)
         self.closed_reason_text = kwargs.get('closed_reason_text', None)
-        self.created_time_utc = None
-        self.description = kwargs.get('description', None)
-        self.end_time_utc = kwargs.get('end_time_utc', None)
-        self.labels = kwargs.get('labels', None)
-        self.last_comment = None
-        self.last_updated_time_utc = None
-        self.owner = kwargs.get('owner', None)
         self.related_alert_ids = None
-        self.severity = kwargs.get('severity', None)
-        self.start_time_utc = kwargs.get('start_time_utc', None)
-        self.status = kwargs.get('status', None)
-        self.title = kwargs.get('title', None)
+        self.case_number = None
+        self.last_comment = None
         self.total_comments = None

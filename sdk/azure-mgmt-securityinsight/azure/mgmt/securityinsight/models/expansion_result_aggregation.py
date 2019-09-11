@@ -17,37 +17,37 @@ class ExpansionResultAggregation(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param aggregation_type: The common type of the aggregation. (for e.g.
-     entity field name)
-    :type aggregation_type: str
-    :param count: Required. Total number of aggregations of the given kind
-     (and aggregationType if given) in the expansion result.
-    :type count: int
-    :param display_name: The display name of the aggregation by type.
-    :type display_name: str
     :param entity_kind: Required. The kind of the aggregated entity. Possible
      values include: 'Account', 'Host', 'File', 'AzureResource',
      'CloudApplication', 'DnsResolution', 'FileHash', 'Ip', 'Malware',
      'Process', 'RegistryKey', 'RegistryValue', 'SecurityGroup', 'Url',
      'SecurityAlert', 'Bookmark'
     :type entity_kind: str or ~azure.mgmt.securityinsight.models.EntityKind
+    :param count: Required. Total number of aggregations of the given kind
+     (and aggregationType if given) in the expansion result.
+    :type count: int
+    :param aggregation_type: The common type of the aggregation. (for e.g.
+     entity field name)
+    :type aggregation_type: str
+    :param display_name: The display name of the aggregation by type.
+    :type display_name: str
     """
 
     _validation = {
-        'count': {'required': True},
         'entity_kind': {'required': True},
+        'count': {'required': True},
     }
 
     _attribute_map = {
-        'aggregation_type': {'key': 'aggregationType', 'type': 'str'},
-        'count': {'key': 'count', 'type': 'int'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
         'entity_kind': {'key': 'entityKind', 'type': 'str'},
+        'count': {'key': 'count', 'type': 'int'},
+        'aggregation_type': {'key': 'aggregationType', 'type': 'str'},
+        'display_name': {'key': 'displayName', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(ExpansionResultAggregation, self).__init__(**kwargs)
-        self.aggregation_type = kwargs.get('aggregation_type', None)
-        self.count = kwargs.get('count', None)
-        self.display_name = kwargs.get('display_name', None)
         self.entity_kind = kwargs.get('entity_kind', None)
+        self.count = kwargs.get('count', None)
+        self.aggregation_type = kwargs.get('aggregation_type', None)
+        self.display_name = kwargs.get('display_name', None)

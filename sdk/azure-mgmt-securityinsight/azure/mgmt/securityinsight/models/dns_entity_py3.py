@@ -22,64 +22,64 @@ class DnsEntity(Entity):
 
     :ivar id: Azure resource Id
     :vartype id: str
-    :ivar name: Azure resource name
-    :vartype name: str
     :ivar type: Azure resource type
     :vartype type: str
+    :ivar name: Azure resource name
+    :vartype name: str
     :param kind: Required. Constant filled by server.
     :type kind: str
-    :ivar additional_data: A bag of custom fields that should be part of the
-     entity and will be presented to the user.
-    :vartype additional_data: dict[str, object]
     :ivar friendly_name: The graph item display name which is a short humanly
      readable description of the graph item instance. This property is optional
      and might be system generated.
     :vartype friendly_name: str
-    :ivar dns_server_ip_entity_id: An ip entity id for the dns server
-     resolving the request
-    :vartype dns_server_ip_entity_id: str
+    :ivar additional_data: A bag of custom fields that should be part of the
+     entity and will be presented to the user.
+    :vartype additional_data: dict[str, object]
     :ivar domain_name: The name of the dns record associated with the alert
     :vartype domain_name: str
-    :ivar host_ip_address_entity_id: An ip entity id for the dns request
-     client
-    :vartype host_ip_address_entity_id: str
     :ivar ip_address_entity_ids: Ip entity identifiers for the resolved ip
      address.
     :vartype ip_address_entity_ids: list[str]
+    :ivar dns_server_ip_entity_id: An ip entity id for the dns server
+     resolving the request
+    :vartype dns_server_ip_entity_id: str
+    :ivar host_ip_address_entity_id: An ip entity id for the dns request
+     client
+    :vartype host_ip_address_entity_id: str
     """
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'readonly': True},
         'type': {'readonly': True},
+        'name': {'readonly': True},
         'kind': {'required': True},
-        'additional_data': {'readonly': True},
         'friendly_name': {'readonly': True},
-        'dns_server_ip_entity_id': {'readonly': True},
+        'additional_data': {'readonly': True},
         'domain_name': {'readonly': True},
-        'host_ip_address_entity_id': {'readonly': True},
         'ip_address_entity_ids': {'readonly': True},
+        'dns_server_ip_entity_id': {'readonly': True},
+        'host_ip_address_entity_id': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'additional_data': {'key': 'properties.additionalData', 'type': '{object}'},
         'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
-        'dns_server_ip_entity_id': {'key': 'properties.dnsServerIpEntityId', 'type': 'str'},
+        'additional_data': {'key': 'properties.additionalData', 'type': '{object}'},
         'domain_name': {'key': 'properties.domainName', 'type': 'str'},
-        'host_ip_address_entity_id': {'key': 'properties.hostIpAddressEntityId', 'type': 'str'},
         'ip_address_entity_ids': {'key': 'properties.ipAddressEntityIds', 'type': '[str]'},
+        'dns_server_ip_entity_id': {'key': 'properties.dnsServerIpEntityId', 'type': 'str'},
+        'host_ip_address_entity_id': {'key': 'properties.hostIpAddressEntityId', 'type': 'str'},
     }
 
     def __init__(self, **kwargs) -> None:
         super(DnsEntity, self).__init__(**kwargs)
-        self.additional_data = None
         self.friendly_name = None
-        self.dns_server_ip_entity_id = None
+        self.additional_data = None
         self.domain_name = None
-        self.host_ip_address_entity_id = None
         self.ip_address_entity_ids = None
+        self.dns_server_ip_entity_id = None
+        self.host_ip_address_entity_id = None
         self.kind = 'DnsResolution'

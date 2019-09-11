@@ -16,10 +16,10 @@ class Entity(Model):
     """Specific entity.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AccountEntity, AzureResourceEntity,
-    CloudApplicationEntity, DnsEntity, FileEntity, FileHashEntity, HostEntity,
-    IpEntity, MalwareEntity, ProcessEntity, RegistryKeyEntity,
-    RegistryValueEntity, SecurityAlert, SecurityGroupEntity, UrlEntity
+    sub-classes are: AccountEntity, HostEntity, FileEntity, SecurityAlert,
+    FileHashEntity, MalwareEntity, SecurityGroupEntity, AzureResourceEntity,
+    CloudApplicationEntity, ProcessEntity, DnsEntity, IpEntity,
+    RegistryKeyEntity, RegistryValueEntity, UrlEntity
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -28,35 +28,35 @@ class Entity(Model):
 
     :ivar id: Azure resource Id
     :vartype id: str
-    :ivar name: Azure resource name
-    :vartype name: str
     :ivar type: Azure resource type
     :vartype type: str
+    :ivar name: Azure resource name
+    :vartype name: str
     :param kind: Required. Constant filled by server.
     :type kind: str
     """
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'readonly': True},
         'type': {'readonly': True},
+        'name': {'readonly': True},
         'kind': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
     }
 
     _subtype_map = {
-        'kind': {'Account': 'AccountEntity', 'AzureResource': 'AzureResourceEntity', 'CloudApplication': 'CloudApplicationEntity', 'DnsResolution': 'DnsEntity', 'File': 'FileEntity', 'FileHash': 'FileHashEntity', 'Host': 'HostEntity', 'Ip': 'IpEntity', 'Malware': 'MalwareEntity', 'Process': 'ProcessEntity', 'RegistryKey': 'RegistryKeyEntity', 'RegistryValue': 'RegistryValueEntity', 'SecurityAlert': 'SecurityAlert', 'SecurityGroup': 'SecurityGroupEntity', 'Url': 'UrlEntity'}
+        'kind': {'Account': 'AccountEntity', 'Host': 'HostEntity', 'File': 'FileEntity', 'SecurityAlert': 'SecurityAlert', 'FileHash': 'FileHashEntity', 'Malware': 'MalwareEntity', 'SecurityGroup': 'SecurityGroupEntity', 'AzureResource': 'AzureResourceEntity', 'CloudApplication': 'CloudApplicationEntity', 'Process': 'ProcessEntity', 'DnsResolution': 'DnsEntity', 'Ip': 'IpEntity', 'RegistryKey': 'RegistryKeyEntity', 'RegistryValue': 'RegistryValueEntity', 'Url': 'UrlEntity'}
     }
 
     def __init__(self, **kwargs):
         super(Entity, self).__init__(**kwargs)
         self.id = None
-        self.name = None
         self.type = None
+        self.name = None
         self.kind = None

@@ -22,19 +22,19 @@ class RegistryKeyEntity(Entity):
 
     :ivar id: Azure resource Id
     :vartype id: str
-    :ivar name: Azure resource name
-    :vartype name: str
     :ivar type: Azure resource type
     :vartype type: str
+    :ivar name: Azure resource name
+    :vartype name: str
     :param kind: Required. Constant filled by server.
     :type kind: str
-    :ivar additional_data: A bag of custom fields that should be part of the
-     entity and will be presented to the user.
-    :vartype additional_data: dict[str, object]
     :ivar friendly_name: The graph item display name which is a short humanly
      readable description of the graph item instance. This property is optional
      and might be system generated.
     :vartype friendly_name: str
+    :ivar additional_data: A bag of custom fields that should be part of the
+     entity and will be presented to the user.
+    :vartype additional_data: dict[str, object]
     :ivar hive: the hive that holds the registry key. Possible values include:
      'HKEY_LOCAL_MACHINE', 'HKEY_CLASSES_ROOT', 'HKEY_CURRENT_CONFIG',
      'HKEY_USERS', 'HKEY_CURRENT_USER_LOCAL_SETTINGS', 'HKEY_PERFORMANCE_DATA',
@@ -47,30 +47,30 @@ class RegistryKeyEntity(Entity):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'readonly': True},
         'type': {'readonly': True},
+        'name': {'readonly': True},
         'kind': {'required': True},
-        'additional_data': {'readonly': True},
         'friendly_name': {'readonly': True},
+        'additional_data': {'readonly': True},
         'hive': {'readonly': True},
         'key': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'additional_data': {'key': 'properties.additionalData', 'type': '{object}'},
         'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
+        'additional_data': {'key': 'properties.additionalData', 'type': '{object}'},
         'hive': {'key': 'properties.hive', 'type': 'str'},
         'key': {'key': 'properties.key', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(RegistryKeyEntity, self).__init__(**kwargs)
-        self.additional_data = None
         self.friendly_name = None
+        self.additional_data = None
         self.hive = None
         self.key = None
         self.kind = 'RegistryKey'

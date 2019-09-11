@@ -18,6 +18,8 @@ from .operations.alert_rules_operations import AlertRulesOperations
 from .operations.actions_operations import ActionsOperations
 from .operations.alert_rule_templates_operations import AlertRuleTemplatesOperations
 from .operations.cases_operations import CasesOperations
+from .operations.case_relations_operations import CaseRelationsOperations
+from .operations.bookmark_relations_operations import BookmarkRelationsOperations
 from .operations.comments_operations import CommentsOperations
 from .operations.case_comments_operations import CaseCommentsOperations
 from .operations.bookmarks_operations import BookmarksOperations
@@ -78,6 +80,10 @@ class SecurityInsights(SDKClient):
     :vartype alert_rule_templates: azure.mgmt.securityinsight.operations.AlertRuleTemplatesOperations
     :ivar cases: Cases operations
     :vartype cases: azure.mgmt.securityinsight.operations.CasesOperations
+    :ivar case_relations: CaseRelations operations
+    :vartype case_relations: azure.mgmt.securityinsight.operations.CaseRelationsOperations
+    :ivar bookmark_relations: BookmarkRelations operations
+    :vartype bookmark_relations: azure.mgmt.securityinsight.operations.BookmarkRelationsOperations
     :ivar comments: Comments operations
     :vartype comments: azure.mgmt.securityinsight.operations.CommentsOperations
     :ivar case_comments: CaseComments operations
@@ -125,6 +131,10 @@ class SecurityInsights(SDKClient):
         self.alert_rule_templates = AlertRuleTemplatesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.cases = CasesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.case_relations = CaseRelationsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.bookmark_relations = BookmarkRelationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.comments = CommentsOperations(
             self._client, self.config, self._serialize, self._deserialize)

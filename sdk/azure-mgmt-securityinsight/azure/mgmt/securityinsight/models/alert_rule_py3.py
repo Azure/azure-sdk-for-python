@@ -25,10 +25,10 @@ class AlertRule(Model):
 
     :ivar id: Azure resource Id
     :vartype id: str
-    :ivar name: Azure resource name
-    :vartype name: str
     :ivar type: Azure resource type
     :vartype type: str
+    :ivar name: Azure resource name
+    :vartype name: str
     :param etag: Etag of the alert rule.
     :type etag: str
     :param kind: Required. Constant filled by server.
@@ -37,15 +37,15 @@ class AlertRule(Model):
 
     _validation = {
         'id': {'readonly': True},
-        'name': {'readonly': True},
         'type': {'readonly': True},
+        'name': {'readonly': True},
         'kind': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
     }
@@ -57,7 +57,7 @@ class AlertRule(Model):
     def __init__(self, *, etag: str=None, **kwargs) -> None:
         super(AlertRule, self).__init__(**kwargs)
         self.id = None
-        self.name = None
         self.type = None
+        self.name = None
         self.etag = etag
         self.kind = None
