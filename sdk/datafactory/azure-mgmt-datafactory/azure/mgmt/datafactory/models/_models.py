@@ -6923,6 +6923,10 @@ class CommonDataServiceForAppsSink(CopySink):
      values from input dataset (except key fields) during write operation.
      Default is false. Type: boolean (or Expression with resultType boolean).
     :type ignore_null_values: object
+    :param alternate_key_name: The logical name of the alternate key which
+     will be used when upserting records. Type: string (or Expression with
+     resultType string).
+    :type alternate_key_name: object
     """
 
     _validation = {
@@ -6940,6 +6944,7 @@ class CommonDataServiceForAppsSink(CopySink):
         'type': {'key': 'type', 'type': 'str'},
         'write_behavior': {'key': 'writeBehavior', 'type': 'str'},
         'ignore_null_values': {'key': 'ignoreNullValues', 'type': 'object'},
+        'alternate_key_name': {'key': 'alternateKeyName', 'type': 'object'},
     }
 
     write_behavior = "Upsert"
@@ -6947,6 +6952,7 @@ class CommonDataServiceForAppsSink(CopySink):
     def __init__(self, **kwargs):
         super(CommonDataServiceForAppsSink, self).__init__(**kwargs)
         self.ignore_null_values = kwargs.get('ignore_null_values', None)
+        self.alternate_key_name = kwargs.get('alternate_key_name', None)
         self.type = 'CommonDataServiceForAppsSink'
 
 
@@ -9965,6 +9971,10 @@ class DynamicsCrmSink(CopySink):
      values from input dataset (except key fields) during write operation.
      Default is false. Type: boolean (or Expression with resultType boolean).
     :type ignore_null_values: object
+    :param alternate_key_name: The logical name of the alternate key which
+     will be used when upserting records. Type: string (or Expression with
+     resultType string).
+    :type alternate_key_name: object
     """
 
     _validation = {
@@ -9982,6 +9992,7 @@ class DynamicsCrmSink(CopySink):
         'type': {'key': 'type', 'type': 'str'},
         'write_behavior': {'key': 'writeBehavior', 'type': 'str'},
         'ignore_null_values': {'key': 'ignoreNullValues', 'type': 'object'},
+        'alternate_key_name': {'key': 'alternateKeyName', 'type': 'object'},
     }
 
     write_behavior = "Upsert"
@@ -9989,6 +10000,7 @@ class DynamicsCrmSink(CopySink):
     def __init__(self, **kwargs):
         super(DynamicsCrmSink, self).__init__(**kwargs)
         self.ignore_null_values = kwargs.get('ignore_null_values', None)
+        self.alternate_key_name = kwargs.get('alternate_key_name', None)
         self.type = 'DynamicsCrmSink'
 
 
@@ -10233,6 +10245,10 @@ class DynamicsSink(CopySink):
      from input dataset (except key fields) during write operation. Default is
      false. Type: boolean (or Expression with resultType boolean).
     :type ignore_null_values: object
+    :param alternate_key_name: The logical name of the alternate key which
+     will be used when upserting records. Type: string (or Expression with
+     resultType string).
+    :type alternate_key_name: object
     """
 
     _validation = {
@@ -10250,6 +10266,7 @@ class DynamicsSink(CopySink):
         'type': {'key': 'type', 'type': 'str'},
         'write_behavior': {'key': 'writeBehavior', 'type': 'str'},
         'ignore_null_values': {'key': 'ignoreNullValues', 'type': 'object'},
+        'alternate_key_name': {'key': 'alternateKeyName', 'type': 'object'},
     }
 
     write_behavior = "Upsert"
@@ -10257,6 +10274,7 @@ class DynamicsSink(CopySink):
     def __init__(self, **kwargs):
         super(DynamicsSink, self).__init__(**kwargs)
         self.ignore_null_values = kwargs.get('ignore_null_values', None)
+        self.alternate_key_name = kwargs.get('alternate_key_name', None)
         self.type = 'DynamicsSink'
 
 
