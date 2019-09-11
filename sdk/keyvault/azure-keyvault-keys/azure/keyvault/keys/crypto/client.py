@@ -36,7 +36,36 @@ class CryptographyClient(KeyVaultClientBase):
         :mod:`azure.identity`
 
     Keyword arguments
-        - *api_version* - version of the Key Vault API to use. Defaults to the most recent.
+        - **api_version** - version of the Key Vault API to use. Defaults to the most recent.
+
+    Creating a ``CryptographyClient``:
+
+    .. code-block:: python
+
+        from azure.identity import DefaultAzureCredential
+        from azure.keyvault.keys.crypto import CryptographyClient
+
+        credential = DefaultAzureCredential()
+
+        # create a CryptographyClient using a Key instance
+        key = key_client.get_key("mykey")
+        crypto_client = CryptographyClient(key, credential)
+
+        # or a Key's id, which must include a version
+        key_id = "https://<your vault>.vault.azure.net/keys/mykey/fe4fdcab688c479a9aa80f01ffeac26"
+        crypto_client = CryptographyClient(key_id, credential)
+
+    You can also obtain a ``CryptographyClient`` from a :class:`~azure.keyvault.keys.KeyClient`:
+
+    .. code-block:: python
+
+        from azure.identity import DefaultAzureCredential
+        from azure.keyvault.keys import KeyClient
+
+        credential = DefaultAzureCredential()
+        key_client = KeyClient(vault_url=<your vault url>, credential=credential)
+        crypto_client = key_client.get_cryptography_client("mykey")
+
     """
 
     def __init__(self, key, credential, **kwargs):

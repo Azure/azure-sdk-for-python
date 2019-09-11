@@ -28,14 +28,43 @@ class CryptographyClient(AsyncKeyVaultClientBase):
 
     :param key:
         Either a :class:`~azure.keyvault.keys.models.Key` instance as returned by
-        :func:`~azure.keyvault.keys.KeyClient.get_key`, or a string.
+        :func:`~azure.keyvault.keys.aio.KeyClient.get_key`, or a string.
         If a string, the value must be the full identifier of an Azure Key Vault key with a version.
     :type key: str or :class:`~azure.keyvault.keys.models.Key`
     :param credential: An object which can provide an access token for the vault, such as a credential from
-        :mod:`azure.identity`
+        :mod:`azure.identity.aio`
 
     Keyword arguments
-        - *api_version* - version of the Key Vault API to use. Defaults to the most recent.
+        - **api_version** - version of the Key Vault API to use. Defaults to the most recent.
+
+    Creating a ``CryptographyClient``:
+
+    .. code-block:: python
+
+        from azure.identity.aio import DefaultAzureCredential
+        from azure.keyvault.keys.crypto.aio import CryptographyClient
+
+        credential = DefaultAzureCredential()
+
+        # create a CryptographyClient using a Key instance
+        key = await key_client.get_key("mykey")
+        crypto_client = CryptographyClient(key, credential)
+
+        # or a Key's id, which must include a version
+        key_id = "https://<your vault>.vault.azure.net/keys/mykey/fe4fdcab688c479a9aa80f01ffeac26"
+        crypto_client = CryptographyClient(key_id, credential)
+
+    You can also obtain a ``CryptographyClient`` from a :class:`~azure.keyvault.keys.aio.KeyClient`:
+
+    .. code-block:: python
+
+        from azure.identity.aio import DefaultAzureCredential
+        from azure.keyvault.keys.aio import KeyClient
+
+        credential = DefaultAzureCredential()
+        key_client = KeyClient(vault_url=<your vault url>, credential=credential)
+        crypto_client = key_client.get_cryptography_client("mykey")
+
     """
 
     def __init__(self, key: "Union[Key, str]", credential: "TokenCredential", **kwargs: "**Any") -> None:
