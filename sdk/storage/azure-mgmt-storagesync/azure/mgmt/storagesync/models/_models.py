@@ -797,18 +797,11 @@ class ResourcesMoveInfo(Model):
 class RestoreFileSpec(Model):
     """Restore file spec.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
     :param path: Restore file spec path
     :type path: str
-    :ivar isdir: Restore file spec isdir
-    :vartype isdir: bool
+    :param isdir: Restore file spec isdir
+    :type isdir: bool
     """
-
-    _validation = {
-        'isdir': {'readonly': True},
-    }
 
     _attribute_map = {
         'path': {'key': 'path', 'type': 'str'},
@@ -818,7 +811,7 @@ class RestoreFileSpec(Model):
     def __init__(self, **kwargs):
         super(RestoreFileSpec, self).__init__(**kwargs)
         self.path = kwargs.get('path', None)
-        self.isdir = None
+        self.isdir = kwargs.get('isdir', None)
 
 
 class ServerEndpoint(ProxyResource):
@@ -1114,8 +1107,7 @@ class ServerEndpointRecallStatus(Model):
 
     :ivar last_updated_timestamp: Last updated timestamp
     :vartype last_updated_timestamp: datetime
-    :ivar total_recall_errors_count: Total count of recall errors over 24
-     hours
+    :ivar total_recall_errors_count: Total count of recall errors.
     :vartype total_recall_errors_count: long
     :ivar recall_errors: Array of recall errors
     :vartype recall_errors:
@@ -1655,8 +1647,8 @@ class SyncGroup(ProxyResource):
     :ivar type: The type of the resource. Ex-
      Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
     :vartype type: str
-    :param unique_id: Unique Id
-    :type unique_id: str
+    :ivar unique_id: Unique Id
+    :vartype unique_id: str
     :ivar sync_group_status: Sync group status
     :vartype sync_group_status: str
     """
@@ -1665,6 +1657,7 @@ class SyncGroup(ProxyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'unique_id': {'readonly': True},
         'sync_group_status': {'readonly': True},
     }
 
@@ -1678,7 +1671,7 @@ class SyncGroup(ProxyResource):
 
     def __init__(self, **kwargs):
         super(SyncGroup, self).__init__(**kwargs)
-        self.unique_id = kwargs.get('unique_id', None)
+        self.unique_id = None
         self.sync_group_status = None
 
 
