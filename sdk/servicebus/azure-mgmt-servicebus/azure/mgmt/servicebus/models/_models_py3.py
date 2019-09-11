@@ -1612,22 +1612,19 @@ class SqlFilter(Model):
     """Represents a filter which is a composition of an expression and an action
     that is executed in the pub/sub pipeline.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
     :param sql_expression: The SQL expression. e.g. MyProperty='ABC'
     :type sql_expression: str
-    :ivar compatibility_level: This property is reserved for future use. An
+    :param compatibility_level: This property is reserved for future use. An
      integer value showing the compatibility level, currently hard-coded to 20.
      Default value: 20 .
-    :vartype compatibility_level: int
+    :type compatibility_level: int
     :param requires_preprocessing: Value that indicates whether the rule
      action requires preprocessing. Default value: True .
     :type requires_preprocessing: bool
     """
 
     _validation = {
-        'compatibility_level': {'readonly': True},
+        'compatibility_level': {'maximum': 20, 'minimum': 20},
     }
 
     _attribute_map = {
@@ -1636,10 +1633,10 @@ class SqlFilter(Model):
         'requires_preprocessing': {'key': 'requiresPreprocessing', 'type': 'bool'},
     }
 
-    def __init__(self, *, sql_expression: str=None, requires_preprocessing: bool=True, **kwargs) -> None:
+    def __init__(self, *, sql_expression: str=None, compatibility_level: int=20, requires_preprocessing: bool=True, **kwargs) -> None:
         super(SqlFilter, self).__init__(**kwargs)
         self.sql_expression = sql_expression
-        self.compatibility_level = None
+        self.compatibility_level = compatibility_level
         self.requires_preprocessing = requires_preprocessing
 
 
