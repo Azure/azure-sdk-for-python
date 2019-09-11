@@ -10,7 +10,7 @@ The Azure Event Hubs client library allows for publishing and consuming of Azure
 
 - Emit telemetry about your application for business intelligence and diagnostic purposes.
 - Publish facts about the state of your application which interested parties may observe and use as a trigger for taking action.
-- Observe interesting operations and interactions happening within your business or other ecosystem, allowing looselycoupled systems to interact without the need to bind them together.
+- Observe interesting operations and interactions happening within your business or other ecosystem, allowing loosely coupled systems to interact without the need to bind them together.
 - Receive events from one or more publishers, transform them to better meet the needs of your ecosystem, then publish the transformed events to a new stream for consumers to observe.
 
 [Source code](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhubs) | [Package (PyPi)](https://pypi.org/project/azure-eventhub/) | [API reference documentation](https://azure.github.io/azure-sdk-for-python/ref/azure.eventhub) | [Product documentation](https://docs.microsoft.com/en-us/azure/event-hubs/)
