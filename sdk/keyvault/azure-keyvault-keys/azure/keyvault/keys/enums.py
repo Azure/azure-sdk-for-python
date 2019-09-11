@@ -5,7 +5,7 @@
 from enum import Enum
 
 
-class JsonWebKeyCurveName(str, Enum):
+class KeyCurveName(str, Enum):
     """Supported elliptic curves"""
 
     p_256 = "P-256"  #: The NIST P-256 elliptic curve, AKA SECG curve SECP256R1.
@@ -14,7 +14,7 @@ class JsonWebKeyCurveName(str, Enum):
     p_256_k = "P-256K"  #: The SECG SECP256K1 elliptic curve.
 
 
-class JsonWebKeyOperation(str, Enum):
+class KeyOperation(str, Enum):
     """Supported key operations"""
 
     encrypt = "encrypt"
@@ -25,7 +25,7 @@ class JsonWebKeyOperation(str, Enum):
     unwrap_key = "unwrapKey"
 
 
-class JsonWebKeyType(str, Enum):
+class KeyType(str, Enum):
     """Supported key types"""
 
     ec = "EC"  #: Elliptic Curve

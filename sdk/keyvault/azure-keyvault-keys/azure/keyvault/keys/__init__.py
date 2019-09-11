@@ -3,6 +3,6 @@
 # Licensed under the MIT License.
 # -------------------------------------
 from .client import KeyClient
-from .enums import JsonWebKeyCurveName, JsonWebKeyOperation, JsonWebKeyType
+from .enums import KeyCurveName, KeyOperation, KeyType
 
-__all__ = ["JsonWebKeyCurveName", "JsonWebKeyOperation", "JsonWebKeyType", "KeyClient"]
+__all__ = ["KeyCurveName", "KeyOperation", "KeyType", "KeyClient"]
