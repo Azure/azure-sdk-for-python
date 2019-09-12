@@ -9,7 +9,7 @@ import logging
 import uuid
 from azure.core import PipelineClient
 from azure.core.configuration import Configuration, ConnectionConfiguration
-from azure.core.pipeline.transport import HttpTransport, HttpRequest, RequestsTransport
+from azure.core.pipeline.transport import HttpRequest, RequestsTransport
 from azure.core.pipeline.policies import (
     UserAgentPolicy,
     RedirectPolicy,
@@ -109,7 +109,7 @@ class _InkRecognizerConfiguration():
         if timeout is not None:
             kwargs["connection_timeout"] = timeout
         self.kwargs = kwargs
-    
+
     def _generate_uuid(self):
         return str(uuid.uuid4())
 
@@ -125,8 +125,9 @@ class _InkRecognizerClientBase:
         self._default_arguments.update(kwargs)
 
         azure_config = _AzureConfiguration(credentials, **kwargs)
-        self._pipeline_client = PipelineClient(base_url=url, config=azure_config, transport=azure_config.transport)
-        
+        self._pipeline_client = PipelineClient(
+            base_url=url, config=azure_config, transport=azure_config.transport)
+
     def __enter__(self):
         self._pipeline_client.__enter__()
         return self
@@ -170,7 +171,7 @@ class _InkRecognizerClientBase:
         status_code = response.status_code
         headers = response.headers
         content = response.body().decode("utf-8")
-        
+
         if status_code == 200:
             self._logger.info("Response headers:")
             self._logger.info(headers)
@@ -208,25 +209,34 @@ class InkRecognizerClient(_InkRecognizerClientBase):
 
     :param str url: target url of the Ink Recognizer service
 
-    :param ~azure.core.TokenCredential credentials: An available Azure Active Directory credential for Ink Recognition Service
+    :param ~azure.core.TokenCredential credentials: An available Azure Active 
+    Directory credential for Ink Recognition Service
 
-    Key word arguments include Ink Recognizer specific arguments, azure service common arguments and azure pipline policies.
+    Key word arguments include Ink Recognizer specific arguments, azure service 
+    common arguments and azure pipline policies.
 
     Ink Recognizer specific arguments:
 
-    :param ServiceVersion service_version: Version of Ink Recognizer Service. Default is ServiceVersion.Preview
+    :param ServiceVersion service_version: Version of Ink Recognizer Service. 
+    Default is ServiceVersion.Preview
 
-    :param ApplicationKind application_kind: Inform Ink Recognizer Service of contents of the application. This can facilitate faster processing as the service will skip some classification steps. Default is ApplicationKind.MIXED
+    :param ApplicationKind application_kind: Inform Ink Recognizer Service of 
+    contents of the application. This can facilitate faster processing as the 
+    service will skip some classification steps. Default is ApplicationKind.MIXED
 
-    :param InkPointUnit ink_point_unit: unit of the x and y axis coordinates for each InkPoint. Default is InkPointUnit.MM.
+    :param InkPointUnit ink_point_unit: unit of the x and y axis coordinates 
+    for each InkPoint. Default is InkPointUnit.MM.
 
-    :param str language: Language (IETF BCP-47) of strokes, can be overwritten by stroke-specific language. Default is "en-US"
+    :param str language: Language (IETF BCP-47) of strokes, can be overwritten 
+    by stroke-specific language. Default is "en-US"
 
-    :param float unit_multiple: multiplier for unit. Each value in InkPoint will be multiplied by this value on server side. Default is 1.0.
+    :param float unit_multiple: multiplier for unit. Each value in InkPoint 
+    will be multiplied by this value on server side. Default is 1.0.
 
     Azure service common arguments:
 
-    :param ~azure.core.pipeline.transport.HttpTransport transport: transport instance for the client. Default is RequestsTransport()
+    :param ~azure.core.pipeline.transport.HttpTransport transport: transport 
+    instance for the client. Default is RequestsTransport()
 
     :param float timeout: Timeout in seconds.
 
@@ -234,7 +244,8 @@ class InkRecognizerClient(_InkRecognizerClientBase):
 
     :param str client_request_id: Caller-specified identification of the request.
 
-    :param callable response_hook: callable that is called with (headers, deserialized_response) if the http status is 200.
+    :param callable response_hook: callable that is called with 
+    (headers, deserialized_response) if the http status is 200.
 
     :param list[str] scopes: let you specify the type of access needed during authentication.
 
@@ -249,7 +260,8 @@ class InkRecognizerClient(_InkRecognizerClientBase):
         self._logger.info(data)
 
         request = HttpRequest("PUT", self._generate_url(config), data=data)
-        response = self._pipeline_client._pipeline.run(request, headers=config.headers, **config.kwargs)
+        response = self._pipeline_client._pipeline.run(
+            request, headers=config.headers, **config.kwargs)
         return response.http_response
 
     def recognize_ink(self, ink_stroke_list, **kwargs):
@@ -258,21 +270,29 @@ class InkRecognizerClient(_InkRecognizerClientBase):
         Synchronously sends data to the service and returns a tree structure
         containing all the recognition units from Ink Recognizer Service.
 
-        :param List[IInkStroke] ink_stroke_list: a iterable that contanins stroke instances.
+        :param List[IInkStroke] ink_stroke_list: a iterable that contanins 
+        stroke instances.
 
-        Key word arguments include Ink Recognizer specific arguments, azure service common arguments and azure pipline policies.
+        Key word arguments include Ink Recognizer specific arguments, azure 
+        service common arguments and azure pipline policies.
 
         Ink Recognizer spicific arguments:
 
-        :param ServiceVersion service_version: Version of Ink Recognizer Service. Default is ServiceVersion.Preview
+        :param ServiceVersion service_version: Version of Ink Recognizer Service. 
+        Default is ServiceVersion.Preview
 
-        :param ApplicationKind application_kind: Inform Ink Recognizer Service of contents of the application. This can facilitate faster processing as the service will skip some classification steps. Default is ApplicationKind.MIXED
+        :param ApplicationKind application_kind: Inform Ink Recognizer Service of 
+        contents of the application. This can facilitate faster processing as the 
+        service will skip some classification steps. Default is ApplicationKind.MIXED
 
-        :param InkPointUnit ink_point_unit: unit of the x and y axis coordinates for each InkPoint. Default is InkPointUnit.MM.
+        :param InkPointUnit ink_point_unit: unit of the x and y axis coordinates 
+        for each InkPoint. Default is InkPointUnit.MM.
 
-        :param str language: Language (IETF BCP-47) of strokes, can be overwritten by stroke-specific language. Default is "en-US"
+        :param str language: Language (IETF BCP-47) of strokes, can be overwritten 
+        by stroke-specific language. Default is "en-US"
 
-        :param float unit_multiple: multiplier for unit. Each value in InkPoint will be multiplied by this value on server side. Default is 1.0.
+        :param float unit_multiple: multiplier for unit. Each value in InkPoint 
+        will be multiplied by this value on server side. Default is 1.0.
 
         Azure service common arguments:
 
@@ -282,7 +302,8 @@ class InkRecognizerClient(_InkRecognizerClientBase):
 
         :param str client_request_id: Caller-specified identifier for the request.
 
-        :param callable response_hook: callable that is called with (response, headers).
+        :param callable response_hook: callable that is called with 
+        (headers, deserialized_response) if the http status is 200.
 
         Azure pipeline policies:
         https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/docs/configuration.md
@@ -299,7 +320,6 @@ class InkRecognizerClient(_InkRecognizerClientBase):
 
         :raise HttpResponseError: Unclassified error
         """
-
         config = self._generate_config(kwargs)
         request_data = self._pack_request(ink_stroke_list, config)
         response = self._send_request(data=request_data, config=config)

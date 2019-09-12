@@ -12,7 +12,6 @@ if six.PY2:
         __metaclass__ = ABCMeta
 else:
     from abc import ABC
-from ._enums import InkStrokeKind
 
 
 class IInkPoint(ABC):

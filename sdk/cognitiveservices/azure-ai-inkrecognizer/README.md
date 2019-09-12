@@ -1,12 +1,12 @@
 # Azure Ink Recognizer SDK for Python
 
-Azure Ink Recognizer SDK is an SDK for developers to work with Azure Ink Recognizer Service. The service recognize a collection of ink strokes and return a tree hierarchy of the recognized units, such as lines, words, shapes, as well as the handwriting recognition result of the words. 
+Azure Ink Recognizer SDK is an SDK for developers to work with Azure Ink Recognizer Service. The service recognize a collection of ink strokes and return a tree hierarchy of the recognized units, such as lines, words, shapes, as well as the handwriting recognition result of the words.
 
 Features:
+
 * Connect to Azure Ink Recognizer Service
 * Convert collections of ink strokes into HTTP requests
 * Parse HTTP response into ink recognition units
-
 
 [Source code][source_code] | [Package (PyPi)][pypi] | [API reference documentation][ref_inkrecognizer_sdk] | [Product documentation][ink_recognizer_docs] | [Samples][samples]
 
@@ -28,13 +28,13 @@ TODO.
 
 #### Get credentials
 
-TODO. 
+TODO.
 
 ## Examples
 
 The [Samples][samples] provide several code snippets covering some of the most common Ink Recognizer SDK tasks, including:
 
-* Implement InkPoint and InkStroke classes 
+* Implement InkPoint and InkStroke classes
 * Convert stroke unit from pixel to mm
 * Set language recognition locale
 * Indexing a key word from recognition results

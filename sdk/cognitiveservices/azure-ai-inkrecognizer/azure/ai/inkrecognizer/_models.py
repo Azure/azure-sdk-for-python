@@ -4,12 +4,12 @@
 # license information.
 #--------------------------------------------------------------------------
 
-import json
 from collections import OrderedDict
 from ._enums import InkRecognitionUnitKind, ShapeKind
 
 
 _STR_MAX_LENGTH = 1024
+
 
 def _truncate(string):
     if len(string) > _STR_MAX_LENGTH:
@@ -32,12 +32,12 @@ class Point:
 
     @property
     def x(self):
-        """ """
+        """ X-axis coordinate of the point. """
         return self._x
 
     @property
     def y(self):
-        """ """
+        """ X-axis coordinate of the point. """
         return self._y
 
 

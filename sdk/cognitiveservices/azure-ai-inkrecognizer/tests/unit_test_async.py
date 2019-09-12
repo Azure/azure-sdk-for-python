@@ -13,8 +13,6 @@ import asyncio
 from unittest.mock import Mock
 import pytest
 from azure.ai.inkrecognizer.aio import InkRecognizerClient
-from azure.ai.inkrecognizer.aio import InkStrokeKind, InkRecognitionUnitKind, InkPointUnit
-from azure.ai.inkrecognizer.aio import Rectangle, InkRecognitionUnit, InkBullet, InkDrawing, Line, Paragraph, InkWord, WritingRegion
 from unit_test import parse_result_from_json
 
 

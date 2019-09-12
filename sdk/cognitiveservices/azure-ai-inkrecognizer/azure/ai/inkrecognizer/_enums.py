@@ -6,6 +6,7 @@
 
 from enum import Enum
 
+
 class ApplicationKind(Enum):
     """
     The ApplicationKind enum allows an application to identify its domain (when it has one). 
@@ -14,7 +15,7 @@ class ApplicationKind(Enum):
     Applications that don't have a specific domain can simply specify ApplicationKind.MIXED
     which is the default.
     """
-    
+
     MIXED = "mixed"
     """ The application can have strokes of different kinds. """
 
@@ -96,7 +97,8 @@ class InkRecognitionUnitKind(Enum):
 
     LIST_ITEM = "listItem"
     """
-    One item of a list. It has only a line as its child, where a bullet should at the begining of that line.
+    One item of a list. It has only a line as its child, where a bullet should 
+    at the begining of that line.
     """
 
 

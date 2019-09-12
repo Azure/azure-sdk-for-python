@@ -474,44 +474,6 @@
             ]
         },
         {
-            "alternates": [
-                {
-                    "category": "inkBullet",
-                    "recognizedString": "-"
-                },
-                {
-                    "category": "inkBullet",
-                    "recognizedString": "_"
-                },
-                {
-                    "category": "inkBullet",
-                    "recognizedString": "="
-                },
-                {
-                    "category": "inkBullet",
-                    "recognizedString": "~"
-                },
-                {
-                    "category": "inkBullet",
-                    "recognizedString": ","
-                },
-                {
-                    "category": "inkBullet",
-                    "recognizedString": "I"
-                },
-                {
-                    "category": "inkBullet",
-                    "recognizedString": "U"
-                },
-                {
-                    "category": "inkBullet",
-                    "recognizedString": "a"
-                },
-                {
-                    "category": "inkBullet",
-                    "recognizedString": "u"
-                }
-            ],
             "boundingRectangle": {
                 "height": 0.009999999776482582,
                 "topX": 51.060001373291016,
