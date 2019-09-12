@@ -13,7 +13,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 12 Sep 2019 07:02:54 GMT
+      - Thu, 12 Sep 2019 19:01:31 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -25,11 +25,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 12 Sep 2019 07:02:52 GMT
+      - Thu, 12 Sep 2019 19:01:31 GMT
       etag:
-      - '"0x8D7374F3B75F481"'
+      - '"0x8D737B39FC49420"'
       last-modified:
-      - Thu, 12 Sep 2019 07:02:53 GMT
+      - Thu, 12 Sep 2019 19:01:31 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -53,7 +53,7 @@ interactions:
       x-ms-content-length:
       - '512'
       x-ms-date:
-      - Thu, 12 Sep 2019 07:02:55 GMT
+      - Thu, 12 Sep 2019 19:01:31 GMT
       x-ms-file-attributes:
       - none
       x-ms-file-creation-time:
@@ -75,27 +75,27 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 12 Sep 2019 07:02:53 GMT
+      - Thu, 12 Sep 2019 19:01:31 GMT
       etag:
-      - '"0x8D7374F3BD6FC72"'
+      - '"0x8D737B39FF15A6D"'
       last-modified:
-      - Thu, 12 Sep 2019 07:02:54 GMT
+      - Thu, 12 Sep 2019 19:01:31 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-file-attributes:
       - Archive
       x-ms-file-change-time:
-      - '2019-09-12T07:02:54.2103666Z'
+      - '2019-09-12T19:01:31.8282861Z'
       x-ms-file-creation-time:
-      - '2019-09-12T07:02:54.2103666Z'
+      - '2019-09-12T19:01:31.8282861Z'
       x-ms-file-id:
       - '13835128424026341376'
       x-ms-file-last-write-time:
-      - '2019-09-12T07:02:54.2103666Z'
+      - '2019-09-12T19:01:31.8282861Z'
       x-ms-file-parent-id:
       - '0'
       x-ms-file-permission-key:
-      - 3041988787716220399*9410193282558201185
+      - 2456630009689146767*9995558760652467457
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
@@ -105,15 +105,15 @@ interactions:
       message: Created
 - request:
     body: !!binary |
-      Kmqvpu9PxhZ6Z/kRJ4G2gua/W7O+mLnF0km4Xk3QoMlegszBvGhCAPLovq1Oup4zarU04j8yRvyG
-      0Z3O7q/uQ9NbSQw+qQzwGhzJ9iR6TqIP9Xot/ERexJwdJ0gmqOgcuhuWud4n9+2jTbmBcNB5P0WE
-      FzPwnOFsKOHz/bSwjIfGtu0vvtsZY92xobpWsx0B/W/qLYBryAGzvUi1sqJA2EDSNB2BWgnJgYer
-      1LeW3RG+sfYCjEsCAkNwfx1VnBpZVSIs9Cdn6jXdbr77eFTc8m+09T6ZMRvWrYYJMCKYz5vLVYW8
-      dif4EirBlgaNwRJP5hXYeM4NYTeyX/oymzoXd9KqwjJ9/l8k80UJxxrreAbei2dCHA9hJI/NEJA0
-      vLd/EX8VzN4gXu7ycjQb16Lo3uCZnTo33q6Y+6GWyPV8QqIAFOgTKOT0xPOdG67ebdIXDrhdl/3C
-      0v33jSRtpSnLtr5Qlx2sIrtR365lYzQwDCC02JlOpBj07Tp3J1L1iziNCNFj94dec4U0qWLY0AfZ
-      4nmt6OemhurJT4BQFjwCEKMbKapb35jrh7qVpJF+wZDAW3mEcnzWerPSzBPYZnd+hkn1YVl8ez6E
-      hMvnmta87yS7x57SkNJO7fLR2H+etYGsrY+UJwPGnNe9Lq1H/IcNWUd0J1xKR0Y4HS367MokX9c=
+      IPXl0/PjUuyRCqLa4nxEifBja4p2Owfq1lZ+9m8R6rFKWX17MZVHJezcVfORR8FiG9sfvuSlKb9J
+      DDOIZTWIGVpuChwBNNIDF8PhVZIWNL+EMkpiLYmIe84Cb9nmI2Mw0Gzd/DGU2ZEQI0VisvaCLHGB
+      Dp7Dt5F8yW932G9UG9olZNBu24/f82piy5TtNzP7tURCmS9+SiE5vjdkA+gHctk5lFxsMYgHP4JO
+      VRgLD2YYV1x8xSwSZSTZbfNy2k6N/D9Q9aFEl5WIKpx/zVLNIrOfZ0cOXfv30/ovQ2vg/KkDgJqA
+      VxMb5ZBTPYGyWDcTMS1vs9IOrEAlxBQaabsbeJpjq3/shjBx9/FHWZjBuEq0Q3NzJgTKcC+EDcTk
+      z5gMrPzK1hfOk7ogC7EMWzv1d7O6xXH6bxIsmZKJOevkEGeavXRMcQ6uhdTnnER0o0gBt0waFF61
+      wPZNPV7b9Aapxqr0llgqnpzfKHOs2mb5o8nPmCgcbPw0b7exjmNbn/KrsqUURSeSjPV+p0gDSYiN
+      kaZ4mfct6V4QwbC3Xf5BZ0o4yzxqhBSJuTkrEBHcnrcDlA3zMilXhTQf4FksMtOYxNp8MZ0ptBvd
+      pcGzkTAEF9X68zgrIeleUlzx84fD1p2NdlNublq4uvbYfymc2hyimXEtglZfDgZCmBsY2dQx3s0=
     headers:
       Accept:
       - '*/*'
@@ -124,13 +124,13 @@ interactions:
       Content-Length:
       - '512'
       Content-MD5:
-      - rGxgvuell083sSBhr/FEcg==
+      - 58C4V+OMRhc34c+07mw3lg==
       Content-Type:
       - application/octet-stream
       User-Agent:
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 12 Sep 2019 07:02:55 GMT
+      - Thu, 12 Sep 2019 19:01:31 GMT
       x-ms-range:
       - bytes=0-511
       x-ms-version:
@@ -146,13 +146,13 @@ interactions:
       content-length:
       - '0'
       content-md5:
-      - rGxgvuell083sSBhr/FEcg==
+      - 58C4V+OMRhc34c+07mw3lg==
       date:
-      - Thu, 12 Sep 2019 07:02:53 GMT
+      - Thu, 12 Sep 2019 19:01:31 GMT
       etag:
-      - '"0x8D7374F3BEA60D2"'
+      - '"0x8D737B3A0002A2F"'
       last-modified:
-      - Thu, 12 Sep 2019 07:02:54 GMT
+      - Thu, 12 Sep 2019 19:01:31 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted:

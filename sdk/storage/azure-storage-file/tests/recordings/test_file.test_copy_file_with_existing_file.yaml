@@ -13,7 +13,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 12 Sep 2019 07:01:47 GMT
+      - Thu, 12 Sep 2019 18:51:31 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -25,11 +25,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 12 Sep 2019 07:01:46 GMT
+      - Thu, 12 Sep 2019 18:51:31 GMT
       etag:
-      - '"0x8D7374F13A260F7"'
+      - '"0x8D737B23A4FCDE8"'
       last-modified:
-      - Thu, 12 Sep 2019 07:01:46 GMT
+      - Thu, 12 Sep 2019 18:51:31 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -53,7 +53,7 @@ interactions:
       x-ms-content-length:
       - '1024'
       x-ms-date:
-      - Thu, 12 Sep 2019 07:01:48 GMT
+      - Thu, 12 Sep 2019 18:51:31 GMT
       x-ms-file-attributes:
       - none
       x-ms-file-creation-time:
@@ -75,27 +75,27 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 12 Sep 2019 07:01:46 GMT
+      - Thu, 12 Sep 2019 18:51:31 GMT
       etag:
-      - '"0x8D7374F13D34D58"'
+      - '"0x8D737B23A66F175"'
       last-modified:
-      - Thu, 12 Sep 2019 07:01:47 GMT
+      - Thu, 12 Sep 2019 18:51:31 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-file-attributes:
       - Archive
       x-ms-file-change-time:
-      - '2019-09-12T07:01:47.0773592Z'
+      - '2019-09-12T18:51:31.9745909Z'
       x-ms-file-creation-time:
-      - '2019-09-12T07:01:47.0773592Z'
+      - '2019-09-12T18:51:31.9745909Z'
       x-ms-file-id:
       - '13835128424026341376'
       x-ms-file-last-write-time:
-      - '2019-09-12T07:01:47.0773592Z'
+      - '2019-09-12T18:51:31.9745909Z'
       x-ms-file-parent-id:
       - '0'
       x-ms-file-permission-key:
-      - 3104534798617655250*9490612404856053596
+      - 2881407518990059724*10330193899937013826
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
@@ -105,24 +105,24 @@ interactions:
       message: Created
 - request:
     body: !!binary |
-      CVoeuiGgUwTlYjByI6WuE7N7TAENgOTdbBp/Ol+YonJ2A0773D4SGvc3A1QcMRZlPzIyLSX+vdgw
-      9vo/QVsVzfKu4nMaPsI8GxyEGr3BwvFHbdRJdHk64Tn+KhdGTfJGf/mJr7kiEKuAJ7sckAVTD7EL
-      EP7YMmvn2YN6585pMVSD/D1kD8Lv5e5pZilXpEr4fRlrfbxVRPErWj2u9uaNzvU3YOJdeIInCUwm
-      1rlJOxchhD2Kn5PaHuXsBG6Hwg0f1n5jFj1qJHCjM0sKEw0XzrwREmfpOe7v+ncE3iozS/pvJnoO
-      mwWw9JAvzU4gMXu5UM3QriUwvwYU8s1Jwgg7nBA84yHAlJNKUI3rDt5q0ORWekZpRXvkXG5PajIH
-      eJ2A0dXAOqJzBf4vnm2hfaJNDBSJtFenQM2D5HQhO9fykM7v3DOGhS8ZyhQAYL9HK1fx9R1+KY8V
-      2QSZ3i3NDWEIvq8EhxZuqxjqQ10sJHoCA+kv6FiLRUMelhK4SIq+VPIInhCmX/tBk/Dn7lGQrL1N
-      rt5PzSJwDOV6VZqIr72yp2J9AxOWEIl4Vqgcza6DBcZY3L0+1XpDNr/AMCrxDWnx2iWE/mrSgW13
-      ztUIk93tYHS2jJOBDYcwLbIeB+8+jC7bi3uOvZaKSenRBnuf1OdttRyw1WBkgBWFsLwd85aby5AP
-      mXeg3s+7lWbRiS9j+BVUr72mMZaXyiDLgWO3h7Yjj1TPFflplCqkiD0X1n6alnF3qmnnVp2UxC4B
-      F0R+Xtr9GnsmCdePyJzSRNCGqNlhX2BcDi5mTi0UYgvwv1xPei4ngRvaUntJaydPPYcMcX6KWNKw
-      Txz4LWgN+477UwqP5eiKP7Hb9m27gfIPQXIs/B0yJy94k1YuS7oqqgZ6imVfJwbw+5qQKsh7AW2R
-      hhqBJZz+2wBiFDZUvPSrDIxJhcRSrEmQ0iFyvNaaMdckyN9L0iHEmqY2kN+40UEbEDQfies6qTcj
-      ajVMf+7g4mlCcF9FvWr27taLZ7b50lPjZYP4VpAMbhQ8Der9jrFI9O7KTdUy0I0uXUWlfZ9QllkQ
-      ILo3gDyQKk9rvDqZrGNdwuJcV9nuCzA1eySPe4sVQmfxttYH9WpBIVkarfbgFdGLgUbNttIomUYr
-      ougxjbX35YQgwSwRI7mMwLIjGNiE36xnTOfluElbqH+w3Pcm0fHyfgG/+HHKxP4jEFzsj056PLOA
-      SxinTv58FUIfH/v4goNdaLTKGT6WhAgRuVHGkp1oO7yMczOnS12Ipk4kIJhsnzY40kz1nkavI95j
-      9LqRmqXIkul3/s2yJrDxPUBv5OY5abmjDBgitWZt1hyRKmeSS4maBrLpdGFjN4NR7GLkkLgEJA==
+      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
     headers:
       Accept:
       - '*/*'
@@ -137,7 +137,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 12 Sep 2019 07:01:48 GMT
+      - Thu, 12 Sep 2019 18:51:32 GMT
       x-ms-range:
       - bytes=0-1023
       x-ms-version:
@@ -153,13 +153,13 @@ interactions:
       content-length:
       - '0'
       content-md5:
-      - zuFgDoTWT1zZBYKcn3YBdw==
+      - mErUbFMOOWbNtrIzqvZeFg==
       date:
-      - Thu, 12 Sep 2019 07:01:46 GMT
+      - Thu, 12 Sep 2019 18:51:31 GMT
       etag:
-      - '"0x8D7374F13E503B4"'
+      - '"0x8D737B23A7EC39B"'
       last-modified:
-      - Thu, 12 Sep 2019 07:01:47 GMT
+      - Thu, 12 Sep 2019 18:51:32 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted:
@@ -185,7 +185,7 @@ interactions:
       x-ms-copy-source:
       - https://pyacrstorage838911ab.file.core.windows.net/utshare838911ab/file838911ab
       x-ms-date:
-      - Thu, 12 Sep 2019 07:01:48 GMT
+      - Thu, 12 Sep 2019 18:51:32 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -197,15 +197,15 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 12 Sep 2019 07:01:48 GMT
+      - Thu, 12 Sep 2019 18:51:32 GMT
       etag:
-      - '"0x8D7374F149894BC"'
+      - '"0x8D737B23ABC2603"'
       last-modified:
-      - Thu, 12 Sep 2019 07:01:48 GMT
+      - Thu, 12 Sep 2019 18:51:32 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-copy-id:
-      - cb5e4fd0-f7e7-42f0-8d9c-d89d96723c5b
+      - 559367ab-0035-4b14-98a3-fbea236b23a3
       x-ms-copy-status:
       - success
       x-ms-version:
@@ -225,7 +225,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 12 Sep 2019 07:01:49 GMT
+      - Thu, 12 Sep 2019 18:51:32 GMT
       x-ms-range:
       - bytes=0-33554431
       x-ms-version:
@@ -235,24 +235,24 @@ interactions:
   response:
     body:
       string: !!binary |
-        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
+        a+JuUEoPlgEBF5hnkn9kL3pCYZ71SgKNZUQhOMRb1OnvBVEC+UzaurtHlgXvISXRCQw8/T1vFbeS
+        rMJpBTdglkPhoJiMNTYx4aGP24Vz7ESkn9t/Nsf8nRTzYtGnWjA6NYmLSODMOC0ucPa+/dP5+clm
+        CwyzWACLL/RJIWK6CNJjdPRcnbpBNg35FznSSRfj8Z0BCSAQYCDZHZRe2w/WDguqVIy60GSzJ+zX
+        RNRJ0SLqN0ZWYqKjWIUZnBwG7n3ITZXfyO1fP9yfi7f2kYXdW+2aMycZfo7JYmqRaOS4y6X4Eh17
+        GqSQ0MsRwr9was/0k/pCe0wbaUlxVloiunRuPc00wAdxPZM9QN8wdY9/t8aeEzdEFuG9MomnbfUH
+        xF7XcskM6mlPBJuLLUlqIIX4to+ZNBuKvJsBKIeixfG7NBSuKd3f0dwgfznZ6+cI2La1JEoDXTsy
+        wtmQuTR0N8oXzm/UhgBvxjw0E7OMoexidPwd3rUZpvaP5oCkyGum9V71VmGjh6vfOqhFlsV0KNGa
+        zX5XehC2NrJtm/l5WUWGqkb3dqWdkMXBdcZuXNUNaLxfzHrB/XiBAlvhZ5kZVwyVG0nAaNetDjtJ
+        j5BMwxN+hv0mGmZzF42RL5/bXOeFnVvDJKyNV9N66R4nZLMrzDj9HQJrCWIg2vYNEnoJn+02EH0V
+        NL5CZf6QEnZCaYeNhpa/pqUyGIQU3VYQPGTDWwXZ1ZO+PGqZl1wFzb0pEC9qzM4nC0wA8olK+VJp
+        9Mt6nE32AEA++uASa2sUhxmEffkE33Gs37ODN/Efxexp17Uaa+a7KEBwhIaIdXN6vdrbVEHCtIQ6
+        lucTdoUggLuVoDJvq9WF+1brYWxMz46QlXirGL4ITiRYg+A1sZF6YBB61b1TjwE4XGTDUBPxx8tB
+        7SYm5dgEYLLXvHyKqChk2rceqPNyu2NmnZBcJbcidIuSJD5ZrVMcpnr98Mc84e578VVSqwak8c64
+        Tr1Km6o0NnYpq6j6X/jMdYKVBuwxdnorVzp+me0anWQwUsqeVSjMgZ/YJvNaeUl18J6kd/PPgtHx
+        mxUUoBN7PujcOtgT9+gXpMIxmHscwET4Ufwdn6FZ7AROjhNfTUcfBfo2uXC0QH1eFMCKbreoFNQP
+        lobrawUe6MUvXO+2TX9TwTfBwkWVifSalnlKFukkCpmZBLGg2nl1r58eLjzJY5p0a3bjIQl42QZo
+        HvbkBAPOy9iOyNpIIgfCqCcz+8T+R0eNhsWSwGdWaJI9CJoorQblSK4pCEHNIPKPAQ44eQwB1UJZ
+        rduh4WW6yEAOArKgfRfmV8QGSGIRhZDOWmciNcI6V07hPik+FK2fE1amZrp/NkRVLs33qVklhg==
     headers:
       accept-ranges:
       - bytes
@@ -263,17 +263,17 @@ interactions:
       content-type:
       - application/octet-stream
       date:
-      - Thu, 12 Sep 2019 07:01:48 GMT
+      - Thu, 12 Sep 2019 18:51:32 GMT
       etag:
-      - '"0x8D7374F149894BC"'
+      - '"0x8D737B23ABC2603"'
       last-modified:
-      - Thu, 12 Sep 2019 07:01:48 GMT
+      - Thu, 12 Sep 2019 18:51:32 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-copy-completion-time:
-      - Thu, 12 Sep 2019 07:01:48 GMT
+      - Thu, 12 Sep 2019 18:51:32 GMT
       x-ms-copy-id:
-      - cb5e4fd0-f7e7-42f0-8d9c-d89d96723c5b
+      - 559367ab-0035-4b14-98a3-fbea236b23a3
       x-ms-copy-progress:
       - 1024/1024
       x-ms-copy-source:
@@ -283,17 +283,17 @@ interactions:
       x-ms-file-attributes:
       - Archive
       x-ms-file-change-time:
-      - '2019-09-12T07:01:47.0773592Z'
+      - '2019-09-12T18:51:31.9745909Z'
       x-ms-file-creation-time:
-      - '2019-09-12T07:01:48.3702460Z'
+      - '2019-09-12T18:51:32.5329923Z'
       x-ms-file-id:
       - '13835093239654252544'
       x-ms-file-last-write-time:
-      - '2019-09-12T07:01:47.0773592Z'
+      - '2019-09-12T18:51:31.9745909Z'
       x-ms-file-parent-id:
       - '0'
       x-ms-file-permission-key:
-      - 3104534798617655250*9490612404856053596
+      - 2881407518990059724*10330193899937013826
       x-ms-server-encrypted:
       - 'true'
       x-ms-type:

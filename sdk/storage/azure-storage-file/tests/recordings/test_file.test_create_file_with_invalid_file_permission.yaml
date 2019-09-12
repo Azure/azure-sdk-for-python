@@ -15,7 +15,7 @@ interactions:
       x-ms-content-length:
       - '1024'
       x-ms-date:
-      - Thu, 12 Sep 2019 07:06:59 GMT
+      - Thu, 12 Sep 2019 19:00:31 GMT
       x-ms-file-attributes:
       - none
       x-ms-file-creation-time:
@@ -33,14 +33,14 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>FileInvalidPermission</Code><Message>The
-        specified file permission is not valid.\nRequestId:a25fc108-301a-00cb-6638-69c7f1000000\nTime:2019-09-12T07:06:58.4365280Z</Message></Error>"
+        specified file permission is not valid.\nRequestId:48064576-b01a-004f-159c-69422f000000\nTime:2019-09-12T19:00:31.4343846Z</Message></Error>"
     headers:
       content-length:
       - '233'
       content-type:
       - application/xml
       date:
-      - Thu, 12 Sep 2019 07:06:57 GMT
+      - Thu, 12 Sep 2019 19:00:31 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:

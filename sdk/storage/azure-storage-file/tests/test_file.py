@@ -44,11 +44,10 @@ LARGE_FILE_SIZE = 64 * 1024 + 5
 # ------------------------------------------------------------------------------
 
 class StorageFileTest(FileTestCase):
-    def setUp(self):
+    def _setup(self):
         self.share_name = self.get_resource_name('utshare')
         self.short_byte_data = self.get_random_bytes(1024)
         self.remote_share_name = None
-        super(StorageFileTest, self).setUp()
 
     # --Helpers-----------------------------------------------------------------
     def _create_share(self, fsc):
@@ -125,6 +124,7 @@ class StorageFileTest(FileTestCase):
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_make_file_url(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        self._setup()
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)
         share = fsc.get_share_client("vhds")
@@ -141,6 +141,7 @@ class StorageFileTest(FileTestCase):
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_make_file_url_no_directory(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        self._setup()
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)
         share = fsc.get_share_client("vhds")
@@ -157,6 +158,7 @@ class StorageFileTest(FileTestCase):
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_make_file_url_with_protocol(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        self._setup()
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)
         url = self._account_url(storage_account.name).replace('https', 'http')
@@ -175,6 +177,7 @@ class StorageFileTest(FileTestCase):
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_make_file_url_with_sas(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        self._setup()
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)
         sas = '?sv=2015-04-05&st=2015-04-29T22%3A18%3A26Z&se=2015-04-30T02%3A23%3A26Z&sr=b&sp=rw&sip=168.1.5.60-168.1.5.70&spr=https&sig=Z%2FRHIX5Xcg0Mq2rqI3OlWTjEg2tYkboXr1P9ZUXDtkk%3D'
@@ -196,6 +199,7 @@ class StorageFileTest(FileTestCase):
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_file(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        self._setup()
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)
         file_name =self.get_resource_name(TEST_FILE_PREFIX)
@@ -218,6 +222,7 @@ class StorageFileTest(FileTestCase):
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_file_with_metadata(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        self._setup()
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)
         metadata = {'hello': 'world', 'number': '42'}
@@ -241,6 +246,7 @@ class StorageFileTest(FileTestCase):
     @ResourceGroupPreparer()     
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_file_when_file_permission_is_too_long(self, resource_group, location, storage_account, storage_account_key):
+        self._setup()
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         file_client = self._get_file_client(fsc)
         permission = str(self.get_random_bytes(8 * 1024 + 1))
@@ -252,6 +258,7 @@ class StorageFileTest(FileTestCase):
     def test_create_file_with_invalid_file_permission(self, resource_group, location, storage_account, storage_account_key):
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         # Arrange
+        self._setup()
         file_name = self._get_file_client(fsc)
 
         with self.assertRaises(HttpResponseError):
@@ -260,6 +267,7 @@ class StorageFileTest(FileTestCase):
     @ResourceGroupPreparer()     
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_file_will_set_all_smb_properties(self, resource_group, location, storage_account, storage_account_key):
+        self._setup()
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)
         # Arrange
@@ -280,6 +288,7 @@ class StorageFileTest(FileTestCase):
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_file_exists(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        self._setup()
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)
         file_client = self._create_file(fsc)
@@ -293,7 +302,9 @@ class StorageFileTest(FileTestCase):
     @ResourceGroupPreparer()     
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_file_not_exists(self, resource_group, location, storage_account, storage_account_key):
+        pytest.skip("temp")
         # Arrange
+        self._setup()
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)
         file_name =self.get_resource_name(TEST_FILE_PREFIX)
@@ -313,6 +324,7 @@ class StorageFileTest(FileTestCase):
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_file_exists_with_snapshot(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        self._setup()
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)
         file_client = self._create_file(fsc)
@@ -336,6 +348,7 @@ class StorageFileTest(FileTestCase):
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_file_not_exists_with_snapshot(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        self._setup()
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)
         share_client = fsc.get_share_client(self.share_name)
@@ -359,7 +372,7 @@ class StorageFileTest(FileTestCase):
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_resize_file(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        pytest.skip("TODO: Verify the x-ms-file-permission value.")
+        self._setup()
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)
         file_client = self._create_file(fsc)
@@ -374,8 +387,8 @@ class StorageFileTest(FileTestCase):
     @ResourceGroupPreparer()     
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_set_file_properties(self, resource_group, location, storage_account, storage_account_key):
-        pytest.skip("TODO: Verify the x-ms-file-permission value.")
         # Arrange
+        self._setup()
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)
         file_client = self._create_file(fsc)
@@ -398,6 +411,7 @@ class StorageFileTest(FileTestCase):
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_set_file_properties_with_file_permission(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        self._setup()
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)
         file_client = self._create_file(fsc)
@@ -432,6 +446,7 @@ class StorageFileTest(FileTestCase):
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_get_file_properties(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        self._setup()
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)
         file_client = self._create_file(fsc)
@@ -447,6 +462,7 @@ class StorageFileTest(FileTestCase):
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_get_file_properties_with_snapshot(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        self._setup()
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)
         file_client = self._create_file(fsc)
@@ -479,6 +495,7 @@ class StorageFileTest(FileTestCase):
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_get_file_metadata_with_snapshot(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        self._setup()
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)
         file_client = self._create_file(fsc)
@@ -509,6 +526,7 @@ class StorageFileTest(FileTestCase):
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_get_file_properties_with_non_existing_file(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        self._setup()
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)
         file_name =self.get_resource_name(TEST_FILE_PREFIX)
@@ -528,6 +546,7 @@ class StorageFileTest(FileTestCase):
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_get_file_metadata(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        self._setup()
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)
         file_client = self._create_file(fsc)
@@ -543,6 +562,7 @@ class StorageFileTest(FileTestCase):
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_set_file_metadata_with_upper_case(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        self._setup()
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)
         metadata = {'hello': 'world', 'number': '42', 'UP': 'UPval'}
@@ -563,6 +583,7 @@ class StorageFileTest(FileTestCase):
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_delete_file_with_existing_file(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        self._setup()
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)
         file_client = self._create_file(fsc)
@@ -578,6 +599,7 @@ class StorageFileTest(FileTestCase):
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_delete_file_with_non_existing_file(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        self._setup()
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)
         file_name =self.get_resource_name(TEST_FILE_PREFIX)
@@ -597,6 +619,7 @@ class StorageFileTest(FileTestCase):
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_update_range(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        self._setup()
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)
         file_client = self._create_file(fsc)
@@ -607,7 +630,6 @@ class StorageFileTest(FileTestCase):
 
         # Assert
         content = file_client.download_file().content_as_bytes()
-        import ipdb; ipdb.set_trace()
         self.assertEqual(data, content[:512])
         self.assertEqual(self.short_byte_data[512:], content[512:])
 
@@ -615,6 +637,7 @@ class StorageFileTest(FileTestCase):
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_update_range_with_md5(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        self._setup()
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)
         file_client = self._create_file(fsc)
@@ -630,6 +653,7 @@ class StorageFileTest(FileTestCase):
     def test_update_range_without_enough_bytes(self, resource_group, location, storage_account, storage_account_key):
         #test_update_range_from_file_url_when_source_file_does_not_have_enough_bytes
         # Arrange
+        self._setup()
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)
         source_file_name = 'testfile1'
@@ -653,6 +677,7 @@ class StorageFileTest(FileTestCase):
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_update_range_from_file_url(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        self._setup()
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)
         source_file_name = 'testfile'
@@ -686,6 +711,7 @@ class StorageFileTest(FileTestCase):
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_update_big_range_from_file_url(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        self._setup()
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)
         source_file_name = 'testfile1'
@@ -722,6 +748,7 @@ class StorageFileTest(FileTestCase):
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_clear_range(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        self._setup()
         # TODO: update swagger and fix this test
         pytest.skip("TODO: fix swagger!")
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
@@ -740,6 +767,7 @@ class StorageFileTest(FileTestCase):
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_update_file_unicode(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        self._setup()
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)
         file_client = self._create_file(fsc)
@@ -761,6 +789,7 @@ class StorageFileTest(FileTestCase):
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_list_ranges_none(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        self._setup()
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)
         file_name =self.get_resource_name(TEST_FILE_PREFIX)
@@ -782,6 +811,7 @@ class StorageFileTest(FileTestCase):
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_list_ranges_2(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        self._setup()
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)
         file_name =self.get_resource_name(TEST_FILE_PREFIX)
@@ -811,6 +841,7 @@ class StorageFileTest(FileTestCase):
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_list_ranges_none_from_snapshot(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        self._setup()
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)
         file_name =self.get_resource_name(TEST_FILE_PREFIX)
@@ -843,6 +874,7 @@ class StorageFileTest(FileTestCase):
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_list_ranges_2_from_snapshot(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        self._setup()
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)
         file_name =self.get_resource_name(TEST_FILE_PREFIX)
@@ -882,6 +914,7 @@ class StorageFileTest(FileTestCase):
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_copy_file_with_existing_file(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        self._setup()
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)
         source_client = self._create_file(fsc)
@@ -906,6 +939,7 @@ class StorageFileTest(FileTestCase):
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_copy_file_async_private_file(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        self._setup()
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)
         fsc2 = FileServiceClient(self._account_url(self._remote_account_details()[0]), max_range_size=4 * 1024, credential=self._remote_account_details()[1])
@@ -929,6 +963,7 @@ class StorageFileTest(FileTestCase):
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_copy_file_async_private_file_with_sas(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        self._setup()
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)
         fsc2 = FileServiceClient(self._account_url(self._remote_account_details()[0]), credential=self._remote_account_details()[1])
@@ -961,6 +996,7 @@ class StorageFileTest(FileTestCase):
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_abort_copy_file(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        self._setup()
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)
         data = b'12345678' * 1024 * 1024
@@ -993,6 +1029,7 @@ class StorageFileTest(FileTestCase):
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_abort_copy_file_with_synchronous_copy_fails(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        self._setup()
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)
         source_file = self._create_file(fsc)
@@ -1016,6 +1053,7 @@ class StorageFileTest(FileTestCase):
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_unicode_get_file_unicode_name(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        self._setup()
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)
         file_name = '啊齄丂狛狜'
@@ -1036,6 +1074,7 @@ class StorageFileTest(FileTestCase):
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_file_unicode_data(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        self._setup()
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)
         file_name =self.get_resource_name(TEST_FILE_PREFIX)
@@ -1057,6 +1096,7 @@ class StorageFileTest(FileTestCase):
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_unicode_get_file_binary_data(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        self._setup()
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)
         base64_data = 'AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/wABAgMEBQYHCAkKCwwNDg8QERITFBUWFxgZGhscHR4fICEiIyQlJicoKSorLC0uLzAxMjM0NTY3ODk6Ozw9Pj9AQUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVpbXF1eX2BhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ent8fX5/gIGCg4SFhoeIiYqLjI2Oj5CRkpOUlZaXmJmam5ydnp+goaKjpKWmp6ipqqusra6vsLGys7S1tre4ubq7vL2+v8DBwsPExcbHyMnKy8zNzs/Q0dLT1NXW19jZ2tvc3d7f4OHi4+Tl5ufo6err7O3u7/Dx8vP09fb3+Pn6+/z9/v8AAQIDBAUGBwgJCgsMDQ4PEBESExQVFhcYGRobHB0eHyAhIiMkJSYnKCkqKywtLi8wMTIzNDU2Nzg5Ojs8PT4/QEFCQ0RFRkdISUpLTE1OT1BRUlNUVVZXWFlaW1xdXl9gYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXp7fH1+f4CBgoOEhYaHiImKi4yNjo+QkZKTlJWWl5iZmpucnZ6foKGio6SlpqeoqaqrrK2ur7CxsrO0tba3uLm6u7y9vr/AwcLDxMXGx8jJysvMzc7P0NHS09TV1tfY2drb3N3e3+Dh4uPk5ebn6Onq6+zt7u/w8fLz9PX29/j5+vv8/f7/AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/w=='
@@ -1084,6 +1124,7 @@ class StorageFileTest(FileTestCase):
             return
 
         # Arrange
+        self._setup()
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)
         file_name =self.get_resource_name(TEST_FILE_PREFIX)
@@ -1119,6 +1160,7 @@ class StorageFileTest(FileTestCase):
             return
 
         # Arrange
+        self._setup()
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)
         file_name =self.get_resource_name(TEST_FILE_PREFIX)
@@ -1148,6 +1190,7 @@ class StorageFileTest(FileTestCase):
             return
 
         # Arrange
+        self._setup()
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)
         file_name =self.get_resource_name(TEST_FILE_PREFIX)
@@ -1178,6 +1221,7 @@ class StorageFileTest(FileTestCase):
             return
 
         # Arrange
+        self._setup()
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)       
         file_name =self.get_resource_name(TEST_FILE_PREFIX)
@@ -1209,6 +1253,7 @@ class StorageFileTest(FileTestCase):
             return
 
         # Arrange
+        self._setup()
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)   
         file_name =self.get_resource_name(TEST_FILE_PREFIX)
@@ -1249,7 +1294,7 @@ class StorageFileTest(FileTestCase):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
             return
-
+        self._setup()
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)
         # Arrange       
@@ -1281,7 +1326,7 @@ class StorageFileTest(FileTestCase):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
             return
-
+        self._setup()
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)     
@@ -1311,7 +1356,7 @@ class StorageFileTest(FileTestCase):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
             return
-
+        self._setup()
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)      
@@ -1351,7 +1396,7 @@ class StorageFileTest(FileTestCase):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
             return
-
+        self._setup()
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)       
@@ -1380,7 +1425,7 @@ class StorageFileTest(FileTestCase):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
             return
-
+        self._setup()
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)     
@@ -1419,6 +1464,7 @@ class StorageFileTest(FileTestCase):
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_file_from_text(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        self._setup()
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)
         file_name =self.get_resource_name(TEST_FILE_PREFIX)
@@ -1441,6 +1487,7 @@ class StorageFileTest(FileTestCase):
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_file_from_text_with_encoding(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        self._setup()
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)
         file_name =self.get_resource_name(TEST_FILE_PREFIX)
@@ -1467,6 +1514,7 @@ class StorageFileTest(FileTestCase):
             return
 
         # Arrange
+        self._setup()
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)
         file_name =self.get_resource_name(TEST_FILE_PREFIX)
@@ -1489,6 +1537,7 @@ class StorageFileTest(FileTestCase):
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_file_with_md5_small(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
+        self._setup()
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)
         file_name =self.get_resource_name(TEST_FILE_PREFIX)
@@ -1513,6 +1562,7 @@ class StorageFileTest(FileTestCase):
             return
 
         # Arrange
+        self._setup()
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)
         file_name =self.get_resource_name(TEST_FILE_PREFIX)
@@ -1538,6 +1588,7 @@ class StorageFileTest(FileTestCase):
             return
 
         # Arrange
+        self._setup()
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)
         file_client = self._create_file(fsc)
@@ -1565,6 +1616,7 @@ class StorageFileTest(FileTestCase):
             return
 
         # Arrange
+        self._setup()
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)
         file_client = self._create_file(fsc)
@@ -1597,6 +1649,7 @@ class StorageFileTest(FileTestCase):
             return
 
         # Arrange
+        self._setup()
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)
         file_client = self._create_file(fsc)
@@ -1627,6 +1680,7 @@ class StorageFileTest(FileTestCase):
             return
 
         # Arrange
+        self._setup()
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)
         file_client = self._create_file(fsc)
@@ -1655,6 +1709,7 @@ class StorageFileTest(FileTestCase):
             return
 
         # Arrange
+        self._setup()
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)
         file_client = self._create_file(fsc)
@@ -1692,6 +1747,7 @@ class StorageFileTest(FileTestCase):
             return
 
         # Arrange
+        self._setup()
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)
         updated_data = b'updated file data'
@@ -1721,7 +1777,7 @@ class StorageFileTest(FileTestCase):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:
             return
-
+        self._setup()
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)

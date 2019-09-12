@@ -13,7 +13,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 12 Sep 2019 07:03:34 GMT
+      - Thu, 12 Sep 2019 19:06:26 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -25,11 +25,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 12 Sep 2019 07:03:33 GMT
+      - Thu, 12 Sep 2019 19:06:26 GMT
       etag:
-      - '"0x8D7374F537F7E4A"'
+      - '"0x8D737B44FB6129C"'
       last-modified:
-      - Thu, 12 Sep 2019 07:03:33 GMT
+      - Thu, 12 Sep 2019 19:06:26 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -53,7 +53,7 @@ interactions:
       x-ms-content-length:
       - '1024'
       x-ms-date:
-      - Thu, 12 Sep 2019 07:03:35 GMT
+      - Thu, 12 Sep 2019 19:06:26 GMT
       x-ms-file-attributes:
       - none
       x-ms-file-creation-time:
@@ -75,27 +75,27 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 12 Sep 2019 07:03:33 GMT
+      - Thu, 12 Sep 2019 19:06:26 GMT
       etag:
-      - '"0x8D7374F539A803C"'
+      - '"0x8D737B44FC7E16A"'
       last-modified:
-      - Thu, 12 Sep 2019 07:03:34 GMT
+      - Thu, 12 Sep 2019 19:06:26 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-file-attributes:
       - Archive
       x-ms-file-change-time:
-      - '2019-09-12T07:03:34.0792892Z'
+      - '2019-09-12T19:06:26.8354922Z'
       x-ms-file-creation-time:
-      - '2019-09-12T07:03:34.0792892Z'
+      - '2019-09-12T19:06:26.8354922Z'
       x-ms-file-id:
       - '13835128424026341376'
       x-ms-file-last-write-time:
-      - '2019-09-12T07:03:34.0792892Z'
+      - '2019-09-12T19:06:26.8354922Z'
       x-ms-file-parent-id:
       - '0'
       x-ms-file-permission-key:
-      - 13274334286460586578*1195425267391685340
+      - 159662636148969757*12292526889685367187
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
@@ -105,24 +105,24 @@ interactions:
       message: Created
 - request:
     body: !!binary |
-      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
+      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
     headers:
       Accept:
       - '*/*'
@@ -137,7 +137,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 12 Sep 2019 07:03:35 GMT
+      - Thu, 12 Sep 2019 19:06:26 GMT
       x-ms-range:
       - bytes=0-1023
       x-ms-version:
@@ -153,13 +153,13 @@ interactions:
       content-length:
       - '0'
       content-md5:
-      - 7ayBXbmY325LYKgFx+7nSg==
+      - 77KaPMkDG+UGZ/sDTeSDqA==
       date:
-      - Thu, 12 Sep 2019 07:03:33 GMT
+      - Thu, 12 Sep 2019 19:06:26 GMT
       etag:
-      - '"0x8D7374F53C0ACB9"'
+      - '"0x8D737B44FD3CA6D"'
       last-modified:
-      - Thu, 12 Sep 2019 07:03:34 GMT
+      - Thu, 12 Sep 2019 19:06:26 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-server-encrypted:
@@ -181,7 +181,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 12 Sep 2019 07:03:35 GMT
+      - Thu, 12 Sep 2019 19:06:26 GMT
       x-ms-version:
       - '2019-02-02'
     method: HEAD
@@ -195,27 +195,27 @@ interactions:
       content-type:
       - application/octet-stream
       date:
-      - Thu, 12 Sep 2019 07:03:33 GMT
+      - Thu, 12 Sep 2019 19:06:26 GMT
       etag:
-      - '"0x8D7374F53C0ACB9"'
+      - '"0x8D737B44FD3CA6D"'
       last-modified:
-      - Thu, 12 Sep 2019 07:03:34 GMT
+      - Thu, 12 Sep 2019 19:06:26 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-file-attributes:
       - Archive
       x-ms-file-change-time:
-      - '2019-09-12T07:03:34.0792892Z'
+      - '2019-09-12T19:06:26.8354922Z'
       x-ms-file-creation-time:
-      - '2019-09-12T07:03:34.0792892Z'
+      - '2019-09-12T19:06:26.8354922Z'
       x-ms-file-id:
       - '13835128424026341376'
       x-ms-file-last-write-time:
-      - '2019-09-12T07:03:34.0792892Z'
+      - '2019-09-12T19:06:26.8354922Z'
       x-ms-file-parent-id:
       - '0'
       x-ms-file-permission-key:
-      - 13274334286460586578*1195425267391685340
+      - 159662636148969757*12292526889685367187
       x-ms-server-encrypted:
       - 'true'
       x-ms-type:

@@ -22,12 +22,16 @@ interactions:
 =======
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
+<<<<<<< HEAD
 <<<<<<< HEAD:sdk/storage/azure-storage-file/tests/recordings/test_share.test_delete_share_with_existing_share.yaml
       - Wed, 11 Sep 2019 21:59:33 GMT
 >>>>>>> Migrate Files to Devtools Framework
 =======
       - Thu, 12 Sep 2019 07:03:09 GMT
 >>>>>>> ,pre recordingd and fixes:sdk/storage/azure-storage-file/tests/recordings/test_file.test_get_file_properties_with_non_existing_file.yaml
+=======
+      - Thu, 12 Sep 2019 19:06:56 GMT
+>>>>>>> fix test files
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -51,11 +55,11 @@ interactions:
       - 8dc2459b-e01a-0096-36b6-6d5a25000000
 =======
       date:
-      - Thu, 12 Sep 2019 07:03:10 GMT
+      - Thu, 12 Sep 2019 19:06:56 GMT
       etag:
-      - '"0x8D7374F46396857"'
+      - '"0x8D737B461B5253B"'
       last-modified:
-      - Thu, 12 Sep 2019 07:03:11 GMT
+      - Thu, 12 Sep 2019 19:06:56 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
 >>>>>>> Migrate Files to Devtools Framework
@@ -85,12 +89,16 @@ interactions:
 =======
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
+<<<<<<< HEAD
 <<<<<<< HEAD:sdk/storage/azure-storage-file/tests/recordings/test_share.test_delete_share_with_existing_share.yaml
       - Wed, 11 Sep 2019 21:59:33 GMT
 >>>>>>> Migrate Files to Devtools Framework
 =======
       - Thu, 12 Sep 2019 07:03:13 GMT
 >>>>>>> ,pre recordingd and fixes:sdk/storage/azure-storage-file/tests/recordings/test_file.test_get_file_properties_with_non_existing_file.yaml
+=======
+      - Thu, 12 Sep 2019 19:06:56 GMT
+>>>>>>> fix test files
       x-ms-version:
       - '2019-02-02'
     method: HEAD
@@ -113,7 +121,7 @@ interactions:
 =======
 >>>>>>> ,pre recordingd and fixes:sdk/storage/azure-storage-file/tests/recordings/test_file.test_get_file_properties_with_non_existing_file.yaml
       date:
-      - Thu, 12 Sep 2019 07:03:11 GMT
+      - Thu, 12 Sep 2019 19:06:56 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
 <<<<<<< HEAD:sdk/storage/azure-storage-file/tests/recordings/test_share.test_delete_share_with_existing_share.yaml
