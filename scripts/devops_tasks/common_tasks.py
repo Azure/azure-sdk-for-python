@@ -131,7 +131,7 @@ def filter_for_compatibility(package_set):
 # this function is where a glob string gets translated to a list of packages
 # It is called by both BUILD (package) and TEST. In the future, this function will be the central location
 # for handling targeting of release packages
-def process_glob_string(glob_string, target_root_dir):
+def process_glob_string(glob_string, target_root_dir, additional_filter_string=""):
     if glob_string:
         individual_globs = glob_string.split(",")
     else:
@@ -145,8 +145,8 @@ def process_glob_string(glob_string, target_root_dir):
         collected_top_level_directories.extend([os.path.dirname(p) for p in globbed])
 
     # dedup, in case we have double coverage from the glob strings. Example: "azure-mgmt-keyvault,azure-mgmt-*"
-    collected_directories = list(set(collected_top_level_directories))
-
+    collected_directories = [p for p in list(set(collected_top_level_directories)) if additional_filter_string in p]
+    
     # if we have individually queued this specific package, it's obvious that we want to build it specifically
     # in this case, do not honor the omission list
     if len(collected_directories) == 1:

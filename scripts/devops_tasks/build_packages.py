@@ -65,6 +65,14 @@ if __name__ == "__main__":
         ),
     )
 
+    parser.add_argument(
+        "--additionalfilterstring",
+        help=(
+            "Additional filter on top of the glob_string already presented. Used in simple 'contains' match"
+            "Example: --additionalfilterstring=nspkg"
+        ),
+    )
+
     args = parser.parse_args()
 
     # We need to support both CI builds of everything and individual service
@@ -75,5 +83,5 @@ if __name__ == "__main__":
     else:
         target_dir = root_dir
 
-    targeted_packages = process_glob_string(args.glob_string, target_dir)
+    targeted_packages = process_glob_string(args.glob_string, target_dir, args.additionalfilterstring)
     build_packages(targeted_packages, args.distribution_directory)
