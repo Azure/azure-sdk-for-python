@@ -22,10 +22,10 @@ class CaseRelation(RelationBase):
 
     :ivar id: Azure resource Id
     :vartype id: str
-    :ivar type: Azure resource type
-    :vartype type: str
     :ivar name: Azure resource name
     :vartype name: str
+    :ivar type: Azure resource type
+    :vartype type: str
     :ivar kind: The type of relation node. Possible values include:
      'CasesToBookmarks'
     :vartype kind: str or ~azure.mgmt.securityinsight.models.RelationTypes
@@ -43,8 +43,8 @@ class CaseRelation(RelationBase):
 
     _validation = {
         'id': {'readonly': True},
-        'type': {'readonly': True},
         'name': {'readonly': True},
+        'type': {'readonly': True},
         'kind': {'readonly': True},
         'relation_name': {'required': True},
         'bookmark_id': {'required': True},
@@ -53,8 +53,8 @@ class CaseRelation(RelationBase):
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
         'relation_name': {'key': 'properties.relationName', 'type': 'str'},

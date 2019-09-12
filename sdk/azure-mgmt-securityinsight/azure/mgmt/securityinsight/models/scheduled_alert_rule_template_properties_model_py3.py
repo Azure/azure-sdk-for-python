@@ -15,9 +15,6 @@ from msrest.serialization import Model
 class ScheduledAlertRuleTemplatePropertiesModel(Model):
     """Schedule alert rule template property bag.
 
-    :param severity: The severity for alerts created by this alert rule.
-     Possible values include: 'High', 'Medium', 'Low', 'Informational'
-    :type severity: str or ~azure.mgmt.securityinsight.models.AlertSeverity
     :param query: The query that creates alerts for this rule.
     :type query: str
     :param query_frequency: The frequency (in ISO 8601 duration format) for
@@ -26,6 +23,9 @@ class ScheduledAlertRuleTemplatePropertiesModel(Model):
     :param query_period: The period (in ISO 8601 duration format) that this
      alert rule looks at.
     :type query_period: timedelta
+    :param severity: The severity for alerts created by this alert rule.
+     Possible values include: 'High', 'Medium', 'Low', 'Informational'
+    :type severity: str or ~azure.mgmt.securityinsight.models.AlertSeverity
     :param trigger_operator: The operation against the threshold that triggers
      alert rule. Possible values include: 'GreaterThan', 'LessThan', 'Equal',
      'NotEqual'
@@ -36,19 +36,19 @@ class ScheduledAlertRuleTemplatePropertiesModel(Model):
     """
 
     _attribute_map = {
-        'severity': {'key': 'severity', 'type': 'AlertSeverity'},
         'query': {'key': 'query', 'type': 'str'},
         'query_frequency': {'key': 'queryFrequency', 'type': 'duration'},
         'query_period': {'key': 'queryPeriod', 'type': 'duration'},
+        'severity': {'key': 'severity', 'type': 'AlertSeverity'},
         'trigger_operator': {'key': 'triggerOperator', 'type': 'TriggerOperator'},
         'trigger_threshold': {'key': 'triggerThreshold', 'type': 'int'},
     }
 
-    def __init__(self, *, severity=None, query: str=None, query_frequency=None, query_period=None, trigger_operator=None, trigger_threshold: int=None, **kwargs) -> None:
+    def __init__(self, *, query: str=None, query_frequency=None, query_period=None, severity=None, trigger_operator=None, trigger_threshold: int=None, **kwargs) -> None:
         super(ScheduledAlertRuleTemplatePropertiesModel, self).__init__(**kwargs)
-        self.severity = severity
         self.query = query
         self.query_frequency = query_frequency
         self.query_period = query_period
+        self.severity = severity
         self.trigger_operator = trigger_operator
         self.trigger_threshold = trigger_threshold
