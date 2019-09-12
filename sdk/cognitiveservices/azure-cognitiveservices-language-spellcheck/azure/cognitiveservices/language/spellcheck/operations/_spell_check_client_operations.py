@@ -9,62 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.service_client import SDKClient
-from msrest import Configuration, Serializer, Deserializer
-from .version import VERSION
 from msrest.pipeline import ClientRawResponse
-from . import models
+from .. import models
 
 
-class SpellCheckAPIConfiguration(Configuration):
-    """Configuration for SpellCheckAPI
-    Note that all parameters used to create this instance are saved as instance
-    attributes.
-
-    :param credentials: Subscription credentials which uniquely identify
-     client subscription.
-    :type credentials: None
-    :param str base_url: Service URL
-    """
-
-    def __init__(
-            self, credentials, base_url=None):
-
-        if credentials is None:
-            raise ValueError("Parameter 'credentials' must not be None.")
-        if not base_url:
-            base_url = 'https://api.cognitive.microsoft.com/bing/v7.0'
-
-        super(SpellCheckAPIConfiguration, self).__init__(base_url)
-
-        self.add_user_agent('azure-cognitiveservices-language-spellcheck/{}'.format(VERSION))
-
-        self.credentials = credentials
-
-
-class SpellCheckAPI(SDKClient):
-    """The Spell Check API - V7 lets you check a text string for spelling and grammar errors.
-
-    :ivar config: Configuration for client.
-    :vartype config: SpellCheckAPIConfiguration
-
-    :param credentials: Subscription credentials which uniquely identify
-     client subscription.
-    :type credentials: None
-    :param str base_url: Service URL
-    """
-
-    def __init__(
-            self, credentials, base_url=None):
-
-        self.config = SpellCheckAPIConfiguration(credentials, base_url)
-        super(SpellCheckAPI, self).__init__(self.config.credentials, self.config)
-
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '1.0'
-        self._serialize = Serializer(client_models)
-        self._deserialize = Deserializer(client_models)
-
+class SpellCheckClientOperationsMixin(object):
 
     def spell_checker(
             self, text, accept_language=None, pragma=None, user_agent=None, client_id=None, client_ip=None, location=None, action_type=None, app_name=None, country_code=None, client_machine_name=None, doc_id=None, market=None, session_id=None, set_lang=None, user_id=None, mode=None, pre_context_text=None, post_context_text=None, custom_headers=None, raw=False, **operation_config):
@@ -266,7 +215,8 @@ class SpellCheckAPI(SDKClient):
          mistakes. 2) Spell—Finds most spelling mistakes but does not find some
          of the grammar errors that Proof catches (for example, capitalization
          and repeated words). Possible values include: 'proof', 'spell'
-        :type mode: str
+        :type mode: str or
+         ~azure.cognitiveservices.language.spellcheck.models.Mode
         :param pre_context_text: A string that gives context to the text
          string. For example, the text string petal is valid. However, if you
          set preContextText to bike, the context changes and the text string
@@ -302,6 +252,10 @@ class SpellCheckAPI(SDKClient):
 
         # Construct URL
         url = self.spell_checker.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True)
+        }
+        url = self._client.format_url(url, **path_format_arguments)
 
         # Construct parameters
         query_parameters = {}
@@ -323,10 +277,17 @@ class SpellCheckAPI(SDKClient):
             query_parameters['SetLang'] = self._serialize.query("set_lang", set_lang, 'str')
         if user_id is not None:
             query_parameters['UserId'] = self._serialize.query("user_id", user_id, 'str')
+        if mode is not None:
+            query_parameters['Mode'] = self._serialize.query("mode", mode, 'str')
+        if pre_context_text is not None:
+            query_parameters['PreContextText'] = self._serialize.query("pre_context_text", pre_context_text, 'str')
+        if post_context_text is not None:
+            query_parameters['PostContextText'] = self._serialize.query("post_context_text", post_context_text, 'str')
+        query_parameters['Text'] = self._serialize.query("text", text, 'str')
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/x-www-form-urlencoded'
+        header_parameters['Accept'] = 'application/json'
         if custom_headers:
             header_parameters.update(custom_headers)
         header_parameters['X-BingApis-SDK'] = self._serialize.header("x_bing_apis_sdk", x_bing_apis_sdk, 'str')
@@ -343,24 +304,14 @@ class SpellCheckAPI(SDKClient):
         if location is not None:
             header_parameters['X-Search-Location'] = self._serialize.header("location", location, 'str')
 
-        # Construct form data
-        form_data_content = {
-            'Text': text,
-            'Mode': mode,
-            'PreContextText': pre_context_text,
-            'PostContextText': post_context_text,
-        }
-
         # Construct and send request
-        request = self._client.post(url, query_parameters)
-        response = self._client.send_formdata(
-            request, header_parameters, form_data_content, stream=False, **operation_config)
+        request = self._client.post(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
             raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
-
         if response.status_code == 200:
             deserialized = self._deserialize('SpellCheck', response)
 
