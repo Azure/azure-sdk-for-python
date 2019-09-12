@@ -39,7 +39,7 @@ class CasesOperations(object):
 
     def list(
             self, resource_group_name, operational_insights_resource_provider, workspace_name, filter=None, orderby=None, top=None, skip_token=None, custom_headers=None, raw=False, **operation_config):
-        """Gets all cases (deprecated, will be replaced in the future).
+        """Gets all cases.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription. The name is case insensitive.
@@ -135,7 +135,7 @@ class CasesOperations(object):
 
     def get(
             self, resource_group_name, operational_insights_resource_provider, workspace_name, case_id, custom_headers=None, raw=False, **operation_config):
-        """Gets a case (deprecated, will be replaced in the future).
+        """Gets a case.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription. The name is case insensitive.
@@ -205,8 +205,7 @@ class CasesOperations(object):
 
     def create_or_update(
             self, resource_group_name, operational_insights_resource_provider, workspace_name, case_id, case, custom_headers=None, raw=False, **operation_config):
-        """Creates or updates the case (deprecated, will be replaced in the
-        future).
+        """Creates or updates the case.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription. The name is case insensitive.
@@ -284,7 +283,7 @@ class CasesOperations(object):
 
     def delete(
             self, resource_group_name, operational_insights_resource_provider, workspace_name, case_id, custom_headers=None, raw=False, **operation_config):
-        """Delete the case (deprecated, will be replaced in the future).
+        """Delete the case.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription. The name is case insensitive.
@@ -345,7 +344,7 @@ class CasesOperations(object):
 
     def get_comment(
             self, resource_group_name, operational_insights_resource_provider, workspace_name, case_id, case_comment_id, custom_headers=None, raw=False, **operation_config):
-        """Gets a case comment (deprecated, will be replaced in the future).
+        """Gets a case comment.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription. The name is case insensitive.

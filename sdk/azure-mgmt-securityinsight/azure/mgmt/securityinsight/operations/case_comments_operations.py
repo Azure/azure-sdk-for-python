@@ -39,7 +39,7 @@ class CaseCommentsOperations(object):
 
     def create_comment(
             self, resource_group_name, operational_insights_resource_provider, workspace_name, case_id, case_comment_id, message, custom_headers=None, raw=False, **operation_config):
-        """Creates the case comment (deprecated, will be replaced in the future).
+        """Creates the case comment.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription. The name is case insensitive.
