@@ -3,26 +3,19 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import asyncio
-import time
 import os
 from azure.keyvault.certificates.aio import CertificateClient
 from azure.identity.aio import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 
 # ----------------------------------------------------------------------------------------------------------
-# Prerequistes -
+# Prerequisites:
+# 1. An Azure Key Vault (https://docs.microsoft.com/en-us/azure/key-vault/quick-create-cli)
 #
-# 1. An Azure Key Vault-
-#    https://docs.microsoft.com/en-us/azure/key-vault/quick-create-cli
+# 2. azure-keyvault-certificates and azure-identity packages (pip install these)
 #
-#  2. Microsoft Azure Key Vault PyPI package -
-#    https://pypi.python.org/pypi/azure-keyvault-certificates/
-#
-# 3. Microsoft Azure Identity package -
-#    https://pypi.python.org/pypi/azure-identity/
-#
-# 4. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL.
-# How to do this - https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-certificates#createget-credentials)
+# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL
+#    (See https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys#authenticate-the-client)
 #
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates the basic backup and restore operations on a vault(certificates) resource for Azure Key Vault
@@ -48,7 +41,7 @@ async def run_sample():
     client = CertificateClient(vault_url=VAULT_URL, credential=credential)
     try:
 
-        print("\n1. Create Certificate")
+        print("\n.. Create Certificate")
         cert_name = 'BackupRestoreCertificate'
 
         # Let's create a certificate for your key vault.
@@ -60,12 +53,14 @@ async def run_sample():
 
         # Backups are good to have, if in case certificates gets deleted accidentally.
         # For long term storage, it is ideal to write the backup to a file.
-        print("\n2. Create a backup for an existing certificate")
+        print("\n.. Create a backup for an existing certificate")
         certificate_backup = await client.backup_certificate(name=cert_name)
         print("Backup created for certificate with name '{0}'.".format(cert_name))
 
         # The storage account certificate is no longer in use, so you can delete it.
         await client.delete_certificate(name=cert_name)
+        # To ensure certificate is deleted on the server side.
+        await asyncio.sleep(30)
         print("Deleted Certificate with name '{0}'".format(cert_name))
 
         # Even though the certificate is deleted, it can still be recovered so its name cannot be reused.
@@ -74,11 +69,11 @@ async def run_sample():
         print ("\nPurging certificate...")
         await client.purge_deleted_certificate(name=cert_name)
         # To ensure certificate is purged on the server side.
-        time.sleep(30)
+        await asyncio.sleep(30)
         print("Purged Certificate with name '{0}'".format(cert_name))
 
         # In future, if the certificate is required again, we can use the backup value to restore it in the Key Vault.
-        print("\n3. Restore the certificate using the backed up certificate bytes")
+        print("\n.. Restore the certificate using the backed up certificate bytes")
         certificate = await client.restore_certificate(certificate_backup)
         print("Restored Certificate with name '{0}'".format(certificate.name))
 
