@@ -15,7 +15,7 @@ import requests
 import pytest
 
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceExistsError
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, FakeStorageAccount
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.storage.file import (
     FileClient,
     FileServiceClient,
@@ -32,9 +32,7 @@ from filetestcase import (
 )
 
 # ------------------------------------------------------------------------------
-FAKE_STORAGE = FakeStorageAccount(
-    name='pyacrstorage',
-    id='')
+
 TEST_SHARE_PREFIX = 'share'
 TEST_DIRECTORY_PREFIX = 'dir'
 TEST_FILE_PREFIX = 'file'
@@ -50,6 +48,7 @@ class StorageFileTest(FileTestCase):
         self.share_name = self.get_resource_name('utshare')
         self.short_byte_data = self.get_random_bytes(1024)
         self.remote_share_name = None
+        super(StorageFileTest, self).setUp()
 
     # --Helpers-----------------------------------------------------------------
     def _create_share(self, fsc):
@@ -123,7 +122,7 @@ class StorageFileTest(FileTestCase):
 
     # --Test cases for files ----------------------------------------------
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_make_file_url(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
@@ -139,7 +138,7 @@ class StorageFileTest(FileTestCase):
                          + '.file.core.windows.net/vhds/vhd_dir/my.vhd')
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_make_file_url_no_directory(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
@@ -155,7 +154,7 @@ class StorageFileTest(FileTestCase):
                          + '.file.core.windows.net/vhds/my.vhd')
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_make_file_url_with_protocol(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
@@ -173,7 +172,7 @@ class StorageFileTest(FileTestCase):
                          + '.file.core.windows.net/vhds/vhd_dir/my.vhd')
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_make_file_url_with_sas(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
@@ -194,7 +193,7 @@ class StorageFileTest(FileTestCase):
                          '.file.core.windows.net/vhds/vhd_dir/my.vhd{}'.format(sas))
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_file(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
@@ -216,7 +215,7 @@ class StorageFileTest(FileTestCase):
         self.assertEqual(props.last_modified, resp['last_modified'])
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_file_with_metadata(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
@@ -240,7 +239,7 @@ class StorageFileTest(FileTestCase):
         self.assertDictEqual(props.metadata, metadata)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_file_when_file_permission_is_too_long(self, resource_group, location, storage_account, storage_account_key):
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         file_client = self._get_file_client(fsc)
@@ -249,7 +248,7 @@ class StorageFileTest(FileTestCase):
             file_client.create_file(1024, file_permission=permission)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_file_with_invalid_file_permission(self, resource_group, location, storage_account, storage_account_key):
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         # Arrange
@@ -259,7 +258,7 @@ class StorageFileTest(FileTestCase):
             file_name.create_file(1024, file_permission="abcde")
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_file_will_set_all_smb_properties(self, resource_group, location, storage_account, storage_account_key):
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
         self._create_share(fsc)
@@ -278,7 +277,7 @@ class StorageFileTest(FileTestCase):
         self.assertIsNotNone(file_properties.last_write_time)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_file_exists(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
@@ -292,7 +291,7 @@ class StorageFileTest(FileTestCase):
         self.assertTrue(exists)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_file_not_exists(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
@@ -311,7 +310,7 @@ class StorageFileTest(FileTestCase):
         # Assert
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_file_exists_with_snapshot(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
@@ -334,7 +333,7 @@ class StorageFileTest(FileTestCase):
         self.assertTrue(props)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_file_not_exists_with_snapshot(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
@@ -357,7 +356,7 @@ class StorageFileTest(FileTestCase):
             snapshot_client.get_file_properties()
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_resize_file(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         pytest.skip("TODO: Verify the x-ms-file-permission value.")
@@ -373,7 +372,7 @@ class StorageFileTest(FileTestCase):
         self.assertEqual(props.size, 5)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_set_file_properties(self, resource_group, location, storage_account, storage_account_key):
         pytest.skip("TODO: Verify the x-ms-file-permission value.")
         # Arrange
@@ -396,7 +395,7 @@ class StorageFileTest(FileTestCase):
         self.assertIsNotNone(properties.permission_key)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_set_file_properties_with_file_permission(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
@@ -430,7 +429,7 @@ class StorageFileTest(FileTestCase):
         self.assertIn("Temporary", properties.file_attributes)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_get_file_properties(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
@@ -445,7 +444,7 @@ class StorageFileTest(FileTestCase):
         self.assertEqual(properties.size, len(self.short_byte_data))
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_get_file_properties_with_snapshot(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
@@ -477,7 +476,7 @@ class StorageFileTest(FileTestCase):
         self.assertDictEqual(metadata, snapshot_props.metadata)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_get_file_metadata_with_snapshot(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
@@ -507,7 +506,7 @@ class StorageFileTest(FileTestCase):
         self.assertDictEqual(metadata, file_snapshot_metadata)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_get_file_properties_with_non_existing_file(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
@@ -526,7 +525,7 @@ class StorageFileTest(FileTestCase):
             # Assert
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_get_file_metadata(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
@@ -541,7 +540,7 @@ class StorageFileTest(FileTestCase):
         self.assertEqual(0, len(md))
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_set_file_metadata_with_upper_case(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
@@ -561,7 +560,7 @@ class StorageFileTest(FileTestCase):
         self.assertFalse('up' in md)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_delete_file_with_existing_file(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
@@ -576,7 +575,7 @@ class StorageFileTest(FileTestCase):
             file_client.get_file_properties()
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_delete_file_with_non_existing_file(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
@@ -595,7 +594,7 @@ class StorageFileTest(FileTestCase):
             # Assert
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_update_range(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
@@ -608,11 +607,12 @@ class StorageFileTest(FileTestCase):
 
         # Assert
         content = file_client.download_file().content_as_bytes()
+        import ipdb; ipdb.set_trace()
         self.assertEqual(data, content[:512])
         self.assertEqual(self.short_byte_data[512:], content[512:])
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_update_range_with_md5(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
@@ -626,7 +626,7 @@ class StorageFileTest(FileTestCase):
         # Assert
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_update_range_without_enough_bytes(self, resource_group, location, storage_account, storage_account_key):
         #test_update_range_from_file_url_when_source_file_does_not_have_enough_bytes
         # Arrange
@@ -650,7 +650,7 @@ class StorageFileTest(FileTestCase):
             destination_file_client.upload_range_from_url(source_file_url, 0, 2049, 0)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_update_range_from_file_url(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
@@ -683,7 +683,7 @@ class StorageFileTest(FileTestCase):
         self.assertEqual(data, file_content)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_update_big_range_from_file_url(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
@@ -719,7 +719,7 @@ class StorageFileTest(FileTestCase):
         self.assertEqual(data, file_content)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_clear_range(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         # TODO: update swagger and fix this test
@@ -737,7 +737,7 @@ class StorageFileTest(FileTestCase):
         self.assertEqual(self.short_byte_data[512:], content[512:])
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_update_file_unicode(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
@@ -758,7 +758,7 @@ class StorageFileTest(FileTestCase):
         # Assert
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_list_ranges_none(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
@@ -779,7 +779,7 @@ class StorageFileTest(FileTestCase):
         self.assertEqual(len(ranges), 0)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_list_ranges_2(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
@@ -808,7 +808,7 @@ class StorageFileTest(FileTestCase):
         self.assertEqual(ranges[1]['end'], 1535)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_list_ranges_none_from_snapshot(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
@@ -840,7 +840,7 @@ class StorageFileTest(FileTestCase):
         self.assertEqual(len(ranges), 0)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_list_ranges_2_from_snapshot(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
@@ -879,7 +879,7 @@ class StorageFileTest(FileTestCase):
         self.assertEqual(ranges[1]['end'], 1535)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_copy_file_with_existing_file(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
@@ -903,7 +903,7 @@ class StorageFileTest(FileTestCase):
         self.assertEqual(copy_file, self.short_byte_data)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_copy_file_async_private_file(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
@@ -926,7 +926,7 @@ class StorageFileTest(FileTestCase):
         self.assertEqual(e.exception.error_code, StorageErrorCode.cannot_verify_copy_source)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_copy_file_async_private_file_with_sas(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
@@ -958,7 +958,7 @@ class StorageFileTest(FileTestCase):
         self.assertEqual(actual_data, data)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_abort_copy_file(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
@@ -990,7 +990,7 @@ class StorageFileTest(FileTestCase):
         self.assertEqual(target_file.properties.copy.status, 'aborted')
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_abort_copy_file_with_synchronous_copy_fails(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
@@ -1013,7 +1013,7 @@ class StorageFileTest(FileTestCase):
         self.assertEqual(copy_resp['copy_status'], 'success')
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_unicode_get_file_unicode_name(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
@@ -1033,7 +1033,7 @@ class StorageFileTest(FileTestCase):
         self.assertEqual(content, b'hello world')
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_file_unicode_data(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
@@ -1054,7 +1054,7 @@ class StorageFileTest(FileTestCase):
         self.assertEqual(content, data)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_unicode_get_file_binary_data(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
@@ -1077,7 +1077,7 @@ class StorageFileTest(FileTestCase):
         self.assertEqual(content, binary_data)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_file_from_bytes_with_progress(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -1112,7 +1112,7 @@ class StorageFileTest(FileTestCase):
         self.assert_file_equal(file_client, data)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_file_from_bytes_with_index(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -1141,7 +1141,7 @@ class StorageFileTest(FileTestCase):
         self.assert_file_equal(file_client, data[1024:])
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_file_from_bytes_with_index_and_count(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -1171,7 +1171,7 @@ class StorageFileTest(FileTestCase):
         self.assert_file_equal(file_client, data[index:index + count])
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_file_from_path(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -1202,7 +1202,7 @@ class StorageFileTest(FileTestCase):
         self.assert_file_equal(file_client, data)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_file_from_path_with_progress(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -1244,7 +1244,7 @@ class StorageFileTest(FileTestCase):
             progress, unknown_size=False)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_file_from_stream(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -1276,7 +1276,7 @@ class StorageFileTest(FileTestCase):
         self.assert_file_equal(file_client, data[:file_size])
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_file_from_stream_non_seekable(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -1306,7 +1306,7 @@ class StorageFileTest(FileTestCase):
         self.assert_file_equal(file_client, data[:file_size])
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_file_from_stream_with_progress(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -1346,7 +1346,7 @@ class StorageFileTest(FileTestCase):
             progress, unknown_size=False)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_file_from_stream_truncated(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -1375,7 +1375,7 @@ class StorageFileTest(FileTestCase):
         self.assert_file_equal(file_client, data[:file_size])
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_file_from_stream_with_progress_truncated(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -1416,7 +1416,7 @@ class StorageFileTest(FileTestCase):
             progress, unknown_size=False)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_file_from_text(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
@@ -1438,7 +1438,7 @@ class StorageFileTest(FileTestCase):
         self.assert_file_equal(file_client, data)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_file_from_text_with_encoding(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
@@ -1460,7 +1460,7 @@ class StorageFileTest(FileTestCase):
         self.assert_file_equal(file_client, data)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_file_from_text_chunked_upload(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -1486,7 +1486,7 @@ class StorageFileTest(FileTestCase):
         self.assert_file_equal(file_client, encoded_data)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_file_with_md5_small(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), max_range_size=4 * 1024, credential=storage_account_key)
@@ -1506,7 +1506,7 @@ class StorageFileTest(FileTestCase):
         # Assert
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_file_with_md5_large(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -1531,7 +1531,7 @@ class StorageFileTest(FileTestCase):
 
     # --Test cases for sas & acl ------------------------------------------------
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_sas_access_file(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:
@@ -1558,7 +1558,7 @@ class StorageFileTest(FileTestCase):
         self.assertEqual(self.short_byte_data, content)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_sas_signed_identifier(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:
@@ -1590,7 +1590,7 @@ class StorageFileTest(FileTestCase):
         self.assertEqual(self.short_byte_data, content)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_account_sas(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:
@@ -1620,7 +1620,7 @@ class StorageFileTest(FileTestCase):
         self.assertEqual(self.short_byte_data, response.content)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_shared_read_access_file(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:
@@ -1648,7 +1648,7 @@ class StorageFileTest(FileTestCase):
         self.assertEqual(self.short_byte_data, response.content)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_shared_read_access_file_with_content_query_params(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:
@@ -1685,7 +1685,7 @@ class StorageFileTest(FileTestCase):
         self.assertEqual(response.headers['content-type'], 'text')
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_shared_write_access_file(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:
@@ -1716,7 +1716,7 @@ class StorageFileTest(FileTestCase):
         self.assertEqual(updated_data, file_content[:len(updated_data)])
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_shared_delete_access_file(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:

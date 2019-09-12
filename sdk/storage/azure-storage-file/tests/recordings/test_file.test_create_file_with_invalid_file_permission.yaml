@@ -1,0 +1,53 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-content-length:
+      - '1024'
+      x-ms-date:
+      - Thu, 12 Sep 2019 07:06:59 GMT
+      x-ms-file-attributes:
+      - none
+      x-ms-file-creation-time:
+      - now
+      x-ms-file-last-write-time:
+      - now
+      x-ms-file-permission:
+      - abcde
+      x-ms-type:
+      - file
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://pyacrstorage725b1688.file.core.windows.net/utshare725b1688/file725b1688
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>FileInvalidPermission</Code><Message>The
+        specified file permission is not valid.\nRequestId:a25fc108-301a-00cb-6638-69c7f1000000\nTime:2019-09-12T07:06:58.4365280Z</Message></Error>"
+    headers:
+      content-length:
+      - '233'
+      content-type:
+      - application/xml
+      date:
+      - Thu, 12 Sep 2019 07:06:57 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code:
+      - FileInvalidPermission
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 400
+      message: The specified file permission is not valid.
+version: 1

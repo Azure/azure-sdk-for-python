@@ -22,8 +22,12 @@ interactions:
 =======
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
+<<<<<<< HEAD
       - Wed, 11 Sep 2019 22:00:38 GMT
 >>>>>>> Migrate Files to Devtools Framework
+=======
+      - Thu, 12 Sep 2019 07:21:06 GMT
+>>>>>>> ,pre recordingd and fixes
       x-ms-meta:
       - '{''hello'': ''world'', ''number'': ''42''}'
       x-ms-meta-hello:
@@ -53,11 +57,11 @@ interactions:
       - 4e2aa381-d01a-00b2-72b6-6dac85000000
 =======
       date:
-      - Wed, 11 Sep 2019 22:00:37 GMT
+      - Thu, 12 Sep 2019 07:21:05 GMT
       etag:
-      - '"0x8D737037A73794E"'
+      - '"0x8D73751C68472FF"'
       last-modified:
-      - Wed, 11 Sep 2019 22:00:37 GMT
+      - Thu, 12 Sep 2019 07:21:05 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
 >>>>>>> Migrate Files to Devtools Framework
@@ -87,8 +91,12 @@ interactions:
 =======
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
+<<<<<<< HEAD
       - Wed, 11 Sep 2019 22:00:38 GMT
 >>>>>>> Migrate Files to Devtools Framework
+=======
+      - Thu, 12 Sep 2019 07:21:07 GMT
+>>>>>>> ,pre recordingd and fixes
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -96,6 +104,7 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
+<<<<<<< HEAD
 <<<<<<< HEAD
         ServiceEndpoint=\"https://storagename.file.core.windows.net/\"><Prefix>sharef877141f</Prefix><Shares><Share><Name>sharef877141f</Name><Properties><Last-Modified>Wed,
         18 Sep 2019 00:17:00 GMT</Last-Modified><Etag>\"0x8D73BCD86A87E48\"</Etag><Quota>5120</Quota></Properties><Metadata><hello>world</hello><number>42</number></Metadata></Share></Shares><NextMarker
@@ -152,12 +161,16 @@ interactions:
 =======
         ServiceEndpoint=\"https://pyacrstoragef877141f.file.core.windows.net/\"><Prefix>sharef877141f</Prefix><Shares><Share><Name>sharef877141f</Name><Properties><Last-Modified>Wed,
         11 Sep 2019 22:00:37 GMT</Last-Modified><Etag>\"0x8D737037A73794E\"</Etag><Quota>5120</Quota></Properties><Metadata><hello>world</hello><number>42</number></Metadata></Share></Shares><NextMarker
+=======
+        ServiceEndpoint=\"https://pyacrstoragef877141f.file.core.windows.net/\"><Prefix>sharef877141f</Prefix><Shares><Share><Name>sharef877141f</Name><Properties><Last-Modified>Thu,
+        12 Sep 2019 07:21:05 GMT</Last-Modified><Etag>\"0x8D73751C68472FF\"</Etag><Quota>5120</Quota></Properties><Metadata><hello>world</hello><number>42</number></Metadata></Share></Shares><NextMarker
+>>>>>>> ,pre recordingd and fixes
         /></EnumerationResults>"
     headers:
       content-type:
       - application/xml
       date:
-      - Wed, 11 Sep 2019 22:00:37 GMT
+      - Thu, 12 Sep 2019 07:21:05 GMT
       server:
 >>>>>>> Migrate Files to Devtools Framework
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0

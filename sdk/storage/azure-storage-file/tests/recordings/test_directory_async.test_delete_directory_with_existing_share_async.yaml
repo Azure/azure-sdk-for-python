@@ -14,8 +14,12 @@ interactions:
 =======
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
+<<<<<<< HEAD
       - Wed, 11 Sep 2019 21:43:15 GMT
 >>>>>>> Migrate Files to Devtools Framework
+=======
+      - Thu, 12 Sep 2019 06:59:49 GMT
+>>>>>>> ,pre recordingd and fixes
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -43,9 +47,9 @@ interactions:
       x-ms-request-id: f6bf3943-f01a-009a-04b3-6dcd2d000000
 =======
       content-length: '0'
-      date: Wed, 11 Sep 2019 21:43:14 GMT
-      etag: '"0x8D737010D0583D7"'
-      last-modified: Wed, 11 Sep 2019 21:43:14 GMT
+      date: Thu, 12 Sep 2019 06:59:47 GMT
+      etag: '"0x8D7374ECCF3FB9A"'
+      last-modified: Thu, 12 Sep 2019 06:59:48 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
 >>>>>>> Migrate Files to Devtools Framework
       x-ms-version: '2019-02-02'
@@ -75,8 +79,12 @@ interactions:
 =======
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
+<<<<<<< HEAD
       - Wed, 11 Sep 2019 21:43:16 GMT
 >>>>>>> Migrate Files to Devtools Framework
+=======
+      - Thu, 12 Sep 2019 06:59:49 GMT
+>>>>>>> ,pre recordingd and fixes
       x-ms-file-attributes:
       - none
       x-ms-file-creation-time:
@@ -119,18 +127,22 @@ interactions:
       x-ms-request-id: f6bf3946-f01a-009a-05b3-6dcd2d000000
 =======
       content-length: '0'
-      date: Wed, 11 Sep 2019 21:43:14 GMT
-      etag: '"0x8D737010D27A615"'
-      last-modified: Wed, 11 Sep 2019 21:43:15 GMT
+      date: Thu, 12 Sep 2019 06:59:47 GMT
+      etag: '"0x8D7374ECD102074"'
+      last-modified: Thu, 12 Sep 2019 06:59:48 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-file-attributes: Directory
-      x-ms-file-change-time: '2019-09-11T21:43:15.1411733Z'
-      x-ms-file-creation-time: '2019-09-11T21:43:15.1411733Z'
+      x-ms-file-change-time: '2019-09-12T06:59:48.3577460Z'
+      x-ms-file-creation-time: '2019-09-12T06:59:48.3577460Z'
       x-ms-file-id: '13835128424026341376'
-      x-ms-file-last-write-time: '2019-09-11T21:43:15.1411733Z'
+      x-ms-file-last-write-time: '2019-09-12T06:59:48.3577460Z'
       x-ms-file-parent-id: '0'
+<<<<<<< HEAD
       x-ms-file-permission-key: 11253155686602741755*17649637083725430898
 >>>>>>> Migrate Files to Devtools Framework
+=======
+      x-ms-file-permission-key: 14015730928318249501*12275342633832213908
+>>>>>>> ,pre recordingd and fixes
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2019-02-02'
     status:
@@ -159,8 +171,12 @@ interactions:
 =======
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
+<<<<<<< HEAD
       - Wed, 11 Sep 2019 21:43:16 GMT
 >>>>>>> Migrate Files to Devtools Framework
+=======
+      - Thu, 12 Sep 2019 06:59:49 GMT
+>>>>>>> ,pre recordingd and fixes
       x-ms-version:
       - '2019-02-02'
     method: DELETE
@@ -182,7 +198,7 @@ interactions:
       x-ms-request-id: f6bf3947-f01a-009a-06b3-6dcd2d000000
 =======
       content-length: '0'
-      date: Wed, 11 Sep 2019 21:43:14 GMT
+      date: Thu, 12 Sep 2019 06:59:47 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
 >>>>>>> Migrate Files to Devtools Framework
       x-ms-version: '2019-02-02'
@@ -212,8 +228,12 @@ interactions:
 =======
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
+<<<<<<< HEAD
       - Wed, 11 Sep 2019 21:43:16 GMT
 >>>>>>> Migrate Files to Devtools Framework
+=======
+      - Thu, 12 Sep 2019 06:59:50 GMT
+>>>>>>> ,pre recordingd and fixes
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -221,6 +241,7 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ResourceNotFound</Code><Message>The
+<<<<<<< HEAD
 <<<<<<< HEAD
         specified resource does not exist.\nRequestId:f6bf3948-f01a-009a-07b3-6dcd2d000000\nTime:2019-09-17T23:53:11.3697503Z</Message></Error>"
     headers:
@@ -240,10 +261,13 @@ interactions:
       x-ms-request-id: f6bf3948-f01a-009a-07b3-6dcd2d000000
 =======
         specified resource does not exist.\nRequestId:fa1475ad-501a-0031-0be9-6851dd000000\nTime:2019-09-11T21:43:15.2957460Z</Message></Error>"
+=======
+        specified resource does not exist.\nRequestId:28a392c9-801a-00e1-1937-69b3a1000000\nTime:2019-09-12T06:59:48.5335624Z</Message></Error>"
+>>>>>>> ,pre recordingd and fixes
     headers:
       content-length: '223'
       content-type: application/xml
-      date: Wed, 11 Sep 2019 21:43:14 GMT
+      date: Thu, 12 Sep 2019 06:59:47 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: ResourceNotFound
 >>>>>>> Migrate Files to Devtools Framework

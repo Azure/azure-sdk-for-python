@@ -14,8 +14,12 @@ interactions:
 =======
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
+<<<<<<< HEAD
       - Wed, 11 Sep 2019 22:03:51 GMT
 >>>>>>> Migrate Files to Devtools Framework
+=======
+      - Thu, 12 Sep 2019 07:24:10 GMT
+>>>>>>> ,pre recordingd and fixes
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -23,6 +27,7 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidResourceName</Code><Message>The
+<<<<<<< HEAD
 <<<<<<< HEAD
         specifed resource name contains invalid characters.\nRequestId:6cf5d10a-701a-0012-66b6-6d2824000000\nTime:2019-09-18T00:17:09.7124287Z</Message></Error>"
     headers:
@@ -42,10 +47,13 @@ interactions:
       x-ms-request-id: 6cf5d10a-701a-0012-66b6-6d2824000000
 =======
         specifed resource name contains invalid characters.\nRequestId:4d2b0941-f01a-000c-16ec-6868c6000000\nTime:2019-09-11T22:03:50.9218960Z</Message></Error>"
+=======
+        specifed resource name contains invalid characters.\nRequestId:dcd8a1cc-501a-0023-493b-69e9fc000000\nTime:2019-09-12T07:24:08.8812027Z</Message></Error>"
+>>>>>>> ,pre recordingd and fixes
     headers:
       content-length: '243'
       content-type: application/xml
-      date: Wed, 11 Sep 2019 22:03:50 GMT
+      date: Thu, 12 Sep 2019 07:24:08 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: InvalidResourceName
 >>>>>>> Migrate Files to Devtools Framework

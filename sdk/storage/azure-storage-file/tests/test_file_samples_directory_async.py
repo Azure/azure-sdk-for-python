@@ -8,16 +8,14 @@
 
 import os
 import asyncio
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, FakeStorageAccount
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 
 from asyncfiletestcase import (
     AsyncFileTestCase,
 )
 
 SOURCE_FILE = 'SampleSource.txt'
-FAKE_STORAGE = FakeStorageAccount(
-    name='pyacrstorage',
-    id='')
+
 
 class TestDirectorySamples(AsyncFileTestCase):
 
@@ -28,18 +26,9 @@ class TestDirectorySamples(AsyncFileTestCase):
 
         super(TestDirectorySamples, self).setUp()
 
-    def tearDown(self):
-        if os.path.isfile(SOURCE_FILE):
-            try:
-                os.remove(SOURCE_FILE)
-            except:
-                pass
-
-        return super(TestDirectorySamples, self).tearDown()
-
     #--Begin File Samples-----------------------------------------------------------------
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_create_directory(self, resource_group, location, storage_account, storage_account_key):
         # Instantiate the ShareClient from a connection string
@@ -77,7 +66,7 @@ class TestDirectorySamples(AsyncFileTestCase):
             await share.delete_share()
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_create_subdirectories(self, resource_group, location, storage_account, storage_account_key):
         # Instantiate the ShareClient from a connection string
@@ -96,7 +85,7 @@ class TestDirectorySamples(AsyncFileTestCase):
             await parent_dir.create_directory()
 
             # Create a subdirectory
-            subdir = parent_dir.create_subdirectory("subdir")
+            subdir = await parent_dir.create_subdirectory("subdir")
             # [END create_subdirectory]
 
             # Upload a file to the parent directory
@@ -126,7 +115,7 @@ class TestDirectorySamples(AsyncFileTestCase):
             await share.delete_share()
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_get_subdirectory_client(self, resource_group, location, storage_account, storage_account_key):
         # Instantiate the ShareClient from a connection string

@@ -3,6 +3,7 @@ interactions:
     body: null
     headers:
       User-Agent:
+<<<<<<< HEAD
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
@@ -14,10 +15,20 @@ interactions:
       - '2019-02-02'
     method: PUT
     uri: https://storagename.file.core.windows.net/utshare3f830ff6?restype=share
+=======
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Thu, 12 Sep 2019 07:09:41 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://pyacrstorage3f830ff6.file.core.windows.net/utshare3f830ff6?restype=share
+>>>>>>> ,pre recordingd and fixes
   response:
     body:
       string: ''
     headers:
+<<<<<<< HEAD
       ? !!python/object/new:multidict._istr.istr
       - Content-Length
       : '0'
@@ -34,6 +45,13 @@ interactions:
       - Server
       : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id: 5d0359f3-301a-00ba-6fb3-6db68a000000
+=======
+      content-length: '0'
+      date: Thu, 12 Sep 2019 07:09:39 GMT
+      etag: '"0x8D737502DCCE795"'
+      last-modified: Thu, 12 Sep 2019 07:09:40 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+>>>>>>> ,pre recordingd and fixes
       x-ms-version: '2019-02-02'
     status:
       code: 201
@@ -42,7 +60,11 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
+<<<<<<< HEAD
         - emilydevtest.file.core.windows.net
+=======
+        - pyacrstorage3f830ff6.file.core.windows.net
+>>>>>>> ,pre recordingd and fixes
         - /utshare3f830ff6
         - restype=share
         - ''
@@ -50,6 +72,7 @@ interactions:
     body: null
     headers:
       User-Agent:
+<<<<<<< HEAD
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
@@ -59,6 +82,13 @@ interactions:
       - '1024'
       x-ms-date:
       - Tue, 17 Sep 2019 23:57:50 GMT
+=======
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-content-length:
+      - '1024'
+      x-ms-date:
+      - Thu, 12 Sep 2019 07:09:41 GMT
+>>>>>>> ,pre recordingd and fixes
       x-ms-file-attributes:
       - none
       x-ms-file-creation-time:
@@ -72,11 +102,16 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
+<<<<<<< HEAD
     uri: https://storagename.file.core.windows.net/utshare3f830ff6/file3f830ff6
+=======
+    uri: https://pyacrstorage3f830ff6.file.core.windows.net/utshare3f830ff6/file3f830ff6
+>>>>>>> ,pre recordingd and fixes
   response:
     body:
       string: ''
     headers:
+<<<<<<< HEAD
       ? !!python/object/new:multidict._istr.istr
       - Content-Length
       : '0'
@@ -100,6 +135,20 @@ interactions:
       x-ms-file-parent-id: '0'
       x-ms-file-permission-key: 4099112195243312672*10394889115079208622
       x-ms-request-id: 20b5abbb-001a-00b1-21b3-6d4de1000000
+=======
+      content-length: '0'
+      date: Thu, 12 Sep 2019 07:09:39 GMT
+      etag: '"0x8D737502E00EDEB"'
+      last-modified: Thu, 12 Sep 2019 07:09:40 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-file-attributes: Archive
+      x-ms-file-change-time: '2019-09-12T07:09:40.4938731Z'
+      x-ms-file-creation-time: '2019-09-12T07:09:40.4938731Z'
+      x-ms-file-id: '13835128424026341376'
+      x-ms-file-last-write-time: '2019-09-12T07:09:40.4938731Z'
+      x-ms-file-parent-id: '0'
+      x-ms-file-permission-key: 12614011071914132722*553116459944160380
+>>>>>>> ,pre recordingd and fixes
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2019-02-02'
     status:
@@ -109,12 +158,17 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
+<<<<<<< HEAD
         - emilydevtest.file.core.windows.net
+=======
+        - pyacrstorage3f830ff6.file.core.windows.net
+>>>>>>> ,pre recordingd and fixes
         - /utshare3f830ff6/file3f830ff6
         - ''
         - ''
 - request:
     body: !!binary |
+<<<<<<< HEAD
       42mL7Ewv6c8CGfTfnt3cGDshVF0gG8LDLxvjPwZgaRLZNwjMlbwu6GbortPYt33dK2oel9fU6iGr
       MI2sikPdZxUhJ2co9v0IPnl4+HnMvxasr8LpyAR48d5xPBDA/JD+DRtIXzRCxkyepm5T7KSIIx4h
       YDOQOllewYk27N88MFTWKaEgUuUQp8SSuVdNOE8KAsdiAEFyC2mTRq6pI3F/Q86hvcj5ciEqF0jX
@@ -133,17 +187,43 @@ interactions:
       w+uYvFvfeEWG9y5lOuMvOrMRlNVdDsAY1QdcbYMmnqIq8it2bR1u5LIYtzuy+QcSHTHqZpAnGV+l
       TubQRwJ92yIcSQpRajaqdlD6EQQqNxNK1691fp0RFph+j5l3wdixGJzTbUk3sWdubDbE5ihHdCZx
       Q0NI9E6kDvxL4EGGOHhUKqhOgyrIyT1IlFdk/JxsTl81sbPHRlSNlhk0BKJbMbZWUlfLUKTSNg==
+=======
+      /jblfdjEGmGKBqa5QAPTcJV8SmVw9voJ3IYWpzMldW7qyFrvlDtIoFH7w567c6AWxNwJk6oHkwLP
+      T1gGKwCu0L+klTFqs1RRDdZ8M9LsW+IfGvACvaENJZGlF7dypMtd3tIqKxmLPKJRMzxqrbwEg2wt
+      Cu1oiETLuKAhs6MqWlbjmBhHy7mKySXtmKAByff5QMvycutMMF8jE6Um6kKS5gyVi+84ip9fruQS
+      DNCsQcqzSLv6yg3U8tOJ++yVEkeK3zF2vT7Jn7ioux7JAaO0yaA2lI635VGzxu/QyULDwusjOWer
+      q2Qen05qnyp4mKhfEB8X2F86Pn0ebRMCJlc8DFAyZYqTE1mhqlLgtoOdNeJbtPCzfXCzlit2NeqC
+      1sFvWm6Ar5j+e55pAvIWShvuQTeWSYqGEGo68jwgKyDPLrvKwifzC7E2ZSxbNNqoXXR6BwoGzkeX
+      aXyWhunWjPKdQW6+ZnjIEmfU1MYAqC2rViDU+aAqbWZ0e1IKuBluLo+JEoC2BossBDeJJN55eRvK
+      jtit1jd9Z56hMubXhHcQImjUhAZgV90SIu9iCs5I+1TC3vQfF5IOBaKH13Uw+dWWdSsMonIZqliY
+      9glBsMO1MMsfPdJ7eHR1cqra/NHa3+ULvzPYOaTKQ7+5GuZlfSfqLZU0PQZQ4aOvqUv3JFY/JJ3g
+      plJpmsKZYFh4FWMyWEIse0/qDV93jCrSUz51K5ma+tif01vMO3lzZGhTwlOHIDuJu5wPp7eL+ZqP
+      anmJ05iyjpxkXcDAPguhwNZhnBlTNERabEc6Bh8PvsFiOZPMXZXruUqkp+0bZbegt8JA5a+huR/x
+      DpRTPFXFYubxq5BiCdgLL3KZv9/ro1IzepmZh4FivzZ74w6+xvjQmZxrs1GzcNnhLQ4AKQftxznj
+      YDhzmnu3X3zALNLTLrwXHbenrzM0UQ/hD7rgoIoCs+rupMkZEYdc5CBvhzY9aUedI9KYQBZ95Nxw
+      wC2YO4woxrXJ1VB1AXpCYMUoH/urirSMfCY2CokKeMLbE3roYWC0c4Lg2ZBfUwHYrbX8wmrn/um6
+      zdfqidmI2Dmj7ZNjVaQomoed0dGmGlZ1W1Qf9MF4WlzdMsBygJY6CFbimK76YcKm9uTGKN7jY7wx
+      5RmXVvczE3f5xqHpDabNDW1VhnlbEPsa9nYh10ZAAQ/wAIQ4i5/b3StUS5a4y0ZgVUKYoYoCp4yT
+      HGWTv2FbXtOjBFnHxKGK4JPlr3FVg/R0IxHweH8lLZ6gWVjfe5HZI1yH07DOBMPDprt3fg/NNj93
+      TIzOXW8DDAAHvRYwr09vrgdrLxR2Vzg0O1B5ijCMlrOyt3+VJwJ6UwVgecYvwrO2PrT+AJQK8Q==
+>>>>>>> ,pre recordingd and fixes
     headers:
       Content-Length:
       - '1024'
       Content-Type:
       - application/octet-stream
       User-Agent:
+<<<<<<< HEAD
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
       - f494d346-d9a6-11e9-8c72-001a7dda7113
       x-ms-date:
       - Tue, 17 Sep 2019 23:57:50 GMT
+=======
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Thu, 12 Sep 2019 07:09:42 GMT
+>>>>>>> ,pre recordingd and fixes
       x-ms-range:
       - bytes=0-1023
       x-ms-version:
@@ -151,11 +231,16 @@ interactions:
       x-ms-write:
       - update
     method: PUT
+<<<<<<< HEAD
     uri: https://storagename.file.core.windows.net/utshare3f830ff6/file3f830ff6?comp=range
+=======
+    uri: https://pyacrstorage3f830ff6.file.core.windows.net/utshare3f830ff6/file3f830ff6?comp=range
+>>>>>>> ,pre recordingd and fixes
   response:
     body:
       string: ''
     headers:
+<<<<<<< HEAD
       ? !!python/object/new:multidict._istr.istr
       - Content-Length
       : '0'
@@ -175,6 +260,14 @@ interactions:
       - Server
       : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id: 20b5abbd-001a-00b1-22b3-6d4de1000000
+=======
+      content-length: '0'
+      content-md5: s+RVbreZxq/JI0eVlkCPYg==
+      date: Thu, 12 Sep 2019 07:09:39 GMT
+      etag: '"0x8D737502E092CD9"'
+      last-modified: Thu, 12 Sep 2019 07:09:40 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+>>>>>>> ,pre recordingd and fixes
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2019-02-02'
     status:
@@ -184,7 +277,11 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
+<<<<<<< HEAD
         - emilydevtest.file.core.windows.net
+=======
+        - pyacrstorage3f830ff6.file.core.windows.net
+>>>>>>> ,pre recordingd and fixes
         - /utshare3f830ff6/file3f830ff6
         - comp=range
         - ''
@@ -196,11 +293,17 @@ interactions:
       Content-Type:
       - application/octet-stream
       User-Agent:
+<<<<<<< HEAD
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
       - f497698a-d9a6-11e9-b642-001a7dda7113
       x-ms-date:
       - Tue, 17 Sep 2019 23:57:50 GMT
+=======
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Thu, 12 Sep 2019 07:09:42 GMT
+>>>>>>> ,pre recordingd and fixes
       x-ms-range:
       - bytes=0-511
       x-ms-version:
@@ -208,11 +311,16 @@ interactions:
       x-ms-write:
       - update
     method: PUT
+<<<<<<< HEAD
     uri: https://storagename.file.core.windows.net/utshare3f830ff6/file3f830ff6?comp=range
+=======
+    uri: https://pyacrstorage3f830ff6.file.core.windows.net/utshare3f830ff6/file3f830ff6?comp=range
+>>>>>>> ,pre recordingd and fixes
   response:
     body:
       string: ''
     headers:
+<<<<<<< HEAD
       ? !!python/object/new:multidict._istr.istr
       - Content-Length
       : '0'
@@ -232,6 +340,14 @@ interactions:
       - Server
       : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id: 20b5abbe-001a-00b1-23b3-6d4de1000000
+=======
+      content-length: '0'
+      content-md5: pTsTLZHyQ+et6NksJ1OHxg==
+      date: Thu, 12 Sep 2019 07:09:40 GMT
+      etag: '"0x8D737502E1C431D"'
+      last-modified: Thu, 12 Sep 2019 07:09:40 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+>>>>>>> ,pre recordingd and fixes
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2019-02-02'
     status:
@@ -241,7 +357,11 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
+<<<<<<< HEAD
         - emilydevtest.file.core.windows.net
+=======
+        - pyacrstorage3f830ff6.file.core.windows.net
+>>>>>>> ,pre recordingd and fixes
         - /utshare3f830ff6/file3f830ff6
         - comp=range
         - ''
@@ -251,6 +371,7 @@ interactions:
       Accept:
       - application/xml
       User-Agent:
+<<<<<<< HEAD
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
@@ -258,12 +379,21 @@ interactions:
       - f499b1ec-d9a6-11e9-b5f3-001a7dda7113
       x-ms-date:
       - Tue, 17 Sep 2019 23:57:50 GMT
+=======
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Thu, 12 Sep 2019 07:09:42 GMT
+>>>>>>> ,pre recordingd and fixes
       x-ms-range:
       - bytes=0-33554431
       x-ms-version:
       - '2019-02-02'
     method: GET
+<<<<<<< HEAD
     uri: https://storagename.file.core.windows.net/utshare3f830ff6/file3f830ff6
+=======
+    uri: https://pyacrstorage3f830ff6.file.core.windows.net/utshare3f830ff6/file3f830ff6
+>>>>>>> ,pre recordingd and fixes
   response:
     body:
       string: !!binary |
@@ -275,6 +405,7 @@ interactions:
         bm9wYWJjZGVmZ2hpamtsbW5vcGFiY2RlZmdoaWprbG1ub3BhYmNkZWZnaGlqa2xtbm9wYWJjZGVm
         Z2hpamtsbW5vcGFiY2RlZmdoaWprbG1ub3BhYmNkZWZnaGlqa2xtbm9wYWJjZGVmZ2hpamtsbW5v
         cGFiY2RlZmdoaWprbG1ub3BhYmNkZWZnaGlqa2xtbm9wYWJjZGVmZ2hpamtsbW5vcGFiY2RlZmdo
+<<<<<<< HEAD
         aWprbG1ub3BhYmNkZWZnaGlqa2xtbm9wYWJjZGVmZ2hpamtsbW5vcGFiY2RlZmdoaWprbG1ub3A8
         14g3JknQEqSxJxUO7gkI3RmCDhHl9CI+YfrAOOBiDBglZQ9pz4lWzUzoZ2AyqFsyhoKtShvQzzef
         XXkz16aB9VXnJcTgMy49wJJ5bdx3hZvLUeDKXICNxfc/XilNuG02t3kb3Ybt9YmWZhzOUXC71p5W
@@ -318,6 +449,34 @@ interactions:
       x-ms-file-parent-id: '0'
       x-ms-file-permission-key: 4099112195243312672*10394889115079208622
       x-ms-request-id: 20b5abbf-001a-00b1-24b3-6d4de1000000
+=======
+        aWprbG1ub3BhYmNkZWZnaGlqa2xtbm9wYWJjZGVmZ2hpamtsbW5vcGFiY2RlZmdoaWprbG1ub3Dg
+        plJpmsKZYFh4FWMyWEIse0/qDV93jCrSUz51K5ma+tif01vMO3lzZGhTwlOHIDuJu5wPp7eL+ZqP
+        anmJ05iyjpxkXcDAPguhwNZhnBlTNERabEc6Bh8PvsFiOZPMXZXruUqkp+0bZbegt8JA5a+huR/x
+        DpRTPFXFYubxq5BiCdgLL3KZv9/ro1IzepmZh4FivzZ74w6+xvjQmZxrs1GzcNnhLQ4AKQftxznj
+        YDhzmnu3X3zALNLTLrwXHbenrzM0UQ/hD7rgoIoCs+rupMkZEYdc5CBvhzY9aUedI9KYQBZ95Nxw
+        wC2YO4woxrXJ1VB1AXpCYMUoH/urirSMfCY2CokKeMLbE3roYWC0c4Lg2ZBfUwHYrbX8wmrn/um6
+        zdfqidmI2Dmj7ZNjVaQomoed0dGmGlZ1W1Qf9MF4WlzdMsBygJY6CFbimK76YcKm9uTGKN7jY7wx
+        5RmXVvczE3f5xqHpDabNDW1VhnlbEPsa9nYh10ZAAQ/wAIQ4i5/b3StUS5a4y0ZgVUKYoYoCp4yT
+        HGWTv2FbXtOjBFnHxKGK4JPlr3FVg/R0IxHweH8lLZ6gWVjfe5HZI1yH07DOBMPDprt3fg/NNj93
+        TIzOXW8DDAAHvRYwr09vrgdrLxR2Vzg0O1B5ijCMlrOyt3+VJwJ6UwVgecYvwrO2PrT+AJQK8Q==
+    headers:
+      accept-ranges: bytes
+      content-length: '1024'
+      content-range: bytes 0-1023/1024
+      content-type: application/octet-stream
+      date: Thu, 12 Sep 2019 07:09:40 GMT
+      etag: '"0x8D737502E1C431D"'
+      last-modified: Thu, 12 Sep 2019 07:09:40 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-file-attributes: Archive
+      x-ms-file-change-time: '2019-09-12T07:09:40.4938731Z'
+      x-ms-file-creation-time: '2019-09-12T07:09:40.4938731Z'
+      x-ms-file-id: '13835128424026341376'
+      x-ms-file-last-write-time: '2019-09-12T07:09:40.4938731Z'
+      x-ms-file-parent-id: '0'
+      x-ms-file-permission-key: 12614011071914132722*553116459944160380
+>>>>>>> ,pre recordingd and fixes
       x-ms-server-encrypted: 'true'
       x-ms-type: File
       x-ms-version: '2019-02-02'
@@ -328,7 +487,11 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
+<<<<<<< HEAD
         - emilydevtest.file.core.windows.net
+=======
+        - pyacrstorage3f830ff6.file.core.windows.net
+>>>>>>> ,pre recordingd and fixes
         - /utshare3f830ff6/file3f830ff6
         - ''
         - ''

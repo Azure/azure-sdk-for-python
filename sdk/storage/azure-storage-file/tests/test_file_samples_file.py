@@ -8,7 +8,7 @@
 
 import os
 
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, FakeStorageAccount
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 
 from filetestcase import (
     FileTestCase
@@ -16,9 +16,7 @@ from filetestcase import (
 
 SOURCE_FILE = 'SampleSource.txt'
 DEST_FILE = 'SampleDestination.txt'
-FAKE_STORAGE = FakeStorageAccount(
-    name='pyacrstorage',
-    id='')
+
 
 class TestFileSamples(FileTestCase):
 
@@ -27,24 +25,10 @@ class TestFileSamples(FileTestCase):
         with open(SOURCE_FILE, 'wb') as stream:
             stream.write(data)
 
-    def tearDown(self):
-        if os.path.isfile(SOURCE_FILE):
-            try:
-                os.remove(SOURCE_FILE)
-            except:
-                pass
-        if os.path.isfile(DEST_FILE):
-            try:
-                os.remove(DEST_FILE)
-            except:
-                pass
-
-        return super(TestFileSamples, self).tearDown()
-
     #--Begin File Samples-----------------------------------------------------------------
 
     @ResourceGroupPreparer()               
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_file_operations(self, resource_group, location, storage_account, storage_account_key):
         self._setup()
         # Instantiate the ShareClient from a connection string
@@ -87,7 +71,7 @@ class TestFileSamples(FileTestCase):
             share.delete_share()
 
     @ResourceGroupPreparer()               
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_copy_from_url(self, resource_group, location, storage_account, storage_account_key):
         self._setup()
         # Instantiate the ShareClient from a connection string

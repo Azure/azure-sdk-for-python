@@ -22,8 +22,12 @@ interactions:
 =======
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
+<<<<<<< HEAD
       - Wed, 11 Sep 2019 22:00:55 GMT
 >>>>>>> Migrate Files to Devtools Framework
+=======
+      - Thu, 12 Sep 2019 07:21:33 GMT
+>>>>>>> ,pre recordingd and fixes
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -47,11 +51,11 @@ interactions:
       - 068b0409-f01a-00b5-37b6-6dc0e6000000
 =======
       date:
-      - Wed, 11 Sep 2019 22:00:56 GMT
+      - Thu, 12 Sep 2019 07:21:31 GMT
       etag:
-      - '"0x8D737038524F155"'
+      - '"0x8D73751D60A655C"'
       last-modified:
-      - Wed, 11 Sep 2019 22:00:55 GMT
+      - Thu, 12 Sep 2019 07:21:31 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
 >>>>>>> Migrate Files to Devtools Framework
@@ -64,10 +68,14 @@ interactions:
     body: '<?xml version=''1.0'' encoding=''utf-8''?>
 
 <<<<<<< HEAD
+<<<<<<< HEAD
       <SignedIdentifiers><SignedIdentifier><Id>testid</Id><AccessPolicy><Start>2019-09-18T00:16:04Z</Start><Expiry>2019-09-18T01:17:04Z</Expiry><Permission>w</Permission></AccessPolicy></SignedIdentifier></SignedIdentifiers>'
 =======
       <SignedIdentifiers><SignedIdentifier><Id>testid</Id><AccessPolicy><Start>2019-09-11T21:59:57Z</Start><Expiry>2019-09-11T23:00:57Z</Expiry><Permission>w</Permission></AccessPolicy></SignedIdentifier></SignedIdentifiers>'
 >>>>>>> Migrate Files to Devtools Framework
+=======
+      <SignedIdentifiers><SignedIdentifier><Id>testid</Id><AccessPolicy><Start>2019-09-12T07:20:33Z</Start><Expiry>2019-09-12T08:21:33Z</Expiry><Permission>w</Permission></AccessPolicy></SignedIdentifier></SignedIdentifiers>'
+>>>>>>> ,pre recordingd and fixes
     headers:
       Accept:
       - '*/*'
@@ -89,8 +97,12 @@ interactions:
 =======
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
+<<<<<<< HEAD
       - Wed, 11 Sep 2019 22:00:57 GMT
 >>>>>>> Migrate Files to Devtools Framework
+=======
+      - Thu, 12 Sep 2019 07:21:33 GMT
+>>>>>>> ,pre recordingd and fixes
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -114,11 +126,11 @@ interactions:
       - 068b040b-f01a-00b5-38b6-6dc0e6000000
 =======
       date:
-      - Wed, 11 Sep 2019 22:00:57 GMT
+      - Thu, 12 Sep 2019 07:21:31 GMT
       etag:
-      - '"0x8D7370386552A8C"'
+      - '"0x8D73751D6241C04"'
       last-modified:
-      - Wed, 11 Sep 2019 22:00:57 GMT
+      - Thu, 12 Sep 2019 07:21:32 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
 >>>>>>> Migrate Files to Devtools Framework
@@ -148,14 +160,19 @@ interactions:
 =======
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
+<<<<<<< HEAD
       - Wed, 11 Sep 2019 22:00:58 GMT
 >>>>>>> Migrate Files to Devtools Framework
+=======
+      - Thu, 12 Sep 2019 07:21:33 GMT
+>>>>>>> ,pre recordingd and fixes
       x-ms-version:
       - '2019-02-02'
     method: GET
     uri: https://pyacrstorage492a15b6.file.core.windows.net/share492a15b6?restype=share&comp=acl
   response:
     body:
+<<<<<<< HEAD
 <<<<<<< HEAD
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><SignedIdentifiers><SignedIdentifier><Id>testid</Id><AccessPolicy><Start>2019-09-18T00:16:04.0000000Z</Start><Expiry>2019-09-18T01:17:04.0000000Z</Expiry><Permission>w</Permission></AccessPolicy></SignedIdentifier></SignedIdentifiers>"
     headers:
@@ -213,15 +230,18 @@ interactions:
       Server:
 =======
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><SignedIdentifiers><SignedIdentifier><Id>testid</Id><AccessPolicy><Start>2019-09-11T21:59:57.0000000Z</Start><Expiry>2019-09-11T23:00:57.0000000Z</Expiry><Permission>w</Permission></AccessPolicy></SignedIdentifier></SignedIdentifiers>"
+=======
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><SignedIdentifiers><SignedIdentifier><Id>testid</Id><AccessPolicy><Start>2019-09-12T07:20:33.0000000Z</Start><Expiry>2019-09-12T08:21:33.0000000Z</Expiry><Permission>w</Permission></AccessPolicy></SignedIdentifier></SignedIdentifiers>"
+>>>>>>> ,pre recordingd and fixes
     headers:
       content-type:
       - application/xml
       date:
-      - Wed, 11 Sep 2019 22:00:57 GMT
+      - Thu, 12 Sep 2019 07:21:31 GMT
       etag:
-      - '"0x8D7370386552A8C"'
+      - '"0x8D73751D6241C04"'
       last-modified:
-      - Wed, 11 Sep 2019 22:00:57 GMT
+      - Thu, 12 Sep 2019 07:21:32 GMT
       server:
 >>>>>>> Migrate Files to Devtools Framework
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0

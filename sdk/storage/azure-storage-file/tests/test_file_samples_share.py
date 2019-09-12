@@ -8,16 +8,14 @@
 
 import os
 
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, FakeStorageAccount
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 
 from filetestcase import (
     FileTestCase
 )
 
 SOURCE_FILE = 'SampleSource.txt'
-FAKE_STORAGE = FakeStorageAccount(
-    name='pyacrstorage',
-    id='')
+
 
 class TestShareSamples(FileTestCase):
     def setUp(self):
@@ -27,19 +25,10 @@ class TestShareSamples(FileTestCase):
 
         super(TestShareSamples, self).setUp()
 
-    def tearDown(self):
-        if os.path.isfile(SOURCE_FILE):
-            try:
-                os.remove(SOURCE_FILE)
-            except:
-                pass
-
-        return super(TestShareSamples, self).tearDown()
-
     #--Begin File Samples-----------------------------------------------------------------
 
     @ResourceGroupPreparer()               
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_share_snapshot(self, resource_group, location, storage_account, storage_account_key):
         # Instantiate the ShareClient from a connection string
         from azure.storage.file import ShareClient
@@ -58,7 +47,7 @@ class TestShareSamples(FileTestCase):
             # [END delete_share]
 
     @ResourceGroupPreparer()               
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_set_share_quota_and_metadata(self, resource_group, location, storage_account, storage_account_key):
         # [START create_share_client_from_conn_string]
         from azure.storage.file import ShareClient
@@ -88,7 +77,7 @@ class TestShareSamples(FileTestCase):
             share.delete_share()
 
     @ResourceGroupPreparer()               
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_list_directories_and_files(self, resource_group, location, storage_account, storage_account_key):
         # Instantiate the ShareClient from a connection string
         from azure.storage.file import ShareClient
@@ -115,7 +104,7 @@ class TestShareSamples(FileTestCase):
             share.delete_share()
 
     @ResourceGroupPreparer()               
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_get_directory_or_file_client(self, resource_group, location, storage_account, storage_account_key):
         # Instantiate the ShareClient from a connection string
         from azure.storage.file import ShareClient

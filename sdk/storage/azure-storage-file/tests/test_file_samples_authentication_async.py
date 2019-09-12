@@ -9,20 +9,18 @@
 import asyncio
 from datetime import datetime, timedelta
 
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, FakeStorageAccount
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 
 from asyncfiletestcase import (
     AsyncFileTestCase
 )
 
 
-FAKE_STORAGE = FakeStorageAccount(
-    name='pyacrstorage',
-    id='')
+
 
 class TestFileAuthSamples(AsyncFileTestCase):
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_auth_connection_string(self, resource_group, location, storage_account, storage_account_key):
         connection_string = self.connection_string(storage_account, storage_account_key)
@@ -37,7 +35,7 @@ class TestFileAuthSamples(AsyncFileTestCase):
         assert properties is not None
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_auth_shared_key(self, resource_group, location, storage_account, storage_account_key):
         url = self._account_url(storage_account.name)
@@ -53,7 +51,7 @@ class TestFileAuthSamples(AsyncFileTestCase):
         assert account_info is not None
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_auth_shared_access_signature(self, resource_group, location, storage_account, storage_account_key):
         connection_string = self.connection_string(storage_account, storage_account_key)

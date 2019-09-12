@@ -14,8 +14,12 @@ interactions:
 =======
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
+<<<<<<< HEAD
       - Wed, 11 Sep 2019 21:43:49 GMT
 >>>>>>> Migrate Files to Devtools Framework
+=======
+      - Thu, 12 Sep 2019 06:59:49 GMT
+>>>>>>> ,pre recordingd and fixes
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -43,9 +47,9 @@ interactions:
       x-ms-request-id: 918bc972-001a-0037-76b3-6d8158000000
 =======
       content-length: '0'
-      date: Wed, 11 Sep 2019 21:43:48 GMT
-      etag: '"0x8D73701214EF5B7"'
-      last-modified: Wed, 11 Sep 2019 21:43:48 GMT
+      date: Thu, 12 Sep 2019 06:59:47 GMT
+      etag: '"0x8D7374ECCF49D4D"'
+      last-modified: Thu, 12 Sep 2019 06:59:48 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
 >>>>>>> Migrate Files to Devtools Framework
       x-ms-version: '2019-02-02'
@@ -75,8 +79,12 @@ interactions:
 =======
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
+<<<<<<< HEAD
       - Wed, 11 Sep 2019 21:43:50 GMT
 >>>>>>> Migrate Files to Devtools Framework
+=======
+      - Thu, 12 Sep 2019 06:59:49 GMT
+>>>>>>> ,pre recordingd and fixes
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -84,6 +92,7 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ResourceNotFound</Code><Message>The
+<<<<<<< HEAD
 <<<<<<< HEAD
         specified resource does not exist.\nRequestId:918bc975-001a-0037-77b3-6d8158000000\nTime:2019-09-17T23:53:12.7901421Z</Message></Error>"
     headers:
@@ -103,10 +112,13 @@ interactions:
       x-ms-request-id: 918bc975-001a-0037-77b3-6d8158000000
 =======
         specified resource does not exist.\nRequestId:e0accff9-a01a-0095-48e9-68e08c000000\nTime:2019-09-11T21:43:49.0182806Z</Message></Error>"
+=======
+        specified resource does not exist.\nRequestId:6770a4b4-801a-008c-6037-69198f000000\nTime:2019-09-12T06:59:48.3575698Z</Message></Error>"
+>>>>>>> ,pre recordingd and fixes
     headers:
       content-length: '223'
       content-type: application/xml
-      date: Wed, 11 Sep 2019 21:43:48 GMT
+      date: Thu, 12 Sep 2019 06:59:47 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: ResourceNotFound
 >>>>>>> Migrate Files to Devtools Framework

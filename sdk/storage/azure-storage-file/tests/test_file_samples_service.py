@@ -6,20 +6,18 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, FakeStorageAccount
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from filetestcase import (
     FileTestCase
 )
 
-FAKE_STORAGE = FakeStorageAccount(
-    name='pyacrstorage',
-    id='')
+
 
 
 class TestFileServiceSamples(FileTestCase):
 
     @ResourceGroupPreparer()               
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_file_service_properties(self, resource_group, location, storage_account, storage_account_key):
         # Instantiate the FileServiceClient from a connection string
         from azure.storage.file import FileServiceClient
@@ -59,7 +57,7 @@ class TestFileServiceSamples(FileTestCase):
         # [END get_service_properties]
 
     @ResourceGroupPreparer()               
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_share_operations(self, resource_group, location, storage_account, storage_account_key):
         # Instantiate the FileServiceClient from a connection string
         from azure.storage.file import FileServiceClient
@@ -84,7 +82,7 @@ class TestFileServiceSamples(FileTestCase):
             # [END fsc_delete_shares]
 
     @ResourceGroupPreparer()               
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_get_share_client(self, resource_group, location, storage_account, storage_account_key):
         # [START get_share_client]
         from azure.storage.file import FileServiceClient

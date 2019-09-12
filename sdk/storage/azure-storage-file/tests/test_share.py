@@ -28,9 +28,7 @@ from filetestcase import (
 )
 
 # ------------------------------------------------------------------------------
-FAKE_STORAGE = FakeStorageAccount(
-    name='pyacrstorage',
-    id='')
+
 TEST_SHARE_PREFIX = 'share'
 
 
@@ -50,7 +48,7 @@ class StorageShareTest(FileTestCase):
 
     # --Test cases for shares -----------------------------------------
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_share(self, resource_group, location, storage_account, storage_account_key):
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
         share = self._get_share_reference(fsc)
@@ -62,7 +60,7 @@ class StorageShareTest(FileTestCase):
         self.assertTrue(created)
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_share_snapshot(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
@@ -79,7 +77,7 @@ class StorageShareTest(FileTestCase):
         self.assertIsNotNone(snapshot['last_modified'])
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_snapshot_with_metadata(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
@@ -108,7 +106,7 @@ class StorageShareTest(FileTestCase):
         self.assertEqual(snapshot_props.metadata, metadata2)
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_delete_share_with_snapshots(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
@@ -125,7 +123,7 @@ class StorageShareTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_delete_snapshot(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
@@ -149,7 +147,7 @@ class StorageShareTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_share_fail_on_exist(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
@@ -163,7 +161,7 @@ class StorageShareTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_share_with_already_existing_share_fail_on_exist(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
@@ -179,7 +177,7 @@ class StorageShareTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_share_with_metadata(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
@@ -196,7 +194,7 @@ class StorageShareTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_share_with_quota(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
@@ -212,7 +210,7 @@ class StorageShareTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_share_exists(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
@@ -226,7 +224,7 @@ class StorageShareTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_share_not_exists(self, resource_group, location, storage_account, storage_account_key):
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
         share = self._get_share_reference(fsc)
@@ -239,7 +237,7 @@ class StorageShareTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_share_snapshot_exists(self, resource_group, location, storage_account, storage_account_key):
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
         share = self._create_share(fsc)
@@ -254,7 +252,7 @@ class StorageShareTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_share_snapshot_not_exists(self, resource_group, location, storage_account, storage_account_key):
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
         share = self._create_share(fsc)
@@ -269,7 +267,7 @@ class StorageShareTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_unicode_create_share_unicode_name(self, resource_group, location, storage_account, storage_account_key):
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
         share_name = u'啊齄丂狛狜'
@@ -284,7 +282,7 @@ class StorageShareTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_list_shares_no_options(self, resource_group, location, storage_account, storage_account_key):
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
         share = self._create_share(fsc)
@@ -299,7 +297,7 @@ class StorageShareTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_list_shares_with_snapshot(self, resource_group, location, storage_account, storage_account_key):
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
         share = self._create_share(fsc, 'random')
@@ -320,7 +318,7 @@ class StorageShareTest(FileTestCase):
 
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_list_shares_with_prefix(self, resource_group, location, storage_account, storage_account_key):
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
         share = self._get_share_reference(fsc)
@@ -337,7 +335,7 @@ class StorageShareTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_list_shares_with_include_metadata(self, resource_group, location, storage_account, storage_account_key):
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
         metadata = {'hello': 'world', 'number': '42'}
@@ -357,7 +355,7 @@ class StorageShareTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_list_shares_with_num_results_and_marker(self, resource_group, location, storage_account, storage_account_key):
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
         prefix = 'listshare'
@@ -387,7 +385,7 @@ class StorageShareTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_set_share_metadata(self, resource_group, location, storage_account, storage_account_key):
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
         share = self._create_share(fsc)
@@ -402,7 +400,7 @@ class StorageShareTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_get_share_metadata(self, resource_group, location, storage_account, storage_account_key):
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
         metadata = {'hello': 'world', 'number': '42'}
@@ -418,7 +416,7 @@ class StorageShareTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_get_share_metadata_with_snapshot(self, resource_group, location, storage_account, storage_account_key):
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
         metadata = {'hello': 'world', 'number': '42'}
@@ -436,7 +434,7 @@ class StorageShareTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_set_share_properties(self, resource_group, location, storage_account, storage_account_key):
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
         share = self._create_share(fsc)
@@ -451,7 +449,7 @@ class StorageShareTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_delete_share_with_existing_share(self, resource_group, location, storage_account, storage_account_key):
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
         share = self._get_share_reference(fsc)
@@ -465,7 +463,7 @@ class StorageShareTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_delete_share_with_existing_share_fail_not_exist(self, resource_group, location, storage_account, storage_account_key):
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
         client = self._get_share_reference(fsc)
@@ -479,7 +477,7 @@ class StorageShareTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_delete_share_with_non_existing_share(self, resource_group, location, storage_account, storage_account_key):
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
         client = self._get_share_reference(fsc)
@@ -494,7 +492,7 @@ class StorageShareTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_delete_share_with_non_existing_share_fail_not_exist(self, resource_group, location, storage_account, storage_account_key):
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
         client = self._get_share_reference(fsc)
@@ -508,7 +506,7 @@ class StorageShareTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_get_share_stats(self, resource_group, location, storage_account, storage_account_key):
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
         share = self._get_share_reference(fsc)
@@ -522,7 +520,7 @@ class StorageShareTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_set_share_acl(self, resource_group, location, storage_account, storage_account_key):
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
         share = self._get_share_reference(fsc)
@@ -537,7 +535,7 @@ class StorageShareTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_set_share_acl_with_empty_signed_identifiers(self, resource_group, location, storage_account, storage_account_key):
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
         share = self._get_share_reference(fsc)
@@ -553,7 +551,7 @@ class StorageShareTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_set_share_acl_with_signed_identifiers(self, resource_group, location, storage_account, storage_account_key):
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
         share = self._get_share_reference(fsc)
@@ -577,7 +575,7 @@ class StorageShareTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_set_share_acl_too_many_ids(self, resource_group, location, storage_account, storage_account_key):
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
         share = self._get_share_reference(fsc)
@@ -598,7 +596,7 @@ class StorageShareTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_list_directories_and_files(self, resource_group, location, storage_account, storage_account_key):
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
         share = self._create_share(fsc)
@@ -623,7 +621,7 @@ class StorageShareTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_list_directories_and_files_with_snapshot(self, resource_group, location, storage_account, storage_account_key):
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
         share_name = self._create_share(fsc)
@@ -651,7 +649,7 @@ class StorageShareTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_list_directories_and_files_with_num_results(self, resource_group, location, storage_account, storage_account_key):
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
         share_name = self._create_share(fsc)
@@ -674,7 +672,7 @@ class StorageShareTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_list_directories_and_files_with_num_results_and_marker(self, resource_group, location, storage_account, storage_account_key):
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
         share_name = self._create_share(fsc)
@@ -705,7 +703,7 @@ class StorageShareTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_list_directories_and_files_with_prefix(self, resource_group, location, storage_account, storage_account_key):
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
         share = self._create_share(fsc)
@@ -730,7 +728,7 @@ class StorageShareTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_shared_access_share(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
         if not self.is_live:
@@ -765,7 +763,7 @@ class StorageShareTest(FileTestCase):
         self.assertEqual(data, response.content)
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_permission_for_share(self, resource_group, location, storage_account, storage_account_key):
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
         user_given_permission = "O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-" \
@@ -781,4 +779,4 @@ class StorageShareTest(FileTestCase):
         permission_key2 = share_client.create_permission_for_share(server_returned_permission)
         # the permission key obtained from user_given_permission should be the same as the permission key obtained from
         # server returned permission
-        self.assertEquals(permission_key, permission_key2)
+        self.assertEqual(permission_key, permission_key2)

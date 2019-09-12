@@ -8,7 +8,7 @@
 import unittest
 from datetime import timedelta
 from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, FakeStorageAccount
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.storage.file import (
     FileServiceClient,
     StorageErrorCode,
@@ -19,9 +19,7 @@ from filetestcase import (
 
 
 # ------------------------------------------------------------------------------
-FAKE_STORAGE = FakeStorageAccount(
-    name='pyacrstorage',
-    id='')
+
 
 class StorageDirectoryTest(FileTestCase):
     def setUp(self):
@@ -35,7 +33,7 @@ class StorageDirectoryTest(FileTestCase):
 
     # --Test cases for directories ----------------------------------------------
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_directories(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
@@ -49,7 +47,7 @@ class StorageDirectoryTest(FileTestCase):
         self.assertTrue(created)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_directories_with_metadata(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
@@ -65,7 +63,7 @@ class StorageDirectoryTest(FileTestCase):
         self.assertDictEqual(md, metadata)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_directories_fail_on_exist(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
@@ -81,7 +79,7 @@ class StorageDirectoryTest(FileTestCase):
         self.assertTrue(created)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_subdirectories(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
@@ -97,7 +95,7 @@ class StorageDirectoryTest(FileTestCase):
         self.assertEqual(created.directory_path, 'dir1/dir2')
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_subdirectories_with_metadata(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
@@ -116,7 +114,7 @@ class StorageDirectoryTest(FileTestCase):
         self.assertEqual(sub_metadata, metadata)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_file_in_directory(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
@@ -134,7 +132,7 @@ class StorageDirectoryTest(FileTestCase):
         self.assertEqual(file_content, file_data)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_delete_file_in_directory(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
@@ -153,7 +151,7 @@ class StorageDirectoryTest(FileTestCase):
             new_file.get_file_properties()
 
     @ResourceGroupPreparer()    
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_delete_subdirectories(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
@@ -172,7 +170,7 @@ class StorageDirectoryTest(FileTestCase):
             subdir.get_directory_properties()
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_get_directory_properties(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
@@ -189,7 +187,7 @@ class StorageDirectoryTest(FileTestCase):
         self.assertIsNotNone(props.last_modified)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_get_directory_properties_with_snapshot(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
@@ -213,7 +211,7 @@ class StorageDirectoryTest(FileTestCase):
         self.assertDictEqual(metadata, props.metadata)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_get_directory_metadata_with_snapshot(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
@@ -235,7 +233,7 @@ class StorageDirectoryTest(FileTestCase):
         self.assertDictEqual(metadata, snapshot_metadata)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_get_directory_properties_with_non_existing_directory(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
@@ -250,7 +248,7 @@ class StorageDirectoryTest(FileTestCase):
             # Assert
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_directory_exists(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
@@ -265,7 +263,7 @@ class StorageDirectoryTest(FileTestCase):
         self.assertTrue(exists)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_directory_not_exists(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
@@ -280,7 +278,7 @@ class StorageDirectoryTest(FileTestCase):
         # Assert
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_directory_parent_not_exists(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
@@ -296,7 +294,7 @@ class StorageDirectoryTest(FileTestCase):
         self.assertEqual(e.exception.error_code, StorageErrorCode.parent_not_found)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_directory_exists_with_snapshot(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
@@ -315,7 +313,7 @@ class StorageDirectoryTest(FileTestCase):
         self.assertTrue(exists)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_directory_not_exists_with_snapshot(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
@@ -334,7 +332,7 @@ class StorageDirectoryTest(FileTestCase):
         # Assert
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_get_set_directory_metadata(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
@@ -351,7 +349,7 @@ class StorageDirectoryTest(FileTestCase):
         self.assertDictEqual(md, metadata)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_set_directory_properties_with_empty_smb_properties(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
@@ -366,15 +364,15 @@ class StorageDirectoryTest(FileTestCase):
 
         # Assert
         # Make sure set empty smb_properties doesn't change smb_properties
-        self.assertEquals(directory_properties_on_creation.creation_time,
+        self.assertEqual(directory_properties_on_creation.creation_time,
                           directory_properties.creation_time)
-        self.assertEquals(directory_properties_on_creation.last_write_time,
+        self.assertEqual(directory_properties_on_creation.last_write_time,
                           directory_properties.last_write_time)
-        self.assertEquals(directory_properties_on_creation.permission_key,
+        self.assertEqual(directory_properties_on_creation.permission_key,
                           directory_properties.permission_key)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_set_directory_properties_with_file_permission_key(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
@@ -398,11 +396,11 @@ class StorageDirectoryTest(FileTestCase):
 
         # Assert
         self.assertIsNotNone(directory_properties)
-        self.assertEquals(directory_properties.creation_time, new_creation_time)
-        self.assertEquals(directory_properties.last_write_time, new_last_write_time)
+        self.assertEqual(directory_properties.creation_time, new_creation_time)
+        self.assertEqual(directory_properties.last_write_time, new_last_write_time)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_list_subdirectories_and_files(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
@@ -432,7 +430,7 @@ class StorageDirectoryTest(FileTestCase):
         self.assertEqual(list_dir, expected)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_list_subdirectories_and_files_with_prefix(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
@@ -459,7 +457,7 @@ class StorageDirectoryTest(FileTestCase):
         self.assertEqual(list_dir, expected)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_list_subdirectories_and_files_with_snapshot(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
@@ -491,7 +489,7 @@ class StorageDirectoryTest(FileTestCase):
         self.assertEqual(list_dir, expected)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_list_nested_subdirectories_and_files(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
@@ -517,7 +515,7 @@ class StorageDirectoryTest(FileTestCase):
         self.assertEqual(list_dir, expected)
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_delete_directory_with_existing_share(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
@@ -534,7 +532,7 @@ class StorageDirectoryTest(FileTestCase):
             directory.get_directory_properties()
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_delete_directory_with_non_existing_directory(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
@@ -549,7 +547,7 @@ class StorageDirectoryTest(FileTestCase):
         # Assert
 
     @ResourceGroupPreparer()     
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_get_directory_properties_server_encryption(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)

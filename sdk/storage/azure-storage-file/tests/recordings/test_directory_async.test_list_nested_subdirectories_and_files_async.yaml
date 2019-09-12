@@ -14,8 +14,12 @@ interactions:
 =======
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
+<<<<<<< HEAD
       - Wed, 11 Sep 2019 21:44:19 GMT
 >>>>>>> Migrate Files to Devtools Framework
+=======
+      - Thu, 12 Sep 2019 07:00:26 GMT
+>>>>>>> ,pre recordingd and fixes
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -43,9 +47,9 @@ interactions:
       x-ms-request-id: 4b1ca0ad-901a-0068-34b3-6d3564000000
 =======
       content-length: '0'
-      date: Wed, 11 Sep 2019 21:44:18 GMT
-      etag: '"0x8D7370132F6E80C"'
-      last-modified: Wed, 11 Sep 2019 21:44:18 GMT
+      date: Thu, 12 Sep 2019 07:00:34 GMT
+      etag: '"0x8D7374EE7A1315B"'
+      last-modified: Thu, 12 Sep 2019 07:00:32 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
 >>>>>>> Migrate Files to Devtools Framework
       x-ms-version: '2019-02-02'
@@ -75,8 +79,12 @@ interactions:
 =======
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
+<<<<<<< HEAD
       - Wed, 11 Sep 2019 21:44:19 GMT
 >>>>>>> Migrate Files to Devtools Framework
+=======
+      - Thu, 12 Sep 2019 07:00:36 GMT
+>>>>>>> ,pre recordingd and fixes
       x-ms-file-attributes:
       - none
       x-ms-file-creation-time:
@@ -119,18 +127,22 @@ interactions:
       x-ms-request-id: 4b1ca0b0-901a-0068-35b3-6d3564000000
 =======
       content-length: '0'
-      date: Wed, 11 Sep 2019 21:44:18 GMT
-      etag: '"0x8D7370133081290"'
-      last-modified: Wed, 11 Sep 2019 21:44:18 GMT
+      date: Thu, 12 Sep 2019 07:00:34 GMT
+      etag: '"0x8D7374EE91546F2"'
+      last-modified: Thu, 12 Sep 2019 07:00:35 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-file-attributes: Directory
-      x-ms-file-change-time: '2019-09-11T21:44:18.6876560Z'
-      x-ms-file-creation-time: '2019-09-11T21:44:18.6876560Z'
+      x-ms-file-change-time: '2019-09-12T07:00:35.3677042Z'
+      x-ms-file-creation-time: '2019-09-12T07:00:35.3677042Z'
       x-ms-file-id: '13835128424026341376'
-      x-ms-file-last-write-time: '2019-09-11T21:44:18.6876560Z'
+      x-ms-file-last-write-time: '2019-09-12T07:00:35.3677042Z'
       x-ms-file-parent-id: '0'
+<<<<<<< HEAD
       x-ms-file-permission-key: 2811637609565532653*5755555868910528100
 >>>>>>> Migrate Files to Devtools Framework
+=======
+      x-ms-file-permission-key: 12917210134768377312*15823397557925202537
+>>>>>>> ,pre recordingd and fixes
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2019-02-02'
     status:
@@ -159,8 +171,12 @@ interactions:
 =======
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
+<<<<<<< HEAD
       - Wed, 11 Sep 2019 21:44:19 GMT
 >>>>>>> Migrate Files to Devtools Framework
+=======
+      - Thu, 12 Sep 2019 07:00:36 GMT
+>>>>>>> ,pre recordingd and fixes
       x-ms-file-attributes:
       - none
       x-ms-file-creation-time:
@@ -203,18 +219,22 @@ interactions:
       x-ms-request-id: 4b1ca0b1-901a-0068-36b3-6d3564000000
 =======
       content-length: '0'
-      date: Wed, 11 Sep 2019 21:44:18 GMT
-      etag: '"0x8D737013317F3EB"'
-      last-modified: Wed, 11 Sep 2019 21:44:18 GMT
+      date: Thu, 12 Sep 2019 07:00:35 GMT
+      etag: '"0x8D7374EE927C0CC"'
+      last-modified: Thu, 12 Sep 2019 07:00:35 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-file-attributes: Directory
-      x-ms-file-change-time: '2019-09-11T21:44:18.7917291Z'
-      x-ms-file-creation-time: '2019-09-11T21:44:18.7917291Z'
+      x-ms-file-change-time: '2019-09-12T07:00:35.4887884Z'
+      x-ms-file-creation-time: '2019-09-12T07:00:35.4887884Z'
       x-ms-file-id: '11529285414812647424'
-      x-ms-file-last-write-time: '2019-09-11T21:44:18.7917291Z'
+      x-ms-file-last-write-time: '2019-09-12T07:00:35.4887884Z'
       x-ms-file-parent-id: '13835128424026341376'
+<<<<<<< HEAD
       x-ms-file-permission-key: 2811637609565532653*5755555868910528100
 >>>>>>> Migrate Files to Devtools Framework
+=======
+      x-ms-file-permission-key: 12917210134768377312*15823397557925202537
+>>>>>>> ,pre recordingd and fixes
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2019-02-02'
     status:
@@ -243,8 +263,12 @@ interactions:
 =======
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
+<<<<<<< HEAD
       - Wed, 11 Sep 2019 21:44:20 GMT
 >>>>>>> Migrate Files to Devtools Framework
+=======
+      - Thu, 12 Sep 2019 07:00:37 GMT
+>>>>>>> ,pre recordingd and fixes
       x-ms-file-attributes:
       - none
       x-ms-file-creation-time:
@@ -287,18 +311,22 @@ interactions:
       x-ms-request-id: 4b1ca0b2-901a-0068-37b3-6d3564000000
 =======
       content-length: '0'
-      date: Wed, 11 Sep 2019 21:44:18 GMT
-      etag: '"0x8D73701331F4837"'
-      last-modified: Wed, 11 Sep 2019 21:44:18 GMT
+      date: Thu, 12 Sep 2019 07:00:35 GMT
+      etag: '"0x8D7374EE94C6649"'
+      last-modified: Thu, 12 Sep 2019 07:00:35 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-file-attributes: Directory
-      x-ms-file-change-time: '2019-09-11T21:44:18.8397623Z'
-      x-ms-file-creation-time: '2019-09-11T21:44:18.8397623Z'
+      x-ms-file-change-time: '2019-09-12T07:00:35.7289545Z'
+      x-ms-file-creation-time: '2019-09-12T07:00:35.7289545Z'
       x-ms-file-id: '16140971433240035328'
-      x-ms-file-last-write-time: '2019-09-11T21:44:18.8397623Z'
+      x-ms-file-last-write-time: '2019-09-12T07:00:35.7289545Z'
       x-ms-file-parent-id: '11529285414812647424'
+<<<<<<< HEAD
       x-ms-file-permission-key: 2811637609565532653*5755555868910528100
 >>>>>>> Migrate Files to Devtools Framework
+=======
+      x-ms-file-permission-key: 12917210134768377312*15823397557925202537
+>>>>>>> ,pre recordingd and fixes
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2019-02-02'
     status:
@@ -327,8 +355,12 @@ interactions:
 =======
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
+<<<<<<< HEAD
       - Wed, 11 Sep 2019 21:44:20 GMT
 >>>>>>> Migrate Files to Devtools Framework
+=======
+      - Thu, 12 Sep 2019 07:00:37 GMT
+>>>>>>> ,pre recordingd and fixes
       x-ms-file-attributes:
       - none
       x-ms-file-creation-time:
@@ -371,18 +403,22 @@ interactions:
       x-ms-request-id: 4b1ca0b3-901a-0068-38b3-6d3564000000
 =======
       content-length: '0'
-      date: Wed, 11 Sep 2019 21:44:18 GMT
-      etag: '"0x8D7370133284A88"'
-      last-modified: Wed, 11 Sep 2019 21:44:18 GMT
+      date: Thu, 12 Sep 2019 07:00:35 GMT
+      etag: '"0x8D7374EE96C4FFC"'
+      last-modified: Thu, 12 Sep 2019 07:00:35 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-file-attributes: Directory
-      x-ms-file-change-time: '2019-09-11T21:44:18.8988040Z'
-      x-ms-file-creation-time: '2019-09-11T21:44:18.8988040Z'
+      x-ms-file-change-time: '2019-09-12T07:00:35.9380988Z'
+      x-ms-file-creation-time: '2019-09-12T07:00:35.9380988Z'
       x-ms-file-id: '10376363910205800448'
-      x-ms-file-last-write-time: '2019-09-11T21:44:18.8988040Z'
+      x-ms-file-last-write-time: '2019-09-12T07:00:35.9380988Z'
       x-ms-file-parent-id: '11529285414812647424'
+<<<<<<< HEAD
       x-ms-file-permission-key: 2811637609565532653*5755555868910528100
 >>>>>>> Migrate Files to Devtools Framework
+=======
+      x-ms-file-permission-key: 12917210134768377312*15823397557925202537
+>>>>>>> ,pre recordingd and fixes
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2019-02-02'
     status:
@@ -415,8 +451,12 @@ interactions:
       x-ms-content-length:
       - '5'
       x-ms-date:
+<<<<<<< HEAD
       - Wed, 11 Sep 2019 21:44:20 GMT
 >>>>>>> Migrate Files to Devtools Framework
+=======
+      - Thu, 12 Sep 2019 07:00:37 GMT
+>>>>>>> ,pre recordingd and fixes
       x-ms-file-attributes:
       - none
       x-ms-file-creation-time:
@@ -461,18 +501,22 @@ interactions:
       x-ms-request-id: 4b1ca0b4-901a-0068-39b3-6d3564000000
 =======
       content-length: '0'
-      date: Wed, 11 Sep 2019 21:44:18 GMT
-      etag: '"0x8D7370133314CD0"'
-      last-modified: Wed, 11 Sep 2019 21:44:18 GMT
+      date: Thu, 12 Sep 2019 07:00:35 GMT
+      etag: '"0x8D7374EE98B2817"'
+      last-modified: Thu, 12 Sep 2019 07:00:36 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-file-attributes: Archive
-      x-ms-file-change-time: '2019-09-11T21:44:18.9578448Z'
-      x-ms-file-creation-time: '2019-09-11T21:44:18.9578448Z'
+      x-ms-file-change-time: '2019-09-12T07:00:36.1402391Z'
+      x-ms-file-creation-time: '2019-09-12T07:00:36.1402391Z'
       x-ms-file-id: '14988049928633188352'
-      x-ms-file-last-write-time: '2019-09-11T21:44:18.9578448Z'
+      x-ms-file-last-write-time: '2019-09-12T07:00:36.1402391Z'
       x-ms-file-parent-id: '13835128424026341376'
+<<<<<<< HEAD
       x-ms-file-permission-key: 16681121707515072234*5755555868910528100
 >>>>>>> Migrate Files to Devtools Framework
+=======
+      x-ms-file-permission-key: 8302641548433531623*15823397557925202537
+>>>>>>> ,pre recordingd and fixes
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2019-02-02'
     status:
@@ -503,8 +547,12 @@ interactions:
 =======
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
+<<<<<<< HEAD
       - Wed, 11 Sep 2019 21:44:20 GMT
 >>>>>>> Migrate Files to Devtools Framework
+=======
+      - Thu, 12 Sep 2019 07:00:37 GMT
+>>>>>>> ,pre recordingd and fixes
       x-ms-range:
       - bytes=0-4
       x-ms-version:
@@ -540,9 +588,9 @@ interactions:
 =======
       content-length: '0'
       content-md5: idkDvDXe3nJP1SxRQ3/1/Q==
-      date: Wed, 11 Sep 2019 21:44:18 GMT
-      etag: '"0x8D7370133393D80"'
-      last-modified: Wed, 11 Sep 2019 21:44:19 GMT
+      date: Thu, 12 Sep 2019 07:00:35 GMT
+      etag: '"0x8D7374EE99A1ED9"'
+      last-modified: Thu, 12 Sep 2019 07:00:36 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
 >>>>>>> Migrate Files to Devtools Framework
       x-ms-request-server-encrypted: 'true'
@@ -577,8 +625,12 @@ interactions:
       x-ms-content-length:
       - '5'
       x-ms-date:
+<<<<<<< HEAD
       - Wed, 11 Sep 2019 21:44:20 GMT
 >>>>>>> Migrate Files to Devtools Framework
+=======
+      - Thu, 12 Sep 2019 07:00:37 GMT
+>>>>>>> ,pre recordingd and fixes
       x-ms-file-attributes:
       - none
       x-ms-file-creation-time:
@@ -593,10 +645,14 @@ interactions:
       - '2019-02-02'
     method: PUT
 <<<<<<< HEAD
+<<<<<<< HEAD
     uri: https://storagename.file.core.windows.net/utsharecde41c24/dir1/subdir1/file2
 =======
     uri: https://pyacrstoragecde41c24.file.core.windows.net/utsharecde41c24/dir1/subdir1/file3
 >>>>>>> Migrate Files to Devtools Framework
+=======
+    uri: https://pyacrstoragecde41c24.file.core.windows.net/utsharecde41c24/dir1/subdir1/file2
+>>>>>>> ,pre recordingd and fixes
   response:
     body:
       string: ''
@@ -627,18 +683,22 @@ interactions:
       x-ms-request-id: c348e3ed-701a-00d9-36b3-6d2b71000000
 =======
       content-length: '0'
-      date: Wed, 11 Sep 2019 21:44:18 GMT
-      etag: '"0x8D7370133468654"'
-      last-modified: Wed, 11 Sep 2019 21:44:19 GMT
+      date: Thu, 12 Sep 2019 07:00:35 GMT
+      etag: '"0x8D7374EE9B01BBE"'
+      last-modified: Thu, 12 Sep 2019 07:00:36 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-file-attributes: Archive
-      x-ms-file-change-time: '2019-09-11T21:44:19.0969428Z'
-      x-ms-file-creation-time: '2019-09-11T21:44:19.0969428Z'
+      x-ms-file-change-time: '2019-09-12T07:00:36.3824062Z'
+      x-ms-file-creation-time: '2019-09-12T07:00:36.3824062Z'
       x-ms-file-id: '13835093239654252544'
-      x-ms-file-last-write-time: '2019-09-11T21:44:19.0969428Z'
+      x-ms-file-last-write-time: '2019-09-12T07:00:36.3824062Z'
       x-ms-file-parent-id: '11529285414812647424'
+<<<<<<< HEAD
       x-ms-file-permission-key: 16681121707515072234*5755555868910528100
 >>>>>>> Migrate Files to Devtools Framework
+=======
+      x-ms-file-permission-key: 8302641548433531623*15823397557925202537
+>>>>>>> ,pre recordingd and fixes
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2019-02-02'
     status:
@@ -653,8 +713,12 @@ interactions:
         - /utsharecde41c24/dir1/subdir1/file2
 =======
         - pyacrstoragecde41c24.file.core.windows.net
+<<<<<<< HEAD
         - /utsharecde41c24/dir1/subdir1/file3
 >>>>>>> Migrate Files to Devtools Framework
+=======
+        - /utsharecde41c24/dir1/subdir1/file2
+>>>>>>> ,pre recordingd and fixes
         - ''
         - ''
 - request:
@@ -676,8 +740,12 @@ interactions:
       x-ms-content-length:
       - '5'
       x-ms-date:
+<<<<<<< HEAD
       - Wed, 11 Sep 2019 21:44:20 GMT
 >>>>>>> Migrate Files to Devtools Framework
+=======
+      - Thu, 12 Sep 2019 07:00:37 GMT
+>>>>>>> ,pre recordingd and fixes
       x-ms-file-attributes:
       - none
       x-ms-file-creation-time:
@@ -692,10 +760,14 @@ interactions:
       - '2019-02-02'
     method: PUT
 <<<<<<< HEAD
+<<<<<<< HEAD
     uri: https://storagename.file.core.windows.net/utsharecde41c24/dir1/subdir1/file3
 =======
     uri: https://pyacrstoragecde41c24.file.core.windows.net/utsharecde41c24/dir1/subdir1/file2
 >>>>>>> Migrate Files to Devtools Framework
+=======
+    uri: https://pyacrstoragecde41c24.file.core.windows.net/utsharecde41c24/dir1/subdir1/file3
+>>>>>>> ,pre recordingd and fixes
   response:
     body:
       string: ''
@@ -726,18 +798,22 @@ interactions:
       x-ms-request-id: e9c19c2a-b01a-0040-6bb3-6d54cc000000
 =======
       content-length: '0'
-      date: Wed, 11 Sep 2019 21:44:18 GMT
-      etag: '"0x8D73701334797F1"'
-      last-modified: Wed, 11 Sep 2019 21:44:19 GMT
+      date: Thu, 12 Sep 2019 07:00:35 GMT
+      etag: '"0x8D7374EE9B9BA67"'
+      last-modified: Thu, 12 Sep 2019 07:00:36 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-file-attributes: Archive
-      x-ms-file-change-time: '2019-09-11T21:44:19.1039473Z'
-      x-ms-file-creation-time: '2019-09-11T21:44:19.1039473Z'
+      x-ms-file-change-time: '2019-09-12T07:00:36.4454503Z'
+      x-ms-file-creation-time: '2019-09-12T07:00:36.4454503Z'
       x-ms-file-id: '13835163608398430208'
-      x-ms-file-last-write-time: '2019-09-11T21:44:19.1039473Z'
+      x-ms-file-last-write-time: '2019-09-12T07:00:36.4454503Z'
       x-ms-file-parent-id: '11529285414812647424'
+<<<<<<< HEAD
       x-ms-file-permission-key: 16681121707515072234*5755555868910528100
 >>>>>>> Migrate Files to Devtools Framework
+=======
+      x-ms-file-permission-key: 8302641548433531623*15823397557925202537
+>>>>>>> ,pre recordingd and fixes
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2019-02-02'
     status:
@@ -752,8 +828,12 @@ interactions:
         - /utsharecde41c24/dir1/subdir1/file3
 =======
         - pyacrstoragecde41c24.file.core.windows.net
+<<<<<<< HEAD
         - /utsharecde41c24/dir1/subdir1/file2
 >>>>>>> Migrate Files to Devtools Framework
+=======
+        - /utsharecde41c24/dir1/subdir1/file3
+>>>>>>> ,pre recordingd and fixes
         - ''
         - ''
 - request:
@@ -773,8 +853,12 @@ interactions:
 =======
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
+<<<<<<< HEAD
       - Wed, 11 Sep 2019 21:44:20 GMT
 >>>>>>> Migrate Files to Devtools Framework
+=======
+      - Thu, 12 Sep 2019 07:00:37 GMT
+>>>>>>> ,pre recordingd and fixes
       x-ms-range:
       - bytes=0-4
       x-ms-version:
@@ -783,10 +867,14 @@ interactions:
       - update
     method: PUT
 <<<<<<< HEAD
+<<<<<<< HEAD
     uri: https://storagename.file.core.windows.net/utsharecde41c24/dir1/subdir1/file2?comp=range
 =======
     uri: https://pyacrstoragecde41c24.file.core.windows.net/utsharecde41c24/dir1/subdir1/file3?comp=range
 >>>>>>> Migrate Files to Devtools Framework
+=======
+    uri: https://pyacrstoragecde41c24.file.core.windows.net/utsharecde41c24/dir1/subdir1/file2?comp=range
+>>>>>>> ,pre recordingd and fixes
   response:
     body:
       string: ''
@@ -813,10 +901,10 @@ interactions:
       x-ms-request-id: c348e3ef-701a-00d9-38b3-6d2b71000000
 =======
       content-length: '0'
-      content-md5: eTafePeILBuqu8fUXcXaoA==
-      date: Wed, 11 Sep 2019 21:44:18 GMT
-      etag: '"0x8D73701334C53B5"'
-      last-modified: Wed, 11 Sep 2019 21:44:19 GMT
+      content-md5: /5zy1pDYiMszf2v0UmthMA==
+      date: Thu, 12 Sep 2019 07:00:35 GMT
+      etag: '"0x8D7374EE9BBB68C"'
+      last-modified: Thu, 12 Sep 2019 07:00:36 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
 >>>>>>> Migrate Files to Devtools Framework
       x-ms-request-server-encrypted: 'true'
@@ -833,8 +921,12 @@ interactions:
         - /utsharecde41c24/dir1/subdir1/file2
 =======
         - pyacrstoragecde41c24.file.core.windows.net
+<<<<<<< HEAD
         - /utsharecde41c24/dir1/subdir1/file3
 >>>>>>> Migrate Files to Devtools Framework
+=======
+        - /utsharecde41c24/dir1/subdir1/file2
+>>>>>>> ,pre recordingd and fixes
         - comp=range
         - ''
 - request:
@@ -854,8 +946,12 @@ interactions:
 =======
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
+<<<<<<< HEAD
       - Wed, 11 Sep 2019 21:44:20 GMT
 >>>>>>> Migrate Files to Devtools Framework
+=======
+      - Thu, 12 Sep 2019 07:00:38 GMT
+>>>>>>> ,pre recordingd and fixes
       x-ms-range:
       - bytes=0-4
       x-ms-version:
@@ -864,10 +960,14 @@ interactions:
       - update
     method: PUT
 <<<<<<< HEAD
+<<<<<<< HEAD
     uri: https://storagename.file.core.windows.net/utsharecde41c24/dir1/subdir1/file3?comp=range
 =======
     uri: https://pyacrstoragecde41c24.file.core.windows.net/utsharecde41c24/dir1/subdir1/file2?comp=range
 >>>>>>> Migrate Files to Devtools Framework
+=======
+    uri: https://pyacrstoragecde41c24.file.core.windows.net/utsharecde41c24/dir1/subdir1/file3?comp=range
+>>>>>>> ,pre recordingd and fixes
   response:
     body:
       string: ''
@@ -894,10 +994,10 @@ interactions:
       x-ms-request-id: e9c19c2b-b01a-0040-6cb3-6d54cc000000
 =======
       content-length: '0'
-      content-md5: /5zy1pDYiMszf2v0UmthMA==
-      date: Wed, 11 Sep 2019 21:44:18 GMT
-      etag: '"0x8D73701334D1728"'
-      last-modified: Wed, 11 Sep 2019 21:44:19 GMT
+      content-md5: eTafePeILBuqu8fUXcXaoA==
+      date: Thu, 12 Sep 2019 07:00:35 GMT
+      etag: '"0x8D7374EE9C3A735"'
+      last-modified: Thu, 12 Sep 2019 07:00:36 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
 >>>>>>> Migrate Files to Devtools Framework
       x-ms-request-server-encrypted: 'true'
@@ -914,8 +1014,12 @@ interactions:
         - /utsharecde41c24/dir1/subdir1/file3
 =======
         - pyacrstoragecde41c24.file.core.windows.net
+<<<<<<< HEAD
         - /utsharecde41c24/dir1/subdir1/file2
 >>>>>>> Migrate Files to Devtools Framework
+=======
+        - /utsharecde41c24/dir1/subdir1/file3
+>>>>>>> ,pre recordingd and fixes
         - comp=range
         - ''
 - request:
@@ -935,8 +1039,12 @@ interactions:
 =======
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
+<<<<<<< HEAD
       - Wed, 11 Sep 2019 21:44:20 GMT
 >>>>>>> Migrate Files to Devtools Framework
+=======
+      - Thu, 12 Sep 2019 07:00:38 GMT
+>>>>>>> ,pre recordingd and fixes
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -964,7 +1072,7 @@ interactions:
       x-ms-request-id: e9c19c2c-b01a-0040-6db3-6d54cc000000
 =======
       content-type: application/xml
-      date: Wed, 11 Sep 2019 21:44:18 GMT
+      date: Thu, 12 Sep 2019 07:00:35 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       transfer-encoding: chunked
 >>>>>>> Migrate Files to Devtools Framework

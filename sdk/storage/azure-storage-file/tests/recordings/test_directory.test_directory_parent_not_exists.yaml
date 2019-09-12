@@ -22,7 +22,7 @@ interactions:
 =======
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 11 Sep 2019 21:42:22 GMT
+      - Thu, 12 Sep 2019 07:05:19 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -34,11 +34,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 11 Sep 2019 21:42:21 GMT
+      - Thu, 12 Sep 2019 07:05:17 GMT
       etag:
-      - '"0x8D73700ED70C2BE"'
+      - '"0x8D7374F91C388AE"'
       last-modified:
-      - Wed, 11 Sep 2019 21:42:21 GMT
+      - Thu, 12 Sep 2019 07:05:18 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -58,8 +58,12 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
+<<<<<<< HEAD
       - Wed, 11 Sep 2019 21:42:23 GMT
 >>>>>>> Migrate Files to Devtools Framework
+=======
+      - Thu, 12 Sep 2019 07:05:19 GMT
+>>>>>>> ,pre recordingd and fixes
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -68,10 +72,14 @@ interactions:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ParentNotFound</Code><Message>The
 <<<<<<< HEAD
+<<<<<<< HEAD
         specified parent path does not exist.\nRequestId:f8feb8ab-201a-00d4-20b3-6de3a5000000\nTime:2019-09-17T23:53:19.3433764Z</Message></Error>"
 =======
         specified parent path does not exist.\nRequestId:efd5bb18-501a-0034-7fe9-685e07000000\nTime:2019-09-11T21:42:22.0393046Z</Message></Error>"
 >>>>>>> Migrate Files to Devtools Framework
+=======
+        specified parent path does not exist.\nRequestId:6e025ab4-201a-0121-1e38-69aadb000000\nTime:2019-09-12T07:05:18.4890298Z</Message></Error>"
+>>>>>>> ,pre recordingd and fixes
     headers:
       content-length:
       - '224'
@@ -88,7 +96,7 @@ interactions:
       - f8feb8ab-201a-00d4-20b3-6de3a5000000
 =======
       date:
-      - Wed, 11 Sep 2019 21:42:21 GMT
+      - Thu, 12 Sep 2019 07:05:18 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:

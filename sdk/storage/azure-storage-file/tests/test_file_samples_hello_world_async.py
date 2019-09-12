@@ -8,14 +8,12 @@
 
 import os
 import asyncio
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, FakeStorageAccount
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 
 from asyncfiletestcase import (
     AsyncFileTestCase
 )
-FAKE_STORAGE = FakeStorageAccount(
-    name='pyacrstorage',
-    id='')
+
 SOURCE_FILE = 'SampleSourceAsync.txt'
 
 
@@ -25,22 +23,12 @@ class TestHelloWorldSamples(AsyncFileTestCase):
         data = b"Lorem ipsum dolor sit amet, consectetur adipiscing elit"
         with open(SOURCE_FILE, 'wb') as stream:
             stream.write(data)
-
         super(TestHelloWorldSamples, self).setUp()
-
-    def tearDown(self):
-        if os.path.isfile(SOURCE_FILE):
-            try:
-                os.remove(SOURCE_FILE)
-            except:
-                pass
-
-        return super(TestHelloWorldSamples, self).tearDown()
 
     #--Begin File Samples-----------------------------------------------------------------
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_create_client_with_connection_string(self, resource_group, location, storage_account, storage_account_key):
         # Instantiate the FileServiceClient from a connection string
@@ -52,7 +40,7 @@ class TestHelloWorldSamples(AsyncFileTestCase):
         assert properties is not None
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_create_file_share(self, resource_group, location, storage_account, storage_account_key):
         # Instantiate the ShareClient from a connection string
@@ -73,7 +61,7 @@ class TestHelloWorldSamples(AsyncFileTestCase):
             await share.delete_share()
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_upload_file_to_share(self, resource_group, location, storage_account, storage_account_key):
         # Instantiate the ShareClient from a connection string

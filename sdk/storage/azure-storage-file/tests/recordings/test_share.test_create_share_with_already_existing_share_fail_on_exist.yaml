@@ -22,8 +22,12 @@ interactions:
 =======
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
+<<<<<<< HEAD
       - Wed, 11 Sep 2019 21:59:32 GMT
 >>>>>>> Migrate Files to Devtools Framework
+=======
+      - Thu, 12 Sep 2019 07:20:04 GMT
+>>>>>>> ,pre recordingd and fixes
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -47,11 +51,11 @@ interactions:
       - c8219a3a-201a-000f-2cb6-6d2598000000
 =======
       date:
-      - Wed, 11 Sep 2019 21:59:31 GMT
+      - Thu, 12 Sep 2019 07:20:03 GMT
       etag:
-      - '"0x8D7370353224F59"'
+      - '"0x8D73751A1248C9B"'
       last-modified:
-      - Wed, 11 Sep 2019 21:59:31 GMT
+      - Thu, 12 Sep 2019 07:20:03 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
 >>>>>>> Migrate Files to Devtools Framework
@@ -83,8 +87,12 @@ interactions:
 =======
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
+<<<<<<< HEAD
       - Wed, 11 Sep 2019 21:59:32 GMT
 >>>>>>> Migrate Files to Devtools Framework
+=======
+      - Thu, 12 Sep 2019 07:20:04 GMT
+>>>>>>> ,pre recordingd and fixes
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -93,10 +101,14 @@ interactions:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareAlreadyExists</Code><Message>The
 <<<<<<< HEAD
+<<<<<<< HEAD
         specified share already exists.\nRequestId:c8219a3c-201a-000f-2db6-6d2598000000\nTime:2019-09-18T00:16:50.1296567Z</Message></Error>"
 =======
         specified share already exists.\nRequestId:9ad389f0-e01a-000f-19ec-681c59000000\nTime:2019-09-11T21:59:31.6112069Z</Message></Error>"
 >>>>>>> Migrate Files to Devtools Framework
+=======
+        specified share already exists.\nRequestId:e148239a-201a-0080-353a-6993dc000000\nTime:2019-09-12T07:20:03.2751332Z</Message></Error>"
+>>>>>>> ,pre recordingd and fixes
     headers:
       content-length:
       - '222'
@@ -113,7 +125,7 @@ interactions:
       - c8219a3c-201a-000f-2db6-6d2598000000
 =======
       date:
-      - Wed, 11 Sep 2019 21:59:31 GMT
+      - Thu, 12 Sep 2019 07:20:03 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:

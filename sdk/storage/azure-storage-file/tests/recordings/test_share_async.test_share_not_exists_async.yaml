@@ -14,8 +14,12 @@ interactions:
 =======
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
+<<<<<<< HEAD
       - Wed, 11 Sep 2019 22:03:33 GMT
 >>>>>>> Migrate Files to Devtools Framework
+=======
+      - Thu, 12 Sep 2019 07:22:57 GMT
+>>>>>>> ,pre recordingd and fixes
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -23,6 +27,7 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareNotFound</Code><Message>The
+<<<<<<< HEAD
 <<<<<<< HEAD
         specified share does not exist.\nRequestId:da87d0f1-701a-005f-76b6-6de7c8000000\nTime:2019-09-18T00:17:05.7253714Z</Message></Error>"
     headers:
@@ -42,10 +47,13 @@ interactions:
       x-ms-request-id: da87d0f1-701a-005f-76b6-6de7c8000000
 =======
         specified share does not exist.\nRequestId:84922f0e-401a-002b-66ec-688517000000\nTime:2019-09-11T22:03:32.0237485Z</Message></Error>"
+=======
+        specified share does not exist.\nRequestId:e7cdde68-001a-0136-543a-696ab8000000\nTime:2019-09-12T07:22:55.7369401Z</Message></Error>"
+>>>>>>> ,pre recordingd and fixes
     headers:
       content-length: '217'
       content-type: application/xml
-      date: Wed, 11 Sep 2019 22:03:31 GMT
+      date: Thu, 12 Sep 2019 07:22:55 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: ShareNotFound
 >>>>>>> Migrate Files to Devtools Framework

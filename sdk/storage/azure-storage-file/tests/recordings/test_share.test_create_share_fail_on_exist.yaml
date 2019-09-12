@@ -22,8 +22,12 @@ interactions:
 =======
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
+<<<<<<< HEAD
       - Wed, 11 Sep 2019 21:59:26 GMT
 >>>>>>> Migrate Files to Devtools Framework
+=======
+      - Thu, 12 Sep 2019 07:20:02 GMT
+>>>>>>> ,pre recordingd and fixes
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -47,11 +51,11 @@ interactions:
       - eb7f680a-501a-0048-5ab6-6d4ec3000000
 =======
       date:
-      - Wed, 11 Sep 2019 21:59:25 GMT
+      - Thu, 12 Sep 2019 07:20:01 GMT
       etag:
-      - '"0x8D737034F8BB4AB"'
+      - '"0x8D73751A07E7A02"'
       last-modified:
-      - Wed, 11 Sep 2019 21:59:25 GMT
+      - Thu, 12 Sep 2019 07:20:02 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
 >>>>>>> Migrate Files to Devtools Framework

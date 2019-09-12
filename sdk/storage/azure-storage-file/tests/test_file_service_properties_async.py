@@ -11,7 +11,7 @@ import asyncio
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, FakeStorageAccount
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.storage.file.aio import (
     FileServiceClient,
     Metrics,
@@ -23,9 +23,7 @@ from asyncfiletestcase import (
     AsyncFileTestCase
 )
 
-FAKE_STORAGE = FakeStorageAccount(
-    name='pyacrstorage',
-    id='')
+
 
 # ------------------------------------------------------------------------------
 class AiohttpTestTransport(AioHttpTransport):
@@ -73,7 +71,7 @@ class FileServicePropertiesTest(AsyncFileTestCase):
 
     # --Test cases per service ---------------------------------------
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_file_service_properties_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -91,7 +89,7 @@ class FileServicePropertiesTest(AsyncFileTestCase):
 
     # --Test cases per feature ---------------------------------------
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_set_hour_metrics_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -106,7 +104,7 @@ class FileServicePropertiesTest(AsyncFileTestCase):
         self._assert_metrics_equal(received_props.hour_metrics, hour_metrics)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_set_minute_metrics_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -122,7 +120,7 @@ class FileServicePropertiesTest(AsyncFileTestCase):
         self._assert_metrics_equal(received_props.minute_metrics, minute_metrics)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_set_cors_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -154,7 +152,7 @@ class FileServicePropertiesTest(AsyncFileTestCase):
     # --Test cases for errors ---------------------------------------
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_too_many_cors_rules_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange

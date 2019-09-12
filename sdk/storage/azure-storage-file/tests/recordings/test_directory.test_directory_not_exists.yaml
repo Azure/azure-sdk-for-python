@@ -22,7 +22,7 @@ interactions:
 =======
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 11 Sep 2019 21:42:21 GMT
+      - Thu, 12 Sep 2019 06:58:43 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -34,11 +34,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 11 Sep 2019 21:42:20 GMT
+      - Thu, 12 Sep 2019 06:58:42 GMT
       etag:
-      - '"0x8D73700ECE79FBE"'
+      - '"0x8D7374EA5E35EA5"'
       last-modified:
-      - Wed, 11 Sep 2019 21:42:21 GMT
+      - Thu, 12 Sep 2019 06:58:42 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -58,8 +58,12 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
+<<<<<<< HEAD
       - Wed, 11 Sep 2019 21:42:22 GMT
 >>>>>>> Migrate Files to Devtools Framework
+=======
+      - Thu, 12 Sep 2019 06:58:44 GMT
+>>>>>>> ,pre recordingd and fixes
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -68,10 +72,14 @@ interactions:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ResourceNotFound</Code><Message>The
 <<<<<<< HEAD
+<<<<<<< HEAD
         specified resource does not exist.\nRequestId:2ace7c89-001a-00a1-1eb3-6d8889000000\nTime:2019-09-17T23:53:18.4491485Z</Message></Error>"
 =======
         specified resource does not exist.\nRequestId:194939bc-401a-00b8-71e9-68b627000000\nTime:2019-09-11T21:42:21.1395663Z</Message></Error>"
 >>>>>>> Migrate Files to Devtools Framework
+=======
+        specified resource does not exist.\nRequestId:07bea36c-501a-00f8-7e37-69fa7e000000\nTime:2019-09-12T06:58:43.4638655Z</Message></Error>"
+>>>>>>> ,pre recordingd and fixes
     headers:
       content-length:
       - '223'
@@ -88,7 +96,7 @@ interactions:
       - 2ace7c89-001a-00a1-1eb3-6d8889000000
 =======
       date:
-      - Wed, 11 Sep 2019 21:42:20 GMT
+      - Thu, 12 Sep 2019 06:58:43 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:

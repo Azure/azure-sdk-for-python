@@ -11,7 +11,7 @@ import asyncio
 import pytest
 import requests
 from azure.core.pipeline.transport import AioHttpTransport
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, FakeStorageAccount
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from multidict import CIMultiDict, CIMultiDictProxy
 from azure.core.exceptions import (
     HttpResponseError,
@@ -32,9 +32,7 @@ from asyncfiletestcase import (
 from filetestcase import LogCaptured
 
 # ------------------------------------------------------------------------------
-FAKE_STORAGE = FakeStorageAccount(
-    name='pyacrstorage',
-    id='')
+
 TEST_SHARE_PREFIX = 'share'
 
 
@@ -66,7 +64,7 @@ class StorageShareTest(AsyncFileTestCase):
 
     # --Test cases for shares -----------------------------------------
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_create_share_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -80,7 +78,7 @@ class StorageShareTest(AsyncFileTestCase):
         self.assertTrue(created)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_create_share_snapshot_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -98,7 +96,7 @@ class StorageShareTest(AsyncFileTestCase):
         self.assertIsNotNone(snapshot['last_modified'])
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_create_snapshot_with_metadata_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -128,7 +126,7 @@ class StorageShareTest(AsyncFileTestCase):
         self.assertEqual(snapshot_props.metadata, metadata2)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_delete_share_with_snapshots_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -145,7 +143,7 @@ class StorageShareTest(AsyncFileTestCase):
         self.assertIsNone(deleted)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_delete_snapshot_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -169,7 +167,7 @@ class StorageShareTest(AsyncFileTestCase):
         self.assertIsNone(deleted)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_create_share_fail_on_exist(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -183,7 +181,7 @@ class StorageShareTest(AsyncFileTestCase):
         self.assertTrue(created)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_create_share_with_already_existing_share_fail_on_exist_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -199,7 +197,7 @@ class StorageShareTest(AsyncFileTestCase):
         self.assertTrue(created)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_create_share_with_metadata_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -216,7 +214,7 @@ class StorageShareTest(AsyncFileTestCase):
         self.assertDictEqual(props.metadata, metadata)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_create_share_with_quota_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -232,7 +230,7 @@ class StorageShareTest(AsyncFileTestCase):
         self.assertEqual(props.quota, 1)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_share_exists_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -246,7 +244,7 @@ class StorageShareTest(AsyncFileTestCase):
         self.assertTrue(exists)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_share_not_exists_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -260,7 +258,7 @@ class StorageShareTest(AsyncFileTestCase):
         # Assert
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_share_snapshot_exists_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -276,7 +274,7 @@ class StorageShareTest(AsyncFileTestCase):
         self.assertTrue(exists)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_share_snapshot_not_exists_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -292,7 +290,7 @@ class StorageShareTest(AsyncFileTestCase):
         # Assert
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_unicode_create_share_unicode_name_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -308,7 +306,7 @@ class StorageShareTest(AsyncFileTestCase):
             # Assert
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_list_shares_no_options_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -326,7 +324,7 @@ class StorageShareTest(AsyncFileTestCase):
         self.assert_named_item_in_container(shares, share.share_name)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_list_shares_with_snapshot_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -350,7 +348,7 @@ class StorageShareTest(AsyncFileTestCase):
         self.assert_named_item_in_container(all_shares, snapshot2['snapshot'])
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_list_shares_with_prefix_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -370,7 +368,7 @@ class StorageShareTest(AsyncFileTestCase):
         self.assertIsNone(shares[0].metadata)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_list_shares_with_include_metadata_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -393,7 +391,7 @@ class StorageShareTest(AsyncFileTestCase):
 
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_list_shares_with_num_results_and_marker_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -428,7 +426,7 @@ class StorageShareTest(AsyncFileTestCase):
         self.assert_named_item_in_container(shares2, share_names[3])
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_set_share_metadata_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -445,7 +443,7 @@ class StorageShareTest(AsyncFileTestCase):
         self.assertDictEqual(md, metadata)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_get_share_metadata_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -462,7 +460,7 @@ class StorageShareTest(AsyncFileTestCase):
         self.assertDictEqual(props.metadata, metadata)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_get_share_metadata_with_snapshot_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -481,7 +479,7 @@ class StorageShareTest(AsyncFileTestCase):
         self.assertDictEqual(props.metadata, metadata)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_set_share_properties_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -497,7 +495,7 @@ class StorageShareTest(AsyncFileTestCase):
         self.assertEqual(props.quota, 1)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_delete_share_with_existing_share_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -512,7 +510,7 @@ class StorageShareTest(AsyncFileTestCase):
         self.assertIsNone(deleted)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_delete_share_with_existing_share_fail_not_exist_async(self, resource_group, location, storage_account, storage_account_key):
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
@@ -526,7 +524,7 @@ class StorageShareTest(AsyncFileTestCase):
             log_as_str = log_captured.getvalue()
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_delete_share_with_non_existing_share_async(self, resource_group, location, storage_account, storage_account_key):
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
@@ -541,7 +539,7 @@ class StorageShareTest(AsyncFileTestCase):
             self.assertTrue('ERROR' not in log_as_str)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_delete_share_with_non_existing_share_fail_not_exist_async(self, resource_group, location, storage_account, storage_account_key):
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
@@ -555,7 +553,7 @@ class StorageShareTest(AsyncFileTestCase):
             log_as_str = log_captured.getvalue()
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_get_share_stats_async(self, resource_group, location, storage_account, storage_account_key):
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
@@ -569,7 +567,7 @@ class StorageShareTest(AsyncFileTestCase):
         self.assertEqual(share_usage, 0)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_set_share_acl_async(self, resource_group, location, storage_account, storage_account_key):
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
@@ -584,7 +582,7 @@ class StorageShareTest(AsyncFileTestCase):
         self.assertIsNotNone(acl)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_set_share_acl_with_empty_signed_identifiers_async(self, resource_group, location, storage_account, storage_account_key):
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
@@ -600,7 +598,7 @@ class StorageShareTest(AsyncFileTestCase):
         self.assertEqual(len(acl.get('signed_identifiers')), 0)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_set_share_acl_with_signed_identifiers_async(self, resource_group, location, storage_account, storage_account_key):
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
@@ -624,7 +622,7 @@ class StorageShareTest(AsyncFileTestCase):
         self.assertEqual(acl['signed_identifiers'][0].id, 'testid')
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_set_share_acl_too_many_ids_async(self, resource_group, location, storage_account, storage_account_key):
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
@@ -645,7 +643,7 @@ class StorageShareTest(AsyncFileTestCase):
         )
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_list_directories_and_files_async(self, resource_group, location, storage_account, storage_account_key):
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
@@ -672,7 +670,7 @@ class StorageShareTest(AsyncFileTestCase):
         self.assert_named_item_in_container(resp, 'file1')
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_list_directories_and_files_with_snapshot_async(self, resource_group, location, storage_account, storage_account_key):
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
@@ -702,7 +700,7 @@ class StorageShareTest(AsyncFileTestCase):
         self.assert_named_item_in_container(resp, 'dir2')
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_list_directories_and_files_with_num_results_async(self, resource_group, location, storage_account, storage_account_key):
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
@@ -727,7 +725,7 @@ class StorageShareTest(AsyncFileTestCase):
         self.assert_named_item_in_container(results, 'filea1')
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_list_directories_and_files_with_num_results_and_marker_async(self, resource_group, location, storage_account, storage_account_key):
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
@@ -762,7 +760,7 @@ class StorageShareTest(AsyncFileTestCase):
         self.assertEqual(generator2.continuation_token, None)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_list_directories_and_files_with_prefix_async(self, resource_group, location, storage_account, storage_account_key):
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
@@ -789,7 +787,7 @@ class StorageShareTest(AsyncFileTestCase):
         self.assert_named_item_in_container(resp, 'pref_dir3')
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_shared_access_share_async(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
@@ -824,7 +822,7 @@ class StorageShareTest(AsyncFileTestCase):
         self.assertEqual(data, response.content)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def _test_create_permission_for_share(self, resource_group, location, storage_account, storage_account_key):
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
@@ -841,4 +839,4 @@ class StorageShareTest(AsyncFileTestCase):
         permission_key2 = await share_client.create_permission_for_share(server_returned_permission)
         # the permission key obtained from user_given_permission should be the same as the permission key obtained from
         # server returned permission
-        self.assertEquals(permission_key, permission_key2)
+        self.assertEqual(permission_key, permission_key2)

@@ -8,19 +8,17 @@
 
 from datetime import datetime, timedelta
 
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, FakeStorageAccount
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 
 from filetestcase import (
     FileTestCase
 )
-FAKE_STORAGE = FakeStorageAccount(
-    name='pyacrstorage',
-    id='')
+
 
 class TestFileAuthSamples(FileTestCase):
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_auth_connection_string(self, resource_group, location, storage_account, storage_account_key):
         connection_string = self.connection_string(storage_account, storage_account_key)
         # Instantiate the FileServiceClient from a connection string
@@ -34,7 +32,7 @@ class TestFileAuthSamples(FileTestCase):
         assert properties is not None
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_auth_shared_key(self, resource_group, location, storage_account, storage_account_key):
         url = self._account_url(storage_account.name)
         connection_string = self.connection_string(storage_account, storage_account_key)
@@ -49,7 +47,7 @@ class TestFileAuthSamples(FileTestCase):
         assert account_info is not None
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_auth_shared_access_signature(self, resource_group, location, storage_account, storage_account_key):
         connection_string = self.connection_string(storage_account, storage_account_key)
         # SAS URL is calculated from storage key, so this test runs live only

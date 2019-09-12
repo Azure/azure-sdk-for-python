@@ -3,6 +3,7 @@ interactions:
     body: null
     headers:
       User-Agent:
+<<<<<<< HEAD
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
@@ -14,10 +15,20 @@ interactions:
       - '2019-02-02'
     method: PUT
     uri: https://storagename.file.core.windows.net/utshare5db41615?restype=share
+=======
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Thu, 12 Sep 2019 07:11:14 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://pyacrstorage5db41615.file.core.windows.net/utshare5db41615?restype=share
+>>>>>>> ,pre recordingd and fixes
   response:
     body:
       string: ''
     headers:
+<<<<<<< HEAD
       ? !!python/object/new:multidict._istr.istr
       - Content-Length
       : '0'
@@ -34,6 +45,13 @@ interactions:
       - Server
       : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id: 28d8225e-a01a-00e5-3eb3-6d02b6000000
+=======
+      content-length: '0'
+      date: Thu, 12 Sep 2019 07:11:13 GMT
+      etag: '"0x8D7375065923EEB"'
+      last-modified: Thu, 12 Sep 2019 07:11:13 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+>>>>>>> ,pre recordingd and fixes
       x-ms-version: '2019-02-02'
     status:
       code: 201
@@ -42,7 +60,11 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
+<<<<<<< HEAD
         - emilydevtest.file.core.windows.net
+=======
+        - pyacrstorage5db41615.file.core.windows.net
+>>>>>>> ,pre recordingd and fixes
         - /utshare5db41615
         - restype=share
         - ''
@@ -50,6 +72,7 @@ interactions:
     body: null
     headers:
       User-Agent:
+<<<<<<< HEAD
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
@@ -59,6 +82,13 @@ interactions:
       - '2048'
       x-ms-date:
       - Tue, 17 Sep 2019 23:57:43 GMT
+=======
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-content-length:
+      - '2048'
+      x-ms-date:
+      - Thu, 12 Sep 2019 07:11:15 GMT
+>>>>>>> ,pre recordingd and fixes
       x-ms-file-attributes:
       - none
       x-ms-file-creation-time:
@@ -72,11 +102,16 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
+<<<<<<< HEAD
     uri: https://storagename.file.core.windows.net/utshare5db41615/file5db41615
+=======
+    uri: https://pyacrstorage5db41615.file.core.windows.net/utshare5db41615/file5db41615
+>>>>>>> ,pre recordingd and fixes
   response:
     body:
       string: ''
     headers:
+<<<<<<< HEAD
       ? !!python/object/new:multidict._istr.istr
       - Content-Length
       : '0'
@@ -100,6 +135,20 @@ interactions:
       x-ms-file-parent-id: '0'
       x-ms-file-permission-key: 4099112195243312672*10394889115079208622
       x-ms-request-id: 763184dd-101a-00bd-4eb3-6ddae9000000
+=======
+      content-length: '0'
+      date: Thu, 12 Sep 2019 07:11:13 GMT
+      etag: '"0x8D7375065B94D73"'
+      last-modified: Thu, 12 Sep 2019 07:11:13 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-file-attributes: Archive
+      x-ms-file-change-time: '2019-09-12T07:11:13.9768691Z'
+      x-ms-file-creation-time: '2019-09-12T07:11:13.9768691Z'
+      x-ms-file-id: '13835128424026341376'
+      x-ms-file-last-write-time: '2019-09-12T07:11:13.9768691Z'
+      x-ms-file-parent-id: '0'
+      x-ms-file-permission-key: 6692777138468208547*17600468774885873453
+>>>>>>> ,pre recordingd and fixes
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2019-02-02'
     status:
@@ -109,7 +158,11 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
+<<<<<<< HEAD
         - emilydevtest.file.core.windows.net
+=======
+        - pyacrstorage5db41615.file.core.windows.net
+>>>>>>> ,pre recordingd and fixes
         - /utshare5db41615/file5db41615
         - ''
         - ''
@@ -121,11 +174,17 @@ interactions:
       Content-Type:
       - application/octet-stream
       User-Agent:
+<<<<<<< HEAD
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
       - f0c2b48a-d9a6-11e9-8eab-001a7dda7113
       x-ms-date:
       - Tue, 17 Sep 2019 23:57:43 GMT
+=======
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Thu, 12 Sep 2019 07:11:15 GMT
+>>>>>>> ,pre recordingd and fixes
       x-ms-range:
       - bytes=0-511
       x-ms-version:
@@ -133,11 +192,16 @@ interactions:
       x-ms-write:
       - update
     method: PUT
+<<<<<<< HEAD
     uri: https://storagename.file.core.windows.net/utshare5db41615/file5db41615?comp=range
+=======
+    uri: https://pyacrstorage5db41615.file.core.windows.net/utshare5db41615/file5db41615?comp=range
+>>>>>>> ,pre recordingd and fixes
   response:
     body:
       string: ''
     headers:
+<<<<<<< HEAD
       ? !!python/object/new:multidict._istr.istr
       - Content-Length
       : '0'
@@ -157,6 +221,14 @@ interactions:
       - Server
       : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id: 763184de-101a-00bd-4fb3-6ddae9000000
+=======
+      content-length: '0'
+      content-md5: pTsTLZHyQ+et6NksJ1OHxg==
+      date: Thu, 12 Sep 2019 07:11:13 GMT
+      etag: '"0x8D7375065C2EC23"'
+      last-modified: Thu, 12 Sep 2019 07:11:14 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+>>>>>>> ,pre recordingd and fixes
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2019-02-02'
     status:
@@ -166,7 +238,11 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
+<<<<<<< HEAD
         - emilydevtest.file.core.windows.net
+=======
+        - pyacrstorage5db41615.file.core.windows.net
+>>>>>>> ,pre recordingd and fixes
         - /utshare5db41615/file5db41615
         - comp=range
         - ''
@@ -178,11 +254,17 @@ interactions:
       Content-Type:
       - application/octet-stream
       User-Agent:
+<<<<<<< HEAD
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
       - f0c549b6-d9a6-11e9-bd84-001a7dda7113
       x-ms-date:
       - Tue, 17 Sep 2019 23:57:43 GMT
+=======
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Thu, 12 Sep 2019 07:11:15 GMT
+>>>>>>> ,pre recordingd and fixes
       x-ms-range:
       - bytes=1024-1535
       x-ms-version:
@@ -190,11 +272,16 @@ interactions:
       x-ms-write:
       - update
     method: PUT
+<<<<<<< HEAD
     uri: https://storagename.file.core.windows.net/utshare5db41615/file5db41615?comp=range
+=======
+    uri: https://pyacrstorage5db41615.file.core.windows.net/utshare5db41615/file5db41615?comp=range
+>>>>>>> ,pre recordingd and fixes
   response:
     body:
       string: ''
     headers:
+<<<<<<< HEAD
       ? !!python/object/new:multidict._istr.istr
       - Content-Length
       : '0'
@@ -214,6 +301,14 @@ interactions:
       - Server
       : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id: 763184df-101a-00bd-50b3-6ddae9000000
+=======
+      content-length: '0'
+      content-md5: pTsTLZHyQ+et6NksJ1OHxg==
+      date: Thu, 12 Sep 2019 07:11:13 GMT
+      etag: '"0x8D7375065CEAE19"'
+      last-modified: Thu, 12 Sep 2019 07:11:14 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+>>>>>>> ,pre recordingd and fixes
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2019-02-02'
     status:
@@ -223,7 +318,11 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
+<<<<<<< HEAD
         - emilydevtest.file.core.windows.net
+=======
+        - pyacrstorage5db41615.file.core.windows.net
+>>>>>>> ,pre recordingd and fixes
         - /utshare5db41615/file5db41615
         - comp=range
         - ''
@@ -231,6 +330,7 @@ interactions:
     body: null
     headers:
       User-Agent:
+<<<<<<< HEAD
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
@@ -242,10 +342,20 @@ interactions:
       - '2019-02-02'
     method: PUT
     uri: https://storagename.file.core.windows.net/utshare5db41615?restype=share&comp=snapshot
+=======
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Thu, 12 Sep 2019 07:11:15 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://pyacrstorage5db41615.file.core.windows.net/utshare5db41615?restype=share&comp=snapshot
+>>>>>>> ,pre recordingd and fixes
   response:
     body:
       string: ''
     headers:
+<<<<<<< HEAD
       ? !!python/object/new:multidict._istr.istr
       - Content-Length
       : '0'
@@ -263,6 +373,14 @@ interactions:
       : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id: c5e31a37-f01a-0051-08b3-6dce78000000
       x-ms-snapshot: '2019-09-17T23:57:43.0000000Z'
+=======
+      content-length: '0'
+      date: Thu, 12 Sep 2019 07:11:14 GMT
+      etag: '"0x8D7375065923EEB"'
+      last-modified: Thu, 12 Sep 2019 07:11:13 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-snapshot: '2019-09-12T07:11:14.0000000Z'
+>>>>>>> ,pre recordingd and fixes
       x-ms-version: '2019-02-02'
     status:
       code: 201
@@ -271,7 +389,11 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
+<<<<<<< HEAD
         - emilydevtest.file.core.windows.net
+=======
+        - pyacrstorage5db41615.file.core.windows.net
+>>>>>>> ,pre recordingd and fixes
         - /utshare5db41615
         - restype=share&comp=snapshot
         - ''
@@ -279,6 +401,7 @@ interactions:
     body: null
     headers:
       User-Agent:
+<<<<<<< HEAD
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
@@ -290,10 +413,20 @@ interactions:
       - '2019-02-02'
     method: DELETE
     uri: https://storagename.file.core.windows.net/utshare5db41615/file5db41615
+=======
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Thu, 12 Sep 2019 07:11:16 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: DELETE
+    uri: https://pyacrstorage5db41615.file.core.windows.net/utshare5db41615/file5db41615
+>>>>>>> ,pre recordingd and fixes
   response:
     body:
       string: ''
     headers:
+<<<<<<< HEAD
       ? !!python/object/new:multidict._istr.istr
       - Content-Length
       : '0'
@@ -304,6 +437,11 @@ interactions:
       - Server
       : Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-request-id: 763184e2-101a-00bd-52b3-6ddae9000000
+=======
+      content-length: '0'
+      date: Thu, 12 Sep 2019 07:11:14 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+>>>>>>> ,pre recordingd and fixes
       x-ms-version: '2019-02-02'
     status:
       code: 202
@@ -312,7 +450,11 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
+<<<<<<< HEAD
         - emilydevtest.file.core.windows.net
+=======
+        - pyacrstorage5db41615.file.core.windows.net
+>>>>>>> ,pre recordingd and fixes
         - /utshare5db41615/file5db41615
         - ''
         - ''
@@ -322,6 +464,7 @@ interactions:
       Accept:
       - application/xml
       User-Agent:
+<<<<<<< HEAD
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
@@ -333,10 +476,20 @@ interactions:
       - '2019-02-02'
     method: GET
     uri: https://storagename.file.core.windows.net/utshare5db41615/file5db41615?sharesnapshot=2019-09-17T23:57:43.0000000Z&comp=rangelist
+=======
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Thu, 12 Sep 2019 07:11:16 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: GET
+    uri: https://pyacrstorage5db41615.file.core.windows.net/utshare5db41615/file5db41615?sharesnapshot=2019-09-12T07:11:14.0000000Z&comp=rangelist
+>>>>>>> ,pre recordingd and fixes
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Ranges><Range><Start>0</Start><End>511</End></Range><Range><Start>1024</Start><End>1535</End></Range></Ranges>"
     headers:
+<<<<<<< HEAD
       ? !!python/object/new:multidict._istr.istr
       - Content-Type
       : application/xml
@@ -357,6 +510,15 @@ interactions:
       : chunked
       x-ms-content-length: '2048'
       x-ms-request-id: 91af88e7-901a-009c-3bb3-6dfe92000000
+=======
+      content-type: application/xml
+      date: Thu, 12 Sep 2019 07:11:13 GMT
+      etag: '"0x8D7375065CEAE19"'
+      last-modified: Thu, 12 Sep 2019 07:11:14 GMT
+      server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      transfer-encoding: chunked
+      x-ms-content-length: '2048'
+>>>>>>> ,pre recordingd and fixes
       x-ms-version: '2019-02-02'
     status:
       code: 200
@@ -365,8 +527,14 @@ interactions:
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
         - https
+<<<<<<< HEAD
         - emilydevtest.file.core.windows.net
         - /utshare5db41615/file5db41615
         - sharesnapshot=2019-09-17T23:57:43.0000000Z&comp=rangelist
+=======
+        - pyacrstorage5db41615.file.core.windows.net
+        - /utshare5db41615/file5db41615
+        - sharesnapshot=2019-09-12T07:11:14.0000000Z&comp=rangelist
+>>>>>>> ,pre recordingd and fixes
         - ''
 version: 1

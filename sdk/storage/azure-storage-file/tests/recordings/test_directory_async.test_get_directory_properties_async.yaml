@@ -14,8 +14,12 @@ interactions:
 =======
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
+<<<<<<< HEAD
       - Wed, 11 Sep 2019 21:44:07 GMT
 >>>>>>> Migrate Files to Devtools Framework
+=======
+      - Thu, 12 Sep 2019 07:06:55 GMT
+>>>>>>> ,pre recordingd and fixes
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -43,9 +47,9 @@ interactions:
       x-ms-request-id: 98f589e6-a01a-0001-57b3-6d0c28000000
 =======
       content-length: '0'
-      date: Wed, 11 Sep 2019 21:44:05 GMT
-      etag: '"0x8D737012BEDF6EB"'
-      last-modified: Wed, 11 Sep 2019 21:44:06 GMT
+      date: Thu, 12 Sep 2019 07:06:53 GMT
+      etag: '"0x8D7374FCAE4CF74"'
+      last-modified: Thu, 12 Sep 2019 07:06:54 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
 >>>>>>> Migrate Files to Devtools Framework
       x-ms-version: '2019-02-02'
@@ -75,8 +79,12 @@ interactions:
 =======
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
+<<<<<<< HEAD
       - Wed, 11 Sep 2019 21:44:08 GMT
 >>>>>>> Migrate Files to Devtools Framework
+=======
+      - Thu, 12 Sep 2019 07:06:55 GMT
+>>>>>>> ,pre recordingd and fixes
       x-ms-file-attributes:
       - none
       x-ms-file-creation-time:
@@ -119,18 +127,22 @@ interactions:
       x-ms-request-id: 98f589e9-a01a-0001-58b3-6d0c28000000
 =======
       content-length: '0'
-      date: Wed, 11 Sep 2019 21:44:05 GMT
-      etag: '"0x8D737012BFA1871"'
-      last-modified: Wed, 11 Sep 2019 21:44:06 GMT
+      date: Thu, 12 Sep 2019 07:06:53 GMT
+      etag: '"0x8D7374FCAF4B171"'
+      last-modified: Thu, 12 Sep 2019 07:06:54 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-file-attributes: Directory
-      x-ms-file-change-time: '2019-09-11T21:44:06.8520049Z'
-      x-ms-file-creation-time: '2019-09-11T21:44:06.8520049Z'
+      x-ms-file-change-time: '2019-09-12T07:06:54.3192433Z'
+      x-ms-file-creation-time: '2019-09-12T07:06:54.3192433Z'
       x-ms-file-id: '13835128424026341376'
-      x-ms-file-last-write-time: '2019-09-11T21:44:06.8520049Z'
+      x-ms-file-last-write-time: '2019-09-12T07:06:54.3192433Z'
       x-ms-file-parent-id: '0'
+<<<<<<< HEAD
       x-ms-file-permission-key: 6161364758159121470*4421046686927080375
 >>>>>>> Migrate Files to Devtools Framework
+=======
+      x-ms-file-permission-key: 14098579175391014579*12354236910929787194
+>>>>>>> ,pre recordingd and fixes
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2019-02-02'
     status:
@@ -159,8 +171,12 @@ interactions:
 =======
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
+<<<<<<< HEAD
       - Wed, 11 Sep 2019 21:44:08 GMT
 >>>>>>> Migrate Files to Devtools Framework
+=======
+      - Thu, 12 Sep 2019 07:06:55 GMT
+>>>>>>> ,pre recordingd and fixes
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -195,18 +211,22 @@ interactions:
       x-ms-request-id: 98f589ee-a01a-0001-59b3-6d0c28000000
 =======
       content-length: '0'
-      date: Wed, 11 Sep 2019 21:44:05 GMT
-      etag: '"0x8D737012BFA1871"'
-      last-modified: Wed, 11 Sep 2019 21:44:06 GMT
+      date: Thu, 12 Sep 2019 07:06:53 GMT
+      etag: '"0x8D7374FCAF4B171"'
+      last-modified: Thu, 12 Sep 2019 07:06:54 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-file-attributes: Directory
-      x-ms-file-change-time: '2019-09-11T21:44:06.8520049Z'
-      x-ms-file-creation-time: '2019-09-11T21:44:06.8520049Z'
+      x-ms-file-change-time: '2019-09-12T07:06:54.3192433Z'
+      x-ms-file-creation-time: '2019-09-12T07:06:54.3192433Z'
       x-ms-file-id: '13835128424026341376'
-      x-ms-file-last-write-time: '2019-09-11T21:44:06.8520049Z'
+      x-ms-file-last-write-time: '2019-09-12T07:06:54.3192433Z'
       x-ms-file-parent-id: '0'
+<<<<<<< HEAD
       x-ms-file-permission-key: 6161364758159121470*4421046686927080375
 >>>>>>> Migrate Files to Devtools Framework
+=======
+      x-ms-file-permission-key: 14098579175391014579*12354236910929787194
+>>>>>>> ,pre recordingd and fixes
       x-ms-server-encrypted: 'true'
       x-ms-version: '2019-02-02'
     status:

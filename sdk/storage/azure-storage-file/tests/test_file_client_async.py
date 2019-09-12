@@ -7,7 +7,7 @@ import unittest
 import platform
 import asyncio
 from azure.core.pipeline.transport import AioHttpTransport
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, FakeStorageAccount
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from multidict import CIMultiDict, CIMultiDictProxy
 from azure.storage.file import VERSION
 from azure.storage.file.aio import (
@@ -22,9 +22,7 @@ from asyncfiletestcase import (
 #from azure.storage.common import TokenCredential
 
 # ------------------------------------------------------------------------------
-FAKE_STORAGE = FakeStorageAccount(
-    name='pyacrstorage',
-    id='')
+
 SERVICES = {
     FileServiceClient: 'file',
     ShareClient: 'file',
@@ -66,7 +64,7 @@ class StorageFileClientTest(AsyncFileTestCase):
 
     # --Direct Parameters Test Cases --------------------------------------------
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_service_with_key_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
 
@@ -81,7 +79,7 @@ class StorageFileClientTest(AsyncFileTestCase):
             self.assertEqual(service.scheme, 'https')
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_service_with_sas_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
 
@@ -97,7 +95,7 @@ class StorageFileClientTest(AsyncFileTestCase):
             self.assertTrue(service.url.endswith(self.sas_token))
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_service_with_token_async(self, resource_group, location, storage_account, storage_account_key):
         for service_type in SERVICES:
             # Act
@@ -107,7 +105,7 @@ class StorageFileClientTest(AsyncFileTestCase):
                              share='foo', directory_path='bar', file_path='baz')
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_service_china_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         url = self._account_url(storage_account.name).replace('core.windows.net', 'core.chinacloudapi.cn')
@@ -126,7 +124,7 @@ class StorageFileClientTest(AsyncFileTestCase):
             self.assertEqual(service.secondary_hostname,
                              '{}-secondary.{}.core.chinacloudapi.cn'.format(storage_account.name, service_type[1]))
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_service_protocol_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         url = self._account_url(storage_account.name).replace('https', 'http')
@@ -140,7 +138,7 @@ class StorageFileClientTest(AsyncFileTestCase):
             self.assertEqual(service.scheme, 'http')
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_service_empty_key_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         for service_type in SERVICES:
@@ -155,7 +153,7 @@ class StorageFileClientTest(AsyncFileTestCase):
                 'You need to provide either an account key or SAS token when creating a storage service.')
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_service_missing_arguments_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
 
@@ -165,7 +163,7 @@ class StorageFileClientTest(AsyncFileTestCase):
                 service_type(None)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_service_with_socket_timeout_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
 
@@ -186,7 +184,7 @@ class StorageFileClientTest(AsyncFileTestCase):
     # --Connection String Test Cases --------------------------------------------
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_service_with_connection_string_key_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         conn_string = 'AccountName={};AccountKey={};'.format(storage_account.name, storage_account_key)
@@ -201,7 +199,7 @@ class StorageFileClientTest(AsyncFileTestCase):
             self.assertEqual(service.scheme, 'https')
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_service_with_connection_string_sas_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         conn_string = 'AccountName={};SharedAccessSignature={};'.format(storage_account.name, self.sas_token)
@@ -217,7 +215,7 @@ class StorageFileClientTest(AsyncFileTestCase):
             self.assertTrue(service.url.endswith(self.sas_token))
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_service_with_conn_str_endpnt_protocol(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         conn_string = 'AccountName={};AccountKey={};DefaultEndpointsProtocol=http;EndpointSuffix=core.chinacloudapi.cn;'.format(
@@ -238,7 +236,7 @@ class StorageFileClientTest(AsyncFileTestCase):
             self.assertEqual(service.scheme, 'http')
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_service_with_connection_string_emulated_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         for service_type in SERVICES.items():
@@ -250,7 +248,7 @@ class StorageFileClientTest(AsyncFileTestCase):
                     conn_string, share='foo', directory_path='bar', file_path='baz', transport=AiohttpTestTransport())
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_service_with_conn_str_fails_if_sey_without_prim(self, resource_group, location, storage_account, storage_account_key):
         for service_type in SERVICES.items():
             # Arrange
@@ -265,7 +263,7 @@ class StorageFileClientTest(AsyncFileTestCase):
                     conn_string, share='foo', directory_path='bar', file_path='baz')
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_create_service_with_conn_str_succeeds_if_sec_with_pri(self, resource_group, location, storage_account, storage_account_key):
         for service_type in SERVICES.items():
             # Arrange
@@ -286,7 +284,7 @@ class StorageFileClientTest(AsyncFileTestCase):
             self.assertEqual(service.secondary_hostname, 'www-sec.mydomain.com')
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_user_agent_default_async(self, resource_group, location, storage_account, storage_account_key):
         service = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
@@ -303,7 +301,7 @@ class StorageFileClientTest(AsyncFileTestCase):
         await service.get_service_properties(raw_response_hook=callback)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_user_agent_custom_async(self, resource_group, location, storage_account, storage_account_key):
         custom_app = "TestApp/v1.0"
@@ -333,7 +331,7 @@ class StorageFileClientTest(AsyncFileTestCase):
         await service.get_service_properties(raw_response_hook=callback2, user_agent="TestApp/v2.0")
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_user_agent_append_async(self, resource_group, location, storage_account, storage_account_key):
         service = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())

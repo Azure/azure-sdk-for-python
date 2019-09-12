@@ -11,7 +11,7 @@ import unittest
 
 import pytest
 from azure.core.exceptions import HttpResponseError
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, FakeStorageAccount
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.storage.file import (
     FileClient,
     FileServiceClient,
@@ -22,9 +22,7 @@ from filetestcase import (
 )
 
 # ------------------------------------------------------------------------------
-FAKE_STORAGE = FakeStorageAccount(
-    name='pyacrstorage',
-    id='')
+
 TEST_FILE_PREFIX = 'file'
 FILE_PATH = 'file_output.temp.dat'
 MAX_SINGLE_GET_SIZE = 32 * 1024
@@ -36,6 +34,7 @@ class StorageGetFileTest(FileTestCase):
     # --Helpers-----------------------------------------------------------------
     def setUp(self):
         self.byte_data = self.get_random_bytes(64 * 1024 + 5)
+        super(StorageGetFileTest, self).setUp()
 
     def _setup(self, fsc, url, credential):
         self.share_name = self.get_resource_name('utshare')
@@ -81,7 +80,7 @@ class StorageGetFileTest(FileTestCase):
     # -- Get test cases for files ----------------------------------------------
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_unicode_get_file_unicode_data(self, resource_group, location, storage_account, storage_account_key):
         fsc = FileServiceClient(self._account_url(storage_account.name),
             credential=storage_account_key,
@@ -108,7 +107,7 @@ class StorageGetFileTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_unicode_get_file_binary_data(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name),
@@ -137,7 +136,7 @@ class StorageGetFileTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_get_file_no_content(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name),
@@ -165,7 +164,7 @@ class StorageGetFileTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_get_file_to_bytes(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -194,7 +193,7 @@ class StorageGetFileTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_get_file_to_bytes_with_progress(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -234,7 +233,7 @@ class StorageGetFileTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_get_file_to_bytes_non_parallel(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name),
@@ -270,7 +269,7 @@ class StorageGetFileTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_get_file_to_bytes_small(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name),
@@ -309,7 +308,7 @@ class StorageGetFileTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_get_file_with_iter(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -340,7 +339,7 @@ class StorageGetFileTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_get_file_to_stream(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -372,7 +371,7 @@ class StorageGetFileTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_get_file_to_stream_with_progress(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -417,7 +416,7 @@ class StorageGetFileTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_get_file_to_stream_non_parallel(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name),
@@ -458,7 +457,7 @@ class StorageGetFileTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_get_file_to_stream_small(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name),
@@ -501,7 +500,7 @@ class StorageGetFileTest(FileTestCase):
             progress)
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_get_file_to_stream_from_snapshot(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -544,7 +543,7 @@ class StorageGetFileTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_get_file_to_stream_with_progress_from_snapshot(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -600,7 +599,7 @@ class StorageGetFileTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_get_file_to_stream_non_parallel_from_snapshot(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name),
@@ -652,7 +651,7 @@ class StorageGetFileTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_get_file_to_stream_small_from_snapshot(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name),
@@ -708,7 +707,7 @@ class StorageGetFileTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_ranged_get_file_to_path(self, resource_group, location, storage_account, storage_account_key):
         fsc = FileServiceClient(self._account_url(storage_account.name),
             credential=storage_account_key,
@@ -742,7 +741,7 @@ class StorageGetFileTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_ranged_get_file_to_path_with_single_byte(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -776,7 +775,7 @@ class StorageGetFileTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_ranged_get_file_to_bytes_with_zero_byte(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name),
@@ -805,7 +804,7 @@ class StorageGetFileTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_ranged_get_file_to_path_with_progress(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -853,7 +852,7 @@ class StorageGetFileTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_ranged_get_file_to_path_small(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name),
@@ -882,7 +881,7 @@ class StorageGetFileTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_ranged_get_file_to_path_non_parallel(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name),
@@ -911,7 +910,7 @@ class StorageGetFileTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_ranged_get_file_to_path_invalid_range_parallel(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -949,7 +948,7 @@ class StorageGetFileTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_ranged_get_file_to_path_invalid_range_non_parallel(self, resource_group, location, storage_account, storage_account_key):
 
         # Arrange
@@ -984,7 +983,7 @@ class StorageGetFileTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_get_file_to_text(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -1015,7 +1014,7 @@ class StorageGetFileTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_get_file_to_text_with_progress(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -1058,7 +1057,7 @@ class StorageGetFileTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_get_file_to_text_non_parallel(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name),
@@ -1097,7 +1096,7 @@ class StorageGetFileTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_get_file_to_text_small(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name),
@@ -1136,7 +1135,7 @@ class StorageGetFileTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_get_file_to_text_with_encoding(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name),
@@ -1164,7 +1163,7 @@ class StorageGetFileTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_get_file_to_text_with_encoding_and_progress(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name),
@@ -1204,7 +1203,7 @@ class StorageGetFileTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_get_file_non_seekable(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name),
@@ -1234,7 +1233,7 @@ class StorageGetFileTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_get_file_non_seekable_parallel(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -1266,7 +1265,7 @@ class StorageGetFileTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_get_file_non_seekable_from_snapshot(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name),
@@ -1307,7 +1306,7 @@ class StorageGetFileTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_get_file_non_seekable_parallel_from_snapshot(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -1347,7 +1346,7 @@ class StorageGetFileTest(FileTestCase):
                     non_seekable_stream, max_concurrency=2)
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_get_file_exact_get_size(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name),
@@ -1386,7 +1385,7 @@ class StorageGetFileTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_get_file_exact_chunk_size(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -1429,7 +1428,7 @@ class StorageGetFileTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_get_file_with_md5(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
         if not self.is_live:
@@ -1457,7 +1456,7 @@ class StorageGetFileTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_get_file_range_with_md5(self, resource_group, location, storage_account, storage_account_key):
         pytest.skip("TODO: Verify the x-ms-file-permission value.")
         # parallel tests introduce random order of requests, can only run live
@@ -1495,7 +1494,7 @@ class StorageGetFileTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_get_file_server_encryption(self, resource_group, location, storage_account, storage_account_key):
 
         #Arrange
@@ -1523,7 +1522,7 @@ class StorageGetFileTest(FileTestCase):
         
 
     @ResourceGroupPreparer()          
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_get_file_properties_server_encryption(self, resource_group, location, storage_account, storage_account_key):
 
         # Arrange

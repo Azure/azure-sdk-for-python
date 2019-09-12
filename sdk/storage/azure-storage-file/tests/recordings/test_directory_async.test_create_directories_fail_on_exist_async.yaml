@@ -14,8 +14,12 @@ interactions:
 =======
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
+<<<<<<< HEAD
       - Wed, 11 Sep 2019 21:43:21 GMT
 >>>>>>> Migrate Files to Devtools Framework
+=======
+      - Thu, 12 Sep 2019 06:59:18 GMT
+>>>>>>> ,pre recordingd and fixes
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -43,9 +47,9 @@ interactions:
       x-ms-request-id: d6c64c99-e01a-003f-1ab3-6d9b57000000
 =======
       content-length: '0'
-      date: Wed, 11 Sep 2019 21:43:20 GMT
-      etag: '"0x8D73701104FE7DC"'
-      last-modified: Wed, 11 Sep 2019 21:43:20 GMT
+      date: Thu, 12 Sep 2019 06:59:17 GMT
+      etag: '"0x8D7374EBAA9DE85"'
+      last-modified: Thu, 12 Sep 2019 06:59:17 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
 >>>>>>> Migrate Files to Devtools Framework
       x-ms-version: '2019-02-02'
@@ -75,8 +79,12 @@ interactions:
 =======
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
+<<<<<<< HEAD
       - Wed, 11 Sep 2019 21:43:21 GMT
 >>>>>>> Migrate Files to Devtools Framework
+=======
+      - Thu, 12 Sep 2019 06:59:19 GMT
+>>>>>>> ,pre recordingd and fixes
       x-ms-file-attributes:
       - none
       x-ms-file-creation-time:
@@ -119,18 +127,22 @@ interactions:
       x-ms-request-id: d6c64c9c-e01a-003f-1bb3-6d9b57000000
 =======
       content-length: '0'
-      date: Wed, 11 Sep 2019 21:43:20 GMT
-      etag: '"0x8D7370110608330"'
-      last-modified: Wed, 11 Sep 2019 21:43:20 GMT
+      date: Thu, 12 Sep 2019 06:59:17 GMT
+      etag: '"0x8D7374EBACCE04E"'
+      last-modified: Thu, 12 Sep 2019 06:59:17 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-file-attributes: Directory
-      x-ms-file-change-time: '2019-09-11T21:43:20.5470000Z'
-      x-ms-file-creation-time: '2019-09-11T21:43:20.5470000Z'
+      x-ms-file-change-time: '2019-09-12T06:59:17.7180238Z'
+      x-ms-file-creation-time: '2019-09-12T06:59:17.7180238Z'
       x-ms-file-id: '13835128424026341376'
-      x-ms-file-last-write-time: '2019-09-11T21:43:20.5470000Z'
+      x-ms-file-last-write-time: '2019-09-12T06:59:17.7180238Z'
       x-ms-file-parent-id: '0'
+<<<<<<< HEAD
       x-ms-file-permission-key: 15776733473731818294*12837811534274438335
 >>>>>>> Migrate Files to Devtools Framework
+=======
+      x-ms-file-permission-key: 861147930902087566*7145048120548708359
+>>>>>>> ,pre recordingd and fixes
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2019-02-02'
     status:
@@ -159,8 +171,12 @@ interactions:
 =======
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
+<<<<<<< HEAD
       - Wed, 11 Sep 2019 21:43:21 GMT
 >>>>>>> Migrate Files to Devtools Framework
+=======
+      - Thu, 12 Sep 2019 06:59:19 GMT
+>>>>>>> ,pre recordingd and fixes
       x-ms-file-attributes:
       - none
       x-ms-file-creation-time:
@@ -176,6 +192,7 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ResourceAlreadyExists</Code><Message>The
+<<<<<<< HEAD
 <<<<<<< HEAD
         specified resource already exists.\nRequestId:d6c64c9d-e01a-003f-1cb3-6d9b57000000\nTime:2019-09-17T23:53:10.2993214Z</Message></Error>"
     headers:
@@ -195,10 +212,13 @@ interactions:
       x-ms-request-id: d6c64c9d-e01a-003f-1cb3-6d9b57000000
 =======
         specified resource already exists.\nRequestId:b1c54bd1-901a-00e0-6ce9-680280000000\nTime:2019-09-11T21:43:20.5943127Z</Message></Error>"
+=======
+        specified resource already exists.\nRequestId:e2d374f0-d01a-0046-6a37-69d49c000000\nTime:2019-09-12T06:59:17.8518594Z</Message></Error>"
+>>>>>>> ,pre recordingd and fixes
     headers:
       content-length: '228'
       content-type: application/xml
-      date: Wed, 11 Sep 2019 21:43:20 GMT
+      date: Thu, 12 Sep 2019 06:59:17 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: ResourceAlreadyExists
 >>>>>>> Migrate Files to Devtools Framework

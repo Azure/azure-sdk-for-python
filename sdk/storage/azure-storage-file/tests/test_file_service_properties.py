@@ -14,7 +14,7 @@ from azure.storage.file import (
     CorsRule,
     RetentionPolicy,
 )
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, FakeStorageAccount
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from filetestcase import (
     FileTestCase,
 )
@@ -22,9 +22,7 @@ from filetestcase import (
 
 # ------------------------------------------------------------------------------
 
-FAKE_STORAGE = FakeStorageAccount(
-    name='pyacrstorage',
-    id='')
+
 
 
 class FileServicePropertiesTest(FileTestCase):
@@ -61,7 +59,7 @@ class FileServicePropertiesTest(FileTestCase):
 
     # --Test cases per service ---------------------------------------
     @ResourceGroupPreparer()               
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_file_service_properties(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
@@ -79,7 +77,7 @@ class FileServicePropertiesTest(FileTestCase):
 
     # --Test cases per feature ---------------------------------------
     @ResourceGroupPreparer()               
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_set_hour_metrics(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
@@ -93,7 +91,7 @@ class FileServicePropertiesTest(FileTestCase):
         self._assert_metrics_equal(received_props.hour_metrics, hour_metrics)
 
     @ResourceGroupPreparer()               
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_set_minute_metrics(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
@@ -108,7 +106,7 @@ class FileServicePropertiesTest(FileTestCase):
         self._assert_metrics_equal(received_props.minute_metrics, minute_metrics)
 
     @ResourceGroupPreparer()               
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_set_cors(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
@@ -137,7 +135,7 @@ class FileServicePropertiesTest(FileTestCase):
 
     # --Test cases for errors ---------------------------------------
     @ResourceGroupPreparer()               
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_retention_no_days(self, resource_group, location, storage_account, storage_account_key):
         # Assert
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)
@@ -146,7 +144,7 @@ class FileServicePropertiesTest(FileTestCase):
                           True, None)
 
     @ResourceGroupPreparer()               
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_too_many_cors_rules(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key)

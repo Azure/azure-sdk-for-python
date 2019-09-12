@@ -14,8 +14,12 @@ interactions:
 =======
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
+<<<<<<< HEAD
       - Wed, 11 Sep 2019 22:02:08 GMT
 >>>>>>> Migrate Files to Devtools Framework
+=======
+      - Thu, 12 Sep 2019 07:22:06 GMT
+>>>>>>> ,pre recordingd and fixes
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -43,9 +47,9 @@ interactions:
       x-ms-request-id: 98f59398-a01a-0001-20b6-6d0c28000000
 =======
       content-length: '0'
-      date: Wed, 11 Sep 2019 22:02:07 GMT
-      etag: '"0x8D73703B01DF241"'
-      last-modified: Wed, 11 Sep 2019 22:02:07 GMT
+      date: Thu, 12 Sep 2019 07:22:05 GMT
+      etag: '"0x8D73751EA18AE1D"'
+      last-modified: Thu, 12 Sep 2019 07:22:05 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
 >>>>>>> Migrate Files to Devtools Framework
       x-ms-version: '2019-02-02'
@@ -79,8 +83,12 @@ interactions:
 =======
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
+<<<<<<< HEAD
       - Wed, 11 Sep 2019 22:02:08 GMT
 >>>>>>> Migrate Files to Devtools Framework
+=======
+      - Thu, 12 Sep 2019 07:22:07 GMT
+>>>>>>> ,pre recordingd and fixes
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -88,6 +96,7 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ShareAlreadyExists</Code><Message>The
+<<<<<<< HEAD
 <<<<<<< HEAD
         specified share already exists.\nRequestId:98f5939b-a01a-0001-21b6-6d0c28000000\nTime:2019-09-18T00:16:57.9919032Z</Message></Error>"
     headers:
@@ -107,10 +116,13 @@ interactions:
       x-ms-request-id: 98f5939b-a01a-0001-21b6-6d0c28000000
 =======
         specified share already exists.\nRequestId:6cc903ae-001a-00d3-45ec-688fd3000000\nTime:2019-09-11T22:02:07.5887125Z</Message></Error>"
+=======
+        specified share already exists.\nRequestId:cabd687f-e01a-005c-163a-6977ce000000\nTime:2019-09-12T07:22:05.6359720Z</Message></Error>"
+>>>>>>> ,pre recordingd and fixes
     headers:
       content-length: '222'
       content-type: application/xml
-      date: Wed, 11 Sep 2019 22:02:07 GMT
+      date: Thu, 12 Sep 2019 07:22:05 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code: ShareAlreadyExists
 >>>>>>> Migrate Files to Devtools Framework

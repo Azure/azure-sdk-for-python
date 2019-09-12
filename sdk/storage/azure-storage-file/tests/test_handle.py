@@ -12,7 +12,7 @@ from azure.core.exceptions import (
     HttpResponseError,
     ResourceNotFoundError,
     ResourceExistsError)
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, FakeStorageAccount
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.storage.file.file_service_client import FileServiceClient
 from azure.storage.file.directory_client import DirectoryClient
 from azure.storage.file.file_client import FileClient
@@ -24,9 +24,7 @@ from filetestcase import (
 # ------------------------------------------------------------------------------
 TEST_SHARE_NAME = 'test'
 TEST_SHARE_PREFIX = 'share'
-FAKE_STORAGE = FakeStorageAccount(
-    name='pyacrstorage',
-    id='')
+
 
 # ------------------------------------------------------------------------------
 
@@ -59,7 +57,7 @@ class StorageHandleTest(FileTestCase):
         self.assertIsNotNone(handles[0].open_time)
 
     @ResourceGroupPreparer()               
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_list_handles_on_share(self, resource_group, location, storage_account, storage_account_key):
         #pytest.skip("")
         # don't run live, since the test set up was highly manual
@@ -78,7 +76,7 @@ class StorageHandleTest(FileTestCase):
 
 #
     @ResourceGroupPreparer()               
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_list_handles_on_share_snapshot(self, resource_group, location, storage_account, storage_account_key):
         # don't run live, since the test set up was highly manual
         # only run when recording, or playing back in CI
@@ -95,7 +93,7 @@ class StorageHandleTest(FileTestCase):
         self._validate_handles(handles)
 
     @ResourceGroupPreparer()               
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_list_handles_with_marker(self, resource_group, location, storage_account, storage_account_key):
         # don't run live, since the test set up was highly manual
         # only run when recording, or playing back in CI
@@ -129,7 +127,7 @@ class StorageHandleTest(FileTestCase):
         self.assertTrue(old_handle_not_present)
 
     @ResourceGroupPreparer()               
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_list_handles_on_directory(self, resource_group, location, storage_account, storage_account_key):
         # don't run live, since the test set up was highly manual
         # only run when recording, or playing back in CI
@@ -152,7 +150,7 @@ class StorageHandleTest(FileTestCase):
         self.assertTrue(len(handles) == 0)
 
     @ResourceGroupPreparer()               
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_list_handles_on_file(self, resource_group, location, storage_account, storage_account_key):
         # don't run live, since the test set up was highly manual
         # only run when recording, or playing back in CI
@@ -169,7 +167,7 @@ class StorageHandleTest(FileTestCase):
         self._validate_handles(handles)
 
     @ResourceGroupPreparer()               
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_close_single_handle(self, resource_group, location, storage_account, storage_account_key):
         # don't run live, since the test set up was highly manual
         # only run when recording, or playing back in CI
@@ -191,7 +189,7 @@ class StorageHandleTest(FileTestCase):
         self.assertEqual(1, num_closed.result())
 
     @ResourceGroupPreparer()               
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     def test_close_all_handle(self, resource_group, location, storage_account, storage_account_key):
         # don't run live, since the test set up was highly manual
         # only run when recording, or playing back in CI

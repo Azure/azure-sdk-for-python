@@ -14,8 +14,12 @@ interactions:
 =======
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
+<<<<<<< HEAD
       - Wed, 11 Sep 2019 21:43:22 GMT
 >>>>>>> Migrate Files to Devtools Framework
+=======
+      - Thu, 12 Sep 2019 06:59:18 GMT
+>>>>>>> ,pre recordingd and fixes
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -43,9 +47,9 @@ interactions:
       x-ms-request-id: 7d279c22-601a-000e-57b3-6d7a44000000
 =======
       content-length: '0'
-      date: Wed, 11 Sep 2019 21:43:21 GMT
-      etag: '"0x8D737011100AACA"'
-      last-modified: Wed, 11 Sep 2019 21:43:21 GMT
+      date: Thu, 12 Sep 2019 06:59:17 GMT
+      etag: '"0x8D7374EBA7E1BE5"'
+      last-modified: Thu, 12 Sep 2019 06:59:17 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
 >>>>>>> Migrate Files to Devtools Framework
       x-ms-version: '2019-02-02'
@@ -75,8 +79,12 @@ interactions:
 =======
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
+<<<<<<< HEAD
       - Wed, 11 Sep 2019 21:43:23 GMT
 >>>>>>> Migrate Files to Devtools Framework
+=======
+      - Thu, 12 Sep 2019 06:59:18 GMT
+>>>>>>> ,pre recordingd and fixes
       x-ms-file-attributes:
       - none
       x-ms-file-creation-time:
@@ -123,18 +131,22 @@ interactions:
       x-ms-request-id: 7d279c25-601a-000e-58b3-6d7a44000000
 =======
       content-length: '0'
-      date: Wed, 11 Sep 2019 21:43:21 GMT
-      etag: '"0x8D73701112CA45B"'
-      last-modified: Wed, 11 Sep 2019 21:43:21 GMT
+      date: Thu, 12 Sep 2019 06:59:17 GMT
+      etag: '"0x8D7374EBA8CE423"'
+      last-modified: Thu, 12 Sep 2019 06:59:17 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-file-attributes: Directory
-      x-ms-file-change-time: '2019-09-11T21:43:21.8847835Z'
-      x-ms-file-creation-time: '2019-09-11T21:43:21.8847835Z'
+      x-ms-file-change-time: '2019-09-12T06:59:17.2986915Z'
+      x-ms-file-creation-time: '2019-09-12T06:59:17.2986915Z'
       x-ms-file-id: '13835128424026341376'
-      x-ms-file-last-write-time: '2019-09-11T21:43:21.8847835Z'
+      x-ms-file-last-write-time: '2019-09-12T06:59:17.2986915Z'
       x-ms-file-parent-id: '0'
+<<<<<<< HEAD
       x-ms-file-permission-key: 14738885846982347584*11840012373026004169
 >>>>>>> Migrate Files to Devtools Framework
+=======
+      x-ms-file-permission-key: 11794285128509313019*14661065917486848114
+>>>>>>> ,pre recordingd and fixes
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2019-02-02'
     status:
@@ -163,8 +175,12 @@ interactions:
 =======
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
+<<<<<<< HEAD
       - Wed, 11 Sep 2019 21:43:23 GMT
 >>>>>>> Migrate Files to Devtools Framework
+=======
+      - Thu, 12 Sep 2019 06:59:18 GMT
+>>>>>>> ,pre recordingd and fixes
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -196,18 +212,22 @@ interactions:
       x-ms-file-last-write-time: '2019-09-17T23:53:10.4625081Z'
 =======
       content-length: '0'
-      date: Wed, 11 Sep 2019 21:43:21 GMT
-      etag: '"0x8D73701112CA45B"'
-      last-modified: Wed, 11 Sep 2019 21:43:21 GMT
+      date: Thu, 12 Sep 2019 06:59:17 GMT
+      etag: '"0x8D7374EBA8CE423"'
+      last-modified: Thu, 12 Sep 2019 06:59:17 GMT
       server: Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-file-attributes: Directory
-      x-ms-file-change-time: '2019-09-11T21:43:21.8847835Z'
-      x-ms-file-creation-time: '2019-09-11T21:43:21.8847835Z'
+      x-ms-file-change-time: '2019-09-12T06:59:17.2986915Z'
+      x-ms-file-creation-time: '2019-09-12T06:59:17.2986915Z'
       x-ms-file-id: '13835128424026341376'
+<<<<<<< HEAD
       x-ms-file-last-write-time: '2019-09-11T21:43:21.8847835Z'
 >>>>>>> Migrate Files to Devtools Framework
+=======
+      x-ms-file-last-write-time: '2019-09-12T06:59:17.2986915Z'
+>>>>>>> ,pre recordingd and fixes
       x-ms-file-parent-id: '0'
-      x-ms-file-permission-key: 14738885846982347584*11840012373026004169
+      x-ms-file-permission-key: 11794285128509313019*14661065917486848114
       x-ms-meta-hello: world
       x-ms-meta-number: '42'
 <<<<<<< HEAD

@@ -1,0 +1,302 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Thu, 12 Sep 2019 07:09:50 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://pyacrstorage50281096.file.core.windows.net/utshare50281096?restype=share
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Thu, 12 Sep 2019 07:09:49 GMT
+      etag:
+      - '"0x8D737503389A8A1"'
+      last-modified:
+      - Thu, 12 Sep 2019 07:09:49 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-content-length:
+      - '1024'
+      x-ms-date:
+      - Thu, 12 Sep 2019 07:09:51 GMT
+      x-ms-file-attributes:
+      - none
+      x-ms-file-creation-time:
+      - now
+      x-ms-file-last-write-time:
+      - now
+      x-ms-file-permission:
+      - Inherit
+      x-ms-type:
+      - file
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://pyacrstorage50281096.file.core.windows.net/utshare50281096/file50281096
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Thu, 12 Sep 2019 07:09:49 GMT
+      etag:
+      - '"0x8D7375033B6DC8D"'
+      last-modified:
+      - Thu, 12 Sep 2019 07:09:50 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-file-attributes:
+      - Archive
+      x-ms-file-change-time:
+      - '2019-09-12T07:09:50.0747917Z'
+      x-ms-file-creation-time:
+      - '2019-09-12T07:09:50.0747917Z'
+      x-ms-file-id:
+      - '13835128424026341376'
+      x-ms-file-last-write-time:
+      - '2019-09-12T07:09:50.0747917Z'
+      x-ms-file-parent-id:
+      - '0'
+      x-ms-file-permission-key:
+      - 12612346766428097292*551944727072842626
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: !!binary |
+      RDMj3XzJ4+7FT+xjRYxPdp0dngKfL6x62/qI+Z3SsWasQqjnKJsKVhlR1HgXTRnEYdiHMWgyEtTW
+      BZ9iJbPKno8NCUYpJQM54yHTzqk4UUzomPsvY2ky7TDuK3V+Jbd4ltE58O2ELC2pyjgNRVxS+yjb
+      m6Y9hskeq0/wwyYCdJYUEehQh9G6l4K7P/vznYsBqL88tEfmO96EXWxerzVzltKu/paXgLRu5ddB
+      hGbQM0OJ4i5Lg/P+A6X1gsUjkMs10Knlh7nVxtWQnYfJ3iEuohqxA5Iu+IFDURKDFQjqKPFVWLo4
+      PNr9qQUECGJ28UtTOBgxN17yndR16TNf8eFrK3loUIGkbI6dQPyJvdELGIJ0MDxtYFMGsZosshZy
+      T5SET2Xsoug9pZLTMAi7hVImSk2+DMIy3esZ9cBOmSOq14N2QNpIKi6cTUL9mVtIiIiyjIE+jtqC
+      fvVezniIa19RRC9B1SKF0Cd52IWn1n+WBe50eryt/U5THB2BkwR9GvQnq6Ibp/z47prAS47WPrrz
+      cxOhzkT30hwXZnn4oAoTU7FFkexBB33hxoucRLfOqQBinGZCQK28A2ENs53qEN9cezl9c5EKZcBu
+      6eF13zmdnU2XdKm7Yz3wkntQW/WVenBO5ZySz8+kbTEsYKQDZZHtzDvFizlMNRm7oQX56p8z91Si
+      BUyQf6gjmSIKt6oyGTJAB2iuh9SvBivnHBl7ToW6H6KttWOCwda86RDrJbymtvUNaDnUEm9eFaRv
+      rEDUyDhfRIonWAtbY/m8sp/Tp5FUtjfgLA3dba3j/qqCzF7AYWeTR5Jan33iuvmZuKCQARccCQ62
+      uYqvgktG/Zi58EhnVcsm/Rwi349YvYqwuM0s1Gm9+LHWLEmF7Rck/YKNuEl80MF5HTxydP7nPoap
+      BDUmnggolqzGybYKszkV+8O7teDDFYM5iXnyqdDXQlhLWMiT2RLV+BQb4wj4QslGlBIUd7FxGPoH
+      gZVudabx+uTnJsOdY+r04LRgXPbApQJyDwzVOF4AjDqkRoPFilXdKmY8RvwFKoWVQ7crFWlmQXvf
+      K7IXhH+UdV7bBYxmiU3dd+QEtrH3iy3qfeEM2IdEYYRlB0UyuTzaWdbg5eKHvYYIuFnzStap8NXV
+      FYbLyeByOE8nxqdPI8wfk26liC9hNiP3OPQdARLz9Ll/uzH03plpixFWNIjEvHFQYXTJLuBgJ0qk
+      P9DUnVxpqi/3Mi1pH35Pl0VXk8r7EaV0c1U2uzegagItOaIiSMJJvpTQOD1CqAHKaV4UkPGq23tN
+      AHKJH6ijahpYew6BITorH+2J2lULidhbOlhxg85STM5JPD0DYHjI5KTKBztLguGazMgsES1GCg==
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '1024'
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Thu, 12 Sep 2019 07:09:51 GMT
+      x-ms-range:
+      - bytes=0-1023
+      x-ms-version:
+      - '2019-02-02'
+      x-ms-write:
+      - update
+    method: PUT
+    uri: https://pyacrstorage50281096.file.core.windows.net/utshare50281096/file50281096?comp=range
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      content-md5:
+      - 6QtxKhBciRrzlnCxL3PpcA==
+      date:
+      - Thu, 12 Sep 2019 07:09:49 GMT
+      etag:
+      - '"0x8D7375033C6BDDD"'
+      last-modified:
+      - Thu, 12 Sep 2019 07:09:50 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Thu, 12 Sep 2019 07:09:51 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: PUT
+    uri: https://pyacrstorage50281096.file.core.windows.net/utshare50281096?restype=share&comp=snapshot
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Thu, 12 Sep 2019 07:09:50 GMT
+      etag:
+      - '"0x8D737503389A8A1"'
+      last-modified:
+      - Thu, 12 Sep 2019 07:09:49 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-snapshot:
+      - '2019-09-12T07:09:50.0000000Z'
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Thu, 12 Sep 2019 07:09:52 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: DELETE
+    uri: https://pyacrstorage50281096.file.core.windows.net/utshare50281096/file50281096
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Thu, 12 Sep 2019 07:09:50 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 202
+      message: Accepted
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      x-ms-date:
+      - Thu, 12 Sep 2019 07:09:52 GMT
+      x-ms-version:
+      - '2019-02-02'
+    method: HEAD
+    uri: https://pyacrstorage50281096.file.core.windows.net/utshare50281096/file50281096?sharesnapshot=2019-09-12T07:09:50.0000000Z
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '1024'
+      content-type:
+      - application/octet-stream
+      date:
+      - Thu, 12 Sep 2019 07:09:50 GMT
+      etag:
+      - '"0x8D7375033C6BDDD"'
+      last-modified:
+      - Thu, 12 Sep 2019 07:09:50 GMT
+      server:
+      - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-file-attributes:
+      - Archive
+      x-ms-file-change-time:
+      - '2019-09-12T07:09:50.0747917Z'
+      x-ms-file-creation-time:
+      - '2019-09-12T07:09:50.0747917Z'
+      x-ms-file-id:
+      - '13835128424026341376'
+      x-ms-file-last-write-time:
+      - '2019-09-12T07:09:50.0747917Z'
+      x-ms-file-parent-id:
+      - '0'
+      x-ms-file-permission-key:
+      - 12612346766428097292*551944727072842626
+      x-ms-server-encrypted:
+      - 'true'
+      x-ms-type:
+      - File
+      x-ms-version:
+      - '2019-02-02'
+    status:
+      code: 200
+      message: OK
+version: 1

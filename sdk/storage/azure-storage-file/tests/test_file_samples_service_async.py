@@ -8,21 +8,19 @@
 
 import asyncio
 
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, FakeStorageAccount
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from asyncfiletestcase import (
     AsyncFileTestCase
 )
 
-FAKE_STORAGE = FakeStorageAccount(
-    name='pyacrstorage',
-    id='')
+
 
 
 class TestFileServiceSamples(AsyncFileTestCase):
 
 
     @ResourceGroupPreparer()               
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_file_service_properties(self, resource_group, location, storage_account, storage_account_key):
         # Instantiate the FileServiceClient from a connection string
@@ -63,7 +61,7 @@ class TestFileServiceSamples(AsyncFileTestCase):
         # [END get_service_properties]
 
     @ResourceGroupPreparer()               
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_share_operations(self, resource_group, location, storage_account, storage_account_key):
         # Instantiate the FileServiceClient from a connection string
@@ -91,7 +89,7 @@ class TestFileServiceSamples(AsyncFileTestCase):
             # [END fsc_delete_shares]
 
     @ResourceGroupPreparer()               
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_get_share_client(self, resource_group, location, storage_account, storage_account_key):
         # [START get_share_client]

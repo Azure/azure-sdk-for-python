@@ -11,7 +11,7 @@ import unittest
 import time
 from datetime import datetime, timedelta
 import asyncio
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, FakeStorageAccount
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 import requests
@@ -35,9 +35,7 @@ from asyncfiletestcase import (
 )
 
 # ------------------------------------------------------------------------------
-FAKE_STORAGE = FakeStorageAccount(
-    name='pyacrstorage',
-    id='')
+
 TEST_SHARE_PREFIX = 'share'
 TEST_DIRECTORY_PREFIX = 'dir'
 TEST_FILE_PREFIX = 'file'
@@ -62,6 +60,7 @@ class AiohttpTestTransport(AioHttpTransport):
 
 class StorageFileTestAsync(AsyncFileTestCase):
     def setUp(self):
+        super(StorageFileTestAsync, self).setUp()
         self.share_name = self.get_resource_name('utshare')
         self.short_byte_data = self.get_random_bytes(1024)
         self.remote_share_name = None
@@ -148,7 +147,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
 
     # --Test cases for files ----------------------------------------------
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_make_file_url_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -164,7 +163,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
                          + '.file.core.windows.net/vhds/vhd_dir/my.vhd')
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_make_file_url_no_directory_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -180,7 +179,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
                          + '.file.core.windows.net/vhds/my.vhd')
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_make_file_url_with_protocol(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -198,7 +197,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
                          + '.file.core.windows.net/vhds/vhd_dir/my.vhd')
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_make_file_url_with_sas(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -219,7 +218,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
                          '.file.core.windows.net/vhds/vhd_dir/my.vhd{}'.format(sas))
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_create_file_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -242,7 +241,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
             self.assertEqual(props.last_modified, resp['last_modified'])
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_create_file_with_metadata_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -267,7 +266,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
             self.assertDictEqual(props.metadata, metadata)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_create_file_when_file_permission_is_too_long(self, resource_group, location, storage_account, storage_account_key):
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
@@ -277,7 +276,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
             await file_client.create_file(1024, file_permission=permission)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_create_file_with_invalid_file_permission(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -288,7 +287,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
             await file_name.create_file(1024, file_permission="abcde")
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_create_file_will_set_all_smb_properties(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -307,7 +306,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         self.assertIsNotNone(file_properties.last_write_time)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_file_exists_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -321,7 +320,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         self.assertTrue(exists)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_file_not_exists_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -340,7 +339,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         # Assert
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_file_exists_with_snapshot_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -363,7 +362,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         self.assertTrue(props)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_file_not_exists_with_snapshot_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -387,7 +386,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
             await snapshot_client.get_file_properties()
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_resize_file_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -403,7 +402,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         self.assertEqual(props.size, 5)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_set_file_properties_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -425,7 +424,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         self.assertIsNotNone(properties.permission_key)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_set_file_properties_with_file_permission(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -459,7 +458,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         self.assertIn("Temporary", properties.file_attributes)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_get_file_properties_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -474,7 +473,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         self.assertEqual(properties.size, len(self.short_byte_data))
     
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_get_file_properties_with_snapshot_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -507,7 +506,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         self.assertDictEqual(metadata, snapshot_props.metadata)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_get_file_metadata_with_snapshot_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -538,7 +537,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
 
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_get_file_properties_with_non_existing_file_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -557,7 +556,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
             # Assert
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_get_file_metadata_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -572,7 +571,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         self.assertEqual(0, len(md.metadata))
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_set_file_metadata_with_upper_case_async(self, resource_group, location, storage_account, storage_account_key):
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
@@ -593,7 +592,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         self.assertFalse('up' in md)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_delete_file_with_existing_file_async(self, resource_group, location, storage_account, storage_account_key):
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
@@ -607,7 +606,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
             await file_client.get_file_properties()
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_delete_file_with_non_existing_file_async(self, resource_group, location, storage_account, storage_account_key):
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
@@ -626,7 +625,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
             # Assert
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_update_range_async(self, resource_group, location, storage_account, storage_account_key):
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
@@ -643,7 +642,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         self.assertEqual(self.short_byte_data[512:], content[512:])
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_update_range_with_md5_async(self, resource_group, location, storage_account, storage_account_key):
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
@@ -656,7 +655,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         # Assert
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_update_range_without_enough_bytes(self, resource_group, location, storage_account, storage_account_key):
         #test_update_range_from_file_url_when_source_file_does_not_have_enough_bytes
@@ -680,7 +679,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
             await destination_file_client.upload_range_from_url(source_file_url, 0, 2049, 0)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_update_range_from_file_url(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -714,7 +713,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         self.assertEqual(data, file_content)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_update_big_range_from_file_url(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -751,7 +750,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         self.assertEqual(data, file_content)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_clear_range_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -770,7 +769,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         self.assertEqual(self.short_byte_data[512:], content[512:])
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_update_file_unicode_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -792,7 +791,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         # Assert
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_list_ranges_none_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -815,7 +814,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         self.assertEqual(len(ranges), 0)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_list_ranges_2_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -846,7 +845,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         self.assertEqual(ranges[1]['end'], 1535)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_list_ranges_none_from_snapshot_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -880,7 +879,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         self.assertEqual(len(ranges), 0)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_list_ranges_2_from_snapshot_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -922,7 +921,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         self.assertEqual(ranges[1]['end'], 1535)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_copy_file_with_existing_file_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -948,8 +947,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         self.assertEqual(content, self.short_byte_data)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
-    @StorageAccountPreparer(name_prefix='remotestorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_copy_file_async_private_file_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -973,7 +971,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         self.assertEqual(e.exception.error_code, StorageErrorCode.cannot_verify_copy_source)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_copy_file_async_private_file_with_sas_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -1008,7 +1006,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         self.assertEqual(actual_data, data)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_abort_copy_file_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -1043,7 +1041,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         self.assertEqual(target_file.properties.copy.status, 'aborted')
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_abort_copy_file_with_synchronous_copy_fails_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -1067,7 +1065,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         self.assertEqual(copy_resp['copy_status'], 'success')
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_unicode_get_file_unicode_name_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -1090,7 +1088,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         self.assertEqual(content, b'hello world')
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_file_unicode_data_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -1113,7 +1111,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         self.assertEqual(content, data)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_file_unicode_data_and_file_attributes(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -1132,7 +1130,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         self.assertIn('Temporary', properties.file_attributes)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_unicode_get_file_binary_data_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -1157,7 +1155,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         self.assertEqual(content, binary_data)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_create_file_from_bytes_with_progress_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
@@ -1190,7 +1188,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         await self.assert_file_equal(file_client, data)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_create_file_from_bytes_with_index_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
@@ -1220,7 +1218,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         await self.assert_file_equal(file_client, data[1024:])
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_create_file_from_bytes_with_index_and_count_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
@@ -1251,7 +1249,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         await self.assert_file_equal(file_client, data[index:index + count])
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_create_file_from_path_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
@@ -1283,7 +1281,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         await self.assert_file_equal(file_client, data)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_create_file_from_path_with_progress_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
@@ -1326,7 +1324,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
             progress, unknown_size=False)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_create_file_from_stream_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
@@ -1359,7 +1357,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         await self.assert_file_equal(file_client, data[:file_size])
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_create_file_from_stream_non_seekable_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
@@ -1390,7 +1388,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         await self.assert_file_equal(file_client, data[:file_size])
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_create_file_from_stream_with_progress_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
@@ -1431,7 +1429,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
             progress, unknown_size=False)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_create_file_from_stream_truncated_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
@@ -1461,7 +1459,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         await self.assert_file_equal(file_client, data[:file_size])
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_create_file_from_stream_with_progress_truncated_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
@@ -1503,7 +1501,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
             progress, unknown_size=False)
     
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_create_file_from_text_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -1526,7 +1524,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         await self.assert_file_equal(file_client, data)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_create_file_from_text_with_encoding_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -1549,7 +1547,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         await self.assert_file_equal(file_client, data)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_create_file_from_text_chunked_upload_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
@@ -1576,7 +1574,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         await self.assert_file_equal(file_client, encoded_data)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_create_file_with_md5_small_async(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
@@ -1598,7 +1596,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
 
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_create_file_with_md5_large_async(self, resource_group, location, storage_account, storage_account_key):
         # parallel tests introduce random order of requests, can only run live
@@ -1625,7 +1623,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
     # --Test cases for sas & acl ------------------------------------------------
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_sas_access_file_async(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
@@ -1653,7 +1651,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         self.assertEqual(self.short_byte_data, content)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_sas_signed_identifier_async(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
@@ -1686,7 +1684,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         self.assertEqual(self.short_byte_data, content)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_account_sas_async(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
@@ -1716,7 +1714,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         self.assertEqual(self.short_byte_data, response.content)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_shared_read_access_file_async(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
@@ -1744,7 +1742,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         self.assertEqual(self.short_byte_data, response.content)
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_shared_read_access_file_with_content_query_params_async(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
@@ -1781,7 +1779,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         self.assertEqual(response.headers['content-type'], 'text')
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_shared_write_access_file_async(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only
@@ -1813,7 +1811,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
         self.assertEqual(updated_data, file_content[:len(updated_data)])
 
     @ResourceGroupPreparer()
-    @StorageAccountPreparer(name_prefix='pyacrstorage', playback_fake_resource=FAKE_STORAGE)
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_shared_delete_access_file_async(self, resource_group, location, storage_account, storage_account_key):
         # SAS URL is calculated from storage key, so this test runs live only

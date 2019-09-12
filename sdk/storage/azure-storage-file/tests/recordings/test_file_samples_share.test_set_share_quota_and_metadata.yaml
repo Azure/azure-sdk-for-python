@@ -13,7 +13,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 11 Sep 2019 21:23:58 GMT
+      - Thu, 12 Sep 2019 07:12:11 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -25,11 +25,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 11 Sep 2019 21:23:56 GMT
+      - Thu, 12 Sep 2019 07:12:10 GMT
       etag:
-      - '"0x8D736FE5B21DA3F"'
+      - '"0x8D737508799FEF6"'
       last-modified:
-      - Wed, 11 Sep 2019 21:23:57 GMT
+      - Thu, 12 Sep 2019 07:12:10 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -51,7 +51,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 11 Sep 2019 21:23:58 GMT
+      - Thu, 12 Sep 2019 07:12:12 GMT
       x-ms-share-quota:
       - '1'
       x-ms-version:
@@ -65,11 +65,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 11 Sep 2019 21:23:56 GMT
+      - Thu, 12 Sep 2019 07:12:10 GMT
       etag:
-      - '"0x8D736FE5B2ED55A"'
+      - '"0x8D7375087B7FDB7"'
       last-modified:
-      - Wed, 11 Sep 2019 21:23:57 GMT
+      - Thu, 12 Sep 2019 07:12:11 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -91,7 +91,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 11 Sep 2019 21:23:58 GMT
+      - Thu, 12 Sep 2019 07:12:12 GMT
       x-ms-meta-category:
       - test
       x-ms-version:
@@ -105,11 +105,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 11 Sep 2019 21:23:56 GMT
+      - Thu, 12 Sep 2019 07:12:10 GMT
       etag:
-      - '"0x8D736FE5B3ABF26"'
+      - '"0x8D7375087E15F30"'
       last-modified:
-      - Wed, 11 Sep 2019 21:23:57 GMT
+      - Thu, 12 Sep 2019 07:12:11 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -129,7 +129,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 11 Sep 2019 21:23:58 GMT
+      - Thu, 12 Sep 2019 07:12:12 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
@@ -141,11 +141,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 11 Sep 2019 21:23:56 GMT
+      - Thu, 12 Sep 2019 07:12:10 GMT
       etag:
-      - '"0x8D736FE5B3ABF26"'
+      - '"0x8D7375087E15F30"'
       last-modified:
-      - Wed, 11 Sep 2019 21:23:57 GMT
+      - Thu, 12 Sep 2019 07:12:11 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-has-immutability-policy:
@@ -175,7 +175,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Wed, 11 Sep 2019 21:23:58 GMT
+      - Thu, 12 Sep 2019 07:12:12 GMT
       x-ms-version:
       - '2019-02-02'
     method: DELETE
@@ -187,7 +187,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Wed, 11 Sep 2019 21:23:56 GMT
+      - Thu, 12 Sep 2019 07:12:11 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
