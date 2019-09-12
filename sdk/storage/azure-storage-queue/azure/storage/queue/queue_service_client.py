@@ -395,6 +395,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
                 :caption: Create a queue in the service.
         """
         queue = self.get_queue_client(name)
+        kwargs.setdefault('merge_span', True)
         queue.create_queue(
             metadata=metadata, timeout=timeout, **kwargs)
         return queue
@@ -433,6 +434,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
                 :caption: Delete a queue in the service.
         """
         queue_client = self.get_queue_client(queue)
+        kwargs.setdefault('merge_span', True)
         queue_client.delete_queue(timeout=timeout, **kwargs)
 
     def get_queue_client(self, queue, **kwargs):

@@ -240,6 +240,7 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
                 :caption: Create a share in the file service.
         """
         share = self.get_share_client(share_name)
+        kwargs.setdefault('merge_span', True)
         await share.create_share(metadata, quota, timeout, **kwargs)
         return share
 
@@ -273,6 +274,7 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
                 :caption: Delete a share in the file service.
         """
         share = self.get_share_client(share_name)
+        kwargs.setdefault('merge_span', True)
         await share.delete_share(
             delete_snapshots=delete_snapshots, timeout=timeout, **kwargs)
 
