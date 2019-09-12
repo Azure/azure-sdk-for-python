@@ -155,6 +155,32 @@ class SqlStoredProcedureGetResultsPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(SqlStoredProcedureGetResultsPaged, self).__init__(*args, **kwargs)
+class SqlUserDefinedFunctionGetResultsPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`SqlUserDefinedFunctionGetResults <azure.mgmt.cosmosdb.models.SqlUserDefinedFunctionGetResults>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[SqlUserDefinedFunctionGetResults]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(SqlUserDefinedFunctionGetResultsPaged, self).__init__(*args, **kwargs)
+class SqlTriggerGetResultsPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`SqlTriggerGetResults <azure.mgmt.cosmosdb.models.SqlTriggerGetResults>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[SqlTriggerGetResults]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(SqlTriggerGetResultsPaged, self).__init__(*args, **kwargs)
 class MongoDBDatabaseGetResultsPaged(Paged):
     """
     A paging container for iterating over a list of :class:`MongoDBDatabaseGetResults <azure.mgmt.cosmosdb.models.MongoDBDatabaseGetResults>` object

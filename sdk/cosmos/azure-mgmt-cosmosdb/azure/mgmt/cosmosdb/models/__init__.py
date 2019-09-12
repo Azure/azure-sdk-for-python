@@ -78,6 +78,12 @@ try:
     from ._models_py3 import SqlStoredProcedureCreateUpdateParameters
     from ._models_py3 import SqlStoredProcedureGetResults
     from ._models_py3 import SqlStoredProcedureResource
+    from ._models_py3 import SqlTriggerCreateUpdateParameters
+    from ._models_py3 import SqlTriggerGetResults
+    from ._models_py3 import SqlTriggerResource
+    from ._models_py3 import SqlUserDefinedFunctionCreateUpdateParameters
+    from ._models_py3 import SqlUserDefinedFunctionGetResults
+    from ._models_py3 import SqlUserDefinedFunctionResource
     from ._models_py3 import TableCreateUpdateParameters
     from ._models_py3 import TableGetResults
     from ._models_py3 import TableResource
@@ -157,6 +163,12 @@ except (SyntaxError, ImportError):
     from ._models import SqlStoredProcedureCreateUpdateParameters
     from ._models import SqlStoredProcedureGetResults
     from ._models import SqlStoredProcedureResource
+    from ._models import SqlTriggerCreateUpdateParameters
+    from ._models import SqlTriggerGetResults
+    from ._models import SqlTriggerResource
+    from ._models import SqlUserDefinedFunctionCreateUpdateParameters
+    from ._models import SqlUserDefinedFunctionGetResults
+    from ._models import SqlUserDefinedFunctionResource
     from ._models import TableCreateUpdateParameters
     from ._models import TableGetResults
     from ._models import TableResource
@@ -183,6 +195,8 @@ from ._paged_models import PercentileMetricPaged
 from ._paged_models import SqlContainerGetResultsPaged
 from ._paged_models import SqlDatabaseGetResultsPaged
 from ._paged_models import SqlStoredProcedureGetResultsPaged
+from ._paged_models import SqlTriggerGetResultsPaged
+from ._paged_models import SqlUserDefinedFunctionGetResultsPaged
 from ._paged_models import TableGetResultsPaged
 from ._paged_models import UsagePaged
 from ._cosmos_db_enums import (
@@ -269,6 +283,12 @@ __all__ = [
     'SqlStoredProcedureCreateUpdateParameters',
     'SqlStoredProcedureGetResults',
     'SqlStoredProcedureResource',
+    'SqlTriggerCreateUpdateParameters',
+    'SqlTriggerGetResults',
+    'SqlTriggerResource',
+    'SqlUserDefinedFunctionCreateUpdateParameters',
+    'SqlUserDefinedFunctionGetResults',
+    'SqlUserDefinedFunctionResource',
     'TableCreateUpdateParameters',
     'TableGetResults',
     'TableResource',
@@ -290,6 +310,8 @@ __all__ = [
     'SqlDatabaseGetResultsPaged',
     'SqlContainerGetResultsPaged',
     'SqlStoredProcedureGetResultsPaged',
+    'SqlUserDefinedFunctionGetResultsPaged',
+    'SqlTriggerGetResultsPaged',
     'MongoDBDatabaseGetResultsPaged',
     'MongoDBCollectionGetResultsPaged',
     'TableGetResultsPaged',
