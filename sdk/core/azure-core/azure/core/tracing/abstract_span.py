@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """Protocol that defines what functions wrappers of tracing libraries should implement."""
+from enum import Enum
 
 try:
     from typing import TYPE_CHECKING
@@ -18,6 +19,15 @@ try:
     from typing_extensions import Protocol
 except ImportError:
     Protocol = object  # type: ignore
+
+
+class SpanKind(Enum):
+    UNSPECIFIED = 1
+    SERVER = 2
+    CLIENT = 3
+    PRODUCER = 4
+    CONSUMER = 5
+    INTERNAL = 6
 
 
 class AbstractSpan(Protocol):
@@ -36,6 +46,16 @@ class AbstractSpan(Protocol):
         Create a child span for the current span and append it to the child spans list.
         The child span must be wrapped by an implementation of AbstractSpan
         """
+
+    @property
+    def kind(self):
+        # type: () -> SpanKind
+        """Get the span kind of this span."""
+
+    @kind.setter
+    def kind(self, value):
+        # type: (SpanKind) -> None
+        """Set the span kind of this span."""
 
     def start(self):
         # type: () -> None

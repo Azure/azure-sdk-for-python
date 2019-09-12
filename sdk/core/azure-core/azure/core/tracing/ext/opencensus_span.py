@@ -6,9 +6,11 @@
 
 from opencensus.trace import Span, execution_context
 from opencensus.trace.tracer import Tracer
-from opencensus.trace.span import SpanKind
+from opencensus.trace.span import SpanKind as OpenCensusSpanKind
 from opencensus.trace.link import Link
 from opencensus.trace.propagation import trace_context_http_header_format
+
+from .. import SpanKind
 
 try:
     from typing import TYPE_CHECKING
@@ -61,6 +63,34 @@ class OpenCensusSpan(object):
         """
         return self.__class__(name=name)
 
+    @property
+    def kind(self):
+        # type: () -> SpanKind
+        """Get the span kind of this span."""
+        value = self.span_instance.span_kind
+        return (
+            SpanKind.CLIENT if value == OpenCensusSpanKind.CLIENT else
+            SpanKind.SERVER if value == OpenCensusSpanKind.SERVER else
+            SpanKind.UNSPECIFIED if value == OpenCensusSpanKind.UNSPECIFIED else
+            None
+        )
+
+
+    @kind.setter
+    def kind(self, value):
+        # type: (SpanKind) -> None
+        """Set the span kind of this span."""
+        kind = (
+            OpenCensusSpanKind.CLIENT if value == SpanKind.CLIENT else
+            OpenCensusSpanKind.SERVER if value == SpanKind.SERVER else
+            OpenCensusSpanKind.UNSPECIFIED if value == SpanKind.UNSPECIFIED else
+            None
+        )
+        if kind is None:
+            raise ValueError("Kind {} is not supported in OpenCensus".format(value))
+        self.span_instance.span_kind = kind
+
+
     def start(self):
         # type: () -> None
         """Set the start time for a span."""
@@ -110,7 +140,7 @@ class OpenCensusSpan(object):
         :param response: The response received by the server. Is None if no response received.
         :type response: HttpResponse
         """
-        self._span_instance.span_kind = SpanKind.CLIENT
+        self.kind = SpanKind.CLIENT
         self.span_instance.add_attribute(self._span_component, "http")
         self.span_instance.add_attribute(self._http_method, request.method)
         self.span_instance.add_attribute(self._http_url, request.url)
