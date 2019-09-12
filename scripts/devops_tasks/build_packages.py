@@ -67,6 +67,7 @@ if __name__ == "__main__":
 
     parser.add_argument(
         "--additionalfilterstring",
+        default="",
         help=(
             "Additional filter on top of the glob_string already presented. Used in simple 'contains' match"
             "Example: --additionalfilterstring=nspkg"
