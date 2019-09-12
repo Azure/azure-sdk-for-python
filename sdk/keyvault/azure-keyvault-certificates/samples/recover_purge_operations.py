@@ -30,71 +30,63 @@ from azure.core.exceptions import HttpResponseError
 # ----------------------------------------------------------------------------------------------------------
 
 
-def run_sample():
-    # Instantiate a certificate client that will be used to call the service.
-    # Notice that the client is using default Azure credentials.
-    # To make default credentials work, ensure that environment variables 'AZURE_CLIENT_ID',
-    # 'AZURE_CLIENT_SECRET' and 'AZURE_TENANT_ID' are set with the service principal credentials.
-    VAULT_URL = os.environ["VAULT_URL"]
-    credential = DefaultAzureCredential()
-    client = CertificateClient(vault_url=VAULT_URL, credential=credential)
-    try:
-        # Let's create certificates holding storage and bank accounts credentials. If the certificate
-        # already exists in the Key Vault, then a new version of the certificate is created.
-        print("\n.. Create Certificates")
+# Instantiate a certificate client that will be used to call the service.
+# Notice that the client is using default Azure credentials.
+# To make default credentials work, ensure that environment variables 'AZURE_CLIENT_ID',
+# 'AZURE_CLIENT_SECRET' and 'AZURE_TENANT_ID' are set with the service principal credentials.
+VAULT_URL = os.environ["VAULT_URL"]
+credential = DefaultAzureCredential()
+client = CertificateClient(vault_url=VAULT_URL, credential=credential)
+try:
+    # Let's create certificates holding storage and bank accounts credentials. If the certificate
+    # already exists in the Key Vault, then a new version of the certificate is created.
+    print("\n.. Create Certificates")
 
-        bank_cert_name = "BankRecoverCertificate"
-        storage_cert_name = "ServerRecoverCertificate"
+    bank_cert_name = "BankRecoverCertificate"
+    storage_cert_name = "ServerRecoverCertificate"
 
-        bank_certificate_poller = client.create_certificate(name=bank_cert_name)
-        storage_certificate_poller = client.create_certificate(name=storage_cert_name)
+    bank_certificate_poller = client.create_certificate(name=bank_cert_name)
+    storage_certificate_poller = client.create_certificate(name=storage_cert_name)
 
-        bank_certificate_poller.wait()
-        storage_certificate_poller.wait()
-        print("Certificate with name '{0}' was created.".format(bank_cert_name))
-        print("Certificate with name '{0}' was created.".format(storage_cert_name))
+    bank_certificate_poller.wait()
+    storage_certificate_poller.wait()
+    print("Certificate with name '{0}' was created.".format(bank_cert_name))
+    print("Certificate with name '{0}' was created.".format(storage_cert_name))
 
-        # The storage account was closed, need to delete its credentials from the Key Vault.
-        print("\n.. Delete a Certificate")
-        deleted_bank_certificate = client.delete_certificate(name=bank_cert_name)
-        # To ensure certificate is deleted on the server side.
-        time.sleep(30)
+    # The storage account was closed, need to delete its credentials from the Key Vault.
+    print("\n.. Delete a Certificate")
+    deleted_bank_certificate = client.delete_certificate(name=bank_cert_name)
+    # To ensure certificate is deleted on the server side.
+    time.sleep(30)
 
-        print("Certificate with name '{0}' was deleted on date {1}.".format(
-            deleted_bank_certificate.name,
-            deleted_bank_certificate.deleted_date)
-        )
+    print("Certificate with name '{0}' was deleted on date {1}.".format(
+        deleted_bank_certificate.name,
+        deleted_bank_certificate.deleted_date)
+    )
 
-        # We accidentally deleted the bank account certificate. Let's recover it.
-        # A deleted certificate can only be recovered if the Key Vault is soft-delete enabled.
-        print("\n.. Recover Deleted Certificate")
-        recovered_bank_certificate = client.recover_deleted_certificate(deleted_bank_certificate.name)
-        print("Recovered Certificate with name '{0}'.".format(recovered_bank_certificate.name))
+    # We accidentally deleted the bank account certificate. Let's recover it.
+    # A deleted certificate can only be recovered if the Key Vault is soft-delete enabled.
+    print("\n.. Recover Deleted Certificate")
+    recovered_bank_certificate = client.recover_deleted_certificate(deleted_bank_certificate.name)
+    print("Recovered Certificate with name '{0}'.".format(recovered_bank_certificate.name))
 
-        # Let's delete the storage certificate now.
-        # If the keyvault is soft-delete enabled, then for permanent deletion deleted certificate needs to be purged.
-        client.delete_certificate(name=storage_cert_name)
-        # To ensure certificate is deleted on the server side.
-        time.sleep(30)
+    # Let's delete the storage certificate now.
+    # If the keyvault is soft-delete enabled, then for permanent deletion deleted certificate needs to be purged.
+    client.delete_certificate(name=storage_cert_name)
+    # To ensure certificate is deleted on the server side.
+    time.sleep(30)
 
-        # To ensure permanent deletion, we might need to purge the secret.
-        print("\n.. Purge Deleted Certificate")
-        client.purge_deleted_certificate(name=storage_cert_name)
-        print("Certificate has been permanently deleted.")
+    # To ensure permanent deletion, we might need to purge the secret.
+    print("\n.. Purge Deleted Certificate")
+    client.purge_deleted_certificate(name=storage_cert_name)
+    print("Certificate has been permanently deleted.")
 
-    except HttpResponseError as e:
-        if "(NotSupported)" in e.message:
-            print("\n{0} Please enable soft delete on Key Vault to perform this operation.".format(e.message))
-        else:
-            print("\nrun_sample has caught an error. {0}".format(e.message))
+except HttpResponseError as e:
+    if "(NotSupported)" in e.message:
+        print("\n{0} Please enable soft delete on Key Vault to perform this operation.".format(e.message))
+    else:
+        print("\nrun_sample has caught an error. {0}".format(e.message))
 
-    finally:
-        print("\nrun_sample done")
+finally:
+    print("\nrun_sample done")
 
-
-if __name__ == "__main__":
-    try:
-        run_sample()
-
-    except Exception as e:
-        print("Top level Error: {0}".format(str(e)))

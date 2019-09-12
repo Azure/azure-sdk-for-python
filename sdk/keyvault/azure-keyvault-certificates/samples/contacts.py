@@ -26,48 +26,39 @@ from azure.core.exceptions import HttpResponseError
 # 3. Delete contacts (delete_contacts)
 # ----------------------------------------------------------------------------------------------------------
 
-def run_sample():
-    # Instantiate a certificate client that will be used to call the service.
-    # Notice that the client is using default Azure credentials.
-    # To make default credentials work, ensure that environment variables 'AZURE_CLIENT_ID',
-    # 'AZURE_CLIENT_SECRET' and 'AZURE_TENANT_ID' are set with the service principal credentials.
-    VAULT_URL = os.environ["VAULT_URL"]
-    credential = DefaultAzureCredential()
-    client = CertificateClient(vault_url=VAULT_URL, credential=credential)
-    try:
-        # First we create a list of Contacts that we would like to make the certificate contacts for this key vault.
-        contact_list = [
-            Contact(email='admin@contoso.com',
-                    name='John Doe',
-                    phone='1111111111'),
-            Contact(email='admin2@contoso.com',
-                    name='John Doe2',
-                    phone='2222222222')
-        ]
+# Instantiate a certificate client that will be used to call the service.
+# Notice that the client is using default Azure credentials.
+# To make default credentials work, ensure that environment variables 'AZURE_CLIENT_ID',
+# 'AZURE_CLIENT_SECRET' and 'AZURE_TENANT_ID' are set with the service principal credentials.
+VAULT_URL = os.environ["VAULT_URL"]
+credential = DefaultAzureCredential()
+client = CertificateClient(vault_url=VAULT_URL, credential=credential)
+try:
+    # First we create a list of Contacts that we would like to make the certificate contacts for this key vault.
+    contact_list = [
+        Contact(email='admin@contoso.com',
+                name='John Doe',
+                phone='1111111111'),
+        Contact(email='admin2@contoso.com',
+                name='John Doe2',
+                phone='2222222222')
+    ]
 
-        # Creates and sets the certificate contacts for this key vault.
-        client.create_contacts(contacts=contact_list)
+    # Creates and sets the certificate contacts for this key vault.
+    client.create_contacts(contacts=contact_list)
 
-        # Gets the certificate contacts for this key vault.
-        contacts = client.get_contacts()
-        for contact in contacts:
-            print(contact.name)
-            print(contact.email)
-            print(contact.phone)
+    # Gets the certificate contacts for this key vault.
+    contacts = client.get_contacts()
+    for contact in contacts:
+        print(contact.name)
+        print(contact.email)
+        print(contact.phone)
 
-        # Deletes all of the certificate contacts for this key vault.
-        client.delete_contacts()
+    # Deletes all of the certificate contacts for this key vault.
+    client.delete_contacts()
 
-    except HttpResponseError as e:
-        print("\nrun_sample has caught an error. {0}".format(e.message))
+except HttpResponseError as e:
+    print("\nrun_sample has caught an error. {0}".format(e.message))
 
-    finally:
-        print("\nrun_sample done")
-
-
-if __name__ == "__main__":
-    try:
-        run_sample()
-
-    except Exception as e:
-        print("Top level Error: {0}".format(str(e)))
+finally:
+    print("\nrun_sample done")
