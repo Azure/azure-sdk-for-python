@@ -44,6 +44,7 @@ class RoutingSource(str, Enum):
     twin_change_events = "TwinChangeEvents"
     device_lifecycle_events = "DeviceLifecycleEvents"
     device_job_lifecycle_events = "DeviceJobLifecycleEvents"
+    digital_twin_change_events = "DigitalTwinChangeEvents"
 
 
 class Capabilities(str, Enum):

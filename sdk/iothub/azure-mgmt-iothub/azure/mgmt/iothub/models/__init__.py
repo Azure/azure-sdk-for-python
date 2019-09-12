@@ -19,6 +19,7 @@ try:
     from ._models_py3 import CertificateWithNonceDescription
     from ._models_py3 import CloudToDeviceProperties
     from ._models_py3 import EndpointHealthData
+    from ._models_py3 import EnrichmentProperties
     from ._models_py3 import ErrorDetails, ErrorDetailsException
     from ._models_py3 import EventHubConsumerGroupInfo
     from ._models_py3 import EventHubProperties
@@ -32,6 +33,7 @@ try:
     from ._models_py3 import IotHubLocationDescription
     from ._models_py3 import IotHubNameAvailabilityInfo
     from ._models_py3 import IotHubProperties
+    from ._models_py3 import IotHubPropertiesDeviceStreams
     from ._models_py3 import IotHubQuotaMetricInfo
     from ._models_py3 import IotHubSkuDescription
     from ._models_py3 import IotHubSkuInfo
@@ -78,6 +80,7 @@ except (SyntaxError, ImportError):
     from ._models import CertificateWithNonceDescription
     from ._models import CloudToDeviceProperties
     from ._models import EndpointHealthData
+    from ._models import EnrichmentProperties
     from ._models import ErrorDetails, ErrorDetailsException
     from ._models import EventHubConsumerGroupInfo
     from ._models import EventHubProperties
@@ -91,6 +94,7 @@ except (SyntaxError, ImportError):
     from ._models import IotHubLocationDescription
     from ._models import IotHubNameAvailabilityInfo
     from ._models import IotHubProperties
+    from ._models import IotHubPropertiesDeviceStreams
     from ._models import IotHubQuotaMetricInfo
     from ._models import IotHubSkuDescription
     from ._models import IotHubSkuInfo
@@ -162,6 +166,7 @@ __all__ = [
     'CertificateWithNonceDescription',
     'CloudToDeviceProperties',
     'EndpointHealthData',
+    'EnrichmentProperties',
     'ErrorDetails', 'ErrorDetailsException',
     'EventHubConsumerGroupInfo',
     'EventHubProperties',
@@ -175,6 +180,7 @@ __all__ = [
     'IotHubLocationDescription',
     'IotHubNameAvailabilityInfo',
     'IotHubProperties',
+    'IotHubPropertiesDeviceStreams',
     'IotHubQuotaMetricInfo',
     'IotHubSkuDescription',
     'IotHubSkuInfo',
