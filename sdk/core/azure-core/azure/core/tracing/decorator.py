@@ -48,17 +48,23 @@ def distributed_trace(func=None, name_of_span=None):
     @functools.wraps(func)
     def wrapper_use_tracer(*args, **kwargs):
         # type: (Any, Any) -> Any
+        merge_span = kwargs.pop('merge_span', False)
+        passed_in_parent = kwargs.pop("parent_span", None)
+
         span_impl_type = settings.tracing_implementation()
-        # If no tracing enabled, or merge_span is set do nothing
-        if kwargs.pop('merge_span', False) or span_impl_type is None:
+        if span_impl_type is None:
+            return func(*args, **kwargs) # type: ignore
+
+        # Merge span is parameter is set, but only if no explicit parent are passed
+        if merge_span and not passed_in_parent:
             return func(*args, **kwargs) # type: ignore
 
         # Get original context
         original_wrapped_span = tracing_context.current_span.get()  # type: AbstractSpan
         original_span_instance = span_impl_type.get_current_span()
 
-        passed_in_parent = kwargs.pop("parent_span", None)
         parent_span = common.get_parent_span(passed_in_parent)
+        common.set_span_contexts(parent_span)
 
         name = name_of_span or common.get_function_and_class_name(func, *args)  # type: ignore
         child = parent_span.span(name=name)
@@ -68,6 +74,7 @@ def distributed_trace(func=None, name_of_span=None):
             return func(*args, **kwargs) # type: ignore
         finally:
             child.finish()
+            common.set_span_contexts(parent_span)
             # This test means "get_parent" created the span, so I need to finish it.
             if original_wrapped_span is None and passed_in_parent is None and original_span_instance is None:
                 parent_span.finish()

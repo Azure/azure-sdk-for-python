@@ -54,9 +54,18 @@ class MockClient:
         if numb_times < 1:
             return None
         response = self.pipeline.run(self.request, **kwargs)
-        self.get_foo()
+        self.get_foo(merge_span=True)
+        kwargs['merge_span'] = True
         self.make_request(numb_times - 1, **kwargs)
         return response
+
+    @distributed_trace
+    def merge_span_method(self):
+        return self.get_foo(merge_span=True)
+
+    @distributed_trace
+    def no_merge_span_method(self):
+        return self.get_foo()
 
     @distributed_trace
     def get_foo(self):
@@ -168,6 +177,26 @@ class TestDecorator(object):
             assert not parent.children[1].children
 
     @pytest.mark.parametrize("value", ["opencensus", None])
+    def test_span_with_opencensus_merge_span(self, value):
+        with ContextHelper(tracer_to_use=value) as ctx:
+            exporter = MockExporter()
+            trace = tracer_module.Tracer(sampler=AlwaysOnSampler(), exporter=exporter)
+            with trace.start_span(name="OverAll") as parent:
+                client = MockClient()
+                client.merge_span_method()
+                client.no_merge_span_method()
+            trace.finish()
+            exporter.build_tree()
+            parent = exporter.root
+            assert len(parent.children) == 3
+            assert parent.children[0].span_data.name == "MockClient.__init__"
+            assert not parent.children[0].children
+            assert parent.children[1].span_data.name == "MockClient.merge_span_method"
+            assert not parent.children[1].children
+            assert parent.children[2].span_data.name == "MockClient.no_merge_span_method"
+            assert parent.children[2].children[0].span_data.name == "MockClient.get_foo"
+
+    @pytest.mark.parametrize("value", ["opencensus", None])
     def test_span_with_opencensus_complicated(self, value):
         with ContextHelper(tracer_to_use=value) as ctx:
             exporter = MockExporter()
@@ -193,10 +222,11 @@ class TestDecorator(object):
             assert parent.children[3].span_data.name == "MockClient.make_request"
             assert not parent.children[3].children
 
-    def test_span_with_exception(self):
+    @pytest.mark.parametrize("value", ["opencensus", None])
+    def test_span_with_exception(self, value):
         """Assert that if an exception is raised, the next sibling method is actually a sibling span.
         """
-        with ContextHelper():
+        with ContextHelper(tracer_to_use=value):
             exporter = MockExporter()
             trace = tracer_module.Tracer(sampler=AlwaysOnSampler(), exporter=exporter)
             with trace.span("overall"):
