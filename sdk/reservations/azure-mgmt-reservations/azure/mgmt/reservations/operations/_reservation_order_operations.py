@@ -40,7 +40,7 @@ class ReservationOrderOperations(object):
 
         self.config = config
 
-    def calculate(
+    def calculate_price(
             self, body, custom_headers=None, raw=False, **operation_config):
         """Calculate price for a `ReservationOrder`.
 
@@ -60,7 +60,7 @@ class ReservationOrderOperations(object):
          :class:`ErrorException<azure.mgmt.reservations.models.ErrorException>`
         """
         # Construct URL
-        url = self.calculate.metadata['url']
+        url = self.calculate_price.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -96,7 +96,7 @@ class ReservationOrderOperations(object):
             return client_raw_response
 
         return deserialized
-    calculate.metadata = {'url': '/providers/Microsoft.Capacity/calculatePrice'}
+    calculate_price.metadata = {'url': '/providers/Microsoft.Capacity/calculatePrice'}
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
@@ -263,13 +263,15 @@ class ReservationOrderOperations(object):
     purchase.metadata = {'url': '/providers/Microsoft.Capacity/reservationOrders/{reservationOrderId}'}
 
     def get(
-            self, reservation_order_id, custom_headers=None, raw=False, **operation_config):
+            self, reservation_order_id, expand=None, custom_headers=None, raw=False, **operation_config):
         """Get a specific `ReservationOrder`.
 
         Get the details of the `ReservationOrder`.
 
         :param reservation_order_id: Order Id of the reservation
         :type reservation_order_id: str
+        :param expand: May be used to expand the planInformation.
+        :type expand: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -291,6 +293,8 @@ class ReservationOrderOperations(object):
         # Construct parameters
         query_parameters = {}
         query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+        if expand is not None:
+            query_parameters['$expand'] = self._serialize.query("expand", expand, 'str')
 
         # Construct headers
         header_parameters = {}
