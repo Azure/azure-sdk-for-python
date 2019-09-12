@@ -49,10 +49,9 @@ def distributed_trace(func=None, name_of_span=None):
     def wrapper_use_tracer(*args, **kwargs):
         # type: (Any, Any) -> Any
         span_impl_type = settings.tracing_implementation()
-        if span_impl_type is None:
+        # If no tracing enabled, or merge_span is set do nothing
+        if kwargs.pop('merge_span', False) or span_impl_type is None:
             return func(*args, **kwargs) # type: ignore
-
-        # Tracing mode
 
         # Get original context
         original_wrapped_span = tracing_context.current_span.get()  # type: AbstractSpan
@@ -61,22 +60,17 @@ def distributed_trace(func=None, name_of_span=None):
         passed_in_parent = kwargs.pop("parent_span", None)
         parent_span = common.get_parent_span(passed_in_parent)
 
-        if parent_span is not None and original_wrapped_span is None:
-            common.set_span_contexts(parent_span)
-            name = name_of_span or common.get_function_and_class_name(func, *args)  # type: ignore
-            child = parent_span.span(name=name)
-            child.start()
-            common.set_span_contexts(child)
-            try:
-                ans = func(*args, **kwargs) # type: ignore
-            finally:
-                child.finish()
-                # This test means "get_parent" created the span, so I need to finish it.
-                if original_wrapped_span is None and passed_in_parent is None and original_span_instance is None:
-                    parent_span.finish()
-                common.set_span_contexts(original_wrapped_span, span_instance=original_span_instance)
-        else:
-            ans = func(*args, **kwargs) # type: ignore
-        return ans
+        name = name_of_span or common.get_function_and_class_name(func, *args)  # type: ignore
+        child = parent_span.span(name=name)
+        child.start()
+        common.set_span_contexts(child)
+        try:
+            return func(*args, **kwargs) # type: ignore
+        finally:
+            child.finish()
+            # This test means "get_parent" created the span, so I need to finish it.
+            if original_wrapped_span is None and passed_in_parent is None and original_span_instance is None:
+                parent_span.finish()
+            common.set_span_contexts(original_wrapped_span, span_instance=original_span_instance)
 
     return wrapper_use_tracer
