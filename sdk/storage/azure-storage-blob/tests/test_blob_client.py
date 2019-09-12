@@ -7,6 +7,7 @@ import unittest
 import pytest
 import platform
 
+from azure.core.exceptions import AzureError
 from azure.storage.blob import (
     VERSION,
     BlobServiceClient,
@@ -16,7 +17,7 @@ from azure.storage.blob import (
 from testcase import (
     StorageTestCase,
     record,
-)
+    TestMode)
 #from azure.storage.common import TokenCredential
 
 # ------------------------------------------------------------------------------
@@ -388,6 +389,32 @@ class StorageClientTest(StorageTestCase):
         # Assert
         exists = container.get_container_properties(raw_response_hook=callback)
         self.assertTrue(exists)
+
+    def test_client_request_id_echo(self):
+        # client request id is different for every request, so it will never match the recorded one
+        if TestMode.need_recording_file(self.test_mode):
+            return
+
+        # Arrange
+        request_id_header_name = 'x-ms-client-request-id'
+        service = BlobServiceClient(self._get_account_url(), credential=self.account_key)
+
+        # Act make the client request ID slightly different
+        def callback(response):
+            response.http_response.status_code = 200
+            response.http_response.headers[request_id_header_name] += '1'
+
+        # Assert the client request ID validation is working
+        with self.assertRaises(AzureError):
+            service.get_service_properties(raw_response_hook=callback)
+
+        # Act remove the echoed client request ID
+        def callback(response):
+            response.status_code = 200
+            del response.http_response.headers[request_id_header_name]
+
+        # Assert the client request ID validation is not throwing when the ID is not echoed
+        service.get_service_properties(raw_response_hook=callback)
 
     @record
     def test_user_agent_default(self):
