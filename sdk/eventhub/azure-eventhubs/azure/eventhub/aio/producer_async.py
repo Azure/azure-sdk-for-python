@@ -12,6 +12,7 @@ from uamqp import types, constants, errors  # type: ignore
 from uamqp import SendClientAsync  # type: ignore
 
 from azure.core.tracing.common import get_parent_span
+from azure.core.tracing import SpanKind
 from opencensus.trace.span import SpanKind
 from opencensus.trace.status import Status
 
@@ -221,7 +222,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
         parent_span = get_parent_span()
         if parent_span:
             child = parent_span.span(name="Azure.EventHubs.send")
-            child.span_instance.span_kind = SpanKind.CLIENT
+            child.kind = SpanKind.CLIENT  # Should be PRODUCER
 
         def trace_message(message):
             message_span = child.span(name="Azure.EventHubs.message")

@@ -12,7 +12,7 @@ from uamqp import errors, types  # type: ignore
 from uamqp import ReceiveClientAsync, Source  # type: ignore
 
 from azure.core.tracing.common import get_parent_span
-from opencensus.trace.span import SpanKind
+from azure.core.tracing import SpanKind
 from opencensus.trace.status import Status
 
 from azure.eventhub import EventData, EventPosition
@@ -241,7 +241,7 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         parent_span = get_parent_span()
         if parent_span:
             child = parent_span.span(name="Azure.EventHubs.receive")
-            child.span_instance.span_kind = SpanKind.CLIENT
+            child.kind = SpanKind.CLIENT  # Should be PRODUCER
 
             child.start()
             self._client._add_span_request_attributes(child)

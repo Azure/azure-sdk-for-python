@@ -9,7 +9,7 @@ import asyncio
 import logging
 
 from azure.core.tracing.common import get_parent_span
-from opencensus.trace.span import SpanKind
+from azure.core.tracing import SpanKind
 from opencensus.trace.status import Status
 
 from azure.eventhub import EventPosition, EventHubError
@@ -256,7 +256,7 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
                     parent_span = get_parent_span()
                     if parent_span:
                         child = parent_span.span(name="Azure.EventHubs.process")
-                        child.span_instance.span_kind = SpanKind.SERVER
+                        child.kind = SpanKind.SERVER
 
                         for event_data in events:
                             if event_data.application_properties:
