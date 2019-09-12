@@ -66,6 +66,8 @@ class ResourceSkusOperations(object):
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                if self.config.filter is not None:
+                    query_parameters['$filter'] = self._serialize.query("self.config.filter", self.config.filter, 'str')
 
             else:
                 url = next_link

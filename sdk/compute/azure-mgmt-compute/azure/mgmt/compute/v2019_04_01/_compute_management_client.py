@@ -33,13 +33,15 @@ class ComputeManagementClient(SDKClient):
      Microsoft Azure subscription. The subscription ID forms part of the URI
      for every service call.
     :type subscription_id: str
+    :param filter: The filter to apply on the operation.
+    :type filter: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, subscription_id, base_url=None):
+            self, credentials, subscription_id, filter=None, base_url=None):
 
-        self.config = ComputeManagementClientConfiguration(credentials, subscription_id, base_url)
+        self.config = ComputeManagementClientConfiguration(credentials, subscription_id, filter, base_url)
         super(ComputeManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
