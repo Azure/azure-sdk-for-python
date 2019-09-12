@@ -3,27 +3,19 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import asyncio
-import datetime
-import time
 import os
 from azure.keyvault.certificates.aio import CertificateClient
 from azure.identity.aio import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 
 # ----------------------------------------------------------------------------------------------------------
-# Prerequistes -
+# Prerequisites:
+# 1. An Azure Key Vault (https://docs.microsoft.com/en-us/azure/key-vault/quick-create-cli)
 #
-# 1. An Azure Key Vault-
-#    https://docs.microsoft.com/en-us/azure/key-vault/quick-create-cli
+# 2. azure-keyvault-certificates and azure-identity packages (pip install these)
 #
-# 2. Microsoft Azure Key Vault PyPI package -
-#    https://pypi.python.org/pypi/azure-keyvault-certificates/
-#
-# 3. Microsoft Azure Identity package -
-#    https://pypi.python.org/pypi/azure-identity/
-#
-# 4. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL.
-# How to do this - https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-certificates#createget-credentials)
+# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL
+#    (See https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys#authenticate-the-client)
 #
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates the basic list operations on a vault(certificate) resource for Azure Key Vault.
@@ -49,12 +41,11 @@ async def run_sample():
     try:
         # Let's create a certificate for holding storage and bank accounts credentials. If the certificate
         # already exists in the Key Vault, then a new version of the certificate is created.
-        print("\n1. Create Certificate")
+        print("\n.. Create Certificate")
         bank_cert_name = "BankListCertificate"
         storage_cert_name = "StorageListCertificate"
-        expires = datetime.datetime.utcnow() + datetime.timedelta(days=365)
 
-        bank_certificate_poller = await client.create_certificate(name=bank_cert_name, expires=expires)
+        bank_certificate_poller = await client.create_certificate(name=bank_cert_name)
         storage_certificate_poller = await client.create_certificate(name=storage_cert_name)
 
         # await the creation of the bank and storage certificate
@@ -65,38 +56,37 @@ async def run_sample():
         print("Certificate with name '{0}' was created.".format(storage_cert_name))
 
         # Let's list the certificates.
-        print("\n2. List certificates from the Key Vault")
+        print("\n.. List certificates from the Key Vault")
         certificates = client.list_certificates()
         async for certificate in certificates:
             print("Certificate with name '{0}' was found.".format(certificate.name))
 
-        # You find the bank certificate needs to change the expiration date because the bank account credentials will be valid for an extra year.
-        # Calling create_certificate on an existing certificate creates a new version of the certificate in the Key Vault with the new value.
+        # You've decided to add tags to the certificate you created. Calling create_certificate on an existing
+        # certificate creates a new version of the certificate in the Key Vault with the new value.
 
-        expires = datetime.datetime.utcnow() + datetime.timedelta(days=365)
+        tags = {"a": "b"}
 
-        updated_bank_certificate_poller = await client.create_certificate(name=bank_cert_name, expires=expires)
+        updated_bank_certificate_poller = await client.create_certificate(name=bank_cert_name, tags=tags)
         await updated_bank_certificate_poller
         print(
-            "Certificate with name '{0}' was updated with expiration date '{1}'".format(bank_cert_name, expires)
+            "Certificate with name '{0}' was created again with tags '{1}'".format(bank_cert_name, tags)
         )
 
-        # You need to check all the different expiration dates your bank account certificate had previously. Lets print all the versions of this certificate.
-        print("\n3. List versions of the certificate using its name")
+        # You need to check all the different tags your bank account certificate had previously. Lets print all the versions of this certificate.
+        print("\n.. List versions of the certificate using its name")
         certificate_versions = client.list_certificate_versions(bank_cert_name)
         async for certificate_version in certificate_versions:
-            print("Bank Certificate with name '{0}' with version '{1}' has expiration date: '{2}'.".format(certificate_version.name, certificate_version.version, certificate_version.expires))
+            print("Bank Certificate with name '{0}' with version '{1}' has tags: '{2}'.".format(
+                certificate_version.name,
+                certificate_version.version,
+                certificate_version.tags))
 
-        # The bank acoount and storage accounts got closed. Let's delete bank and storage accounts certificates.
+        # The bank account and storage accounts got closed. Let's delete bank and storage accounts certificates.
         await client.delete_certificate(name=bank_cert_name)
         await client.delete_certificate(name=storage_cert_name)
 
-        # To ensure certificate is deleted on the server side.
-        print("Deleting certificates...")
-        time.sleep(30)
-
         # You can list all the deleted and non-purged certificates, assuming Key Vault is soft-delete enabled.
-        print("\n3. List deleted certificates from the Key Vault")
+        print("\n.. List deleted certificates from the Key Vault")
         deleted_certificates = client.list_deleted_certificates()
         async for deleted_certificate in deleted_certificates:
             print(
