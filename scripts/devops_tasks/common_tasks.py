@@ -146,7 +146,7 @@ def process_glob_string(glob_string, target_root_dir):
 
     # dedup, in case we have double coverage from the glob strings. Example: "azure-mgmt-keyvault,azure-mgmt-*"
     collected_directories = list(set(collected_top_level_directories))
-
+    
     # if we have individually queued this specific package, it's obvious that we want to build it specifically
     # in this case, do not honor the omission list
     if len(collected_directories) == 1:
