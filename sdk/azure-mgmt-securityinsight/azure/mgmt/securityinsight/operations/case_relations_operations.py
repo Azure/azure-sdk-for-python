@@ -211,7 +211,7 @@ class CaseRelationsOperations(object):
 
     def create_or_update_relation(
             self, resource_group_name, operational_insights_resource_provider, workspace_name, case_id, relation_name, relation_input_model, custom_headers=None, raw=False, **operation_config):
-        """Creates the case relation.
+        """Creates or updates the case relation.
 
         :param resource_group_name: The name of the resource group within the
          user's subscription. The name is case insensitive.
