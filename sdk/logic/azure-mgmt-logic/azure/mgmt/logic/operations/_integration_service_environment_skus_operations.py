@@ -40,7 +40,7 @@ class IntegrationServiceEnvironmentSkusOperations(object):
 
     def list(
             self, resource_group, integration_service_environment_name, custom_headers=None, raw=False, **operation_config):
-        """Gets a list of integration service environment skus.
+        """Gets a list of integration service environment Skus.
 
         :param resource_group: The resource group.
         :type resource_group: str
