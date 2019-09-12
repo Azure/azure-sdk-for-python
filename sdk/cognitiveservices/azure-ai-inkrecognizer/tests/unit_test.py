@@ -75,7 +75,8 @@ def pass_response(response, config):
     return response
 
 
-def parse_result_from_json(json_path):
+def parse_result(result_filename):
+    json_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "test_data", result_filename)
     client = InkRecognizerClient(URL, CREDENTIAL)
     with open(json_path, "r") as f:
         raw_recognition_result = f.read()
@@ -188,7 +189,8 @@ class TestClient:
                 raise AssertionError("Should raise ResourceNotFoundError here")
 
         # valid response from server
-        with open(os.path.join(os.getcwd(), "test_data", "hello_world_result.json"), "r") as f:
+        json_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "test_data", "hello_world_result.json")
+        with open(json_path, "r") as f:
             recognition_json = f.read()
 
         response = Mock(status_code=200, headers={}, body=lambda: recognition_json.encode("utf-8"))
@@ -211,7 +213,7 @@ class TestClient:
 
 class TestModels:
     def test_unit_ink_recognition_unit(self):
-        root = parse_result_from_json(os.path.join(os.getcwd(), "test_data", "hello_world_result.json"))
+        root = parse_result("hello_world_result.json")
         units = root._units
         assert len(units) > 0 
         for unit in units:
@@ -229,7 +231,7 @@ class TestModels:
                 assert isinstance(child, InkRecognitionUnit) 
 
     def test_unit_ink_bullet(self):
-        root = parse_result_from_json(os.path.join(os.getcwd(), "test_data", "list_result.json"))
+        root = parse_result("list_result.json")
         bullets = root.ink_bullets
         assert len(bullets) > 0
         for bullet in bullets:
@@ -239,7 +241,7 @@ class TestModels:
             assert len(bullet.children) == 0
 
     def test_unit_ink_drawing(self):
-        root = parse_result_from_json(os.path.join(os.getcwd(), "test_data", "drawings_result.json"))
+        root = parse_result("drawings_result.json")
         drawings = root.ink_drawings
         assert len(drawings) > 0 
         for drawing in drawings:
@@ -259,7 +261,7 @@ class TestModels:
             assert len(drawing.children) == 0
             
     def test_unit_line(self):
-        root = parse_result_from_json(os.path.join(os.getcwd(), "test_data", "hello_world_result.json"))
+        root = parse_result("hello_world_result.json")
         lines = root.lines
         assert len(lines) > 0
         for line in lines:
@@ -273,7 +275,7 @@ class TestModels:
                 assert isinstance(child, (InkBullet, InkWord))
 
     def test_unit_paragraph(self):
-        root = parse_result_from_json(os.path.join(os.getcwd(), "test_data", "list_result.json"))
+        root = parse_result("list_result.json")
         paragraphs = root.paragraphs
         assert len(paragraphs) > 0
         for paragraph in paragraphs:
@@ -284,7 +286,7 @@ class TestModels:
                 assert isinstance(child, (Line, ListItem))
 
     def test_unit_ink_word(self):
-        root = parse_result_from_json(os.path.join(os.getcwd(), "test_data", "hello_world_result.json"))
+        root = parse_result("hello_world_result.json")
         words = root.ink_words
         assert len(words) > 0
         for word in words:
@@ -297,7 +299,7 @@ class TestModels:
             assert len(word.children) == 0
 
     def test_unit_writing_region(self):
-        root = parse_result_from_json(os.path.join(os.getcwd(), "test_data", "list_result.json"))
+        root = parse_result("list_result.json")
         writing_regions = root.writing_regions
         assert len(writing_regions) > 0
         for writing_region in writing_regions:
@@ -308,7 +310,7 @@ class TestModels:
                 assert isinstance(child, Paragraph)
 
     def test_unit_list_item(self):
-        root = parse_result_from_json(os.path.join(os.getcwd(), "test_data", "list_result.json"))
+        root = parse_result("list_result.json")
         list_items = root.list_items
         assert len(list_items) > 0
         for list_item in list_items:
