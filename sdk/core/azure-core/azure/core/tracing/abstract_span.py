@@ -57,6 +57,12 @@ class AbstractSpan(Protocol):
         # type: (SpanKind) -> None
         """Set the span kind of this span."""
 
+    def __enter__(self):
+        """Start a span."""
+
+    def __exit__(self, exception_type, exception_value, traceback):
+        """Finish a span."""
+
     def start(self):
         # type: () -> None
         """Set the start time for a span."""

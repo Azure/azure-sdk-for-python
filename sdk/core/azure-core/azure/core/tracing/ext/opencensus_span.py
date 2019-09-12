@@ -90,17 +90,24 @@ class OpenCensusSpan(object):
             raise ValueError("Kind {} is not supported in OpenCensus".format(value))
         self.span_instance.span_kind = kind
 
+    def __enter__(self):
+        """Start a span."""
+        self.span_instance.__enter__()
+        return self
+
+    def __exit__(self, exception_type, exception_value, traceback):
+        """Finish a span."""
+        self.span_instance.__exit__(exception_type, exception_value, traceback)
 
     def start(self):
         # type: () -> None
         """Set the start time for a span."""
-        self.span_instance.start()
+        self.__enter__()
 
     def finish(self):
         # type: () -> None
         """Set the end time for a span."""
-        tracer = self.get_current_tracer()
-        tracer.end_span()
+        self.__exit__(None, None, None)
 
     def to_header(self):
         # type: () -> Dict[str, str]

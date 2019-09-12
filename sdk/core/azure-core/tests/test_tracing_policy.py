@@ -106,7 +106,10 @@ def test_distributed_tracing_policy_with_user_agent(should_set_sdk_context):
 
             time.sleep(0.001)
             policy.on_request(pipeline_request)
-            policy.on_exception(pipeline_request)
+            try:
+                raise ValueError("Transport trouble")
+            except:
+                policy.on_exception(pipeline_request)
 
             user_agent.on_response(pipeline_request, pipeline_response)
 
@@ -132,3 +135,6 @@ def test_distributed_tracing_policy_with_user_agent(should_set_sdk_context):
         assert network_span.span_data.attributes.get("x-ms-client-request-id") == "some client request id"
         assert network_span.span_data.attributes.get("x-ms-request-id") is None
         assert network_span.span_data.attributes.get("http.status_code") == 504
+        # Exception should propagate status for Opencensus
+        assert network_span.span_data.status.message == 'Transport trouble'
+

@@ -203,4 +203,6 @@ async def test_span_with_exception(value):
         assert len(parent.children) == 3
         assert parent.children[0].span_data.name == "MockClient.__init__"
         assert parent.children[1].span_data.name == "MockClient.raising_exception"
+        # Exception should propagate status for Opencensus
+        assert parent.children[1].span_data.status.message == 'Something went horribly wrong here'
         assert parent.children[2].span_data.name == "MockClient.get_foo"

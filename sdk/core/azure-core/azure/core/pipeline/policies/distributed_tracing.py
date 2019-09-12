@@ -24,7 +24,7 @@
 #
 # --------------------------------------------------------------------------
 """Traces network calls using the implementation library from the settings."""
-
+import sys
 from six.moves import urllib
 
 from azure.core.tracing.context import tracing_context
@@ -84,7 +84,7 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
         self.parent_span_dict[child] = original_context
         self.set_header(request, child)
 
-    def end_span(self, request, response=None):
+    def end_span(self, request, response=None, exc_info=None):
         # type: (HttpRequest, Optional[HttpResponse]) -> None
         """Ends the span that is tracing the network and updates its status."""
         span = tracing_context.current_span.get()  # type: AbstractSpan
@@ -95,7 +95,10 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
                 span.add_attribute(self._request_id, request_id)
             if response and self._response_id in response.headers:
                 span.add_attribute(self._response_id, response.headers[self._response_id])
-            span.finish()
+            if exc_info:
+                span.__exit__(*exc_info)
+            else:
+                span.finish()
 
             original_context = self.parent_span_dict.pop(span, None)
             if original_context:
@@ -107,5 +110,5 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
 
     def on_exception(self, _request):  # pylint: disable=unused-argument
         # type: (PipelineRequest) -> bool
-        self.end_span(_request.http_request)  # type: ignore
+        self.end_span(_request.http_request, exc_info=sys.exc_info())  # type: ignore
         return False
