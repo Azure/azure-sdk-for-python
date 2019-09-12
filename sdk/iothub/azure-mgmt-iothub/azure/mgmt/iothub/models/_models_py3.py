@@ -781,7 +781,7 @@ class IotHubLocationDescription(Model):
     :type location: str
     :param role: The role of the region, can be either primary or secondary.
      The primary region is where the IoT hub is currently provisioned. The
-     secondary region is the the Azure disaster recovery (DR) paired region and
+     secondary region is the Azure disaster recovery (DR) paired region and
      also the region where the IoT hub can failover to. Possible values
      include: 'primary', 'secondary'
     :type role: str or ~azure.mgmt.iothub.models.IotHubReplicaRoleType
