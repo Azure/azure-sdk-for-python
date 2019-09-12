@@ -10,7 +10,6 @@ import logging
 
 from azure.core.tracing.common import get_parent_span
 from azure.core.tracing import SpanKind
-from opencensus.trace.status import Status
 
 from azure.eventhub import EventPosition, EventHubError
 from azure.eventhub.aio import EventHubClient

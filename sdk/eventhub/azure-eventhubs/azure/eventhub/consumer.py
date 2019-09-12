@@ -14,7 +14,6 @@ from uamqp import ReceiveClient, Source  # type: ignore
 
 from azure.core.tracing.common import get_parent_span
 from azure.core.tracing import SpanKind
-from opencensus.trace.status import Status
 
 from azure.eventhub.common import EventData, EventPosition
 from azure.eventhub.error import _error_handler
