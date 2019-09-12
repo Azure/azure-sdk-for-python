@@ -17,12 +17,12 @@ def get_live_storage_blob_client():
     try:
         storage_connection_str = os.environ['AZURE_STORAGE_CONN_STR']
     except KeyError:
-        return None
+        return None, None
     try:
         from azure.storage.blob import BlobServiceClient
         from azure.storage.blob.aio import ContainerClient
     except ImportError or ModuleNotFoundError:
-        return None
+        return None, None
 
     container_str = str(uuid.uuid4())
     blob_service_client = BlobServiceClient.from_connection_string(storage_connection_str)
