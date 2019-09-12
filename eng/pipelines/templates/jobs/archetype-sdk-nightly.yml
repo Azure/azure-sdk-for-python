@@ -39,7 +39,7 @@ jobs:
     dependsOn:
        - 'Build'
 
-    timeoutInMinutes: 240
+    timeoutInMinutes: 270
 
     strategy:
       matrix:
