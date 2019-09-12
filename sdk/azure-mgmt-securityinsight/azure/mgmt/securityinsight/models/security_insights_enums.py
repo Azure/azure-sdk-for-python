@@ -53,6 +53,7 @@ class AttackTactic(str, Enum):
     collection = "Collection"
     exfiltration = "Exfiltration"
     command_and_control = "CommandAndControl"
+    impact = "Impact"
 
 
 class DataTypeStatus(str, Enum):
