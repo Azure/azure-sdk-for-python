@@ -186,7 +186,7 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
             # Tracing
             current_span = get_parent_span()
             if current_span and event_data.application_properties:
-                traceparent = event_data.application_properties.get(b"Diagnostic-Id", None).decode('ascii')
+                traceparent = event_data.application_properties.get(b"Diagnostic-Id", "").decode('ascii')
                 if traceparent:
                     current_span.link(traceparent)
 
