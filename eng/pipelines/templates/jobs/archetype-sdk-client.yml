@@ -34,7 +34,7 @@ jobs:
     - template: ../steps/analyze.yml
 
   - job: 'Test'
-    timeoutInMinutes: ${{ paramters.TestTimeoutInMinutes }}
+    timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
     variables:
     - template: ../variables/globals.yml
 
