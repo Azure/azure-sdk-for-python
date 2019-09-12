@@ -7,61 +7,61 @@
 import platform
 if platform.python_version() < "3.5.3":
     raise ImportError("Asynchronous client supports Python 3.5.3+ only.")
-else:
-    from .._enums import (
-        ApplicationKind,
-        InkPointUnit,
-        InkRecognitionUnitKind,
-        ShapeKind,
-        InkStrokeKind,
-        ServiceVersion
-    )
 
-    from ._client_async import InkRecognizerClient
-    from .._ink_stroke import (
-        IInkPoint,
-        IInkStroke
-    )
-    from .._models import (
-        Point,
-        Rectangle,
-        InkRecognitionUnit,
-        InkBullet,
-        InkDrawing,
-        Line,
-        Paragraph,
-        InkWord,
-        WritingRegion,
-        ListItem,
-        InkRecognitionRoot
-    )
+from .._enums import (
+    ApplicationKind,
+    InkPointUnit,
+    InkRecognitionUnitKind,
+    ShapeKind,
+    InkStrokeKind,
+    ServiceVersion
+)
 
-    from .._version import VERSION
+from ._client_async import InkRecognizerClient
+from .._ink_stroke import (
+    IInkPoint,
+    IInkStroke
+)
+from .._models import (
+    Point,
+    Rectangle,
+    InkRecognitionUnit,
+    InkBullet,
+    InkDrawing,
+    Line,
+    Paragraph,
+    InkWord,
+    WritingRegion,
+    ListItem,
+    InkRecognitionRoot
+)
 
-    __all__ = [#enums
-               "ApplicationKind", 
-               "InkPointUnit",
-               "InkRecognitionUnitKind", 
-               "ShapeKind", 
-               "InkStrokeKind",
-               "ServiceVersion",
-               # client
-               "InkRecognizerClient",
-               # interfaces
-               "IInkPoint", 
-               "IInkStroke",
-               # models
-               "Point", 
-               "Rectangle", 
-               "InkRecognitionUnit", 
-               "InkBullet",
-               "InkDrawing", 
-               "Line", 
-               "Paragraph", 
-               "InkWord", 
-               "WritingRegion",
-               "ListItem",
-               "InkRecognitionRoot"
-              ]
+from .._version import VERSION
 
-    __version__ = VERSION
+__all__ = [#enums
+            "ApplicationKind", 
+            "InkPointUnit",
+            "InkRecognitionUnitKind", 
+            "ShapeKind", 
+            "InkStrokeKind",
+            "ServiceVersion",
+            # client
+            "InkRecognizerClient",
+            # interfaces
+            "IInkPoint", 
+            "IInkStroke",
+            # models
+            "Point", 
+            "Rectangle", 
+            "InkRecognitionUnit", 
+            "InkBullet",
+            "InkDrawing", 
+            "Line", 
+            "Paragraph", 
+            "InkWord", 
+            "WritingRegion",
+            "ListItem",
+            "InkRecognitionRoot"
+            ]
+
+__version__ = VERSION

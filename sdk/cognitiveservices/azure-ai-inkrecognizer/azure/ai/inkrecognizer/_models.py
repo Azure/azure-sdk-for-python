@@ -293,16 +293,16 @@ class InkDrawing(InkRecognitionUnit):
 
     def _parse_one_alternate(self, json_object, json_alternate):
         kind = json_alternate.get("category")
-        if kind == InkRecognitionUnitKind.INK_DRAWING.value:
-            json_object_alternate = json_object.copy()
-            json_object_alternate["confidence"] = json_alternate["confidence"]
-            json_object_alternate["recognizedObject"] = json_alternate["recognizedString"]
-            json_object_alternate["rotationAngle"] = json_alternate["rotationAngle"]
-            json_object_alternate["points"] = json_alternate.get("points", [])
-            json_object_alternate["alternates"] = []
-            return InkDrawing(json_object_alternate)
-        else:
+        if kind != InkRecognitionUnitKind.INK_DRAWING.value:
             raise ValueError("Unexpected InkDrawing alternate kind: %s" % kind)
+        json_object_alternate = json_object.copy()
+        json_object_alternate["confidence"] = json_alternate["confidence"]
+        json_object_alternate["recognizedObject"] = json_alternate["recognizedString"]
+        json_object_alternate["rotationAngle"] = json_alternate["rotationAngle"]
+        json_object_alternate["points"] = json_alternate.get("points", [])
+        json_object_alternate["alternates"] = []
+        return InkDrawing(json_object_alternate)
+            
 
     def _parse_alternates(self, json_object):
         return [self._parse_one_alternate(json_object, json_alternate)
@@ -695,15 +695,14 @@ def _parse_one_recognition_unit(json_object):
     kind = json_object["category"]
     if kind in _RECOGNITION_UNIT_MAP:
         return _RECOGNITION_UNIT_MAP[kind](json_object)
-    else:
-        # use base class
-        return InkRecognitionUnit(json_object)
+    # return base class
+    return InkRecognitionUnit(json_object)
 
 
-def _parse_recognition_units(json_object, status_code):
+def _parse_recognition_units(content_json, status_code):
     # parse raw result into InkRecognitionUnit tree
     units = OrderedDict()
-    recognition_unit_list = json_object.get("recognitionUnits", [])
+    recognition_unit_list = content_json.get("recognitionUnits", [])
     # parse all units in json response into InkRecognitionUnit
     for json_object in recognition_unit_list:
         unit = _parse_one_recognition_unit(json_object)

@@ -4,7 +4,6 @@
 # license information.
 #--------------------------------------------------------------------------
 
-import logging
 from azure.core import AsyncPipelineClient
 from azure.core.pipeline.transport import HttpRequest, AioHttpTransport
 from azure.core.pipeline.policies import (
@@ -17,13 +16,13 @@ from .._client import _InkRecognizerClientBase, _AzureConfiguration
 
 
 class _AzureConfigurationAsync(_AzureConfiguration):
-    def __init__(self, credentials, **kwargs):
+    def __init__(self, credential, **kwargs):
         self._set_universal(**kwargs)
         # async-specific azure pipeline policies
         scopes = []
         if "scopes" in kwargs:
             scopes = kwargs.pop("scopes")
-        self.authentication_policy = AsyncBearerTokenCredentialPolicy(credentials, *scopes, **kwargs)
+        self.authentication_policy = AsyncBearerTokenCredentialPolicy(credential, *scopes, **kwargs)
         self.retry_policy = kwargs.get("retry_policy", AsyncRetryPolicy(**kwargs))
         self.redirect_policy = kwargs.get("redirect_policy", AsyncRedirectPolicy(**kwargs))
         self.transport = kwargs.get("transport", AioHttpTransport())
@@ -37,7 +36,7 @@ class InkRecognizerClient(_InkRecognizerClientBase):
 
     :param str url: target url of the Ink Recognizer service
 
-    :param ~azure.core.TokenCredential credentials: An available Azure Active 
+    :param ~azure.core.TokenCredential credential: An available Azure Active 
     Directory credential for Ink Recognition Service
     
     Key word arguments include Ink Recognizer specific arguments, azure service 
@@ -81,9 +80,9 @@ class InkRecognizerClient(_InkRecognizerClientBase):
     https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/docs/configuration.md
     """
 
-    def __init__(self, url, credentials, **kwargs):
-        super().__init__(url, credentials, **kwargs)
-        azure_config = _AzureConfigurationAsync(credentials, **kwargs)
+    def __init__(self, url, credential, **kwargs):
+        super().__init__(url, credential, **kwargs)
+        azure_config = _AzureConfigurationAsync(credential, **kwargs)
         self._pipeline_client = AsyncPipelineClient(
             base_url=url, config=azure_config, transport=azure_config.transport)
 

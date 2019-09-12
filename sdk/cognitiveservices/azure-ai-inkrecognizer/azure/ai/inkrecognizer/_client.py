@@ -45,7 +45,6 @@ _DEFAULT_ARGUMENTS = {
 def _validate_param(param, param_name, types):
     if not isinstance(types, (list, tuple)):
         types = [types]
-    assert len(types) > 0
     if not isinstance(param, tuple(types)):
         if len(types) == 1:
             supported_type = "<%s>" % types[0].__name__
@@ -69,13 +68,13 @@ def _get_and_validate_param(kwargs, param_name, types, default=None):
 
 
 class _AzureConfiguration(Configuration):
-    def __init__(self, credentials, **kwargs):
+    def __init__(self, credential, **kwargs):
         self._set_universal(**kwargs)
         # sync-specific azure pipeline policies
         scopes = []
         if "scopes" in kwargs:
             scopes = kwargs.pop("scopes")
-        self.authentication_policy = BearerTokenCredentialPolicy(credentials, *scopes, **kwargs)
+        self.authentication_policy = BearerTokenCredentialPolicy(credential, *scopes, **kwargs)
         self.retry_policy = kwargs.get("retry_policy", RetryPolicy(**kwargs))
         self.redirect_policy = kwargs.get("redirect_policy", RedirectPolicy(**kwargs))
         self.transport = kwargs.get("transport", RequestsTransport())
@@ -115,7 +114,7 @@ class _InkRecognizerConfiguration():
 
 
 class _InkRecognizerClientBase:
-    def __init__(self, url, credentials, **kwargs):
+    def __init__(self, url, credential, **kwargs):
         # type: (str, str, Any) -> None
         _validate_param(url, "url", str)
 
@@ -124,7 +123,7 @@ class _InkRecognizerClientBase:
         self._default_arguments = _DEFAULT_ARGUMENTS
         self._default_arguments.update(kwargs)
 
-        azure_config = _AzureConfiguration(credentials, **kwargs)
+        azure_config = _AzureConfiguration(credential, **kwargs)
         self._pipeline_client = PipelineClient(
             base_url=url, config=azure_config, transport=azure_config.transport)
 
@@ -192,12 +191,11 @@ class _InkRecognizerClientBase:
         if status_code == 404:
             self._logger.warning(content)
             raise ResourceNotFoundError(content)
-        elif status_code == 401:
+        if status_code == 401:
             self._logger.warning(content)
             raise ClientAuthenticationError(content)
-        else:
-            self._logger.warning(content)
-            raise HttpResponseError(content)
+        self._logger.warning(content)
+        raise HttpResponseError(content)
 
 
 class InkRecognizerClient(_InkRecognizerClientBase):
@@ -209,7 +207,7 @@ class InkRecognizerClient(_InkRecognizerClientBase):
 
     :param str url: target url of the Ink Recognizer service
 
-    :param ~azure.core.TokenCredential credentials: An available Azure Active 
+    :param ~azure.core.TokenCredential credential: An available Azure Active 
     Directory credential for Ink Recognition Service
 
     Key word arguments include Ink Recognizer specific arguments, azure service 
