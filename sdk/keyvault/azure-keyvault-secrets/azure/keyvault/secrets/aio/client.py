@@ -38,7 +38,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         :param str name: The name of the secret
         :param str version: (optional) Version of the secret to get. If unspecified, gets the latest version.
         :rtype: ~azure.keyvault.secrets.models.Secret
-        :raises: ~azure.core.exceptions.ResourceNotFoundError if the secret doesn't exist
+        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError` if the secret doesn't exist
 
         Example:
             .. literalinclude:: ../tests/test_samples_secrets_async.py
@@ -118,7 +118,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         :param datetime.datetime expires: (optional) Expiry date  of the secret in UTC.
         :param dict(str, str) tags: (optional) Application specific metadata in the form of key-value pairs.
         :rtype: ~azure.keyvault.secrets.models.SecretAttributes
-        :raises: ~azure.core.exceptions.ResourceNotFoundError if the secret doesn't exist
+        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError` if the secret doesn't exist
 
         Example:
             .. literalinclude:: ../tests/test_samples_secrets_async.py
@@ -201,7 +201,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         :param str name: Name of the secret
         :returns: The raw bytes of the secret backup
         :rtype: bytes
-        :raises: ~azure.core.exceptions.ResourceNotFoundError if the secret doesn't exist
+        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError` if the secret doesn't exist
 
          Example:
             .. literalinclude:: ../tests/test_samples_secrets_async.py
@@ -223,7 +223,7 @@ class SecretClient(AsyncKeyVaultClientBase):
         :param bytes backup: The raw bytes of the secret backup
         :returns: The restored secret
         :rtype: ~azure.keyvault.secrets.models.SecretAttributes
-        :raises: ~azure.core.exceptions.ResourceExistsError if the secret's name is already in use
+        :raises: :class:`~azure.core.exceptions.ResourceExistsError` if the secret's name is already in use
 
         Example:
             .. literalinclude:: ../tests/test_samples_secrets_async.py
@@ -244,7 +244,7 @@ class SecretClient(AsyncKeyVaultClientBase):
 
         :param str name: Name of the secret
         :rtype: ~azure.keyvault.secrets.models.DeletedSecret
-        :raises: ~azure.core.exceptions.ResourceNotFoundError if the secret doesn't exist
+        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError` if the secret doesn't exist
 
         Example:
             .. literalinclude:: ../tests/test_samples_secrets_async.py
@@ -266,7 +266,7 @@ class SecretClient(AsyncKeyVaultClientBase):
 
         :param str name: Name of the secret
         :rtype: ~azure.keyvault.secrets.models.DeletedSecret
-        :raises: ~azure.core.exceptions.ResourceNotFoundError if the deleted secret doesn't exist
+        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError` if the deleted secret doesn't exist
 
         Example:
             .. literalinclude:: ../tests/test_samples_secrets_async.py
