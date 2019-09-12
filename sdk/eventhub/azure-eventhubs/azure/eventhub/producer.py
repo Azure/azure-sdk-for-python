@@ -257,18 +257,11 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         self._unsent_events = [wrapper_event_data.message]
 
         if parent_span:
-            # Start current span and set metadata
-            child.start()
-            self._client._add_span_request_attributes(child)
-        try:
+            with child:
+                self._client._add_span_request_attributes(child)
+                self._send_event_data_with_retry(timeout=timeout)
+        else:
             self._send_event_data_with_retry(timeout=timeout)
-        except Exception as err:
-            if parent_span:
-                child.span_instance.status = Status.from_exception(err)
-            raise
-        finally:
-            if parent_span:
-                child.finish()
 
     def close(self, exception=None):  # pylint:disable=useless-super-delegation
         # type:(Exception) -> None

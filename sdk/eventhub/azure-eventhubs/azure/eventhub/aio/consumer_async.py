@@ -237,29 +237,22 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
                 :caption: Receives events asynchronously
 
         """
+        self._check_closed()
+
+        timeout = timeout or self._client._config.receive_timeout  # pylint:disable=protected-access
+        max_batch_size = max_batch_size or min(self._client._config.max_batch_size, self._prefetch)  # pylint:disable=protected-access
+
         # Tracing code
         parent_span = get_parent_span()
         if parent_span:
             child = parent_span.span(name="Azure.EventHubs.receive")
             child.kind = SpanKind.CLIENT  # Should be PRODUCER
 
-            child.start()
-            self._client._add_span_request_attributes(child)
-
-        self._check_closed()
-
-        timeout = timeout or self._client._config.receive_timeout  # pylint:disable=protected-access
-        max_batch_size = max_batch_size or min(self._client._config.max_batch_size, self._prefetch)  # pylint:disable=protected-access
-
-        try:
+            with child:
+                self._client._add_span_request_attributes(child)
+                return await self._receive_with_retry(timeout=timeout, max_batch_size=max_batch_size)
+        else:
             return await self._receive_with_retry(timeout=timeout, max_batch_size=max_batch_size)
-        except Exception as err:
-            if parent_span:
-                child.span_instance.status = Status.from_exception(err)
-            raise
-        finally:
-            if parent_span:
-                child.finish()
 
     async def close(self, exception=None):
         # type: (Exception) -> None

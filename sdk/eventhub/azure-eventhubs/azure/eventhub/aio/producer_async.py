@@ -13,8 +13,6 @@ from uamqp import SendClientAsync  # type: ignore
 
 from azure.core.tracing.common import get_parent_span
 from azure.core.tracing import SpanKind
-from opencensus.trace.span import SpanKind
-from opencensus.trace.status import Status
 
 from azure.eventhub.common import EventData, EventDataBatch
 from azure.eventhub.error import _error_handler, OperationTimeoutError, EventDataError
@@ -254,18 +252,11 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
         self._unsent_events = [wrapper_event_data.message]
 
         if parent_span:
-            # Start current span and set metadata
-            child.start()
-            self._client._add_span_request_attributes(child)
-        try:
+            with child:
+                self._client._add_span_request_attributes(child)
+                await self._send_event_data_with_retry(timeout=timeout)  # pylint:disable=unexpected-keyword-arg # TODO: to refactor
+        else:
             await self._send_event_data_with_retry(timeout=timeout)  # pylint:disable=unexpected-keyword-arg # TODO: to refactor
-        except Exception as err:
-            if parent_span:
-                child.span_instance.status = Status.from_exception(err)
-            raise
-        finally:
-            if parent_span:
-                child.finish()
 
     async def close(self, exception=None):
         # type: (Exception) -> None

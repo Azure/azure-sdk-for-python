@@ -264,18 +264,11 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
                                 if traceparent:
                                     child.link(traceparent)
 
-                        child.start()
-                        self._eventhub_client._add_span_request_attributes(child)
-
-                        try:
+                        with child:
+                            self._eventhub_client._add_span_request_attributes(child)
                             await partition_processor.process_events(events, partition_context)
-                        except Exception as err:
-                            if parent_span:
-                                child.span_instance.status = Status.from_exception(err)
-                            raise
-                        finally:
-                            if parent_span:
-                                child.finish()
+                    else:
+                        await partition_processor.process_events(events, partition_context)
 
                 except asyncio.CancelledError:
                     log.info(
