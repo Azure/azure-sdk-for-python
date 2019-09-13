@@ -11,10 +11,10 @@ class EventHub:
     def __init__(self):
         # This test requires a previusly created Event Hub.
         # In this example the name is "myeventhub", but it could be change below
-        connectionString = os.environ["EVENT_HUBS_CONNECTION_STRING"]
-        eventHubName = "myeventhub"
+        connection_string = os.environ["EVENT_HUBS_CONNECTION_STRING"]
+        event_hub_name = "myeventhub"
         self.client = EventHubClient.from_connection_string(
-            connectionString, eventHubName
+            connection_string, event_hub_path=event_hub_name
         )
 
     def get_partition_ids(self):

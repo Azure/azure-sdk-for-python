@@ -15,7 +15,7 @@ class EventHub:
         connection_string = os.environ["EVENT_HUBS_CONNECTION_STRING"]
         event_hub_name = "myeventhub"
         self.client = EventHubClient.from_connection_string(
-            connection_string, event_hub_name
+            connection_string, event_hub_path=event_hub_name
         )
 
     async def get_partition_ids(self):
