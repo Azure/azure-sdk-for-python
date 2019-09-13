@@ -8,7 +8,7 @@ from typing import Any, AsyncIterable, Optional, Dict, List, Union
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.keyvault.keys.models import DeletedKey, JsonWebKey, Key, KeyBase, KeyOperationResult
+from azure.keyvault.keys.models import DeletedKey, JsonWebKey, Key, KeyBase
 from azure.keyvault.keys._shared import AsyncKeyVaultClientBase
 
 from ..crypto.aio import CryptographyClient
@@ -57,16 +57,16 @@ class KeyClient(AsyncKeyVaultClientBase):
 
         :param str name: The name of the new key. Key Vault will generate the key's version.
         :param key_type: The type of key to create
-        :type key_type: str or ~azure.keyvault.keys.enums.JsonWebKeyType
+        :type key_type: str or ~azure.keyvault.keys.enums.KeyType
         :param int size: (optional) RSA key size in bits, for example 2048, 3072, or 4096.
         :param key_operations: (optional) Allowed key operations
-        :type key_operations: list(str or ~azure.keyvault.keys.enums.JsonWebKeyOperation)
+        :type key_operations: list(str or ~azure.keyvault.keys.enums.KeyOperation)
         :param bool enabled: (optional) Whether the key is enabled for use
         :param expires: (optional) Expiry date of the key in UTC
         :param datetime.datetime not_before: (optional) Not before date of the key in UTC
         :param dict tags: (optional) Application specific metadata in the form of key-value pairs
         :param curve: (optional) Elliptic curve name. Defaults to the NIST P-256 elliptic curve.
-        :type curve: ~azure.keyvault.keys.enums.JsonWebKeyCurveName or str
+        :type curve: ~azure.keyvault.keys.enums.KeyCurveName or str
         :returns: The created key
         :rtype: ~azure.keyvault.keys.models.Key
 
@@ -116,7 +116,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         :param bool hsm: Whether to create a hardware key (HSM) or software key
         :param int size: (optional) Key size in bits, for example 2048, 3072, or 4096
         :param key_operations: (optional) Allowed key operations
-        :type key_operations: list(str or ~azure.keyvault.keys.enums.JsonWebKeyOperation)
+        :type key_operations: list(str or ~azure.keyvault.keys.enums.KeyOperation)
         :param bool enabled: (optional) Whether the key is enabled for use
         :param expires: (optional) Expiry date of the key in UTC
         :param datetime.datetime not_before: (optional) Not before date of the key in UTC
@@ -165,9 +165,9 @@ class KeyClient(AsyncKeyVaultClientBase):
         :param str name: The name for the new key. Key Vault will generate the key's version.
         :param bool hsm: Whether to create as a hardware key (HSM) or software key.
         :param curve: (optional) Elliptic curve name. Defaults to the NIST P-256 elliptic curve.
-        :type curve: ~azure.keyvault.keys.enums.JsonWebKeyCurveName or str
+        :type curve: ~azure.keyvault.keys.enums.KeyCurveName or str
         :param key_operations: (optional) Allowed key operations
-        :type key_operations: list(~azure.keyvault.keys.enums.JsonWebKeyOperation)
+        :type key_operations: list(~azure.keyvault.keys.enums.KeyOperation)
         :param bool enabled: (optional) Whether the key is enabled for use
         :param datetime.datetime expires: (optional) Expiry date of the key in UTC
         :param datetime.datetime not_before: (optional) Not before date of the key in UTC
@@ -204,7 +204,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         :param str name: The name of the key to delete.
         :returns: The deleted key
         :rtype: ~azure.keyvault.keys.models.DeletedKey
-        :raises: ~azure.core.exceptions.ResourceNotFoundError if the key doesn't exist
+        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys_async.py
@@ -225,7 +225,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         :param str version: (optional) A specific version of the key to get. If not specified, gets the latest version
             of the key.
         :rtype: ~azure.keyvault.keys.models.Key
-        :raises: ~azure.core.exceptions.ResourceNotFoundError if the key doesn't exist
+        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys_async.py
@@ -398,14 +398,14 @@ class KeyClient(AsyncKeyVaultClientBase):
         :param str name: The name of key to update
         :param str version: (optional) The version of the key to update
         :param key_operations: (optional) Allowed key operations
-        :type key_operations: list(str or ~azure.keyvault.keys.enums.JsonWebKeyOperation)
+        :type key_operations: list(str or ~azure.keyvault.keys.enums.KeyOperation)
         :param bool enabled: (optional) Whether the key is enabled for use
         :param datetime.datetime expires: (optional) Expiry date of the key in UTC
         :param datetime.datetime not_before: (optional) Not before date of the key in UTC
         :param dict tags: (optional) Application specific metadata in the form of key-value pairs
         :returns: The updated key
         :rtype: ~azure.keyvault.keys.models.Key
-        :raises: ~azure.core.exceptions.ResourceNotFoundError if the key doesn't exist
+        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys_async.py
@@ -443,7 +443,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         :param str name: The name of the key
         :returns: The raw bytes of the key backup
         :rtype: bytes
-        :raises: ~azure.core.exceptions.ResourceNotFoundError if the key doesn't exist
+        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys_async.py
@@ -469,7 +469,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         :param bytes backup: The raw bytes of the key backup
         :returns: The restored key
         :rtype: ~azure.keyvault.keys.models.Key
-        :raises: ~azure.core.exceptions.ResourceExistsError if the backed up key's name is already in use
+        :raises: :class:`~azure.core.exceptions.ResourceExistsError` if the backed up key's name is already in use
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys_async.py
@@ -517,75 +517,3 @@ class KeyClient(AsyncKeyVaultClientBase):
             self.vault_url, name, key=key, hsm=hsm, key_attributes=attributes, tags=tags, **kwargs
         )
         return Key._from_key_bundle(bundle)
-
-    @distributed_trace_async
-    async def wrap_key(
-        self, name: str, algorithm: str, value: bytes, version: Optional[str] = None, **kwargs: "**Any"
-    ) -> KeyOperationResult:
-        """Wraps a symmetric key using a specified key.
-
-        The WRAP operation supports encryption of a symmetric key using a key
-        encryption key that has previously been stored in an Azure Key Vault.
-        The WRAP operation is only strictly necessary for symmetric keys stored
-        in Azure Key Vault since protection with an asymmetric key can be
-        performed using the public portion of the key. This operation is
-        supported for asymmetric keys as a convenience for callers that have a
-        key-reference but do not have access to the public key material. This
-        operation requires the keys/wrapKey permission.
-
-        :param name: The name of the key.
-        :type name: str
-        :param version: The version of the key.
-        :type version: str
-        :param algorithm: algorithm identifier. Possible values include:
-         'RSA-OAEP', 'RSA-OAEP-256', 'RSA1_5'
-        :type algorithm: str or
-         ~azure.keyvault.keys.models.JsonWebKeyEncryptionAlgorithm
-        :param value:
-        :type value: bytes
-        :returns: The wrapped symmetric key.
-        :rtype: ~azure.keyvault.keys._models.KeyOperationResult
-
-        """
-        if version is None:
-            version = ""
-
-        bundle = await self._client.wrap_key(
-            self.vault_url, name, key_version=version, algorithm=algorithm, value=value, **kwargs
-        )
-        return KeyOperationResult(id=bundle.kid, value=bundle.result)
-
-    @distributed_trace_async
-    async def unwrap_key(
-        self, name: str, algorithm: str, value: bytes, version: Optional[str] = None, **kwargs: "**Any"
-    ) -> KeyOperationResult:
-        """Unwraps a symmetric key using the specified key that was initially used
-        for wrapping that key.
-
-        The UNWRAP operation supports decryption of a symmetric key using the
-        target key encryption key. This operation is the reverse of the WRAP
-        operation. The UNWRAP operation applies to asymmetric and symmetric
-        keys stored in Azure Key Vault since it uses the private portion of the
-        key. This operation requires the keys/unwrapKey permission.
-
-        :param name: The name of the key.
-        :type name: str
-        :param version: The version of the key.
-        :type version: str
-        :param algorithm: algorithm identifier. Possible values include:
-         'RSA-OAEP', 'RSA-OAEP-256', 'RSA1_5'
-        :type algorithm: str or
-         ~azure.keyvault.keys.models.JsonWebKeyEncryptionAlgorithm
-        :param value:
-        :type value: bytes
-        :returns: The unwrapped symmetric key.
-        :rtype: ~azure.keyvault.keys._models.KeyOperationResult
-
-        """
-        if version is None:
-            version = ""
-
-        bundle = await self._client.unwrap_key(
-            self.vault_url, name, key_version=version, algorithm=algorithm, value=value, **kwargs
-        )
-        return KeyOperationResult(id=bundle.kid, value=bundle.result)

@@ -1,6 +1,27 @@
 # Change Log azure-storage-blob
 
 
+## Version 12.0.0b3:
+
+**New features**
+- Added SAS support for snapshot and identity.
+- Distributed tracing framework OpenCensus is now supported.
+- Added support for append_block_from_url API for append blobs.
+- Added support for upload_pages_from_url API for page blobs.
+- Added support for client provided encryption key to numerous APIs.
+
+**Dependency updates**
+- Adopted [azure-core](https://pypi.org/project/azure-core/) 1.0.0b3
+  - If you later want to revert to previous versions of azure-storage-blob, or another Azure SDK
+  library requiring azure-core 1.0.0b1 or azure-core 1.0.0b2, you must explicitly install
+  the specific version of azure-core as well. For example:
+
+  `pip install azure-core==1.0.0b2 azure-storage-blob==12.0.0b2`
+
+**Fixes and improvements**
+- Fix where content-type was being added in the request when not mentioned explicitly.
+
+
 ## Version 12.0.0b2:
 
 **Breaking changes**

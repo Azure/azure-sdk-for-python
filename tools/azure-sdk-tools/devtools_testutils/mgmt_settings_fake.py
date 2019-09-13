@@ -29,6 +29,12 @@ HDI_ADLS_CLIENT_ID = '00000000-0000-0000-0000-000000000000'
 # Ubuntu image
 LINUX_OS_VHD = "https://mystorageaccount.blob.core.windows.net/inputtestdatadonotdelete/ubuntu.vhd"
 
+# Storage tests related
+ACTIVE_DIRECTORY_APPLICATION_ID  = '00000000-0000-0000-0000-00000000000'
+ACTIVE_DIRECTORY_APPLICATION_SECRET = '000000000ft5g5g5g5g5g5g5g5000000?'
+ACTIVE_DIRECTORY_TENANT_ID = '00000000-0000-0000-0000-000000000000'
+IS_SERVER_SIDE_FILE_ENCRYPTION_ENABLED = True
+
 # Read for details of this file:
 # https://github.com/Azure/azure-sdk-for-python/wiki/Contributing-to-the-tests
 

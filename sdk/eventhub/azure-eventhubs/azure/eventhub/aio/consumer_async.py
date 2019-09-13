@@ -13,7 +13,7 @@ from uamqp import ReceiveClientAsync, Source  # type: ignore
 
 from azure.eventhub import EventData, EventPosition
 from azure.eventhub.error import EventHubError, ConnectError, _error_handler
-from ._consumer_producer_mixin_async import ConsumerProducerMixin, _retry_decorator
+from ._consumer_producer_mixin_async import ConsumerProducerMixin
 
 log = logging.getLogger(__name__)
 
@@ -31,10 +31,11 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
     group to be actively reading events from the partition.  These non-exclusive consumers are
     sometimes referred to as "Non-Epoch Consumers."
 
+    Please use the method `create_consumer` on `EventHubClient` for creating `EventHubConsumer`.
     """
-    timeout = 0
-    _epoch = b'com.microsoft:epoch'
-    _timeout = b'com.microsoft:timeout'
+    _timeout = 0
+    _epoch_symbol = b'com.microsoft:epoch'
+    _timeout_symbol = b'com.microsoft:timeout'
 
     def __init__(  # pylint: disable=super-init-not-called
             self, client, source, **kwargs):
@@ -51,8 +52,8 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         :param prefetch: The number of events to prefetch from the service
          for processing. Default is 300.
         :type prefetch: int
-        :param owner_level: The priority of the exclusive consumer. It will an exclusive
-         consumer if owner_level is set.
+        :param owner_level: The priority of the exclusive consumer. An exclusive
+         consumer will be created if owner_level is set.
         :type owner_level: int
         :param loop: An event loop.
         """
@@ -64,77 +65,83 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         loop = kwargs.get("loop", None)
 
         super(EventHubConsumer, self).__init__()
-        self.loop = loop or asyncio.get_event_loop()
-        self.running = False
-        self.client = client
-        self.source = source
-        self.offset = event_position
-        self.messages_iter = None
-        self.prefetch = prefetch
-        self.owner_level = owner_level
-        self.keep_alive = keep_alive
-        self.auto_reconnect = auto_reconnect
-        self.retry_policy = errors.ErrorPolicy(max_retries=self.client.config.max_retries, on_error=_error_handler)
-        self.reconnect_backoff = 1
-        self.redirected = None
-        self.error = None
+        self._loop = loop or asyncio.get_event_loop()
+        self._running = False
+        self._client = client
+        self._source = source
+        self._offset = event_position
+        self._messages_iter = None
+        self._prefetch = prefetch
+        self._owner_level = owner_level
+        self._keep_alive = keep_alive
+        self._auto_reconnect = auto_reconnect
+        self._retry_policy = errors.ErrorPolicy(max_retries=self._client._config.max_retries, on_error=_error_handler)  # pylint:disable=protected-access
+        self._reconnect_backoff = 1
+        self._redirected = None
+        self._error = None
         self._link_properties = {}
-        partition = self.source.split('/')[-1]
-        self.partition = partition
-        self.name = "EHReceiver-{}-partition{}".format(uuid.uuid4(), partition)
+        partition = self._source.split('/')[-1]
+        self._partition = partition
+        self._name = "EHReceiver-{}-partition{}".format(uuid.uuid4(), partition)
         if owner_level:
-            self._link_properties[types.AMQPSymbol(self._epoch)] = types.AMQPLong(int(owner_level))
-        link_property_timeout_ms = (self.client.config.receive_timeout or self.timeout) * 1000
-        self._link_properties[types.AMQPSymbol(self._timeout)] = types.AMQPLong(int(link_property_timeout_ms))
+            self._link_properties[types.AMQPSymbol(self._epoch_symbol)] = types.AMQPLong(int(owner_level))
+        link_property_timeout_ms = (self._client._config.receive_timeout or self._timeout) * 1000  # pylint:disable=protected-access
+        self._link_properties[types.AMQPSymbol(self._timeout_symbol)] = types.AMQPLong(int(link_property_timeout_ms))
         self._handler = None
 
     def __aiter__(self):
         return self
 
     async def __anext__(self):
-        max_retries = self.client.config.max_retries
-        retry_count = 0
-        while True:
+        retried_times = 0
+        last_exception = None
+        while retried_times < self._client._config.max_retries:  # pylint:disable=protected-access
             try:
                 await self._open()
-                if not self.messages_iter:
-                    self.messages_iter = self._handler.receive_messages_iter_async()
-                message = await self.messages_iter.__anext__()
+                if not self._messages_iter:
+                    self._messages_iter = self._handler.receive_messages_iter_async()
+                message = await self._messages_iter.__anext__()
                 event_data = EventData._from_message(message)  # pylint:disable=protected-access
-                self.offset = EventPosition(event_data.offset, inclusive=False)
-                retry_count = 0
+                self._offset = EventPosition(event_data.offset, inclusive=False)
+                retried_times = 0
                 return event_data
             except Exception as exception:  # pylint:disable=broad-except
-                await self._handle_exception(exception, retry_count, max_retries, timeout_time=None)
-                retry_count += 1
+                last_exception = await self._handle_exception(exception)
+                await self._client._try_delay(retried_times=retried_times, last_exception=last_exception,  # pylint:disable=protected-access
+                                              entity_name=self._name)
+                retried_times += 1
+        log.info("%r operation has exhausted retry. Last exception: %r.", self._name, last_exception)
+        raise last_exception
 
     def _create_handler(self):
         alt_creds = {
-            "username": self.client._auth_config.get("iot_username"),  # pylint:disable=protected-access
-            "password": self.client._auth_config.get("iot_password")}  # pylint:disable=protected-access
-        source = Source(self.source)
-        if self.offset is not None:
-            source.set_filter(self.offset._selector())  # pylint:disable=protected-access
+            "username": self._client._auth_config.get("iot_username") if self._redirected else None,  # pylint:disable=protected-access
+            "password": self._client._auth_config.get("iot_password") if self._redirected else None  # pylint:disable=protected-access
+        }
+
+        source = Source(self._source)
+        if self._offset is not None:
+            source.set_filter(self._offset._selector())  # pylint:disable=protected-access
         self._handler = ReceiveClientAsync(
             source,
-            auth=self.client.get_auth(**alt_creds),
-            debug=self.client.config.network_tracing,
-            prefetch=self.prefetch,
+            auth=self._client._get_auth(**alt_creds),  # pylint:disable=protected-access
+            debug=self._client._config.network_tracing,  # pylint:disable=protected-access
+            prefetch=self._prefetch,
             link_properties=self._link_properties,
-            timeout=self.timeout,
-            error_policy=self.retry_policy,
-            keep_alive_interval=self.keep_alive,
-            client_name=self.name,
-            properties=self.client._create_properties(  # pylint:disable=protected-access
-                self.client.config.user_agent),
-            loop=self.loop)
-        self.messages_iter = None
+            timeout=self._timeout,
+            error_policy=self._retry_policy,
+            keep_alive_interval=self._keep_alive,
+            client_name=self._name,
+            properties=self._client._create_properties(  # pylint:disable=protected-access
+                self._client._config.user_agent),  # pylint:disable=protected-access
+            loop=self._loop)
+        self._messages_iter = None
 
     async def _redirect(self, redirect):
-        self.messages_iter = None
+        self._messages_iter = None
         await super(EventHubConsumer, self)._redirect(redirect)
 
-    async def _open(self, timeout_time=None):
+    async def _open(self):
         """
         Open the EventHubConsumer using the supplied connection.
         If the handler has previously been redirected, the redirect
@@ -142,20 +149,25 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
 
         """
         # pylint: disable=protected-access
-        if not self.running and self.redirected:
-            self.client._process_redirect_uri(self.redirected)
-            self.source = self.redirected.address
-        await super(EventHubConsumer, self)._open(timeout_time)
+        self._redirected = self._redirected or self._client._iothub_redirect_info
+
+        if not self._running and self._redirected:
+            self._client._process_redirect_uri(self._redirected)
+            self._source = self._redirected.address
+        await super(EventHubConsumer, self)._open()
+
+    async def _open_with_retry(self):
+        return await self._do_retryable_operation(self._open, operation_need_param=False)
 
     async def _receive(self, timeout_time=None, max_batch_size=None, **kwargs):
         last_exception = kwargs.get("last_exception")
-        data_batch = kwargs.get("data_batch")
+        data_batch = []
 
-        await self._open(timeout_time)
+        await self._open()
         remaining_time = timeout_time - time.time()
         if remaining_time <= 0.0:
             if last_exception:
-                log.info("%r receive operation timed out. (%r)", self.name, last_exception)
+                log.info("%r receive operation timed out. (%r)", self._name, last_exception)
                 raise last_exception
             return data_batch
 
@@ -165,13 +177,13 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
             timeout=remaining_time_ms)
         for message in message_batch:
             event_data = EventData._from_message(message)  # pylint:disable=protected-access
-            self.offset = EventPosition(event_data.offset)
+            self._offset = EventPosition(event_data.offset)
             data_batch.append(event_data)
         return data_batch
 
-    @_retry_decorator
-    async def _receive_with_try(self, timeout_time=None, max_batch_size=None, **kwargs):
-        return await self._receive(timeout_time=timeout_time, max_batch_size=max_batch_size, **kwargs)
+    async def _receive_with_retry(self, timeout=None, max_batch_size=None, **kwargs):
+        return await self._do_retryable_operation(self._receive, timeout=timeout,
+                                                  max_batch_size=max_batch_size, **kwargs)
 
     @property
     def queue_size(self):
@@ -215,11 +227,10 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         """
         self._check_closed()
 
-        timeout = timeout or self.client.config.receive_timeout
-        max_batch_size = max_batch_size or min(self.client.config.max_batch_size, self.prefetch)
-        data_batch = []  # type: List[EventData]
+        timeout = timeout or self._client._config.receive_timeout  # pylint:disable=protected-access
+        max_batch_size = max_batch_size or min(self._client._config.max_batch_size, self._prefetch)  # pylint:disable=protected-access
 
-        return await self._receive_with_try(timeout=timeout, max_batch_size=max_batch_size, data_batch=data_batch)
+        return await self._receive_with_retry(timeout=timeout, max_batch_size=max_batch_size)
 
     async def close(self, exception=None):
         # type: (Exception) -> None
@@ -241,17 +252,18 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
                 :caption: Close down the handler.
 
         """
-        self.running = False
-        if self.error:
+        self._running = False
+        if self._error:
             return
         if isinstance(exception, errors.LinkRedirect):
-            self.redirected = exception
+            self._redirected = exception
         elif isinstance(exception, EventHubError):
-            self.error = exception
+            self._error = exception
         elif isinstance(exception, (errors.LinkDetach, errors.ConnectionClose)):
-            self.error = ConnectError(str(exception), exception)
+            self._error = ConnectError(str(exception), exception)
         elif exception:
-            self.error = EventHubError(str(exception))
+            self._error = EventHubError(str(exception))
         else:
-            self.error = EventHubError("This receive handler is now closed.")
-        await self._handler.close_async()
+            self._error = EventHubError("This receive handler is now closed.")
+        if self._handler:
+            await self._handler.close_async()

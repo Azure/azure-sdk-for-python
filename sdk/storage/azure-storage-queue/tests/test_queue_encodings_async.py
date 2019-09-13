@@ -8,8 +8,8 @@
 import unittest
 import pytest
 import asyncio
-
 from azure.core.exceptions import HttpResponseError, DecodeError, ResourceExistsError
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer, FakeStorageAccount
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 from azure.storage.queue import (
@@ -28,15 +28,12 @@ from azure.storage.queue.aio import (
     QueueServiceClient
 )
 
-from queuetestcase import (
-    QueueTestCase,
-    record,
-    TestMode
+from asyncqueuetestcase import (
+    AsyncQueueTestCase
 )
 
 # ------------------------------------------------------------------------------
 TEST_QUEUE_PREFIX = 'mytestqueue'
-
 
 # ------------------------------------------------------------------------------
 
@@ -51,34 +48,15 @@ class AiohttpTestTransport(AioHttpTransport):
         return response
 
 
-class StorageQueueEncodingTestAsync(QueueTestCase):
-    def setUp(self):
-        super(StorageQueueEncodingTestAsync, self).setUp()
-
-        queue_url = self._get_queue_url()
-        credentials = self._get_shared_key_credential()
-        self.qsc = QueueServiceClient(account_url=queue_url, credential=credentials, transport=AiohttpTestTransport())
-        self.test_queues = []
-
-    def tearDown(self):
-        if not self.is_playback():
-            loop = asyncio.get_event_loop()
-            for queue in self.test_queues:
-                try:
-                    loop.run_until_complete(self.qsc.delete_queue(queue.queue_name))
-                except:
-                    pass
-        return super(StorageQueueEncodingTestAsync, self).tearDown()
-
+class StorageQueueEncodingTestAsync(AsyncQueueTestCase):
     # --Helpers-----------------------------------------------------------------
-    def _get_queue_reference(self, prefix=TEST_QUEUE_PREFIX):
+    def _get_queue_reference(self, qsc, prefix=TEST_QUEUE_PREFIX):
         queue_name = self.get_resource_name(prefix)
-        queue = self.qsc.get_queue_client(queue_name)
-        self.test_queues.append(queue)
+        queue = qsc.get_queue_client(queue_name)
         return queue
 
-    async def _create_queue(self, prefix=TEST_QUEUE_PREFIX):
-        queue = self._get_queue_reference(prefix)
+    async def _create_queue(self, qsc, prefix=TEST_QUEUE_PREFIX):
+        queue = self._get_queue_reference(qsc, prefix)
         try:
             created = await queue.create_queue()
         except ResourceExistsError:
@@ -102,55 +80,53 @@ class StorageQueueEncodingTestAsync(QueueTestCase):
         self.assertEqual(message, dequeued.content)
 
     # --------------------------------------------------------------------------
-
-    async def _test_message_text_xml(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncQueueTestCase.await_prepared_test
+    async def test_message_text_xml(self, resource_group, location, storage_account, storage_account_key):
         # Arrange.
+        qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key, transport=AiohttpTestTransport())
         message = u'<message1>'
-        queue = self.qsc.get_queue_client(self.get_resource_name(TEST_QUEUE_PREFIX))
+        queue = qsc.get_queue_client(self.get_resource_name(TEST_QUEUE_PREFIX))
 
         # Asserts
         await self._validate_encoding(queue, message)
 
-    @record
-    def test_message_text_xml(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_message_text_xml())
-
-    async def _test_message_text_xml_whitespace(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncQueueTestCase.await_prepared_test
+    async def test_message_text_xml_whitespace(self, resource_group, location, storage_account, storage_account_key):
         # Arrange.
+        qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key, transport=AiohttpTestTransport())
         message = u'  mess\t age1\n'
-        queue = self.qsc.get_queue_client(self.get_resource_name(TEST_QUEUE_PREFIX))
+        queue = qsc.get_queue_client(self.get_resource_name(TEST_QUEUE_PREFIX))
 
         # Asserts
         await self._validate_encoding(queue, message)
 
-    @record
-    def test_message_text_xml_whitespace(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_message_text_xml_whitespace())
-
-    async def _test_message_text_xml_invalid_chars(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncQueueTestCase.await_prepared_test
+    async def test_message_text_xml_invalid_chars(self, resource_group, location, storage_account, storage_account_key):
         # Action.
-        queue = self._get_queue_reference()
+        qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key, transport=AiohttpTestTransport())
+        queue = self._get_queue_reference(qsc)
         message = u'\u0001'
 
         # Asserts
         with self.assertRaises(HttpResponseError):
             await queue.enqueue_message(message)
 
-    @record
-    def test_message_text_xml_invalid_chars(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_message_text_xml_invalid_chars())
-
-    async def _test_message_text_base64(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncQueueTestCase.await_prepared_test
+    async def test_message_text_base64(self, resource_group, location, storage_account, storage_account_key):
         # Arrange.
-        queue_url = self._get_queue_url()
-        credentials = self._get_shared_key_credential()
+        qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key, transport=AiohttpTestTransport())
         queue = QueueClient(
-            queue_url=queue_url,
+            queue_url=self._account_url(storage_account.name),
             queue=self.get_resource_name(TEST_QUEUE_PREFIX),
-            credential=credentials,
+            credential=storage_account_key,
             message_encode_policy=TextBase64EncodePolicy(),
             message_decode_policy=TextBase64DecodePolicy(),
             transport=AiohttpTestTransport())
@@ -160,19 +136,16 @@ class StorageQueueEncodingTestAsync(QueueTestCase):
         # Asserts
         await self._validate_encoding(queue, message)
 
-    @record
-    def test_message_text_base64(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_message_text_base64())
-
-    async def _test_message_bytes_base64(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncQueueTestCase.await_prepared_test
+    async def test_message_bytes_base64(self, resource_group, location, storage_account, storage_account_key):
         # Arrange.
-        queue_url = self._get_queue_url()
-        credentials = self._get_shared_key_credential()
+        qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key, transport=AiohttpTestTransport())
         queue = QueueClient(
-            queue_url=queue_url,
+            queue_url=self._account_url(storage_account.name),
             queue=self.get_resource_name(TEST_QUEUE_PREFIX),
-            credential=credentials,
+            credential=storage_account_key,
             message_encode_policy=BinaryBase64EncodePolicy(),
             message_decode_policy=BinaryBase64DecodePolicy(),
             transport=AiohttpTestTransport())
@@ -182,14 +155,13 @@ class StorageQueueEncodingTestAsync(QueueTestCase):
         # Asserts
         await self._validate_encoding(queue, message)
 
-    @record
-    def test_message_bytes_base64(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_message_bytes_base64())
-
-    async def _test_message_bytes_fails(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncQueueTestCase.await_prepared_test
+    async def test_message_bytes_fails(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        queue = self._get_queue_reference()
+        qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key, transport=AiohttpTestTransport())
+        queue = self._get_queue_reference(qsc)
 
         # Action.
         with self.assertRaises(TypeError) as e:
@@ -199,19 +171,16 @@ class StorageQueueEncodingTestAsync(QueueTestCase):
         # Asserts
         self.assertTrue(str(e.exception).startswith('Message content must be text'))
 
-    @record
-    def test_message_bytes_fails(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_message_bytes_fails())
-
-    async def _test_message_text_fails(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncQueueTestCase.await_prepared_test
+    async def test_message_text_fails(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        queue_url = self._get_queue_url()
-        credentials = self._get_shared_key_credential()
+        qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key, transport=AiohttpTestTransport()) 
         queue = QueueClient(
-            queue_url=queue_url,
+            queue_url=self._account_url(storage_account.name),
             queue=self.get_resource_name(TEST_QUEUE_PREFIX),
-            credential=credentials,
+            credential=storage_account_key,
             message_encode_policy=BinaryBase64EncodePolicy(),
             message_decode_policy=BinaryBase64DecodePolicy(),
             transport=AiohttpTestTransport())
@@ -224,19 +193,16 @@ class StorageQueueEncodingTestAsync(QueueTestCase):
         # Asserts
         self.assertTrue(str(e.exception).startswith('Message content must be bytes'))
 
-    @record
-    def test_message_text_fails(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_message_text_fails())
-
-    async def _test_message_base64_decode_fails(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncQueueTestCase.await_prepared_test
+    async def test_message_base64_decode_fails(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        queue_url = self._get_queue_url()
-        credentials = self._get_shared_key_credential()
+        qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key, transport=AiohttpTestTransport())
         queue = QueueClient(
-            queue_url=queue_url,
+            queue_url=self._account_url(storage_account.name),
             queue=self.get_resource_name(TEST_QUEUE_PREFIX),
-            credential=credentials,
+            credential=storage_account_key,
             message_encode_policy=TextXMLEncodePolicy(),
             message_decode_policy=BinaryBase64DecodePolicy(),
             transport=AiohttpTestTransport())
@@ -253,11 +219,6 @@ class StorageQueueEncodingTestAsync(QueueTestCase):
 
         # Asserts
         self.assertNotEqual(-1, str(e.exception).find('Message content is not valid base 64'))
-
-    @record
-    def test_message_base64_decode_fails(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_message_base64_decode_fails())
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':

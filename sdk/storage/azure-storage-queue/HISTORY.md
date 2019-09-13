@@ -1,6 +1,17 @@
 # Change Log azure-storage-queue
 
 
+## Version 12.0.0b3:
+
+**Dependency updates**
+- Adopted [azure-core](https://pypi.org/project/azure-core/) 1.0.0b3
+  - If you later want to revert to previous versions of azure-storage-queue, or another Azure SDK
+  library requiring azure-core 1.0.0b1 or azure-core 1.0.0b2, you must explicitly install
+  the specific version of azure-core as well. For example:
+
+  `pip install azure-core==1.0.0b2 azure-storage-queue==12.0.0b2`
+
+
 ## Version 12.0.0b2:
 
 **Breaking changes**

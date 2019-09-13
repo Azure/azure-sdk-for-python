@@ -14,6 +14,8 @@ from azure.core.async_paging import AsyncItemPaged
 
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
+from .._parser import _get_file_permission, _datetime_to_str
+from .._shared.parser import _str
 
 from .._generated.aio import AzureFileStorage
 from .._generated.version import VERSION
@@ -29,7 +31,7 @@ from .file_client_async import FileClient
 from .models import DirectoryPropertiesPaged, HandlesPaged
 
 if TYPE_CHECKING:
-    from ..models import SharePermissions, ShareProperties, DirectoryProperties, ContentSettings
+    from ..models import ShareProperties, DirectoryProperties, ContentSettings, NTFSAttributes
     from .._generated.models import HandleItem
 
 
@@ -96,6 +98,7 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
         self._loop = loop
 
     def get_file_client(self, file_name, **kwargs):
+        # type: (str, Any) -> FileClient
         """Get a client to interact with a specific file.
 
         The file need not already exist.
@@ -113,6 +116,7 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
             _location_mode=self._location_mode, loop=self._loop, **kwargs)
 
     def get_subdirectory_client(self, directory_name, **kwargs):
+        # type: (str, Any) -> DirectoryClient
         """Get a client to interact with a specific subdirectory.
 
         The subdirectory need not already exist.
@@ -227,7 +231,8 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
             page_iterator_class=DirectoryPropertiesPaged)
 
     @distributed_trace
-    def list_handles(self, recursive=False, timeout=None, **kwargs) -> AsyncItemPaged:
+    def list_handles(self, recursive=False, timeout=None, **kwargs):
+        # type: (bool, Optional[int], Any) -> AsyncItemPaged
         """Lists opened handles on a directory or a file under the directory.
 
         :param bool recursive:
@@ -343,6 +348,58 @@ class DirectoryClient(AsyncStorageAccountHostsMixin, DirectoryClientBase):
                 timeout=timeout,
                 cls=return_response_headers,
                 headers=headers,
+                **kwargs)
+        except StorageErrorException as error:
+            process_storage_error(error)
+
+    @distributed_trace_async
+    async def set_http_headers(self, file_attributes="none",  # type: Union[str, NTFSAttributes]
+                               file_creation_time="preserve",  # type: Union[str, datetime]
+                               file_last_write_time="preserve",  # type: Union[str, datetime]
+                               file_permission=None,  # type: Optional[str]
+                               file_permission_key=None,  # type: Optional[str]
+                               timeout=None,  # type: Optional[int]
+                               **kwargs):  # type: ignore
+        # type: (...) -> Dict[str, Any]
+        """Sets HTTP headers on the directory.
+
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
+        :param file_attributes:
+            The file system attributes for files and directories.
+            If not set, indicates preservation of existing values.
+            Here is an example for when the var type is str: 'Temporary|Archive'
+        :type file_attributes: str or :class:`~azure.storage.file.models.NTFSAttributes`
+        :param file_creation_time: Creation time for the file
+            Default value: Now.
+        :type file_creation_time: str or datetime
+        :param file_last_write_time: Last write time for the file
+            Default value: Now.
+        :type file_last_write_time: str or datetime
+        :param file_permission: If specified the permission (security
+            descriptor) shall be set for the directory/file. This header can be
+            used if Permission size is <= 8KB, else x-ms-file-permission-key
+            header shall be used. Default value: Inherit. If SDDL is specified as
+            input, it must have owner, group and dacl. Note: Only one of the
+            x-ms-file-permission or x-ms-file-permission-key should be specified.
+        :type file_permission: str
+        :param file_permission_key: Key of the permission to be set for the
+            directory/file. Note: Only one of the x-ms-file-permission or
+            x-ms-file-permission-key should be specified.
+        :type file_permission_key: str
+        :returns: File-updated property dict (Etag and last modified).
+        :rtype: dict(str, Any)
+        """
+        file_permission = _get_file_permission(file_permission, file_permission_key, 'preserve')
+        try:
+            return await self._client.directory.set_properties(  # type: ignore
+                file_attributes=_str(file_attributes),
+                file_creation_time=_datetime_to_str(file_creation_time),
+                file_last_write_time=_datetime_to_str(file_last_write_time),
+                file_permission=file_permission,
+                file_permission_key=file_permission_key,
+                timeout=timeout,
+                cls=return_response_headers,
                 **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)

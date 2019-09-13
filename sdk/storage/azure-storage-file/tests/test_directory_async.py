@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 import unittest
 import asyncio
+from datetime import timedelta
 
 from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError
 from azure.core.pipeline.transport import AioHttpTransport
@@ -417,6 +418,61 @@ class StorageDirectoryTest(FileTestCase):
     def test_get_set_directory_metadata_async(self):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_get_set_directory_metadata_async())
+
+    async def _test_set_directory_properties_with_empty_smb_properties(self):
+        # Arrange
+        await self._setup()
+        share_client = self.fsc.get_share_client(self.share_name)
+        directory_client = await share_client.create_directory('dir1')
+        directory_properties_on_creation = await directory_client.get_directory_properties()
+
+        # Act
+        await directory_client.set_http_headers()
+        directory_properties = await directory_client.get_directory_properties()
+
+        # Assert
+        # Make sure set empty smb_properties doesn't change smb_properties
+        self.assertEquals(directory_properties_on_creation.creation_time,
+                          directory_properties.creation_time)
+        self.assertEquals(directory_properties_on_creation.last_write_time,
+                          directory_properties.last_write_time)
+        self.assertEquals(directory_properties_on_creation.permission_key,
+                          directory_properties.permission_key)
+
+    @record
+    def test_set_directory_properties_with_empty_smb_properties_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_set_directory_properties_with_empty_smb_properties())
+
+    async def _test_set_directory_properties_with_file_permission_key(self):
+        # Arrange
+        await self._setup()
+        share_client = self.fsc.get_share_client(self.share_name)
+        directory_client = await share_client.create_directory('dir1')
+
+        directory_properties_on_creation = await directory_client.get_directory_properties()
+        permission_key = directory_properties_on_creation.permission_key
+        last_write_time = directory_properties_on_creation.last_write_time
+        creation_time = directory_properties_on_creation.creation_time
+
+        new_last_write_time = last_write_time + timedelta(hours=1)
+        new_creation_time = creation_time + timedelta(hours=1)
+
+        # Act
+        await directory_client.set_http_headers(file_attributes='None', file_creation_time=new_creation_time,
+                                                file_last_write_time=new_last_write_time,
+                                                file_permission_key=permission_key)
+        directory_properties = await directory_client.get_directory_properties()
+
+        # Assert
+        self.assertIsNotNone(directory_properties)
+        self.assertEquals(directory_properties.creation_time, new_creation_time)
+        self.assertEquals(directory_properties.last_write_time, new_last_write_time)
+
+    @record
+    def test_set_directory_properties_with_file_permission_key_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_set_directory_properties_with_file_permission_key())
 
     async def _test_list_subdirectories_and_files_async(self):
         # Arrange
