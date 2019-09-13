@@ -12,18 +12,28 @@ from devtools_testutils import AzureMgmtTestCase
 
 import pytest
 
+# GraphRBAC tests
+AD_DOMAIN = "myaddomain.onmicrosoft.com"
+
 class GraphRbacTest(AzureMgmtTestCase):
 
     def setUp(self):
         super(GraphRbacTest, self).setUp()
+        if self.is_live:
+            # Set the env variable AZURE_AD_DOMAIN or put AD_DOMAIN in your "mgmt_settings_real" file
+            self.ad_domain = self.get_settings_value('AD_DOMAIN')
+            self.scrubber.register_name_pair(self.ad_domain, AD_DOMAIN)
+        else:
+            self.ad_domain = AD_DOMAIN
+
         self.graphrbac_client = self.create_basic_client(
             azure.graphrbac.GraphRbacManagementClient,
-            tenant_id=self.settings.AD_DOMAIN
+            tenant_id=self.ad_domain
         )
 
     def _build_object_url(self, object_id):
         return "https://graph.windows.net/{}/directoryObjects/{}".format(
-            self.settings.AD_DOMAIN,
+            self.ad_domain,
             object_id
         )
 
@@ -105,7 +115,7 @@ class GraphRbacTest(AzureMgmtTestCase):
 
         user = self.graphrbac_client.users.create(
             azure.graphrbac.models.UserCreateParameters(
-                user_principal_name="testbuddy#TEST@{}".format(self.settings.AD_DOMAIN),
+                user_principal_name="testbuddy#TEST@{}".format(self.ad_domain),
                 account_enabled=False,
                 display_name='Test Buddy',
                 mail_nickname='testbuddy',

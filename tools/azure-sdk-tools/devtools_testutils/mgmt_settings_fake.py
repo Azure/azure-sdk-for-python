@@ -11,8 +11,6 @@ from azure.common.credentials import (
 
 SUBSCRIPTION_ID = "00000000-0000-0000-0000-000000000000"
 
-# GraphRBAC tests
-AD_DOMAIN = "myaddomain.onmicrosoft.com"
 # Keyvault tests
 TENANT_ID = '00000000-0000-0000-0000-000000000000'
 CLIENT_OID = '00000000-0000-0000-0000-000000000000'
