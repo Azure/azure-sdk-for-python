@@ -76,8 +76,8 @@ class Rectangle:
 
 class InkRecognitionUnit:
     """
-    An InkRecognitionUnit instance represents a single entity recognized by the
-    Ink Recognizer Service.
+    An InkRecognitionUnit instance represents a single entity recognized by
+    the Ink Recognizer Service.
     """
 
     _ink_recognition_unit_kind = InkRecognitionUnitKind.UNKNOWN
@@ -96,7 +96,8 @@ class InkRecognitionUnit:
         self._parent = None
 
     def __str__(self):
-        return _truncate("%s id=%s strokes=%s" % (type(self), self._id, self._stroke_ids))
+        return _truncate("%s id=%s strokes=%s" % (
+            type(self), self._id, self._stroke_ids))
 
     __repr__ = __str__
 
@@ -439,7 +440,7 @@ class Line(InkRecognitionUnit):
     @property
     def words(self):
         # type: () -> List[InkWord]
-        """ All the words in this line. 
+        """ All the words in this line.
         
         :rtype: List[InkWord]
         """
@@ -473,7 +474,8 @@ class Paragraph(InkRecognitionUnit):
         
         :rtype: List[Line]
         """
-        return [unit for unit in self.children if unit.kind == InkRecognitionUnitKind.LINE]
+        return [unit for unit in self.children 
+                if unit.kind == InkRecognitionUnitKind.LINE]
 
     @property
     def list_items(self):
@@ -482,14 +484,15 @@ class Paragraph(InkRecognitionUnit):
         All the ListItems in the paragraph.
         """
 
-        return [unit for unit in self.children if unit.kind == InkRecognitionUnitKind.LIST_ITEM]
+        return [unit for unit in self.children 
+                if unit.kind == InkRecognitionUnitKind.LIST_ITEM]
 
 
 class WritingRegion(InkRecognitionUnit):
     """
     A WritingRegion instance represents a certain part of a writing surface that the
     user has written at least one word on. WritingRegions are the top-level writing
-    objects under an InkRecognitionRoot. 
+    objects under an InkRecognitionRoot.
     """
     _ink_recognition_unit_kind = InkRecognitionUnitKind.WRITING_REGION
 
@@ -551,7 +554,7 @@ class InkRecognitionRoot():
     """
     An InkRecognitionRoot instance is the return type from the recognize_ink method in
     InkRecognizerClient. It is the root of the of recognition unit tree.
-    It also contains the HTTP request status code of the recognition request. 
+    It also contains the HTTP request status code of the recognition request.
     WritingRegions and Shapes are the only top-level objects under an InkRecognitionRoot.
     """
 
@@ -560,7 +563,8 @@ class InkRecognitionRoot():
         self._status_code = status_code
         self._unit_kind_map = {}
         for unit in units:
-            if unit.kind in [InkRecognitionUnitKind.INK_DRAWING, InkRecognitionUnitKind.WRITING_REGION]:
+            if unit.kind in [InkRecognitionUnitKind.INK_DRAWING, 
+                             InkRecognitionUnitKind.WRITING_REGION]:
                 unit._parent = self
 
     def _get_recognition_units(self, unit_kind):
@@ -675,7 +679,8 @@ class InkRecognitionRoot():
             raise ValueError("Expected a string, got %s" % type(word))
         
         word_lower = word.lower()
-        return [ink_word for ink_word in self.ink_words if ink_word.recognized_text.lower() == word_lower]
+        return [ink_word for ink_word in self.ink_words 
+                if ink_word.recognized_text.lower() == word_lower]
 
 
 _RECOGNITION_UNIT_MAP = {

@@ -115,7 +115,7 @@ class _InkRecognizerConfiguration():
 
 class _InkRecognizerClientBase:
     def __init__(self, url, credential, **kwargs):
-        # type: (str, str, Any) -> None
+        # type: (str, TokenCredential, Any) -> None
         _validate_param(url, "url", str)
 
         self._logger = _LOGGER
@@ -205,36 +205,36 @@ class InkRecognizerClient(_InkRecognizerClientBase):
     the default settings). Communication with the service is
     blocking/synchronous.
 
-    :param str url: target url of the Ink Recognizer service
+    :param str url: target url of the Ink Recognizer service.
 
-    :param ~azure.core.TokenCredential credential: An available Azure Active 
-    Directory credential for Ink Recognition Service
+    :param ~azure.core.TokenCredential credential: An available Azure Active
+    Directory credential for Ink Recognition Service.
 
-    Key word arguments include Ink Recognizer specific arguments, azure service 
+    Key word arguments include Ink Recognizer specific arguments, azure service
     common arguments and azure pipline policies.
 
     Ink Recognizer specific arguments:
 
-    :param ServiceVersion service_version: Version of Ink Recognizer Service. 
-    Default is ServiceVersion.Preview
+    :param ServiceVersion service_version: Version of Ink Recognizer Service.
+    Default is ServiceVersion.Preview.
 
-    :param ApplicationKind application_kind: Inform Ink Recognizer Service of 
-    contents of the application. This can facilitate faster processing as the 
-    service will skip some classification steps. Default is ApplicationKind.MIXED
+    :param ApplicationKind application_kind: Inform Ink Recognizer Service of
+    contents of the application. This can facilitate faster processing as the
+    service will skip some classification steps. Default is ApplicationKind.MIXED.
 
-    :param InkPointUnit ink_point_unit: unit of the x and y axis coordinates 
+    :param InkPointUnit ink_point_unit: unit of the x and y axis coordinates
     for each InkPoint. Default is InkPointUnit.MM.
 
-    :param str language: Language (IETF BCP-47) of strokes, can be overwritten 
-    by stroke-specific language. Default is "en-US"
+    :param str language: Language (IETF BCP-47) of strokes, can be overwritten
+    by stroke-specific language. Default is "en-US".
 
-    :param float unit_multiple: multiplier for unit. Each value in InkPoint 
+    :param float unit_multiple: multiplier for unit. Each value in InkPoint
     will be multiplied by this value on server side. Default is 1.0.
 
     Azure service common arguments:
 
-    :param ~azure.core.pipeline.transport.HttpTransport transport: transport 
-    instance for the client. Default is RequestsTransport()
+    :param ~azure.core.pipeline.transport.HttpTransport transport: transport
+    instance for the client. Default is RequestsTransport().
 
     :param float timeout: Timeout in seconds.
 
@@ -242,7 +242,7 @@ class InkRecognizerClient(_InkRecognizerClientBase):
 
     :param str client_request_id: Caller-specified identification of the request.
 
-    :param callable response_hook: callable that is called with 
+    :param callable response_hook: callable that is called with
     (headers, deserialized_response) if the http status is 200.
 
     :param list[str] scopes: let you specify the type of access needed during authentication.
@@ -268,28 +268,28 @@ class InkRecognizerClient(_InkRecognizerClientBase):
         Synchronously sends data to the service and returns a tree structure
         containing all the recognition units from Ink Recognizer Service.
 
-        :param List[IInkStroke] ink_stroke_list: a iterable that contanins 
+        :param List[IInkStroke] ink_stroke_list: a iterable that contanins
         stroke instances.
 
-        Key word arguments include Ink Recognizer specific arguments, azure 
+        Key word arguments include Ink Recognizer specific arguments, azure
         service common arguments and azure pipline policies.
 
         Ink Recognizer spicific arguments:
 
-        :param ServiceVersion service_version: Version of Ink Recognizer Service. 
-        Default is ServiceVersion.Preview
+        :param ServiceVersion service_version: Version of Ink Recognizer Service.
+        Default is ServiceVersion.Preview.
 
-        :param ApplicationKind application_kind: Inform Ink Recognizer Service of 
-        contents of the application. This can facilitate faster processing as the 
-        service will skip some classification steps. Default is ApplicationKind.MIXED
+        :param ApplicationKind application_kind: Inform Ink Recognizer Service of
+        contents of the application. This can facilitate faster processing as the
+        service will skip some classification steps. Default is ApplicationKind.MIXED.
 
-        :param InkPointUnit ink_point_unit: unit of the x and y axis coordinates 
+        :param InkPointUnit ink_point_unit: unit of the x and y axis coordinates
         for each InkPoint. Default is InkPointUnit.MM.
 
-        :param str language: Language (IETF BCP-47) of strokes, can be overwritten 
-        by stroke-specific language. Default is "en-US"
+        :param str language: Language (IETF BCP-47) of strokes, can be overwritten
+        by stroke-specific language. Default is "en-US".
 
-        :param float unit_multiple: multiplier for unit. Each value in InkPoint 
+        :param float unit_multiple: multiplier for unit. Each value in InkPoint
         will be multiplied by this value on server side. Default is 1.0.
 
         Azure service common arguments:
@@ -300,7 +300,7 @@ class InkRecognizerClient(_InkRecognizerClientBase):
 
         :param str client_request_id: Caller-specified identifier for the request.
 
-        :param callable response_hook: callable that is called with 
+        :param callable response_hook: callable that is called with
         (headers, deserialized_response) if the http status is 200.
 
         Azure pipeline policies:
@@ -310,13 +310,13 @@ class InkRecognizerClient(_InkRecognizerClientBase):
 
         **Exceptions:**
 
-        :raise ServerResponseError: Unexpected Server response that can't be parsed by client
+        :raise ServerResponseError: Unexpected Server response that can't be parsed by client.
 
-        :raise ResourceNotFoundError: Indicates URL is invalid
+        :raise ResourceNotFoundError: Indicates URL is invalid.
 
-        :raise ClientAuthenticationError: Authentication issue
+        :raise ClientAuthenticationError: Authentication issue.
 
-        :raise HttpResponseError: Unclassified error
+        :raise HttpResponseError: Unclassified error.
         """
         config = self._generate_config(kwargs)
         request_data = self._pack_request(ink_stroke_list, config)

@@ -9,11 +9,12 @@ from enum import Enum
 
 class ApplicationKind(Enum):
     """
-    The ApplicationKind enum allows an application to identify its domain (when it has one). 
-    Specifying a domain allows the application to inform the service of its contents. 
-    This can facilitate faster processing as the service will skip some classification steps. 
-    Applications that don't have a specific domain can simply specify ApplicationKind.MIXED
-    which is the default.
+    The ApplicationKind enum allows an application to identify its domain
+    (when it has one). Specifying a domain allows the application to
+    inform the service of its contents. 
+    This can facilitate faster processing as the service will skip some
+    classification steps. Applications that don't have a specific domain
+    can simply specify ApplicationKind.MIXED, which is the default.
     """
 
     MIXED = "mixed"
@@ -46,7 +47,7 @@ class InkStrokeKind(Enum):
 
 
 class InkPointUnit(Enum):
-    """ The length unit passes to InkPoint. The default value is InkPointUnit.MM. """
+    """ The length unit passes to InkPoint. Default is InkPointUnit.MM. """
 
     MM = "mm"
     """"""
@@ -97,7 +98,7 @@ class InkRecognitionUnitKind(Enum):
 
     LIST_ITEM = "listItem"
     """
-    One item of a list. It has only a line as its child, where a bullet should 
+    One item of a list. It has only a line as its child, where a bullet should
     at the begining of that line.
     """
 
@@ -105,7 +106,8 @@ class InkRecognitionUnitKind(Enum):
 class ShapeKind(Enum):
     """
     The Shape enum represents different shapes that can be reported by the ink
-    recognizer service. Any unrecognized shpae will be reported as ShapeKind.DRAWING.
+    recognizer service. Any unrecognized shpae will be reported as
+    ShapeKind.DRAWING.
     """
 
     BLOCK_ARROW = "blockArrow"

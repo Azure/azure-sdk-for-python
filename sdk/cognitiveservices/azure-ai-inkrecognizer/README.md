@@ -30,7 +30,7 @@ TODO.
 
 TODO.
 
-## Key Concepts
+## Key concepts
 
 TODO.
 

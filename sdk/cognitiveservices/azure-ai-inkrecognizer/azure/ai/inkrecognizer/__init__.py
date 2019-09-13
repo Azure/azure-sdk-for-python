@@ -30,33 +30,33 @@ from ._models import (
     ListItem,
     InkRecognitionRoot
 )
-
 from ._version import VERSION
 
-__all__ = [# enums
-           "ApplicationKind", 
-           "InkPointUnit",
-           "InkRecognitionUnitKind", 
-           "ShapeKind", 
-           "InkStrokeKind", 
-           "ServiceVersion",
-           # client
-           "InkRecognizerClient",
-           # interfaces
-           "IInkPoint", 
-           "IInkStroke",
-           # models
-           "Point", 
-           "Rectangle", 
-           "InkRecognitionUnit", 
-           "InkBullet",
-           "InkDrawing", 
-           "Line", 
-           "Paragraph", 
-           "InkWord", 
-           "WritingRegion",
-           "ListItem",
-           "InkRecognitionRoot",
-          ]
+__all__ = [
+    # enums
+    "ApplicationKind",
+    "InkPointUnit",
+    "InkRecognitionUnitKind",
+    "ShapeKind",
+    "InkStrokeKind",
+    "ServiceVersion",
+    # client
+    "InkRecognizerClient",
+    # interfaces
+    "IInkPoint",
+    "IInkStroke",
+    # models
+    "Point",
+    "Rectangle",
+    "InkRecognitionUnit",
+    "InkBullet",
+    "InkDrawing",
+    "Line",
+    "Paragraph",
+    "InkWord",
+    "WritingRegion",
+    "ListItem",
+    "InkRecognitionRoot"
+]
 
 __version__ = VERSION
