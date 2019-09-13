@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class VirtualNetworkByPCOperations(object):
-    """VirtualNetworkByPCOperations operations.
+class VirtualNetworksOperations(object):
+    """VirtualNetworksOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -38,12 +38,92 @@ class VirtualNetworkByPCOperations(object):
 
         self.config = config
 
+    def list(
+            self, region_id, pc_name, resource_pool_name, custom_headers=None, raw=False, **operation_config):
+        """Implements list available virtual networks within a subscription
+        method.
+
+        Return list of virtual networks in location for private cloud.
+
+        :param region_id: The region Id (westus, eastus)
+        :type region_id: str
+        :param pc_name: The private cloud name
+        :type pc_name: str
+        :param resource_pool_name: Resource pool used to derive vSphere
+         cluster which contains virtual networks
+        :type resource_pool_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: An iterator like instance of VirtualNetwork
+        :rtype:
+         ~azure.mgmt.vmwarecloudsimple.models.VirtualNetworkPaged[~azure.mgmt.vmwarecloudsimple.models.VirtualNetwork]
+        :raises:
+         :class:`CSRPErrorException<azure.mgmt.vmwarecloudsimple.models.CSRPErrorException>`
+        """
+        def prepare_request(next_link=None):
+            if not next_link:
+                # Construct URL
+                url = self.list.metadata['url']
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+                    'regionId': self._serialize.url("region_id", region_id, 'str'),
+                    'pcName': self._serialize.url("pc_name", pc_name, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
+
+                # Construct parameters
+                query_parameters = {}
+                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                query_parameters['resourcePoolName'] = self._serialize.query("resource_pool_name", resource_pool_name, 'str')
+
+            else:
+                url = next_link
+                query_parameters = {}
+
+            # Construct headers
+            header_parameters = {}
+            header_parameters['Accept'] = 'application/json'
+            if self.config.generate_client_request_id:
+                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            if custom_headers:
+                header_parameters.update(custom_headers)
+            if self.config.accept_language is not None:
+                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+            # Construct and send request
+            request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
+            response = self._client.send(request, stream=False, **operation_config)
+
+            if response.status_code not in [200]:
+                raise models.CSRPErrorException(self._deserialize, response)
+
+            return response
+
+        # Deserialize response
+        header_dict = None
+        if raw:
+            header_dict = {}
+        deserialized = models.VirtualNetworkPaged(internal_paging, self._deserialize.dependencies, header_dict)
+
+        return deserialized
+    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.VMwareCloudSimple/locations/{regionId}/privateClouds/{pcName}/virtualNetworks'}
+
     def get(
-            self, pc_name, virtual_network_name, custom_headers=None, raw=False, **operation_config):
+            self, region_id, pc_name, virtual_network_name, custom_headers=None, raw=False, **operation_config):
         """Implements virtual network GET method.
 
         Return virtual network by its name.
 
+        :param region_id: The region Id (westus, eastus)
+        :type region_id: str
         :param pc_name: The private cloud name
         :type pc_name: str
         :param virtual_network_name: virtual network id (vsphereId)
@@ -63,7 +143,7 @@ class VirtualNetworkByPCOperations(object):
         url = self.get.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'regionId': self._serialize.url("self.config.region_id", self.config.region_id, 'str'),
+            'regionId': self._serialize.url("region_id", region_id, 'str'),
             'pcName': self._serialize.url("pc_name", pc_name, 'str'),
             'virtualNetworkName': self._serialize.url("virtual_network_name", virtual_network_name, 'str')
         }

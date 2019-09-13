@@ -17,8 +17,8 @@ from msrestazure.polling.arm_polling import ARMPolling
 from .. import models
 
 
-class DedicatedCloudServiceOperations(object):
-    """DedicatedCloudServiceOperations operations.
+class DedicatedCloudServicesOperations(object):
+    """DedicatedCloudServicesOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -124,7 +124,7 @@ class DedicatedCloudServiceOperations(object):
             self, resource_group_name, filter=None, top=None, skip_token=None, custom_headers=None, raw=False, **operation_config):
         """Implements list of dedicatedCloudService objects within RG method.
 
-        Returns list of dedicated cloud service within resource group.
+        Returns list of dedicated cloud services within a resource group.
 
         :param resource_group_name: The name of the resource group
         :type resource_group_name: str

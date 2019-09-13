@@ -629,8 +629,8 @@ class ResourcePool(Model):
 
     :param id: Required. resource pool id (privateCloudId:vsphereId)
     :type id: str
-    :param location: Azure region
-    :type location: str
+    :ivar location: Azure region
+    :vartype location: str
     :ivar name: {ResourcePoolName}
     :vartype name: str
     :ivar private_cloud_id: The Private Cloud Id
@@ -643,6 +643,7 @@ class ResourcePool(Model):
 
     _validation = {
         'id': {'required': True},
+        'location': {'readonly': True},
         'name': {'readonly': True},
         'private_cloud_id': {'readonly': True},
         'full_name': {'readonly': True},
@@ -661,7 +662,7 @@ class ResourcePool(Model):
     def __init__(self, **kwargs):
         super(ResourcePool, self).__init__(**kwargs)
         self.id = kwargs.get('id', None)
-        self.location = kwargs.get('location', None)
+        self.location = None
         self.name = None
         self.private_cloud_id = None
         self.full_name = None
@@ -935,11 +936,11 @@ class VirtualMachine(Model):
     :type expose_to_guest_vm: bool
     :ivar folder: The path to virtual machine folder in VCenter
     :vartype folder: str
-    :param guest_os: Required. The name of Guest OS
-    :type guest_os: str
-    :param guest_os_type: Required. The Guest OS type. Possible values
-     include: 'linux', 'windows', 'other'
-    :type guest_os_type: str or
+    :ivar guest_os: The name of Guest OS
+    :vartype guest_os: str
+    :ivar guest_os_type: The Guest OS type. Possible values include: 'linux',
+     'windows', 'other'
+    :vartype guest_os_type: str or
      ~azure.mgmt.vmwarecloudsimple.models.GuestOSType
     :param nics: The list of Virtual NICs
     :type nics: list[~azure.mgmt.vmwarecloudsimple.models.VirtualNic]
@@ -984,8 +985,8 @@ class VirtualMachine(Model):
         'controllers': {'readonly': True},
         'dnsname': {'readonly': True},
         'folder': {'readonly': True},
-        'guest_os': {'required': True},
-        'guest_os_type': {'required': True},
+        'guest_os': {'readonly': True},
+        'guest_os_type': {'readonly': True},
         'number_of_cores': {'required': True},
         'private_cloud_id': {'required': True},
         'provisioning_state': {'readonly': True},
@@ -1036,8 +1037,8 @@ class VirtualMachine(Model):
         self.dnsname = None
         self.expose_to_guest_vm = kwargs.get('expose_to_guest_vm', None)
         self.folder = None
-        self.guest_os = kwargs.get('guest_os', None)
-        self.guest_os_type = kwargs.get('guest_os_type', None)
+        self.guest_os = None
+        self.guest_os_type = None
         self.nics = kwargs.get('nics', None)
         self.number_of_cores = kwargs.get('number_of_cores', None)
         self.password = kwargs.get('password', None)
@@ -1098,10 +1099,10 @@ class VirtualMachineTemplate(Model):
     :type disks: list[~azure.mgmt.vmwarecloudsimple.models.VirtualDisk]
     :param expose_to_guest_vm: Expose Guest OS or not
     :type expose_to_guest_vm: bool
-    :param guest_os: Required. The Guest OS
-    :type guest_os: str
-    :param guest_os_type: Required. The Guest OS types
-    :type guest_os_type: str
+    :ivar guest_os: Required. The Guest OS
+    :vartype guest_os: str
+    :ivar guest_os_type: Required. The Guest OS types
+    :vartype guest_os_type: str
     :param nics: The list of Virtual NICs
     :type nics: list[~azure.mgmt.vmwarecloudsimple.models.VirtualNic]
     :param number_of_cores: The number of CPU cores
@@ -1123,8 +1124,8 @@ class VirtualMachineTemplate(Model):
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
-        'guest_os': {'required': True},
-        'guest_os_type': {'required': True},
+        'guest_os': {'required': True, 'readonly': True},
+        'guest_os_type': {'required': True, 'readonly': True},
         'private_cloud_id': {'required': True},
         'vmwaretools': {'readonly': True},
         'type': {'readonly': True},
@@ -1161,8 +1162,8 @@ class VirtualMachineTemplate(Model):
         self.description = kwargs.get('description', None)
         self.disks = kwargs.get('disks', None)
         self.expose_to_guest_vm = kwargs.get('expose_to_guest_vm', None)
-        self.guest_os = kwargs.get('guest_os', None)
-        self.guest_os_type = kwargs.get('guest_os_type', None)
+        self.guest_os = None
+        self.guest_os_type = None
         self.nics = kwargs.get('nics', None)
         self.number_of_cores = kwargs.get('number_of_cores', None)
         self.path = kwargs.get('path', None)
@@ -1185,8 +1186,8 @@ class VirtualNetwork(Model):
     :vartype assignable: bool
     :param id: Required. virtual network id (privateCloudId:vsphereId)
     :type id: str
-    :param location: Azure region
-    :type location: str
+    :ivar location: Azure region
+    :vartype location: str
     :ivar name: {VirtualNetworkName}
     :vartype name: str
     :ivar private_cloud_id: The Private Cloud id
@@ -1198,6 +1199,7 @@ class VirtualNetwork(Model):
     _validation = {
         'assignable': {'readonly': True},
         'id': {'required': True},
+        'location': {'readonly': True},
         'name': {'readonly': True},
         'private_cloud_id': {'readonly': True},
         'type': {'readonly': True},
@@ -1216,7 +1218,7 @@ class VirtualNetwork(Model):
         super(VirtualNetwork, self).__init__(**kwargs)
         self.assignable = None
         self.id = kwargs.get('id', None)
-        self.location = kwargs.get('location', None)
+        self.location = None
         self.name = None
         self.private_cloud_id = None
         self.type = None
@@ -1234,7 +1236,7 @@ class VirtualNic(Model):
     :type ip_addresses: list[str]
     :param mac_address: NIC MAC address
     :type mac_address: str
-    :param network: The list of Virtual Networks
+    :param network: Required. Virtual Network
     :type network: ~azure.mgmt.vmwarecloudsimple.models.VirtualNetwork
     :param nic_type: Required. NIC type. Possible values include: 'E1000',
      'E1000E', 'PCNET32', 'VMXNET', 'VMXNET2', 'VMXNET3'
@@ -1248,6 +1250,7 @@ class VirtualNic(Model):
     """
 
     _validation = {
+        'network': {'required': True},
         'nic_type': {'required': True},
         'virtual_nic_name': {'readonly': True},
     }

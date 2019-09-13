@@ -9,34 +9,26 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._available_operations import AvailableOperations
-from ._dedicated_cloud_node_operations import DedicatedCloudNodeOperations
-from ._dedicated_cloud_service_operations import DedicatedCloudServiceOperations
-from ._skus_availability_within_region_operations import SkusAvailabilityWithinRegionOperations
-from ._private_cloud_by_region_operations import PrivateCloudByRegionOperations
-from ._resource_pools_by_pc_operations import ResourcePoolsByPCOperations
-from ._resource_pool_by_pc_operations import ResourcePoolByPCOperations
-from ._virtual_machine_templates_by_pc_operations import VirtualMachineTemplatesByPCOperations
-from ._virtual_machine_template_by_pc_operations import VirtualMachineTemplateByPCOperations
-from ._virtual_networks_by_pc_operations import VirtualNetworksByPCOperations
-from ._virtual_network_by_pc_operations import VirtualNetworkByPCOperations
-from ._usages_within_region_operations import UsagesWithinRegionOperations
-from ._virtual_machine_operations import VirtualMachineOperations
-from ._vmware_cloud_simple_client_operations import VMwareCloudSimpleClientOperationsMixin
+from ._operations import Operations
+from ._dedicated_cloud_nodes_operations import DedicatedCloudNodesOperations
+from ._dedicated_cloud_services_operations import DedicatedCloudServicesOperations
+from ._skus_availability_operations import SkusAvailabilityOperations
+from ._private_clouds_operations import PrivateCloudsOperations
+from ._resource_pools_operations import ResourcePoolsOperations
+from ._virtual_machine_templates_operations import VirtualMachineTemplatesOperations
+from ._virtual_networks_operations import VirtualNetworksOperations
+from ._usages_operations import UsagesOperations
+from ._virtual_machines_operations import VirtualMachinesOperations
 
 __all__ = [
-    'AvailableOperations',
-    'DedicatedCloudNodeOperations',
-    'DedicatedCloudServiceOperations',
-    'SkusAvailabilityWithinRegionOperations',
-    'PrivateCloudByRegionOperations',
-    'ResourcePoolsByPCOperations',
-    'ResourcePoolByPCOperations',
-    'VirtualMachineTemplatesByPCOperations',
-    'VirtualMachineTemplateByPCOperations',
-    'VirtualNetworksByPCOperations',
-    'VirtualNetworkByPCOperations',
-    'UsagesWithinRegionOperations',
-    'VirtualMachineOperations',
-    'VMwareCloudSimpleClientOperationsMixin',
+    'Operations',
+    'DedicatedCloudNodesOperations',
+    'DedicatedCloudServicesOperations',
+    'SkusAvailabilityOperations',
+    'PrivateCloudsOperations',
+    'ResourcePoolsOperations',
+    'VirtualMachineTemplatesOperations',
+    'VirtualNetworksOperations',
+    'UsagesOperations',
+    'VirtualMachinesOperations',
 ]

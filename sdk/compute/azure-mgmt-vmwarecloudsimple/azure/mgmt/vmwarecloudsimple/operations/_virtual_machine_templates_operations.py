@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class VirtualMachineTemplatesByPCOperations(object):
-    """VirtualMachineTemplatesByPCOperations operations.
+class VirtualMachineTemplatesOperations(object):
+    """VirtualMachineTemplatesOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -39,13 +39,15 @@ class VirtualMachineTemplatesByPCOperations(object):
         self.config = config
 
     def list(
-            self, pc_name, resource_pool_name, custom_headers=None, raw=False, **operation_config):
+            self, pc_name, region_id, resource_pool_name, custom_headers=None, raw=False, **operation_config):
         """Implements list of available VM templates.
 
         Returns list of virtual machine templates in region for private cloud.
 
         :param pc_name: The private cloud name
         :type pc_name: str
+        :param region_id: The region Id (westus, eastus)
+        :type region_id: str
         :param resource_pool_name: Resource pool used to derive vSphere
          cluster which contains VM templates
         :type resource_pool_name: str
@@ -67,7 +69,7 @@ class VirtualMachineTemplatesByPCOperations(object):
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
                     'pcName': self._serialize.url("pc_name", pc_name, 'str'),
-                    'regionId': self._serialize.url("self.config.region_id", self.config.region_id, 'str')
+                    'regionId': self._serialize.url("region_id", region_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -112,3 +114,69 @@ class VirtualMachineTemplatesByPCOperations(object):
 
         return deserialized
     list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.VMwareCloudSimple/locations/{regionId}/privateClouds/{pcName}/virtualMachineTemplates'}
+
+    def get(
+            self, region_id, pc_name, virtual_machine_template_name, custom_headers=None, raw=False, **operation_config):
+        """Implements virtual machine template GET method.
+
+        Returns virtual machine templates by its name.
+
+        :param region_id: The region Id (westus, eastus)
+        :type region_id: str
+        :param pc_name: The private cloud name
+        :type pc_name: str
+        :param virtual_machine_template_name: virtual machine template id
+         (vsphereId)
+        :type virtual_machine_template_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: VirtualMachineTemplate or ClientRawResponse if raw=true
+        :rtype: ~azure.mgmt.vmwarecloudsimple.models.VirtualMachineTemplate or
+         ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`CSRPErrorException<azure.mgmt.vmwarecloudsimple.models.CSRPErrorException>`
+        """
+        # Construct URL
+        url = self.get.metadata['url']
+        path_format_arguments = {
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'regionId': self._serialize.url("region_id", region_id, 'str'),
+            'pcName': self._serialize.url("pc_name", pc_name, 'str'),
+            'virtualMachineTemplateName': self._serialize.url("virtual_machine_template_name", virtual_machine_template_name, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if self.config.generate_client_request_id:
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+        if custom_headers:
+            header_parameters.update(custom_headers)
+        if self.config.accept_language is not None:
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.CSRPErrorException(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('VirtualMachineTemplate', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.VMwareCloudSimple/locations/{regionId}/privateClouds/{pcName}/virtualMachineTemplates/{virtualMachineTemplateName}'}

@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class UsagesWithinRegionOperations(object):
-    """UsagesWithinRegionOperations operations.
+class UsagesOperations(object):
+    """UsagesOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -39,11 +39,13 @@ class UsagesWithinRegionOperations(object):
         self.config = config
 
     def list(
-            self, filter=None, custom_headers=None, raw=False, **operation_config):
+            self, region_id, filter=None, custom_headers=None, raw=False, **operation_config):
         """Implements Usages List method.
 
         Returns list of usage in region.
 
+        :param region_id: The region Id (westus, eastus)
+        :type region_id: str
         :param filter: The filter to apply on the list operation. only
          name.value is allowed here as a filter e.g. $filter=name.value eq
          'xxxx'
@@ -65,7 +67,7 @@ class UsagesWithinRegionOperations(object):
                 url = self.list.metadata['url']
                 path_format_arguments = {
                     'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'regionId': self._serialize.url("self.config.region_id", self.config.region_id, 'str')
+                    'regionId': self._serialize.url("region_id", region_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
