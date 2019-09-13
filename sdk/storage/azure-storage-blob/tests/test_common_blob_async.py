@@ -22,6 +22,7 @@ from azure.core.exceptions import (
 from azure.core.pipeline.transport import AioHttpTransport
 from multidict import CIMultiDict, CIMultiDictProxy
 
+from azure.storage.blob._generated.models import RehydratePriority
 from azure.storage.blob.aio import (
     BlobServiceClient,
     ContainerClient,
@@ -1169,6 +1170,36 @@ class StorageCommonBlobTestAsync(StorageTestCase):
     def test_copy_blob_with_blob_tier_specified_async(self):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_copy_blob_with_blob_tier_specified())
+
+    async def _test_copy_blob_with_rehydrate_priority(self):
+        # Arrange
+        await self._setup()
+        blob_name = await self._create_block_blob()
+
+        # Act
+        sourceblob = '{0}/{1}/{2}'.format(
+            self._get_account_url(), self.container_name, blob_name)
+
+        blob_tier = StandardBlobTier.Archive
+        rehydrate_priority = RehydratePriority.high
+        copyblob = self.bsc.get_blob_client(self.container_name, 'blob1copy')
+        copy = await copyblob.start_copy_from_url(sourceblob,
+                                                  standard_blob_tier=blob_tier,
+                                                  rehydrate_priority=rehydrate_priority)
+        copy_blob_properties = await copyblob.get_blob_properties()
+        await copyblob.set_standard_blob_tier(StandardBlobTier.Hot)
+        second_resp = await copyblob.get_blob_properties()
+
+        # Assert
+        self.assertIsNotNone(copy)
+        self.assertIsNotNone(copy.get('copy_id'))
+        self.assertEqual(copy_blob_properties.blob_tier, blob_tier)
+        self.assertEqual(second_resp.archive_status, 'rehydrate-pending-to-hot')
+
+    @record
+    def test_copy_blob_with_rehydrate_priority_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_copy_blob_with_rehydrate_priority())
 
     # TODO: external copy was supported since 2019-02-02
     # async def _test_copy_blob_with_external_blob_fails(self):

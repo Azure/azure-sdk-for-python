@@ -916,6 +916,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         :param ~azure.storage.blob.models.StandardBlobTier standard_blob_tier:
             A standard blob tier value to set the blob to. For this version of the library,
             this is only applicable to block blobs on standard storage accounts.
+        :param :class:`~azure.storage.blob.models.RehydratePriority` rehydrate_priority:
+            Indicates the priority with which to rehydrate an archived blob
         :param bool requires_sync:
             Enforces that the service will not return a response until the copy is complete.
         :returns: A dictionary of copy properties (etag, last_modified, copy_id, copy_status).
@@ -1040,6 +1042,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             tier is optimized for storing data that is rarely accessed and stored
             for at least six months with flexible latency requirements.
         :type standard_blob_tier: str or ~azure.storage.blob.models.StandardBlobTier
+        :param :class:`~azure.storage.blob.models.RehydratePriority` rehydrate_priority:
+            Indicates the priority with which to rehydrate an archived blob
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :param lease:
