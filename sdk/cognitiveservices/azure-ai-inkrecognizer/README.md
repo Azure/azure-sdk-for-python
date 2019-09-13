@@ -1,4 +1,4 @@
-# Azure Ink Recognizer SDK for Python
+# Azure Ink Recognizer client library for Python
 
 Azure Ink Recognizer SDK is an SDK for developers to work with Azure Ink Recognizer Service. The service recognize a collection of ink strokes and return a tree hierarchy of the recognized units, such as lines, words, shapes, as well as the handwriting recognition result of the words.
 
@@ -27,6 +27,10 @@ pip install azure-ai-inkrecognizer
 TODO.
 
 #### Get credentials
+
+TODO.
+
+## Key Concepts
 
 TODO.
 
