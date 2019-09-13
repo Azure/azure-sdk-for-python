@@ -194,7 +194,7 @@ class OpenShiftManagedCluster(Resource):
     :param auth_profile: Configures OpenShift authentication.
     :type auth_profile:
      ~azure.mgmt.containerservice.v2019_09_30_preview.models.OpenShiftManagedClusterAuthProfile
-    :param monitor_profile: Configures Log Analytics intergration.
+    :param monitor_profile: Configures Log Analytics integration.
     :type monitor_profile:
      ~azure.mgmt.containerservice.v2019_09_30_preview.models.OpenShiftManagedClusterMonitorProfile
     """
