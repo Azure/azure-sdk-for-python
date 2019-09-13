@@ -8,8 +8,8 @@ import uuid
 import asyncio
 import logging
 
-from azure.core.tracing.common import get_parent_span
 from azure.core.tracing import SpanKind
+from azure.core.settings import settings
 
 from azure.eventhub import EventPosition, EventHubError
 from azure.eventhub.aio import EventHubClient
@@ -252,9 +252,9 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
                     events = await partition_consumer.receive()
 
                     # Tracing
-                    parent_span = get_parent_span()
-                    if parent_span:
-                        child = parent_span.span(name="Azure.EventHubs.process")
+                    span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
+                    if span_impl_type is not None:
+                        child = span_impl_type(name="Azure.EventHubs.process")
                         child.kind = SpanKind.SERVER
 
                         for event_data in events:

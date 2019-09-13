@@ -12,8 +12,8 @@ from typing import Iterable, Union
 from uamqp import types, constants, errors  # type: ignore
 from uamqp import SendClient  # type: ignore
 
-from azure.core.tracing.common import get_parent_span
 from azure.core.tracing import SpanKind
+from azure.core.settings import settings
 
 from azure.eventhub.common import EventData, EventDataBatch
 from azure.eventhub.error import _error_handler, OperationTimeoutError, EventDataError
@@ -222,9 +222,9 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
 
         """
         # Tracing code
-        parent_span = get_parent_span()
-        if parent_span:
-            child = parent_span.span(name="Azure.EventHubs.send")
+        span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
+        if span_impl_type is not None:
+            child = span_impl_type(name="Azure.EventHubs.send")
             child.kind = SpanKind.CLIENT  # Should be PRODUCER
 
         def trace_message(message):
@@ -255,7 +255,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         wrapper_event_data.message.on_send_complete = self._on_outcome
         self._unsent_events = [wrapper_event_data.message]
 
-        if parent_span:
+        if span_impl_type is not None:
             with child:
                 self._client._add_span_request_attributes(child)
                 self._send_event_data_with_retry(timeout=timeout)
