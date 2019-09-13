@@ -62,7 +62,7 @@ class StorageFileTestAsync(AsyncFileTestCase):
     def setUp(self):
         super(StorageFileTestAsync, self).setUp()
         self.share_name = self.get_resource_name('utshare')
-        self.short_byte_data = self.get_random_bytes(1024)
+        self.short_byte_data = b'viscaelbarcelona' * 64
         self.remote_share_name = None
 
     # --Helpers-----------------------------------------------------------------
@@ -574,6 +574,10 @@ class StorageFileTestAsync(AsyncFileTestCase):
     @StorageAccountPreparer(name_prefix='pyacrstorage')
     @AsyncFileTestCase.await_prepared_test
     async def test_set_file_metadata_with_upper_case_async(self, resource_group, location, storage_account, storage_account_key):
+        if not self.is_live:
+            # x-ms-meta-UP is being recorded as x-ms-meta-up which is failing the test case in recording mode.
+            pytest.skip("TODO: Fix a bug in devtools which is converting headers to lowercase.")
+
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
         # Arrange
         metadata = {'hello': 'world', 'number': '42', 'UP': 'UPval'}
@@ -948,11 +952,12 @@ class StorageFileTestAsync(AsyncFileTestCase):
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @StorageAccountPreparer(name_prefix='remotestorage', parameter_name='remote')
     @AsyncFileTestCase.await_prepared_test
-    async def test_copy_file_async_private_file_async(self, resource_group, location, storage_account, storage_account_key):
+    async def test_copy_file_async_private_file_async(self, resource_group, location, storage_account, storage_account_key, remote, remote_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
-        fsc2 = FileServiceClient(self._account_url(self._remote_account_details()[0]), credential=self._remote_account_details()[1], transport=AiohttpTestTransport())
+        fsc2 = FileServiceClient(self._account_url(remote.name), credential=remote_key, transport=AiohttpTestTransport())
         await self._create_remote_share(fsc2)
         source_file = await self._create_remote_file(fsc2)
 
@@ -972,12 +977,13 @@ class StorageFileTestAsync(AsyncFileTestCase):
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @StorageAccountPreparer(name_prefix='remotestorage', parameter_name='remote')
     @AsyncFileTestCase.await_prepared_test
-    async def test_copy_file_async_private_file_with_sas_async(self, resource_group, location, storage_account, storage_account_key):
+    async def test_copy_file_async_private_file_with_sas_async(self, resource_group, location, storage_account, storage_account_key, remote, remote_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
         data = b'12345678' * 1024 * 1024
-        fsc2 = FileServiceClient(self._account_url(self._remote_account_details()[0]), credential=self._remote_account_details()[1], transport=AiohttpTestTransport())
+        fsc2 = FileServiceClient(self._account_url(remote.name), credential=remote_key, transport=AiohttpTestTransport())
         await self._create_remote_share(fsc2)
         source_file = await self._create_remote_file(fsc2, file_data=data)
         sas_token = source_file.generate_shared_access_signature(
@@ -1007,12 +1013,13 @@ class StorageFileTestAsync(AsyncFileTestCase):
 
     @ResourceGroupPreparer()
     @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @StorageAccountPreparer(name_prefix='remotestorage', parameter_name='remote')
     @AsyncFileTestCase.await_prepared_test
-    async def test_abort_copy_file_async(self, resource_group, location, storage_account, storage_account_key):
+    async def test_abort_copy_file_async(self, resource_group, location, storage_account, storage_account_key, remote, remote_key):
         # Arrange
         fsc = FileServiceClient(self._account_url(storage_account.name), credential=storage_account_key, transport=AiohttpTestTransport())
         data = b'12345678' * 1024 * 1024
-        fsc2 = FileServiceClient(self._account_url(self._remote_account_details()[0]), credential=self._remote_account_details()[0], transport=AiohttpTestTransport())
+        fsc2 = FileServiceClient(self._account_url(remote.name), credential=remote_key, transport=AiohttpTestTransport())
         await self._create_remote_share(fsc2)
         source_file = await self._create_remote_file(fsc2, file_data=data)
         sas_token = source_file.generate_shared_access_signature(

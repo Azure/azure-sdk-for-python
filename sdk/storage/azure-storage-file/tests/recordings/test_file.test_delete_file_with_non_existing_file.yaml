@@ -23,6 +23,7 @@ interactions:
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
 <<<<<<< HEAD
+<<<<<<< HEAD
 <<<<<<< HEAD:sdk/storage/azure-storage-file/tests/recordings/test_share.test_get_share_metadata.yaml
       - Wed, 11 Sep 2019 22:00:08 GMT
 >>>>>>> Migrate Files to Devtools Framework
@@ -38,6 +39,9 @@ interactions:
 =======
       - Thu, 12 Sep 2019 19:02:55 GMT
 >>>>>>> fix test files
+=======
+      - Fri, 13 Sep 2019 17:27:36 GMT
+>>>>>>> Files recordings
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -61,11 +65,11 @@ interactions:
       - 2a3951f3-b01a-00c6-7fb6-6d9875000000
 =======
       date:
-      - Thu, 12 Sep 2019 19:02:55 GMT
+      - Fri, 13 Sep 2019 17:27:34 GMT
       etag:
-      - '"0x8D737B3D1C7C4B6"'
+      - '"0x8D7386FAAD592E5"'
       last-modified:
-      - Thu, 12 Sep 2019 19:02:55 GMT
+      - Fri, 13 Sep 2019 17:27:35 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
 >>>>>>> Migrate Files to Devtools Framework
@@ -98,6 +102,7 @@ interactions:
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
 <<<<<<< HEAD
+<<<<<<< HEAD
 <<<<<<< HEAD:sdk/storage/azure-storage-file/tests/recordings/test_share.test_get_share_metadata.yaml
       - Wed, 11 Sep 2019 22:00:08 GMT
 >>>>>>> Migrate Files to Devtools Framework
@@ -107,6 +112,9 @@ interactions:
 =======
       - Thu, 12 Sep 2019 19:02:55 GMT
 >>>>>>> fix test files
+=======
+      - Fri, 13 Sep 2019 17:27:36 GMT
+>>>>>>> Files recordings
       x-ms-version:
       - '2019-02-02'
     method: DELETE
@@ -114,7 +122,7 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ResourceNotFound</Code><Message>The
-        specified resource does not exist.\nRequestId:d0d591b5-501a-00e9-809c-69cc70000000\nTime:2019-09-12T19:02:55.8207815Z</Message></Error>"
+        specified resource does not exist.\nRequestId:4f7cdfba-401a-002d-1658-6a6ec2000000\nTime:2019-09-13T17:27:35.9035146Z</Message></Error>"
     headers:
       content-length:
 <<<<<<< HEAD:sdk/storage/azure-storage-file/tests/recordings/test_share.test_get_share_metadata.yaml
@@ -134,7 +142,7 @@ interactions:
       - application/xml
 >>>>>>> ,pre recordingd and fixes:sdk/storage/azure-storage-file/tests/recordings/test_file.test_delete_file_with_non_existing_file.yaml
       date:
-      - Thu, 12 Sep 2019 19:02:54 GMT
+      - Fri, 13 Sep 2019 17:27:35 GMT
       server:
 >>>>>>> Migrate Files to Devtools Framework
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0

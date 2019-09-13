@@ -23,6 +23,7 @@ interactions:
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
 <<<<<<< HEAD
+<<<<<<< HEAD
 <<<<<<< HEAD:sdk/storage/azure-storage-file/tests/recordings/test_share.test_delete_share_with_existing_share.yaml
       - Wed, 11 Sep 2019 21:59:33 GMT
 >>>>>>> Migrate Files to Devtools Framework
@@ -32,6 +33,9 @@ interactions:
 =======
       - Thu, 12 Sep 2019 19:06:56 GMT
 >>>>>>> fix test files
+=======
+      - Fri, 13 Sep 2019 17:27:51 GMT
+>>>>>>> Files recordings
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -55,11 +59,11 @@ interactions:
       - 8dc2459b-e01a-0096-36b6-6d5a25000000
 =======
       date:
-      - Thu, 12 Sep 2019 19:06:56 GMT
+      - Fri, 13 Sep 2019 17:27:50 GMT
       etag:
-      - '"0x8D737B461B5253B"'
+      - '"0x8D7386FB3F243BF"'
       last-modified:
-      - Thu, 12 Sep 2019 19:06:56 GMT
+      - Fri, 13 Sep 2019 17:27:50 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
 >>>>>>> Migrate Files to Devtools Framework
@@ -90,6 +94,7 @@ interactions:
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
 <<<<<<< HEAD
+<<<<<<< HEAD
 <<<<<<< HEAD:sdk/storage/azure-storage-file/tests/recordings/test_share.test_delete_share_with_existing_share.yaml
       - Wed, 11 Sep 2019 21:59:33 GMT
 >>>>>>> Migrate Files to Devtools Framework
@@ -99,6 +104,9 @@ interactions:
 =======
       - Thu, 12 Sep 2019 19:06:56 GMT
 >>>>>>> fix test files
+=======
+      - Fri, 13 Sep 2019 17:27:51 GMT
+>>>>>>> Files recordings
       x-ms-version:
       - '2019-02-02'
     method: HEAD
@@ -121,7 +129,7 @@ interactions:
 =======
 >>>>>>> ,pre recordingd and fixes:sdk/storage/azure-storage-file/tests/recordings/test_file.test_get_file_properties_with_non_existing_file.yaml
       date:
-      - Thu, 12 Sep 2019 19:06:56 GMT
+      - Fri, 13 Sep 2019 17:27:50 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
 <<<<<<< HEAD:sdk/storage/azure-storage-file/tests/recordings/test_share.test_delete_share_with_existing_share.yaml

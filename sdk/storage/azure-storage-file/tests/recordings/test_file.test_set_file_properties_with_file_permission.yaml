@@ -24,7 +24,7 @@ interactions:
 =======
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 12 Sep 2019 19:17:23 GMT
+      - Fri, 13 Sep 2019 17:28:41 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
@@ -36,11 +36,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 12 Sep 2019 19:17:23 GMT
+      - Fri, 13 Sep 2019 17:28:50 GMT
       etag:
-      - '"0x8D737B5D7932D80"'
+      - '"0x8D7386FD55AD3DD"'
       last-modified:
-      - Thu, 12 Sep 2019 19:17:24 GMT
+      - Fri, 13 Sep 2019 17:28:46 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -64,8 +64,12 @@ interactions:
       x-ms-content-length:
       - '1024'
       x-ms-date:
+<<<<<<< HEAD
       - Thu, 12 Sep 2019 19:17:24 GMT
 >>>>>>> fix test files
+=======
+      - Fri, 13 Sep 2019 17:28:51 GMT
+>>>>>>> Files recordings
       x-ms-file-attributes:
       - none
       x-ms-file-creation-time:
@@ -102,17 +106,18 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 12 Sep 2019 19:17:23 GMT
+      - Fri, 13 Sep 2019 17:28:50 GMT
       etag:
-      - '"0x8D737B5D7A7E38F"'
+      - '"0x8D7386FD7BE04D7"'
       last-modified:
-      - Thu, 12 Sep 2019 19:17:24 GMT
+      - Fri, 13 Sep 2019 17:28:50 GMT
       server:
 >>>>>>> fix test files
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-file-attributes:
       - Archive
       x-ms-file-change-time:
+<<<<<<< HEAD
 <<<<<<< HEAD
       - '2019-09-17T23:57:42.6677455Z'
       x-ms-file-creation-time:
@@ -129,17 +134,24 @@ interactions:
       - 20b5ab81-001a-00b1-6fb3-6d4de1000000
 =======
       - '2019-09-12T19:17:24.2926991Z'
+=======
+      - '2019-09-13T17:28:50.8294359Z'
+>>>>>>> Files recordings
       x-ms-file-creation-time:
-      - '2019-09-12T19:17:24.2926991Z'
+      - '2019-09-13T17:28:50.8294359Z'
       x-ms-file-id:
       - '13835128424026341376'
       x-ms-file-last-write-time:
-      - '2019-09-12T19:17:24.2926991Z'
+      - '2019-09-13T17:28:50.8294359Z'
       x-ms-file-parent-id:
       - '0'
       x-ms-file-permission-key:
+<<<<<<< HEAD
       - 8091303916513419540*15630585056658950554
 >>>>>>> fix test files
+=======
+      - 4714110057693091516*16846570236139896370
+>>>>>>> Files recordings
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
@@ -148,6 +160,7 @@ interactions:
       code: 201
       message: Created
 - request:
+<<<<<<< HEAD
     body: !!binary |
 <<<<<<< HEAD
       BN/TsYuKq3zqsWHqlDC8OVcHc29q8YrqSFs1aMO21xJGHg5eQguDO5cQEDkaWH3j5rCPXEDMH/6X
@@ -188,6 +201,9 @@ interactions:
       xmC80WdXNOykD2eyklvj9w0dgoYFo9zR2z4nz4kNDNHV+vDqtQIinGwN9GqvRS3Fc+nsBJs3/B1H
       DXpkFe1GWo+C85DM/d+zacu6DHaeVnlMhLV0jIQ96kUa/RckhZPaj9YTX/r7FJJRKVNbfPy8lg==
 >>>>>>> fix test files
+=======
+    body: viscaelbarcelonaviscaelbarcelonaviscaelbarcelonaviscaelbarcelonaviscaelbarcelonaviscaelbarcelonaviscaelbarcelonaviscaelbarcelonaviscaelbarcelonaviscaelbarcelonaviscaelbarcelonaviscaelbarcelonaviscaelbarcelonaviscaelbarcelonaviscaelbarcelonaviscaelbarcelonaviscaelbarcelonaviscaelbarcelonaviscaelbarcelonaviscaelbarcelonaviscaelbarcelonaviscaelbarcelonaviscaelbarcelonaviscaelbarcelonaviscaelbarcelonaviscaelbarcelonaviscaelbarcelonaviscaelbarcelonaviscaelbarcelonaviscaelbarcelonaviscaelbarcelonaviscaelbarcelonaviscaelbarcelonaviscaelbarcelonaviscaelbarcelonaviscaelbarcelonaviscaelbarcelonaviscaelbarcelonaviscaelbarcelonaviscaelbarcelonaviscaelbarcelonaviscaelbarcelonaviscaelbarcelonaviscaelbarcelonaviscaelbarcelonaviscaelbarcelonaviscaelbarcelonaviscaelbarcelonaviscaelbarcelonaviscaelbarcelonaviscaelbarcelonaviscaelbarcelonaviscaelbarcelonaviscaelbarcelonaviscaelbarcelonaviscaelbarcelonaviscaelbarcelonaviscaelbarcelonaviscaelbarcelonaviscaelbarcelonaviscaelbarcelonaviscaelbarcelonaviscaelbarcelonaviscaelbarcelona
+>>>>>>> Files recordings
     headers:
       Accept:
       - '*/*'
@@ -209,8 +225,12 @@ interactions:
 =======
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
+<<<<<<< HEAD
       - Thu, 12 Sep 2019 19:17:24 GMT
 >>>>>>> fix test files
+=======
+      - Fri, 13 Sep 2019 17:28:51 GMT
+>>>>>>> Files recordings
       x-ms-range:
       - bytes=0-1023
       x-ms-version:
@@ -246,13 +266,13 @@ interactions:
       content-length:
       - '0'
       content-md5:
-      - eXmq1gS6XRQh7YE/GMsOtQ==
+      - du4kJz1REW8y+U0MUsGZyA==
       date:
-      - Thu, 12 Sep 2019 19:17:23 GMT
+      - Fri, 13 Sep 2019 17:28:50 GMT
       etag:
-      - '"0x8D737B5D7BB480E"'
+      - '"0x8D7386FD7D0A6FD"'
       last-modified:
-      - Thu, 12 Sep 2019 19:17:24 GMT
+      - Fri, 13 Sep 2019 17:28:50 GMT
       server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
 >>>>>>> fix test files
@@ -288,7 +308,7 @@ interactions:
 =======
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 12 Sep 2019 19:17:24 GMT
+      - Fri, 13 Sep 2019 17:28:51 GMT
       x-ms-version:
       - '2019-02-02'
     method: HEAD
@@ -316,17 +336,18 @@ interactions:
       content-type:
       - application/octet-stream
       date:
-      - Thu, 12 Sep 2019 19:17:23 GMT
+      - Fri, 13 Sep 2019 17:28:50 GMT
       etag:
-      - '"0x8D737B5D7BB480E"'
+      - '"0x8D7386FD7D0A6FD"'
       last-modified:
-      - Thu, 12 Sep 2019 19:17:24 GMT
+      - Fri, 13 Sep 2019 17:28:50 GMT
       server:
 >>>>>>> fix test files
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-file-attributes:
       - Archive
       x-ms-file-change-time:
+<<<<<<< HEAD
 <<<<<<< HEAD
       - '2019-09-17T23:57:42.6677455Z'
       x-ms-file-creation-time:
@@ -343,17 +364,24 @@ interactions:
       - 20b5ab85-001a-00b1-72b3-6d4de1000000
 =======
       - '2019-09-12T19:17:24.2926991Z'
+=======
+      - '2019-09-13T17:28:50.8294359Z'
+>>>>>>> Files recordings
       x-ms-file-creation-time:
-      - '2019-09-12T19:17:24.2926991Z'
+      - '2019-09-13T17:28:50.8294359Z'
       x-ms-file-id:
       - '13835128424026341376'
       x-ms-file-last-write-time:
-      - '2019-09-12T19:17:24.2926991Z'
+      - '2019-09-13T17:28:50.8294359Z'
       x-ms-file-parent-id:
       - '0'
       x-ms-file-permission-key:
+<<<<<<< HEAD
       - 8091303916513419540*15630585056658950554
 >>>>>>> fix test files
+=======
+      - 4714110057693091516*16846570236139896370
+>>>>>>> Files recordings
       x-ms-server-encrypted:
       - 'true'
       x-ms-type:
@@ -390,6 +418,7 @@ interactions:
       - spanish
       x-ms-date:
 <<<<<<< HEAD
+<<<<<<< HEAD
       - Tue, 17 Sep 2019 23:57:42 GMT
       x-ms-file-attributes:
       - Archive|Temporary
@@ -399,13 +428,20 @@ interactions:
       - '2019-09-18T02:57:42.6677450Z'
 =======
       - Thu, 12 Sep 2019 19:17:24 GMT
+=======
+      - Fri, 13 Sep 2019 17:28:52 GMT
+>>>>>>> Files recordings
       x-ms-file-attributes:
       - Archive|Temporary
       x-ms-file-creation-time:
-      - '2019-09-12T22:17:24.2926990Z'
+      - '2019-09-13T20:28:50.8294350Z'
       x-ms-file-last-write-time:
+<<<<<<< HEAD
       - '2019-09-12T22:17:24.2926990Z'
 >>>>>>> fix test files
+=======
+      - '2019-09-13T20:28:50.8294350Z'
+>>>>>>> Files recordings
       x-ms-file-permission:
       - preserve
       x-ms-version:
@@ -434,17 +470,18 @@ interactions:
       content-length:
       - '0'
       date:
-      - Thu, 12 Sep 2019 19:17:23 GMT
+      - Fri, 13 Sep 2019 17:28:50 GMT
       etag:
-      - '"0x8D737B5D7D0CFD3"'
+      - '"0x8D7386FD7E8054E"'
       last-modified:
-      - Thu, 12 Sep 2019 19:17:24 GMT
+      - Fri, 13 Sep 2019 17:28:51 GMT
       server:
 >>>>>>> fix test files
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-file-attributes:
       - Archive | Temporary
       x-ms-file-change-time:
+<<<<<<< HEAD
 <<<<<<< HEAD
       - '2019-09-17T23:57:42.7998704Z'
       x-ms-file-creation-time:
@@ -461,17 +498,24 @@ interactions:
       - 20b5ab86-001a-00b1-73b3-6d4de1000000
 =======
       - '2019-09-12T19:17:24.5608915Z'
+=======
+      - '2019-09-13T17:28:51.1046990Z'
+>>>>>>> Files recordings
       x-ms-file-creation-time:
-      - '2019-09-12T22:17:24.2926990Z'
+      - '2019-09-13T20:28:50.8294350Z'
       x-ms-file-id:
       - '13835128424026341376'
       x-ms-file-last-write-time:
-      - '2019-09-12T22:17:24.2926990Z'
+      - '2019-09-13T20:28:50.8294350Z'
       x-ms-file-parent-id:
       - '0'
       x-ms-file-permission-key:
+<<<<<<< HEAD
       - 8091303916513419540*15630585056658950554
 >>>>>>> fix test files
+=======
+      - 4714110057693091516*16846570236139896370
+>>>>>>> Files recordings
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
@@ -504,7 +548,7 @@ interactions:
 =======
       - azsdk-python-storage-file/12.0.0b3 Python/3.7.3 (Windows-10-10.0.17763-SP0)
       x-ms-date:
-      - Thu, 12 Sep 2019 19:17:24 GMT
+      - Fri, 13 Sep 2019 17:28:52 GMT
       x-ms-version:
       - '2019-02-02'
     method: HEAD
@@ -538,17 +582,18 @@ interactions:
       content-length:
       - '1024'
       date:
-      - Thu, 12 Sep 2019 19:17:23 GMT
+      - Fri, 13 Sep 2019 17:28:50 GMT
       etag:
-      - '"0x8D737B5D7D0CFD3"'
+      - '"0x8D7386FD7E8054E"'
       last-modified:
-      - Thu, 12 Sep 2019 19:17:24 GMT
+      - Fri, 13 Sep 2019 17:28:51 GMT
       server:
 >>>>>>> fix test files
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
       x-ms-file-attributes:
       - Archive | Temporary
       x-ms-file-change-time:
+<<<<<<< HEAD
 <<<<<<< HEAD
       - '2019-09-17T23:57:42.7998704Z'
       x-ms-file-creation-time:
@@ -565,17 +610,24 @@ interactions:
       - 20b5ab87-001a-00b1-74b3-6d4de1000000
 =======
       - '2019-09-12T19:17:24.5608915Z'
+=======
+      - '2019-09-13T17:28:51.1046990Z'
+>>>>>>> Files recordings
       x-ms-file-creation-time:
-      - '2019-09-12T22:17:24.2926990Z'
+      - '2019-09-13T20:28:50.8294350Z'
       x-ms-file-id:
       - '13835128424026341376'
       x-ms-file-last-write-time:
-      - '2019-09-12T22:17:24.2926990Z'
+      - '2019-09-13T20:28:50.8294350Z'
       x-ms-file-parent-id:
       - '0'
       x-ms-file-permission-key:
+<<<<<<< HEAD
       - 8091303916513419540*15630585056658950554
 >>>>>>> fix test files
+=======
+      - 4714110057693091516*16846570236139896370
+>>>>>>> Files recordings
       x-ms-server-encrypted:
       - 'true'
       x-ms-type:
