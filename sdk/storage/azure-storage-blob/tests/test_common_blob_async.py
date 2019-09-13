@@ -41,7 +41,7 @@ from azure.storage.blob import (
     AccessPolicy,
     ResourceTypes,
     AccountPermissions,
-)
+    StandardBlobTier)
 
 from testcase import (
     StorageTestCase,
@@ -1145,6 +1145,30 @@ class StorageCommonBlobTestAsync(StorageTestCase):
     def test_copy_blob_with_existing_blob(self):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_copy_blob_with_existing_blob())
+
+    async def _test_copy_blob_with_blob_tier_specified(self):
+        # Arrange
+        await self._setup()
+        blob_name = await self._create_block_blob()
+        self.bsc.get_blob_client(self.container_name, blob_name)
+
+        # Act
+        sourceblob = '{0}/{1}/{2}'.format(
+            self._get_account_url(), self.container_name, blob_name)
+
+        copyblob = self.bsc.get_blob_client(self.container_name, 'blob1copy')
+        blob_tier = StandardBlobTier.Cool
+        await copyblob.start_copy_from_url(sourceblob, standard_blob_tier=blob_tier)
+
+        copy_blob_properties = await copyblob.get_blob_properties()
+
+        # Assert
+        self.assertEqual(copy_blob_properties.blob_tier, blob_tier)
+
+    @record
+    def test_copy_blob_with_blob_tier_specified_async(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_copy_blob_with_blob_tier_specified())
 
     # TODO: external copy was supported since 2019-02-02
     # async def _test_copy_blob_with_external_blob_fails(self):

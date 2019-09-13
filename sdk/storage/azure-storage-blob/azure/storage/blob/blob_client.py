@@ -507,6 +507,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             A page blob tier value to set the blob to. The tier correlates to the size of the
             blob and number of allowed IOPS. This is only applicable to page blobs on
             premium storage accounts.
+        :param ~azure.storage.blob.models.StandardBlobTier standard_blob_tier:
+            A standard blob tier value to set the blob to. For this version of the library,
+            this is only applicable to block blobs on standard storage accounts.
         :param int maxsize_condition:
             Optional conditional header. The max length in bytes permitted for
             the append blob. If the Append Block operation would cause the blob
@@ -1341,9 +1344,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 headers['x-ms-source-lease-id'] = source_lease.id # type: str
             except AttributeError:
                 headers['x-ms-source-lease-id'] = source_lease
-        if kwargs.get('premium_page_blob_tier'):
-            premium_page_blob_tier = kwargs.pop('premium_page_blob_tier')
-            headers['x-ms-access-tier'] = premium_page_blob_tier.value
+
+        tier = kwargs.pop('premium_page_blob_tier', None) or kwargs.pop('standard_blob_tier', None)
+
         if kwargs.get('requires_sync'):
             headers['x-ms-requires-sync'] = str(kwargs.pop('requires_sync'))
 
@@ -1358,6 +1361,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             'timeout': timeout,
             'modified_access_conditions': dest_mod_conditions,
             'headers': headers,
+            'tier': tier.value if tier else None,
             'cls': return_response_headers,
         }
         if not incremental_copy:
@@ -1499,6 +1503,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             A page blob tier value to set the blob to. The tier correlates to the size of the
             blob and number of allowed IOPS. This is only applicable to page blobs on
             premium storage accounts.
+        :param ~azure.storage.blob.models.StandardBlobTier standard_blob_tier:
+            A standard blob tier value to set the blob to. For this version of the library,
+            this is only applicable to block blobs on standard storage accounts.
         :param bool requires_sync:
             Enforces that the service will not return a response until the copy is complete.
         :returns: A dictionary of copy properties (etag, last_modified, copy_id, copy_status).
@@ -1930,6 +1937,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 raise ValueError("Customer provided encryption key must be used over HTTPS.")
             cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                                encryption_algorithm=cpk.algorithm)
+
+        tier = kwargs.pop('standard_blob_tier', None)
+
         options = {
             'blocks': block_lookup,
             'blob_http_headers': blob_headers,
@@ -1938,7 +1948,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             'modified_access_conditions': mod_conditions,
             'cls': return_response_headers,
             'validate_content': validate_content,
-            'cpk_info': cpk_info}
+            'cpk_info': cpk_info,
+            'tier': tier.value if tier else None
+        }
         options.update(kwargs)
         return options
 
@@ -1993,6 +2005,9 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             the value specified. Specify the wildcard character (*) to perform
             the operation only if the resource does not exist, and fail the
             operation if it does exist.
+        :param ~azure.storage.blob.models.StandardBlobTier standard_blob_tier:
+            A standard blob tier value to set the blob to. For this version of the library,
+            this is only applicable to block blobs on standard storage accounts.
         :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.

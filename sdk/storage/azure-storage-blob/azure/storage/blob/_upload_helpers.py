@@ -79,6 +79,7 @@ def upload_block_blob(  # pylint: disable=too-many-locals
         if (encryption_options.get('key') is not None) and (adjusted_count is not None):
             adjusted_count += (16 - (length % 16))
         blob_headers = kwargs.pop('blob_headers', None)
+        tier = kwargs.pop('standard_blob_tier', None)
 
         # Do single put if the size is smaller than config.max_single_put_size
         if adjusted_count is not None and (adjusted_count < blob_settings.max_single_put_size):
@@ -100,6 +101,7 @@ def upload_block_blob(  # pylint: disable=too-many-locals
                 validate_content=validate_content,
                 data_stream_total=adjusted_count,
                 upload_stream_current=0,
+                tier=tier.value if tier else None,
                 **kwargs)
 
         use_original_upload_path = blob_settings.use_byte_buffer or \
@@ -145,6 +147,7 @@ def upload_block_blob(  # pylint: disable=too-many-locals
             cls=return_response_headers,
             validate_content=validate_content,
             headers=headers,
+            tier=tier.value if tier else None,
             **kwargs)
     except StorageErrorException as error:
         try:
