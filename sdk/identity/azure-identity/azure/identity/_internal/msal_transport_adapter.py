@@ -61,7 +61,8 @@ class MsalTransportAdapter(object):
         self._pipeline = self._build_pipeline(**kwargs)
 
     def __enter__(self):
-        return self._patch.__enter__()
+        self._patch.__enter__()
+        return self
 
     def __exit__(self, *args):
         self._patch.__exit__(*args)
