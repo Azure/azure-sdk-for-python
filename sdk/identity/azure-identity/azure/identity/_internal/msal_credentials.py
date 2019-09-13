@@ -68,6 +68,7 @@ class MsalCredential(ABC):
             app = cls(client_id=self._client_id, client_credential=self._client_credential, authority=self._authority)
 
         # monkeypatch the app to replace requests.Session with MsalTransportAdapter
+        app.client.session.close()
         app.client.session = self._adapter
 
         return app
