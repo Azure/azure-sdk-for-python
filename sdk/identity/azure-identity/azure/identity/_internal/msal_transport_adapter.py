@@ -38,7 +38,8 @@ class MsalTransportResponse:
 
     def raise_for_status(self):
         # type: () -> None
-        raise ClientAuthenticationError("authentication failed", self._response)
+        if self.status_code >= 400:
+            raise ClientAuthenticationError("authentication failed", self._response)
 
 
 class MsalTransportAdapter(object):
