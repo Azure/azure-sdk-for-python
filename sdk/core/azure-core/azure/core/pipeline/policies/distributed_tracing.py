@@ -27,8 +27,6 @@
 import sys
 from six.moves import urllib
 
-from azure.core.tracing.context import tracing_context
-from azure.core.tracing.common import set_span_contexts, get_parent_span
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.settings import settings
 
@@ -47,6 +45,7 @@ if TYPE_CHECKING:
 
 class DistributedTracingPolicy(SansIOHTTPPolicy):
     """The policy to create spans for Azure Calls"""
+    TRACING_CONTEXT = "TRACING_CONTEXT"
 
     def __init__(self):
         # type: () -> None
@@ -68,26 +67,25 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
         if span_impl_type is None:
             return
 
-        original_context = (
-            tracing_context.current_span.get(),
-            span_impl_type.get_current_span()
-        )
-        parent_span = get_parent_span()
-
         path = urllib.parse.urlparse(request.http_request.url).path  # type: ignore
         if not path:
             path = "/"
-        child = parent_span.span(name=path)
-        child.start()
 
-        set_span_contexts(child)
-        self.parent_span_dict[child] = original_context
-        self.set_header(request, child)
+        span = span_impl_type(name=path)
+        span.start()
+
+        self.set_header(request, span)
+
+        request.context[self.TRACING_CONTEXT] = span
 
     def end_span(self, request, response=None, exc_info=None):
-        # type: (HttpRequest, Optional[HttpResponse]) -> None
+        # type: (PipelineRequest, Optional[HttpResponse]) -> None
         """Ends the span that is tracing the network and updates its status."""
-        span = tracing_context.current_span.get()  # type: AbstractSpan
+        if self.TRACING_CONTEXT not in request.context:
+            return
+
+        span = request.context[self.TRACING_CONTEXT]  # type: AbstractSpan
+        request = request.http_request
         if span is not None:
             span.set_http_attributes(request, response=response)
             request_id = request.headers.get(self._request_id)
@@ -100,15 +98,11 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
             else:
                 span.finish()
 
-            original_context = self.parent_span_dict.pop(span, None)
-            if original_context:
-                set_span_contexts(original_context[0], original_context[1])
-
     def on_response(self, request, response):
         # type: (PipelineRequest, PipelineResponse) -> None
-        self.end_span(request.http_request, response=response.http_response)  # type: ignore
+        self.end_span(request, response=response.http_response)  # type: ignore
 
-    def on_exception(self, _request):  # pylint: disable=unused-argument
+    def on_exception(self, request):  # pylint: disable=unused-argument
         # type: (PipelineRequest) -> bool
-        self.end_span(_request.http_request, exc_info=sys.exc_info())  # type: ignore
+        self.end_span(request, exc_info=sys.exc_info())  # type: ignore
         return False
