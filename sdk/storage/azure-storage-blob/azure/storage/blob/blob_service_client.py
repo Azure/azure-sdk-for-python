@@ -17,7 +17,6 @@ except ImportError:
 
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.tracing.common import get_parent_span
 
 from ._shared.shared_access_signature import SharedAccessSignature
 from ._shared.models import LocationMode, Services, UserDelegationKey
