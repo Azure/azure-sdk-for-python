@@ -166,10 +166,10 @@ class OpenCensusSpan(object):
     def link(cls, traceparent):
         # type: (str) -> None
         """
-        Given a dictionary, extracts the context and links the context to the current tracer.
+        Links the context to the current tracer.
 
-        :param headers: A key value pair dictionary
-        :type headers: dict
+        :param traceparent: A complete traceparent
+        :type traceparent: str
         """
         cls.link_from_headers({
             'traceparent': traceparent

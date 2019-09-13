@@ -128,7 +128,7 @@ class AbstractSpan(Protocol):
         Given a traceparent, extracts the context and links the context to the current tracer.
 
         :param traceparent: A string representing a traceparent
-        :type headers: str
+        :type traceparent: str
         """
 
     @classmethod
