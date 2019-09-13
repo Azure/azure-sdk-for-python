@@ -19,12 +19,8 @@ class GraphRbacTest(AzureMgmtTestCase):
 
     def setUp(self):
         super(GraphRbacTest, self).setUp()
-        if self.is_live:
-            # Set the env variable AZURE_AD_DOMAIN or put AD_DOMAIN in your "mgmt_settings_real" file
-            self.ad_domain = self.get_settings_value('AD_DOMAIN')
-            self.scrubber.register_name_pair(self.ad_domain, AD_DOMAIN)
-        else:
-            self.ad_domain = AD_DOMAIN
+        # Set the env variable AZURE_AD_DOMAIN or put AD_DOMAIN in your "mgmt_settings_real" file
+        self.ad_domain = self.set_value_to_scrub('AD_DOMAIN', AD_DOMAIN)
 
         self.graphrbac_client = self.create_basic_client(
             azure.graphrbac.GraphRbacManagementClient,

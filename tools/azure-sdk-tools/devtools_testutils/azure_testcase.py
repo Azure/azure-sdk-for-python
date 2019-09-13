@@ -110,6 +110,14 @@ class AzureTestCase(ReplayableTest):
             key_value = getattr(self.settings, key)
         return key_value
 
+    def set_value_to_scrub(self, key, default_value):
+        if self.is_live:
+            value = self.get_settings_value(key)
+            self.scrubber.register_name_pair(value, default_value)
+        else:
+            return default_value
+
+
     def setUp(self):
         # Every test uses a different resource group name calculated from its
         # qualified test name.
