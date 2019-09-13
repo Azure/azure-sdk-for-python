@@ -68,7 +68,7 @@ def _get_and_validate_param(kwargs, param_name, types, default=None):
 
 
 class _AzureConfiguration(Configuration):
-    def __init__(self, credential, **kwargs):
+    def __init__(self, credential, **kwargs):  # pylint:disable=super-init-not-called
         self._set_universal(**kwargs)
         # sync-specific azure pipeline policies
         scopes = []
@@ -109,7 +109,7 @@ class _InkRecognizerConfiguration():
             kwargs["connection_timeout"] = timeout
         self.kwargs = kwargs
 
-    def _generate_uuid(self):
+    def _generate_uuid(self):  # pylint:disable=no-self-use
         return str(uuid.uuid4())
 
 
@@ -141,9 +141,9 @@ class _InkRecognizerClientBase:
         return config
 
     def _generate_url(self, config):
-        return self._url + config.service_version._to_string()
+        return self._url + config.service_version._to_string()  # pylint:disable=protected-access
 
-    def _pack_one_stroke(self, stroke):
+    def _pack_one_stroke(self, stroke):  # pylint:disable=no-self-use
         stroke_points = [{"x": point.x, "y": point.y} for point in stroke.points]
         stroke_json = {
             "id": stroke.id,
@@ -166,7 +166,7 @@ class _InkRecognizerClientBase:
                         if len(stroke.points) != 0]
         })
 
-    def _parse_result(self, response, config):
+    def _parse_result(self, response, config):  # pylint:disable=inconsistent-return-statements
         status_code = response.status_code
         headers = response.headers
         content = response.body().decode("utf-8")
@@ -180,8 +180,8 @@ class _InkRecognizerClientBase:
             if config.response_hook:
                 config.response_hook(headers, content_json)
             try:
-                return _parse_recognition_units(content_json, status_code) 
-            except Exception as err:
+                return _parse_recognition_units(content_json, status_code)
+            except Exception as err:  # pylint:disable=broad-except
                 msg = "Cannot parse response from server."
                 raise_with_traceback(ServiceResponseError, msg, err)
         else:
@@ -258,7 +258,7 @@ class InkRecognizerClient(_InkRecognizerClientBase):
         self._logger.info(data)
 
         request = HttpRequest("PUT", self._generate_url(config), data=data)
-        response = self._pipeline_client._pipeline.run(
+        response = self._pipeline_client._pipeline.run(  # pylint:disable=protected-access
             request, headers=config.headers, **config.kwargs)
         return response.http_response
 

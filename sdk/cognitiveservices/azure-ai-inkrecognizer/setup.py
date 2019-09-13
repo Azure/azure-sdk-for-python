@@ -61,9 +61,9 @@ setup(
         'azure',
     ]),
     install_requires=[
-        'six>=1.11.0',
-        'enum34>=1.1.6',
-        'azure-core>=1.0.0b2'
+        'six>=1.6',
+        'enum34>=1.0.4',
+        'azure-core<2.0.0,>=1.0.0b2'
     ],
     extras_require={
         ":python_version<'3.0'": ['azure-nspkg'],

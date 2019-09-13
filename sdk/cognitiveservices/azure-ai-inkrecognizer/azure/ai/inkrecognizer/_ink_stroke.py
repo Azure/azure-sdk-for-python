@@ -47,14 +47,14 @@ class IInkStroke(ABC):
         s_0.id = 0, s_1.id = 1, s_2.id = 2.
         No matter what order they are sent into InkRecognizerClient, they will
         be re-ordered as (s_0, s_1, s_2) when doing ink recognition.
-        
+
         :rtype: int
         """
 
     @abc.abstractproperty
     def points(self):
         """ An iterable of <IInkPoint> of this stroke.
-        
+
         :rtype: List[IInkPoint]
         """
 

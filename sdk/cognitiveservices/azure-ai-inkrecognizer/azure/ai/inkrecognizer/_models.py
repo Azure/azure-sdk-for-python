@@ -136,7 +136,7 @@ class InkRecognitionUnit:
         rtype: int
         """
         return self._id
-   
+
     @property
     def kind(self):
         # type: () -> InkRecognitionUnitKind
@@ -205,7 +205,7 @@ class InkBullet(InkRecognitionUnit):
         The recognized string of the bullet, e.g. '*'. If the bullet isn't
         recognized as a string (e.g. when the bullet is a complex shape), an
         empty string is returned.
-        
+
         :rtype: str
         """
 
@@ -229,7 +229,7 @@ class InkWord(InkRecognitionUnit):
         return _truncate("%s id=%s text='%s' strokes=%s" % (
             type(self), self._id, self.recognized_text, self._stroke_ids))
 
-    def _parse_alternates(self, json_object):
+    def _parse_alternates(self, json_object):  # pylint:disable=no-self-use
         return [json_alternate.get("recognizedString", "")
                 for json_alternate in json_object.get("alternates", [])]
 
@@ -277,22 +277,22 @@ class InkDrawing(InkRecognitionUnit):
         return _truncate("%s id=%s shape='%s' strokes=%s" % (
             type(self), self._id, self.recognized_shape, self._stroke_ids))
 
-    def _parse_center(self, center):
+    def _parse_center(self, center):  # pylint:disable=no-self-use, inconsistent-return-statements
         if center is None:
             return
         return Point(center["x"], center["y"])
 
-    def _parse_shape(self, shape_string):
+    def _parse_shape(self, shape_string):  # pylint:disable=no-self-use
         try:
             shape = ShapeKind(shape_string)
         except ValueError:
             raise ValueError("Unexpected shape from server: %s." % shape_string)
         return shape
 
-    def _parse_points(self, points):
+    def _parse_points(self, points):  # pylint:disable=no-self-use
         return [Point(point["x"], point["y"]) for point in points]
 
-    def _parse_one_alternate(self, json_object, json_alternate):
+    def _parse_one_alternate(self, json_object, json_alternate):  # pylint:disable=no-self-use
         kind = json_alternate.get("category")
         if kind != InkRecognitionUnitKind.INK_DRAWING.value:
             raise ValueError("Unexpected InkDrawing alternate kind: %s" % kind)
@@ -303,7 +303,7 @@ class InkDrawing(InkRecognitionUnit):
         json_object_alternate["points"] = json_alternate.get("points", [])
         json_object_alternate["alternates"] = []
         return InkDrawing(json_object_alternate)
-            
+
 
     def _parse_alternates(self, json_object):
         return [self._parse_one_alternate(json_object, json_alternate)
@@ -398,7 +398,7 @@ class Line(InkRecognitionUnit):
         self._recognized_text = json_object.get("recognizedText", "")
         self._alternates = self._parse_alternates(json_object.get("alternates", []))
 
-    def _parse_alternates(self, alternates):
+    def _parse_alternates(self, alternates):  # pylint:disable=no-self-use
         return [alternate["recognizedString"] for alternate in alternates]
 
     @property
@@ -441,7 +441,7 @@ class Line(InkRecognitionUnit):
     def words(self):
         # type: () -> List[InkWord]
         """ All the words in this line.
-        
+
         :rtype: List[InkWord]
         """
         return [unit for unit in self.children if unit.kind == InkRecognitionUnitKind.INK_WORD]
@@ -471,10 +471,10 @@ class Paragraph(InkRecognitionUnit):
         # type: () -> List[Line]
         """
         All the lines in the paragraph.
-        
+
         :rtype: List[Line]
         """
-        return [unit for unit in self.children 
+        return [unit for unit in self.children
                 if unit.kind == InkRecognitionUnitKind.LINE]
 
     @property
@@ -484,7 +484,7 @@ class Paragraph(InkRecognitionUnit):
         All the ListItems in the paragraph.
         """
 
-        return [unit for unit in self.children 
+        return [unit for unit in self.children
                 if unit.kind == InkRecognitionUnitKind.LIST_ITEM]
 
 
@@ -513,7 +513,7 @@ class WritingRegion(InkRecognitionUnit):
         # type: () -> List[Paragraph]
         """
         All paragraphs in the writing region.
-        
+
         :rtype: List[Paragraph]
         """
         return self.children
@@ -544,7 +544,7 @@ class ListItem(InkRecognitionUnit):
         # type: () -> List[Line]
         """
         All the lines in the list item (Should be only one).
-        
+
         :rtype: List[Line]
         """
         return self.children
@@ -563,16 +563,16 @@ class InkRecognitionRoot():
         self._status_code = status_code
         self._unit_kind_map = {}
         for unit in units:
-            if unit.kind in [InkRecognitionUnitKind.INK_DRAWING, 
+            if unit.kind in [InkRecognitionUnitKind.INK_DRAWING,
                              InkRecognitionUnitKind.WRITING_REGION]:
-                unit._parent = self
+                unit._parent = self  # pylint:disable=protected-access
 
     def _get_recognition_units(self, unit_kind):
         if unit_kind in self._unit_kind_map:
             return self._unit_kind_map[unit_kind]
         if not isinstance(unit_kind, InkRecognitionUnitKind):
             raise ValueError("Expected a InkRecognitionUnitKind instance, got %s" % type(unit_kind))
-        
+
         self._unit_kind_map[unit_kind] = [unit for unit in self._units if unit.kind == unit_kind]
         return self._unit_kind_map[unit_kind]
 
@@ -606,7 +606,7 @@ class InkRecognitionRoot():
         """
 
         return self._get_recognition_units(InkRecognitionUnitKind.INK_DRAWING)
-    
+
     @property
     def lines(self):
         # type: () -> List[Line]
@@ -617,7 +617,7 @@ class InkRecognitionRoot():
         """
 
         return self._get_recognition_units(InkRecognitionUnitKind.LINE)
-    
+
     @property
     def ink_bullets(self):
         # type: () -> List[InkBullet]
@@ -628,7 +628,7 @@ class InkRecognitionRoot():
         """
 
         return self._get_recognition_units(InkRecognitionUnitKind.INK_BULLET)
-    
+
     @property
     def paragraphs(self):
         # type: () -> List[Paragraph]
@@ -639,7 +639,7 @@ class InkRecognitionRoot():
         """
 
         return self._get_recognition_units(InkRecognitionUnitKind.PARAGRAPH)
-    
+
     @property
     def writing_regions(self):
         # type: () -> List[WritingRegion]
@@ -666,7 +666,7 @@ class InkRecognitionRoot():
         # type: (str) -> List[InkWord]
         """
         Returns all Inkwords returned by the Ink Recognizer Service whose
-        recognized text is exactly the same as the given string. This is 
+        recognized text is exactly the same as the given string. This is
         case insensitive.
 
         :param str word: word to find.
@@ -677,9 +677,9 @@ class InkRecognitionRoot():
         """
         if not isinstance(word, str):
             raise ValueError("Expected a string, got %s" % type(word))
-        
+
         word_lower = word.lower()
-        return [ink_word for ink_word in self.ink_words 
+        return [ink_word for ink_word in self.ink_words
                 if ink_word.recognized_text.lower() == word_lower]
 
 
@@ -690,7 +690,7 @@ _RECOGNITION_UNIT_MAP = {
     InkRecognitionUnitKind.INK_DRAWING.value      : InkDrawing,
     InkRecognitionUnitKind.PARAGRAPH.value        : Paragraph,
     InkRecognitionUnitKind.LINE.value             : Line,
-    InkRecognitionUnitKind.WRITING_REGION.value   : WritingRegion, 
+    InkRecognitionUnitKind.WRITING_REGION.value   : WritingRegion,
     InkRecognitionUnitKind.LIST_ITEM.value        : ListItem
 }
 
@@ -712,11 +712,11 @@ def _parse_recognition_units(content_json, status_code):
     for json_object in recognition_unit_list:
         unit = _parse_one_recognition_unit(json_object)
         units[unit.id] = unit
-    
+
     # set children and parent for each unit
     for unit in units.values():
-        unit._children = [units[child_id] for child_id in unit._child_ids]
-        unit._parent = units.get(unit._parent_id, None)
+        unit._children = [units[child_id] for child_id in unit._child_ids]  # pylint:disable=protected-access
+        unit._parent = units.get(unit._parent_id, None)  # pylint:disable=protected-access
 
     root = InkRecognitionRoot(units.values(), status_code)
     return root

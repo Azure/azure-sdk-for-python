@@ -16,7 +16,7 @@ from .._client import _InkRecognizerClientBase, _AzureConfiguration
 
 
 class _AzureConfigurationAsync(_AzureConfiguration):
-    def __init__(self, credential, **kwargs):
+    def __init__(self, credential, **kwargs): # pylint:disable=super-init-not-called
         self._set_universal(**kwargs)
         # async-specific azure pipeline policies
         scopes = []
@@ -38,7 +38,7 @@ class InkRecognizerClient(_InkRecognizerClientBase):
 
     :param ~azure.core.TokenCredential credential: An available Azure Active
     Directory credential for Ink Recognition Service.
-    
+
     Key word arguments include Ink Recognizer specific arguments, azure service
     common arguments and azure pipline policies.
 
@@ -52,7 +52,7 @@ class InkRecognizerClient(_InkRecognizerClientBase):
     service will skip some classification steps. Default is ApplicationKind.MIXED.
 
     :param InkPointUnit ink_point_unit: unit of the x and y axis values for each
-    InkPoint. Default is InkPointUnit.MM. 
+    InkPoint. Default is InkPointUnit.MM.
 
     :param str language: Language (IETF BCP-47) of strokes, will be overwritten
     by stroke-specific language. Default is "en-US".
@@ -101,7 +101,7 @@ class InkRecognizerClient(_InkRecognizerClientBase):
         self._logger.info(data)
 
         request = HttpRequest("PUT", self._generate_url(config), data=data)
-        response = await self._pipeline_client._pipeline.run(
+        response = await self._pipeline_client._pipeline.run(  # pylint:disable=protected-access
             request, headers=config.headers, **config.kwargs)
         return response.http_response
 
@@ -128,7 +128,7 @@ class InkRecognizerClient(_InkRecognizerClientBase):
         service will skip some classification steps. Default is ApplicationKind.MIXED.
 
         :param InkPointUnit ink_point_unit: unit of the x and y axis coordinates
-        for each InkPoint. Default is InkPointUnit.MM. 
+        for each InkPoint. Default is InkPointUnit.MM.
 
         :param str language: Language (IETF BCP-47) of strokes, can be overwritten
         by stroke-specific language. Default is "en-US".
@@ -147,13 +147,13 @@ class InkRecognizerClient(_InkRecognizerClientBase):
         :param callable response_hook: callable that is called with
         (headers, deserialized_response) if the http status is 200.
 
-        Azure pipeline policies: 
+        Azure pipeline policies:
         https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/core/azure-core/docs/configuration.md
 
         :rtype: InkRecognitionRoot
 
         **Exceptions:**
-        
+
         :raise ServerResponseError: Unexpected Server response that can't be parsed by client.
 
         :raise ResourceNotFoundError: Indicates URL is invalid.
@@ -162,7 +162,7 @@ class InkRecognizerClient(_InkRecognizerClientBase):
 
         :raise HttpResponseError: Unclassified error.
         """
-        
+
         config = self._generate_config(kwargs)
         request_data = self._pack_request(ink_stroke_list, config)
         response = await self._send_request(data=request_data, config=config)

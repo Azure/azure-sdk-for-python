@@ -8,7 +8,7 @@ import platform
 if platform.python_version() < "3.5.3":
     raise ImportError("Asynchronous client supports Python 3.5.3+ only.")
 
-from .._enums import (
+from .._enums import (  # pylint:disable=wrong-import-position
     ApplicationKind,
     InkPointUnit,
     InkRecognitionUnitKind,
@@ -16,12 +16,12 @@ from .._enums import (
     InkStrokeKind,
     ServiceVersion
 )
-from ._client_async import InkRecognizerClient
-from .._ink_stroke import (
+from ._client_async import InkRecognizerClient  # pylint:disable=wrong-import-position
+from .._ink_stroke import (  # pylint:disable=wrong-import-position
     IInkPoint,
     IInkStroke
 )
-from .._models import (
+from .._models import (  # pylint:disable=wrong-import-position
     Point,
     Rectangle,
     InkRecognitionUnit,
@@ -34,7 +34,7 @@ from .._models import (
     ListItem,
     InkRecognitionRoot
 )
-from .._version import VERSION
+from .._version import VERSION  # pylint:disable=wrong-import-position
 
 __all__ = [
     #enums

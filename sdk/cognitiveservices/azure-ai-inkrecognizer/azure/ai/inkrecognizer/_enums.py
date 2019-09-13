@@ -11,7 +11,7 @@ class ApplicationKind(Enum):
     """
     The ApplicationKind enum allows an application to identify its domain
     (when it has one). Specifying a domain allows the application to
-    inform the service of its contents. 
+    inform the service of its contents.
     This can facilitate faster processing as the service will skip some
     classification steps. Applications that don't have a specific domain
     can simply specify ApplicationKind.MIXED, which is the default.
