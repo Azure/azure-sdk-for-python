@@ -4,9 +4,10 @@
 # ------------------------------------
 
 """
-Pylint custom checkers for SDK guidelines: C4717 - C4738
+Pylint custom checkers for SDK guidelines: C4715 - C4738
 """
 
+import os
 import logging
 import astroid
 from pylint.checkers import BaseChecker
@@ -1621,6 +1622,82 @@ class CheckForPolicyUse(BaseChecker):
                     )
 
 
+class DependenciesVersionCheck(BaseChecker):
+    __implements__ = IAstroidChecker
+
+    name = "missing-dependency-version-check"
+    priority = -1
+    msgs = {
+        "C4715": (
+            "Dependencies in setup.py must have >=version, <version pattern in install_requires=[]. ",
+            "missing-dependency-version-check-1",
+            "Please follow the format.",
+        ),
+        "C4716": (
+            "Dependencies in setup.py must have >=version, <version pattern in extras_require={}. ",
+            "missing-dependency-version-check-2",
+            "Please follow the format.",
+        ),
+    }
+    options = (
+        (
+            "ignore-missing-dependency-version-check",
+            {
+                "default": False,
+                "type": "yn",
+                "metavar": "<y_or_n>",
+                "help": "Allow the dependency to not have < version.",
+            },
+        ),
+    )
+
+    def __init__(self, linter=None):
+        super(DependenciesVersionCheck, self).__init__(linter)
+        self.tree = None
+        self.node = None
+
+    def visit_module(self, node):
+        """Visits the module. Goes up a directory to parse the setup.py file into an AST.
+
+        :param node: module node
+        :type node: ast.Module
+        :return: None
+        """
+        try:
+            if self.tree is None:
+                self.node = node
+                cwd = os.getcwd()
+                setup = os.path.join(cwd, "setup.py")
+                with open(setup, "r") as source:
+                    tree = astroid.parse(source.read())
+                self.tree = tree
+        except Exception:
+            logger.debug("Pylint custom checker failed to check setup.py dependencies.")
+            pass
+
+    def close(self):
+        """This method is inherited from BaseChecker and called at the very end of linting a module.
+        It reports any errors on the __init__.py file.
+
+        :return: None
+        """
+        setup_keywords = self.tree.body[-1].value.keywords
+        for keyword in setup_keywords:
+            if isinstance(keyword.value, astroid.List) and keyword.as_string().startswith("install_requires"):
+                for dep in keyword.value.elts:
+                    if dep.value.find(">=") != -1 and dep.value.find("<") == -1:
+                        self.add_message(
+                            msg_id="missing-dependency-version-check-1", node=self.node, confidence=None
+                        )
+            if isinstance(keyword.value, astroid.Dict) and keyword.as_string().startswith("extras_require"):
+                for key, val in keyword.value.items:
+                    for dep in val.elts:
+                        if dep.as_string().find(">=") != -1 and dep.as_string().find("<") == -1:
+                            self.add_message(
+                                msg_id="missing-dependency-version-check-2", node=self.node, confidence=None
+                            )
+
+
 # if a linter is registered in this function then it will be checked with pylint
 def register(linter):
     linter.register_checker(ClientsDoNotUseStaticMethods(linter))
@@ -1637,6 +1714,7 @@ def register(linter):
     linter.register_checker(ClientConstructorDoesNotHaveConnectionStringParam(linter))
     linter.register_checker(PackageNameDoesNotUseUnderscoreOrPeriod(linter))
     linter.register_checker(ServiceClientUsesNameWithClientSuffix(linter))
+    linter.register_checker(DependenciesVersionCheck(linter))
 
     # disabled by default, use pylint --enable=check-docstrings if you want to use it
     linter.register_checker(CheckDocstringParameters(linter))
