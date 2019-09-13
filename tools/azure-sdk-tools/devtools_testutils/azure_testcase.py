@@ -100,7 +100,7 @@ class AzureTestCase(ReplayableTest):
     def is_playback(self):
         return not self.is_live
 
-    def get_settings_value(key):
+    def get_settings_value(self, key):
         key_value = os.environ.get("AZURE_"+key, None)
 
         if key_value and self._real_settings and getattr(self._real_settings, key) != key_value:
