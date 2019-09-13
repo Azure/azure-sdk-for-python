@@ -17,6 +17,7 @@ try:
     from ._models_py3 import CalculatePriceResponsePropertiesBillingCurrencyTotal
     from ._models_py3 import CalculatePriceResponsePropertiesPricingCurrencyTotal
     from ._models_py3 import Catalog
+    from ._models_py3 import CatalogBillingPlansItem
     from ._models_py3 import Error, ErrorException
     from ._models_py3 import ExtendedErrorInfo
     from ._models_py3 import ExtendedStatusInfo
@@ -53,6 +54,7 @@ except (SyntaxError, ImportError):
     from ._models import CalculatePriceResponsePropertiesBillingCurrencyTotal
     from ._models import CalculatePriceResponsePropertiesPricingCurrencyTotal
     from ._models import Catalog
+    from ._models import CatalogBillingPlansItem
     from ._models import Error, ErrorException
     from ._models import ExtendedErrorInfo
     from ._models import ExtendedStatusInfo
@@ -103,6 +105,7 @@ __all__ = [
     'CalculatePriceResponsePropertiesBillingCurrencyTotal',
     'CalculatePriceResponsePropertiesPricingCurrencyTotal',
     'Catalog',
+    'CatalogBillingPlansItem',
     'Error', 'ErrorException',
     'ExtendedErrorInfo',
     'ExtendedStatusInfo',
