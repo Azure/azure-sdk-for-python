@@ -51,12 +51,12 @@ def get_lib_deps(base_dir):
     dependencies = {}
     for lib_dir in locate_libs(base_dir):
         try:
-            lib_name = os.path.basename(lib_dir)
+            setup_path = os.path.join(lib_dir, 'setup.py')
+            lib_name, version, requires = parse_setup(setup_path)
+            
             if should_skip_lib(lib_name):
                 continue
-            setup_path = os.path.join(lib_dir, 'setup.py')
-            version, requires = parse_setup(setup_path)
-
+            
             packages[lib_name] = {
                 'version': version,
                 'source': lib_dir
@@ -127,13 +127,14 @@ def parse_setup(setup_filename):
     _, kwargs = global_vars['__setup_calls__'][0]
 
     version = kwargs['version']
+    name = kwargs['name']
     requires = []
     if 'install_requires' in kwargs:
         requires += kwargs['install_requires']
     if 'extras_require' in kwargs:
         for extra in kwargs['extras_require'].values():
             requires += extra
-    return version, requires
+    return name, version, requires
 
 def dict_compare(d1, d2):
     d1_keys = set(d1.keys())
