@@ -411,10 +411,13 @@ def test_interactive_credential_timeout():
 def test_username_password_credential():
     expected_token = "access-token"
     transport = validating_transport(
-        requests=[Request()] * 2,  # not validating requests because they're formed by MSAL
+        requests=[Request()] * 3,  # not validating requests because they're formed by MSAL
         responses=[
-            # expecting tenant discovery then a token request
+            # tenant discovery
             mock_response(json_payload={"authorization_endpoint": "https://a/b", "token_endpoint": "https://a/b"}),
+            # user realm discovery, interests MSAL only when the response body contains account_type == "Federated"
+            mock_response(json_payload={}),
+            # token request
             mock_response(
                 json_payload={
                     "access_token": expected_token,

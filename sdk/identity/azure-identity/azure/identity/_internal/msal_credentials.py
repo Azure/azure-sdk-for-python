@@ -64,7 +64,7 @@ class MsalCredential(ABC):
         """Creates an MSAL application, patching msal.authority to use an azure-core pipeline during tenant discovery"""
 
         # MSAL application initializers use msal.authority to send AAD tenant discovery requests
-        with mock.patch("msal.authority.requests", self._adapter):
+        with self._adapter:
             app = cls(client_id=self._client_id, client_credential=self._client_credential, authority=self._authority)
 
         # monkeypatch the app to replace requests.Session with MsalTransportAdapter
