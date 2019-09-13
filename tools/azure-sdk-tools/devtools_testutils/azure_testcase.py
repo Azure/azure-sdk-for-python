@@ -151,7 +151,7 @@ class AzureTestCase(ReplayableTest):
                 secret=secret
             )
         else:
-            credentials = self.test_class_instance.settings.get_credentials()
+            credentials = self.settings.get_credentials()
 
         # Real client creation
         client = client_class(
