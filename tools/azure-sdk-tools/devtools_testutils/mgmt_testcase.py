@@ -115,7 +115,7 @@ class AzureMgmtTestCase(AzureTestCase):
         if self.is_live:
             subscription_id = os.environ.get("AZURE_SUBSCRIPTION_ID", None)
         if not subscription_id:
-            subscription_id = self.test_class_instance.settings.SUBSCRIPTION_ID
+            subscription_id = self.settings.SUBSCRIPTION_ID
 
         return self.create_basic_client(
             client_class,
