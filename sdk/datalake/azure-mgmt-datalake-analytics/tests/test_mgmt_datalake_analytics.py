@@ -16,10 +16,13 @@ from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 # 'East US 2' is the ADL production region for now
 _REGION = 'East US 2'
 
+# this is used explicitly for ADLA job id replacement in recordings.
+ADLA_JOB_ID = "00000000-0000-0000-0000-000000000000"
+
 class MgmtDataLakeAnalyticsTest(AzureMgmtTestCase):
     def setUp(self):
         super(MgmtDataLakeAnalyticsTest, self).setUp()
-        
+
         self.adls_account_client = self.create_mgmt_client(
             azure.mgmt.datalake.store.DataLakeStoreAccountManagementClient
         )
@@ -54,20 +57,20 @@ class MgmtDataLakeAnalyticsTest(AzureMgmtTestCase):
         self.credential_name = self.get_resource_name('adlacredential')
         self.credential_id = self.get_resource_name('adlacredid')
         self.schema_name = 'dbo'
-        
-        self.catalog_script = """DROP DATABASE IF EXISTS {0}; CREATE DATABASE {0}; 
+
+        self.catalog_script = """DROP DATABASE IF EXISTS {0}; CREATE DATABASE {0};
 CREATE TABLE {0}.dbo.{1}
 (
         //Define schema of table
-        UserId          int, 
-        Start           DateTime, 
-        Region          string, 
-        Query           string, 
-        Duration        int, 
-        Urls            string, 
+        UserId          int,
+        Start           DateTime,
+        Region          string,
+        Query           string,
+        Duration        int,
+        Urls            string,
         ClickedUrls     string,
-    INDEX idx1 
-    CLUSTERED (Region ASC) 
+    INDEX idx1
+    CLUSTERED (Region ASC)
     PARTITIONED BY (UserId) HASH (Region)
 );
 
@@ -88,23 +91,23 @@ RETURNS @result TABLE
     s_date DateTime,
     s_time string,
     s_sitename string,
-    cs_method string, 
+    cs_method string,
     cs_uristem string,
     cs_uriquery string,
     s_port int,
-    cs_username string, 
+    cs_username string,
     c_ip string,
     cs_useragent string,
     cs_cookie string,
-    cs_referer string, 
+    cs_referer string,
     cs_host string,
     sc_status int,
     sc_substatus int,
-    sc_win32status int, 
+    sc_win32status int,
     sc_bytes int,
     cs_bytes int,
     s_timetaken int
-) 
+)
 AS
 BEGIN
 
@@ -133,38 +136,38 @@ BEGIN
 
 RETURN;
 END;
-CREATE VIEW {0}.dbo.{3} 
-AS 
-    SELECT * FROM 
+CREATE VIEW {0}.dbo.{3}
+AS
+    SELECT * FROM
     (
         VALUES(1,2),(2,4)
-    ) 
-AS 
+    )
+AS
 T(a, b);
 CREATE PROCEDURE {0}.dbo.{4}()
 AS BEGIN
-  CREATE VIEW {0}.dbo.{3} 
-  AS 
-    SELECT * FROM 
+  CREATE VIEW {0}.dbo.{3}
+  AS
+    SELECT * FROM
     (
         VALUES(1,2),(2,4)
-    ) 
-  AS 
+    )
+  AS
   T(a, b);
 END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, self.proc_name)
 
         # define all the job IDs to be used during execution
         if self.is_playback():
-            self.cancel_id = self._fake_settings.ADLA_JOB_ID
-            self.run_id = self._fake_settings.ADLA_JOB_ID
-            self.catalog_id = self._fake_settings.ADLA_JOB_ID
-            self.cred_create_id = self._fake_settings.ADLA_JOB_ID
-            self.cred_drop_id = self._fake_settings.ADLA_JOB_ID
-            self.pipeline_id = self._fake_settings.ADLA_JOB_ID
-            self.recurrence_id = self._fake_settings.ADLA_JOB_ID
-            self.run_id_2 = self._fake_settings.ADLA_JOB_ID
-            self.run_id_3 = self._fake_settings.ADLA_JOB_ID
-            self.principal_id = self._fake_settings.ADLA_JOB_ID
+            self.cancel_id = ADLA_JOB_ID
+            self.run_id = ADLA_JOB_ID
+            self.catalog_id = ADLA_JOB_ID
+            self.cred_create_id = ADLA_JOB_ID
+            self.cred_drop_id = ADLA_JOB_ID
+            self.pipeline_id = ADLA_JOB_ID
+            self.recurrence_id = ADLA_JOB_ID
+            self.run_id_2 = ADLA_JOB_ID
+            self.run_id_3 = ADLA_JOB_ID
+            self.principal_id = ADLA_JOB_ID
         else:
             self.cancel_id = str(uuid.uuid1())
             self.run_id = str(uuid.uuid1())
@@ -178,16 +181,16 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
             self.principal_id = str(uuid.uuid1())
 
             real_to_fake_dict = {
-                self.cancel_id: self._fake_settings.ADLA_JOB_ID,
-                self.run_id:  self._fake_settings.ADLA_JOB_ID,
-                self.catalog_id:  self._fake_settings.ADLA_JOB_ID,
-                self.cred_create_id: self._fake_settings.ADLA_JOB_ID,
-                self.cred_drop_id: self._fake_settings.ADLA_JOB_ID,
-                self.pipeline_id: self._fake_settings.ADLA_JOB_ID,
-                self.recurrence_id: self._fake_settings.ADLA_JOB_ID,
-                self.run_id_2: self._fake_settings.ADLA_JOB_ID,
-                self.run_id_3: self._fake_settings.ADLA_JOB_ID,
-                self.principal_id: self._fake_settings.ADLA_JOB_ID
+                self.cancel_id: ADLA_JOB_ID,
+                self.run_id:  ADLA_JOB_ID,
+                self.catalog_id:  ADLA_JOB_ID,
+                self.cred_create_id: ADLA_JOB_ID,
+                self.cred_drop_id: ADLA_JOB_ID,
+                self.pipeline_id: ADLA_JOB_ID,
+                self.recurrence_id: ADLA_JOB_ID,
+                self.run_id_2: ADLA_JOB_ID,
+                self.run_id_3: ADLA_JOB_ID,
+                self.principal_id: ADLA_JOB_ID
             }
 
             for key in real_to_fake_dict:
@@ -205,7 +208,7 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
             self.adls_account_name,
             params_create,
         ).result()
-        
+
         # validation of the create
         self.assertEqual(adls_account.name, self.adls_account_name)
 
@@ -226,14 +229,14 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
                 self.job_account_name,
                 params_create,
             ).result()
-        
+
             # full validation of the create
             self.assertEqual(adla_account.name, self.job_account_name)
 
             # wait five minutes for the account to be fully provisioned with a queue.
             if self.is_live:
                 time.sleep(300)
-    
+
             if create_catalog:
                 self.run_job_to_completion(self.job_account_name, self.catalog_id, self.catalog_script)
 
@@ -254,7 +257,7 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
             job_params
         )
         self.assertIsNotNone(create_response)
-        
+
         max_wait_in_seconds = 180
         cur_wait_in_seconds = 0
         adla_job = self.adla_job_client.job.get(
@@ -262,7 +265,7 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
             job_id
         )
         self.assertIsNotNone(adla_job)
-        
+
         while adla_job.state != azure.mgmt.datalake.analytics.job.models.JobState.ended and cur_wait_in_seconds < max_wait_in_seconds:
             if self.is_live:
                 time.sleep(5)
@@ -276,9 +279,9 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
         self.assertTrue(cur_wait_in_seconds <= max_wait_in_seconds)
         self.assertTrue(adla_job.state == azure.mgmt.datalake.analytics.job.models.JobState.ended and adla_job.result == azure.mgmt.datalake.analytics.job.models.JobResult.succeeded,
                         'Job: {0} did not return success. Current job state: {1}. Actual result: {2}. Error (if any): {3}'.format(
-                            adla_job.job_id, 
-                            adla_job.state, 
-                            adla_job.result, 
+                            adla_job.job_id,
+                            adla_job.state,
+                            adla_job.result,
                             adla_job.error_message
                         ))
 
@@ -419,7 +422,7 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
         self.assertIsNotNone(table_match)
         self.assertEqual(len(table_match), 1)
         self.assertIsNotNone(table_match[0].column_list)
-        
+
         # get the tabe list with only basic info and verify that extended properties are empty
         table_list = list(self.adla_catalog_client.catalog.list_tables(self.job_account_name, self.db_name, self.schema_name, basic=True))
         self.assertGreater(len(table_list), 0)
@@ -473,14 +476,14 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
         tvf_match = [item for item in tvf_list if item.name == self.tvf_name]
         self.assertIsNotNone(tvf_list)
         self.assertEqual(len(tvf_list), 1)
-        
+
         # get tvf list by database
         tvf_list = list(self.adla_catalog_client.catalog.list_table_valued_functions_by_database(self.job_account_name, self.db_name))
         self.assertGreater(len(tvf_list), 0)
         tvf_match = [item for item in tvf_list if item.name == self.tvf_name]
         self.assertIsNotNone(tvf_list)
         self.assertEqual(len(tvf_list), 1)
-        
+
         # get specific tvf
         specific_tvf = self.adla_catalog_client.catalog.get_table_valued_function(self.job_account_name, self.db_name, self.schema_name, self.tvf_name)
         self.assertEqual(specific_tvf.name, tvf_match[0].name)
@@ -553,7 +556,7 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
         # get the initial number of ACLs by db
         acl_by_db_list = list(
             self.adla_catalog_client.catalog.list_acls_by_database(
-                self.job_account_name, 
+                self.job_account_name,
                 self.db_name
             )
         )
@@ -566,14 +569,14 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
 
         # grant ACL to the db
         self.adla_catalog_client.catalog.grant_acl_to_database(
-            self.job_account_name, 
-            self.db_name, 
+            self.job_account_name,
+            self.db_name,
             grant_acl_param
         )
 
         acl_by_db_list = list(
             self.adla_catalog_client.catalog.list_acls_by_database(
-                self.job_account_name, 
+                self.job_account_name,
                 self.db_name
             )
         )
@@ -588,15 +591,15 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
 
         # revoke ACL from the db
         self.adla_catalog_client.catalog.revoke_acl_from_database(
-            self.job_account_name, 
-            self.db_name, 
-            revoke_ace_type, 
+            self.job_account_name,
+            self.db_name,
+            revoke_ace_type,
             revoke_principal_id
         )
 
         acl_by_db_list = list(
             self.adla_catalog_client.catalog.list_acls_by_database(
-                self.job_account_name, 
+                self.job_account_name,
                 self.db_name
             )
         )
@@ -605,7 +608,7 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
 
         # grant ACL to the catalog
         self.adla_catalog_client.catalog.grant_acl(
-            self.job_account_name, 
+            self.job_account_name,
             grant_acl_param
         )
 
@@ -620,8 +623,8 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
 
         # revoke ACL from the catalog
         self.adla_catalog_client.catalog.revoke_acl(
-            self.job_account_name, 
-            revoke_ace_type, 
+            self.job_account_name,
+            revoke_ace_type,
             revoke_principal_id
         )
 
@@ -643,7 +646,7 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
                 user_id = self.credential_id
             )
         )
-        
+
         # try to create the credential again.
         try:
             self.adla_catalog_client.catalog.create_credential(
@@ -659,7 +662,7 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
             self.assertTrue(False, 'should not have made it here')
         except Exception:
             pass
-        
+
         # get credential and ensure the response is not null
         cred_response = self.adla_catalog_client.catalog.get_credential(
             self.job_account_name,
@@ -676,7 +679,7 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
                 self.db_name
             )
         )
-        
+
         self.assertIsNotNone(cred_list)
         self.assertGreater(len(cred_list), 0)
         specific_cred = [item for item in cred_list if item.name == self.credential_name]
@@ -737,7 +740,7 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
             account_name,
             params_create,
         ).result()
-        
+
         # full validation of the create
         self.assertEqual(adla_account.name, account_name)
         self.assertIsNotNone(adla_account.id)
@@ -768,7 +771,7 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
                 min_priority_per_job = 1
             )
         )
-        
+
         self.assertEqual(group_id, new_policy.object_id)
         self.assertEqual(azure.mgmt.datalake.analytics.account.models.AADObjectType.group.value, new_policy.object_type)
         self.assertEqual(1, new_policy.max_degree_of_parallelism_per_job)
@@ -840,7 +843,7 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
 
         # ensure that the account name is available
         name_availability = self.adla_account_client.accounts.check_name_availability(
-            location.replace(" ", ""), 
+            location.replace(" ", ""),
             account_name
         )
         self.assertTrue(name_availability.name_available)
@@ -851,10 +854,10 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
             account_name,
             params_create
         ).result()
-        
+
         # ensure that the account name is no longer available
         name_availability = self.adla_account_client.accounts.check_name_availability(
-            location.replace(" ", ""), 
+            location.replace(" ", ""),
             account_name
         )
         self.assertFalse(name_availability.name_available)
@@ -907,7 +910,7 @@ END;""".format(self.db_name, self.table_name, self.tvf_name, self.view_name, sel
 
         self.assertEqual(adla_account.tags['tag2'], 'value2')
 
-        # confirm that 'locations.get_capability' is functional 
+        # confirm that 'locations.get_capability' is functional
         get_capability = self.adla_account_client.locations.get_capability(location.replace(" ", ""))
         self.assertIsNotNone(get_capability)
 

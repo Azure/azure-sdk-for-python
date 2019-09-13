@@ -73,7 +73,7 @@ class AzureMgmtTestCase(AzureTestCase):
         )
 
     def _setup_scrubber(self):
-        constants_to_scrub = ['SUBSCRIPTION_ID', 'TENANT_ID']#, 'CLIENT_OID', 'ADLA_JOB_ID', 'AD_DOMAIN']
+        constants_to_scrub = ['SUBSCRIPTION_ID', 'TENANT_ID']#, 'CLIENT_OID', 'AD_DOMAIN']
         for key in constants_to_scrub:
             key_value = self.get_settings_value(key)
             if key_value and hasattr(self._fake_settings, key):

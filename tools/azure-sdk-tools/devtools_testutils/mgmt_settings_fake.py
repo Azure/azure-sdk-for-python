@@ -11,8 +11,6 @@ from azure.common.credentials import (
 
 SUBSCRIPTION_ID = "00000000-0000-0000-0000-000000000000"
 
-# this is used explicitly for ADLA job id replacement in recordings.
-ADLA_JOB_ID = "00000000-0000-0000-0000-000000000000"
 # GraphRBAC tests
 AD_DOMAIN = "myaddomain.onmicrosoft.com"
 # Keyvault tests
@@ -44,7 +42,7 @@ def get_credentials(**kwargs):
     #    'user@myaddomain.onmicrosoft.com',
     #    'Password'
     #)
-    # note that UserCredential does not work any longer. Must use a ServicePrincipal. 
+    # note that UserCredential does not work any longer. Must use a ServicePrincipal.
     # for deprecated APIs I believe will still work.
     # return ServicePrincipalCredentials(
     #     client_id = '<AAD App client id>',
