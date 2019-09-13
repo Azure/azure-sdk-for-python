@@ -106,8 +106,9 @@ class PublicClientCredential(MsalCredential):
 
     def __init__(self, **kwargs):
         # type: (Any) -> None
+        tenant = kwargs.pop("tenant", None) or "organizations"
         super(PublicClientCredential, self).__init__(
-            authority="https://login.microsoftonline.com/" + kwargs.pop("tenant", "organizations"), **kwargs
+            authority="https://login.microsoftonline.com/" + tenant, **kwargs
         )
 
     @abc.abstractmethod
