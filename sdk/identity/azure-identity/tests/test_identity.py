@@ -439,3 +439,46 @@ def test_username_password_credential():
 
     token = credential.get_token("scope")
     assert token.token == expected_token
+
+
+def test_username_password_environment_credential(monkeypatch):
+    client_id = "fake-client-id"
+    username = "foo@bar.com"
+    password = "password"
+    expected_token = "***"
+
+    create_transport = functools.partial(
+        validating_transport,
+        requests=[Request()] * 3,  # not validating requests because they're formed by MSAL
+        responses=[
+            # tenant discovery
+            mock_response(json_payload={"authorization_endpoint": "https://a/b", "token_endpoint": "https://a/b"}),
+            # user realm discovery, interests MSAL only when the response body contains account_type == "Federated"
+            mock_response(json_payload={}),
+            # token request
+            mock_response(
+                json_payload={
+                    "access_token": expected_token,
+                    "expires_in": 42,
+                    "token_type": "Bearer",
+                    "ext_expires_in": 42,
+                }
+            ),
+        ],
+    )
+
+    monkeypatch.setenv(EnvironmentVariables.AZURE_CLIENT_ID, client_id)
+    monkeypatch.setenv(EnvironmentVariables.AZURE_USERNAME, username)
+    monkeypatch.setenv(EnvironmentVariables.AZURE_PASSWORD, password)
+
+    token = EnvironmentCredential(transport=create_transport()).get_token("scope")
+
+    # not validating expires_on because doing so requires monkeypatching time, and this is tested elsewhere
+    assert token.token == expected_token
+
+    # now with a tenant id
+    monkeypatch.setenv(EnvironmentVariables.AZURE_TENANT_ID, "tenant_id")
+
+    token = EnvironmentCredential(transport=create_transport()).get_token("scope")
+
+    assert token.token == expected_token
