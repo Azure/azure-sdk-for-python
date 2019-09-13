@@ -59,24 +59,9 @@ def distributed_trace_async(func=None, name_of_span=None):
         if merge_span and not passed_in_parent:
             return await func(*args, **kwargs) # type: ignore
 
-        # Get original context
-        original_wrapped_span = tracing_context.current_span.get()  # type: AbstractSpan
-        original_span_instance = span_impl_type.get_current_span()
-
-        parent_span = common.get_parent_span(passed_in_parent)
-        common.set_span_contexts(parent_span)
-
-        name = name_of_span or common.get_function_and_class_name(func, *args)  # type: ignore
-        child = parent_span.span(name=name)
-        try:
-            with child:
-                common.set_span_contexts(child)
+        with common.change_context(passed_in_parent):
+            name = name_of_span or common.get_function_and_class_name(func, *args)  # type: str
+            with span_impl_type(name=name) as span:
                 return await func(*args, **kwargs)  # type: ignore
-        finally:
-            common.set_span_contexts(parent_span)
-            # This test means "get_parent" created the span, so I need to finish it.
-            if original_wrapped_span is None and passed_in_parent is None and original_span_instance is None:
-                parent_span.finish()
-            common.set_span_contexts(original_wrapped_span, span_instance=original_span_instance)
 
     return wrapper_use_tracer

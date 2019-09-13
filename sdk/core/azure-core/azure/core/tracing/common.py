@@ -24,6 +24,7 @@
 #
 # --------------------------------------------------------------------------
 """Common functions shared by both the sync and the async decorators."""
+from contextlib import contextmanager
 
 from azure.core.tracing.context import tracing_context
 from azure.core.tracing.abstract_span import AbstractSpan
@@ -78,6 +79,32 @@ def set_span_contexts(wrapped_span, span_instance=None):
         span_impl_type.set_current_span(span_instance)
     else:
         span_impl_type.set_current_span(wrapped_span.span_instance)
+
+
+@contextmanager
+def change_context(span):
+    # type: (Optional[AbstractSpan]) -> None
+    """Execute this block inside the given context and restore it afterwards.
+
+    This does not start and ends the span, but just make sure all code is executed within
+    that span.
+
+    If span is None, no-op.
+
+    :param span: A span
+    :type span: AbstractSpan
+    """
+    span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
+    if span_impl_type is None or span is None:
+        yield
+    else:
+        original_span = span_impl_type.get_current_span()
+        try:
+            span_impl_type.set_current_span(span)
+            yield
+        finally:
+            span_impl_type.set_current_span(original_span)
+
 
 
 def get_parent_span(parent_span=None):
