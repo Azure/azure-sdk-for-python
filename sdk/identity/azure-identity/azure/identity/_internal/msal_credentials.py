@@ -21,11 +21,6 @@ except AttributeError:  # Python 2.7, abc exists, but not ABC
     ABC = abc.ABCMeta("ABC", (object,), {"__slots__": ()})  # type: ignore
 
 try:
-    from unittest import mock
-except ImportError:  # python < 3.3
-    import mock  # type: ignore
-
-try:
     from typing import TYPE_CHECKING
 except ImportError:
     TYPE_CHECKING = False

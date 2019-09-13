@@ -23,7 +23,7 @@ except ImportError:
     TYPE_CHECKING = False
 
 if TYPE_CHECKING:
-    # pylint:disable=unused-import
+    # pylint:disable=unused-import,ungrouped-imports
     from typing import Any, Dict, Mapping, Optional
     from azure.core.pipeline import PipelineResponse
 
