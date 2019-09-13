@@ -35,6 +35,7 @@
   ./ref/azure.eventhub.extensions.rst
   ./ref/azure.graphrbac.rst
   ./ref/azure.identity.rst
+  ./ref/azure.keyvault.certificates.rst
   ./ref/azure.keyvault.keys.rst
   ./ref/azure.keyvault.secrets.rst
   ./ref/azure.loganalytics.rst
