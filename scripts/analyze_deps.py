@@ -260,11 +260,9 @@ if __name__ == '__main__':
     missing_reqs, new_reqs, changed_reqs = {}, {}, {}
     non_overridden_reqs_count = 0
     exitcode = 0
-
     if frozen:
         flat_deps = {req: sorted(dependencies[req].keys()) for req in dependencies}
         missing_reqs, new_reqs, changed_reqs = dict_compare(frozen, flat_deps)
-
         if args.verbose and len(overrides) > 0:
             print('\nThe following requirement overrides are in place:')
             for overridden_req in overrides:
