@@ -14,9 +14,12 @@ try:
     from ._models_py3 import AvailableOperationDisplay
     from ._models_py3 import AvailableOperationDisplayPropertyServiceSpecificationMetricsItem
     from ._models_py3 import AvailableOperationDisplayPropertyServiceSpecificationMetricsList
+    from ._models_py3 import CreateDedicatedCloudNodeProperties
+    from ._models_py3 import CreateDedicatedCloudNodeRequest
     from ._models_py3 import CSRPError, CSRPErrorException
     from ._models_py3 import CSRPErrorBody
     from ._models_py3 import DedicatedCloudNode
+    from ._models_py3 import DedicatedCloudNodeProperties
     from ._models_py3 import DedicatedCloudService
     from ._models_py3 import OperationError
     from ._models_py3 import OperationResource
@@ -39,9 +42,12 @@ except (SyntaxError, ImportError):
     from ._models import AvailableOperationDisplay
     from ._models import AvailableOperationDisplayPropertyServiceSpecificationMetricsItem
     from ._models import AvailableOperationDisplayPropertyServiceSpecificationMetricsList
+    from ._models import CreateDedicatedCloudNodeProperties
+    from ._models import CreateDedicatedCloudNodeRequest
     from ._models import CSRPError, CSRPErrorException
     from ._models import CSRPErrorBody
     from ._models import DedicatedCloudNode
+    from ._models import DedicatedCloudNodeProperties
     from ._models import DedicatedCloudService
     from ._models import OperationError
     from ._models import OperationResource
@@ -88,9 +94,12 @@ __all__ = [
     'AvailableOperationDisplay',
     'AvailableOperationDisplayPropertyServiceSpecificationMetricsItem',
     'AvailableOperationDisplayPropertyServiceSpecificationMetricsList',
+    'CreateDedicatedCloudNodeProperties',
+    'CreateDedicatedCloudNodeRequest',
     'CSRPError', 'CSRPErrorException',
     'CSRPErrorBody',
     'DedicatedCloudNode',
+    'DedicatedCloudNodeProperties',
     'DedicatedCloudService',
     'OperationError',
     'OperationResource',
