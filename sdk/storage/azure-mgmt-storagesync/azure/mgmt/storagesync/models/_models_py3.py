@@ -332,41 +332,6 @@ class CloudError(Model):
     }
 
 
-class FilesNotSyncingError(Model):
-    """Files not syncing error object.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar error_code: Error code (HResult)
-    :vartype error_code: int
-    :ivar persistent_count: Count of persistent files not syncing with the
-     specified error code
-    :vartype persistent_count: long
-    :ivar transient_count: Count of transient files not syncing with the
-     specified error code
-    :vartype transient_count: long
-    """
-
-    _validation = {
-        'error_code': {'readonly': True},
-        'persistent_count': {'readonly': True},
-        'transient_count': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'error_code': {'key': 'errorCode', 'type': 'int'},
-        'persistent_count': {'key': 'persistentCount', 'type': 'long'},
-        'transient_count': {'key': 'transientCount', 'type': 'long'},
-    }
-
-    def __init__(self, **kwargs) -> None:
-        super(FilesNotSyncingError, self).__init__(**kwargs)
-        self.error_code = None
-        self.persistent_count = None
-        self.transient_count = None
-
-
 class OperationDisplayInfo(Model):
     """The operation supported by storage sync.
 
@@ -832,28 +797,21 @@ class ResourcesMoveInfo(Model):
 class RestoreFileSpec(Model):
     """Restore file spec.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
     :param path: Restore file spec path
     :type path: str
-    :ivar isdir: Restore file spec isdir
-    :vartype isdir: bool
+    :param isdir: Restore file spec isdir
+    :type isdir: bool
     """
-
-    _validation = {
-        'isdir': {'readonly': True},
-    }
 
     _attribute_map = {
         'path': {'key': 'path', 'type': 'str'},
         'isdir': {'key': 'isdir', 'type': 'bool'},
     }
 
-    def __init__(self, *, path: str=None, **kwargs) -> None:
+    def __init__(self, *, path: str=None, isdir: bool=None, **kwargs) -> None:
         super(RestoreFileSpec, self).__init__(**kwargs)
         self.path = path
-        self.isdir = None
+        self.isdir = isdir
 
 
 class ServerEndpoint(ProxyResource):
@@ -903,6 +861,14 @@ class ServerEndpoint(ProxyResource):
     :vartype offline_data_transfer_storage_account_tenant_id: str
     :param offline_data_transfer_share_name: Offline data transfer share name
     :type offline_data_transfer_share_name: str
+    :ivar cloud_tiering_status: Cloud tiering status. Only populated if cloud
+     tiering is enabled.
+    :vartype cloud_tiering_status:
+     ~azure.mgmt.storagesync.models.ServerEndpointCloudTieringStatus
+    :ivar recall_status: Recall status. Only populated if cloud tiering is
+     enabled.
+    :vartype recall_status:
+     ~azure.mgmt.storagesync.models.ServerEndpointRecallStatus
     """
 
     _validation = {
@@ -917,6 +883,8 @@ class ServerEndpoint(ProxyResource):
         'sync_status': {'readonly': True},
         'offline_data_transfer_storage_account_resource_id': {'readonly': True},
         'offline_data_transfer_storage_account_tenant_id': {'readonly': True},
+        'cloud_tiering_status': {'readonly': True},
+        'recall_status': {'readonly': True},
     }
 
     _attribute_map = {
@@ -937,6 +905,8 @@ class ServerEndpoint(ProxyResource):
         'offline_data_transfer_storage_account_resource_id': {'key': 'properties.offlineDataTransferStorageAccountResourceId', 'type': 'str'},
         'offline_data_transfer_storage_account_tenant_id': {'key': 'properties.offlineDataTransferStorageAccountTenantId', 'type': 'str'},
         'offline_data_transfer_share_name': {'key': 'properties.offlineDataTransferShareName', 'type': 'str'},
+        'cloud_tiering_status': {'key': 'properties.cloudTieringStatus', 'type': 'ServerEndpointCloudTieringStatus'},
+        'recall_status': {'key': 'properties.recallStatus', 'type': 'ServerEndpointRecallStatus'},
     }
 
     def __init__(self, *, server_local_path: str=None, cloud_tiering=None, volume_free_space_percent: int=None, tier_files_older_than_days: int=None, friendly_name: str=None, server_resource_id: str=None, offline_data_transfer=None, offline_data_transfer_share_name: str=None, **kwargs) -> None:
@@ -955,6 +925,47 @@ class ServerEndpoint(ProxyResource):
         self.offline_data_transfer_storage_account_resource_id = None
         self.offline_data_transfer_storage_account_tenant_id = None
         self.offline_data_transfer_share_name = offline_data_transfer_share_name
+        self.cloud_tiering_status = None
+        self.recall_status = None
+
+
+class ServerEndpointCloudTieringStatus(Model):
+    """Server endpoint cloud tiering status object.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar health: Cloud tiering health state. Possible values include:
+     'Healthy', 'Error'
+    :vartype health: str or ~azure.mgmt.storagesync.models.enum
+    :ivar last_updated_timestamp: Last updated timestamp
+    :vartype last_updated_timestamp: datetime
+    :ivar last_cloud_tiering_result: Last cloud tiering result (HResult)
+    :vartype last_cloud_tiering_result: int
+    :ivar last_success_timestamp: Last cloud tiering success timestamp
+    :vartype last_success_timestamp: datetime
+    """
+
+    _validation = {
+        'health': {'readonly': True},
+        'last_updated_timestamp': {'readonly': True},
+        'last_cloud_tiering_result': {'readonly': True},
+        'last_success_timestamp': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'health': {'key': 'health', 'type': 'str'},
+        'last_updated_timestamp': {'key': 'lastUpdatedTimestamp', 'type': 'iso-8601'},
+        'last_cloud_tiering_result': {'key': 'lastCloudTieringResult', 'type': 'int'},
+        'last_success_timestamp': {'key': 'lastSuccessTimestamp', 'type': 'iso-8601'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(ServerEndpointCloudTieringStatus, self).__init__(**kwargs)
+        self.health = None
+        self.last_updated_timestamp = None
+        self.last_cloud_tiering_result = None
+        self.last_success_timestamp = None
 
 
 class ServerEndpointCreateParameters(ProxyResource):
@@ -1025,6 +1036,208 @@ class ServerEndpointCreateParameters(ProxyResource):
         self.offline_data_transfer_share_name = offline_data_transfer_share_name
 
 
+class ServerEndpointFilesNotSyncingError(Model):
+    """Files not syncing error object.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar error_code: Error code (HResult)
+    :vartype error_code: int
+    :ivar persistent_count: Count of persistent files not syncing with the
+     specified error code
+    :vartype persistent_count: long
+    :ivar transient_count: Count of transient files not syncing with the
+     specified error code
+    :vartype transient_count: long
+    """
+
+    _validation = {
+        'error_code': {'readonly': True},
+        'persistent_count': {'readonly': True, 'minimum': 0},
+        'transient_count': {'readonly': True, 'minimum': 0},
+    }
+
+    _attribute_map = {
+        'error_code': {'key': 'errorCode', 'type': 'int'},
+        'persistent_count': {'key': 'persistentCount', 'type': 'long'},
+        'transient_count': {'key': 'transientCount', 'type': 'long'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(ServerEndpointFilesNotSyncingError, self).__init__(**kwargs)
+        self.error_code = None
+        self.persistent_count = None
+        self.transient_count = None
+
+
+class ServerEndpointRecallError(Model):
+    """Server endpoint recall error object.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar error_code: Error code (HResult)
+    :vartype error_code: int
+    :ivar count: Count of occurences of the error
+    :vartype count: long
+    """
+
+    _validation = {
+        'error_code': {'readonly': True},
+        'count': {'readonly': True, 'minimum': 0},
+    }
+
+    _attribute_map = {
+        'error_code': {'key': 'errorCode', 'type': 'int'},
+        'count': {'key': 'count', 'type': 'long'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(ServerEndpointRecallError, self).__init__(**kwargs)
+        self.error_code = None
+        self.count = None
+
+
+class ServerEndpointRecallStatus(Model):
+    """Server endpoint recall status object.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar last_updated_timestamp: Last updated timestamp
+    :vartype last_updated_timestamp: datetime
+    :ivar total_recall_errors_count: Total count of recall errors.
+    :vartype total_recall_errors_count: long
+    :ivar recall_errors: Array of recall errors
+    :vartype recall_errors:
+     list[~azure.mgmt.storagesync.models.ServerEndpointRecallError]
+    """
+
+    _validation = {
+        'last_updated_timestamp': {'readonly': True},
+        'total_recall_errors_count': {'readonly': True, 'minimum': 0},
+        'recall_errors': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'last_updated_timestamp': {'key': 'lastUpdatedTimestamp', 'type': 'iso-8601'},
+        'total_recall_errors_count': {'key': 'totalRecallErrorsCount', 'type': 'long'},
+        'recall_errors': {'key': 'recallErrors', 'type': '[ServerEndpointRecallError]'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(ServerEndpointRecallStatus, self).__init__(**kwargs)
+        self.last_updated_timestamp = None
+        self.total_recall_errors_count = None
+        self.recall_errors = None
+
+
+class ServerEndpointSyncActivityStatus(Model):
+    """Sync Session status object.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar timestamp: Timestamp when properties were updated
+    :vartype timestamp: datetime
+    :ivar per_item_error_count: Per item error count
+    :vartype per_item_error_count: long
+    :ivar applied_item_count: Applied item count.
+    :vartype applied_item_count: long
+    :ivar total_item_count: Total item count (if available)
+    :vartype total_item_count: long
+    :ivar applied_bytes: Applied bytes
+    :vartype applied_bytes: long
+    :ivar total_bytes: Total bytes (if available)
+    :vartype total_bytes: long
+    """
+
+    _validation = {
+        'timestamp': {'readonly': True},
+        'per_item_error_count': {'readonly': True, 'minimum': 0},
+        'applied_item_count': {'readonly': True, 'minimum': 0},
+        'total_item_count': {'readonly': True, 'minimum': 0},
+        'applied_bytes': {'readonly': True, 'minimum': 0},
+        'total_bytes': {'readonly': True, 'minimum': 0},
+    }
+
+    _attribute_map = {
+        'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
+        'per_item_error_count': {'key': 'perItemErrorCount', 'type': 'long'},
+        'applied_item_count': {'key': 'appliedItemCount', 'type': 'long'},
+        'total_item_count': {'key': 'totalItemCount', 'type': 'long'},
+        'applied_bytes': {'key': 'appliedBytes', 'type': 'long'},
+        'total_bytes': {'key': 'totalBytes', 'type': 'long'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(ServerEndpointSyncActivityStatus, self).__init__(**kwargs)
+        self.timestamp = None
+        self.per_item_error_count = None
+        self.applied_item_count = None
+        self.total_item_count = None
+        self.applied_bytes = None
+        self.total_bytes = None
+
+
+class ServerEndpointSyncSessionStatus(Model):
+    """Sync Session status object.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar last_sync_result: Last sync result (HResult)
+    :vartype last_sync_result: int
+    :ivar last_sync_timestamp: Last sync timestamp
+    :vartype last_sync_timestamp: datetime
+    :ivar last_sync_success_timestamp: Last sync success timestamp
+    :vartype last_sync_success_timestamp: datetime
+    :ivar last_sync_per_item_error_count: Last sync per item error count.
+    :vartype last_sync_per_item_error_count: long
+    :ivar persistent_files_not_syncing_count: Count of persistent files not
+     syncing.
+    :vartype persistent_files_not_syncing_count: long
+    :ivar transient_files_not_syncing_count: Count of transient files not
+     syncing.
+    :vartype transient_files_not_syncing_count: long
+    :ivar files_not_syncing_errors: Array of per-item errors coming from the
+     last sync session.
+    :vartype files_not_syncing_errors:
+     list[~azure.mgmt.storagesync.models.ServerEndpointFilesNotSyncingError]
+    """
+
+    _validation = {
+        'last_sync_result': {'readonly': True},
+        'last_sync_timestamp': {'readonly': True},
+        'last_sync_success_timestamp': {'readonly': True},
+        'last_sync_per_item_error_count': {'readonly': True, 'minimum': 0},
+        'persistent_files_not_syncing_count': {'readonly': True, 'minimum': 0},
+        'transient_files_not_syncing_count': {'readonly': True, 'minimum': 0},
+        'files_not_syncing_errors': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'last_sync_result': {'key': 'lastSyncResult', 'type': 'int'},
+        'last_sync_timestamp': {'key': 'lastSyncTimestamp', 'type': 'iso-8601'},
+        'last_sync_success_timestamp': {'key': 'lastSyncSuccessTimestamp', 'type': 'iso-8601'},
+        'last_sync_per_item_error_count': {'key': 'lastSyncPerItemErrorCount', 'type': 'long'},
+        'persistent_files_not_syncing_count': {'key': 'persistentFilesNotSyncingCount', 'type': 'long'},
+        'transient_files_not_syncing_count': {'key': 'transientFilesNotSyncingCount', 'type': 'long'},
+        'files_not_syncing_errors': {'key': 'filesNotSyncingErrors', 'type': '[ServerEndpointFilesNotSyncingError]'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(ServerEndpointSyncSessionStatus, self).__init__(**kwargs)
+        self.last_sync_result = None
+        self.last_sync_timestamp = None
+        self.last_sync_success_timestamp = None
+        self.last_sync_per_item_error_count = None
+        self.persistent_files_not_syncing_count = None
+        self.transient_files_not_syncing_count = None
+        self.files_not_syncing_errors = None
+
+
 class ServerEndpointSyncStatus(Model):
     """Server Endpoint sync status.
 
@@ -1047,20 +1260,22 @@ class ServerEndpointSyncStatus(Model):
      'Download', 'UploadAndDownload'
     :vartype sync_activity: str or ~azure.mgmt.storagesync.models.enum
     :ivar total_persistent_files_not_syncing_count: Total count of persistent
-     files not syncing (combined upload + download). Reserved for future use.
+     files not syncing (combined upload + download).
     :vartype total_persistent_files_not_syncing_count: long
     :ivar last_updated_timestamp: Last Updated Timestamp
     :vartype last_updated_timestamp: datetime
     :ivar upload_status: Upload Status
-    :vartype upload_status: ~azure.mgmt.storagesync.models.SyncSessionStatus
+    :vartype upload_status:
+     ~azure.mgmt.storagesync.models.ServerEndpointSyncSessionStatus
     :ivar download_status: Download Status
-    :vartype download_status: ~azure.mgmt.storagesync.models.SyncSessionStatus
+    :vartype download_status:
+     ~azure.mgmt.storagesync.models.ServerEndpointSyncSessionStatus
     :ivar upload_activity: Upload sync activity
     :vartype upload_activity:
-     ~azure.mgmt.storagesync.models.SyncActivityStatus
+     ~azure.mgmt.storagesync.models.ServerEndpointSyncActivityStatus
     :ivar download_activity: Download sync activity
     :vartype download_activity:
-     ~azure.mgmt.storagesync.models.SyncActivityStatus
+     ~azure.mgmt.storagesync.models.ServerEndpointSyncActivityStatus
     :ivar offline_data_transfer_status: Offline Data Transfer State. Possible
      values include: 'InProgress', 'Stopping', 'NotRunning', 'Complete'
     :vartype offline_data_transfer_status: str or
@@ -1072,7 +1287,7 @@ class ServerEndpointSyncStatus(Model):
         'upload_health': {'readonly': True},
         'combined_health': {'readonly': True},
         'sync_activity': {'readonly': True},
-        'total_persistent_files_not_syncing_count': {'readonly': True},
+        'total_persistent_files_not_syncing_count': {'readonly': True, 'minimum': 0},
         'last_updated_timestamp': {'readonly': True},
         'upload_status': {'readonly': True},
         'download_status': {'readonly': True},
@@ -1088,10 +1303,10 @@ class ServerEndpointSyncStatus(Model):
         'sync_activity': {'key': 'syncActivity', 'type': 'str'},
         'total_persistent_files_not_syncing_count': {'key': 'totalPersistentFilesNotSyncingCount', 'type': 'long'},
         'last_updated_timestamp': {'key': 'lastUpdatedTimestamp', 'type': 'iso-8601'},
-        'upload_status': {'key': 'uploadStatus', 'type': 'SyncSessionStatus'},
-        'download_status': {'key': 'downloadStatus', 'type': 'SyncSessionStatus'},
-        'upload_activity': {'key': 'uploadActivity', 'type': 'SyncActivityStatus'},
-        'download_activity': {'key': 'downloadActivity', 'type': 'SyncActivityStatus'},
+        'upload_status': {'key': 'uploadStatus', 'type': 'ServerEndpointSyncSessionStatus'},
+        'download_status': {'key': 'downloadStatus', 'type': 'ServerEndpointSyncSessionStatus'},
+        'upload_activity': {'key': 'uploadActivity', 'type': 'ServerEndpointSyncActivityStatus'},
+        'download_activity': {'key': 'downloadActivity', 'type': 'ServerEndpointSyncActivityStatus'},
         'offline_data_transfer_status': {'key': 'offlineDataTransferStatus', 'type': 'str'},
     }
 
@@ -1418,54 +1633,6 @@ class SubscriptionState(Model):
         self.properties = properties
 
 
-class SyncActivityStatus(Model):
-    """Sync Session status object.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar timestamp: Timestamp when properties were updated
-    :vartype timestamp: datetime
-    :ivar per_item_error_count: Per item error count
-    :vartype per_item_error_count: long
-    :ivar applied_item_count: Applied item count.
-    :vartype applied_item_count: long
-    :ivar total_item_count: Total item count (if available)
-    :vartype total_item_count: long
-    :ivar applied_bytes: Applied bytes
-    :vartype applied_bytes: long
-    :ivar total_bytes: Total bytes (if available)
-    :vartype total_bytes: long
-    """
-
-    _validation = {
-        'timestamp': {'readonly': True},
-        'per_item_error_count': {'readonly': True},
-        'applied_item_count': {'readonly': True},
-        'total_item_count': {'readonly': True},
-        'applied_bytes': {'readonly': True},
-        'total_bytes': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
-        'per_item_error_count': {'key': 'perItemErrorCount', 'type': 'long'},
-        'applied_item_count': {'key': 'appliedItemCount', 'type': 'long'},
-        'total_item_count': {'key': 'totalItemCount', 'type': 'long'},
-        'applied_bytes': {'key': 'appliedBytes', 'type': 'long'},
-        'total_bytes': {'key': 'totalBytes', 'type': 'long'},
-    }
-
-    def __init__(self, **kwargs) -> None:
-        super(SyncActivityStatus, self).__init__(**kwargs)
-        self.timestamp = None
-        self.per_item_error_count = None
-        self.applied_item_count = None
-        self.total_item_count = None
-        self.applied_bytes = None
-        self.total_bytes = None
-
-
 class SyncGroup(ProxyResource):
     """Sync Group object.
 
@@ -1480,8 +1647,8 @@ class SyncGroup(ProxyResource):
     :ivar type: The type of the resource. Ex-
      Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
     :vartype type: str
-    :param unique_id: Unique Id
-    :type unique_id: str
+    :ivar unique_id: Unique Id
+    :vartype unique_id: str
     :ivar sync_group_status: Sync group status
     :vartype sync_group_status: str
     """
@@ -1490,6 +1657,7 @@ class SyncGroup(ProxyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'unique_id': {'readonly': True},
         'sync_group_status': {'readonly': True},
     }
 
@@ -1501,9 +1669,9 @@ class SyncGroup(ProxyResource):
         'sync_group_status': {'key': 'properties.syncGroupStatus', 'type': 'str'},
     }
 
-    def __init__(self, *, unique_id: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs) -> None:
         super(SyncGroup, self).__init__(**kwargs)
-        self.unique_id = unique_id
+        self.unique_id = None
         self.sync_group_status = None
 
 
@@ -1541,63 +1709,6 @@ class SyncGroupCreateParameters(ProxyResource):
     def __init__(self, *, properties=None, **kwargs) -> None:
         super(SyncGroupCreateParameters, self).__init__(**kwargs)
         self.properties = properties
-
-
-class SyncSessionStatus(Model):
-    """Sync Session status object.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar last_sync_result: Last sync result (HResult)
-    :vartype last_sync_result: int
-    :ivar last_sync_timestamp: Last sync timestamp
-    :vartype last_sync_timestamp: datetime
-    :ivar last_sync_success_timestamp: Last sync success timestamp
-    :vartype last_sync_success_timestamp: datetime
-    :ivar last_sync_per_item_error_count: Last sync per item error count.
-    :vartype last_sync_per_item_error_count: long
-    :ivar persistent_files_not_syncing_count: Count of persistent files not
-     syncing. Reserved for future use.
-    :vartype persistent_files_not_syncing_count: long
-    :ivar transient_files_not_syncing_count: Count of transient files not
-     syncing. Reserved for future use.
-    :vartype transient_files_not_syncing_count: long
-    :ivar files_not_syncing_errors: Array of per-item errors coming from the
-     last sync session. Reserved for future use.
-    :vartype files_not_syncing_errors:
-     list[~azure.mgmt.storagesync.models.FilesNotSyncingError]
-    """
-
-    _validation = {
-        'last_sync_result': {'readonly': True},
-        'last_sync_timestamp': {'readonly': True},
-        'last_sync_success_timestamp': {'readonly': True},
-        'last_sync_per_item_error_count': {'readonly': True},
-        'persistent_files_not_syncing_count': {'readonly': True},
-        'transient_files_not_syncing_count': {'readonly': True},
-        'files_not_syncing_errors': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'last_sync_result': {'key': 'lastSyncResult', 'type': 'int'},
-        'last_sync_timestamp': {'key': 'lastSyncTimestamp', 'type': 'iso-8601'},
-        'last_sync_success_timestamp': {'key': 'lastSyncSuccessTimestamp', 'type': 'iso-8601'},
-        'last_sync_per_item_error_count': {'key': 'lastSyncPerItemErrorCount', 'type': 'long'},
-        'persistent_files_not_syncing_count': {'key': 'persistentFilesNotSyncingCount', 'type': 'long'},
-        'transient_files_not_syncing_count': {'key': 'transientFilesNotSyncingCount', 'type': 'long'},
-        'files_not_syncing_errors': {'key': 'filesNotSyncingErrors', 'type': '[FilesNotSyncingError]'},
-    }
-
-    def __init__(self, **kwargs) -> None:
-        super(SyncSessionStatus, self).__init__(**kwargs)
-        self.last_sync_result = None
-        self.last_sync_timestamp = None
-        self.last_sync_success_timestamp = None
-        self.last_sync_per_item_error_count = None
-        self.persistent_files_not_syncing_count = None
-        self.transient_files_not_syncing_count = None
-        self.files_not_syncing_errors = None
 
 
 class TriggerChangeDetectionParameters(Model):

@@ -16,7 +16,6 @@ try:
     from ._models_py3 import CheckNameAvailabilityResult
     from ._models_py3 import CloudEndpoint
     from ._models_py3 import CloudEndpointCreateParameters
-    from ._models_py3 import FilesNotSyncingError
     from ._models_py3 import OperationDisplayInfo
     from ._models_py3 import OperationDisplayResource
     from ._models_py3 import OperationEntity
@@ -32,7 +31,13 @@ try:
     from ._models_py3 import ResourcesMoveInfo
     from ._models_py3 import RestoreFileSpec
     from ._models_py3 import ServerEndpoint
+    from ._models_py3 import ServerEndpointCloudTieringStatus
     from ._models_py3 import ServerEndpointCreateParameters
+    from ._models_py3 import ServerEndpointFilesNotSyncingError
+    from ._models_py3 import ServerEndpointRecallError
+    from ._models_py3 import ServerEndpointRecallStatus
+    from ._models_py3 import ServerEndpointSyncActivityStatus
+    from ._models_py3 import ServerEndpointSyncSessionStatus
     from ._models_py3 import ServerEndpointSyncStatus
     from ._models_py3 import ServerEndpointUpdateParameters
     from ._models_py3 import StorageSyncApiError
@@ -42,10 +47,8 @@ try:
     from ._models_py3 import StorageSyncServiceCreateParameters
     from ._models_py3 import StorageSyncServiceUpdateParameters
     from ._models_py3 import SubscriptionState
-    from ._models_py3 import SyncActivityStatus
     from ._models_py3 import SyncGroup
     from ._models_py3 import SyncGroupCreateParameters
-    from ._models_py3 import SyncSessionStatus
     from ._models_py3 import TrackedResource
     from ._models_py3 import TriggerChangeDetectionParameters
     from ._models_py3 import TriggerRolloverRequest
@@ -57,7 +60,6 @@ except (SyntaxError, ImportError):
     from ._models import CheckNameAvailabilityResult
     from ._models import CloudEndpoint
     from ._models import CloudEndpointCreateParameters
-    from ._models import FilesNotSyncingError
     from ._models import OperationDisplayInfo
     from ._models import OperationDisplayResource
     from ._models import OperationEntity
@@ -73,7 +75,13 @@ except (SyntaxError, ImportError):
     from ._models import ResourcesMoveInfo
     from ._models import RestoreFileSpec
     from ._models import ServerEndpoint
+    from ._models import ServerEndpointCloudTieringStatus
     from ._models import ServerEndpointCreateParameters
+    from ._models import ServerEndpointFilesNotSyncingError
+    from ._models import ServerEndpointRecallError
+    from ._models import ServerEndpointRecallStatus
+    from ._models import ServerEndpointSyncActivityStatus
+    from ._models import ServerEndpointSyncSessionStatus
     from ._models import ServerEndpointSyncStatus
     from ._models import ServerEndpointUpdateParameters
     from ._models import StorageSyncApiError
@@ -83,10 +91,8 @@ except (SyntaxError, ImportError):
     from ._models import StorageSyncServiceCreateParameters
     from ._models import StorageSyncServiceUpdateParameters
     from ._models import SubscriptionState
-    from ._models import SyncActivityStatus
     from ._models import SyncGroup
     from ._models import SyncGroupCreateParameters
-    from ._models import SyncSessionStatus
     from ._models import TrackedResource
     from ._models import TriggerChangeDetectionParameters
     from ._models import TriggerRolloverRequest
@@ -111,7 +117,6 @@ __all__ = [
     'CheckNameAvailabilityResult',
     'CloudEndpoint',
     'CloudEndpointCreateParameters',
-    'FilesNotSyncingError',
     'OperationDisplayInfo',
     'OperationDisplayResource',
     'OperationEntity',
@@ -127,7 +132,13 @@ __all__ = [
     'ResourcesMoveInfo',
     'RestoreFileSpec',
     'ServerEndpoint',
+    'ServerEndpointCloudTieringStatus',
     'ServerEndpointCreateParameters',
+    'ServerEndpointFilesNotSyncingError',
+    'ServerEndpointRecallError',
+    'ServerEndpointRecallStatus',
+    'ServerEndpointSyncActivityStatus',
+    'ServerEndpointSyncSessionStatus',
     'ServerEndpointSyncStatus',
     'ServerEndpointUpdateParameters',
     'StorageSyncApiError',
@@ -137,10 +148,8 @@ __all__ = [
     'StorageSyncServiceCreateParameters',
     'StorageSyncServiceUpdateParameters',
     'SubscriptionState',
-    'SyncActivityStatus',
     'SyncGroup',
     'SyncGroupCreateParameters',
-    'SyncSessionStatus',
     'TrackedResource',
     'TriggerChangeDetectionParameters',
     'TriggerRolloverRequest',
