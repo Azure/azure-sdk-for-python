@@ -3407,7 +3407,7 @@ class Token(ProxyResource):
     :param status: The status of the token example enabled or disabled.
      Possible values include: 'enabled', 'disabled'
     :type status: str or
-     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.Status
+     ~azure.mgmt.containerregistry.v2019_06_01_preview.models.TokenStatus
     """
 
     _validation = {
@@ -3500,7 +3500,7 @@ class TokenPassword(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :param creation_time: The password created datetime of the password.
+    :param creation_time: The creation datetime of the password.
     :type creation_time: datetime
     :param expiry: The expiry datetime of the password.
     :type expiry: datetime

@@ -215,6 +215,12 @@ class TokenPasswordName(str, Enum):
     password2 = "password2"
 
 
+class TokenStatus(str, Enum):
+
+    enabled = "enabled"
+    disabled = "disabled"
+
+
 class Status(str, Enum):
 
     enabled = "enabled"

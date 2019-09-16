@@ -253,6 +253,7 @@ from ._container_registry_management_client_enums import (
     SecretObjectType,
     TokenCertificateName,
     TokenPasswordName,
+    TokenStatus,
     Status,
 )
 
@@ -397,5 +398,6 @@ __all__ = [
     'SecretObjectType',
     'TokenCertificateName',
     'TokenPasswordName',
+    'TokenStatus',
     'Status',
 ]
