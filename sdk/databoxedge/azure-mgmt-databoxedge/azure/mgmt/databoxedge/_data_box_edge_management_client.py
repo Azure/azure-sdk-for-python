@@ -18,6 +18,7 @@ from .operations import DevicesOperations
 from .operations import AlertsOperations
 from .operations import BandwidthSchedulesOperations
 from .operations import JobsOperations
+from .operations import NodesOperations
 from .operations import OperationsStatusOperations
 from .operations import OrdersOperations
 from .operations import RolesOperations
@@ -44,6 +45,8 @@ class DataBoxEdgeManagementClient(SDKClient):
     :vartype bandwidth_schedules: azure.mgmt.databoxedge.operations.BandwidthSchedulesOperations
     :ivar jobs: Jobs operations
     :vartype jobs: azure.mgmt.databoxedge.operations.JobsOperations
+    :ivar nodes: Nodes operations
+    :vartype nodes: azure.mgmt.databoxedge.operations.NodesOperations
     :ivar operations_status: OperationsStatus operations
     :vartype operations_status: azure.mgmt.databoxedge.operations.OperationsStatusOperations
     :ivar orders: Orders operations
@@ -74,7 +77,7 @@ class DataBoxEdgeManagementClient(SDKClient):
         super(DataBoxEdgeManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2019-03-01'
+        self.api_version = '2019-07-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -87,6 +90,8 @@ class DataBoxEdgeManagementClient(SDKClient):
         self.bandwidth_schedules = BandwidthSchedulesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.jobs = JobsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.nodes = NodesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations_status = OperationsStatusOperations(
             self._client, self.config, self._serialize, self._deserialize)

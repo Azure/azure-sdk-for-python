@@ -38,6 +38,7 @@ try:
     from ._models_py3 import NetworkAdapter
     from ._models_py3 import NetworkAdapterPosition
     from ._models_py3 import NetworkSettings
+    from ._models_py3 import Node
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import Order
@@ -92,6 +93,7 @@ except (SyntaxError, ImportError):
     from ._models import NetworkAdapter
     from ._models import NetworkAdapterPosition
     from ._models import NetworkSettings
+    from ._models import Node
     from ._models import Operation
     from ._models import OperationDisplay
     from ._models import Order
@@ -120,6 +122,7 @@ except (SyntaxError, ImportError):
 from ._paged_models import AlertPaged
 from ._paged_models import BandwidthSchedulePaged
 from ._paged_models import DataBoxEdgeDevicePaged
+from ._paged_models import NodePaged
 from ._paged_models import OperationPaged
 from ._paged_models import OrderPaged
 from ._paged_models import RolePaged
@@ -152,6 +155,7 @@ from ._data_box_edge_management_client_enums import (
     NetworkAdapterStatus,
     NetworkAdapterRDMAStatus,
     NetworkAdapterDHCPStatus,
+    NodeStatus,
     OrderState,
     AuthenticationType,
     ShareStatus,
@@ -194,6 +198,7 @@ __all__ = [
     'NetworkAdapter',
     'NetworkAdapterPosition',
     'NetworkSettings',
+    'Node',
     'Operation',
     'OperationDisplay',
     'Order',
@@ -223,6 +228,7 @@ __all__ = [
     'DataBoxEdgeDevicePaged',
     'AlertPaged',
     'BandwidthSchedulePaged',
+    'NodePaged',
     'OrderPaged',
     'RolePaged',
     'SharePaged',
@@ -253,6 +259,7 @@ __all__ = [
     'NetworkAdapterStatus',
     'NetworkAdapterRDMAStatus',
     'NetworkAdapterDHCPStatus',
+    'NodeStatus',
     'OrderState',
     'AuthenticationType',
     'ShareStatus',

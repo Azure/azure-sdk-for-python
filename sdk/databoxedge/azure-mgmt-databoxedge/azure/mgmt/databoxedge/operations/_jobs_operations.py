@@ -25,7 +25,7 @@ class JobsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version. Constant value: "2019-03-01".
+    :ivar api_version: The API version. Constant value: "2019-07-01".
     """
 
     models = models
@@ -35,13 +35,14 @@ class JobsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-03-01"
+        self.api_version = "2019-07-01"
 
         self.config = config
 
     def get(
             self, device_name, name, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Gets the details of a specified job on a data box edge/gateway device.
+        """Gets the details of a specified job on a Data Box Edge/Data Box Gateway
+        device.
 
         :param device_name: The device name.
         :type device_name: str

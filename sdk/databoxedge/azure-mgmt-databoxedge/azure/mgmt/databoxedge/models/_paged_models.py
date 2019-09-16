@@ -64,6 +64,19 @@ class BandwidthSchedulePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(BandwidthSchedulePaged, self).__init__(*args, **kwargs)
+class NodePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`Node <azure.mgmt.databoxedge.models.Node>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[Node]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(NodePaged, self).__init__(*args, **kwargs)
 class OrderPaged(Paged):
     """
     A paging container for iterating over a list of :class:`Order <azure.mgmt.databoxedge.models.Order>` object

@@ -70,6 +70,7 @@ class DataBoxEdgeDeviceStatus(str, Enum):
     needs_attention = "NeedsAttention"
     disconnected = "Disconnected"
     partially_disconnected = "PartiallyDisconnected"
+    maintenance = "Maintenance"
 
 
 class DeviceType(str, Enum):
@@ -212,6 +213,15 @@ class NetworkAdapterDHCPStatus(str, Enum):
     enabled = "Enabled"
 
 
+class NodeStatus(str, Enum):
+
+    unknown = "Unknown"
+    up = "Up"
+    down = "Down"
+    rebooting = "Rebooting"
+    shutting_down = "ShuttingDown"
+
+
 class OrderState(str, Enum):
 
     untracked = "Untracked"
@@ -238,8 +248,11 @@ class AuthenticationType(str, Enum):
 
 class ShareStatus(str, Enum):
 
-    online = "Online"
     offline = "Offline"
+    unknown = "Unknown"
+    ok = "OK"
+    updating = "Updating"
+    needs_attention = "NeedsAttention"
 
 
 class MonitoringStatus(str, Enum):

@@ -27,7 +27,7 @@ class DevicesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version. Constant value: "2019-03-01".
+    :ivar api_version: The API version. Constant value: "2019-07-01".
     """
 
     models = models
@@ -37,13 +37,13 @@ class DevicesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-03-01"
+        self.api_version = "2019-07-01"
 
         self.config = config
 
     def list_by_subscription(
             self, expand=None, custom_headers=None, raw=False, **operation_config):
-        """Gets all the data box edge/gateway devices in a subscription.
+        """Gets all the Data Box Edge/Data Box Gateway devices in a subscription.
 
         :param expand: Specify $expand=details to populate additional fields
          related to the resource or Specify $skipToken=<token> to populate the
@@ -115,7 +115,8 @@ class DevicesOperations(object):
 
     def list_by_resource_group(
             self, resource_group_name, expand=None, custom_headers=None, raw=False, **operation_config):
-        """Gets all the data box edge/gateway devices in a resource group.
+        """Gets all the Data Box Edge/Data Box Gateway devices in a resource
+        group.
 
         :param resource_group_name: The resource group name.
         :type resource_group_name: str
@@ -190,7 +191,7 @@ class DevicesOperations(object):
 
     def get(
             self, device_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Gets the properties of the data box edge/gateway device.
+        """Gets the properties of the Data Box Edge/Data Box Gateway device.
 
         :param device_name: The device name.
         :type device_name: str
@@ -301,7 +302,7 @@ class DevicesOperations(object):
 
     def create_or_update(
             self, device_name, data_box_edge_device, resource_group_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Creates or updates a Data Box Edge/Gateway resource.
+        """Creates or updates a Data Box Edge/Data Box Gateway resource.
 
         :param device_name: The device name.
         :type device_name: str
@@ -390,7 +391,7 @@ class DevicesOperations(object):
 
     def delete(
             self, device_name, resource_group_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Deletes the data box edge/gateway device.
+        """Deletes the Data Box Edge/Data Box Gateway device.
 
         :param device_name: The device name.
         :type device_name: str
@@ -431,7 +432,7 @@ class DevicesOperations(object):
 
     def update(
             self, device_name, parameters, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Modifies a Data Box Edge/Gateway resource.
+        """Modifies a Data Box Edge/Data Box Gateway resource.
 
         :param device_name: The device name.
         :type device_name: str
@@ -537,7 +538,7 @@ class DevicesOperations(object):
 
     def download_updates(
             self, device_name, resource_group_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Downloads the updates on a data box edge/gateway device.
+        """Downloads the updates on a Data Box Edge/Data Box Gateway device.
 
         :param device_name: The device name.
         :type device_name: str
@@ -578,8 +579,8 @@ class DevicesOperations(object):
 
     def get_extended_information(
             self, device_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Gets additional information for the specified data box edge/gateway
-        device.
+        """Gets additional information for the specified Data Box Edge/Data Box
+        Gateway device.
 
         :param device_name: The device name.
         :type device_name: str
@@ -679,7 +680,7 @@ class DevicesOperations(object):
 
     def install_updates(
             self, device_name, resource_group_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Installs the updates on the data box edge/gateway device.
+        """Installs the updates on the Data Box Edge/Data Box Gateway device.
 
         :param device_name: The device name.
         :type device_name: str
@@ -720,8 +721,8 @@ class DevicesOperations(object):
 
     def get_network_settings(
             self, device_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Gets the network settings of the specified data box edge/gateway
-        device.
+        """Gets the network settings of the specified Data Box Edge/Data Box
+        Gateway device.
 
         :param device_name: The device name.
         :type device_name: str
@@ -820,7 +821,7 @@ class DevicesOperations(object):
 
     def scan_for_updates(
             self, device_name, resource_group_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Scans for updates on a data box edge/gateway device.
+        """Scans for updates on a Data Box Edge/Data Box Gateway device.
 
         :param device_name: The device name.
         :type device_name: str
@@ -903,7 +904,8 @@ class DevicesOperations(object):
 
     def create_or_update_security_settings(
             self, device_name, security_settings, resource_group_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Updates the security settings on a data box edge/gateway device.
+        """Updates the security settings on a Data Box Edge/Data Box Gateway
+        device.
 
         :param device_name: The device name.
         :type device_name: str

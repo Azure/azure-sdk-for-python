@@ -27,7 +27,7 @@ class UsersOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version. Constant value: "2019-03-01".
+    :ivar api_version: The API version. Constant value: "2019-07-01".
     """
 
     models = models
@@ -37,13 +37,14 @@ class UsersOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-03-01"
+        self.api_version = "2019-07-01"
 
         self.config = config
 
     def list_by_data_box_edge_device(
             self, device_name, resource_group_name, custom_headers=None, raw=False, **operation_config):
-        """Gets all the users registered on a data box edge/gateway device.
+        """Gets all the users registered on a Data Box Edge/Data Box Gateway
+        device.
 
         :param device_name: The device name.
         :type device_name: str
@@ -230,8 +231,8 @@ class UsersOperations(object):
 
     def create_or_update(
             self, device_name, name, user, resource_group_name, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Creates a new user or updates an existing user's information on a data
-        box edge/gateway device.
+        """Creates a new user or updates an existing user's information on a Data
+        Box Edge/Data Box Gateway device.
 
         :param device_name: The device name.
         :type device_name: str

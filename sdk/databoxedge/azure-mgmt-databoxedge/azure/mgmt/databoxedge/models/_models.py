@@ -485,7 +485,8 @@ class DataBoxEdgeDevice(ARMBaseModel):
     :type etag: str
     :param data_box_edge_device_status: The status of the Data Box
      Edge/Gateway device. Possible values include: 'ReadyToSetup', 'Online',
-     'Offline', 'NeedsAttention', 'Disconnected', 'PartiallyDisconnected'
+     'Offline', 'NeedsAttention', 'Disconnected', 'PartiallyDisconnected',
+     'Maintenance'
     :type data_box_edge_device_status: str or
      ~azure.mgmt.databoxedge.models.DataBoxEdgeDeviceStatus
     :ivar serial_number: The Serial Number of Data Box Edge/Gateway device.
@@ -518,6 +519,8 @@ class DataBoxEdgeDevice(ARMBaseModel):
     :ivar configured_role_types: Type of compute roles configured.
     :vartype configured_role_types: list[str or
      ~azure.mgmt.databoxedge.models.RoleTypes]
+    :ivar node_count: The number of nodes in the cluster.
+    :vartype node_count: int
     """
 
     _validation = {
@@ -534,6 +537,7 @@ class DataBoxEdgeDevice(ARMBaseModel):
         'time_zone': {'readonly': True},
         'device_hcs_version': {'readonly': True},
         'configured_role_types': {'readonly': True},
+        'node_count': {'readonly': True},
     }
 
     _attribute_map = {
@@ -557,6 +561,7 @@ class DataBoxEdgeDevice(ARMBaseModel):
         'time_zone': {'key': 'properties.timeZone', 'type': 'str'},
         'device_hcs_version': {'key': 'properties.deviceHcsVersion', 'type': 'str'},
         'configured_role_types': {'key': 'properties.configuredRoleTypes', 'type': '[str]'},
+        'node_count': {'key': 'properties.nodeCount', 'type': 'int'},
     }
 
     def __init__(self, **kwargs):
@@ -578,6 +583,7 @@ class DataBoxEdgeDevice(ARMBaseModel):
         self.time_zone = None
         self.device_hcs_version = None
         self.configured_role_types = None
+        self.node_count = None
 
 
 class DataBoxEdgeDeviceExtendedInfo(ARMBaseModel):
@@ -772,6 +778,8 @@ class IoTDeviceInfo(Model):
     :param io_thost_hub: Required. Host name for the IoT hub associated to the
      device.
     :type io_thost_hub: str
+    :param io_thost_hub_id: Id of the IoT hub associated to the device.
+    :type io_thost_hub_id: str
     :param authentication: IoT device authentication info.
     :type authentication: ~azure.mgmt.databoxedge.models.Authentication
     """
@@ -784,6 +792,7 @@ class IoTDeviceInfo(Model):
     _attribute_map = {
         'device_id': {'key': 'deviceId', 'type': 'str'},
         'io_thost_hub': {'key': 'ioTHostHub', 'type': 'str'},
+        'io_thost_hub_id': {'key': 'ioTHostHubId', 'type': 'str'},
         'authentication': {'key': 'authentication', 'type': 'Authentication'},
     }
 
@@ -791,6 +800,7 @@ class IoTDeviceInfo(Model):
         super(IoTDeviceInfo, self).__init__(**kwargs)
         self.device_id = kwargs.get('device_id', None)
         self.io_thost_hub = kwargs.get('io_thost_hub', None)
+        self.io_thost_hub_id = kwargs.get('io_thost_hub_id', None)
         self.authentication = kwargs.get('authentication', None)
 
 
@@ -1439,6 +1449,77 @@ class NetworkSettings(ARMBaseModel):
         self.network_adapters = None
 
 
+class Node(ARMBaseModel):
+    """Represents a single node in a Data box Edge/Gateway device
+    Gateway devices, standalone Edge devices and a single node cluster Edge
+    device will all have 1 node
+    Multi-node Edge devices will have more than 1 nodes.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: The path ID that uniquely identifies the object.
+    :vartype id: str
+    :ivar name: The object name.
+    :vartype name: str
+    :ivar type: The hierarchical type of the object.
+    :vartype type: str
+    :ivar node_status: The current status of the individual node. Possible
+     values include: 'Unknown', 'Up', 'Down', 'Rebooting', 'ShuttingDown'
+    :vartype node_status: str or ~azure.mgmt.databoxedge.models.NodeStatus
+    :ivar node_chassis_serial_number: Serial number of the Chassis
+    :vartype node_chassis_serial_number: str
+    :ivar node_serial_number: Serial number of the individual node
+    :vartype node_serial_number: str
+    :ivar node_display_name: Display Name of the individual node
+    :vartype node_display_name: str
+    :ivar node_friendly_software_version: Friendly software version name that
+     is currently installed on the node
+    :vartype node_friendly_software_version: str
+    :ivar node_hcs_version: HCS version that is currently installed on the
+     node
+    :vartype node_hcs_version: str
+    :ivar node_instance_id: Guid instance id of the node
+    :vartype node_instance_id: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'node_status': {'readonly': True},
+        'node_chassis_serial_number': {'readonly': True},
+        'node_serial_number': {'readonly': True},
+        'node_display_name': {'readonly': True},
+        'node_friendly_software_version': {'readonly': True},
+        'node_hcs_version': {'readonly': True},
+        'node_instance_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'node_status': {'key': 'properties.nodeStatus', 'type': 'str'},
+        'node_chassis_serial_number': {'key': 'properties.nodeChassisSerialNumber', 'type': 'str'},
+        'node_serial_number': {'key': 'properties.nodeSerialNumber', 'type': 'str'},
+        'node_display_name': {'key': 'properties.nodeDisplayName', 'type': 'str'},
+        'node_friendly_software_version': {'key': 'properties.nodeFriendlySoftwareVersion', 'type': 'str'},
+        'node_hcs_version': {'key': 'properties.nodeHcsVersion', 'type': 'str'},
+        'node_instance_id': {'key': 'properties.nodeInstanceId', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(Node, self).__init__(**kwargs)
+        self.node_status = None
+        self.node_chassis_serial_number = None
+        self.node_serial_number = None
+        self.node_display_name = None
+        self.node_friendly_software_version = None
+        self.node_hcs_version = None
+        self.node_instance_id = None
+
+
 class Operation(Model):
     """Operations.
 
@@ -1666,7 +1747,7 @@ class PeriodicTimerSourceInfo(Model):
     All required parameters must be populated in order to send to Azure.
 
     :param start_time: Required. The time of the day that results in a valid
-     trigger. Schedule is computed with reference to the time specified up to
+     trigger. Schedule is computed with reference to the time specified upto
      seconds. If timezone is not specified the time will considered to be in
      device timezone. The value will always be returned as UTC time.
     :type start_time: datetime
@@ -1828,7 +1909,7 @@ class Share(ARMBaseModel):
     :param description: Description for the share.
     :type description: str
     :param share_status: Required. Current status of the share. Possible
-     values include: 'Online', 'Offline'
+     values include: 'Offline', 'Unknown', 'OK', 'Updating', 'NeedsAttention'
     :type share_status: str or ~azure.mgmt.databoxedge.models.ShareStatus
     :param monitoring_status: Required. Current monitoring status of the
      share. Possible values include: 'Enabled', 'Disabled'
@@ -1981,6 +2062,8 @@ class StorageAccountCredential(ARMBaseModel):
     :param account_type: Required. Type of storage accessed on the storage
      account. Possible values include: 'GeneralPurposeStorage', 'BlobStorage'
     :type account_type: str or ~azure.mgmt.databoxedge.models.AccountType
+    :param storage_account_id: Id of the storage account.
+    :type storage_account_id: str
     """
 
     _validation = {
@@ -2003,6 +2086,7 @@ class StorageAccountCredential(ARMBaseModel):
         'ssl_status': {'key': 'properties.sslStatus', 'type': 'str'},
         'blob_domain_name': {'key': 'properties.blobDomainName', 'type': 'str'},
         'account_type': {'key': 'properties.accountType', 'type': 'str'},
+        'storage_account_id': {'key': 'properties.storageAccountId', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -2014,6 +2098,7 @@ class StorageAccountCredential(ARMBaseModel):
         self.ssl_status = kwargs.get('ssl_status', None)
         self.blob_domain_name = kwargs.get('blob_domain_name', None)
         self.account_type = kwargs.get('account_type', None)
+        self.storage_account_id = kwargs.get('storage_account_id', None)
 
 
 class SymmetricKey(Model):
