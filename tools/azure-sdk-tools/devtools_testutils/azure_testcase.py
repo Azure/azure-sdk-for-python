@@ -100,6 +100,24 @@ class AzureTestCase(ReplayableTest):
     def is_playback(self):
         return not self.is_live
 
+    def get_settings_value(self, key):
+        key_value = os.environ.get("AZURE_"+key, None)
+
+        if key_value and self._real_settings and getattr(self._real_settings, key) != key_value:
+            raise ValueError("You have both AZURE_{key} env variable and mgmt_settings_real.py for {key} to difference values".format(key=key))
+
+        if not key_value:
+            key_value = getattr(self.settings, key)
+        return key_value
+
+    def set_value_to_scrub(self, key, default_value):
+        if self.is_live:
+            value = self.get_settings_value(key)
+            self.scrubber.register_name_pair(value, default_value)
+            return value
+        else:
+            return default_value
+
 
     def setUp(self):
         # Every test uses a different resource group name calculated from its
@@ -130,9 +148,23 @@ class AzureTestCase(ReplayableTest):
                 **kwargs
             )
 
+        tenant_id = os.environ.get("AZURE_TENANT_ID", None)
+        client_id = os.environ.get("AZURE_CLIENT_ID", None)
+        secret = os.environ.get("AZURE_CLIENT_SECRET", None)
+
+        if tenant_id and client_id and secret and self.is_live:
+            from msrestazure.azure_active_directory import ServicePrincipalCredentials
+            credentials = ServicePrincipalCredentials(
+                tenant=tenant_id,
+                client_id=client_id,
+                secret=secret
+            )
+        else:
+            credentials = self.settings.get_credentials()
+
         # Real client creation
         client = client_class(
-            credentials=self.settings.get_credentials(),
+            credentials=credentials,
             **kwargs
         )
         if self.is_playback():
