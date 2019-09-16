@@ -40,6 +40,7 @@ DEFAULT_PERMISSIONS = Permissions(
     storage=[perm.value for perm in StoragePermissions],
 )
 DEFAULT_SKU = SkuName.premium.value
+CLIENT_OID = '00000000-0000-0000-0000-000000000000'
 
 
 class VaultClientPreparer(AzureMgmtPreparer):
@@ -77,6 +78,7 @@ class VaultClientPreparer(AzureMgmtPreparer):
         self.parameter_name = parameter_name
         self.creds_parameter = "credentials"
         self.parameter_name_for_location = "location"
+        self.client_oid = None
 
     def _get_resource_group(self, **kwargs):
         try:
@@ -89,13 +91,14 @@ class VaultClientPreparer(AzureMgmtPreparer):
             raise AzureTestError(template.format(ResourceGroupPreparer.__name__))
 
     def create_resource(self, name, **kwargs):
+        self.client_oid = self.test_class_instance.set_value_to_scrub('CLIENT_OID', CLIENT_OID)
         if self.is_live:
             # create a vault with the management client
             group = self._get_resource_group(**kwargs).name
             access_policies = [
                 AccessPolicyEntry(
                     tenant_id=self.test_class_instance.settings.TENANT_ID,
-                    object_id=self.test_class_instance.settings.CLIENT_OID,
+                    object_id=self.client_oid,
                     permissions=self.permissions,
                 )
             ]
