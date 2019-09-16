@@ -22,7 +22,7 @@ steps:
     displayName: 'Generate Python2 Applicable Namespace Packages'
     inputs:
       scriptPath: 'scripts/devops_tasks/build_packages.py'
-      arguments: '-d "$(Build.ArtifactStagingDirectory)" "*-nspkg" --service=${{parameters.ServiceDirectory}}'
+      arguments: '-d "$(Build.ArtifactStagingDirectory)" "${{ parameters.BuildTargetingString }}" --pkgfilter="nspkg" --service=${{parameters.ServiceDirectory}}'
 
   - task: UsePythonVersion@0
     displayName: 'Use Python $(PythonVersion)'
