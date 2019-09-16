@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import time
+import os
 
 from devtools_testutils import AzureMgmtTestCase
 
@@ -15,8 +16,10 @@ class KeyVaultTestCase(AzureMgmtTestCase):
     def tearDown(self):
         super(KeyVaultTestCase, self).tearDown()
         if self.is_live:
-            # write identifier to file
-            pass
+            dirname = os.path.dirname(os.path.abspath(__file__))
+            seed_filename = os.path.abspath(os.path.join(dirname, "seed.txt"))
+            with open(seed_filename, 'w') as f:
+                f.write(os.environ['RUN_IDENTIFIER'])
 
     def _poll_until_no_exception(self, fn, expected_exception, max_retries=20, retry_delay=3):
         """polling helper for live tests because some operations take an unpredictable amount of time to complete"""
