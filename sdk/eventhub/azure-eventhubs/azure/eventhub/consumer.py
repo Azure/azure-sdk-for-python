@@ -236,17 +236,7 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         timeout = timeout or self._client._config.receive_timeout  # pylint:disable=protected-access
         max_batch_size = max_batch_size or min(self._client._config.max_batch_size, self._prefetch)  # pylint:disable=protected-access
 
-        # Tracing code
-        span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
-        if span_impl_type:
-            child = span_impl_type(name="Azure.EventHubs.receive")
-            child.kind = SpanKind.CLIENT  # Should be PRODUCER
-
-            with child:
-                self._client._add_span_request_attributes(child)
-                return self._receive_with_retry(timeout=timeout, max_batch_size=max_batch_size)
-        else:
-            return self._receive_with_retry(timeout=timeout, max_batch_size=max_batch_size)
+        return self._receive_with_retry(timeout=timeout, max_batch_size=max_batch_size)
 
     def close(self, exception=None):
         # type:(Exception) -> None
