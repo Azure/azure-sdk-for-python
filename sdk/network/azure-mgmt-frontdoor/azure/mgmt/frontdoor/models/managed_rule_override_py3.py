@@ -27,6 +27,9 @@ class ManagedRuleOverride(Model):
     :param action: Describes the override action to be applied when rule
      matches. Possible values include: 'Allow', 'Block', 'Log', 'Redirect'
     :type action: str or ~azure.mgmt.frontdoor.models.ActionType
+    :param exclusions: Describes the exclusions that are applied to this
+     specific rule.
+    :type exclusions: list[~azure.mgmt.frontdoor.models.ManagedRuleExclusion]
     """
 
     _validation = {
@@ -37,10 +40,12 @@ class ManagedRuleOverride(Model):
         'rule_id': {'key': 'ruleId', 'type': 'str'},
         'enabled_state': {'key': 'enabledState', 'type': 'str'},
         'action': {'key': 'action', 'type': 'str'},
+        'exclusions': {'key': 'exclusions', 'type': '[ManagedRuleExclusion]'},
     }
 
-    def __init__(self, *, rule_id: str, enabled_state=None, action=None, **kwargs) -> None:
+    def __init__(self, *, rule_id: str, enabled_state=None, action=None, exclusions=None, **kwargs) -> None:
         super(ManagedRuleOverride, self).__init__(**kwargs)
         self.rule_id = rule_id
         self.enabled_state = enabled_state
         self.action = action
+        self.exclusions = exclusions
