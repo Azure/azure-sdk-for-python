@@ -15,14 +15,15 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class Operations(object):
-    """Operations operations.
+class PartnerTransfersTransfersOperations(object):
+    """PartnerTransfersTransfersOperations operations.
+
+    You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
     :param client: Client for service requests.
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: Version of the API to be used with the client request. The current version is 2018-03-01-preview. Constant value: "2018-03-01-preview".
     """
 
     models = models
@@ -32,34 +33,43 @@ class Operations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-03-01-preview"
 
         self.config = config
 
     def list(
-            self, custom_headers=None, raw=False, **operation_config):
-        """Lists all of the available billing REST API operations.
+            self, billing_account_name, billing_profile_name, customer_name, custom_headers=None, raw=False, **operation_config):
+        """Lists all transfer's details initiated from given invoice section.
 
+        :param billing_account_name: billing Account Id.
+        :type billing_account_name: str
+        :param billing_profile_name: Billing Profile Id.
+        :type billing_profile_name: str
+        :param customer_name: Customer name.
+        :type customer_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Operation
+        :return: An iterator like instance of TransferDetails
         :rtype:
-         ~azure.mgmt.billing.models.OperationPaged[~azure.mgmt.billing.models.Operation]
+         ~azure.mgmt.billing.models.TransferDetailsPaged[~azure.mgmt.billing.models.TransferDetails]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.billing.models.ErrorResponseException>`
         """
-        def internal_paging(next_link=None, raw=False):
-
+        def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']
+                path_format_arguments = {
+                    'billingAccountName': self._serialize.url("billing_account_name", billing_account_name, 'str'),
+                    'billingProfileName': self._serialize.url("billing_profile_name", billing_profile_name, 'str'),
+                    'customerName': self._serialize.url("customer_name", customer_name, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
-                query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
             else:
                 url = next_link
@@ -67,7 +77,7 @@ class Operations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+            header_parameters['Accept'] = 'application/json'
             if self.config.generate_client_request_id:
                 header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
             if custom_headers:
@@ -76,9 +86,13 @@ class Operations(object):
                 header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
             # Construct and send request
-            request = self._client.get(url, query_parameters)
-            response = self._client.send(
-                request, header_parameters, stream=False, **operation_config)
+            request = self._client.get(url, query_parameters, header_parameters)
+            return request
+
+        def internal_paging(next_link=None):
+            request = prepare_request(next_link)
+
+            response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
                 raise models.ErrorResponseException(self._deserialize, response)
@@ -86,12 +100,10 @@ class Operations(object):
             return response
 
         # Deserialize response
-        deserialized = models.OperationPaged(internal_paging, self._deserialize.dependencies)
-
+        header_dict = None
         if raw:
             header_dict = {}
-            client_raw_response = models.OperationPaged(internal_paging, self._deserialize.dependencies, header_dict)
-            return client_raw_response
+        deserialized = models.TransferDetailsPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/providers/Microsoft.Billing/operations'}
+    list.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/customers/{customerName}/transfers'}
