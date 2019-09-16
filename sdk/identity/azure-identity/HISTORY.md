@@ -1,5 +1,12 @@
 # Release History
 
+## 1.0.0b4
+### Fixes and improvements:
+- `UsernamePasswordCredential` correctly handles environment configuration with
+no tenant information (#7260)
+- MSAL's user realm discovery requests are sent through credential
+pipelines (#7260)
+
 ## 1.0.0b3 (2019-09-10)
 ### New features:
 - `SharedTokenCacheCredential` authenticates with tokens stored in a local

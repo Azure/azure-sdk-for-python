@@ -433,9 +433,10 @@ class UsernamePasswordCredential(PublicClientCredential):
 
         if not result:
             # cache miss -> request a new token
-            result = app.acquire_token_by_username_password(
-                username=self._username, password=self._password, scopes=scopes
-            )
+            with self._adapter:
+                result = app.acquire_token_by_username_password(
+                    username=self._username, password=self._password, scopes=scopes
+                )
 
         if "access_token" not in result:
             raise ClientAuthenticationError(message="authentication failed: {}".format(result.get("error_description")))
