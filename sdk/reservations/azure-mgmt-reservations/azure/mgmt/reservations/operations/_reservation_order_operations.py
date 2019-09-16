@@ -40,7 +40,7 @@ class ReservationOrderOperations(object):
 
         self.config = config
 
-    def calculate_price(
+    def calculate(
             self, body, custom_headers=None, raw=False, **operation_config):
         """Calculate price for a `ReservationOrder`.
 
@@ -60,7 +60,7 @@ class ReservationOrderOperations(object):
          :class:`ErrorException<azure.mgmt.reservations.models.ErrorException>`
         """
         # Construct URL
-        url = self.calculate_price.metadata['url']
+        url = self.calculate.metadata['url']
 
         # Construct parameters
         query_parameters = {}
@@ -96,7 +96,7 @@ class ReservationOrderOperations(object):
             return client_raw_response
 
         return deserialized
-    calculate_price.metadata = {'url': '/providers/Microsoft.Capacity/calculatePrice'}
+    calculate.metadata = {'url': '/providers/Microsoft.Capacity/calculatePrice'}
 
     def list(
             self, custom_headers=None, raw=False, **operation_config):
