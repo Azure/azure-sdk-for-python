@@ -292,7 +292,7 @@ class DedicatedCloudNodesOperations(object):
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(dedicated_cloud_node_request, 'CreateDedicatedCloudNodeRequest')
+        body_content = self._serialize.body(dedicated_cloud_node_request, 'DedicatedCloudNode')
 
         # Construct and send request
         request = self._client.put(url, query_parameters, header_parameters, body_content)
@@ -332,7 +332,7 @@ class DedicatedCloudNodesOperations(object):
         :param dedicated_cloud_node_request: Create Dedicated Cloud Node
          request
         :type dedicated_cloud_node_request:
-         ~azure.mgmt.vmwarecloudsimple.models.CreateDedicatedCloudNodeRequest
+         ~azure.mgmt.vmwarecloudsimple.models.DedicatedCloudNode
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
