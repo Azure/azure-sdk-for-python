@@ -26,7 +26,7 @@ class IotHubOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The version of the API. Constant value: "2019-03-22".
+    :ivar api_version: The version of the API. Constant value: "2019-07-01-preview".
     """
 
     models = models
@@ -36,7 +36,7 @@ class IotHubOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2019-03-22"
+        self.api_version = "2019-07-01-preview"
 
         self.config = config
 
@@ -84,15 +84,13 @@ class IotHubOperations(object):
 
     def manual_failover(
             self, iot_hub_name, resource_group_name, failover_region, custom_headers=None, raw=False, polling=True, **operation_config):
-        """Manually initiate a failover for the IoT Hub to its secondary region.
+        """Manual Failover Fail over.
 
-        Manually initiate a failover for the IoT Hub to its secondary region.
-        To learn more, see https://aka.ms/manualfailover.
+        Perform manual fail over of given hub.
 
-        :param iot_hub_name: Name of the IoT hub to failover
+        :param iot_hub_name: IotHub to fail over
         :type iot_hub_name: str
-        :param resource_group_name: Name of the resource group containing the
-         IoT hub resource
+        :param resource_group_name: resource group which Iot Hub belongs to
         :type resource_group_name: str
         :param failover_region: Region the hub will be failed over to
         :type failover_region: str
