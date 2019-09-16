@@ -224,3 +224,17 @@ class OpenCensusSpan(object):
         :type tracer: :class: opencensus.trace.Tracer
         """
         return execution_context.set_opencensus_tracer(tracer)
+
+    @classmethod
+    def with_current_context(cls, _):
+        # type: (Callable) -> Callable
+        """Passes the current spans to the new context the function will be run in.
+
+        :param func: The function that will be run in the new context
+        :return: The target the pass in instead of the function
+        """
+        try:
+            import opencensus.ext.threading  # pylint: disable=unused-import
+        except ImportError:
+            raise ValueError("In order to trace threads with Opencensus, please install opencensus-ext-threading")
+        # Noop, once opencensus-ext-threading is installed threads get context for free.

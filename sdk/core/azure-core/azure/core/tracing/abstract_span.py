@@ -168,3 +168,12 @@ class AbstractSpan(Protocol):
         """
         Set the given tracer as the current tracer in the execution context.
         """
+
+    @classmethod
+    def with_current_context(cls, func):
+        # type: (Callable) -> Callable
+        """Passes the current spans to the new context the function will be run in.
+
+        :param func: The function that will be run in the new context
+        :return: The target the pass in instead of the function
+        """

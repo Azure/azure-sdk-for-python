@@ -80,3 +80,17 @@ def change_context(span):
             yield
         finally:
             span_impl_type.set_current_span(original_span)
+
+
+def with_current_context(func):
+    # type: (Callable) -> Any
+    """Passes the current spans to the new context the function will be run in.
+
+    :param func: The function that will be run in the new context
+    :return: The target the pass in instead of the function
+    """
+    span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
+    if span_impl_type is not None:
+        return func
+
+    return span_impl_type.with_current_context(func)
