@@ -951,6 +951,100 @@ class ContainerClient(StorageAccountHostsMixin):
             timeout=timeout,
             **kwargs)
 
+    @distributed_trace
+    def delete_blobs(
+            self, *blobs,  # type: Union[str, BlobProperties]
+            delete_snapshots=None,  # type: Optional[str]
+            lease=None,  # type: Optional[Union[str, LeaseClient]]
+            timeout=None,  # type: Optional[int]
+            **kwargs
+        ):
+        # type: (...) -> None
+        """Marks the specified blobs or snapshots for deletion.
+
+        The blob is later deleted during garbage collection.
+        Note that in order to delete a blob, you must delete all of its
+        snapshots. You can delete both at the same time with the Delete
+        Blob operation.
+
+        If a delete retention policy is enabled for the service, then this operation soft deletes the blob or snapshot
+        and retains the blob or snapshot for specified number of days.
+        After specified number of days, blob's data is removed from the service during garbage collection.
+        Soft deleted blob or snapshot is accessible through List Blobs API specifying `include="deleted"` option.
+        Soft-deleted blob or snapshot can be restored using Undelete API.
+
+        :param blob: The blob with which to interact. If specified, this value will override
+         a blob value specified in the blob URL.
+        :type blob: str or ~azure.storage.blob.models.BlobProperties
+        :param str delete_snapshots:
+            Required if the blob has associated snapshots. Values include:
+             - "only": Deletes only the blobs snapshots.
+             - "include": Deletes the blob along with all snapshots.
+        :param lease:
+            Required if the blob has an active lease. Value can be a Lease object
+            or the lease ID as a string.
+        :type lease: ~azure.storage.blob.lease.LeaseClient or str
+        :param str delete_snapshots:
+            Required if the blob has associated snapshots. Values include:
+             - "only": Deletes only the blobs snapshots.
+             - "include": Deletes the blob along with all snapshots.
+        :param datetime if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only
+            if the resource has been modified since the specified time.
+        :param datetime if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the resource has not been modified since the specified date/time.
+        :param str if_match:
+            An ETag value, or the wildcard character (*). Specify this header to perform
+            the operation only if the resource's ETag matches the value specified.
+        :param str if_none_match:
+            An ETag value, or the wildcard character (*). Specify this header
+            to perform the operation only if the resource's ETag does not match
+            the value specified. Specify the wildcard character (*) to perform
+            the operation only if the resource does not exist, and fail the
+            operation if it does exist.
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
+        :rtype: None
+        """
+        from azure.core.pipeline.transport import HttpRequest, HttpResponse, RequestsTransport
+        from azure.core.exceptions import map_error
+        reqs = []
+        for blob in blobs:
+            reqs.append(HttpRequest("DELETE", blob))
+
+        request = self._client._client.post(
+            url='https://{}/?comp=batch'.format(self.primary_hostname),
+            headers={
+                'x-ms-version': "2019-02-02"
+            }
+            #params={'comp': 'batch'}
+        )
+        request.set_multipart_mixed(
+            *reqs,
+            policies=[]
+        )
+
+        response = self._pipeline.run(
+            request,
+        )
+        response = response.http_response
+
+        try:
+            if response.status_code not in [200]:
+                from ._generated import models
+                error_map = kwargs.pop('error_map', None)
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise models.StorageErrorException(response, self._client.container._deserialize)
+        except StorageErrorException as error:
+            process_storage_error(error)
+
     def get_blob_client(
             self, blob,  # type: Union[str, BlobProperties]
             snapshot=None  # type: str

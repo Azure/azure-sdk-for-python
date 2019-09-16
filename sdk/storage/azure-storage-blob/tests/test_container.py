@@ -962,6 +962,26 @@ class StorageContainerTest(StorageTestCase):
         self.assertNamedItemInContainer(resp, 'blob4')
 
     @record
+    def test_delete_blobs_simple(self):
+        # Arrange
+        container = self._create_container()
+        data = b'hello world'
+
+        try:
+            container.get_blob_client('blob1').upload_blob(data)
+            container.get_blob_client('blob2').upload_blob(data)
+            container.get_blob_client('blob3').upload_blob(data)
+        except:
+            pass
+
+        # Act
+        container.delete_blobs(
+            'blob1',
+            'blob2',
+            'blob3',
+        )
+
+    @record
     def test_walk_blobs_with_delimiter(self):
         # Arrange
         container = self._create_container()
