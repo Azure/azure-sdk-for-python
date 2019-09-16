@@ -47,7 +47,7 @@ class MgmtMSIComputeTest(AzureMgmtTestCase):
         )
 
     @ResourceGroupPreparer()
-    def test_create_msi_enabled_vm(self, resource_group, location):
+    def _test_create_msi_enabled_vm(self, resource_group, location):
         virtual_machines_models = self.compute_client.virtual_machines.models
 
         names = self.get_resource_names('pyvmir')
