@@ -114,6 +114,7 @@ class AzureTestCase(ReplayableTest):
         if self.is_live:
             value = self.get_settings_value(key)
             self.scrubber.register_name_pair(value, default_value)
+            return value
         else:
             return default_value
 
