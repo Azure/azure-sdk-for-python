@@ -277,6 +277,7 @@ class MgmtManagedDisksTest(AzureMgmtTestCase):
                         'os_state': "Generalized",
                         'blob_uri': self.settings.LINUX_OS_VHD,  # 'https://mystorageaccount.blob.core.windows.net/inputtestdatadonotdelete/ubuntu.vhd'
                         'caching': "ReadWrite",
+                        'hyper_vgeneration': "V1"
                     }
                 }
             }
