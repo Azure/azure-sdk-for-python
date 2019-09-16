@@ -139,12 +139,361 @@ class AvailableOperationDisplayPropertyServiceSpecificationMetricsList(Model):
         self.metric_specifications = metric_specifications
 
 
+class BaseDedicatedCloudNode(Model):
+    """Dedicated cloud node model.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id:
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/dedicatedCloudNodes/{dedicatedCloudNodeName}
+    :vartype id: str
+    :param location: Required. Azure region
+    :type location: str
+    :ivar name: {dedicatedCloudNodeName}
+    :vartype name: str
+    :param sku: Dedicated Cloud Nodes SKU
+    :type sku: ~azure.mgmt.vmwarecloudsimple.models.Sku
+    :param tags: Dedicated Cloud Nodes tags
+    :type tags: dict[str, str]
+    :ivar type: {resourceProviderNamespace}/{resourceType}
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'location': {'required': True},
+        'name': {'readonly': True, 'pattern': r'^[-a-zA-Z0-9]+$'},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(self, *, location: str, sku=None, tags=None, **kwargs) -> None:
+        super(BaseDedicatedCloudNode, self).__init__(**kwargs)
+        self.id = None
+        self.location = location
+        self.name = None
+        self.sku = sku
+        self.tags = tags
+        self.type = None
+
+
 class CloudError(Model):
     """CloudError.
     """
 
     _attribute_map = {
     }
+
+
+class CreateDedicatedCloudNodeRequest(BaseDedicatedCloudNode):
+    """CreateDedicatedCloudNodeRequest.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id:
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/dedicatedCloudNodes/{dedicatedCloudNodeName}
+    :vartype id: str
+    :param location: Required. Azure region
+    :type location: str
+    :ivar name: {dedicatedCloudNodeName}
+    :vartype name: str
+    :param sku: Dedicated Cloud Nodes SKU
+    :type sku: ~azure.mgmt.vmwarecloudsimple.models.Sku
+    :param tags: Dedicated Cloud Nodes tags
+    :type tags: dict[str, str]
+    :ivar type: {resourceProviderNamespace}/{resourceType}
+    :vartype type: str
+    :param availability_zone_id: Required. Availability Zone id, e.g. "az1"
+    :type availability_zone_id: str
+    :ivar availability_zone_name: Availability Zone name, e.g. "Availability
+     Zone 1"
+    :vartype availability_zone_name: str
+    :ivar cloud_rack_name: VMWare Cloud Rack Name
+    :vartype cloud_rack_name: str
+    :ivar created: date time the resource was created
+    :vartype created: object
+    :param placement_group_id: Required. Placement Group id, e.g. "n1"
+    :type placement_group_id: str
+    :ivar placement_group_name: Placement Name, e.g. "Placement Group 1"
+    :vartype placement_group_name: str
+    :ivar private_cloud_id: Private Cloud Id
+    :vartype private_cloud_id: str
+    :ivar private_cloud_name: Resource Pool Name
+    :vartype private_cloud_name: str
+    :ivar provisioning_state: The provisioning status of the resource
+    :vartype provisioning_state: str
+    :param purchase_id: Required. purchase id
+    :type purchase_id: str
+    :param create_dedicated_cloud_node_request_id: Required. SKU's id
+    :type create_dedicated_cloud_node_request_id: str
+    :param create_dedicated_cloud_node_request_name: Required. SKU's name
+    :type create_dedicated_cloud_node_request_name: str
+    :ivar status: Node status, indicates is private cloud set up on this node
+     or not. Possible values include: 'unused', 'used'
+    :vartype status: str or ~azure.mgmt.vmwarecloudsimple.models.NodeStatus
+    :ivar vmware_cluster_name: VMWare Cluster Name
+    :vartype vmware_cluster_name: str
+    :param nodes_count: Required. count of nodes to create
+    :type nodes_count: int
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'location': {'required': True},
+        'name': {'readonly': True, 'pattern': r'^[-a-zA-Z0-9]+$'},
+        'type': {'readonly': True},
+        'availability_zone_id': {'required': True},
+        'availability_zone_name': {'readonly': True},
+        'cloud_rack_name': {'readonly': True},
+        'created': {'readonly': True},
+        'placement_group_id': {'required': True},
+        'placement_group_name': {'readonly': True},
+        'private_cloud_id': {'readonly': True},
+        'private_cloud_name': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+        'purchase_id': {'required': True},
+        'create_dedicated_cloud_node_request_id': {'required': True},
+        'create_dedicated_cloud_node_request_name': {'required': True},
+        'status': {'readonly': True},
+        'vmware_cluster_name': {'readonly': True},
+        'nodes_count': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'availability_zone_id': {'key': 'properties.availabilityZoneId', 'type': 'str'},
+        'availability_zone_name': {'key': 'properties.availabilityZoneName', 'type': 'str'},
+        'cloud_rack_name': {'key': 'properties.cloudRackName', 'type': 'str'},
+        'created': {'key': 'properties.created', 'type': 'object'},
+        'placement_group_id': {'key': 'properties.placementGroupId', 'type': 'str'},
+        'placement_group_name': {'key': 'properties.placementGroupName', 'type': 'str'},
+        'private_cloud_id': {'key': 'properties.privateCloudId', 'type': 'str'},
+        'private_cloud_name': {'key': 'properties.privateCloudName', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'purchase_id': {'key': 'properties.purchaseId', 'type': 'str'},
+        'create_dedicated_cloud_node_request_id': {'key': 'properties.skuDescription.id', 'type': 'str'},
+        'create_dedicated_cloud_node_request_name': {'key': 'properties.skuDescription.name', 'type': 'str'},
+        'status': {'key': 'properties.status', 'type': 'NodeStatus'},
+        'vmware_cluster_name': {'key': 'properties.vmwareClusterName', 'type': 'str'},
+        'nodes_count': {'key': 'properties.nodesCount', 'type': 'int'},
+    }
+
+    def __init__(self, *, location: str, availability_zone_id: str, placement_group_id: str, purchase_id: str, create_dedicated_cloud_node_request_id: str, create_dedicated_cloud_node_request_name: str, nodes_count: int, sku=None, tags=None, **kwargs) -> None:
+        super(CreateDedicatedCloudNodeRequest, self).__init__(location=location, sku=sku, tags=tags, **kwargs)
+        self.availability_zone_id = availability_zone_id
+        self.availability_zone_name = None
+        self.cloud_rack_name = None
+        self.created = None
+        self.placement_group_id = placement_group_id
+        self.placement_group_name = None
+        self.private_cloud_id = None
+        self.private_cloud_name = None
+        self.provisioning_state = None
+        self.purchase_id = purchase_id
+        self.create_dedicated_cloud_node_request_id = create_dedicated_cloud_node_request_id
+        self.create_dedicated_cloud_node_request_name = create_dedicated_cloud_node_request_name
+        self.status = None
+        self.vmware_cluster_name = None
+        self.nodes_count = nodes_count
+
+
+class CSRPError(Model):
+    """General error model.
+
+    :param error: Error's body
+    :type error: ~azure.mgmt.vmwarecloudsimple.models.CSRPErrorBody
+    """
+
+    _attribute_map = {
+        'error': {'key': 'error', 'type': 'CSRPErrorBody'},
+    }
+
+    def __init__(self, *, error=None, **kwargs) -> None:
+        super(CSRPError, self).__init__(**kwargs)
+        self.error = error
+
+
+class CSRPErrorException(HttpOperationError):
+    """Server responsed with exception of type: 'CSRPError'.
+
+    :param deserialize: A deserializer
+    :param response: Server response to be deserialized.
+    """
+
+    def __init__(self, deserialize, response, *args):
+
+        super(CSRPErrorException, self).__init__(deserialize, response, 'CSRPError', *args)
+
+
+class CSRPErrorBody(Model):
+    """Error properties.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar code: Error's code
+    :vartype code: str
+    :ivar details: Error's details
+    :vartype details: list[~azure.mgmt.vmwarecloudsimple.models.CSRPErrorBody]
+    :ivar message: Error's message
+    :vartype message: str
+    :param target: Error's target
+    :type target: str
+    """
+
+    _validation = {
+        'code': {'readonly': True},
+        'details': {'readonly': True},
+        'message': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'details': {'key': 'details', 'type': '[CSRPErrorBody]'},
+        'message': {'key': 'message', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+    }
+
+    def __init__(self, *, target: str=None, **kwargs) -> None:
+        super(CSRPErrorBody, self).__init__(**kwargs)
+        self.code = None
+        self.details = None
+        self.message = None
+        self.target = target
+
+
+class DedicatedCloudNode(BaseDedicatedCloudNode):
+    """DedicatedCloudNode.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id:
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/dedicatedCloudNodes/{dedicatedCloudNodeName}
+    :vartype id: str
+    :param location: Required. Azure region
+    :type location: str
+    :ivar name: {dedicatedCloudNodeName}
+    :vartype name: str
+    :param sku: Dedicated Cloud Nodes SKU
+    :type sku: ~azure.mgmt.vmwarecloudsimple.models.Sku
+    :param tags: Dedicated Cloud Nodes tags
+    :type tags: dict[str, str]
+    :ivar type: {resourceProviderNamespace}/{resourceType}
+    :vartype type: str
+    :param availability_zone_id: Required. Availability Zone id, e.g. "az1"
+    :type availability_zone_id: str
+    :ivar availability_zone_name: Availability Zone name, e.g. "Availability
+     Zone 1"
+    :vartype availability_zone_name: str
+    :ivar cloud_rack_name: VMWare Cloud Rack Name
+    :vartype cloud_rack_name: str
+    :ivar created: date time the resource was created
+    :vartype created: object
+    :param placement_group_id: Required. Placement Group id, e.g. "n1"
+    :type placement_group_id: str
+    :ivar placement_group_name: Placement Name, e.g. "Placement Group 1"
+    :vartype placement_group_name: str
+    :ivar private_cloud_id: Private Cloud Id
+    :vartype private_cloud_id: str
+    :ivar private_cloud_name: Resource Pool Name
+    :vartype private_cloud_name: str
+    :ivar provisioning_state: The provisioning status of the resource
+    :vartype provisioning_state: str
+    :param purchase_id: Required. purchase id
+    :type purchase_id: str
+    :param dedicated_cloud_node_id: Required. SKU's id
+    :type dedicated_cloud_node_id: str
+    :param dedicated_cloud_node_name: Required. SKU's name
+    :type dedicated_cloud_node_name: str
+    :ivar status: Node status, indicates is private cloud set up on this node
+     or not. Possible values include: 'unused', 'used'
+    :vartype status: str or ~azure.mgmt.vmwarecloudsimple.models.NodeStatus
+    :ivar vmware_cluster_name: VMWare Cluster Name
+    :vartype vmware_cluster_name: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'location': {'required': True},
+        'name': {'readonly': True, 'pattern': r'^[-a-zA-Z0-9]+$'},
+        'type': {'readonly': True},
+        'availability_zone_id': {'required': True},
+        'availability_zone_name': {'readonly': True},
+        'cloud_rack_name': {'readonly': True},
+        'created': {'readonly': True},
+        'placement_group_id': {'required': True},
+        'placement_group_name': {'readonly': True},
+        'private_cloud_id': {'readonly': True},
+        'private_cloud_name': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+        'purchase_id': {'required': True},
+        'dedicated_cloud_node_id': {'required': True},
+        'dedicated_cloud_node_name': {'required': True},
+        'status': {'readonly': True},
+        'vmware_cluster_name': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'sku': {'key': 'sku', 'type': 'Sku'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'availability_zone_id': {'key': 'properties.availabilityZoneId', 'type': 'str'},
+        'availability_zone_name': {'key': 'properties.availabilityZoneName', 'type': 'str'},
+        'cloud_rack_name': {'key': 'properties.cloudRackName', 'type': 'str'},
+        'created': {'key': 'properties.created', 'type': 'object'},
+        'placement_group_id': {'key': 'properties.placementGroupId', 'type': 'str'},
+        'placement_group_name': {'key': 'properties.placementGroupName', 'type': 'str'},
+        'private_cloud_id': {'key': 'properties.privateCloudId', 'type': 'str'},
+        'private_cloud_name': {'key': 'properties.privateCloudName', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'purchase_id': {'key': 'properties.purchaseId', 'type': 'str'},
+        'dedicated_cloud_node_id': {'key': 'properties.skuDescription.id', 'type': 'str'},
+        'dedicated_cloud_node_name': {'key': 'properties.skuDescription.name', 'type': 'str'},
+        'status': {'key': 'properties.status', 'type': 'NodeStatus'},
+        'vmware_cluster_name': {'key': 'properties.vmwareClusterName', 'type': 'str'},
+    }
+
+    def __init__(self, *, location: str, availability_zone_id: str, placement_group_id: str, purchase_id: str, dedicated_cloud_node_id: str, dedicated_cloud_node_name: str, sku=None, tags=None, **kwargs) -> None:
+        super(DedicatedCloudNode, self).__init__(location=location, sku=sku, tags=tags, **kwargs)
+        self.availability_zone_id = availability_zone_id
+        self.availability_zone_name = None
+        self.cloud_rack_name = None
+        self.created = None
+        self.placement_group_id = placement_group_id
+        self.placement_group_name = None
+        self.private_cloud_id = None
+        self.private_cloud_name = None
+        self.provisioning_state = None
+        self.purchase_id = purchase_id
+        self.dedicated_cloud_node_id = dedicated_cloud_node_id
+        self.dedicated_cloud_node_name = dedicated_cloud_node_name
+        self.status = None
+        self.vmware_cluster_name = None
 
 
 class DedicatedCloudNodeProperties(Model):
@@ -237,376 +586,6 @@ class DedicatedCloudNodeProperties(Model):
         self.name = name
         self.status = None
         self.vmware_cluster_name = None
-
-
-class CreateDedicatedCloudNodeProperties(DedicatedCloudNodeProperties):
-    """CreateDedicatedCloudNodeProperties.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param availability_zone_id: Required. Availability Zone id, e.g. "az1"
-    :type availability_zone_id: str
-    :ivar availability_zone_name: Availability Zone name, e.g. "Availability
-     Zone 1"
-    :vartype availability_zone_name: str
-    :ivar cloud_rack_name: VMWare Cloud Rack Name
-    :vartype cloud_rack_name: str
-    :ivar created: date time the resource was created
-    :vartype created: object
-    :param placement_group_id: Required. Placement Group id, e.g. "n1"
-    :type placement_group_id: str
-    :ivar placement_group_name: Placement Name, e.g. "Placement Group 1"
-    :vartype placement_group_name: str
-    :ivar private_cloud_id: Private Cloud Id
-    :vartype private_cloud_id: str
-    :ivar private_cloud_name: Resource Pool Name
-    :vartype private_cloud_name: str
-    :ivar provisioning_state: The provisioning status of the resource
-    :vartype provisioning_state: str
-    :param purchase_id: Required. purchase id
-    :type purchase_id: str
-    :param id: Required. SKU's id
-    :type id: str
-    :param name: Required. SKU's name
-    :type name: str
-    :ivar status: Node status, indicates is private cloud set up on this node
-     or not. Possible values include: 'unused', 'used'
-    :vartype status: str or ~azure.mgmt.vmwarecloudsimple.models.NodeStatus
-    :ivar vmware_cluster_name: VMWare Cluster Name
-    :vartype vmware_cluster_name: str
-    :param nodes_count: Required. count of nodes to create
-    :type nodes_count: int
-    """
-
-    _validation = {
-        'availability_zone_id': {'required': True},
-        'availability_zone_name': {'readonly': True},
-        'cloud_rack_name': {'readonly': True},
-        'created': {'readonly': True},
-        'placement_group_id': {'required': True},
-        'placement_group_name': {'readonly': True},
-        'private_cloud_id': {'readonly': True},
-        'private_cloud_name': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'purchase_id': {'required': True},
-        'id': {'required': True},
-        'name': {'required': True},
-        'status': {'readonly': True},
-        'vmware_cluster_name': {'readonly': True},
-        'nodes_count': {'required': True},
-    }
-
-    _attribute_map = {
-        'availability_zone_id': {'key': 'availabilityZoneId', 'type': 'str'},
-        'availability_zone_name': {'key': 'availabilityZoneName', 'type': 'str'},
-        'cloud_rack_name': {'key': 'cloudRackName', 'type': 'str'},
-        'created': {'key': 'created', 'type': 'object'},
-        'placement_group_id': {'key': 'placementGroupId', 'type': 'str'},
-        'placement_group_name': {'key': 'placementGroupName', 'type': 'str'},
-        'private_cloud_id': {'key': 'privateCloudId', 'type': 'str'},
-        'private_cloud_name': {'key': 'privateCloudName', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'purchase_id': {'key': 'purchaseId', 'type': 'str'},
-        'id': {'key': 'skuDescription.id', 'type': 'str'},
-        'name': {'key': 'skuDescription.name', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'NodeStatus'},
-        'vmware_cluster_name': {'key': 'vmwareClusterName', 'type': 'str'},
-        'nodes_count': {'key': 'nodesCount', 'type': 'int'},
-    }
-
-    def __init__(self, *, availability_zone_id: str, placement_group_id: str, purchase_id: str, id: str, name: str, nodes_count: int, **kwargs) -> None:
-        super(CreateDedicatedCloudNodeProperties, self).__init__(availability_zone_id=availability_zone_id, placement_group_id=placement_group_id, purchase_id=purchase_id, id=id, name=name, **kwargs)
-        self.nodes_count = nodes_count
-
-
-class DedicatedCloudNode(Model):
-    """Dedicated cloud node model.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id:
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/dedicatedCloudNodes/{dedicatedCloudNodeName}
-    :vartype id: str
-    :param location: Required. Azure region
-    :type location: str
-    :ivar name: {dedicatedCloudNodeName}
-    :vartype name: str
-    :param availability_zone_id: Required. Availability Zone id, e.g. "az1"
-    :type availability_zone_id: str
-    :ivar availability_zone_name: Availability Zone name, e.g. "Availability
-     Zone 1"
-    :vartype availability_zone_name: str
-    :ivar cloud_rack_name: VMWare Cloud Rack Name
-    :vartype cloud_rack_name: str
-    :ivar created: date time the resource was created
-    :vartype created: object
-    :param placement_group_id: Required. Placement Group id, e.g. "n1"
-    :type placement_group_id: str
-    :ivar placement_group_name: Placement Name, e.g. "Placement Group 1"
-    :vartype placement_group_name: str
-    :ivar private_cloud_id: Private Cloud Id
-    :vartype private_cloud_id: str
-    :ivar private_cloud_name: Resource Pool Name
-    :vartype private_cloud_name: str
-    :ivar provisioning_state: The provisioning status of the resource
-    :vartype provisioning_state: str
-    :param purchase_id: Required. purchase id
-    :type purchase_id: str
-    :param id1: Required. SKU's id
-    :type id1: str
-    :param name1: Required. SKU's name
-    :type name1: str
-    :ivar status: Node status, indicates is private cloud set up on this node
-     or not. Possible values include: 'unused', 'used'
-    :vartype status: str or ~azure.mgmt.vmwarecloudsimple.models.NodeStatus
-    :ivar vmware_cluster_name: VMWare Cluster Name
-    :vartype vmware_cluster_name: str
-    :param sku: Dedicated Cloud Nodes SKU
-    :type sku: ~azure.mgmt.vmwarecloudsimple.models.Sku
-    :param tags: Dedicated Cloud Nodes tags
-    :type tags: dict[str, str]
-    :ivar type: {resourceProviderNamespace}/{resourceType}
-    :vartype type: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'location': {'required': True},
-        'name': {'readonly': True, 'pattern': r'^[-a-zA-Z0-9]+$'},
-        'availability_zone_id': {'required': True},
-        'availability_zone_name': {'readonly': True},
-        'cloud_rack_name': {'readonly': True},
-        'created': {'readonly': True},
-        'placement_group_id': {'required': True},
-        'placement_group_name': {'readonly': True},
-        'private_cloud_id': {'readonly': True},
-        'private_cloud_name': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'purchase_id': {'required': True},
-        'id1': {'required': True},
-        'name1': {'required': True},
-        'status': {'readonly': True},
-        'vmware_cluster_name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'availability_zone_id': {'key': 'properties.availabilityZoneId', 'type': 'str'},
-        'availability_zone_name': {'key': 'properties.availabilityZoneName', 'type': 'str'},
-        'cloud_rack_name': {'key': 'properties.cloudRackName', 'type': 'str'},
-        'created': {'key': 'properties.created', 'type': 'object'},
-        'placement_group_id': {'key': 'properties.placementGroupId', 'type': 'str'},
-        'placement_group_name': {'key': 'properties.placementGroupName', 'type': 'str'},
-        'private_cloud_id': {'key': 'properties.privateCloudId', 'type': 'str'},
-        'private_cloud_name': {'key': 'properties.privateCloudName', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'purchase_id': {'key': 'properties.purchaseId', 'type': 'str'},
-        'id1': {'key': 'properties.skuDescription.id', 'type': 'str'},
-        'name1': {'key': 'properties.skuDescription.name', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'NodeStatus'},
-        'vmware_cluster_name': {'key': 'properties.vmwareClusterName', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(self, *, location: str, availability_zone_id: str, placement_group_id: str, purchase_id: str, id1: str, name1: str, sku=None, tags=None, **kwargs) -> None:
-        super(DedicatedCloudNode, self).__init__(**kwargs)
-        self.id = None
-        self.location = location
-        self.name = None
-        self.availability_zone_id = availability_zone_id
-        self.availability_zone_name = None
-        self.cloud_rack_name = None
-        self.created = None
-        self.placement_group_id = placement_group_id
-        self.placement_group_name = None
-        self.private_cloud_id = None
-        self.private_cloud_name = None
-        self.provisioning_state = None
-        self.purchase_id = purchase_id
-        self.id1 = id1
-        self.name1 = name1
-        self.status = None
-        self.vmware_cluster_name = None
-        self.sku = sku
-        self.tags = tags
-        self.type = None
-
-
-class CreateDedicatedCloudNodeRequest(DedicatedCloudNode):
-    """CreateDedicatedCloudNodeRequest.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id:
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/dedicatedCloudNodes/{dedicatedCloudNodeName}
-    :vartype id: str
-    :param location: Required. Azure region
-    :type location: str
-    :ivar name: {dedicatedCloudNodeName}
-    :vartype name: str
-    :param availability_zone_id: Required. Availability Zone id, e.g. "az1"
-    :type availability_zone_id: str
-    :ivar availability_zone_name: Availability Zone name, e.g. "Availability
-     Zone 1"
-    :vartype availability_zone_name: str
-    :ivar cloud_rack_name: VMWare Cloud Rack Name
-    :vartype cloud_rack_name: str
-    :ivar created: date time the resource was created
-    :vartype created: object
-    :param placement_group_id: Required. Placement Group id, e.g. "n1"
-    :type placement_group_id: str
-    :ivar placement_group_name: Placement Name, e.g. "Placement Group 1"
-    :vartype placement_group_name: str
-    :ivar private_cloud_id: Private Cloud Id
-    :vartype private_cloud_id: str
-    :ivar private_cloud_name: Resource Pool Name
-    :vartype private_cloud_name: str
-    :ivar provisioning_state: The provisioning status of the resource
-    :vartype provisioning_state: str
-    :param purchase_id: Required. purchase id
-    :type purchase_id: str
-    :param id1: Required. SKU's id
-    :type id1: str
-    :param name1: Required. SKU's name
-    :type name1: str
-    :ivar status: Node status, indicates is private cloud set up on this node
-     or not. Possible values include: 'unused', 'used'
-    :vartype status: str or ~azure.mgmt.vmwarecloudsimple.models.NodeStatus
-    :ivar vmware_cluster_name: VMWare Cluster Name
-    :vartype vmware_cluster_name: str
-    :param sku: Dedicated Cloud Nodes SKU
-    :type sku: ~azure.mgmt.vmwarecloudsimple.models.Sku
-    :param tags: Dedicated Cloud Nodes tags
-    :type tags: dict[str, str]
-    :ivar type: {resourceProviderNamespace}/{resourceType}
-    :vartype type: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'location': {'required': True},
-        'name': {'readonly': True, 'pattern': r'^[-a-zA-Z0-9]+$'},
-        'availability_zone_id': {'required': True},
-        'availability_zone_name': {'readonly': True},
-        'cloud_rack_name': {'readonly': True},
-        'created': {'readonly': True},
-        'placement_group_id': {'required': True},
-        'placement_group_name': {'readonly': True},
-        'private_cloud_id': {'readonly': True},
-        'private_cloud_name': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'purchase_id': {'required': True},
-        'id1': {'required': True},
-        'name1': {'required': True},
-        'status': {'readonly': True},
-        'vmware_cluster_name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'availability_zone_id': {'key': 'properties.availabilityZoneId', 'type': 'str'},
-        'availability_zone_name': {'key': 'properties.availabilityZoneName', 'type': 'str'},
-        'cloud_rack_name': {'key': 'properties.cloudRackName', 'type': 'str'},
-        'created': {'key': 'properties.created', 'type': 'object'},
-        'placement_group_id': {'key': 'properties.placementGroupId', 'type': 'str'},
-        'placement_group_name': {'key': 'properties.placementGroupName', 'type': 'str'},
-        'private_cloud_id': {'key': 'properties.privateCloudId', 'type': 'str'},
-        'private_cloud_name': {'key': 'properties.privateCloudName', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'purchase_id': {'key': 'properties.purchaseId', 'type': 'str'},
-        'id1': {'key': 'properties.skuDescription.id', 'type': 'str'},
-        'name1': {'key': 'properties.skuDescription.name', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'NodeStatus'},
-        'vmware_cluster_name': {'key': 'properties.vmwareClusterName', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(self, *, location: str, availability_zone_id: str, placement_group_id: str, purchase_id: str, id1: str, name1: str, sku=None, tags=None, **kwargs) -> None:
-        super(CreateDedicatedCloudNodeRequest, self).__init__(location=location, availability_zone_id=availability_zone_id, placement_group_id=placement_group_id, purchase_id=purchase_id, id1=id1, name1=name1, sku=sku, tags=tags, **kwargs)
-
-
-class CSRPError(Model):
-    """General error model.
-
-    :param error: Error's body
-    :type error: ~azure.mgmt.vmwarecloudsimple.models.CSRPErrorBody
-    """
-
-    _attribute_map = {
-        'error': {'key': 'error', 'type': 'CSRPErrorBody'},
-    }
-
-    def __init__(self, *, error=None, **kwargs) -> None:
-        super(CSRPError, self).__init__(**kwargs)
-        self.error = error
-
-
-class CSRPErrorException(HttpOperationError):
-    """Server responsed with exception of type: 'CSRPError'.
-
-    :param deserialize: A deserializer
-    :param response: Server response to be deserialized.
-    """
-
-    def __init__(self, deserialize, response, *args):
-
-        super(CSRPErrorException, self).__init__(deserialize, response, 'CSRPError', *args)
-
-
-class CSRPErrorBody(Model):
-    """Error properties.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar code: Error's code
-    :vartype code: str
-    :ivar details: Error's details
-    :vartype details: list[~azure.mgmt.vmwarecloudsimple.models.CSRPErrorBody]
-    :ivar message: Error's message
-    :vartype message: str
-    :param target: Error's target
-    :type target: str
-    """
-
-    _validation = {
-        'code': {'readonly': True},
-        'details': {'readonly': True},
-        'message': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[CSRPErrorBody]'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-    }
-
-    def __init__(self, *, target: str=None, **kwargs) -> None:
-        super(CSRPErrorBody, self).__init__(**kwargs)
-        self.code = None
-        self.details = None
-        self.message = None
-        self.target = target
 
 
 class DedicatedCloudService(Model):

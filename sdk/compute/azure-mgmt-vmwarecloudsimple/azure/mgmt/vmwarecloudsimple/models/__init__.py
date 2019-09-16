@@ -14,7 +14,7 @@ try:
     from ._models_py3 import AvailableOperationDisplay
     from ._models_py3 import AvailableOperationDisplayPropertyServiceSpecificationMetricsItem
     from ._models_py3 import AvailableOperationDisplayPropertyServiceSpecificationMetricsList
-    from ._models_py3 import CreateDedicatedCloudNodeProperties
+    from ._models_py3 import BaseDedicatedCloudNode
     from ._models_py3 import CreateDedicatedCloudNodeRequest
     from ._models_py3 import CSRPError, CSRPErrorException
     from ._models_py3 import CSRPErrorBody
@@ -42,7 +42,7 @@ except (SyntaxError, ImportError):
     from ._models import AvailableOperationDisplay
     from ._models import AvailableOperationDisplayPropertyServiceSpecificationMetricsItem
     from ._models import AvailableOperationDisplayPropertyServiceSpecificationMetricsList
-    from ._models import CreateDedicatedCloudNodeProperties
+    from ._models import BaseDedicatedCloudNode
     from ._models import CreateDedicatedCloudNodeRequest
     from ._models import CSRPError, CSRPErrorException
     from ._models import CSRPErrorBody
@@ -94,7 +94,7 @@ __all__ = [
     'AvailableOperationDisplay',
     'AvailableOperationDisplayPropertyServiceSpecificationMetricsItem',
     'AvailableOperationDisplayPropertyServiceSpecificationMetricsList',
-    'CreateDedicatedCloudNodeProperties',
+    'BaseDedicatedCloudNode',
     'CreateDedicatedCloudNodeRequest',
     'CSRPError', 'CSRPErrorException',
     'CSRPErrorBody',
