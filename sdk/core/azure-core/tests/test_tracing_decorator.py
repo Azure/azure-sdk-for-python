@@ -19,7 +19,6 @@ from azure.core.pipeline.policies import HTTPPolicy
 from azure.core.pipeline.transport import HttpTransport
 from azure.core.settings import settings
 from azure.core.tracing import common
-from azure.core.tracing.context import tracing_context
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.ext.opencensus_span import OpenCensusSpan
 from opencensus.trace import tracer as tracer_module, execution_context
@@ -43,7 +42,6 @@ class MockClient:
         self.assert_current_span = assert_current_span
 
     def verify_request(self, request):
-        current_span = tracing_context.current_span.get()
         if self.assert_current_span:
             assert execution_context.get_current_span() is not None
         return self.expected_response
@@ -91,42 +89,6 @@ class TestCommon(object):
             client = MockClient()
             assert common.get_function_and_class_name(client.get_foo, client) == "MockClient.get_foo"
             assert common.get_function_and_class_name(random_function) == "random_function"
-
-    def test_set_span_context(self):
-        with ContextHelper(environ={"AZURE_SDK_TRACING_IMPLEMENTATION": "opencensus"}):
-            wrapper = settings.tracing_implementation()
-            assert wrapper is OpenCensusSpan
-            assert tracing_context.current_span.get() is None
-            assert wrapper.get_current_span() is None
-            parent = OpenCensusSpan()
-            common.set_span_contexts(parent)
-            assert parent.span_instance == wrapper.get_current_span()
-            assert tracing_context.current_span.get() == parent
-
-    def test_get_parent_span(self):
-        with ContextHelper():
-            opencensus = sys.modules["opencensus"]
-            del sys.modules["opencensus"]
-
-            parent = common.get_parent_span(None)
-            assert parent is None
-
-            sys.modules["opencensus"] = opencensus
-            parent = common.get_parent_span(None)
-            assert parent.span_instance.name == "azure-sdk-for-python-first_parent_span"
-
-            tracer = tracer_module.Tracer(sampler=AlwaysOnSampler())
-            parent = common.get_parent_span(None)
-            assert parent.span_instance.name == "azure-sdk-for-python-first_parent_span"
-            parent.finish()
-
-            some_span = tracer.start_span(name="some_span")
-            new_parent = common.get_parent_span(None)
-            assert new_parent.span_instance.name == "some_span"
-            some_span.finish()
-
-            should_be_old_parent = common.get_parent_span(parent.span_instance)
-            assert should_be_old_parent.span_instance == parent.span_instance
 
 
 class TestDecorator(object):

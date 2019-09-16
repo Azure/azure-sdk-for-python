@@ -4,7 +4,6 @@
 # ------------------------------------
 """Tests for the distributed tracing policy."""
 
-from azure.core.tracing.context import tracing_context
 from azure.core.pipeline import PipelineResponse, PipelineRequest, PipelineContext
 from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
 from azure.core.pipeline.policies.universal import UserAgentPolicy
@@ -17,15 +16,12 @@ import time
 import pytest
 
 
-@pytest.mark.parametrize("should_set_sdk_context", [True, False])
-def test_distributed_tracing_policy_solo(should_set_sdk_context):
+def test_distributed_tracing_policy_solo():
     """Test policy with no other policy and happy path"""
     with ContextHelper():
         exporter = MockExporter()
         trace = tracer_module.Tracer(sampler=AlwaysOnSampler(), exporter=exporter)
         with trace.span("parent"):
-            if should_set_sdk_context:
-                tracing_context.current_span.set(OpenCensusSpan(trace.current_span()))
             policy = DistributedTracingPolicy()
 
             request = HttpRequest("GET", "http://127.0.0.1/temp?query=query")
@@ -72,15 +68,12 @@ def test_distributed_tracing_policy_solo(should_set_sdk_context):
         assert network_span.span_data.attributes.get("http.status_code") == 504
 
 
-@pytest.mark.parametrize("should_set_sdk_context", [True, False])
-def test_distributed_tracing_policy_with_user_agent(should_set_sdk_context):
+def test_distributed_tracing_policy_with_user_agent():
     """Test policy working with user agent."""
     with ContextHelper(environ={"AZURE_HTTP_USER_AGENT": "mytools"}):
         exporter = MockExporter()
         trace = tracer_module.Tracer(sampler=AlwaysOnSampler(), exporter=exporter)
         with trace.span("parent"):
-            if should_set_sdk_context:
-                tracing_context.current_span.set(OpenCensusSpan(trace.current_span()))
             policy = DistributedTracingPolicy()
 
             request = HttpRequest("GET", "http://127.0.0.1")

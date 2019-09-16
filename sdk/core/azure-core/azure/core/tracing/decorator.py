@@ -29,7 +29,6 @@ import functools
 
 import azure.core.tracing.common as common
 from azure.core.settings import settings
-from azure.core.tracing.context import tracing_context
 
 try:
     from typing import TYPE_CHECKING

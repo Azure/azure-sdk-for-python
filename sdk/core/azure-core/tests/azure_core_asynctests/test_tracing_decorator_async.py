@@ -17,7 +17,6 @@ from azure.core import HttpRequest
 from azure.core.pipeline import Pipeline, PipelineResponse
 from azure.core.pipeline.policies import HTTPPolicy
 from azure.core.pipeline.transport import HttpTransport
-from azure.core.tracing.context import tracing_context
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.tracing.ext.opencensus_span import OpenCensusSpan
@@ -42,9 +41,8 @@ class MockClient:
         self.assert_current_span = assert_current_span
 
     def verify_request(self, request):
-        current_span = tracing_context.current_span.get()
         if self.assert_current_span:
-            assert current_span is not None
+            assert execution_context.get_current_span() is not None
         return self.expected_response
 
     @distributed_trace_async
