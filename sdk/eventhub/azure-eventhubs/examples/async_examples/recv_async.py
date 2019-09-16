@@ -11,21 +11,15 @@ An example to show running concurrent consumers.
 
 import os
 import time
-import logging
 import asyncio
 
 from azure.eventhub.aio import EventHubClient
 from azure.eventhub import EventPosition, EventHubSharedKeyCredential
 
-import examples
-logger = examples.get_logger(logging.INFO)
-
-
-HOSTNAME = os.environ.get('EVENT_HUB_HOSTNAME')  # <mynamespace>.servicebus.windows.net
-EVENT_HUB = os.environ.get('EVENT_HUB_NAME')
-
-USER = os.environ.get('EVENT_HUB_SAS_POLICY')
-KEY = os.environ.get('EVENT_HUB_SAS_KEY')
+HOSTNAME = os.environ['EVENT_HUB_HOSTNAME']  # <mynamespace>.servicebus.windows.net
+EVENT_HUB = os.environ['EVENT_HUB_NAME']
+USER = os.environ['EVENT_HUB_SAS_POLICY']
+KEY = os.environ['EVENT_HUB_SAS_KEY']
 
 EVENT_POSITION = EventPosition("-1")
 
@@ -44,18 +38,11 @@ async def pump(client, partition):
         run_time = end_time - start_time
         print("Received {} messages in {} seconds".format(total, run_time))
 
-try:
-    if not HOSTNAME:
-        raise ValueError("No EventHubs URL supplied.")
 
-    loop = asyncio.get_event_loop()
-    client = EventHubClient(host=HOSTNAME, event_hub_path=EVENT_HUB, credential=EventHubSharedKeyCredential(USER, KEY),
-                            network_tracing=False)
-    tasks = [
-        asyncio.ensure_future(pump(client, "0")),
-        asyncio.ensure_future(pump(client, "1"))]
-    loop.run_until_complete(asyncio.wait(tasks))
-    loop.close()
-
-except KeyboardInterrupt:
-    pass
+loop = asyncio.get_event_loop()
+client = EventHubClient(host=HOSTNAME, event_hub_path=EVENT_HUB, credential=EventHubSharedKeyCredential(USER, KEY),
+                        network_tracing=False)
+tasks = [
+    asyncio.ensure_future(pump(client, "0")),
+    asyncio.ensure_future(pump(client, "1"))]
+loop.run_until_complete(asyncio.wait(tasks))

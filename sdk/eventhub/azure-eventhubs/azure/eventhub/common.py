@@ -39,7 +39,6 @@ def parse_sas_token(sas_token):
 class EventData(object):
     """
     The EventData class is a holder of event content.
-    Acts as a wrapper to an uamqp.message.Message object.
 
     Example:
         .. literalinclude:: ../examples/test_examples_eventhub.py
@@ -201,6 +200,15 @@ class EventData(object):
         self.message.application_properties = properties
 
     @property
+    def system_properties(self):
+        """
+        Metadata set by the Event Hubs Service associated with the EventData
+
+        :rtype: dict
+        """
+        return self._annotations
+
+    @property
     def body(self):
         """
         The body of the event data object.
@@ -253,9 +261,15 @@ class EventData(object):
 
 class EventDataBatch(object):
     """
-    The EventDataBatch class is a holder of a batch of event data within max size bytes.
-    Use ~azure.eventhub.Producer.create_batch method to create an EventDataBatch object.
-    Do not instantiate an EventDataBatch object directly.
+    Sending events in batch get better performance than sending individual events.
+    EventDataBatch helps you create the maximum allowed size batch of `EventData` to improve sending performance.
+
+    Use `try_add` method to add events until the maximum batch size limit in bytes has been reached -
+    a `ValueError` will be raised.
+    Use `send` method of ~azure.eventhub.EventHubProducer or ~azure.eventhub.aio.EventHubProducer for sending.
+
+    Please use the `create_batch` method of `EventHubProducer`
+    to create an `EventDataBatch` object instead of instantiating an `EventDataBatch` object directly.
     """
 
     def __init__(self, max_size=None, partition_key=None):
@@ -298,8 +312,9 @@ class EventDataBatch(object):
     def try_add(self, event_data):
         """
         The message size is a sum up of body, properties, header, etc.
-        :param event_data:
-        :return:
+        :param event_data: ~azure.eventhub.EventData
+        :return: None
+        :raise: ValueError, when exceeding the size limit.
         """
         if event_data is None:
             log.warning("event_data is None when calling EventDataBatch.try_add. Ignored")

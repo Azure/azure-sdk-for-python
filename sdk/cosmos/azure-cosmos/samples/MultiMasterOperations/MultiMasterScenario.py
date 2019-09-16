@@ -27,7 +27,12 @@ class MultiMasterScenario(object):
             connection_policy.UseMultipleWriteLocations = True
             connection_policy.PreferredLocations = [region]
 
-            client = cosmos_client_connection.CosmosClientConnection(self.account_endpoint, {'masterKey': self.account_key}, connection_policy, documents.ConsistencyLevel.Session)
+            client = cosmos_client_connection.CosmosClientConnection(
+                self.account_endpoint,
+                {'masterKey': self.account_key},
+                connection_policy,
+                documents.ConsistencyLevel.Session
+            )
 
             self.workers.append(Worker(client, self.database_name, self.basic_collection_name))
 

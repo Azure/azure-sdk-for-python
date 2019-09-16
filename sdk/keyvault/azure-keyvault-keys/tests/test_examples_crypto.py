@@ -53,14 +53,14 @@ class TestCryptoExamples(KeyVaultTestCase):
         from azure.keyvault.keys.crypto import KeyWrapAlgorithm
 
         # wrap returns a tuple with the wrapped bytes and the metadata required to unwrap the key
-        key_id, wrap_algorithm, wrapped_bytes = client.wrap(KeyWrapAlgorithm.rsa_oaep, key_bytes)
+        key_id, wrap_algorithm, wrapped_bytes = client.wrap_key(KeyWrapAlgorithm.rsa_oaep, key_bytes)
 
         # [END wrap]
 
         # [START unwrap]
         from azure.keyvault.keys.crypto import KeyWrapAlgorithm
 
-        result = client.unwrap(KeyWrapAlgorithm.rsa_oaep, wrapped_bytes)
+        result = client.unwrap_key(KeyWrapAlgorithm.rsa_oaep, wrapped_bytes)
         unwrapped_bytes = result.unwrapped_bytes
 
         # [END unwrap]

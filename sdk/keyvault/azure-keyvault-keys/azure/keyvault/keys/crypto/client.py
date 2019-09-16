@@ -3,9 +3,10 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import six
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import AzureError, HttpResponseError
 
 from . import DecryptResult, EncryptResult, SignResult, VerifyResult, UnwrapKeyResult, WrapKeyResult
+from ._internal import EllipticCurveKey, RsaKey
 from ..models import Key
 from .._shared import KeyVaultClientBase, parse_vault_id
 
@@ -19,6 +20,7 @@ if TYPE_CHECKING:
     from typing import Any, Optional, Union
     from azure.core.credentials import TokenCredential
     from . import EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
+    from ._internal import Key as _Key
 
 
 class CryptographyClient(KeyVaultClientBase):
@@ -34,7 +36,36 @@ class CryptographyClient(KeyVaultClientBase):
         :mod:`azure.identity`
 
     Keyword arguments
-        - *api_version* - version of the Key Vault API to use. Defaults to the most recent.
+        - **api_version** - version of the Key Vault API to use. Defaults to the most recent.
+
+    Creating a ``CryptographyClient``:
+
+    .. code-block:: python
+
+        from azure.identity import DefaultAzureCredential
+        from azure.keyvault.keys.crypto import CryptographyClient
+
+        credential = DefaultAzureCredential()
+
+        # create a CryptographyClient using a Key instance
+        key = key_client.get_key("mykey")
+        crypto_client = CryptographyClient(key, credential)
+
+        # or a Key's id, which must include a version
+        key_id = "https://<your vault>.vault.azure.net/keys/mykey/fe4fdcab688c479a9aa80f01ffeac26"
+        crypto_client = CryptographyClient(key_id, credential)
+
+    You can also obtain a ``CryptographyClient`` from a :class:`~azure.keyvault.keys.KeyClient`:
+
+    .. code-block:: python
+
+        from azure.identity import DefaultAzureCredential
+        from azure.keyvault.keys import KeyClient
+
+        credential = DefaultAzureCredential()
+        key_client = KeyClient(vault_url=<your vault url>, credential=credential)
+        crypto_client = key_client.get_cryptography_client("mykey")
+
     """
 
     def __init__(self, key, credential, **kwargs):
@@ -43,15 +74,21 @@ class CryptographyClient(KeyVaultClientBase):
         if isinstance(key, Key):
             self._key = key
             self._key_id = parse_vault_id(key.id)
+            self._allowed_ops = frozenset(self._key.key_material.key_ops)
         elif isinstance(key, six.text_type):
             self._key = None
             self._key_id = parse_vault_id(key)
-            self._get_key_forbidden = None  # type: Optional[bool]
+            self._keys_get_forbidden = None  # type: Optional[bool]
+
+            # will be replaced with actual permissions before any local operations are attempted, if we can get the key
+            self._allowed_ops = frozenset()
         else:
             raise ValueError("'key' must be a Key instance or a key ID string including a version")
 
         if not self._key_id.version:
             raise ValueError("'key' must include a version")
+
+        self._internal_key = None  # type: Optional[_Key]
 
         super(CryptographyClient, self).__init__(vault_url=self._key_id.vault_url, credential=credential, **kwargs)
 
@@ -74,15 +111,36 @@ class CryptographyClient(KeyVaultClientBase):
         :rtype: :class:`~azure.keyvault.keys.models.Key` or ``None``
         """
 
-        if not (self._key or self._get_key_forbidden):
+        if not (self._key or self._keys_get_forbidden):
             try:
                 self._key = self._client.get_key(self._key_id.vault_url, self._key_id.name, self._key_id.version)
+                self._allowed_ops = frozenset(self._key.key_material.key_ops)
             except HttpResponseError as ex:
-                self._get_key_forbidden = ex.status_code == 403
+                # if we got a 403, we don't have keys/get permission and won't try to get the key again
+                # (other errors may be transient)
+                self._keys_get_forbidden = ex.status_code == 403
         return self._key
+
+    def _get_local_key(self):
+        # type: () -> Optional[_Key]
+        """Gets an object implementing local operations. Will be ``None``, if the client was instantiated with a key
+        id and lacks keys/get permission."""
+
+        if not self._internal_key:
+            key = self.get_key()
+            if not key:
+                return None
+
+            if key.key_material.kty.lower().startswith("ec"):
+                self._internal_key = EllipticCurveKey.from_jwk(key.key_material)
+            else:
+                self._internal_key = RsaKey.from_jwk(key.key_material)
+
+        return self._internal_key
 
     def encrypt(self, algorithm, plaintext, **kwargs):
         # type: (EncryptionAlgorithm, bytes, **Any) -> EncryptResult
+        # pylint:disable=line-too-long
         """
         Encrypt bytes using the client's key. Requires the keys/encrypt permission.
 
@@ -105,15 +163,21 @@ class CryptographyClient(KeyVaultClientBase):
 
         """
 
-        result = self._client.encrypt(
-            vault_base_url=self._key_id.vault_url,
-            key_name=self._key_id.name,
-            key_version=self._key_id.version,
-            algorithm=algorithm,
-            value=plaintext,
-            **kwargs
-        )
-        return EncryptResult(key_id=self.key_id, algorithm=algorithm, ciphertext=result.result, authentication_tag=None)
+        local_key = self._get_local_key()
+        if local_key:
+            if "encrypt" not in self._allowed_ops:
+                raise AzureError("This client doesn't have 'keys/encrypt' permission")
+            result = local_key.encrypt(plaintext, algorithm=algorithm.value)
+        else:
+            result = self._client.encrypt(
+                vault_base_url=self._key_id.vault_url,
+                key_name=self._key_id.name,
+                key_version=self._key_id.version,
+                algorithm=algorithm,
+                value=plaintext,
+                **kwargs
+            ).result
+        return EncryptResult(key_id=self.key_id, algorithm=algorithm, ciphertext=result, authentication_tag=None)
 
     def decrypt(self, algorithm, ciphertext, **kwargs):
         # type: (EncryptionAlgorithm, bytes, **Any) -> DecryptResult
@@ -153,7 +217,7 @@ class CryptographyClient(KeyVaultClientBase):
         )
         return DecryptResult(decrypted_bytes=result.result)
 
-    def wrap(self, algorithm, key, **kwargs):
+    def wrap_key(self, algorithm, key, **kwargs):
         # type: (KeyWrapAlgorithm, bytes, **Any) -> WrapKeyResult
         """
         Wrap a key with the client's key. Requires the keys/wrapKey permission.
@@ -170,21 +234,28 @@ class CryptographyClient(KeyVaultClientBase):
             from azure.keyvault.keys.crypto import KeyWrapAlgorithm
 
             # wrap returns a tuple with the wrapped bytes and the metadata required to unwrap the key
-            key_id, wrap_algorithm, wrapped_bytes = client.wrap(KeyWrapAlgorithm.rsa_oaep, key_bytes)
+            key_id, wrap_algorithm, wrapped_bytes = client.wrap_key(KeyWrapAlgorithm.rsa_oaep, key_bytes)
 
         """
 
-        result = self._client.wrap_key(
-            vault_base_url=self._key_id.vault_url,
-            key_name=self._key_id.name,
-            key_version=self._key_id.version,
-            algorithm=algorithm,
-            value=key,
-            **kwargs
-        )
-        return WrapKeyResult(key_id=self.key_id, algorithm=algorithm, encrypted_key=result.result)
+        local_key = self._get_local_key()
+        if local_key:
+            if "wrapKey" not in self._allowed_ops:
+                raise AzureError("This client doesn't have 'keys/wrapKey' permission")
+            result = local_key.wrap_key(key, algorithm=algorithm.value)
+        else:
+            result = self._client.wrap_key(
+                self._key_id.vault_url,
+                self._key_id.name,
+                self._key_id.version,
+                algorithm=algorithm,
+                value=key,
+                **kwargs
+            ).result
 
-    def unwrap(self, algorithm, encrypted_key, **kwargs):
+        return WrapKeyResult(key_id=self.key_id, algorithm=algorithm, encrypted_key=result)
+
+    def unwrap_key(self, algorithm, encrypted_key, **kwargs):
         # type: (KeyWrapAlgorithm, bytes, **Any) -> UnwrapKeyResult
         """
         Unwrap a key previously wrapped with the client's key. Requires the keys/unwrapKey permission.
@@ -200,7 +271,7 @@ class CryptographyClient(KeyVaultClientBase):
 
             from azure.keyvault.keys.crypto import KeyWrapAlgorithm
 
-            result = client.unwrap(KeyWrapAlgorithm.rsa_oaep, wrapped_bytes)
+            result = client.unwrap_key(KeyWrapAlgorithm.rsa_oaep, wrapped_bytes)
             unwrapped_bytes = result.unwrapped_bytes
 
         """
@@ -270,14 +341,21 @@ class CryptographyClient(KeyVaultClientBase):
             assert verified.result is True
 
         """
+        #    def verify(self, vault_base_url, key_name, key_version, algorithm, digest, signature, cls=None, **kwargs):
 
-        result = self._client.verify(
-            vault_base_url=self._key_id.vault_url,
-            key_name=self._key_id.name,
-            key_version=self._key_id.version,
-            algorithm=algorithm,
-            digest=digest,
-            signature=signature,
-            **kwargs
-        )
-        return VerifyResult(result=result.value)
+        local_key = self._get_local_key()
+        if local_key:
+            if "verify" not in self._allowed_ops:
+                raise AzureError("This client doesn't have 'keys/verify' permission")
+            result = local_key.verify(digest, signature, algorithm=algorithm.value)
+        else:
+            result = self._client.verify(
+                vault_base_url=self._key_id.vault_url,
+                key_name=self._key_id.name,
+                key_version=self._key_id.version,
+                algorithm=algorithm,
+                digest=digest,
+                signature=signature,
+                **kwargs
+            ).value
+        return VerifyResult(result=result)

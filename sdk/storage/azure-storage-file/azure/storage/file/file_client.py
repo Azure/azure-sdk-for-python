@@ -3,13 +3,14 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
+# pylint: disable=too-many-lines
 import functools
 from io import BytesIO
 from typing import ( # pylint: disable=unused-import
     Optional, Union, IO, List, Dict, Any, Iterable,
     TYPE_CHECKING
 )
+
 try:
     from urllib.parse import urlparse, quote, unquote
 except ImportError:
@@ -26,13 +27,15 @@ from ._generated.version import VERSION
 from ._generated.models import StorageErrorException, FileHTTPHeaders
 from ._shared.uploads import IterStreamer, FileChunkUploader, upload_data_chunks
 from ._shared.downloads import StorageStreamDownloader
-from ._shared.shared_access_signature import FileSharedAccessSignature
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
 from ._shared.request_handlers import add_metadata_headers, get_length
 from ._shared.response_handlers import return_response_headers, process_storage_error
+from ._shared.parser import _str
+from ._parser import _get_file_permission, _datetime_to_str
 from ._deserialize import deserialize_file_properties, deserialize_file_stream
 from ._polling import CloseHandles
-from .models import HandlesPaged
+from .models import HandlesPaged, NTFSAttributes  # pylint: disable=unused-import
+from ._shared_access_signature import FileSharedAccessSignature
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -50,6 +53,11 @@ def _upload_file_helper(
         timeout,
         max_connections,
         file_settings,
+        file_attributes="none",
+        file_creation_time="now",
+        file_last_write_time="now",
+        file_permission=None,
+        file_permission_key=None,
         **kwargs):
     try:
         if size is None or size < 0:
@@ -59,12 +67,17 @@ def _upload_file_helper(
             content_settings=content_settings,
             metadata=metadata,
             timeout=timeout,
+            file_attributes=file_attributes,
+            file_creation_time=file_creation_time,
+            file_last_write_time=file_last_write_time,
+            file_permission=file_permission,
+            file_permission_key=file_permission_key,
             **kwargs
         )
         if size == 0:
             return response
 
-        return upload_data_chunks(
+        responses = upload_data_chunks(
             service=client,
             uploader_class=FileChunkUploader,
             total_size=size,
@@ -73,7 +86,9 @@ def _upload_file_helper(
             max_connections=max_connections,
             validate_content=validate_content,
             timeout=timeout,
-            **kwargs)
+            **kwargs
+        )
+        return sorted(responses, key=lambda r: r.get('last_modified'))[-1]
     except StorageErrorException as error:
         process_storage_error(error)
 
@@ -165,7 +180,7 @@ class FileClient(StorageAccountHostsMixin):
         self.directory_path = "/".join(self.file_path[:-1])
         self._query_str, credential = self._format_query_string(
             sas_token, credential, share_snapshot=self.snapshot)
-        super(FileClient, self).__init__(parsed_url, 'file', credential, **kwargs)
+        super(FileClient, self).__init__(parsed_url, service='file', credential=credential, **kwargs)
         self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline)
 
     def _format_url(self, hostname):
@@ -300,11 +315,11 @@ class FileClient(StorageAccountHostsMixin):
         else:
             file_path = None # type: ignore
         return sas.generate_file( # type: ignore
-            self.share_name,
-            file_path,
-            self.file_name,
-            permission,
-            expiry,
+            share_name=self.share_name,
+            directory_name=file_path,
+            file_name=self.file_name,
+            permission=permission,
+            expiry=expiry,
             start=start,
             policy_id=policy_id,
             ip=ip,
@@ -316,13 +331,18 @@ class FileClient(StorageAccountHostsMixin):
             content_type=content_type)
 
     @distributed_trace
-    def create_file( # type: ignore
-            self, size, # type: int
-            content_settings=None, # type: Optional[ContentSettings]
+    def create_file(  # type: ignore
+            self, size,  # type: int
+            content_settings=None,  # type: Optional[ContentSettings]
             metadata=None,  # type: Optional[Dict[str, str]]
-            timeout=None, # type: Optional[int]
-            **kwargs # type: Any
-        ):
+            file_attributes="none",  # type: Union[str, NTFSAttributes]
+            file_creation_time="now",  # type: Union[str, datetime]
+            file_last_write_time="now",  # type: Union[str, datetime]
+            file_permission=None,   # type: Optional[str]
+            file_permission_key=None,  # type: Optional[str]
+            timeout=None,  # type: Optional[int]
+            **kwargs  # type: Any
+    ):
         # type: (...) -> Dict[str, Any]
         """Creates a new file.
 
@@ -337,6 +357,29 @@ class FileClient(StorageAccountHostsMixin):
         :type metadata: dict(str, str)
         :param int timeout:
             The timeout parameter is expressed in seconds.
+        :param file_attributes:
+            The file system attributes for files and directories.
+            If not set, the default value would be "None" and the attributes will be set to "Archive".
+            Here is an example for when the var type is str: 'Temporary|Archive'.
+            file_attributes value is not case sensitive.
+        :type file_attributes: str or :class:`~azure.storage.file.models.NTFSAttributes`
+        :param file_creation_time: Creation time for the file
+            Default value: Now.
+        :type file_creation_time: str or datetime
+        :param file_last_write_time: Last write time for the file
+            Default value: Now.
+        :type file_last_write_time: str or datetime
+        :param file_permission: If specified the permission (security
+            descriptor) shall be set for the directory/file. This header can be
+            used if Permission size is <= 8KB, else x-ms-file-permission-key
+            header shall be used. Default value: Inherit. If SDDL is specified as
+            input, it must have owner, group and dacl. Note: Only one of the
+            x-ms-file-permission or x-ms-file-permission-key should be specified.
+        :type file_permission: str
+        :param file_permission_key: Key of the permission to be set for the
+            directory/file. Note: Only one of the x-ms-file-permission or
+            x-ms-file-permission-key should be specified.
+        :type file_permission_key: str
         :returns: File-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
 
@@ -363,13 +406,19 @@ class FileClient(StorageAccountHostsMixin):
                 file_content_language=content_settings.content_language,
                 file_content_disposition=content_settings.content_disposition
             )
+        file_permission = _get_file_permission(file_permission, file_permission_key, 'Inherit')
         try:
-            return self._client.file.create( # type: ignore
+            return self._client.file.create(  # type: ignore
                 file_content_length=size,
-                timeout=timeout,
                 metadata=metadata,
+                file_attributes=_str(file_attributes),
+                file_creation_time=_datetime_to_str(file_creation_time),
+                file_last_write_time=_datetime_to_str(file_last_write_time),
+                file_permission=file_permission,
+                file_permission_key=file_permission_key,
                 file_http_headers=file_http_headers,
                 headers=headers,
+                timeout=timeout,
                 cls=return_response_headers,
                 **kwargs)
         except StorageErrorException as error:
@@ -377,15 +426,20 @@ class FileClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def upload_file(
-            self, data, # type: Any
-            length=None, # type: Optional[int]
+            self, data,  # type: Any
+            length=None,  # type: Optional[int]
             metadata=None,  # type: Optional[Dict[str, str]]
-            content_settings=None, # type: Optional[ContentSettings]
+            content_settings=None,  # type: Optional[ContentSettings]
             validate_content=False,  # type: bool
             max_connections=1,  # type: Optional[int]
-            timeout=None, # type: Optional[int]
-            encoding='UTF-8',  # type: str
-            **kwargs # type: Any
+            file_attributes="none",  # type: Union[str, NTFSAttributes]
+            file_creation_time="now",  # type: Union[str, datetime]
+            file_last_write_time="now",  # type: Union[str, datetime]
+            file_permission=None,  # type: Optional[str]
+            file_permission_key=None,  # type: Optional[str]
+            encoding="UTF-8",  # type: str
+            timeout=None,  # type: Optional[int]
+            **kwargs  # type: Any
         ):
         # type: (...) -> Dict[str, Any]
         """Uploads a new file.
@@ -412,6 +466,29 @@ class FileClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :param str encoding:
             Defaults to UTF-8.
+        :param file_attributes:
+            The file system attributes for files and directories.
+            If not set, the default value would be "None" and the attributes will be set to "Archive".
+            Here is an example for when the var type is str: 'Temporary|Archive'.
+            file_attributes value is not case sensitive.
+        :type file_attributes: str or :class:`~azure.storage.file.models.NTFSAttributes`
+        :param file_creation_time: Creation time for the file
+            Default value: Now.
+        :type file_creation_time: str or datetime
+        :param file_last_write_time: Last write time for the file
+            Default value: Now.
+        :type file_last_write_time: str or datetime
+        :param file_permission: If specified the permission (security
+            descriptor) shall be set for the directory/file. This header can be
+            used if Permission size is <= 8KB, else x-ms-file-permission-key
+            header shall be used. Default value: Inherit. If SDDL is specified as
+            input, it must have owner, group and dacl. Note: Only one of the
+            x-ms-file-permission or x-ms-file-permission-key should be specified.
+        :type file_permission: str
+        :param file_permission_key: Key of the permission to be set for the
+            directory/file. Note: Only one of the x-ms-file-permission or
+            x-ms-file-permission-key should be specified.
+        :type file_permission_key: str
         :returns: File-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
 
@@ -451,6 +528,11 @@ class FileClient(StorageAccountHostsMixin):
             timeout,
             max_connections,
             self._config,
+            file_attributes=file_attributes,
+            file_creation_time=file_creation_time,
+            file_last_write_time=file_last_write_time,
+            file_permission=file_permission,
+            file_permission_key=file_permission_key,
             **kwargs)
 
     @distributed_trace
@@ -564,7 +646,7 @@ class FileClient(StorageAccountHostsMixin):
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError("Encryption not supported.")
         if length is not None and offset is None:
-            raise ValueError("Offset value must not be None is length is set.")
+            raise ValueError("Offset value must not be None if length is set.")
 
         return StorageStreamDownloader(
             service=self._client.file,
@@ -631,14 +713,44 @@ class FileClient(StorageAccountHostsMixin):
         return file_props # type: ignore
 
     @distributed_trace
-    def set_http_headers(self, content_settings, timeout=None, **kwargs): # type: ignore
-        #type: (ContentSettings, Optional[int], Optional[Any]) -> Dict[str, Any]
+    def set_http_headers(self, content_settings,  # type: ContentSettings
+                         file_attributes="preserve",  # type: Union[str, NTFSAttributes]
+                         file_creation_time="preserve",  # type: Union[str, datetime]
+                         file_last_write_time="preserve",  # type: Union[str, datetime]
+                         file_permission=None,  # type: Optional[str]
+                         file_permission_key=None,  # type: Optional[str]
+                         timeout=None,  # type: Optional[int]
+                         **kwargs  # Any
+                         ):  # type: ignore
+        # type: (ContentSettings, Optional[int], Optional[Any]) -> Dict[str, Any]
         """Sets HTTP headers on the file.
 
         :param ~azure.storage.file.models.ContentSettings content_settings:
             ContentSettings object used to set file properties.
         :param int timeout:
             The timeout parameter is expressed in seconds.
+        :param file_attributes:
+            The file system attributes for files and directories.
+            If not set, indicates preservation of existing values.
+            Here is an example for when the var type is str: 'Temporary|Archive'
+        :type file_attributes: str or :class:`~azure.storage.file.models.NTFSAttributes`
+        :param file_creation_time: Creation time for the file
+            Default value: Now.
+        :type file_creation_time: str or datetime
+        :param file_last_write_time: Last write time for the file
+            Default value: Now.
+        :type file_last_write_time: str or datetime
+        :param file_permission: If specified the permission (security
+            descriptor) shall be set for the directory/file. This header can be
+            used if Permission size is <= 8KB, else x-ms-file-permission-key
+            header shall be used. Default value: Inherit. If SDDL is specified as
+            input, it must have owner, group and dacl. Note: Only one of the
+            x-ms-file-permission or x-ms-file-permission-key should be specified.
+        :type file_permission: str
+        :param file_permission_key: Key of the permission to be set for the
+            directory/file. Note: Only one of the x-ms-file-permission or
+            x-ms-file-permission-key should be specified.
+        :type file_permission_key: str
         :returns: File-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
@@ -651,11 +763,17 @@ class FileClient(StorageAccountHostsMixin):
             file_content_language=content_settings.content_language,
             file_content_disposition=content_settings.content_disposition
         )
+        file_permission = _get_file_permission(file_permission, file_permission_key, 'preserve')
         try:
-            return self._client.file.set_http_headers( # type: ignore
-                timeout=timeout,
+            return self._client.file.set_http_headers(  # type: ignore
                 file_content_length=file_content_length,
                 file_http_headers=file_http_headers,
+                file_attributes=_str(file_attributes),
+                file_creation_time=_datetime_to_str(file_creation_time),
+                file_last_write_time=_datetime_to_str(file_last_write_time),
+                file_permission=file_permission,
+                file_permission_key=file_permission_key,
+                timeout=timeout,
                 cls=return_response_headers,
                 **kwargs)
         except StorageErrorException as error:
@@ -692,12 +810,12 @@ class FileClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def upload_range( # type: ignore
+    def upload_range(  # type: ignore
             self, data,  # type: bytes
-            start_range, # type: int
-            end_range, # type: int
+            start_range,  # type: int
+            end_range,  # type: int
             validate_content=False, # type: Optional[bool]
-            timeout=None, # type: Optional[int]
+            timeout=None,  # type: Optional[int]
             encoding='UTF-8',
             **kwargs
         ):
@@ -746,6 +864,83 @@ class FileClient(StorageAccountHostsMixin):
                 validate_content=validate_content,
                 cls=return_response_headers,
                 **kwargs)
+        except StorageErrorException as error:
+            process_storage_error(error)
+
+    @staticmethod
+    def _upload_range_from_url_options(source_url,  # type: str
+                                       range_start,  # type: int
+                                       range_end,  # type: int
+                                       source_range_start,  # type: int
+                                       **kwargs
+                                       ):
+        # type: (...) -> Dict[str, Any]
+
+        if range_start is None or range_end is None or source_range_start is None:
+            raise ValueError("start_range must be specified")
+
+        # Format range
+        destination_range = 'bytes={0}-{1}'.format(range_start, range_end)
+        source_range = 'bytes={0}-{1}'.format(source_range_start, source_range_start + (range_end - range_start))
+
+        options = {
+            'copy_source': source_url,
+            'content_length': 0,
+            'source_range': source_range,
+            'range': destination_range,
+            'timeout': kwargs.pop('timeout', None),
+            'cls': return_response_headers}
+        options.update(kwargs)
+        return options
+
+    @distributed_trace
+    def upload_range_from_url(self, source_url,  # type: str
+                              range_start,  # type: int
+                              range_end,  # type: int
+                              source_range_start,  # type: int
+                              **kwargs  # type: Any
+                              ):
+        # type: (str, int, int, int, **Any) -> Dict[str, Any]
+        '''
+        Writes the bytes from one Azure File endpoint into the specified range of another Azure File endpoint.
+
+        :param int range_start:
+            Start of byte range to use for updating a section of the file.
+            The range can be up to 4 MB in size.
+            The start_range and end_range params are inclusive.
+            Ex: start_range=0, end_range=511 will download first 512 bytes of file.
+        :param int range_end:
+            End of byte range to use for updating a section of the file.
+            The range can be up to 4 MB in size.
+            The start_range and end_range params are inclusive.
+            Ex: start_range=0, end_range=511 will download first 512 bytes of file.
+        :param str source_url:
+            A URL of up to 2 KB in length that specifies an Azure file or blob.
+            The value should be URL-encoded as it would appear in a request URI.
+            If the source is in another account, the source must either be public
+            or must be authenticated via a shared access signature. If the source
+            is public, no authentication is required.
+            Examples:
+            https://myaccount.file.core.windows.net/myshare/mydir/myfile
+            https://otheraccount.file.core.windows.net/myshare/mydir/myfile?sastoken
+        :param int source_range_start:
+            Start of byte range to use for updating a section of the file.
+            The range can be up to 4 MB in size.
+            The start_range and end_range params are inclusive.
+            Ex: start_range=0, end_range=511 will download first 512 bytes of file.
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
+        '''
+
+        options = self._upload_range_from_url_options(
+            source_url=source_url,
+            range_start=range_start,
+            range_end=range_end,
+            source_range_start=source_range_start,
+            **kwargs
+        )
+        try:
+            return self._client.file.upload_range_from_url(**options)  # type: ignore
         except StorageErrorException as error:
             process_storage_error(error)
 
@@ -850,9 +1045,13 @@ class FileClient(StorageAccountHostsMixin):
         """
         try:
             return self._client.file.set_http_headers( # type: ignore
-                timeout=timeout,
                 file_content_length=size,
+                file_attributes="preserve",
+                file_creation_time="preserve",
+                file_last_write_time="preserve",
+                file_permission="preserve",
                 cls=return_response_headers,
+                timeout=timeout,
                 **kwargs)
         except StorageErrorException as error:
             process_storage_error(error)

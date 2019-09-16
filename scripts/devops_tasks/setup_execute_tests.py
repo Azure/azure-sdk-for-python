@@ -65,8 +65,9 @@ def prep_tests(targeted_packages, python_version):
         [
             python_version,
             dev_setup_script_location,
+            "--disabledevelop",
             "-p",
-            ",".join([os.path.basename(p) for p in targeted_packages]),
+            ",".join([os.path.basename(p) for p in targeted_packages])
         ],
         root_dir,
     )
@@ -251,6 +252,9 @@ if __name__ == "__main__":
 
     targeted_packages = process_glob_string(args.glob_string, target_dir)
     extended_pytest_args = []
+
+    if len(targeted_packages) == 0:
+        exit(0) 
 
     # common argument handling
     if args.disablecov:

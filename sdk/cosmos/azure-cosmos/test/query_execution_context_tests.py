@@ -58,9 +58,9 @@ class QueryExecutionContextEndToEndTests(unittest.TestCase):
                 "tests.")
 
         cls.client = cosmos_client.CosmosClient(QueryExecutionContextEndToEndTests.host,
-                                                 {'masterKey': QueryExecutionContextEndToEndTests.masterKey},
-                                                 "Session",
-                                                 QueryExecutionContextEndToEndTests.connectionPolicy)
+                                                QueryExecutionContextEndToEndTests.masterKey,
+                                                "Session",
+                                                connection_policy=QueryExecutionContextEndToEndTests.connectionPolicy)
         cls.created_db = test_config._test_config.create_database_if_not_exist(cls.client)
         cls.created_collection = cls.create_collection(cls.created_db)
         cls.document_definitions = []

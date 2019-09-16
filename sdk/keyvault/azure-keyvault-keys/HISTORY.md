@@ -1,5 +1,19 @@
 # Release History
 
+## 4.0.0b4
+- Enums 'JsonWebKeyCurveName', 'JsonWebKeyOperation', and 'JsonWebKeyType' have
+been renamed to 'KeyCurveName', 'KeyOperation', and 'KeyType', respectively.
+
+## 4.0.0b3 (2019-09-11)
+### Breaking changes:
+- `CryptographyClient` methods `wrap` and `unwrap` are renamed `wrap_key` and
+`unwrap_key`, respectively.
+
+### New features:
+- `CryptographyClient` performs encrypt, verify and wrap operations locally
+when its key's public material is available (i.e., when it has keys/get
+permission).
+
 ## 4.0.0b2 (2019-08-06)
 ### Breaking changes:
 - Removed `azure.core.Configuration` from the public API in preparation for a

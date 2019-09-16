@@ -8,44 +8,38 @@
 
 import pytest
 import asyncio
-
-try:
-    import settings_real as settings
-except ImportError:
-    import queue_settings_fake as settings
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from multidict import CIMultiDict, CIMultiDictProxy
-from queuetestcase import (
-    QueueTestCase,
-    record,
-    TestMode
+from asyncqueuetestcase import (
+    AsyncQueueTestCase
 )
 
 
 
-class TestQueueHelloWorldSamplesAsync(QueueTestCase):
+class TestQueueHelloWorldSamplesAsync(AsyncQueueTestCase):
 
-    connection_string = settings.CONNECTION_STRING
-
-    async def _test_create_client_with_connection_string(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncQueueTestCase.await_prepared_test
+    async def test_create_client_with_connection_string(self, resource_group, location, storage_account, storage_account_key):
+        conn_str = self.connection_string(storage_account, storage_account_key)
         # Instantiate the QueueServiceClient from a connection string
         from azure.storage.queue.aio import QueueServiceClient
-        queue_service = QueueServiceClient.from_connection_string(self.connection_string)
+        queue_service = QueueServiceClient.from_connection_string(conn_str)
 
         # Get queue service properties
         properties = await queue_service.get_service_properties()
 
         assert properties is not None
 
-    def test_create_client_with_connection_string(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_create_client_with_connection_string())
-
-    async def _test_queue_and_messages_example(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncQueueTestCase.await_prepared_test
+    async def test_queue_and_messages_example(self, resource_group, location, storage_account, storage_account_key):
+        conn_str = self.connection_string(storage_account, storage_account_key)
         # Instantiate the QueueClient from a connection string
         from azure.storage.queue.aio import QueueClient
-        queue = QueueClient.from_connection_string(self.connection_string, "myasyncqueue")
+        queue = QueueClient.from_connection_string(conn_str, "myasyncqueue")
 
         # Create the queue
         # [START async_create_queue]
@@ -69,9 +63,3 @@ class TestQueueHelloWorldSamplesAsync(QueueTestCase):
             # [START async_delete_queue]
             await queue.delete_queue()
             # [END async_delete_queue]
-
-    def test_queue_and_messages_example(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_queue_and_messages_example())

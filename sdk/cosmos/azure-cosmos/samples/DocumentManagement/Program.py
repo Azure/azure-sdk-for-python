@@ -179,22 +179,16 @@ def run_sample():
             try:
                 db = client.create_database(id=DATABASE_ID)
 
-            except errors.HTTPFailure as e:
-                if e.status_code == 409:
-                    pass
-                else:
-                    raise errors.HTTPFailure(e.status_code)
+            except errors.CosmosResourceExistsError:
+                pass
 
             # setup container for this sample
             try:
                 container = db.create_container(id=CONTAINER_ID, partition_key=PartitionKey(path='/id', kind='Hash'))
                 print('Container with id \'{0}\' created'.format(CONTAINER_ID))
 
-            except errors.HTTPFailure as e:
-                if e.status_code == 409:
-                    print('Container with id \'{0}\' was found'.format(CONTAINER_ID))
-                else:
-                    raise errors.HTTPFailure(e.status_code)
+            except errors.CosmosResourceExistsError:
+                print('Container with id \'{0}\' was found'.format(CONTAINER_ID))
 
             ItemManagement.CreateItems(container)
             ItemManagement.ReadItem(container, 'SalesOrder1')
@@ -208,13 +202,10 @@ def run_sample():
             try:
                 client.delete_database(db)
 
-            except errors.CosmosError as e:
-                if e.status_code == 404:
-                    pass
-                else:
-                    raise errors.HTTPFailure(e.status_code)
+            except errors.CosmosResourceNotFoundError:
+                pass
 
-        except errors.HTTPFailure as e:
+        except errors.CosmosHttpResponseError as e:
             print('\nrun_sample has caught an error. {0}'.format(e.message))
         
         finally:

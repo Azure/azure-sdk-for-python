@@ -7,27 +7,22 @@
 # --------------------------------------------------------------------------
 
 import asyncio
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 
-try:
-    import settings_real as settings
-except ImportError:
-    import queue_settings_fake as settings
-
-from queuetestcase import (
-    QueueTestCase,
-    record,
-    TestMode
+from asyncqueuetestcase import (
+    AsyncQueueTestCase
 )
 
 
-class TestQueueServiceSamples(QueueTestCase):
+class TestQueueServiceSamples(AsyncQueueTestCase):
 
-    connection_string = settings.CONNECTION_STRING
-
-    async def _test_queue_service_properties(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncQueueTestCase.await_prepared_test
+    async def test_queue_service_properties(self, resource_group, location, storage_account, storage_account_key):
         # Instantiate the QueueServiceClient from a connection string
         from azure.storage.queue.aio import QueueServiceClient
-        queue_service = QueueServiceClient.from_connection_string(self.connection_string)
+        queue_service = QueueServiceClient.from_connection_string(self.connection_string(storage_account, storage_account_key))
 
         # [START async_set_queue_service_properties]
         # Create service properties
@@ -65,16 +60,13 @@ class TestQueueServiceSamples(QueueTestCase):
         properties = await queue_service.get_service_properties()
         # [END async_get_queue_service_properties]
 
-    def test_queue_service_properties(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_queue_service_properties())
-
-    async def _test_queues_in_account(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncQueueTestCase.await_prepared_test
+    async def test_queues_in_account(self, resource_group, location, storage_account, storage_account_key):
         # Instantiate the QueueServiceClient from a connection string
         from azure.storage.queue.aio import QueueServiceClient
-        queue_service = QueueServiceClient.from_connection_string(self.connection_string)
+        queue_service = QueueServiceClient.from_connection_string(self.connection_string(storage_account, storage_account_key))
 
         # [START async_qsc_create_queue]
         await queue_service.create_queue("asynctestqueue")
@@ -98,24 +90,15 @@ class TestQueueServiceSamples(QueueTestCase):
             await queue_service.delete_queue("asynctestqueue")
             # [END async_qsc_delete_queue]
 
-    def test_queues_in_account(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_queues_in_account())
-
-    async def _test_get_queue_client(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    @AsyncQueueTestCase.await_prepared_test
+    async def test_get_queue_client(self, resource_group, location, storage_account, storage_account_key):
         # Instantiate the QueueServiceClient from a connection string
         from azure.storage.queue.aio import QueueServiceClient, QueueClient
-        queue_service = QueueServiceClient.from_connection_string(self.connection_string)
+        queue_service = QueueServiceClient.from_connection_string(self.connection_string(storage_account, storage_account_key))
 
         # [START async_get_queue_client]
         # Get the queue client to interact with a specific queue
         queue = queue_service.get_queue_client("myasyncqueue")
         # [END async_get_queue_client]
-
-    def test_get_queue_client(self):
-        if TestMode.need_recording_file(self.test_mode):
-            return
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_get_queue_client())

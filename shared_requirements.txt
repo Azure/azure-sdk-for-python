@@ -9,6 +9,7 @@ azure-common~=1.1
 azure-core<2.0.0,>=1.0.0b2
 azure-cosmosdb-table~=1.0
 azure-datalake-store~=0.0.18
+azure-eventhub<6.0.0,>=5.0.0b3
 azure-eventgrid~=1.1
 azure-graphrbac~=0.40.0
 azure-keyvault~=1.0
@@ -77,6 +78,7 @@ azure-mgmt-subscription~=0.2.0
 azure-mgmt-trafficmanager~=0.50.0
 azure-mgmt-web~=0.35.0
 azure-nspkg
+azure-keyvault-nspkg
 azure-security-nspkg
 azure-servicebus~=0.21.1
 azure-servicefabric~=6.3.0.0
@@ -90,6 +92,7 @@ futures
 mock
 typing
 msal~=0.4.1
+msal-extensions~=0.1.1
 msrest>=0.5.0
 msrestazure<2.0.0,>=0.4.32
 requests>=2.18.4
@@ -100,3 +103,9 @@ aiohttp>=3.0
 aiodns>=2.0
 python-dateutil>=2.8.0
 six>=1.6
+#override azure-storage-blob azure-core<2.0.0,>=1.0.0b3
+#override azure-storage-queue azure-core<2.0.0,>=1.0.0b3
+#override azure-storage-file azure-core<2.0.0,>=1.0.0b3
+#override azure-cosmos azure-core<2.0.0,>=1.0.0b3
+#override azure-eventhub-checkpointstoreblob-aio azure-storage-blob<12.0.0b4,>=12.0.0b2
+#override azure-eventhub-checkpointstoreblob-aio aiohttp<4.0,>=3.0

@@ -58,7 +58,7 @@ class Test_retry_policy_tests(unittest.TestCase):
         try:
             func(*args, **kwargs)
             self.assertFalse(True, 'function should fail.')
-        except errors.HTTPFailure as inst:
+        except errors.CosmosHttpResponseError as inst:
             self.assertEqual(inst.status_code, status_code)
 
     @classmethod
@@ -70,7 +70,7 @@ class Test_retry_policy_tests(unittest.TestCase):
                 "'masterKey' and 'host' at the top of this class to run the "
                 "tests.")
 
-        cls.client = cosmos_client.CosmosClient(cls.host, {'masterKey': cls.masterKey}, "Session", cls.connectionPolicy)
+        cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey, "Session", connection_policy=cls.connectionPolicy)
         cls.created_collection = test_config._test_config.create_single_partition_collection_if_not_exist(cls.client)
         cls.retry_after_in_milliseconds = 1000
 
@@ -88,7 +88,7 @@ class Test_retry_policy_tests(unittest.TestCase):
 
             try:
                 self.created_collection.create_item(body=document_definition)
-            except errors.HTTPFailure as e:
+            except errors.CosmosHttpResponseError as e:
                 self.assertEqual(e.status_code, StatusCodes.TOO_MANY_REQUESTS)
                 self.assertEqual(connection_policy.RetryOptions.MaxRetryAttemptCount, self.created_collection.client_connection.last_response_headers[HttpHeaders.ThrottleRetryCount])
                 self.assertGreaterEqual( self.created_collection.client_connection.last_response_headers[HttpHeaders.ThrottleRetryWaitTimeInMs],
@@ -110,7 +110,7 @@ class Test_retry_policy_tests(unittest.TestCase):
 
             try:
                 self.created_collection.create_item(body=document_definition)
-            except errors.HTTPFailure as e:
+            except errors.CosmosHttpResponseError as e:
                 self.assertEqual(e.status_code, StatusCodes.TOO_MANY_REQUESTS)
                 self.assertEqual(connection_policy.RetryOptions.MaxRetryAttemptCount, self.created_collection.client_connection.last_response_headers[HttpHeaders.ThrottleRetryCount])
                 self.assertGreaterEqual(self.created_collection.client_connection.last_response_headers[HttpHeaders.ThrottleRetryWaitTimeInMs],
@@ -133,7 +133,7 @@ class Test_retry_policy_tests(unittest.TestCase):
 
             try:
                 self.created_collection.create_item(body=document_definition)
-            except errors.HTTPFailure as e:
+            except errors.CosmosHttpResponseError as e:
                 self.assertEqual(e.status_code, StatusCodes.TOO_MANY_REQUESTS)
                 self.assertGreaterEqual(self.created_collection.client_connection.last_response_headers[HttpHeaders.ThrottleRetryWaitTimeInMs],
                                         connection_policy.RetryOptions.MaxWaitTimeInSeconds * 1000)
@@ -162,7 +162,7 @@ class Test_retry_policy_tests(unittest.TestCase):
                         { 'name':'@id', 'value':document_definition['id'] }
                     ]
                 }))
-            except errors.HTTPFailure as e:
+            except errors.CosmosHttpResponseError as e:
                 self.assertEqual(e.status_code, StatusCodes.TOO_MANY_REQUESTS)
                 self.assertEqual(connection_policy.RetryOptions.MaxRetryAttemptCount,
                                 self.created_collection.client_connection.last_response_headers[HttpHeaders.ThrottleRetryCount])
@@ -233,7 +233,7 @@ class Test_retry_policy_tests(unittest.TestCase):
             created_document = {}
             try :
                 created_document = self.created_collection.create_item(body=document_definition)
-            except errors.HTTPFailure as err:
+            except errors.CosmosHttpResponseError as err:
                 self.assertEqual(err.status_code, 10054)
 
             self.assertDictEqual(created_document, {})
@@ -244,7 +244,12 @@ class Test_retry_policy_tests(unittest.TestCase):
             _retry_utility.ExecuteFunction = original_execute_function
 
     def _MockExecuteFunction(self, function, *args, **kwargs):
-        raise errors.HTTPFailure(StatusCodes.TOO_MANY_REQUESTS, "Request rate is too large", {HttpHeaders.RetryAfterInMilliseconds: self.retry_after_in_milliseconds})
+        response = test_config.FakeResponse({HttpHeaders.RetryAfterInMilliseconds: self.retry_after_in_milliseconds})
+        raise errors.CosmosHttpResponseError(
+            status_code=StatusCodes.TOO_MANY_REQUESTS,
+            message="Request rate is too large",
+            response=response)
+
 
     class MockExecuteFunctionConnectionReset(object):
 
@@ -257,7 +262,10 @@ class Test_retry_policy_tests(unittest.TestCase):
             if self.counter % 3 == 0:
                 return self.org_func(func, *args, **kwargs)
             else:
-                raise errors.HTTPFailure(10054, "Connection was reset", {})
+                raise errors.CosmosHttpResponseError(
+                    status_code=10054,
+                    message="Connection was reset",
+                    response=test_config.FakeResponse({}))
 
 
 if __name__ == '__main__':

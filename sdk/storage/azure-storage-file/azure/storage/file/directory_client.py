@@ -5,9 +5,10 @@
 # --------------------------------------------------------------------------
 
 import functools
-from typing import ( # pylint: disable=unused-import
+from typing import (  # pylint: disable=unused-import
     Optional, Union, Any, Dict, TYPE_CHECKING
 )
+
 try:
     from urllib.parse import urlparse, quote, unquote
 except ImportError:
@@ -25,14 +26,17 @@ from ._generated.models import StorageErrorException
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
 from ._shared.request_handlers import add_metadata_headers
 from ._shared.response_handlers import return_response_headers, process_storage_error
+from ._shared.parser import _str
+from ._parser import _get_file_permission, _datetime_to_str
 from ._deserialize import deserialize_directory_properties
 from ._polling import CloseHandles
 from .file_client import FileClient
-from .models import DirectoryPropertiesPaged, HandlesPaged
+from .models import DirectoryPropertiesPaged, HandlesPaged, NTFSAttributes  # pylint: disable=unused-import
 
 if TYPE_CHECKING:
-    from .models import SharePermissions, ShareProperties, DirectoryProperties, ContentSettings
+    from .models import ShareProperties, DirectoryProperties, ContentSettings
     from ._generated.models import HandleItem
+
 
 class DirectoryClient(StorageAccountHostsMixin):
     """A client to interact with a specific directory, although it may not yet exist.
@@ -118,7 +122,7 @@ class DirectoryClient(StorageAccountHostsMixin):
 
         self._query_str, credential = self._format_query_string(
             sas_token, credential, share_snapshot=self.snapshot)
-        super(DirectoryClient, self).__init__(parsed_url, 'file', credential, **kwargs)
+        super(DirectoryClient, self).__init__(parsed_url, service='file', credential=credential, **kwargs)
         self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline)
 
     def _format_url(self, hostname):
@@ -168,6 +172,7 @@ class DirectoryClient(StorageAccountHostsMixin):
             account_url, share=share, directory_path=directory_path, credential=credential, **kwargs)
 
     def get_file_client(self, file_name, **kwargs):
+        # type: (str, Any) -> FileClient
         """Get a client to interact with a specific file.
 
         The file need not already exist.
@@ -185,6 +190,7 @@ class DirectoryClient(StorageAccountHostsMixin):
             _location_mode=self._location_mode, **kwargs)
 
     def get_subdirectory_client(self, directory_name, **kwargs):
+        # type: (str, Any) -> DirectoryClient
         """Get a client to interact with a specific subdirectory.
 
         The subdirectory need not already exist.
@@ -300,6 +306,7 @@ class DirectoryClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def list_handles(self, recursive=False, timeout=None, **kwargs):
+        # type: (bool, Optional[int], Any) -> ItemPaged
         """Lists opened handles on a directory or a file under the directory.
 
         :param bool recursive:
@@ -420,12 +427,63 @@ class DirectoryClient(StorageAccountHostsMixin):
             process_storage_error(error)
 
     @distributed_trace
+    def set_http_headers(self, file_attributes="none",  # type: Union[str, NTFSAttributes]
+                         file_creation_time="preserve",  # type: Union[str, datetime]
+                         file_last_write_time="preserve",  # type: Union[str, datetime]
+                         file_permission=None,   # type: Optional[str]
+                         file_permission_key=None,   # type: Optional[str]
+                         timeout=None,  # type: Optional[int]
+                         **kwargs):  # type: ignore
+        # type: (...) -> Dict[str, Any]
+        """Sets HTTP headers on the directory.
+
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
+        :param file_attributes:
+            The file system attributes for files and directories.
+            If not set, indicates preservation of existing values.
+            Here is an example for when the var type is str: 'Temporary|Archive'
+        :type file_attributes: str or :class:`~azure.storage.file.models.NTFSAttributes`
+        :param file_creation_time: Creation time for the file
+            Default value: Now.
+        :type file_creation_time: str or datetime
+        :param file_last_write_time: Last write time for the file
+            Default value: Now.
+        :type file_last_write_time: str or datetime
+        :param file_permission: If specified the permission (security
+            descriptor) shall be set for the directory/file. This header can be
+            used if Permission size is <= 8KB, else x-ms-file-permission-key
+            header shall be used. Default value: Inherit. If SDDL is specified as
+            input, it must have owner, group and dacl. Note: Only one of the
+            x-ms-file-permission or x-ms-file-permission-key should be specified.
+        :type file_permission: str
+        :param file_permission_key: Key of the permission to be set for the
+            directory/file. Note: Only one of the x-ms-file-permission or
+            x-ms-file-permission-key should be specified.
+        :type file_permission_key: str
+        :returns: File-updated property dict (Etag and last modified).
+        :rtype: dict(str, Any)
+        """
+        file_permission = _get_file_permission(file_permission, file_permission_key, 'preserve')
+        try:
+            return self._client.directory.set_properties(  # type: ignore
+                file_attributes=_str(file_attributes),
+                file_creation_time=_datetime_to_str(file_creation_time),
+                file_last_write_time=_datetime_to_str(file_last_write_time),
+                file_permission=file_permission,
+                file_permission_key=file_permission_key,
+                timeout=timeout,
+                cls=return_response_headers,
+                **kwargs)
+        except StorageErrorException as error:
+            process_storage_error(error)
+
+    @distributed_trace
     def create_subdirectory(
             self, directory_name,  # type: str
-            metadata=None, #type: Optional[Dict[str, Any]]
-            timeout=None, # type: Optional[int]
-            **kwargs
-        ):
+            metadata=None,  # type: Optional[Dict[str, Any]]
+            timeout=None,  # type: Optional[int]
+            **kwargs):
         # type: (...) -> DirectoryClient
         """Creates a new subdirectory and returns a client to interact
         with the subdirectory.

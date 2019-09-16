@@ -9,6 +9,8 @@ from typing import (  # pylint: disable=unused-import
     TypeVar, TYPE_CHECKING
 )
 
+from azure.core.tracing.decorator_async import distributed_trace_async
+
 from .._shared.response_handlers import return_response_headers, process_storage_error
 from .._generated.models import (
     StorageErrorException,
@@ -59,6 +61,7 @@ class LeaseClient(LeaseClientBase):
     async def __aexit__(self, *args):
         await self.release()
 
+    @distributed_trace_async
     async def acquire(self, lease_duration=-1, timeout=None, **kwargs):
         # type: (int, Optional[int], Any) -> None
         """Requests a new lease.
@@ -115,6 +118,7 @@ class LeaseClient(LeaseClientBase):
         self.last_modified = response.get('last_modified')   # type: datetime
         self.etag = kwargs.get('etag')  # type: str
 
+    @distributed_trace_async
     async def renew(self, timeout=None, **kwargs):
         # type: (Optional[int], Any) -> None
         """Renews the lease.
@@ -168,6 +172,7 @@ class LeaseClient(LeaseClientBase):
         self.id = response.get('lease_id')  # type: str
         self.last_modified = response.get('last_modified')   # type: datetime
 
+    @distributed_trace_async
     async def release(self, timeout=None, **kwargs):
         # type: (Optional[int], Any) -> None
         """Release the lease.
@@ -219,6 +224,7 @@ class LeaseClient(LeaseClientBase):
         self.id = response.get('lease_id')  # type: str
         self.last_modified = response.get('last_modified')   # type: datetime
 
+    @distributed_trace_async
     async def change(self, proposed_lease_id, timeout=None, **kwargs):
         # type: (str, Optional[int], Any) -> None
         """Change the lease ID of an active lease.
@@ -270,6 +276,7 @@ class LeaseClient(LeaseClientBase):
         self.id = response.get('lease_id')  # type: str
         self.last_modified = response.get('last_modified')   # type: datetime
 
+    @distributed_trace_async
     async def break_lease(self, lease_break_period=None, timeout=None, **kwargs):
         # type: (Optional[int], Optional[int], Any) -> int
         """Break the lease, if the container or blob has an active lease.

@@ -1,5 +1,25 @@
 # Release History
 
+## 5.0.0b3 (2019-09-10)
+
+**New features**
+
+- Added support for automatic load balancing among multiple `EventProcessor`.
+- Added `BlobPartitionManager` which implements `PartitionManager`.
+    - Azure Blob Storage is applied for storing data used by `EventProcessor`.
+    - Packaged separately as a plug-in to `EventProcessor`.
+    - For details, please refer to [Azure Blob Storage Partition Manager](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/eventhub/azure-eventhubs-checkpointstoreblob-aio).
+- Added property `system_properties` on `EventData`.
+
+**Breaking changes**
+
+- Removed constructor method of `PartitionProcessor`. For initialization please implement the method `initialize`.
+- Replaced `CheckpointManager` by `PartitionContext`.
+    - `PartitionContext` has partition context information and method `update_checkpoint`.
+- Updated all methods of `PartitionProcessor` to include `PartitionContext` as part of the arguments.
+- Updated accessibility of class members in `EventHub/EventHubConsumer/EventHubProducer`to be private.
+- Moved `azure.eventhub.eventprocessor` under `aio` package, which now becomes `azure.eventhub.aio.eventprocessor`.
+
 ## 5.0.0b2 (2019-08-06)
 
 **New features**

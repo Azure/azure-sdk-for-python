@@ -11,15 +11,23 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 2609976c-b636-11e9-83c9-2816a845e8c6
+      - ccaab446-d055-11e9-a686-001a7dda7113
       x-ms-date:
-      - Sat, 03 Aug 2019 21:32:09 GMT
+      - Fri, 06 Sep 2019 03:24:13 GMT
+      x-ms-file-attributes:
+      - none
+      x-ms-file-creation-time:
+      - now
+      x-ms-file-last-write-time:
+      - now
+      x-ms-file-permission:
+      - inherit
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
     uri: https://storagename.file.core.windows.net/utshare954e1740/dir1?restype=directory
   response:
@@ -29,19 +37,35 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Sat, 03 Aug 2019 21:32:08 GMT
+      - Fri, 06 Sep 2019 03:24:13 GMT
       ETag:
-      - '"0x8D7185A09C1DACE"'
+      - '"0x8D73279B0EF7C2F"'
       Last-Modified:
-      - Sat, 03 Aug 2019 21:32:08 GMT
+      - Fri, 06 Sep 2019 03:24:13 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - ccaab446-d055-11e9-a686-001a7dda7113
+      x-ms-file-attributes:
+      - Directory
+      x-ms-file-change-time:
+      - '2019-09-06T03:24:13.7131055Z'
+      x-ms-file-creation-time:
+      - '2019-09-06T03:24:13.7131055Z'
+      x-ms-file-id:
+      - '13835128424026341376'
+      x-ms-file-last-write-time:
+      - '2019-09-06T03:24:13.7131055Z'
+      x-ms-file-parent-id:
+      - '0'
+      x-ms-file-permission-key:
+      - 17913408918638655783*10394889115079208622
       x-ms-request-id:
-      - 874f8ce4-101a-005a-5242-4a6281000000
+      - f9c5fa4f-201a-007d-2a62-6422d7000000
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -57,15 +81,15 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 26450642-b636-11e9-b443-2816a845e8c6
+      - ccc45606-d055-11e9-9284-001a7dda7113
       x-ms-date:
-      - Sat, 03 Aug 2019 21:32:09 GMT
+      - Fri, 06 Sep 2019 03:24:13 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: DELETE
     uri: https://storagename.file.core.windows.net/utshare954e1740/dir1?restype=directory
   response:
@@ -75,13 +99,15 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Sat, 03 Aug 2019 21:32:08 GMT
+      - Fri, 06 Sep 2019 03:24:13 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - ccc45606-d055-11e9-9284-001a7dda7113
       x-ms-request-id:
-      - 874f8ce9-101a-005a-5342-4a6281000000
+      - f9c5fa51-201a-007d-2b62-6422d7000000
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 202
       message: Accepted
@@ -95,38 +121,38 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - 267c1ed2-b636-11e9-a69f-2816a845e8c6
+      - cccb55dc-d055-11e9-a178-001a7dda7113
       x-ms-date:
-      - Sat, 03 Aug 2019 21:32:10 GMT
+      - Fri, 06 Sep 2019 03:24:13 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: GET
     uri: https://storagename.file.core.windows.net/utshare954e1740/dir1?restype=directory
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ResourceNotFound</Code><Message>The
-        specified resource does not exist.\nRequestId:874f8cea-101a-005a-5442-4a6281000000\nTime:2019-08-03T21:32:09.0808554Z</Message></Error>"
+        specified resource does not exist.\nRequestId:f9c5fa52-201a-007d-2c62-6422d7000000\nTime:2019-09-06T03:24:13.9022410Z</Message></Error>"
     headers:
       Content-Length:
       - '223'
       Content-Type:
       - application/xml
       Date:
-      - Sat, 03 Aug 2019 21:32:09 GMT
+      - Fri, 06 Sep 2019 03:24:13 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
+      x-ms-client-request-id:
+      - cccb55dc-d055-11e9-a178-001a7dda7113
       x-ms-error-code:
       - ResourceNotFound
       x-ms-request-id:
-      - 874f8cea-101a-005a-5442-4a6281000000
+      - f9c5fa52-201a-007d-2c62-6422d7000000
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 404
       message: The specified resource does not exist.

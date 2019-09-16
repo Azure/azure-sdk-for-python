@@ -3,6 +3,27 @@
 Release History
 ===============
 
+8.0.0 (2019-09-12)
+++++++++++++++++++
+
+**Note**
+
+- Compute API version default is now 2019-07-01
+- New disks version 2019-03-01
+- New galleries version 2019-07-01
+
+**Features**
+
+- Model GalleryImageVersionStorageProfile has a new parameter source
+- Model GalleryDiskImage has a new parameter source
+- Model Snapshot has new parameters: disk_size_bytes, unique_id, incremental
+- Model EncryptionSettingsCollection has a new parameter encryption_settings_version
+- Model CreationData has new parameters: source_unique_id, upload_size_bytes
+
+**Breaking Changes**
+
+- Model GalleryImageVersionPublishingProfile no longer has parameter source
+
 7.0.0 (2019-08-27)
 ++++++++++++++++++
 
