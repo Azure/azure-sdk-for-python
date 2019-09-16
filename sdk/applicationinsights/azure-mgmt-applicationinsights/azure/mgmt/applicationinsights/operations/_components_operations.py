@@ -446,6 +446,12 @@ class ComponentsOperations(object):
             self, resource_group_name, resource_name, table, filters, custom_headers=None, raw=False, **operation_config):
         """Purges data in an Application Insights component by a set of
         user-defined filters.
+        In order to manage system resources, purge requests are throttled at 50
+        requests per hour. You should batch the execution of purge requests by
+        sending a single command whose predicate includes all user identities
+        that require purging. Use the in operator to specify multiple
+        identities. You should run the query prior to using for a purge request
+        to verify that the results are expected.
 
         :param resource_group_name: The name of the resource group. The name
          is case insensitive.
