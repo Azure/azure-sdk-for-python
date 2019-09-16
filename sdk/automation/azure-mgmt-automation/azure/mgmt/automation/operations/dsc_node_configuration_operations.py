@@ -273,7 +273,7 @@ class DscNodeConfigurationOperations(object):
         :type filter: str
         :param skip: The number of rows to skip.
         :type skip: int
-        :param top: The the number of rows to take.
+        :param top: The number of rows to take.
         :type top: int
         :param inlinecount: Return total rows.
         :type inlinecount: str
