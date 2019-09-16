@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .luis_authoring_client import LUISAuthoringClient
-from .version import VERSION
+from ._configuration import LUISAuthoringClientConfiguration
+from ._luis_authoring_client import LUISAuthoringClient
+__all__ = ['LUISAuthoringClient', 'LUISAuthoringClientConfiguration']
 
-__all__ = ['LUISAuthoringClient']
+from .version import VERSION
 
 __version__ = VERSION
 

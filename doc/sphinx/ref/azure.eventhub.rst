@@ -35,14 +35,6 @@ azure.eventhub.common module
    :undoc-members:
    :show-inheritance:
 
-azure.eventhub.configuration module
------------------------------------
-
-.. automodule:: azure.eventhub.configuration
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 azure.eventhub.consumer module
 ------------------------------
 

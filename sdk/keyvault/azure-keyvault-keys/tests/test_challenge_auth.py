@@ -18,7 +18,7 @@ from azure.core.pipeline.transport import HttpRequest
 from azure.keyvault.keys._shared import ChallengeAuthPolicy, HttpChallenge, HttpChallengeCache
 import pytest
 
-from helpers import mock_response, Request, validating_transport
+from keys_helpers import mock_response, Request, validating_transport
 
 
 def test_challenge_cache():

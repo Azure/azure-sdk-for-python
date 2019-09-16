@@ -10,5 +10,4 @@
 # --------------------------------------------------------------------------
 
 from ._key_vault_client_async import KeyVaultClient
-from ._configuration_async import KeyVaultClientConfiguration
-__all__ = ['KeyVaultClient', 'KeyVaultClientConfiguration']
+__all__ = ['KeyVaultClient']

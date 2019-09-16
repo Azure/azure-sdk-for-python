@@ -4,6 +4,13 @@
 # ------------------------------------
 import os
 
+from azure.core import Configuration
+from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
+from azure.core.pipeline.policies import ContentDecodePolicy, HeadersPolicy, NetworkTraceLoggingPolicy, RetryPolicy
+
+from ._authn_client import AuthnClient
+from ._constants import Endpoints, EnvironmentVariables
+
 try:
     from typing import TYPE_CHECKING
 except ImportError:
@@ -14,13 +21,6 @@ if TYPE_CHECKING:
     from typing import Any, Mapping, Optional, Type
     from azure.core.credentials import AccessToken
 
-from azure.core import Configuration
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
-from azure.core.pipeline.policies import ContentDecodePolicy, HeadersPolicy, NetworkTraceLoggingPolicy, RetryPolicy
-
-from ._authn_client import AuthnClient
-from .constants import Endpoints, EnvironmentVariables
-
 
 class _ManagedIdentityBase(object):
     """Sans I/O base for managed identity credentials"""
@@ -28,12 +28,12 @@ class _ManagedIdentityBase(object):
     def __init__(self, endpoint, client_cls, config=None, client_id=None, **kwargs):
         # type: (str, Type, Optional[Configuration], Optional[str], Any) -> None
         self._client_id = client_id
-        config = config or self.create_config(**kwargs)
+        config = config or self._create_config(**kwargs)
         policies = [ContentDecodePolicy(), config.headers_policy, config.retry_policy, config.logging_policy]
         self._client = client_cls(endpoint, config, policies, **kwargs)
 
     @staticmethod
-    def create_config(**kwargs):
+    def _create_config(**kwargs):
         # type: (Mapping[str, Any]) -> Configuration
         """
         Build a default configuration for the credential's HTTP pipeline.
@@ -79,8 +79,8 @@ class ImdsCredential(_ManagedIdentityBase):
         super(ImdsCredential, self).__init__(endpoint=Endpoints.IMDS, client_cls=AuthnClient, config=config, **kwargs)
         self._endpoint_available = None  # type: Optional[bool]
 
-    def get_token(self, *scopes):
-        # type: (*str) -> AccessToken
+    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
+        # type: (*str, **Any) -> AccessToken
         """
         Request an access token for `scopes`.
 
@@ -137,8 +137,8 @@ class MsiCredential(_ManagedIdentityBase):
                 endpoint=endpoint, client_cls=AuthnClient, config=config, **kwargs
             )
 
-    def get_token(self, *scopes):
-        # type: (*str) -> AccessToken
+    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
+        # type: (*str, **Any) -> AccessToken
         """
         Request an access token for `scopes`.
 

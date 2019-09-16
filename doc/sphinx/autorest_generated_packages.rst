@@ -4,6 +4,7 @@
   :caption: Developer Documentation
 
   ref/azure.common
+  ./ref/azure.appconfiguration.rst
   ./ref/azure.applicationinsights.rst
   ./ref/azure.batch.rst
   ./ref/azure.cognitiveservices.anomalydetector.rst
@@ -28,10 +29,13 @@
   ./ref/azure.cognitiveservices.vision.face.rst
   ./ref/azure.core.rst
   ./ref/azure.cosmos.rst
+  ./ref/azure.data.appconfiguration.rst
   ./ref/azure.eventgrid.rst
   ./ref/azure.eventhub.rst
+  ./ref/azure.eventhub.extensions.rst
   ./ref/azure.graphrbac.rst
   ./ref/azure.identity.rst
+  ./ref/azure.keyvault.certificates.rst
   ./ref/azure.keyvault.keys.rst
   ./ref/azure.keyvault.secrets.rst
   ./ref/azure.loganalytics.rst

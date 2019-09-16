@@ -29,28 +29,33 @@
 """
 
 from collections import namedtuple
+from enum import Enum
 import logging
 import os
-import six
 import sys
+import six
+from azure.core.tracing import AbstractSpan
 
 try:
-    from typing import TYPE_CHECKING
+    from typing import Type, Optional, Dict, Callable, cast, TYPE_CHECKING
 except ImportError:
     TYPE_CHECKING = False
 
 if TYPE_CHECKING:
     from typing import Any, Union
-
-
-from azure.core.tracing import AbstractSpan
-
+    try:
+        # pylint:disable=unused-import
+        from azure.core.tracing.ext.opencensus_span import OpenCensusSpan  # pylint:disable=redefined-outer-name
+    except ImportError:
+        pass
 
 __all__ = ("settings",)
 
 
-class _Unset(object):
-    pass
+# https://www.python.org/dev/peps/pep-0484/#support-for-singleton-types-in-unions
+class _Unset(Enum):
+    token = 0
+_unset = _Unset.token
 
 
 def convert_bool(value):
@@ -119,10 +124,10 @@ def convert_logging(value):
 
 
 def get_opencensus_span():
-    # type: () -> OpenCensusSpan
+    # type: () -> Optional[Type[AbstractSpan]]
     """Returns the OpenCensusSpan if opencensus is installed else returns None"""
     try:
-        from azure.core.tracing.ext.opencensus_span import OpenCensusSpan
+        from azure.core.tracing.ext.opencensus_span import OpenCensusSpan  # pylint:disable=redefined-outer-name
 
         return OpenCensusSpan
     except ImportError:
@@ -130,16 +135,19 @@ def get_opencensus_span():
 
 
 def get_opencensus_span_if_opencensus_is_imported():
+    # type: () -> Optional[Type[AbstractSpan]]
     if "opencensus" not in sys.modules:
         return None
     return get_opencensus_span()
 
 
-_tracing_implementation_dict = {"opencensus": get_opencensus_span}
+_tracing_implementation_dict = {
+    "opencensus": get_opencensus_span
+}  # type: Dict[str, Callable[[], Optional[Type[AbstractSpan]]]]
 
 
 def convert_tracing_impl(value):
-    # type: (Union[str, AbstractSpan]) -> AbstractSpan
+    # type: (Union[str, Type[AbstractSpan]]) -> Optional[Type[AbstractSpan]]
     """Convert a string to AbstractSpan
 
     If a AbstractSpan is passed in, it is returned as-is. Otherwise the function
@@ -156,19 +164,21 @@ def convert_tracing_impl(value):
     if value is None:
         return get_opencensus_span_if_opencensus_is_imported()
 
-    wrapper_class = value
-    if isinstance(value, six.string_types):
-        value = value.lower()
-        get_wrapper_class = _tracing_implementation_dict.get(value, lambda: _Unset)
-        wrapper_class = get_wrapper_class()
-        if wrapper_class is _Unset:
-            raise ValueError(
-                "Cannot convert {} to AbstractSpan, valid values are: {}".format(
-                    value, ", ".join(_tracing_implementation_dict)
-                )
-            )
+    if not isinstance(value, six.string_types):
+        return value
 
-    return wrapper_class
+    value = cast(str, value)  # mypy clarity
+    value = value.lower()
+    get_wrapper_class = _tracing_implementation_dict.get(value, lambda: _unset)
+    wrapper_class = get_wrapper_class()  # type: Union[None, _Unset, Type[AbstractSpan]]
+    if wrapper_class is _unset:
+        raise ValueError(
+            "Cannot convert {} to AbstractSpan, valid values are: {}".format(
+                value, ", ".join(_tracing_implementation_dict)
+            )
+        )
+    # type ignored until https://github.com/python/mypy/issues/7279
+    return wrapper_class  # type: ignore
 
 
 class PrioritizedSetting(object):
@@ -253,7 +263,7 @@ class PrioritizedSetting(object):
         self.set_value(value)
 
     def set_value(self, value):
-        # (Any) -> None
+        # type: (Any) -> None
         """Specify a value for this setting programmatically.
 
         A value set this way takes precedence over all other methods except
@@ -408,10 +418,6 @@ class Settings(object):
 
     tracing_implementation = PrioritizedSetting(
         "tracing_implementation", env_var="AZURE_SDK_TRACING_IMPLEMENTATION", convert=convert_tracing_impl, default=None
-    )
-
-    tracing_should_only_propagate = PrioritizedSetting(
-        "tracing_should_only_propagate", env_var="AZURE_TRACING_ONLY_PROPAGATE", convert=convert_bool, default=False
     )
 
 

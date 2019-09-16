@@ -1204,12 +1204,14 @@ class ApplicationGatewayOnDemandProbe(Model):
     :param match: Criterion for classifying a healthy probe response.
     :type match:
      ~azure.mgmt.network.v2019_04_01.models.ApplicationGatewayProbeHealthResponseMatch
-    :param backend_pool_name: Name of backend pool of application gateway to
-     which probe request will be sent.
-    :type backend_pool_name: str
-    :param backend_http_setting_name: Name of backend http setting of
+    :param backend_address_pool: Reference of backend pool of application
+     gateway to which probe request will be sent.
+    :type backend_address_pool:
+     ~azure.mgmt.network.v2019_04_01.models.SubResource
+    :param backend_http_settings: Reference of backend http setting of
      application gateway to be used for test probe.
-    :type backend_http_setting_name: str
+    :type backend_http_settings:
+     ~azure.mgmt.network.v2019_04_01.models.SubResource
     """
 
     _attribute_map = {
@@ -1219,11 +1221,11 @@ class ApplicationGatewayOnDemandProbe(Model):
         'timeout': {'key': 'timeout', 'type': 'int'},
         'pick_host_name_from_backend_http_settings': {'key': 'pickHostNameFromBackendHttpSettings', 'type': 'bool'},
         'match': {'key': 'match', 'type': 'ApplicationGatewayProbeHealthResponseMatch'},
-        'backend_pool_name': {'key': 'backendPoolName', 'type': 'str'},
-        'backend_http_setting_name': {'key': 'backendHttpSettingName', 'type': 'str'},
+        'backend_address_pool': {'key': 'backendAddressPool', 'type': 'SubResource'},
+        'backend_http_settings': {'key': 'backendHttpSettings', 'type': 'SubResource'},
     }
 
-    def __init__(self, *, protocol=None, host: str=None, path: str=None, timeout: int=None, pick_host_name_from_backend_http_settings: bool=None, match=None, backend_pool_name: str=None, backend_http_setting_name: str=None, **kwargs) -> None:
+    def __init__(self, *, protocol=None, host: str=None, path: str=None, timeout: int=None, pick_host_name_from_backend_http_settings: bool=None, match=None, backend_address_pool=None, backend_http_settings=None, **kwargs) -> None:
         super(ApplicationGatewayOnDemandProbe, self).__init__(**kwargs)
         self.protocol = protocol
         self.host = host
@@ -1231,8 +1233,8 @@ class ApplicationGatewayOnDemandProbe(Model):
         self.timeout = timeout
         self.pick_host_name_from_backend_http_settings = pick_host_name_from_backend_http_settings
         self.match = match
-        self.backend_pool_name = backend_pool_name
-        self.backend_http_setting_name = backend_http_setting_name
+        self.backend_address_pool = backend_address_pool
+        self.backend_http_settings = backend_http_settings
 
 
 class ApplicationGatewayPathRule(SubResource):
@@ -2075,6 +2077,22 @@ class ApplicationSecurityGroup(Resource):
         self.etag = None
 
 
+class AutoApprovedPrivateLinkService(Model):
+    """The information of an AutoApprovedPrivateLinkService.
+
+    :param private_link_service: The id of the private link service resource.
+    :type private_link_service: str
+    """
+
+    _attribute_map = {
+        'private_link_service': {'key': 'privateLinkService', 'type': 'str'},
+    }
+
+    def __init__(self, *, private_link_service: str=None, **kwargs) -> None:
+        super(AutoApprovedPrivateLinkService, self).__init__(**kwargs)
+        self.private_link_service = private_link_service
+
+
 class Availability(Model):
     """Availability of the metric.
 
@@ -2136,26 +2154,30 @@ class AvailableDelegation(Model):
 class AvailablePrivateEndpointType(Model):
     """The information of an AvailablePrivateEndpointType.
 
+    :param name: The name of the service and resource.
+    :type name: str
     :param id: A unique identifier of the AvailablePrivateEndpoint Type
      resource.
     :type id: str
     :param type: Resource type.
     :type type: str
-    :param service_name: The name of the service and resource
-    :type service_name: str
+    :param resource_name: The name of the service and resource.
+    :type resource_name: str
     """
 
     _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
         'id': {'key': 'id', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'service_name': {'key': 'serviceName', 'type': 'str'},
+        'resource_name': {'key': 'resourceName', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, type: str=None, service_name: str=None, **kwargs) -> None:
+    def __init__(self, *, name: str=None, id: str=None, type: str=None, resource_name: str=None, **kwargs) -> None:
         super(AvailablePrivateEndpointType, self).__init__(**kwargs)
+        self.name = name
         self.id = id
         self.type = type
-        self.service_name = service_name
+        self.resource_name = resource_name
 
 
 class AvailableProvidersList(Model):
@@ -3132,9 +3154,9 @@ class BastionHostIPConfiguration(SubResource):
      Possible values include: 'Static', 'Dynamic'
     :type private_ip_allocation_method: str or
      ~azure.mgmt.network.v2019_04_01.models.IPAllocationMethod
-    :ivar name: Name of the resource that is unique within a resource group.
+    :param name: Name of the resource that is unique within a resource group.
      This name can be used to access the resource.
-    :vartype name: str
+    :type name: str
     :ivar etag: A unique read-only string that changes whenever the resource
      is updated.
     :vartype etag: str
@@ -3145,7 +3167,6 @@ class BastionHostIPConfiguration(SubResource):
     _validation = {
         'subnet': {'required': True},
         'public_ip_address': {'required': True},
-        'name': {'readonly': True},
         'etag': {'readonly': True},
         'type': {'readonly': True},
     }
@@ -3161,13 +3182,13 @@ class BastionHostIPConfiguration(SubResource):
         'type': {'key': 'type', 'type': 'str'},
     }
 
-    def __init__(self, *, subnet, public_ip_address, id: str=None, provisioning_state=None, private_ip_allocation_method=None, **kwargs) -> None:
+    def __init__(self, *, subnet, public_ip_address, id: str=None, provisioning_state=None, private_ip_allocation_method=None, name: str=None, **kwargs) -> None:
         super(BastionHostIPConfiguration, self).__init__(id=id, **kwargs)
         self.subnet = subnet
         self.public_ip_address = public_ip_address
         self.provisioning_state = provisioning_state
         self.private_ip_allocation_method = private_ip_allocation_method
-        self.name = None
+        self.name = name
         self.etag = None
         self.type = None
 
@@ -3355,6 +3376,22 @@ class BgpSettings(Model):
         self.asn = asn
         self.bgp_peering_address = bgp_peering_address
         self.peer_weight = peer_weight
+
+
+class CheckPrivateLinkServiceVisibilityRequest(Model):
+    """Request body of the CheckPrivateLinkServiceVisibility API service call.
+
+    :param private_link_service_alias: The alias of the private link service.
+    :type private_link_service_alias: str
+    """
+
+    _attribute_map = {
+        'private_link_service_alias': {'key': 'privateLinkServiceAlias', 'type': 'str'},
+    }
+
+    def __init__(self, *, private_link_service_alias: str=None, **kwargs) -> None:
+        super(CheckPrivateLinkServiceVisibilityRequest, self).__init__(**kwargs)
+        self.private_link_service_alias = private_link_service_alias
 
 
 class CloudError(Model):
@@ -5673,9 +5710,9 @@ class ExpressRouteCrossConnection(Resource):
     :type location: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
-    :ivar primary_azure_port: The name of the primary  port.
+    :ivar primary_azure_port: The name of the primary port.
     :vartype primary_azure_port: str
-    :ivar secondary_azure_port: The name of the secondary  port.
+    :ivar secondary_azure_port: The name of the secondary port.
     :vartype secondary_azure_port: str
     :ivar s_tag: The identifier of the circuit traffic.
     :vartype s_tag: int
@@ -6500,6 +6537,11 @@ class FrontendIPConfiguration(SubResource):
      Possible values include: 'Static', 'Dynamic'
     :type private_ip_allocation_method: str or
      ~azure.mgmt.network.v2019_04_01.models.IPAllocationMethod
+    :param private_ip_address_version: It represents whether the specific
+     ipconfiguration is IPv4 or IPv6. Default is taken as IPv4. Possible values
+     include: 'IPv4', 'IPv6'
+    :type private_ip_address_version: str or
+     ~azure.mgmt.network.v2019_04_01.models.IPVersion
     :param subnet: The reference of the subnet resource.
     :type subnet: ~azure.mgmt.network.v2019_04_01.models.Subnet
     :param public_ip_address: The reference of the Public IP resource.
@@ -6536,6 +6578,7 @@ class FrontendIPConfiguration(SubResource):
         'load_balancing_rules': {'key': 'properties.loadBalancingRules', 'type': '[SubResource]'},
         'private_ip_address': {'key': 'properties.privateIPAddress', 'type': 'str'},
         'private_ip_allocation_method': {'key': 'properties.privateIPAllocationMethod', 'type': 'str'},
+        'private_ip_address_version': {'key': 'properties.privateIPAddressVersion', 'type': 'str'},
         'subnet': {'key': 'properties.subnet', 'type': 'Subnet'},
         'public_ip_address': {'key': 'properties.publicIPAddress', 'type': 'PublicIPAddress'},
         'public_ip_prefix': {'key': 'properties.publicIPPrefix', 'type': 'SubResource'},
@@ -6545,7 +6588,7 @@ class FrontendIPConfiguration(SubResource):
         'zones': {'key': 'zones', 'type': '[str]'},
     }
 
-    def __init__(self, *, id: str=None, private_ip_address: str=None, private_ip_allocation_method=None, subnet=None, public_ip_address=None, public_ip_prefix=None, provisioning_state: str=None, name: str=None, etag: str=None, zones=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, private_ip_address: str=None, private_ip_allocation_method=None, private_ip_address_version=None, subnet=None, public_ip_address=None, public_ip_prefix=None, provisioning_state: str=None, name: str=None, etag: str=None, zones=None, **kwargs) -> None:
         super(FrontendIPConfiguration, self).__init__(id=id, **kwargs)
         self.inbound_nat_rules = None
         self.inbound_nat_pools = None
@@ -6553,6 +6596,7 @@ class FrontendIPConfiguration(SubResource):
         self.load_balancing_rules = None
         self.private_ip_address = private_ip_address
         self.private_ip_allocation_method = private_ip_allocation_method
+        self.private_ip_address_version = private_ip_address_version
         self.subnet = subnet
         self.public_ip_address = public_ip_address
         self.public_ip_prefix = public_ip_prefix
@@ -7332,11 +7376,11 @@ class LoadBalancingRule(SubResource):
      ~azure.mgmt.network.v2019_04_01.models.LoadDistribution
     :param frontend_port: Required. The port for the external endpoint. Port
      numbers for each rule must be unique within the Load Balancer. Acceptable
-     values are between 0 and 65534. Note that value 0 enables "Any Port"
+     values are between 0 and 65534. Note that value 0 enables "Any Port".
     :type frontend_port: int
     :param backend_port: The port used for internal connections on the
      endpoint. Acceptable values are between 0 and 65535. Note that value 0
-     enables "Any Port"
+     enables "Any Port".
     :type backend_port: int
     :param idle_timeout_in_minutes: The timeout for the TCP idle connection.
      The value can be set between 4 and 30 minutes. The default value is 4
@@ -9704,7 +9748,7 @@ class PolicySettings(Model):
      disabled state. Possible values include: 'Disabled', 'Enabled'
     :type enabled_state: str or
      ~azure.mgmt.network.v2019_04_01.models.WebApplicationFirewallEnabledState
-    :param mode: Describes if it is in detection mode  or prevention mode at
+    :param mode: Describes if it is in detection mode or prevention mode at
      policy level. Possible values include: 'Prevention', 'Detection'
     :type mode: str or
      ~azure.mgmt.network.v2019_04_01.models.WebApplicationFirewallMode
@@ -9915,7 +9959,7 @@ class PrivateLinkService(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'load_balancer_frontend_ip_configurations': {'key': 'properties.loadBalancerFrontendIPConfigurations', 'type': '[FrontendIPConfiguration]'},
+        'load_balancer_frontend_ip_configurations': {'key': 'properties.loadBalancerFrontendIpConfigurations', 'type': '[FrontendIPConfiguration]'},
         'ip_configurations': {'key': 'properties.ipConfigurations', 'type': '[PrivateLinkServiceIpConfiguration]'},
         'network_interfaces': {'key': 'properties.networkInterfaces', 'type': '[NetworkInterface]'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
@@ -10099,6 +10143,22 @@ class PrivateLinkServicePropertiesVisibility(ResourceSet):
 
     def __init__(self, *, subscriptions=None, **kwargs) -> None:
         super(PrivateLinkServicePropertiesVisibility, self).__init__(subscriptions=subscriptions, **kwargs)
+
+
+class PrivateLinkServiceVisibility(Model):
+    """Response for the CheckPrivateLinkServiceVisibility API service call.
+
+    :param visible: Private Link Service Visibility (True/False).
+    :type visible: bool
+    """
+
+    _attribute_map = {
+        'visible': {'key': 'visible', 'type': 'bool'},
+    }
+
+    def __init__(self, *, visible: bool=None, **kwargs) -> None:
+        super(PrivateLinkServiceVisibility, self).__init__(**kwargs)
+        self.visible = visible
 
 
 class Probe(SubResource):
@@ -10425,6 +10485,10 @@ class PublicIPPrefix(Resource):
     :param public_ip_addresses: The list of all referenced PublicIPAddresses.
     :type public_ip_addresses:
      list[~azure.mgmt.network.v2019_04_01.models.ReferencedPublicIpAddress]
+    :ivar load_balancer_frontend_ip_configuration: The reference to load
+     balancer frontend IP configuration associated with the public IP prefix.
+    :vartype load_balancer_frontend_ip_configuration:
+     ~azure.mgmt.network.v2019_04_01.models.SubResource
     :param resource_guid: The resource GUID property of the public IP prefix
      resource.
     :type resource_guid: str
@@ -10442,6 +10506,7 @@ class PublicIPPrefix(Resource):
     _validation = {
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'load_balancer_frontend_ip_configuration': {'readonly': True},
     }
 
     _attribute_map = {
@@ -10456,6 +10521,7 @@ class PublicIPPrefix(Resource):
         'prefix_length': {'key': 'properties.prefixLength', 'type': 'int'},
         'ip_prefix': {'key': 'properties.ipPrefix', 'type': 'str'},
         'public_ip_addresses': {'key': 'properties.publicIPAddresses', 'type': '[ReferencedPublicIpAddress]'},
+        'load_balancer_frontend_ip_configuration': {'key': 'properties.loadBalancerFrontendIpConfiguration', 'type': 'SubResource'},
         'resource_guid': {'key': 'properties.resourceGuid', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
@@ -10470,6 +10536,7 @@ class PublicIPPrefix(Resource):
         self.prefix_length = prefix_length
         self.ip_prefix = ip_prefix
         self.public_ip_addresses = public_ip_addresses
+        self.load_balancer_frontend_ip_configuration = None
         self.resource_guid = resource_guid
         self.provisioning_state = provisioning_state
         self.etag = etag
@@ -10554,7 +10621,7 @@ class ResourceNavigationLink(SubResource):
     :ivar etag: A unique read-only string that changes whenever the resource
      is updated.
     :vartype etag: str
-    :ivar type: Resource type
+    :ivar type: Resource type.
     :vartype type: str
     """
 
@@ -11113,7 +11180,7 @@ class ServiceAssociationLink(SubResource):
     :ivar etag: A unique read-only string that changes whenever the resource
      is updated.
     :vartype etag: str
-    :param type: Resource type
+    :param type: Resource type.
     :type type: str
     """
 
@@ -11442,7 +11509,7 @@ class Subnet(SubResource):
     :type id: str
     :param address_prefix: The address prefix for the subnet.
     :type address_prefix: str
-    :param address_prefixes: List of  address prefixes for the subnet.
+    :param address_prefixes: List of address prefixes for the subnet.
     :type address_prefixes: list[str]
     :param network_security_group: The reference of the NetworkSecurityGroup
      resource.
@@ -11458,7 +11525,7 @@ class Subnet(SubResource):
     :param service_endpoint_policies: An array of service endpoint policies.
     :type service_endpoint_policies:
      list[~azure.mgmt.network.v2019_04_01.models.ServiceEndpointPolicy]
-    :ivar private_endpoints: An array of references to private endpoints
+    :ivar private_endpoints: An array of references to private endpoints.
     :vartype private_endpoints:
      list[~azure.mgmt.network.v2019_04_01.models.PrivateEndpoint]
     :ivar ip_configurations: Gets an array of references to the network
@@ -11485,6 +11552,12 @@ class Subnet(SubResource):
     :vartype purpose: str
     :param provisioning_state: The provisioning state of the resource.
     :type provisioning_state: str
+    :param private_endpoint_network_policies: Enable or Disable private end
+     point on the subnet.
+    :type private_endpoint_network_policies: str
+    :param private_link_service_network_policies: Enable or Disable private
+     link service on the subnet.
+    :type private_link_service_network_policies: str
     :param name: The name of the resource that is unique within a resource
      group. This name can be used to access the resource.
     :type name: str
@@ -11517,11 +11590,13 @@ class Subnet(SubResource):
         'delegations': {'key': 'properties.delegations', 'type': '[Delegation]'},
         'purpose': {'key': 'properties.purpose', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'private_endpoint_network_policies': {'key': 'properties.privateEndpointNetworkPolicies', 'type': 'str'},
+        'private_link_service_network_policies': {'key': 'properties.privateLinkServiceNetworkPolicies', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str=None, address_prefix: str=None, address_prefixes=None, network_security_group=None, route_table=None, nat_gateway=None, service_endpoints=None, service_endpoint_policies=None, resource_navigation_links=None, service_association_links=None, delegations=None, provisioning_state: str=None, name: str=None, etag: str=None, **kwargs) -> None:
+    def __init__(self, *, id: str=None, address_prefix: str=None, address_prefixes=None, network_security_group=None, route_table=None, nat_gateway=None, service_endpoints=None, service_endpoint_policies=None, resource_navigation_links=None, service_association_links=None, delegations=None, provisioning_state: str=None, private_endpoint_network_policies: str=None, private_link_service_network_policies: str=None, name: str=None, etag: str=None, **kwargs) -> None:
         super(Subnet, self).__init__(id=id, **kwargs)
         self.address_prefix = address_prefix
         self.address_prefixes = address_prefixes
@@ -11538,6 +11613,8 @@ class Subnet(SubResource):
         self.delegations = delegations
         self.purpose = None
         self.provisioning_state = provisioning_state
+        self.private_endpoint_network_policies = private_endpoint_network_policies
+        self.private_link_service_network_policies = private_link_service_network_policies
         self.name = name
         self.etag = etag
 
@@ -12400,8 +12477,8 @@ class VirtualNetworkGateway(Resource):
     :param bgp_settings: Virtual network gateway's BGP speaker settings.
     :type bgp_settings: ~azure.mgmt.network.v2019_04_01.models.BgpSettings
     :param custom_routes: The reference of the address space resource which
-     represents the custom routes address space specified by the the customer
-     for virtual network gateway and VpnClient.
+     represents the custom routes address space specified by the customer for
+     virtual network gateway and VpnClient.
     :type custom_routes: ~azure.mgmt.network.v2019_04_01.models.AddressSpace
     :param resource_guid: The resource GUID property of the
      VirtualNetworkGateway resource.
@@ -13982,7 +14059,7 @@ class WebApplicationFirewallPolicy(Resource):
     :type location: str
     :param tags: Resource tags.
     :type tags: dict[str, str]
-    :param policy_settings: Describes  policySettings for policy.
+    :param policy_settings: Describes policySettings for policy.
     :type policy_settings:
      ~azure.mgmt.network.v2019_04_01.models.PolicySettings
     :param custom_rules: Describes custom rules inside the policy.

@@ -3,6 +3,79 @@
 Release History
 ===============
 
+8.0.0 (2019-09-12)
+++++++++++++++++++
+
+**Note**
+
+- Compute API version default is now 2019-07-01
+- New disks version 2019-03-01
+- New galleries version 2019-07-01
+
+**Features**
+
+- Model GalleryImageVersionStorageProfile has a new parameter source
+- Model GalleryDiskImage has a new parameter source
+- Model Snapshot has new parameters: disk_size_bytes, unique_id, incremental
+- Model EncryptionSettingsCollection has a new parameter encryption_settings_version
+- Model CreationData has new parameters: source_unique_id, upload_size_bytes
+
+**Breaking Changes**
+
+- Model GalleryImageVersionPublishingProfile no longer has parameter source
+
+7.0.0 (2019-08-27)
+++++++++++++++++++
+
+**Features**
+
+- Model VirtualMachineScaleSetUpdateVMProfile has a new parameter scheduled_events_profile
+- Model VirtualMachineScaleSetUpdateVMProfile has a new parameter billing_profile
+- Model VirtualMachine has a new parameter virtual_machine_scale_set
+- Model VirtualMachine has a new parameter priority
+- Model VirtualMachine has a new parameter billing_profile
+- Model VirtualMachine has a new parameter eviction_policy
+- Model VirtualMachineScaleSetVMProfile has a new parameter scheduled_events_profile
+- Model VirtualMachineScaleSetVMProfile has a new parameter billing_profile
+- Model VirtualMachineImage has a new parameter hyper_vgeneration
+- Model VirtualMachineUpdate has a new parameter virtual_machine_scale_set
+- Model VirtualMachineUpdate has a new parameter priority
+- Model VirtualMachineUpdate has a new parameter billing_profile
+- Model VirtualMachineUpdate has a new parameter eviction_policy
+
+**Breaking changes**
+
+- Operation VirtualMachineScaleSetVMsOperations.get has a new signature
+
+6.0.0 (2019-07-20)
+++++++++++++++++++
+
+**Features**
+
+- Model VirtualMachine has a new parameter host
+- Model VirtualMachineUpdate has a new parameter host
+- Model VirtualMachineInstanceView has a new parameter hyper_vgeneration
+- Added operation group GalleryApplicationVersionsOperations
+- Added operation group GalleryApplicationsOperations
+- Added operation group DedicatedHostsOperations
+- Added operation group DedicatedHostGroupsOperations
+
+**Breaking changes**
+
+- Model GalleryArtifactPublishingProfileBase has a new signature
+
+**General Breaking changes**
+
+This version uses a next-generation code generator that *might* introduce breaking changes if you were importing from the v20xx_yy_zz API folders.
+In summary, some modules were incorrectly visible/importable and have been renamed. This fixed several issues caused by usage of classes that were not supposed to be used in the first place.
+
+- ComputeManagementClient cannot be imported from `azure.mgmt.compute.v20xx_yy_zz.compute_management_client` anymore (import from `azure.mgmt.compute.v20xx_yy_zz` works like before)
+- ComputeManagementClientConfiguration import has been moved from `azure.mgmt.compute.v20xx_yy_zz.compute_management_client` to `azure.mgmt.compute.v20xx_yy_zz`
+- A model `MyClass` from a "models" sub-module cannot be imported anymore using `azure.mgmt.compute.v20xx_yy_zz.models.my_class` (import from `azure.mgmt.compute.v20xx_yy_zz.models` works like before)
+- An operation class `MyClassOperations` from an `operations` sub-module cannot be imported anymore using `azure.mgmt.compute.v20xx_yy_zz.operations.my_class_operations` (import from `azure.mgmt.compute.v20xx_yy_zz.operations` works like before)
+
+Last but not least, HTTP connection pooling is now enabled by default. You should always use a client as a context manager, or call close(), or use no more than one client per process.
+
 5.0.0 (2019-04-26)
 ++++++++++++++++++
 

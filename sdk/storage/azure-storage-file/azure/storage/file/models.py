@@ -6,11 +6,9 @@
 # pylint: disable=too-few-public-methods, too-many-instance-attributes
 # pylint: disable=super-init-not-called, too-many-lines
 
-from azure.core.paging import Paged
-from ._shared.utils import (
-    return_context_and_deserialized,
-    process_storage_error)
-
+from azure.core.paging import PageIterator
+from azure.storage.file._parser import _parse_datetime_from_str
+from ._shared.response_handlers import return_context_and_deserialized, process_storage_error
 from ._shared.models import DictMixin, get_enum_value
 from ._generated.models import StorageErrorException
 from ._generated.models import Metrics as GeneratedMetrics
@@ -243,14 +241,14 @@ class ShareProperties(DictMixin):
         return props
 
 
-class SharePropertiesPaged(Paged):
+class SharePropertiesPaged(PageIterator):
     """An iterable of Share properties.
 
     :ivar str service_endpoint: The service URL.
     :ivar str prefix: A file name prefix being used to filter the list.
-    :ivar str current_marker: The continuation token of the current page of results.
+    :ivar str marker: The continuation token of the current page of results.
     :ivar int results_per_page: The maximum number of results retrieved per API call.
-    :ivar str next_marker: The continuation token to retrieve the next page of results.
+    :ivar str continuation_token: The continuation token to retrieve the next page of results.
     :ivar str location_mode: The location mode being used to list results. The available
         options include "primary" and "secondary".
     :ivar current_page: The current page of listed results.
@@ -261,43 +259,41 @@ class SharePropertiesPaged(Paged):
         begin with the specified prefix.
     :param int results_per_page: The maximum number of share names to retrieve per
         call.
-    :param str marker: An opaque continuation token.
+    :param str continuation_token: An opaque continuation token.
     """
-    def __init__(self, command, prefix=None, results_per_page=None, marker=None, **kwargs):
-        super(SharePropertiesPaged, self).__init__(command, None)
+    def __init__(self, command, prefix=None, results_per_page=None, continuation_token=None):
+        super(SharePropertiesPaged, self).__init__(
+            get_next=self._get_next_cb,
+            extract_data=self._extract_data_cb,
+            continuation_token=continuation_token or ""
+        )
+        self._command = command
         self.service_endpoint = None
         self.prefix = prefix
-        self.current_marker = None
+        self.marker = None
         self.results_per_page = results_per_page
-        self.next_marker = marker or ""
         self.location_mode = None
+        self.current_page = []
 
-    def _advance_page(self):
-        """Force moving the cursor to the next azure call.
-        This method is for advanced usage, iterator protocol is prefered.
-        :raises: StopIteration if no further page
-        :return: The current page list
-        :rtype: list
-        """
-        if self.next_marker is None:
-            raise StopIteration("End of paging")
-        self._current_page_iter_index = 0
+    def _get_next_cb(self, continuation_token):
         try:
-            self.location_mode, self._response = self._get_next(
-                marker=self.next_marker or None,
+            return self._command(
+                marker=continuation_token or None,
                 maxresults=self.results_per_page,
+                prefix=self.prefix,
                 cls=return_context_and_deserialized,
                 use_location=self.location_mode)
         except StorageErrorException as error:
             process_storage_error(error)
 
+    def _extract_data_cb(self, get_next_return):
+        self.location_mode, self._response = get_next_return
         self.service_endpoint = self._response.service_endpoint
         self.prefix = self._response.prefix
-        self.current_marker = self._response.marker
+        self.marker = self._response.marker
         self.results_per_page = self._response.max_results
         self.current_page = [ShareProperties._from_generated(i) for i in self._response.share_items]  # pylint: disable=protected-access
-        self.next_marker = self._response.next_marker or None
-        return self.current_page
+        return self._response.next_marker or None, self.current_page
 
 
 class Handle(DictMixin):
@@ -352,12 +348,12 @@ class Handle(DictMixin):
         return handle
 
 
-class HandlesPaged(Paged):
+class HandlesPaged(PageIterator):
     """An iterable of Handles.
 
-    :ivar str current_marker: The continuation token of the current page of results.
+    :ivar str marker: The continuation token of the current page of results.
     :ivar int results_per_page: The maximum number of results retrieved per API call.
-    :ivar str next_marker: The continuation token to retrieve the next page of results.
+    :ivar str continuation_token: The continuation token to retrieve the next page of results.
     :ivar str location_mode: The location mode being used to list results. The available
         options include "primary" and "secondary".
     :ivar current_page: The current page of listed results.
@@ -366,36 +362,34 @@ class HandlesPaged(Paged):
     :param callable command: Function to retrieve the next page of items.
     :param int results_per_page: The maximum number of share names to retrieve per
         call.
-    :param str marker: An opaque continuation token.
+    :param str continuation_token: An opaque continuation token.
     """
-    def __init__(self, command, results_per_page=None, marker=None, **kwargs):
-        super(HandlesPaged, self).__init__(command, None)
-        self.current_marker = None
+    def __init__(self, command, results_per_page=None, continuation_token=None):
+        super(HandlesPaged, self).__init__(
+            get_next=self._get_next_cb,
+            extract_data=self._extract_data_cb,
+            continuation_token=continuation_token or ""
+        )
+        self._command = command
+        self.marker = None
         self.results_per_page = results_per_page
-        self.next_marker = marker or ""
         self.location_mode = None
+        self.current_page = []
 
-    def _advance_page(self):
-        """Force moving the cursor to the next azure call.
-        This method is for advanced usage, iterator protocol is prefered.
-        :raises: StopIteration if no further page
-        :return: The current page list
-        :rtype: list
-        """
-        if self.next_marker is None:
-            raise StopIteration("End of paging")
-        self._current_page_iter_index = 0
+    def _get_next_cb(self, continuation_token):
         try:
-            self.location_mode, self._response = self._get_next(
-                marker=self.next_marker or None,
+            return self._command(
+                marker=continuation_token or None,
                 maxresults=self.results_per_page,
                 cls=return_context_and_deserialized,
                 use_location=self.location_mode)
         except StorageErrorException as error:
             process_storage_error(error)
+
+    def _extract_data_cb(self, get_next_return):
+        self.location_mode, self._response = get_next_return
         self.current_page = [Handle._from_generated(h) for h in self._response.handle_list]  # pylint: disable=protected-access
-        self.next_marker = self._response.next_marker or None
-        return self.current_page
+        return self._response.next_marker or None, self.current_page
 
 
 class DirectoryProperties(DictMixin):
@@ -420,6 +414,13 @@ class DirectoryProperties(DictMixin):
         self.etag = kwargs.get('ETag')
         self.server_encrypted = kwargs.get('x-ms-server-encrypted')
         self.metadata = kwargs.get('metadata')
+        self.change_time = _parse_datetime_from_str(kwargs.get('x-ms-file-change-time'))
+        self.creation_time = _parse_datetime_from_str(kwargs.get('x-ms-file-creation-time'))
+        self.last_write_time = _parse_datetime_from_str(kwargs.get('x-ms-file-last-write-time'))
+        self.file_attributes = kwargs.get('x-ms-file-attributes')
+        self.permission_key = kwargs.get('x-ms-file-permission-key')
+        self.file_id = kwargs.get('x-ms-file-id')
+        self.parent_id = kwargs.get('x-ms-file-parent-id')
 
     @classmethod
     def _from_generated(cls, generated):
@@ -432,7 +433,7 @@ class DirectoryProperties(DictMixin):
         return props
 
 
-class DirectoryPropertiesPaged(Paged):
+class DirectoryPropertiesPaged(PageIterator):
     """An iterable for the contents of a directory.
 
     This iterable will yield dicts for the contents of the directory. The dicts
@@ -441,9 +442,9 @@ class DirectoryPropertiesPaged(Paged):
 
     :ivar str service_endpoint: The service URL.
     :ivar str prefix: A file name prefix being used to filter the list.
-    :ivar str current_marker: The continuation token of the current page of results.
+    :ivar str marker: The continuation token of the current page of results.
     :ivar int results_per_page: The maximum number of results retrieved per API call.
-    :ivar str next_marker: The continuation token to retrieve the next page of results.
+    :ivar str continuation_token: The continuation token to retrieve the next page of results.
     :ivar str location_mode: The location mode being used to list results. The available
         options include "primary" and "secondary".
     :ivar current_page: The current page of listed results.
@@ -454,30 +455,26 @@ class DirectoryPropertiesPaged(Paged):
         begin with the specified prefix.
     :param int results_per_page: The maximum number of share names to retrieve per
         call.
-    :param str marker: An opaque continuation token.
+    :param str continuation_token: An opaque continuation token.
     """
-    def __init__(self, command, prefix=None, results_per_page=None, marker=None, **kwargs):
-        super(DirectoryPropertiesPaged, self).__init__(command, None)
+    def __init__(self, command, prefix=None, results_per_page=None, continuation_token=None):
+        super(DirectoryPropertiesPaged, self).__init__(
+            get_next=self._get_next_cb,
+            extract_data=self._extract_data_cb,
+            continuation_token=continuation_token or ""
+        )
+        self._command = command
         self.service_endpoint = None
         self.prefix = prefix
-        self.current_marker = None
+        self.marker = None
         self.results_per_page = results_per_page
-        self.next_marker = marker or ""
         self.location_mode = None
+        self.current_page = []
 
-    def _advance_page(self):
-        """Force moving the cursor to the next azure call.
-        This method is for advanced usage, iterator protocol is prefered.
-        :raises: StopIteration if no further page
-        :return: The current page list
-        :rtype: list
-        """
-        if self.next_marker is None:
-            raise StopIteration("End of paging")
-        self._current_page_iter_index = 0
+    def _get_next_cb(self, continuation_token):
         try:
-            self.location_mode, self._response = self._get_next(
-                marker=self.next_marker or None,
+            return self._command(
+                marker=continuation_token or None,
                 prefix=self.prefix,
                 maxresults=self.results_per_page,
                 cls=return_context_and_deserialized,
@@ -485,14 +482,15 @@ class DirectoryPropertiesPaged(Paged):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    def _extract_data_cb(self, get_next_return):
+        self.location_mode, self._response = get_next_return
         self.service_endpoint = self._response.service_endpoint
         self.prefix = self._response.prefix
-        self.current_marker = self._response.marker
+        self.marker = self._response.marker
         self.results_per_page = self._response.max_results
         self.current_page = [_wrap_item(i) for i in self._response.segment.directory_items]
         self.current_page.extend([_wrap_item(i) for i in self._response.segment.file_items])
-        self.next_marker = self._response.next_marker or None
-        return self.current_page
+        return self._response.next_marker or None, self.current_page
 
 
 class FileProperties(DictMixin):
@@ -546,6 +544,13 @@ class FileProperties(DictMixin):
         self.server_encrypted = kwargs.get('x-ms-server-encrypted')
         self.copy = CopyProperties(**kwargs)
         self.content_settings = ContentSettings(**kwargs)
+        self.change_time = _parse_datetime_from_str(kwargs.get('x-ms-file-change-time'))
+        self.creation_time = _parse_datetime_from_str(kwargs.get('x-ms-file-creation-time'))
+        self.last_write_time = _parse_datetime_from_str(kwargs.get('x-ms-file-last-write-time'))
+        self.file_attributes = kwargs.get('x-ms-file-attributes')
+        self.permission_key = kwargs.get('x-ms-file-permission-key')
+        self.file_id = kwargs.get('x-ms-file-id')
+        self.parent_id = kwargs.get('x-ms-file-parent-id')
 
     @classmethod
     def _from_generated(cls, generated):
@@ -755,3 +760,77 @@ SharePermissions.DELETE = SharePermissions(delete=True) # type: ignore
 SharePermissions.LIST = SharePermissions(list=True) # type: ignore
 SharePermissions.READ = SharePermissions(read=True) # type: ignore
 SharePermissions.WRITE = SharePermissions(write=True) # type: ignore
+
+
+class NTFSAttributes(object):
+    """
+    Valid set of attributes to set for file or directory.
+    To set attribute for directory, 'Directory' should always be enabled except setting 'None' for directory.
+
+    :ivar bool read_only:
+        Enable/disable 'ReadOnly' attribute for DIRECTORY or FILE
+    :ivar bool hidden:
+        Enable/disable 'Hidden' attribute for DIRECTORY or FILE
+    :ivar bool system:
+        Enable/disable 'System' attribute for DIRECTORY or FILE
+    :ivar bool none:
+        Enable/disable 'None' attribute for DIRECTORY or FILE to clear all attributes of FILE/DIRECTORY
+    :ivar bool directory:
+        Enable/disable 'Directory' attribute for DIRECTORY
+    :ivar bool archive:
+        Enable/disable 'Archive' attribute for DIRECTORY or FILE
+    :ivar bool temporary:
+        Enable/disable 'Temporary' attribute for FILE
+    :ivar bool offline:
+        Enable/disable 'Offline' attribute for DIRECTORY or FILE
+    :ivar bool not_content_indexed:
+        Enable/disable 'NotContentIndexed' attribute for DIRECTORY or FILE
+    :ivar bool no_scrub_data:
+        Enable/disable 'NoScrubData' attribute for DIRECTORY or FILE
+    """
+    def __init__(self, read_only=False, hidden=False, system=False, none=False, directory=False, archive=False,
+                 temporary=False, offline=False, not_content_indexed=False, no_scrub_data=False, _str=None):
+        if not _str:
+            _str = ''
+        self.read_only = read_only or ('ReadOnly' in _str)
+        self.hidden = hidden or ('Hidden' in _str)
+        self.system = system or ('System' in _str)
+        self.none = none or ('None' in _str)
+        self.directory = directory or ('Directory' in _str)
+        self.archive = archive or ('Archive' in _str)
+        self.temporary = temporary or ('Temporary' in _str)
+        self.offline = offline or ('Offline' in _str)
+        self.not_content_indexed = not_content_indexed or ('NotContentIndexed' in _str)
+        self.no_scrub_data = no_scrub_data or ('NoScrubData' in _str)
+
+    def __or__(self, other):
+        return NTFSAttributes(_str=str(self) + str(other))
+
+    def __add__(self, other):
+        return NTFSAttributes(_str=str(self) + str(other))
+
+    def __str__(self):
+        concatenated_params = (('ReadOnly|' if self.read_only else '') +
+                               ('Hidden|' if self.hidden else '') +
+                               ('System|' if self.system else '') +
+                               ('None|' if self.none else '') +
+                               ('Directory|' if self.directory else '') +
+                               ('Archive|' if self.archive else '') +
+                               ('Temporary|' if self.temporary else '') +
+                               ('Offline|' if self.offline else '') +
+                               ('NotContentIndexed|' if self.not_content_indexed else '') +
+                               ('NoScrubData|' if self.no_scrub_data else ''))
+
+        return concatenated_params.strip('|')
+
+
+NTFSAttributes.READ_ONLY = NTFSAttributes(read_only=True)
+NTFSAttributes.HIDDEN = NTFSAttributes(hidden=True)
+NTFSAttributes.SYSTEM = NTFSAttributes(system=True)
+NTFSAttributes.NONE = NTFSAttributes(none=True)
+NTFSAttributes.DIRECTORY = NTFSAttributes(directory=True)
+NTFSAttributes.ARCHIVE = NTFSAttributes(archive=True)
+NTFSAttributes.TEMPORARY = NTFSAttributes(temporary=True)
+NTFSAttributes.OFFLINE = NTFSAttributes(offline=True)
+NTFSAttributes.NOT_CONTENT_INDEXED = NTFSAttributes(not_content_indexed=True)
+NTFSAttributes.NO_SCRUB_DATA = NTFSAttributes(no_scrub_data=True)

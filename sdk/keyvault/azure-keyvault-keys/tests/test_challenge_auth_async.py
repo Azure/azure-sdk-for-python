@@ -19,7 +19,7 @@ from azure.core.pipeline.transport import HttpRequest
 from azure.keyvault.keys._shared import AsyncChallengeAuthPolicy, HttpChallenge, HttpChallengeCache
 import pytest
 
-from helpers import async_validating_transport, mock_response, Request
+from keys_helpers import async_validating_transport, mock_response, Request
 
 
 @pytest.mark.asyncio

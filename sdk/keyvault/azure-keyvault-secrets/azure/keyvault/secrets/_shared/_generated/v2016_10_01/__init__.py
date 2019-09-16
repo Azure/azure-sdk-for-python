@@ -9,9 +9,8 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._configuration import KeyVaultClientConfiguration
 from ._key_vault_client import KeyVaultClient
-__all__ = ['KeyVaultClient', 'KeyVaultClientConfiguration']
+__all__ = ['KeyVaultClient']
 
 from .version import VERSION
 

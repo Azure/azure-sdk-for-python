@@ -31,7 +31,7 @@ class NetworkManagementClientOperationsMixin(object):
          overrides<msrest:optionsforoperations>`.
         :return: DnsNameAvailabilityResult or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.network.v2019_04_01.models.DnsNameAvailabilityResult or
+         ~azure.mgmt.network.v2019_06_01.models.DnsNameAvailabilityResult or
          ~msrest.pipeline.ClientRawResponse
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         
@@ -77,6 +77,8 @@ class NetworkManagementClientOperationsMixin(object):
             from .v2019_02_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2019-04-01':
             from .v2019_04_01.operations import NetworkManagementClientOperationsMixin as OperationClass
+        elif api_version == '2019-06-01':
+            from .v2019_06_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()
@@ -101,10 +103,10 @@ class NetworkManagementClientOperationsMixin(object):
          overrides<msrest:optionsforoperations>`.
         :return: VirtualWanSecurityProviders or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.network.v2019_04_01.models.VirtualWanSecurityProviders or
+         ~azure.mgmt.network.v2019_06_01.models.VirtualWanSecurityProviders or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorException<azure.mgmt.network.v2019_04_01.models.ErrorException>`
+         :class:`ErrorException<azure.mgmt.network.v2019_06_01.models.ErrorException>`
         
         """
         api_version = self._get_api_version('supported_security_providers')
@@ -120,6 +122,8 @@ class NetworkManagementClientOperationsMixin(object):
             from .v2019_02_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2019-04-01':
             from .v2019_04_01.operations import NetworkManagementClientOperationsMixin as OperationClass
+        elif api_version == '2019-06-01':
+            from .v2019_06_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         mixin_instance = OperationClass()

@@ -10,23 +10,20 @@ import uuid
 import time
 import functools
 from abc import abstractmethod
-try:
-    from urlparse import urlparse
-    from urllib import unquote_plus, urlencode, quote_plus
-except ImportError:
-    from urllib.parse import urlparse, unquote_plus, urlencode, quote_plus
+from typing import Dict, Union, Any, TYPE_CHECKING
 
-try:
-    from typing import TYPE_CHECKING
-except ImportError:
-    TYPE_CHECKING = False
-if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
-    from typing import Union
-
-from azure.eventhub import __version__
+from azure.eventhub import __version__, EventPosition
 from azure.eventhub.configuration import _Configuration
 from .common import EventHubSharedKeyCredential, EventHubSASTokenCredential, _Address
+
+try:
+    from urlparse import urlparse  # type: ignore
+    from urllib import urlencode, quote_plus  # type: ignore
+except ImportError:
+    from urllib.parse import urlparse, urlencode, quote_plus
+
+if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential  # type: ignore
 
 log = logging.getLogger(__name__)
 MAX_USER_AGENT_LENGTH = 512
@@ -87,14 +84,14 @@ def _build_uri(address, entity):
     return address
 
 
-class EventHubClientAbstract(object):
+class EventHubClientAbstract(object):  # pylint:disable=too-many-instance-attributes
     """
     The EventHubClientAbstract class defines a high level interface for sending
     events to and receiving events from the Azure Event Hubs service.
     """
 
     def __init__(self, host, event_hub_path, credential, **kwargs):
-        # type:(str, str, Union[EventHubSharedKeyCredential, EventHubSASTokenCredential, TokenCredential], ...) -> None
+        # type:(str, str, Union[EventHubSharedKeyCredential, EventHubSASTokenCredential, TokenCredential], Any) -> None
         """
         Constructs a new EventHubClient.
 
@@ -118,9 +115,9 @@ class EventHubClientAbstract(object):
         :type auth_timeout: float
         :param user_agent: The user agent that needs to be appended to the built in user agent string.
         :type user_agent: str
-        :param max_retries: The max number of attempts to redo the failed operation when an error happened. Default
+        :param retry_total: The total number of attempts to redo the failed operation when an error happened. Default
          value is 3.
-        :type max_retries: int
+        :type retry_total: int
         :param transport_type: The type of transport protocol that will be used for communicating with
          the Event Hubs service. Default is ~azure.eventhub.TransportType.Amqp.
         :type transport_type: ~azure.eventhub.TransportType
@@ -136,29 +133,32 @@ class EventHubClientAbstract(object):
          queued. Default value is 60 seconds. If set to 0, there will be no timeout.
         :type send_timeout: float
         """
-        self.container_id = "eventhub.pysdk-" + str(uuid.uuid4())[:8]
-        self.address = _Address()
-        self.address.hostname = host
-        self.address.path = "/" + event_hub_path if event_hub_path else ""
-        self._auth_config = {}
-        self.credential = credential
-        if isinstance(credential, EventHubSharedKeyCredential):
-            self.username = credential.policy
-            self.password = credential.key
-            self._auth_config['username'] = self.username
-            self._auth_config['password'] = self.password
-
-        self.host = host
         self.eh_name = event_hub_path
-        self.keep_alive = kwargs.get("keep_alive", 30)
-        self.auto_reconnect = kwargs.get("auto_reconnect", True)
-        self.mgmt_target = "amqps://{}/{}".format(self.host, self.eh_name)
-        self.auth_uri = "sb://{}{}".format(self.address.hostname, self.address.path)
-        self.get_auth = functools.partial(self._create_auth)
-        self.config = _Configuration(**kwargs)
-        self.debug = self.config.network_tracing
+        self._host = host
+        self._container_id = "eventhub.pysdk-" + str(uuid.uuid4())[:8]
+        self._address = _Address()
+        self._address.hostname = host
+        self._address.path = "/" + event_hub_path if event_hub_path else ""
+        self._auth_config = {}  # type:Dict[str,str]
+        self._credential = credential
+        if isinstance(credential, EventHubSharedKeyCredential):
+            self._username = credential.policy
+            self._password = credential.key
+            self._auth_config['username'] = self._username
+            self._auth_config['password'] = self._password
 
-        log.info("%r: Created the Event Hub client", self.container_id)
+        self._keep_alive = kwargs.get("keep_alive", 30)
+        self._auto_reconnect = kwargs.get("auto_reconnect", True)
+        self._mgmt_target = "amqps://{}/{}".format(self._host, self.eh_name)
+        self._auth_uri = "sb://{}{}".format(self._address.hostname, self._address.path)
+        self._get_auth = functools.partial(self._create_auth)
+        self._config = _Configuration(**kwargs)
+        self._debug = self._config.network_tracing
+        self._is_iothub = False
+        self._iothub_redirect_info = None
+        self._redirect_consumer = None
+
+        log.info("%r: Created the Event Hub client", self._container_id)
 
     @classmethod
     def _from_iothub_connection_string(cls, conn_str, **kwargs):
@@ -177,6 +177,11 @@ class EventHubClientAbstract(object):
             'iot_password': key,
             'username': username,
             'password': password}
+        client._is_iothub = True  # pylint: disable=protected-access
+        client._redirect_consumer = client.create_consumer(consumer_group='$default',  # pylint: disable=protected-access, no-member
+                                                           partition_id='0',
+                                                           event_position=EventPosition('-1'),
+                                                           operation='/messages/events')
         return client
 
     @abstractmethod
@@ -212,14 +217,16 @@ class EventHubClientAbstract(object):
     def _process_redirect_uri(self, redirect):
         redirect_uri = redirect.address.decode('utf-8')
         auth_uri, _, _ = redirect_uri.partition("/ConsumerGroups")
-        self.address = urlparse(auth_uri)
-        self.host = self.address.hostname
-        self.auth_uri = "sb://{}{}".format(self.address.hostname, self.address.path)
-        self.eh_name = self.address.path.lstrip('/')
-        self.mgmt_target = redirect_uri
+        self._address = urlparse(auth_uri)
+        self._host = self._address.hostname
+        self.eh_name = self._address.path.lstrip('/')
+        self._auth_uri = "sb://{}{}".format(self._address.hostname, self._address.path)
+        self._mgmt_target = redirect_uri
+        if self._is_iothub:
+            self._iothub_redirect_info = redirect
 
     @classmethod
-    def from_connection_string(cls, conn_str, event_hub_path=None, **kwargs):
+    def from_connection_string(cls, conn_str, **kwargs):
         """Create an EventHubClient from an EventHub/IotHub connection string.
 
         :param conn_str: The connection string of an eventhub or IoT hub
@@ -239,9 +246,9 @@ class EventHubClientAbstract(object):
         :type auth_timeout: float
         :param user_agent: The user agent that needs to be appended to the built in user agent string.
         :type user_agent: str
-        :param max_retries: The max number of attempts to redo the failed operation when an error happened. Default
+        :param retry_total: The total number of attempts to redo the failed operation when an error happened. Default
          value is 3.
-        :type max_retries: int
+        :type retry_total: int
         :param transport_type: The type of transport protocol that will be used for communicating with
          the Event Hubs service. Default is ~azure.eventhub.TransportType.Amqp.
         :type transport_type: ~azure.eventhub.TransportType
@@ -251,7 +258,7 @@ class EventHubClientAbstract(object):
          will return as soon as service returns no new events. Default value is the same as prefetch.
         :type max_batch_size: int
         :param receive_timeout: The timeout in seconds to receive a batch of events from an Event Hub.
-         Default value is 0 seconds.
+         Default value is 0 seconds, meaning there is no timeout.
         :type receive_timeout: float
         :param send_timeout: The timeout in seconds for an individual event to be sent from the time that it is
          queued. Default value is 60 seconds. If set to 0, there will be no timeout.
@@ -266,8 +273,9 @@ class EventHubClientAbstract(object):
                 :caption: Create an EventHubClient from a connection string.
 
         """
+        event_hub_path = kwargs.pop("event_hub_path", None)
         is_iot_conn_str = conn_str.lstrip().lower().startswith("hostname")
-        if not is_iot_conn_str:
+        if not is_iot_conn_str:  # pylint:disable=no-else-return
             address, policy, key, entity = _parse_conn_str(conn_str)
             entity = event_hub_path or entity
             left_slash_pos = address.find("//")
@@ -278,15 +286,3 @@ class EventHubClientAbstract(object):
             return cls(host, entity, EventHubSharedKeyCredential(policy, key), **kwargs)
         else:
             return cls._from_iothub_connection_string(conn_str, **kwargs)
-
-    @abstractmethod
-    def create_consumer(
-            self, consumer_group, partition_id, event_position, owner_level=None,
-            operation=None,
-            prefetch=None,
-    ):
-        pass
-
-    @abstractmethod
-    def create_producer(self, partition_id=None, operation=None, send_timeout=None):
-        pass

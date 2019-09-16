@@ -36,7 +36,7 @@ except ImportError:
     pass
 
 # Version extraction inspired from 'requests'
-with open(os.path.join(PACKAGE_FOLDER_PATH, "version.py"), "r") as fd:
+with open(os.path.join(PACKAGE_FOLDER_PATH, "_version.py"), "r") as fd:
     VERSION = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]', fd.read(), re.MULTILINE).group(1)
 
 if not VERSION:
@@ -56,7 +56,7 @@ setup(
     license="MIT License",
     author="Microsoft Corporation",
     author_email="azurekeyvault@microsoft.com",
-    url="https://github.com/Azure/azure-sdk-for-python",
+    url="https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys",
     classifiers=[
         "Development Status :: 4 - Beta",
         "Programming Language :: Python",
@@ -75,8 +75,13 @@ setup(
             "tests",
             # Exclude packages that will be covered by PEP420 or nspkg
             "azure",
+            "azure.keyvault",
         ]
     ),
-    install_requires=["azure-core<2.0.0,>=1.0.0b1", "azure-common~=1.1", "msrest>=0.5.0"],
-    extras_require={":python_version<'3.0'": ["azure-nspkg"], ":python_version<'3.5'": ["typing"]},
+    install_requires=["azure-core<2.0.0,>=1.0.0b2", "azure-common~=1.1", "cryptography>=2.1.4", "msrest>=0.5.0"],
+    extras_require={
+        ":python_version<'3.0'": ["azure-keyvault-nspkg"],
+        ":python_version<'3.4'": ["enum34>=1.0.4"],
+        ":python_version<'3.5'": ["typing"],
+    },
 )

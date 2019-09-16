@@ -24,6 +24,12 @@ class IPAllocationMethod(str, Enum):
     dynamic = "Dynamic"
 
 
+class IPVersion(str, Enum):
+
+    ipv4 = "IPv4"
+    ipv6 = "IPv6"
+
+
 class SecurityRuleProtocol(str, Enum):
 
     tcp = "Tcp"
@@ -58,12 +64,6 @@ class PublicIPAddressSkuName(str, Enum):
 
     basic = "Basic"
     standard = "Standard"
-
-
-class IPVersion(str, Enum):
-
-    ipv4 = "IPv4"
-    ipv6 = "IPv6"
 
 
 class DdosSettingsProtectionCoverage(str, Enum):
@@ -160,6 +160,9 @@ class ApplicationGatewaySslCipherSuite(str, Enum):
     tls_dhe_dss_with_aes_256_cbc_sha = "TLS_DHE_DSS_WITH_AES_256_CBC_SHA"
     tls_dhe_dss_with_aes_128_cbc_sha = "TLS_DHE_DSS_WITH_AES_128_CBC_SHA"
     tls_rsa_with_3_des_ede_cbc_sha = "TLS_RSA_WITH_3DES_EDE_CBC_SHA"
+    tls_dhe_dss_with_3_des_ede_cbc_sha = "TLS_DHE_DSS_WITH_3DES_EDE_CBC_SHA"
+    tls_ecdhe_rsa_with_aes_128_gcm_sha256 = "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256"
+    tls_ecdhe_rsa_with_aes_256_gcm_sha384 = "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384"
 
 
 class ApplicationGatewayCustomErrorStatusCode(str, Enum):

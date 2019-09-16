@@ -170,7 +170,7 @@ class StorageBlobEncryptionTest(StorageTestCase):
 
     @record
     def test_missing_attribute_kek_unwrap(self):
-        # Shared between all services in _decrypt_blob
+        # Shared between all services in decrypt_blob
         # Arrange
         self.bsc.require_encryption = True
         valid_key = KeyWrapper('key1')
@@ -282,7 +282,7 @@ class StorageBlobEncryptionTest(StorageTestCase):
         self.bsc.require_encryption = True
         self.bsc.key_encryption_key = KeyWrapper('key1')
         small_stream = StringIO(u'small')
-        large_stream = StringIO(u'large' * self.config.blob_settings.max_single_put_size)
+        large_stream = StringIO(u'large' * self.config.max_single_put_size)
         blob_name = self._get_blob_reference(BlobType.BlockBlob)
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
@@ -306,7 +306,7 @@ class StorageBlobEncryptionTest(StorageTestCase):
         self.bsc.key_encryption_key = KeyWrapper('key1')
         self.bsc.require_encryption = True
         content = self.get_random_bytes(
-            self.config.blob_settings.max_single_put_size + self.config.blob_settings.max_block_size)
+            self.config.max_single_put_size + self.config.max_block_size)
         blob_name = self._get_blob_reference(BlobType.BlockBlob)
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
@@ -325,7 +325,7 @@ class StorageBlobEncryptionTest(StorageTestCase):
         # Arrange
         self.bsc.key_encryption_key = KeyWrapper('key1')
         self.bsc.require_encryption = True
-        content = urandom(self.config.blob_settings.max_single_put_size + 1)
+        content = urandom(self.config.max_single_put_size + 1)
         blob_name = self._get_blob_reference(BlobType.BlockBlob)
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
@@ -344,19 +344,19 @@ class StorageBlobEncryptionTest(StorageTestCase):
         # Arrange
         self.bsc.key_encryption_key = KeyWrapper('key1')
         self.bsc.require_encryption = True
-        content = self.get_random_bytes(self.config.blob_settings.max_single_put_size * 2)
+        content = self.get_random_bytes(self.config.max_single_put_size * 2)
         blob_name = self._get_blob_reference(BlobType.BlockBlob)
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
         blob.upload_blob(
             content,
-            length=self.config.blob_settings.max_single_put_size + 53,
+            length=self.config.max_single_put_size + 53,
             max_connections=3)
         blob_content = blob.download_blob().content_as_bytes(max_connections=3)
 
         # Assert
-        self.assertEqual(content[:self.config.blob_settings.max_single_put_size+53], blob_content)
+        self.assertEqual(content[:self.config.max_single_put_size+53], blob_content)
 
     @record
     def test_put_block_blob_single_shot(self):
@@ -379,7 +379,7 @@ class StorageBlobEncryptionTest(StorageTestCase):
         # Arrange
         self.bsc.require_encryption = True
         self.bsc.key_encryption_key = KeyWrapper('key1')
-        content = b'Random repeats' * self.config.blob_settings.max_single_put_size * 5
+        content = b'Random repeats' * self.config.max_single_put_size * 5
 
         # All page blob uploads call _upload_chunks, so this will test the ability
         # of that function to handle ranges even though it's a small blob
@@ -389,12 +389,12 @@ class StorageBlobEncryptionTest(StorageTestCase):
         # Act
         blob.upload_blob(
             content[2:],
-            length=self.config.blob_settings.max_single_put_size + 5,
+            length=self.config.max_single_put_size + 5,
             max_connections=1)
         blob_content = blob.download_blob().content_as_bytes(max_connections=1)
 
         # Assert
-        self.assertEqual(content[2:2 + self.config.blob_settings.max_single_put_size + 5], blob_content)
+        self.assertEqual(content[2:2 + self.config.max_single_put_size + 5], blob_content)
 
     @record
     def test_put_blob_empty(self):
@@ -417,7 +417,7 @@ class StorageBlobEncryptionTest(StorageTestCase):
         # Arrange
         self.bsc.key_encryption_key = KeyWrapper('key1')
         self.bsc.require_encryption = True
-        content = self.get_random_bytes(self.config.blob_settings.max_single_put_size + 1)
+        content = self.get_random_bytes(self.config.max_single_put_size + 1)
         blob_name = self._get_blob_reference(BlobType.BlockBlob)
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 

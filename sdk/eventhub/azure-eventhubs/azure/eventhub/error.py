@@ -2,9 +2,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
+import logging
 import six
 
-from uamqp import constants, errors
+from uamqp import errors, compat  # type: ignore
 
 
 _NO_RETRY_ERRORS = (
@@ -14,6 +15,8 @@ _NO_RETRY_ERRORS = (
     b"com.microsoft:precondition-failed",
     b"com.microsoft:argument-error"
 )
+
+log = logging.getLogger(__name__)
 
 
 def _error_handler(error):
@@ -98,14 +101,12 @@ class ConnectionLostError(EventHubError):
     """Connection to event hub is lost. SDK will retry. So this shouldn't happen.
 
     """
-    pass
 
 
 class ConnectError(EventHubError):
     """Fail to connect to event hubs
 
     """
-    pass
 
 
 class AuthenticationError(ConnectError):
@@ -113,18 +114,99 @@ class AuthenticationError(ConnectError):
 
 
     """
-    pass
 
 
 class EventDataError(EventHubError):
     """Problematic event data so the send will fail at client side
 
     """
-    pass
 
 
 class EventDataSendError(EventHubError):
     """Service returns error while an event data is being sent
 
     """
-    pass
+
+
+class OperationTimeoutError(EventHubError):
+    """Operation times out
+
+    """
+
+
+def _create_eventhub_exception(exception):
+    if isinstance(exception, errors.AuthenticationException):
+        error = AuthenticationError(str(exception), exception)
+    elif isinstance(exception, errors.VendorLinkDetach):
+        error = ConnectError(str(exception), exception)
+    elif isinstance(exception, errors.LinkDetach):
+        error = ConnectionLostError(str(exception), exception)
+    elif isinstance(exception, errors.ConnectionClose):
+        error = ConnectionLostError(str(exception), exception)
+    elif isinstance(exception, errors.MessageHandlerError):
+        error = ConnectionLostError(str(exception), exception)
+    elif isinstance(exception, errors.AMQPConnectionError):
+        error_type = AuthenticationError if str(exception).startswith("Unable to open authentication session") \
+            else ConnectError
+        error = error_type(str(exception), exception)
+    elif isinstance(exception, compat.TimeoutException):
+        error = ConnectionLostError(str(exception), exception)
+    else:
+        error = EventHubError(str(exception), exception)
+    return error
+
+
+def _handle_exception(exception, closable):  # pylint:disable=too-many-branches, too-many-statements
+    try:  # closable is a producer/consumer object
+        name = closable._name  # pylint: disable=protected-access
+    except AttributeError:  # closable is an client object
+        name = closable._container_id  # pylint: disable=protected-access
+    if isinstance(exception, KeyboardInterrupt):  # pylint:disable=no-else-raise
+        log.info("%r stops due to keyboard interrupt", name)
+        closable.close()
+        raise exception
+    elif isinstance(exception, EventHubError):
+        closable.close()
+        raise exception
+    elif isinstance(exception, (
+            errors.MessageAccepted,
+            errors.MessageAlreadySettled,
+            errors.MessageModified,
+            errors.MessageRejected,
+            errors.MessageReleased,
+            errors.MessageContentTooLarge)
+            ):
+        log.info("%r Event data error (%r)", name, exception)
+        error = EventDataError(str(exception), exception)
+        raise error
+    elif isinstance(exception, errors.MessageException):
+        log.info("%r Event data send error (%r)", name, exception)
+        error = EventDataSendError(str(exception), exception)
+        raise error
+    else:
+        if isinstance(exception, errors.AuthenticationException):
+            if hasattr(closable, "_close_connection"):
+                closable._close_connection()  # pylint:disable=protected-access
+        elif isinstance(exception, errors.LinkRedirect):
+            log.info("%r link redirect received. Redirecting...", name)
+            redirect = exception
+            if hasattr(closable, "_redirect"):
+                closable._redirect(redirect)  # pylint:disable=protected-access
+        elif isinstance(exception, errors.LinkDetach):
+            if hasattr(closable, "_close_handler"):
+                closable._close_handler()  # pylint:disable=protected-access
+        elif isinstance(exception, errors.ConnectionClose):
+            if hasattr(closable, "_close_connection"):
+                closable._close_connection()  # pylint:disable=protected-access
+        elif isinstance(exception, errors.MessageHandlerError):
+            if hasattr(closable, "_close_handler"):
+                closable._close_handler()  # pylint:disable=protected-access
+        elif isinstance(exception, errors.AMQPConnectionError):
+            if hasattr(closable, "_close_connection"):
+                closable._close_connection()  # pylint:disable=protected-access
+        elif isinstance(exception, compat.TimeoutException):
+            pass  # Timeout doesn't need to recreate link or connection to retry
+        else:
+            if hasattr(closable, "_close_connection"):
+                closable._close_connection()  # pylint:disable=protected-access
+        return _create_eventhub_exception(exception)

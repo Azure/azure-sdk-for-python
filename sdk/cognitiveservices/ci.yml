@@ -13,6 +13,10 @@ pr:
   branches:
     include:
     - master
+    - feature/*
+    - hotfix/*
+    - release/*
+    - restapi*
   paths:
     include:
     - sdk/cognitiveservices/
@@ -21,3 +25,4 @@ jobs:
 - template: ../../eng/pipelines/templates/jobs/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: cognitiveservices
+    TestTimeoutInMinutes: 75

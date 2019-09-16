@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import ( # pylint: disable=unused-import
+from typing import (  # pylint: disable=unused-import
     Optional, Union, Dict, Any, TYPE_CHECKING
 )
 try:
@@ -14,30 +14,27 @@ except ImportError:
     from urllib2 import quote, unquote # type: ignore
 
 import six
-
-from ._shared.shared_access_signature import FileSharedAccessSignature
-from .directory_client import DirectoryClient
-from .file_client import FileClient
+from azure.core.tracing.decorator import distributed_trace
+from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
+from ._shared.request_handlers import add_metadata_headers, serialize_iso
+from ._shared.response_handlers import (
+    return_response_headers,
+    process_storage_error,
+    return_headers_and_deserialized)
 from ._generated import AzureFileStorage
 from ._generated.version import VERSION
 from ._generated.models import (
     StorageErrorException,
     SignedIdentifier,
-    DeleteSnapshotsOptionType)
-from ._shared.utils import (
-    StorageAccountHostsMixin,
-    serialize_iso,
-    return_headers_and_deserialized,
-    parse_query,
-    return_response_headers,
-    add_metadata_headers,
-    process_storage_error,
-    parse_connection_str)
-
-from ._share_utils import deserialize_share_properties
+    DeleteSnapshotsOptionType,
+    SharePermission)
+from ._deserialize import deserialize_share_properties, deserialize_permission_key, deserialize_permission
+from .directory_client import DirectoryClient
+from .file_client import FileClient
+from ._shared_access_signature import FileSharedAccessSignature
 
 if TYPE_CHECKING:
-    from .models import ShareProperties, AccessPolicy
+    from .models import ShareProperties, AccessPolicy, SharePermissions
 
 
 class ShareClient(StorageAccountHostsMixin):
@@ -117,7 +114,7 @@ class ShareClient(StorageAccountHostsMixin):
             self.share_name = share or unquote(path_share)
         self._query_str, credential = self._format_query_string(
             sas_token, credential, share_snapshot=self.snapshot)
-        super(ShareClient, self).__init__(parsed_url, 'file', credential, **kwargs)
+        super(ShareClient, self).__init__(parsed_url, service='file', credential=credential, **kwargs)
         self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline)
 
     def _format_url(self, hostname):
@@ -171,17 +168,18 @@ class ShareClient(StorageAccountHostsMixin):
             account_url, share=share, snapshot=snapshot, credential=credential, **kwargs)
 
     def generate_shared_access_signature(
-            self, permission=None,
-            expiry=None,
-            start=None,
-            policy_id=None,
-            ip=None,
-            protocol=None,
-            cache_control=None,
-            content_disposition=None,
-            content_encoding=None,
-            content_language=None,
-            content_type=None):
+            self, permission=None,  # type: Optional[Union[SharePermissions, str]]
+            expiry=None,  # type: Optional[Union[datetime, str]]
+            start=None,  # type: Optional[Union[datetime, str]]
+            policy_id=None,  # type: Optional[str]
+            ip=None,  # type: Optional[str]
+            protocol=None,  # type: Optional[str]
+            cache_control=None,  # type: Optional[str]
+            content_disposition=None,  # type: Optional[str]
+            content_encoding=None,  # type: Optional[str]
+            content_language=None,  # type: Optional[str]
+            content_type=None
+        ):  # type: (...) -> str
         """Generates a shared access signature for the share.
         Use the returned signature with the credential parameter of any FileServiceClient,
         ShareClient, DirectoryClient, or FileClient.
@@ -243,9 +241,9 @@ class ShareClient(StorageAccountHostsMixin):
             raise ValueError("No account SAS key available.")
         sas = FileSharedAccessSignature(self.credential.account_name, self.credential.account_key)
         return sas.generate_share(
-            self.share_name,
-            permission,
-            expiry,
+            share_name=self.share_name,
+            permission=permission,
+            expiry=expiry,
             start=start,
             policy_id=policy_id,
             ip=ip,
@@ -258,6 +256,7 @@ class ShareClient(StorageAccountHostsMixin):
         )
 
     def get_directory_client(self, directory_path=None):
+        # type: (Optional[str]) -> DirectoryClient
         """Get a client to interact with the specified directory.
         The directory need not already exist.
 
@@ -272,6 +271,7 @@ class ShareClient(StorageAccountHostsMixin):
             _location_mode=self._location_mode)
 
     def get_file_client(self, file_path):
+        # type: (str) -> FileClient
         """Get a client to interact with the specified file.
         The file need not already exist.
 
@@ -284,6 +284,7 @@ class ShareClient(StorageAccountHostsMixin):
             self.url, file_path=file_path, snapshot=self.snapshot, credential=self.credential, _hosts=self._hosts,
             _configuration=self._config, _pipeline=self._pipeline, _location_mode=self._location_mode)
 
+    @distributed_trace
     def create_share( # type: ignore
             self, metadata=None,  # type: Optional[Dict[str, str]]
             quota=None, # type: Optional[int]
@@ -312,8 +313,6 @@ class ShareClient(StorageAccountHostsMixin):
                 :dedent: 8
                 :caption: Creates a file share.
         """
-        if self.require_encryption and not self.key_encryption_key:
-            raise ValueError("Encryption required but no key was provided.")
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata)) # type: ignore
 
@@ -328,6 +327,7 @@ class ShareClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def create_snapshot( # type: ignore
             self, metadata=None,  # type: Optional[Dict[str, str]]
             timeout=None,  # type: Optional[int]
@@ -371,6 +371,7 @@ class ShareClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def delete_share(
             self, delete_snapshots=False, # type: Optional[bool]
             timeout=None,  # type: Optional[int]
@@ -406,6 +407,7 @@ class ShareClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def get_share_properties(self, timeout=None, **kwargs):
         # type: (Optional[int], Any) -> ShareProperties
         """Returns all user-defined metadata and system properties for the
@@ -437,6 +439,7 @@ class ShareClient(StorageAccountHostsMixin):
         props.snapshot = self.snapshot
         return props # type: ignore
 
+    @distributed_trace
     def set_share_quota(self, quota, timeout=None, **kwargs): # type: ignore
         # type: (int, Optional[int], Any) ->  Dict[str, Any]
         """Sets the quota for the share.
@@ -466,6 +469,7 @@ class ShareClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def set_share_metadata(self, metadata, timeout=None, **kwargs): # type: ignore
         # type: (Dict[str, Any], Optional[int], Any) ->  Dict[str, Any]
         """Sets the metadata for the share.
@@ -501,6 +505,7 @@ class ShareClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def get_share_access_policy(self, timeout=None, **kwargs):
         # type: (Optional[int], **Any) -> Dict[str, Any]
         """Gets the permissions for the share. The permissions
@@ -523,6 +528,7 @@ class ShareClient(StorageAccountHostsMixin):
             'signed_identifiers': identifiers or []
         }
 
+    @distributed_trace
     def set_share_access_policy(self, signed_identifiers=None, timeout=None, **kwargs): # type: ignore
         # type: (Optional[Dict[str, Optional[AccessPolicy]]], Optional[int], **Any) -> Dict[str, str]
         """Sets the permissions for the share, or stored access
@@ -561,6 +567,7 @@ class ShareClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def get_share_stats(self, timeout=None, **kwargs): # type: ignore
         # type: (Optional[int], **Any) -> int
         """Gets the approximate size of the data stored on the share in bytes.
@@ -581,6 +588,7 @@ class ShareClient(StorageAccountHostsMixin):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def list_directories_and_files( # type: ignore
             self, directory_name=None,  # type: Optional[str]
             name_starts_with=None,  # type: Optional[str]
@@ -616,6 +624,70 @@ class ShareClient(StorageAccountHostsMixin):
         return directory.list_directories_and_files(
             name_starts_with=name_starts_with, marker=marker, timeout=timeout, **kwargs)
 
+    @staticmethod
+    def _create_permission_for_share_options(file_permission,  # type: str
+                                             **kwargs):
+        options = {
+            'share_permission': SharePermission(permission=file_permission),
+            'cls': deserialize_permission_key,
+            'timeout': kwargs.pop('timeout', None),
+        }
+        options.update(kwargs)
+        return options
+
+    @distributed_trace
+    def create_permission_for_share(self, file_permission,  # type: str
+                                    timeout=None,  # type: Optional[int]
+                                    **kwargs  # type: Any
+                                    ):
+        # type: (...) -> str
+        """
+        Create a permission(a security descriptor) at the share level.
+        This 'permission' can be used for the files/directories in the share.
+        If a 'permission' already exists, it shall return the key of it, else
+        creates a new permission at the share level and return its key.
+
+        :param str file_permission:
+            File permission, a Portable SDDL
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns a file permission key
+        :rtype str
+        """
+        options = self._create_permission_for_share_options(file_permission, timeout=timeout, **kwargs)
+        try:
+            return self._client.share.create_permission(**options)
+        except StorageErrorException as error:
+            process_storage_error(error)
+
+    @distributed_trace
+    def get_permission_for_share(  # type: ignore
+            self, file_permission_key,  # type: str
+            timeout=None,  # type: Optional[int]
+            **kwargs  # type: Any
+    ):
+        # type: (...) -> str
+        """
+        Get a permission(a security descriptor) for a given key.
+        This 'permission' can be used for the files/directories in the share.
+
+        :param str file_permission_key:
+            Key of the file permission to retrieve
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
+        :returns a file permission(a portable SDDL)
+        :rtype str
+        """
+        try:
+            return self._client.share.get_permission(  # type: ignore
+                file_permission_key=file_permission_key,
+                cls=deserialize_permission,
+                timeout=timeout,
+                **kwargs)
+        except StorageErrorException as error:
+            process_storage_error(error)
+
+    @distributed_trace
     def create_directory(self, directory_name, metadata=None, timeout=None, **kwargs):
         # type: (str, Optional[Dict[str, Any]], Optional[int], Any) -> DirectoryClient
         """Creates a directory in the share and returns a client to interact

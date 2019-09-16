@@ -4,25 +4,29 @@
 # --------------------------------------------------------------------------------------------
 import logging
 import datetime
+import time
 import functools
 import asyncio
-from typing import Any, List, Dict
 
-from uamqp import authentication, constants
+from typing import Any, List, Dict, Union, TYPE_CHECKING
+
+from uamqp import authentication, constants  # type: ignore
 from uamqp import (
     Message,
     AMQPClientAsync,
-    errors,
-)
-from uamqp import compat
+)  # type: ignore
 
-from azure.eventhub.error import ConnectError
-from azure.eventhub.common import parse_sas_token, EventPosition, EventHubSharedKeyCredential, EventHubSASTokenCredential
+from azure.eventhub.common import parse_sas_token, EventPosition, \
+    EventHubSharedKeyCredential, EventHubSASTokenCredential
 from ..client_abstract import EventHubClientAbstract
 
 from .producer_async import EventHubProducer
 from .consumer_async import EventHubConsumer
+from ._connection_manager_async import get_connection_manager
+from .error_async import _handle_exception
 
+if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential  # type: ignore
 
 log = logging.getLogger(__name__)
 
@@ -42,6 +46,18 @@ class EventHubClient(EventHubClientAbstract):
 
     """
 
+    def __init__(self, host, event_hub_path, credential, **kwargs):
+        # type:(str, str, Union[EventHubSharedKeyCredential, EventHubSASTokenCredential, TokenCredential], Any) -> None
+        super(EventHubClient, self).__init__(host=host, event_hub_path=event_hub_path, credential=credential, **kwargs)
+        self._lock = asyncio.Lock()
+        self._conn_manager = get_connection_manager(**kwargs)
+
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        await self.close()
+
     def _create_auth(self, username=None, password=None):
         """
         Create an ~uamqp.authentication.cbs_auth_async.SASTokenAuthAsync instance to authenticate
@@ -52,50 +68,67 @@ class EventHubClient(EventHubClientAbstract):
         :param password: The shared access key.
         :type password: str
         """
-        http_proxy = self.config.http_proxy
-        transport_type = self.config.transport_type
-        auth_timeout = self.config.auth_timeout
+        http_proxy = self._config.http_proxy
+        transport_type = self._config.transport_type
+        auth_timeout = self._config.auth_timeout
 
-        if isinstance(self.credential, EventHubSharedKeyCredential):
+        if isinstance(self._credential, EventHubSharedKeyCredential):  # pylint:disable=no-else-return
             username = username or self._auth_config['username']
             password = password or self._auth_config['password']
             if "@sas.root" in username:
                 return authentication.SASLPlain(
-                    self.host, username, password, http_proxy=http_proxy, transport_type=transport_type)
+                    self._host, username, password, http_proxy=http_proxy, transport_type=transport_type)
             return authentication.SASTokenAsync.from_shared_access_key(
-                self.auth_uri, username, password, timeout=auth_timeout, http_proxy=http_proxy,
+                self._auth_uri, username, password, timeout=auth_timeout, http_proxy=http_proxy,
                 transport_type=transport_type)
 
-        elif isinstance(self.credential, EventHubSASTokenCredential):
-            token = self.credential.get_sas_token()
+        elif isinstance(self._credential, EventHubSASTokenCredential):
+            token = self._credential.get_sas_token()
             try:
                 expiry = int(parse_sas_token(token)['se'])
             except (KeyError, TypeError, IndexError):
                 raise ValueError("Supplied SAS token has no valid expiry value.")
             return authentication.SASTokenAsync(
-                self.auth_uri, self.auth_uri, token,
+                self._auth_uri, self._auth_uri, token,
                 expires_at=expiry,
                 timeout=auth_timeout,
                 http_proxy=http_proxy,
                 transport_type=transport_type)
 
         else:
-            get_jwt_token = functools.partial(self.credential.get_token, 'https://eventhubs.azure.net//.default')
-            return authentication.JWTTokenAsync(self.auth_uri, self.auth_uri,
+            get_jwt_token = functools.partial(self._credential.get_token, 'https://eventhubs.azure.net//.default')
+            return authentication.JWTTokenAsync(self._auth_uri, self._auth_uri,
                                                 get_jwt_token, http_proxy=http_proxy,
                                                 transport_type=transport_type)
+
+    async def _close_connection(self):
+        await self._conn_manager.reset_connection_if_broken()
+
+    async def _try_delay(self, retried_times, last_exception, timeout_time=None, entity_name=None):
+        entity_name = entity_name or self._container_id
+        backoff = self._config.backoff_factor * 2 ** retried_times
+        if backoff <= self._config.backoff_max and (
+                timeout_time is None or time.time() + backoff <= timeout_time):  # pylint:disable=no-else-return
+            await asyncio.sleep(backoff)
+            log.info("%r has an exception (%r). Retrying...", format(entity_name), last_exception)
+        else:
+            log.info("%r operation has timed out. Last exception before timeout is (%r)",
+                     entity_name, last_exception)
+            raise last_exception
 
     async def _management_request(self, mgmt_msg, op_type):
         alt_creds = {
             "username": self._auth_config.get("iot_username"),
-            "password": self._auth_config.get("iot_password")}
-        connect_count = 0
-        while True:
-            connect_count += 1
+            "password": self._auth_config.get("iot_password")
+        }
+
+        retried_times = 0
+        while retried_times <= self._config.max_retries:
             mgmt_auth = self._create_auth(**alt_creds)
-            mgmt_client = AMQPClientAsync(self.mgmt_target, auth=mgmt_auth, debug=self.config.network_tracing)
+            mgmt_client = AMQPClientAsync(self._mgmt_target, auth=mgmt_auth, debug=self._config.network_tracing)
             try:
-                await mgmt_client.open_async()
+                conn = await self._conn_manager.get_connection(self._host, mgmt_auth)
+                await mgmt_client.open_async(connection=conn)
                 response = await mgmt_client.mgmt_request_async(
                     mgmt_msg,
                     constants.READ_OPERATION,
@@ -103,17 +136,24 @@ class EventHubClient(EventHubClientAbstract):
                     status_code_field=b'status-code',
                     description_fields=b'status-description')
                 return response
-            except (errors.AMQPConnectionError, errors.TokenAuthFailure, compat.TimeoutException) as failure:
-                if connect_count >= self.config.max_retries:
-                    err = ConnectError(
-                        "Can not connect to EventHubs or get management info from the service. "
-                        "Please make sure the connection string or token is correct and retry. "
-                        "Besides, this method doesn't work if you use an IoT connection string.",
-                        failure
-                    )
-                    raise err
+            except Exception as exception:  # pylint:disable=broad-except
+                last_exception = await _handle_exception(exception, self)
+                await self._try_delay(retried_times=retried_times, last_exception=last_exception)
+                retried_times += 1
             finally:
                 await mgmt_client.close_async()
+
+    async def _iothub_redirect(self):
+        async with self._lock:
+            if self._is_iothub and not self._iothub_redirect_info:
+                if not self._redirect_consumer:
+                    self._redirect_consumer = self.create_consumer(consumer_group='$default',
+                                                                   partition_id='0',
+                                                                   event_position=EventPosition('-1'),
+                                                                   operation='/messages/events')
+                async with self._redirect_consumer:
+                    await self._redirect_consumer._open_with_retry()  # pylint: disable=protected-access
+                self._redirect_consumer = None
 
     async def get_properties(self):
         # type:() -> Dict[str, Any]
@@ -126,8 +166,10 @@ class EventHubClient(EventHubClientAbstract):
             -'partition_ids'
 
         :rtype: dict
-        :raises: ~azure.eventhub.ConnectError
+        :raises: ~azure.eventhub.EventHubError
         """
+        if self._is_iothub and not self._iothub_redirect_info:
+            await self._iothub_redirect()
         mgmt_msg = Message(application_properties={'name': self.eh_name})
         response = await self._management_request(mgmt_msg, op_type=b'com.microsoft:eventhub')
         output = {}
@@ -165,8 +207,10 @@ class EventHubClient(EventHubClientAbstract):
         :param partition: The target partition id.
         :type partition: str
         :rtype: dict
-        :raises: ~azure.eventhub.ConnectError
+        :raises: ~azure.eventhub.EventHubError
         """
+        if self._is_iothub and not self._iothub_redirect_info:
+            await self._iothub_redirect()
         mgmt_msg = Message(application_properties={'name': self.eh_name,
                                                    'partition': partition})
         response = await self._management_request(mgmt_msg, op_type=b'com.microsoft:partition')
@@ -184,9 +228,11 @@ class EventHubClient(EventHubClientAbstract):
         return output
 
     def create_consumer(
-            self, consumer_group, partition_id, event_position, owner_level=None,
-            operation=None, prefetch=None, loop=None):
-        # type: (str, str, EventPosition, int, str, int, asyncio.AbstractEventLoop) -> EventHubConsumer
+            self,
+            consumer_group: str,
+            partition_id: str,
+            event_position: EventPosition, **kwargs
+    ) -> EventHubConsumer:
         """
         Create an async consumer to the client for a particular consumer group and partition.
 
@@ -217,19 +263,26 @@ class EventHubClient(EventHubClientAbstract):
                 :caption: Add an async consumer to the client for a particular consumer group and partition.
 
         """
-        prefetch = self.config.prefetch if prefetch is None else prefetch
+        owner_level = kwargs.get("owner_level")
+        operation = kwargs.get("operation")
+        prefetch = kwargs.get("prefetch") or self._config.prefetch
+        loop = kwargs.get("loop")
 
-        path = self.address.path + operation if operation else self.address.path
+        path = self._address.path + operation if operation else self._address.path
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
-            self.address.hostname, path, consumer_group, partition_id)
+            self._address.hostname, path, consumer_group, partition_id)
         handler = EventHubConsumer(
             self, source_url, event_position=event_position, owner_level=owner_level,
             prefetch=prefetch, loop=loop)
         return handler
 
     def create_producer(
-            self, partition_id=None, operation=None, send_timeout=None, loop=None):
-        # type: (str, str, float, asyncio.AbstractEventLoop) -> EventHubProducer
+            self, *,
+            partition_id: str = None,
+            operation: str = None,
+            send_timeout: float = None,
+            loop: asyncio.AbstractEventLoop = None
+    ) -> EventHubProducer:
         """
         Create an async producer to send EventData object to an EventHub.
 
@@ -244,7 +297,7 @@ class EventHubClient(EventHubClientAbstract):
          queued. Default value is 60 seconds. If set to 0, there will be no timeout.
         :type send_timeout: float
         :param loop: An event loop. If not specified the default event loop will be used.
-        :rtype ~azure.eventhub.aio.producer_async.EventHubProducer
+        :rtype: ~azure.eventhub.aio.producer_async.EventHubProducer
 
         Example:
             .. literalinclude:: ../examples/async_examples/test_examples_eventhub_async.py
@@ -255,11 +308,16 @@ class EventHubClient(EventHubClientAbstract):
                 :caption: Add an async producer to the client to send EventData.
 
         """
-        target = "amqps://{}{}".format(self.address.hostname, self.address.path)
+
+        target = "amqps://{}{}".format(self._address.hostname, self._address.path)
         if operation:
             target = target + operation
-        send_timeout = self.config.send_timeout if send_timeout is None else send_timeout
+        send_timeout = self._config.send_timeout if send_timeout is None else send_timeout
 
         handler = EventHubProducer(
             self, target, partition=partition_id, send_timeout=send_timeout, loop=loop)
         return handler
+
+    async def close(self):
+        # type: () -> None
+        await self._conn_manager.close_connection()

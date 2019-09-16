@@ -15,7 +15,7 @@ Common uses of Queue storage include:
 Install the Azure Storage Queue client library for Python with [pip](https://pypi.org/project/pip/):
 
 ```bash
-pip install azure-storage-queue
+pip install azure-storage-queue --pre
 ```
 
 **Prerequisites**: You must have an [Azure subscription](https://azure.microsoft.com/free/), and a
@@ -114,6 +114,13 @@ from azure.storage.queue import QueueClient
 queue = QueueClient.from_connection_string(conn_str="my_connection_string", queue="myqueue")
 queue.create_queue()
 ```
+Create a queue asynchronously.
+```python
+from azure.storage.queue.aio import QueueClient
+
+queue = QueueClient.from_connection_string(conn_str="my_connection_string", queue="myqueue")
+await queue.create_queue()
+```
 ### Enqueue messages
 Enqueue a message in your queue.
 
@@ -123,6 +130,15 @@ from azure.storage.queue import QueueClient
 queue = QueueClient.from_connection_string(conn_str="my_connection_string", queue="myqueue")
 queue.enqueue_message("I'm using queues!")
 queue.enqueue_message("This is my second message")
+```
+Enqueue messages with an async client
+```python
+from azure.storage.queue.aio import QueueClient
+
+queue = QueueClient.from_connection_string(conn_str="my_connection_string", queue="myqueue")
+await asyncio.gather(
+    queue.enqueue_message("I'm using queues!"),
+    queue.enqueue_message("This is my second message"))
 ```
 
 ### Receive messages
@@ -136,10 +152,33 @@ response = queue.receive_messages()
 
 for message in response:
     print(message.content)
+    queue.delete_message(message)
 
 # Printed messages from the front of the queue
 # >>I'm using queues!   
 # >>This is my second message
+```
+Receive messages by batch.
+```python
+queue = QueueClient.from_connection_string(conn_str="my_connection_string", queue="myqueue")
+response = queue.receive_messages(messages_per_page=10)
+
+for message_batch in response.by_page():
+    for message in message_batch:
+        print(message.content)
+        queue.delete_message(message)
+```
+Receive messages asynchronously:
+```python
+from azure.storage.queue.aio import QueueClient
+
+queue = QueueClient.from_connection_string(conn_str="my_connection_string", queue="myqueue")
+response = queue.receive_messages()
+
+async for message in response:
+    print(message.content)
+    await queue.delete_message(message)
+
 ```
 
 ## Troubleshooting
@@ -154,25 +193,25 @@ Get started with our [Queue samples](https://github.com/Azure/azure-sdk-for-pyth
 
 Several Storage Queues Python SDK samples are available to you in the SDK's GitHub repository. These samples provide example code for additional scenarios commonly encountered while working with Storage Queues:
 
-* [`test_queue_samples_hello_world.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-queue/tests/test_queue_samples_hello_world.py) - Examples found in this article:
+* [`test_queue_samples_hello_world.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-queue/tests/test_queue_samples_hello_world.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-queue/tests/test_queue_samples_hello_world_async.py)) - Examples found in this article:
     * Client creation
     * Create a queue
     * Enqueue messages
     * Receive messages
 
-* [`test_queue_samples_authentication.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-queue/tests/test_queue_samples_authentication.py) - Examples for authenticating and creating the client:
+* [`test_queue_samples_authentication.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-queue/tests/test_queue_samples_authentication.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-queue/tests/test_queue_samples_authentication_async.py)) - Examples for authenticating and creating the client:
     * From a connection string
     * From a shared access key
     * From a shared access signature token
     * From active directory
 
-* [`test_queue_samples_service.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-queue/tests/test_queue_samples_service.py) - Examples for interacting with the queue service:
+* [`test_queue_samples_service.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-queue/tests/test_queue_samples_service.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-queue/tests/test_queue_samples_service_async.py)) - Examples for interacting with the queue service:
     * Get and set service properties
     * List queues in a storage account
     * Create and delete a queue from the service
     * Get the QueueClient
 
-* [`test_queue_samples_message.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-queue/tests/test_queue_samples_message.py) - Examples for working with queues and messages:
+* [`test_queue_samples_message.py`](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-queue/tests/test_queue_samples_message.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/storage/azure-storage-queue/tests/test_queue_samples_message_async.py)) - Examples for working with queues and messages:
     * Set an access policy
     * Get and set queue metadata
     * Enqueue and receive messages

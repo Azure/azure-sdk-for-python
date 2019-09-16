@@ -142,12 +142,12 @@ class StorageBlockBlobTest(StorageTestCase):
         dest_blob = self.bsc.get_blob_client(self.container_name, dest_blob_name)
 
         # Act
-        copy_props = dest_blob.copy_blob_from_url(self.source_blob_url, requires_sync=True)
+        copy_props = dest_blob.start_copy_from_url(self.source_blob_url, requires_sync=True)
 
         # Assert
         self.assertIsNotNone(copy_props)
-        self.assertIsNotNone(copy_props.copy_id())
-        self.assertEqual('success', copy_props.status())
+        self.assertIsNotNone(copy_props['copy_id'])
+        self.assertEqual('success', copy_props['copy_status'])
 
         # Verify content
         content = dest_blob.download_blob().content_as_bytes()

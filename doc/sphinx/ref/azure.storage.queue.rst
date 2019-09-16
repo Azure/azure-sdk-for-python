@@ -1,6 +1,13 @@
 azure.storage.queue package
 ===========================
 
+Subpackages
+-----------
+
+.. toctree::
+
+   azure.storage.queue.aio
+
 Submodules
 ----------
 

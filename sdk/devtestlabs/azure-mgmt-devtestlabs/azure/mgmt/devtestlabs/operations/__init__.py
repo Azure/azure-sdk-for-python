@@ -9,31 +9,31 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .provider_operations import ProviderOperations
-from .labs_operations import LabsOperations
-from .operations import Operations
-from .global_schedules_operations import GlobalSchedulesOperations
-from .artifact_sources_operations import ArtifactSourcesOperations
-from .arm_templates_operations import ArmTemplatesOperations
-from .artifacts_operations import ArtifactsOperations
-from .costs_operations import CostsOperations
-from .custom_images_operations import CustomImagesOperations
-from .formulas_operations import FormulasOperations
-from .gallery_images_operations import GalleryImagesOperations
-from .notification_channels_operations import NotificationChannelsOperations
-from .policy_sets_operations import PolicySetsOperations
-from .policies_operations import PoliciesOperations
-from .schedules_operations import SchedulesOperations
-from .service_runners_operations import ServiceRunnersOperations
-from .users_operations import UsersOperations
-from .disks_operations import DisksOperations
-from .environments_operations import EnvironmentsOperations
-from .secrets_operations import SecretsOperations
-from .service_fabrics_operations import ServiceFabricsOperations
-from .service_fabric_schedules_operations import ServiceFabricSchedulesOperations
-from .virtual_machines_operations import VirtualMachinesOperations
-from .virtual_machine_schedules_operations import VirtualMachineSchedulesOperations
-from .virtual_networks_operations import VirtualNetworksOperations
+from ._provider_operations import ProviderOperations
+from ._labs_operations import LabsOperations
+from ._operations import Operations
+from ._global_schedules_operations import GlobalSchedulesOperations
+from ._artifact_sources_operations import ArtifactSourcesOperations
+from ._arm_templates_operations import ArmTemplatesOperations
+from ._artifacts_operations import ArtifactsOperations
+from ._costs_operations import CostsOperations
+from ._custom_images_operations import CustomImagesOperations
+from ._formulas_operations import FormulasOperations
+from ._gallery_images_operations import GalleryImagesOperations
+from ._notification_channels_operations import NotificationChannelsOperations
+from ._policy_sets_operations import PolicySetsOperations
+from ._policies_operations import PoliciesOperations
+from ._schedules_operations import SchedulesOperations
+from ._service_runners_operations import ServiceRunnersOperations
+from ._users_operations import UsersOperations
+from ._disks_operations import DisksOperations
+from ._environments_operations import EnvironmentsOperations
+from ._secrets_operations import SecretsOperations
+from ._service_fabrics_operations import ServiceFabricsOperations
+from ._service_fabric_schedules_operations import ServiceFabricSchedulesOperations
+from ._virtual_machines_operations import VirtualMachinesOperations
+from ._virtual_machine_schedules_operations import VirtualMachineSchedulesOperations
+from ._virtual_networks_operations import VirtualNetworksOperations
 
 __all__ = [
     'ProviderOperations',

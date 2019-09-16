@@ -246,3 +246,21 @@ async def test_send_over_websocket_async(connstr_receivers):
 
     for r in receivers:
         r.close()
+
+
+@pytest.mark.liveTest
+@pytest.mark.asyncio
+async def test_send_with_create_event_batch_async(connstr_receivers):
+    connection_str, receivers = connstr_receivers
+    client = EventHubClient.from_connection_string(connection_str, transport_type=TransportType.AmqpOverWebsocket, network_tracing=False)
+    sender = client.create_producer()
+
+    event_data_batch = await sender.create_batch(max_size=100000)
+    while True:
+        try:
+            event_data_batch.try_add(EventData('A single event data'))
+        except ValueError:
+            break
+
+    await sender.send(event_data_batch)
+    await sender.close()

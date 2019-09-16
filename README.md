@@ -1,6 +1,6 @@
 # Azure SDK for Python
 
-[![Python](https://img.shields.io/pypi/pyversions/azure-core.svg?maxAge=2592000)](https://pypi.python.org/pypi/azure/) [![BuildStatus](https://dev.azure.com/azure-sdk/public/_apis/build/status/46?branchName=master)](https://dev.azure.com/azure-sdk/public/_build/latest?definitionId=46&branchName=master) [![Dependencies](https://img.shields.io/badge/dependencies-analyzed-blue.svg)](https://azuresdkartifacts.blob.core.windows.net/azure-sdk-for-python/dependencies/dependencies.html)
+[![Python](https://img.shields.io/pypi/pyversions/azure-core.svg?maxAge=2592000)](https://pypi.python.org/pypi/azure/) [![Build Status](https://dev.azure.com/azure-sdk/public/_apis/build/status/python/python%20-%20core%20-%20ci?branchName=master)](https://dev.azure.com/azure-sdk/public/_build/latest?definitionId=458&branchName=master) [![Dependencies](https://img.shields.io/badge/dependencies-analyzed-blue.svg)](https://azuresdkartifacts.blob.core.windows.net/azure-sdk-for-python/dependencies/dependencies.html)
 
 This repository contains official Python libraries for Azure services. For documentation go to [Azure SDK for Python documentation](http://aka.ms/python-docs).
 
@@ -46,16 +46,21 @@ Last stable versions of packages that have been provided for usage with Azure an
 Libraries which enable you to provision specific resources. They are responsible for directly mirroring and consuming Azure service's REST endpoints. The management libraries use the `azure-mgmt-<service name>` convention for their package names.
 
 ## Need help?
-* For detailed documentation visit our [Azure SDK for Python documentation](aka.ms/python-docs)
+* For detailed documentation visit our [Azure SDK for Python documentation](https://aka.ms/python-docs)
 * File an issue via [Github Issues](../../issues)
 * Check [previous questions](https://stackoverflow.com/questions/tagged/azure+python) or ask new ones on StackOverflow using `azure` and `python` tags.
 
 ## Contributing
 For details on contributing to this repository, see the [contributing guide](CONTRIBUTING.md).
 
-## Code of Conduct
+This project welcomes contributions and suggestions. Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit
+https://cla.microsoft.com.
 
-This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+When you submit a pull request, a CLA-bot will automatically determine whether you need to provide a CLA and decorate the PR appropriately (e.g., label, comment). Simply follow the instructions provided by the bot. You will only need to do this once across all repositories using our CLA.
+
+This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
+For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/)
+or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
 
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2FREADME.png)
 

@@ -3,6 +3,74 @@
 Release History
 ===============
 
+5.0.0 (2019-08-27)
+++++++++++++++++++
+
+**Features**
+
+- Model PrivateLinkServiceIpConfiguration has a new parameter primary
+- Model PrivateLinkServiceIpConfiguration has a new parameter etag
+- Model PrivateLinkServiceIpConfiguration has a new parameter type
+- Model PrivateLinkServiceIpConfiguration has a new parameter id
+- Model AzureFirewall has a new parameter virtual_hub
+- Model AzureFirewall has a new parameter hub_ip_addresses
+- Model AzureFirewall has a new parameter firewall_policy
+- Model PrivateLinkServiceConnection has a new parameter provisioning_state
+- Model PrivateLinkServiceConnection has a new parameter etag
+- Model PrivateLinkServiceConnection has a new parameter type
+- Model PublicIPPrefix has a new parameter load_balancer_frontend_ip_configuration
+- Model ApplicationGatewayOnDemandProbe has a new parameter backend_address_pool
+- Model ApplicationGatewayOnDemandProbe has a new parameter backend_http_settings
+- Model PrivateEndpointConnection has a new parameter provisioning_state
+- Model PrivateEndpointConnection has a new parameter etag
+- Model PrivateEndpointConnection has a new parameter type
+- Added operation SubnetsOperations.unprepare_network_policies
+- Added operation group FirewallPolicyRuleGroupsOperations
+- Added operation group FirewallPoliciesOperations
+
+**Breaking changes**
+
+- Model PrivateLinkServiceIpConfiguration no longer has parameter public_ip_address
+- Model ApplicationGatewayOnDemandProbe no longer has parameter backend_pool_name
+- Model ApplicationGatewayOnDemandProbe no longer has parameter backend_http_setting_name
+
+4.0.0 (2019-07-19)
+++++++++++++++++++
+
+**Features**
+
+- Model Subnet has a new parameter private_link_service_network_policies
+- Model Subnet has a new parameter private_endpoint_network_policies
+- Model VpnSite has a new parameter vpn_site_links
+- Model LoadBalancingRule has a new parameter type
+- Model BackendAddressPool has a new parameter outbound_rules
+- Model BackendAddressPool has a new parameter type
+- Model InboundNatPool has a new parameter type
+- Model OutboundRule has a new parameter type
+- Model InboundNatRule has a new parameter type
+- Model Probe has a new parameter type
+- Model FrontendIPConfiguration has a new parameter private_ip_address_version
+- Model FrontendIPConfiguration has a new parameter type
+- Model AvailablePrivateEndpointType has a new parameter name
+- Model AvailablePrivateEndpointType has a new parameter resource_name
+- Model VpnConnection has a new parameter vpn_link_connections
+- Added operation AvailablePrivateEndpointTypesOperations.list_by_resource_group
+- Added operation AzureFirewallsOperations.update_tags
+- Added operation PrivateLinkServicesOperations.check_private_link_service_visibility_by_resource_group
+- Added operation PrivateLinkServicesOperations.list_auto_approved_private_link_services
+- Added operation PrivateLinkServicesOperations.check_private_link_service_visibility
+- Added operation PrivateLinkServicesOperations.list_auto_approved_private_link_services_by_resource_group
+- Added operation group VpnLinkConnectionsOperations
+- Added operation group VpnSiteLinkConnectionsOperations
+- Added operation group VpnSiteLinksOperations
+
+**Breaking changes**
+
+- Operation SubnetsOperations.prepare_network_policies has a new signature
+- Model PrepareNetworkPoliciesRequest no longer has parameter resource_group_name
+- Model AvailablePrivateEndpointType no longer has parameter service_name
+- Removed operation group AvailableResourceGroupPrivateEndpointTypesOperations
+
 3.0.0 (2019-05-24)
 ++++++++++++++++++
 

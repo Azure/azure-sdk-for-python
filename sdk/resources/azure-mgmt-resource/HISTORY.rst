@@ -3,6 +3,49 @@
 Release History
 ===============
 
+4.0.0 (2019-09-03)
+++++++++++++++++++
+
+**Features**
+
+- Model PolicyAssignment has a new parameter enforcement_mode
+- Added operation DeploymentOperations.get_at_scope
+- Added operation DeploymentOperations.list_at_tenant_scope
+- Added operation DeploymentOperations.get_at_tenant_scope
+- Added operation DeploymentOperations.list_at_scope
+- Added operation DeploymentsOperations.create_or_update_at_tenant_scope
+- Added operation DeploymentsOperations.list_at_tenant_scope
+- Added operation DeploymentsOperations.delete_at_scope
+- Added operation DeploymentsOperations.cancel_at_tenant_scope
+- Added operation DeploymentsOperations.list_at_scope
+- Added operation DeploymentsOperations.get_at_scope
+- Added operation DeploymentsOperations.export_template_at_tenant_scope
+- Added operation DeploymentsOperations.validate_at_scope
+- Added operation DeploymentsOperations.delete_at_tenant_scope
+- Added operation DeploymentsOperations.export_template_at_scope
+- Added operation DeploymentsOperations.validate_at_tenant_scope
+- Added operation DeploymentsOperations.create_or_update_at_scope
+- Added operation DeploymentsOperations.check_existence_at_tenant_scope
+- Added operation DeploymentsOperations.check_existence_at_scope
+- Added operation DeploymentsOperations.cancel_at_scope
+- Added operation DeploymentsOperations.get_at_tenant_scope
+- Added operation DeploymentsOperations.calculate_template_hash
+- Added operation ProvidersOperations.list_at_tenant_scope
+- Added operation ProvidersOperations.get_at_tenant_scope
+
+**Breaking changes**
+
+- Model DeploymentValidateResult no longer has parameter error
+- Model ErrorResponse has a new signature
+
+3.1.0 (2019-07-20)
+++++++++++++++++++
+
+**Features**
+
+- Model TenantIdDescription has a new parameter domains
+- Model TenantIdDescription has a new parameter display_name
+
 3.0.0 (2019-06-13)
 ++++++++++++++++++
 

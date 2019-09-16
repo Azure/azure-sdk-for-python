@@ -16,7 +16,6 @@ from opencensus.trace import tracer as tracer_module
 from opencensus.trace.span import SpanKind
 from opencensus.trace.samplers import AlwaysOnSampler
 from opencensus.trace.base_exporter import Exporter
-from opencensus.common.utils import timestamp_to_microseconds
 from tracing_common import MockExporter, ContextHelper
 import os
 
@@ -79,6 +78,7 @@ class TestOpencensusWrapper(unittest.TestCase):
             assert wrapped_class.span_instance.start_time is not None
             assert wrapped_class.span_instance.end_time is not None
             parent.finish()
+            tracer.finish()
 
     def test_to_header(self):
         with ContextHelper() as ctx:

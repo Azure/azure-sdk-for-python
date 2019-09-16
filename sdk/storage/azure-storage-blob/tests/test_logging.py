@@ -17,7 +17,7 @@ from azure.storage.blob import (
     ContainerPermissions,
     BlobPermissions
 )
-from azure.storage.blob._shared.utils import _QueryStringConstants
+from azure.storage.blob._shared.shared_access_signature import QueryStringConstants
 
 from testcase import (
     StorageTestCase,
@@ -96,7 +96,7 @@ class StorageLoggingTest(StorageTestCase):
         )
         # parse out the signed signature
         token_components = parse_qs(token)
-        signed_signature = quote(token_components[_QueryStringConstants.SIGNED_SIGNATURE][0])
+        signed_signature = quote(token_components[QueryStringConstants.SIGNED_SIGNATURE][0])
 
         sas_service = ContainerClient(container.url, credential=token)
 
@@ -107,7 +107,7 @@ class StorageLoggingTest(StorageTestCase):
 
             # Assert
             # make sure the query parameter 'sig' is logged, but its value is not
-            self.assertTrue(_QueryStringConstants.SIGNED_SIGNATURE in log_as_str)
+            self.assertTrue(QueryStringConstants.SIGNED_SIGNATURE in log_as_str)
             self.assertFalse(signed_signature in log_as_str)
 
     @record
@@ -122,17 +122,17 @@ class StorageLoggingTest(StorageTestCase):
 
         # parse out the signed signature
         token_components = parse_qs(self.source_blob_url)
-        signed_signature = quote(token_components[_QueryStringConstants.SIGNED_SIGNATURE][0])
+        signed_signature = quote(token_components[QueryStringConstants.SIGNED_SIGNATURE][0])
 
         # Act
         with LogCaptured(self) as log_captured:
-            dest_blob.copy_blob_from_url(
+            dest_blob.start_copy_from_url(
                 self.source_blob_url, requires_sync=True, logging_enable=True)
             log_as_str = log_captured.getvalue()
 
             # Assert
             # make sure the query parameter 'sig' is logged, but its value is not
-            self.assertTrue(_QueryStringConstants.SIGNED_SIGNATURE in log_as_str)
+            self.assertTrue(QueryStringConstants.SIGNED_SIGNATURE in log_as_str)
             self.assertFalse(signed_signature in log_as_str)
 
             # make sure authorization header is logged, but its value is not

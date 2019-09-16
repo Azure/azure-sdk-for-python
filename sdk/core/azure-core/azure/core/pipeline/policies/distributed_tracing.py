@@ -25,17 +25,12 @@
 # --------------------------------------------------------------------------
 """Traces network calls using the implementation library from the settings."""
 
-from azure.core.pipeline import PipelineRequest, PipelineResponse
+from six.moves import urllib
+
 from azure.core.tracing.context import tracing_context
-from azure.core.tracing.abstract_span import AbstractSpan
 from azure.core.tracing.common import set_span_contexts
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.settings import settings
-
-try:
-    from urllib.parse import urlparse
-except ImportError:
-    from urlparse import urlparse
 
 try:
     from typing import TYPE_CHECKING
@@ -43,64 +38,74 @@ except ImportError:
     TYPE_CHECKING = False
 
 if TYPE_CHECKING:
-    from typing import Any, Optional
-    from azure.core.pipeline.transport import HttpRequest, HttpResponse
+    # the HttpRequest and HttpResponse related type ignores stem from this issue: #5796
+    from azure.core.pipeline.transport import HttpRequest, HttpResponse  # pylint: disable=ungrouped-imports
+    from azure.core.tracing.abstract_span import AbstractSpan  # pylint: disable=ungrouped-imports
+    from azure.core.pipeline import PipelineRequest, PipelineResponse  # pylint: disable=ungrouped-imports
+    from typing import Any, Optional, Dict, List, Union
 
 
 class DistributedTracingPolicy(SansIOHTTPPolicy):
     """The policy to create spans for Azure Calls"""
 
     def __init__(self):
-        # type: (str, str, str) -> None
-        self.parent_span_dict = {}
-        self._request_id = "x-ms-request-id"
+        # type: () -> None
+        self.parent_span_dict = {}  # type: Dict[AbstractSpan, List[Union[AbstractSpan, Any]]]
+        self._request_id = "x-ms-client-request-id"
+        self._response_id = "x-ms-request-id"
 
-    def set_header(self, request, span):
-        # type: (PipelineRequest[HttpRequest], Any) -> None
+    def set_header(self, request, span):  # pylint: disable=no-self-use
+        # type: (PipelineRequest, Any) -> None
         """
         Sets the header information on the span.
         """
         headers = span.to_header()
-        request.http_request.headers.update(headers)
+        request.http_request.headers.update(headers)  # type: ignore
 
-    def on_request(self, request, **kwargs):
-        # type: (PipelineRequest[HttpRequest], Any) -> None
-        parent_span = tracing_context.current_span.get()  # type: AbstractSpan
+    def on_request(self, request):
+        # type: (PipelineRequest) -> None
+        parent_span = tracing_context.current_span.get()
+        wrapper_class = settings.tracing_implementation()
+        original_context = [parent_span, None]
+        if parent_span is None and wrapper_class is not None:
+            current_span_instance = wrapper_class.get_current_span()
+            original_context[1] = current_span_instance
+            parent_span = wrapper_class(current_span_instance)
 
         if parent_span is None:
             return
 
-        only_propagate = settings.tracing_should_only_propagate()
-        if only_propagate:
-            self.set_header(request, parent_span)
-            return
-
-        path = urlparse(request.http_request.url).path
+        path = urllib.parse.urlparse(request.http_request.url).path  # type: ignore
         if not path:
             path = "/"
         child = parent_span.span(name=path)
         child.start()
 
         set_span_contexts(child)
-        self.parent_span_dict[child] = parent_span
+        self.parent_span_dict[child] = original_context
         self.set_header(request, child)
 
     def end_span(self, request, response=None):
         # type: (HttpRequest, Optional[HttpResponse]) -> None
         """Ends the span that is tracing the network and updates its status."""
-        span = tracing_context.current_span.get()   # type: AbstractSpan
-        only_propagate = settings.tracing_should_only_propagate()
-        if span and not only_propagate:
+        span = tracing_context.current_span.get()  # type: AbstractSpan
+        if span is not None:
             span.set_http_attributes(request, response=response)
-            if response and self._request_id in response.headers:
-                span.add_attribute(self._request_id, response.headers[self._request_id])
+            request_id = request.headers.get(self._request_id)
+            if request_id is not None:
+                span.add_attribute(self._request_id, request_id)
+            if response and self._response_id in response.headers:
+                span.add_attribute(self._response_id, response.headers[self._response_id])
             span.finish()
-            set_span_contexts(self.parent_span_dict[span])
+            original_context = self.parent_span_dict.pop(span, None)
+            if original_context:
+                set_span_contexts(original_context[0], original_context[1])
 
-    def on_response(self, request, response, **kwargs):
-        # type: (PipelineRequest[HttpRequest], PipelineResponse[HttpRequest, HttpResponse], Any) -> None
-        self.end_span(request.http_request, response=response.http_response)
+    def on_response(self, request, response):
+        # type: (PipelineRequest, PipelineResponse) -> None
+        self.end_span(request.http_request, response=response.http_response)  # type: ignore
 
-    def on_exception(self, _request, **kwargs):  # pylint: disable=unused-argument
-        # type: (PipelineRequest[HttpRequest], Any) -> bool
-        self.end_span(_request.http_request)
+    def on_exception(self, _request):  # pylint: disable=unused-argument
+        # type: (PipelineRequest) -> bool
+        self.end_span(_request.http_request)  # type: ignore
+        return False

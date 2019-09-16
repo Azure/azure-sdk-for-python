@@ -1,5 +1,58 @@
 # Change Log azure-storage-blob
 
+
+## Version 12.0.0b3:
+
+**New features**
+- Added SAS support for snapshot and identity.
+- Distributed tracing framework OpenCensus is now supported.
+- Added support for append_block_from_url API for append blobs.
+- Added support for upload_pages_from_url API for page blobs.
+- Added support for client provided encryption key to numerous APIs.
+
+**Dependency updates**
+- Adopted [azure-core](https://pypi.org/project/azure-core/) 1.0.0b3
+  - If you later want to revert to previous versions of azure-storage-blob, or another Azure SDK
+  library requiring azure-core 1.0.0b1 or azure-core 1.0.0b2, you must explicitly install
+  the specific version of azure-core as well. For example:
+
+  `pip install azure-core==1.0.0b2 azure-storage-blob==12.0.0b2`
+
+**Fixes and improvements**
+- Fix where content-type was being added in the request when not mentioned explicitly.
+
+
+## Version 12.0.0b2:
+
+**Breaking changes**
+- Renamed `copy_blob_from_url` to `start_copy_from_url` and changed behaviour to return a dictionary of copy properties rather than a polling object. Status of the copy operation can be retrieved with the `get_blob_properties` operation.
+- Added `abort_copy` operation to the `BlobClient` class. This replaces the previous abort operation on the copy status polling operation.
+- The behavior of listing operations has been modified:
+    - The previous `marker` parameter has been removed.
+    - The iterable response object now supports a `by_page` function that will return a secondary iterator of batches of results. This function supports a `continuation_token` parameter to replace the previous `marker` parameter.
+- Some parameters have become keyword only, rather than positional. Some examples include:
+    - `timeout`
+    - `lease`
+    - `encoding`
+    - Modification conditions, e.g. `if_modified_since`, `if_match` , `maxsize_condition`, etc
+
+**New features**
+- Added async APIs to subnamespace `azure.storage.blob.aio`.
+- Distributed tracing framework OpenCensus is now supported.
+
+**Dependency updates**
+- Adopted [azure-core](https://pypi.org/project/azure-core/) 1.0.0b2
+  - If you later want to revert to azure-storage-blob 12.0.0b1, or another Azure SDK
+  library requiring azure-core 1.0.0b1, you must explicitly install azure-core
+  1.0.0b1 as well. For example:
+
+  `pip install azure-core==1.0.0b1 azure-storage-blob==12.0.0b1`
+
+**Fixes and improvements**
+- Fix for SAS URL encoding (#6500)
+- General refactor of duplicate and shared code.
+
+
 ## Version 12.0.0b1:
 
 Version 12.0.0b1 is the first preview of our efforts to create a user-friendly and Pythonic client library for Azure Storage Blobs. For more information about this, and preview releases of other Azure SDK libraries, please visit

@@ -79,11 +79,11 @@ class StorageTestCase(unittest.TestCase):
         self.fake_settings = fake_settings
 
         if settings is None:
-            self.test_mode = TestMode.playback
+            self.test_mode = os.getenv('TEST_MODE') or TestMode.playback
         else:
             self.test_mode = self.settings.TEST_MODE.lower() or TestMode.playback
 
-        if self.test_mode == TestMode.playback:
+        if self.test_mode == TestMode.playback or (self.settings is None and self.test_mode.lower() == TestMode.run_live_no_record):
             self.settings = self.fake_settings
 
         # example of qualified test name:
@@ -328,9 +328,18 @@ class StorageTestCase(unittest.TestCase):
             response = copy.deepcopy(response)
             headers = response.get('headers')
             if headers:
+                def internal_scrub(key, val):
+                    if key.lower() == 'retry-after':
+                        return '0'
+                    return self._scrub(val)
+
                 for name, val in headers.items():
-                    for i in range(len(val)):
-                        val[i] = self._scrub(val[i])
+                    if isinstance(val, list):
+                        for i, e in enumerate(val):
+                            val[i] = internal_scrub(name, e)
+                    else:
+                        headers[name] = internal_scrub(name, val)
+
             body = response.get('body')
             if body:
                 body_str = body.get('string')

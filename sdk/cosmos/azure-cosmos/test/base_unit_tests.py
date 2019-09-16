@@ -1,6 +1,6 @@
 import unittest
 import pytest
-import azure.cosmos.base as base
+import azure.cosmos._base as base
 
 pytestmark = pytest.mark.cosmosEmulator
 

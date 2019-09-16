@@ -22,6 +22,8 @@ try:
     from ._models_py3 import AutoScaleRun
     from ._models_py3 import AutoScaleRunError
     from ._models_py3 import AutoUserSpecification
+    from ._models_py3 import AzureBlobFileSystemConfiguration
+    from ._models_py3 import AzureFileShareConfiguration
     from ._models_py3 import BatchError, BatchErrorException
     from ._models_py3 import BatchErrorDetail
     from ._models_py3 import Certificate
@@ -32,6 +34,7 @@ try:
     from ._models_py3 import CertificateGetOptions
     from ._models_py3 import CertificateListOptions
     from ._models_py3 import CertificateReference
+    from ._models_py3 import CIFSMountConfiguration
     from ._models_py3 import CloudJob
     from ._models_py3 import CloudJobSchedule
     from ._models_py3 import CloudPool
@@ -126,10 +129,12 @@ try:
     from ._models_py3 import JobUpdateParameter
     from ._models_py3 import LinuxUserConfiguration
     from ._models_py3 import MetadataItem
+    from ._models_py3 import MountConfiguration
     from ._models_py3 import MultiInstanceSettings
     from ._models_py3 import NameValuePair
     from ._models_py3 import NetworkConfiguration
     from ._models_py3 import NetworkSecurityGroupRule
+    from ._models_py3 import NFSMountConfiguration
     from ._models_py3 import NodeAgentInformation
     from ._models_py3 import NodeCounts
     from ._models_py3 import NodeDisableSchedulingParameter
@@ -223,6 +228,8 @@ except (SyntaxError, ImportError):
     from ._models import AutoScaleRun
     from ._models import AutoScaleRunError
     from ._models import AutoUserSpecification
+    from ._models import AzureBlobFileSystemConfiguration
+    from ._models import AzureFileShareConfiguration
     from ._models import BatchError, BatchErrorException
     from ._models import BatchErrorDetail
     from ._models import Certificate
@@ -233,6 +240,7 @@ except (SyntaxError, ImportError):
     from ._models import CertificateGetOptions
     from ._models import CertificateListOptions
     from ._models import CertificateReference
+    from ._models import CIFSMountConfiguration
     from ._models import CloudJob
     from ._models import CloudJobSchedule
     from ._models import CloudPool
@@ -327,10 +335,12 @@ except (SyntaxError, ImportError):
     from ._models import JobUpdateParameter
     from ._models import LinuxUserConfiguration
     from ._models import MetadataItem
+    from ._models import MountConfiguration
     from ._models import MultiInstanceSettings
     from ._models import NameValuePair
     from ._models import NetworkConfiguration
     from ._models import NetworkSecurityGroupRule
+    from ._models import NFSMountConfiguration
     from ._models import NodeAgentInformation
     from ._models import NodeCounts
     from ._models import NodeDisableSchedulingParameter
@@ -481,6 +491,8 @@ __all__ = [
     'AutoScaleRun',
     'AutoScaleRunError',
     'AutoUserSpecification',
+    'AzureBlobFileSystemConfiguration',
+    'AzureFileShareConfiguration',
     'BatchError', 'BatchErrorException',
     'BatchErrorDetail',
     'Certificate',
@@ -491,6 +503,7 @@ __all__ = [
     'CertificateGetOptions',
     'CertificateListOptions',
     'CertificateReference',
+    'CIFSMountConfiguration',
     'CloudJob',
     'CloudJobSchedule',
     'CloudPool',
@@ -585,10 +598,12 @@ __all__ = [
     'JobUpdateParameter',
     'LinuxUserConfiguration',
     'MetadataItem',
+    'MountConfiguration',
     'MultiInstanceSettings',
     'NameValuePair',
     'NetworkConfiguration',
     'NetworkSecurityGroupRule',
+    'NFSMountConfiguration',
     'NodeAgentInformation',
     'NodeCounts',
     'NodeDisableSchedulingParameter',

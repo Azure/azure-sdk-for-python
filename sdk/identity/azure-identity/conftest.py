@@ -6,7 +6,7 @@ import os
 import sys
 
 import pytest
-from azure.identity.constants import EnvironmentVariables
+from azure.identity._constants import EnvironmentVariables
 
 # IMDS tests must be run explicitly
 collect_ignore_glob = ["*imds*"]  # pylint:disable=invalid-name

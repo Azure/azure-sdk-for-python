@@ -19,10 +19,10 @@ if TYPE_CHECKING:
 
 
 class VaultClient(KeyVaultClientBase):
-    def __init__(self, vault_url, credential, config=None, transport=None, api_version=None, **kwargs):
-        # type: (str, TokenCredential, Configuration, Optional[HttpTransport], Optional[str], **Any) -> None
+    def __init__(self, vault_url, credential, transport=None, api_version=None, **kwargs):
+        # type: (str, TokenCredential, Optional[HttpTransport], Optional[str], **Any) -> None
         super(VaultClient, self).__init__(
-            vault_url, credential, config=config, transport=transport, api_version=api_version, **kwargs
+            vault_url, credential, transport=transport, api_version=api_version, **kwargs
         )
         self._secrets = SecretClient(self.vault_url, credential, generated_client=self._client, **kwargs)
 

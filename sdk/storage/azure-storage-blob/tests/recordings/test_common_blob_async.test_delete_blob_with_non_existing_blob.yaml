@@ -1,0 +1,95 @@
+interactions:
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - ddfac554-b4d3-11e9-a440-b831b58100e8
+      x-ms-date:
+      - Fri, 02 Aug 2019 03:16:06 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: PUT
+    uri: https://storagename.blob.core.windows.net/utcontainer213a196f?timeout=5&restype=container
+  response:
+    body:
+      string: ''
+    headers:
+      ? !!python/object/new:multidict._istr.istr
+      - Content-Length
+      : '0'
+      ? !!python/object/new:multidict._istr.istr
+      - Date
+      : Fri, 02 Aug 2019 03:16:05 GMT
+      ? !!python/object/new:multidict._istr.istr
+      - Etag
+      : '"0x8D716F7C240B14E"'
+      ? !!python/object/new:multidict._istr.istr
+      - Last-Modified
+      : Fri, 02 Aug 2019 03:16:06 GMT
+      ? !!python/object/new:multidict._istr.istr
+      - Server
+      : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-request-id: b7c85854-d01e-00a2-4ee0-48a99c000000
+      x-ms-version: '2018-03-28'
+    status:
+      code: 201
+      message: Created
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - amqptest.blob.core.windows.net
+        - /utcontainer213a196f
+        - timeout=5&restype=container
+        - ''
+- request:
+    body: null
+    headers:
+      User-Agent:
+      - azsdk-python-storage-blob/12.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      content-type:
+      - application/xml; charset=utf-8
+      x-ms-client-request-id:
+      - de185f5a-b4d3-11e9-88b2-b831b58100e8
+      x-ms-date:
+      - Fri, 02 Aug 2019 03:16:06 GMT
+      x-ms-version:
+      - '2018-03-28'
+    method: DELETE
+    uri: https://storagename.blob.core.windows.net/utcontainer213a196f/blob213a196f
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>BlobNotFound</Code><Message>The
+        specified blob does not exist.\nRequestId:b7c85871-d01e-00a2-66e0-48a99c000000\nTime:2019-08-02T03:16:06.8747854Z</Message></Error>"
+    headers:
+      ? !!python/object/new:multidict._istr.istr
+      - Content-Length
+      : '215'
+      ? !!python/object/new:multidict._istr.istr
+      - Content-Type
+      : application/xml
+      ? !!python/object/new:multidict._istr.istr
+      - Date
+      : Fri, 02 Aug 2019 03:16:05 GMT
+      ? !!python/object/new:multidict._istr.istr
+      - Server
+      : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-error-code: BlobNotFound
+      x-ms-request-id: b7c85871-d01e-00a2-66e0-48a99c000000
+      x-ms-version: '2018-03-28'
+    status:
+      code: 404
+      message: The specified blob does not exist.
+    url: !!python/object/new:yarl.URL
+      state: !!python/tuple
+      - !!python/object/new:urllib.parse.SplitResult
+        - https
+        - amqptest.blob.core.windows.net
+        - /utcontainer213a196f/blob213a196f
+        - ''
+        - ''
+version: 1

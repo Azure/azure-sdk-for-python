@@ -4,57 +4,34 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import base64
-import hashlib
-import hmac
 import logging
 import sys
+
 try:
     from urllib.parse import urlparse, unquote
 except ImportError:
     from urlparse import urlparse # type: ignore
     from urllib2 import unquote # type: ignore
 
+try:
+    from yarl import URL
+except ImportError:
+    pass
+
+try:
+    from azure.core.pipeline.transport import AioHttpTransport
+except ImportError:
+    AioHttpTransport = None
+
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 
-if sys.version_info < (3,):
-    _unicode_type = unicode  # pylint: disable=undefined-variable
-else:
-    _unicode_type = str
+from . import sign_string
+
+
 logger = logging.getLogger(__name__)
 
 
-def _encode_base64(data):
-    if isinstance(data, _unicode_type):
-        data = data.encode('utf-8')
-    encoded = base64.b64encode(data)
-    return encoded.decode('utf-8')
-
-
-def _decode_base64_to_bytes(data):
-    if isinstance(data, _unicode_type):
-        data = data.encode('utf-8')
-    return base64.b64decode(data)
-
-
-def _decode_base64_to_text(data):
-    decoded_bytes = _decode_base64_to_bytes(data)
-    return decoded_bytes.decode('utf-8')
-
-
-def _sign_string(key, string_to_sign, key_is_base64=True):
-    if key_is_base64:
-        key = _decode_base64_to_bytes(key)
-    else:
-        if isinstance(key, _unicode_type):
-            key = key.encode('utf-8')
-    if isinstance(string_to_sign, _unicode_type):
-        string_to_sign = string_to_sign.encode('utf-8')
-    signed_hmac_sha256 = hmac.HMAC(key, string_to_sign, hashlib.sha256)
-    digest = signed_hmac_sha256.digest()
-    encoded_digest = _encode_base64(digest)
-    return encoded_digest
 
 # wraps a given exception with the desired exception type
 def _wrap_exception(ex, desired_type):
@@ -98,6 +75,12 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
 
     def _get_canonicalized_resource(self, request):
         uri_path = urlparse(request.http_request.url).path
+        try:
+            if isinstance(request.context.transport, AioHttpTransport):
+                uri_path = URL(uri_path)
+                return '/' + self.account_name + str(uri_path)
+        except TypeError:
+            pass
         return '/' + self.account_name + uri_path
 
     def _get_canonicalized_headers(self, request):
@@ -125,7 +108,7 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
 
     def _add_authorization_header(self, request, string_to_sign):
         try:
-            signature = _sign_string(self.account_key, string_to_sign)
+            signature = sign_string(self.account_key, string_to_sign)
             auth_string = 'SharedKey ' + self.account_name + ':' + signature
             request.http_request.headers['Authorization'] = auth_string
         except Exception as ex:
@@ -133,7 +116,10 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
             # Doing so will clarify/locate the source of problem
             raise _wrap_exception(ex, AzureSigningError)
 
-    def on_request(self, request, **kwargs):
+    def on_request(self, request):
+        if not 'content-type' in request.http_request.headers:
+            request.http_request.headers['content-type'] = 'application/xml; charset=utf-8'
+
         string_to_sign = \
             self._get_verb(request) + \
             self._get_headers(

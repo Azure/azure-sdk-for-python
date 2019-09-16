@@ -41,7 +41,7 @@ def mock_response(status_code=200, headers={}, json_payload=None):
     if json_payload is not None:
         response.text = lambda: json.dumps(json_payload)
         response.headers["content-type"] = "application/json"
-        response.content_type = ["application/json"]
+        response.content_type = "application/json"
     return response
 
 

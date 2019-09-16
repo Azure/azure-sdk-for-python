@@ -6,26 +6,20 @@
 # license information.
 # --------------------------------------------------------------------------
 
-try:
-    import settings_real as settings
-except ImportError:
-    import queue_settings_fake as settings
-
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from queuetestcase import (
-    QueueTestCase,
-    record
+    QueueTestCase
 )
 
 
 class TestQueueServiceSamples(QueueTestCase):
 
-    connection_string = settings.CONNECTION_STRING
-
-    @record
-    def test_queue_service_properties(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_queue_service_properties(self, resource_group, location, storage_account, storage_account_key):
         # Instantiate the QueueServiceClient from a connection string
         from azure.storage.queue import QueueServiceClient
-        queue_service = QueueServiceClient.from_connection_string(self.connection_string)
+        queue_service = QueueServiceClient.from_connection_string(self.connection_string(storage_account, storage_account_key))
 
         # [START set_queue_service_properties]
         # Create service properties
@@ -63,11 +57,12 @@ class TestQueueServiceSamples(QueueTestCase):
         properties = queue_service.get_service_properties()
         # [END get_queue_service_properties]
 
-    @record
-    def test_queues_in_account(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_queues_in_account(self, resource_group, location, storage_account, storage_account_key):
         # Instantiate the QueueServiceClient from a connection string
         from azure.storage.queue import QueueServiceClient
-        queue_service = QueueServiceClient.from_connection_string(self.connection_string)
+        queue_service = QueueServiceClient.from_connection_string(self.connection_string(storage_account, storage_account_key))
 
         # [START qsc_create_queue]
         queue_service.create_queue("testqueue")
@@ -76,10 +71,14 @@ class TestQueueServiceSamples(QueueTestCase):
         try:
             # [START qsc_list_queues]
             # List all the queues in the service
-            list_queues = next(queue_service.list_queues())
+            list_queues = queue_service.list_queues()
+            for queue in list_queues:
+                print(queue)
 
             # List the queues in the service that start with the name "test"
-            list_test_queues = next(queue_service.list_queues(name_starts_with="test"))
+            list_test_queues = queue_service.list_queues(name_starts_with="test")
+            for queue in list_test_queues:
+                print(queue)
             # [END qsc_list_queues]
 
         finally:
@@ -87,11 +86,12 @@ class TestQueueServiceSamples(QueueTestCase):
             queue_service.delete_queue("testqueue")
             # [END qsc_delete_queue]
 
-    @record
-    def test_get_queue_client(self):
+    @ResourceGroupPreparer()
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_get_queue_client(self, resource_group, location, storage_account, storage_account_key):
         # Instantiate the QueueServiceClient from a connection string
         from azure.storage.queue import QueueServiceClient, QueueClient
-        queue_service = QueueServiceClient.from_connection_string(self.connection_string)
+        queue_service = QueueServiceClient.from_connection_string(self.connection_string(storage_account, storage_account_key))
 
         # [START get_queue_client]
         # Get the queue client to interact with a specific queue

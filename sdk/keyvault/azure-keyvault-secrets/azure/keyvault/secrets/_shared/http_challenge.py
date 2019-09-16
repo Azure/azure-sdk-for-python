@@ -90,6 +90,7 @@ class HttpChallenge(object):
         """ Returns True if challenge vault supports message protection """
         return self.supports_pop() and self.server_encryption_key and self.server_signature_key
 
+    # pylint:disable=no-self-use
     def _validate_challenge(self, challenge):
         """ Verifies that the challenge is a valid auth challenge and returns the key=value pairs. """
         if not challenge:
@@ -97,7 +98,7 @@ class HttpChallenge(object):
 
         return challenge.strip()
 
-    # pylint: disable=no-self-use
+    # pylint:disable=no-self-use
     def _validate_request_uri(self, uri):
         """ Extracts the host authority from the given URI. """
         if not uri:

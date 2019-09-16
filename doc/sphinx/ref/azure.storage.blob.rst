@@ -1,6 +1,13 @@
 azure.storage.blob package
 ==========================
 
+Subpackages
+-----------
+
+.. toctree::
+
+   azure.storage.blob.aio
+
 Submodules
 ----------
 
@@ -40,14 +47,6 @@ azure.storage.blob.models module
 --------------------------------
 
 .. automodule:: azure.storage.blob.models
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-azure.storage.blob.polling module
----------------------------------
-
-.. automodule:: azure.storage.blob.polling
    :members:
    :undoc-members:
    :show-inheritance:

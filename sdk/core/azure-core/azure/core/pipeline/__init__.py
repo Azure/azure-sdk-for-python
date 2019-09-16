@@ -109,7 +109,7 @@ class PipelineRequest(object):
     :type context: ~azure.core.pipeline.PipelineContext
     """
     def __init__(self, http_request, context):
-        # type: (HTTPRequestType, Optional[Any]) -> None
+        # type: (HTTPRequestType, PipelineContext) -> None
         self.http_request = http_request
         self.context = context
 

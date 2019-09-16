@@ -266,10 +266,9 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
 class ContentDecodePolicy(SansIOHTTPPolicy):
     """Policy for decoding unstreamed response content.
     """
-    JSON_MIMETYPES = [
-        'application/json',
-        'text/json' # Because we're open minded people...
-    ]
+    # Accept "text" because we're open minded people...
+    JSON_REGEXP = re.compile(r'^(application|text)/([0-9a-z+.]+\+)?json$')
+
     # Name used in context
     CONTEXT_NAME = "deserialized_data"
 
@@ -301,7 +300,7 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
         if content_type is None:
             return data
 
-        if content_type in cls.JSON_MIMETYPES:
+        if cls.JSON_REGEXP.match(content_type):
             try:
                 return json.loads(data_as_str)
             except ValueError as err:
@@ -350,7 +349,7 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
         # Try to use content-type from headers if available
         content_type = None
         if response.content_type: # type: ignore
-            content_type = response.content_type[0].strip().lower() # type: ignore
+            content_type = response.content_type.split(";")[0].strip().lower() # type: ignore
 
         # Ouch, this server did not declare what it sent...
         # Let's guess it's JSON...

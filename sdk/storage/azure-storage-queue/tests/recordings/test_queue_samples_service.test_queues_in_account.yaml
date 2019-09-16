@@ -11,27 +11,25 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      x-ms-client-request-id:
-      - 1593b812-99ee-11e9-9ac7-b831b58100e8
+      - azsdk-python-storage-queue/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
       x-ms-date:
-      - Fri, 28 Jun 2019 21:45:45 GMT
+      - Fri, 06 Sep 2019 22:00:35 GMT
       x-ms-version:
       - '2018-03-28'
     method: PUT
-    uri: https://storagename.queue.core.windows.net/testqueue
+    uri: https://pyacrstoragefdf21450.queue.core.windows.net/testqueue
   response:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
-      Date:
-      - Fri, 28 Jun 2019 21:45:45 GMT
-      Server:
+      date:
+      - Fri, 06 Sep 2019 22:00:33 GMT
+      server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - 598b9d2a-d003-00ef-14fa-2da601000000
       x-ms-version:
       - '2018-03-28'
     status:
@@ -47,35 +45,31 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      x-ms-client-request-id:
-      - 15a86928-99ee-11e9-b79a-b831b58100e8
+      - azsdk-python-storage-queue/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
       x-ms-date:
-      - Fri, 28 Jun 2019 21:45:45 GMT
+      - Fri, 06 Sep 2019 22:00:36 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
-    uri: https://storagename.queue.core.windows.net/?comp=list
+    uri: https://pyacrstoragefdf21450.queue.core.windows.net/?comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://storagename.queue.core.windows.net/\"><Queues><Queue><Name>testqueue</Name></Queue></Queues><NextMarker
+        ServiceEndpoint=\"https://pyacrstoragefdf21450.queue.core.windows.net/\"><Queues><Queue><Name>testqueue</Name></Queue></Queues><NextMarker
         /></EnumerationResults>"
     headers:
-      Cache-Control:
+      cache-control:
       - no-cache
-      Content-Type:
+      content-type:
       - application/xml
-      Date:
-      - Fri, 28 Jun 2019 21:45:45 GMT
-      Server:
+      date:
+      - Fri, 06 Sep 2019 22:00:34 GMT
+      server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
-      Transfer-Encoding:
+      transfer-encoding:
       - chunked
-      Vary:
-      - Origin
-      x-ms-request-id:
-      - 598b9d2d-d003-00ef-15fa-2da601000000
       x-ms-version:
       - '2018-03-28'
     status:
@@ -91,35 +85,31 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      x-ms-client-request-id:
-      - 15af1ebe-99ee-11e9-b394-b831b58100e8
+      - azsdk-python-storage-queue/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
       x-ms-date:
-      - Fri, 28 Jun 2019 21:45:45 GMT
+      - Fri, 06 Sep 2019 22:00:36 GMT
       x-ms-version:
       - '2018-03-28'
     method: GET
-    uri: https://storagename.queue.core.windows.net/?prefix=test&comp=list
+    uri: https://pyacrstoragefdf21450.queue.core.windows.net/?prefix=test&comp=list
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><EnumerationResults
-        ServiceEndpoint=\"https://storagename.queue.core.windows.net/\"><Prefix>test</Prefix><Queues><Queue><Name>testqueue</Name></Queue></Queues><NextMarker
+        ServiceEndpoint=\"https://pyacrstoragefdf21450.queue.core.windows.net/\"><Prefix>test</Prefix><Queues><Queue><Name>testqueue</Name></Queue></Queues><NextMarker
         /></EnumerationResults>"
     headers:
-      Cache-Control:
+      cache-control:
       - no-cache
-      Content-Type:
+      content-type:
       - application/xml
-      Date:
-      - Fri, 28 Jun 2019 21:45:45 GMT
-      Server:
+      date:
+      - Fri, 06 Sep 2019 22:00:34 GMT
+      server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
-      Transfer-Encoding:
+      transfer-encoding:
       - chunked
-      Vary:
-      - Origin
-      x-ms-request-id:
-      - 598b9d2e-d003-00ef-16fa-2da601000000
       x-ms-version:
       - '2018-03-28'
     status:
@@ -137,27 +127,25 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-queue/12.0.0b1 Python/3.7.3 (Windows-10-10.0.18362-SP0)
-      x-ms-client-request-id:
-      - 15b539a6-99ee-11e9-95b5-b831b58100e8
+      - azsdk-python-storage-queue/12.0.0b2 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      content-type:
+      - application/xml; charset=utf-8
       x-ms-date:
-      - Fri, 28 Jun 2019 21:45:45 GMT
+      - Fri, 06 Sep 2019 22:00:36 GMT
       x-ms-version:
       - '2018-03-28'
     method: DELETE
-    uri: https://storagename.queue.core.windows.net/testqueue
+    uri: https://pyacrstoragefdf21450.queue.core.windows.net/testqueue
   response:
     body:
       string: ''
     headers:
-      Content-Length:
+      content-length:
       - '0'
-      Date:
-      - Fri, 28 Jun 2019 21:45:45 GMT
-      Server:
+      date:
+      - Fri, 06 Sep 2019 22:00:35 GMT
+      server:
       - Windows-Azure-Queue/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id:
-      - 598b9d2f-d003-00ef-17fa-2da601000000
       x-ms-version:
       - '2018-03-28'
     status:

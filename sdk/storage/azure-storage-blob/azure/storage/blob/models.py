@@ -9,12 +9,10 @@
 from enum import Enum
 from typing import List, Any, TYPE_CHECKING # pylint: disable=unused-import
 
-from azure.core.paging import Paged
+from azure.core.paging import PageIterator, ItemPaged
 
-from ._shared.utils import (
-    decode_base64,
-    return_context_and_deserialized,
-    process_storage_error)
+from ._shared import decode_base64_to_text
+from ._shared.response_handlers import return_context_and_deserialized, process_storage_error
 from ._shared.models import DictMixin, get_enum_value
 from ._generated.models import Logging as GeneratedLogging
 from ._generated.models import Metrics as GeneratedMetrics
@@ -287,14 +285,14 @@ class ContainerProperties(DictMixin):
         return props
 
 
-class ContainerPropertiesPaged(Paged):
+class ContainerPropertiesPaged(PageIterator):
     """An Iterable of Container properties.
 
     :ivar str service_endpoint: The service URL.
     :ivar str prefix: A container name prefix being used to filter the list.
-    :ivar str current_marker: The continuation token of the current page of results.
+    :ivar str marker: The continuation token of the current page of results.
     :ivar int results_per_page: The maximum number of results retrieved per API call.
-    :ivar str next_marker: The continuation token to retrieve the next page of results.
+    :ivar str continuation_token: The continuation token to retrieve the next page of results.
     :ivar str location_mode: The location mode being used to list results. The available
         options include "primary" and "secondary".
     :ivar current_page: The current page of listed results.
@@ -305,53 +303,45 @@ class ContainerPropertiesPaged(Paged):
         begin with the specified prefix.
     :param int results_per_page: The maximum number of container names to retrieve per
         call.
-    :param str marker: An opaque continuation token.
+    :param str continuation_token: An opaque continuation token.
     """
-    def __init__(self, command, prefix=None, results_per_page=None, marker=None):
-        super(ContainerPropertiesPaged, self).__init__(command, None)
+    def __init__(self, command, prefix=None, results_per_page=None, continuation_token=None):
+        super(ContainerPropertiesPaged, self).__init__(
+            get_next=self._get_next_cb,
+            extract_data=self._extract_data_cb,
+            continuation_token=continuation_token or ""
+        )
+        self._command = command
         self.service_endpoint = None
         self.prefix = prefix
-        self.current_marker = None
+        self.marker = None
         self.results_per_page = results_per_page
-        self.next_marker = marker or ""
         self.location_mode = None
+        self.current_page = []
 
-    def _advance_page(self):
-        """Force moving the cursor to the next azure call.
-
-        This method is for advanced usage, iterator protocol is prefered.
-
-        :raises: StopIteration if no further page
-        :return: The current page list
-        :rtype: list
-        """
-        if self.next_marker is None:
-            raise StopIteration("End of paging")
-        self._current_page_iter_index = 0
+    def _get_next_cb(self, continuation_token):
         try:
-            self.location_mode, self._response = self._get_next(
-                marker=self.next_marker or None,
+            return self._command(
+                marker=continuation_token or None,
                 maxresults=self.results_per_page,
                 cls=return_context_and_deserialized,
                 use_location=self.location_mode)
         except StorageErrorException as error:
             process_storage_error(error)
 
+    def _extract_data_cb(self, get_next_return):
+        self.location_mode, self._response = get_next_return
         self.service_endpoint = self._response.service_endpoint
         self.prefix = self._response.prefix
-        self.current_marker = self._response.marker
+        self.marker = self._response.marker
         self.results_per_page = self._response.max_results
-        self.current_page = self._response.container_items
-        self.next_marker = self._response.next_marker or None
-        return self.current_page
+        self.current_page = [self._build_item(item) for item in self._response.container_items]
 
-    def __next__(self): # type: ignore
-        item = super(ContainerPropertiesPaged, self).__next__()
-        if isinstance(item, ContainerProperties):
-            return item
+        return self._response.next_marker or None, self.current_page
+
+    @staticmethod
+    def _build_item(item):
         return ContainerProperties._from_generated(item)  # pylint: disable=protected-access
-
-    next = __next__
 
 
 class BlobProperties(DictMixin):
@@ -423,6 +413,7 @@ class BlobProperties(DictMixin):
         self.snapshot = kwargs.get('x-ms-snapshot')
         self.blob_type = BlobType(kwargs['x-ms-blob-type']) if kwargs.get('x-ms-blob-type') else None
         self.metadata = kwargs.get('metadata')
+        self.encrypted_metadata = kwargs.get('encrypted_metadata')
         self.last_modified = kwargs.get('Last-Modified')
         self.etag = kwargs.get('ETag')
         self.size = kwargs.get('Content-Length')
@@ -441,6 +432,8 @@ class BlobProperties(DictMixin):
         self.remaining_retention_days = None
         self.creation_time = kwargs.get('x-ms-creation-time')
         self.archive_status = kwargs.get('x-ms-archive-status')
+        self.encryption_key_sha256 = kwargs.get('x-ms-encryption-key-sha256')
+        self.request_server_encrypted = kwargs.get('x-ms-server-encrypted')
 
     @classmethod
     def _from_generated(cls, generated):
@@ -451,7 +444,8 @@ class BlobProperties(DictMixin):
         blob.etag = generated.properties.etag
         blob.deleted = generated.deleted
         blob.snapshot = generated.snapshot
-        blob.metadata = generated.metadata
+        blob.metadata = generated.metadata.additional_properties if generated.metadata else {}
+        blob.encrypted_metadata = generated.metadata.encrypted if generated.metadata else None
         blob.lease = LeaseProperties._from_generated(generated)  # pylint: disable=protected-access
         blob.copy = CopyProperties._from_generated(generated)  # pylint: disable=protected-access
         blob.last_modified = generated.properties.last_modified
@@ -469,14 +463,14 @@ class BlobProperties(DictMixin):
         return blob
 
 
-class BlobPropertiesPaged(Paged):
+class BlobPropertiesPaged(PageIterator):
     """An Iterable of Blob properties.
 
     :ivar str service_endpoint: The service URL.
     :ivar str prefix: A blob name prefix being used to filter the list.
-    :ivar str current_marker: The continuation token of the current page of results.
+    :ivar str marker: The continuation token of the current page of results.
     :ivar int results_per_page: The maximum number of results retrieved per API call.
-    :ivar str next_marker: The continuation token to retrieve the next page of results.
+    :ivar str continuation_token: The continuation token to retrieve the next page of results.
     :ivar str location_mode: The location mode being used to list results. The available
         options include "primary" and "secondary".
     :ivar current_page: The current page of listed results.
@@ -489,7 +483,7 @@ class BlobPropertiesPaged(Paged):
         begin with the specified prefix.
     :param int results_per_page: The maximum number of blobs to retrieve per
         call.
-    :param str marker: An opaque continuation token.
+    :param str continuation_token: An opaque continuation token.
     :param str delimiter:
         Used to capture blobs whose names begin with the same substring up to
         the appearance of the delimiter character. The delimiter may be a single
@@ -503,55 +497,48 @@ class BlobPropertiesPaged(Paged):
             container=None,
             prefix=None,
             results_per_page=None,
-            marker=None,
+            continuation_token=None,
             delimiter=None,
             location_mode=None):
-        super(BlobPropertiesPaged, self).__init__(command, None)
+        super(BlobPropertiesPaged, self).__init__(
+            get_next=self._get_next_cb,
+            extract_data=self._extract_data_cb,
+            continuation_token=continuation_token or ""
+        )
+        self._command = command
         self.service_endpoint = None
         self.prefix = prefix
-        self.current_marker = None
+        self.marker = None
         self.results_per_page = results_per_page
-        self.next_marker = marker or ""
         self.container = container
         self.delimiter = delimiter
         self.current_page = None
         self.location_mode = location_mode
 
-    def _advance_page(self):
-        """Force moving the cursor to the next azure call.
-
-        This method is for advanced usage, iterator protocol is prefered.
-
-        :raises: StopIteration if no further page
-        :return: The current page list
-        :rtype: list
-        """
-        if self.next_marker is None:
-            raise StopIteration("End of paging")
-        self._current_page_iter_index = 0
-
+    def _get_next_cb(self, continuation_token):
         try:
-            self.location_mode, self._response = self._get_next(
+            return self._command(
                 prefix=self.prefix,
-                marker=self.next_marker or None,
+                marker=continuation_token or None,
                 maxresults=self.results_per_page,
                 cls=return_context_and_deserialized,
                 use_location=self.location_mode)
         except StorageErrorException as error:
             process_storage_error(error)
 
+    def _extract_data_cb(self, get_next_return):
+        self.location_mode, self._response = get_next_return
         self.service_endpoint = self._response.service_endpoint
         self.prefix = self._response.prefix
-        self.current_marker = self._response.marker
+        self.marker = self._response.marker
         self.results_per_page = self._response.max_results
-        self.current_page = self._response.segment.blob_items
-        self.next_marker = self._response.next_marker or None
         self.container = self._response.container_name
+        self.current_page = [self._build_item(item) for item in self._response.segment.blob_items]
         self.delimiter = self._response.delimiter
-        return self.current_page
 
-    def __next__(self):
-        item = super(BlobPropertiesPaged, self).__next__()
+        return self._response.next_marker or None, self.current_page
+
+    def _build_item(self, item):
         if isinstance(item, BlobProperties):
             return item
         if isinstance(item, BlobItem):
@@ -560,10 +547,8 @@ class BlobPropertiesPaged(Paged):
             return blob
         return item
 
-    next = __next__
 
-
-class BlobPrefix(BlobPropertiesPaged, DictMixin):
+class BlobPrefix(ItemPaged, DictMixin):
     """An Iterable of Blob properties.
 
     Returned from walk_blobs when a delimiter is used.
@@ -572,7 +557,7 @@ class BlobPrefix(BlobPropertiesPaged, DictMixin):
     :ivar str name: The prefix, or "directory name" of the blob.
     :ivar str service_endpoint: The service URL.
     :ivar str prefix: A blob name prefix being used to filter the list.
-    :ivar str current_marker: The continuation token of the current page of results.
+    :ivar str marker: The continuation token of the current page of results.
     :ivar int results_per_page: The maximum number of results retrieved per API call.
     :ivar str next_marker: The continuation token to retrieve the next page of results.
     :ivar str location_mode: The location mode being used to list results. The available
@@ -597,50 +582,36 @@ class BlobPrefix(BlobPropertiesPaged, DictMixin):
         Options include 'primary' or 'secondary'.
     """
     def __init__(self, *args, **kwargs):
-        super(BlobPrefix, self).__init__(*args, **kwargs)
+        super(BlobPrefix, self).__init__(*args, page_iterator_class=BlobPrefixPaged, **kwargs)
+        self.name = kwargs.get('prefix')
+        self.prefix = kwargs.get('prefix')
+        self.results_per_page = kwargs.get('results_per_page')
+        self.container = kwargs.get('container')
+        self.delimiter = kwargs.get('delimiter')
+        self.location_mode = kwargs.get('location_mode')
+
+class BlobPrefixPaged(BlobPropertiesPaged):
+    def __init__(self, *args, **kwargs):
+        super(BlobPrefixPaged, self).__init__(*args, **kwargs)
         self.name = self.prefix
 
-    def _advance_page(self):
-        """Force moving the cursor to the next azure call.
+    def _extract_data_cb(self, get_next_return):
+        continuation_token, _ = super(BlobPrefixPaged, self)._extract_data_cb(get_next_return)
+        self.current_page = self._response.segment.blob_prefixes + self._response.segment.blob_items
+        self.current_page = [self._build_item(item) for item in self.current_page]
 
-        This method is for advanced usage, iterator protocol is prefered.
+        return continuation_token, self.current_page
 
-        :raises: StopIteration if no further page
-        :return: The current page list
-        :rtype: list
-        """
-        if self.next_marker is None:
-            raise StopIteration("End of paging")
-        self._current_page_iter_index = 0
-        self.location_mode, self._response = self._get_next(
-            prefix=self.prefix,
-            marker=self.next_marker or None,
-            maxresults=self.results_per_page,
-            cls=return_context_and_deserialized,
-            use_location=self.location_mode)
-        self.service_endpoint = self._response.service_endpoint
-        self.prefix = self._response.prefix
-        self.current_marker = self._response.marker
-        self.results_per_page = self._response.max_results
-        self.current_page = self._response.segment.blob_prefixes
-        self.current_page.extend(self._response.segment.blob_items)
-        self.next_marker = self._response.next_marker or None
-        self.container = self._response.container_name
-        self.delimiter = self._response.delimiter
-
-    def __next__(self):
-        item = super(BlobPrefix, self).__next__()
+    def _build_item(self, item):
+        item = super(BlobPrefixPaged, self)._build_item(item)
         if isinstance(item, GenBlobPrefix):
             return BlobPrefix(
-                self._get_next,
+                self._command,
                 container=self.container,
                 prefix=item.name,
                 results_per_page=self.results_per_page,
                 location_mode=self.location_mode)
         return item
-
-    next = __next__
-
 
 class LeaseProperties(DictMixin):
     """Blob Lease Properties.
@@ -805,7 +776,7 @@ class BlobBlock(DictMixin):
     @classmethod
     def _from_generated(cls, generated):
         block = cls()
-        block.id = decode_base64(generated.name)
+        block.id = decode_base64_to_text(generated.name)
         block.size = generated.size
         return block
 
@@ -1013,3 +984,31 @@ BlobPermissions.CREATE = BlobPermissions(create=True)
 BlobPermissions.DELETE = BlobPermissions(delete=True)
 BlobPermissions.READ = BlobPermissions(read=True)
 BlobPermissions.WRITE = BlobPermissions(write=True)
+
+
+class CustomerProvidedEncryptionKey(object):
+    """
+    All data in Azure Storage is encrypted at-rest using an account-level encryption key.
+    In versions 2018-06-17 and newer, you can manage the key used to encrypt blob contents
+    and application metadata per-blob by providing an AES-256 encryption key in requests to the storage service.
+
+    When you use a customer-provided key, Azure Storage does not manage or persist your key.
+    When writing data to a blob, the provided key is used to encrypt your data before writing it to disk.
+    A SHA-256 hash of the encryption key is written alongside the blob contents,
+    and is used to verify that all subsequent operations against the blob use the same encryption key.
+    This hash cannot be used to retrieve the encryption key or decrypt the contents of the blob.
+    When reading a blob, the provided key is used to decrypt your data after reading it from disk.
+    In both cases, the provided encryption key is securely discarded
+    as soon as the encryption or decryption process completes.
+
+    :ivar str key_value:
+        Base64-encoded AES-256 encryption key value.
+    :ivar str key_hash:
+        Base64-encoded SHA256 of the encryption key.
+    :ivar str algorithm:
+        Specifies the algorithm to use when encrypting data using the given key. Must be AES256.
+    """
+    def __init__(self, key_value, key_hash):
+        self.key_value = key_value
+        self.key_hash = key_hash
+        self.algorithm = 'AES256'

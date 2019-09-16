@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .security_center import SecurityCenter
-from .version import VERSION
+from ._configuration import SecurityCenterConfiguration
+from ._security_center import SecurityCenter
+__all__ = ['SecurityCenter', 'SecurityCenterConfiguration']
 
-__all__ = ['SecurityCenter']
+from .version import VERSION
 
 __version__ = VERSION
 

@@ -33,10 +33,10 @@ def test_send_with_partition_key(connstr_receivers):
         received = partition.receive(timeout=5)
         for message in received:
             try:
-                existing = found_partition_keys[message._partition_key]
+                existing = found_partition_keys[message.partition_key]
                 assert existing == index
             except KeyError:
-                found_partition_keys[message._partition_key] = index
+                found_partition_keys[message.partition_key] = index
 
 
 @pytest.mark.liveTest
@@ -249,3 +249,20 @@ def test_send_over_websocket_sync(connstr_receivers):
         received.extend(r.receive(timeout=3))
 
     assert len(received) == 20
+
+
+@pytest.mark.liveTest
+def test_send_with_create_event_batch_sync(connstr_receivers):
+    connection_str, receivers = connstr_receivers
+    client = EventHubClient.from_connection_string(connection_str, transport_type=TransportType.AmqpOverWebsocket, network_tracing=False)
+    sender = client.create_producer()
+
+    event_data_batch = sender.create_batch(max_size=100000)
+    while True:
+        try:
+            event_data_batch.try_add(EventData('A single event data'))
+        except ValueError:
+            break
+
+    sender.send(event_data_batch)
+    sender.close()

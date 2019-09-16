@@ -20,6 +20,8 @@ from .models import (
     SharePropertiesPaged,
     DirectoryProperties,
     DirectoryPropertiesPaged,
+    Handle,
+    HandlesPaged,
     FileProperties,
     Metrics,
     RetentionPolicy,
@@ -27,7 +29,8 @@ from .models import (
     AccessPolicy,
     FilePermissions,
     SharePermissions,
-    ContentSettings)
+    ContentSettings,
+    NTFSAttributes)
 
 
 __version__ = VERSION
@@ -56,5 +59,8 @@ __all__ = [
     'DirectoryProperties',
     'DirectoryPropertiesPaged',
     'FileProperties',
-    'ContentSettings'
+    'ContentSettings',
+    'Handle',
+    'HandlesPaged',
+    'NTFSAttributes'
 ]

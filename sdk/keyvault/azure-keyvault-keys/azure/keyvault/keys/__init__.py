@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # -------------------------------------
-from ._client import KeyClient
+from .client import KeyClient
+from .enums import KeyCurveName, KeyOperation, KeyType
 
-__all__ = ["KeyClient"]
+__all__ = ["KeyCurveName", "KeyOperation", "KeyType", "KeyClient"]
