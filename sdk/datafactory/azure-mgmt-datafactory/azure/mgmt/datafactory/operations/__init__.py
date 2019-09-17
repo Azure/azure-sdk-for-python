@@ -25,7 +25,6 @@ from ._trigger_runs_operations import TriggerRunsOperations
 from ._rerun_triggers_operations import RerunTriggersOperations
 from ._data_flows_operations import DataFlowsOperations
 from ._data_flow_debug_session_operations import DataFlowDebugSessionOperations
-from ._data_factory_operation_operations import DataFactoryOperationOperations
 
 __all__ = [
     'Operations',
@@ -44,5 +43,4 @@ __all__ = [
     'RerunTriggersOperations',
     'DataFlowsOperations',
     'DataFlowDebugSessionOperations',
-    'DataFactoryOperationOperations',
 ]

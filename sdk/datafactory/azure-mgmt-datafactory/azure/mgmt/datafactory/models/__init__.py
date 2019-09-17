@@ -16,6 +16,7 @@ try:
     from ._models_py3 import ActivityPolicy
     from ._models_py3 import ActivityRun
     from ._models_py3 import ActivityRunsQueryResponse
+    from ._models_py3 import AddDataFlowToDebugSessionResponse
     from ._models_py3 import AmazonMWSLinkedService
     from ._models_py3 import AmazonMWSObjectDataset
     from ._models_py3 import AmazonMWSSource
@@ -143,13 +144,15 @@ try:
     from ._models_py3 import DataFlowDebugCommandPayload
     from ._models_py3 import DataFlowDebugCommandRequest
     from ._models_py3 import DataFlowDebugCommandResponse
-    from ._models_py3 import DataFlowDebugResultResponse
+    from ._models_py3 import DataFlowDebugPackage
+    from ._models_py3 import DataFlowDebugPackageDebugSettings
     from ._models_py3 import DataFlowDebugSessionInfo
     from ._models_py3 import DataFlowFolder
     from ._models_py3 import DataFlowReference
     from ._models_py3 import DataFlowResource
     from ._models_py3 import DataFlowSink
     from ._models_py3 import DataFlowSource
+    from ._models_py3 import DataFlowSourceSetting
     from ._models_py3 import DataFlowStagingInfo
     from ._models_py3 import DataLakeAnalyticsUSQLActivity
     from ._models_py3 import Dataset
@@ -395,7 +398,6 @@ try:
     from ._models_py3 import PrestoLinkedService
     from ._models_py3 import PrestoObjectDataset
     from ._models_py3 import PrestoSource
-    from ._models_py3 import QueryDataFlowDebugSessionsResponse
     from ._models_py3 import QuickBooksLinkedService
     from ._models_py3 import QuickBooksObjectDataset
     from ._models_py3 import QuickBooksSource
@@ -506,9 +508,6 @@ try:
     from ._models_py3 import StoredProcedureParameter
     from ._models_py3 import StoreReadSettings
     from ._models_py3 import StoreWriteSettings
-    from ._models_py3 import SubmitDataFlowForPreviewRequest
-    from ._models_py3 import SubmitDataFlowForPreviewRequestDebugSettings
-    from ._models_py3 import SubmitDataFlowForPreviewResponse
     from ._models_py3 import SubResource
     from ._models_py3 import SybaseLinkedService
     from ._models_py3 import SybaseSource
@@ -550,7 +549,6 @@ try:
     from ._models_py3 import WebLinkedServiceTypeProperties
     from ._models_py3 import WebSource
     from ._models_py3 import WebTableDataset
-    from ._models_py3 import WranglingDataFlow
     from ._models_py3 import XeroLinkedService
     from ._models_py3 import XeroObjectDataset
     from ._models_py3 import XeroSource
@@ -564,6 +562,7 @@ except (SyntaxError, ImportError):
     from ._models import ActivityPolicy
     from ._models import ActivityRun
     from ._models import ActivityRunsQueryResponse
+    from ._models import AddDataFlowToDebugSessionResponse
     from ._models import AmazonMWSLinkedService
     from ._models import AmazonMWSObjectDataset
     from ._models import AmazonMWSSource
@@ -691,13 +690,15 @@ except (SyntaxError, ImportError):
     from ._models import DataFlowDebugCommandPayload
     from ._models import DataFlowDebugCommandRequest
     from ._models import DataFlowDebugCommandResponse
-    from ._models import DataFlowDebugResultResponse
+    from ._models import DataFlowDebugPackage
+    from ._models import DataFlowDebugPackageDebugSettings
     from ._models import DataFlowDebugSessionInfo
     from ._models import DataFlowFolder
     from ._models import DataFlowReference
     from ._models import DataFlowResource
     from ._models import DataFlowSink
     from ._models import DataFlowSource
+    from ._models import DataFlowSourceSetting
     from ._models import DataFlowStagingInfo
     from ._models import DataLakeAnalyticsUSQLActivity
     from ._models import Dataset
@@ -943,7 +944,6 @@ except (SyntaxError, ImportError):
     from ._models import PrestoLinkedService
     from ._models import PrestoObjectDataset
     from ._models import PrestoSource
-    from ._models import QueryDataFlowDebugSessionsResponse
     from ._models import QuickBooksLinkedService
     from ._models import QuickBooksObjectDataset
     from ._models import QuickBooksSource
@@ -1054,9 +1054,6 @@ except (SyntaxError, ImportError):
     from ._models import StoredProcedureParameter
     from ._models import StoreReadSettings
     from ._models import StoreWriteSettings
-    from ._models import SubmitDataFlowForPreviewRequest
-    from ._models import SubmitDataFlowForPreviewRequestDebugSettings
-    from ._models import SubmitDataFlowForPreviewResponse
     from ._models import SubResource
     from ._models import SybaseLinkedService
     from ._models import SybaseSource
@@ -1098,13 +1095,13 @@ except (SyntaxError, ImportError):
     from ._models import WebLinkedServiceTypeProperties
     from ._models import WebSource
     from ._models import WebTableDataset
-    from ._models import WranglingDataFlow
     from ._models import XeroLinkedService
     from ._models import XeroObjectDataset
     from ._models import XeroSource
     from ._models import ZohoLinkedService
     from ._models import ZohoObjectDataset
     from ._models import ZohoSource
+from ._paged_models import DataFlowDebugSessionInfoPaged
 from ._paged_models import DataFlowResourcePaged
 from ._paged_models import DatasetResourcePaged
 from ._paged_models import FactoryPaged
@@ -1197,6 +1194,7 @@ __all__ = [
     'ActivityPolicy',
     'ActivityRun',
     'ActivityRunsQueryResponse',
+    'AddDataFlowToDebugSessionResponse',
     'AmazonMWSLinkedService',
     'AmazonMWSObjectDataset',
     'AmazonMWSSource',
@@ -1324,13 +1322,15 @@ __all__ = [
     'DataFlowDebugCommandPayload',
     'DataFlowDebugCommandRequest',
     'DataFlowDebugCommandResponse',
-    'DataFlowDebugResultResponse',
+    'DataFlowDebugPackage',
+    'DataFlowDebugPackageDebugSettings',
     'DataFlowDebugSessionInfo',
     'DataFlowFolder',
     'DataFlowReference',
     'DataFlowResource',
     'DataFlowSink',
     'DataFlowSource',
+    'DataFlowSourceSetting',
     'DataFlowStagingInfo',
     'DataLakeAnalyticsUSQLActivity',
     'Dataset',
@@ -1576,7 +1576,6 @@ __all__ = [
     'PrestoLinkedService',
     'PrestoObjectDataset',
     'PrestoSource',
-    'QueryDataFlowDebugSessionsResponse',
     'QuickBooksLinkedService',
     'QuickBooksObjectDataset',
     'QuickBooksSource',
@@ -1687,9 +1686,6 @@ __all__ = [
     'StoredProcedureParameter',
     'StoreReadSettings',
     'StoreWriteSettings',
-    'SubmitDataFlowForPreviewRequest',
-    'SubmitDataFlowForPreviewRequestDebugSettings',
-    'SubmitDataFlowForPreviewResponse',
     'SubResource',
     'SybaseLinkedService',
     'SybaseSource',
@@ -1731,7 +1727,6 @@ __all__ = [
     'WebLinkedServiceTypeProperties',
     'WebSource',
     'WebTableDataset',
-    'WranglingDataFlow',
     'XeroLinkedService',
     'XeroObjectDataset',
     'XeroSource',
@@ -1747,6 +1742,7 @@ __all__ = [
     'TriggerResourcePaged',
     'RerunTriggerResourcePaged',
     'DataFlowResourcePaged',
+    'DataFlowDebugSessionInfoPaged',
     'IntegrationRuntimeState',
     'IntegrationRuntimeAutoUpdate',
     'ParameterType',

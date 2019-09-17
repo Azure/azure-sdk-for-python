@@ -129,3 +129,16 @@ class DataFlowResourcePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(DataFlowResourcePaged, self).__init__(*args, **kwargs)
+class DataFlowDebugSessionInfoPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`DataFlowDebugSessionInfo <azure.mgmt.datafactory.models.DataFlowDebugSessionInfo>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[DataFlowDebugSessionInfo]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(DataFlowDebugSessionInfoPaged, self).__init__(*args, **kwargs)

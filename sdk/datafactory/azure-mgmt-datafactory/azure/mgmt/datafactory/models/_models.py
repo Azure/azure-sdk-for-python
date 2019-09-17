@@ -286,6 +286,22 @@ class ActivityRunsQueryResponse(Model):
         self.continuation_token = kwargs.get('continuation_token', None)
 
 
+class AddDataFlowToDebugSessionResponse(Model):
+    """Response body structure for starting data flow debug session.
+
+    :param job_version: The ID of data flow debug job version.
+    :type job_version: str
+    """
+
+    _attribute_map = {
+        'job_version': {'key': 'jobVersion', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(AddDataFlowToDebugSessionResponse, self).__init__(**kwargs)
+        self.job_version = kwargs.get('job_version', None)
+
+
 class LinkedService(Model):
     """The Azure Data Factory nested object which contains the information and
     credential which can be used to connect with related store or compute
@@ -2623,20 +2639,32 @@ class AzureDatabricksLinkedService(LinkedService):
      to https://docs.azuredatabricks.net/api/latest/authentication.html. Type:
      string (or Expression with resultType string).
     :type access_token: ~azure.mgmt.datafactory.models.SecretBase
-    :param existing_cluster_id: The id of an existing cluster that will be
-     used for all runs of this job. Type: string (or Expression with resultType
-     string).
+    :param existing_cluster_id: The id of an existing interactive cluster that
+     will be used for all runs of this activity. Type: string (or Expression
+     with resultType string).
     :type existing_cluster_id: object
-    :param new_cluster_version: The Spark version of new cluster. Type: string
-     (or Expression with resultType string).
+    :param instance_pool_id: The id of an existing instance pool that will be
+     used for all runs of this activity. Type: string (or Expression with
+     resultType string).
+    :type instance_pool_id: object
+    :param new_cluster_version: If not using an existing interactive cluster,
+     this specifies the Spark version of a new job cluster or instance pool
+     nodes created for each run of this activity. Required if instancePoolId is
+     specified. Type: string (or Expression with resultType string).
     :type new_cluster_version: object
-    :param new_cluster_num_of_worker: Number of worker nodes that new cluster
-     should have. A string formatted Int32, like '1' means numOfWorker is 1 or
-     '1:10' means auto-scale from 1 as min and 10 as max. Type: string (or
-     Expression with resultType string).
+    :param new_cluster_num_of_worker: If not using an existing interactive
+     cluster, this specifies the number of worker nodes to use for the new job
+     cluster or instance pool. For new job clusters, this a string-formatted
+     Int32, like '1' means numOfWorker is 1 or '1:10' means auto-scale from 1
+     (min) to 10 (max). For instance pools, this is a string-formatted Int32,
+     and can only specify a fixed number of worker nodes, such as '2'. Required
+     if newClusterVersion is specified. Type: string (or Expression with
+     resultType string).
     :type new_cluster_num_of_worker: object
-    :param new_cluster_node_type: The node types of new cluster. Type: string
-     (or Expression with resultType string).
+    :param new_cluster_node_type: The node type of the new job cluster. This
+     property is required if newClusterVersion is specified and instancePoolId
+     is not specified. If instancePoolId is specified, this property is
+     ignored. Type: string (or Expression with resultType string).
     :type new_cluster_node_type: object
     :param new_cluster_spark_conf: A set of optional, user-specified Spark
      configuration key-value pairs.
@@ -2645,16 +2673,20 @@ class AzureDatabricksLinkedService(LinkedService):
      environment variables key-value pairs.
     :type new_cluster_spark_env_vars: dict[str, object]
     :param new_cluster_custom_tags: Additional tags for cluster resources.
+     This property is ignored in instance pool configurations.
     :type new_cluster_custom_tags: dict[str, object]
-    :param new_cluster_driver_node_type: The driver node type for the new
-     cluster. Type: string (or Expression with resultType string).
+    :param new_cluster_driver_node_type: The driver node type for the new job
+     cluster. This property is ignored in instance pool configurations. Type:
+     string (or Expression with resultType string).
     :type new_cluster_driver_node_type: object
     :param new_cluster_init_scripts: User-defined initialization scripts for
      the new cluster. Type: array of strings (or Expression with resultType
      array of strings).
     :type new_cluster_init_scripts: object
     :param new_cluster_enable_elastic_disk: Enable the elastic disk on the new
-     cluster. Type: boolean (or Expression with resultType boolean).
+     cluster. This property is now ignored, and takes the default elastic disk
+     behavior in Databricks (elastic disks are always enabled). Type: boolean
+     (or Expression with resultType boolean).
     :type new_cluster_enable_elastic_disk: object
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
@@ -2678,6 +2710,7 @@ class AzureDatabricksLinkedService(LinkedService):
         'domain': {'key': 'typeProperties.domain', 'type': 'object'},
         'access_token': {'key': 'typeProperties.accessToken', 'type': 'SecretBase'},
         'existing_cluster_id': {'key': 'typeProperties.existingClusterId', 'type': 'object'},
+        'instance_pool_id': {'key': 'typeProperties.instancePoolId', 'type': 'object'},
         'new_cluster_version': {'key': 'typeProperties.newClusterVersion', 'type': 'object'},
         'new_cluster_num_of_worker': {'key': 'typeProperties.newClusterNumOfWorker', 'type': 'object'},
         'new_cluster_node_type': {'key': 'typeProperties.newClusterNodeType', 'type': 'object'},
@@ -2695,6 +2728,7 @@ class AzureDatabricksLinkedService(LinkedService):
         self.domain = kwargs.get('domain', None)
         self.access_token = kwargs.get('access_token', None)
         self.existing_cluster_id = kwargs.get('existing_cluster_id', None)
+        self.instance_pool_id = kwargs.get('instance_pool_id', None)
         self.new_cluster_version = kwargs.get('new_cluster_version', None)
         self.new_cluster_num_of_worker = kwargs.get('new_cluster_num_of_worker', None)
         self.new_cluster_node_type = kwargs.get('new_cluster_node_type', None)
@@ -6906,6 +6940,10 @@ class CommonDataServiceForAppsSink(CopySink):
      values from input dataset (except key fields) during write operation.
      Default is false. Type: boolean (or Expression with resultType boolean).
     :type ignore_null_values: object
+    :param alternate_key_name: The logical name of the alternate key which
+     will be used when upserting records. Type: string (or Expression with
+     resultType string).
+    :type alternate_key_name: object
     """
 
     _validation = {
@@ -6923,6 +6961,7 @@ class CommonDataServiceForAppsSink(CopySink):
         'type': {'key': 'type', 'type': 'str'},
         'write_behavior': {'key': 'writeBehavior', 'type': 'str'},
         'ignore_null_values': {'key': 'ignoreNullValues', 'type': 'object'},
+        'alternate_key_name': {'key': 'alternateKeyName', 'type': 'object'},
     }
 
     write_behavior = "Upsert"
@@ -6930,6 +6969,7 @@ class CommonDataServiceForAppsSink(CopySink):
     def __init__(self, **kwargs):
         super(CommonDataServiceForAppsSink, self).__init__(**kwargs)
         self.ignore_null_values = kwargs.get('ignore_null_values', None)
+        self.alternate_key_name = kwargs.get('alternate_key_name', None)
         self.type = 'CommonDataServiceForAppsSink'
 
 
@@ -7764,15 +7804,13 @@ class CouchbaseTableDataset(Dataset):
 class CreateDataFlowDebugSessionRequest(Model):
     """Request body structure for creating data flow debug session.
 
-    :param data_flow_name: The name of the data flow.
-    :type data_flow_name: str
     :param compute_type: Compute type of the cluster. The value will be
      overwritten by the same setting in integration runtime if provided.
     :type compute_type: str
     :param core_count: Core count of the cluster. The value will be
      overwritten by the same setting in integration runtime if provided.
     :type core_count: int
-    :param time_to_live: TTL setting of the cluster.
+    :param time_to_live: Time to live setting of the cluster in minutes.
     :type time_to_live: int
     :param integration_runtime: Set to use integration runtime setting for
      data flow debug session.
@@ -7781,7 +7819,6 @@ class CreateDataFlowDebugSessionRequest(Model):
     """
 
     _attribute_map = {
-        'data_flow_name': {'key': 'dataFlowName', 'type': 'str'},
         'compute_type': {'key': 'computeType', 'type': 'str'},
         'core_count': {'key': 'coreCount', 'type': 'int'},
         'time_to_live': {'key': 'timeToLive', 'type': 'int'},
@@ -7790,7 +7827,6 @@ class CreateDataFlowDebugSessionRequest(Model):
 
     def __init__(self, **kwargs):
         super(CreateDataFlowDebugSessionRequest, self).__init__(**kwargs)
-        self.data_flow_name = kwargs.get('data_flow_name', None)
         self.compute_type = kwargs.get('compute_type', None)
         self.core_count = kwargs.get('core_count', None)
         self.time_to_live = kwargs.get('time_to_live', None)
@@ -7800,16 +7836,20 @@ class CreateDataFlowDebugSessionRequest(Model):
 class CreateDataFlowDebugSessionResponse(Model):
     """Response body structure for creating data flow debug session.
 
+    :param status: The state of the debug session.
+    :type status: str
     :param session_id: The ID of data flow debug session.
     :type session_id: str
     """
 
     _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
         'session_id': {'key': 'sessionId', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(CreateDataFlowDebugSessionResponse, self).__init__(**kwargs)
+        self.status = kwargs.get('status', None)
         self.session_id = kwargs.get('session_id', None)
 
 
@@ -8266,7 +8306,7 @@ class DataFlow(Model):
     and transformations.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: WranglingDataFlow, MappingDataFlow
+    sub-classes are: MappingDataFlow
 
     All required parameters must be populated in order to send to Azure.
 
@@ -8294,7 +8334,7 @@ class DataFlow(Model):
     }
 
     _subtype_map = {
-        'type': {'WranglingDataFlow': 'WranglingDataFlow', 'MappingDataFlow': 'MappingDataFlow'}
+        'type': {'MappingDataFlow': 'MappingDataFlow'}
     }
 
     def __init__(self, **kwargs):
@@ -8340,15 +8380,13 @@ class DataFlowDebugCommandPayload(Model):
 
 
 class DataFlowDebugCommandRequest(Model):
-    """Request body structure for data flow expression preview.
+    """Request body structure for data flow debug command.
 
     :param session_id: The ID of data flow debug session.
     :type session_id: str
-    :param data_flow_name: The data flow which contains the debug session.
-    :type data_flow_name: str
-    :param command_name: The command name. Possible values include:
+    :param command: The command type. Possible values include:
      'executePreviewQuery', 'executeStatisticsQuery', 'executeExpressionQuery'
-    :type command_name: str or
+    :type command: str or
      ~azure.mgmt.datafactory.models.DataFlowDebugCommandType
     :param command_payload: The command payload object.
     :type command_payload:
@@ -8357,37 +8395,18 @@ class DataFlowDebugCommandRequest(Model):
 
     _attribute_map = {
         'session_id': {'key': 'sessionId', 'type': 'str'},
-        'data_flow_name': {'key': 'dataFlowName', 'type': 'str'},
-        'command_name': {'key': 'commandName', 'type': 'str'},
+        'command': {'key': 'command', 'type': 'str'},
         'command_payload': {'key': 'commandPayload', 'type': 'DataFlowDebugCommandPayload'},
     }
 
     def __init__(self, **kwargs):
         super(DataFlowDebugCommandRequest, self).__init__(**kwargs)
         self.session_id = kwargs.get('session_id', None)
-        self.data_flow_name = kwargs.get('data_flow_name', None)
-        self.command_name = kwargs.get('command_name', None)
+        self.command = kwargs.get('command', None)
         self.command_payload = kwargs.get('command_payload', None)
 
 
 class DataFlowDebugCommandResponse(Model):
-    """Response body structure of data flow query for data preview, statistics or
-    expression preview.
-
-    :param run_id: The run ID of data flow debug session.
-    :type run_id: str
-    """
-
-    _attribute_map = {
-        'run_id': {'key': 'runId', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(DataFlowDebugCommandResponse, self).__init__(**kwargs)
-        self.run_id = kwargs.get('run_id', None)
-
-
-class DataFlowDebugResultResponse(Model):
     """Response body structure of data flow result for data preview, statistics or
     expression preview.
 
@@ -8405,13 +8424,80 @@ class DataFlowDebugResultResponse(Model):
     }
 
     def __init__(self, **kwargs):
-        super(DataFlowDebugResultResponse, self).__init__(**kwargs)
+        super(DataFlowDebugCommandResponse, self).__init__(**kwargs)
         self.status = kwargs.get('status', None)
         self.data = kwargs.get('data', None)
 
 
+class DataFlowDebugPackage(Model):
+    """Request body structure for starting data flow debug session.
+
+    :param session_id: The ID of data flow debug session.
+    :type session_id: str
+    :param data_flow: Data flow instance.
+    :type data_flow: ~azure.mgmt.datafactory.models.DataFlowResource
+    :param datasets: List of datasets.
+    :type datasets: list[~azure.mgmt.datafactory.models.DatasetResource]
+    :param linked_services: List of linked services.
+    :type linked_services:
+     list[~azure.mgmt.datafactory.models.LinkedServiceResource]
+    :param staging: Staging info for debug session.
+    :type staging: ~azure.mgmt.datafactory.models.DataFlowStagingInfo
+    :param debug_settings: Data flow debug settings.
+    :type debug_settings:
+     ~azure.mgmt.datafactory.models.DataFlowDebugPackageDebugSettings
+    :param additional_properties:
+    :type additional_properties: object
+    """
+
+    _attribute_map = {
+        'session_id': {'key': 'sessionId', 'type': 'str'},
+        'data_flow': {'key': 'dataFlow', 'type': 'DataFlowResource'},
+        'datasets': {'key': 'datasets', 'type': '[DatasetResource]'},
+        'linked_services': {'key': 'linkedServices', 'type': '[LinkedServiceResource]'},
+        'staging': {'key': 'staging', 'type': 'DataFlowStagingInfo'},
+        'debug_settings': {'key': 'debugSettings', 'type': 'DataFlowDebugPackageDebugSettings'},
+        'additional_properties': {'key': 'additionalProperties', 'type': 'object'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DataFlowDebugPackage, self).__init__(**kwargs)
+        self.session_id = kwargs.get('session_id', None)
+        self.data_flow = kwargs.get('data_flow', None)
+        self.datasets = kwargs.get('datasets', None)
+        self.linked_services = kwargs.get('linked_services', None)
+        self.staging = kwargs.get('staging', None)
+        self.debug_settings = kwargs.get('debug_settings', None)
+        self.additional_properties = kwargs.get('additional_properties', None)
+
+
+class DataFlowDebugPackageDebugSettings(Model):
+    """Data flow debug settings.
+
+    :param source_settings: Source setting for data flow debug.
+    :type source_settings:
+     list[~azure.mgmt.datafactory.models.DataFlowSourceSetting]
+    :param parameters: Data flow parameters.
+    :type parameters: dict[str, object]
+    :param dataset_parameters: Parameters for dataset.
+    :type dataset_parameters: object
+    """
+
+    _attribute_map = {
+        'source_settings': {'key': 'sourceSettings', 'type': '[DataFlowSourceSetting]'},
+        'parameters': {'key': 'parameters', 'type': '{object}'},
+        'dataset_parameters': {'key': 'datasetParameters', 'type': 'object'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DataFlowDebugPackageDebugSettings, self).__init__(**kwargs)
+        self.source_settings = kwargs.get('source_settings', None)
+        self.parameters = kwargs.get('parameters', None)
+        self.dataset_parameters = kwargs.get('dataset_parameters', None)
+
+
 class DataFlowDebugSessionInfo(Model):
-    """Data flow debug session or job cluster info.
+    """Data flow debug session info.
 
     :param data_flow_name: The name of the data flow.
     :type data_flow_name: str
@@ -8421,10 +8507,9 @@ class DataFlowDebugSessionInfo(Model):
     :type core_count: int
     :param node_count: Node count of the cluster. (deprecated property)
     :type node_count: int
-    :param integration_runtime: Attached integration runtime name of data flow
-     debug session.
-    :type integration_runtime:
-     ~azure.mgmt.datafactory.models.IntegrationRuntimeResource
+    :param integration_runtime_name: Attached integration runtime name of data
+     flow debug session.
+    :type integration_runtime_name: str
     :param session_id: The ID of data flow debug session.
     :type session_id: str
     :param start_time: Start time of data flow debug session.
@@ -8433,6 +8518,8 @@ class DataFlowDebugSessionInfo(Model):
     :type time_to_live_in_minutes: str
     :param last_activity_time: Last activity time of data flow debug session.
     :type last_activity_time: str
+    :param additional_properties:
+    :type additional_properties: object
     """
 
     _attribute_map = {
@@ -8440,11 +8527,12 @@ class DataFlowDebugSessionInfo(Model):
         'compute_type': {'key': 'computeType', 'type': 'str'},
         'core_count': {'key': 'coreCount', 'type': 'int'},
         'node_count': {'key': 'nodeCount', 'type': 'int'},
-        'integration_runtime': {'key': 'integrationRuntime', 'type': 'IntegrationRuntimeResource'},
+        'integration_runtime_name': {'key': 'integrationRuntimeName', 'type': 'str'},
         'session_id': {'key': 'sessionId', 'type': 'str'},
         'start_time': {'key': 'startTime', 'type': 'str'},
         'time_to_live_in_minutes': {'key': 'timeToLiveInMinutes', 'type': 'str'},
         'last_activity_time': {'key': 'lastActivityTime', 'type': 'str'},
+        'additional_properties': {'key': 'additionalProperties', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
@@ -8453,11 +8541,12 @@ class DataFlowDebugSessionInfo(Model):
         self.compute_type = kwargs.get('compute_type', None)
         self.core_count = kwargs.get('core_count', None)
         self.node_count = kwargs.get('node_count', None)
-        self.integration_runtime = kwargs.get('integration_runtime', None)
+        self.integration_runtime_name = kwargs.get('integration_runtime_name', None)
         self.session_id = kwargs.get('session_id', None)
         self.start_time = kwargs.get('start_time', None)
         self.time_to_live_in_minutes = kwargs.get('time_to_live_in_minutes', None)
         self.last_activity_time = kwargs.get('last_activity_time', None)
+        self.additional_properties = kwargs.get('additional_properties', None)
 
 
 class DataFlowFolder(Model):
@@ -8598,7 +8687,7 @@ class DataFlowResource(SubResource):
 
 
 class Transformation(Model):
-    """A transformation.
+    """A data flow transformation.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -8697,6 +8786,30 @@ class DataFlowSource(Transformation):
     def __init__(self, **kwargs):
         super(DataFlowSource, self).__init__(**kwargs)
         self.dataset = kwargs.get('dataset', None)
+        self.additional_properties = kwargs.get('additional_properties', None)
+
+
+class DataFlowSourceSetting(Model):
+    """Definition of data flow source setting for debug.
+
+    :param source_name: The data flow source name.
+    :type source_name: str
+    :param row_limit: Defines the row limit of data flow source in debug.
+    :type row_limit: int
+    :param additional_properties:
+    :type additional_properties: object
+    """
+
+    _attribute_map = {
+        'source_name': {'key': 'sourceName', 'type': 'str'},
+        'row_limit': {'key': 'rowLimit', 'type': 'int'},
+        'additional_properties': {'key': 'additionalProperties', 'type': 'object'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DataFlowSourceSetting, self).__init__(**kwargs)
+        self.source_name = kwargs.get('source_name', None)
+        self.row_limit = kwargs.get('row_limit', None)
         self.additional_properties = kwargs.get('additional_properties', None)
 
 
@@ -10438,6 +10551,10 @@ class DynamicsCrmSink(CopySink):
      values from input dataset (except key fields) during write operation.
      Default is false. Type: boolean (or Expression with resultType boolean).
     :type ignore_null_values: object
+    :param alternate_key_name: The logical name of the alternate key which
+     will be used when upserting records. Type: string (or Expression with
+     resultType string).
+    :type alternate_key_name: object
     """
 
     _validation = {
@@ -10455,6 +10572,7 @@ class DynamicsCrmSink(CopySink):
         'type': {'key': 'type', 'type': 'str'},
         'write_behavior': {'key': 'writeBehavior', 'type': 'str'},
         'ignore_null_values': {'key': 'ignoreNullValues', 'type': 'object'},
+        'alternate_key_name': {'key': 'alternateKeyName', 'type': 'object'},
     }
 
     write_behavior = "Upsert"
@@ -10462,6 +10580,7 @@ class DynamicsCrmSink(CopySink):
     def __init__(self, **kwargs):
         super(DynamicsCrmSink, self).__init__(**kwargs)
         self.ignore_null_values = kwargs.get('ignore_null_values', None)
+        self.alternate_key_name = kwargs.get('alternate_key_name', None)
         self.type = 'DynamicsCrmSink'
 
 
@@ -10706,6 +10825,10 @@ class DynamicsSink(CopySink):
      from input dataset (except key fields) during write operation. Default is
      false. Type: boolean (or Expression with resultType boolean).
     :type ignore_null_values: object
+    :param alternate_key_name: The logical name of the alternate key which
+     will be used when upserting records. Type: string (or Expression with
+     resultType string).
+    :type alternate_key_name: object
     """
 
     _validation = {
@@ -10723,6 +10846,7 @@ class DynamicsSink(CopySink):
         'type': {'key': 'type', 'type': 'str'},
         'write_behavior': {'key': 'writeBehavior', 'type': 'str'},
         'ignore_null_values': {'key': 'ignoreNullValues', 'type': 'object'},
+        'alternate_key_name': {'key': 'alternateKeyName', 'type': 'object'},
     }
 
     write_behavior = "Upsert"
@@ -10730,6 +10854,7 @@ class DynamicsSink(CopySink):
     def __init__(self, **kwargs):
         super(DynamicsSink, self).__init__(**kwargs)
         self.ignore_null_values = kwargs.get('ignore_null_values', None)
+        self.alternate_key_name = kwargs.get('alternate_key_name', None)
         self.type = 'DynamicsSink'
 
 
@@ -11044,6 +11169,9 @@ class ExecuteDataFlowActivity(ExecutionActivity):
     :type data_flow: ~azure.mgmt.datafactory.models.DataFlowReference
     :param staging: Staging info for execute data flow activity.
     :type staging: ~azure.mgmt.datafactory.models.DataFlowStagingInfo
+    :param integration_runtime: The integration runtime reference.
+    :type integration_runtime:
+     ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
     """
 
     _validation = {
@@ -11063,12 +11191,14 @@ class ExecuteDataFlowActivity(ExecutionActivity):
         'policy': {'key': 'policy', 'type': 'ActivityPolicy'},
         'data_flow': {'key': 'typeProperties.dataFlow', 'type': 'DataFlowReference'},
         'staging': {'key': 'typeProperties.staging', 'type': 'DataFlowStagingInfo'},
+        'integration_runtime': {'key': 'typeProperties.integrationRuntime', 'type': 'IntegrationRuntimeReference'},
     }
 
     def __init__(self, **kwargs):
         super(ExecuteDataFlowActivity, self).__init__(**kwargs)
         self.data_flow = kwargs.get('data_flow', None)
         self.staging = kwargs.get('staging', None)
+        self.integration_runtime = kwargs.get('integration_runtime', None)
         self.type = 'ExecuteDataFlow'
 
 
@@ -21713,22 +21843,6 @@ class PrestoSource(CopySource):
         self.type = 'PrestoSource'
 
 
-class QueryDataFlowDebugSessionsResponse(Model):
-    """Response body structure of data flow query all API.
-
-    :param value: Array with all active debug session or job cluster info.
-    :type value: list[~azure.mgmt.datafactory.models.DataFlowDebugSessionInfo]
-    """
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[DataFlowDebugSessionInfo]'},
-    }
-
-    def __init__(self, **kwargs):
-        super(QueryDataFlowDebugSessionsResponse, self).__init__(**kwargs)
-        self.value = kwargs.get('value', None)
-
-
 class QuickBooksLinkedService(LinkedService):
     """QuickBooks server linked service.
 
@@ -27789,88 +27903,6 @@ class StoredProcedureParameter(Model):
         self.type = kwargs.get('type', None)
 
 
-class SubmitDataFlowForPreviewRequest(Model):
-    """Request body structure for starting data flow debug session.
-
-    :param session_id: The ID of data flow debug session.
-    :type session_id: str
-    :param data_flow: Data flow instance.
-    :type data_flow: ~azure.mgmt.datafactory.models.DataFlowResource
-    :param datasets: List of datasets.
-    :type datasets: list[~azure.mgmt.datafactory.models.DatasetResource]
-    :param linked_services: List of linked services.
-    :type linked_services:
-     list[~azure.mgmt.datafactory.models.LinkedServiceResource]
-    :param staging: Staging info for debug session.
-    :type staging: object
-    :param debug_settings: Data flow debug settings.
-    :type debug_settings:
-     ~azure.mgmt.datafactory.models.SubmitDataFlowForPreviewRequestDebugSettings
-    :param incremental_debug: The type of new Databricks cluster.
-    :type incremental_debug: bool
-    """
-
-    _attribute_map = {
-        'session_id': {'key': 'sessionId', 'type': 'str'},
-        'data_flow': {'key': 'dataFlow', 'type': 'DataFlowResource'},
-        'datasets': {'key': 'datasets', 'type': '[DatasetResource]'},
-        'linked_services': {'key': 'linkedServices', 'type': '[LinkedServiceResource]'},
-        'staging': {'key': 'staging', 'type': 'object'},
-        'debug_settings': {'key': 'debugSettings', 'type': 'SubmitDataFlowForPreviewRequestDebugSettings'},
-        'incremental_debug': {'key': 'incrementalDebug', 'type': 'bool'},
-    }
-
-    def __init__(self, **kwargs):
-        super(SubmitDataFlowForPreviewRequest, self).__init__(**kwargs)
-        self.session_id = kwargs.get('session_id', None)
-        self.data_flow = kwargs.get('data_flow', None)
-        self.datasets = kwargs.get('datasets', None)
-        self.linked_services = kwargs.get('linked_services', None)
-        self.staging = kwargs.get('staging', None)
-        self.debug_settings = kwargs.get('debug_settings', None)
-        self.incremental_debug = kwargs.get('incremental_debug', None)
-
-
-class SubmitDataFlowForPreviewRequestDebugSettings(Model):
-    """Data flow debug settings.
-
-    :param source_settings: Source setting for data flow debug.
-    :type source_settings: object
-    :param parameters: Data flow parameters.
-    :type parameters: dict[str, object]
-    :param dataset_parameters: Parameters for dataset.
-    :type dataset_parameters: dict[str, dict[str, object]]
-    """
-
-    _attribute_map = {
-        'source_settings': {'key': 'sourceSettings', 'type': 'object'},
-        'parameters': {'key': 'parameters', 'type': '{object}'},
-        'dataset_parameters': {'key': 'datasetParameters', 'type': '{{object}}'},
-    }
-
-    def __init__(self, **kwargs):
-        super(SubmitDataFlowForPreviewRequestDebugSettings, self).__init__(**kwargs)
-        self.source_settings = kwargs.get('source_settings', None)
-        self.parameters = kwargs.get('parameters', None)
-        self.dataset_parameters = kwargs.get('dataset_parameters', None)
-
-
-class SubmitDataFlowForPreviewResponse(Model):
-    """Response body structure for starting data flow debug session.
-
-    :param job_version: The ID of data flow debug job version.
-    :type job_version: str
-    """
-
-    _attribute_map = {
-        'job_version': {'key': 'jobVersion', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(SubmitDataFlowForPreviewResponse, self).__init__(**kwargs)
-        self.job_version = kwargs.get('job_version', None)
-
-
 class SybaseLinkedService(LinkedService):
     """Linked service for Sybase data source.
 
@@ -29758,48 +29790,6 @@ class WebTableDataset(Dataset):
         self.index = kwargs.get('index', None)
         self.path = kwargs.get('path', None)
         self.type = 'WebTable'
-
-
-class WranglingDataFlow(DataFlow):
-    """Wrangling data flow.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param description: The description of the data flow.
-    :type description: str
-    :param annotations: List of tags that can be used for describing the data
-     flow.
-    :type annotations: list[object]
-    :param folder: The folder that this data flow is in. If not specified,
-     Data flow will appear at the root level.
-    :type folder: ~azure.mgmt.datafactory.models.DataFlowFolder
-    :param type: Required. Constant filled by server.
-    :type type: str
-    :param additional_properties: Unmatched properties from the message are
-     deserialized this collection
-    :type additional_properties: dict[str, object]
-    :param type_properties: Wrangling data flow type properties.
-    :type type_properties: dict[str, object]
-    """
-
-    _validation = {
-        'type': {'required': True},
-    }
-
-    _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'annotations': {'key': 'annotations', 'type': '[object]'},
-        'folder': {'key': 'folder', 'type': 'DataFlowFolder'},
-        'type': {'key': 'type', 'type': 'str'},
-        'additional_properties': {'key': '', 'type': '{object}'},
-        'type_properties': {'key': 'typeProperties', 'type': '{object}'},
-    }
-
-    def __init__(self, **kwargs):
-        super(WranglingDataFlow, self).__init__(**kwargs)
-        self.additional_properties = kwargs.get('additional_properties', None)
-        self.type_properties = kwargs.get('type_properties', None)
-        self.type = 'WranglingDataFlow'
 
 
 class XeroLinkedService(LinkedService):
