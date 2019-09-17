@@ -90,6 +90,19 @@ class ReservationRecommendationPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(ReservationRecommendationPaged, self).__init__(*args, **kwargs)
+class ReservationTransactionPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ReservationTransaction <azure.mgmt.consumption.models.ReservationTransaction>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ReservationTransaction]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ReservationTransactionPaged, self).__init__(*args, **kwargs)
 class ForecastPaged(Paged):
     """
     A paging container for iterating over a list of :class:`Forecast <azure.mgmt.consumption.models.Forecast>` object

@@ -1333,6 +1333,8 @@ class ReservationDetail(Resource):
     :ivar total_reserved_quantity: This is the total count of instances that
      are reserved for the reservationId.
     :vartype total_reserved_quantity: decimal.Decimal
+    :ivar kind: The reservation kind.
+    :vartype kind: str
     """
 
     _validation = {
@@ -1350,6 +1352,7 @@ class ReservationDetail(Resource):
         'used_hours': {'readonly': True},
         'instance_id': {'readonly': True},
         'total_reserved_quantity': {'readonly': True},
+        'kind': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1367,6 +1370,7 @@ class ReservationDetail(Resource):
         'used_hours': {'key': 'properties.usedHours', 'type': 'decimal'},
         'instance_id': {'key': 'properties.instanceId', 'type': 'str'},
         'total_reserved_quantity': {'key': 'properties.totalReservedQuantity', 'type': 'decimal'},
+        'kind': {'key': 'properties.kind', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -1381,6 +1385,7 @@ class ReservationDetail(Resource):
         self.used_hours = None
         self.instance_id = None
         self.total_reserved_quantity = None
+        self.kind = None
 
 
 class ReservationRecommendation(Model):
@@ -1431,6 +1436,8 @@ class ReservationRecommendation(Model):
     :vartype first_usage_date: datetime
     :ivar scope: Shared or single recommendation.
     :vartype scope: str
+    :ivar sku_properties: List of sku properties
+    :vartype sku_properties: list[~azure.mgmt.consumption.models.SkuProperty]
     """
 
     _validation = {
@@ -1453,6 +1460,7 @@ class ReservationRecommendation(Model):
         'net_savings': {'readonly': True},
         'first_usage_date': {'readonly': True},
         'scope': {'readonly': True},
+        'sku_properties': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1475,6 +1483,7 @@ class ReservationRecommendation(Model):
         'net_savings': {'key': 'properties.netSavings', 'type': 'decimal'},
         'first_usage_date': {'key': 'properties.firstUsageDate', 'type': 'iso-8601'},
         'scope': {'key': 'properties.scope', 'type': 'str'},
+        'sku_properties': {'key': 'properties.skuProperties', 'type': '[SkuProperty]'},
     }
 
     def __init__(self, **kwargs):
@@ -1498,6 +1507,7 @@ class ReservationRecommendation(Model):
         self.net_savings = None
         self.first_usage_date = None
         self.scope = None
+        self.sku_properties = None
 
 
 class ReservationSummary(Resource):
@@ -1549,6 +1559,22 @@ class ReservationSummary(Resource):
      12/10/2017 and on that for hour 4 and 5, utilization was 100%, this field
      will return 100% for that day.
     :vartype max_utilization_percentage: decimal.Decimal
+    :ivar kind: The reservation kind.
+    :vartype kind: str
+    :ivar purchased_quantity: This is the purchased quantity for the
+     reservationId.
+    :vartype purchased_quantity: decimal.Decimal
+    :ivar remaining_quantity: This is the remaining quantity for the
+     reservationId.
+    :vartype remaining_quantity: decimal.Decimal
+    :ivar total_reserved_quantity: This is the total count of instances that
+     are reserved for the reservationId.
+    :vartype total_reserved_quantity: decimal.Decimal
+    :ivar used_quantity: This is the used quantity for the reservationId.
+    :vartype used_quantity: decimal.Decimal
+    :ivar utilized_percentage: This is the utilized percentage for the
+     reservation Id.
+    :vartype utilized_percentage: decimal.Decimal
     """
 
     _validation = {
@@ -1565,6 +1591,12 @@ class ReservationSummary(Resource):
         'min_utilization_percentage': {'readonly': True},
         'avg_utilization_percentage': {'readonly': True},
         'max_utilization_percentage': {'readonly': True},
+        'kind': {'readonly': True},
+        'purchased_quantity': {'readonly': True},
+        'remaining_quantity': {'readonly': True},
+        'total_reserved_quantity': {'readonly': True},
+        'used_quantity': {'readonly': True},
+        'utilized_percentage': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1581,6 +1613,12 @@ class ReservationSummary(Resource):
         'min_utilization_percentage': {'key': 'properties.minUtilizationPercentage', 'type': 'decimal'},
         'avg_utilization_percentage': {'key': 'properties.avgUtilizationPercentage', 'type': 'decimal'},
         'max_utilization_percentage': {'key': 'properties.maxUtilizationPercentage', 'type': 'decimal'},
+        'kind': {'key': 'properties.kind', 'type': 'str'},
+        'purchased_quantity': {'key': 'properties.purchasedQuantity', 'type': 'decimal'},
+        'remaining_quantity': {'key': 'properties.remainingQuantity', 'type': 'decimal'},
+        'total_reserved_quantity': {'key': 'properties.totalReservedQuantity', 'type': 'decimal'},
+        'used_quantity': {'key': 'properties.usedQuantity', 'type': 'decimal'},
+        'utilized_percentage': {'key': 'properties.utilizedPercentage', 'type': 'decimal'},
     }
 
     def __init__(self, **kwargs):
@@ -1594,6 +1632,150 @@ class ReservationSummary(Resource):
         self.min_utilization_percentage = None
         self.avg_utilization_percentage = None
         self.max_utilization_percentage = None
+        self.kind = None
+        self.purchased_quantity = None
+        self.remaining_quantity = None
+        self.total_reserved_quantity = None
+        self.used_quantity = None
+        self.utilized_percentage = None
+
+
+class ReservationTransaction(Resource):
+    """Reservation transaction resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar event_date: The date of the transaction
+    :vartype event_date: datetime
+    :ivar reservation_order_id: The reservation order ID is the identifier for
+     a reservation purchase. Each reservation order ID represents a single
+     purchase transaction. A reservation order contains reservations. The
+     reservation order specifies the VM size and region for the reservations.
+    :vartype reservation_order_id: str
+    :ivar description: The description of the transaction.
+    :vartype description: str
+    :ivar event_type: The type of the transaction (Purchase, Cancel, etc.)
+    :vartype event_type: str
+    :ivar quantity: The quantity of the transaction.
+    :vartype quantity: decimal.Decimal
+    :ivar amount: The charge of the transaction.
+    :vartype amount: decimal.Decimal
+    :ivar currency: The ISO currency in which the transaction is charged, for
+     example, USD.
+    :vartype currency: str
+    :ivar reservation_order_name: The name of the reservation order.
+    :vartype reservation_order_name: str
+    :ivar purchasing_enrollment: The purchasing enrollment.
+    :vartype purchasing_enrollment: str
+    :ivar purchasing_subscription_guid: The subscription guid that makes the
+     transaction.
+    :vartype purchasing_subscription_guid: str
+    :ivar purchasing_subscription_name: The subscription name that makes the
+     transaction.
+    :vartype purchasing_subscription_name: str
+    :ivar arm_sku_name: This is the ARM Sku name. It can be used to join with
+     the serviceType field in additional info in usage records.
+    :vartype arm_sku_name: str
+    :ivar term: This is the term of the transaction.
+    :vartype term: str
+    :ivar region: The region of the transaction.
+    :vartype region: str
+    :ivar account_name: The name of the account that makes the transaction.
+    :vartype account_name: str
+    :ivar account_owner_email: The email of the account owner that makes the
+     transaction.
+    :vartype account_owner_email: str
+    :ivar department_name: The department name.
+    :vartype department_name: str
+    :ivar cost_center: The cost center of this department if it is a
+     department and a cost center is provided.
+    :vartype cost_center: str
+    :ivar current_enrollment: The current enrollment.
+    :vartype current_enrollment: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'tags': {'readonly': True},
+        'event_date': {'readonly': True},
+        'reservation_order_id': {'readonly': True},
+        'description': {'readonly': True},
+        'event_type': {'readonly': True},
+        'quantity': {'readonly': True},
+        'amount': {'readonly': True},
+        'currency': {'readonly': True},
+        'reservation_order_name': {'readonly': True},
+        'purchasing_enrollment': {'readonly': True},
+        'purchasing_subscription_guid': {'readonly': True},
+        'purchasing_subscription_name': {'readonly': True},
+        'arm_sku_name': {'readonly': True},
+        'term': {'readonly': True},
+        'region': {'readonly': True},
+        'account_name': {'readonly': True},
+        'account_owner_email': {'readonly': True},
+        'department_name': {'readonly': True},
+        'cost_center': {'readonly': True},
+        'current_enrollment': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'event_date': {'key': 'properties.eventDate', 'type': 'iso-8601'},
+        'reservation_order_id': {'key': 'properties.reservationOrderId', 'type': 'str'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'event_type': {'key': 'properties.eventType', 'type': 'str'},
+        'quantity': {'key': 'properties.quantity', 'type': 'decimal'},
+        'amount': {'key': 'properties.amount', 'type': 'decimal'},
+        'currency': {'key': 'properties.currency', 'type': 'str'},
+        'reservation_order_name': {'key': 'properties.reservationOrderName', 'type': 'str'},
+        'purchasing_enrollment': {'key': 'properties.purchasingEnrollment', 'type': 'str'},
+        'purchasing_subscription_guid': {'key': 'properties.purchasingSubscriptionGuid', 'type': 'str'},
+        'purchasing_subscription_name': {'key': 'properties.purchasingSubscriptionName', 'type': 'str'},
+        'arm_sku_name': {'key': 'properties.armSkuName', 'type': 'str'},
+        'term': {'key': 'properties.term', 'type': 'str'},
+        'region': {'key': 'properties.region', 'type': 'str'},
+        'account_name': {'key': 'properties.accountName', 'type': 'str'},
+        'account_owner_email': {'key': 'properties.accountOwnerEmail', 'type': 'str'},
+        'department_name': {'key': 'properties.departmentName', 'type': 'str'},
+        'cost_center': {'key': 'properties.costCenter', 'type': 'str'},
+        'current_enrollment': {'key': 'properties.currentEnrollment', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ReservationTransaction, self).__init__(**kwargs)
+        self.event_date = None
+        self.reservation_order_id = None
+        self.description = None
+        self.event_type = None
+        self.quantity = None
+        self.amount = None
+        self.currency = None
+        self.reservation_order_name = None
+        self.purchasing_enrollment = None
+        self.purchasing_subscription_guid = None
+        self.purchasing_subscription_name = None
+        self.arm_sku_name = None
+        self.term = None
+        self.region = None
+        self.account_name = None
+        self.account_owner_email = None
+        self.department_name = None
+        self.cost_center = None
+        self.current_enrollment = None
 
 
 class ResourceAttributes(Model):
@@ -1622,6 +1804,34 @@ class ResourceAttributes(Model):
         super(ResourceAttributes, self).__init__(**kwargs)
         self.location = None
         self.sku = None
+
+
+class SkuProperty(Model):
+    """The Sku property.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar name: The name of sku property.
+    :vartype name: str
+    :ivar value: The value of sku property.
+    :vartype value: str
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'value': {'key': 'value', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SkuProperty, self).__init__(**kwargs)
+        self.name = None
+        self.value = None
 
 
 class Tag(Model):
@@ -1732,7 +1942,7 @@ class UsageDetail(Resource):
      ~azure.mgmt.consumption.models.MeterDetailsResponse
     :ivar quantity: The usage quantity.
     :vartype quantity: decimal.Decimal
-    :ivar effective_price: Effective Price that’s charged for the usage.
+    :ivar effective_price: Effective Price that's charged for the usage.
     :vartype effective_price: decimal.Decimal
     :ivar cost: The amount of cost before tax.
     :vartype cost: decimal.Decimal
