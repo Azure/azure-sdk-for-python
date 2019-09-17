@@ -71,28 +71,6 @@ class AzureAppConfigurationClientProxy(object):
         )
         return _to_list(paged)
 
-    def update_configuration_setting(
-        self,
-        key,
-        value=None,
-        content_type=None,
-        tags=None,
-        label=None,
-        etag=None,
-        **kwargs
-    ):
-        return get_event_loop().run_until_complete(
-            self.obj.update_configuration_setting(
-                key,
-                value=value,
-                content_type=content_type,
-                tags=tags,
-                label=label,
-                etag=etag,
-                **kwargs
-            )
-        )
-
     def set_configuration_setting(self, configuration_setting, **kwargs):
         return get_event_loop().run_until_complete(
             self.obj.set_configuration_setting(configuration_setting, **kwargs)

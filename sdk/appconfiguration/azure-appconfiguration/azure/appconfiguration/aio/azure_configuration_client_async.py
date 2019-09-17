@@ -17,6 +17,7 @@ from azure.core.exceptions import (
 )
 from ..utils import (
     get_endpoint_from_connection_string,
+    escape_and_tostr,
     prep_update_configuration_setting,
     quote_etag,
 )
@@ -115,7 +116,7 @@ class AzureAppConfigurationClient:
     ):  # type: (list, list, dict) -> azure.core.paging.ItemPaged[ConfigurationSetting]
 
         """List the configuration settings stored in the configuration service, optionally filtered by
-        label and accept_date_time
+        label and accept_datetime
 
         :param labels: filter results based on their label. '*' can be
          used as wildcard in the beginning or end of the filter
@@ -123,8 +124,8 @@ class AzureAppConfigurationClient:
         :param keys: filter results based on their keys. '*' can be
          used as wildcard in the beginning or end of the filter
         :type keys: list[str]
-        :param accept_date_time: filter out ConfigurationSetting created after this datetime
-        :type accept_date_time: datetime
+        :param accept_datetime: filter out ConfigurationSetting created after this datetime
+        :type accept_datetime: datetime
         :param select: specify which fields to include in the results. Leave None to include all fields
         :type select: list[str]
         :param dict kwargs: if "headers" exists, its value (a dict) will be added to the http request header
@@ -138,21 +139,23 @@ class AzureAppConfigurationClient:
 
             from datetime import datetime, timedelta
 
-            accept_date_time = datetime.today() + timedelta(days=-1)
+            accept_datetime = datetime.today() + timedelta(days=-1)
 
             all_listed = async_client.list_configuration_settings()
             async for item in all_listed:
                 pass  # do something
 
             filtered_listed = async_client.list_configuration_settings(
-                labels=["*Labe*"], keys=["*Ke*"], accept_date_time=accept_date_time
+                labels=["*Labe*"], keys=["*Ke*"], accept_datetime=accept_datetime
             )
             async for item in filtered_listed:
                 pass  # do something
         """
+        encoded_labels = escape_and_tostr(labels)
+        encoded_keys = escape_and_tostr(keys)
         return self._impl.get_key_values(
-            label=labels,
-            key=keys,
+            label=encoded_labels,
+            key=encoded_keys,
             cls=lambda objs: [ConfigurationSetting._from_key_value(x) for x in objs],
             **kwargs
         )
@@ -167,8 +170,8 @@ class AzureAppConfigurationClient:
         :type key: str
         :param label: label of the ConfigurationSetting
         :type label: str
-        :param accept_date_time: The retrieved ConfigurationSetting must be created no later than this datetime
-        :type accept_date_time: datetime
+        :param accept_datetime: The retrieved ConfigurationSetting must be created no later than this datetime
+        :type accept_datetime: datetime
         :param dict kwargs: if "headers" exists, its value (a dict) will be added to the http request header
         :return: The matched ConfigurationSetting object
         :rtype: :class:`ConfigurationSetting`
@@ -236,67 +239,6 @@ class AzureAppConfigurationClient:
             error_map={412: ResourceExistsError},
         )
         return ConfigurationSetting._from_key_value(key_value_added)
-
-    @distributed_trace_async
-    async def update_configuration_setting(
-        self, key, value=None, label=None, etag=None, **kwargs
-    ):
-        # type: (str, str, str, str, dict) -> ConfigurationSetting
-        """Update specified attributes of the ConfigurationSetting
-
-        :param key: key used to identify the ConfigurationSetting
-        :param value: the value to be updated to the ConfigurationSetting. None means unchanged.
-        :param content_type: the content type to be updated to the ConfigurationSetting. None means unchanged.
-        :param tags: tags to be updated to the ConfigurationSetting. None means unchanged.
-        :param label: lable used together with key to identify the ConfigurationSetting.
-        :param etag: the ETag (http entity tag) of the ConfigurationSetting.
-            Used to check if the configuration setting has changed. Leave None to skip the check.
-        :param kwargs: if "headers" exists, its value (a dict) will be added to the http request header
-        :rtype: :class:`ConfigurationSetting`
-        :raises: :class:`ResourceNotFoundError`, :class:`ResourceModifiedError`, :class:`HttpRequestError`
-
-        Example
-
-        .. code-block:: python
-
-            # in async function
-            updated_kv = await async_client.update_configuration_setting(
-                key="MyKey",
-                label="MyLabel",
-                value="my updated value",
-                content_type=None,  # None means not to update it
-                tags={"my updated tag": "my updated tag value"}
-            )
-        """
-        custom_headers = prep_update_configuration_setting(key, **kwargs)
-
-        key_value = await self._impl.get_key_value(
-            key=key,
-            label=label
-        )
-
-        if key_value is None:
-            raise ResourceNotFoundError()
-
-        if value is not None:
-            key_value.value = value
-        content_type = kwargs.get("content_type")
-        if content_type is not None:
-            key_value.content_type = content_type
-        if_match = quote_etag(etag) if etag else None
-        tags = kwargs.get("tags")
-        if tags is not None:
-            key_value.tags = tags
-        key_value_updated = await self._impl.put_key_value(
-            entity=key_value,
-            key=key,
-            label=label,
-            if_match=if_match,
-            headers=custom_headers,
-            error_map={404: ResourceNotFoundError, 412: ResourceModifiedError},
-        )
-        return ConfigurationSetting._from_key_value(key_value_updated)
-
     @distributed_trace_async
     async def set_configuration_setting(
         self, configuration_setting, **kwargs
@@ -405,8 +347,8 @@ class AzureAppConfigurationClient:
         :param keys: filter results based on their keys. '*' can be
          used as wildcard in the beginning or end of the filter
         :type keys: list[str]
-        :param accept_date_time: filter out ConfigurationSetting created after this datetime
-        :type accept_date_time: datetime
+        :param accept_datetime: filter out ConfigurationSetting created after this datetime
+        :type accept_datetime: datetime
         :param select: specify which fields to include in the results. Leave None to include all fields
         :type select: list[str]
         :param dict kwargs: if "headers" exists, its value (a dict) will be added to the http request header
@@ -421,21 +363,23 @@ class AzureAppConfigurationClient:
             # in async function
             from datetime import datetime, timedelta
 
-            accept_date_time = datetime.today() + timedelta(days=-1)
+            accept_datetime = datetime.today() + timedelta(days=-1)
 
             all_revisions = async_client.list_revisions()
             async for item in all_revisions:
                 pass  # do something
 
             filtered_revisions = async_client.list_revisions(
-                labels=["*Labe*"], keys=["*Ke*"], accept_date_time=accept_date_time
+                labels=["*Labe*"], keys=["*Ke*"], accept_datetime=accept_datetime
             )
             async for item in filtered_revisions:
                 pass  # do something
         """
+        encoded_labels = escape_and_tostr(labels)
+        encoded_keys = escape_and_tostr(keys)
         return self._impl.get_revisions(
-            label=labels,
-            key=keys,
+            label=encoded_labels,
+            key=encoded_keys,
             cls=lambda objs: [ConfigurationSetting._from_key_value(x) for x in objs],
             **kwargs
         )

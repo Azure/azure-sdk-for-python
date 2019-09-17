@@ -99,62 +99,6 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
             and to_set_kv.etag != set_kv.etag
         )
 
-    # method: update_configuration_setting
-    def test_update_existing_configuration_setting_etag(self):
-        to_update_kv = self.test_config_setting
-        tags = {"a": "b", "c": "d"}
-        updated_kv = self.get_config_client().update_configuration_setting(
-            to_update_kv.key,
-            label=to_update_kv.label,
-            value="updated_value",
-            tags=tags,
-            etag=to_update_kv.etag,
-        )
-        assert (
-            to_update_kv.key == updated_kv.key
-            and to_update_kv.label == updated_kv.label
-            and "updated_value" == updated_kv.value
-            and to_update_kv.content_type == updated_kv.content_type
-            and tags == updated_kv.tags
-            and to_update_kv.etag != updated_kv.etag
-        )
-
-    def test_update_existing_configuration_setting_label_noetag(self):
-        to_update_kv = self.test_config_setting
-        tags = {"a": "b", "c": "d"}
-        updated_kv = self.get_config_client().update_configuration_setting(
-            to_update_kv.key, label=to_update_kv.label, value="updated_value", tags=tags
-        )
-        assert (
-            to_update_kv.key == updated_kv.key
-            and to_update_kv.label == updated_kv.label
-            and "updated_value" == updated_kv.value
-            and to_update_kv.content_type == updated_kv.content_type
-            and tags == updated_kv.tags
-            and to_update_kv.etag != updated_kv.etag
-        )
-
-    def test_update_existing_configuration_setting_label_wrong_etag(self):
-        to_update_kv = self.test_config_setting
-        tags = {"a": "b", "c": "d"}
-        etag = "wrong etag"
-        with pytest.raises(ResourceModifiedError):
-            self.get_config_client().update_configuration_setting(
-                to_update_kv.key,
-                label=to_update_kv.label,
-                value="updated_value",
-                tags=tags,
-                etag=etag,
-            )
-
-    def test_update_no_existing_configuration_setting_label_noetag(self):
-        key = KEY_UUID
-        label = "test_label1"
-        with pytest.raises(ResourceNotFoundError):
-            self.get_config_client().update_configuration_setting(
-                key, label=label, value="some value"
-            )
-
     # method: get_configuration_setting
     def test_get_configuration_setting_no_label(self):
         compare_kv = self.test_config_setting_no_label
@@ -182,17 +126,18 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
 
     def test_get_non_existing_configuration_setting(self):
         compare_kv = self.test_config_setting
-        get_kv = self.get_config_client().get_configuration_setting(
-            compare_kv.key, compare_kv.label + "a")
-        assert get_kv is None
+        with pytest.raises(ResourceNotFoundError):
+            self.get_config_client().get_configuration_setting(
+                compare_kv.key, compare_kv.label + "a"
+            )
 
     # method: delete_configuration_setting
     def test_delete_with_key_no_label(self):
         to_delete_kv = self.test_config_setting_no_label
         self.get_config_client().delete_configuration_setting(to_delete_kv.key)
         self.to_delete.remove(to_delete_kv)
-        get_kv = self.get_config_client().get_configuration_setting(to_delete_kv.key)
-        assert get_kv is None
+        with pytest.raises(ResourceNotFoundError):
+            self.get_config_client().get_configuration_setting(to_delete_kv.key)
 
     def test_delete_with_key_label(self):
         to_delete_kv = self.test_config_setting
@@ -200,9 +145,10 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
             to_delete_kv.key, label=to_delete_kv.label
         )
         self.to_delete.remove(to_delete_kv)
-        get_kv = self.get_config_client().get_configuration_setting(
-            to_delete_kv.key, label=to_delete_kv.label)
-        assert get_kv is None
+        with pytest.raises(ResourceNotFoundError):
+            self.get_config_client().get_configuration_setting(
+                to_delete_kv.key, label=to_delete_kv.label
+            )
 
     def test_delete_non_existing(self):
         deleted_kv = self.get_config_client().delete_configuration_setting(
@@ -217,8 +163,8 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
         )
         self.to_delete.remove(to_delete_kv)
         assert deleted_kv is not None
-        get_kv = self.get_config_client().get_configuration_setting(to_delete_kv.key)
-        assert get_kv is None
+        with pytest.raises(ResourceNotFoundError):
+            self.get_config_client().get_configuration_setting(to_delete_kv.key)
 
     def test_delete_wrong_etag(self):
         to_delete_kv = self.test_config_setting_no_label
@@ -230,7 +176,7 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
     # method: list_configuration_settings
     def test_list_configuration_settings_key_label(self):
         items = self.get_config_client().list_configuration_settings(
-            labels=LABEL, keys=KEY
+            labels=[LABEL], keys=[KEY]
         )
         cnt = 0
         for kv in items:
@@ -239,7 +185,7 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
         assert cnt == 1
 
     def test_list_configuration_settings_only_label(self):
-        items = self.get_config_client().list_configuration_settings(labels=LABEL)
+        items = self.get_config_client().list_configuration_settings(labels=[LABEL])
         cnt = 0
         for kv in items:
             assert kv.label == LABEL
@@ -247,7 +193,7 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
         assert cnt == 1
 
     def test_list_configuration_settings_only_key(self):
-        items = self.get_config_client().list_configuration_settings(keys=KEY)
+        items = self.get_config_client().list_configuration_settings(keys=[KEY])
         cnt = 0
         for kv in items:
             assert kv.key == KEY
@@ -256,7 +202,7 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
 
     def test_list_configuration_settings_fields(self):
         items = self.get_config_client().list_configuration_settings(
-            keys="*", labels=LABEL, select=["key", "content_type"]
+            keys=["*"], labels=[LABEL], select=["key", "content_type"]
         )
         cnt = 0
         for kv in items:
@@ -275,7 +221,7 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
         )
         self.to_delete.append(resered_char_kv)
         items = self.get_config_client().list_configuration_settings(
-            labels=LABEL_RESERVED_CHARS_QUERY
+            labels=[LABEL_RESERVED_CHARS]
         )
         cnt = 0
         for kv in items:
@@ -285,7 +231,7 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
 
     def test_list_configuration_settings_contains(self):
         items = self.get_config_client().list_configuration_settings(
-            labels="*" + LABEL + "*"
+            labels=["*" + LABEL + "*"]
         )
         cnt = 0
         for kv in items:
@@ -297,7 +243,7 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
         to_list_kv = self.test_config_setting
         custom_headers = {"If-Match": to_list_kv.etag}
         items = self.get_config_client().list_configuration_settings(
-            keys=to_list_kv.key, labels=to_list_kv.label, headers=custom_headers
+            keys=[to_list_kv.key], labels=[to_list_kv.label], headers=custom_headers
         )
         cnt = 0
         for kv in items:
@@ -320,7 +266,7 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
             ]
         except ResourceExistsError:
             pass
-        items = self.get_config_client().list_configuration_settings(keys="multi_*")
+        items = self.get_config_client().list_configuration_settings(keys=["multi_*"])
         assert len(list(items)) > PAGE_SIZE
 
         # Remove configuration settings
@@ -335,20 +281,21 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
             pass
 
     def test_list_configuration_settings_null_label(self):
-        items = self.get_config_client().list_configuration_settings(labels="")
+        items = self.get_config_client().list_configuration_settings(labels=[""])
         assert len(list(items)) > 0
 
-    def test_list_configuration_settings_only_accept_time(self):
+    def test_list_configuration_settings_only_accepttime(self):
         exclude_today = self.get_config_client().list_configuration_settings(
             accept_datetime=datetime.datetime.today() + datetime.timedelta(days=-1)
         )
-        assert len(list(exclude_today)) > 0
+        all_inclusive = self.get_config_client().list_configuration_settings()
+        assert len(list(all_inclusive)) > len(list(exclude_today))
 
     # method: list_revisions
     def test_list_revisions_key_label(self):
         to_list1 = self.test_config_setting
         items = self.get_config_client().list_revisions(
-            labels=to_list1.label, keys=to_list1.key
+            labels=[to_list1.label], keys=[to_list1.key]
         )
         cnt = 0
         for kv in items:
@@ -357,7 +304,7 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
         assert cnt >= 2
 
     def test_list_revisions_only_label(self):
-        items = self.get_config_client().list_revisions(labels=LABEL)
+        items = self.get_config_client().list_revisions(labels=[LABEL])
         cnt = 0
         for kv in items:
             assert kv.label == LABEL
@@ -365,7 +312,7 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
         assert cnt >= 1
 
     def test_list_revisions_key_no_label(self):
-        items = self.get_config_client().list_revisions(keys=KEY)
+        items = self.get_config_client().list_revisions(keys=[KEY])
         cnt = 0
         for kv in items:
             assert kv.key == KEY
@@ -374,7 +321,7 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
 
     def test_list_revisions_fields(self):
         items = self.get_config_client().list_revisions(
-            keys="*", labels=LABEL, select=["key", "content_type"]
+            keys=["*"], labels=[LABEL], select=["key", "content_type"]
         )
         for kv in items:
             assert (
@@ -389,7 +336,7 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
         to_list_kv = self.test_config_setting
         custom_headers = {"If-Match": to_list_kv.etag}
         items = self.get_config_client().list_revisions(
-            keys=to_list_kv.key, labels=to_list_kv.label, headers=custom_headers
+            keys=[to_list_kv.key], labels=[to_list_kv.label], headers=custom_headers
         )
         cnt = 0
         for kv in items:
