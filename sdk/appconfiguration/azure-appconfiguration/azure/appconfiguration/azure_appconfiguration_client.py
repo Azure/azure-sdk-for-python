@@ -117,7 +117,7 @@ class AzureAppConfigurationClient:
         :type labels: list[str]
         :keyword datetime accept_datetime: filter out ConfigurationSetting created after this datetime
         :keyword list[str] select: specify which fields to include in the results. Leave None to include all fields
-        :param dict kwargs: if "headers" exists, its value (a dict) will be added to the http request header
+        :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
         :return: An iterator of :class:`ConfigurationSetting`
         :rtype: :class:`azure.core.paging.ItemPaged[ConfigurationSetting]`
         :raises: :class:`HttpRequestError`
@@ -161,7 +161,7 @@ class AzureAppConfigurationClient:
         :param label: label of the ConfigurationSetting
         :type label: str
         :keyword datetime accept_datetime: the retrieved ConfigurationSetting that created no later than this datetime
-        :param dict kwargs: if "headers" exists, its value (a dict) will be added to the http request header
+        :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
         :return: The matched ConfigurationSetting object
         :rtype: :class:`ConfigurationSetting`
         :raises: :class:`ResourceNotFoundError`, :class:`HttpRequestError`
@@ -192,7 +192,7 @@ class AzureAppConfigurationClient:
 
         :param configuration_setting: the ConfigurationSetting object to be added
         :type configuration_setting: :class:`ConfigurationSetting<azure.appconfiguration.ConfigurationSetting>`
-        :param dict kwargs: if "headers" exists, its value (a dict) will be added to the http request header
+        :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
         :return: The ConfigurationSetting object returned from the App Configuration service
         :rtype: :class:`ConfigurationSetting`
         :raises: :class:`ResourceExistsError`, :class:`HttpRequestError`
@@ -240,8 +240,7 @@ class AzureAppConfigurationClient:
         :param configuration_setting: the ConfigurationSetting to be added (if not exists)
         or updated (if exists) to the service
         :type configuration_setting: :class:`ConfigurationSetting`
-        :param kwargs: if "headers" exists, its value (a dict) will be added to the http request header
-        :type kwargs: dict
+        :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
         :return: The ConfigurationSetting returned from the service
         :rtype: :class:`ConfigurationSetting`
         :raises: :class:`ResourceModifiedError`, :class:`HttpRequestError`
@@ -292,8 +291,7 @@ class AzureAppConfigurationClient:
         :type label: str
         :param etag: check if the ConfigurationSetting is changed. Set None to skip checking etag
         :type etag: str
-        :param kwargs: if "headers" exists, its value (a dict) will be added to the http request
-        :type kwargs: dict
+        :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request
         :return: The deleted ConfigurationSetting returned from the service, or None if it doesn't exist.
         :rtype: :class:`ConfigurationSetting`
         :raises: :class:`ResourceModifiedError`, :class:`HttpRequestError`
@@ -336,7 +334,7 @@ class AzureAppConfigurationClient:
         :type labels: list[str]
         :keyword datetime accept_datetime: filter out ConfigurationSetting created after this datetime
         :keyword list[str] select: specify which fields to include in the results. Leave None to include all fields
-        :param dict kwargs: if "headers" exists, its value (a dict) will be added to the http request header
+        :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
         :return: An iterator of :class:`ConfigurationSetting`
         :rtype: :class:`azure.core.paging.ItemPaged[ConfigurationSetting]`
         :raises: :class:`HttpRequestError`
