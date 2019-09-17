@@ -8441,27 +8441,27 @@ class MigrationEligibilityInfo(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar is_eligibile_for_migration: Whether object is eligible for migration
+    :ivar is_eligible_for_migration: Whether object is eligible for migration
      or not.
-    :vartype is_eligibile_for_migration: bool
+    :vartype is_eligible_for_migration: bool
     :ivar validation_messages: Information about eligibility failure for the
      server object.
     :vartype validation_messages: list[str]
     """
 
     _validation = {
-        'is_eligibile_for_migration': {'readonly': True},
+        'is_eligible_for_migration': {'readonly': True},
         'validation_messages': {'readonly': True},
     }
 
     _attribute_map = {
-        'is_eligibile_for_migration': {'key': 'isEligibileForMigration', 'type': 'bool'},
+        'is_eligible_for_migration': {'key': 'isEligibleForMigration', 'type': 'bool'},
         'validation_messages': {'key': 'validationMessages', 'type': '[str]'},
     }
 
     def __init__(self, **kwargs) -> None:
         super(MigrationEligibilityInfo, self).__init__(**kwargs)
-        self.is_eligibile_for_migration = None
+        self.is_eligible_for_migration = None
         self.validation_messages = None
 
 
