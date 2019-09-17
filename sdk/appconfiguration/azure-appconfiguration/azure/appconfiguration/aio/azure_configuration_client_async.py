@@ -112,18 +112,18 @@ class AzureAppConfigurationClient:
 
     @distributed_trace
     def list_configuration_settings(
-        self, labels=None, keys=None, **kwargs
+        self, keys=None, labels=None, **kwargs
     ):  # type: (list, list, dict) -> azure.core.paging.ItemPaged[ConfigurationSetting]
 
         """List the configuration settings stored in the configuration service, optionally filtered by
         label and accept_datetime
 
-        :param labels: filter results based on their label. '*' can be
-         used as wildcard in the beginning or end of the filter
-        :type labels: list[str]
         :param keys: filter results based on their keys. '*' can be
          used as wildcard in the beginning or end of the filter
         :type keys: list[str]
+        :param labels: filter results based on their label. '*' can be
+         used as wildcard in the beginning or end of the filter
+        :type labels: list[str]
         :param accept_datetime: filter out ConfigurationSetting created after this datetime
         :type accept_datetime: datetime
         :param select: specify which fields to include in the results. Leave None to include all fields
@@ -335,18 +335,18 @@ class AzureAppConfigurationClient:
 
     @distributed_trace
     def list_revisions(
-        self, labels=None, keys=None, **kwargs
+        self, keys=None, labels=None, **kwargs
     ):  # type: (list, list, dict) -> azure.core.paging.ItemPaged[ConfigurationSetting]
 
         """
         Find the ConfigurationSetting revision history.
 
-        :param labels: filter results based on their label. '*' can be
-         used as wildcard in the beginning or end of the filter
-        :type labels: list[str]
         :param keys: filter results based on their keys. '*' can be
          used as wildcard in the beginning or end of the filter
         :type keys: list[str]
+        :param labels: filter results based on their label. '*' can be
+         used as wildcard in the beginning or end of the filter
+        :type labels: list[str]
         :param accept_datetime: filter out ConfigurationSetting created after this datetime
         :type accept_datetime: datetime
         :param select: specify which fields to include in the results. Leave None to include all fields
