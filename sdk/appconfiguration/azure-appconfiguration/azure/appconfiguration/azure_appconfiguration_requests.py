@@ -61,9 +61,9 @@ class AppConfigRequestsCredentialsPolicy(HTTPPolicy):
             "x-ms-content-sha256": content_hash,
             "Authorization": "HMAC-SHA256 Credential="
             + self._credentials.credential
-            + ", SignedHeaders="
+            + "&SignedHeaders="
             + signed_headers
-            + ", Signature="
+            + "&Signature="
             + signature,
         }
 
