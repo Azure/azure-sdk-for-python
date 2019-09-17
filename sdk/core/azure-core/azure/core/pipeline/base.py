@@ -158,7 +158,9 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
         first_node = self._impl_policies[0] if self._impl_policies else _TransportRunner(self._transport)
         response = first_node.send(pipeline_request)  # type: ignore
 
-        if multipart_helper:
+        if (response.http_response.content_type or '').startswith("multipart/mixed"):
+            from .transport.base import MultiPartHelper
+            multipart_helper = MultiPartHelper(request)
             part_responses = multipart_helper.parse_response(response.http_response)
             response.context['MULTIPART_RESPONSE'] = part_responses
 
