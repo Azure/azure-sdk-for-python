@@ -8,31 +8,34 @@
 from azure.core import AsyncPipelineClient
 from msrest import Serializer, Deserializer
 
-from ._configuration_async import ConfigurationClientConfiguration
-from .operations_async import ConfigurationClientOperationsMixin
+from ._configuration_async import AzureAppConfigurationConfiguration
+from .operations_async import AzureAppConfigurationOperationsMixin
 from .. import models
 
 
-class ConfigurationClient(ConfigurationClientOperationsMixin):
-    """Represents an Azure App Configuration Client
+class AzureAppConfiguration(AzureAppConfigurationOperationsMixin):
+    """AzureAppConfiguration
 
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
+    :param sync_token: Used to guarantee real-time consistency between
+     requests.
+    :type sync_token: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, base_url=None, **kwargs):
+            self, credentials, sync_token=None, base_url=None, **kwargs):
 
         if not base_url:
             base_url = 'http://localhost'
-        self._config = ConfigurationClientConfiguration(credentials, **kwargs)
+        self._config = AzureAppConfigurationConfiguration(credentials, sync_token, **kwargs)
         self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '0.1'
+        self.api_version = '1.0'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 

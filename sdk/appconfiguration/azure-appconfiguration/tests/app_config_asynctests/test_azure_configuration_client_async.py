@@ -99,62 +99,6 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
             and to_set_kv.etag != set_kv.etag
         )
 
-    # method: update_configuration_setting
-    def test_update_existing_configuration_setting_etag(self):
-        to_update_kv = self.test_config_setting
-        tags = {"a": "b", "c": "d"}
-        updated_kv = self.get_config_client().update_configuration_setting(
-            to_update_kv.key,
-            label=to_update_kv.label,
-            value="updated_value",
-            tags=tags,
-            etag=to_update_kv.etag,
-        )
-        assert (
-            to_update_kv.key == updated_kv.key
-            and to_update_kv.label == updated_kv.label
-            and "updated_value" == updated_kv.value
-            and to_update_kv.content_type == updated_kv.content_type
-            and tags == updated_kv.tags
-            and to_update_kv.etag != updated_kv.etag
-        )
-
-    def test_update_existing_configuration_setting_label_noetag(self):
-        to_update_kv = self.test_config_setting
-        tags = {"a": "b", "c": "d"}
-        updated_kv = self.get_config_client().update_configuration_setting(
-            to_update_kv.key, label=to_update_kv.label, value="updated_value", tags=tags
-        )
-        assert (
-            to_update_kv.key == updated_kv.key
-            and to_update_kv.label == updated_kv.label
-            and "updated_value" == updated_kv.value
-            and to_update_kv.content_type == updated_kv.content_type
-            and tags == updated_kv.tags
-            and to_update_kv.etag != updated_kv.etag
-        )
-
-    def test_update_existing_configuration_setting_label_wrong_etag(self):
-        to_update_kv = self.test_config_setting
-        tags = {"a": "b", "c": "d"}
-        etag = "wrong etag"
-        with pytest.raises(ResourceModifiedError):
-            self.get_config_client().update_configuration_setting(
-                to_update_kv.key,
-                label=to_update_kv.label,
-                value="updated_value",
-                tags=tags,
-                etag=etag,
-            )
-
-    def test_update_no_existing_configuration_setting_label_noetag(self):
-        key = KEY_UUID
-        label = "test_label1"
-        with pytest.raises(ResourceNotFoundError):
-            self.get_config_client().update_configuration_setting(
-                key, label=label, value="some value"
-            )
-
     # method: get_configuration_setting
     def test_get_configuration_setting_no_label(self):
         compare_kv = self.test_config_setting_no_label
@@ -258,7 +202,7 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
 
     def test_list_configuration_settings_fields(self):
         items = self.get_config_client().list_configuration_settings(
-            keys=["*"], labels=[LABEL], fields=["key", "content_type"]
+            keys=["*"], labels=[LABEL], select=["key", "content_type"]
         )
         cnt = 0
         for kv in items:
@@ -323,7 +267,7 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
         except ResourceExistsError:
             pass
         items = self.get_config_client().list_configuration_settings(keys=["multi_*"])
-        assert len(list(items)) == PAGE_SIZE
+        assert len(list(items)) > PAGE_SIZE
 
         # Remove configuration settings
         try:
@@ -340,9 +284,9 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
         items = self.get_config_client().list_configuration_settings(labels=[""])
         assert len(list(items)) > 0
 
-    def test_list_configuration_settings_only_accept_time(self):
+    def test_list_configuration_settings_only_accepttime(self):
         exclude_today = self.get_config_client().list_configuration_settings(
-            accept_date_time=datetime.datetime.today() + datetime.timedelta(days=-1)
+            accept_datetime=datetime.datetime.today() + datetime.timedelta(days=-1)
         )
         all_inclusive = self.get_config_client().list_configuration_settings()
         assert len(list(all_inclusive)) > len(list(exclude_today))
@@ -377,7 +321,7 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
 
     def test_list_revisions_fields(self):
         items = self.get_config_client().list_revisions(
-            keys=["*"], labels=[LABEL], fields=["key", "content_type"]
+            keys=["*"], labels=[LABEL], select=["key", "content_type"]
         )
         for kv in items:
             assert (

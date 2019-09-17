@@ -28,12 +28,13 @@ def escape_reserved(value):
     return re.sub(r"((?!^)\*(?!$)|\\|,)", r"\\\1", value)
 
 
-def escape_and_tolist(value):
-    if value is not None:
-        if isinstance(value, str):
-            value = [value]
-        value = escape_reserved(value)
-    return value
+def escape_and_tostr(value):
+    if value is None:
+        return None
+    if value == [None]:
+        return None
+    value = escape_reserved(value)
+    return ','.join(value)
 
 
 def quote_etag(etag):
