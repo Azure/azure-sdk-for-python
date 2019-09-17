@@ -124,10 +124,8 @@ class AzureAppConfigurationClient:
         :param labels: filter results based on their label. '*' can be
          used as wildcard in the beginning or end of the filter
         :type labels: list[str]
-        :param accept_datetime: filter out ConfigurationSetting created after this datetime
-        :type accept_datetime: datetime
-        :param select: specify which fields to include in the results. Leave None to include all fields
-        :type select: list[str]
+        :keyword datetime accept_datetime: filter out ConfigurationSetting created after this datetime
+        :keyword list[str] select: specify which fields to include in the results. Leave None to include all fields
         :param dict kwargs: if "headers" exists, its value (a dict) will be added to the http request header
         :return: An iterator of :class:`ConfigurationSetting`
         :rtype: :class:`azure.core.paging.ItemPaged[ConfigurationSetting]`
@@ -170,8 +168,7 @@ class AzureAppConfigurationClient:
         :type key: str
         :param label: label of the ConfigurationSetting
         :type label: str
-        :param accept_datetime: The retrieved ConfigurationSetting must be created no later than this datetime
-        :type accept_datetime: datetime
+        :keyword datetime accept_datetime: the retrieved ConfigurationSetting that created no later than this datetime
         :param dict kwargs: if "headers" exists, its value (a dict) will be added to the http request header
         :return: The matched ConfigurationSetting object
         :rtype: :class:`ConfigurationSetting`
@@ -347,10 +344,8 @@ class AzureAppConfigurationClient:
         :param labels: filter results based on their label. '*' can be
          used as wildcard in the beginning or end of the filter
         :type labels: list[str]
-        :param accept_datetime: filter out ConfigurationSetting created after this datetime
-        :type accept_datetime: datetime
-        :param select: specify which fields to include in the results. Leave None to include all fields
-        :type select: list[str]
+        :keyword datetime accept_datetime: filter out ConfigurationSetting created after this datetime
+        :keyword list[str] select: specify which fields to include in the results. Leave None to include all fields
         :param dict kwargs: if "headers" exists, its value (a dict) will be added to the http request header
         :return: An iterator of :class:`ConfigurationSetting`
         :rtype: :class:`azure.core.paging.ItemPaged[ConfigurationSetting]`
