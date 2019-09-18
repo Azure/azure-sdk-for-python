@@ -1014,10 +1014,17 @@ class ContainerClient(StorageAccountHostsMixin):
         :rtype: None
         """
         from azure.core.pipeline.transport import HttpRequest, HttpResponse, RequestsTransport
-        from azure.core.exceptions import map_error
+        from azure.core.pipeline.policies import HeadersPolicy
+        from azure.core.exceptions import map_error, HttpResponseError
         reqs = []
         for blob in blobs:
-            reqs.append(HttpRequest("DELETE", blob))
+            reqs.append(HttpRequest(
+                "DELETE",
+                "/{}/{}".format(self.container_name, blob),
+                headers={
+                    'Content-Length': '0'
+                }
+            ))
 
         request = self._client._client.post(
             url='https://{}/?comp=batch'.format(self.primary_hostname),
@@ -1026,22 +1033,40 @@ class ContainerClient(StorageAccountHostsMixin):
             }
             #params={'comp': 'batch'}
         )
+
+        from wsgiref.handlers import format_date_time
+        from time import time
+        class LocalStorageHeadersPolicy(HeadersPolicy):
+
+            def on_request(self, request):
+                # type: (PipelineRequest, Any) -> None
+                super(LocalStorageHeadersPolicy, self).on_request(request)
+                current_time = format_date_time(time())
+                request.http_request.headers['x-ms-date'] = current_time
+
+
         request.set_multipart_mixed(
             *reqs,
-            policies=[]
+            policies=[
+                LocalStorageHeadersPolicy(),
+                self._credential_policy
+            ]
         )
 
-        response = self._pipeline.run(
+        pipeline_response = self._pipeline.run(
             request,
         )
-        response = response.http_response
+        response = pipeline_response.http_response
 
         try:
-            if response.status_code not in [200]:
-                from ._generated import models
-                error_map = kwargs.pop('error_map', None)
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise models.StorageErrorException(response, self._client.container._deserialize)
+            if response.status_code not in [202]:
+                raise HttpResponseError(response=response)
+            # This scenario to be discussed
+            if len(pipeline_response.context['MULTIPART_RESPONSE']) != len(reqs):
+                raise HttpResponseError(
+                    message="Didn't receive the same number of parts",
+                    response=response
+                )
         except StorageErrorException as error:
             process_storage_error(error)
 
