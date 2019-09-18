@@ -80,11 +80,9 @@ try:
     from ._models_py3 import LongTermRetentionBackup
     from ._models_py3 import ManagedBackupShortTermRetentionPolicy
     from ._models_py3 import ManagedDatabase
-    from ._models_py3 import ManagedDatabaseRestoreDetailsResult
     from ._models_py3 import ManagedDatabaseSecurityAlertPolicy
     from ._models_py3 import ManagedDatabaseUpdate
     from ._models_py3 import ManagedInstance
-    from ._models_py3 import ManagedInstanceAdministrator
     from ._models_py3 import ManagedInstanceEditionCapability
     from ._models_py3 import ManagedInstanceEncryptionProtector
     from ._models_py3 import ManagedInstanceFamilyCapability
@@ -102,18 +100,12 @@ try:
     from ._models_py3 import MetricDefinition
     from ._models_py3 import MetricName
     from ._models_py3 import MetricValue
-    from ._models_py3 import Name
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import OperationImpact
     from ._models_py3 import PartnerInfo
     from ._models_py3 import PartnerRegionInfo
     from ._models_py3 import PerformanceLevelCapability
-    from ._models_py3 import PrivateEndpointConnection
-    from ._models_py3 import PrivateEndpointProperty
-    from ._models_py3 import PrivateLinkResource
-    from ._models_py3 import PrivateLinkResourceProperties
-    from ._models_py3 import PrivateLinkServiceConnectionStateProperty
     from ._models_py3 import ProxyResource
     from ._models_py3 import RecommendedElasticPool
     from ._models_py3 import RecommendedElasticPoolMetric
@@ -165,7 +157,6 @@ try:
     from ._models_py3 import TrackedResource
     from ._models_py3 import TransparentDataEncryption
     from ._models_py3 import TransparentDataEncryptionActivity
-    from ._models_py3 import Usage
     from ._models_py3 import VirtualCluster
     from ._models_py3 import VirtualClusterUpdate
     from ._models_py3 import VirtualNetworkRule
@@ -243,11 +234,9 @@ except (SyntaxError, ImportError):
     from ._models import LongTermRetentionBackup
     from ._models import ManagedBackupShortTermRetentionPolicy
     from ._models import ManagedDatabase
-    from ._models import ManagedDatabaseRestoreDetailsResult
     from ._models import ManagedDatabaseSecurityAlertPolicy
     from ._models import ManagedDatabaseUpdate
     from ._models import ManagedInstance
-    from ._models import ManagedInstanceAdministrator
     from ._models import ManagedInstanceEditionCapability
     from ._models import ManagedInstanceEncryptionProtector
     from ._models import ManagedInstanceFamilyCapability
@@ -265,18 +254,12 @@ except (SyntaxError, ImportError):
     from ._models import MetricDefinition
     from ._models import MetricName
     from ._models import MetricValue
-    from ._models import Name
     from ._models import Operation
     from ._models import OperationDisplay
     from ._models import OperationImpact
     from ._models import PartnerInfo
     from ._models import PartnerRegionInfo
     from ._models import PerformanceLevelCapability
-    from ._models import PrivateEndpointConnection
-    from ._models import PrivateEndpointProperty
-    from ._models import PrivateLinkResource
-    from ._models import PrivateLinkResourceProperties
-    from ._models import PrivateLinkServiceConnectionStateProperty
     from ._models import ProxyResource
     from ._models import RecommendedElasticPool
     from ._models import RecommendedElasticPoolMetric
@@ -328,7 +311,6 @@ except (SyntaxError, ImportError):
     from ._models import TrackedResource
     from ._models import TransparentDataEncryption
     from ._models import TransparentDataEncryptionActivity
-    from ._models import Usage
     from ._models import VirtualCluster
     from ._models import VirtualClusterUpdate
     from ._models import VirtualNetworkRule
@@ -362,7 +344,6 @@ from ._paged_models import LongTermRetentionBackupPaged
 from ._paged_models import ManagedBackupShortTermRetentionPolicyPaged
 from ._paged_models import ManagedDatabasePaged
 from ._paged_models import ManagedDatabaseSecurityAlertPolicyPaged
-from ._paged_models import ManagedInstanceAdministratorPaged
 from ._paged_models import ManagedInstanceEncryptionProtectorPaged
 from ._paged_models import ManagedInstanceKeyPaged
 from ._paged_models import ManagedInstancePaged
@@ -371,8 +352,6 @@ from ._paged_models import ManagedServerSecurityAlertPolicyPaged
 from ._paged_models import MetricDefinitionPaged
 from ._paged_models import MetricPaged
 from ._paged_models import OperationPaged
-from ._paged_models import PrivateEndpointConnectionPaged
-from ._paged_models import PrivateLinkResourcePaged
 from ._paged_models import RecommendedElasticPoolMetricPaged
 from ._paged_models import RecommendedElasticPoolPaged
 from ._paged_models import RecoverableDatabasePaged
@@ -401,7 +380,6 @@ from ._paged_models import SyncGroupLogPropertiesPaged
 from ._paged_models import SyncGroupPaged
 from ._paged_models import SyncMemberPaged
 from ._paged_models import TransparentDataEncryptionActivityPaged
-from ._paged_models import UsagePaged
 from ._paged_models import VirtualClusterPaged
 from ._paged_models import VirtualNetworkRulePaged
 from ._paged_models import VulnerabilityAssessmentScanRecordPaged
@@ -438,8 +416,11 @@ from ._sql_management_client_enums import (
     ReadWriteEndpointFailoverPolicy,
     ReadOnlyEndpointFailoverPolicy,
     FailoverGroupReplicationRole,
-    OperationOrigin,
     IdentityType,
+    ManagedServerCreateMode,
+    ManagedInstanceLicenseType,
+    ManagedInstanceProxyOverride,
+    OperationOrigin,
     SyncAgentState,
     SyncMemberDbType,
     SyncGroupLogType,
@@ -458,6 +439,9 @@ from ._sql_management_client_enums import (
     JobStepActionSource,
     JobStepOutputType,
     JobTargetGroupMembershipType,
+    ManagedDatabaseStatus,
+    CatalogCollationType,
+    ManagedDatabaseCreateMode,
     AutomaticTuningServerMode,
     AutomaticTuningServerReason,
     RestorePointType,
@@ -469,7 +453,6 @@ from ._sql_management_client_enums import (
     CreateMode,
     SampleName,
     DatabaseStatus,
-    CatalogCollationType,
     DatabaseLicenseType,
     DatabaseReadScale,
     ElasticPoolState,
@@ -478,11 +461,6 @@ from ._sql_management_client_enums import (
     VulnerabilityAssessmentScanState,
     InstanceFailoverGroupReplicationRole,
     InstancePoolLicenseType,
-    ManagedServerCreateMode,
-    ManagedInstanceLicenseType,
-    ManagedInstanceProxyOverride,
-    ManagedDatabaseStatus,
-    ManagedDatabaseCreateMode,
     LongTermRetentionDatabaseState,
     VulnerabilityAssessmentPolicyBaselineName,
     SensitivityLabelSource,
@@ -560,11 +538,9 @@ __all__ = [
     'LongTermRetentionBackup',
     'ManagedBackupShortTermRetentionPolicy',
     'ManagedDatabase',
-    'ManagedDatabaseRestoreDetailsResult',
     'ManagedDatabaseSecurityAlertPolicy',
     'ManagedDatabaseUpdate',
     'ManagedInstance',
-    'ManagedInstanceAdministrator',
     'ManagedInstanceEditionCapability',
     'ManagedInstanceEncryptionProtector',
     'ManagedInstanceFamilyCapability',
@@ -582,18 +558,12 @@ __all__ = [
     'MetricDefinition',
     'MetricName',
     'MetricValue',
-    'Name',
     'Operation',
     'OperationDisplay',
     'OperationImpact',
     'PartnerInfo',
     'PartnerRegionInfo',
     'PerformanceLevelCapability',
-    'PrivateEndpointConnection',
-    'PrivateEndpointProperty',
-    'PrivateLinkResource',
-    'PrivateLinkResourceProperties',
-    'PrivateLinkServiceConnectionStateProperty',
     'ProxyResource',
     'RecommendedElasticPool',
     'RecommendedElasticPoolMetric',
@@ -645,7 +615,6 @@ __all__ = [
     'TrackedResource',
     'TransparentDataEncryption',
     'TransparentDataEncryptionActivity',
-    'Usage',
     'VirtualCluster',
     'VirtualClusterUpdate',
     'VirtualNetworkRule',
@@ -676,6 +645,7 @@ __all__ = [
     'DatabaseUsagePaged',
     'EncryptionProtectorPaged',
     'FailoverGroupPaged',
+    'ManagedInstancePaged',
     'OperationPaged',
     'ServerKeyPaged',
     'SyncAgentPaged',
@@ -698,6 +668,7 @@ __all__ = [
     'JobVersionPaged',
     'LongTermRetentionBackupPaged',
     'ManagedBackupShortTermRetentionPolicyPaged',
+    'ManagedDatabasePaged',
     'ServerDnsAliasPaged',
     'ServerSecurityAlertPolicyPaged',
     'RestorableDroppedManagedDatabasePaged',
@@ -705,7 +676,6 @@ __all__ = [
     'ManagedDatabaseSecurityAlertPolicyPaged',
     'ManagedServerSecurityAlertPolicyPaged',
     'SensitivityLabelPaged',
-    'ManagedInstanceAdministratorPaged',
     'DatabaseOperationPaged',
     'ElasticPoolOperationPaged',
     'VulnerabilityAssessmentScanRecordPaged',
@@ -717,11 +687,6 @@ __all__ = [
     'ManagedInstanceVulnerabilityAssessmentPaged',
     'ServerVulnerabilityAssessmentPaged',
     'InstancePoolPaged',
-    'UsagePaged',
-    'ManagedInstancePaged',
-    'ManagedDatabasePaged',
-    'PrivateEndpointConnectionPaged',
-    'PrivateLinkResourcePaged',
     'CheckNameAvailabilityReason',
     'ServerConnectionType',
     'SecurityAlertPolicyState',
@@ -754,8 +719,11 @@ __all__ = [
     'ReadWriteEndpointFailoverPolicy',
     'ReadOnlyEndpointFailoverPolicy',
     'FailoverGroupReplicationRole',
-    'OperationOrigin',
     'IdentityType',
+    'ManagedServerCreateMode',
+    'ManagedInstanceLicenseType',
+    'ManagedInstanceProxyOverride',
+    'OperationOrigin',
     'SyncAgentState',
     'SyncMemberDbType',
     'SyncGroupLogType',
@@ -774,6 +742,9 @@ __all__ = [
     'JobStepActionSource',
     'JobStepOutputType',
     'JobTargetGroupMembershipType',
+    'ManagedDatabaseStatus',
+    'CatalogCollationType',
+    'ManagedDatabaseCreateMode',
     'AutomaticTuningServerMode',
     'AutomaticTuningServerReason',
     'RestorePointType',
@@ -785,7 +756,6 @@ __all__ = [
     'CreateMode',
     'SampleName',
     'DatabaseStatus',
-    'CatalogCollationType',
     'DatabaseLicenseType',
     'DatabaseReadScale',
     'ElasticPoolState',
@@ -794,11 +764,6 @@ __all__ = [
     'VulnerabilityAssessmentScanState',
     'InstanceFailoverGroupReplicationRole',
     'InstancePoolLicenseType',
-    'ManagedServerCreateMode',
-    'ManagedInstanceLicenseType',
-    'ManagedInstanceProxyOverride',
-    'ManagedDatabaseStatus',
-    'ManagedDatabaseCreateMode',
     'LongTermRetentionDatabaseState',
     'VulnerabilityAssessmentPolicyBaselineName',
     'SensitivityLabelSource',

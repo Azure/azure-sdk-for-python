@@ -324,6 +324,19 @@ class FailoverGroupPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(FailoverGroupPaged, self).__init__(*args, **kwargs)
+class ManagedInstancePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ManagedInstance <azure.mgmt.sql.models.ManagedInstance>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ManagedInstance]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ManagedInstancePaged, self).__init__(*args, **kwargs)
 class OperationPaged(Paged):
     """
     A paging container for iterating over a list of :class:`Operation <azure.mgmt.sql.models.Operation>` object
@@ -610,6 +623,19 @@ class ManagedBackupShortTermRetentionPolicyPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(ManagedBackupShortTermRetentionPolicyPaged, self).__init__(*args, **kwargs)
+class ManagedDatabasePaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ManagedDatabase <azure.mgmt.sql.models.ManagedDatabase>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ManagedDatabase]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ManagedDatabasePaged, self).__init__(*args, **kwargs)
 class ServerDnsAliasPaged(Paged):
     """
     A paging container for iterating over a list of :class:`ServerDnsAlias <azure.mgmt.sql.models.ServerDnsAlias>` object
@@ -701,19 +727,6 @@ class SensitivityLabelPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(SensitivityLabelPaged, self).__init__(*args, **kwargs)
-class ManagedInstanceAdministratorPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`ManagedInstanceAdministrator <azure.mgmt.sql.models.ManagedInstanceAdministrator>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[ManagedInstanceAdministrator]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(ManagedInstanceAdministratorPaged, self).__init__(*args, **kwargs)
 class DatabaseOperationPaged(Paged):
     """
     A paging container for iterating over a list of :class:`DatabaseOperation <azure.mgmt.sql.models.DatabaseOperation>` object
@@ -857,68 +870,3 @@ class InstancePoolPaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(InstancePoolPaged, self).__init__(*args, **kwargs)
-class UsagePaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`Usage <azure.mgmt.sql.models.Usage>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[Usage]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(UsagePaged, self).__init__(*args, **kwargs)
-class ManagedInstancePaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`ManagedInstance <azure.mgmt.sql.models.ManagedInstance>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[ManagedInstance]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(ManagedInstancePaged, self).__init__(*args, **kwargs)
-class ManagedDatabasePaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`ManagedDatabase <azure.mgmt.sql.models.ManagedDatabase>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[ManagedDatabase]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(ManagedDatabasePaged, self).__init__(*args, **kwargs)
-class PrivateEndpointConnectionPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`PrivateEndpointConnection <azure.mgmt.sql.models.PrivateEndpointConnection>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[PrivateEndpointConnection]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(PrivateEndpointConnectionPaged, self).__init__(*args, **kwargs)
-class PrivateLinkResourcePaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`PrivateLinkResource <azure.mgmt.sql.models.PrivateLinkResource>` object
-    """
-
-    _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[PrivateLinkResource]'}
-    }
-
-    def __init__(self, *args, **kwargs):
-
-        super(PrivateLinkResourcePaged, self).__init__(*args, **kwargs)

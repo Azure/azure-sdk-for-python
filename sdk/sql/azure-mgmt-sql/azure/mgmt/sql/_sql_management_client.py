@@ -39,6 +39,7 @@ from .operations import DatabaseUsagesOperations
 from .operations import DatabaseAutomaticTuningOperations
 from .operations import EncryptionProtectorsOperations
 from .operations import FailoverGroupsOperations
+from .operations import ManagedInstancesOperations
 from .operations import Operations
 from .operations import ServerKeysOperations
 from .operations import SyncAgentsOperations
@@ -65,6 +66,7 @@ from .operations import JobVersionsOperations
 from .operations import LongTermRetentionBackupsOperations
 from .operations import BackupLongTermRetentionPoliciesOperations
 from .operations import ManagedBackupShortTermRetentionPoliciesOperations
+from .operations import ManagedDatabasesOperations
 from .operations import ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations
 from .operations import ServerAutomaticTuningOperations
 from .operations import ServerDnsAliasesOperations
@@ -74,7 +76,6 @@ from .operations import RestorePointsOperations
 from .operations import ManagedDatabaseSecurityAlertPoliciesOperations
 from .operations import ManagedServerSecurityAlertPoliciesOperations
 from .operations import SensitivityLabelsOperations
-from .operations import ManagedInstanceAdministratorsOperations
 from .operations import DatabaseOperations
 from .operations import ElasticPoolOperations
 from .operations import CapabilitiesOperations
@@ -93,12 +94,6 @@ from .operations import ManagedInstanceVulnerabilityAssessmentsOperations
 from .operations import ServerVulnerabilityAssessmentsOperations
 from .operations import ManagedDatabaseSensitivityLabelsOperations
 from .operations import InstancePoolsOperations
-from .operations import UsagesOperations
-from .operations import ManagedInstancesOperations
-from .operations import ManagedDatabaseRestoreDetailsOperations
-from .operations import ManagedDatabasesOperations
-from .operations import PrivateEndpointConnectionsOperations
-from .operations import PrivateLinkResourcesOperations
 from . import models
 
 
@@ -160,6 +155,8 @@ class SqlManagementClient(SDKClient):
     :vartype encryption_protectors: azure.mgmt.sql.operations.EncryptionProtectorsOperations
     :ivar failover_groups: FailoverGroups operations
     :vartype failover_groups: azure.mgmt.sql.operations.FailoverGroupsOperations
+    :ivar managed_instances: ManagedInstances operations
+    :vartype managed_instances: azure.mgmt.sql.operations.ManagedInstancesOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.sql.operations.Operations
     :ivar server_keys: ServerKeys operations
@@ -212,6 +209,8 @@ class SqlManagementClient(SDKClient):
     :vartype backup_long_term_retention_policies: azure.mgmt.sql.operations.BackupLongTermRetentionPoliciesOperations
     :ivar managed_backup_short_term_retention_policies: ManagedBackupShortTermRetentionPolicies operations
     :vartype managed_backup_short_term_retention_policies: azure.mgmt.sql.operations.ManagedBackupShortTermRetentionPoliciesOperations
+    :ivar managed_databases: ManagedDatabases operations
+    :vartype managed_databases: azure.mgmt.sql.operations.ManagedDatabasesOperations
     :ivar managed_restorable_dropped_database_backup_short_term_retention_policies: ManagedRestorableDroppedDatabaseBackupShortTermRetentionPolicies operations
     :vartype managed_restorable_dropped_database_backup_short_term_retention_policies: azure.mgmt.sql.operations.ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations
     :ivar server_automatic_tuning: ServerAutomaticTuning operations
@@ -230,8 +229,6 @@ class SqlManagementClient(SDKClient):
     :vartype managed_server_security_alert_policies: azure.mgmt.sql.operations.ManagedServerSecurityAlertPoliciesOperations
     :ivar sensitivity_labels: SensitivityLabels operations
     :vartype sensitivity_labels: azure.mgmt.sql.operations.SensitivityLabelsOperations
-    :ivar managed_instance_administrators: ManagedInstanceAdministrators operations
-    :vartype managed_instance_administrators: azure.mgmt.sql.operations.ManagedInstanceAdministratorsOperations
     :ivar database_operations: DatabaseOperations operations
     :vartype database_operations: azure.mgmt.sql.operations.DatabaseOperations
     :ivar elastic_pool_operations: ElasticPoolOperations operations
@@ -268,18 +265,6 @@ class SqlManagementClient(SDKClient):
     :vartype managed_database_sensitivity_labels: azure.mgmt.sql.operations.ManagedDatabaseSensitivityLabelsOperations
     :ivar instance_pools: InstancePools operations
     :vartype instance_pools: azure.mgmt.sql.operations.InstancePoolsOperations
-    :ivar usages: Usages operations
-    :vartype usages: azure.mgmt.sql.operations.UsagesOperations
-    :ivar managed_instances: ManagedInstances operations
-    :vartype managed_instances: azure.mgmt.sql.operations.ManagedInstancesOperations
-    :ivar managed_database_restore_details: ManagedDatabaseRestoreDetails operations
-    :vartype managed_database_restore_details: azure.mgmt.sql.operations.ManagedDatabaseRestoreDetailsOperations
-    :ivar managed_databases: ManagedDatabases operations
-    :vartype managed_databases: azure.mgmt.sql.operations.ManagedDatabasesOperations
-    :ivar private_endpoint_connections: PrivateEndpointConnections operations
-    :vartype private_endpoint_connections: azure.mgmt.sql.operations.PrivateEndpointConnectionsOperations
-    :ivar private_link_resources: PrivateLinkResources operations
-    :vartype private_link_resources: azure.mgmt.sql.operations.PrivateLinkResourcesOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -352,6 +337,8 @@ class SqlManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.failover_groups = FailoverGroupsOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.managed_instances = ManagedInstancesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
         self.server_keys = ServerKeysOperations(
@@ -404,6 +391,8 @@ class SqlManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.managed_backup_short_term_retention_policies = ManagedBackupShortTermRetentionPoliciesOperations(
             self._client, self.config, self._serialize, self._deserialize)
+        self.managed_databases = ManagedDatabasesOperations(
+            self._client, self.config, self._serialize, self._deserialize)
         self.managed_restorable_dropped_database_backup_short_term_retention_policies = ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.server_automatic_tuning = ServerAutomaticTuningOperations(
@@ -421,8 +410,6 @@ class SqlManagementClient(SDKClient):
         self.managed_server_security_alert_policies = ManagedServerSecurityAlertPoliciesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.sensitivity_labels = SensitivityLabelsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.managed_instance_administrators = ManagedInstanceAdministratorsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.database_operations = DatabaseOperations(
             self._client, self.config, self._serialize, self._deserialize)
@@ -459,16 +446,4 @@ class SqlManagementClient(SDKClient):
         self.managed_database_sensitivity_labels = ManagedDatabaseSensitivityLabelsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.instance_pools = InstancePoolsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.usages = UsagesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.managed_instances = ManagedInstancesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.managed_database_restore_details = ManagedDatabaseRestoreDetailsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.managed_databases = ManagedDatabasesOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.private_link_resources = PrivateLinkResourcesOperations(
             self._client, self.config, self._serialize, self._deserialize)

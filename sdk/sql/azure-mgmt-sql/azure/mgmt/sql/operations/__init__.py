@@ -35,6 +35,7 @@ from ._database_usages_operations import DatabaseUsagesOperations
 from ._database_automatic_tuning_operations import DatabaseAutomaticTuningOperations
 from ._encryption_protectors_operations import EncryptionProtectorsOperations
 from ._failover_groups_operations import FailoverGroupsOperations
+from ._managed_instances_operations import ManagedInstancesOperations
 from ._operations import Operations
 from ._server_keys_operations import ServerKeysOperations
 from ._sync_agents_operations import SyncAgentsOperations
@@ -61,6 +62,7 @@ from ._job_versions_operations import JobVersionsOperations
 from ._long_term_retention_backups_operations import LongTermRetentionBackupsOperations
 from ._backup_long_term_retention_policies_operations import BackupLongTermRetentionPoliciesOperations
 from ._managed_backup_short_term_retention_policies_operations import ManagedBackupShortTermRetentionPoliciesOperations
+from ._managed_databases_operations import ManagedDatabasesOperations
 from ._managed_restorable_dropped_database_backup_short_term_retention_policies_operations import ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations
 from ._server_automatic_tuning_operations import ServerAutomaticTuningOperations
 from ._server_dns_aliases_operations import ServerDnsAliasesOperations
@@ -70,7 +72,6 @@ from ._restore_points_operations import RestorePointsOperations
 from ._managed_database_security_alert_policies_operations import ManagedDatabaseSecurityAlertPoliciesOperations
 from ._managed_server_security_alert_policies_operations import ManagedServerSecurityAlertPoliciesOperations
 from ._sensitivity_labels_operations import SensitivityLabelsOperations
-from ._managed_instance_administrators_operations import ManagedInstanceAdministratorsOperations
 from ._database_operations import DatabaseOperations
 from ._elastic_pool_operations import ElasticPoolOperations
 from ._capabilities_operations import CapabilitiesOperations
@@ -89,12 +90,6 @@ from ._managed_instance_vulnerability_assessments_operations import ManagedInsta
 from ._server_vulnerability_assessments_operations import ServerVulnerabilityAssessmentsOperations
 from ._managed_database_sensitivity_labels_operations import ManagedDatabaseSensitivityLabelsOperations
 from ._instance_pools_operations import InstancePoolsOperations
-from ._usages_operations import UsagesOperations
-from ._managed_instances_operations import ManagedInstancesOperations
-from ._managed_database_restore_details_operations import ManagedDatabaseRestoreDetailsOperations
-from ._managed_databases_operations import ManagedDatabasesOperations
-from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
-from ._private_link_resources_operations import PrivateLinkResourcesOperations
 
 __all__ = [
     'RecoverableDatabasesOperations',
@@ -123,6 +118,7 @@ __all__ = [
     'DatabaseAutomaticTuningOperations',
     'EncryptionProtectorsOperations',
     'FailoverGroupsOperations',
+    'ManagedInstancesOperations',
     'Operations',
     'ServerKeysOperations',
     'SyncAgentsOperations',
@@ -149,6 +145,7 @@ __all__ = [
     'LongTermRetentionBackupsOperations',
     'BackupLongTermRetentionPoliciesOperations',
     'ManagedBackupShortTermRetentionPoliciesOperations',
+    'ManagedDatabasesOperations',
     'ManagedRestorableDroppedDatabaseBackupShortTermRetentionPoliciesOperations',
     'ServerAutomaticTuningOperations',
     'ServerDnsAliasesOperations',
@@ -158,7 +155,6 @@ __all__ = [
     'ManagedDatabaseSecurityAlertPoliciesOperations',
     'ManagedServerSecurityAlertPoliciesOperations',
     'SensitivityLabelsOperations',
-    'ManagedInstanceAdministratorsOperations',
     'DatabaseOperations',
     'ElasticPoolOperations',
     'CapabilitiesOperations',
@@ -177,10 +173,4 @@ __all__ = [
     'ServerVulnerabilityAssessmentsOperations',
     'ManagedDatabaseSensitivityLabelsOperations',
     'InstancePoolsOperations',
-    'UsagesOperations',
-    'ManagedInstancesOperations',
-    'ManagedDatabaseRestoreDetailsOperations',
-    'ManagedDatabasesOperations',
-    'PrivateEndpointConnectionsOperations',
-    'PrivateLinkResourcesOperations',
 ]
