@@ -71,21 +71,19 @@ try:
     print("New version was created for Key with name '{0}' with the updated size.".format(new_key.name))
 
     # You should have more than one version of the rsa key at this time. Lets print all the versions of this key.
-    print("\n.. List versions of the key using its name")
+    print("\n.. List versions of a key using its name")
     key_versions = client.list_key_versions(rsa_key.name)
     for key in key_versions:
-        print("RSA Key with name '{0}' has version: '{1}'".format(key.name, key.version))
+        print("Key '{0}' has version: '{1}'".format(key.name, key.version))
 
     # Both the rsa key and ec key are not needed anymore. Let's delete those keys.
-    client.delete_key(rsa_key.name)
-    client.delete_key(ec_key.name)
-
-    # To ensure key is deleted on the server side.
-    print("\nDeleting keys...")
-    time.sleep(20)
+    print("\n.. Delete the created keys...")
+    for key_name in (ec_key.name, rsa_key.name):
+        client.delete_key(key_name)
+    time.sleep(10)
 
     # You can list all the deleted and non-purged keys, assuming Key Vault is soft-delete enabled.
-    print("\n.. List deleted keys from the Key Vault")
+    print("\n.. List deleted keys from the Key Vault (requires soft-delete)")
     deleted_keys = client.list_deleted_keys()
     for deleted_key in deleted_keys:
         print("Key with name '{0}' has recovery id '{1}'".format(deleted_key.name, deleted_key.recovery_id))
