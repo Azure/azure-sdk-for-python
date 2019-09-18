@@ -136,6 +136,16 @@ class CRUDTests(unittest.TestCase):
         self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND,
                                            read_db.read)
 
+        database_proxy = read_db.create_if_not_exists(offer_throughput=10000)
+        self.assertEqual(read_db.id, database_proxy.id)
+        self.assertEquals(database_proxy.read_offer().offer_throughput, 10000)
+
+        database_proxy = read_db.create_if_not_exists(offer_throughput=9000)
+        self.assertEqual(read_db.id, database_proxy.id)
+        self.assertEquals(database_proxy.read_offer().offer_throughput, 10000)
+
+        self.client.delete_database(read_db.id)
+
     @pytest.mark.skip("skipping as the TestResources subscription doesn't support this offer")
     def test_database_level_offer_throughput(self):
         # Create a database with throughput
@@ -235,6 +245,16 @@ class CRUDTests(unittest.TestCase):
         created_container = created_db.get_container_client(created_collection.id)
         self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND,
                                            created_container.read)
+
+        container_proxy = created_container.create_if_not_exists(partition_key=PartitionKey(path='/id', kind='Hash'))
+        self.assertEqual(created_container.id, container_proxy.id)
+        self.assertDictEqual(PartitionKey(path='/id', kind='Hash'), container_proxy._properties['partitionKey'])
+
+        container_proxy = created_container.create_if_not_exists(partition_key=created_properties['partitionKey'])
+        self.assertEqual(created_container.id, container_proxy.id)
+        self.assertDictEqual(PartitionKey(path='/id', kind='Hash'), container_proxy._properties['partitionKey'])
+
+        created_db.delete_container(created_collection.id)
 
     def test_partitioned_collection(self):
         created_db = self.databaseForTest

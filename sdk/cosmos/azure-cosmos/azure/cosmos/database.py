@@ -142,6 +142,55 @@ class DatabaseProxy(object):
         return cast('Dict[str, Any]', self._properties)
 
     @distributed_trace
+    def create_if_not_exists(  # pylint: disable=redefined-builtin
+        self,
+        populate_query_metrics=None,  # type: Optional[bool]
+        offer_throughput=None,  # type: Optional[int]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> DatabaseProxy
+        """
+        Create the database if it does not exist already.
+
+        If the database already exists, it is returned.
+
+        :param str session_token: Token for use with Session consistency.
+        :param dict(str, str) initial_headers: Initial headers to be sent as part of the request.
+        :param dict(str, str) access_condition: Conditions Associated with the request.
+        :param bool populate_query_metrics: Enable returning query metrics in response headers.
+        :param int offer_throughput: The provisioned throughput for this offer.
+        :param dict(str, Any) request_options: Dictionary of additional properties to be used for the request.
+        :param Callable response_hook: a callable invoked with the response metadata
+        :returns: A DatabaseProxy instance representing the database.
+        :rtype: ~azure.cosmos.database.DatabaseProxy
+        :raise CosmosHttpResponseError: The database read or creation failed.
+        """
+        response_hook = kwargs.pop('response_hook', None)
+        try:
+            from .cosmos_client import CosmosClient
+
+            database_link = CosmosClient._get_database_link(self)
+            self._properties = self.client_connection.ReadDatabase(
+                database_link, **kwargs
+            )
+
+            if response_hook:
+                response_hook(self.client_connection.last_response_headers, self._properties)
+
+            return self
+        except CosmosResourceNotFoundError:
+            request_options = build_options(kwargs)
+            if populate_query_metrics is not None:
+                request_options["populateQueryMetrics"] = populate_query_metrics
+            if offer_throughput is not None:
+                request_options["offerThroughput"] = offer_throughput
+
+            result = self.client_connection.CreateDatabase(database=dict(id=self.id), options=request_options, **kwargs)
+            if response_hook:
+                response_hook(self.client_connection.last_response_headers)
+            return DatabaseProxy(self.client_connection, id=result["id"], properties=result)
+
+    @distributed_trace
     def create_container(
         self,
         id,  # type: str  # pylint: disable=redefined-builtin

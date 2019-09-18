@@ -63,6 +63,7 @@ class ContainerProxy(object):
         self.client_connection = client_connection
         self.id = id
         self._properties = properties
+        self.database_link = database_link
         self.container_link = u"{}/colls/{}".format(database_link, self.id)
         self._is_system_key = None
         self._scripts = None  # type: Optional[ScriptsProxy]
@@ -150,6 +151,79 @@ class ContainerProxy(object):
             response_hook(self.client_connection.last_response_headers, self._properties)
 
         return cast('Dict[str, Any]', self._properties)
+
+    @distributed_trace
+    def create_if_not_exists(
+        self,
+        partition_key,  # type: Any
+        indexing_policy=None,  # type: Optional[Dict[str, Any]]
+        default_ttl=None,  # type: Optional[int]
+        populate_query_metrics=None,  # type: Optional[bool]
+        offer_throughput=None,  # type: Optional[int]
+        unique_key_policy=None,  # type: Optional[Dict[str, Any]]
+        conflict_resolution_policy=None,  # type: Optional[Dict[str, Any]]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> ContainerProxy
+        """
+        Create the container if it does not exist already.
+
+        If the container already exists, it is returned.
+
+        :param partition_key: The partition key to use for the container.
+        :param indexing_policy: The indexing policy to apply to the container.
+        :param default_ttl: Default time to live (TTL) for items in the container. If unspecified, items do not expire.
+        :param session_token: Token for use with Session consistency.
+        :param initial_headers: Initial headers to be sent as part of the request.
+        :param access_condition: Conditions Associated with the request.
+        :param populate_query_metrics: Enable returning query metrics in response headers.
+        :param offer_throughput: The provisioned throughput for this offer.
+        :param unique_key_policy: The unique key policy to apply to the container.
+        :param conflict_resolution_policy: The conflict resolution policy to apply to the container.
+        :param request_options: Dictionary of additional properties to be used for the request.
+        :param response_hook: a callable invoked with the response metadata
+        :returns: A `ContainerProxy` instance representing the container.
+        :raise CosmosHttpResponseError: The container read or creation failed.
+        :rtype: ~azure.cosmos.container.ContainerProxy
+        """
+
+        response_hook = kwargs.pop('response_hook', None)
+        try:
+            collection_link = self.container_link
+            self._properties = self.client_connection.ReadContainer(
+                collection_link, **kwargs
+            )
+
+            if response_hook:
+                response_hook(self.client_connection.last_response_headers, self._properties)
+            return self
+        except CosmosResourceNotFoundError:
+            definition = dict(id=self.id)  # type: Dict[str, Any]
+            if partition_key:
+                definition["partitionKey"] = partition_key
+            if indexing_policy:
+                definition["indexingPolicy"] = indexing_policy
+            if default_ttl:
+                definition["defaultTtl"] = default_ttl
+            if unique_key_policy:
+                definition["uniqueKeyPolicy"] = unique_key_policy
+            if conflict_resolution_policy:
+                definition["conflictResolutionPolicy"] = conflict_resolution_policy
+
+            request_options = build_options(kwargs)
+            if populate_query_metrics is not None:
+                request_options["populateQueryMetrics"] = populate_query_metrics
+            if offer_throughput is not None:
+                request_options["offerThroughput"] = offer_throughput
+
+            data = self.client_connection.CreateContainer(
+                database_link=self.database_link, collection=definition, options=request_options, **kwargs
+            )
+
+            if response_hook:
+                response_hook(self.client_connection.last_response_headers, data)
+
+            return ContainerProxy(self.client_connection, self.database_link, data["id"], properties=data)
 
     @distributed_trace
     def read_item(

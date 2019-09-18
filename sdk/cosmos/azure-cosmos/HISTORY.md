@@ -1,5 +1,9 @@
 # Change Log azure-cosmos
 
+## Version 4.0.0b3:
+
+- Added `create_if_not_exists()` functionality to container and database.
+
 ## Version 4.0.0b2:
 
 Version 4.0.0b2 is the second iteration in our efforts to build a more Pythonic client library.
