@@ -2,7 +2,7 @@
 
 ## Version 4.0.0b3:
 
-- Added `create_if_not_exists()` functionality to container and database.
+- Added `create_database_if_not_exists()` and `create_container_if_not_exists` functionalities to CosmosClient and Database respectively.
 
 ## Version 4.0.0b2:
 
