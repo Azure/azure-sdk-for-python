@@ -501,10 +501,11 @@ class Dataset(Model):
     MongoDbCollectionDataset, FileShareDataset, Office365Dataset,
     AzureBlobFSDataset, AzureDataLakeStoreDataset,
     CommonDataServiceForAppsEntityDataset, DynamicsCrmEntityDataset,
-    DynamicsEntityDataset, DocumentDbCollectionDataset, CustomDataset,
-    CassandraTableDataset, AzureSqlDWTableDataset, AzureSqlMITableDataset,
-    AzureSqlTableDataset, AzureTableDataset, AzureBlobDataset, BinaryDataset,
-    OrcDataset, JsonDataset, DelimitedTextDataset, ParquetDataset, AvroDataset,
+    DynamicsEntityDataset, DocumentDbCollectionDataset,
+    CosmosDbSqlApiCollectionDataset, CustomDataset, CassandraTableDataset,
+    AzureSqlDWTableDataset, AzureSqlMITableDataset, AzureSqlTableDataset,
+    AzureTableDataset, AzureBlobDataset, BinaryDataset, OrcDataset,
+    JsonDataset, DelimitedTextDataset, ParquetDataset, AvroDataset,
     AmazonS3Dataset
 
     All required parameters must be populated in order to send to Azure.
@@ -555,7 +556,7 @@ class Dataset(Model):
     }
 
     _subtype_map = {
-        'type': {'GoogleAdWordsObject': 'GoogleAdWordsObjectDataset', 'AzureDataExplorerTable': 'AzureDataExplorerTableDataset', 'OracleServiceCloudObject': 'OracleServiceCloudObjectDataset', 'DynamicsAXResource': 'DynamicsAXResourceDataset', 'ResponsysObject': 'ResponsysObjectDataset', 'SalesforceMarketingCloudObject': 'SalesforceMarketingCloudObjectDataset', 'VerticaTable': 'VerticaTableDataset', 'NetezzaTable': 'NetezzaTableDataset', 'ZohoObject': 'ZohoObjectDataset', 'XeroObject': 'XeroObjectDataset', 'SquareObject': 'SquareObjectDataset', 'SparkObject': 'SparkObjectDataset', 'ShopifyObject': 'ShopifyObjectDataset', 'ServiceNowObject': 'ServiceNowObjectDataset', 'QuickBooksObject': 'QuickBooksObjectDataset', 'PrestoObject': 'PrestoObjectDataset', 'PhoenixObject': 'PhoenixObjectDataset', 'PaypalObject': 'PaypalObjectDataset', 'MarketoObject': 'MarketoObjectDataset', 'AzureMariaDBTable': 'AzureMariaDBTableDataset', 'MariaDBTable': 'MariaDBTableDataset', 'MagentoObject': 'MagentoObjectDataset', 'JiraObject': 'JiraObjectDataset', 'ImpalaObject': 'ImpalaObjectDataset', 'HubspotObject': 'HubspotObjectDataset', 'HiveObject': 'HiveObjectDataset', 'HBaseObject': 'HBaseObjectDataset', 'GreenplumTable': 'GreenplumTableDataset', 'GoogleBigQueryObject': 'GoogleBigQueryObjectDataset', 'EloquaObject': 'EloquaObjectDataset', 'DrillTable': 'DrillTableDataset', 'CouchbaseTable': 'CouchbaseTableDataset', 'ConcurObject': 'ConcurObjectDataset', 'AzurePostgreSqlTable': 'AzurePostgreSqlTableDataset', 'AmazonMWSObject': 'AmazonMWSObjectDataset', 'HttpFile': 'HttpDataset', 'AzureSearchIndex': 'AzureSearchIndexDataset', 'WebTable': 'WebTableDataset', 'SapTableResource': 'SapTableResourceDataset', 'RestResource': 'RestResourceDataset', 'SqlServerTable': 'SqlServerTableDataset', 'SapOpenHubTable': 'SapOpenHubTableDataset', 'SapHanaTable': 'SapHanaTableDataset', 'SapEccResource': 'SapEccResourceDataset', 'SapCloudForCustomerResource': 'SapCloudForCustomerResourceDataset', 'SapBwCube': 'SapBwCubeDataset', 'SybaseTable': 'SybaseTableDataset', 'SalesforceServiceCloudObject': 'SalesforceServiceCloudObjectDataset', 'SalesforceObject': 'SalesforceObjectDataset', 'MicrosoftAccessTable': 'MicrosoftAccessTableDataset', 'PostgreSqlTable': 'PostgreSqlTableDataset', 'MySqlTable': 'MySqlTableDataset', 'OdbcTable': 'OdbcTableDataset', 'InformixTable': 'InformixTableDataset', 'RelationalTable': 'RelationalTableDataset', 'Db2Table': 'Db2TableDataset', 'AmazonRedshiftTable': 'AmazonRedshiftTableDataset', 'AzureMySqlTable': 'AzureMySqlTableDataset', 'TeradataTable': 'TeradataTableDataset', 'OracleTable': 'OracleTableDataset', 'ODataResource': 'ODataResourceDataset', 'CosmosDbMongoDbApiCollection': 'CosmosDbMongoDbApiCollectionDataset', 'MongoDbV2Collection': 'MongoDbV2CollectionDataset', 'MongoDbCollection': 'MongoDbCollectionDataset', 'FileShare': 'FileShareDataset', 'Office365Table': 'Office365Dataset', 'AzureBlobFSFile': 'AzureBlobFSDataset', 'AzureDataLakeStoreFile': 'AzureDataLakeStoreDataset', 'CommonDataServiceForAppsEntity': 'CommonDataServiceForAppsEntityDataset', 'DynamicsCrmEntity': 'DynamicsCrmEntityDataset', 'DynamicsEntity': 'DynamicsEntityDataset', 'DocumentDbCollection': 'DocumentDbCollectionDataset', 'CustomDataset': 'CustomDataset', 'CassandraTable': 'CassandraTableDataset', 'AzureSqlDWTable': 'AzureSqlDWTableDataset', 'AzureSqlMITable': 'AzureSqlMITableDataset', 'AzureSqlTable': 'AzureSqlTableDataset', 'AzureTable': 'AzureTableDataset', 'AzureBlob': 'AzureBlobDataset', 'Binary': 'BinaryDataset', 'Orc': 'OrcDataset', 'Json': 'JsonDataset', 'DelimitedText': 'DelimitedTextDataset', 'Parquet': 'ParquetDataset', 'Avro': 'AvroDataset', 'AmazonS3Object': 'AmazonS3Dataset'}
+        'type': {'GoogleAdWordsObject': 'GoogleAdWordsObjectDataset', 'AzureDataExplorerTable': 'AzureDataExplorerTableDataset', 'OracleServiceCloudObject': 'OracleServiceCloudObjectDataset', 'DynamicsAXResource': 'DynamicsAXResourceDataset', 'ResponsysObject': 'ResponsysObjectDataset', 'SalesforceMarketingCloudObject': 'SalesforceMarketingCloudObjectDataset', 'VerticaTable': 'VerticaTableDataset', 'NetezzaTable': 'NetezzaTableDataset', 'ZohoObject': 'ZohoObjectDataset', 'XeroObject': 'XeroObjectDataset', 'SquareObject': 'SquareObjectDataset', 'SparkObject': 'SparkObjectDataset', 'ShopifyObject': 'ShopifyObjectDataset', 'ServiceNowObject': 'ServiceNowObjectDataset', 'QuickBooksObject': 'QuickBooksObjectDataset', 'PrestoObject': 'PrestoObjectDataset', 'PhoenixObject': 'PhoenixObjectDataset', 'PaypalObject': 'PaypalObjectDataset', 'MarketoObject': 'MarketoObjectDataset', 'AzureMariaDBTable': 'AzureMariaDBTableDataset', 'MariaDBTable': 'MariaDBTableDataset', 'MagentoObject': 'MagentoObjectDataset', 'JiraObject': 'JiraObjectDataset', 'ImpalaObject': 'ImpalaObjectDataset', 'HubspotObject': 'HubspotObjectDataset', 'HiveObject': 'HiveObjectDataset', 'HBaseObject': 'HBaseObjectDataset', 'GreenplumTable': 'GreenplumTableDataset', 'GoogleBigQueryObject': 'GoogleBigQueryObjectDataset', 'EloquaObject': 'EloquaObjectDataset', 'DrillTable': 'DrillTableDataset', 'CouchbaseTable': 'CouchbaseTableDataset', 'ConcurObject': 'ConcurObjectDataset', 'AzurePostgreSqlTable': 'AzurePostgreSqlTableDataset', 'AmazonMWSObject': 'AmazonMWSObjectDataset', 'HttpFile': 'HttpDataset', 'AzureSearchIndex': 'AzureSearchIndexDataset', 'WebTable': 'WebTableDataset', 'SapTableResource': 'SapTableResourceDataset', 'RestResource': 'RestResourceDataset', 'SqlServerTable': 'SqlServerTableDataset', 'SapOpenHubTable': 'SapOpenHubTableDataset', 'SapHanaTable': 'SapHanaTableDataset', 'SapEccResource': 'SapEccResourceDataset', 'SapCloudForCustomerResource': 'SapCloudForCustomerResourceDataset', 'SapBwCube': 'SapBwCubeDataset', 'SybaseTable': 'SybaseTableDataset', 'SalesforceServiceCloudObject': 'SalesforceServiceCloudObjectDataset', 'SalesforceObject': 'SalesforceObjectDataset', 'MicrosoftAccessTable': 'MicrosoftAccessTableDataset', 'PostgreSqlTable': 'PostgreSqlTableDataset', 'MySqlTable': 'MySqlTableDataset', 'OdbcTable': 'OdbcTableDataset', 'InformixTable': 'InformixTableDataset', 'RelationalTable': 'RelationalTableDataset', 'Db2Table': 'Db2TableDataset', 'AmazonRedshiftTable': 'AmazonRedshiftTableDataset', 'AzureMySqlTable': 'AzureMySqlTableDataset', 'TeradataTable': 'TeradataTableDataset', 'OracleTable': 'OracleTableDataset', 'ODataResource': 'ODataResourceDataset', 'CosmosDbMongoDbApiCollection': 'CosmosDbMongoDbApiCollectionDataset', 'MongoDbV2Collection': 'MongoDbV2CollectionDataset', 'MongoDbCollection': 'MongoDbCollectionDataset', 'FileShare': 'FileShareDataset', 'Office365Table': 'Office365Dataset', 'AzureBlobFSFile': 'AzureBlobFSDataset', 'AzureDataLakeStoreFile': 'AzureDataLakeStoreDataset', 'CommonDataServiceForAppsEntity': 'CommonDataServiceForAppsEntityDataset', 'DynamicsCrmEntity': 'DynamicsCrmEntityDataset', 'DynamicsEntity': 'DynamicsEntityDataset', 'DocumentDbCollection': 'DocumentDbCollectionDataset', 'CosmosDbSqlApiCollection': 'CosmosDbSqlApiCollectionDataset', 'CustomDataset': 'CustomDataset', 'CassandraTable': 'CassandraTableDataset', 'AzureSqlDWTable': 'AzureSqlDWTableDataset', 'AzureSqlMITable': 'AzureSqlMITableDataset', 'AzureSqlTable': 'AzureSqlTableDataset', 'AzureTable': 'AzureTableDataset', 'AzureBlob': 'AzureBlobDataset', 'Binary': 'BinaryDataset', 'Orc': 'OrcDataset', 'Json': 'JsonDataset', 'DelimitedText': 'DelimitedTextDataset', 'Parquet': 'ParquetDataset', 'Avro': 'AvroDataset', 'AmazonS3Object': 'AmazonS3Dataset'}
     }
 
     def __init__(self, **kwargs):
@@ -654,8 +655,9 @@ class CopySource(Model):
     SybaseSource, PostgreSqlSource, MySqlSource, OdbcSource, Db2Source,
     MicrosoftAccessSource, InformixSource, RelationalSource,
     CommonDataServiceForAppsSource, DynamicsCrmSource, DynamicsSource,
-    DocumentDbCollectionSource, BlobSource, AzureTableSource, BinarySource,
-    OrcSource, JsonSource, DelimitedTextSource, ParquetSource, AvroSource
+    CosmosDbSqlApiSource, DocumentDbCollectionSource, BlobSource,
+    AzureTableSource, BinarySource, OrcSource, JsonSource, DelimitedTextSource,
+    ParquetSource, AvroSource
 
     All required parameters must be populated in order to send to Azure.
 
@@ -690,7 +692,7 @@ class CopySource(Model):
     }
 
     _subtype_map = {
-        'type': {'AmazonRedshiftSource': 'AmazonRedshiftSource', 'GoogleAdWordsSource': 'GoogleAdWordsSource', 'OracleServiceCloudSource': 'OracleServiceCloudSource', 'DynamicsAXSource': 'DynamicsAXSource', 'ResponsysSource': 'ResponsysSource', 'SalesforceMarketingCloudSource': 'SalesforceMarketingCloudSource', 'VerticaSource': 'VerticaSource', 'NetezzaSource': 'NetezzaSource', 'ZohoSource': 'ZohoSource', 'XeroSource': 'XeroSource', 'SquareSource': 'SquareSource', 'SparkSource': 'SparkSource', 'ShopifySource': 'ShopifySource', 'ServiceNowSource': 'ServiceNowSource', 'QuickBooksSource': 'QuickBooksSource', 'PrestoSource': 'PrestoSource', 'PhoenixSource': 'PhoenixSource', 'PaypalSource': 'PaypalSource', 'MarketoSource': 'MarketoSource', 'AzureMariaDBSource': 'AzureMariaDBSource', 'MariaDBSource': 'MariaDBSource', 'MagentoSource': 'MagentoSource', 'JiraSource': 'JiraSource', 'ImpalaSource': 'ImpalaSource', 'HubspotSource': 'HubspotSource', 'HiveSource': 'HiveSource', 'HBaseSource': 'HBaseSource', 'GreenplumSource': 'GreenplumSource', 'GoogleBigQuerySource': 'GoogleBigQuerySource', 'EloquaSource': 'EloquaSource', 'DrillSource': 'DrillSource', 'CouchbaseSource': 'CouchbaseSource', 'ConcurSource': 'ConcurSource', 'AzurePostgreSqlSource': 'AzurePostgreSqlSource', 'AmazonMWSSource': 'AmazonMWSSource', 'HttpSource': 'HttpSource', 'AzureBlobFSSource': 'AzureBlobFSSource', 'AzureDataLakeStoreSource': 'AzureDataLakeStoreSource', 'Office365Source': 'Office365Source', 'CosmosDbMongoDbApiSource': 'CosmosDbMongoDbApiSource', 'MongoDbV2Source': 'MongoDbV2Source', 'MongoDbSource': 'MongoDbSource', 'CassandraSource': 'CassandraSource', 'WebSource': 'WebSource', 'TeradataSource': 'TeradataSource', 'OracleSource': 'OracleSource', 'AzureDataExplorerSource': 'AzureDataExplorerSource', 'AzureMySqlSource': 'AzureMySqlSource', 'HdfsSource': 'HdfsSource', 'FileSystemSource': 'FileSystemSource', 'SqlDWSource': 'SqlDWSource', 'SqlMISource': 'SqlMISource', 'AzureSqlSource': 'AzureSqlSource', 'SqlServerSource': 'SqlServerSource', 'SqlSource': 'SqlSource', 'RestSource': 'RestSource', 'SapTableSource': 'SapTableSource', 'SapOpenHubSource': 'SapOpenHubSource', 'SapHanaSource': 'SapHanaSource', 'SapEccSource': 'SapEccSource', 'SapCloudForCustomerSource': 'SapCloudForCustomerSource', 'SalesforceServiceCloudSource': 'SalesforceServiceCloudSource', 'SalesforceSource': 'SalesforceSource', 'ODataSource': 'ODataSource', 'SapBwSource': 'SapBwSource', 'SybaseSource': 'SybaseSource', 'PostgreSqlSource': 'PostgreSqlSource', 'MySqlSource': 'MySqlSource', 'OdbcSource': 'OdbcSource', 'Db2Source': 'Db2Source', 'MicrosoftAccessSource': 'MicrosoftAccessSource', 'InformixSource': 'InformixSource', 'RelationalSource': 'RelationalSource', 'CommonDataServiceForAppsSource': 'CommonDataServiceForAppsSource', 'DynamicsCrmSource': 'DynamicsCrmSource', 'DynamicsSource': 'DynamicsSource', 'DocumentDbCollectionSource': 'DocumentDbCollectionSource', 'BlobSource': 'BlobSource', 'AzureTableSource': 'AzureTableSource', 'BinarySource': 'BinarySource', 'OrcSource': 'OrcSource', 'JsonSource': 'JsonSource', 'DelimitedTextSource': 'DelimitedTextSource', 'ParquetSource': 'ParquetSource', 'AvroSource': 'AvroSource'}
+        'type': {'AmazonRedshiftSource': 'AmazonRedshiftSource', 'GoogleAdWordsSource': 'GoogleAdWordsSource', 'OracleServiceCloudSource': 'OracleServiceCloudSource', 'DynamicsAXSource': 'DynamicsAXSource', 'ResponsysSource': 'ResponsysSource', 'SalesforceMarketingCloudSource': 'SalesforceMarketingCloudSource', 'VerticaSource': 'VerticaSource', 'NetezzaSource': 'NetezzaSource', 'ZohoSource': 'ZohoSource', 'XeroSource': 'XeroSource', 'SquareSource': 'SquareSource', 'SparkSource': 'SparkSource', 'ShopifySource': 'ShopifySource', 'ServiceNowSource': 'ServiceNowSource', 'QuickBooksSource': 'QuickBooksSource', 'PrestoSource': 'PrestoSource', 'PhoenixSource': 'PhoenixSource', 'PaypalSource': 'PaypalSource', 'MarketoSource': 'MarketoSource', 'AzureMariaDBSource': 'AzureMariaDBSource', 'MariaDBSource': 'MariaDBSource', 'MagentoSource': 'MagentoSource', 'JiraSource': 'JiraSource', 'ImpalaSource': 'ImpalaSource', 'HubspotSource': 'HubspotSource', 'HiveSource': 'HiveSource', 'HBaseSource': 'HBaseSource', 'GreenplumSource': 'GreenplumSource', 'GoogleBigQuerySource': 'GoogleBigQuerySource', 'EloquaSource': 'EloquaSource', 'DrillSource': 'DrillSource', 'CouchbaseSource': 'CouchbaseSource', 'ConcurSource': 'ConcurSource', 'AzurePostgreSqlSource': 'AzurePostgreSqlSource', 'AmazonMWSSource': 'AmazonMWSSource', 'HttpSource': 'HttpSource', 'AzureBlobFSSource': 'AzureBlobFSSource', 'AzureDataLakeStoreSource': 'AzureDataLakeStoreSource', 'Office365Source': 'Office365Source', 'CosmosDbMongoDbApiSource': 'CosmosDbMongoDbApiSource', 'MongoDbV2Source': 'MongoDbV2Source', 'MongoDbSource': 'MongoDbSource', 'CassandraSource': 'CassandraSource', 'WebSource': 'WebSource', 'TeradataSource': 'TeradataSource', 'OracleSource': 'OracleSource', 'AzureDataExplorerSource': 'AzureDataExplorerSource', 'AzureMySqlSource': 'AzureMySqlSource', 'HdfsSource': 'HdfsSource', 'FileSystemSource': 'FileSystemSource', 'SqlDWSource': 'SqlDWSource', 'SqlMISource': 'SqlMISource', 'AzureSqlSource': 'AzureSqlSource', 'SqlServerSource': 'SqlServerSource', 'SqlSource': 'SqlSource', 'RestSource': 'RestSource', 'SapTableSource': 'SapTableSource', 'SapOpenHubSource': 'SapOpenHubSource', 'SapHanaSource': 'SapHanaSource', 'SapEccSource': 'SapEccSource', 'SapCloudForCustomerSource': 'SapCloudForCustomerSource', 'SalesforceServiceCloudSource': 'SalesforceServiceCloudSource', 'SalesforceSource': 'SalesforceSource', 'ODataSource': 'ODataSource', 'SapBwSource': 'SapBwSource', 'SybaseSource': 'SybaseSource', 'PostgreSqlSource': 'PostgreSqlSource', 'MySqlSource': 'MySqlSource', 'OdbcSource': 'OdbcSource', 'Db2Source': 'Db2Source', 'MicrosoftAccessSource': 'MicrosoftAccessSource', 'InformixSource': 'InformixSource', 'RelationalSource': 'RelationalSource', 'CommonDataServiceForAppsSource': 'CommonDataServiceForAppsSource', 'DynamicsCrmSource': 'DynamicsCrmSource', 'DynamicsSource': 'DynamicsSource', 'CosmosDbSqlApiSource': 'CosmosDbSqlApiSource', 'DocumentDbCollectionSource': 'DocumentDbCollectionSource', 'BlobSource': 'BlobSource', 'AzureTableSource': 'AzureTableSource', 'BinarySource': 'BinarySource', 'OrcSource': 'OrcSource', 'JsonSource': 'JsonSource', 'DelimitedTextSource': 'DelimitedTextSource', 'ParquetSource': 'ParquetSource', 'AvroSource': 'AvroSource'}
     }
 
     def __init__(self, **kwargs):
@@ -1538,8 +1540,8 @@ class CopySink(Model):
     DynamicsCrmSink, DynamicsSink, MicrosoftAccessSink, InformixSink, OdbcSink,
     AzureSearchIndexSink, AzureBlobFSSink, AzureDataLakeStoreSink, OracleSink,
     SqlDWSink, SqlMISink, AzureSqlSink, SqlServerSink, SqlSink,
-    DocumentDbCollectionSink, FileSystemSink, BlobSink, BinarySink,
-    ParquetSink, AvroSink, AzureTableSink, AzureQueueSink,
+    CosmosDbSqlApiSink, DocumentDbCollectionSink, FileSystemSink, BlobSink,
+    BinarySink, ParquetSink, AvroSink, AzureTableSink, AzureQueueSink,
     SapCloudForCustomerSink, AzureMySqlSink, AzurePostgreSqlSink, OrcSink,
     JsonSink, DelimitedTextSink
 
@@ -1585,7 +1587,7 @@ class CopySink(Model):
     }
 
     _subtype_map = {
-        'type': {'CosmosDbMongoDbApiSink': 'CosmosDbMongoDbApiSink', 'SalesforceServiceCloudSink': 'SalesforceServiceCloudSink', 'SalesforceSink': 'SalesforceSink', 'AzureDataExplorerSink': 'AzureDataExplorerSink', 'CommonDataServiceForAppsSink': 'CommonDataServiceForAppsSink', 'DynamicsCrmSink': 'DynamicsCrmSink', 'DynamicsSink': 'DynamicsSink', 'MicrosoftAccessSink': 'MicrosoftAccessSink', 'InformixSink': 'InformixSink', 'OdbcSink': 'OdbcSink', 'AzureSearchIndexSink': 'AzureSearchIndexSink', 'AzureBlobFSSink': 'AzureBlobFSSink', 'AzureDataLakeStoreSink': 'AzureDataLakeStoreSink', 'OracleSink': 'OracleSink', 'SqlDWSink': 'SqlDWSink', 'SqlMISink': 'SqlMISink', 'AzureSqlSink': 'AzureSqlSink', 'SqlServerSink': 'SqlServerSink', 'SqlSink': 'SqlSink', 'DocumentDbCollectionSink': 'DocumentDbCollectionSink', 'FileSystemSink': 'FileSystemSink', 'BlobSink': 'BlobSink', 'BinarySink': 'BinarySink', 'ParquetSink': 'ParquetSink', 'AvroSink': 'AvroSink', 'AzureTableSink': 'AzureTableSink', 'AzureQueueSink': 'AzureQueueSink', 'SapCloudForCustomerSink': 'SapCloudForCustomerSink', 'AzureMySqlSink': 'AzureMySqlSink', 'AzurePostgreSqlSink': 'AzurePostgreSqlSink', 'OrcSink': 'OrcSink', 'JsonSink': 'JsonSink', 'DelimitedTextSink': 'DelimitedTextSink'}
+        'type': {'CosmosDbMongoDbApiSink': 'CosmosDbMongoDbApiSink', 'SalesforceServiceCloudSink': 'SalesforceServiceCloudSink', 'SalesforceSink': 'SalesforceSink', 'AzureDataExplorerSink': 'AzureDataExplorerSink', 'CommonDataServiceForAppsSink': 'CommonDataServiceForAppsSink', 'DynamicsCrmSink': 'DynamicsCrmSink', 'DynamicsSink': 'DynamicsSink', 'MicrosoftAccessSink': 'MicrosoftAccessSink', 'InformixSink': 'InformixSink', 'OdbcSink': 'OdbcSink', 'AzureSearchIndexSink': 'AzureSearchIndexSink', 'AzureBlobFSSink': 'AzureBlobFSSink', 'AzureDataLakeStoreSink': 'AzureDataLakeStoreSink', 'OracleSink': 'OracleSink', 'SqlDWSink': 'SqlDWSink', 'SqlMISink': 'SqlMISink', 'AzureSqlSink': 'AzureSqlSink', 'SqlServerSink': 'SqlServerSink', 'SqlSink': 'SqlSink', 'CosmosDbSqlApiSink': 'CosmosDbSqlApiSink', 'DocumentDbCollectionSink': 'DocumentDbCollectionSink', 'FileSystemSink': 'FileSystemSink', 'BlobSink': 'BlobSink', 'BinarySink': 'BinarySink', 'ParquetSink': 'ParquetSink', 'AvroSink': 'AvroSink', 'AzureTableSink': 'AzureTableSink', 'AzureQueueSink': 'AzureQueueSink', 'SapCloudForCustomerSink': 'SapCloudForCustomerSink', 'AzureMySqlSink': 'AzureMySqlSink', 'AzurePostgreSqlSink': 'AzurePostgreSqlSink', 'OrcSink': 'OrcSink', 'JsonSink': 'JsonSink', 'DelimitedTextSink': 'DelimitedTextSink'}
     }
 
     def __init__(self, **kwargs):
@@ -7352,13 +7354,18 @@ class CosmosDbLinkedService(LinkedService):
     :type annotations: list[object]
     :param type: Required. Constant filled by server.
     :type type: str
-    :param connection_string: Required. The connection string. Type: string,
+    :param connection_string: The connection string. Type: string,
      SecureString or AzureKeyVaultSecretReference.
     :type connection_string: object
-    :param account_key: The Azure key vault secret reference of accountKey in
-     connection string.
-    :type account_key:
-     ~azure.mgmt.datafactory.models.AzureKeyVaultSecretReference
+    :param account_endpoint: The endpoint of the Azure CosmosDB account. Type:
+     string (or Expression with resultType string)
+    :type account_endpoint: object
+    :param database: The name of the database. Type: string (or Expression
+     with resultType string)
+    :type database: object
+    :param account_key: The account key of the Azure CosmosDB account. Type:
+     SecureString or AzureKeyVaultSecretReference.
+    :type account_key: ~azure.mgmt.datafactory.models.SecretBase
     :param encrypted_credential: The encrypted credential used for
      authentication. Credentials are encrypted using the integration runtime
      credential manager. Type: string (or Expression with resultType string).
@@ -7367,7 +7374,6 @@ class CosmosDbLinkedService(LinkedService):
 
     _validation = {
         'type': {'required': True},
-        'connection_string': {'required': True},
     }
 
     _attribute_map = {
@@ -7378,13 +7384,17 @@ class CosmosDbLinkedService(LinkedService):
         'annotations': {'key': 'annotations', 'type': '[object]'},
         'type': {'key': 'type', 'type': 'str'},
         'connection_string': {'key': 'typeProperties.connectionString', 'type': 'object'},
-        'account_key': {'key': 'typeProperties.accountKey', 'type': 'AzureKeyVaultSecretReference'},
+        'account_endpoint': {'key': 'typeProperties.accountEndpoint', 'type': 'object'},
+        'database': {'key': 'typeProperties.database', 'type': 'object'},
+        'account_key': {'key': 'typeProperties.accountKey', 'type': 'SecretBase'},
         'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
         super(CosmosDbLinkedService, self).__init__(**kwargs)
         self.connection_string = kwargs.get('connection_string', None)
+        self.account_endpoint = kwargs.get('account_endpoint', None)
+        self.database = kwargs.get('database', None)
         self.account_key = kwargs.get('account_key', None)
         self.encrypted_credential = kwargs.get('encrypted_credential', None)
         self.type = 'CosmosDb'
@@ -7619,6 +7629,182 @@ class CosmosDbMongoDbApiSource(CopySource):
         self.cursor_methods = kwargs.get('cursor_methods', None)
         self.batch_size = kwargs.get('batch_size', None)
         self.type = 'CosmosDbMongoDbApiSource'
+
+
+class CosmosDbSqlApiCollectionDataset(Dataset):
+    """Microsoft Azure CosmosDB (SQL API) Collection dataset.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param description: Dataset description.
+    :type description: str
+    :param structure: Columns that define the structure of the dataset. Type:
+     array (or Expression with resultType array), itemType: DatasetDataElement.
+    :type structure: object
+    :param schema: Columns that define the physical type schema of the
+     dataset. Type: array (or Expression with resultType array), itemType:
+     DatasetSchemaDataElement.
+    :type schema: object
+    :param linked_service_name: Required. Linked service reference.
+    :type linked_service_name:
+     ~azure.mgmt.datafactory.models.LinkedServiceReference
+    :param parameters: Parameters for dataset.
+    :type parameters: dict[str,
+     ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :param annotations: List of tags that can be used for describing the
+     Dataset.
+    :type annotations: list[object]
+    :param folder: The folder that this Dataset is in. If not specified,
+     Dataset will appear at the root level.
+    :type folder: ~azure.mgmt.datafactory.models.DatasetFolder
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param collection_name: Required. CosmosDB (SQL API) collection name.
+     Type: string (or Expression with resultType string).
+    :type collection_name: object
+    """
+
+    _validation = {
+        'linked_service_name': {'required': True},
+        'type': {'required': True},
+        'collection_name': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'description': {'key': 'description', 'type': 'str'},
+        'structure': {'key': 'structure', 'type': 'object'},
+        'schema': {'key': 'schema', 'type': 'object'},
+        'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
+        'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
+        'folder': {'key': 'folder', 'type': 'DatasetFolder'},
+        'type': {'key': 'type', 'type': 'str'},
+        'collection_name': {'key': 'typeProperties.collectionName', 'type': 'object'},
+    }
+
+    def __init__(self, **kwargs):
+        super(CosmosDbSqlApiCollectionDataset, self).__init__(**kwargs)
+        self.collection_name = kwargs.get('collection_name', None)
+        self.type = 'CosmosDbSqlApiCollection'
+
+
+class CosmosDbSqlApiSink(CopySink):
+    """A copy activity Azure CosmosDB (SQL API) Collection sink.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param write_batch_size: Write batch size. Type: integer (or Expression
+     with resultType integer), minimum: 0.
+    :type write_batch_size: object
+    :param write_batch_timeout: Write batch timeout. Type: string (or
+     Expression with resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type write_batch_timeout: object
+    :param sink_retry_count: Sink retry count. Type: integer (or Expression
+     with resultType integer).
+    :type sink_retry_count: object
+    :param sink_retry_wait: Sink retry wait. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type sink_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count
+     for the sink data store. Type: integer (or Expression with resultType
+     integer).
+    :type max_concurrent_connections: object
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param write_behavior: Describes how to write data to Azure Cosmos DB.
+     Type: string (or Expression with resultType string). Allowed values:
+     insert and upsert.
+    :type write_behavior: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'write_batch_size': {'key': 'writeBatchSize', 'type': 'object'},
+        'write_batch_timeout': {'key': 'writeBatchTimeout', 'type': 'object'},
+        'sink_retry_count': {'key': 'sinkRetryCount', 'type': 'object'},
+        'sink_retry_wait': {'key': 'sinkRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'type': {'key': 'type', 'type': 'str'},
+        'write_behavior': {'key': 'writeBehavior', 'type': 'object'},
+    }
+
+    def __init__(self, **kwargs):
+        super(CosmosDbSqlApiSink, self).__init__(**kwargs)
+        self.write_behavior = kwargs.get('write_behavior', None)
+        self.type = 'CosmosDbSqlApiSink'
+
+
+class CosmosDbSqlApiSource(CopySource):
+    """A copy activity Azure CosmosDB (SQL API) Collection source.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param source_retry_count: Source retry count. Type: integer (or
+     Expression with resultType integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression
+     with resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count
+     for the source data store. Type: integer (or Expression with resultType
+     integer).
+    :type max_concurrent_connections: object
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param query: SQL API query. Type: string (or Expression with resultType
+     string).
+    :type query: object
+    :param page_size: Page size of the result. Type: integer (or Expression
+     with resultType integer).
+    :type page_size: object
+    :param preferred_regions: Preferred regions. Type: array of strings (or
+     Expression with resultType array of strings).
+    :type preferred_regions: object
+    :param include_system_columns: Whether includes system columns in result.
+     Type: boolean (or Expression with resultType boolean).
+    :type include_system_columns: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'type': {'key': 'type', 'type': 'str'},
+        'query': {'key': 'query', 'type': 'object'},
+        'page_size': {'key': 'pageSize', 'type': 'object'},
+        'preferred_regions': {'key': 'preferredRegions', 'type': 'object'},
+        'include_system_columns': {'key': 'includeSystemColumns', 'type': 'object'},
+    }
+
+    def __init__(self, **kwargs):
+        super(CosmosDbSqlApiSource, self).__init__(**kwargs)
+        self.query = kwargs.get('query', None)
+        self.page_size = kwargs.get('page_size', None)
+        self.preferred_regions = kwargs.get('preferred_regions', None)
+        self.include_system_columns = kwargs.get('include_system_columns', None)
+        self.type = 'CosmosDbSqlApiSource'
 
 
 class CouchbaseLinkedService(LinkedService):
@@ -9337,7 +9523,8 @@ class DocumentDbCollectionSink(CopySink):
      Type: string (or Expression with resultType string).
     :type nesting_separator: object
     :param write_behavior: Describes how to write data to Azure Cosmos DB.
-     Allowed values: insert and upsert.
+     Type: string (or Expression with resultType string). Allowed values:
+     insert and upsert.
     :type write_behavior: object
     """
 
