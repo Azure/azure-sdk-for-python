@@ -150,7 +150,7 @@ class SecurityAlert(Entity):
         'product_name': {'key': 'properties.productName', 'type': 'str'},
         'product_version': {'key': 'properties.productVersion', 'type': 'str'},
         'remediation_steps': {'key': 'properties.remediationSteps', 'type': '[str]'},
-        'severity': {'key': 'properties.severity', 'type': 'AlertSeverity'},
+        'severity': {'key': 'properties.severity', 'type': 'str'},
         'start_time_utc': {'key': 'properties.startTimeUtc', 'type': 'iso-8601'},
         'status': {'key': 'properties.status', 'type': 'str'},
         'system_alert_id': {'key': 'properties.systemAlertId', 'type': 'str'},
