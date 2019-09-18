@@ -135,6 +135,7 @@ from ._container_registry_management_client_enums import (
     WebhookAction,
     TokenCertificateName,
     TokenPasswordName,
+    TokenStatus,
     Status,
 )
 
@@ -211,5 +212,6 @@ __all__ = [
     'WebhookAction',
     'TokenCertificateName',
     'TokenPasswordName',
+    'TokenStatus',
     'Status',
 ]
