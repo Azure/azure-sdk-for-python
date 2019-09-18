@@ -41,9 +41,9 @@ class WorkflowsOperations(object):
 
     def list_by_subscription(
             self, top=None, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Gets a list of workflows by subscription.
+        """Gets the list of workflows by subscription.
 
-        :param top: The number of items to be included in the result.
+        :param top: The number of items to be included in the results.
         :type top: int
         :param filter: The filter to apply on the operation. Options for
          filters include: State, Trigger, and ReferencedResourceId.

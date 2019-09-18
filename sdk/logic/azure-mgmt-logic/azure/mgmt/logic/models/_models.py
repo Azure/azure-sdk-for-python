@@ -3623,7 +3623,9 @@ class Workflow(Resource):
     :type sku: ~azure.mgmt.logic.models.Sku
     :param integration_account: The integration account.
     :type integration_account: ~azure.mgmt.logic.models.ResourceReference
-    :param definition: The definition.
+    :param definition: The definition. See [Schema reference for Workflow
+     Definition Language in Azure Logic
+     Apps](https://aka.ms/logic-apps-workflow-definition-language).
     :type definition: object
     :param parameters: The parameters.
     :type parameters: dict[str, ~azure.mgmt.logic.models.WorkflowParameter]
