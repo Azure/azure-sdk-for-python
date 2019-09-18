@@ -31,11 +31,11 @@ class ConnectivityCollection(Model):
     :ivar groups: The collection of connectivity related Managed Network
      Groups within the Managed Network
     :vartype groups:
-     list[~azure.mgmt.network.v2019_06_01_pre.models.ManagedNetworkGroup]
+     list[~azure.mgmt.managednetwork.v2019_06_01_pre.models.ManagedNetworkGroup]
     :ivar peerings: The collection of Managed Network Peering Policies within
      the Managed Network
     :vartype peerings:
-     list[~azure.mgmt.network.v2019_06_01_pre.models.ManagedNetworkPeeringPolicy]
+     list[~azure.mgmt.managednetwork.v2019_06_01_pre.models.ManagedNetworkPeeringPolicy]
     """
 
     _validation = {
@@ -104,7 +104,7 @@ class ResourceProperties(Model):
      resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
      Possible values include: 'Updating', 'Deleting', 'Failed', 'Succeeded'
     :vartype provisioning_state: str or
-     ~azure.mgmt.network.v2019_06_01_pre.models.ProvisioningState
+     ~azure.mgmt.managednetwork.v2019_06_01_pre.models.ProvisioningState
     :ivar etag: A unique read-only string that changes whenever the resource
      is updated.
     :vartype etag: str
@@ -138,20 +138,22 @@ class ManagedNetworkPeeringPolicyProperties(ResourceProperties):
      resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
      Possible values include: 'Updating', 'Deleting', 'Failed', 'Succeeded'
     :vartype provisioning_state: str or
-     ~azure.mgmt.network.v2019_06_01_pre.models.ProvisioningState
+     ~azure.mgmt.managednetwork.v2019_06_01_pre.models.ProvisioningState
     :ivar etag: A unique read-only string that changes whenever the resource
      is updated.
     :vartype etag: str
     :param type: Required. Gets or sets the connectivity type of a network
      structure policy. Possible values include: 'HubAndSpokeTopology',
      'MeshTopology'
-    :type type: str or ~azure.mgmt.network.v2019_06_01_pre.models.Type
+    :type type: str or ~azure.mgmt.managednetwork.v2019_06_01_pre.models.Type
     :param hub: Gets or sets the hub virtual network ID
-    :type hub: ~azure.mgmt.network.v2019_06_01_pre.models.ResourceId
+    :type hub: ~azure.mgmt.managednetwork.v2019_06_01_pre.models.ResourceId
     :param spokes: Gets or sets the spokes group IDs
-    :type spokes: list[~azure.mgmt.network.v2019_06_01_pre.models.ResourceId]
+    :type spokes:
+     list[~azure.mgmt.managednetwork.v2019_06_01_pre.models.ResourceId]
     :param mesh: Gets or sets the mesh group IDs
-    :type mesh: list[~azure.mgmt.network.v2019_06_01_pre.models.ResourceId]
+    :type mesh:
+     list[~azure.mgmt.managednetwork.v2019_06_01_pre.models.ResourceId]
     """
 
     _validation = {
@@ -189,20 +191,22 @@ class HubAndSpokePeeringPolicyProperties(ManagedNetworkPeeringPolicyProperties):
      resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
      Possible values include: 'Updating', 'Deleting', 'Failed', 'Succeeded'
     :vartype provisioning_state: str or
-     ~azure.mgmt.network.v2019_06_01_pre.models.ProvisioningState
+     ~azure.mgmt.managednetwork.v2019_06_01_pre.models.ProvisioningState
     :ivar etag: A unique read-only string that changes whenever the resource
      is updated.
     :vartype etag: str
     :param type: Required. Gets or sets the connectivity type of a network
      structure policy. Possible values include: 'HubAndSpokeTopology',
      'MeshTopology'
-    :type type: str or ~azure.mgmt.network.v2019_06_01_pre.models.Type
+    :type type: str or ~azure.mgmt.managednetwork.v2019_06_01_pre.models.Type
     :param hub: Gets or sets the hub virtual network ID
-    :type hub: ~azure.mgmt.network.v2019_06_01_pre.models.ResourceId
+    :type hub: ~azure.mgmt.managednetwork.v2019_06_01_pre.models.ResourceId
     :param spokes: Gets or sets the spokes group IDs
-    :type spokes: list[~azure.mgmt.network.v2019_06_01_pre.models.ResourceId]
+    :type spokes:
+     list[~azure.mgmt.managednetwork.v2019_06_01_pre.models.ResourceId]
     :param mesh: Gets or sets the mesh group IDs
-    :type mesh: list[~azure.mgmt.network.v2019_06_01_pre.models.ResourceId]
+    :type mesh:
+     list[~azure.mgmt.managednetwork.v2019_06_01_pre.models.ResourceId]
     """
 
     _validation = {
@@ -324,18 +328,18 @@ class ManagedNetwork(TrackedResource):
      resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
      Possible values include: 'Updating', 'Deleting', 'Failed', 'Succeeded'
     :vartype provisioning_state: str or
-     ~azure.mgmt.network.v2019_06_01_pre.models.ProvisioningState
+     ~azure.mgmt.managednetwork.v2019_06_01_pre.models.ProvisioningState
     :ivar etag: A unique read-only string that changes whenever the resource
      is updated.
     :vartype etag: str
     :param scope: The collection of management groups, subscriptions, virtual
      networks, and subnets by the Managed Network. This is a read-only property
      that is reflective of all ScopeAssignments for this Managed Network
-    :type scope: ~azure.mgmt.network.v2019_06_01_pre.models.Scope
+    :type scope: ~azure.mgmt.managednetwork.v2019_06_01_pre.models.Scope
     :ivar connectivity: The collection of groups and policies concerned with
      connectivity
     :vartype connectivity:
-     ~azure.mgmt.network.v2019_06_01_pre.models.ConnectivityCollection
+     ~azure.mgmt.managednetwork.v2019_06_01_pre.models.ConnectivityCollection
     """
 
     _validation = {
@@ -423,27 +427,28 @@ class ManagedNetworkGroup(ProxyResource):
      resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
      Possible values include: 'Updating', 'Deleting', 'Failed', 'Succeeded'
     :vartype provisioning_state: str or
-     ~azure.mgmt.network.v2019_06_01_pre.models.ProvisioningState
+     ~azure.mgmt.managednetwork.v2019_06_01_pre.models.ProvisioningState
     :ivar etag: A unique read-only string that changes whenever the resource
      is updated.
     :vartype etag: str
     :param management_groups: The collection of management groups covered by
      the Managed Network
     :type management_groups:
-     list[~azure.mgmt.network.v2019_06_01_pre.models.ResourceId]
+     list[~azure.mgmt.managednetwork.v2019_06_01_pre.models.ResourceId]
     :param subscriptions: The collection of subscriptions covered by the
      Managed Network
     :type subscriptions:
-     list[~azure.mgmt.network.v2019_06_01_pre.models.ResourceId]
+     list[~azure.mgmt.managednetwork.v2019_06_01_pre.models.ResourceId]
     :param virtual_networks: The collection of virtual nets covered by the
      Managed Network
     :type virtual_networks:
-     list[~azure.mgmt.network.v2019_06_01_pre.models.ResourceId]
+     list[~azure.mgmt.managednetwork.v2019_06_01_pre.models.ResourceId]
     :param subnets: The collection of  subnets covered by the Managed Network
-    :type subnets: list[~azure.mgmt.network.v2019_06_01_pre.models.ResourceId]
+    :type subnets:
+     list[~azure.mgmt.managednetwork.v2019_06_01_pre.models.ResourceId]
     :param kind: Responsibility role under which this Managed Network Group
      will be created. Possible values include: 'Connectivity'
-    :type kind: str or ~azure.mgmt.network.v2019_06_01_pre.models.Kind
+    :type kind: str or ~azure.mgmt.managednetwork.v2019_06_01_pre.models.Kind
     """
 
     _validation = {
@@ -497,7 +502,7 @@ class ManagedNetworkPeeringPolicy(ProxyResource):
     :type location: str
     :param properties: Gets or sets the properties of a Managed Network Policy
     :type properties:
-     ~azure.mgmt.network.v2019_06_01_pre.models.ManagedNetworkPeeringPolicyProperties
+     ~azure.mgmt.managednetwork.v2019_06_01_pre.models.ManagedNetworkPeeringPolicyProperties
     """
 
     _validation = {
@@ -547,20 +552,22 @@ class MeshPeeringPolicyProperties(ManagedNetworkPeeringPolicyProperties):
      resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
      Possible values include: 'Updating', 'Deleting', 'Failed', 'Succeeded'
     :vartype provisioning_state: str or
-     ~azure.mgmt.network.v2019_06_01_pre.models.ProvisioningState
+     ~azure.mgmt.managednetwork.v2019_06_01_pre.models.ProvisioningState
     :ivar etag: A unique read-only string that changes whenever the resource
      is updated.
     :vartype etag: str
     :param type: Required. Gets or sets the connectivity type of a network
      structure policy. Possible values include: 'HubAndSpokeTopology',
      'MeshTopology'
-    :type type: str or ~azure.mgmt.network.v2019_06_01_pre.models.Type
+    :type type: str or ~azure.mgmt.managednetwork.v2019_06_01_pre.models.Type
     :param hub: Gets or sets the hub virtual network ID
-    :type hub: ~azure.mgmt.network.v2019_06_01_pre.models.ResourceId
+    :type hub: ~azure.mgmt.managednetwork.v2019_06_01_pre.models.ResourceId
     :param spokes: Gets or sets the spokes group IDs
-    :type spokes: list[~azure.mgmt.network.v2019_06_01_pre.models.ResourceId]
+    :type spokes:
+     list[~azure.mgmt.managednetwork.v2019_06_01_pre.models.ResourceId]
     :param mesh: Gets or sets the mesh group IDs
-    :type mesh: list[~azure.mgmt.network.v2019_06_01_pre.models.ResourceId]
+    :type mesh:
+     list[~azure.mgmt.managednetwork.v2019_06_01_pre.models.ResourceId]
     """
 
     _validation = {
@@ -588,7 +595,8 @@ class Operation(Model):
     :param name: Operation name: {provider}/{resource}/{operation}
     :type name: str
     :param display: The object that represents the operation.
-    :type display: ~azure.mgmt.network.v2019_06_01_pre.models.OperationDisplay
+    :type display:
+     ~azure.mgmt.managednetwork.v2019_06_01_pre.models.OperationDisplay
     """
 
     _attribute_map = {
@@ -649,17 +657,18 @@ class Scope(Model):
     :param management_groups: The collection of management groups covered by
      the Managed Network
     :type management_groups:
-     list[~azure.mgmt.network.v2019_06_01_pre.models.ResourceId]
+     list[~azure.mgmt.managednetwork.v2019_06_01_pre.models.ResourceId]
     :param subscriptions: The collection of subscriptions covered by the
      Managed Network
     :type subscriptions:
-     list[~azure.mgmt.network.v2019_06_01_pre.models.ResourceId]
+     list[~azure.mgmt.managednetwork.v2019_06_01_pre.models.ResourceId]
     :param virtual_networks: The collection of virtual nets covered by the
      Managed Network
     :type virtual_networks:
-     list[~azure.mgmt.network.v2019_06_01_pre.models.ResourceId]
+     list[~azure.mgmt.managednetwork.v2019_06_01_pre.models.ResourceId]
     :param subnets: The collection of  subnets covered by the Managed Network
-    :type subnets: list[~azure.mgmt.network.v2019_06_01_pre.models.ResourceId]
+    :type subnets:
+     list[~azure.mgmt.managednetwork.v2019_06_01_pre.models.ResourceId]
     """
 
     _attribute_map = {
@@ -697,7 +706,7 @@ class ScopeAssignment(ProxyResource):
      resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
      Possible values include: 'Updating', 'Deleting', 'Failed', 'Succeeded'
     :vartype provisioning_state: str or
-     ~azure.mgmt.network.v2019_06_01_pre.models.ProvisioningState
+     ~azure.mgmt.managednetwork.v2019_06_01_pre.models.ProvisioningState
     :ivar etag: A unique read-only string that changes whenever the resource
      is updated.
     :vartype etag: str

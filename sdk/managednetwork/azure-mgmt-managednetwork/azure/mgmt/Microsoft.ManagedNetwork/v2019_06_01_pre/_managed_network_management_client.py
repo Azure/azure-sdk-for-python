@@ -28,15 +28,15 @@ class ManagedNetworkManagementClient(SDKClient):
     :vartype config: ManagedNetworkManagementClientConfiguration
 
     :ivar managed_networks: ManagedNetworks operations
-    :vartype managed_networks: azure.mgmt.network.v2019_06_01_pre.operations.ManagedNetworksOperations
+    :vartype managed_networks: azure.mgmt.managednetwork.v2019_06_01_pre.operations.ManagedNetworksOperations
     :ivar scope_assignments: ScopeAssignments operations
-    :vartype scope_assignments: azure.mgmt.network.v2019_06_01_pre.operations.ScopeAssignmentsOperations
+    :vartype scope_assignments: azure.mgmt.managednetwork.v2019_06_01_pre.operations.ScopeAssignmentsOperations
     :ivar managed_network_groups: ManagedNetworkGroups operations
-    :vartype managed_network_groups: azure.mgmt.network.v2019_06_01_pre.operations.ManagedNetworkGroupsOperations
+    :vartype managed_network_groups: azure.mgmt.managednetwork.v2019_06_01_pre.operations.ManagedNetworkGroupsOperations
     :ivar managed_network_peering_policies: ManagedNetworkPeeringPolicies operations
-    :vartype managed_network_peering_policies: azure.mgmt.network.v2019_06_01_pre.operations.ManagedNetworkPeeringPoliciesOperations
+    :vartype managed_network_peering_policies: azure.mgmt.managednetwork.v2019_06_01_pre.operations.ManagedNetworkPeeringPoliciesOperations
     :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.network.v2019_06_01_pre.operations.Operations
+    :vartype operations: azure.mgmt.managednetwork.v2019_06_01_pre.operations.Operations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials

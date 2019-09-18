@@ -55,10 +55,11 @@ class ManagedNetworksOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: ManagedNetwork or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.network.v2019_06_01_pre.models.ManagedNetwork or
+        :rtype:
+         ~azure.mgmt.managednetwork.v2019_06_01_pre.models.ManagedNetwork or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.network.v2019_06_01_pre.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.managednetwork.v2019_06_01_pre.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -109,7 +110,7 @@ class ManagedNetworksOperations(object):
         :param managed_network: Parameters supplied to the create/update a
          Managed Network Resource
         :type managed_network:
-         ~azure.mgmt.network.v2019_06_01_pre.models.ManagedNetwork
+         ~azure.mgmt.managednetwork.v2019_06_01_pre.models.ManagedNetwork
         :param resource_group_name: The name of the resource group.
         :type resource_group_name: str
         :param managed_network_name: The name of the Managed Network.
@@ -120,10 +121,11 @@ class ManagedNetworksOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: ManagedNetwork or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.network.v2019_06_01_pre.models.ManagedNetwork or
+        :rtype:
+         ~azure.mgmt.managednetwork.v2019_06_01_pre.models.ManagedNetwork or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.network.v2019_06_01_pre.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.managednetwork.v2019_06_01_pre.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.create_or_update.metadata['url']
@@ -227,7 +229,7 @@ class ManagedNetworksOperations(object):
         :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.network.v2019_06_01_pre.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.managednetwork.v2019_06_01_pre.models.ErrorResponseException>`
         """
         raw_result = self._delete_initial(
             resource_group_name=resource_group_name,
@@ -321,11 +323,11 @@ class ManagedNetworksOperations(object):
         :return: An instance of LROPoller that returns ManagedNetwork or
          ClientRawResponse<ManagedNetwork> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.network.v2019_06_01_pre.models.ManagedNetwork]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.managednetwork.v2019_06_01_pre.models.ManagedNetwork]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.network.v2019_06_01_pre.models.ManagedNetwork]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.managednetwork.v2019_06_01_pre.models.ManagedNetwork]]
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.network.v2019_06_01_pre.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.managednetwork.v2019_06_01_pre.models.ErrorResponseException>`
         """
         raw_result = self._update_initial(
             resource_group_name=resource_group_name,
@@ -376,9 +378,9 @@ class ManagedNetworksOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of ManagedNetwork
         :rtype:
-         ~azure.mgmt.network.v2019_06_01_pre.models.ManagedNetworkPaged[~azure.mgmt.network.v2019_06_01_pre.models.ManagedNetwork]
+         ~azure.mgmt.managednetwork.v2019_06_01_pre.models.ManagedNetworkPaged[~azure.mgmt.managednetwork.v2019_06_01_pre.models.ManagedNetwork]
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.network.v2019_06_01_pre.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.managednetwork.v2019_06_01_pre.models.ErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -456,9 +458,9 @@ class ManagedNetworksOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of ManagedNetwork
         :rtype:
-         ~azure.mgmt.network.v2019_06_01_pre.models.ManagedNetworkPaged[~azure.mgmt.network.v2019_06_01_pre.models.ManagedNetwork]
+         ~azure.mgmt.managednetwork.v2019_06_01_pre.models.ManagedNetworkPaged[~azure.mgmt.managednetwork.v2019_06_01_pre.models.ManagedNetwork]
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.network.v2019_06_01_pre.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.managednetwork.v2019_06_01_pre.models.ErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:

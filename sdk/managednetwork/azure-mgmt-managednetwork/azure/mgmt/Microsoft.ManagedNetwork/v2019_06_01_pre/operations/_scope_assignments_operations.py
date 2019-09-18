@@ -53,10 +53,11 @@ class ScopeAssignmentsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: ScopeAssignment or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.network.v2019_06_01_pre.models.ScopeAssignment or
+        :rtype:
+         ~azure.mgmt.managednetwork.v2019_06_01_pre.models.ScopeAssignment or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.network.v2019_06_01_pre.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.managednetwork.v2019_06_01_pre.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -124,10 +125,11 @@ class ScopeAssignmentsOperations(object):
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
         :return: ScopeAssignment or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.network.v2019_06_01_pre.models.ScopeAssignment or
+        :rtype:
+         ~azure.mgmt.managednetwork.v2019_06_01_pre.models.ScopeAssignment or
          ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.network.v2019_06_01_pre.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.managednetwork.v2019_06_01_pre.models.ErrorResponseException>`
         """
         parameters = models.ScopeAssignment(location=location, assigned_managed_network=assigned_managed_network)
 
@@ -243,9 +245,9 @@ class ScopeAssignmentsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of ScopeAssignment
         :rtype:
-         ~azure.mgmt.network.v2019_06_01_pre.models.ScopeAssignmentPaged[~azure.mgmt.network.v2019_06_01_pre.models.ScopeAssignment]
+         ~azure.mgmt.managednetwork.v2019_06_01_pre.models.ScopeAssignmentPaged[~azure.mgmt.managednetwork.v2019_06_01_pre.models.ScopeAssignment]
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.network.v2019_06_01_pre.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.managednetwork.v2019_06_01_pre.models.ErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
