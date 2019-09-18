@@ -124,6 +124,9 @@ try:
     from ._models_py3 import CosmosDbMongoDbApiLinkedService
     from ._models_py3 import CosmosDbMongoDbApiSink
     from ._models_py3 import CosmosDbMongoDbApiSource
+    from ._models_py3 import CosmosDbSqlApiCollectionDataset
+    from ._models_py3 import CosmosDbSqlApiSink
+    from ._models_py3 import CosmosDbSqlApiSource
     from ._models_py3 import CouchbaseLinkedService
     from ._models_py3 import CouchbaseSource
     from ._models_py3 import CouchbaseTableDataset
@@ -648,6 +651,9 @@ except (SyntaxError, ImportError):
     from ._models import CosmosDbMongoDbApiLinkedService
     from ._models import CosmosDbMongoDbApiSink
     from ._models import CosmosDbMongoDbApiSource
+    from ._models import CosmosDbSqlApiCollectionDataset
+    from ._models import CosmosDbSqlApiSink
+    from ._models import CosmosDbSqlApiSource
     from ._models import CouchbaseLinkedService
     from ._models import CouchbaseSource
     from ._models import CouchbaseTableDataset
@@ -1255,6 +1261,9 @@ __all__ = [
     'CosmosDbMongoDbApiLinkedService',
     'CosmosDbMongoDbApiSink',
     'CosmosDbMongoDbApiSource',
+    'CosmosDbSqlApiCollectionDataset',
+    'CosmosDbSqlApiSink',
+    'CosmosDbSqlApiSource',
     'CouchbaseLinkedService',
     'CouchbaseSource',
     'CouchbaseTableDataset',
