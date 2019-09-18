@@ -65,7 +65,8 @@ class CertificateClient(AsyncKeyVaultClientBase):
         :param bool enabled: Determines whether the object is enabled.
         :param tags: Application specific metadata in the form of key-value pairs.
         :type tags: dict(str, str)
-        :returns: The created CertificateOperation
+        :returns: A coroutine for the creation of the certificate. Awaiting the coroutine
+        returns the created certificate if creation is successful, the status if not.
         :rtype: coroutine
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
@@ -117,17 +118,24 @@ class CertificateClient(AsyncKeyVaultClientBase):
         )
 
         command = partial(
-            self._client.get_certificate_operation,
-            vault_base_url=self.vault_url,
-            certificate_name=name,
+            self.get_certificate_operation,
+            name=name,
+            **kwargs
+        )
+
+        get_certificate_command = partial(
+            self.get_certificate_with_policy,
+            name=name,
             **kwargs
         )
 
         create_certificate_polling = CreateCertificatePollerAsync(
-            unknown_issuer=(policy.issuer_name.lower() == 'unknown'))
+            get_certificate_command=get_certificate_command,
+            unknown_issuer=(policy.issuer_name.lower() == 'unknown')
+        )
         return async_poller(
             command,
-            create_certificate_operation.status.lower(),
+            create_certificate_operation,
             None,
             create_certificate_polling
         )

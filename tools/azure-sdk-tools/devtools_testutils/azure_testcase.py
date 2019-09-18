@@ -11,6 +11,7 @@ import zlib
 from azure_devtools.scenario_tests import (
     ReplayableTest, AzureTestError,
     GeneralNameReplacer, RequestUrlNormalizer,
+    OAuthRequestResponsesFilter
 )
 
 from .config import TEST_SETTING_FILENAME
@@ -89,6 +90,7 @@ class AzureTestCase(ReplayableTest):
     def _get_recording_processors(self):
         return [
             self.scrubber,
+            OAuthRequestResponsesFilter(),
             RequestUrlNormalizer()
         ]
 

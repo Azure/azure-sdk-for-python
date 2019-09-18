@@ -73,7 +73,8 @@ class CertificateClient(KeyVaultClientBase):
         :param bool enabled: Determines whether the object is enabled.
         :param tags: Application specific metadata in the form of key-value pairs.
         :type tags: dict(str, str)
-        :returns: The created CertificateOperation
+        :returns: An LROPoller for the create certificate operation. Waiting on the poller
+        gives you the certificate if creation is successful, the status if not.
         :rtype: ~azure.core.polling.LROPoller
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
@@ -126,16 +127,24 @@ class CertificateClient(KeyVaultClientBase):
         )
 
         command = partial(
-            self._client.get_certificate_operation,
-            vault_base_url=self.vault_url,
-            certificate_name=name,
+            self.get_certificate_operation,
+            name=name,
             **kwargs
         )
 
-        create_certificate_polling = CreateCertificatePoller(unknown_issuer=(policy.issuer_name.lower() == 'unknown'))
+        get_certificate_command = partial(
+            self.get_certificate_with_policy,
+            name=name,
+            **kwargs
+        )
+
+        create_certificate_polling = CreateCertificatePoller(
+            get_certificate_command=get_certificate_command,
+            unknown_issuer=(policy.issuer_name.lower() == 'unknown')
+        )
         return LROPoller(
             command,
-            create_certificate_operation.status.lower(),
+            create_certificate_operation,
             None,
             create_certificate_polling
         )
@@ -329,7 +338,7 @@ class CertificateClient(KeyVaultClientBase):
         """Imports a certificate into a specified key vault.
 
         Imports an existing valid certificate, containing a private key, into
-        Azure Key Vault. The certificate to be imported can be in either PFX or
+        Azure Key Vault. The certificate to be imported can be in either PFX orHi
         PEM format. If the certificate is in PEM format the PEM file must
         contain the key as well as x509 certificates. This operation requires
         the certificates/import permission.
