@@ -39,7 +39,6 @@ VAULT_URL = os.environ["VAULT_URL"]
 credential = DefaultAzureCredential()
 client = CertificateClient(vault_url=VAULT_URL, credential=credential)
 try:
-
     print("\n.. Create Certificate")
     cert_name = 'BackupRestoreCertificate'
 
@@ -59,22 +58,12 @@ try:
     print("Backup created for certificate with name '{0}'.".format(cert_name))
 
     # The storage account certificate is no longer in use, so you can delete it.
+    print("\n.. Delete the certificate")
     client.delete_certificate(name=cert_name)
-    # To ensure certificate is deleted on the server side.
-    time.sleep(20)
-    print("Deleted Certificate with name '{0}'".format(cert_name))
-
-    # Even though the certificate is deleted, it can still be recovered so its name cannot be reused.
-    # In order to be able to reuse the name during restoration, we must purge the certificate
-    # after the initial deletion.
-    print("\nPurging certificate...")
-    client.purge_deleted_certificate(name=cert_name)
-    # To ensure certificate is purged on the server side.
-    time.sleep(20)
-    print("Purged Certificate with name '{0}'".format(cert_name))
+    print("Deleted certificate '{0}'".format(cert_name))
 
     # In future, if the certificate is required again, we can use the backup value to restore it in the Key Vault.
-    print("\n.. Restore the certificate using the backed up certificate bytes")
+    print("\n.. Restore the certificate from the backup")
     certificate = client.restore_certificate(certificate_backup)
     print("Restored Certificate with name '{0}'".format(certificate.name))
 
