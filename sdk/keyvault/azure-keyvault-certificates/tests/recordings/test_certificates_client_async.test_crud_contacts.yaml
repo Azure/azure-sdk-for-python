@@ -20,7 +20,7 @@ interactions:
       cache-control: no-cache
       content-length: '87'
       content-type: application/json; charset=utf-8
-      date: Wed, 18 Sep 2019 17:03:45 GMT
+      date: Wed, 18 Sep 2019 20:48:12 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-IIS/10.0
@@ -45,55 +45,6 @@ interactions:
         - api-version=7.0
         - ''
 - request:
-    body: client_id=3640fa99-2ed4-4816-92c9-3c61066adca2&client_secret=f3afd12d-7504-4dc5-8b76-25726a60dcf5&grant_type=client_credentials&scope=https%3A%2F%2Fvault.azure.net%2F.default
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '174'
-      Content-Type:
-      - application/x-www-form-urlencoded
-      User-Agent:
-      - python-requests/2.22.0
-    method: POST
-    uri: https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/token
-  response:
-    body:
-      string: '{"token_type":"Bearer","expires_in":3600,"ext_expires_in":3600,"access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6ImllX3FXQ1hoWHh0MXpJRXN1NGM3YWNRVkduNCIsImtpZCI6ImllX3FXQ1hoWHh0MXpJRXN1NGM3YWNRVkduNCJ9.eyJhdWQiOiJodHRwczovL3ZhdWx0LmF6dXJlLm5ldCIsImlzcyI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzcyZjk4OGJmLTg2ZjEtNDFhZi05MWFiLTJkN2NkMDExZGI0Ny8iLCJpYXQiOjE1Njg4MjU5MjYsIm5iZiI6MTU2ODgyNTkyNiwiZXhwIjoxNTY4ODI5ODI2LCJhaW8iOiI0MkZnWUhocU8rbXZtci92eTFQV3IzdEZlOTR6QWdBPSIsImFwcGlkIjoiMzY0MGZhOTktMmVkNC00ODE2LTkyYzktM2M2MTA2NmFkY2EyIiwiYXBwaWRhY3IiOiIxIiwiaWRwIjoiaHR0cHM6Ly9zdHMud2luZG93cy5uZXQvNzJmOTg4YmYtODZmMS00MWFmLTkxYWItMmQ3Y2QwMTFkYjQ3LyIsIm9pZCI6ImE3NjRjZDk3LTQzZWQtNGQxNS04ZjJlLTMxNzhjYjMwMWE4YSIsInN1YiI6ImE3NjRjZDk3LTQzZWQtNGQxNS04ZjJlLTMxNzhjYjMwMWE4YSIsInRpZCI6IjcyZjk4OGJmLTg2ZjEtNDFhZi05MWFiLTJkN2NkMDExZGI0NyIsInV0aSI6IlhqQWZlbW52b0U2RVl2QjdxUk1LQUEiLCJ2ZXIiOiIxLjAifQ.JipQbvdgP6ywtvmYj_qktJQCaaHzYMF60uhcQeFWNr46q5z9sFAgerUKHCcOZVrK5HrVvFwP6egguGIcb2S63eWe-B74fJ3nlE-Kjz9GeR2YOBSNp0uftXxdQJlBvajCa5qgr0hvFIX1WOUxqpRXrgAaIf7vGNiP204IKqb8r3Rltpvo9RUZpoHW6vjiprBKnQLdfHXiDiNFdOlvjJ-O7L0hVJaLXepweQFldZnYZmv4GgQTJk7SuVOs-_6hNno5Y4yFeBW396woWf-fdtGKLI6qByojR3-NzDCzBntGjlfFVGqNKQU-zHdKdpCk4fs4WAoX4GepOVUMy5g4tz5-ew"}'
-    headers:
-      cache-control:
-      - no-cache, no-store
-      content-length:
-      - '1231'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Wed, 18 Sep 2019 17:03:46 GMT
-      expires:
-      - '-1'
-      p3p:
-      - CP="DSP CUR OTPi IND OTRi ONL FIN"
-      pragma:
-      - no-cache
-      set-cookie:
-      - fpc=AhPYr8xS6GdHnzDw6byXsbs1E-O8AQAAAHJaFNUOAAAA; expires=Fri, 18-Oct-2019
-        17:03:46 GMT; path=/; secure; HttpOnly
-      - x-ms-gateway-slice=estsfd; path=/; secure; HttpOnly
-      - stsservicecookie=estsfd; path=/; secure; HttpOnly
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      x-content-type-options:
-      - nosniff
-      x-ms-ests-server:
-      - 2.1.9368.9 - NCUS ProdSlices
-    status:
-      code: 200
-      message: OK
-- request:
     body: '{"contacts": [{"email": "admin@contoso.com", "name": "John Doe", "phone":
       "1111111111"}, {"email": "admin2@contoso.com", "name": "John Doe2", "phone":
       "2222222222"}]}'
@@ -116,7 +67,7 @@ interactions:
       cache-control: no-cache
       content-length: '221'
       content-type: application/json; charset=utf-8
-      date: Wed, 18 Sep 2019 17:03:45 GMT
+      date: Wed, 18 Sep 2019 20:48:13 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-IIS/10.0
@@ -155,7 +106,7 @@ interactions:
       cache-control: no-cache
       content-length: '221'
       content-type: application/json; charset=utf-8
-      date: Wed, 18 Sep 2019 17:03:45 GMT
+      date: Wed, 18 Sep 2019 20:48:13 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-IIS/10.0
@@ -194,7 +145,7 @@ interactions:
       cache-control: no-cache
       content-length: '221'
       content-type: application/json; charset=utf-8
-      date: Wed, 18 Sep 2019 17:03:45 GMT
+      date: Wed, 18 Sep 2019 20:48:13 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-IIS/10.0
@@ -232,7 +183,7 @@ interactions:
       cache-control: no-cache
       content-length: '68'
       content-type: application/json; charset=utf-8
-      date: Wed, 18 Sep 2019 17:03:45 GMT
+      date: Wed, 18 Sep 2019 20:48:13 GMT
       expires: '-1'
       pragma: no-cache
       server: Microsoft-IIS/10.0

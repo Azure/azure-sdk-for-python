@@ -8,7 +8,6 @@ import logging
 from typing import Any, Callable
 
 from azure.core.polling import AsyncPollingMethod
-from azure.keyvault.certificates._shared import parse_vault_id
 
 
 logger = logging.getLogger(__name__)
