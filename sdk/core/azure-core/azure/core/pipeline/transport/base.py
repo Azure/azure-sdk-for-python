@@ -593,6 +593,7 @@ class PipelineClientBase(object):
 
 
 from email.message import Message
+from email.policy import HTTP
 try:
     from email import message_from_bytes as message_parser
 except ImportError: # 2.7
@@ -625,14 +626,16 @@ class MultiPartHelper(object):
         # Update the main request with the body
         main_message = Message()
         main_message.add_header("Content-Type", "multipart/mixed")
-        for req in self.requests:
+        for i, req in enumerate(self.requests):
             part_message = Message()
-            part_message.add_header('content-type', 'application/http')
+            part_message.add_header('Content-Type', 'application/http')
+            part_message.add_header('Content-Transfer-Encoding', 'binary')
+            part_message.add_header('Content-ID', str(i))
             part_message.set_payload(req.serialize())
             main_message.attach(part_message)
 
-        full_message = main_message.as_bytes()
-        headers, _, body = full_message.split(b'\n', maxsplit=2)
+        full_message = main_message.as_bytes(policy=HTTP)
+        headers, _, body = full_message.split(b'\r\n', maxsplit=2)
         self.main_request.set_bytes_body(body)
         self.main_request.headers['Content-Type'] = 'multipart/mixed; boundary='+main_message.get_boundary()
 
