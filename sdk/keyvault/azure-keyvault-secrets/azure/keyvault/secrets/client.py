@@ -193,7 +193,7 @@ class SecretClient(KeyVaultClientBase):
         return self._client.get_secrets(
             self._vault_url,
             maxresults=max_page_size,
-            cls=lambda objs: [DeletedSecret._from_secret_item(x) for x in objs],
+            cls=lambda objs: [SecretAttributes._from_secret_item(x) for x in objs],
             **kwargs
         )
 
@@ -221,7 +221,7 @@ class SecretClient(KeyVaultClientBase):
             self._vault_url,
             name,
             maxresults=max_page_size,
-            cls=lambda objs: [DeletedSecret._from_secret_item(x) for x in objs],
+            cls=lambda objs: [SecretAttributes._from_secret_item(x) for x in objs],
             **kwargs
         )
 
