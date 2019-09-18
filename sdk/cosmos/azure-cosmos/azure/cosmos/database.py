@@ -223,6 +223,64 @@ class DatabaseProxy(object):
         return ContainerProxy(self.client_connection, self.database_link, data["id"], properties=data)
 
     @distributed_trace
+    def create_container_if_not_exists(
+        self,
+        id,  # type: str  # pylint: disable=redefined-builtin
+        partition_key,  # type: Any
+        indexing_policy=None,  # type: Optional[Dict[str, Any]]
+        default_ttl=None,  # type: Optional[int]
+        populate_query_metrics=None,  # type: Optional[bool]
+        offer_throughput=None,  # type: Optional[int]
+        unique_key_policy=None,  # type: Optional[Dict[str, Any]]
+        conflict_resolution_policy=None,  # type: Optional[Dict[str, Any]]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> ContainerProxy
+        """
+        Create the container if it does not exist already.
+
+        If the container already exists, the existing settings are returned.
+        Note: it does not check or update the existing container settings or offer throughput
+        if they differ from what was passed into the method.
+
+        :param id: ID (name) of container to read or create.
+        :param partition_key: The partition key to use for the container.
+        :param indexing_policy: The indexing policy to apply to the container.
+        :param default_ttl: Default time to live (TTL) for items in the container. If unspecified, items do not expire.
+        :param session_token: Token for use with Session consistency.
+        :param initial_headers: Initial headers to be sent as part of the request.
+        :param access_condition: Conditions Associated with the request.
+        :param populate_query_metrics: Enable returning query metrics in response headers.
+        :param offer_throughput: The provisioned throughput for this offer.
+        :param unique_key_policy: The unique key policy to apply to the container.
+        :param conflict_resolution_policy: The conflict resolution policy to apply to the container.
+        :param request_options: Dictionary of additional properties to be used for the request.
+        :param response_hook: a callable invoked with the response metadata
+        :returns: A `ContainerProxy` instance representing the container.
+        :raise CosmosHttpResponseError: The container read or creation failed.
+        :rtype: ~azure.cosmos.container.ContainerProxy
+        """
+
+        try:
+            container_proxy = self.get_container_client(id)
+            container_proxy.read(
+                populate_query_metrics=populate_query_metrics,
+                **kwargs
+            )
+            return container_proxy
+        except CosmosResourceNotFoundError:
+            return self.create_container(
+                id=id,
+                partition_key=partition_key,
+                indexing_policy=indexing_policy,
+                default_ttl=default_ttl,
+                populate_query_metrics=populate_query_metrics,
+                offer_throughput=offer_throughput,
+                unique_key_policy=unique_key_policy,
+                conflict_resolution_policy=conflict_resolution_policy
+            )
+
+    @distributed_trace
     def delete_container(
         self,
         container,  # type: Union[str, ContainerProxy, Dict[str, Any]]
