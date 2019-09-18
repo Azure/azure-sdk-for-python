@@ -71,11 +71,11 @@ async def run_sample():
         print("Key with name '{0}' was updated on date '{1}'".format(updated_ec_key.name, updated_ec_key.updated))
         print("Key with name '{0}' was updated to expire on '{1}'".format(updated_ec_key.name, updated_ec_key.expires))
 
-        # The RSA key is no longer used, need to delete it from the Key Vault.
-        print("\n.. Delete Key")
-        deleted_key = await client.delete_key(rsa_key.name)
-        print("Deleting Key..")
-        print("Key with name '{0}' was deleted.".format(deleted_key.name))
+        # The keys are no longer used, let's delete them
+        print("\n.. Deleting keys")
+        for key_name in (ec_key.name, rsa_key.name):
+            deleted_key = await client.delete_key(key_name)
+            print("\nDeleted '{}'".format(deleted_key.name))
 
     except HttpResponseError as e:
         print("\nrun_sample has caught an error. {0}".format(e.message))
