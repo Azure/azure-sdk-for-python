@@ -593,7 +593,10 @@ class PipelineClientBase(object):
 
 
 from email.message import Message
-from email import message_from_string
+try:
+    from email import message_from_bytes as message_parser
+except ImportError: # 2.7
+    from email import message_from_string as message_parser
 
 
 class MultiPartHelper(object):
@@ -634,21 +637,24 @@ class MultiPartHelper(object):
         self.main_request.headers['Content-Type'] = 'multipart/mixed; boundary='+main_message.get_boundary()
 
     def parse_response(self, response):
-        body_as_str = response.text()
+        body_as_bytes = response.body()
         # In order to use email.message parser, I need full HTTP bytes. Faking something to make the parser happy
         http_body = (
-            'Content-Type: ' +
-            response.content_type +
-            '\n\n' +
-            body_as_str
+            b'Content-Type: ' +
+            response.content_type.encode('ascii') +
+            b'\r\n\r\n' +
+            body_as_bytes
         )
 
-        message = message_from_string(http_body)  # type: Message
+        message = message_parser(http_body)  # type: Message
 
         # Rebuild an HTTP response from pure string
         responses = []
         for request, raw_reponse in zip(self.requests, message.get_payload()):
-            responses.append(_deserialize_response(raw_reponse.get_payload().encode('ascii'), request))
+            if raw_reponse.get_content_type() == "application/http":
+                responses.append(_deserialize_response(raw_reponse.get_payload(decode=True), request))
+            else:
+                raise ValueError("Multipart doesn't support part other than application/http for now")
 
         # Apply on_response concurrently to all requests
         import concurrent.futures
