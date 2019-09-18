@@ -6,8 +6,6 @@
 
 from datetime import datetime
 import re
-from requests.structures import CaseInsensitiveDict
-
 
 def escape_reserved(value):
     """
@@ -41,21 +39,6 @@ def quote_etag(etag):
     if etag != "*" and etag is not None:
         return '"' + etag + '"'
     return etag
-
-
-def prep_update_configuration_setting(key, etag=None, **kwargs):
-    # type: (str, str, dict) -> CaseInsensitiveDict
-    if not key:
-        raise ValueError("key is mandatory to update a ConfigurationSetting")
-
-    custom_headers = CaseInsensitiveDict(kwargs.get("headers"))
-    if etag:
-        custom_headers["if-match"] = quote_etag(etag)
-    elif "if-match" not in custom_headers:
-        custom_headers["if-match"] = "*"
-
-    return custom_headers
-
 
 def get_endpoint_from_connection_string(connection_string):
     endpoint, _, _ = parse_connection_string(connection_string)

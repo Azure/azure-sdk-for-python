@@ -18,7 +18,6 @@ from azure.core.exceptions import (
 from .._utils import (
     get_endpoint_from_connection_string,
     escape_and_tostr,
-    prep_update_configuration_setting,
     quote_etag,
 )
 from .._generated.aio import AzureAppConfiguration
@@ -40,6 +39,9 @@ class AzureAppConfigurationClient:
     This is the async version of :class:`azure.appconfiguration.ConfigurationClient`
 
     """
+
+    # pylint:disable=protected-access
+
     def __init__(self, base_url, credential, **kwargs):
         # type: (str, AppConfigConnectionStringCredential, Any) -> None
         self.config = AzureAppConfigurationConfiguration(credential, **kwargs)

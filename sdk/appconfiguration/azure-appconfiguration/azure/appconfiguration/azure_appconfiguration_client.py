@@ -23,7 +23,6 @@ from .azure_appconfiguration_credential import AppConfigConnectionStringCredenti
 from ._utils import (
     get_endpoint_from_connection_string,
     escape_and_tostr,
-    prep_update_configuration_setting,
     quote_etag,
 )
 from ._user_agent import USER_AGENT
@@ -37,6 +36,9 @@ class AzureAppConfigurationClient:
         :type credential: azure.AppConfigConnectionStringCredential
 
     """
+
+    # pylint:disable=protected-access
+
     def __init__(self, base_url, credential, **kwargs):
         # type: (str, AppConfigConnectionStringCredential, Any) -> None
         self.config = AzureAppConfigurationConfiguration(credential, **kwargs)
@@ -259,11 +261,11 @@ class AzureAppConfigurationClient:
             returned_config_setting = client.set_configuration_setting(config_setting)
         """
         key_value = KeyValue(
-            key = configuration_setting.key,
-            label = configuration_setting.label,
-            content_type = configuration_setting.content_type,
-            value = configuration_setting.value,
-            tags = configuration_setting.tags
+            key=configuration_setting.key,
+            label=configuration_setting.label,
+            content_type=configuration_setting.content_type,
+            value=configuration_setting.value,
+            tags=configuration_setting.tags
         )
         custom_headers = CaseInsensitiveDict(kwargs.get("headers"))
         etag = configuration_setting.etag
