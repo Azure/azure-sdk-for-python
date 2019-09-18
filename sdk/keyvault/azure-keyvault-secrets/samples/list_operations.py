@@ -1,3 +1,7 @@
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
 import time
 import os
 from azure.keyvault.secrets import SecretClient
@@ -5,19 +9,13 @@ from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 
 # ----------------------------------------------------------------------------------------------------------
-# Prerequistes -
+# Prerequisites:
+# 1. An Azure Key Vault (https://docs.microsoft.com/en-us/azure/key-vault/quick-create-cli)
 #
-# 1. An Azure Key Vault-
-#    https://docs.microsoft.com/en-us/azure/key-vault/quick-create-cli
+# 2. azure-keyvault-secrets and azure-identity libraries (pip install these)
 #
-# 2. Microsoft Azure Key Vault PyPI package -
-#    https://pypi.python.org/pypi/azure-keyvault-secrets/
-#
-# 3. Microsoft Azure Identity package -
-#    https://pypi.python.org/pypi/azure-identity/
-#
-# 4. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL.
-# How to do this - https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys#createget-credentials)
+# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL
+#    (See https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys#authenticate-the-client)
 #
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates the basic list operations on a vault(secret) resource for Azure Key Vault.
@@ -43,7 +41,7 @@ def run_sample():
     try:
         # Let's create secrets holding storage and bank accounts credentials. If the secret
         # already exists in the Key Vault, then a new version of the secret is created.
-        print("\n1. Create Secret")
+        print("\n.. Create Secret")
         bank_secret = client.set_secret("listOpsBankSecretName", "listOpsSecretValue1")
         storage_secret = client.set_secret("listOpsStorageSecretName", "listOpsSecretValue2")
         print("Secret with name '{0}' was created.".format(bank_secret.name))
@@ -53,7 +51,7 @@ def run_sample():
         # Let's list the secrets and print their values.
         # List operations don 't return the secrets with value information.
         # So, for each returned secret we call get_secret to get the secret with its value information.
-        print("\n2. List secrets from the Key Vault")
+        print("\n.. List secrets from the Key Vault")
         secrets = client.list_secrets()
         for secret in secrets:
             retrieved_secret = client.get_secret(secret.name)
@@ -71,7 +69,7 @@ def run_sample():
 
         # You need to check all the different values your bank account password secret had previously. Lets print all
         # the versions of this secret.
-        print("\n3. List versions of the secret using its name")
+        print("\n.. List versions of the secret using its name")
         secret_versions = client.list_secret_versions(bank_secret.name)
         for secret_version in secret_versions:
             print("Bank Secret with name '{0}' has version: '{1}'.".format(secret_version.name, secret_version.version))
@@ -85,7 +83,7 @@ def run_sample():
         time.sleep(30)
 
         # You can list all the deleted and non-purged secrets, assuming Key Vault is soft-delete enabled.
-        print("\n3. List deleted secrets from the Key Vault")
+        print("\n.. List deleted secrets from the Key Vault")
         deleted_secrets = client.list_deleted_secrets()
         for deleted_secret in deleted_secrets:
             print(
