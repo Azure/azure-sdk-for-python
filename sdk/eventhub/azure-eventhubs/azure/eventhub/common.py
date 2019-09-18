@@ -57,13 +57,9 @@ class EventData(object):
     PROP_TIMESTAMP = b"x-opt-enqueued-time"
     PROP_DEVICE_ID = b"iothub-connection-device-id"
     PROP_LAST_ENQUEUED_SEQUENCE_NUMBER = b"last_enqueued_sequence_number"
-    PROP_LAST_ENQUEUED_SEQUENCE_NUMBER_AMQP_SYMBOL = types.AMQPSymbol(PROP_LAST_ENQUEUED_SEQUENCE_NUMBER)
     PROP_LAST_ENQUEUED_OFFSET = b"last_enqueued_offset"
-    PROP_LAST_ENQUEUED_OFFSET_AMQP_SYMBOL = types.AMQPSymbol(PROP_LAST_ENQUEUED_OFFSET)
     PROP_LAST_ENQUEUED_TIME_UTC = b"last_enqueued_time_utc"
-    PROP_LAST_ENQUEUED_TIME_UTC_AMQP_SYMBOL = types.AMQPSymbol(PROP_LAST_ENQUEUED_TIME_UTC)
     PROP_RUNTIME_INFO_RETRIEVAL_TIME_UTC = b"runtime_info_retrieval_time_utc"
-    PROP_RUNTIME_INFO_RETRIEVAL_TIME_UTC_AMQP_SYMBOL = types.AMQPSymbol(PROP_RUNTIME_INFO_RETRIEVAL_TIME_UTC)
 
     def __init__(self, body=None, to_device=None):
         """
@@ -136,13 +132,13 @@ class EventData(object):
         if event_data._delivery_annotations:
             event_data._runtime_info = {
                 "last_enqueued_sequence_number":
-                    event_data._delivery_annotations.get(EventData.PROP_LAST_ENQUEUED_SEQUENCE_NUMBER_AMQP_SYMBOL, None),
+                    event_data._delivery_annotations.get(EventData.PROP_LAST_ENQUEUED_SEQUENCE_NUMBER, None),
                 "last_enqueued_offset":
                     event_data._delivery_annotations.get(EventData.PROP_LAST_ENQUEUED_OFFSET, None),
                 "last_enqueued_time_utc":
-                    event_data._delivery_annotations.get(EventData.PROP_LAST_ENQUEUED_TIME_UTC_AMQP_SYMBOL, None),
+                    event_data._delivery_annotations.get(EventData.PROP_LAST_ENQUEUED_TIME_UTC, None),
                 "runtime_info_retrieval_time_utc":
-                    event_data._delivery_annotations.get(EventData.PROP_RUNTIME_INFO_RETRIEVAL_TIME_UTC_AMQP_SYMBOL, None)
+                    event_data._delivery_annotations.get(EventData.PROP_RUNTIME_INFO_RETRIEVAL_TIME_UTC, None)
             }
         return event_data
 

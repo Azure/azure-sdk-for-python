@@ -9,7 +9,7 @@ import logging
 import time
 from typing import List
 
-from uamqp import types, errors  # type: ignore
+from uamqp import types, errors, utils  # type: ignore
 from uamqp import ReceiveClient, Source  # type: ignore
 
 from azure.eventhub.common import EventData, EventPosition
@@ -125,7 +125,8 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         if self._offset is not None:
             source.set_filter(self._offset._selector())  # pylint:disable=protected-access
 
-        desired_capabilities = types.AMQPArray([types.AMQPSymbol(self._receiver_runtime_metric_symbol)])\
+        desired_capabilities = utils.data_factory(
+            types.AMQPArray([types.AMQPSymbol(self._receiver_runtime_metric_symbol)]))\
             if self._track_last_enqueued_event_info else None
 
         self._handler = ReceiveClient(

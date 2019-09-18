@@ -266,6 +266,7 @@ class EventHubClient(EventHubClientAbstract):
         owner_level = kwargs.get("owner_level")
         operation = kwargs.get("operation")
         prefetch = kwargs.get("prefetch") or self._config.prefetch
+        track_last_enqueued_event_info = kwargs.get("track_last_enqueued_event_info", False)
         loop = kwargs.get("loop")
 
         path = self._address.path + operation if operation else self._address.path
@@ -273,7 +274,8 @@ class EventHubClient(EventHubClientAbstract):
             self._address.hostname, path, consumer_group, partition_id)
         handler = EventHubConsumer(
             self, source_url, event_position=event_position, owner_level=owner_level,
-            prefetch=prefetch, loop=loop)
+            prefetch=prefetch,
+            track_last_enqueued_event_info=track_last_enqueued_event_info, loop=loop)
         return handler
 
     def create_producer(
