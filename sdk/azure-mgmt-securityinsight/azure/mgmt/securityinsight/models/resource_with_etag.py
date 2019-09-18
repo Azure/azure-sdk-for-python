@@ -9,21 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.serialization import Model
+from .resource import Resource
 
 
-class AlertRuleTemplate(Model):
-    """Alert rule template.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: FusionAlertRuleTemplate,
-    MicrosoftSecurityIncidentCreationAlertRuleTemplate,
-    ScheduledAlertRuleTemplate
+class ResourceWithEtag(Resource):
+    """An azure resource object with an Etag property.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
-
-    All required parameters must be populated in order to send to Azure.
 
     :ivar id: Azure resource Id
     :vartype id: str
@@ -31,31 +24,23 @@ class AlertRuleTemplate(Model):
     :vartype name: str
     :ivar type: Azure resource type
     :vartype type: str
-    :param kind: Required. Constant filled by server.
-    :type kind: str
+    :param etag: Etag of the azure resource
+    :type etag: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'kind': {'required': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    _subtype_map = {
-        'kind': {'Fusion': 'FusionAlertRuleTemplate', 'MicrosoftSecurityIncidentCreation': 'MicrosoftSecurityIncidentCreationAlertRuleTemplate', 'Scheduled': 'ScheduledAlertRuleTemplate'}
-    }
-
-    def __init__(self, **kwargs) -> None:
-        super(AlertRuleTemplate, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.kind = None
+    def __init__(self, **kwargs):
+        super(ResourceWithEtag, self).__init__(**kwargs)
+        self.etag = kwargs.get('etag', None)

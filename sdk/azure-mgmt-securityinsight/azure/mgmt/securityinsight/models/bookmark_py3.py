@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_py3 import Resource
+from .resource_with_etag_py3 import ResourceWithEtag
 
 
-class Bookmark(Resource):
+class Bookmark(ResourceWithEtag):
     """Represents a bookmark in Azure Security Insights.
 
     Variables are only populated by the server, and will be ignored when
@@ -26,7 +26,7 @@ class Bookmark(Resource):
     :vartype name: str
     :ivar type: Azure resource type
     :vartype type: str
-    :param etag: Etag of the bookmark.
+    :param etag: Etag of the azure resource
     :type etag: str
     :param created: The time the bookmark was created
     :type created: datetime
@@ -73,8 +73,7 @@ class Bookmark(Resource):
     }
 
     def __init__(self, *, display_name: str, query: str, etag: str=None, created=None, created_by=None, labels=None, notes: str=None, query_result: str=None, updated=None, updated_by=None, **kwargs) -> None:
-        super(Bookmark, self).__init__(**kwargs)
-        self.etag = etag
+        super(Bookmark, self).__init__(etag=etag, **kwargs)
         self.created = created
         self.created_by = created_by
         self.display_name = display_name

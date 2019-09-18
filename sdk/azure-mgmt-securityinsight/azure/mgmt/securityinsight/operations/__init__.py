@@ -14,11 +14,11 @@ from .alert_rules_operations import AlertRulesOperations
 from .actions_operations import ActionsOperations
 from .alert_rule_templates_operations import AlertRuleTemplatesOperations
 from .cases_operations import CasesOperations
-from .case_relations_operations import CaseRelationsOperations
-from .bookmark_relations_operations import BookmarkRelationsOperations
 from .comments_operations import CommentsOperations
 from .case_comments_operations import CaseCommentsOperations
 from .bookmarks_operations import BookmarksOperations
+from .case_relations_operations import CaseRelationsOperations
+from .bookmark_relations_operations import BookmarkRelationsOperations
 from .data_connectors_operations import DataConnectorsOperations
 from .entities_operations import EntitiesOperations
 from .office_consents_operations import OfficeConsentsOperations
@@ -32,11 +32,11 @@ __all__ = [
     'ActionsOperations',
     'AlertRuleTemplatesOperations',
     'CasesOperations',
-    'CaseRelationsOperations',
-    'BookmarkRelationsOperations',
     'CommentsOperations',
     'CaseCommentsOperations',
     'BookmarksOperations',
+    'CaseRelationsOperations',
+    'BookmarkRelationsOperations',
     'DataConnectorsOperations',
     'EntitiesOperations',
     'OfficeConsentsOperations',

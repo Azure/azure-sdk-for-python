@@ -20,8 +20,37 @@ class AggregationsKind(str, Enum):
 class AlertRuleKind(str, Enum):
 
     scheduled = "Scheduled"
-    filter = "Filter"
+    microsoft_security_incident_creation = "MicrosoftSecurityIncidentCreation"
     fusion = "Fusion"
+
+
+class DataTypeStatus(str, Enum):
+
+    exist = "Exist"
+    not_exist = "NotExist"
+
+
+class TemplateStatus(str, Enum):
+
+    installed = "Installed"  #: Alert rule template installed. and can not use more then once
+    available = "Available"  #: Alert rule template is available.
+    not_available = "NotAvailable"  #: Alert rule template is not available
+
+
+class AttackTactic(str, Enum):
+
+    initial_access = "InitialAccess"
+    execution = "Execution"
+    persistence = "Persistence"
+    privilege_escalation = "PrivilegeEscalation"
+    defense_evasion = "DefenseEvasion"
+    credential_access = "CredentialAccess"
+    discovery = "Discovery"
+    lateral_movement = "LateralMovement"
+    collection = "Collection"
+    exfiltration = "Exfiltration"
+    command_and_control = "CommandAndControl"
+    impact = "Impact"
 
 
 class TriggerOperator(str, Enum):
@@ -38,34 +67,6 @@ class AlertSeverity(str, Enum):
     medium = "Medium"  #: Medium severity
     low = "Low"  #: Low severity
     informational = "Informational"  #: Informational severity
-
-
-class AttackTactic(str, Enum):
-
-    initial_access = "InitialAccess"
-    execution = "Execution"
-    persistence = "Persistence"
-    privilege_escalation = "PrivilegeEscalation"
-    defense_evasion = "DefenseEvasion"
-    credential_access = "CredentialAccess"
-    discovery = "Discovery"
-    lateral_movement = "LateralMovement"
-    collection = "Collection"
-    exfiltration = "Exfiltration"
-    command_and_control = "CommandAndControl"
-
-
-class DataTypeStatus(str, Enum):
-
-    exist = "Exist"
-    not_exist = "NotExist"
-
-
-class TemplateStatus(str, Enum):
-
-    installed = "Installed"  #: Alert rule template installed. and can not use more then once
-    available = "Available"  #: Alert rule template is available.
-    not_available = "NotAvailable"  #: Alert rule template is not available
 
 
 class RelationTypes(str, Enum):
@@ -178,6 +179,14 @@ class OSFamily(str, Enum):
     windows = "Windows"  #: Host with Windows operating system.
     android = "Android"  #: Host with Android operating system.
     ios = "IOS"  #: Host with IOS operating system.
+
+
+class MicrosoftSecurityProductName(str, Enum):
+
+    microsoft_cloud_app_security = "Microsoft Cloud App Security"
+    azure_security_center = "Azure Security Center"
+    azure_advanced_threat_protection = "Azure Advanced Threat Protection"
+    azure_active_directory_identity_protection = "Azure Active Directory Identity Protection"
 
 
 class ElevationToken(str, Enum):

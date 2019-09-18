@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_py3 import Resource
+from .resource_with_etag_py3 import ResourceWithEtag
 
 
-class Action(Resource):
+class Action(ResourceWithEtag):
     """Action for alert rule.
 
     Variables are only populated by the server, and will be ignored when
@@ -24,7 +24,7 @@ class Action(Resource):
     :vartype name: str
     :ivar type: Azure resource type
     :vartype type: str
-    :param etag: Etag of the action.
+    :param etag: Etag of the azure resource
     :type etag: str
     :param trigger_uri: The uri for the action to trigger.
     :type trigger_uri: str
@@ -45,6 +45,5 @@ class Action(Resource):
     }
 
     def __init__(self, *, etag: str=None, trigger_uri: str=None, **kwargs) -> None:
-        super(Action, self).__init__(**kwargs)
-        self.etag = etag
+        super(Action, self).__init__(etag=etag, **kwargs)
         self.trigger_uri = trigger_uri
