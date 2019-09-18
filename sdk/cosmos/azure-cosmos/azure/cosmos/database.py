@@ -239,7 +239,9 @@ class DatabaseProxy(object):
         """
         Create the container if it does not exist already.
 
-        If the container already exists, it is returned.
+        If the container already exists, the existing settings are returned.
+        Note: it does not check or update the existing container settings or offer throughput
+        if they differ from what was passed into the method.
 
         :param id: ID (name) of container to read or create.
         :param partition_key: The partition key to use for the container.

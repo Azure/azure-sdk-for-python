@@ -257,7 +257,9 @@ class CosmosClient(object):
         """
         Create the database if it does not exist already.
 
-        If the database already exists, it is returned.
+        If the database already exists, the existing settings are returned.
+        Note: it does not check or update the existing database settings or offer throughput
+        if they differ from what was passed into the method.
 
         :param id: ID (name) of the database to read or create.
         :param str session_token: Token for use with Session consistency.
