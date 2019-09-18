@@ -98,6 +98,6 @@ class PrimaryAggregationType(str, Enum):
     none = "None"
     average = "Average"
     total = "Total"
-    minimimum = "Minimimum"
+    minimum = "Minimum"
     maximum = "Maximum"
     last = "Last"
