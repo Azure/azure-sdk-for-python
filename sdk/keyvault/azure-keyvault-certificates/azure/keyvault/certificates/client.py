@@ -61,7 +61,7 @@ class CertificateClient(KeyVaultClientBase):
             tags=None,  # type: Optional[Dict[str, str]]
             **kwargs  # type: Any
     ):
-        # type: (...) -> CertificateOperation
+        # type: (...) -> LROPoller
         """Creates a new certificate.
 
         If this is the first version, the certificate resource is created. This
@@ -75,7 +75,7 @@ class CertificateClient(KeyVaultClientBase):
         :param tags: Application specific metadata in the form of key-value pairs.
         :type tags: dict(str, str)
         :returns: An LROPoller for the create certificate operation. Waiting on the poller
-        gives you the certificate if creation is successful, the status if not.
+        gives you the certificate if creation is successful, the CertificateOperation if not.
         :rtype: ~azure.core.polling.LROPoller
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 

@@ -5,7 +5,7 @@
 # pylint:disable=too-many-lines,too-many-public-methods
 import base64
 import uuid
-from typing import Any, AsyncIterable, Optional, Iterable, List, Dict
+from typing import Any, AsyncIterable, Optional, Iterable, List, Dict, Coroutine
 from functools import partial
 
 from azure.core.tracing.decorator import distributed_trace
@@ -53,7 +53,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         enabled: Optional[bool] = None,
         tags: Optional[Dict[str, str]] = None,
         **kwargs: "**Any"
-    ) -> CertificateOperation:
+    ) -> Coroutine:
         """Creates a new certificate.
 
         If this is the first version, the certificate resource is created. This
@@ -67,8 +67,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         :param tags: Application specific metadata in the form of key-value pairs.
         :type tags: dict(str, str)
         :returns: A coroutine for the creation of the certificate. Awaiting the coroutine
-        returns the created certificate if creation is successful, the status if not.
-        :rtype: coroutine
+        returns the created Certificate if creation is successful, the CertificateOperation if not.
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
