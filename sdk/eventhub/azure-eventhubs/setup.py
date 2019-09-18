@@ -67,7 +67,7 @@ setup(
     zip_safe=False,
     packages=find_packages(exclude=exclude_packages),
     install_requires=[
-        'uamqp~=1.2.0',
+        'uamqp>=1.2.3',
         'azure-common~=1.1',
     ],
     extras_require={
