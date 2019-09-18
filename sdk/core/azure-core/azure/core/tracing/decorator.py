@@ -60,7 +60,7 @@ def distributed_trace(func=None, name_of_span=None):
 
         with common.change_context(passed_in_parent):
             name = name_of_span or common.get_function_and_class_name(func, *args)  # type: str
-            with span_impl_type(name=name) as span:
+            with span_impl_type(name=name):
                 return func(*args, **kwargs) # type: ignore
 
     return wrapper_use_tracer
