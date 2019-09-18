@@ -16,7 +16,7 @@ class KeyVaultTestCase(AzureMgmtTestCase):
     def tearDown(self):
         super(KeyVaultTestCase, self).tearDown()
         if self.is_live:
-            dirname = os.path.dirname(os.path.abspath(__file__))
+            dirname = os.path.dirname(__file__)
             seed_filename = os.path.abspath(os.path.join(dirname, "seed.txt"))
             with open(seed_filename, 'w') as f:
                 f.write(os.environ['RUN_IDENTIFIER'])

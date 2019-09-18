@@ -4,7 +4,6 @@
 # ------------------------------------
 import time
 import os
-import pytest
 
 try:
     from unittest.mock import Mock

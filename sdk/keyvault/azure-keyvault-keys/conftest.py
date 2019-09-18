@@ -15,10 +15,9 @@ if sys.version_info < (3, 5):
 identifier = os.environ.get("RUN_IDENTIFIER")
 if not identifier:
     # get the run identifier for unique test runs
-    dirname = os.path.dirname(os.path.abspath(__file__))
+    dirname = os.path.dirname(__file__)
     seed_filename = os.path.abspath(os.path.join(dirname, "tests", "seed.txt"))
 
     # definitely not running in pipeline
-    # could be running locally under direction of ignorant or negligent dev
     with open(seed_filename, 'r') as f:
         os.environ['RUN_IDENTIFIER'] = f.read()
