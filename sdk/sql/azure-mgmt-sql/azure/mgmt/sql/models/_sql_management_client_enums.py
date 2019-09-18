@@ -325,34 +325,15 @@ class FailoverGroupReplicationRole(str, Enum):
     secondary = "Secondary"
 
 
-class IdentityType(str, Enum):
-
-    system_assigned = "SystemAssigned"
-
-
-class ManagedServerCreateMode(str, Enum):
-
-    default = "Default"
-    point_in_time_restore = "PointInTimeRestore"
-
-
-class ManagedInstanceLicenseType(str, Enum):
-
-    license_included = "LicenseIncluded"
-    base_price = "BasePrice"
-
-
-class ManagedInstanceProxyOverride(str, Enum):
-
-    proxy = "Proxy"
-    redirect = "Redirect"
-    default = "Default"
-
-
 class OperationOrigin(str, Enum):
 
     user = "user"
     system = "system"
+
+
+class IdentityType(str, Enum):
+
+    system_assigned = "SystemAssigned"
 
 
 class SyncAgentState(str, Enum):
@@ -503,30 +484,6 @@ class JobTargetGroupMembershipType(str, Enum):
     exclude = "Exclude"
 
 
-class ManagedDatabaseStatus(str, Enum):
-
-    online = "Online"
-    offline = "Offline"
-    shutdown = "Shutdown"
-    creating = "Creating"
-    inaccessible = "Inaccessible"
-    updating = "Updating"
-
-
-class CatalogCollationType(str, Enum):
-
-    database_default = "DATABASE_DEFAULT"
-    sql_latin1_general_cp1_ci_as = "SQL_Latin1_General_CP1_CI_AS"
-
-
-class ManagedDatabaseCreateMode(str, Enum):
-
-    default = "Default"
-    restore_external_backup = "RestoreExternalBackup"
-    point_in_time_restore = "PointInTimeRestore"
-    recovery = "Recovery"
-
-
 class AutomaticTuningServerMode(str, Enum):
 
     custom = "Custom"
@@ -631,6 +588,13 @@ class DatabaseStatus(str, Enum):
     scaling = "Scaling"
     offline_changing_dw_performance_tiers = "OfflineChangingDwPerformanceTiers"
     online_changing_dw_performance_tiers = "OnlineChangingDwPerformanceTiers"
+    disabled = "Disabled"
+
+
+class CatalogCollationType(str, Enum):
+
+    database_default = "DATABASE_DEFAULT"
+    sql_latin1_general_cp1_ci_as = "SQL_Latin1_General_CP1_CI_AS"
 
 
 class DatabaseLicenseType(str, Enum):
@@ -682,6 +646,44 @@ class InstancePoolLicenseType(str, Enum):
 
     license_included = "LicenseIncluded"
     base_price = "BasePrice"
+
+
+class ManagedServerCreateMode(str, Enum):
+
+    default = "Default"
+    point_in_time_restore = "PointInTimeRestore"
+
+
+class ManagedInstanceLicenseType(str, Enum):
+
+    license_included = "LicenseIncluded"
+    base_price = "BasePrice"
+
+
+class ManagedInstanceProxyOverride(str, Enum):
+
+    proxy = "Proxy"
+    redirect = "Redirect"
+    default = "Default"
+
+
+class ManagedDatabaseStatus(str, Enum):
+
+    online = "Online"
+    offline = "Offline"
+    shutdown = "Shutdown"
+    creating = "Creating"
+    inaccessible = "Inaccessible"
+    restoring = "Restoring"
+    updating = "Updating"
+
+
+class ManagedDatabaseCreateMode(str, Enum):
+
+    default = "Default"
+    restore_external_backup = "RestoreExternalBackup"
+    point_in_time_restore = "PointInTimeRestore"
+    recovery = "Recovery"
 
 
 class LongTermRetentionDatabaseState(str, Enum):

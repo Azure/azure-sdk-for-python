@@ -502,7 +502,7 @@ class Database(TrackedResource):
      'Offline', 'Standby', 'Shutdown', 'EmergencyMode', 'AutoClosed',
      'Copying', 'Creating', 'Inaccessible', 'OfflineSecondary', 'Pausing',
      'Paused', 'Resuming', 'Scaling', 'OfflineChangingDwPerformanceTiers',
-     'OnlineChangingDwPerformanceTiers'
+     'OnlineChangingDwPerformanceTiers', 'Disabled'
     :vartype status: str or ~azure.mgmt.sql.models.DatabaseStatus
     :ivar database_id: The ID of the database.
     :vartype database_id: str
@@ -556,11 +556,16 @@ class Database(TrackedResource):
     :ivar earliest_restore_date: This records the earliest start date and time
      that restore is available for this database (ISO8601 format).
     :vartype earliest_restore_date: datetime
-    :param read_scale: The state of read-only routing. If enabled, connections
-     that have application intent set to readonly in their connection string
-     may be routed to a readonly secondary replica in the same region. Possible
-     values include: 'Enabled', 'Disabled'
+    :param read_scale: If enabled, connections that have application intent
+     set to readonly in their connection string may be routed to a readonly
+     secondary replica. This property is only settable for Premium and Business
+     Critical databases. Possible values include: 'Enabled', 'Disabled'
     :type read_scale: str or ~azure.mgmt.sql.models.DatabaseReadScale
+    :param read_replica_count: The number of readonly secondary replicas
+     associated with the database to which readonly application intent
+     connections may be routed. This property is only settable for Hyperscale
+     edition databases.
+    :type read_replica_count: int
     :ivar current_sku: The name and tier of the SKU.
     :vartype current_sku: ~azure.mgmt.sql.models.Sku
     :param auto_pause_delay: Time in minutes after which database is
@@ -569,6 +574,12 @@ class Database(TrackedResource):
     :param min_capacity: Minimal capacity that database will always have
      allocated, if not paused
     :type min_capacity: float
+    :ivar paused_date: The date when database was paused by user configuration
+     or action (ISO8601 format). Null if the database is ready.
+    :vartype paused_date: datetime
+    :ivar resumed_date: The date when database was resumed by user action or
+     database login (ISO8601 format). Null if the database is paused.
+    :vartype resumed_date: datetime
     """
 
     _validation = {
@@ -588,6 +599,8 @@ class Database(TrackedResource):
         'max_log_size_bytes': {'readonly': True},
         'earliest_restore_date': {'readonly': True},
         'current_sku': {'readonly': True},
+        'paused_date': {'readonly': True},
+        'resumed_date': {'readonly': True},
     }
 
     _attribute_map = {
@@ -624,12 +637,15 @@ class Database(TrackedResource):
         'max_log_size_bytes': {'key': 'properties.maxLogSizeBytes', 'type': 'long'},
         'earliest_restore_date': {'key': 'properties.earliestRestoreDate', 'type': 'iso-8601'},
         'read_scale': {'key': 'properties.readScale', 'type': 'str'},
+        'read_replica_count': {'key': 'properties.readReplicaCount', 'type': 'int'},
         'current_sku': {'key': 'properties.currentSku', 'type': 'Sku'},
         'auto_pause_delay': {'key': 'properties.autoPauseDelay', 'type': 'int'},
         'min_capacity': {'key': 'properties.minCapacity', 'type': 'float'},
+        'paused_date': {'key': 'properties.pausedDate', 'type': 'iso-8601'},
+        'resumed_date': {'key': 'properties.resumedDate', 'type': 'iso-8601'},
     }
 
-    def __init__(self, *, location: str, tags=None, sku=None, create_mode=None, collation: str=None, max_size_bytes: int=None, sample_name=None, elastic_pool_id: str=None, source_database_id: str=None, restore_point_in_time=None, source_database_deletion_date=None, recovery_services_recovery_point_id: str=None, long_term_retention_backup_resource_id: str=None, recoverable_database_id: str=None, restorable_dropped_database_id: str=None, catalog_collation=None, zone_redundant: bool=None, license_type=None, read_scale=None, auto_pause_delay: int=None, min_capacity: float=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, sku=None, create_mode=None, collation: str=None, max_size_bytes: int=None, sample_name=None, elastic_pool_id: str=None, source_database_id: str=None, restore_point_in_time=None, source_database_deletion_date=None, recovery_services_recovery_point_id: str=None, long_term_retention_backup_resource_id: str=None, recoverable_database_id: str=None, restorable_dropped_database_id: str=None, catalog_collation=None, zone_redundant: bool=None, license_type=None, read_scale=None, read_replica_count: int=None, auto_pause_delay: int=None, min_capacity: float=None, **kwargs) -> None:
         super(Database, self).__init__(location=location, tags=tags, **kwargs)
         self.sku = sku
         self.kind = None
@@ -659,9 +675,12 @@ class Database(TrackedResource):
         self.max_log_size_bytes = None
         self.earliest_restore_date = None
         self.read_scale = read_scale
+        self.read_replica_count = read_replica_count
         self.current_sku = None
         self.auto_pause_delay = auto_pause_delay
         self.min_capacity = min_capacity
+        self.paused_date = None
+        self.resumed_date = None
 
 
 class DatabaseAutomaticTuning(ProxyResource):
@@ -809,8 +828,8 @@ class DatabaseBlobAuditingPolicy(ProxyResource):
     :type is_storage_secondary_key_in_use: bool
     :param is_azure_monitor_target_enabled: Specifies whether audit events are
      sent to Azure Monitor.
-     In order to send the events to Azure Monitor, specify 'State' as 'Enabled'
-     and 'IsAzureMonitorTargetEnabled' as true.
+     In order to send the events to Azure Monitor, specify 'state' as 'Enabled'
+     and 'isAzureMonitorTargetEnabled' as true.
      When using REST API to configure auditing, Diagnostic Settings with
      'SQLSecurityAuditEvents' diagnostic logs category on the database should
      be also created.
@@ -1112,7 +1131,7 @@ class DatabaseUpdate(Model):
      'Offline', 'Standby', 'Shutdown', 'EmergencyMode', 'AutoClosed',
      'Copying', 'Creating', 'Inaccessible', 'OfflineSecondary', 'Pausing',
      'Paused', 'Resuming', 'Scaling', 'OfflineChangingDwPerformanceTiers',
-     'OnlineChangingDwPerformanceTiers'
+     'OnlineChangingDwPerformanceTiers', 'Disabled'
     :vartype status: str or ~azure.mgmt.sql.models.DatabaseStatus
     :ivar database_id: The ID of the database.
     :vartype database_id: str
@@ -1166,11 +1185,16 @@ class DatabaseUpdate(Model):
     :ivar earliest_restore_date: This records the earliest start date and time
      that restore is available for this database (ISO8601 format).
     :vartype earliest_restore_date: datetime
-    :param read_scale: The state of read-only routing. If enabled, connections
-     that have application intent set to readonly in their connection string
-     may be routed to a readonly secondary replica in the same region. Possible
-     values include: 'Enabled', 'Disabled'
+    :param read_scale: If enabled, connections that have application intent
+     set to readonly in their connection string may be routed to a readonly
+     secondary replica. This property is only settable for Premium and Business
+     Critical databases. Possible values include: 'Enabled', 'Disabled'
     :type read_scale: str or ~azure.mgmt.sql.models.DatabaseReadScale
+    :param read_replica_count: The number of readonly secondary replicas
+     associated with the database to which readonly application intent
+     connections may be routed. This property is only settable for Hyperscale
+     edition databases.
+    :type read_replica_count: int
     :ivar current_sku: The name and tier of the SKU.
     :vartype current_sku: ~azure.mgmt.sql.models.Sku
     :param auto_pause_delay: Time in minutes after which database is
@@ -1179,6 +1203,12 @@ class DatabaseUpdate(Model):
     :param min_capacity: Minimal capacity that database will always have
      allocated, if not paused
     :type min_capacity: float
+    :ivar paused_date: The date when database was paused by user configuration
+     or action (ISO8601 format). Null if the database is ready.
+    :vartype paused_date: datetime
+    :ivar resumed_date: The date when database was resumed by user action or
+     database login (ISO8601 format). Null if the database is paused.
+    :vartype resumed_date: datetime
     :param tags: Resource tags.
     :type tags: dict[str, str]
     """
@@ -1194,6 +1224,8 @@ class DatabaseUpdate(Model):
         'max_log_size_bytes': {'readonly': True},
         'earliest_restore_date': {'readonly': True},
         'current_sku': {'readonly': True},
+        'paused_date': {'readonly': True},
+        'resumed_date': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1223,13 +1255,16 @@ class DatabaseUpdate(Model):
         'max_log_size_bytes': {'key': 'properties.maxLogSizeBytes', 'type': 'long'},
         'earliest_restore_date': {'key': 'properties.earliestRestoreDate', 'type': 'iso-8601'},
         'read_scale': {'key': 'properties.readScale', 'type': 'str'},
+        'read_replica_count': {'key': 'properties.readReplicaCount', 'type': 'int'},
         'current_sku': {'key': 'properties.currentSku', 'type': 'Sku'},
         'auto_pause_delay': {'key': 'properties.autoPauseDelay', 'type': 'int'},
         'min_capacity': {'key': 'properties.minCapacity', 'type': 'float'},
+        'paused_date': {'key': 'properties.pausedDate', 'type': 'iso-8601'},
+        'resumed_date': {'key': 'properties.resumedDate', 'type': 'iso-8601'},
         'tags': {'key': 'tags', 'type': '{str}'},
     }
 
-    def __init__(self, *, sku=None, create_mode=None, collation: str=None, max_size_bytes: int=None, sample_name=None, elastic_pool_id: str=None, source_database_id: str=None, restore_point_in_time=None, source_database_deletion_date=None, recovery_services_recovery_point_id: str=None, long_term_retention_backup_resource_id: str=None, recoverable_database_id: str=None, restorable_dropped_database_id: str=None, catalog_collation=None, zone_redundant: bool=None, license_type=None, read_scale=None, auto_pause_delay: int=None, min_capacity: float=None, tags=None, **kwargs) -> None:
+    def __init__(self, *, sku=None, create_mode=None, collation: str=None, max_size_bytes: int=None, sample_name=None, elastic_pool_id: str=None, source_database_id: str=None, restore_point_in_time=None, source_database_deletion_date=None, recovery_services_recovery_point_id: str=None, long_term_retention_backup_resource_id: str=None, recoverable_database_id: str=None, restorable_dropped_database_id: str=None, catalog_collation=None, zone_redundant: bool=None, license_type=None, read_scale=None, read_replica_count: int=None, auto_pause_delay: int=None, min_capacity: float=None, tags=None, **kwargs) -> None:
         super(DatabaseUpdate, self).__init__(**kwargs)
         self.sku = sku
         self.create_mode = create_mode
@@ -1257,9 +1292,12 @@ class DatabaseUpdate(Model):
         self.max_log_size_bytes = None
         self.earliest_restore_date = None
         self.read_scale = read_scale
+        self.read_replica_count = read_replica_count
         self.current_sku = None
         self.auto_pause_delay = auto_pause_delay
         self.min_capacity = min_capacity
+        self.paused_date = None
+        self.resumed_date = None
         self.tags = tags
 
 
@@ -2427,9 +2465,9 @@ class EncryptionProtector(ProxyResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :param kind: Kind of encryption protector. This is metadata used for the
+    :ivar kind: Kind of encryption protector. This is metadata used for the
      Azure portal experience.
-    :type kind: str
+    :vartype kind: str
     :ivar location: Resource location.
     :vartype location: str
     :ivar subregion: Subregion of the encryption protector.
@@ -2450,6 +2488,7 @@ class EncryptionProtector(ProxyResource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'kind': {'readonly': True},
         'location': {'readonly': True},
         'subregion': {'readonly': True},
         'server_key_type': {'required': True},
@@ -2470,9 +2509,9 @@ class EncryptionProtector(ProxyResource):
         'thumbprint': {'key': 'properties.thumbprint', 'type': 'str'},
     }
 
-    def __init__(self, *, server_key_type, kind: str=None, server_key_name: str=None, **kwargs) -> None:
+    def __init__(self, *, server_key_type, server_key_name: str=None, **kwargs) -> None:
         super(EncryptionProtector, self).__init__(**kwargs)
-        self.kind = kind
+        self.kind = None
         self.location = None
         self.subregion = None
         self.server_key_name = server_key_name
@@ -2633,8 +2672,8 @@ class ExtendedDatabaseBlobAuditingPolicy(ProxyResource):
     :type is_storage_secondary_key_in_use: bool
     :param is_azure_monitor_target_enabled: Specifies whether audit events are
      sent to Azure Monitor.
-     In order to send the events to Azure Monitor, specify 'State' as 'Enabled'
-     and 'IsAzureMonitorTargetEnabled' as true.
+     In order to send the events to Azure Monitor, specify 'state' as 'Enabled'
+     and 'isAzureMonitorTargetEnabled' as true.
      When using REST API to configure auditing, Diagnostic Settings with
      'SQLSecurityAuditEvents' diagnostic logs category on the database should
      be also created.
@@ -2786,8 +2825,8 @@ class ExtendedServerBlobAuditingPolicy(ProxyResource):
     :type is_storage_secondary_key_in_use: bool
     :param is_azure_monitor_target_enabled: Specifies whether audit events are
      sent to Azure Monitor.
-     In order to send the events to Azure Monitor, specify 'State' as 'Enabled'
-     and 'IsAzureMonitorTargetEnabled' as true.
+     In order to send the events to Azure Monitor, specify 'state' as 'Enabled'
+     and 'isAzureMonitorTargetEnabled' as true.
      When using REST API to configure auditing, Diagnostic Settings with
      'SQLSecurityAuditEvents' diagnostic logs category on the database should
      be also created.
@@ -4401,7 +4440,7 @@ class ManagedDatabase(TrackedResource):
     :param collation: Collation of the managed database.
     :type collation: str
     :ivar status: Status of the database. Possible values include: 'Online',
-     'Offline', 'Shutdown', 'Creating', 'Inaccessible', 'Updating'
+     'Offline', 'Shutdown', 'Creating', 'Inaccessible', 'Restoring', 'Updating'
     :vartype status: str or ~azure.mgmt.sql.models.ManagedDatabaseStatus
     :ivar creation_date: Creation date of the database.
     :vartype creation_date: datetime
@@ -4504,6 +4543,86 @@ class ManagedDatabase(TrackedResource):
         self.recoverable_database_id = recoverable_database_id
 
 
+class ManagedDatabaseRestoreDetailsResult(ProxyResource):
+    """A managed database restore details.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar status: Restore status.
+    :vartype status: str
+    :ivar current_restoring_file_name: Current restoring file name.
+    :vartype current_restoring_file_name: str
+    :ivar last_restored_file_name: Last restored file name.
+    :vartype last_restored_file_name: str
+    :ivar last_restored_file_time: Last restored file time.
+    :vartype last_restored_file_time: datetime
+    :ivar percent_completed: Percent completed.
+    :vartype percent_completed: float
+    :ivar unrestorable_files: List of unrestorable files.
+    :vartype unrestorable_files: list[str]
+    :ivar number_of_files_detected: Number of files detected.
+    :vartype number_of_files_detected: long
+    :ivar last_uploaded_file_name: Last uploaded file name.
+    :vartype last_uploaded_file_name: str
+    :ivar last_uploaded_file_time: Last uploaded file time.
+    :vartype last_uploaded_file_time: datetime
+    :ivar block_reason: The reason why restore is in Blocked state.
+    :vartype block_reason: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'status': {'readonly': True},
+        'current_restoring_file_name': {'readonly': True},
+        'last_restored_file_name': {'readonly': True},
+        'last_restored_file_time': {'readonly': True},
+        'percent_completed': {'readonly': True},
+        'unrestorable_files': {'readonly': True},
+        'number_of_files_detected': {'readonly': True},
+        'last_uploaded_file_name': {'readonly': True},
+        'last_uploaded_file_time': {'readonly': True},
+        'block_reason': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'status': {'key': 'properties.status', 'type': 'str'},
+        'current_restoring_file_name': {'key': 'properties.currentRestoringFileName', 'type': 'str'},
+        'last_restored_file_name': {'key': 'properties.lastRestoredFileName', 'type': 'str'},
+        'last_restored_file_time': {'key': 'properties.lastRestoredFileTime', 'type': 'iso-8601'},
+        'percent_completed': {'key': 'properties.percentCompleted', 'type': 'float'},
+        'unrestorable_files': {'key': 'properties.unrestorableFiles', 'type': '[str]'},
+        'number_of_files_detected': {'key': 'properties.numberOfFilesDetected', 'type': 'long'},
+        'last_uploaded_file_name': {'key': 'properties.lastUploadedFileName', 'type': 'str'},
+        'last_uploaded_file_time': {'key': 'properties.lastUploadedFileTime', 'type': 'iso-8601'},
+        'block_reason': {'key': 'properties.blockReason', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(ManagedDatabaseRestoreDetailsResult, self).__init__(**kwargs)
+        self.status = None
+        self.current_restoring_file_name = None
+        self.last_restored_file_name = None
+        self.last_restored_file_time = None
+        self.percent_completed = None
+        self.unrestorable_files = None
+        self.number_of_files_detected = None
+        self.last_uploaded_file_name = None
+        self.last_uploaded_file_time = None
+        self.block_reason = None
+
+
 class ManagedDatabaseSecurityAlertPolicy(ProxyResource):
     """A managed database security alert policy.
 
@@ -4589,7 +4708,7 @@ class ManagedDatabaseUpdate(Model):
     :param collation: Collation of the managed database.
     :type collation: str
     :ivar status: Status of the database. Possible values include: 'Online',
-     'Offline', 'Shutdown', 'Creating', 'Inaccessible', 'Updating'
+     'Offline', 'Shutdown', 'Creating', 'Inaccessible', 'Restoring', 'Updating'
     :vartype status: str or ~azure.mgmt.sql.models.ManagedDatabaseStatus
     :ivar creation_date: Creation date of the database.
     :vartype creation_date: datetime
@@ -4843,6 +4962,60 @@ class ManagedInstance(TrackedResource):
         self.proxy_override = proxy_override
         self.timezone_id = timezone_id
         self.instance_pool_id = instance_pool_id
+
+
+class ManagedInstanceAdministrator(ProxyResource):
+    """An Azure SQL managed instance administrator.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar administrator_type: Required. Type of the managed instance
+     administrator. Default value: "ActiveDirectory" .
+    :vartype administrator_type: str
+    :param login: Required. Login name of the managed instance administrator.
+    :type login: str
+    :param sid: Required. SID (object ID) of the managed instance
+     administrator.
+    :type sid: str
+    :param tenant_id: Tenant ID of the managed instance administrator.
+    :type tenant_id: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'administrator_type': {'required': True, 'constant': True},
+        'login': {'required': True},
+        'sid': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'administrator_type': {'key': 'properties.administratorType', 'type': 'str'},
+        'login': {'key': 'properties.login', 'type': 'str'},
+        'sid': {'key': 'properties.sid', 'type': 'str'},
+        'tenant_id': {'key': 'properties.tenantId', 'type': 'str'},
+    }
+
+    administrator_type = "ActiveDirectory"
+
+    def __init__(self, *, login: str, sid: str, tenant_id: str=None, **kwargs) -> None:
+        super(ManagedInstanceAdministrator, self).__init__(**kwargs)
+        self.login = login
+        self.sid = sid
+        self.tenant_id = tenant_id
 
 
 class ManagedInstanceEditionCapability(Model):
@@ -5713,6 +5886,26 @@ class MetricValue(Model):
         self.total = None
 
 
+class Name(Model):
+    """ARM Usage Name.
+
+    :param value: Usage name value
+    :type value: str
+    :param localized_value: Usage name localized value.
+    :type localized_value: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': 'str'},
+        'localized_value': {'key': 'localizedValue', 'type': 'str'},
+    }
+
+    def __init__(self, *, value: str=None, localized_value: str=None, **kwargs) -> None:
+        super(Name, self).__init__(**kwargs)
+        self.value = value
+        self.localized_value = localized_value
+
+
 class Operation(Model):
     """SQL REST API operation definition.
 
@@ -5925,6 +6118,167 @@ class PerformanceLevelCapability(Model):
         super(PerformanceLevelCapability, self).__init__(**kwargs)
         self.value = None
         self.unit = None
+
+
+class PrivateEndpointConnection(ProxyResource):
+    """A private endpoint connection.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :param private_endpoint: Private endpoint which the connection belongs to.
+    :type private_endpoint: ~azure.mgmt.sql.models.PrivateEndpointProperty
+    :param private_link_service_connection_state: Connection state of the
+     private endpoint connection.
+    :type private_link_service_connection_state:
+     ~azure.mgmt.sql.models.PrivateLinkServiceConnectionStateProperty
+    :ivar provisioning_state: State of the private endpoint connection.
+    :vartype provisioning_state: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'PrivateEndpointProperty'},
+        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionStateProperty'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+    }
+
+    def __init__(self, *, private_endpoint=None, private_link_service_connection_state=None, **kwargs) -> None:
+        super(PrivateEndpointConnection, self).__init__(**kwargs)
+        self.private_endpoint = private_endpoint
+        self.private_link_service_connection_state = private_link_service_connection_state
+        self.provisioning_state = None
+
+
+class PrivateEndpointProperty(Model):
+    """PrivateEndpointProperty.
+
+    :param id: Resource id of the private endpoint.
+    :type id: str
+    """
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(self, *, id: str=None, **kwargs) -> None:
+        super(PrivateEndpointProperty, self).__init__(**kwargs)
+        self.id = id
+
+
+class PrivateLinkResource(ProxyResource):
+    """A private link resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar properties: The private link resource group id.
+    :vartype properties: ~azure.mgmt.sql.models.PrivateLinkResourceProperties
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'properties': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'PrivateLinkResourceProperties'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(PrivateLinkResource, self).__init__(**kwargs)
+        self.properties = None
+
+
+class PrivateLinkResourceProperties(Model):
+    """Properties of a private link resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar group_id: The private link resource group id.
+    :vartype group_id: str
+    :ivar required_members: The private link resource required member names.
+    :vartype required_members: list[str]
+    """
+
+    _validation = {
+        'group_id': {'readonly': True},
+        'required_members': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'group_id': {'key': 'groupId', 'type': 'str'},
+        'required_members': {'key': 'requiredMembers', 'type': '[str]'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(PrivateLinkResourceProperties, self).__init__(**kwargs)
+        self.group_id = None
+        self.required_members = None
+
+
+class PrivateLinkServiceConnectionStateProperty(Model):
+    """PrivateLinkServiceConnectionStateProperty.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param status: Required. The private link service connection status.
+    :type status: str
+    :param description: Required. The private link service connection
+     description.
+    :type description: str
+    :ivar actions_required: The actions required for private link service
+     connection.
+    :vartype actions_required: str
+    """
+
+    _validation = {
+        'status': {'required': True},
+        'description': {'required': True},
+        'actions_required': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'status': {'key': 'status', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'actions_required': {'key': 'actionsRequired', 'type': 'str'},
+    }
+
+    def __init__(self, *, status: str, description: str, **kwargs) -> None:
+        super(PrivateLinkServiceConnectionStateProperty, self).__init__(**kwargs)
+        self.status = status
+        self.description = description
+        self.actions_required = None
 
 
 class RecommendedElasticPool(ProxyResource):
@@ -6900,8 +7254,8 @@ class ServerBlobAuditingPolicy(ProxyResource):
     :type is_storage_secondary_key_in_use: bool
     :param is_azure_monitor_target_enabled: Specifies whether audit events are
      sent to Azure Monitor.
-     In order to send the events to Azure Monitor, specify 'State' as 'Enabled'
-     and 'IsAzureMonitorTargetEnabled' as true.
+     In order to send the events to Azure Monitor, specify 'state' as 'Enabled'
+     and 'isAzureMonitorTargetEnabled' as true.
      When using REST API to configure auditing, Diagnostic Settings with
      'SQLSecurityAuditEvents' diagnostic logs category on the database should
      be also created.
@@ -7719,26 +8073,22 @@ class ServiceTierAdvisor(ProxyResource):
 
 
 class Sku(Model):
-    """The resource model definition representing SKU.
+    """An ARM Resource SKU.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the SKU. Ex - P3. It is typically a
-     letter+number code
+    :param name: Required. The name of the SKU, typically, a letter + Number
+     code, e.g. P3.
     :type name: str
-    :param tier: This field is required to be implemented by the Resource
-     Provider if the service has more than one tier, but is not required on a
-     PUT.
+    :param tier: The tier or edition of the particular SKU, e.g. Basic,
+     Premium.
     :type tier: str
-    :param size: The SKU size. When the name field is the combination of tier
-     and some other value, this would be the standalone code.
+    :param size: Size of the particular SKU
     :type size: str
     :param family: If the service has different generations of hardware, for
      the same SKU, then that can be captured here.
     :type family: str
-    :param capacity: If the SKU supports scale out/in then the capacity
-     integer should be included. If scale out/in is not possible for the
-     resource this may be omitted.
+    :param capacity: Capacity of the particular SKU.
     :type capacity: int
     """
 
@@ -8545,6 +8895,59 @@ class TransparentDataEncryptionActivity(ProxyResource):
         self.location = None
         self.status = None
         self.percent_complete = None
+
+
+class Usage(Model):
+    """ARM usage.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: ~azure.mgmt.sql.models.Name
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar unit: Usage unit.
+    :vartype unit: str
+    :ivar current_value: Usage current value.
+    :vartype current_value: int
+    :ivar limit: Usage limit.
+    :vartype limit: int
+    :ivar requested_limit: Usage requested limit.
+    :vartype requested_limit: int
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'unit': {'readonly': True},
+        'current_value': {'readonly': True},
+        'limit': {'readonly': True},
+        'requested_limit': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'Name'},
+        'type': {'key': 'type', 'type': 'str'},
+        'unit': {'key': 'unit', 'type': 'str'},
+        'current_value': {'key': 'currentValue', 'type': 'int'},
+        'limit': {'key': 'limit', 'type': 'int'},
+        'requested_limit': {'key': 'requestedLimit', 'type': 'int'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(Usage, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.unit = None
+        self.current_value = None
+        self.limit = None
+        self.requested_limit = None
 
 
 class VirtualCluster(TrackedResource):
