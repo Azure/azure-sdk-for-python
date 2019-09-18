@@ -40,12 +40,15 @@ class UsagesOperations(object):
         self.config = config
 
     def list(
-            self, location, custom_headers=None, raw=False, **operation_config):
+            self, location, expand_children=None, custom_headers=None, raw=False, **operation_config):
         """Gets the current usage information as well as limits for AML resources
         for given subscription and location.
 
         :param location: The location for which resource usage is queried.
         :type location: str
+        :param expand_children: Specifies if detailed usages of child
+         resources are required.
+        :type expand_children: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -69,6 +72,8 @@ class UsagesOperations(object):
                 # Construct parameters
                 query_parameters = {}
                 query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
+                if expand_children is not None:
+                    query_parameters['expandChildren'] = self._serialize.query("expand_children", expand_children, 'str')
 
             else:
                 url = next_link
