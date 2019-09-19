@@ -21,6 +21,7 @@ try:
     from .backend_pools_settings_py3 import BackendPoolsSettings
     from .front_door_update_parameters_py3 import FrontDoorUpdateParameters
     from .purge_parameters_py3 import PurgeParameters
+    from .routing_rule_list_result_py3 import RoutingRuleListResult
     from .sub_resource_py3 import SubResource
     from .route_configuration_py3 import RouteConfiguration
     from .routing_rule_update_parameters_py3 import RoutingRuleUpdateParameters
@@ -28,9 +29,12 @@ try:
     from .forwarding_configuration_py3 import ForwardingConfiguration
     from .redirect_configuration_py3 import RedirectConfiguration
     from .backend_py3 import Backend
+    from .load_balancing_settings_list_result_py3 import LoadBalancingSettingsListResult
     from .load_balancing_settings_update_parameters_py3 import LoadBalancingSettingsUpdateParameters
+    from .health_probe_settings_list_result_py3 import HealthProbeSettingsListResult
     from .health_probe_settings_update_parameters_py3 import HealthProbeSettingsUpdateParameters
     from .backend_pool_update_parameters_py3 import BackendPoolUpdateParameters
+    from .backend_pool_list_result_py3 import BackendPoolListResult
     from .frontend_endpoint_update_parameters_web_application_firewall_policy_link_py3 import FrontendEndpointUpdateParametersWebApplicationFirewallPolicyLink
     from .frontend_endpoint_update_parameters_py3 import FrontendEndpointUpdateParameters
     from .validate_custom_domain_input_py3 import ValidateCustomDomainInput
@@ -68,6 +72,7 @@ except (SyntaxError, ImportError):
     from .backend_pools_settings import BackendPoolsSettings
     from .front_door_update_parameters import FrontDoorUpdateParameters
     from .purge_parameters import PurgeParameters
+    from .routing_rule_list_result import RoutingRuleListResult
     from .sub_resource import SubResource
     from .route_configuration import RouteConfiguration
     from .routing_rule_update_parameters import RoutingRuleUpdateParameters
@@ -75,9 +80,12 @@ except (SyntaxError, ImportError):
     from .forwarding_configuration import ForwardingConfiguration
     from .redirect_configuration import RedirectConfiguration
     from .backend import Backend
+    from .load_balancing_settings_list_result import LoadBalancingSettingsListResult
     from .load_balancing_settings_update_parameters import LoadBalancingSettingsUpdateParameters
+    from .health_probe_settings_list_result import HealthProbeSettingsListResult
     from .health_probe_settings_update_parameters import HealthProbeSettingsUpdateParameters
     from .backend_pool_update_parameters import BackendPoolUpdateParameters
+    from .backend_pool_list_result import BackendPoolListResult
     from .frontend_endpoint_update_parameters_web_application_firewall_policy_link import FrontendEndpointUpdateParametersWebApplicationFirewallPolicyLink
     from .frontend_endpoint_update_parameters import FrontendEndpointUpdateParameters
     from .validate_custom_domain_input import ValidateCustomDomainInput
@@ -104,10 +112,6 @@ except (SyntaxError, ImportError):
     from .managed_rule_group_definition import ManagedRuleGroupDefinition
     from .managed_rule_set_definition import ManagedRuleSetDefinition
 from .front_door_paged import FrontDoorPaged
-from .routing_rule_paged import RoutingRulePaged
-from .health_probe_settings_model_paged import HealthProbeSettingsModelPaged
-from .load_balancing_settings_model_paged import LoadBalancingSettingsModelPaged
-from .backend_pool_paged import BackendPoolPaged
 from .frontend_endpoint_paged import FrontendEndpointPaged
 from .web_application_firewall_policy_paged import WebApplicationFirewallPolicyPaged
 from .managed_rule_set_definition_paged import ManagedRuleSetDefinitionPaged
@@ -158,6 +162,7 @@ __all__ = [
     'BackendPoolsSettings',
     'FrontDoorUpdateParameters',
     'PurgeParameters',
+    'RoutingRuleListResult',
     'SubResource',
     'RouteConfiguration',
     'RoutingRuleUpdateParameters',
@@ -165,9 +170,12 @@ __all__ = [
     'ForwardingConfiguration',
     'RedirectConfiguration',
     'Backend',
+    'LoadBalancingSettingsListResult',
     'LoadBalancingSettingsUpdateParameters',
+    'HealthProbeSettingsListResult',
     'HealthProbeSettingsUpdateParameters',
     'BackendPoolUpdateParameters',
+    'BackendPoolListResult',
     'FrontendEndpointUpdateParametersWebApplicationFirewallPolicyLink',
     'FrontendEndpointUpdateParameters',
     'ValidateCustomDomainInput',
@@ -194,10 +202,6 @@ __all__ = [
     'ManagedRuleGroupDefinition',
     'ManagedRuleSetDefinition',
     'FrontDoorPaged',
-    'RoutingRulePaged',
-    'HealthProbeSettingsModelPaged',
-    'LoadBalancingSettingsModelPaged',
-    'BackendPoolPaged',
     'FrontendEndpointPaged',
     'WebApplicationFirewallPolicyPaged',
     'ManagedRuleSetDefinitionPaged',

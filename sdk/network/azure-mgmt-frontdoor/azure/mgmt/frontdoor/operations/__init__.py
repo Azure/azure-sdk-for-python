@@ -10,10 +10,6 @@
 # --------------------------------------------------------------------------
 
 from .front_doors_operations import FrontDoorsOperations
-from .routing_rules_operations import RoutingRulesOperations
-from .health_probe_settings_operations import HealthProbeSettingsOperations
-from .load_balancing_settings_operations import LoadBalancingSettingsOperations
-from .backend_pools_operations import BackendPoolsOperations
 from .frontend_endpoints_operations import FrontendEndpointsOperations
 from .endpoints_operations import EndpointsOperations
 from .policies_operations import PoliciesOperations
@@ -21,10 +17,6 @@ from .managed_rule_sets_operations import ManagedRuleSetsOperations
 
 __all__ = [
     'FrontDoorsOperations',
-    'RoutingRulesOperations',
-    'HealthProbeSettingsOperations',
-    'LoadBalancingSettingsOperations',
-    'BackendPoolsOperations',
     'FrontendEndpointsOperations',
     'EndpointsOperations',
     'PoliciesOperations',
