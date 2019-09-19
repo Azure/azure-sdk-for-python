@@ -45,6 +45,7 @@ try:
     from .billing_profile_creation_request_py3 import BillingProfileCreationRequest
     from .invoice_section_creation_request_py3 import InvoiceSectionCreationRequest
     from .invoice_section_list_result_py3 import InvoiceSectionListResult
+    from .invoice_section_with_create_sub_permission_py3 import InvoiceSectionWithCreateSubPermission
     from .download_url_py3 import DownloadUrl
     from .error_details_py3 import ErrorDetails
     from .error_response_py3 import ErrorResponse, ErrorResponseException
@@ -64,6 +65,7 @@ try:
     from .transaction_py3 import Transaction
     from .transaction_list_result_py3 import TransactionListResult
     from .policy_py3 import Policy
+    from .customer_policy_py3 import CustomerPolicy
     from .available_balance_py3 import AvailableBalance
     from .payment_method_py3 import PaymentMethod
     from .update_auto_renew_request_py3 import UpdateAutoRenewRequest
@@ -119,6 +121,7 @@ except (SyntaxError, ImportError):
     from .billing_profile_creation_request import BillingProfileCreationRequest
     from .invoice_section_creation_request import InvoiceSectionCreationRequest
     from .invoice_section_list_result import InvoiceSectionListResult
+    from .invoice_section_with_create_sub_permission import InvoiceSectionWithCreateSubPermission
     from .download_url import DownloadUrl
     from .error_details import ErrorDetails
     from .error_response import ErrorResponse, ErrorResponseException
@@ -138,6 +141,7 @@ except (SyntaxError, ImportError):
     from .transaction import Transaction
     from .transaction_list_result import TransactionListResult
     from .policy import Policy
+    from .customer_policy import CustomerPolicy
     from .available_balance import AvailableBalance
     from .payment_method import PaymentMethod
     from .update_auto_renew_request import UpdateAutoRenewRequest
@@ -157,6 +161,7 @@ except (SyntaxError, ImportError):
     from .validate_transfer_response import ValidateTransferResponse
     from .validate_transfer_list_response import ValidateTransferListResponse
     from .line_of_credit import LineOfCredit
+from .invoice_section_with_create_sub_permission_paged import InvoiceSectionWithCreateSubPermissionPaged
 from .payment_method_paged import PaymentMethodPaged
 from .customer_paged import CustomerPaged
 from .billing_subscription_paged import BillingSubscriptionPaged
@@ -185,6 +190,7 @@ from .billing_management_client_enums import (
     MarketplacePurchasesPolicy,
     ReservationPurchasesPolicy,
     ViewChargesPolicy,
+    ViewCharges,
     PaymentMethodType,
     UpdateAutoRenew,
     Status,
@@ -226,6 +232,7 @@ __all__ = [
     'BillingProfileCreationRequest',
     'InvoiceSectionCreationRequest',
     'InvoiceSectionListResult',
+    'InvoiceSectionWithCreateSubPermission',
     'DownloadUrl',
     'ErrorDetails',
     'ErrorResponse', 'ErrorResponseException',
@@ -245,6 +252,7 @@ __all__ = [
     'Transaction',
     'TransactionListResult',
     'Policy',
+    'CustomerPolicy',
     'AvailableBalance',
     'PaymentMethod',
     'UpdateAutoRenewRequest',
@@ -264,6 +272,7 @@ __all__ = [
     'ValidateTransferResponse',
     'ValidateTransferListResponse',
     'LineOfCredit',
+    'InvoiceSectionWithCreateSubPermissionPaged',
     'PaymentMethodPaged',
     'CustomerPaged',
     'BillingSubscriptionPaged',
@@ -291,6 +300,7 @@ __all__ = [
     'MarketplacePurchasesPolicy',
     'ReservationPurchasesPolicy',
     'ViewChargesPolicy',
+    'ViewCharges',
     'PaymentMethodType',
     'UpdateAutoRenew',
     'Status',
