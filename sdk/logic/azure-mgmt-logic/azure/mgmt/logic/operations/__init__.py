@@ -36,6 +36,7 @@ from ._integration_service_environment_operations import IntegrationServiceEnvir
 from ._integration_service_environment_network_health_operations import IntegrationServiceEnvironmentNetworkHealthOperations
 from ._integration_service_environment_managed_apis_operations import IntegrationServiceEnvironmentManagedApisOperations
 from ._integration_service_environment_managed_api_operations import IntegrationServiceEnvironmentManagedApiOperations
+from ._integration_service_environment_managed_api_operations_operations import IntegrationServiceEnvironmentManagedApiOperationsOperations
 from ._operations import Operations
 
 __all__ = [
@@ -66,5 +67,6 @@ __all__ = [
     'IntegrationServiceEnvironmentNetworkHealthOperations',
     'IntegrationServiceEnvironmentManagedApisOperations',
     'IntegrationServiceEnvironmentManagedApiOperations',
+    'IntegrationServiceEnvironmentManagedApiOperationsOperations',
     'Operations',
 ]
