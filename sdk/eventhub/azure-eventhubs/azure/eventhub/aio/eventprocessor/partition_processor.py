@@ -13,8 +13,6 @@ from .partition_context import PartitionContext
 class CloseReason(Enum):
     SHUTDOWN = 0  # user call EventProcessor.stop()
     OWNERSHIP_LOST = 1  # lose the ownership of a partition.
-    EVENTHUB_EXCEPTION = 2  # Exception happens during receiving events
-    PROCESS_EVENTS_ERROR = 3  # Exception happens during process_events
 
 
 class PartitionProcessor(ABC):
