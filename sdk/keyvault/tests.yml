@@ -1,4 +1,3 @@
-
 trigger: none
 
 jobs:
@@ -25,3 +24,7 @@ jobs:
       EnvVars:
         TEST_MODE: 'RunLiveNoRecord'
         RUN_IDENTIFIER: $(Build.BuildId)$(Agent.JobName)
+        AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
+        AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
+        AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
+        AZURE_CLIENT_OID: $(aad-azure-sdk-test-client-oid)
