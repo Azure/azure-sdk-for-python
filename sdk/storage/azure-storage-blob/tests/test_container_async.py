@@ -95,7 +95,7 @@ class StorageContainerTestAsync(StorageTestCase):
         return container
 
     #--Test cases for containers -----------------------------------------
-    
+
     async def _test_create_container(self):
         # Arrange
         container_name = self._get_container_reference()
@@ -1191,6 +1191,30 @@ class StorageContainerTestAsync(StorageTestCase):
         self.assertNamedItemInContainer(resp, 'a/')
         self.assertNamedItemInContainer(resp, 'b/')
         self.assertNamedItemInContainer(resp, 'blob4')
+
+    @record
+    def test_delete_blobs_simple(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_delete_blobs_simple())
+
+    async def _test_delete_blobs_simple(self):
+        # Arrange
+        container = await self._create_container()
+        data = b'hello world'
+
+        try:
+            await container.get_blob_client('blob1').upload_blob(data)
+            await container.get_blob_client('blob2').upload_blob(data)
+            await container.get_blob_client('blob3').upload_blob(data)
+        except:
+            pass
+
+        # Act
+        await container.delete_blobs(
+            'blob12',
+            # 'blob2',
+            # 'blob3',
+        )
 
     @record
     def test_list_blobs_with_delimiter(self):

@@ -51,11 +51,11 @@ class AsyncStorageAccountHostsMixin(object):
 
     def _create_pipeline(self, credential, **kwargs):
         # type: (Any, **Any) -> Tuple[Configuration, Pipeline]
-        credential_policy = None
+        self._credential_policy = None
         if hasattr(credential, 'get_token'):
-            credential_policy = AsyncBearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE)
+            self._credential_policy = AsyncBearerTokenCredentialPolicy(credential, STORAGE_OAUTH_SCOPE)
         elif isinstance(credential, SharedKeyCredentialPolicy):
-            credential_policy = credential
+            self._credential_policy = credential
         elif credential is not None:
             raise TypeError("Unsupported credential: {}".format(credential))
         config = kwargs.get('_configuration') or create_configuration(**kwargs)
@@ -76,7 +76,7 @@ class AsyncStorageAccountHostsMixin(object):
             config.user_agent_policy,
             StorageContentValidation(),
             StorageRequestHook(**kwargs),
-            credential_policy,
+            self._credential_policy,
             ContentDecodePolicy(),
             AsyncRedirectPolicy(**kwargs),
             StorageHosts(hosts=self._hosts, **kwargs), # type: ignore
