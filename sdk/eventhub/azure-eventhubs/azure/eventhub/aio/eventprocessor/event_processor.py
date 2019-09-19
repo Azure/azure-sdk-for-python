@@ -171,6 +171,7 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
             _, task = self._tasks.popitem()
             task.cancel()
         log.info("EventProcessor %r has been cancelled", self._id)
+
         await asyncio.sleep(2)  # give some time to finish after cancelled.
 
     def _cancel_tasks_for_partitions(self, to_cancel_partitions):
@@ -257,22 +258,18 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
                         partition_id,
                         consumer_group_name
                     )
-                    if self._running is False:
-                        await close(CloseReason.SHUTDOWN)
-                    else:
-                        await close(CloseReason.OWNERSHIP_LOST)
                     raise
+                except OwnershipLostError:
+                    break
                 except EventHubError as eh_err:
                     await process_error(eh_err)
-                    await close(CloseReason.EVENTHUB_EXCEPTION)
-                    # An EventProcessor will pick up this partition again after the ownership is released
-                    break
-                except OwnershipLostError:
-                    await close(CloseReason.OWNERSHIP_LOST)
-                    break
+                    continue
                 except Exception as other_error:  # pylint:disable=broad-except
                     await process_error(other_error)
-                    await close(CloseReason.PROCESS_EVENTS_ERROR)
-                    break
+                    continue
         finally:
+            if self._running is False:
+                await close(CloseReason.SHUTDOWN)
+            else:
+                await close(CloseReason.OWNERSHIP_LOST)
             await partition_consumer.close()
