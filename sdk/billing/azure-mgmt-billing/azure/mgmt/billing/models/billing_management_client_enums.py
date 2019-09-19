@@ -164,6 +164,12 @@ class ViewChargesPolicy(str, Enum):
     subscription_owner = "SubscriptionOwner"
 
 
+class ViewCharges(str, Enum):
+
+    allowed = "Allowed"
+    not_allowed = "NotAllowed"
+
+
 class PaymentMethodType(str, Enum):
 
     credits = "Credits"

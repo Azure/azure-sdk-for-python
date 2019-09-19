@@ -89,4 +89,4 @@ class BillingPropertyOperations(object):
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Billing/billingProperty'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Billing/billingProperty/default'}
