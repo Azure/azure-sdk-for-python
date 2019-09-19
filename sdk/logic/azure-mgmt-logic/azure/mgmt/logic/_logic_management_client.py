@@ -39,7 +39,7 @@ from .operations import IntegrationServiceEnvironmentSkusOperations
 from .operations import IntegrationServiceEnvironmentNetworkHealthOperations
 from .operations import IntegrationServiceEnvironmentManagedApisOperations
 from .operations import IntegrationServiceEnvironmentManagedApiOperations
-from .operations import IntegrationServiceEnvironmentManagedApiOperationsOperations
+from .operations import IntegrationServiceEnvironmentsManagedApiOperations
 from .operations import Operations
 from . import models
 
@@ -102,8 +102,8 @@ class LogicManagementClient(SDKClient):
     :vartype integration_service_environment_managed_apis: azure.mgmt.logic.operations.IntegrationServiceEnvironmentManagedApisOperations
     :ivar integration_service_environment_managed_api: IntegrationServiceEnvironmentManagedApi operations
     :vartype integration_service_environment_managed_api: azure.mgmt.logic.operations.IntegrationServiceEnvironmentManagedApiOperations
-    :ivar integration_service_environment_managed_api_operations: IntegrationServiceEnvironmentManagedApiOperations operations
-    :vartype integration_service_environment_managed_api_operations: azure.mgmt.logic.operations.IntegrationServiceEnvironmentManagedApiOperationsOperations
+    :ivar integration_service_environments_managed_api_operations: IntegrationServiceEnvironmentsManagedApiOperations operations
+    :vartype integration_service_environments_managed_api_operations: azure.mgmt.logic.operations.IntegrationServiceEnvironmentsManagedApiOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.logic.operations.Operations
 
@@ -178,7 +178,7 @@ class LogicManagementClient(SDKClient):
             self._client, self.config, self._serialize, self._deserialize)
         self.integration_service_environment_managed_api = IntegrationServiceEnvironmentManagedApiOperations(
             self._client, self.config, self._serialize, self._deserialize)
-        self.integration_service_environment_managed_api_operations = IntegrationServiceEnvironmentManagedApiOperationsOperations(
+        self.integration_service_environments_managed_api_operations = IntegrationServiceEnvironmentsManagedApiOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
