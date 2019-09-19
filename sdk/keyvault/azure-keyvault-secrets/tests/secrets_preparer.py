@@ -101,13 +101,13 @@ class VaultClientPreparer(AzureMgmtPreparer):
             group = self._get_resource_group(**kwargs).name
             access_policies = [
                 AccessPolicyEntry(
-                    tenant_id=self.test_class_instance.settings.TENANT_ID,
+                    tenant_id=self.test_class_instance.get_settings_value('TENANT_ID'),
                     object_id=self.client_oid,
                     permissions=self.permissions,
                 )
             ]
             properties = VaultProperties(
-                tenant_id=self.test_class_instance.settings.TENANT_ID,
+                tenant_id=self.test_class_instance.get_settings_value('TENANT_ID'),
                 sku=Sku(name=self.sku),
                 access_policies=access_policies,
                 vault_uri=None,
