@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class Operations(object):
-    """Operations operations.
+class IntegrationServiceEnvironmentManagedApisOperations(object):
+    """IntegrationServiceEnvironmentManagedApisOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -39,17 +39,22 @@ class Operations(object):
         self.config = config
 
     def list(
-            self, custom_headers=None, raw=False, **operation_config):
-        """Lists all of the available Logic REST API operations.
+            self, resource_group, integration_service_environment_name, custom_headers=None, raw=False, **operation_config):
+        """Gets the integration service environment managed Apis.
 
+        :param resource_group: The resource group.
+        :type resource_group: str
+        :param integration_service_environment_name: The integration service
+         environment name.
+        :type integration_service_environment_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Operation
+        :return: An iterator like instance of ManagedApi
         :rtype:
-         ~azure.mgmt.logic.models.OperationPaged[~azure.mgmt.logic.models.Operation]
+         ~azure.mgmt.logic.models.ManagedApiPaged[~azure.mgmt.logic.models.ManagedApi]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.logic.models.ErrorResponseException>`
         """
@@ -57,6 +62,12 @@ class Operations(object):
             if not next_link:
                 # Construct URL
                 url = self.list.metadata['url']
+                path_format_arguments = {
+                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+                    'resourceGroup': self._serialize.url("resource_group", resource_group, 'str'),
+                    'integrationServiceEnvironmentName': self._serialize.url("integration_service_environment_name", integration_service_environment_name, 'str')
+                }
+                url = self._client.format_url(url, **path_format_arguments)
 
                 # Construct parameters
                 query_parameters = {}
@@ -94,7 +105,7 @@ class Operations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.OperationPaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.ManagedApiPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/providers/Microsoft.Logic/operations'}
+    list.metadata = {'url': '/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Logic/integrationServiceEnvironments/{integrationServiceEnvironmentName}/managedApis'}

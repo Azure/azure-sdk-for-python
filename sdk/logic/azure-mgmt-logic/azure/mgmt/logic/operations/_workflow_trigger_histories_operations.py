@@ -11,7 +11,8 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
+from msrest.polling import LROPoller, NoPolling
+from msrestazure.polling.arm_polling import ARMPolling
 
 from .. import models
 
@@ -25,7 +26,7 @@ class WorkflowTriggerHistoriesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version. Constant value: "2018-07-01-preview".
+    :ivar api_version: The API version. Constant value: "2019-05-01".
     """
 
     models = models
@@ -35,7 +36,7 @@ class WorkflowTriggerHistoriesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-07-01-preview"
+        self.api_version = "2019-05-01"
 
         self.config = config
 
@@ -62,7 +63,8 @@ class WorkflowTriggerHistoriesOperations(object):
         :return: An iterator like instance of WorkflowTriggerHistory
         :rtype:
          ~azure.mgmt.logic.models.WorkflowTriggerHistoryPaged[~azure.mgmt.logic.models.WorkflowTriggerHistory]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.logic.models.ErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -108,9 +110,7 @@ class WorkflowTriggerHistoriesOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -144,7 +144,8 @@ class WorkflowTriggerHistoriesOperations(object):
         :return: WorkflowTriggerHistory or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.logic.models.WorkflowTriggerHistory or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.logic.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -176,9 +177,7 @@ class WorkflowTriggerHistoriesOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -191,28 +190,9 @@ class WorkflowTriggerHistoriesOperations(object):
         return deserialized
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/workflows/{workflowName}/triggers/{triggerName}/histories/{historyName}'}
 
-    def resubmit(
-            self, resource_group_name, workflow_name, trigger_name, history_name, custom_headers=None, raw=False, **operation_config):
-        """Resubmits a workflow run based on the trigger history.
 
-        :param resource_group_name: The resource group name.
-        :type resource_group_name: str
-        :param workflow_name: The workflow name.
-        :type workflow_name: str
-        :param trigger_name: The workflow trigger name.
-        :type trigger_name: str
-        :param history_name: The workflow trigger history name. Corresponds to
-         the run name for triggers that resulted in a run.
-        :type history_name: str
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _resubmit_initial(
+            self, resource_group_name, workflow_name, trigger_name, history_name, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.resubmit.metadata['url']
         path_format_arguments = {
@@ -241,12 +221,58 @@ class WorkflowTriggerHistoriesOperations(object):
         request = self._client.post(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
-        if response.status_code not in [202]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+
+    def resubmit(
+            self, resource_group_name, workflow_name, trigger_name, history_name, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Resubmits a workflow run based on the trigger history.
+
+        :param resource_group_name: The resource group name.
+        :type resource_group_name: str
+        :param workflow_name: The workflow name.
+        :type workflow_name: str
+        :param trigger_name: The workflow trigger name.
+        :type trigger_name: str
+        :param history_name: The workflow trigger history name. Corresponds to
+         the run name for triggers that resulted in a run.
+        :type history_name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns None or
+         ClientRawResponse<None> if raw==True
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.logic.models.ErrorResponseException>`
+        """
+        raw_result = self._resubmit_initial(
+            resource_group_name=resource_group_name,
+            workflow_name=workflow_name,
+            trigger_name=trigger_name,
+            history_name=history_name,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            if raw:
+                client_raw_response = ClientRawResponse(None, response)
+                return client_raw_response
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     resubmit.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/workflows/{workflowName}/triggers/{triggerName}/histories/{historyName}/resubmit'}
