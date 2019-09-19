@@ -2878,7 +2878,7 @@ class SqlStoredProcedureGetResults(ARMResourceProperties):
 
 
 class SqlStoredProcedureResource(Model):
-    """Cosmos DB SQL storedProcedure resource object.
+    """Cosmos DB SQL storedProcedure/userDefinedFunction resource object.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -2977,8 +2977,9 @@ class SqlTriggerGetResults(ARMResourceProperties):
     :type sql_trigger_get_results_id: str
     :param body: Body of the Trigger
     :type body: str
-    :param trigger_type: Type of the Trigger
-    :type trigger_type: str
+    :param trigger_type: Type of the Trigger. Possible values include: 'Pre',
+     'Post'
+    :type trigger_type: str or ~azure.mgmt.cosmosdb.models.enum
     :param trigger_operation: The operation the trigger is associated with
     :type trigger_operation: str
     :ivar _rid: A system generated property. A unique identifier.
@@ -3016,7 +3017,7 @@ class SqlTriggerGetResults(ARMResourceProperties):
         '_etag': {'key': 'properties._etag', 'type': 'str'},
     }
 
-    def __init__(self, *, sql_trigger_get_results_id: str, location: str=None, tags=None, body: str=None, trigger_type: str=None, trigger_operation: str=None, **kwargs) -> None:
+    def __init__(self, *, sql_trigger_get_results_id: str, location: str=None, tags=None, body: str=None, trigger_type=None, trigger_operation: str=None, **kwargs) -> None:
         super(SqlTriggerGetResults, self).__init__(location=location, tags=tags, **kwargs)
         self.sql_trigger_get_results_id = sql_trigger_get_results_id
         self.body = body
@@ -3036,8 +3037,9 @@ class SqlTriggerResource(Model):
     :type id: str
     :param body: Body of the Trigger
     :type body: str
-    :param trigger_type: Type of the Trigger
-    :type trigger_type: str
+    :param trigger_type: Type of the Trigger. Possible values include: 'Pre',
+     'Post'
+    :type trigger_type: str or ~azure.mgmt.cosmosdb.models.enum
     :param trigger_operation: The operation the trigger is associated with
     :type trigger_operation: str
     """
@@ -3053,7 +3055,7 @@ class SqlTriggerResource(Model):
         'trigger_operation': {'key': 'triggerOperation', 'type': 'str'},
     }
 
-    def __init__(self, *, id: str, body: str=None, trigger_type: str=None, trigger_operation: str=None, **kwargs) -> None:
+    def __init__(self, *, id: str, body: str=None, trigger_type=None, trigger_operation: str=None, **kwargs) -> None:
         super(SqlTriggerResource, self).__init__(**kwargs)
         self.id = id
         self.body = body
@@ -3179,7 +3181,7 @@ class SqlUserDefinedFunctionGetResults(ARMResourceProperties):
 
 
 class SqlUserDefinedFunctionResource(Model):
-    """Cosmos DB SQL userDefinedFunction resource object.
+    """Cosmos DB SQL storedProcedure/userDefinedFunction resource object.
 
     All required parameters must be populated in order to send to Azure.
 
