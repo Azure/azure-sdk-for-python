@@ -262,22 +262,9 @@ class ApiOperationPropertiesDefinition(Model):
         self.is_notification = kwargs.get('is_notification', None)
 
 
-class ApiReference(Resource):
+class ApiReference(Model):
     """The Api reference.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: The resource id.
-    :vartype id: str
-    :ivar name: Gets the resource name.
-    :vartype name: str
-    :ivar type: Gets the resource type.
-    :vartype type: str
-    :param location: The resource location.
-    :type location: str
-    :param tags: The resource tags.
-    :type tags: dict[str, str]
     :param display_name: The display name of the api.
     :type display_name: str
     :param description: The description of the api.
@@ -297,18 +284,7 @@ class ApiReference(Resource):
      ~azure.mgmt.logic.models.ResourceReference
     """
 
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'display_name': {'key': 'displayName', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'icon_uri': {'key': 'iconUri', 'type': 'str'},
@@ -5431,6 +5407,26 @@ class WorkflowRunFilter(Model):
     def __init__(self, **kwargs):
         super(WorkflowRunFilter, self).__init__(**kwargs)
         self.status = kwargs.get('status', None)
+
+
+class WorkflowRunListResult(Model):
+    """The list of workflow runs.
+
+    :param value: A list of workflow runs.
+    :type value: list[~azure.mgmt.logic.models.WorkflowRun]
+    :param next_link: The URL to get the next set of results.
+    :type next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[WorkflowRun]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(WorkflowRunListResult, self).__init__(**kwargs)
+        self.value = kwargs.get('value', None)
+        self.next_link = kwargs.get('next_link', None)
 
 
 class WorkflowRunTrigger(Model):

@@ -262,22 +262,9 @@ class ApiOperationPropertiesDefinition(Model):
         self.is_notification = is_notification
 
 
-class ApiReference(Resource):
+class ApiReference(Model):
     """The Api reference.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: The resource id.
-    :vartype id: str
-    :ivar name: Gets the resource name.
-    :vartype name: str
-    :ivar type: Gets the resource type.
-    :vartype type: str
-    :param location: The resource location.
-    :type location: str
-    :param tags: The resource tags.
-    :type tags: dict[str, str]
     :param display_name: The display name of the api.
     :type display_name: str
     :param description: The description of the api.
@@ -297,18 +284,7 @@ class ApiReference(Resource):
      ~azure.mgmt.logic.models.ResourceReference
     """
 
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'display_name': {'key': 'displayName', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'icon_uri': {'key': 'iconUri', 'type': 'str'},
@@ -318,8 +294,8 @@ class ApiReference(Resource):
         'integration_service_environment': {'key': 'integrationServiceEnvironment', 'type': 'ResourceReference'},
     }
 
-    def __init__(self, *, location: str=None, tags=None, display_name: str=None, description: str=None, icon_uri: str=None, swagger=None, brand_color: str=None, category=None, integration_service_environment=None, **kwargs) -> None:
-        super(ApiReference, self).__init__(location=location, tags=tags, **kwargs)
+    def __init__(self, *, display_name: str=None, description: str=None, icon_uri: str=None, swagger=None, brand_color: str=None, category=None, integration_service_environment=None, **kwargs) -> None:
+        super(ApiReference, self).__init__(**kwargs)
         self.display_name = display_name
         self.description = description
         self.icon_uri = icon_uri
@@ -5431,6 +5407,26 @@ class WorkflowRunFilter(Model):
     def __init__(self, *, status=None, **kwargs) -> None:
         super(WorkflowRunFilter, self).__init__(**kwargs)
         self.status = status
+
+
+class WorkflowRunListResult(Model):
+    """The list of workflow runs.
+
+    :param value: A list of workflow runs.
+    :type value: list[~azure.mgmt.logic.models.WorkflowRun]
+    :param next_link: The URL to get the next set of results.
+    :type next_link: str
+    """
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[WorkflowRun]'},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+    }
+
+    def __init__(self, *, value=None, next_link: str=None, **kwargs) -> None:
+        super(WorkflowRunListResult, self).__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
 
 
 class WorkflowRunTrigger(Model):
