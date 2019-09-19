@@ -269,9 +269,8 @@ logger.addHandler(handler)
 file_handler = logging.FileHandler(filename)
 logger.addHandler(file_handler)
 
-# Enable network trace logging. This will be logged at DEBUG level.
-config = CertificateClient.create_config(credential=credential, logging_enable=True)
-client = CertificateClient(vault_url=url, credential=credential, config=config)
+# Enable network trace logging. Each HTTP request will be logged at DEBUG level.
+client = CertificateClient(vault_url=url, credential=credential, logging_enable=True))
 ```
 
 Network trace logging can also be enabled for any single operation:
