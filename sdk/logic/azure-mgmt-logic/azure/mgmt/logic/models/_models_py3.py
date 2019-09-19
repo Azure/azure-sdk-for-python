@@ -262,22 +262,50 @@ class ApiOperationPropertiesDefinition(Model):
         self.is_notification = is_notification
 
 
-class ApiReference(Resource):
+class ResourceReference(Model):
+    """The resource reference.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :param id: The resource id.
+    :type id: str
+    :ivar name: Gets the resource name.
+    :vartype name: str
+    :ivar type: Gets the resource type.
+    :vartype type: str
+    """
+
+    _validation = {
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(self, *, id: str=None, **kwargs) -> None:
+        super(ResourceReference, self).__init__(**kwargs)
+        self.id = id
+        self.name = None
+        self.type = None
+
+
+class ApiReference(ResourceReference):
     """The Api reference.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: The resource id.
-    :vartype id: str
+    :param id: The resource id.
+    :type id: str
     :ivar name: Gets the resource name.
     :vartype name: str
     :ivar type: Gets the resource type.
     :vartype type: str
-    :param location: The resource location.
-    :type location: str
-    :param tags: The resource tags.
-    :type tags: dict[str, str]
     :param display_name: The display name of the api.
     :type display_name: str
     :param description: The description of the api.
@@ -298,7 +326,6 @@ class ApiReference(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
     }
@@ -307,8 +334,6 @@ class ApiReference(Resource):
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
         'display_name': {'key': 'displayName', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'icon_uri': {'key': 'iconUri', 'type': 'str'},
@@ -318,8 +343,8 @@ class ApiReference(Resource):
         'integration_service_environment': {'key': 'integrationServiceEnvironment', 'type': 'ResourceReference'},
     }
 
-    def __init__(self, *, location: str=None, tags=None, display_name: str=None, description: str=None, icon_uri: str=None, swagger=None, brand_color: str=None, category=None, integration_service_environment=None, **kwargs) -> None:
-        super(ApiReference, self).__init__(location=location, tags=tags, **kwargs)
+    def __init__(self, *, id: str=None, display_name: str=None, description: str=None, icon_uri: str=None, swagger=None, brand_color: str=None, category=None, integration_service_environment=None, **kwargs) -> None:
+        super(ApiReference, self).__init__(id=id, **kwargs)
         self.display_name = display_name
         self.description = description
         self.icon_uri = icon_uri
@@ -3753,38 +3778,6 @@ class KeyVaultKeyReferenceKeyVault(Model):
 
     def __init__(self, *, id: str=None, **kwargs) -> None:
         super(KeyVaultKeyReferenceKeyVault, self).__init__(**kwargs)
-        self.id = id
-        self.name = None
-        self.type = None
-
-
-class ResourceReference(Model):
-    """The resource reference.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :param id: The resource id.
-    :type id: str
-    :ivar name: Gets the resource name.
-    :vartype name: str
-    :ivar type: Gets the resource type.
-    :vartype type: str
-    """
-
-    _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(self, *, id: str=None, **kwargs) -> None:
-        super(ResourceReference, self).__init__(**kwargs)
         self.id = id
         self.name = None
         self.type = None
