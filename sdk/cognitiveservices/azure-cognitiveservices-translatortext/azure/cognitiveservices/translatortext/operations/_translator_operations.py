@@ -1034,7 +1034,7 @@ class TranslatorOperations(object):
     translate.metadata = {'url': '/translate'}
 
     def transliterate(
-            self, language, from_script, to_script, x_client_trace_id=None, request_body=None, respnse_body=None, custom_headers=None, raw=False, **operation_config):
+            self, language, from_script, to_script, x_client_trace_id=None, request_body=None, response_body=None, custom_headers=None, raw=False, **operation_config):
         """Converts the text of a language in one script into another type of
         script. Example-
         Japanese script "こんにちは"
@@ -1071,13 +1071,13 @@ class TranslatorOperations(object):
          * The entire text included in the request cannot exceed 5,000
          characters including spaces.
         :type request_body: str
-        :param respnse_body:
+        :param response_body:
          A successful response is a JSON array with one result for each element
          in the input array. A result object includes the following properties:
          * `text`- A string which is the result of converting the input string
          to the output script.
          * `script`- A string specifying the script used in the output.
-        :type respnse_body: str
+        :type response_body: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1113,8 +1113,8 @@ class TranslatorOperations(object):
             header_parameters['X-ClientTraceId'] = self._serialize.header("x_client_trace_id", x_client_trace_id, 'str')
         if request_body is not None:
             header_parameters['Request Body'] = self._serialize.header("request_body", request_body, 'str')
-        if respnse_body is not None:
-            header_parameters['Respnse Body'] = self._serialize.header("respnse_body", respnse_body, 'str')
+        if response_body is not None:
+            header_parameters['Response Body'] = self._serialize.header("response_body", response_body, 'str')
 
         # Construct and send request
         request = self._client.post(url, query_parameters, header_parameters)
