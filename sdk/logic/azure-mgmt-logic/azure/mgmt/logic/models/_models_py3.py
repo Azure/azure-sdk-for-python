@@ -5409,26 +5409,6 @@ class WorkflowRunFilter(Model):
         self.status = status
 
 
-class WorkflowRunListResult(Model):
-    """The list of workflow runs.
-
-    :param value: A list of workflow runs.
-    :type value: list[~azure.mgmt.logic.models.WorkflowRun]
-    :param next_link: The URL to get the next set of results.
-    :type next_link: str
-    """
-
-    _attribute_map = {
-        'value': {'key': 'value', 'type': '[WorkflowRun]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-    }
-
-    def __init__(self, *, value=None, next_link: str=None, **kwargs) -> None:
-        super(WorkflowRunListResult, self).__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
 class WorkflowRunTrigger(Model):
     """The workflow run trigger.
 
