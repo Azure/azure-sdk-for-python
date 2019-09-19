@@ -223,12 +223,13 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
             child.kind = SpanKind.CLIENT  # Should be PRODUCER
 
         def trace_message(message):
-            message_span = child.span(name="Azure.EventHubs.message")
-            message_span.start()
-            app_prop = dict(message.application_properties)
-            app_prop.setdefault(b"Diagnostic-Id", message_span.get_trace_parent().encode('ascii'))
-            message.application_properties = app_prop
-            message_span.finish()
+            if span_impl_type is not None:
+                message_span = child.span(name="Azure.EventHubs.message")
+                message_span.start()
+                app_prop = dict(message.application_properties)
+                app_prop.setdefault(b"Diagnostic-Id", message_span.get_trace_parent().encode('ascii'))
+                message.application_properties = app_prop
+                message_span.finish()
 
         self._check_closed()
         if isinstance(event_data, EventData):
