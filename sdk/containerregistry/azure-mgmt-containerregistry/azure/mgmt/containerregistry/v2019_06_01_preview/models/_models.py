@@ -2573,8 +2573,8 @@ class ScopeMap(ProxyResource):
      ~azure.mgmt.containerregistry.v2019_06_01_preview.models.ProvisioningState
     :param actions: Required. The list of scoped permissions for registry
      artifacts.
-     E.g. repositories/repository-name/pull,
-     repositories/repository-name/delete
+     E.g. repositories/repository-name/content/read,
+     repositories/repository-name/metadata/write
     :type actions: list[str]
     """
 
