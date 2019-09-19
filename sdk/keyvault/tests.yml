@@ -24,6 +24,7 @@ jobs:
       EnvVars:
         AZURE_TEST_RUN_LIVE: true
         RUN_IDENTIFIER: $(Build.BuildId)$(Agent.JobName)
+        AZURE_SUBSCRIPTION_ID: $(azure-subscription-id)
         AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
         AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
         AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
