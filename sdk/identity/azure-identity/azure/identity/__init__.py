@@ -17,6 +17,7 @@ from ._credentials import (
 
 
 __all__ = [
+    "AuthorizationCodeCredential",
     "CertificateCredential",
     "ChainedTokenCredential",
     "ClientSecretCredential",
