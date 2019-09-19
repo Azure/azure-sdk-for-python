@@ -28,6 +28,21 @@ class UsageUnit(str, Enum):
     count = "Count"
 
 
+class QuotaUnit(str, Enum):
+
+    count = "Count"
+
+
+class Status(str, Enum):
+
+    undefined = "Undefined"
+    success = "Success"
+    failure = "Failure"
+    invalid_quota_below_cluster_minimum = "InvalidQuotaBelowClusterMinimum"
+    invalid_quota_exceeds_subscription_limit = "InvalidQuotaExceedsSubscriptionLimit"
+    invalid_vm_family_name = "InvalidVMFamilyName"
+
+
 class ResourceIdentityType(str, Enum):
 
     system_assigned = "SystemAssigned"
@@ -39,10 +54,27 @@ class VmPriority(str, Enum):
     low_priority = "LowPriority"
 
 
+class RemoteLoginPortPublicAccess(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+    not_specified = "NotSpecified"
+
+
 class AllocationState(str, Enum):
 
     steady = "Steady"
     resizing = "Resizing"
+
+
+class NodeState(str, Enum):
+
+    idle = "idle"
+    running = "running"
+    preparing = "preparing"
+    unusable = "unusable"
+    leaving = "leaving"
+    preempted = "preempted"
 
 
 class ComputeType(str, Enum):
