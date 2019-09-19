@@ -36,7 +36,6 @@ from .operations import IntegrationAccountCertificatesOperations
 from .operations import IntegrationAccountSessionsOperations
 from .operations import IntegrationServiceEnvironmentsOperations
 from .operations import IntegrationServiceEnvironmentSkusOperations
-from .operations import IntegrationServiceEnvironmentOperations
 from .operations import IntegrationServiceEnvironmentNetworkHealthOperations
 from .operations import IntegrationServiceEnvironmentManagedApisOperations
 from .operations import IntegrationServiceEnvironmentManagedApiOperations
@@ -97,8 +96,6 @@ class LogicManagementClient(SDKClient):
     :vartype integration_service_environments: azure.mgmt.logic.operations.IntegrationServiceEnvironmentsOperations
     :ivar integration_service_environment_skus: IntegrationServiceEnvironmentSkus operations
     :vartype integration_service_environment_skus: azure.mgmt.logic.operations.IntegrationServiceEnvironmentSkusOperations
-    :ivar integration_service_environment: IntegrationServiceEnvironment operations
-    :vartype integration_service_environment: azure.mgmt.logic.operations.IntegrationServiceEnvironmentOperations
     :ivar integration_service_environment_network_health: IntegrationServiceEnvironmentNetworkHealth operations
     :vartype integration_service_environment_network_health: azure.mgmt.logic.operations.IntegrationServiceEnvironmentNetworkHealthOperations
     :ivar integration_service_environment_managed_apis: IntegrationServiceEnvironmentManagedApis operations
@@ -174,8 +171,6 @@ class LogicManagementClient(SDKClient):
         self.integration_service_environments = IntegrationServiceEnvironmentsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.integration_service_environment_skus = IntegrationServiceEnvironmentSkusOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.integration_service_environment = IntegrationServiceEnvironmentOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.integration_service_environment_network_health = IntegrationServiceEnvironmentNetworkHealthOperations(
             self._client, self.config, self._serialize, self._deserialize)
