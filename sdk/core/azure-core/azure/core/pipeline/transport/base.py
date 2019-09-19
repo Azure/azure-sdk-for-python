@@ -281,12 +281,35 @@ class HttpRequest(object):
         self.files = None
 
     def set_multipart_mixed(self, *requests, **kwargs):
+        # type: (HttpRequest, Any) -> None
+        """Set the part of a multipart/mixed.
+
+        Only support args for now are HttpRequest objects.
+
+        kwargs:
+        - policies: SansIOPolicy to apply at preparation time
+
+        :param requests: HttpRequests object
+        """
         self.multipart_mixed_info = (
             requests,
             kwargs.pop("policies", [])
         )
 
+    def prepare_multipart_mixed(self):
+        # type: () -> None
+        """Will prepare the body of this request according to the multipart information.
+
+        Does nothing if "set_multipart_mixed" was never called.
+        """
+        if self.multipart_mixed_info:
+            multipart_helper = MultiPartHelper(self)
+            multipart_helper.prepare_request()
+
     def serialize(self):
+        # type: () -> bytes
+        """Serialize this request using application/http spec.
+        """
         return _serialize_request(self)
 
 
