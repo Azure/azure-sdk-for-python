@@ -1,0 +1,354 @@
+interactions:
+- request:
+    body: grant_type=client_credentials&resource=https%3A%2F%2Fmanagement.core.windows.net%2F&response_type=client_credentials
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '116'
+      Content-Type:
+      - application/x-www-form-urlencoded;charset=UTF-8
+      User-Agent:
+      - python-requests/2.22.0
+    method: POST
+    uri: https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/token
+  response:
+    body:
+      string: '{"token_type":"Bearer","expires_in":"3600","ext_expires_in":"3600","expires_on":"1568859421","not_before":"1568855521","resource":"https://management.core.windows.net/","access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6ImllX3FXQ1hoWHh0MXpJRXN1NGM3YWNRVkduNCIsImtpZCI6ImllX3FXQ1hoWHh0MXpJRXN1NGM3YWNRVkduNCJ9.eyJhdWQiOiJodHRwczovL21hbmFnZW1lbnQuY29yZS53aW5kb3dzLm5ldC8iLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC83MmY5ODhiZi04NmYxLTQxYWYtOTFhYi0yZDdjZDAxMWRiNDcvIiwiaWF0IjoxNTY4ODU1NTIxLCJuYmYiOjE1Njg4NTU1MjEsImV4cCI6MTU2ODg1OTQyMSwiYWlvIjoiNDJGZ1lFajFQSnI2eTBUaTZhekNKeEcvbmxrOEJBQT0iLCJhcHBpZCI6IjZhZTBmNDU1LWViNTMtNDhjZS1hMWQyLTQzNjhiMWE3NDU1NyIsImFwcGlkYWNyIjoiMSIsImlkcCI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzcyZjk4OGJmLTg2ZjEtNDFhZi05MWFiLTJkN2NkMDExZGI0Ny8iLCJvaWQiOiI5MGIxOTUwZC0yZDgzLTQzMjgtYjc4OS1hNWQyMGZmOTE4MWYiLCJzdWIiOiI5MGIxOTUwZC0yZDgzLTQzMjgtYjc4OS1hNWQyMGZmOTE4MWYiLCJ0aWQiOiI3MmY5ODhiZi04NmYxLTQxYWYtOTFhYi0yZDdjZDAxMWRiNDciLCJ1dGkiOiIxdExhUzZHYklVcUR6SFVocFhvRUFBIiwidmVyIjoiMS4wIn0.ZyovWk1GYzWsRqwntLNnr0CRzqDGF1noXGY0BmzOxnDtLAT8ErepM4V3yG8XRJZsVuyynvVnZkECEFBoiPQra430Gh_ta_5uQx_YZvm-yunPE7N9bnMGmwSie92BuX9MyOq4qxQQP8334T72YyPkV7hftqlnHPXSLXNHpuglTCXkalDoleLpXCvnavIx1TElgvC9WcntQLft2o5yDO9XCFx6t852wNEm1iPHoxZO4MGxqZOyH7win8E4zI8qirCVWjTY248wMMkLv7DXHBupcgo2lP0Tp8KFjGPl1h84he9XiRZrqN7swzrNV8_bsKnCh6mJo3jSFod2xaP3iVZf2g"}'
+    headers:
+      cache-control:
+      - no-cache, no-store
+      content-length:
+      - '1354'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 19 Sep 2019 01:17:00 GMT
+      expires:
+      - '-1'
+      p3p:
+      - CP="DSP CUR OTPi IND OTRi ONL FIN"
+      pragma:
+      - no-cache
+      set-cookie:
+      - fpc=AqRaMEpsYcNGhdCZyjpACeLzwTF_AQAAAAzOFNUOAAAA; expires=Sat, 19-Oct-2019
+        01:17:01 GMT; path=/; secure; HttpOnly; SameSite=None
+      - x-ms-gateway-slice=estsfd; path=/; secure; HttpOnly
+      - stsservicecookie=estsfd; path=/; secure; HttpOnly
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ests-server:
+      - 2.1.9395.15 - NCUS ProdSlices
+    status:
+      code: 200
+      message: OK
+- request:
+    body: grant_type=client_credentials&resource=https%3A%2F%2Fmanagement.core.windows.net%2F&response_type=client_credentials
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '116'
+      Content-Type:
+      - application/x-www-form-urlencoded;charset=UTF-8
+      User-Agent:
+      - python-requests/2.22.0
+    method: POST
+    uri: https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/token
+  response:
+    body:
+      string: '{"token_type":"Bearer","expires_in":"3599","ext_expires_in":"3599","expires_on":"1568859421","not_before":"1568855521","resource":"https://management.core.windows.net/","access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6ImllX3FXQ1hoWHh0MXpJRXN1NGM3YWNRVkduNCIsImtpZCI6ImllX3FXQ1hoWHh0MXpJRXN1NGM3YWNRVkduNCJ9.eyJhdWQiOiJodHRwczovL21hbmFnZW1lbnQuY29yZS53aW5kb3dzLm5ldC8iLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC83MmY5ODhiZi04NmYxLTQxYWYtOTFhYi0yZDdjZDAxMWRiNDcvIiwiaWF0IjoxNTY4ODU1NTIxLCJuYmYiOjE1Njg4NTU1MjEsImV4cCI6MTU2ODg1OTQyMSwiYWlvIjoiNDJGZ1lGaHVWdkl4NkU1VjZhRW05YS9HdXc5NEFBQT0iLCJhcHBpZCI6IjZhZTBmNDU1LWViNTMtNDhjZS1hMWQyLTQzNjhiMWE3NDU1NyIsImFwcGlkYWNyIjoiMSIsImlkcCI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzcyZjk4OGJmLTg2ZjEtNDFhZi05MWFiLTJkN2NkMDExZGI0Ny8iLCJvaWQiOiI5MGIxOTUwZC0yZDgzLTQzMjgtYjc4OS1hNWQyMGZmOTE4MWYiLCJzdWIiOiI5MGIxOTUwZC0yZDgzLTQzMjgtYjc4OS1hNWQyMGZmOTE4MWYiLCJ0aWQiOiI3MmY5ODhiZi04NmYxLTQxYWYtOTFhYi0yZDdjZDAxMWRiNDciLCJ1dGkiOiJPd253MUJCYndrMjIyZW5SZWNjRkFBIiwidmVyIjoiMS4wIn0.eWwg3Sq4mzWVlqb5Vrgybl0f9dbkKCQMS6Gvh88Rd8TstIO9fgfY20Cf-x-0jv7YUlSnfbSSz3s7gsr5LmL5wemmneC8oxg3MVA1-jMHqVp3ufdj1VTHuHs-8lqcjJS6vMbamM1kdA5uwONrxiC2pahswjDEigj-j3W42S0hz1AWwDGDYAOl0Tg-FyPBjIWLwUUvsZCZ6tbupk772iDdzWJOZFb2mYSUyKAHKoSi68X1gla_usZfzuFQuRdZtjFS8Ng5qd-9BxCv06aatqp8g_qZq8Y8h9RwG70gYdCXI7mB8moPt_aH4NC-38tTSIHRzp6n-B3AcrsZauy6-3bZ9A"}'
+    headers:
+      cache-control:
+      - no-cache, no-store
+      content-length:
+      - '1354'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 19 Sep 2019 01:17:00 GMT
+      expires:
+      - '-1'
+      p3p:
+      - CP="DSP CUR OTPi IND OTRi ONL FIN"
+      pragma:
+      - no-cache
+      set-cookie:
+      - fpc=Ah70K9fftSVAh0Yat1YTuA7zwTF_AQAAAAzOFNUOAAAA; expires=Sat, 19-Oct-2019
+        01:17:01 GMT; path=/; secure; HttpOnly; SameSite=None
+      - x-ms-gateway-slice=estsfd; path=/; secure; HttpOnly
+      - stsservicecookie=estsfd; path=/; secure; HttpOnly
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ests-server:
+      - 2.1.9395.15 - WUS ProdSlices
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"location": "West US 2", "properties": {"scope": {"virtualNetworks": [{"id":
+      "subscriptions/18ba8369-92e4-4d70-8b1e-937660bde798/resourceGroups/MNC-Portal/providers/Microsoft.Network/virtualNetworks/Spoke11"},
+      {"id": "subscriptions/18ba8369-92e4-4d70-8b1e-937660bde798/resourceGroups/MNC-Portal/providers/Microsoft.Network/virtualNetworks/Spoke12"},
+      {"id": "subscriptions/18ba8369-92e4-4d70-8b1e-937660bde798/resourceGroups/MNC-Portal/providers/Microsoft.Network/virtualNetworks/Hub"}]}}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '489'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.7.4 (Windows-10-10.0.18362-SP0) msrest/0.6.10 msrest_azure/0.4.34
+        azure-mgmt-network/2019-06-01-preview Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/18ba8369-92e4-4d70-8b1e-937660bde798/resourceGroups/MNC-Portal/providers/Microsoft.ManagedNetwork/managedNetworks/TestMNCforPolicy?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"id":"subscriptions/18ba8369-92e4-4d70-8b1e-937660bde798/resourceGroups/MNC-Portal/providers/Microsoft.ManagedNetwork/managedNetworks/TestMNCforPolicy","name":"TestMNCforPolicy","type":"Microsoft.ManagedNetwork/managedNetworks","location":"West
+        US 2","apiVersion":"","tags":{},"resourceGuid":"","provisioningState":0,"properties":{"scope":{"virtualNetworks":[{"id":"subscriptions/18ba8369-92e4-4d70-8b1e-937660bde798/resourceGroups/MNC-Portal/providers/Microsoft.Network/virtualNetworks/Spoke11"},{"id":"subscriptions/18ba8369-92e4-4d70-8b1e-937660bde798/resourceGroups/MNC-Portal/providers/Microsoft.Network/virtualNetworks/Spoke12"},{"id":"subscriptions/18ba8369-92e4-4d70-8b1e-937660bde798/resourceGroups/MNC-Portal/providers/Microsoft.Network/virtualNetworks/Hub"}],"managementGroups":[],"subscriptions":[],"subNets":[]},"connectivity":{"peerings":[],"groups":[]}}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '870'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 19 Sep 2019 01:17:01 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"location": "West US 2", "properties": {"virtualNetworks": [{"id": "subscriptions/18ba8369-92e4-4d70-8b1e-937660bde798/resourceGroups/MNC-Portal/providers/Microsoft.Network/virtualNetworks/Spoke11"},
+      {"id": "subscriptions/18ba8369-92e4-4d70-8b1e-937660bde798/resourceGroups/MNC-Portal/providers/Microsoft.Network/virtualNetworks/Spoke12"}]}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '342'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.7.4 (Windows-10-10.0.18362-SP0) msrest/0.6.10 msrest_azure/0.4.34
+        azure-mgmt-network/2019-06-01-preview Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/18ba8369-92e4-4d70-8b1e-937660bde798/resourceGroups/MNC-Portal/providers/Microsoft.ManagedNetwork/managedNetworks/TestMNCforPolicy/managedNetworkGroups/TestGroup?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"id":"subscriptions/18ba8369-92e4-4d70-8b1e-937660bde798/resourceGroups/MNC-Portal/providers/Microsoft.ManagedNetwork/managedNetworks/TestMNCforPolicy/managedNetworkGroups/TestGroup","name":"TestGroup","type":"Microsoft.ManagedNetwork/managedNetworkGroups","location":"West
+        US 2","apiVersion":"","tags":{},"resourceGuid":"","provisioningState":0,"properties":{"virtualNetworks":[{"id":"subscriptions/18ba8369-92e4-4d70-8b1e-937660bde798/resourceGroups/MNC-Portal/providers/Microsoft.Network/virtualNetworks/Spoke11"},{"id":"subscriptions/18ba8369-92e4-4d70-8b1e-937660bde798/resourceGroups/MNC-Portal/providers/Microsoft.Network/virtualNetworks/Spoke12"}],"managementGroups":[],"subscriptions":[],"subNets":[]}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '712'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 19 Sep 2019 01:17:03 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.4 (Windows-10-10.0.18362-SP0) msrest/0.6.10 msrest_azure/0.4.34
+        azure-mgmt-network/2019-06-01-preview Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: GET
+    uri: https://management.azure.com/subscriptions/18ba8369-92e4-4d70-8b1e-937660bde798/resourceGroups/MNC-Portal/providers/Microsoft.ManagedNetwork/managedNetworks/TestMNCforPolicy/managedNetworkGroups/TestGroup?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"id":"subscriptions/18ba8369-92e4-4d70-8b1e-937660bde798/resourceGroups/MNC-Portal/providers/Microsoft.ManagedNetwork/managedNetworks/TestMNCforPolicy/managedNetworkGroups/TestGroup","name":"TestGroup","type":"Microsoft.ManagedNetwork/managedNetworkGroups","location":"West
+        US 2","apiVersion":"","tags":{},"resourceGuid":"d6985d25-3af8-42eb-8ba2-c047e1ebc884","provisioningState":0,"properties":{"virtualNetworks":[{"id":"subscriptions/18ba8369-92e4-4d70-8b1e-937660bde798/resourceGroups/MNC-Portal/providers/Microsoft.Network/virtualNetworks/Spoke11"},{"id":"subscriptions/18ba8369-92e4-4d70-8b1e-937660bde798/resourceGroups/MNC-Portal/providers/Microsoft.Network/virtualNetworks/Spoke12"}],"managementGroups":[],"subscriptions":[],"subNets":[]}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '748'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 19 Sep 2019 01:17:03 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"location": "West US 2", "properties": {"type": "HubAndSpokeTopology",
+      "hub": {"id": "subscriptions/18ba8369-92e4-4d70-8b1e-937660bde798/resourceGroups/MNC-Portal/providers/Microsoft.Network/virtualNetworks/Hub"},
+      "spokes": [{"id": "subscriptions/18ba8369-92e4-4d70-8b1e-937660bde798/resourceGroups/MNC-Portal/providers/Microsoft.ManagedNetwork/managedNetworks/TestMNCforPolicy/managedNetworkGroups/TestGroup"}]}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '414'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.7.4 (Windows-10-10.0.18362-SP0) msrest/0.6.10 msrest_azure/0.4.34
+        azure-mgmt-network/2019-06-01-preview Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/18ba8369-92e4-4d70-8b1e-937660bde798/resourceGroups/MNC-Portal/providers/Microsoft.ManagedNetwork/managedNetworks/TestMNCforPolicy/managedNetworkPeeringPolicies/TestPolicy?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"id":"subscriptions/18ba8369-92e4-4d70-8b1e-937660bde798/resourceGroups/MNC-Portal/providers/Microsoft.ManagedNetwork/managedNetworks/TestMNCforPolicy/managedNetworkPeeringPolicies/TestPolicy","name":"TestPolicy","type":"Microsoft.ManagedNetwork/managedNetworkPeeringPolicies","location":"West
+        US 2","apiVersion":"","tags":{},"resourceGuid":"","provisioningState":0,"properties":{"type":1,"hub":{"id":"subscriptions/18ba8369-92e4-4d70-8b1e-937660bde798/resourceGroups/MNC-Portal/providers/Microsoft.Network/virtualNetworks/Hub"},"spokes":[{"id":"subscriptions/18ba8369-92e4-4d70-8b1e-937660bde798/resourceGroups/MNC-Portal/providers/Microsoft.ManagedNetwork/managedNetworks/TestMNCforPolicy/managedNetworkGroups/TestGroup"}],"mesh":[]}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '737'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 19 Sep 2019 01:17:04 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1199'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.7.4 (Windows-10-10.0.18362-SP0) msrest/0.6.10 msrest_azure/0.4.34
+        azure-mgmt-network/2019-06-01-preview Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: GET
+    uri: https://management.azure.com/subscriptions/18ba8369-92e4-4d70-8b1e-937660bde798/resourceGroups/MNC-Portal/providers/Microsoft.ManagedNetwork/managedNetworks/TestMNCforPolicy/managedNetworkPeeringPolicies/TestPolicy?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"id":"subscriptions/18ba8369-92e4-4d70-8b1e-937660bde798/resourceGroups/MNC-Portal/providers/Microsoft.ManagedNetwork/managedNetworks/TestMNCforPolicy/managedNetworkPeeringPolicies/TestPolicy","name":"TestPolicy","type":"Microsoft.ManagedNetwork/managedNetworkPeeringPolicies","location":"West
+        US 2","apiVersion":"","tags":{},"resourceGuid":"9efec7f0-c53c-4b0f-92eb-d174eb1f0f57","provisioningState":0,"properties":{"type":1,"hub":{"id":"subscriptions/18ba8369-92e4-4d70-8b1e-937660bde798/resourceGroups/MNC-Portal/providers/Microsoft.Network/virtualNetworks/Hub"},"spokes":[{"id":"subscriptions/18ba8369-92e4-4d70-8b1e-937660bde798/resourceGroups/MNC-Portal/providers/Microsoft.ManagedNetwork/managedNetworks/TestMNCforPolicy/managedNetworkGroups/TestGroup"}],"mesh":[]}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '773'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 19 Sep 2019 01:17:05 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+    status:
+      code: 200
+      message: OK
+version: 1

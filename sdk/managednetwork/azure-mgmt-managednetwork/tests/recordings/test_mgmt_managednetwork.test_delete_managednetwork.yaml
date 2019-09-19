@@ -1,0 +1,196 @@
+interactions:
+- request:
+    body: grant_type=client_credentials&resource=https%3A%2F%2Fmanagement.core.windows.net%2F&response_type=client_credentials
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '116'
+      Content-Type:
+      - application/x-www-form-urlencoded;charset=UTF-8
+      User-Agent:
+      - python-requests/2.22.0
+    method: POST
+    uri: https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/token
+  response:
+    body:
+      string: '{"token_type":"Bearer","expires_in":"3600","ext_expires_in":"3600","expires_on":"1568859416","not_before":"1568855516","resource":"https://management.core.windows.net/","access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6ImllX3FXQ1hoWHh0MXpJRXN1NGM3YWNRVkduNCIsImtpZCI6ImllX3FXQ1hoWHh0MXpJRXN1NGM3YWNRVkduNCJ9.eyJhdWQiOiJodHRwczovL21hbmFnZW1lbnQuY29yZS53aW5kb3dzLm5ldC8iLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC83MmY5ODhiZi04NmYxLTQxYWYtOTFhYi0yZDdjZDAxMWRiNDcvIiwiaWF0IjoxNTY4ODU1NTE2LCJuYmYiOjE1Njg4NTU1MTYsImV4cCI6MTU2ODg1OTQxNiwiYWlvIjoiNDJGZ1lDaVRDUWc0SmhlVmNWZEc0WWY4cEFwdkFBPT0iLCJhcHBpZCI6IjZhZTBmNDU1LWViNTMtNDhjZS1hMWQyLTQzNjhiMWE3NDU1NyIsImFwcGlkYWNyIjoiMSIsImlkcCI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzcyZjk4OGJmLTg2ZjEtNDFhZi05MWFiLTJkN2NkMDExZGI0Ny8iLCJvaWQiOiI5MGIxOTUwZC0yZDgzLTQzMjgtYjc4OS1hNWQyMGZmOTE4MWYiLCJzdWIiOiI5MGIxOTUwZC0yZDgzLTQzMjgtYjc4OS1hNWQyMGZmOTE4MWYiLCJ0aWQiOiI3MmY5ODhiZi04NmYxLTQxYWYtOTFhYi0yZDdjZDAxMWRiNDciLCJ1dGkiOiIxR2N0Y0EyeXcwQ3ZWd01KaTNVQ0FBIiwidmVyIjoiMS4wIn0.k4EqerNtIIpJHWL8dvxHdvPiYfFQl137tQUctAl8-eaVsY8mqcPOoT47wLL8lSRCb2gF1KJrAQ2YnNR1q0m0_RE2QXhMRiX1YGgP4Zo8Bt7idk3WW95xOXFKcQxHNo8FO8lMsINwmA5mYFCNs6RoaMNUjt3GSKS8QdW0BgI2DtdyvVeacQFtKgqfw4zY32f5Zwoi-4wbrq5JV95kuS5mi-i04h_eVrUj_L1aAtg2crSM803dEjnhZKHN-Jb0ZteOG4d5Sd18WYTX3XjB2p1iLj1r_oStNTBXQB_gOkDqOiV-ljSoQ3k9vmamknfGYAtpTN86hSr0Re9HAwcJA9ErpA"}'
+    headers:
+      cache-control:
+      - no-cache, no-store
+      content-length:
+      - '1354'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 19 Sep 2019 01:16:55 GMT
+      expires:
+      - '-1'
+      p3p:
+      - CP="DSP CUR OTPi IND OTRi ONL FIN"
+      pragma:
+      - no-cache
+      set-cookie:
+      - fpc=AkHW9RBrVQFKhacOGxxqG7jzwTF_AQAAAAjOFNUOAAAA; expires=Sat, 19-Oct-2019
+        01:16:56 GMT; path=/; secure; HttpOnly; SameSite=None
+      - x-ms-gateway-slice=estsfd; path=/; secure; HttpOnly
+      - stsservicecookie=estsfd; path=/; secure; HttpOnly
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ests-server:
+      - 2.1.9395.15 - SCUS ProdSlices
+    status:
+      code: 200
+      message: OK
+- request:
+    body: grant_type=client_credentials&resource=https%3A%2F%2Fmanagement.core.windows.net%2F&response_type=client_credentials
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '116'
+      Content-Type:
+      - application/x-www-form-urlencoded;charset=UTF-8
+      User-Agent:
+      - python-requests/2.22.0
+    method: POST
+    uri: https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/token
+  response:
+    body:
+      string: '{"token_type":"Bearer","expires_in":"3599","ext_expires_in":"3599","expires_on":"1568859417","not_before":"1568855517","resource":"https://management.core.windows.net/","access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6ImllX3FXQ1hoWHh0MXpJRXN1NGM3YWNRVkduNCIsImtpZCI6ImllX3FXQ1hoWHh0MXpJRXN1NGM3YWNRVkduNCJ9.eyJhdWQiOiJodHRwczovL21hbmFnZW1lbnQuY29yZS53aW5kb3dzLm5ldC8iLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC83MmY5ODhiZi04NmYxLTQxYWYtOTFhYi0yZDdjZDAxMWRiNDcvIiwiaWF0IjoxNTY4ODU1NTE3LCJuYmYiOjE1Njg4NTU1MTcsImV4cCI6MTU2ODg1OTQxNywiYWlvIjoiNDJGZ1lEZ2VtcGQyd1d1SFMrZUZXelcrNnk5cEF3QT0iLCJhcHBpZCI6IjZhZTBmNDU1LWViNTMtNDhjZS1hMWQyLTQzNjhiMWE3NDU1NyIsImFwcGlkYWNyIjoiMSIsImlkcCI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzcyZjk4OGJmLTg2ZjEtNDFhZi05MWFiLTJkN2NkMDExZGI0Ny8iLCJvaWQiOiI5MGIxOTUwZC0yZDgzLTQzMjgtYjc4OS1hNWQyMGZmOTE4MWYiLCJzdWIiOiI5MGIxOTUwZC0yZDgzLTQzMjgtYjc4OS1hNWQyMGZmOTE4MWYiLCJ0aWQiOiI3MmY5ODhiZi04NmYxLTQxYWYtOTFhYi0yZDdjZDAxMWRiNDciLCJ1dGkiOiJPd253MUJCYndrMjIyZW5SUmNjRkFBIiwidmVyIjoiMS4wIn0.qgKMgFaQTawcMwR6dfn7jrcZn6QqSH31GNKfQGpyFO0QPt1LS3roP0CvR8b59_abgVDR1eFKlr5RH3VUm-bVp_fRkoC8PoUnq2vU6l7JW1tapVD9UnjqZGdXxayLihkir9v1qCFX1KjnZCtssY6EDMSNxmPe3D7Co2f5M9p-DLe6SoNpcSbfT61sZtUuUkyU6pfwcOlkc5hX7zlxWISDaFUoiECF61GQyW7d0GXcXd8MVQeYbJpIaYpzqvTSJkvl8TIQ57Yv2CUHWSY3nOh1eCXyAhQzqYFeLDzNgH16PLh8wHvcLoA53Q7rvyulWfphRsZjIqwOySuOAwdr_lvZTQ"}'
+    headers:
+      cache-control:
+      - no-cache, no-store
+      content-length:
+      - '1354'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 19 Sep 2019 01:16:56 GMT
+      expires:
+      - '-1'
+      p3p:
+      - CP="DSP CUR OTPi IND OTRi ONL FIN"
+      pragma:
+      - no-cache
+      set-cookie:
+      - fpc=AoLdVOTl0ypMsFkS7sge1frzwTF_AQAAAAjOFNUOAAAA; expires=Sat, 19-Oct-2019
+        01:16:57 GMT; path=/; secure; HttpOnly; SameSite=None
+      - x-ms-gateway-slice=estsfd; path=/; secure; HttpOnly
+      - stsservicecookie=estsfd; path=/; secure; HttpOnly
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ests-server:
+      - 2.1.9395.15 - WUS ProdSlices
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"location": "West US 2", "properties": {"scope": {"subscriptions": [{"id":
+      "subscriptions/18ba8369-92e4-4d70-8b1e-937660bde798"}]}}}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '133'
+      Content-Type:
+      - application/json; charset=utf-8
+      User-Agent:
+      - python/3.7.4 (Windows-10-10.0.18362-SP0) msrest/0.6.10 msrest_azure/0.4.34
+        azure-mgmt-network/2019-06-01-preview Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: PUT
+    uri: https://management.azure.com/subscriptions/18ba8369-92e4-4d70-8b1e-937660bde798/resourceGroups/MNCRG/providers/Microsoft.ManagedNetwork/managedNetworks/PythonSDKTestMNC_Delete?api-version=2019-06-01-preview
+  response:
+    body:
+      string: '{"id":"subscriptions/18ba8369-92e4-4d70-8b1e-937660bde798/resourceGroups/MNCRG/providers/Microsoft.ManagedNetwork/managedNetworks/PythonSDKTestMNC_Delete","name":"PythonSDKTestMNC_Delete","type":"Microsoft.ManagedNetwork/managedNetworks","location":"West
+        US 2","apiVersion":"","tags":{},"resourceGuid":"","provisioningState":0,"properties":{"scope":{"virtualNetworks":[],"managementGroups":[],"subscriptions":[{"id":"subscriptions/18ba8369-92e4-4d70-8b1e-937660bde798"}],"subNets":[]},"connectivity":{"peerings":[],"groups":[]}}}'
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '529'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Thu, 19 Sep 2019 01:16:58 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-writes:
+      - '1198'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - python/3.7.4 (Windows-10-10.0.18362-SP0) msrest/0.6.10 msrest_azure/0.4.34
+        azure-mgmt-network/2019-06-01-preview Azure-SDK-For-Python
+      accept-language:
+      - en-US
+    method: DELETE
+    uri: https://management.azure.com/subscriptions/18ba8369-92e4-4d70-8b1e-937660bde798/resourceGroups/MNCRG/providers/Microsoft.ManagedNetwork/managedNetworks/PythonSDKTestMNC_Delete?api-version=2019-06-01-preview
+  response:
+    body:
+      string: ''
+    headers:
+      cache-control:
+      - no-cache
+      content-length:
+      - '0'
+      date:
+      - Thu, 19 Sep 2019 01:17:00 GMT
+      expires:
+      - '-1'
+      pragma:
+      - no-cache
+      server:
+      - Kestrel
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ratelimit-remaining-subscription-deletes:
+      - '14999'
+    status:
+      code: 200
+      message: OK
+version: 1

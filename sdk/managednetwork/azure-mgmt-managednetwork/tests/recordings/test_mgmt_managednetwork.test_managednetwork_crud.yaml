@@ -1,0 +1,100 @@
+interactions:
+- request:
+    body: grant_type=client_credentials&resource=https%3A%2F%2Fmanagement.core.windows.net%2F&response_type=client_credentials
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '116'
+      Content-Type:
+      - application/x-www-form-urlencoded;charset=UTF-8
+      User-Agent:
+      - python-requests/2.22.0
+    method: POST
+    uri: https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/token
+  response:
+    body:
+      string: '{"token_type":"Bearer","expires_in":"3599","ext_expires_in":"3599","expires_on":"1568843139","not_before":"1568839239","resource":"https://management.core.windows.net/","access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6ImllX3FXQ1hoWHh0MXpJRXN1NGM3YWNRVkduNCIsImtpZCI6ImllX3FXQ1hoWHh0MXpJRXN1NGM3YWNRVkduNCJ9.eyJhdWQiOiJodHRwczovL21hbmFnZW1lbnQuY29yZS53aW5kb3dzLm5ldC8iLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC83MmY5ODhiZi04NmYxLTQxYWYtOTFhYi0yZDdjZDAxMWRiNDcvIiwiaWF0IjoxNTY4ODM5MjM5LCJuYmYiOjE1Njg4MzkyMzksImV4cCI6MTU2ODg0MzEzOSwiYWlvIjoiNDJGZ1lOaFdiM0wzcHI0ZzA0MDJocVdSWDBMa0FBPT0iLCJhcHBpZCI6IjZhZTBmNDU1LWViNTMtNDhjZS1hMWQyLTQzNjhiMWE3NDU1NyIsImFwcGlkYWNyIjoiMSIsImlkcCI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzcyZjk4OGJmLTg2ZjEtNDFhZi05MWFiLTJkN2NkMDExZGI0Ny8iLCJvaWQiOiI5MGIxOTUwZC0yZDgzLTQzMjgtYjc4OS1hNWQyMGZmOTE4MWYiLCJzdWIiOiI5MGIxOTUwZC0yZDgzLTQzMjgtYjc4OS1hNWQyMGZmOTE4MWYiLCJ0aWQiOiI3MmY5ODhiZi04NmYxLTQxYWYtOTFhYi0yZDdjZDAxMWRiNDciLCJ1dGkiOiJxY3NXWUROTFNrYWNPbUoyMjJZQUFBIiwidmVyIjoiMS4wIn0.t8SZWY1yleVXhw-0GTWlHfUkwGGXbuhmANs3M_El9gNxZt-DFGFonl_pw1Eio1jxrki2jZ6qEmlSnIoOqQ4k-ly13Ym3_zppzHqYG_gRhsiX8jB-DKfS8GvhbL5RpFwBH5H70U5SGwtzJDH_c8dYmr3CkWWvH-6JiN5fDo1Okyy28OJpVM80OnfmfnahiXVkcJ74sAceWJ1ftZLaO2jI0Y49Ay9j-2oH_q6lBlIflMe1k0E3Qk3QDvhdhcDPi9lo6ATCR35NzH1Tc6TK0LP7xBL5QpdiQWH8p10XkOV1RbECWGvCBqoatz9wQGdBtWcGmh8-b22JxWL82CQcwXorEg"}'
+    headers:
+      cache-control:
+      - no-cache, no-store
+      content-length:
+      - '1354'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 18 Sep 2019 20:45:38 GMT
+      expires:
+      - '-1'
+      p3p:
+      - CP="DSP CUR OTPi IND OTRi ONL FIN"
+      pragma:
+      - no-cache
+      set-cookie:
+      - fpc=Ar25Puw_5c9BrM0IPmuS8H7zwTF_AQAAAHKOFNUOAAAA; expires=Fri, 18-Oct-2019
+        20:45:39 GMT; path=/; secure; HttpOnly
+      - x-ms-gateway-slice=estsfd; path=/; secure; HttpOnly
+      - stsservicecookie=estsfd; path=/; secure; HttpOnly
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ests-server:
+      - 2.1.9368.9 - SCUS ProdSlices
+    status:
+      code: 200
+      message: OK
+- request:
+    body: grant_type=client_credentials&resource=https%3A%2F%2Fmanagement.core.windows.net%2F&response_type=client_credentials
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '116'
+      Content-Type:
+      - application/x-www-form-urlencoded;charset=UTF-8
+      User-Agent:
+      - python-requests/2.22.0
+    method: POST
+    uri: https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/token
+  response:
+    body:
+      string: '{"token_type":"Bearer","expires_in":"3600","ext_expires_in":"3600","expires_on":"1568843139","not_before":"1568839239","resource":"https://management.core.windows.net/","access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6ImllX3FXQ1hoWHh0MXpJRXN1NGM3YWNRVkduNCIsImtpZCI6ImllX3FXQ1hoWHh0MXpJRXN1NGM3YWNRVkduNCJ9.eyJhdWQiOiJodHRwczovL21hbmFnZW1lbnQuY29yZS53aW5kb3dzLm5ldC8iLCJpc3MiOiJodHRwczovL3N0cy53aW5kb3dzLm5ldC83MmY5ODhiZi04NmYxLTQxYWYtOTFhYi0yZDdjZDAxMWRiNDcvIiwiaWF0IjoxNTY4ODM5MjM5LCJuYmYiOjE1Njg4MzkyMzksImV4cCI6MTU2ODg0MzEzOSwiYWlvIjoiNDJGZ1lOaWlYY1ZtdFhsNTJwSDVZYmtyMW50OUJ3QT0iLCJhcHBpZCI6IjZhZTBmNDU1LWViNTMtNDhjZS1hMWQyLTQzNjhiMWE3NDU1NyIsImFwcGlkYWNyIjoiMSIsImlkcCI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzcyZjk4OGJmLTg2ZjEtNDFhZi05MWFiLTJkN2NkMDExZGI0Ny8iLCJvaWQiOiI5MGIxOTUwZC0yZDgzLTQzMjgtYjc4OS1hNWQyMGZmOTE4MWYiLCJzdWIiOiI5MGIxOTUwZC0yZDgzLTQzMjgtYjc4OS1hNWQyMGZmOTE4MWYiLCJ0aWQiOiI3MmY5ODhiZi04NmYxLTQxYWYtOTFhYi0yZDdjZDAxMWRiNDciLCJ1dGkiOiJlQ2Q3dU1kVkxFMnduY0JKQmpzQkFBIiwidmVyIjoiMS4wIn0.CXv36vV4RnO7sCM5cRo_Vkw08yG1Fl3tryxAy3PgBSknmwG0Lvw1ZADs7XAu6ZKUzX52ji3SmTutODCz5a6wuxux6a1Zu_ePsr2ShLCQlnHlvrB8U8plOPGz2_EAALTKVKFv6fKvtwpTlQgi4Lpoc1qERci3ur3mQ1w9thNGTH7mALtlCDMKlC7dFPbYCKXZNep5Ltr1sQh8SYJ4hDpdJfD5YORH4M-eWRVKg-dwZU2pTiIuJ93alP4ZrKjHa-aEttYgQBKyWQ4WvPtMY-WM2GRPqlXpB6us8wd_Ab51aSvEhTny5KtaNlgVCIwAORGIVnMKB1lBNhoeyyJRfohEQA"}'
+    headers:
+      cache-control:
+      - no-cache, no-store
+      content-length:
+      - '1354'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Wed, 18 Sep 2019 20:45:39 GMT
+      expires:
+      - '-1'
+      p3p:
+      - CP="DSP CUR OTPi IND OTRi ONL FIN"
+      pragma:
+      - no-cache
+      set-cookie:
+      - fpc=As19i9CAWAJPkIfcE1oLJv3zwTF_AQAAAHOOFNUOAAAA; expires=Fri, 18-Oct-2019
+        20:45:39 GMT; path=/; secure; HttpOnly; SameSite=None
+      - x-ms-gateway-slice=estsfd; path=/; secure; HttpOnly
+      - stsservicecookie=estsfd; path=/; secure; HttpOnly
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+      x-content-type-options:
+      - nosniff
+      x-ms-ests-server:
+      - 2.1.9395.15 - EUS ProdSlices
+    status:
+      code: 200
+      message: OK
+version: 1

@@ -1,7 +1,7 @@
 Microsoft Azure SDK for Python
 ==============================
 
-This is the Microsoft Azure Managed Services Client Library.
+This is the Microsoft Azure Managed Network Library.
 
 Azure Resource Manager (ARM) is the next generation of management APIs that
 replace the old Azure Service Management (ASM).
@@ -17,6 +17,10 @@ For a more complete set of Azure libraries, see the `azure <https://pypi.python.
 Usage
 =====
 
+For code examples, see `Managed Services
+<https://docs.microsoft.com/python/api/overview/azure/>`__
+on docs.microsoft.com.
+
 
 Provide Feedback
 ================
@@ -25,3 +29,5 @@ If you encounter any bugs or have suggestions, please file an issue in the
 `Issues <https://github.com/Azure/azure-sdk-for-python/issues>`__
 section of the project.
 
+
+.. image::  https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fazure-mgmt-managedservices%2FREADME.png
