@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-
+import os
 import sys
 
 # Ignore async tests for Python < 3.5
