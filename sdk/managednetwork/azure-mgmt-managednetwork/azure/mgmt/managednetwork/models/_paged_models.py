@@ -14,7 +14,7 @@ from msrest.paging import Paged
 
 class ManagedNetworkPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`ManagedNetwork <azure.mgmt.managednetwork.v2019_06_01_pre.models.ManagedNetwork>` object
+    A paging container for iterating over a list of :class:`ManagedNetwork <azure.mgmt.managednetwork.v2019_06_01_preview.models.ManagedNetwork>` object
     """
 
     _attribute_map = {
@@ -27,7 +27,7 @@ class ManagedNetworkPaged(Paged):
         super(ManagedNetworkPaged, self).__init__(*args, **kwargs)
 class ScopeAssignmentPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`ScopeAssignment <azure.mgmt.managednetwork.v2019_06_01_pre.models.ScopeAssignment>` object
+    A paging container for iterating over a list of :class:`ScopeAssignment <azure.mgmt.managednetwork.v2019_06_01_preview.models.ScopeAssignment>` object
     """
 
     _attribute_map = {
@@ -40,7 +40,7 @@ class ScopeAssignmentPaged(Paged):
         super(ScopeAssignmentPaged, self).__init__(*args, **kwargs)
 class ManagedNetworkGroupPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`ManagedNetworkGroup <azure.mgmt.managednetwork.v2019_06_01_pre.models.ManagedNetworkGroup>` object
+    A paging container for iterating over a list of :class:`ManagedNetworkGroup <azure.mgmt.managednetwork.v2019_06_01_preview.models.ManagedNetworkGroup>` object
     """
 
     _attribute_map = {
@@ -53,7 +53,7 @@ class ManagedNetworkGroupPaged(Paged):
         super(ManagedNetworkGroupPaged, self).__init__(*args, **kwargs)
 class ManagedNetworkPeeringPolicyPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`ManagedNetworkPeeringPolicy <azure.mgmt.managednetwork.v2019_06_01_pre.models.ManagedNetworkPeeringPolicy>` object
+    A paging container for iterating over a list of :class:`ManagedNetworkPeeringPolicy <azure.mgmt.managednetwork.v2019_06_01_preview.models.ManagedNetworkPeeringPolicy>` object
     """
 
     _attribute_map = {
@@ -66,7 +66,7 @@ class ManagedNetworkPeeringPolicyPaged(Paged):
         super(ManagedNetworkPeeringPolicyPaged, self).__init__(*args, **kwargs)
 class OperationPaged(Paged):
     """
-    A paging container for iterating over a list of :class:`Operation <azure.mgmt.managednetwork.v2019_06_01_pre.models.Operation>` object
+    A paging container for iterating over a list of :class:`Operation <azure.mgmt.managednetwork.v2019_06_01_preview.models.Operation>` object
     """
 
     _attribute_map = {

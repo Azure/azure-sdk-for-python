@@ -60,10 +60,10 @@ class ManagedNetworkPeeringPoliciesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: ManagedNetworkPeeringPolicy or ClientRawResponse if raw=true
         :rtype:
-         ~azure.mgmt.managednetwork.v2019_06_01_pre.models.ManagedNetworkPeeringPolicy
+         ~azure.mgmt.managednetwork.v2019_06_01_preview.models.ManagedNetworkPeeringPolicy
          or ~msrest.pipeline.ClientRawResponse
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.managednetwork.v2019_06_01_pre.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.managednetwork.v2019_06_01_preview.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -177,7 +177,7 @@ class ManagedNetworkPeeringPoliciesOperations(object):
         :param properties: Gets or sets the properties of a Managed Network
          Policy
         :type properties:
-         ~azure.mgmt.managednetwork.v2019_06_01_pre.models.ManagedNetworkPeeringPolicyProperties
+         ~azure.mgmt.managednetwork.v2019_06_01_preview.models.ManagedNetworkPeeringPolicyProperties
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -187,11 +187,11 @@ class ManagedNetworkPeeringPoliciesOperations(object):
          ManagedNetworkPeeringPolicy or
          ClientRawResponse<ManagedNetworkPeeringPolicy> if raw==True
         :rtype:
-         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.managednetwork.v2019_06_01_pre.models.ManagedNetworkPeeringPolicy]
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.managednetwork.v2019_06_01_preview.models.ManagedNetworkPeeringPolicy]
          or
-         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.managednetwork.v2019_06_01_pre.models.ManagedNetworkPeeringPolicy]]
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.managednetwork.v2019_06_01_preview.models.ManagedNetworkPeeringPolicy]]
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.managednetwork.v2019_06_01_pre.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.managednetwork.v2019_06_01_preview.models.ErrorResponseException>`
         """
         raw_result = self._create_or_update_initial(
             resource_group_name=resource_group_name,
@@ -282,7 +282,7 @@ class ManagedNetworkPeeringPoliciesOperations(object):
         :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
          ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.managednetwork.v2019_06_01_pre.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.managednetwork.v2019_06_01_preview.models.ErrorResponseException>`
         """
         raw_result = self._delete_initial(
             resource_group_name=resource_group_name,
@@ -332,9 +332,9 @@ class ManagedNetworkPeeringPoliciesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: An iterator like instance of ManagedNetworkPeeringPolicy
         :rtype:
-         ~azure.mgmt.managednetwork.v2019_06_01_pre.models.ManagedNetworkPeeringPolicyPaged[~azure.mgmt.managednetwork.v2019_06_01_pre.models.ManagedNetworkPeeringPolicy]
+         ~azure.mgmt.managednetwork.v2019_06_01_preview.models.ManagedNetworkPeeringPolicyPaged[~azure.mgmt.managednetwork.v2019_06_01_preview.models.ManagedNetworkPeeringPolicy]
         :raises:
-         :class:`ErrorResponseException<azure.mgmt.managednetwork.v2019_06_01_pre.models.ErrorResponseException>`
+         :class:`ErrorResponseException<azure.mgmt.managednetwork.v2019_06_01_preview.models.ErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
