@@ -1210,11 +1210,16 @@ class StorageContainerTestAsync(StorageTestCase):
             pass
 
         # Act
-        await container.delete_blobs(
+        response = await container.delete_blobs(
             'blob12',
-            # 'blob2',
-            # 'blob3',
+            'blob2',
+            'blob3',
         )
+        assert len(response) == 3
+        assert response[0].status_code == 202
+        assert response[1].status_code == 202
+        assert response[2].status_code == 202
+
 
     @record
     def test_list_blobs_with_delimiter(self):
