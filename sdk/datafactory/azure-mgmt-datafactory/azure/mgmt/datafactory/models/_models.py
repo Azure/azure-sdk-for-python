@@ -7777,9 +7777,6 @@ class CosmosDbSqlApiSource(CopySource):
     :param preferred_regions: Preferred regions. Type: array of strings (or
      Expression with resultType array of strings).
     :type preferred_regions: object
-    :param include_system_columns: Whether includes system columns in result.
-     Type: boolean (or Expression with resultType boolean).
-    :type include_system_columns: object
     """
 
     _validation = {
@@ -7795,7 +7792,6 @@ class CosmosDbSqlApiSource(CopySource):
         'query': {'key': 'query', 'type': 'object'},
         'page_size': {'key': 'pageSize', 'type': 'object'},
         'preferred_regions': {'key': 'preferredRegions', 'type': 'object'},
-        'include_system_columns': {'key': 'includeSystemColumns', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
@@ -7803,7 +7799,6 @@ class CosmosDbSqlApiSource(CopySource):
         self.query = kwargs.get('query', None)
         self.page_size = kwargs.get('page_size', None)
         self.preferred_regions = kwargs.get('preferred_regions', None)
-        self.include_system_columns = kwargs.get('include_system_columns', None)
         self.type = 'CosmosDbSqlApiSource'
 
 

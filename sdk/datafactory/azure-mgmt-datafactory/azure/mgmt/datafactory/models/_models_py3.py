@@ -7777,9 +7777,6 @@ class CosmosDbSqlApiSource(CopySource):
     :param preferred_regions: Preferred regions. Type: array of strings (or
      Expression with resultType array of strings).
     :type preferred_regions: object
-    :param include_system_columns: Whether includes system columns in result.
-     Type: boolean (or Expression with resultType boolean).
-    :type include_system_columns: object
     """
 
     _validation = {
@@ -7795,15 +7792,13 @@ class CosmosDbSqlApiSource(CopySource):
         'query': {'key': 'query', 'type': 'object'},
         'page_size': {'key': 'pageSize', 'type': 'object'},
         'preferred_regions': {'key': 'preferredRegions', 'type': 'object'},
-        'include_system_columns': {'key': 'includeSystemColumns', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, page_size=None, preferred_regions=None, include_system_columns=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, page_size=None, preferred_regions=None, **kwargs) -> None:
         super(CosmosDbSqlApiSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
         self.query = query
         self.page_size = page_size
         self.preferred_regions = preferred_regions
-        self.include_system_columns = include_system_columns
         self.type = 'CosmosDbSqlApiSource'
 
 
