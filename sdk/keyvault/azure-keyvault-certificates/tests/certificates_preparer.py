@@ -4,6 +4,7 @@
 # ------------------------------------
 import time
 import os
+import hashlib
 
 try:
     from unittest.mock import Mock
@@ -61,8 +62,8 @@ class VaultClientPreparer(AzureMgmtPreparer):
         playback_fake_resource=None,
         client_kwargs=None,
     ):
-        # incorporate a unicode integer representation of run identifier into key vault name for uniqueness
-        name_prefix += ''.join(str(ord(c)) for c in os.environ['RUN_IDENTIFIER'])[:10]
+        # incorporate md5 hashing of run identifier into key vault name for uniqueness
+        name_prefix += hashlib.md5(os.environ['RUN_IDENTIFIER'].encode()).hexdigest()[-10:]
 
         super(VaultClientPreparer, self).__init__(
             name_prefix,
