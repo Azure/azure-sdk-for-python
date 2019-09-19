@@ -109,16 +109,15 @@ class OwnershipManager(object):
         # end of calculating expected count per owner
 
         to_claim = active_ownership_self
-        if len(active_ownership_self) > most_count_allowed_per_owner:  # needs to abandon a partition
-            to_claim.pop()  # abandon one partition if owned too many
-        elif len(active_ownership_self) < expected_count_per_owner:
+        if len(active_ownership_self) < expected_count_per_owner:
             # Either claims an inactive partition, or steals from other owners
             if claimable_partition_ids:  # claim an inactive partition if there is
                 random_partition_id = random.choice(claimable_partition_ids)
                 random_chosen_to_claim = ownership_dict.get(random_partition_id,
                                                             {"partition_id": random_partition_id,
                                                              "eventhub_name": self.eventhub_name,
-                                                             "consumer_group_name": self.consumer_group_name
+                                                             "consumer_group_name": self.consumer_group_name,
+                                                             "version": 0,
                                                              })
                 random_chosen_to_claim["owner_id"] = self.owner_id
                 to_claim.append(random_chosen_to_claim)
