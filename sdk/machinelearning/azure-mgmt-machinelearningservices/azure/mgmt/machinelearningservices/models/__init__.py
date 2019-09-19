@@ -18,6 +18,7 @@ try:
     from ._models_py3 import AmlComputeNodeInformation
     from ._models_py3 import AmlComputeNodesInformation
     from ._models_py3 import AmlComputeProperties
+    from ._models_py3 import AmlUserFeature
     from ._models_py3 import ClusterUpdateParameters
     from ._models_py3 import Compute
     from ._models_py3 import ComputeNodesInformation
@@ -47,8 +48,13 @@ try:
     from ._models_py3 import ResourceId
     from ._models_py3 import ResourceName
     from ._models_py3 import ResourceQuota
+    from ._models_py3 import ResourceSkuLocationInfo
+    from ._models_py3 import ResourceSkuZoneDetails
+    from ._models_py3 import Restriction
     from ._models_py3 import ScaleSettings
     from ._models_py3 import ServicePrincipalCredentials
+    from ._models_py3 import Sku
+    from ._models_py3 import SKUCapability
     from ._models_py3 import SslConfiguration
     from ._models_py3 import SystemService
     from ._models_py3 import UpdateWorkspaceQuotas
@@ -63,6 +69,7 @@ try:
     from ._models_py3 import VirtualMachineSizeListResult
     from ._models_py3 import VirtualMachineSshCredentials
     from ._models_py3 import Workspace
+    from ._models_py3 import WorkspaceSku
     from ._models_py3 import WorkspaceUpdateParameters
 except (SyntaxError, ImportError):
     from ._models import AKS
@@ -73,6 +80,7 @@ except (SyntaxError, ImportError):
     from ._models import AmlComputeNodeInformation
     from ._models import AmlComputeNodesInformation
     from ._models import AmlComputeProperties
+    from ._models import AmlUserFeature
     from ._models import ClusterUpdateParameters
     from ._models import Compute
     from ._models import ComputeNodesInformation
@@ -102,8 +110,13 @@ except (SyntaxError, ImportError):
     from ._models import ResourceId
     from ._models import ResourceName
     from ._models import ResourceQuota
+    from ._models import ResourceSkuLocationInfo
+    from ._models import ResourceSkuZoneDetails
+    from ._models import Restriction
     from ._models import ScaleSettings
     from ._models import ServicePrincipalCredentials
+    from ._models import Sku
+    from ._models import SKUCapability
     from ._models import SslConfiguration
     from ._models import SystemService
     from ._models import UpdateWorkspaceQuotas
@@ -118,12 +131,15 @@ except (SyntaxError, ImportError):
     from ._models import VirtualMachineSizeListResult
     from ._models import VirtualMachineSshCredentials
     from ._models import Workspace
+    from ._models import WorkspaceSku
     from ._models import WorkspaceUpdateParameters
+from ._paged_models import AmlUserFeaturePaged
 from ._paged_models import ComputeResourcePaged
 from ._paged_models import OperationPaged
 from ._paged_models import ResourceQuotaPaged
 from ._paged_models import UsagePaged
 from ._paged_models import WorkspacePaged
+from ._paged_models import WorkspaceSkuPaged
 from ._azure_machine_learning_workspaces_enums import (
     ProvisioningState,
     UsageUnit,
@@ -135,6 +151,7 @@ from ._azure_machine_learning_workspaces_enums import (
     AllocationState,
     NodeState,
     ComputeType,
+    ReasonCode,
     UnderlyingResourceAction,
 )
 
@@ -147,6 +164,7 @@ __all__ = [
     'AmlComputeNodeInformation',
     'AmlComputeNodesInformation',
     'AmlComputeProperties',
+    'AmlUserFeature',
     'ClusterUpdateParameters',
     'Compute',
     'ComputeNodesInformation',
@@ -176,8 +194,13 @@ __all__ = [
     'ResourceId',
     'ResourceName',
     'ResourceQuota',
+    'ResourceSkuLocationInfo',
+    'ResourceSkuZoneDetails',
+    'Restriction',
     'ScaleSettings',
     'ServicePrincipalCredentials',
+    'Sku',
+    'SKUCapability',
     'SslConfiguration',
     'SystemService',
     'UpdateWorkspaceQuotas',
@@ -192,12 +215,15 @@ __all__ = [
     'VirtualMachineSizeListResult',
     'VirtualMachineSshCredentials',
     'Workspace',
+    'WorkspaceSku',
     'WorkspaceUpdateParameters',
     'OperationPaged',
     'WorkspacePaged',
+    'AmlUserFeaturePaged',
     'UsagePaged',
     'ResourceQuotaPaged',
     'ComputeResourcePaged',
+    'WorkspaceSkuPaged',
     'ProvisioningState',
     'UsageUnit',
     'QuotaUnit',
@@ -208,5 +234,6 @@ __all__ = [
     'AllocationState',
     'NodeState',
     'ComputeType',
+    'ReasonCode',
     'UnderlyingResourceAction',
 ]
