@@ -15,7 +15,7 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.0.0b4 Python/3.6.6 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://vault105115999744021012.vault.azure.net/keys/ec-verify-P-256/create?api-version=7.0
+    uri: https://vault8bf41593ca44021012.vault.azure.net/keys/ec-verify-P-256/create?api-version=7.0
   response:
     body:
       string: '{"error":{"code":"Unauthorized","message":"Request is missing a Bearer
@@ -28,7 +28,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 16 Sep 2019 21:54:56 GMT
+      - Thu, 19 Sep 2019 21:17:16 GMT
       expires:
       - '-1'
       pragma:
@@ -56,55 +56,6 @@ interactions:
       code: 401
       message: Unauthorized
 - request:
-    body: client_id=fd341195-73b0-4ba7-bf05-a33d6464f84c&client_secret=Bx7%2FR.J%3FvGhcA%3AE3pvBCAXRGje06%3A%3A%2Ac&grant_type=client_credentials&scope=https%3A%2F%2Fvault.azure.net%2F.default
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '182'
-      Content-Type:
-      - application/x-www-form-urlencoded
-      User-Agent:
-      - python-requests/2.22.0
-    method: POST
-    uri: https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/token
-  response:
-    body:
-      string: '{"token_type":"Bearer","expires_in":3599,"ext_expires_in":3599,"access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6ImllX3FXQ1hoWHh0MXpJRXN1NGM3YWNRVkduNCIsImtpZCI6ImllX3FXQ1hoWHh0MXpJRXN1NGM3YWNRVkduNCJ9.eyJhdWQiOiJodHRwczovL3ZhdWx0LmF6dXJlLm5ldCIsImlzcyI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzcyZjk4OGJmLTg2ZjEtNDFhZi05MWFiLTJkN2NkMDExZGI0Ny8iLCJpYXQiOjE1Njg2NzA1OTcsIm5iZiI6MTU2ODY3MDU5NywiZXhwIjoxNTY4Njc0NDk3LCJhaW8iOiI0MkZnWUxCcloyLzJZYS8xZFlyNjhrUkFhcWM3QUE9PSIsImFwcGlkIjoiZmQzNDExOTUtNzNiMC00YmE3LWJmMDUtYTMzZDY0NjRmODRjIiwiYXBwaWRhY3IiOiIxIiwiaWRwIjoiaHR0cHM6Ly9zdHMud2luZG93cy5uZXQvNzJmOTg4YmYtODZmMS00MWFmLTkxYWItMmQ3Y2QwMTFkYjQ3LyIsIm9pZCI6IjQ5ZDNhN2RhLTgxM2ItNDAzYS1hYzVjLWI5Y2YxNmNlNjZmMCIsInN1YiI6IjQ5ZDNhN2RhLTgxM2ItNDAzYS1hYzVjLWI5Y2YxNmNlNjZmMCIsInRpZCI6IjcyZjk4OGJmLTg2ZjEtNDFhZi05MWFiLTJkN2NkMDExZGI0NyIsInV0aSI6IlBsM2FjNGJlakUtaFQ2MzJfdXNuQUEiLCJ2ZXIiOiIxLjAifQ.RtBzh6IeQGyDF6q2hQaQ-ZGP3CvzVlBnUO9KHz1GK4w4r5Tdv_W5Ofb61wxev45DQqd2icl4tdHecDpRCiBqjmct-i9evSDREuGSxmdOIjikQcK6vXfyyfoCfT3id0jwoxZkcsbJYsh_kJ232WPPWJxsuvGsgPnV_91ITTcsusY8plHauD3x5albeLHgSKXajxojPuvTOj6oqp2OF_qNV0ysjad2aMykKfAG7_-nDHbX1pMva2cRnrRiitJKBx6JNynpXzIgWxWMysZO90zGVenTOzagRfLYZSmtkrY2gfTZ7Bsrvf7dl3JPgiEWFBjTC-dITDR1FPIGynjSKw5oKQ"}'
-    headers:
-      cache-control:
-      - no-cache, no-store
-      content-length:
-      - '1231'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Mon, 16 Sep 2019 21:54:56 GMT
-      expires:
-      - '-1'
-      p3p:
-      - CP="DSP CUR OTPi IND OTRi ONL FIN"
-      pragma:
-      - no-cache
-      set-cookie:
-      - fpc=At3nZ_oF0s9IuoPTKJTsnqzQMGJWAQAAALH7EdUOAAAA; expires=Wed, 16-Oct-2019
-        21:54:57 GMT; path=/; secure; HttpOnly
-      - x-ms-gateway-slice=estsfd; path=/; secure; HttpOnly
-      - stsservicecookie=estsfd; path=/; secure; HttpOnly
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      x-content-type-options:
-      - nosniff
-      x-ms-ests-server:
-      - 2.1.9368.8 - EUS ProdSlices
-    status:
-      code: 200
-      message: OK
-- request:
     body: '{"kty": "EC", "crv": "P-256"}'
     headers:
       Accept:
@@ -120,10 +71,10 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.0.0b4 Python/3.6.6 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://vault105115999744021012.vault.azure.net/keys/ec-verify-P-256/create?api-version=7.0
+    uri: https://vault8bf41593ca44021012.vault.azure.net/keys/ec-verify-P-256/create?api-version=7.0
   response:
     body:
-      string: '{"key":{"kid":"https://vault105115999744021012.vault.azure.net/keys/ec-verify-P-256/6be26975788047bb84be1987c00f1502","kty":"EC","key_ops":["sign","verify"],"crv":"P-256","x":"45AXxNQAlEUuuIJ_BR-JGGUvj0ms5UskvMqMh91lZS4","y":"zaJ7-WtWItJrg_VSPZk89f4VtLdRnXDH6WygHQeGONs"},"attributes":{"enabled":true,"created":1568670897,"updated":1568670897,"recoveryLevel":"Purgeable"}}'
+      string: '{"key":{"kid":"https://vault8bf41593ca44021012.vault.azure.net/keys/ec-verify-P-256/9372bf4f916a4d8188ad7e60376ac964","kty":"EC","key_ops":["sign","verify"],"crv":"P-256","x":"HdpZqEFEYtyc-glG5AFrrTktan3WaonOLbZZTsiIEkQ","y":"o-WL4zuhEWx5aeXTC7mjjSR0IenQ7yv-x1LUPAnZ7JE"},"attributes":{"enabled":true,"created":1568927837,"updated":1568927837,"recoveryLevel":"Purgeable"}}'
     headers:
       cache-control:
       - no-cache
@@ -132,7 +83,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 16 Sep 2019 21:54:57 GMT
+      - Thu, 19 Sep 2019 21:17:17 GMT
       expires:
       - '-1'
       pragma:
@@ -172,10 +123,10 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.0.0b4 Python/3.6.6 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://vault105115999744021012.vault.azure.net/keys/ec-verify-P-256/6be26975788047bb84be1987c00f1502/sign?api-version=7.0
+    uri: https://vault8bf41593ca44021012.vault.azure.net/keys/ec-verify-P-256/9372bf4f916a4d8188ad7e60376ac964/sign?api-version=7.0
   response:
     body:
-      string: '{"kid":"https://vault105115999744021012.vault.azure.net/keys/ec-verify-P-256/6be26975788047bb84be1987c00f1502","value":"H_lq8cClZeIZUdnUBUtmZf_Qkz9bCnUgy0jmmetXX5rlWbMZEupnrZiIu0tJ-NQXhW6L6syvLYHIp8OQVN11gw"}'
+      string: '{"kid":"https://vault8bf41593ca44021012.vault.azure.net/keys/ec-verify-P-256/9372bf4f916a4d8188ad7e60376ac964","value":"v0PTVQUjeCjc6ptzU_HvyBd4Lfo6CKqXbDUGK0Sa_7pd5UK_01xbJ0JPW5Y4LXbMVDOnSi_6tCiSfwXSrxY0bg"}'
     headers:
       cache-control:
       - no-cache
@@ -184,7 +135,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 16 Sep 2019 21:54:57 GMT
+      - Thu, 19 Sep 2019 21:17:17 GMT
       expires:
       - '-1'
       pragma:
@@ -224,10 +175,10 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.0.0b4 Python/3.6.6 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://vault105115999744021012.vault.azure.net/keys/ec-verify-P-256K/create?api-version=7.0
+    uri: https://vault8bf41593ca44021012.vault.azure.net/keys/ec-verify-P-256K/create?api-version=7.0
   response:
     body:
-      string: '{"key":{"kid":"https://vault105115999744021012.vault.azure.net/keys/ec-verify-P-256K/ff8e9caa9b134874a490a991a8f0e328","kty":"EC","key_ops":["sign","verify"],"crv":"P-256K","x":"Go1-N1lusBWVmtsuOV_aXQ-yg657caLhdovGsdCa3Xc","y":"41K0xUaJH6tKhbJxNU4J8GR-rj7WhRpCXwVqrcapivI"},"attributes":{"enabled":true,"created":1568670897,"updated":1568670897,"recoveryLevel":"Purgeable"}}'
+      string: '{"key":{"kid":"https://vault8bf41593ca44021012.vault.azure.net/keys/ec-verify-P-256K/c78699cda21b43a9ab221820266f1e21","kty":"EC","key_ops":["sign","verify"],"crv":"P-256K","x":"P_0IFaQZGR0cAP93BO8oQu0dOiz1XA5ojMKaAMFYtSE","y":"TaGRwyVjYD5bcBxNh_UXcbspg19Cvdycg5Dpmt75lqU"},"attributes":{"enabled":true,"created":1568927837,"updated":1568927837,"recoveryLevel":"Purgeable"}}'
     headers:
       cache-control:
       - no-cache
@@ -236,7 +187,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 16 Sep 2019 21:54:57 GMT
+      - Thu, 19 Sep 2019 21:17:17 GMT
       expires:
       - '-1'
       pragma:
@@ -276,10 +227,10 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.0.0b4 Python/3.6.6 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://vault105115999744021012.vault.azure.net/keys/ec-verify-P-256K/ff8e9caa9b134874a490a991a8f0e328/sign?api-version=7.0
+    uri: https://vault8bf41593ca44021012.vault.azure.net/keys/ec-verify-P-256K/c78699cda21b43a9ab221820266f1e21/sign?api-version=7.0
   response:
     body:
-      string: '{"kid":"https://vault105115999744021012.vault.azure.net/keys/ec-verify-P-256K/ff8e9caa9b134874a490a991a8f0e328","value":"eYIS2ClYE9TP4X9eDzGd1TYPXdO9L-xnQjjmarESj1wG1Bt8L1LJDl4DiCw9c0Q3YVBLzuMmrcyKl-Syx_mjxQ"}'
+      string: '{"kid":"https://vault8bf41593ca44021012.vault.azure.net/keys/ec-verify-P-256K/c78699cda21b43a9ab221820266f1e21","value":"HNj1OaCmd1blWSkxH6yGPo0guqu661CufotvEKyK4Vz7PIRb9AhHxR8aA1rxqGnGHVhTgV0wd2yPGEOa4op2aQ"}'
     headers:
       cache-control:
       - no-cache
@@ -288,7 +239,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 16 Sep 2019 21:54:57 GMT
+      - Thu, 19 Sep 2019 21:17:17 GMT
       expires:
       - '-1'
       pragma:
@@ -328,10 +279,10 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.0.0b4 Python/3.6.6 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://vault105115999744021012.vault.azure.net/keys/ec-verify-P-384/create?api-version=7.0
+    uri: https://vault8bf41593ca44021012.vault.azure.net/keys/ec-verify-P-384/create?api-version=7.0
   response:
     body:
-      string: '{"key":{"kid":"https://vault105115999744021012.vault.azure.net/keys/ec-verify-P-384/211a57ba142a4a54aeb5930d6569fa8b","kty":"EC","key_ops":["sign","verify"],"crv":"P-384","x":"rsRnlpkuyCEWk31FgOyKIvhX1w-1w7XAvo6D1supmP4CM3rufm-RB7fMfWmovs3_","y":"2LpOUknhA2RI3YEOTBDFgJFEPEXt69RVOOtWzexyyPIzKE5wAo1py4lm12vh0EGB"},"attributes":{"enabled":true,"created":1568670897,"updated":1568670897,"recoveryLevel":"Purgeable"}}'
+      string: '{"key":{"kid":"https://vault8bf41593ca44021012.vault.azure.net/keys/ec-verify-P-384/22851297911b4dc5aaae8c6d8940ebe9","kty":"EC","key_ops":["sign","verify"],"crv":"P-384","x":"k16nzy-cfmgfI4co5N4htUAMkx3HsczXk5gOsSsVTxW0M_I-fdWEz11yhU99qpv9","y":"wwdblt3fZbZbM55nBoqdy--dx1c_g3ZrmWWnJP436vE4aD48UBcXVsURx7gDqKKk"},"attributes":{"enabled":true,"created":1568927838,"updated":1568927838,"recoveryLevel":"Purgeable"}}'
     headers:
       cache-control:
       - no-cache
@@ -340,7 +291,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 16 Sep 2019 21:54:57 GMT
+      - Thu, 19 Sep 2019 21:17:17 GMT
       expires:
       - '-1'
       pragma:
@@ -380,10 +331,10 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.0.0b4 Python/3.6.6 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://vault105115999744021012.vault.azure.net/keys/ec-verify-P-384/211a57ba142a4a54aeb5930d6569fa8b/sign?api-version=7.0
+    uri: https://vault8bf41593ca44021012.vault.azure.net/keys/ec-verify-P-384/22851297911b4dc5aaae8c6d8940ebe9/sign?api-version=7.0
   response:
     body:
-      string: '{"kid":"https://vault105115999744021012.vault.azure.net/keys/ec-verify-P-384/211a57ba142a4a54aeb5930d6569fa8b","value":"-KdndbZcX9w2-JLD678HLkzQGmQn8RruE9r8X0yriDqOhVzs0EOp0tD84oodl1Wb_hTJBJ3XBPwfjDpgozxxT4-9FkRUW1KqwNtZU6jJRfm1OMt2f_XDZ3tNasx5A7TQ"}'
+      string: '{"kid":"https://vault8bf41593ca44021012.vault.azure.net/keys/ec-verify-P-384/22851297911b4dc5aaae8c6d8940ebe9","value":"9W4ZvGlc4ZYAa5X_VmTls7sPtJooIxqMjcvK4dfyd1iKF1yuE-lzrjIr9THA23j2oCwCwLnENWzKH7NvpVYMGw-Dleramnd0d0oLwvRRq42QNX_GP4T39A97vaESZM98"}'
     headers:
       cache-control:
       - no-cache
@@ -392,7 +343,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 16 Sep 2019 21:54:57 GMT
+      - Thu, 19 Sep 2019 21:17:17 GMT
       expires:
       - '-1'
       pragma:
@@ -432,10 +383,10 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.0.0b4 Python/3.6.6 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://vault105115999744021012.vault.azure.net/keys/ec-verify-P-521/create?api-version=7.0
+    uri: https://vault8bf41593ca44021012.vault.azure.net/keys/ec-verify-P-521/create?api-version=7.0
   response:
     body:
-      string: '{"key":{"kid":"https://vault105115999744021012.vault.azure.net/keys/ec-verify-P-521/14d63b2b21ca4c7a9776fa8ae59a97f1","kty":"EC","key_ops":["sign","verify"],"crv":"P-521","x":"AQpob0rRa9gMgFe7OH6G-ELIaEtXfAZrmdMwXmoKP7tGAG8RI2xHI3H9rYYKoOEzpGJmIui-0CPL6fzShpRCBWF5","y":"ALBbdtuVOndEWK1W4zVVeVM-XbjiOEXylJFbDLb9-fbXC8h4_R9EkQZh-CvPNB_4fSFA-7G_MFF2mPRhH0_acLvE"},"attributes":{"enabled":true,"created":1568670897,"updated":1568670897,"recoveryLevel":"Purgeable"}}'
+      string: '{"key":{"kid":"https://vault8bf41593ca44021012.vault.azure.net/keys/ec-verify-P-521/8bf99ec7c04b4f5cbbc3fe9d92f003ea","kty":"EC","key_ops":["sign","verify"],"crv":"P-521","x":"ATumhUxPMLqDyVbB4pi2LB7HixBMnck7Lwgp3sUB9dSMmK2rMBD9VyhFWbrvSZt04wRC1ho_1dS6ZMt7oW07wMuX","y":"AT6kovOAEi7du0XWzQjyEwGBNSNocbE0Jc7yGHLvYQk1mzY9HIV2IuiS6dNXbzk_9d9UGI1lQ4rcvnIvXX09Y-zJ"},"attributes":{"enabled":true,"created":1568927838,"updated":1568927838,"recoveryLevel":"Purgeable"}}'
     headers:
       cache-control:
       - no-cache
@@ -444,7 +395,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 16 Sep 2019 21:54:57 GMT
+      - Thu, 19 Sep 2019 21:17:17 GMT
       expires:
       - '-1'
       pragma:
@@ -484,10 +435,10 @@ interactions:
       User-Agent:
       - azsdk-python-keyvault-keys/4.0.0b4 Python/3.6.6 (Windows-10-10.0.18362-SP0)
     method: POST
-    uri: https://vault105115999744021012.vault.azure.net/keys/ec-verify-P-521/14d63b2b21ca4c7a9776fa8ae59a97f1/sign?api-version=7.0
+    uri: https://vault8bf41593ca44021012.vault.azure.net/keys/ec-verify-P-521/8bf99ec7c04b4f5cbbc3fe9d92f003ea/sign?api-version=7.0
   response:
     body:
-      string: '{"kid":"https://vault105115999744021012.vault.azure.net/keys/ec-verify-P-521/14d63b2b21ca4c7a9776fa8ae59a97f1","value":"AMQCvaPrXCtwrdN9Y8VMzRkLP_PtPPWOPznshWK3itWsBw_DUhgbZEdG4erb9aKUhd_JYFUCeY9hqbgj1cWTJ26JAF-WcaHcyQ-iIg6Yh_RMtPXiOCEF4VNWpWiH1asCUsT4I_5ohriNnEXpIlN8tzllHMpEK87PAE58VE8TaSBY0sNv"}'
+      string: '{"kid":"https://vault8bf41593ca44021012.vault.azure.net/keys/ec-verify-P-521/8bf99ec7c04b4f5cbbc3fe9d92f003ea","value":"AapuqokdWQ9h2mKtAcLtJJpva5mhxTS3IxrTRsbj7mKnR4hFUMCvotLj23K9uNnDXYLrub6sHmFFBzSi_erBI7RNAIt4xUU9TvrT_uD_ESoDNufaX8LsESI93CCPSjeBaG9MOoCiydxiPr8lWfmjMjvMwJutRhnQf2ZznIdehsJBRqNQ"}'
     headers:
       cache-control:
       - no-cache
@@ -496,7 +447,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 16 Sep 2019 21:54:57 GMT
+      - Thu, 19 Sep 2019 21:17:17 GMT
       expires:
       - '-1'
       pragma:
