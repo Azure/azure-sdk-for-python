@@ -119,6 +119,9 @@ class ExternalEntity(Model):
     :param resolution: A user supplied custom resolution to return as the
      entity's prediction.
     :type resolution: object
+    :param score: A user supplied score to return as the entity's prediction
+     score.
+    :type score: float
     """
 
     _validation = {
@@ -132,6 +135,7 @@ class ExternalEntity(Model):
         'start_index': {'key': 'startIndex', 'type': 'int'},
         'entity_length': {'key': 'entityLength', 'type': 'int'},
         'resolution': {'key': 'resolution', 'type': 'object'},
+        'score': {'key': 'score', 'type': 'float'},
     }
 
     def __init__(self, **kwargs):
@@ -140,6 +144,7 @@ class ExternalEntity(Model):
         self.start_index = kwargs.get('start_index', None)
         self.entity_length = kwargs.get('entity_length', None)
         self.resolution = kwargs.get('resolution', None)
+        self.score = kwargs.get('score', None)
 
 
 class Intent(Model):
@@ -168,9 +173,6 @@ class Prediction(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param normalized_query: Required. The query after pre-processing and
-     normalization.
-    :type normalized_query: str
     :param altered_query: The query after spell checking. Only set if spell
      check was enabled and a spelling mistake was found.
     :type altered_query: str
@@ -180,7 +182,7 @@ class Prediction(Model):
      fired.
     :type intents: dict[str,
      ~azure.cognitiveservices.language.luis.runtime.models.Intent]
-    :param entities: Required. The dictionary representing the entities that
+    :param entities: Required. A dictionary representing the entities that
      fired.
     :type entities: dict[str, object]
     :param sentiment: The result of the sentiment analysis.
@@ -189,14 +191,12 @@ class Prediction(Model):
     """
 
     _validation = {
-        'normalized_query': {'required': True},
         'top_intent': {'required': True},
         'intents': {'required': True},
         'entities': {'required': True},
     }
 
     _attribute_map = {
-        'normalized_query': {'key': 'normalizedQuery', 'type': 'str'},
         'altered_query': {'key': 'alteredQuery', 'type': 'str'},
         'top_intent': {'key': 'topIntent', 'type': 'str'},
         'intents': {'key': 'intents', 'type': '{Intent}'},
@@ -206,7 +206,6 @@ class Prediction(Model):
 
     def __init__(self, **kwargs):
         super(Prediction, self).__init__(**kwargs)
-        self.normalized_query = kwargs.get('normalized_query', None)
         self.altered_query = kwargs.get('altered_query', None)
         self.top_intent = kwargs.get('top_intent', None)
         self.intents = kwargs.get('intents', None)
@@ -259,20 +258,20 @@ class PredictionRequestOptions(Model):
     :param datetime_reference: The reference DateTime used for predicting
      datetime entities.
     :type datetime_reference: datetime
-    :param override_predictions: Whether to make the external entities
+    :param prefer_external_entities: Whether to make the external entities
      resolution override the predictions if an overlap occurs.
-    :type override_predictions: bool
+    :type prefer_external_entities: bool
     """
 
     _attribute_map = {
         'datetime_reference': {'key': 'datetimeReference', 'type': 'iso-8601'},
-        'override_predictions': {'key': 'overridePredictions', 'type': 'bool'},
+        'prefer_external_entities': {'key': 'preferExternalEntities', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
         super(PredictionRequestOptions, self).__init__(**kwargs)
         self.datetime_reference = kwargs.get('datetime_reference', None)
-        self.override_predictions = kwargs.get('override_predictions', None)
+        self.prefer_external_entities = kwargs.get('prefer_external_entities', None)
 
 
 class PredictionResponse(Model):
