@@ -23,6 +23,7 @@ from azure.core.tracing.decorator import distributed_trace
 
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
 from ._shared.request_handlers import add_metadata_headers, serialize_iso
+from ._shared.policies import StorageHeadersPolicy
 from ._shared.response_handlers import (
     process_storage_error,
     return_response_headers,
@@ -1031,24 +1032,12 @@ class ContainerClient(StorageAccountHostsMixin):
             headers={
                 'x-ms-version': "2019-02-02"
             }
-            #params={'comp': 'batch'}
         )
-
-        from wsgiref.handlers import format_date_time
-        from time import time
-        class LocalStorageHeadersPolicy(HeadersPolicy):
-
-            def on_request(self, request):
-                # type: (PipelineRequest, Any) -> None
-                super(LocalStorageHeadersPolicy, self).on_request(request)
-                current_time = format_date_time(time())
-                request.http_request.headers['x-ms-date'] = current_time
-
 
         request.set_multipart_mixed(
             *reqs,
             policies=[
-                LocalStorageHeadersPolicy(),
+                StorageHeadersPolicy(),
                 self._credential_policy
             ]
         )
@@ -1061,16 +1050,15 @@ class ContainerClient(StorageAccountHostsMixin):
         try:
             if response.status_code not in [202]:
                 raise HttpResponseError(response=response)
-            # This scenario to be discussed
-            if len(pipeline_response.context['MULTIPART_RESPONSE']) != len(reqs):
+            parts = response.parts()
+            if len(parts) != len(reqs):
                 raise HttpResponseError(
                     message="Didn't receive the same number of parts",
                     response=response
                 )
+            return parts
         except StorageErrorException as error:
             process_storage_error(error)
-
-        return pipeline_response.context['MULTIPART_RESPONSE']
 
     def get_blob_client(
             self, blob,  # type: Union[str, BlobProperties]

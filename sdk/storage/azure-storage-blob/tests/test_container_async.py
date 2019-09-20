@@ -1211,7 +1211,7 @@ class StorageContainerTestAsync(StorageTestCase):
 
         # Act
         response = await container.delete_blobs(
-            'blob12',
+            'blob1',
             'blob2',
             'blob3',
         )
