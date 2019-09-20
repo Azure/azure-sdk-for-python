@@ -15,7 +15,7 @@ from azure.core.exceptions import (
     ResourceModifiedError,
     ResourceNotFoundError,
 )
-from .._azure_appconfiguration_error import AppConfigResourceReadOnlyError
+from .._azure_appconfiguration_error import ResourceReadOnlyError
 from .._utils import (
     get_endpoint_from_connection_string,
     escape_and_tostr,
@@ -255,7 +255,7 @@ class AzureAppConfigurationClient:
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
         :return: The ConfigurationSetting returned from the service
         :rtype: :class:`ConfigurationSetting`
-        :raises: :class:`AppConfigResourceReadOnlyError`, :class:`ResourceModifiedError`, :class:`HttpRequestError`
+        :raises: :class:`ResourceReadOnlyError`, :class:`ResourceModifiedError`, :class:`HttpRequestError`
 
         Example
 
@@ -288,7 +288,7 @@ class AzureAppConfigurationClient:
             if_match=if_match,
             headers=custom_headers,
             error_map={
-                409: AppConfigResourceReadOnlyError,
+                409: ResourceReadOnlyError,
                 412: ResourceModifiedError,
             },
         )
@@ -310,7 +310,7 @@ class AzureAppConfigurationClient:
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request
         :return: The deleted ConfigurationSetting returned from the service, or None if it doesn't exist.
         :rtype: :class:`ConfigurationSetting`
-        :raises: :class:`AppConfigResourceReadOnlyError`, :class:`ResourceModifiedError`, :class:`HttpRequestError`
+        :raises: :class:`ResourceReadOnlyError`, :class:`ResourceModifiedError`, :class:`HttpRequestError`
 
         Example
 
@@ -329,7 +329,7 @@ class AzureAppConfigurationClient:
             if_match=if_match,
             headers=custom_headers,
             error_map={
-                409: AppConfigResourceReadOnlyError,
+                409: ResourceReadOnlyError,
                 412: ResourceModifiedError,
             },
         )
