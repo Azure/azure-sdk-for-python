@@ -12,6 +12,7 @@
 from .azure_appconfiguration_client import AzureAppConfigurationClient
 from ._models import ConfigurationSetting
 from ._version import VERSION
+from ._azure_appconfiguration_error import AppConfigResourceReadOnlyError
 
 __version__ = VERSION
-__all__ = ["AzureAppConfigurationClient", "ConfigurationSetting"]
+__all__ = ["AzureAppConfigurationClient", "ConfigurationSetting", "AppConfigResourceReadOnlyError"]

@@ -15,6 +15,7 @@ from azure.core.exceptions import (
     ResourceModifiedError,
     ResourceNotFoundError,
 )
+from .._azure_appconfiguration_error import AppConfigResourceReadOnlyError
 from .._utils import (
     get_endpoint_from_connection_string,
     escape_and_tostr,
@@ -238,6 +239,7 @@ class AzureAppConfigurationClient:
             error_map={412: ResourceExistsError},
         )
         return ConfigurationSetting._from_key_value(key_value_added)
+
     @distributed_trace_async
     async def set_configuration_setting(
         self, configuration_setting, **kwargs
@@ -253,7 +255,7 @@ class AzureAppConfigurationClient:
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
         :return: The ConfigurationSetting returned from the service
         :rtype: :class:`ConfigurationSetting`
-        :raises: :class:`ResourceModifiedError`, :class:`HttpRequestError`
+        :raises: :class:`AppConfigResourceReadOnlyError`, :class:`ResourceModifiedError`, :class:`HttpRequestError`
 
         Example
 
@@ -285,7 +287,10 @@ class AzureAppConfigurationClient:
             label=key_value.label,
             if_match=if_match,
             headers=custom_headers,
-            error_map={412: ResourceModifiedError},
+            error_map={
+                409: AppConfigResourceReadOnlyError,
+                412: ResourceModifiedError,
+            },
         )
         return ConfigurationSetting._from_key_value(key_value_set)
 
@@ -305,7 +310,7 @@ class AzureAppConfigurationClient:
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request
         :return: The deleted ConfigurationSetting returned from the service, or None if it doesn't exist.
         :rtype: :class:`ConfigurationSetting`
-        :raises: :class:`ResourceModifiedError`, :class:`HttpRequestError`
+        :raises: :class:`AppConfigResourceReadOnlyError`, :class:`ResourceModifiedError`, :class:`HttpRequestError`
 
         Example
 
@@ -324,7 +329,7 @@ class AzureAppConfigurationClient:
             if_match=if_match,
             headers=custom_headers,
             error_map={
-                404: ResourceNotFoundError,  # 404 doesn't happen actually. return None if no match
+                409: AppConfigResourceReadOnlyError,
                 412: ResourceModifiedError,
             },
         )
