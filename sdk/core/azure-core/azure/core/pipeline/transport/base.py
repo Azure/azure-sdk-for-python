@@ -25,6 +25,13 @@
 # --------------------------------------------------------------------------
 from __future__ import absolute_import
 import abc
+from email.message import Message
+from email.policy import HTTP
+try:
+    from email import message_from_bytes as message_parser
+except ImportError: # 2.7
+    from email import message_from_string as message_parser
+from io import BytesIO
 import json
 import logging
 import os
@@ -41,7 +48,6 @@ from typing import (TYPE_CHECKING, Generic, TypeVar, cast, IO, List, Union, Any,
                     Optional, Tuple, Callable, Iterator)
 
 from six.moves.http_client import HTTPConnection, HTTPResponse as _HTTPResponse
-from io import BytesIO
 
 from azure.core.pipeline import ABC, AbstractContextManager, PipelineRequest, PipelineResponse, PipelineContext
 
@@ -424,7 +430,7 @@ class BytesIOSocket(object):
     def __init__(self, bytes_data):
         self.bytes_data = bytes_data
 
-    def makefile(self, mode):
+    def makefile(self, _):
         return BytesIO(self.bytes_data)
 
 
@@ -643,14 +649,6 @@ class PipelineClientBase(object):
         return request
 
 
-from email.message import Message
-from email.policy import HTTP
-try:
-    from email import message_from_bytes as message_parser
-except ImportError: # 2.7
-    from email import message_from_string as message_parser
-
-
 class MultiPartHelper(object):
     def __init__(
         self,
@@ -683,7 +681,7 @@ class MultiPartHelper(object):
 
         with concurrent.futures.ThreadPoolExecutor() as executor:
             # List comprehension to raise exceptions if happened
-            [_ for _ in executor.map(prepare_requests, self.requests)]
+            [_ for _ in executor.map(prepare_requests, self.requests)]  # pylint: disable=expression-not-assigned
 
         # Update the main request with the body
         main_message = Message()
@@ -699,7 +697,7 @@ class MultiPartHelper(object):
             main_message.attach(part_message)
 
         full_message = main_message.as_bytes(policy=HTTP)
-        headers, _, body = full_message.split(b'\r\n', maxsplit=2)
+        _, _, body = full_message.split(b'\r\n', maxsplit=2)
         self.main_request.set_bytes_body(body)
         self.main_request.headers['Content-Type'] = 'multipart/mixed; boundary='+main_message.get_boundary()
 
@@ -741,7 +739,6 @@ class MultiPartHelper(object):
 
         with concurrent.futures.ThreadPoolExecutor() as executor:
             # List comprehension to raise exceptions if happened
-            [_ for _ in executor.map(parse_responses, responses)]
+            [_ for _ in executor.map(parse_responses, responses)]  # pylint: disable=expression-not-assigned
 
         return responses
-
