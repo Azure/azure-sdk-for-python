@@ -5,21 +5,21 @@
 from datetime import datetime
 from typing import Any, AsyncIterable, Optional, Dict, List, Union
 
-from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.keyvault.keys.models import DeletedKey, JsonWebKey, Key, KeyBase
 from azure.keyvault.keys._shared import AsyncKeyVaultClientBase
 
+from .._shared.exceptions import error_map
 from ..crypto.aio import CryptographyClient
 
 
 class KeyClient(AsyncKeyVaultClientBase):
     """A high-level asynchronous interface for managing a vault's keys.
 
+    :param str vault_url: URL of the vault the client will access
     :param credential: An object which can provide an access token for the vault, such as a credential from
         :mod:`azure.identity.aio`
-    :param str vault_url: URL of the vault the client will access
 
     Example:
         .. literalinclude:: ../tests/test_samples_keys_async.py
@@ -33,6 +33,18 @@ class KeyClient(AsyncKeyVaultClientBase):
     # pylint:disable=protected-access
 
     def get_cryptography_client(self, key: Union[Key, str], **kwargs: Any) -> CryptographyClient:
+        """
+        Get a :class:`~azure.keyvault.keys.crypto.aio.CryptographyClient` capable of performing cryptographic operations
+        with a key.
+
+        :param key:
+            Either a :class:`~azure.keyvault.keys.Key` instance as returned by
+            :func:`~azure.keyvault.keys.aio.KeyClient.get_key`, or a string. If a string, the value must be the full
+            identifier of an Azure Key Vault key with a version.
+        :type key: str or :class:`~azure.keyvault.keys.Key`
+        :rtype: :class:`~azure.keyvault.keys.crypto.aio.CryptographyClient`
+        """
+
         # the initializer requires a credential but won't actually use it in this case because we pass in this
         # KeyClient's generated client, whose pipeline (and auth policy) is fully configured
         credential = object()
@@ -69,6 +81,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         :type curve: ~azure.keyvault.keys.enums.KeyCurveName or str
         :returns: The created key
         :rtype: ~azure.keyvault.keys.models.Key
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys_async.py
@@ -123,6 +136,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         :param dict tags: (optional) Application specific metadata in the form of key-value pairs
         :returns: The created key
         :rtype: ~azure.keyvault.keys.models.Key
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys_async.py
@@ -174,6 +188,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         :param dict tags: (optional) Application specific metadata in the form of key-value pairs
         :returns: The created key
         :rtype: ~azure.keyvault.keys.models.Key
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys_async.py
@@ -204,7 +219,9 @@ class KeyClient(AsyncKeyVaultClientBase):
         :param str name: The name of the key to delete.
         :returns: The deleted key
         :rtype: ~azure.keyvault.keys.models.DeletedKey
-        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist
+        :raises:
+            :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
+            :class:`~azure.core.exceptions.HttpResponseError` for other errors
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys_async.py
@@ -214,7 +231,7 @@ class KeyClient(AsyncKeyVaultClientBase):
                 :caption: Delete a key
                 :dedent: 8
         """
-        bundle = await self._client.delete_key(self.vault_url, name, error_map={404: ResourceNotFoundError}, **kwargs)
+        bundle = await self._client.delete_key(self.vault_url, name, error_map=error_map, **kwargs)
         return DeletedKey._from_deleted_key_bundle(bundle)
 
     @distributed_trace_async
@@ -225,7 +242,9 @@ class KeyClient(AsyncKeyVaultClientBase):
         :param str version: (optional) A specific version of the key to get. If not specified, gets the latest version
             of the key.
         :rtype: ~azure.keyvault.keys.models.Key
-        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist
+        :raises:
+            :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
+            :class:`~azure.core.exceptions.HttpResponseError` for other errors
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys_async.py
@@ -238,9 +257,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         if version is None:
             version = ""
 
-        bundle = await self._client.get_key(
-            self.vault_url, name, version, error_map={404: ResourceNotFoundError}, **kwargs
-        )
+        bundle = await self._client.get_key(self.vault_url, name, version, error_map=error_map, **kwargs)
         return Key._from_key_bundle(bundle)
 
     @distributed_trace_async
@@ -251,6 +268,9 @@ class KeyClient(AsyncKeyVaultClientBase):
         :param str name: The name of the key
         :returns: The deleted key
         :rtype: ~azure.keyvault.keys.models.DeletedKey
+        :raises:
+            :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
+            :class:`~azure.core.exceptions.HttpResponseError` for other errors
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys_async.py
@@ -260,9 +280,7 @@ class KeyClient(AsyncKeyVaultClientBase):
                 :caption: Get a deleted key
                 :dedent: 8
         """
-        bundle = await self._client.get_deleted_key(
-            self.vault_url, name, error_map={404: ResourceNotFoundError}, **kwargs
-        )
+        bundle = await self._client.get_deleted_key(self.vault_url, name, error_map=error_map, **kwargs)
         return DeletedKey._from_deleted_key_bundle(bundle)
 
     @distributed_trace
@@ -286,7 +304,7 @@ class KeyClient(AsyncKeyVaultClientBase):
             self.vault_url,
             maxresults=max_results,
             cls=lambda objs: [DeletedKey._from_deleted_key_item(x) for x in objs],
-            **kwargs
+            **kwargs,
         )
 
     @distributed_trace
@@ -306,10 +324,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         """
         max_results = kwargs.get("max_page_size")
         return self._client.get_keys(
-            self.vault_url,
-            maxresults=max_results,
-            cls=lambda objs: [KeyBase._from_key_item(x) for x in objs],
-            **kwargs
+            self.vault_url, maxresults=max_results, cls=lambda objs: [KeyBase._from_key_item(x) for x in objs], **kwargs
         )
 
     @distributed_trace
@@ -334,7 +349,7 @@ class KeyClient(AsyncKeyVaultClientBase):
             name,
             maxresults=max_results,
             cls=lambda objs: [KeyBase._from_key_item(x) for x in objs],
-            **kwargs
+            **kwargs,
         )
 
     @distributed_trace_async
@@ -346,6 +361,7 @@ class KeyClient(AsyncKeyVaultClientBase):
 
         :param str name: The name of the key
         :returns: None
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
             .. code-block:: python
@@ -368,6 +384,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         :param str name: The name of the deleted key
         :returns: The recovered key
         :rtype: ~azure.keyvault.keys.models.Key
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys_async.py
@@ -405,7 +422,9 @@ class KeyClient(AsyncKeyVaultClientBase):
         :param dict tags: (optional) Application specific metadata in the form of key-value pairs
         :returns: The updated key
         :rtype: ~azure.keyvault.keys.models.Key
-        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist
+        :raises:
+            :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
+            :class:`~azure.core.exceptions.HttpResponseError` for other errors
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys_async.py
@@ -427,7 +446,7 @@ class KeyClient(AsyncKeyVaultClientBase):
             key_ops=key_operations,
             tags=tags,
             key_attributes=attributes,
-            error_map={404: ResourceNotFoundError},
+            error_map=error_map,
             **kwargs,
         )
         return Key._from_key_bundle(bundle)
@@ -443,7 +462,9 @@ class KeyClient(AsyncKeyVaultClientBase):
         :param str name: The name of the key
         :returns: The raw bytes of the key backup
         :rtype: bytes
-        :raises: :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist
+        :raises:
+            :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
+            :class:`~azure.core.exceptions.HttpResponseError` for other errors
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys_async.py
@@ -453,9 +474,7 @@ class KeyClient(AsyncKeyVaultClientBase):
                 :caption: Get a key backup
                 :dedent: 8
         """
-        backup_result = await self._client.backup_key(
-            self.vault_url, name, error_map={404: ResourceNotFoundError}, **kwargs
-        )
+        backup_result = await self._client.backup_key(self.vault_url, name, error_map=error_map, **kwargs)
         return backup_result.value
 
     @distributed_trace_async
@@ -469,7 +488,9 @@ class KeyClient(AsyncKeyVaultClientBase):
         :param bytes backup: The raw bytes of the key backup
         :returns: The restored key
         :rtype: ~azure.keyvault.keys.models.Key
-        :raises: :class:`~azure.core.exceptions.ResourceExistsError` if the backed up key's name is already in use
+        :raises:
+            :class:`~azure.core.exceptions.ResourceExistsError` if the backed up key's name is already in use,
+            :class:`~azure.core.exceptions.HttpResponseError` for other errors
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys_async.py
@@ -479,7 +500,7 @@ class KeyClient(AsyncKeyVaultClientBase):
                 :caption: Restore a key backup
                 :dedent: 8
         """
-        bundle = await self._client.restore_key(self.vault_url, backup, error_map={409: ResourceExistsError}, **kwargs)
+        bundle = await self._client.restore_key(self.vault_url, backup, error_map=error_map, **kwargs)
         return Key._from_key_bundle(bundle)
 
     @distributed_trace_async
@@ -507,6 +528,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         :param dict tags: (optional) Application specific metadata in the form of key-value pairs
         :returns: The imported key
         :rtype: ~azure.keyvault.keys.models.Key
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         """
         if enabled is not None or not_before is not None or expires is not None:

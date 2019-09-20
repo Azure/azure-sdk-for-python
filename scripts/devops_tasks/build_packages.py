@@ -10,7 +10,6 @@
 
 import argparse
 import sys
-from pathlib import Path
 import os
 
 from common_tasks import process_glob_string, run_check_call
@@ -65,6 +64,15 @@ if __name__ == "__main__":
         ),
     )
 
+    parser.add_argument(
+        "--pkgfilter",
+        default="",
+        dest="package_filter_string",
+        help=(
+            "An additional string used to filter the set of artifacts by a simple CONTAINS clause. This filters packages AFTER the set is built with compatibility and omission lists accounted."
+        ),
+    )
+
     args = parser.parse_args()
 
     # We need to support both CI builds of everything and individual service
@@ -75,5 +83,5 @@ if __name__ == "__main__":
     else:
         target_dir = root_dir
 
-    targeted_packages = process_glob_string(args.glob_string, target_dir)
+    targeted_packages = process_glob_string(args.glob_string, target_dir, args.package_filter_string)
     build_packages(targeted_packages, args.distribution_directory)

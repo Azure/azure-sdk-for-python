@@ -82,7 +82,7 @@ class MgmtManagedDisksTest(AzureMgmtTestCase):
         assert access_uri.access_sas is not None
 
     @ResourceGroupPreparer()
-    def test_md_from_storage_blob(self, resource_group, location):
+    def _test_md_from_storage_blob(self, resource_group, location):
         '''Create a Managed Disk from Blob Storage.'''
         DiskCreateOption = self.compute_client.disks.models.DiskCreateOption
 
@@ -265,7 +265,7 @@ class MgmtManagedDisksTest(AzureMgmtTestCase):
         async_update.wait()
 
     @ResourceGroupPreparer()
-    def test_create_image_from_blob(self, resource_group, location):
+    def _test_create_image_from_blob(self, resource_group, location):
         async_create_image = self.compute_client.images.create_or_update(
             resource_group.name,
             'myImage',
@@ -277,6 +277,7 @@ class MgmtManagedDisksTest(AzureMgmtTestCase):
                         'os_state': "Generalized",
                         'blob_uri': self.settings.LINUX_OS_VHD,  # 'https://mystorageaccount.blob.core.windows.net/inputtestdatadonotdelete/ubuntu.vhd'
                         'caching': "ReadWrite",
+                        'hyper_vgeneration': "V1"
                     }
                 }
             }

@@ -73,10 +73,11 @@ class AzureMgmtTestCase(AzureTestCase):
         )
 
     def _setup_scrubber(self):
-        constants_to_scrub = ['SUBSCRIPTION_ID', 'AD_DOMAIN', 'TENANT_ID', 'CLIENT_OID', 'ADLA_JOB_ID']
+        constants_to_scrub = ['SUBSCRIPTION_ID', 'TENANT_ID']
         for key in constants_to_scrub:
-            if hasattr(self.settings, key) and hasattr(self._fake_settings, key):
-                self.scrubber.register_name_pair(getattr(self.settings, key),
+            key_value = self.get_settings_value(key)
+            if key_value and hasattr(self._fake_settings, key):
+                self.scrubber.register_name_pair(key_value,
                                                  getattr(self._fake_settings, key))
 
     def setUp(self):
@@ -110,9 +111,15 @@ class AzureMgmtTestCase(AzureTestCase):
                 **kwargs
             )
 
+        subscription_id = None
+        if self.is_live:
+            subscription_id = os.environ.get("AZURE_SUBSCRIPTION_ID", None)
+        if not subscription_id:
+            subscription_id = self.settings.SUBSCRIPTION_ID
+
         return self.create_basic_client(
             client_class,
-            subscription_id=self.settings.SUBSCRIPTION_ID,
+            subscription_id=subscription_id,
             **kwargs
         )
 
@@ -152,8 +159,6 @@ class AzureMgmtPreparer(AbstractPreparer):
         return self.resource_moniker
 
     def create_mgmt_client(self, client_class):
-        return client_class(
-            credentials=self.test_class_instance.settings.get_credentials(),
-            subscription_id=self.test_class_instance.settings.SUBSCRIPTION_ID,
-            **self.client_kwargs
+        return self.test_class_instance.create_mgmt_client(
+            client_class
         )
