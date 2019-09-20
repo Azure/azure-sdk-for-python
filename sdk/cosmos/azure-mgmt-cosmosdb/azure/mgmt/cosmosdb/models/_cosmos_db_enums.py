@@ -74,7 +74,7 @@ class ConflictResolutionMode(str, Enum):
     custom = "Custom"
 
 
-class TiggerType(str, Enum):
+class TriggerType(str, Enum):
 
     pre = "Pre"
     post = "Post"
