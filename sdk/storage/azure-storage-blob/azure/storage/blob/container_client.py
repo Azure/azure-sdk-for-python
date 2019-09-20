@@ -20,6 +20,8 @@ import six
 
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.pipeline.transport import HttpRequest
+from azure.core.exceptions import HttpResponseError
 
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
 from ._shared.request_handlers import add_metadata_headers, serialize_iso
@@ -952,6 +954,49 @@ class ContainerClient(StorageAccountHostsMixin):
             timeout=timeout,
             **kwargs)
 
+    def _generate_delete_blobs_options(self, snapshot=None, timeout=None, delete_snapshots=None, request_id=None, lease_access_conditions=None, modified_access_conditions=None):
+        lease_id = None
+        if lease_access_conditions is not None:
+            lease_id = lease_access_conditions.lease_id
+        if_modified_since = None
+        if modified_access_conditions is not None:
+            if_modified_since = modified_access_conditions.if_modified_since
+        if_unmodified_since = None
+        if modified_access_conditions is not None:
+            if_unmodified_since = modified_access_conditions.if_unmodified_since
+        if_match = None
+        if modified_access_conditions is not None:
+            if_match = modified_access_conditions.if_match
+        if_none_match = None
+        if modified_access_conditions is not None:
+            if_none_match = modified_access_conditions.if_none_match
+
+        # Construct parameters
+        query_parameters = {}
+        if snapshot is not None:
+            query_parameters['snapshot'] = self._client._serialize.query("snapshot", snapshot, 'str')
+        if timeout is not None:
+            query_parameters['timeout'] = self._client._serialize.query("timeout", timeout, 'int', minimum=0)
+
+        # Construct headers
+        header_parameters = {}
+        if delete_snapshots is not None:
+            header_parameters['x-ms-delete-snapshots'] = self._client._serialize.header("delete_snapshots", delete_snapshots, 'DeleteSnapshotsOptionType')
+        if request_id is not None:
+            header_parameters['x-ms-client-request-id'] = self._client._serialize.header("request_id", request_id, 'str')
+        if lease_id is not None:
+            header_parameters['x-ms-lease-id'] = self._client._serialize.header("lease_id", lease_id, 'str')
+        if if_modified_since is not None:
+            header_parameters['If-Modified-Since'] = self._client._serialize.header("if_modified_since", if_modified_since, 'rfc-1123')
+        if if_unmodified_since is not None:
+            header_parameters['If-Unmodified-Since'] = self._client._serialize.header("if_unmodified_since", if_unmodified_since, 'rfc-1123')
+        if if_match is not None:
+            header_parameters['If-Match'] = self._client._serialize.header("if_match", if_match, 'str')
+        if if_none_match is not None:
+            header_parameters['If-None-Match'] = self._client._serialize.header("if_none_match", if_none_match, 'str')
+
+        return query_parameters, header_parameters
+
     @distributed_trace
     def delete_blobs(
             self, *blobs,  # type: Union[str, BlobProperties]
@@ -1014,18 +1059,23 @@ class ContainerClient(StorageAccountHostsMixin):
             The timeout parameter is expressed in seconds.
         :rtype: None
         """
-        from azure.core.pipeline.transport import HttpRequest, HttpResponse, RequestsTransport
-        from azure.core.pipeline.policies import HeadersPolicy
-        from azure.core.exceptions import map_error, HttpResponseError
+        options = BlobClient._generic_delete_blob_options(
+            delete_snapshots=delete_snapshots,
+            lease=lease,
+            timeout=timeout,
+            **kwargs
+        )
+        query_parameters, header_parameters = self._generate_delete_blobs_options(**options)
+
         reqs = []
         for blob in blobs:
-            reqs.append(HttpRequest(
+            req = HttpRequest(
                 "DELETE",
                 "/{}/{}".format(self.container_name, blob),
-                headers={
-                    'Content-Length': '0'
-                }
-            ))
+                headers=header_parameters
+            )
+            req.format_parameters(query_parameters)
+            reqs.append(req)
 
         request = self._client._client.post(
             url='https://{}/?comp=batch'.format(self.primary_hostname),

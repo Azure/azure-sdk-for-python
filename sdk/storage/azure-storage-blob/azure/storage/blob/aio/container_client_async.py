@@ -13,6 +13,8 @@ from typing import (  # pylint: disable=unused-import
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged
+from azure.core.pipeline.transport import HttpRequest
+from azure.core.exceptions import HttpResponseError
 
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._shared.policies import StorageHeadersPolicy
@@ -838,18 +840,23 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
             The timeout parameter is expressed in seconds.
         :rtype: None
         """
-        from azure.core.pipeline.transport import HttpRequest, HttpResponse, RequestsTransport
-        from azure.core.pipeline.policies import HeadersPolicy
-        from azure.core.exceptions import map_error, HttpResponseError
+        options = BlobClient._generic_delete_blob_options(
+            delete_snapshots=delete_snapshots,
+            lease=lease,
+            timeout=timeout,
+            **kwargs
+        )
+        query_parameters, header_parameters = self._generate_delete_blobs_options(**options)
+
         reqs = []
         for blob in blobs:
-            reqs.append(HttpRequest(
+            req = HttpRequest(
                 "DELETE",
                 "/{}/{}".format(self.container_name, blob),
-                headers={
-                    'Content-Length': '0'
-                }
-            ))
+                headers=header_parameters
+            )
+            req.format_parameters(query_parameters)
+            reqs.append(req)
 
         request = self._client._client.post(
             url='https://{}/?comp=batch'.format(self.primary_hostname),
