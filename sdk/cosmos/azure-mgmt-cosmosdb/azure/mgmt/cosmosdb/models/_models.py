@@ -2979,7 +2979,7 @@ class SqlTriggerGetResults(ARMResourceProperties):
     :type body: str
     :param trigger_type: Type of the Trigger. Possible values include: 'Pre',
      'Post'
-    :type trigger_type: str or ~azure.mgmt.cosmosdb.models.enum
+    :type trigger_type: str or ~azure.mgmt.cosmosdb.models.TiggerType
     :param trigger_operation: The operation the trigger is associated with
     :type trigger_operation: str
     :ivar _rid: A system generated property. A unique identifier.
@@ -3039,7 +3039,7 @@ class SqlTriggerResource(Model):
     :type body: str
     :param trigger_type: Type of the Trigger. Possible values include: 'Pre',
      'Post'
-    :type trigger_type: str or ~azure.mgmt.cosmosdb.models.enum
+    :type trigger_type: str or ~azure.mgmt.cosmosdb.models.TiggerType
     :param trigger_operation: The operation the trigger is associated with
     :type trigger_operation: str
     """

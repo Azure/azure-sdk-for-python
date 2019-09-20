@@ -74,6 +74,12 @@ class ConflictResolutionMode(str, Enum):
     custom = "Custom"
 
 
+class TiggerType(str, Enum):
+
+    pre = "Pre"
+    post = "Post"
+
+
 class KeyKind(str, Enum):
 
     primary = "primary"
