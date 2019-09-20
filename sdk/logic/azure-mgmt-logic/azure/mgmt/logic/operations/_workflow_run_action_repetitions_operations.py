@@ -11,7 +11,6 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
@@ -25,7 +24,7 @@ class WorkflowRunActionRepetitionsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version. Constant value: "2018-07-01-preview".
+    :ivar api_version: The API version. Constant value: "2019-05-01".
     """
 
     models = models
@@ -35,7 +34,7 @@ class WorkflowRunActionRepetitionsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-07-01-preview"
+        self.api_version = "2019-05-01"
 
         self.config = config
 
@@ -60,7 +59,8 @@ class WorkflowRunActionRepetitionsOperations(object):
          WorkflowRunActionRepetitionDefinition
         :rtype:
          ~azure.mgmt.logic.models.WorkflowRunActionRepetitionDefinitionPaged[~azure.mgmt.logic.models.WorkflowRunActionRepetitionDefinition]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.logic.models.ErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -103,9 +103,7 @@ class WorkflowRunActionRepetitionsOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -141,7 +139,8 @@ class WorkflowRunActionRepetitionsOperations(object):
          raw=true
         :rtype: ~azure.mgmt.logic.models.WorkflowRunActionRepetitionDefinition
          or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.logic.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -174,9 +173,7 @@ class WorkflowRunActionRepetitionsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -211,7 +208,8 @@ class WorkflowRunActionRepetitionsOperations(object):
         :return: An iterator like instance of ExpressionRoot
         :rtype:
          ~azure.mgmt.logic.models.ExpressionRootPaged[~azure.mgmt.logic.models.ExpressionRoot]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.logic.models.ErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -255,9 +253,7 @@ class WorkflowRunActionRepetitionsOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorResponseException(self._deserialize, response)
 
             return response
 

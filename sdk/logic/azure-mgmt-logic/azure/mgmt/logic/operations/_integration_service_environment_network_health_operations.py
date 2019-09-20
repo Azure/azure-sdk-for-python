@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class WorkflowRunOperations(object):
-    """WorkflowRunOperations operations.
+class IntegrationServiceEnvironmentNetworkHealthOperations(object):
+    """IntegrationServiceEnvironmentNetworkHealthOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -39,25 +39,23 @@ class WorkflowRunOperations(object):
         self.config = config
 
     def get(
-            self, resource_group_name, workflow_name, run_name, operation_id, custom_headers=None, raw=False, **operation_config):
-        """Gets an operation for a run.
+            self, resource_group, integration_service_environment_name, custom_headers=None, raw=False, **operation_config):
+        """Gets the integration service environment network health.
 
-        :param resource_group_name: The resource group name.
-        :type resource_group_name: str
-        :param workflow_name: The workflow name.
-        :type workflow_name: str
-        :param run_name: The workflow run name.
-        :type run_name: str
-        :param operation_id: The workflow operation id.
-        :type operation_id: str
+        :param resource_group: The resource group.
+        :type resource_group: str
+        :param integration_service_environment_name: The integration service
+         environment name.
+        :type integration_service_environment_name: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: WorkflowRun or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.logic.models.WorkflowRun or
-         ~msrest.pipeline.ClientRawResponse
+        :return: dict or ClientRawResponse if raw=true
+        :rtype: dict[str,
+         ~azure.mgmt.logic.models.IntegrationServiceEnvironmentSubnetNetworkHealth]
+         or ~msrest.pipeline.ClientRawResponse
         :raises:
          :class:`ErrorResponseException<azure.mgmt.logic.models.ErrorResponseException>`
         """
@@ -65,10 +63,8 @@ class WorkflowRunOperations(object):
         url = self.get.metadata['url']
         path_format_arguments = {
             'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("resource_group_name", resource_group_name, 'str'),
-            'workflowName': self._serialize.url("workflow_name", workflow_name, 'str'),
-            'runName': self._serialize.url("run_name", run_name, 'str'),
-            'operationId': self._serialize.url("operation_id", operation_id, 'str')
+            'resourceGroup': self._serialize.url("resource_group", resource_group, 'str'),
+            'integrationServiceEnvironmentName': self._serialize.url("integration_service_environment_name", integration_service_environment_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -95,11 +91,11 @@ class WorkflowRunOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('WorkflowRun', response)
+            deserialized = self._deserialize('{IntegrationServiceEnvironmentSubnetNetworkHealth}', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/workflows/{workflowName}/runs/{runName}/operations/{operationId}'}
+    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Logic/integrationServiceEnvironments/{integrationServiceEnvironmentName}/health/network'}

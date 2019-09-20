@@ -34,6 +34,11 @@ from .operations import IntegrationAccountPartnersOperations
 from .operations import IntegrationAccountAgreementsOperations
 from .operations import IntegrationAccountCertificatesOperations
 from .operations import IntegrationAccountSessionsOperations
+from .operations import IntegrationServiceEnvironmentsOperations
+from .operations import IntegrationServiceEnvironmentSkusOperations
+from .operations import IntegrationServiceEnvironmentNetworkHealthOperations
+from .operations import IntegrationServiceEnvironmentManagedApisOperations
+from .operations import IntegrationServiceEnvironmentManagedApiOperations
 from .operations import Operations
 from . import models
 
@@ -86,6 +91,16 @@ class LogicManagementClient(SDKClient):
     :vartype integration_account_certificates: azure.mgmt.logic.operations.IntegrationAccountCertificatesOperations
     :ivar integration_account_sessions: IntegrationAccountSessions operations
     :vartype integration_account_sessions: azure.mgmt.logic.operations.IntegrationAccountSessionsOperations
+    :ivar integration_service_environments: IntegrationServiceEnvironments operations
+    :vartype integration_service_environments: azure.mgmt.logic.operations.IntegrationServiceEnvironmentsOperations
+    :ivar integration_service_environment_skus: IntegrationServiceEnvironmentSkus operations
+    :vartype integration_service_environment_skus: azure.mgmt.logic.operations.IntegrationServiceEnvironmentSkusOperations
+    :ivar integration_service_environment_network_health: IntegrationServiceEnvironmentNetworkHealth operations
+    :vartype integration_service_environment_network_health: azure.mgmt.logic.operations.IntegrationServiceEnvironmentNetworkHealthOperations
+    :ivar integration_service_environment_managed_apis: IntegrationServiceEnvironmentManagedApis operations
+    :vartype integration_service_environment_managed_apis: azure.mgmt.logic.operations.IntegrationServiceEnvironmentManagedApisOperations
+    :ivar integration_service_environment_managed_api_operations: IntegrationServiceEnvironmentManagedApiOperations operations
+    :vartype integration_service_environment_managed_api_operations: azure.mgmt.logic.operations.IntegrationServiceEnvironmentManagedApiOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.logic.operations.Operations
 
@@ -104,7 +119,7 @@ class LogicManagementClient(SDKClient):
         super(LogicManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2018-07-01-preview'
+        self.api_version = '2019-05-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -149,6 +164,16 @@ class LogicManagementClient(SDKClient):
         self.integration_account_certificates = IntegrationAccountCertificatesOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.integration_account_sessions = IntegrationAccountSessionsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.integration_service_environments = IntegrationServiceEnvironmentsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.integration_service_environment_skus = IntegrationServiceEnvironmentSkusOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.integration_service_environment_network_health = IntegrationServiceEnvironmentNetworkHealthOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.integration_service_environment_managed_apis = IntegrationServiceEnvironmentManagedApisOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.integration_service_environment_managed_api_operations = IntegrationServiceEnvironmentManagedApiOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.operations = Operations(
             self._client, self.config, self._serialize, self._deserialize)
