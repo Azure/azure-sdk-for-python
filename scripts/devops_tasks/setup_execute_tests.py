@@ -240,6 +240,14 @@ if __name__ == "__main__":
         help="Location for prebuilt artifacts (if any)",
     )
 
+    parser.add_argument(
+        "-x",
+        "--xdist",
+        default=False,
+        help=("Flag that enables xdist (requires pip install)"),
+        action="store_true"
+    )
+
     args = parser.parse_args()
 
     # We need to support both CI builds of everything and individual service
@@ -261,6 +269,9 @@ if __name__ == "__main__":
         extended_pytest_args.append("--no-cov")
     else:
         extended_pytest_args.extend(["--durations=10", "--cov", "--cov-report="])
+
+    if args.xdist:
+        extended_pytest_args.append(["-n", " auto"])
 
     if args.runtype != "none":
         execute_global_install_and_test(args, targeted_packages, extended_pytest_args)

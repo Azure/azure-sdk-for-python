@@ -14,11 +14,11 @@ jobs:
 
     steps:
     - template: ../steps/build-artifacts.yml
-      parameters: 
+      parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
         BeforePublishSteps: ${{ parameters.BeforePublishSteps }}
-          
+
   - job: 'Analyze'
     variables:
     - template: ../variables/globals.yml
@@ -39,7 +39,7 @@ jobs:
     dependsOn:
        - 'Build'
 
-    timeoutInMinutes: 270
+    timeoutInMinutes: 240
 
     strategy:
       matrix:
@@ -83,17 +83,17 @@ jobs:
 
     steps:
     - template: ../steps/test-nightly.yml
-      parameters: 
+      parameters:
         ServiceDirectory: ${{ parameters.ServiceDirectory }}
         TestMarkArgument: ${{ parameters.TestMarkArgument }}
         OSName: $(OSName)
         PythonVersion: $(PythonVersion)
         BuildTargetingString: ${{ parameters.BuildTargetingString }}
-        AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
+        AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)" -x'
         CoverageArg: $(CoverageArg)
-        BeforeTestSteps: 
+        BeforeTestSteps:
           - task: DownloadPipelineArtifact@0
             inputs:
-              artifactName: 'artifacts' 
+              artifactName: 'artifacts'
               targetPath: $(Build.ArtifactStagingDirectory)
         ToxTestEnv: "whl,sdist"
