@@ -20,24 +20,21 @@ class AggregationsKind(str, Enum):
 class AlertRuleKind(str, Enum):
 
     scheduled = "Scheduled"
-    filter = "Filter"
+    microsoft_security_incident_creation = "MicrosoftSecurityIncidentCreation"
     fusion = "Fusion"
 
 
-class TriggerOperator(str, Enum):
+class DataTypeStatus(str, Enum):
 
-    greater_than = "GreaterThan"
-    less_than = "LessThan"
-    equal = "Equal"
-    not_equal = "NotEqual"
+    exist = "Exist"
+    not_exist = "NotExist"
 
 
-class AlertSeverity(str, Enum):
+class TemplateStatus(str, Enum):
 
-    high = "High"  #: High severity
-    medium = "Medium"  #: Medium severity
-    low = "Low"  #: Low severity
-    informational = "Informational"  #: Informational severity
+    installed = "Installed"  #: Alert rule template installed. and can not use more then once
+    available = "Available"  #: Alert rule template is available.
+    not_available = "NotAvailable"  #: Alert rule template is not available
 
 
 class AttackTactic(str, Enum):
@@ -56,17 +53,20 @@ class AttackTactic(str, Enum):
     impact = "Impact"
 
 
-class DataTypeStatus(str, Enum):
+class TriggerOperator(str, Enum):
 
-    exist = "Exist"
-    not_exist = "NotExist"
+    greater_than = "GreaterThan"
+    less_than = "LessThan"
+    equal = "Equal"
+    not_equal = "NotEqual"
 
 
-class TemplateStatus(str, Enum):
+class AlertSeverity(str, Enum):
 
-    installed = "Installed"  #: Alert rule template installed. and can not use more then once
-    available = "Available"  #: Alert rule template is available.
-    not_available = "NotAvailable"  #: Alert rule template is not available
+    high = "High"  #: High severity
+    medium = "Medium"  #: Medium severity
+    low = "Low"  #: Low severity
+    informational = "Informational"  #: Informational severity
 
 
 class CloseReason(str, Enum):
@@ -168,6 +168,14 @@ class OSFamily(str, Enum):
     windows = "Windows"  #: Host with Windows operating system.
     android = "Android"  #: Host with Android operating system.
     ios = "IOS"  #: Host with IOS operating system.
+
+
+class MicrosoftSecurityProductName(str, Enum):
+
+    microsoft_cloud_app_security = "Microsoft Cloud App Security"
+    azure_security_center = "Azure Security Center"
+    azure_advanced_threat_protection = "Azure Advanced Threat Protection"
+    azure_active_directory_identity_protection = "Azure Active Directory Identity Protection"
 
 
 class ElevationToken(str, Enum):

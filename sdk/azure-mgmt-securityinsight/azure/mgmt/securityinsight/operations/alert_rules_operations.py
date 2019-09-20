@@ -410,7 +410,7 @@ class AlertRulesOperations(object):
         :type rule_id: str
         :param action_id: Action ID
         :type action_id: str
-        :param etag: Etag of the action.
+        :param etag: Etag of the azure resource
         :type etag: str
         :param trigger_uri: The uri for the action to trigger.
         :type trigger_uri: str

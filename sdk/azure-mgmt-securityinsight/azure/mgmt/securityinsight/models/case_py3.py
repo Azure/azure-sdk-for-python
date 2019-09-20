@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_py3 import Resource
+from .resource_with_etag_py3 import ResourceWithEtag
 
 
-class Case(Resource):
+class Case(ResourceWithEtag):
     """Represents a case in Azure Security Insights.
 
     Variables are only populated by the server, and will be ignored when
@@ -26,7 +26,7 @@ class Case(Resource):
     :vartype name: str
     :ivar type: Azure resource type
     :vartype type: str
-    :param etag: Etag of the alert rule.
+    :param etag: Etag of the azure resource
     :type etag: str
     :ivar case_number: a sequential number
     :vartype case_number: int
@@ -105,8 +105,7 @@ class Case(Resource):
     }
 
     def __init__(self, *, severity, start_time_utc, status, title: str, etag: str=None, close_reason=None, closed_reason_text: str=None, description: str=None, end_time_utc=None, labels=None, owner=None, **kwargs) -> None:
-        super(Case, self).__init__(**kwargs)
-        self.etag = etag
+        super(Case, self).__init__(etag=etag, **kwargs)
         self.case_number = None
         self.close_reason = close_reason
         self.closed_reason_text = closed_reason_text
