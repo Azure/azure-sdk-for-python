@@ -11,7 +11,7 @@ except ImportError:
     TYPE_CHECKING = False
 
 if TYPE_CHECKING:
-    from typing import Any, Dict, Optional, Union
+    from typing import Any, Dict, Optional, Union, Callable
 
     from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
@@ -49,7 +49,7 @@ class AbstractSpan(Protocol):
 
     @property
     def kind(self):
-        # type: () -> SpanKind
+        # type: () -> Optional[SpanKind]
         """Get the span kind of this span."""
 
     @kind.setter

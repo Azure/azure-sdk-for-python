@@ -40,7 +40,7 @@ if TYPE_CHECKING:
     from azure.core.pipeline.transport import HttpRequest, HttpResponse  # pylint: disable=ungrouped-imports
     from azure.core.tracing.abstract_span import AbstractSpan  # pylint: disable=ungrouped-imports
     from azure.core.pipeline import PipelineRequest, PipelineResponse  # pylint: disable=ungrouped-imports
-    from typing import Any, Optional, Dict, List, Union
+    from typing import Any, Optional, Dict, List, Union, Tuple
 
 
 class DistributedTracingPolicy(SansIOHTTPPolicy):
@@ -79,16 +79,16 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
         request.context[self.TRACING_CONTEXT] = span
 
     def end_span(self, request, response=None, exc_info=None):
-        # type: (PipelineRequest, Optional[HttpResponse]) -> None
+        # type: (PipelineRequest, Optional[HttpResponse], Optional[Tuple]) -> None
         """Ends the span that is tracing the network and updates its status."""
         if self.TRACING_CONTEXT not in request.context:
             return
 
         span = request.context[self.TRACING_CONTEXT]  # type: AbstractSpan
-        request = request.http_request
+        http_request = request.http_request  # type: HttpRequest
         if span is not None:
-            span.set_http_attributes(request, response=response)
-            request_id = request.headers.get(self._request_id)
+            span.set_http_attributes(http_request, response=response)
+            request_id = http_request.headers.get(self._request_id)
             if request_id is not None:
                 span.add_attribute(self._request_id, request_id)
             if response and self._response_id in response.headers:

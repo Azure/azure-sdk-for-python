@@ -36,7 +36,7 @@ except ImportError:
     TYPE_CHECKING = False
 
 if TYPE_CHECKING:
-    from typing import Any, Optional, Union, Callable, List
+    from typing import Any, Optional, Union, Callable, List, Type, Generator
 
 
 def get_function_and_class_name(func, *args):
@@ -59,7 +59,7 @@ def get_function_and_class_name(func, *args):
 
 @contextmanager
 def change_context(span):
-    # type: (Optional[AbstractSpan]) -> None
+    # type: (Optional[AbstractSpan]) -> Generator
     """Execute this block inside the given context and restore it afterwards.
 
     This does not start and ends the span, but just make sure all code is executed within

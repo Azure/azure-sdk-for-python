@@ -59,7 +59,7 @@ def distributed_trace_async(func=None, name_of_span=None):
             return await func(*args, **kwargs) # type: ignore
 
         with common.change_context(passed_in_parent):
-            name = name_of_span or common.get_function_and_class_name(func, *args)  # type: str
+            name = name_of_span or common.get_function_and_class_name(func, *args)  # type: ignore
             with span_impl_type(name=name):
                 return await func(*args, **kwargs)  # type: ignore
 

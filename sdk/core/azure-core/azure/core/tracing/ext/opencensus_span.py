@@ -18,7 +18,7 @@ except ImportError:
     TYPE_CHECKING = False
 
 if TYPE_CHECKING:
-    from typing import Dict, Optional, Union
+    from typing import Dict, Optional, Union, Callable
 
     from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
@@ -65,7 +65,7 @@ class OpenCensusSpan(object):
 
     @property
     def kind(self):
-        # type: () -> SpanKind
+        # type: () -> Optional[SpanKind]
         """Get the span kind of this span."""
         value = self.span_instance.span_kind
         return (
@@ -226,7 +226,7 @@ class OpenCensusSpan(object):
         return execution_context.set_opencensus_tracer(tracer)
 
     @classmethod
-    def with_current_context(cls, _):
+    def with_current_context(cls, func):
         # type: (Callable) -> Callable
         """Passes the current spans to the new context the function will be run in.
 
@@ -238,3 +238,4 @@ class OpenCensusSpan(object):
         except ImportError:
             raise ValueError("In order to trace threads with Opencensus, please install opencensus-ext-threading")
         # Noop, once opencensus-ext-threading is installed threads get context for free.
+        return func
