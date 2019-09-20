@@ -16,7 +16,8 @@ try:
     from .aatp_data_connector_py3 import AATPDataConnector
     from .asc_data_connector_py3 import ASCDataConnector
     from .account_entity_py3 import AccountEntity
-    from .action_py3 import Action
+    from .action_request_py3 import ActionRequest
+    from .action_response_py3 import ActionResponse
     from .aggregations_py3 import Aggregations
     from .aggregations_kind1_py3 import AggregationsKind1
     from .alert_rule_py3 import AlertRule
@@ -105,7 +106,8 @@ except (SyntaxError, ImportError):
     from .aatp_data_connector import AATPDataConnector
     from .asc_data_connector import ASCDataConnector
     from .account_entity import AccountEntity
-    from .action import Action
+    from .action_request import ActionRequest
+    from .action_response import ActionResponse
     from .aggregations import Aggregations
     from .aggregations_kind1 import AggregationsKind1
     from .alert_rule import AlertRule
@@ -189,7 +191,7 @@ except (SyntaxError, ImportError):
     from .url_entity import UrlEntity
 from .operation_paged import OperationPaged
 from .alert_rule_paged import AlertRulePaged
-from .action_paged import ActionPaged
+from .action_response_paged import ActionResponsePaged
 from .alert_rule_template_paged import AlertRuleTemplatePaged
 from .case_paged import CasePaged
 from .case_comment_paged import CaseCommentPaged
@@ -239,7 +241,8 @@ __all__ = [
     'AATPDataConnector',
     'ASCDataConnector',
     'AccountEntity',
-    'Action',
+    'ActionRequest',
+    'ActionResponse',
     'Aggregations',
     'AggregationsKind1',
     'AlertRule',
@@ -323,7 +326,7 @@ __all__ = [
     'UrlEntity',
     'OperationPaged',
     'AlertRulePaged',
-    'ActionPaged',
+    'ActionResponsePaged',
     'AlertRuleTemplatePaged',
     'CasePaged',
     'CaseCommentPaged',

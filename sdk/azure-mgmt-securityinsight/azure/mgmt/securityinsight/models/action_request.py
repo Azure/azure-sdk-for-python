@@ -12,7 +12,7 @@
 from .resource_with_etag import ResourceWithEtag
 
 
-class Action(ResourceWithEtag):
+class ActionRequest(ResourceWithEtag):
     """Action for alert rule.
 
     Variables are only populated by the server, and will be ignored when
@@ -26,7 +26,7 @@ class Action(ResourceWithEtag):
     :vartype type: str
     :param etag: Etag of the azure resource
     :type etag: str
-    :param trigger_uri: The uri for the action to trigger.
+    :param trigger_uri: Logic App Callback URL for this specific workflow.
     :type trigger_uri: str
     """
 
@@ -45,5 +45,5 @@ class Action(ResourceWithEtag):
     }
 
     def __init__(self, **kwargs):
-        super(Action, self).__init__(**kwargs)
+        super(ActionRequest, self).__init__(**kwargs)
         self.trigger_uri = kwargs.get('trigger_uri', None)
