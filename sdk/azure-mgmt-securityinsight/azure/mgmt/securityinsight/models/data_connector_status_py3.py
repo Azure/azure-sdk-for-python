@@ -24,7 +24,7 @@ class DataConnectorStatus(Model):
 
     _attribute_map = {
         'connector_id': {'key': 'connectorId', 'type': 'str'},
-        'data_types': {'key': 'dataTypes', 'type': '{DataTypeStatus}'},
+        'data_types': {'key': 'dataTypes', 'type': '{str}'},
     }
 
     def __init__(self, *, connector_id: str=None, data_types=None, **kwargs) -> None:

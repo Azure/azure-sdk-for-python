@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class ScheduledAlertRuleTemplatePropertiesModel(Model):
+class ScheduledAlertRuleCommonProperties(Model):
     """Schedule alert rule template property bag.
 
     :param query: The query that creates alerts for this rule.
@@ -39,13 +39,13 @@ class ScheduledAlertRuleTemplatePropertiesModel(Model):
         'query': {'key': 'query', 'type': 'str'},
         'query_frequency': {'key': 'queryFrequency', 'type': 'duration'},
         'query_period': {'key': 'queryPeriod', 'type': 'duration'},
-        'severity': {'key': 'severity', 'type': 'AlertSeverity'},
+        'severity': {'key': 'severity', 'type': 'str'},
         'trigger_operator': {'key': 'triggerOperator', 'type': 'TriggerOperator'},
         'trigger_threshold': {'key': 'triggerThreshold', 'type': 'int'},
     }
 
     def __init__(self, **kwargs):
-        super(ScheduledAlertRuleTemplatePropertiesModel, self).__init__(**kwargs)
+        super(ScheduledAlertRuleCommonProperties, self).__init__(**kwargs)
         self.query = kwargs.get('query', None)
         self.query_frequency = kwargs.get('query_frequency', None)
         self.query_period = kwargs.get('query_period', None)

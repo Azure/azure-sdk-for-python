@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class BaseAlertRuleTemplateProperties(Model):
+class AlertRuleTemplatePropertiesBase(Model):
     """Base alert rule template property bag.
 
     Variables are only populated by the server, and will be ignored when
@@ -23,7 +23,7 @@ class BaseAlertRuleTemplateProperties(Model):
     :type alert_rules_created_by_template_count: int
     :ivar created_date_utc: The time that this alert rule template has been
      added.
-    :vartype created_date_utc: str
+    :vartype created_date_utc: datetime
     :param description: The description of the alert rule template.
     :type description: str
     :param display_name: The display name for alert rule template.
@@ -46,20 +46,20 @@ class BaseAlertRuleTemplateProperties(Model):
 
     _attribute_map = {
         'alert_rules_created_by_template_count': {'key': 'alertRulesCreatedByTemplateCount', 'type': 'int'},
-        'created_date_utc': {'key': 'createdDateUTC', 'type': 'str'},
+        'created_date_utc': {'key': 'createdDateUTC', 'type': 'iso-8601'},
         'description': {'key': 'description', 'type': 'str'},
         'display_name': {'key': 'displayName', 'type': 'str'},
         'required_data_connectors': {'key': 'requiredDataConnectors', 'type': '[DataConnectorStatus]'},
-        'status': {'key': 'status', 'type': 'TemplateStatus'},
-        'tactics': {'key': 'tactics', 'type': '[AttackTactic]'},
+        'status': {'key': 'status', 'type': 'str'},
+        'tactics': {'key': 'tactics', 'type': '[str]'},
     }
 
-    def __init__(self, **kwargs):
-        super(BaseAlertRuleTemplateProperties, self).__init__(**kwargs)
-        self.alert_rules_created_by_template_count = kwargs.get('alert_rules_created_by_template_count', None)
+    def __init__(self, *, alert_rules_created_by_template_count: int=None, description: str=None, display_name: str=None, required_data_connectors=None, status=None, tactics=None, **kwargs) -> None:
+        super(AlertRuleTemplatePropertiesBase, self).__init__(**kwargs)
+        self.alert_rules_created_by_template_count = alert_rules_created_by_template_count
         self.created_date_utc = None
-        self.description = kwargs.get('description', None)
-        self.display_name = kwargs.get('display_name', None)
-        self.required_data_connectors = kwargs.get('required_data_connectors', None)
-        self.status = kwargs.get('status', None)
-        self.tactics = kwargs.get('tactics', None)
+        self.description = description
+        self.display_name = display_name
+        self.required_data_connectors = required_data_connectors
+        self.status = status
+        self.tactics = tactics

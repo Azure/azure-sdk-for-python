@@ -410,7 +410,7 @@ class AlertRulesOperations(object):
         :type rule_id: str
         :param action_id: Action ID
         :type action_id: str
-        :param etag: Etag of the action.
+        :param etag: Etag of the azure resource
         :type etag: str
         :param trigger_uri: Logic App Callback URL for this specific workflow.
         :type trigger_uri: str
