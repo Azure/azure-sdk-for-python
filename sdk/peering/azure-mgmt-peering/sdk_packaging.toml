@@ -1,0 +1,5 @@
+[packaging]
+package_name = "azure-mgmt-peering"
+package_pprint_name = "Peering Management"
+package_doc_id = "peering"
+is_stable = true
