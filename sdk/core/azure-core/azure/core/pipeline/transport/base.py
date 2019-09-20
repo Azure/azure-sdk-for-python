@@ -107,16 +107,12 @@ class _HTTPSerializer(HTTPConnection):
     """Hacking the stdlib HTTPConnection to serialize HTTP request as strings.
     """
     def __init__(self, *args, **kwargs):
-        self.skip_host = kwargs.pop("skip_host", True)
-        self.skip_accept_encoding = kwargs.pop("skip_accept_encoding", True)
         self.buffer = b''
         kwargs.setdefault("host", "fakehost")
         super(_HTTPSerializer, self).__init__(*args, **kwargs)
 
     def putheader(self, header, *values):
-        if self.skip_host and header == "Host":
-            return
-        if self.skip_accept_encoding and header == "Accept-Encoding":
+        if header in ["Host", "Accept-Encoding"]:
             return
         super(_HTTPSerializer, self).putheader(header, *values)
 
