@@ -79,9 +79,7 @@ class AadClientBase(ABC):
         elif "expires_in" in response:
             expires_on = now + int(response["expires_in"])
         else:
-            for secret in ("access_token", "refresh_token"):
-                if secret in response:
-                    response[secret] = "***"
+            _scrub_secrets(response)
             raise ClientAuthenticationError(
                 message="Unexpected response from Azure Active Directory: {}".format(response)
             )
@@ -97,16 +95,20 @@ class AadClientBase(ABC):
         pass
 
 
+def _scrub_secrets(response):
+    for secret in ("access_token", "refresh_token"):
+        if secret in response:
+            response[secret] = "***"
+
+
 def _raise_for_error(response):
     # type: (dict) -> None
     if "error" not in response:
         return
 
+    _scrub_secrets(response)
     if "error_description" in response:
         message = "Azure Active Directory error '({}) {}'".format(response["error"], response["error_description"])
     else:
-        for secret in ("access_token", "refresh_token"):
-            if secret in response:
-                response[secret] = "***"
         message = "Azure Active Directory error '{}'".format(response)
     raise ClientAuthenticationError(message=message)
