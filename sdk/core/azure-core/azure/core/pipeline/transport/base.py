@@ -43,11 +43,6 @@ from typing import (TYPE_CHECKING, Generic, TypeVar, cast, IO, List, Union, Any,
 from six.moves.http_client import HTTPConnection, HTTPResponse as _HTTPResponse
 from io import BytesIO
 
-# This file is NOT using any "requests" HTTP implementation
-# However, the CaseInsensitiveDict is handy.
-# If one day we reach the point where "requests" can be skip totally,
-# might provide our own implementation
-from requests.structures import CaseInsensitiveDict
 from azure.core.pipeline import ABC, AbstractContextManager, PipelineRequest, PipelineResponse, PipelineContext
 
 
@@ -56,6 +51,30 @@ HTTPRequestType = TypeVar("HTTPRequestType")
 PipelineType = TypeVar("PipelineType")
 
 _LOGGER = logging.getLogger(__name__)
+
+
+def _case_insensitive_dict(*args, **kwargs):
+    """Return a case-insensitive dict from a structure that a dict would have accepted.
+
+    Rational is I don't want to re-implement this, but I don't want
+    to assume "requests" or "aiohttp" are installed either.
+    So I use the one from "requests" or the one from "aiohttp" ("multidict")
+    If one day this library is used in an HTTP context without "requests" nor "aiohttp" installed,
+    we can add "multidict" as a dependency or re-implement our own.
+    """
+    try:
+        from requests.structures import CaseInsensitiveDict
+        return CaseInsensitiveDict(*args, **kwargs)
+    except ImportError:
+        pass
+    try:
+        # multidict is installed by aiohttp
+        from multidict import CIMultiDict
+        return CIMultiDict(*args, **kwargs)
+    except ImportError:
+        raise ValueError(
+            "Neither 'requests' or 'multidict' are installed and no case-insensitive dict impl have been found"
+        )
 
 
 def _format_url_section(template, **kwargs):
@@ -153,7 +172,7 @@ class HttpRequest(object):
         # type: (str, str, Mapping[str, str], Any, Any) -> None
         self.method = method
         self.url = url
-        self.headers = CaseInsensitiveDict(headers)
+        self.headers = _case_insensitive_dict(headers)
         self.files = files
         self.data = data
         self.multipart_mixed_info = None
@@ -389,7 +408,7 @@ class HttpClientTransportResponse(HttpResponse):
     def __init__(self, request, httpclient_response):
         super(HttpClientTransportResponse, self).__init__(request, httpclient_response)
         self.status_code = httpclient_response.status
-        self.headers = dict(httpclient_response.getheaders())
+        self.headers = _case_insensitive_dict(httpclient_response.getheaders())
         self.reason = httpclient_response.reason
         self.content_type = self.headers.get('Content-Type')
         self.data = None

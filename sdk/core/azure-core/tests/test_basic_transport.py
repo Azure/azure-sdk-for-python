@@ -84,6 +84,8 @@ def test_http_client_response():
     assert response.status_code == 200
     assert len(response.headers.keys()) != 0
     assert len(response.text()) != 0
+    assert "content-type" in response.headers
+    assert "Content-Type" in response.headers
 
 
 def test_response_deserialization():
