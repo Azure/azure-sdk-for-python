@@ -636,7 +636,8 @@ class AppWhitelistingGroup(Model):
     :vartype type: str
     :ivar location: Location where the resource is stored
     :vartype location: str
-    :param enforcement_mode: Possible values include: 'Audit', 'Enforce'
+    :param enforcement_mode: Possible values include: 'Audit', 'Enforce',
+     'None'
     :type enforcement_mode: str or ~azure.mgmt.security.models.enum
     :param protection_mode:
     :type protection_mode: ~azure.mgmt.security.models.ProtectionMode
@@ -744,7 +745,7 @@ class AppWhitelistingPutGroupData(Model):
 
     :param enforcement_mode: The enforcement mode of the group. Can also be
      defined per collection type by using ProtectionMode. Possible values
-     include: 'Audit', 'Enforce'
+     include: 'Audit', 'Enforce', 'None'
     :type enforcement_mode: str or ~azure.mgmt.security.models.enum
     :param protection_mode: The protection mode of the group per collection
      type. Can also be defined for all collection types by using
@@ -2792,13 +2793,13 @@ class ProtectionMode(Model):
     """The protection mode of the collection/file types. Exe/Msi/Script are used
     for Windows, Executable is used for Linux.
 
-    :param exe: Possible values include: 'Audit', 'Enforce'
+    :param exe: Possible values include: 'Audit', 'Enforce', 'None'
     :type exe: str or ~azure.mgmt.security.models.enum
-    :param msi: Possible values include: 'Audit', 'Enforce'
+    :param msi: Possible values include: 'Audit', 'Enforce', 'None'
     :type msi: str or ~azure.mgmt.security.models.enum
-    :param script: Possible values include: 'Audit', 'Enforce'
+    :param script: Possible values include: 'Audit', 'Enforce', 'None'
     :type script: str or ~azure.mgmt.security.models.enum
-    :param executable: Possible values include: 'Audit', 'Enforce'
+    :param executable: Possible values include: 'Audit', 'Enforce', 'None'
     :type executable: str or ~azure.mgmt.security.models.enum
     """
 
