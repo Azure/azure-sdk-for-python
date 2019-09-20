@@ -166,23 +166,34 @@ def test_multipart_send():
         policies=[header_policy]
     )
 
-    helper = MultiPartHelper(request)
+    helper = MultiPartHelper(
+        request,
+        boundary="batch_357de4f7-6d0b-4e02-8cd2-6361411a9525" # Fix it so test are deterministic
+    )
     helper.prepare_request()
 
-    # FIXME Boundary is random, so need to improve this test with a regexp or something
     assert request.body == (
-        b'--===============6566992931842418154==\n'
-        b'content-type: application/http\n'
-        b'\n'
-        b'DELETE /container0/blob0 HTTP/1.1\n'
-        b'x-ms-date: Thu, 14 Jun 2018 16:46:54 GMT\n\n\n'
-        b'--===============6566992931842418154==\n'
-        b'content-type: application/http\n'
-        b'\n'
-        b'DELETE /container1/blob1 HTTP/1.1\n'
-        b'x-ms-date: Thu, 14 Jun 2018 16:46:54 GMT\n\n\n'
-        b'--===============6566992931842418154==--\n'
+        b'--batch_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
+        b'Content-Type: application/http\r\n'
+        b'Content-Transfer-Encoding: binary\r\n'
+        b'Content-ID: 0\r\n'
+        b'\r\n'
+        b'DELETE /container0/blob0 HTTP/1.1\r\n'
+        b'x-ms-date: Thu, 14 Jun 2018 16:46:54 GMT\r\n'
+        b'\r\n'
+        b'\r\n'
+        b'--batch_357de4f7-6d0b-4e02-8cd2-6361411a9525\r\n'
+        b'Content-Type: application/http\r\n'
+        b'Content-Transfer-Encoding: binary\r\n'
+        b'Content-ID: 1\r\n'
+        b'\r\n'
+        b'DELETE /container1/blob1 HTTP/1.1\r\n'
+        b'x-ms-date: Thu, 14 Jun 2018 16:46:54 GMT\r\n'
+        b'\r\n'
+        b'\r\n'
+        b'--batch_357de4f7-6d0b-4e02-8cd2-6361411a9525--\r\n'
     )
+
 
 def test_multipart_receive():
 
@@ -201,29 +212,29 @@ def test_multipart_receive():
             response.http_response.headers['x-ms-fun'] = 'true'
 
     body_as_str = (
-        "--batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed\n"
-        "Content-Type: application/http\n"
-        "Content-ID: 0\n"
-        "\n"
-        "HTTP/1.1 202 Accepted\n"
-        "x-ms-request-id: 778fdc83-801e-0000-62ff-0334671e284f\n"
-        "x-ms-version: 2018-11-09\n"
-        "\n"
-        "--batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed\n"
-        "Content-Type: application/http\n"
-        "Content-ID: 2\n"
-        "\n"
-        "HTTP/1.1 404 The specified blob does not exist.\n"
-        "x-ms-error-code: BlobNotFound\n"
-        "x-ms-request-id: 778fdc83-801e-0000-62ff-0334671e2852\n"
-        "x-ms-version: 2018-11-09\n"
-        "Content-Length: 216\n"
-        "Content-Type: application/xml\n"
-        "\n"
-        '<?xml version="1.0" encoding="utf-8"?>\n'
-        "<Error><Code>BlobNotFound</Code><Message>The specified blob does not exist.\n"
-        "RequestId:778fdc83-801e-0000-62ff-0334671e2852\n"
-        "Time:2018-06-14T16:46:54.6040685Z</Message></Error>\n"
+        "--batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed\r\n"
+        "Content-Type: application/http\r\n"
+        "Content-ID: 0\r\n"
+        "\r\n"
+        "HTTP/1.1 202 Accepted\r\n"
+        "x-ms-request-id: 778fdc83-801e-0000-62ff-0334671e284f\r\n"
+        "x-ms-version: 2018-11-09\r\n"
+        "\r\n"
+        "--batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed\r\n"
+        "Content-Type: application/http\r\n"
+        "Content-ID: 2\r\n"
+        "\r\n"
+        "HTTP/1.1 404 The specified blob does not exist.\r\n"
+        "x-ms-error-code: BlobNotFound\r\n"
+        "x-ms-request-id: 778fdc83-801e-0000-62ff-0334671e2852\r\n"
+        "x-ms-version: 2018-11-09\r\n"
+        "Content-Length: 216\r\n"
+        "Content-Type: application/xml\r\n"
+        "\r\n"
+        '<?xml version="1.0" encoding="utf-8"?>\r\n'
+        "<Error><Code>BlobNotFound</Code><Message>The specified blob does not exist.\r\n"
+        "RequestId:778fdc83-801e-0000-62ff-0334671e2852\r\n"
+        "Time:2018-06-14T16:46:54.6040685Z</Message></Error>\r\n"
         "--batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed--"
     )
 
@@ -362,5 +373,6 @@ Time:2018-06-14T16:46:54.6040685Z</Message></Error>
     with Pipeline(RequestsTransport(), policies=[]) as pipeline:
         response = pipeline.run(request)
 
-    assert len(response.context['MULTIPART_RESPONSE']) == 3
-    assert response.context['MULTIPART_RESPONSE'][2].status_code == 404
+    parts = response.http_response.parts()
+    assert len(parts) == 3
+    assert parts[2].status_code == 404

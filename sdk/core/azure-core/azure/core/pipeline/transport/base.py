@@ -640,10 +640,21 @@ class MultiPartHelper(object):
     def __init__(
         self,
         main_request,  # type: HttpRequest
+        boundary=None, # type: str
     ):
+        """Create a multipart helper to serialize and parse multipart/mixed payload.
+
+        boundary is optional, and one will be generate if you don't provide one.
+        Note that no verification are made on the boundary, this is considered advanced
+        enough so you know how to respect RFC1341 7.2.1 and provide a correct boundary.
+
+        :param HttpRequest main_request: The request.
+        :param str boundary: Optional boundary
+        """
         self.main_request = main_request
         self.requests = self.main_request.multipart_mixed_info[0]  # type: List[HttpRequest]
         self.policies = self.main_request.multipart_mixed_info[1]  # type: List[SansIOHTTPPolicy]
+        self._boundary = boundary
 
     def prepare_request(self):
         # Apply on_requests concurrently to all requests
@@ -662,6 +673,8 @@ class MultiPartHelper(object):
         # Update the main request with the body
         main_message = Message()
         main_message.add_header("Content-Type", "multipart/mixed")
+        if self._boundary:
+            main_message.set_boundary(self._boundary)
         for i, req in enumerate(self.requests):
             part_message = Message()
             part_message.add_header('Content-Type', 'application/http')
