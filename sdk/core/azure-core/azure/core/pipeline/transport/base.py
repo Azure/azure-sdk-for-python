@@ -30,7 +30,7 @@ from email.policy import HTTP
 try:
     from email import message_from_bytes as message_parser
 except ImportError: # 2.7
-    from email import message_from_string as message_parser
+    from email import message_from_string as message_parser  # type: ignore
 from io import BytesIO
 import json
 import logging
@@ -45,12 +45,15 @@ except ImportError:
 import xml.etree.ElementTree as ET
 
 from typing import (TYPE_CHECKING, Generic, TypeVar, cast, IO, List, Union, Any, Mapping, Dict, # pylint: disable=unused-import
-                    Optional, Tuple, Callable, Iterator)
+                    Optional, Tuple, Callable, Iterator, Iterable)
 
 from six.moves.http_client import HTTPConnection, HTTPResponse as _HTTPResponse
 
 from azure.core.pipeline import ABC, AbstractContextManager, PipelineRequest, PipelineResponse, PipelineContext
 
+
+if TYPE_CHECKING:
+    from ..policies import SansIOHTTPPolicy
 
 HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
@@ -177,7 +180,7 @@ class HttpRequest(object):
         self.headers = _case_insensitive_dict(headers)
         self.files = files
         self.data = data
-        self.multipart_mixed_info = None
+        self.multipart_mixed_info = None  # type: Optional[Tuple]
 
     def __repr__(self):
         return '<HttpRequest [%s]>' % (self.method)
@@ -665,6 +668,8 @@ class MultiPartHelper(object):
         :param str boundary: Optional boundary
         """
         self.main_request = main_request
+        if self.main_request.multipart_mixed_info is None:
+            raise ValueError("This request doesn't have multipart information available")
         self.requests = self.main_request.multipart_mixed_info[0]  # type: List[HttpRequest]
         self.policies = self.main_request.multipart_mixed_info[1]  # type: List[SansIOHTTPPolicy]
         self._boundary = boundary
