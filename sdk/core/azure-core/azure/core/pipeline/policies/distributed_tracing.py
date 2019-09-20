@@ -59,7 +59,7 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
         Sets the header information on the span.
         """
         headers = span.to_header()
-        request.http_request.headers.update(headers)  # type: ignore
+        request.http_request.headers.update(headers)
 
     def on_request(self, request):
         # type: (PipelineRequest) -> None
@@ -67,7 +67,7 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
         if span_impl_type is None:
             return
 
-        path = urllib.parse.urlparse(request.http_request.url).path  # type: ignore
+        path = urllib.parse.urlparse(request.http_request.url).path
         if not path:
             path = "/"
 
@@ -100,9 +100,9 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
 
     def on_response(self, request, response):
         # type: (PipelineRequest, PipelineResponse) -> None
-        self.end_span(request, response=response.http_response)  # type: ignore
+        self.end_span(request, response=response.http_response)
 
     def on_exception(self, request):  # pylint: disable=unused-argument
         # type: (PipelineRequest) -> bool
-        self.end_span(request, exc_info=sys.exc_info())  # type: ignore
+        self.end_span(request, exc_info=sys.exc_info())
         return False
