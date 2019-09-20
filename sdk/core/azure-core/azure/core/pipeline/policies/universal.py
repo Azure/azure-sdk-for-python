@@ -70,7 +70,7 @@ class HeadersPolicy(SansIOHTTPPolicy):
             :dedent: 4
             :caption: Configuring a headers policy.
     """
-    def __init__(self, base_headers=None, **kwargs):
+    def __init__(self, base_headers=None, **kwargs):  # pylint: disable=super-init-not-called
         # type: (Dict[str, str], Any) -> None
         self._headers = base_headers or {}
         self._headers.update(kwargs.pop('headers', {}))
@@ -123,7 +123,7 @@ class UserAgentPolicy(SansIOHTTPPolicy):
     _USERAGENT = "User-Agent"
     _ENV_ADDITIONAL_USER_AGENT = 'AZURE_HTTP_USER_AGENT'
 
-    def __init__(self, base_user_agent=None, **kwargs):
+    def __init__(self, base_user_agent=None, **kwargs):  # pylint: disable=super-init-not-called
         # type: (Optional[str], bool) -> None
         self.overwrite = kwargs.pop('user_agent_overwrite', False)
         self.use_env = kwargs.pop('user_agent_use_env', True)
@@ -403,7 +403,7 @@ class ProxyPolicy(SansIOHTTPPolicy):
             :dedent: 4
             :caption: Configuring a proxy policy.
     """
-    def __init__(self, proxies=None, **kwargs):  #pylint: disable=unused-argument
+    def __init__(self, proxies=None, **kwargs):  #pylint: disable=unused-argument,super-init-not-called
         self.proxies = proxies
 
     def on_request(self, request):
