@@ -11,7 +11,6 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
 
 from .. import models
 
@@ -25,7 +24,7 @@ class WorkflowTriggerHistoriesOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version. Constant value: "2018-07-01-preview".
+    :ivar api_version: The API version. Constant value: "2019-05-01".
     """
 
     models = models
@@ -35,7 +34,7 @@ class WorkflowTriggerHistoriesOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-07-01-preview"
+        self.api_version = "2019-05-01"
 
         self.config = config
 
@@ -62,7 +61,8 @@ class WorkflowTriggerHistoriesOperations(object):
         :return: An iterator like instance of WorkflowTriggerHistory
         :rtype:
          ~azure.mgmt.logic.models.WorkflowTriggerHistoryPaged[~azure.mgmt.logic.models.WorkflowTriggerHistory]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.logic.models.ErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -108,9 +108,7 @@ class WorkflowTriggerHistoriesOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -144,7 +142,8 @@ class WorkflowTriggerHistoriesOperations(object):
         :return: WorkflowTriggerHistory or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.logic.models.WorkflowTriggerHistory or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.logic.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -176,9 +175,7 @@ class WorkflowTriggerHistoriesOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -211,7 +208,8 @@ class WorkflowTriggerHistoriesOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.logic.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.resubmit.metadata['url']
@@ -242,9 +240,7 @@ class WorkflowTriggerHistoriesOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [202]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)

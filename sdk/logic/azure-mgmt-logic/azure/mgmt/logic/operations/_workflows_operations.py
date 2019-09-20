@@ -11,7 +11,8 @@
 
 import uuid
 from msrest.pipeline import ClientRawResponse
-from msrestazure.azure_exceptions import CloudError
+from msrest.polling import LROPoller, NoPolling
+from msrestazure.polling.arm_polling import ARMPolling
 
 from .. import models
 
@@ -25,7 +26,7 @@ class WorkflowsOperations(object):
     :param config: Configuration of service client.
     :param serializer: An object model serializer.
     :param deserializer: An object model deserializer.
-    :ivar api_version: The API version. Constant value: "2018-07-01-preview".
+    :ivar api_version: The API version. Constant value: "2019-05-01".
     """
 
     models = models
@@ -35,15 +36,15 @@ class WorkflowsOperations(object):
         self._client = client
         self._serialize = serializer
         self._deserialize = deserializer
-        self.api_version = "2018-07-01-preview"
+        self.api_version = "2019-05-01"
 
         self.config = config
 
     def list_by_subscription(
             self, top=None, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Gets the list of workflows by subscription.
+        """Gets a list of workflows by subscription.
 
-        :param top: The number of items to be included in the results.
+        :param top: The number of items to be included in the result.
         :type top: int
         :param filter: The filter to apply on the operation. Options for
          filters include: State, Trigger, and ReferencedResourceId.
@@ -56,7 +57,8 @@ class WorkflowsOperations(object):
         :return: An iterator like instance of Workflow
         :rtype:
          ~azure.mgmt.logic.models.WorkflowPaged[~azure.mgmt.logic.models.Workflow]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.logic.models.ErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -99,9 +101,7 @@ class WorkflowsOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -133,7 +133,8 @@ class WorkflowsOperations(object):
         :return: An iterator like instance of Workflow
         :rtype:
          ~azure.mgmt.logic.models.WorkflowPaged[~azure.mgmt.logic.models.Workflow]
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.logic.models.ErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
@@ -177,9 +178,7 @@ class WorkflowsOperations(object):
             response = self._client.send(request, stream=False, **operation_config)
 
             if response.status_code not in [200]:
-                exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
-                raise exp
+                raise models.ErrorResponseException(self._deserialize, response)
 
             return response
 
@@ -208,7 +207,8 @@ class WorkflowsOperations(object):
         :return: Workflow or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.logic.models.Workflow or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.logic.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.get.metadata['url']
@@ -238,9 +238,7 @@ class WorkflowsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -271,7 +269,8 @@ class WorkflowsOperations(object):
         :return: Workflow or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.logic.models.Workflow or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.logic.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.create_or_update.metadata['url']
@@ -305,9 +304,7 @@ class WorkflowsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 201]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -340,7 +337,8 @@ class WorkflowsOperations(object):
         :return: Workflow or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.logic.models.Workflow or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.logic.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.update.metadata['url']
@@ -374,9 +372,7 @@ class WorkflowsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -404,7 +400,8 @@ class WorkflowsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.logic.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.delete.metadata['url']
@@ -433,9 +430,7 @@ class WorkflowsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 204]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -457,7 +452,8 @@ class WorkflowsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.logic.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.disable.metadata['url']
@@ -486,9 +482,7 @@ class WorkflowsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -510,7 +504,8 @@ class WorkflowsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.logic.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.enable.metadata['url']
@@ -539,9 +534,7 @@ class WorkflowsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -565,7 +558,8 @@ class WorkflowsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: object or ClientRawResponse if raw=true
         :rtype: object or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.logic.models.ErrorResponseException>`
         """
         parameters = models.GenerateUpgradedDefinitionParameters(target_schema_version=target_schema_version)
 
@@ -601,9 +595,7 @@ class WorkflowsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -637,7 +629,8 @@ class WorkflowsOperations(object):
         :return: WorkflowTriggerCallbackUrl or ClientRawResponse if raw=true
         :rtype: ~azure.mgmt.logic.models.WorkflowTriggerCallbackUrl or
          ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.logic.models.ErrorResponseException>`
         """
         list_callback_url1 = models.GetCallbackUrlParameters(not_after=not_after, key_type=key_type)
 
@@ -673,9 +666,7 @@ class WorkflowsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -703,7 +694,8 @@ class WorkflowsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: object or ClientRawResponse if raw=true
         :rtype: object or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.logic.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.list_swagger.metadata['url']
@@ -733,9 +725,7 @@ class WorkflowsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         deserialized = None
         if response.status_code == 200:
@@ -748,25 +738,9 @@ class WorkflowsOperations(object):
         return deserialized
     list_swagger.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/workflows/{workflowName}/listSwagger'}
 
-    def move(
-            self, resource_group_name, workflow_name, move, custom_headers=None, raw=False, **operation_config):
-        """Moves an existing workflow.
 
-        :param resource_group_name: The resource group name.
-        :type resource_group_name: str
-        :param workflow_name: The workflow name.
-        :type workflow_name: str
-        :param move: The workflow to move.
-        :type move: ~azure.mgmt.logic.models.Workflow
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: None or ClientRawResponse if raw=true
-        :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _move_initial(
+            self, resource_group_name, workflow_name, move, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.move.metadata['url']
         path_format_arguments = {
@@ -798,13 +772,55 @@ class WorkflowsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 202]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
+
+    def move(
+            self, resource_group_name, workflow_name, move, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Moves an existing workflow.
+
+        :param resource_group_name: The resource group name.
+        :type resource_group_name: str
+        :param workflow_name: The workflow name.
+        :type workflow_name: str
+        :param move: The workflow to move.
+        :type move: ~azure.mgmt.logic.models.Workflow
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns None or
+         ClientRawResponse<None> if raw==True
+        :rtype: ~msrestazure.azure_operation.AzureOperationPoller[None] or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[None]]
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.logic.models.ErrorResponseException>`
+        """
+        raw_result = self._move_initial(
+            resource_group_name=resource_group_name,
+            workflow_name=workflow_name,
+            move=move,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            if raw:
+                client_raw_response = ClientRawResponse(None, response)
+                return client_raw_response
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     move.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/workflows/{workflowName}/move'}
 
     def regenerate_access_key(
@@ -825,7 +841,8 @@ class WorkflowsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.logic.models.ErrorResponseException>`
         """
         key_type1 = models.RegenerateActionParameter(key_type=key_type)
 
@@ -860,9 +877,7 @@ class WorkflowsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -886,7 +901,8 @@ class WorkflowsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.logic.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.validate_by_resource_group.metadata['url']
@@ -919,9 +935,7 @@ class WorkflowsOperations(object):
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
@@ -929,7 +943,7 @@ class WorkflowsOperations(object):
     validate_by_resource_group.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Logic/workflows/{workflowName}/validate'}
 
     def validate_by_location(
-            self, resource_group_name, location, workflow_name, workflow, custom_headers=None, raw=False, **operation_config):
+            self, resource_group_name, location, workflow_name, custom_headers=None, raw=False, **operation_config):
         """Validates the workflow definition.
 
         :param resource_group_name: The resource group name.
@@ -938,8 +952,6 @@ class WorkflowsOperations(object):
         :type location: str
         :param workflow_name: The workflow name.
         :type workflow_name: str
-        :param workflow: The workflow definition.
-        :type workflow: ~azure.mgmt.logic.models.Workflow
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -947,7 +959,8 @@ class WorkflowsOperations(object):
          overrides<msrest:optionsforoperations>`.
         :return: None or ClientRawResponse if raw=true
         :rtype: None or ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        :raises:
+         :class:`ErrorResponseException<azure.mgmt.logic.models.ErrorResponseException>`
         """
         # Construct URL
         url = self.validate_by_location.metadata['url']
@@ -965,7 +978,6 @@ class WorkflowsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
             header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
@@ -973,17 +985,12 @@ class WorkflowsOperations(object):
         if self.config.accept_language is not None:
             header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
-        # Construct body
-        body_content = self._serialize.body(workflow, 'Workflow')
-
         # Construct and send request
-        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        request = self._client.post(url, query_parameters, header_parameters)
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
-            exp = CloudError(response)
-            exp.request_id = response.headers.get('x-ms-request-id')
-            raise exp
+            raise models.ErrorResponseException(self._deserialize, response)
 
         if raw:
             client_raw_response = ClientRawResponse(None, response)
