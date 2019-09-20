@@ -271,7 +271,7 @@ if __name__ == "__main__":
         extended_pytest_args.extend(["--durations=10", "--cov", "--cov-report="])
 
     if args.xdist:
-        extended_pytest_args.extend(["-n", "auto"])
+        extended_pytest_args.extend(["-n", "8"])
 
     if args.runtype != "none":
         execute_global_install_and_test(args, targeted_packages, extended_pytest_args)
