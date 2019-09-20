@@ -36,8 +36,6 @@ from .operations import GalleryImagesOperations
 from .operations import GalleryImageVersionsOperations
 from .operations import GalleryApplicationsOperations
 from .operations import GalleryApplicationVersionsOperations
-from .operations import DisksOperations
-from .operations import SnapshotsOperations
 from . import models
 
 
@@ -93,10 +91,6 @@ class ComputeManagementClient(SDKClient):
     :vartype gallery_applications: azure.mgmt.compute.v2019_03_01.operations.GalleryApplicationsOperations
     :ivar gallery_application_versions: GalleryApplicationVersions operations
     :vartype gallery_application_versions: azure.mgmt.compute.v2019_03_01.operations.GalleryApplicationVersionsOperations
-    :ivar disks: Disks operations
-    :vartype disks: azure.mgmt.compute.v2019_03_01.operations.DisksOperations
-    :ivar snapshots: Snapshots operations
-    :vartype snapshots: azure.mgmt.compute.v2019_03_01.operations.SnapshotsOperations
 
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
@@ -164,8 +158,4 @@ class ComputeManagementClient(SDKClient):
         self.gallery_applications = GalleryApplicationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.gallery_application_versions = GalleryApplicationVersionsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.disks = DisksOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.snapshots = SnapshotsOperations(
             self._client, self.config, self._serialize, self._deserialize)

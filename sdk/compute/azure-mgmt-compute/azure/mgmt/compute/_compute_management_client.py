@@ -54,13 +54,13 @@ class ComputeManagementClient(MultiApiClientMixin, SDKClient):
             'availability_sets': '2019-03-01',
             'dedicated_host_groups': '2019-03-01',
             'dedicated_hosts': '2019-03-01',
-            'disks': '2019-03-01',
+            'disks': '2018-09-30',
             'images': '2019-03-01',
             'log_analytics': '2019-03-01',
             'operations': '2019-03-01',
             'proximity_placement_groups': '2019-03-01',
             'resource_skus': '2019-04-01',
-            'snapshots': '2019-03-01',
+            'snapshots': '2018-09-30',
             'usage': '2019-03-01',
             'virtual_machine_extension_images': '2019-03-01',
             'virtual_machine_extensions': '2019-03-01',
@@ -220,7 +220,6 @@ class ComputeManagementClient(MultiApiClientMixin, SDKClient):
            * 2018-04-01: :class:`DisksOperations<azure.mgmt.compute.v2018_04_01.operations.DisksOperations>`
            * 2018-06-01: :class:`DisksOperations<azure.mgmt.compute.v2018_06_01.operations.DisksOperations>`
            * 2018-09-30: :class:`DisksOperations<azure.mgmt.compute.v2018_09_30.operations.DisksOperations>`
-           * 2019-03-01: :class:`DisksOperations<azure.mgmt.compute.v2019_03_01.operations.DisksOperations>`
         """
         api_version = self._get_api_version('disks')
         if api_version == '2016-04-30-preview':
@@ -233,8 +232,6 @@ class ComputeManagementClient(MultiApiClientMixin, SDKClient):
             from .v2018_06_01.operations import DisksOperations as OperationClass
         elif api_version == '2018-09-30':
             from .v2018_09_30.operations import DisksOperations as OperationClass
-        elif api_version == '2019-03-01':
-            from .v2019_03_01.operations import DisksOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
@@ -459,7 +456,6 @@ class ComputeManagementClient(MultiApiClientMixin, SDKClient):
            * 2018-04-01: :class:`SnapshotsOperations<azure.mgmt.compute.v2018_04_01.operations.SnapshotsOperations>`
            * 2018-06-01: :class:`SnapshotsOperations<azure.mgmt.compute.v2018_06_01.operations.SnapshotsOperations>`
            * 2018-09-30: :class:`SnapshotsOperations<azure.mgmt.compute.v2018_09_30.operations.SnapshotsOperations>`
-           * 2019-03-01: :class:`SnapshotsOperations<azure.mgmt.compute.v2019_03_01.operations.SnapshotsOperations>`
         """
         api_version = self._get_api_version('snapshots')
         if api_version == '2016-04-30-preview':
@@ -472,8 +468,6 @@ class ComputeManagementClient(MultiApiClientMixin, SDKClient):
             from .v2018_06_01.operations import SnapshotsOperations as OperationClass
         elif api_version == '2018-09-30':
             from .v2018_09_30.operations import SnapshotsOperations as OperationClass
-        elif api_version == '2019-03-01':
-            from .v2019_03_01.operations import SnapshotsOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
