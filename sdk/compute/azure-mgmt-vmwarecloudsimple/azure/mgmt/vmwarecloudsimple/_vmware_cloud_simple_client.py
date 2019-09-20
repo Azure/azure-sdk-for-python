@@ -56,17 +56,17 @@ class VMwareCloudSimpleClient(SDKClient):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param referer: referer url
-    :type referer: str
     :param subscription_id: The subscription ID.
     :type subscription_id: str
+    :param referer: referer url
+    :type referer: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, referer, subscription_id, base_url=None):
+            self, credentials, subscription_id, referer, base_url=None):
 
-        self.config = VMwareCloudSimpleClientConfiguration(credentials, referer, subscription_id, base_url)
+        self.config = VMwareCloudSimpleClientConfiguration(credentials, subscription_id, referer, base_url)
         super(VMwareCloudSimpleClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
