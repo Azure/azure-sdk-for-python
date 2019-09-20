@@ -354,6 +354,19 @@ class _HttpResponseBase(object):
         """
         return self.body().decode(encoding or "utf-8")
 
+    def parts(self):
+        # type: () -> Iterable
+        """Assuming the content-type is multipart/mixed, will return the parts as an iterable.
+
+        :rtype: list
+        :raises ValueError: If the content is not multipart/mixed
+        """
+        if not self.content_type or not self.content_type.startswith("multipart/mixed"):
+            raise ValueError("You can't get parts if the response is nit multipart/mixed")
+
+        multipart_helper = MultiPartHelper(self.request)
+        return multipart_helper.parse_response(self)
+
 
 class HttpResponse(_HttpResponseBase):
     def stream_download(self, pipeline):
