@@ -7535,6 +7535,10 @@ class MigrateSqlServerSqlMITaskInput(SqlMigrationTaskInput):
      required to be provided in selectedDatabases. Possible values include:
      'CreateBackup', 'ExistingBackup'
     :type backup_mode: str or ~azure.mgmt.datamigration.models.BackupMode
+    :param aad_domain_name: Azure Active Directory domain name in the format
+     of 'contoso.com' for federated Azure AD or myaad.onmicrosoft.com for
+     managed domain, required if and only if Windows logins are selected
+    :type aad_domain_name: str
     """
 
     _validation = {
@@ -7553,9 +7557,10 @@ class MigrateSqlServerSqlMITaskInput(SqlMigrationTaskInput):
         'backup_file_share': {'key': 'backupFileShare', 'type': 'FileShare'},
         'backup_blob_share': {'key': 'backupBlobShare', 'type': 'BlobShare'},
         'backup_mode': {'key': 'backupMode', 'type': 'str'},
+        'aad_domain_name': {'key': 'aadDomainName', 'type': 'str'},
     }
 
-    def __init__(self, *, source_connection_info, target_connection_info, selected_databases, backup_blob_share, selected_logins=None, selected_agent_jobs=None, backup_file_share=None, backup_mode=None, **kwargs) -> None:
+    def __init__(self, *, source_connection_info, target_connection_info, selected_databases, backup_blob_share, selected_logins=None, selected_agent_jobs=None, backup_file_share=None, backup_mode=None, aad_domain_name: str=None, **kwargs) -> None:
         super(MigrateSqlServerSqlMITaskInput, self).__init__(source_connection_info=source_connection_info, target_connection_info=target_connection_info, **kwargs)
         self.selected_databases = selected_databases
         self.selected_logins = selected_logins
@@ -7563,6 +7568,7 @@ class MigrateSqlServerSqlMITaskInput(SqlMigrationTaskInput):
         self.backup_file_share = backup_file_share
         self.backup_blob_share = backup_blob_share
         self.backup_mode = backup_mode
+        self.aad_domain_name = aad_domain_name
 
 
 class MigrateSqlServerSqlMITaskOutput(Model):
