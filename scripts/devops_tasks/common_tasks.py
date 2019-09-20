@@ -31,7 +31,7 @@ from packaging.version import Version
 
 logging.getLogger().setLevel(logging.INFO)
 
-OMITTED_CI_PACKAGES = ["azure-mgmt-documentdb", "azure-servicemanagement-legacy"]
+OMITTED_CI_PACKAGES = ["azure-mgmt-documentdb", "azure-servicemanagement-legacy", "azure-mgmt-scheduler"]
 MANAGEMENT_PACKAGE_IDENTIFIERS = [
     "mgmt",
     "azure-cognitiveservices",
