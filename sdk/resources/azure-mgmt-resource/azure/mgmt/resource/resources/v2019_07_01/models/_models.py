@@ -1645,8 +1645,9 @@ class WhatIfChange(Model):
     :ivar after: The predicted snapshot of the resource after the deployment
      is executed.
     :vartype after: object
-    :ivar delta: The predicted delta change to the resource.
-    :vartype delta: object
+    :ivar delta: The predicted changes to resource properties.
+    :vartype delta:
+     list[~azure.mgmt.resource.resources.v2019_07_01.models.WhatIfPropertyChange]
     """
 
     _validation = {
@@ -1662,7 +1663,7 @@ class WhatIfChange(Model):
         'change_type': {'key': 'changeType', 'type': 'ChangeType'},
         'before': {'key': 'before', 'type': 'object'},
         'after': {'key': 'after', 'type': 'object'},
-        'delta': {'key': 'delta', 'type': 'object'},
+        'delta': {'key': 'delta', 'type': '[WhatIfPropertyChange]'},
     }
 
     def __init__(self, **kwargs):
@@ -1707,3 +1708,49 @@ class WhatIfOperationResult(Model):
         self.status = None
         self.changes = None
         self.error = kwargs.get('error', None)
+
+
+class WhatIfPropertyChange(Model):
+    """The predicted change to the resource property.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar path: The path of the property.
+    :vartype path: str
+    :ivar property_change_type: The type of property change. Possible values
+     include: 'Create', 'Delete', 'Modify', 'Array'
+    :vartype property_change_type: str or
+     ~azure.mgmt.resource.resources.v2019_07_01.models.PropertyChangeType
+    :ivar before: The value of the property before the deployment is executed.
+    :vartype before: object
+    :ivar after: The value of the property after the deployment is executed.
+    :vartype after: object
+    :ivar children: Nested property changes.
+    :vartype children:
+     list[~azure.mgmt.resource.resources.v2019_07_01.models.WhatIfPropertyChange]
+    """
+
+    _validation = {
+        'path': {'readonly': True},
+        'property_change_type': {'readonly': True},
+        'before': {'readonly': True},
+        'after': {'readonly': True},
+        'children': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'path': {'key': 'path', 'type': 'str'},
+        'property_change_type': {'key': 'propertyChangeType', 'type': 'PropertyChangeType'},
+        'before': {'key': 'before', 'type': 'object'},
+        'after': {'key': 'after', 'type': 'object'},
+        'children': {'key': 'children', 'type': '[WhatIfPropertyChange]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(WhatIfPropertyChange, self).__init__(**kwargs)
+        self.path = None
+        self.property_change_type = None
+        self.before = None
+        self.after = None
+        self.children = None

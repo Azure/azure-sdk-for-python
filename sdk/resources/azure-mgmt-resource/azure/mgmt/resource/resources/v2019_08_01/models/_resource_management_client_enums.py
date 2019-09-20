@@ -38,6 +38,14 @@ class ResourceIdentityType(str, Enum):
     none = "None"
 
 
+class PropertyChangeType(str, Enum):
+
+    create = "Create"  #: The property does not exist in the current state but is present in the desired state. The property will be created when the deployment is executed.
+    delete = "Delete"  #: The property exists in the current state and is missing from the desired state. It will be deleted when the deployment is executed.
+    modify = "Modify"  #: The property exists in both current and desired state and is different. The value of the property will change when the deployment is executed.
+    array = "Array"  #: The property is an array and contains nested changes.
+
+
 class ChangeType(str, Enum):
 
     create = "Create"  #: The resource does not exist in the current state but is present in the desired state. The resource will be created when the deployment is executed.
