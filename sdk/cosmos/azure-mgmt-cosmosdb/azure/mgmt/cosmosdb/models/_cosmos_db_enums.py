@@ -80,6 +80,15 @@ class TriggerType(str, Enum):
     post = "Post"
 
 
+class TriggerOperation(str, Enum):
+
+    all = "All"
+    create = "Create"
+    update = "Update"
+    delete = "Delete"
+    replace = "Replace"
+
+
 class KeyKind(str, Enum):
 
     primary = "primary"

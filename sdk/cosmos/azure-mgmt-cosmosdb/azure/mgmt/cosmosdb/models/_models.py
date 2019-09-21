@@ -2831,9 +2831,9 @@ class SqlStoredProcedureGetResults(ARMResourceProperties):
     :param tags:
     :type tags: dict[str, str]
     :param sql_stored_procedure_get_results_id: Required. Name of the Cosmos
-     DB SQL userDefinedFunction
+     DB SQL storedProcedure
     :type sql_stored_procedure_get_results_id: str
-    :param body: Body of the User Defined Function
+    :param body: Body of the Stored Procedure
     :type body: str
     :ivar _rid: A system generated property. A unique identifier.
     :vartype _rid: str
@@ -2878,7 +2878,7 @@ class SqlStoredProcedureGetResults(ARMResourceProperties):
 
 
 class SqlStoredProcedureResource(Model):
-    """Cosmos DB SQL storedProcedure/userDefinedFunction resource object.
+    """Cosmos DB SQL storedProcedure resource object.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -2980,8 +2980,10 @@ class SqlTriggerGetResults(ARMResourceProperties):
     :param trigger_type: Type of the Trigger. Possible values include: 'Pre',
      'Post'
     :type trigger_type: str or ~azure.mgmt.cosmosdb.models.TriggerType
-    :param trigger_operation: The operation the trigger is associated with
-    :type trigger_operation: str
+    :param trigger_operation: The operation the trigger is associated with.
+     Possible values include: 'All', 'Create', 'Update', 'Delete', 'Replace'
+    :type trigger_operation: str or
+     ~azure.mgmt.cosmosdb.models.TriggerOperation
     :ivar _rid: A system generated property. A unique identifier.
     :vartype _rid: str
     :ivar _ts: A system generated property that denotes the last updated
@@ -3040,8 +3042,10 @@ class SqlTriggerResource(Model):
     :param trigger_type: Type of the Trigger. Possible values include: 'Pre',
      'Post'
     :type trigger_type: str or ~azure.mgmt.cosmosdb.models.TriggerType
-    :param trigger_operation: The operation the trigger is associated with
-    :type trigger_operation: str
+    :param trigger_operation: The operation the trigger is associated with.
+     Possible values include: 'All', 'Create', 'Update', 'Delete', 'Replace'
+    :type trigger_operation: str or
+     ~azure.mgmt.cosmosdb.models.TriggerOperation
     """
 
     _validation = {
@@ -3181,7 +3185,7 @@ class SqlUserDefinedFunctionGetResults(ARMResourceProperties):
 
 
 class SqlUserDefinedFunctionResource(Model):
-    """Cosmos DB SQL storedProcedure/userDefinedFunction resource object.
+    """Cosmos DB SQL userDefinedFunction resource object.
 
     All required parameters must be populated in order to send to Azure.
 
