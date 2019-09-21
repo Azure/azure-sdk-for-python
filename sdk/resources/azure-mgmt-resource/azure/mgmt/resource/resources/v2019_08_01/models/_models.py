@@ -1627,11 +1627,13 @@ class WhatIfChange(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar resource_id: Resource ID
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar resource_id: Required. Resource ID
     :vartype resource_id: str
-    :ivar change_type: Type of change that will be made to the resource when
-     the deployment is executed. Possible values include: 'Create', 'Delete',
-     'Ignore', 'Deploy', 'NoChange', 'Modify'
+    :ivar change_type: Required. Type of change that will be made to the
+     resource when the deployment is executed. Possible values include:
+     'Create', 'Delete', 'Ignore', 'Deploy', 'NoChange', 'Modify'
     :vartype change_type: str or
      ~azure.mgmt.resource.resources.v2019_08_01.models.ChangeType
     :ivar before: The snapshot of the resource before the deployment is
@@ -1646,8 +1648,8 @@ class WhatIfChange(Model):
     """
 
     _validation = {
-        'resource_id': {'readonly': True},
-        'change_type': {'readonly': True},
+        'resource_id': {'required': True, 'readonly': True},
+        'change_type': {'required': True, 'readonly': True},
         'before': {'readonly': True},
         'after': {'readonly': True},
         'delta': {'readonly': True},
@@ -1711,10 +1713,12 @@ class WhatIfPropertyChange(Model):
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar path: The path of the property.
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar path: Required. The path of the property.
     :vartype path: str
-    :ivar property_change_type: The type of property change. Possible values
-     include: 'Create', 'Delete', 'Modify', 'Array'
+    :ivar property_change_type: Required. The type of property change.
+     Possible values include: 'Create', 'Delete', 'Modify', 'Array'
     :vartype property_change_type: str or
      ~azure.mgmt.resource.resources.v2019_08_01.models.PropertyChangeType
     :ivar before: The value of the property before the deployment is executed.
@@ -1727,8 +1731,8 @@ class WhatIfPropertyChange(Model):
     """
 
     _validation = {
-        'path': {'readonly': True},
-        'property_change_type': {'readonly': True},
+        'path': {'required': True, 'readonly': True},
+        'property_change_type': {'required': True, 'readonly': True},
         'before': {'readonly': True},
         'after': {'readonly': True},
         'children': {'readonly': True},
