@@ -9,11 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_with_etag import ResourceWithEtag
+from .resource import Resource
 
 
-class Action(ResourceWithEtag):
-    """Action for alert rule.
+class RelationBase(Resource):
+    """Represents a relation.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -24,26 +24,29 @@ class Action(ResourceWithEtag):
     :vartype name: str
     :ivar type: Azure resource type
     :vartype type: str
-    :param etag: Etag of the azure resource
+    :ivar kind: The type of relation node. Possible values include:
+     'CasesToBookmarks'
+    :vartype kind: str or ~azure.mgmt.securityinsight.models.RelationTypes
+    :param etag: ETag for relation
     :type etag: str
-    :param trigger_uri: The uri for the action to trigger.
-    :type trigger_uri: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
+        'kind': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
-        'trigger_uri': {'key': 'properties.triggerUri', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(Action, self).__init__(**kwargs)
-        self.trigger_uri = kwargs.get('trigger_uri', None)
+        super(RelationBase, self).__init__(**kwargs)
+        self.kind = None
+        self.etag = kwargs.get('etag', None)
