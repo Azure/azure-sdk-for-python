@@ -15,7 +15,7 @@ try:
     from .aad_data_connector_py3 import AADDataConnector
     from .aad_check_requirements_py3 import AADCheckRequirements
     from .aatp_data_connector_py3 import AATPDataConnector
-    from .aatpr_check_requirements_py3 import AATPRCheckRequirements
+    from .aatp_check_requirements_py3 import AATPCheckRequirements
     from .asc_data_connector_py3 import ASCDataConnector
     from .asc_check_requirements_py3 import ASCCheckRequirements
     from .account_entity_py3 import AccountEntity
@@ -115,7 +115,7 @@ except (SyntaxError, ImportError):
     from .aad_data_connector import AADDataConnector
     from .aad_check_requirements import AADCheckRequirements
     from .aatp_data_connector import AATPDataConnector
-    from .aatpr_check_requirements import AATPRCheckRequirements
+    from .aatp_check_requirements import AATPCheckRequirements
     from .asc_data_connector import ASCDataConnector
     from .asc_check_requirements import ASCCheckRequirements
     from .account_entity import AccountEntity
@@ -262,7 +262,7 @@ __all__ = [
     'AADDataConnector',
     'AADCheckRequirements',
     'AATPDataConnector',
-    'AATPRCheckRequirements',
+    'AATPCheckRequirements',
     'ASCDataConnector',
     'ASCCheckRequirements',
     'AccountEntity',

@@ -12,7 +12,7 @@
 from msrest.serialization import Model
 
 
-class AATPRCheckRequirements(Model):
+class AATPCheckRequirements(Model):
     """AATP (Azure Advanced Threat Protection) requirements check properties.
 
     :param tenant_id: The tenant id to connect to, and get the data from.
@@ -24,5 +24,5 @@ class AATPRCheckRequirements(Model):
     }
 
     def __init__(self, *, tenant_id: str=None, **kwargs) -> None:
-        super(AATPRCheckRequirements, self).__init__(**kwargs)
+        super(AATPCheckRequirements, self).__init__(**kwargs)
         self.tenant_id = tenant_id
