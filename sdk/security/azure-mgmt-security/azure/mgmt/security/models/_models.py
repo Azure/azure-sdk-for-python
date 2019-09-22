@@ -2804,10 +2804,10 @@ class ProtectionMode(Model):
     """
 
     _attribute_map = {
-        'exe': {'key': 'Exe', 'type': 'str'},
-        'msi': {'key': 'Msi', 'type': 'str'},
-        'script': {'key': 'Script', 'type': 'str'},
-        'executable': {'key': 'Executable', 'type': 'str'},
+        'exe': {'key': 'exe', 'type': 'str'},
+        'msi': {'key': 'msi', 'type': 'str'},
+        'script': {'key': 'script', 'type': 'str'},
+        'executable': {'key': 'executable', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
