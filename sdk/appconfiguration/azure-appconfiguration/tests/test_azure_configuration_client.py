@@ -342,3 +342,41 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
             assert kv.key == to_list_kv.key and kv.label == to_list_kv.label
             cnt += 1
         assert cnt > 0
+
+    def test_read_only(self):
+        kv = self.test_config_setting_no_label
+        read_only_kv = self.get_config_client().set_read_only(kv)
+        assert read_only_kv.locked
+        readable_kv = self.get_config_client().clear_read_only(read_only_kv)
+        assert not readable_kv.locked
+
+    def test_delete_read_only(self):
+        to_delete_kv = self.test_config_setting_no_label
+        read_only_kv = self.get_config_client().set_read_only(to_delete_kv)
+        with pytest.raises(ResourceReadOnlyError):
+            self.get_config_client().delete_configuration_setting(to_delete_kv.key)
+        self.get_config_client().clear_read_only(read_only_kv)
+        self.get_config_client().delete_configuration_setting(to_delete_kv.key)
+        self.to_delete.remove(to_delete_kv)
+        with pytest.raises(ResourceNotFoundError):
+            self.get_config_client().get_configuration_setting(to_delete_kv.key)
+
+    def test_set_read_only(self):
+        to_set_kv = self.test_config_setting
+        to_set_kv.value = to_set_kv.value + "a"
+        to_set_kv.tags = {"a": "b", "c": "d"}
+        read_only_kv = self.get_config_client().set_read_only(to_set_kv)
+        with pytest.raises(ResourceReadOnlyError):
+            self.get_config_client().set_configuration_setting(read_only_kv)
+        readable_kv = self.get_config_client().clear_read_only(read_only_kv)
+        readable_kv.value = to_set_kv.value
+        readable_kv.tags = to_set_kv.tags
+        set_kv = self.get_config_client().set_configuration_setting(readable_kv)
+        assert (
+                to_set_kv.key == set_kv.key
+                and to_set_kv.label == to_set_kv.label
+                and to_set_kv.value == set_kv.value
+                and to_set_kv.content_type == set_kv.content_type
+                and to_set_kv.tags == set_kv.tags
+                and to_set_kv.etag != set_kv.etag
+        )

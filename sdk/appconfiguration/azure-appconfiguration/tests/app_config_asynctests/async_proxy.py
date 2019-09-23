@@ -75,3 +75,13 @@ class AzureAppConfigurationClientProxy(object):
         return get_event_loop().run_until_complete(
             self.obj.set_configuration_setting(configuration_setting, **kwargs)
         )
+
+    def set_read_only(self, configuration_setting, **kwargs):
+        return get_event_loop().run_until_complete(
+            self.obj.set_read_only(configuration_setting, **kwargs)
+        )
+
+    def clear_read_only(self, configuration_setting, **kwargs):
+        return get_event_loop().run_until_complete(
+            self.obj.clear_read_only(configuration_setting, **kwargs)
+        )

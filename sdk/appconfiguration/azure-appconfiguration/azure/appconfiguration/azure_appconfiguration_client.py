@@ -371,3 +371,81 @@ class AzureAppConfigurationClient:
             cls=lambda objs: [ConfigurationSetting._from_key_value(x) for x in objs],
             **kwargs
         )
+
+    @distributed_trace
+    def set_read_only(
+        self, configuration_setting, **kwargs
+    ):  # type: (ConfigurationSetting, dict) -> ConfigurationSetting
+
+        """Set a configuration setting read only
+
+        :param configuration_setting: the ConfigurationSetting to be set read only
+        :type configuration_setting: :class:`ConfigurationSetting`
+        :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
+        :return: The ConfigurationSetting returned from the service
+        :rtype: :class:`ConfigurationSetting`
+        :raises: :class:`ResourceNotFoundError`, :class:`ResourceModifiedError`, :class:`HttpRequestError`
+
+        Example
+
+        .. code-block:: python
+
+            config_setting = client.get_configuration_setting(
+                key="MyKey", label="MyLabel"
+            )
+
+            read_only_config_setting = client.set_read_only(config_setting)
+        """
+        etag = configuration_setting.etag
+        if_match = quote_etag(etag) if etag else None
+        error_map = {
+            404: ResourceNotFoundError,
+            412: ResourceModifiedError,
+        }
+        key_value = self._impl.put_lock(
+            key=configuration_setting.key,
+            label=configuration_setting.label,
+            if_match=if_match,
+            error_map=error_map,
+            **kwargs
+        )
+        return ConfigurationSetting._from_key_value(key_value)
+
+    @distributed_trace
+    def clear_read_only(
+            self, configuration_setting, **kwargs
+    ):  # type: (ConfigurationSetting, dict) -> ConfigurationSetting
+
+        """Clear read only flag for a configuration setting
+
+        :param configuration_setting: the ConfigurationSetting to be read only clear
+        :type configuration_setting: :class:`ConfigurationSetting`
+        :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
+        :return: The ConfigurationSetting returned from the service
+        :rtype: :class:`ConfigurationSetting`
+        :raises: :class:`ResourceNotFoundError`, :class:`ResourceModifiedError`, :class:`HttpRequestError`
+
+        Example
+
+        .. code-block:: python
+
+            config_setting = client.get_configuration_setting(
+                key="MyKey", label="MyLabel"
+            )
+
+            read_only_config_setting = client.clear_read_only(config_setting)
+        """
+        etag = configuration_setting.etag
+        if_match = quote_etag(etag) if etag else None
+        error_map = {
+            404: ResourceNotFoundError,
+            412: ResourceModifiedError,
+        }
+        key_value = self._impl.delete_lock(
+            key=configuration_setting.key,
+            label=configuration_setting.label,
+            if_match=if_match,
+            error_map=error_map,
+            **kwargs
+        )
+        return ConfigurationSetting._from_key_value(key_value)

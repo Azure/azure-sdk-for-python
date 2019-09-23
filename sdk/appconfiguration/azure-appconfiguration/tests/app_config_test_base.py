@@ -14,6 +14,7 @@ from azure.core.exceptions import (
     ResourceExistsError,
     AzureError,
 )
+from azure.appconfiguration import ResourceReadOnlyError
 from azure.appconfiguration import AzureAppConfigurationClient
 from azure.appconfiguration import ConfigurationSetting
 from devtools_testutils import AzureMgmtTestCase
