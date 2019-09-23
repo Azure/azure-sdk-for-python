@@ -12,13 +12,15 @@ except ImportError:
     import mock
 
 from azure.core.tracing.ext.opencensus_span import OpenCensusSpan
+from azure.core.tracing import SpanKind
 from opencensus.trace import tracer as tracer_module
-from opencensus.trace.span import SpanKind
+from opencensus.trace.span import SpanKind as OpenCensusSpanKind
 from opencensus.trace.samplers import AlwaysOnSampler
 from opencensus.trace.base_exporter import Exporter
 from tracing_common import MockExporter, ContextHelper
 import os
 
+import pytest
 
 class TestOpencensusWrapper(unittest.TestCase):
     def test_span_passed_in(self):
@@ -97,7 +99,7 @@ class TestOpencensusWrapper(unittest.TestCase):
             trace = tracer_module.Tracer(sampler=AlwaysOnSampler())
             og_header = {"traceparent": "00-2578531519ed94423ceae67588eff2c9-231ebdc614cb9ddd-01"}
             wrapped_class = OpenCensusSpan()
-            OpenCensusSpan.link(og_header)
+            OpenCensusSpan.link_from_headers(og_header)
             assert len(wrapped_class.span_instance.links) == 1
             link = wrapped_class.span_instance.links[0]
             assert link.trace_id == "2578531519ed94423ceae67588eff2c9"
@@ -124,7 +126,7 @@ class TestOpencensusWrapper(unittest.TestCase):
             setattr(request, "headers", {})
             setattr(response, "status_code", 200)
             wrapped_class.set_http_attributes(request)
-            assert wrapped_class.span_instance.span_kind == SpanKind.CLIENT
+            assert wrapped_class.span_instance.span_kind == OpenCensusSpanKind.CLIENT
             assert wrapped_class.span_instance.attributes.get("http.method") == request.method
             assert wrapped_class.span_instance.attributes.get("component") == "http"
             assert wrapped_class.span_instance.attributes.get("http.url") == request.url
@@ -134,3 +136,31 @@ class TestOpencensusWrapper(unittest.TestCase):
             wrapped_class.set_http_attributes(request, response)
             assert wrapped_class.span_instance.attributes.get("http.status_code") == response.status_code
             assert wrapped_class.span_instance.attributes.get("http.user_agent") == request.headers.get("User-Agent")
+
+    def test_span_kind(self):
+        with ContextHelper():
+            trace = tracer_module.Tracer(sampler=AlwaysOnSampler())
+            parent = trace.start_span()
+            wrapped_class = OpenCensusSpan(span=parent)
+
+            wrapped_class.kind = SpanKind.UNSPECIFIED
+            assert wrapped_class.span_instance.span_kind == OpenCensusSpanKind.UNSPECIFIED
+            assert wrapped_class.kind == SpanKind.UNSPECIFIED
+
+            wrapped_class.kind = SpanKind.SERVER
+            assert wrapped_class.span_instance.span_kind == OpenCensusSpanKind.SERVER
+            assert wrapped_class.kind == SpanKind.SERVER
+
+            wrapped_class.kind = SpanKind.CLIENT
+            assert wrapped_class.span_instance.span_kind == OpenCensusSpanKind.CLIENT
+            assert wrapped_class.kind == SpanKind.CLIENT
+
+            # not supported
+            with pytest.raises(ValueError):
+                wrapped_class.kind = SpanKind.PRODUCER
+
+            with pytest.raises(ValueError):
+                wrapped_class.kind = SpanKind.CONSUMER
+
+            with pytest.raises(ValueError):
+                wrapped_class.kind = SpanKind.INTERNAL

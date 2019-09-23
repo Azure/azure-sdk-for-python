@@ -621,6 +621,7 @@ class ShareClient(StorageAccountHostsMixin):
                 :caption: List directories and files in the share.
         """
         directory = self.get_directory_client(directory_name)
+        kwargs.setdefault('merge_span', True)
         return directory.list_directories_and_files(
             name_starts_with=name_starts_with, marker=marker, timeout=timeout, **kwargs)
 
@@ -704,5 +705,6 @@ class ShareClient(StorageAccountHostsMixin):
         :rtype: ~azure.storage.file.directory_client.DirectoryClient
         """
         directory = self.get_directory_client(directory_name)
+        kwargs.setdefault('merge_span', True)
         directory.create_directory(metadata, timeout, **kwargs)
         return directory # type: ignore
