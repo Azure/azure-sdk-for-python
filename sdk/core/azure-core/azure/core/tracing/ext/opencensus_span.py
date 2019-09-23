@@ -160,6 +160,18 @@ class OpenCensusSpan(object):
             self._span_instance.add_attribute(self._http_status_code, 504)
 
     def get_trace_parent(self):
+        """Return traceparent string as defined in W3C trace context specification.
+
+        Example:
+        Value = 00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01
+        base16(version) = 00
+        base16(trace-id) = 4bf92f3577b34da6a3ce929d0e0e4736
+        base16(parent-id) = 00f067aa0ba902b7
+        base16(trace-flags) = 01  // sampled
+
+        :return: a traceparent string
+        :rtype: str
+        """
         return self.to_header()['traceparent']
 
     @classmethod
