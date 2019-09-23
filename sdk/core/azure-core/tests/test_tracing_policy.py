@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """Tests for the distributed tracing policy."""
+import logging
 
 from azure.core.pipeline import PipelineResponse, PipelineRequest, PipelineContext
 from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
@@ -66,6 +67,42 @@ def test_distributed_tracing_policy_solo():
         assert network_span.span_data.attributes.get("http.user_agent") is None
         assert network_span.span_data.attributes.get("x-ms-request-id") == None
         assert network_span.span_data.attributes.get("http.status_code") == 504
+
+
+def test_distributed_tracing_policy_badurl(caplog):
+    """Test policy with a bad url that will throw, and be sure policy ignores it"""
+    with ContextHelper():
+        exporter = MockExporter()
+        trace = tracer_module.Tracer(sampler=AlwaysOnSampler(), exporter=exporter)
+        with trace.span("parent"):
+            policy = DistributedTracingPolicy()
+
+            request = HttpRequest("GET", "http://[[[")
+            request.headers["x-ms-client-request-id"] = "some client request id"
+
+            pipeline_request = PipelineRequest(request, PipelineContext(None))
+            with caplog.at_level(logging.WARNING, logger="azure.core.pipeline.policies.distributed_tracing"):
+                policy.on_request(pipeline_request)
+            assert "Unable to start network span" in caplog.text
+
+            response = HttpResponse(request, None)
+            response.headers = request.headers
+            response.status_code = 202
+            response.headers["x-ms-request-id"] = "some request id"
+
+            ctx = trace.span_context
+            header = trace.propagator.to_headers(ctx)
+            assert request.headers.get("traceparent") is None  # Got not network trace
+
+            policy.on_response(pipeline_request, PipelineResponse(request, response, PipelineContext(None)))
+            time.sleep(0.001)
+            policy.on_request(pipeline_request)
+            policy.on_exception(pipeline_request)
+
+        trace.finish()
+        exporter.build_tree()
+        parent = exporter.root
+        assert len(parent.children) == 0
 
 
 def test_distributed_tracing_policy_with_user_agent():

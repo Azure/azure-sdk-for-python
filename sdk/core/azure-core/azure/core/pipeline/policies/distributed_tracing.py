@@ -24,6 +24,7 @@
 #
 # --------------------------------------------------------------------------
 """Traces network calls using the implementation library from the settings."""
+import logging
 import sys
 from six.moves import urllib
 
@@ -41,6 +42,9 @@ if TYPE_CHECKING:
     from azure.core.tracing.abstract_span import AbstractSpan  # pylint: disable=ungrouped-imports
     from azure.core.pipeline import PipelineRequest, PipelineResponse  # pylint: disable=ungrouped-imports
     from typing import Any, Optional, Dict, List, Union, Tuple
+
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class DistributedTracingPolicy(SansIOHTTPPolicy):
@@ -63,20 +67,23 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
 
     def on_request(self, request):
         # type: (PipelineRequest) -> None
-        span_impl_type = settings.tracing_implementation()
-        if span_impl_type is None:
-            return
+        try:
+            span_impl_type = settings.tracing_implementation()
+            if span_impl_type is None:
+                return
 
-        path = urllib.parse.urlparse(request.http_request.url).path
-        if not path:
-            path = "/"
+            path = urllib.parse.urlparse(request.http_request.url).path
+            if not path:
+                path = "/"
 
-        span = span_impl_type(name=path)
-        span.start()
+            span = span_impl_type(name=path)
+            span.start()
 
-        self.set_header(request, span)
+            self.set_header(request, span)
 
-        request.context[self.TRACING_CONTEXT] = span
+            request.context[self.TRACING_CONTEXT] = span
+        except Exception as err:
+            _LOGGER.warning("Unable to start network span: %s", err)
 
     def end_span(self, request, response=None, exc_info=None):
         # type: (PipelineRequest, Optional[HttpResponse], Optional[Tuple]) -> None
