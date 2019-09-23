@@ -229,6 +229,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
     @record
     def test_create_blob_with_special_chars(self):
+        pytest.skip("Will be fixed in #7407")
         # Arrange
 
         # Act
