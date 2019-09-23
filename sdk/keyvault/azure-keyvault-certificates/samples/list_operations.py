@@ -50,7 +50,7 @@ try:
 
     # await the creation of the bank and storage certificate
     bank_certificate = bank_certificate_poller.result()
-    storage_certificate = storage_certificate_poller.wait()
+    storage_certificate = storage_certificate_poller.result()
 
     print("Certificate with name '{0}' was created.".format(bank_certificate.name))
     print("Certificate with name '{0}' was created.".format(storage_certificate.name))
@@ -65,7 +65,7 @@ try:
     # certificate creates a new version of the certificate in the Key Vault with the new value.
 
     tags = {"a": "b"}
-    bank_certificate = client.create_certificate(name=bank_cert_name, tags=tags).wait()
+    bank_certificate = client.create_certificate(name=bank_cert_name, tags=tags).result()
     print(
         "Certificate with name '{0}' was created again with tags '{1}'".format(
             bank_certificate.name,
@@ -103,4 +103,3 @@ except HttpResponseError as e:
 
 finally:
     print("\nrun_sample done")
-

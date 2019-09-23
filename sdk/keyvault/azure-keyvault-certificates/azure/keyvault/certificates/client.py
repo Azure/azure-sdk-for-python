@@ -75,8 +75,9 @@ class CertificateClient(KeyVaultClientBase):
         :param tags: Application specific metadata in the form of key-value pairs.
         :type tags: dict(str, str)
         :returns: An LROPoller for the create certificate operation. Waiting on the poller
-        gives you the certificate if creation is successful, the CertificateOperation if not.
-        :rtype: ~azure.core.polling.LROPoller
+         gives you the certificate if creation is successful, the CertificateOperation if not.
+        :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.certificates.models.Certificate or
+         ~azure.keyvault.certificates.models.CertificateOperation]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
@@ -118,13 +119,15 @@ class CertificateClient(KeyVaultClientBase):
                                        subject_name="CN=DefaultPolicy",
                                        validity_in_months=12)
 
-        create_certificate_operation = self._client.create_certificate(
-            vault_base_url=self.vault_url,
-            certificate_name=name,
-            certificate_policy=policy._to_certificate_policy_bundle(),
-            certificate_attributes=attributes,
-            tags=tags,
-            **kwargs
+        create_certificate_operation = CertificateOperation._from_certificate_operation_bundle(
+                self._client.create_certificate(
+                vault_base_url=self.vault_url,
+                certificate_name=name,
+                certificate_policy=policy._to_certificate_policy_bundle(),
+                certificate_attributes=attributes,
+                tags=tags,
+                **kwargs
+            )
         )
 
         command = partial(
@@ -139,10 +142,7 @@ class CertificateClient(KeyVaultClientBase):
             **kwargs
         )
 
-        create_certificate_polling = CreateCertificatePoller(
-            get_certificate_command=get_certificate_command,
-            unknown_issuer=(policy.issuer_name.lower() == 'unknown')
-        )
+        create_certificate_polling = CreateCertificatePoller(get_certificate_command=get_certificate_command)
         return LROPoller(
             command,
             create_certificate_operation,
@@ -351,7 +351,7 @@ class CertificateClient(KeyVaultClientBase):
         """Imports a certificate into a specified key vault.
 
         Imports an existing valid certificate, containing a private key, into
-        Azure Key Vault. The certificate to be imported can be in either PFX orHi
+        Azure Key Vault. The certificate to be imported can be in either PFX or
         PEM format. If the certificate is in PEM format the PEM file must
         contain the key as well as x509 certificates. This operation requires
         the certificates/import permission.

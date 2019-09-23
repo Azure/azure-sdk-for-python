@@ -11,12 +11,11 @@ logger = logging.getLogger(__name__)
 
 
 class CreateCertificatePoller(PollingMethod):
-    def __init__(self, get_certificate_command, unknown_issuer=False, interval=5):
+    def __init__(self, get_certificate_command, interval=5):
         self._command = None
         self._resource = None
         self._pending_certificate_op = None
         self._get_certificate_command = get_certificate_command
-        self._unknown_issuer = unknown_issuer
         self._polling_interval = interval
 
     def _update_status(self):
@@ -44,7 +43,7 @@ class CreateCertificatePoller(PollingMethod):
 
     def finished(self):
         # type: () -> bool
-        if self._unknown_issuer:
+        if self._pending_certificate_op.issuer_name.lower() == 'unknown':
             return True
         return self._pending_certificate_op.status.lower() != 'inprogress'
 

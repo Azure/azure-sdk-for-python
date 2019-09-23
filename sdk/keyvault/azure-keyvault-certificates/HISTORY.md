@@ -3,7 +3,7 @@
 ## 4.0.0b4
 ### Breaking changes
 - Enums 'JsonWebKeyCurveName' and 'JsonWebKeyType' have been renamed to 'KeyCurveName' and 'KeyType', respectively.
-- Both async and sync versions of create_certificate now return pollers that return the create Certificate if creation is successful,
+- Both async and sync versions of create_certificate now return pollers that return the created Certificate if creation is successful,
 and the CertificateOperation if not.
 
 ## 4.0.0b3 (2019-09-11)

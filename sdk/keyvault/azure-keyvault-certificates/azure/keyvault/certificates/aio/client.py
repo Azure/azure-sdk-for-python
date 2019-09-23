@@ -67,7 +67,9 @@ class CertificateClient(AsyncKeyVaultClientBase):
         :param tags: Application specific metadata in the form of key-value pairs.
         :type tags: dict(str, str)
         :returns: A coroutine for the creation of the certificate. Awaiting the coroutine
-        returns the created Certificate if creation is successful, the CertificateOperation if not.
+         returns the created Certificate if creation is successful, the CertificateOperation if not.
+        :rtype: coroutine[~azure.keyvault.certificates.models.Certificate or
+         ~azure.keyvault.certificates.models.CertificateOperation]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
@@ -108,13 +110,15 @@ class CertificateClient(AsyncKeyVaultClientBase):
                                        subject_name="CN=DefaultPolicy",
                                        validity_in_months=12)
 
-        create_certificate_operation = await self._client.create_certificate(
-            vault_base_url=self.vault_url,
-            certificate_name=name,
-            certificate_policy=policy._to_certificate_policy_bundle(),
-            certificate_attributes=attributes,
-            tags=tags,
-            **kwargs
+        create_certificate_operation = CertificateOperation._from_certificate_operation_bundle(
+                await self._client.create_certificate(
+                vault_base_url=self.vault_url,
+                certificate_name=name,
+                certificate_policy=policy._to_certificate_policy_bundle(),
+                certificate_attributes=attributes,
+                tags=tags,
+                **kwargs
+            )
         )
 
         command = partial(
@@ -129,10 +133,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
             **kwargs
         )
 
-        create_certificate_polling = CreateCertificatePollerAsync(
-            get_certificate_command=get_certificate_command,
-            unknown_issuer=(policy.issuer_name.lower() == 'unknown')
-        )
+        create_certificate_polling = CreateCertificatePollerAsync(get_certificate_command=get_certificate_command)
         return async_poller(
             command,
             create_certificate_operation,
