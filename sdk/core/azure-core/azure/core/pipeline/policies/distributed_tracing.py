@@ -82,7 +82,7 @@ class DistributedTracingPolicy(SansIOHTTPPolicy):
             self.set_header(request, span)
 
             request.context[self.TRACING_CONTEXT] = span
-        except Exception as err:
+        except Exception as err:  # pylint: disable=broad-except
             _LOGGER.warning("Unable to start network span: %s", err)
 
     def end_span(self, request, response=None, exc_info=None):
