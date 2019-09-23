@@ -262,7 +262,7 @@ if __name__ == "__main__":
     extended_pytest_args = []
 
     if len(targeted_packages) == 0:
-        exit(0) 
+        exit(0)
 
     # common argument handling
     if args.disablecov:
@@ -271,7 +271,7 @@ if __name__ == "__main__":
         extended_pytest_args.extend(["--durations=10", "--cov", "--cov-report="])
 
     if args.xdist:
-        extended_pytest_args.extend(["-n", "8"])
+        extended_pytest_args.extend(["-n", "8", "--dist=loadscope"])
 
     if args.runtype != "none":
         execute_global_install_and_test(args, targeted_packages, extended_pytest_args)
