@@ -26,7 +26,6 @@
 from __future__ import absolute_import
 import abc
 from email.message import Message
-from email.policy import HTTP
 try:
     from email import message_from_bytes as message_parser
 except ImportError: # 2.7
@@ -112,7 +111,7 @@ def _urljoin(base_url, stub_url):
     return parsed.geturl()
 
 
-class _HTTPSerializer(HTTPConnection):
+class _HTTPSerializer(HTTPConnection, object):
     """Hacking the stdlib HTTPConnection to serialize HTTP request as strings.
     """
     def __init__(self, *args, **kwargs):
@@ -433,7 +432,7 @@ class BytesIOSocket(object):
     def __init__(self, bytes_data):
         self.bytes_data = bytes_data
 
-    def makefile(self, _):
+    def makefile(self, *args):
         return BytesIO(self.bytes_data)
 
 
@@ -701,8 +700,12 @@ class MultiPartHelper(object):
             part_message.set_payload(req.serialize())
             main_message.attach(part_message)
 
-        full_message = main_message.as_bytes(policy=HTTP)
-        _, _, body = full_message.split(b'\r\n', maxsplit=2)
+        try:
+            from email.policy import HTTP
+            full_message = main_message.as_bytes(policy=HTTP)
+        except ImportError: # Python 2.7
+            full_message = main_message.as_string()
+        _, _, body = full_message.split(b'\r\n', 2)
         self.main_request.set_bytes_body(body)
         self.main_request.headers['Content-Type'] = 'multipart/mixed; boundary='+main_message.get_boundary()
 

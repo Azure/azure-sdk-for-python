@@ -36,14 +36,21 @@ def test_http_request_serialization():
     )
     serialized = request.serialize()
 
-    expected = (
+    # For some reason Python 2.7 rotate the headers. Both are correct.
+    expected = [(
         b'DELETE /container0/blob0 HTTP/1.1\r\n'
         b'x-ms-date: Thu, 14 Jun 2018 16:46:54 GMT\r\n'
         b'Authorization: SharedKey account:G4jjBXA7LI/RnWKIOQ8i9xH4p76pAQ+4Fs4R1VxasaE=\r\n'
         b'Content-Length: 0\r\n'
         b'\r\n'
-    )
-    assert serialized == expected
+    ),(
+        b'DELETE /container0/blob0 HTTP/1.1\r\n'
+        b'Content-Length: 0\r\n'
+        b'Authorization: SharedKey account:G4jjBXA7LI/RnWKIOQ8i9xH4p76pAQ+4Fs4R1VxasaE=\r\n'
+        b'x-ms-date: Thu, 14 Jun 2018 16:46:54 GMT\r\n'
+        b'\r\n'
+    )]
+    assert serialized in expected
 
 
     # Method + Url + Headers + Body
