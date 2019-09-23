@@ -363,7 +363,7 @@ class CertificateClientTests(KeyVaultTestCase):
             print(delcert)
 
         if not self.is_playback():
-            await asyncio.sleep(30)
+            await asyncio.sleep(50)
 
         # validate all our deleted certificates are returned by list_deleted_certificates
         deleted_certificates = client.list_deleted_certificates()
