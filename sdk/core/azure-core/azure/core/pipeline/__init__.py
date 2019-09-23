@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 
 import abc
-from typing import (TypeVar, Any, Dict, Optional)
+from typing import (TypeVar, Any, Dict, Optional, Generic)
 
 try:
     ABC = abc.ABC
@@ -97,7 +97,7 @@ class PipelineContext(dict):
         return super(PipelineContext, self).pop(*args)
 
 
-class PipelineRequest(object):
+class PipelineRequest(Generic[HTTPRequestType]):
     """A pipeline request object.
 
     Container for moving the HttpRequest through the pipeline.
@@ -114,7 +114,7 @@ class PipelineRequest(object):
         self.context = context
 
 
-class PipelineResponse(object):
+class PipelineResponse(Generic[HTTPRequestType, HTTPResponseType]):
     """A pipeline response object.
 
     The PipelineResponse interface exposes an HTTP response object as it returns through the pipeline of Policy objects.
@@ -132,7 +132,7 @@ class PipelineResponse(object):
     :type context: ~azure.core.pipeline.PipelineContext
     """
     def __init__(self, http_request, http_response, context):
-        # type: (HTTPRequestType, HTTPResponseType, Optional[Dict[str, Any]]) -> None
+        # type: (HTTPRequestType, HTTPResponseType, PipelineContext) -> None
         self.http_request = http_request
         self.http_response = http_response
         self.context = context

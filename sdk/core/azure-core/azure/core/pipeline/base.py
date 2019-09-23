@@ -148,6 +148,6 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
         :rtype: ~azure.core.pipeline.PipelineResponse
         """
         context = PipelineContext(self._transport, **kwargs)
-        pipeline_request = PipelineRequest(request, context) # type: PipelineRequest
+        pipeline_request = PipelineRequest(request, context) # type: PipelineRequest[HTTPRequestType]
         first_node = self._impl_policies[0] if self._impl_policies else _TransportRunner(self._transport)
         return first_node.send(pipeline_request)  # type: ignore
