@@ -143,9 +143,6 @@ class Application(GenericResource):
      'Updating'
     :vartype provisioning_state: str or
      ~azure.mgmt.resource.managedapplications.models.ProvisioningState
-    :param ui_definition_uri: The blob URI where the UI definition file is
-     located.
-    :type ui_definition_uri: str
     :param plan: The plan information.
     :type plan: ~azure.mgmt.resource.managedapplications.models.Plan
     :param kind: Required. The kind of the managed application. Allowed values
@@ -177,7 +174,6 @@ class Application(GenericResource):
         'parameters': {'key': 'properties.parameters', 'type': 'object'},
         'outputs': {'key': 'properties.outputs', 'type': 'object'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'ui_definition_uri': {'key': 'properties.uiDefinitionUri', 'type': 'str'},
         'plan': {'key': 'plan', 'type': 'Plan'},
         'kind': {'key': 'kind', 'type': 'str'},
     }
@@ -189,7 +185,6 @@ class Application(GenericResource):
         self.parameters = kwargs.get('parameters', None)
         self.outputs = None
         self.provisioning_state = None
-        self.ui_definition_uri = kwargs.get('ui_definition_uri', None)
         self.plan = kwargs.get('plan', None)
         self.kind = kwargs.get('kind', None)
 
@@ -357,9 +352,6 @@ class ApplicationPatchable(GenericResource):
      'Updating'
     :vartype provisioning_state: str or
      ~azure.mgmt.resource.managedapplications.models.ProvisioningState
-    :param ui_definition_uri: The blob URI where the UI definition file is
-     located.
-    :type ui_definition_uri: str
     :param plan: The plan information.
     :type plan: ~azure.mgmt.resource.managedapplications.models.PlanPatchable
     :param kind: The kind of the managed application. Allowed values are
@@ -390,7 +382,6 @@ class ApplicationPatchable(GenericResource):
         'parameters': {'key': 'properties.parameters', 'type': 'object'},
         'outputs': {'key': 'properties.outputs', 'type': 'object'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'ui_definition_uri': {'key': 'properties.uiDefinitionUri', 'type': 'str'},
         'plan': {'key': 'plan', 'type': 'PlanPatchable'},
         'kind': {'key': 'kind', 'type': 'str'},
     }
@@ -402,7 +393,6 @@ class ApplicationPatchable(GenericResource):
         self.parameters = kwargs.get('parameters', None)
         self.outputs = None
         self.provisioning_state = None
-        self.ui_definition_uri = kwargs.get('ui_definition_uri', None)
         self.plan = kwargs.get('plan', None)
         self.kind = kwargs.get('kind', None)
 
