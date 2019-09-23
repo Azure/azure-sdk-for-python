@@ -19,7 +19,7 @@ from azure.identity.aio import (
     EnvironmentCredential,
     ManagedIdentityCredential,
 )
-from azure.identity.aio._managed_identity import ImdsCredential
+from azure.identity.aio._credentials.managed_identity import ImdsCredential
 from azure.identity._constants import EnvironmentVariables
 
 from helpers import mock_response, Request, async_validating_transport

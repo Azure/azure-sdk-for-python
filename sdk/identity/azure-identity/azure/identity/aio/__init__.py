@@ -5,7 +5,7 @@
 import os
 
 from .._constants import EnvironmentVariables
-from .credentials import (
+from ._credentials import (
     CertificateCredential,
     ChainedTokenCredential,
     ClientSecretCredential,

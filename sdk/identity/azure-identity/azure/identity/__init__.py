@@ -6,7 +6,7 @@ import os
 
 from ._browser_auth import InteractiveBrowserCredential
 from ._constants import EnvironmentVariables
-from .credentials import (
+from ._credentials import (
     CertificateCredential,
     ChainedTokenCredential,
     ClientSecretCredential,

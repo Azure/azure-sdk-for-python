@@ -25,7 +25,7 @@ from azure.identity import (
     InteractiveBrowserCredential,
     UsernamePasswordCredential,
 )
-from azure.identity._managed_identity import ImdsCredential
+from azure.identity._credentials.managed_identity import ImdsCredential
 from azure.identity._constants import EnvironmentVariables
 import pytest
 
