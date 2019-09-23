@@ -19,7 +19,7 @@ class MgmtResourceTest(AzureMgmtTestCase):
         )
 
     def test_tag_operations(self):
-        tag_name = 'tag1'
+        tag_name = 'tagxyz'
         tag_value = 'value1'
 
         # Create or update
