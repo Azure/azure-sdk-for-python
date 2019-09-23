@@ -13,7 +13,7 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+      - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-resource/4.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
@@ -30,24 +30,20 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 03 Sep 2019 07:42:13 GMT
+      - Sun, 22 Sep 2019 15:32:46 GMT
       expires:
       - '-1'
       pragma:
       - no-cache
       strict-transport-security:
       - max-age=31536000; includeSubDomains
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1199'
+      - '1198'
     status:
-      code: 200
-      message: OK
+      code: 201
+      message: Created
 - request:
     body: null
     headers:
@@ -58,7 +54,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+      - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-resource/4.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
@@ -75,7 +71,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 03 Sep 2019 07:42:13 GMT
+      - Sun, 22 Sep 2019 15:32:46 GMT
       expires:
       - '-1'
       pragma:
@@ -99,7 +95,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+      - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-resource/4.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
@@ -114,7 +110,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 03 Sep 2019 07:42:13 GMT
+      - Sun, 22 Sep 2019 15:32:46 GMT
       expires:
       - '-1'
       pragma:
@@ -136,7 +132,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+      - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-resource/4.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
@@ -153,7 +149,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 03 Sep 2019 07:42:13 GMT
+      - Sun, 22 Sep 2019 15:32:46 GMT
       expires:
       - '-1'
       pragma:
@@ -177,7 +173,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+      - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-resource/4.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
@@ -185,17 +181,17 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups?api-version=2019-08-01
   response:
     body:
-      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/AzureDevops","name":"AzureDevops","type":"Microsoft.Resources/resourceGroups","location":"eastus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ci-jenkins-agents","name":"ci-jenkins-agents","type":"Microsoft.Resources/resourceGroups","location":"westus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cleanupservice","name":"cleanupservice","type":"Microsoft.Resources/resourceGroups","location":"westus","tags":{"What
-        Is Cleanup Service":"https://aka.ms/WhatIsCleanupService"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/demo-aks","name":"demo-aks","type":"Microsoft.Resources/resourceGroups","location":"eastus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/jenkins","name":"jenkins","type":"Microsoft.Resources/resourceGroups","location":"westus2","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/jenkins-demo-1","name":"jenkins-demo-1","type":"Microsoft.Resources/resourceGroups","location":"eastus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/jenkins-demo-2","name":"jenkins-demo-2","type":"Microsoft.Resources/resourceGroups","location":"eastus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/jenkins-demo-cosmosdb","name":"jenkins-demo-cosmosdb","type":"Microsoft.Resources/resourceGroups","location":"australiaeast","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/jenkins-demo-webapp","name":"jenkins-demo-webapp","type":"Microsoft.Resources/resourceGroups","location":"southcentralus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/jenkins-public","name":"jenkins-public","type":"Microsoft.Resources/resourceGroups","location":"eastus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/jenkinsciacr","name":"jenkinsciacr","type":"Microsoft.Resources/resourceGroups","location":"eastus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/jieshe-aks","name":"jieshe-aks","type":"Microsoft.Resources/resourceGroups","location":"eastus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/jieshe-eventhub-test","name":"jieshe-eventhub-test","type":"Microsoft.Resources/resourceGroups","location":"eastus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/jieshe-jenkins","name":"jieshe-jenkins","type":"Microsoft.Resources/resourceGroups","location":"eastus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/jieshe-local-agent1","name":"jieshe-local-agent1","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"JenkinsManagedTag":"ManagedByAzureVMAgents","JenkinsCloudTag":"ttt"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/jieshe-temp","name":"jieshe-temp","type":"Microsoft.Resources/resourceGroups","location":"eastus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/kenchenwebapplinux1","name":"kenchenwebapplinux1","type":"Microsoft.Resources/resourceGroups","location":"westeurope","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/MC_demo-aks_demoaks_eastus","name":"MC_demo-aks_demoaks_eastus","type":"Microsoft.Resources/resourceGroups","location":"eastus","managedBy":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/demo-aks/providers/Microsoft.ContainerService/managedClusters/demoaks","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/MC_jieshe-aks_jiesheaks_southcentralus","name":"MC_jieshe-aks_jiesheaks_southcentralus","type":"Microsoft.Resources/resourceGroups","location":"southcentralus","managedBy":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/jieshe-aks/providers/Microsoft.ContainerService/managedClusters/jiesheaks","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myResourceGroup","name":"myResourceGroup","type":"Microsoft.Resources/resourceGroups","location":"eastus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/NetworkWatcherRG","name":"NetworkWatcherRG","type":"Microsoft.Resources/resourceGroups","location":"eastus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/OS_zimsrg_myOpenShiftManagedCluster_eastus","name":"OS_zimsrg_myOpenShiftManagedCluster_eastus","type":"Microsoft.Resources/resourceGroups","location":"eastus","managedBy":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/zimsrg/providers/Microsoft.ContainerService/openShiftManagedClusters/myOpenShiftManagedCluster","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pcansiblerg","name":"pcansiblerg","type":"Microsoft.Resources/resourceGroups","location":"westus2","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pcansrg","name":"pcansrg","type":"Microsoft.Resources/resourceGroups","location":"eastus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pcappserv-linux-tomcat","name":"pcappserv-linux-tomcat","type":"Microsoft.Resources/resourceGroups","location":"westeurope","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pcappservrg","name":"pcappservrg","type":"Microsoft.Resources/resourceGroups","location":"westeurope","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pcFunctiongp2","name":"pcFunctiongp2","type":"Microsoft.Resources/resourceGroups","location":"eastus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pcjenkinsdemo","name":"pcjenkinsdemo","type":"Microsoft.Resources/resourceGroups","location":"eastus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pclinux","name":"pclinux","type":"Microsoft.Resources/resourceGroups","location":"westeurope","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/pcvmss","name":"pcvmss","type":"Microsoft.Resources/resourceGroups","location":"eastus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/qstest4c69eaa2de97470abfc46440f1bb69e1","name":"qstest4c69eaa2de97470abfc46440f1bb69e1","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1567522946"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/qstestcddfa9f3a2a94682862a66dd2f9d9ba5","name":"qstestcddfa9f3a2a94682862a66dd2f9d9ba5","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1567609361"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/st-test0904a644d7cd41c28c894b7e94f33226","name":"st-test0904a644d7cd41c28c894b7e94f33226","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1567269307"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/st-test1e6688debde74f4ea06f1d9f98cf4bf7","name":"st-test1e6688debde74f4ea06f1d9f98cf4bf7","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"CleanTime":"1567664672"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test-lqy","name":"test-lqy","type":"Microsoft.Resources/resourceGroups","location":"centralus","tags":{},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments_linked_template27ec152e","name":"test_mgmt_resource_test_deployments_linked_template27ec152e","type":"Microsoft.Resources/resourceGroups","location":"westus","properties":{"provisioningState":"Deleting"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments_linked_template_errorafa117b7","name":"test_mgmt_resource_test_deployments_linked_template_errorafa117b7","type":"Microsoft.Resources/resourceGroups","location":"westus","properties":{"provisioningState":"Deleting"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_resource_groups457f1050","name":"test_mgmt_resource_test_resource_groups457f1050","type":"Microsoft.Resources/resourceGroups","location":"westus","tags":{"tag1":"value1"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Testing","name":"Testing","type":"Microsoft.Resources/resourceGroups","location":"westus","tags":{"testing":"testing","delete":"never"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/zimsrg","name":"zimsrg","type":"Microsoft.Resources/resourceGroups","location":"eastus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/zimstgxxx","name":"zimstgxxx","type":"Microsoft.Resources/resourceGroups","location":"westus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/zimstgxxz","name":"zimstgxxz","type":"Microsoft.Resources/resourceGroups","location":"eastus","properties":{"provisioningState":"Succeeded"}}]}'
+      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/0828fanqiu","name":"0828fanqiu","type":"Microsoft.Resources/resourceGroups","location":"centralus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/acr","name":"acr","type":"Microsoft.Resources/resourceGroups","location":"westus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/centraluseuap","name":"centraluseuap","type":"Microsoft.Resources/resourceGroups","location":"centraluseuap","tags":{},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cli_test_ag_http_listenertb7pymvq5kixiqstjlpacrnztz4dhslpayhqs2pexgcghahgnt","name":"cli_test_ag_http_listenertb7pymvq5kixiqstjlpacrnztz4dhslpayhqs2pexgcghahgnt","type":"Microsoft.Resources/resourceGroups","location":"westus","tags":{"product":"azurecli","cause":"automation","date":"2019-09-20T10:01:11Z"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cli_test_ag_private_ip6vemb6nkuuwj3viwef26okxlv4tdwx22kg5pyxy2w2l25kqmvpkwc","name":"cli_test_ag_private_ip6vemb6nkuuwj3viwef26okxlv4tdwx22kg5pyxy2w2l25kqmvpkwc","type":"Microsoft.Resources/resourceGroups","location":"westus","tags":{"product":"azurecli","cause":"automation","date":"2019-09-20T10:15:40Z"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cli_test_app_gateway_waf_configzg3e7m3mxre2ym4anmjioe45j2drzwpkdx3dhwd7nr4e","name":"cli_test_app_gateway_waf_configzg3e7m3mxre2ym4anmjioe45j2drzwpkdx3dhwd7nr4e","type":"Microsoft.Resources/resourceGroups","location":"westus","tags":{"product":"azurecli","cause":"automation","date":"2019-09-20T09:55:34Z"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cli_test_express_routepew5yso7rwsl3glwosveugjt3xeqjtg26nvvtvjxkit4ywbjicgpn","name":"cli_test_express_routepew5yso7rwsl3glwosveugjt3xeqjtg26nvvtvjxkit4ywbjicgpn","type":"Microsoft.Resources/resourceGroups","location":"westus","tags":{"date":"2018-03-27T17:36:37Z","product":"azurecli","cause":"automation"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cli_test_msi_no_scopetbanb44x5fslhr5u7jmtbbhyj64zgwd2pd2jh7t6gqzfwpusckht3h","name":"cli_test_msi_no_scopetbanb44x5fslhr5u7jmtbbhyj64zgwd2pd2jh7t6gqzfwpusckht3h","type":"Microsoft.Resources/resourceGroups","location":"westus","tags":{"product":"azurecli","cause":"automation","date":"2019-09-17T08:00:19Z"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cli_test_vm_zoneuqveyl76dwrbgnlgji6e5srno2gbgzh63aegxxn3xtaw2uvn4rxo7rkzeyo","name":"cli_test_vm_zoneuqveyl76dwrbgnlgji6e5srno2gbgzh63aegxxn3xtaw2uvn4rxo7rkzeyo","type":"Microsoft.Resources/resourceGroups","location":"eastus2","tags":{"product":"azurecli","cause":"automation","date":"2019-09-17T08:04:09Z"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cli_test_vpn_gatewayvw7airivlqrqz3bcd5uhmduodlahzmqr2tcg5rcbuv6s3uz7gq3zk4f","name":"cli_test_vpn_gatewayvw7airivlqrqz3bcd5uhmduodlahzmqr2tcg5rcbuv6s3uz7gq3zk4f","type":"Microsoft.Resources/resourceGroups","location":"westus","tags":{"product":"azurecli","cause":"automation","date":"2019-09-20T10:28:52Z"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/clitest.rg2q3ca3fpldct2ctt3timvon3pgpqiv3oelxw4kobu6cbmuq2rhz3v3giqcplks7lk","name":"clitest.rg2q3ca3fpldct2ctt3timvon3pgpqiv3oelxw4kobu6cbmuq2rhz3v3giqcplks7lk","type":"Microsoft.Resources/resourceGroups","location":"southcentralus","tags":{"product":"azurecli","cause":"automation","date":"2019-09-11T08:56:55Z"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/clitest.rgdt7vrvuhncvy7xjtkk5erwksueq2xakqw3qxhthm6mhvyjyqns23n654er6tk4wun","name":"clitest.rgdt7vrvuhncvy7xjtkk5erwksueq2xakqw3qxhthm6mhvyjyqns23n654er6tk4wun","type":"Microsoft.Resources/resourceGroups","location":"eastus2","tags":{"product":"azurecli","cause":"automation","date":"2019-09-04T02:19:35Z"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/clitest.rgho57ctyd5gghmkk2sktp35iymrshereut27kvw42uu4rjx6kbmxbk456qw4fnltoj","name":"clitest.rgho57ctyd5gghmkk2sktp35iymrshereut27kvw42uu4rjx6kbmxbk456qw4fnltoj","type":"Microsoft.Resources/resourceGroups","location":"southcentralus","tags":{"product":"azurecli","cause":"automation","date":"2019-09-11T08:56:55Z"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/clitest.rgj2pexwqs7ojdk4v6d5n6xpozrp7ha6hazixj5pntfeyjjjy4uvkoigzzbcjrdayxe","name":"clitest.rgj2pexwqs7ojdk4v6d5n6xpozrp7ha6hazixj5pntfeyjjjy4uvkoigzzbcjrdayxe","type":"Microsoft.Resources/resourceGroups","location":"southcentralus","tags":{"product":"azurecli","cause":"automation","date":"2019-09-05T09:34:13Z"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/clitest.rgtsrpsyicc5gvz2sxjjq5qywkuhhihdya6xlw3okq6rrvbevdtvqoewwnqik2fzrbk","name":"clitest.rgtsrpsyicc5gvz2sxjjq5qywkuhhihdya6xlw3okq6rrvbevdtvqoewwnqik2fzrbk","type":"Microsoft.Resources/resourceGroups","location":"southcentralus","tags":{"product":"azurecli","cause":"automation","date":"2019-09-11T08:56:55Z"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/clitest.rgu6ajukcwnhhckvzunxfi5wjb6nzsosth3vwk25tm6l6rh3sr2m5ehvy2n6a3wfvls","name":"clitest.rgu6ajukcwnhhckvzunxfi5wjb6nzsosth3vwk25tm6l6rh3sr2m5ehvy2n6a3wfvls","type":"Microsoft.Resources/resourceGroups","location":"southcentralus","tags":{"product":"azurecli","cause":"automation","date":"2019-09-11T08:56:55Z"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cloud-shell-storage-southeastasia","name":"cloud-shell-storage-southeastasia","type":"Microsoft.Resources/resourceGroups","location":"southeastasia","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/cloud-shell-storage-westus","name":"cloud-shell-storage-westus","type":"Microsoft.Resources/resourceGroups","location":"westus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/Default-Networking","name":"Default-Networking","type":"Microsoft.Resources/resourceGroups","location":"westus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/emerald-city-bookstore","name":"emerald-city-bookstore","type":"Microsoft.Resources/resourceGroups","location":"westus2","tags":{},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/erc360426group","name":"erc360426group","type":"Microsoft.Resources/resourceGroups","location":"northcentralus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fanqiu-test","name":"fanqiu-test","type":"Microsoft.Resources/resourceGroups","location":"centralus","tags":{},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fengtest","name":"fengtest","type":"Microsoft.Resources/resourceGroups","location":"westus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fooziipy98","name":"fooziipy98","type":"Microsoft.Resources/resourceGroups","location":"eastus2","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fooziipy99","name":"fooziipy99","type":"Microsoft.Resources/resourceGroups","location":"eastus2","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fozippy98","name":"fozippy98","type":"Microsoft.Resources/resourceGroups","location":"eastus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fytest","name":"fytest","type":"Microsoft.Resources/resourceGroups","location":"westus","tags":{},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/fytest2","name":"fytest2","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/image-copy-rg","name":"image-copy-rg","type":"Microsoft.Resources/resourceGroups","location":"westus","tags":{"created_by":"image-copy-extension"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/javacsmrg46947","name":"javacsmrg46947","type":"Microsoft.Resources/resourceGroups","location":"southcentralus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/jlrg1","name":"jlrg1","type":"Microsoft.Resources/resourceGroups","location":"southeastasia","tags":{},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/jlwvmrg","name":"jlwvmrg","type":"Microsoft.Resources/resourceGroups","location":"southeastasia","tags":{},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/NetworkWatcherRG","name":"NetworkWatcherRG","type":"Microsoft.Resources/resourceGroups","location":"eastasia","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/new-experiences","name":"new-experiences","type":"Microsoft.Resources/resourceGroups","location":"westus2","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1","name":"rg1","type":"Microsoft.Resources/resourceGroups","location":"eastus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg69214","name":"rg69214","type":"Microsoft.Resources/resourceGroups","location":"northcentralus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/start","name":"start","type":"Microsoft.Resources/resourceGroups","location":"westus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/storage-v2rt-repro","name":"storage-v2rt-repro","type":"Microsoft.Resources/resourceGroups","location":"centralus","tags":{},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_managed_disks_test_grant_access609310b8","name":"test_mgmt_managed_disks_test_grant_access609310b8","type":"Microsoft.Resources/resourceGroups","location":"westus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments_basic667e10fe","name":"test_mgmt_resource_test_deployments_basic667e10fe","type":"Microsoft.Resources/resourceGroups","location":"westus","properties":{"provisioningState":"Deleting"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments_linked_template27ec152e","name":"test_mgmt_resource_test_deployments_linked_template27ec152e","type":"Microsoft.Resources/resourceGroups","location":"westus","properties":{"provisioningState":"Deleting"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_deployments_linked_template_errorafa117b7","name":"test_mgmt_resource_test_deployments_linked_template_errorafa117b7","type":"Microsoft.Resources/resourceGroups","location":"westus","properties":{"provisioningState":"Deleting"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/test_mgmt_resource_test_resource_groups457f1050","name":"test_mgmt_resource_test_resource_groups457f1050","type":"Microsoft.Resources/resourceGroups","location":"westus","tags":{"tag1":"value1"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/tjp-rg","name":"tjp-rg","type":"Microsoft.Resources/resourceGroups","location":"westus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/yugangw","name":"yugangw","type":"Microsoft.Resources/resourceGroups","location":"southeastasia","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/zimshealthcare","name":"zimshealthcare","type":"Microsoft.Resources/resourceGroups","location":"eastus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/zimsrg","name":"zimsrg","type":"Microsoft.Resources/resourceGroups","location":"eastus","tags":{"--moo":"
+        --xyz"},"properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/zuh","name":"zuh","type":"Microsoft.Resources/resourceGroups","location":"centralus","tags":{},"properties":{"provisioningState":"Succeeded"}}]}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '10889'
+      - '14036'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 03 Sep 2019 07:42:13 GMT
+      - Sun, 22 Sep 2019 15:32:46 GMT
       expires:
       - '-1'
       pragma:
@@ -219,7 +215,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+      - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-resource/4.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
@@ -227,16 +223,16 @@ interactions:
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups?$top=2&api-version=2019-08-01
   response:
     body:
-      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/AzureDevops","name":"AzureDevops","type":"Microsoft.Resources/resourceGroups","location":"eastus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/ci-jenkins-agents","name":"ci-jenkins-agents","type":"Microsoft.Resources/resourceGroups","location":"westus","properties":{"provisioningState":"Succeeded"}}],"nextLink":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups?%24top=2&api-version=2019-08-01&%24skiptoken=eyJuZXh0UGFydGl0aW9uS2V5IjoiMSE4IU9EUTBRVFEtIiwibmV4dFJvd0tleSI6IjEhNzIhTVVNMVFqZ3lSVVU1TWprME5EVTJPRUl3UXpCQ09VTTFNak5DUXpCRU9EWmZRMHhGUVU1VlVGTkZVbFpKUTBVdFYwVlRWRlZUIn0%3d"}'
+      string: '{"value":[{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/0828fanqiu","name":"0828fanqiu","type":"Microsoft.Resources/resourceGroups","location":"centralus","properties":{"provisioningState":"Succeeded"}},{"id":"/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/acr","name":"acr","type":"Microsoft.Resources/resourceGroups","location":"westus","properties":{"provisioningState":"Succeeded"}}],"nextLink":"https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourcegroups?%24top=2&api-version=2019-08-01&%24skiptoken=eyJuZXh0UGFydGl0aW9uS2V5IjoiMSE4IU9FTTVOa1UtIiwibmV4dFJvd0tleSI6IjEhODAhTUVJeFJqWTBOekV4UWtZd05FUkVRVUZGUXpORFFqa3lOekpHTURrMU9UQmZRMFZPVkZKQlRGVlRSVlZCVUMxRFJVNVVVa0ZNVlZORlZVRlEifQ%3d%3d"}'
     headers:
       cache-control:
       - no-cache
       content-length:
-      - '791'
+      - '778'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 03 Sep 2019 07:42:13 GMT
+      - Sun, 22 Sep 2019 15:32:46 GMT
       expires:
       - '-1'
       pragma:
@@ -264,7 +260,7 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+      - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-resource/4.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
@@ -281,7 +277,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 03 Sep 2019 07:42:15 GMT
+      - Sun, 22 Sep 2019 15:32:47 GMT
       expires:
       - '-1'
       pragma:
@@ -295,7 +291,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-writes:
-      - '1198'
+      - '1197'
     status:
       code: 200
       message: OK
@@ -309,7 +305,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+      - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-resource/4.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
@@ -326,7 +322,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 03 Sep 2019 07:42:15 GMT
+      - Sun, 22 Sep 2019 15:32:47 GMT
       expires:
       - '-1'
       pragma:
@@ -354,7 +350,7 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+      - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-resource/4.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
@@ -371,7 +367,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 03 Sep 2019 07:42:15 GMT
+      - Sun, 22 Sep 2019 15:32:47 GMT
       expires:
       - '-1'
       pragma:
@@ -397,7 +393,7 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+      - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-resource/4.0.0 Azure-SDK-For-Python
       accept-language:
       - en-US
@@ -412,7 +408,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 03 Sep 2019 07:42:22 GMT
+      - Sun, 22 Sep 2019 15:32:49 GMT
       expires:
       - '-1'
       location:
@@ -424,7 +420,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ratelimit-remaining-subscription-deletes:
-      - '14997'
+      - '14998'
     status:
       code: 202
       message: Accepted
@@ -438,7 +434,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+      - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-resource/4.0.0 Azure-SDK-For-Python
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1URVNUOjVGTUdNVDo1RlJFU09VUkNFOjVGVEVTVDo1RlJFU09VUkNFOjVGR1JPVVBTNDU3RjEwNTAtV0VTVFVTIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2019-08-01
@@ -451,7 +447,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 03 Sep 2019 07:42:38 GMT
+      - Sun, 22 Sep 2019 15:33:05 GMT
       expires:
       - '-1'
       location:
@@ -475,7 +471,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+      - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-resource/4.0.0 Azure-SDK-For-Python
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1URVNUOjVGTUdNVDo1RlJFU09VUkNFOjVGVEVTVDo1RlJFU09VUkNFOjVGR1JPVVBTNDU3RjEwNTAtV0VTVFVTIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2019-08-01
@@ -488,7 +484,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 03 Sep 2019 07:42:53 GMT
+      - Sun, 22 Sep 2019 15:33:20 GMT
       expires:
       - '-1'
       location:
@@ -512,7 +508,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+      - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-resource/4.0.0 Azure-SDK-For-Python
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1URVNUOjVGTUdNVDo1RlJFU09VUkNFOjVGVEVTVDo1RlJFU09VUkNFOjVGR1JPVVBTNDU3RjEwNTAtV0VTVFVTIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2019-08-01
@@ -525,7 +521,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 03 Sep 2019 07:43:09 GMT
+      - Sun, 22 Sep 2019 15:33:35 GMT
       expires:
       - '-1'
       location:
@@ -549,7 +545,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
+      - python/3.6.8 (Linux-4.9.125-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
         msrest_azure/0.4.34 azure-mgmt-resource/4.0.0 Azure-SDK-For-Python
     method: GET
     uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1URVNUOjVGTUdNVDo1RlJFU09VUkNFOjVGVEVTVDo1RlJFU09VUkNFOjVGR1JPVVBTNDU3RjEwNTAtV0VTVFVTIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2019-08-01
@@ -562,44 +558,7 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 03 Sep 2019 07:43:25 GMT
-      expires:
-      - '-1'
-      location:
-      - https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1URVNUOjVGTUdNVDo1RlJFU09VUkNFOjVGVEVTVDo1RlJFU09VUkNFOjVGR1JPVVBTNDU3RjEwNTAtV0VTVFVTIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2019-08-01
-      pragma:
-      - no-cache
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      x-content-type-options:
-      - nosniff
-    status:
-      code: 202
-      message: Accepted
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.6.8 (Linux-4.9.184-linuxkit-x86_64-with-Ubuntu-18.04-bionic) msrest/0.6.8
-        msrest_azure/0.4.34 azure-mgmt-resource/4.0.0 Azure-SDK-For-Python
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/operationresults/eyJqb2JJZCI6IlJFU09VUkNFR1JPVVBERUxFVElPTkpPQi1URVNUOjVGTUdNVDo1RlJFU09VUkNFOjVGVEVTVDo1RlJFU09VUkNFOjVGR1JPVVBTNDU3RjEwNTAtV0VTVFVTIiwiam9iTG9jYXRpb24iOiJ3ZXN0dXMifQ?api-version=2019-08-01
-  response:
-    body:
-      string: ''
-    headers:
-      cache-control:
-      - no-cache
-      content-length:
-      - '0'
-      date:
-      - Tue, 03 Sep 2019 07:43:40 GMT
+      - Sun, 22 Sep 2019 15:33:50 GMT
       expires:
       - '-1'
       pragma:
