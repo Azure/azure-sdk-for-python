@@ -229,11 +229,10 @@ class StorageCPKTest(StorageTestCase):
         destination_blob_client, _ = self._create_block_blob(cpk=TEST_ENCRYPTION_KEY)
 
         # Act part 1: make put block from url calls
-        destination_blob_client.stage_block_from_url(block_id=1, source_url=source_blob_url,
-                                                     source_offset=0, source_length=4 * 1024 - 1,
-                                                     cpk=TEST_ENCRYPTION_KEY)
+        destination_blob_client.stage_block_from_url(block_id=1, source_url=source_blob_url, source_range_start=0,
+                                                     source_range_end=4 * 1024 - 1, cpk=TEST_ENCRYPTION_KEY)
         destination_blob_client.stage_block_from_url(block_id=2, source_url=source_blob_url,
-                                                     source_offset=4 * 1024, source_length=8 * 1024,
+                                                     source_range_start=4 * 1024, source_range_end=8 * 1024,
                                                      cpk=TEST_ENCRYPTION_KEY)
 
         # Assert blocks
@@ -378,9 +377,7 @@ class StorageCPKTest(StorageTestCase):
             blob_client.download_blob()
 
         # Act get the blob content
-        blob = blob_client.download_blob(offset=0,
-                                         length=len(self.byte_data) - 1,
-                                         cpk=TEST_ENCRYPTION_KEY, )
+        blob = blob_client.download_blob(range_start=0, range_end=len(self.byte_data) - 1, cpk=TEST_ENCRYPTION_KEY)
 
         # Assert content was retrieved with the cpk
         self.assertEqual(blob.content_as_bytes(), self.byte_data)
@@ -420,9 +417,7 @@ class StorageCPKTest(StorageTestCase):
             blob_client.download_blob()
 
         # Act get the blob content
-        blob = blob_client.download_blob(offset=0,
-                                         length=len(self.byte_data) - 1,
-                                         cpk=TEST_ENCRYPTION_KEY, )
+        blob = blob_client.download_blob(range_start=0, range_end=len(self.byte_data) - 1, cpk=TEST_ENCRYPTION_KEY)
 
         # Assert content was retrieved with the cpk
         self.assertEqual(blob.content_as_bytes(), self.byte_data)

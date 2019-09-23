@@ -778,7 +778,7 @@ class StorageFileAsyncTest(FileTestCase):
         # Assert
         # To make sure the range of the file is actually updated
         file_ranges = await destination_file_client.get_ranges()
-        file_content = await destination_file_client.download_file(offset=0, length=511)
+        file_content = await destination_file_client.download_file(range_start=0, range_end=511)
         file_content = await file_content.content_as_bytes()
         self.assertEquals(1, len(file_ranges))
         self.assertEquals(0, file_ranges[0].get('start'))
@@ -816,7 +816,7 @@ class StorageFileAsyncTest(FileTestCase):
         # Assert
         # To make sure the range of the file is actually updated
         file_ranges = await destination_file_client.get_ranges()
-        file_content = await destination_file_client.download_file(offset=0, length=end)
+        file_content = await destination_file_client.download_file(range_start=0, range_end=end)
         file_content = await file_content.content_as_bytes()
         self.assertEquals(1, len(file_ranges))
         self.assertEquals(0, file_ranges[0].get('start'))

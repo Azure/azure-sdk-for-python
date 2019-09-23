@@ -131,7 +131,7 @@ class StoragePageBlobTest(StorageTestCase):
 
     def assertRangeEqual(self, container_name, blob_name, expected_data, start_range, end_range):
         blob = self.bs.get_blob_client(container_name, blob_name)
-        actual_data = blob.download_blob(offset=start_range, length=end_range)
+        actual_data = blob.download_blob(range_start=start_range, range_end=end_range)
         self.assertEqual(b"".join(list(actual_data)), expected_data)
 
     class NonSeekableFile(object):

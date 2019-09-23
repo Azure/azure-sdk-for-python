@@ -747,7 +747,7 @@ class StorageGetFileTest(FileTestCase):
         # Act
         end_range = self.MAX_SINGLE_GET_SIZE + 1024
         with open(FILE_PATH, 'wb') as stream:
-            props = await file_client.download_file(offset=1, length=end_range)
+            props = await file_client.download_file(range_start=1, range_end=end_range)
             props = await props.download_to_stream(stream, max_connections=2)
 
         # Assert
@@ -779,7 +779,7 @@ class StorageGetFileTest(FileTestCase):
         # Act
         end_range = self.MAX_SINGLE_GET_SIZE + 1024
         with open(FILE_PATH, 'wb') as stream:
-            props = await file_client.download_file(offset=0, length=0)
+            props = await file_client.download_file(range_start=0, range_end=0)
             props = await props.download_to_stream(stream)
 
         # Assert
@@ -812,11 +812,11 @@ class StorageGetFileTest(FileTestCase):
         # Act
         # the get request should fail in this case since the blob is empty and yet there is a range specified
         with self.assertRaises(HttpResponseError):
-            props = await file_client.download_file(offset=0, length=5)
+            props = await file_client.download_file(range_start=0, range_end=5)
             await props.content_as_bytes()
 
         with self.assertRaises(HttpResponseError):
-            props = await file_client.download_file(offset=3, length=5)
+            props = await file_client.download_file(range_start=3, range_end=5)
             await props.content_as_bytes()
 
     @record
@@ -850,7 +850,8 @@ class StorageGetFileTest(FileTestCase):
         start_range = 3
         end_range = self.MAX_SINGLE_GET_SIZE + 1024
         with open(FILE_PATH, 'wb') as stream:
-            props = await file_client.download_file(offset=start_range, length=end_range, raw_response_hook=callback)
+            props = await file_client.download_file(range_start=start_range, range_end=end_range,
+                                                    raw_response_hook=callback)
             props = await props.download_to_stream(stream, max_connections=2)
 
         # Assert
@@ -882,7 +883,7 @@ class StorageGetFileTest(FileTestCase):
 
         # Act
         with open(FILE_PATH, 'wb') as stream:
-            props = await file_client.download_file(offset=1, length=4)
+            props = await file_client.download_file(range_start=1, range_end=4)
             props = await props.download_to_stream(stream, max_connections=1)
 
         # Assert
@@ -909,7 +910,7 @@ class StorageGetFileTest(FileTestCase):
 
         # Act
         with open(FILE_PATH, 'wb') as stream:
-            props = await file_client.download_file(offset=1, length=3)
+            props = await file_client.download_file(range_start=1, range_end=3)
             props = await props.download_to_stream(stream, max_connections=1)
 
         # Assert
@@ -945,7 +946,7 @@ class StorageGetFileTest(FileTestCase):
         # Act
         end_range = 2 * self.MAX_SINGLE_GET_SIZE
         with open(FILE_PATH, 'wb') as stream:
-            props = await file_client.download_file(offset=1, length=end_range)
+            props = await file_client.download_file(range_start=1, range_end=end_range)
             props = await props.download_to_stream(stream, max_connections=2)
 
         # Assert
@@ -978,7 +979,7 @@ class StorageGetFileTest(FileTestCase):
         # Act
         end_range = 2 * self.MAX_SINGLE_GET_SIZE
         with open(FILE_PATH, 'wb') as stream:
-            props = await file_client.download_file(offset=1, length=end_range)
+            props = await file_client.download_file(range_start=1, range_end=end_range)
             props = await props.download_to_stream(stream, max_connections=1)
 
         # Assert
@@ -1463,7 +1464,7 @@ class StorageGetFileTest(FileTestCase):
             max_single_get_size=self.MAX_SINGLE_GET_SIZE,
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
-        file_content = await file_client.download_file(offset=0, length=1024, validate_content=True)
+        file_content = await file_client.download_file(validate_content=True, range_start=0, range_end=1024)
 
         # Assert
         self.assertIsNone(file_content.properties.content_settings.content_md5)
@@ -1474,7 +1475,7 @@ class StorageGetFileTest(FileTestCase):
         await file_client.set_http_headers(props.content_settings)
 
         # Act
-        file_content = await file_client.download_file(offset=0, length=1024, validate_content=True)
+        file_content = await file_client.download_file(validate_content=True, range_start=0, range_end=1024)
 
         # Assert
         self.assertEqual(b'MDAwMDAwMDA=', file_content.properties.content_settings.content_md5)
@@ -1497,7 +1498,7 @@ class StorageGetFileTest(FileTestCase):
             max_chunk_get_size=self.MAX_CHUNK_GET_SIZE)
 
         # Act
-        file_content = await file_client.download_file(offset=0, length=1024, validate_content=True)
+        file_content = await file_client.download_file(validate_content=True, range_start=0, range_end=1024)
     
         # Assert
         if self.is_file_encryption_enabled():

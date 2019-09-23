@@ -331,7 +331,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
         # Act
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        data = blob.download_blob(offset=0, length=5)
+        data = blob.download_blob(range_start=0, range_end=5)
 
         # Assert
         self.assertEqual(b"".join(list(data)), self.byte_data[:6])

@@ -254,14 +254,14 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         return await upload_append_blob(**options)
 
     @distributed_trace_async
-    async def download_blob(self, offset=None, length=None, validate_content=False, **kwargs):
+    async def download_blob(self, range_start=None, range_end=None, validate_content=False, **kwargs):
         # type: (Optional[int], Optional[int], bool, Any) -> Iterable[bytes]
         """Downloads a blob to a stream with automatic chunking.
 
-        :param int offset:
+        :param int range_start:
             Start of byte range to use for downloading a section of the blob.
             Must be set if length is provided.
-        :param int length:
+        :param int range_end:
             Number of bytes to read from the stream. This is optional, but
             should be supplied for optimal performance.
         :param bool validate_content:
@@ -319,8 +319,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
                 :caption: Download a blob.
         """
         options = self._download_blob_options(
-            offset=offset,
-            length=length,
+            range_start=range_start,
+            range_end=range_end,
             validate_content=validate_content,
             **kwargs)
         extra_properties = {
@@ -1117,14 +1117,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
             process_storage_error(error)
 
     @distributed_trace_async
-    async def stage_block_from_url(
-            self, block_id,  # type: str
-            source_url,  # type: str
-            source_offset=None,  # type: Optional[int]
-            source_length=None,  # type: Optional[int]
-            source_content_md5=None,  # type: Optional[Union[bytes, bytearray]]
-            **kwargs
-        ):
+    async def stage_block_from_url(self, block_id, source_url, source_range_start=None, source_range_end=None,
+                                   source_content_md5=None, **kwargs):
         # type: (...) -> None
         """Creates a new block to be committed as part of a blob where
         the contents are read from a URL.
@@ -1134,10 +1128,10 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
              bytes in size. For a given blob, the length of the value specified for
              the block_id parameter must be the same size for each block.
         :param source_url: The URL.
-        :param source_offset:
+        :param source_range_start:
             Start of byte range to use for the block.
             Must be set if source length is provided.
-        :param source_length: The size of the block in bytes.
+        :param source_range_end: The size of the block in bytes.
         :param bytearray source_content_md5:
             Specify the md5 calculated for the range of
             bytes that must be read from the copy source.
@@ -1157,8 +1151,8 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase):  # pylint: disa
         options = self._stage_block_from_url_options(
             block_id,
             source_url,
-            source_offset=source_offset,
-            source_length=source_length,
+            source_range_start=source_range_start,
+            source_range_end=source_range_end,
             source_content_md5=source_content_md5,
             **kwargs)
         try:

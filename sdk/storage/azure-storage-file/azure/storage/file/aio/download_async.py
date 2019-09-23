@@ -19,7 +19,7 @@ from ..download import process_range_and_offset
 class _AsyncChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
 
     def __init__(
-            self, service=None,
+            self, client=None,
             total_size=None,
             chunk_size=None,
             current_progress=None,
@@ -31,7 +31,7 @@ class _AsyncChunkDownloader(object):  # pylint: disable=too-many-instance-attrib
             encryption_options=None,
             **kwargs):
 
-        self.service = service
+        self.client = client
 
         # information on the download range/chunk size
         self.chunk_size = chunk_size
@@ -107,7 +107,7 @@ class _AsyncChunkDownloader(object):  # pylint: disable=too-many-instance-attrib
             check_content_md5=self.validate_content)
 
         try:
-            _, response = await self.service.download(
+            _, response = await self.client.download(
                 range=range_header,
                 range_get_content_md5=range_validation,
                 validate_content=self.validate_content,
@@ -135,17 +135,17 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
     """
 
     def __init__(
-            self, service=None,
+            self, client=None,
             config=None,
-            offset=None,
-            length=None,
+            range_start=None,
+            range_end=None,
             validate_content=None,
             encryption_options=None,
             **kwargs):
-        self.service = service
+        self.client = client
         self.config = config
-        self.offset = offset
-        self.length = length
+        self.range_start = range_start
+        self.range_end = range_end
         self.validate_content = validate_content
         self.encryption_options = encryption_options or {}
         self.request_options = kwargs
@@ -160,14 +160,14 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         # chunk so a transactional MD5 can be retrieved.
         self.first_get_size = self.config.max_single_get_size if not self.validate_content \
             else self.config.max_chunk_get_size
-        initial_request_start = self.offset if self.offset is not None else 0
-        if self.length is not None and self.length - self.offset < self.first_get_size:
-            initial_request_end = self.length
+        initial_request_start = self.range_start if self.range_start is not None else 0
+        if self.range_end is not None and self.range_end - self.range_start < self.first_get_size:
+            initial_request_end = self.range_end
         else:
             initial_request_end = initial_request_start + self.first_get_size - 1
 
         self.initial_range, self.initial_offset = process_range_and_offset(
-            initial_request_start, initial_request_end, self.length, self.encryption_options)
+            initial_request_start, initial_request_end, self.range_end, self.encryption_options)
         self.download_size = None
         self.file_size = None
         self.response = None
@@ -192,11 +192,11 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
                     self.response, self.initial_offset[0], self.initial_offset[1], self.encryption_options)
             if not self._download_complete:
                 data_end = self.file_size
-                if self.length is not None:
+                if self.range_end is not None:
                     # Use the length unless it is over the end of the file
-                    data_end = min(self.file_size, self.length + 1)
+                    data_end = min(self.file_size, self.range_end + 1)
                 self._iter_downloader = _AsyncChunkDownloader(
-                    service=self.service,
+                    client=self.client,
                     total_size=self.download_size,
                     chunk_size=self.config.max_chunk_get_size,
                     current_progress=self.first_get_size,
@@ -231,7 +231,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         self.properties.size = self.download_size
 
         # Overwrite the content range to the user requested range
-        self.properties.content_range = 'bytes {0}-{1}/{2}'.format(self.offset, self.length, self.file_size)
+        self.properties.content_range = 'bytes {0}-{1}/{2}'.format(self.range_start, self.range_end, self.file_size)
 
         # Set additional properties according to download type
         if extra_properties:
@@ -252,7 +252,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             check_content_md5=self.validate_content)
 
         try:
-            location_mode, response = await self.service.download(
+            location_mode, response = await self.client.download(
                 range=range_header,
                 range_get_content_md5=range_validation,
                 validate_content=self.validate_content,
@@ -267,21 +267,21 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             # Parse the total file size and adjust the download size if ranges
             # were specified
             self.file_size = parse_length_from_content_range(response.properties.content_range)
-            if self.length is not None:
+            if self.range_end is not None:
                 # Use the length unless it is over the end of the file
-                self.download_size = min(self.file_size, self.length - self.offset + 1)
-            elif self.offset is not None:
-                self.download_size = self.file_size - self.offset
+                self.download_size = min(self.file_size, self.range_end - self.range_start + 1)
+            elif self.range_start is not None:
+                self.download_size = self.file_size - self.range_start
             else:
                 self.download_size = self.file_size
 
         except HttpResponseError as error:
-            if self.offset is None and error.response.status_code == 416:
+            if self.range_start is None and error.response.status_code == 416:
                 # Get range will fail on an empty file. If the user did not
                 # request a range, do a regular get request in order to get
                 # any properties.
                 try:
-                    _, response = await self.service.download(
+                    _, response = await self.client.download(
                         validate_content=self.validate_content,
                         data_stream_total=0,
                         download_stream_current=0,
@@ -369,12 +369,12 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             return self.properties
 
         data_end = self.file_size
-        if self.length is not None:
+        if self.range_end is not None:
             # Use the length unless it is over the end of the file
-            data_end = min(self.file_size, self.length + 1)
+            data_end = min(self.file_size, self.range_end + 1)
 
         downloader = _AsyncChunkDownloader(
-            service=self.service,
+            client=self.client,
             total_size=self.download_size,
             chunk_size=self.config.max_chunk_get_size,
             current_progress=self.first_get_size,

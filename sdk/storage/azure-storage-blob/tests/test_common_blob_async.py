@@ -430,7 +430,7 @@ class StorageCommonBlobTestAsync(StorageTestCase):
 
         # Act
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        stream = await blob.download_blob(offset=0, length=5)
+        stream = await blob.download_blob(range_start=0, range_end=5)
         content = await stream.content_as_bytes()
 
         # Assert

@@ -630,7 +630,7 @@ class StorageFileTest(FileTestCase):
         # Assert
         # To make sure the range of the file is actually updated
         file_ranges = destination_file_client.get_ranges()
-        file_content = destination_file_client.download_file(offset=0, length=511).content_as_bytes()
+        file_content = destination_file_client.download_file(range_start=0, range_end=511).content_as_bytes()
         self.assertEquals(1, len(file_ranges))
         self.assertEquals(0, file_ranges[0].get('start'))
         self.assertEquals(511, file_ranges[0].get('end'))
@@ -663,7 +663,7 @@ class StorageFileTest(FileTestCase):
         # Assert
         # To make sure the range of the file is actually updated
         file_ranges = destination_file_client.get_ranges()
-        file_content = destination_file_client.download_file(offset=0, length=end).content_as_bytes()
+        file_content = destination_file_client.download_file(range_start=0, range_end=end).content_as_bytes()
         self.assertEquals(1, len(file_ranges))
         self.assertEquals(0, file_ranges[0].get('start'))
         self.assertEquals(end, file_ranges[0].get('end'))

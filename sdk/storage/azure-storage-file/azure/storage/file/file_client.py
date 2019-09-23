@@ -607,8 +607,8 @@ class FileClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def download_file(
-            self, offset=None,  # type: Optional[int]
-            length=None,  # type: Optional[int]
+            self, range_start=None,  # type: Optional[int]
+            range_end=None,  # type: Optional[int]
             validate_content=False,  # type: bool
             timeout=None,  # type: Optional[int]
             **kwargs
@@ -616,10 +616,10 @@ class FileClient(StorageAccountHostsMixin):
         # type: (...) -> Iterable[bytes]
         """Downloads a file to a stream with automatic chunking.
 
-        :param int offset:
+        :param int range_start:
             Start of byte range to use for downloading a section of the file.
             Must be set if length is provided.
-        :param int length:
+        :param int range_end:
             Number of bytes to read from the stream. This is optional, but
             should be supplied for optimal performance.
         :param bool validate_content:
@@ -645,14 +645,14 @@ class FileClient(StorageAccountHostsMixin):
         """
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError("Encryption not supported.")
-        if length is not None and offset is None:
-            raise ValueError("Offset value must not be None if length is set.")
+        if range_end is not None and range_start is None:
+            raise ValueError("range_start value must not be None if range_end is set.")
 
         return StorageStreamDownloader(
             client=self._client.file,
             config=self._config,
-            offset=offset,
-            length=length,
+            range_start=range_start,
+            range_end=range_end,
             validate_content=validate_content,
             encryption_options=None,
             extra_properties={
@@ -812,8 +812,8 @@ class FileClient(StorageAccountHostsMixin):
     @distributed_trace
     def upload_range(  # type: ignore
             self, data,  # type: bytes
-            start_range,  # type: int
-            end_range,  # type: int
+            range_start,  # type: int
+            range_end,  # type: int
             validate_content=False, # type: Optional[bool]
             timeout=None,  # type: Optional[int]
             encoding='UTF-8',
@@ -824,16 +824,16 @@ class FileClient(StorageAccountHostsMixin):
 
         :param bytes data:
             The data to upload.
-        :param int start_range:
+        :param int range_start:
             Start of byte range to use for uploading a section of the file.
             The range can be up to 4 MB in size.
-            The start_range and end_range params are inclusive.
-            Ex: start_range=0, end_range=511 will upload first 512 bytes of file.
-        :param int end_range:
+            The range_start and range_end params are inclusive.
+            Ex: range_start=0, range_end=511 will upload first 512 bytes of file.
+        :param int range_end:
             End of byte range to use for uploading a section of the file.
             The range can be up to 4 MB in size.
-            The start_range and end_range params are inclusive.
-            Ex: start_range=0, end_range=511 will upload first 512 bytes of file.
+            The range_start and range_end params are inclusive.
+            Ex: range_start=0, range_end=511 will upload first 512 bytes of file.
         :param bool validate_content:
             If true, calculates an MD5 hash of the page content. The storage
             service checks the hash of the content that has arrived
@@ -853,8 +853,8 @@ class FileClient(StorageAccountHostsMixin):
         if isinstance(data, six.text_type):
             data = data.encode(encoding)
 
-        content_range = 'bytes={0}-{1}'.format(start_range, end_range)
-        content_length = end_range - start_range + 1
+        content_range = 'bytes={0}-{1}'.format(range_start, range_end)
+        content_length = range_end - range_start + 1
         try:
             return self._client.file.upload_range( # type: ignore
                 range=content_range,
@@ -877,7 +877,7 @@ class FileClient(StorageAccountHostsMixin):
         # type: (...) -> Dict[str, Any]
 
         if range_start is None or range_end is None or source_range_start is None:
-            raise ValueError("start_range must be specified")
+            raise ValueError("range_start must be specified")
 
         # Format range
         destination_range = 'bytes={0}-{1}'.format(range_start, range_end)
@@ -907,13 +907,13 @@ class FileClient(StorageAccountHostsMixin):
         :param int range_start:
             Start of byte range to use for updating a section of the file.
             The range can be up to 4 MB in size.
-            The start_range and end_range params are inclusive.
-            Ex: start_range=0, end_range=511 will download first 512 bytes of file.
+            The range_start and range_end params are inclusive.
+            Ex: range_start=0, range_end=511 will download first 512 bytes of file.
         :param int range_end:
             End of byte range to use for updating a section of the file.
             The range can be up to 4 MB in size.
-            The start_range and end_range params are inclusive.
-            Ex: start_range=0, end_range=511 will download first 512 bytes of file.
+            The range_start and range_end params are inclusive.
+            Ex: range_start=0, range_end=511 will download first 512 bytes of file.
         :param str source_url:
             A URL of up to 2 KB in length that specifies an Azure file or blob.
             The value should be URL-encoded as it would appear in a request URI.
@@ -926,8 +926,8 @@ class FileClient(StorageAccountHostsMixin):
         :param int source_range_start:
             Start of byte range to use for updating a section of the file.
             The range can be up to 4 MB in size.
-            The start_range and end_range params are inclusive.
-            Ex: start_range=0, end_range=511 will download first 512 bytes of file.
+            The range_start and range_end params are inclusive.
+            Ex: range_start=0, range_end=511 will download first 512 bytes of file.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         '''
@@ -946,22 +946,22 @@ class FileClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def get_ranges( # type: ignore
-            self, start_range=None, # type: Optional[int]
-            end_range=None, # type: Optional[int]
+            self, range_start=None, # type: Optional[int]
+            range_end=None, # type: Optional[int]
             timeout=None, # type: Optional[int]
             **kwargs
         ):
         # type: (...) -> List[dict[str, int]]
         """Returns the list of valid ranges of a file.
 
-        :param int start_range:
+        :param int range_start:
             Specifies the start offset of bytes over which to get ranges.
-            The start_range and end_range params are inclusive.
-            Ex: start_range=0, end_range=511 will download first 512 bytes of file.
-        :param int end_range:
+            The range_start and range_end params are inclusive.
+            Ex: range_start=0, range_end=511 will download first 512 bytes of file.
+        :param int range_end:
             Specifies the end offset of bytes over which to get ranges.
-            The start_range and end_range params are inclusive.
-            Ex: start_range=0, end_range=511 will download first 512 bytes of file.
+            The range_start and range_end params are inclusive.
+            Ex: range_start=0, range_end=511 will download first 512 bytes of file.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: A list of valid ranges.
@@ -971,11 +971,11 @@ class FileClient(StorageAccountHostsMixin):
             raise ValueError("Unsupported method for encryption.")
 
         content_range = None
-        if start_range is not None:
-            if end_range is not None:
-                content_range = 'bytes={0}-{1}'.format(start_range, end_range)
+        if range_start is not None:
+            if range_end is not None:
+                content_range = 'bytes={0}-{1}'.format(range_start, range_end)
             else:
-                content_range = 'bytes={0}-'.format(start_range)
+                content_range = 'bytes={0}-'.format(range_start)
         try:
             ranges = self._client.file.get_range_list(
                 sharesnapshot=self.snapshot,
@@ -988,8 +988,8 @@ class FileClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def clear_range( # type: ignore
-            self, start_range,  # type: int
-            end_range,  # type: int
+            self, range_start,  # type: int
+            range_end,  # type: int
             timeout=None,  # type: Optional[int]
             **kwargs
         ):
@@ -997,16 +997,16 @@ class FileClient(StorageAccountHostsMixin):
         """Clears the specified range and releases the space used in storage for
         that range.
 
-        :param int start_range:
+        :param int range_start:
             Start of byte range to use for clearing a section of the file.
             The range can be up to 4 MB in size.
-            The start_range and end_range params are inclusive.
-            Ex: start_range=0, end_range=511 will download first 512 bytes of file.
-        :param int end_range:
+            The range_start and range_end params are inclusive.
+            Ex: range_start=0, range_end=511 will download first 512 bytes of file.
+        :param int range_end:
             End of byte range to use for clearing a section of the file.
             The range can be up to 4 MB in size.
-            The start_range and end_range params are inclusive.
-            Ex: start_range=0, end_range=511 will download first 512 bytes of file.
+            The range_start and range_end params are inclusive.
+            Ex: range_start=0, range_end=511 will download first 512 bytes of file.
         :param int timeout:
             The timeout parameter is expressed in seconds.
         :returns: File-updated property dict (Etag and last modified).
@@ -1015,11 +1015,11 @@ class FileClient(StorageAccountHostsMixin):
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError("Unsupported method for encryption.")
 
-        if start_range is None or start_range % 512 != 0:
-            raise ValueError("start_range must be an integer that aligns with 512 file size")
-        if end_range is None or end_range % 512 != 511:
-            raise ValueError("end_range must be an integer that aligns with 512 file size")
-        content_range = 'bytes={0}-{1}'.format(start_range, end_range)
+        if range_start is None or range_start % 512 != 0:
+            raise ValueError("range_start must be an integer that aligns with 512 file size")
+        if range_end is None or range_end % 512 != 511:
+            raise ValueError("range_end must be an integer that aligns with 512 file size")
+        content_range = 'bytes={0}-{1}'.format(range_start, range_end)
         try:
             return self._client.file.upload_range( # type: ignore
                 timeout=timeout,

@@ -548,7 +548,7 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
 
         # Act
         await blob.upload_blob(content, max_connections=1)
-        blob_content = await (await blob.download_blob(offset=0, length=50)).content_as_bytes(max_connections=1)
+        blob_content = await (await blob.download_blob(range_start=0, range_end=50)).content_as_bytes(max_connections=1)
 
         # Assert
         self.assertEqual(content[:51], blob_content)
@@ -569,8 +569,8 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
 
         # Act
         await blob.upload_blob(content, max_connections=1)
-        blob_content = await (await blob.download_blob(offset=50, length=127)).content_as_bytes()
-        blob_content2 = await (await blob.download_blob(offset=50)).content_as_bytes()
+        blob_content = await (await blob.download_blob(range_start=50, range_end=127)).content_as_bytes()
+        blob_content2 = await (await blob.download_blob(range_start=50)).content_as_bytes()
 
         # Assert
         self.assertEqual(content[50:], blob_content)
@@ -592,7 +592,7 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
 
         # Act
         await blob.upload_blob(content)
-        blob_content = await (await blob.download_blob(offset=50, length=93)).content_as_bytes()
+        blob_content = await (await blob.download_blob(range_start=50, range_end=93)).content_as_bytes()
 
         # Assert
         self.assertEqual(content[50:94], blob_content)
@@ -613,7 +613,7 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
 
         # Act
         await blob.upload_blob(content)
-        blob_content = await (await blob.download_blob(offset=48, length=63)).content_as_bytes()
+        blob_content = await (await blob.download_blob(range_start=48, range_end=63)).content_as_bytes()
 
         # Assert
         self.assertEqual(content[48:64], blob_content)
@@ -634,7 +634,7 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
 
         # Act
         await blob.upload_blob(content)
-        blob_content = await (await blob.download_blob(offset=5, length=50)).content_as_bytes()
+        blob_content = await (await blob.download_blob(range_start=5, range_end=50)).content_as_bytes()
 
         # Assert
         self.assertEqual(content[5:51], blob_content)
@@ -655,7 +655,7 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
 
         # Act
         await blob.upload_blob(content)
-        blob_content = await (await blob.download_blob(offset=22, length=42)).content_as_bytes()
+        blob_content = await (await blob.download_blob(range_start=22, range_end=42)).content_as_bytes()
 
         # Assert
         self.assertEqual(content[22:43], blob_content)

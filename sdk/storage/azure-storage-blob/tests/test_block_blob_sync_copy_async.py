@@ -108,16 +108,10 @@ class StorageBlockBlobTestAsync(StorageTestCase):
 
         # Act part 1: make put block from url calls
         futures = [
-            dest_blob.stage_block_from_url(
-                block_id=1,
-                source_url=self.source_blob_url,
-                source_offset=0,
-                source_length=4 * 1024 - 1),
-            dest_blob.stage_block_from_url(
-                block_id=2,
-                source_url=self.source_blob_url,
-                source_offset=4 * 1024,
-                source_length=8 * 1024)]
+            dest_blob.stage_block_from_url(block_id=1, source_url=self.source_blob_url, source_range_start=0,
+                                           source_range_end=4 * 1024 - 1),
+            dest_blob.stage_block_from_url(block_id=2, source_url=self.source_blob_url, source_range_start=4 * 1024,
+                                           source_range_end=8 * 1024)]
         await asyncio.gather(*futures)
 
         # Assert blocks
@@ -145,12 +139,8 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         src_md5 = StorageContentValidation.get_content_md5(self.source_blob_data)
 
         # Act part 1: put block from url with md5 validation
-        await dest_blob.stage_block_from_url(
-            block_id=1,
-            source_url=self.source_blob_url,
-            source_content_md5=src_md5,
-            source_offset=0,
-            source_length=8 * 1024)
+        await dest_blob.stage_block_from_url(block_id=1, source_url=self.source_blob_url, source_range_start=0,
+                                             source_content_md5=src_md5, source_range_end=8 * 1024)
 
         # Assert block was staged
         committed, uncommitted = await dest_blob.get_block_list('all')
@@ -160,12 +150,8 @@ class StorageBlockBlobTestAsync(StorageTestCase):
         # Act part 2: put block from url with wrong md5
         fake_md5 = StorageContentValidation.get_content_md5(b"POTATO")
         with self.assertRaises(HttpResponseError) as error:
-            await dest_blob.stage_block_from_url(
-                block_id=2,
-                source_url=self.source_blob_url,
-                source_content_md5=fake_md5,
-                source_offset=0,
-                source_length=8 * 1024)
+            await dest_blob.stage_block_from_url(block_id=2, source_url=self.source_blob_url, source_range_start=0,
+                                                 source_content_md5=fake_md5, source_range_end=8 * 1024)
         self.assertEqual(error.exception.error_code, StorageErrorCode.md5_mismatch)
 
         # Assert block was not staged

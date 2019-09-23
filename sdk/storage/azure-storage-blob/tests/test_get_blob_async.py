@@ -204,14 +204,14 @@ class StorageGetBlobTestAsync(StorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
 
         # Act
-        content = await (await blob.download_blob(offset=0, length=0)).content_as_bytes()
+        content = await (await blob.download_blob(range_start=0, range_end=0)).content_as_bytes()
 
         # Assert
         self.assertEqual(1, len(content))
         self.assertEqual(self.byte_data[0], content[0])
 
         # Act
-        content = await (await blob.download_blob(offset=5, length=5)).content_as_bytes()
+        content = await (await blob.download_blob(range_start=5, range_end=5)).content_as_bytes()
 
         # Assert
         self.assertEqual(1, len(content))
@@ -232,11 +232,11 @@ class StorageGetBlobTestAsync(StorageTestCase):
         # Act
         # the get request should fail in this case since the blob is empty and yet there is a range specified
         with self.assertRaises(HttpResponseError) as e:
-            await blob.download_blob(offset=0, length=5)
+            await blob.download_blob(range_start=0, range_end=5)
         self.assertEqual(StorageErrorCode.invalid_range, e.exception.error_code)
 
         with self.assertRaises(HttpResponseError) as e:
-            await blob.download_blob(offset=3, length=5)
+            await blob.download_blob(range_start=3, range_end=5)
         self.assertEqual(StorageErrorCode.invalid_range, e.exception.error_code)
 
     @record
@@ -254,7 +254,7 @@ class StorageGetBlobTestAsync(StorageTestCase):
         # Act
         # the get request should fail fast in this case since start_range is missing while end_range is specified
         with self.assertRaises(ValueError):
-            await blob.download_blob(length=3)
+            await blob.download_blob(range_end=3)
 
     @record
     def test_ranged_get_blob_with_missing_start_range_async(self):
@@ -515,7 +515,7 @@ class StorageGetBlobTestAsync(StorageTestCase):
         # Act
         end_range = self.config.max_single_get_size
         with open(FILE_PATH, 'wb') as stream:
-            downloader = await blob.download_blob(offset=1, length=end_range)
+            downloader = await blob.download_blob(range_start=1, range_end=end_range)
             properties = await downloader.download_to_stream(stream, max_connections=2)
 
         # Assert
@@ -548,7 +548,8 @@ class StorageGetBlobTestAsync(StorageTestCase):
         start_range = 3
         end_range = self.config.max_single_get_size + 1024
         with open(FILE_PATH, 'wb') as stream:
-            downloader = await blob.download_blob(offset=start_range, length=end_range, raw_response_hook=callback)
+            downloader = await blob.download_blob(range_start=start_range, range_end=end_range,
+                                                  raw_response_hook=callback)
             properties = await downloader.download_to_stream(stream, max_connections=2)
 
         # Assert
@@ -574,7 +575,7 @@ class StorageGetBlobTestAsync(StorageTestCase):
 
         # Act
         with open(FILE_PATH, 'wb') as stream:
-            downloader = await blob.download_blob(offset=1, length=4)
+            downloader = await blob.download_blob(range_start=1, range_end=4)
             properties = await downloader.download_to_stream(stream, max_connections=2)
 
         # Assert
@@ -595,7 +596,7 @@ class StorageGetBlobTestAsync(StorageTestCase):
 
         # Act
         with open(FILE_PATH, 'wb') as stream:
-            downloader = await blob.download_blob(offset=1, length=3)
+            downloader = await blob.download_blob(range_start=1, range_end=3)
             properties = await downloader.download_to_stream(stream, max_connections=1)
 
         # Assert
@@ -625,7 +626,7 @@ class StorageGetBlobTestAsync(StorageTestCase):
         # Act
         end_range = 2 * self.config.max_single_get_size
         with open(FILE_PATH, 'wb') as stream:
-            downloader = await blob.download_blob(offset=1, length=end_range)
+            downloader = await blob.download_blob(range_start=1, range_end=end_range)
             properties = await downloader.download_to_stream(stream, max_connections=2)
 
         # Assert
@@ -655,7 +656,7 @@ class StorageGetBlobTestAsync(StorageTestCase):
         # Act
         end_range = 2 * self.config.max_single_get_size
         with open(FILE_PATH, 'wb') as stream:
-            downloader = await blob.download_blob(offset=1, length=end_range)
+            downloader = await blob.download_blob(range_start=1, range_end=end_range)
             properties = await downloader.download_to_stream(stream, max_connections=2)
 
         # Assert
@@ -1047,7 +1048,7 @@ class StorageGetBlobTestAsync(StorageTestCase):
 
         # Act
         with open(FILE_PATH, 'wb') as stream:
-            downloader = await blob.download_blob(offset=0, length=1024, validate_content=True)
+            downloader = await blob.download_blob(validate_content=True, range_start=0, range_end=1024)
             properties = await downloader.download_to_stream(stream, max_connections=2)
 
         # Assert
@@ -1066,7 +1067,7 @@ class StorageGetBlobTestAsync(StorageTestCase):
 
         await self._setup()
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
-        content = await blob.download_blob(offset=0, length=1024, validate_content=True)
+        content = await blob.download_blob(validate_content=True, range_start=0, range_end=1024)
 
         # Arrange
         props = await blob.get_blob_properties()
@@ -1074,7 +1075,7 @@ class StorageGetBlobTestAsync(StorageTestCase):
         await blob.set_http_headers(props.content_settings)
 
         # Act
-        content = await blob.download_blob(offset=0, length=1024, validate_content=True)
+        content = await blob.download_blob(validate_content=True, range_start=0, range_end=1024)
 
         # Assert
         self.assertEqual(b'MDAwMDAwMDA=', content.properties.content_settings.content_md5)
@@ -1091,7 +1092,7 @@ class StorageGetBlobTestAsync(StorageTestCase):
 
         await self._setup()
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
-        content = await blob.download_blob(offset=0, length=1024, validate_content=True)
+        content = await blob.download_blob(validate_content=True, range_start=0, range_end=1024)
 
         # Arrange
         props = await blob.get_blob_properties()
@@ -1099,7 +1100,7 @@ class StorageGetBlobTestAsync(StorageTestCase):
         await blob.set_http_headers(props.content_settings)
 
         # Act
-        content = await blob.download_blob(offset=0, length=1024, validate_content=True)
+        content = await blob.download_blob(validate_content=True, range_start=0, range_end=1024)
 
         # Assert
         self.assertIsNotNone(content.properties.content_settings.content_type)

@@ -150,7 +150,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
 
     async def assertRangeEqual(self, container_name, blob_name, expected_data, start_range, end_range):
         blob = self.bs.get_blob_client(container_name, blob_name)
-        stream = await blob.download_blob(offset=start_range, length=end_range)
+        stream = await blob.download_blob(range_start=start_range, range_end=end_range)
         actual_data = await stream.content_as_bytes()
         self.assertEqual(actual_data, expected_data)
 
