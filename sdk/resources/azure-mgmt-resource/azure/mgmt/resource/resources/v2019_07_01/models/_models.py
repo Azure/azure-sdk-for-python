@@ -1629,35 +1629,29 @@ class TemplateLink(Model):
 class WhatIfChange(Model):
     """Information about a single resource change predicted by What-If operation.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
-    :ivar resource_id: Required. Resource ID
-    :vartype resource_id: str
-    :ivar change_type: Required. Type of change that will be made to the
+    :param resource_id: Required. Resource ID
+    :type resource_id: str
+    :param change_type: Required. Type of change that will be made to the
      resource when the deployment is executed. Possible values include:
      'Create', 'Delete', 'Ignore', 'Deploy', 'NoChange', 'Modify'
-    :vartype change_type: str or
+    :type change_type: str or
      ~azure.mgmt.resource.resources.v2019_07_01.models.ChangeType
-    :ivar before: The snapshot of the resource before the deployment is
+    :param before: The snapshot of the resource before the deployment is
      executed.
-    :vartype before: object
-    :ivar after: The predicted snapshot of the resource after the deployment
+    :type before: object
+    :param after: The predicted snapshot of the resource after the deployment
      is executed.
-    :vartype after: object
-    :ivar delta: The predicted changes to resource properties.
-    :vartype delta:
+    :type after: object
+    :param delta: The predicted changes to resource properties.
+    :type delta:
      list[~azure.mgmt.resource.resources.v2019_07_01.models.WhatIfPropertyChange]
     """
 
     _validation = {
-        'resource_id': {'required': True, 'readonly': True},
-        'change_type': {'required': True, 'readonly': True},
-        'before': {'readonly': True},
-        'after': {'readonly': True},
-        'delta': {'readonly': True},
+        'resource_id': {'required': True},
+        'change_type': {'required': True},
     }
 
     _attribute_map = {
@@ -1670,34 +1664,26 @@ class WhatIfChange(Model):
 
     def __init__(self, **kwargs):
         super(WhatIfChange, self).__init__(**kwargs)
-        self.resource_id = None
-        self.change_type = None
-        self.before = None
-        self.after = None
-        self.delta = None
+        self.resource_id = kwargs.get('resource_id', None)
+        self.change_type = kwargs.get('change_type', None)
+        self.before = kwargs.get('before', None)
+        self.after = kwargs.get('after', None)
+        self.delta = kwargs.get('delta', None)
 
 
 class WhatIfOperationResult(Model):
     """Result of the What-If operation. Contains a list of predicted changes and a
     URL link to get to the next set of results.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar status: Status of the What-If operation.
-    :vartype status: str
-    :ivar changes: List of resource changes predicted by What-If operation.
-    :vartype changes:
+    :param status: Status of the What-If operation.
+    :type status: str
+    :param changes: List of resource changes predicted by What-If operation.
+    :type changes:
      list[~azure.mgmt.resource.resources.v2019_07_01.models.WhatIfChange]
     :param error: Error when What-If operation fails.
     :type error:
      ~azure.mgmt.resource.resources.v2019_07_01.models.ErrorResponse
     """
-
-    _validation = {
-        'status': {'readonly': True},
-        'changes': {'readonly': True},
-    }
 
     _attribute_map = {
         'status': {'key': 'status', 'type': 'str'},
@@ -1707,40 +1693,35 @@ class WhatIfOperationResult(Model):
 
     def __init__(self, **kwargs):
         super(WhatIfOperationResult, self).__init__(**kwargs)
-        self.status = None
-        self.changes = None
+        self.status = kwargs.get('status', None)
+        self.changes = kwargs.get('changes', None)
         self.error = kwargs.get('error', None)
 
 
 class WhatIfPropertyChange(Model):
     """The predicted change to the resource property.
 
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
     All required parameters must be populated in order to send to Azure.
 
-    :ivar path: Required. The path of the property.
-    :vartype path: str
-    :ivar property_change_type: Required. The type of property change.
+    :param path: Required. The path of the property.
+    :type path: str
+    :param property_change_type: Required. The type of property change.
      Possible values include: 'Create', 'Delete', 'Modify', 'Array'
-    :vartype property_change_type: str or
+    :type property_change_type: str or
      ~azure.mgmt.resource.resources.v2019_07_01.models.PropertyChangeType
-    :ivar before: The value of the property before the deployment is executed.
-    :vartype before: object
-    :ivar after: The value of the property after the deployment is executed.
-    :vartype after: object
-    :ivar children: Nested property changes.
-    :vartype children:
+    :param before: The value of the property before the deployment is
+     executed.
+    :type before: object
+    :param after: The value of the property after the deployment is executed.
+    :type after: object
+    :param children: Nested property changes.
+    :type children:
      list[~azure.mgmt.resource.resources.v2019_07_01.models.WhatIfPropertyChange]
     """
 
     _validation = {
-        'path': {'required': True, 'readonly': True},
-        'property_change_type': {'required': True, 'readonly': True},
-        'before': {'readonly': True},
-        'after': {'readonly': True},
-        'children': {'readonly': True},
+        'path': {'required': True},
+        'property_change_type': {'required': True},
     }
 
     _attribute_map = {
@@ -1753,8 +1734,8 @@ class WhatIfPropertyChange(Model):
 
     def __init__(self, **kwargs):
         super(WhatIfPropertyChange, self).__init__(**kwargs)
-        self.path = None
-        self.property_change_type = None
-        self.before = None
-        self.after = None
-        self.children = None
+        self.path = kwargs.get('path', None)
+        self.property_change_type = kwargs.get('property_change_type', None)
+        self.before = kwargs.get('before', None)
+        self.after = kwargs.get('after', None)
+        self.children = kwargs.get('children', None)
