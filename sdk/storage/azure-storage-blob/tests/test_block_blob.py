@@ -181,6 +181,26 @@ class StorageBlockBlobTest(StorageTestCase):
         # Assert
 
     @record
+    def test_put_block_list_with_blob_tier_specified(self):
+
+        # Arrange
+        blob_name = self._get_blob_reference()
+        blob_client = self.bsc.get_blob_client(self.container_name, blob_name)
+        blob_client.stage_block('1', b'AAA')
+        blob_client.stage_block('2', b'BBB')
+        blob_client.stage_block('3', b'CCC')
+        blob_tier = StandardBlobTier.Cool
+
+        # Act
+        block_list = [BlobBlock(block_id='1'), BlobBlock(block_id='2'), BlobBlock(block_id='3')]
+        blob_client.commit_block_list(block_list,
+                                      standard_blob_tier=blob_tier)
+
+        # Assert
+        blob_properties = blob_client.get_blob_properties()
+        self.assertEqual(blob_properties.blob_tier, blob_tier)
+
+    @record
     def test_get_block_list_no_blocks(self):
         # Arrange
         blob = self._create_blob()
@@ -544,6 +564,21 @@ class StorageBlockBlobTest(StorageTestCase):
         # Assert
         self.assertBlobEqual(self.container_name, blob.blob_name, data)
 
+    @record
+    def test_create_blob_from_bytes_with_blob_tier_specified(self):
+        # Arrange
+        blob_name = self._get_blob_reference()
+        blob_client = self.bsc.get_blob_client(self.container_name, blob_name)
+        data = b'hello world'
+        blob_tier = StandardBlobTier.Cool
+
+        # Act
+        blob_client.upload_blob(data, standard_blob_tier=blob_tier)
+        blob_properties = blob_client.get_blob_properties()
+
+        # Assert
+        self.assertEqual(blob_properties.blob_tier, blob_tier)
+
     def test_create_blob_from_path(self):
         # parallel tests introduce random order of requests, can only run live
         if TestMode.need_recording_file(self.test_mode):
@@ -584,6 +619,23 @@ class StorageBlockBlobTest(StorageTestCase):
         self.assertBlobEqual(self.container_name, blob_name, data)
         self.assertEqual(props.etag, create_resp.get('etag'))
         self.assertEqual(props.last_modified, create_resp.get('last_modified'))
+
+    @record
+    def test_upload_blob_from_path_non_parallel_with_standard_blob_tier(self):
+        # Arrange
+        blob_name = self._get_blob_reference()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        data = self.get_random_bytes(100)
+        with open(FILE_PATH, 'wb') as stream:
+            stream.write(data)
+        blob_tier = StandardBlobTier.Cool
+        # Act
+        with open(FILE_PATH, 'rb') as stream:
+            blob.upload_blob(stream, length=100, max_connections=1, standard_blob_tier=blob_tier)
+        props = blob.get_blob_properties()
+
+        # Assert
+        self.assertEqual(props.blob_tier, blob_tier)
 
     def test_create_blob_from_path_with_progress(self):
         # parallel tests introduce random order of requests, can only run live
@@ -797,6 +849,31 @@ class StorageBlockBlobTest(StorageTestCase):
         properties = blob.get_blob_properties()
         self.assertEqual(properties.content_settings.content_type, content_settings.content_type)
         self.assertEqual(properties.content_settings.content_language, content_settings.content_language)
+
+    def test_create_blob_from_stream_chunked_upload_with_properties(self):
+        # parallel tests introduce random order of requests, can only run live
+        if TestMode.need_recording_file(self.test_mode):
+            return
+
+        # Arrange
+        blob_name = self._get_blob_reference()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        data = self.get_random_bytes(LARGE_BLOB_SIZE)
+        with open(FILE_PATH, 'wb') as stream:
+            stream.write(data)
+        blob_tier = StandardBlobTier.Cool
+
+        # Act
+        content_settings = ContentSettings(
+            content_type='image/png',
+            content_language='spanish')
+        with open(FILE_PATH, 'rb') as stream:
+            blob.upload_blob(stream, content_settings=content_settings, max_connections=2, standard_blob_tier=blob_tier)
+
+        properties = blob.get_blob_properties()
+
+        # Assert
+        self.assertEqual(properties.blob_tier, blob_tier)
 
     @record
     def test_create_blob_from_text(self):

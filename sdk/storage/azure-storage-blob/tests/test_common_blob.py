@@ -33,7 +33,8 @@ from azure.storage.blob import (
     AccessPolicy,
     ResourceTypes,
     AccountPermissions,
-)
+    StandardBlobTier)
+from azure.storage.blob._generated.models import RehydratePriority
 from testcase import (
     StorageTestCase,
     TestMode,
@@ -862,6 +863,50 @@ class StorageCommonBlobTest(StorageTestCase):
 
         copy_content = copyblob.download_blob().content_as_bytes()
         self.assertEqual(copy_content, self.byte_data)
+
+    @record
+    def test_copy_blob_with_blob_tier_specified(self):
+        # Arrange
+        blob_name = self._create_block_blob()
+        self.bsc.get_blob_client(self.container_name, blob_name)
+
+        # Act
+        sourceblob = '{0}/{1}/{2}'.format(
+            self._get_account_url(), self.container_name, blob_name)
+
+        copyblob = self.bsc.get_blob_client(self.container_name, 'blob1copy')
+        blob_tier = StandardBlobTier.Cool
+        copyblob.start_copy_from_url(sourceblob, standard_blob_tier=blob_tier)
+
+        copy_blob_properties = copyblob.get_blob_properties()
+
+        # Assert
+        self.assertEqual(copy_blob_properties.blob_tier, blob_tier)
+
+    @record
+    def test_copy_blob_with_rehydrate_priority(self):
+        # Arrange
+        blob_name = self._create_block_blob()
+
+        # Act
+        sourceblob = '{0}/{1}/{2}'.format(
+            self._get_account_url(), self.container_name, blob_name)
+
+        blob_tier = StandardBlobTier.Archive
+        rehydrate_priority = RehydratePriority.high
+        copyblob = self.bsc.get_blob_client(self.container_name, 'blob1copy')
+        copy = copyblob.start_copy_from_url(sourceblob,
+                                            standard_blob_tier=blob_tier,
+                                            rehydrate_priority=rehydrate_priority)
+        copy_blob_properties = copyblob.get_blob_properties()
+        copyblob.set_standard_blob_tier(StandardBlobTier.Hot)
+        second_resp = copyblob.get_blob_properties()
+
+        # Assert
+        self.assertIsNotNone(copy)
+        self.assertIsNotNone(copy.get('copy_id'))
+        self.assertEqual(copy_blob_properties.blob_tier, blob_tier)
+        self.assertEqual(second_resp.archive_status, 'rehydrate-pending-to-hot')
 
     # TODO: external copy was supported since 2019-02-02
     # @record
