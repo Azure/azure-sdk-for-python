@@ -8432,6 +8432,9 @@ class DataFlowDebugCommandResponse(Model):
 class DataFlowDebugPackage(Model):
     """Request body structure for starting data flow debug session.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param session_id: The ID of data flow debug session.
     :type session_id: str
     :param data_flow: Data flow instance.
@@ -8446,29 +8449,27 @@ class DataFlowDebugPackage(Model):
     :param debug_settings: Data flow debug settings.
     :type debug_settings:
      ~azure.mgmt.datafactory.models.DataFlowDebugPackageDebugSettings
-    :param additional_properties:
-    :type additional_properties: object
     """
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'session_id': {'key': 'sessionId', 'type': 'str'},
         'data_flow': {'key': 'dataFlow', 'type': 'DataFlowResource'},
         'datasets': {'key': 'datasets', 'type': '[DatasetResource]'},
         'linked_services': {'key': 'linkedServices', 'type': '[LinkedServiceResource]'},
         'staging': {'key': 'staging', 'type': 'DataFlowStagingInfo'},
         'debug_settings': {'key': 'debugSettings', 'type': 'DataFlowDebugPackageDebugSettings'},
-        'additional_properties': {'key': 'additionalProperties', 'type': 'object'},
     }
 
-    def __init__(self, *, session_id: str=None, data_flow=None, datasets=None, linked_services=None, staging=None, debug_settings=None, additional_properties=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, session_id: str=None, data_flow=None, datasets=None, linked_services=None, staging=None, debug_settings=None, **kwargs) -> None:
         super(DataFlowDebugPackage, self).__init__(**kwargs)
+        self.additional_properties = additional_properties
         self.session_id = session_id
         self.data_flow = data_flow
         self.datasets = datasets
         self.linked_services = linked_services
         self.staging = staging
         self.debug_settings = debug_settings
-        self.additional_properties = additional_properties
 
 
 class DataFlowDebugPackageDebugSettings(Model):
@@ -8499,6 +8500,9 @@ class DataFlowDebugPackageDebugSettings(Model):
 class DataFlowDebugSessionInfo(Model):
     """Data flow debug session info.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param data_flow_name: The name of the data flow.
     :type data_flow_name: str
     :param compute_type: Compute type of the cluster.
@@ -8515,14 +8519,13 @@ class DataFlowDebugSessionInfo(Model):
     :param start_time: Start time of data flow debug session.
     :type start_time: str
     :param time_to_live_in_minutes: Compute type of the cluster.
-    :type time_to_live_in_minutes: str
+    :type time_to_live_in_minutes: int
     :param last_activity_time: Last activity time of data flow debug session.
     :type last_activity_time: str
-    :param additional_properties:
-    :type additional_properties: object
     """
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'data_flow_name': {'key': 'dataFlowName', 'type': 'str'},
         'compute_type': {'key': 'computeType', 'type': 'str'},
         'core_count': {'key': 'coreCount', 'type': 'int'},
@@ -8530,13 +8533,13 @@ class DataFlowDebugSessionInfo(Model):
         'integration_runtime_name': {'key': 'integrationRuntimeName', 'type': 'str'},
         'session_id': {'key': 'sessionId', 'type': 'str'},
         'start_time': {'key': 'startTime', 'type': 'str'},
-        'time_to_live_in_minutes': {'key': 'timeToLiveInMinutes', 'type': 'str'},
+        'time_to_live_in_minutes': {'key': 'timeToLiveInMinutes', 'type': 'int'},
         'last_activity_time': {'key': 'lastActivityTime', 'type': 'str'},
-        'additional_properties': {'key': 'additionalProperties', 'type': 'object'},
     }
 
-    def __init__(self, *, data_flow_name: str=None, compute_type: str=None, core_count: int=None, node_count: int=None, integration_runtime_name: str=None, session_id: str=None, start_time: str=None, time_to_live_in_minutes: str=None, last_activity_time: str=None, additional_properties=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, data_flow_name: str=None, compute_type: str=None, core_count: int=None, node_count: int=None, integration_runtime_name: str=None, session_id: str=None, start_time: str=None, time_to_live_in_minutes: int=None, last_activity_time: str=None, **kwargs) -> None:
         super(DataFlowDebugSessionInfo, self).__init__(**kwargs)
+        self.additional_properties = additional_properties
         self.data_flow_name = data_flow_name
         self.compute_type = compute_type
         self.core_count = core_count
@@ -8546,7 +8549,6 @@ class DataFlowDebugSessionInfo(Model):
         self.start_time = start_time
         self.time_to_live_in_minutes = time_to_live_in_minutes
         self.last_activity_time = last_activity_time
-        self.additional_properties = additional_properties
 
 
 class DataFlowFolder(Model):
@@ -8731,8 +8733,6 @@ class DataFlowSink(Transformation):
     :type description: str
     :param dataset: Dataset reference.
     :type dataset: ~azure.mgmt.datafactory.models.DatasetReference
-    :param additional_properties:
-    :type additional_properties: object
     """
 
     _validation = {
@@ -8744,13 +8744,12 @@ class DataFlowSink(Transformation):
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'dataset': {'key': 'dataset', 'type': 'DatasetReference'},
-        'additional_properties': {'key': 'additionalProperties', 'type': 'object'},
     }
 
-    def __init__(self, *, name: str, additional_properties=None, description: str=None, dataset=None, additional_properties=None, **kwargs) -> None:
+    def __init__(self, *, name: str, additional_properties=None, description: str=None, dataset=None, **kwargs) -> None:
         super(DataFlowSink, self).__init__(additional_properties=additional_properties, name=name, description=description, **kwargs)
-        self.dataset = dataset
         self.additional_properties = additional_properties
+        self.dataset = dataset
 
 
 class DataFlowSource(Transformation):
@@ -8767,8 +8766,6 @@ class DataFlowSource(Transformation):
     :type description: str
     :param dataset: Dataset reference.
     :type dataset: ~azure.mgmt.datafactory.models.DatasetReference
-    :param additional_properties:
-    :type additional_properties: object
     """
 
     _validation = {
@@ -8780,37 +8777,37 @@ class DataFlowSource(Transformation):
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'dataset': {'key': 'dataset', 'type': 'DatasetReference'},
-        'additional_properties': {'key': 'additionalProperties', 'type': 'object'},
     }
 
-    def __init__(self, *, name: str, additional_properties=None, description: str=None, dataset=None, additional_properties=None, **kwargs) -> None:
+    def __init__(self, *, name: str, additional_properties=None, description: str=None, dataset=None, **kwargs) -> None:
         super(DataFlowSource, self).__init__(additional_properties=additional_properties, name=name, description=description, **kwargs)
-        self.dataset = dataset
         self.additional_properties = additional_properties
+        self.dataset = dataset
 
 
 class DataFlowSourceSetting(Model):
     """Definition of data flow source setting for debug.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param source_name: The data flow source name.
     :type source_name: str
     :param row_limit: Defines the row limit of data flow source in debug.
     :type row_limit: int
-    :param additional_properties:
-    :type additional_properties: object
     """
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'source_name': {'key': 'sourceName', 'type': 'str'},
         'row_limit': {'key': 'rowLimit', 'type': 'int'},
-        'additional_properties': {'key': 'additionalProperties', 'type': 'object'},
     }
 
-    def __init__(self, *, source_name: str=None, row_limit: int=None, additional_properties=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, source_name: str=None, row_limit: int=None, **kwargs) -> None:
         super(DataFlowSourceSetting, self).__init__(**kwargs)
+        self.additional_properties = additional_properties
         self.source_name = source_name
         self.row_limit = row_limit
-        self.additional_properties = additional_properties
 
 
 class DataFlowStagingInfo(Model):
@@ -12449,21 +12446,22 @@ class FtpServerLocation(DatasetLocation):
 class GetDataFactoryOperationStatusResponse(Model):
     """Response body structure for get data factory operation status.
 
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
     :param status: Status of the operation.
     :type status: str
-    :param additional_properties:
-    :type additional_properties: object
     """
 
     _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
         'status': {'key': 'status', 'type': 'str'},
-        'additional_properties': {'key': 'additionalProperties', 'type': 'object'},
     }
 
-    def __init__(self, *, status: str=None, additional_properties=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, status: str=None, **kwargs) -> None:
         super(GetDataFactoryOperationStatusResponse, self).__init__(**kwargs)
-        self.status = status
         self.additional_properties = additional_properties
+        self.status = status
 
 
 class GetMetadataActivity(ExecutionActivity):
@@ -17535,9 +17533,6 @@ class MappingDataFlow(DataFlow):
     :type folder: ~azure.mgmt.datafactory.models.DataFlowFolder
     :param type: Required. Constant filled by server.
     :type type: str
-    :param additional_properties: Unmatched properties from the message are
-     deserialized this collection
-    :type additional_properties: dict[str, object]
     :param sources: List of sources in data flow.
     :type sources: list[~azure.mgmt.datafactory.models.DataFlowSource]
     :param sinks: List of sinks in data flow.
@@ -17546,8 +17541,6 @@ class MappingDataFlow(DataFlow):
     :type transformations: list[~azure.mgmt.datafactory.models.Transformation]
     :param script: DataFlow script.
     :type script: str
-    :param additional_properties1:
-    :type additional_properties1: object
     """
 
     _validation = {
@@ -17559,22 +17552,18 @@ class MappingDataFlow(DataFlow):
         'annotations': {'key': 'annotations', 'type': '[object]'},
         'folder': {'key': 'folder', 'type': 'DataFlowFolder'},
         'type': {'key': 'type', 'type': 'str'},
-        'additional_properties': {'key': '', 'type': '{object}'},
         'sources': {'key': 'typeProperties.sources', 'type': '[DataFlowSource]'},
         'sinks': {'key': 'typeProperties.sinks', 'type': '[DataFlowSink]'},
         'transformations': {'key': 'typeProperties.transformations', 'type': '[Transformation]'},
         'script': {'key': 'typeProperties.script', 'type': 'str'},
-        'additional_properties1': {'key': 'typeProperties.additionalProperties', 'type': 'object'},
     }
 
-    def __init__(self, *, description: str=None, annotations=None, folder=None, additional_properties=None, sources=None, sinks=None, transformations=None, script: str=None, additional_properties1=None, **kwargs) -> None:
+    def __init__(self, *, description: str=None, annotations=None, folder=None, sources=None, sinks=None, transformations=None, script: str=None, **kwargs) -> None:
         super(MappingDataFlow, self).__init__(description=description, annotations=annotations, folder=folder, **kwargs)
-        self.additional_properties = additional_properties
         self.sources = sources
         self.sinks = sinks
         self.transformations = transformations
         self.script = script
-        self.additional_properties1 = additional_properties1
         self.type = 'MappingDataFlow'
 
 
