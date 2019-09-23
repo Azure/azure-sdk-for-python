@@ -521,17 +521,22 @@ class DeploymentPropertiesExtended(Model):
 class DeploymentValidateResult(Model):
     """Information from validate template deployment response.
 
+    :param error: The deployment validation error.
+    :type error:
+     ~azure.mgmt.resource.resources.v2019_08_01.models.ErrorResponse
     :param properties: The template deployment properties.
     :type properties:
      ~azure.mgmt.resource.resources.v2019_08_01.models.DeploymentPropertiesExtended
     """
 
     _attribute_map = {
+        'error': {'key': 'error', 'type': 'ErrorResponse'},
         'properties': {'key': 'properties', 'type': 'DeploymentPropertiesExtended'},
     }
 
-    def __init__(self, *, properties=None, **kwargs) -> None:
+    def __init__(self, *, error=None, properties=None, **kwargs) -> None:
         super(DeploymentValidateResult, self).__init__(**kwargs)
+        self.error = error
         self.properties = properties
 
 
