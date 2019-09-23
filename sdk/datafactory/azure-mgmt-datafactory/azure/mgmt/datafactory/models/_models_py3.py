@@ -13466,8 +13466,9 @@ class HDInsightPigActivity(ExecutionActivity):
     :param storage_linked_services: Storage linked service references.
     :type storage_linked_services:
      list[~azure.mgmt.datafactory.models.LinkedServiceReference]
-    :param arguments: User specified arguments to HDInsightActivity.
-    :type arguments: list[object]
+    :param arguments: User specified arguments to HDInsightActivity. Type:
+     array (or Expression with resultType array).
+    :type arguments: object
     :param get_debug_info: Debug info option. Possible values include: 'None',
      'Always', 'Failure'
     :type get_debug_info: str or
@@ -13497,7 +13498,7 @@ class HDInsightPigActivity(ExecutionActivity):
         'linked_service_name': {'key': 'linkedServiceName', 'type': 'LinkedServiceReference'},
         'policy': {'key': 'policy', 'type': 'ActivityPolicy'},
         'storage_linked_services': {'key': 'typeProperties.storageLinkedServices', 'type': '[LinkedServiceReference]'},
-        'arguments': {'key': 'typeProperties.arguments', 'type': '[object]'},
+        'arguments': {'key': 'typeProperties.arguments', 'type': 'object'},
         'get_debug_info': {'key': 'typeProperties.getDebugInfo', 'type': 'str'},
         'script_path': {'key': 'typeProperties.scriptPath', 'type': 'object'},
         'script_linked_service': {'key': 'typeProperties.scriptLinkedService', 'type': 'LinkedServiceReference'},
