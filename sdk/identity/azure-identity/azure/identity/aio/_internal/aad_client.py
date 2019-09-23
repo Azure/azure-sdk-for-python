@@ -23,9 +23,7 @@ class AadClient(AadClientBase):
         return MsalTransportAdapter(**kwargs)
 
     @wrap_exceptions
-    async def _obtain_token(
-        self, scopes: "Iterable[str]", fn: "Callable", **kwargs: "Any"
-    ) -> "AccessToken":
+    async def _obtain_token(self, scopes: "Iterable[str]", fn: "Callable", **kwargs: "Any") -> "AccessToken":
         now = int(time.time())
         executor = kwargs.get("executor", None)
         loop = kwargs.get("loop", None) or asyncio.get_event_loop()

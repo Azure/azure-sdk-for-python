@@ -10,7 +10,6 @@ from azure.identity.aio._internal.aad_client import AadClient
 import pytest
 
 
-
 class MockClient(AadClient):
     def __init__(self, *args, **kwargs):
         self.session = kwargs.pop("session")
