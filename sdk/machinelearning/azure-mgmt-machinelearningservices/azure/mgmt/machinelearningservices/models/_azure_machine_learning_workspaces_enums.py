@@ -92,7 +92,8 @@ class ComputeType(str, Enum):
 
 class ReasonCode(str, Enum):
 
-    quota_id = "QuotaId"
+    not_specified = "NotSpecified"
+    not_available_for_region = "NotAvailableForRegion"
     not_available_for_subscription = "NotAvailableForSubscription"
 
 
