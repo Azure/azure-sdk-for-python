@@ -93,3 +93,29 @@ def test_exceptions_do_not_expose_secrets():
     # neither should unexpected AAD responses
     del body["error"]
     assert_secrets_not_exposed()
+
+
+def test_respects_authority():
+    my_authority = "my.authority.com"
+
+    class Authority:
+        respected = False
+
+    def check_url(url, **kwargs):
+        Authority.respected = url.startswith("https://" + my_authority)
+
+    transport = Mock(side_effect=check_url)
+    session = Mock(get=transport, post=transport)
+    client = MockClient("client id", "tenant id", session=session, authority=my_authority)
+
+    fns = [
+        functools.partial(client.obtain_token_by_authorization_code, "code", "uri", "scope"),
+        functools.partial(client.obtain_token_by_refresh_token, {"secret": "refresh token"}, "scope"),
+    ]
+
+    for fn in fns:
+        Authority.respected = False
+        with pytest.raises(ClientAuthenticationError):
+            # raises because the mock transport returns nothing
+            fn()
+        assert Authority.respected

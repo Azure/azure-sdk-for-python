@@ -24,6 +24,11 @@ class AuthorizationCodeCredential(object):
     :param str authorization_code: the authorization code from the user's log-in
     :param str redirect_uri: The application's redirect URI. Must match the URI used to request the authorization code.
     :param str client_secret: One of the application's client secrets. Required only for web apps and web APIs.
+
+    Keyword arguments
+        - **authority**: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com', the
+            authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities` defines
+            authorities for other clouds.
     """
 
     def __init__(self, client_id, tenant_id, authorization_code, redirect_uri, client_secret=None, **kwargs):

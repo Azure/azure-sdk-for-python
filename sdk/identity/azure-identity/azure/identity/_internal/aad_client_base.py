@@ -16,7 +16,7 @@ from msal.oauth2cli.oauth2 import Client
 
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
-from .._constants import Endpoints
+from .._constants import KnownAuthorities
 
 try:
     ABC = abc.ABC
@@ -31,9 +31,14 @@ if TYPE_CHECKING:
 class AadClientBase(ABC):
     """Sans I/O methods for AAD clients wrapping MSAL's OAuth client"""
 
-    def __init__(self, client_id, tenant_id, **kwargs):
+    def __init__(self, client_id, tenant, **kwargs):
         # type: (str, str, **Any) -> None
-        config = {"token_endpoint": Endpoints.AAD_OAUTH2_V2_FORMAT.format(tenant_id)}
+        authority = kwargs.pop("authority", KnownAuthorities.AZURE_PUBLIC_CLOUD)
+        if authority[-1] == "/":
+            authority = authority[:-1]
+        token_endpoint = "https://" + "/".join((authority, tenant, "oauth2/v2.0/token"))
+        config = {"token_endpoint": token_endpoint}
+
         self._client = Client(server_configuration=config, client_id=client_id)
         self._client.session.close()
         self._client.session = self._get_client_session(**kwargs)
