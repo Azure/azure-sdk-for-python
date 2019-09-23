@@ -8,6 +8,7 @@ Release History
 
 **Features**
 
+- Model DeploymentValidateResult has a new parameter error
 - Model Subscription has a new parameter managed_by_tenants
 
 **Breaking changes**
