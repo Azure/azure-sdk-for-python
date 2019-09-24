@@ -55,16 +55,13 @@ class EventData(object):
     PROP_PARTITION_KEY = b"x-opt-partition-key"
     PROP_PARTITION_KEY_AMQP_SYMBOL = types.AMQPSymbol(PROP_PARTITION_KEY)
     PROP_TIMESTAMP = b"x-opt-enqueued-time"
-    PROP_DEVICE_ID = b"iothub-connection-device-id"
 
-    def __init__(self, body=None, to_device=None):
+    def __init__(self, body=None):
         """
         Initialize EventData.
 
         :param body: The data to send in a single message.
         :type body: str, bytes or list
-        :param to_device: An IoT device to route to.
-        :type to_device: str
         """
 
         self._annotations = {}
@@ -155,16 +152,6 @@ class EventData(object):
         if timestamp:
             return datetime.datetime.utcfromtimestamp(float(timestamp)/1000)
         return None
-
-    @property
-    def device_id(self):
-        """
-        The device ID of the event data object. This is only used for
-        IoT Hub implementations.
-
-        :rtype: bytes
-        """
-        return self._annotations.get(EventData.PROP_DEVICE_ID, None)
 
     @property
     def partition_key(self):

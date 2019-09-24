@@ -58,23 +58,19 @@ class EventHubClient(EventHubClientAbstract):
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         await self.close()
 
-    def _create_auth(self, username=None, password=None):
+    def _create_auth(self):
         """
         Create an ~uamqp.authentication.cbs_auth_async.SASTokenAuthAsync instance to authenticate
         the session.
 
-        :param username: The name of the shared access policy.
-        :type username: str
-        :param password: The shared access key.
-        :type password: str
         """
         http_proxy = self._config.http_proxy
         transport_type = self._config.transport_type
         auth_timeout = self._config.auth_timeout
 
         if isinstance(self._credential, EventHubSharedKeyCredential):  # pylint:disable=no-else-return
-            username = username or self._auth_config['username']
-            password = password or self._auth_config['password']
+            username = self._credential.policy
+            password = self._credential.key
             if "@sas.root" in username:
                 return authentication.SASLPlain(
                     self._host, username, password, http_proxy=http_proxy, transport_type=transport_type)
@@ -117,14 +113,9 @@ class EventHubClient(EventHubClientAbstract):
             raise last_exception
 
     async def _management_request(self, mgmt_msg, op_type):
-        alt_creds = {
-            "username": self._auth_config.get("iot_username"),
-            "password": self._auth_config.get("iot_password")
-        }
-
         retried_times = 0
         while retried_times <= self._config.max_retries:
-            mgmt_auth = self._create_auth(**alt_creds)
+            mgmt_auth = self._create_auth()
             mgmt_client = AMQPClientAsync(self._mgmt_target, auth=mgmt_auth, debug=self._config.network_tracing)
             try:
                 conn = await self._conn_manager.get_connection(self._host, mgmt_auth)
@@ -143,18 +134,6 @@ class EventHubClient(EventHubClientAbstract):
             finally:
                 await mgmt_client.close_async()
 
-    async def _iothub_redirect(self):
-        async with self._lock:
-            if self._is_iothub and not self._iothub_redirect_info:
-                if not self._redirect_consumer:
-                    self._redirect_consumer = self.create_consumer(consumer_group='$default',
-                                                                   partition_id='0',
-                                                                   event_position=EventPosition('-1'),
-                                                                   operation='/messages/events')
-                async with self._redirect_consumer:
-                    await self._redirect_consumer._open_with_retry()  # pylint: disable=protected-access
-                self._redirect_consumer = None
-
     async def get_properties(self):
         # type:() -> Dict[str, Any]
         """
@@ -168,8 +147,6 @@ class EventHubClient(EventHubClientAbstract):
         :rtype: dict
         :raises: ~azure.eventhub.EventHubError
         """
-        if self._is_iothub and not self._iothub_redirect_info:
-            await self._iothub_redirect()
         mgmt_msg = Message(application_properties={'name': self.eh_name})
         response = await self._management_request(mgmt_msg, op_type=b'com.microsoft:eventhub')
         output = {}
@@ -209,8 +186,6 @@ class EventHubClient(EventHubClientAbstract):
         :rtype: dict
         :raises: ~azure.eventhub.EventHubError
         """
-        if self._is_iothub and not self._iothub_redirect_info:
-            await self._iothub_redirect()
         mgmt_msg = Message(application_properties={'name': self.eh_name,
                                                    'partition': partition})
         response = await self._management_request(mgmt_msg, op_type=b'com.microsoft:partition')

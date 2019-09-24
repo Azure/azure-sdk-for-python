@@ -63,7 +63,6 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
         super(EventHubProducer, self).__init__()
         self._loop = loop or asyncio.get_event_loop()
         self._max_message_size_on_link = None
-        self._running = False
         self._client = client
         self._target = target
         self._partition = partition
@@ -74,7 +73,6 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
         self._reconnect_backoff = 1
         self._name = "EHProducer-{}".format(uuid.uuid4())
         self._unsent_events = None
-        self._redirected = None
         self._error = None
         if partition:
             self._target += "/Partitions/" + partition
@@ -87,7 +85,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
     def _create_handler(self):
         self._handler = SendClientAsync(
             self._target,
-            auth=self._client._get_auth(),  # pylint:disable=protected-access
+            auth=self._client._create_auth(),  # pylint:disable=protected-access
             debug=self._client._config.network_tracing,  # pylint:disable=protected-access
             msg_timeout=self._timeout,
             error_policy=self._retry_policy,
@@ -97,18 +95,6 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
             properties=self._client._create_properties(  # pylint: disable=protected-access
                 self._client._config.user_agent),  # pylint:disable=protected-access
             loop=self._loop)
-
-    async def _open(self):
-        """
-        Open the EventHubProducer using the supplied connection.
-        If the handler has previously been redirected, the redirect
-        context will be used to create a new handler before opening it.
-
-        """
-        if not self._running and self._redirected:
-            self._client._process_redirect_uri(self._redirected)  # pylint: disable=protected-access
-            self._target = self._redirected.address
-        await super(EventHubProducer, self)._open()
 
     async def _open_with_retry(self):
         return await self._do_retryable_operation(self._open, operation_need_param=False)
