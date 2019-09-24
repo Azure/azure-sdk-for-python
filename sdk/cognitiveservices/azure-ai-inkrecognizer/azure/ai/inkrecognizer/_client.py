@@ -97,7 +97,7 @@ class _InkRecognizerConfiguration():
         self.unit_multiple = _get_and_validate_param(kwargs, "unit_multiple", factory=float)
         self.service_version = _get_and_validate_param(kwargs, "service_version", valid_type=ServiceVersion)
         # azure service common arguments
-        self.response_hook = kwargs.get("response_hook", default=None)
+        self.response_hook = kwargs.get("response_hook", None)
         if self.response_hook is not None:
             if not callable(self.response_hook):
                 raise ValueError("response_hook should be callable.")
