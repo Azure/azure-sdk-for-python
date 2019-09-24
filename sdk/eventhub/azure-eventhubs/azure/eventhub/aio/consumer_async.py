@@ -11,7 +11,6 @@ import time
 from uamqp import errors, types  # type: ignore
 from uamqp import ReceiveClientAsync, Source  # type: ignore
 
-from azure.core.tracing import SpanKind
 from azure.core.settings import settings
 
 from azure.eventhub import EventData, EventPosition

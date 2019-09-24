@@ -12,7 +12,6 @@ from typing import List
 from uamqp import types, errors  # type: ignore
 from uamqp import ReceiveClient, Source  # type: ignore
 
-from azure.core.tracing import SpanKind
 from azure.core.settings import settings
 
 from azure.eventhub.common import EventData, EventPosition

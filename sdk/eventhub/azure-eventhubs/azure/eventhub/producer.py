@@ -251,14 +251,14 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
                 if partition_key:
                     event_data = _set_partition_key(event_data, partition_key)
                 wrapper_event_data = EventDataBatch._from_batch(event_data, partition_key)  # pylint: disable=protected-access
-            for internal_message in wrapper_event_data.message._body_gen:
+            for internal_message in wrapper_event_data.message._body_gen:  # pylint: disable=protected-access
                 trace_message(internal_message)
         wrapper_event_data.message.on_send_complete = self._on_outcome
         self._unsent_events = [wrapper_event_data.message]
 
         if span_impl_type is not None:
             with child:
-                self._client._add_span_request_attributes(child)
+                self._client._add_span_request_attributes(child)  # pylint: disable=protected-access
                 self._send_event_data_with_retry(timeout=timeout)
         else:
             self._send_event_data_with_retry(timeout=timeout)

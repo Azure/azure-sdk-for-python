@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # -----------------------------------------------------------------------------------
 
+from contextlib import contextmanager
 from typing import Dict, Type
 import uuid
 import asyncio
@@ -188,7 +189,26 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
             if partition_id not in self._tasks or self._tasks[partition_id].done():
                 self._tasks[partition_id] = get_running_loop().create_task(self._receive(ownership))
 
-    async def _receive(self, ownership):
+    @contextmanager
+    def _context(self, events):
+        # Tracing
+        span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
+        if span_impl_type is None:
+            yield
+        else:
+            child = span_impl_type(name="Azure.EventHubs.process")
+            self._eventhub_client._add_span_request_attributes(child)  # pylint: disable=protected-access
+            child.kind = SpanKind.SERVER
+
+            for event in events:
+                if event.application_properties:
+                    traceparent = event.application_properties.get(b"Diagnostic-Id", b'').decode('ascii')
+                    if traceparent:
+                        child.link(traceparent)
+            with child:
+                yield
+
+    async def _receive(self, ownership):  # pylint: disable=too-many-statements
         log.info("start ownership, %r", ownership)
         partition_processor = self._partition_processor_factory()
         partition_id = ownership["partition_id"]
@@ -250,23 +270,7 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
             while True:
                 try:
                     events = await partition_consumer.receive()
-
-                    # Tracing
-                    span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
-                    if span_impl_type is not None:
-                        child = span_impl_type(name="Azure.EventHubs.process")
-                        child.kind = SpanKind.SERVER
-
-                        for event_data in events:
-                            if event_data.application_properties:
-                                traceparent = event_data.application_properties.get(b"Diagnostic-Id", None).decode('ascii')
-                                if traceparent:
-                                    child.link(traceparent)
-
-                        with child:
-                            self._eventhub_client._add_span_request_attributes(child)
-                            await partition_processor.process_events(events, partition_context)
-                    else:
+                    with self._context(events):
                         await partition_processor.process_events(events, partition_context)
 
                 except asyncio.CancelledError:
