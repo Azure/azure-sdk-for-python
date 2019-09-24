@@ -218,16 +218,11 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
         self._unsent_events = [wrapper_event_data.message]
         await self._send_event_data_with_retry(timeout=timeout)  # pylint:disable=unexpected-keyword-arg # TODO: to refactor
 
-    async def close(self, exception=None):
-        # type: (Exception) -> None
+    async def close(self):
+        # type: () -> None
         """
         Close down the handler. If the handler has already closed,
-        this will be a no op. An optional exception can be passed in to
-        indicate that the handler was shutdown due to error.
-
-        :param exception: An optional exception if the handler is closing
-         due to an error.
-        :type exception: Exception
+        this will be a no op.
 
         Example:
             .. literalinclude:: ../examples/async_examples/test_examples_eventhub_async.py
@@ -238,4 +233,4 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
                 :caption: Close down the handler.
 
         """
-        await super(EventHubProducer, self).close(exception)
+        await super(EventHubProducer, self).close()
