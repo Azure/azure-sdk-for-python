@@ -221,9 +221,6 @@ class EventHubClient(EventHubClientAbstract):
         :param owner_level: The priority of the exclusive consumer. The client will create an exclusive
          consumer if owner_level is set.
         :type owner_level: int
-        :param operation: An optional operation to be appended to the hostname in the source URL.
-         The value must start with `/` character.
-        :type operation: str
         :param prefetch: The message prefetch count of the consumer. Default is 300.
         :type prefetch: int
         :param loop: An event loop. If not specified the default event loop will be used.
@@ -239,13 +236,11 @@ class EventHubClient(EventHubClientAbstract):
 
         """
         owner_level = kwargs.get("owner_level")
-        operation = kwargs.get("operation")
         prefetch = kwargs.get("prefetch") or self._config.prefetch
         loop = kwargs.get("loop")
 
-        path = self._address.path + operation if operation else self._address.path
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
-            self._address.hostname, path, consumer_group, partition_id)
+            self._address.hostname, self._address.path, consumer_group, partition_id)
         handler = EventHubConsumer(
             self, source_url, event_position=event_position, owner_level=owner_level,
             prefetch=prefetch, loop=loop)
@@ -254,7 +249,6 @@ class EventHubClient(EventHubClientAbstract):
     def create_producer(
             self, *,
             partition_id: str = None,
-            operation: str = None,
             send_timeout: float = None,
             loop: asyncio.AbstractEventLoop = None
     ) -> EventHubProducer:
@@ -265,9 +259,6 @@ class EventHubClient(EventHubClientAbstract):
          If omitted, the events will be distributed to available partitions via
          round-robin.
         :type partition_id: str
-        :param operation: An optional operation to be appended to the hostname in the target URL.
-         The value must start with `/` character.
-        :type operation: str
         :param send_timeout: The timeout in seconds for an individual event to be sent from the time that it is
          queued. Default value is 60 seconds. If set to 0, there will be no timeout.
         :type send_timeout: float
@@ -285,8 +276,6 @@ class EventHubClient(EventHubClientAbstract):
         """
 
         target = "amqps://{}{}".format(self._address.hostname, self._address.path)
-        if operation:
-            target = target + operation
         send_timeout = self._config.send_timeout if send_timeout is None else send_timeout
 
         handler = EventHubProducer(

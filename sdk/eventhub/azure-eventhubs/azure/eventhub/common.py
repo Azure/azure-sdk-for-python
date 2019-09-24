@@ -67,8 +67,6 @@ class EventData(object):
         self._annotations = {}
         self._app_properties = {}
         self._msg_properties = MessageProperties()
-        if to_device:
-            self._msg_properties.to = '/devices/{}/messages/devicebound'.format(to_device)
         if body and isinstance(body, list):
             self.message = Message(body[0], properties=self._msg_properties)
             for more in body[1:]:
@@ -90,8 +88,6 @@ class EventData(object):
             dic['offset'] = str(self.offset)
         if self.enqueued_time:
             dic['enqueued_time'] = str(self.enqueued_time)
-        if self.device_id:
-            dic['device_id'] = str(self.device_id)
         if self.partition_key:
             dic['partition_key'] = str(self.partition_key)
         return str(dic)

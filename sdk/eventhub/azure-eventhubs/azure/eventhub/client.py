@@ -224,9 +224,6 @@ class EventHubClient(EventHubClientAbstract):
         :param owner_level: The priority of the exclusive consumer. The client will create an exclusive
          consumer if owner_level is set.
         :type owner_level: int
-        :param operation: An optional operation to be appended to the hostname in the source URL.
-         The value must start with `/` character.
-        :type operation: str
         :param prefetch: The message prefetch count of the consumer. Default is 300.
         :type prefetch: int
         :rtype: ~azure.eventhub.consumer.EventHubConsumer
@@ -241,19 +238,17 @@ class EventHubClient(EventHubClientAbstract):
 
         """
         owner_level = kwargs.get("owner_level")
-        operation = kwargs.get("operation")
         prefetch = kwargs.get("prefetch") or self._config.prefetch
 
-        path = self._address.path + operation if operation else self._address.path
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
-            self._address.hostname, path, consumer_group, partition_id)
+            self._address.hostname, self._address.path, consumer_group, partition_id)
         handler = EventHubConsumer(
             self, source_url, event_position=event_position, owner_level=owner_level,
             prefetch=prefetch)
         return handler
 
-    def create_producer(self, partition_id=None, operation=None, send_timeout=None):
-        # type: (str, str, float) -> EventHubProducer
+    def create_producer(self, partition_id=None, send_timeout=None):
+        # type: (str, str) -> EventHubProducer
         """
         Create an producer to send EventData object to an EventHub.
 
@@ -280,8 +275,6 @@ class EventHubClient(EventHubClientAbstract):
         """
 
         target = "amqps://{}{}".format(self._address.hostname, self._address.path)
-        if operation:
-            target = target + operation
         send_timeout = self._config.send_timeout if send_timeout is None else send_timeout
 
         handler = EventHubProducer(
