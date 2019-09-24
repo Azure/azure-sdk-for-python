@@ -2315,6 +2315,8 @@ class JitNetworkAccessPolicyInitiateRequest(Model):
      open access for
     :type virtual_machines:
      list[~azure.mgmt.security.models.JitNetworkAccessPolicyInitiateVirtualMachine]
+    :param justification: The justification for making the initiate request
+    :type justification: str
     """
 
     _validation = {
@@ -2323,11 +2325,13 @@ class JitNetworkAccessPolicyInitiateRequest(Model):
 
     _attribute_map = {
         'virtual_machines': {'key': 'virtualMachines', 'type': '[JitNetworkAccessPolicyInitiateVirtualMachine]'},
+        'justification': {'key': 'justification', 'type': 'str'},
     }
 
-    def __init__(self, *, virtual_machines, **kwargs) -> None:
+    def __init__(self, *, virtual_machines, justification: str=None, **kwargs) -> None:
         super(JitNetworkAccessPolicyInitiateRequest, self).__init__(**kwargs)
         self.virtual_machines = virtual_machines
+        self.justification = justification
 
 
 class JitNetworkAccessPolicyInitiateVirtualMachine(Model):
@@ -2450,6 +2454,8 @@ class JitNetworkAccessRequest(Model):
     :param requestor: Required. The identity of the person who made the
      request
     :type requestor: str
+    :param justification: The justification for making the initiate request
+    :type justification: str
     """
 
     _validation = {
@@ -2462,13 +2468,15 @@ class JitNetworkAccessRequest(Model):
         'virtual_machines': {'key': 'virtualMachines', 'type': '[JitNetworkAccessRequestVirtualMachine]'},
         'start_time_utc': {'key': 'startTimeUtc', 'type': 'iso-8601'},
         'requestor': {'key': 'requestor', 'type': 'str'},
+        'justification': {'key': 'justification', 'type': 'str'},
     }
 
-    def __init__(self, *, virtual_machines, start_time_utc, requestor: str, **kwargs) -> None:
+    def __init__(self, *, virtual_machines, start_time_utc, requestor: str, justification: str=None, **kwargs) -> None:
         super(JitNetworkAccessRequest, self).__init__(**kwargs)
         self.virtual_machines = virtual_machines
         self.start_time_utc = start_time_utc
         self.requestor = requestor
+        self.justification = justification
 
 
 class JitNetworkAccessRequestPort(Model):

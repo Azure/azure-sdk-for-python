@@ -2315,6 +2315,8 @@ class JitNetworkAccessPolicyInitiateRequest(Model):
      open access for
     :type virtual_machines:
      list[~azure.mgmt.security.models.JitNetworkAccessPolicyInitiateVirtualMachine]
+    :param justification: The justification for making the initiate request
+    :type justification: str
     """
 
     _validation = {
@@ -2323,11 +2325,13 @@ class JitNetworkAccessPolicyInitiateRequest(Model):
 
     _attribute_map = {
         'virtual_machines': {'key': 'virtualMachines', 'type': '[JitNetworkAccessPolicyInitiateVirtualMachine]'},
+        'justification': {'key': 'justification', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(JitNetworkAccessPolicyInitiateRequest, self).__init__(**kwargs)
         self.virtual_machines = kwargs.get('virtual_machines', None)
+        self.justification = kwargs.get('justification', None)
 
 
 class JitNetworkAccessPolicyInitiateVirtualMachine(Model):
@@ -2450,6 +2454,8 @@ class JitNetworkAccessRequest(Model):
     :param requestor: Required. The identity of the person who made the
      request
     :type requestor: str
+    :param justification: The justification for making the initiate request
+    :type justification: str
     """
 
     _validation = {
@@ -2462,6 +2468,7 @@ class JitNetworkAccessRequest(Model):
         'virtual_machines': {'key': 'virtualMachines', 'type': '[JitNetworkAccessRequestVirtualMachine]'},
         'start_time_utc': {'key': 'startTimeUtc', 'type': 'iso-8601'},
         'requestor': {'key': 'requestor', 'type': 'str'},
+        'justification': {'key': 'justification', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -2469,6 +2476,7 @@ class JitNetworkAccessRequest(Model):
         self.virtual_machines = kwargs.get('virtual_machines', None)
         self.start_time_utc = kwargs.get('start_time_utc', None)
         self.requestor = kwargs.get('requestor', None)
+        self.justification = kwargs.get('justification', None)
 
 
 class JitNetworkAccessRequestPort(Model):
