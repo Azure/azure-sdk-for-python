@@ -9,16 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .data_connector_py3 import DataConnector
+from .resource_py3 import Resource
 
 
-class OfficeDataConnector(DataConnector):
-    """Represents office data connector.
+class RelationBase(Resource):
+    """Represents a relation.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
-
-    All required parameters must be populated in order to send to Azure.
 
     :ivar id: Azure resource Id
     :vartype id: str
@@ -26,36 +24,29 @@ class OfficeDataConnector(DataConnector):
     :vartype name: str
     :ivar type: Azure resource type
     :vartype type: str
-    :param etag: Etag of the azure resource
+    :ivar kind: The type of relation node. Possible values include:
+     'CasesToBookmarks'
+    :vartype kind: str or ~azure.mgmt.securityinsight.models.RelationTypes
+    :param etag: ETag for relation
     :type etag: str
-    :param kind: Required. Constant filled by server.
-    :type kind: str
-    :param tenant_id: The tenant id to connect to, and get the data from.
-    :type tenant_id: str
-    :param data_types: The available data types for the connector.
-    :type data_types:
-     ~azure.mgmt.securityinsight.models.OfficeDataConnectorDataTypes
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'kind': {'required': True},
+        'kind': {'readonly': True},
     }
 
     _attribute_map = {
         'id': {'key': 'id', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
-        'tenant_id': {'key': 'properties.tenantId', 'type': 'str'},
-        'data_types': {'key': 'properties.dataTypes', 'type': 'OfficeDataConnectorDataTypes'},
+        'etag': {'key': 'etag', 'type': 'str'},
     }
 
-    def __init__(self, *, etag: str=None, tenant_id: str=None, data_types=None, **kwargs) -> None:
-        super(OfficeDataConnector, self).__init__(etag=etag, **kwargs)
-        self.tenant_id = tenant_id
-        self.data_types = data_types
-        self.kind = 'Office365'
+    def __init__(self, *, etag: str=None, **kwargs) -> None:
+        super(RelationBase, self).__init__(**kwargs)
+        self.kind = None
+        self.etag = etag

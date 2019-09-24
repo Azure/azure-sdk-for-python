@@ -56,9 +56,9 @@ class ActionsOperations(object):
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Action
+        :return: An iterator like instance of ActionResponse
         :rtype:
-         ~azure.mgmt.securityinsight.models.ActionPaged[~azure.mgmt.securityinsight.models.Action]
+         ~azure.mgmt.securityinsight.models.ActionResponsePaged[~azure.mgmt.securityinsight.models.ActionResponse]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
         def internal_paging(next_link=None, raw=False):
@@ -105,11 +105,11 @@ class ActionsOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.ActionPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.ActionResponsePaged(internal_paging, self._deserialize.dependencies)
 
         if raw:
             header_dict = {}
-            client_raw_response = models.ActionPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.ActionResponsePaged(internal_paging, self._deserialize.dependencies, header_dict)
             return client_raw_response
 
         return deserialized

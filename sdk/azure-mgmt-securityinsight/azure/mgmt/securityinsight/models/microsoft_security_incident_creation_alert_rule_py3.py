@@ -20,6 +20,12 @@ class MicrosoftSecurityIncidentCreationAlertRule(AlertRule):
 
     All required parameters must be populated in order to send to Azure.
 
+    :ivar id: Azure resource Id
+    :vartype id: str
+    :ivar name: Azure resource name
+    :vartype name: str
+    :ivar type: Azure resource type
+    :vartype type: str
     :param etag: Etag of the azure resource
     :type etag: str
     :param kind: Required. Constant filled by server.
@@ -56,6 +62,9 @@ class MicrosoftSecurityIncidentCreationAlertRule(AlertRule):
     """
 
     _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'kind': {'required': True},
         'product_filter': {'required': True},
         'display_name': {'required': True},
@@ -64,6 +73,9 @@ class MicrosoftSecurityIncidentCreationAlertRule(AlertRule):
     }
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'display_names_filter': {'key': 'properties.displayNamesFilter', 'type': '[str]'},

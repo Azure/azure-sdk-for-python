@@ -69,6 +69,17 @@ class AlertSeverity(str, Enum):
     informational = "Informational"  #: Informational severity
 
 
+class RelationTypes(str, Enum):
+
+    cases_to_bookmarks = "CasesToBookmarks"  #: Relations between cases and bookmarks
+
+
+class RelationNodeKind(str, Enum):
+
+    case = "Case"  #: Case node part of the relation
+    bookmark = "Bookmark"  #: Bookmark node part of the relation
+
+
 class CloseReason(str, Enum):
 
     resolved = "Resolved"  #: Case was resolved

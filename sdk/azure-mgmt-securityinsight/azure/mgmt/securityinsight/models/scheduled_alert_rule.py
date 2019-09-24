@@ -20,6 +20,12 @@ class ScheduledAlertRule(AlertRule):
 
     All required parameters must be populated in order to send to Azure.
 
+    :ivar id: Azure resource Id
+    :vartype id: str
+    :ivar name: Azure resource name
+    :vartype name: str
+    :ivar type: Azure resource type
+    :vartype type: str
     :param etag: Etag of the azure resource
     :type etag: str
     :param kind: Required. Constant filled by server.
@@ -68,6 +74,9 @@ class ScheduledAlertRule(AlertRule):
     """
 
     _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'kind': {'required': True},
         'display_name': {'required': True},
         'enabled': {'required': True},
@@ -77,6 +86,9 @@ class ScheduledAlertRule(AlertRule):
     }
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'query': {'key': 'properties.query', 'type': 'str'},

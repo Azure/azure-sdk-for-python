@@ -9,16 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .data_connector_py3 import DataConnector
+from .resource_py3 import Resource
 
 
-class OfficeDataConnector(DataConnector):
-    """Represents office data connector.
+class ActionResponse(Resource):
+    """Action for alert rule.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
-
-    All required parameters must be populated in order to send to Azure.
 
     :ivar id: Azure resource Id
     :vartype id: str
@@ -26,22 +24,16 @@ class OfficeDataConnector(DataConnector):
     :vartype name: str
     :ivar type: Azure resource type
     :vartype type: str
-    :param etag: Etag of the azure resource
+    :param etag: Etag of the action.
     :type etag: str
-    :param kind: Required. Constant filled by server.
-    :type kind: str
-    :param tenant_id: The tenant id to connect to, and get the data from.
-    :type tenant_id: str
-    :param data_types: The available data types for the connector.
-    :type data_types:
-     ~azure.mgmt.securityinsight.models.OfficeDataConnectorDataTypes
+    :param workflow_id: The name of the logic app's workflow.
+    :type workflow_id: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'kind': {'required': True},
     }
 
     _attribute_map = {
@@ -49,13 +41,10 @@ class OfficeDataConnector(DataConnector):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'tenant_id': {'key': 'properties.tenantId', 'type': 'str'},
-        'data_types': {'key': 'properties.dataTypes', 'type': 'OfficeDataConnectorDataTypes'},
+        'workflow_id': {'key': 'properties.workflowId', 'type': 'str'},
     }
 
-    def __init__(self, *, etag: str=None, tenant_id: str=None, data_types=None, **kwargs) -> None:
-        super(OfficeDataConnector, self).__init__(etag=etag, **kwargs)
-        self.tenant_id = tenant_id
-        self.data_types = data_types
-        self.kind = 'Office365'
+    def __init__(self, *, etag: str=None, workflow_id: str=None, **kwargs) -> None:
+        super(ActionResponse, self).__init__(**kwargs)
+        self.etag = etag
+        self.workflow_id = workflow_id

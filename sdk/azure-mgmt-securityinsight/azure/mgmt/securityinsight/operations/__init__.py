@@ -17,6 +17,8 @@ from .cases_operations import CasesOperations
 from .comments_operations import CommentsOperations
 from .case_comments_operations import CaseCommentsOperations
 from .bookmarks_operations import BookmarksOperations
+from .case_relations_operations import CaseRelationsOperations
+from .bookmark_relations_operations import BookmarkRelationsOperations
 from .data_connectors_operations import DataConnectorsOperations
 from .entities_operations import EntitiesOperations
 from .office_consents_operations import OfficeConsentsOperations
@@ -33,6 +35,8 @@ __all__ = [
     'CommentsOperations',
     'CaseCommentsOperations',
     'BookmarksOperations',
+    'CaseRelationsOperations',
+    'BookmarkRelationsOperations',
     'DataConnectorsOperations',
     'EntitiesOperations',
     'OfficeConsentsOperations',

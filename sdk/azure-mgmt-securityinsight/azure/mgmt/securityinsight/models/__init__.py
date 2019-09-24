@@ -16,7 +16,8 @@ try:
     from .aatp_data_connector_py3 import AATPDataConnector
     from .asc_data_connector_py3 import ASCDataConnector
     from .account_entity_py3 import AccountEntity
-    from .action_py3 import Action
+    from .action_request_py3 import ActionRequest
+    from .action_response_py3 import ActionResponse
     from .aggregations_py3 import Aggregations
     from .aggregations_kind1_py3 import AggregationsKind1
     from .alert_rule_py3 import AlertRule
@@ -28,6 +29,11 @@ try:
     from .aws_cloud_trail_data_connector_data_types_py3 import AwsCloudTrailDataConnectorDataTypes
     from .aws_cloud_trail_data_connector_py3 import AwsCloudTrailDataConnector
     from .azure_resource_entity_py3 import AzureResourceEntity
+    from .relation_base_py3 import RelationBase
+    from .case_relation_py3 import CaseRelation
+    from .bookmark_relation_py3 import BookmarkRelation
+    from .relation_node_py3 import RelationNode
+    from .relations_model_input_py3 import RelationsModelInput
     from .user_info_py3 import UserInfo
     from .bookmark_py3 import Bookmark
     from .case_py3 import Case
@@ -100,7 +106,8 @@ except (SyntaxError, ImportError):
     from .aatp_data_connector import AATPDataConnector
     from .asc_data_connector import ASCDataConnector
     from .account_entity import AccountEntity
-    from .action import Action
+    from .action_request import ActionRequest
+    from .action_response import ActionResponse
     from .aggregations import Aggregations
     from .aggregations_kind1 import AggregationsKind1
     from .alert_rule import AlertRule
@@ -112,6 +119,11 @@ except (SyntaxError, ImportError):
     from .aws_cloud_trail_data_connector_data_types import AwsCloudTrailDataConnectorDataTypes
     from .aws_cloud_trail_data_connector import AwsCloudTrailDataConnector
     from .azure_resource_entity import AzureResourceEntity
+    from .relation_base import RelationBase
+    from .case_relation import CaseRelation
+    from .bookmark_relation import BookmarkRelation
+    from .relation_node import RelationNode
+    from .relations_model_input import RelationsModelInput
     from .user_info import UserInfo
     from .bookmark import Bookmark
     from .case import Case
@@ -179,11 +191,13 @@ except (SyntaxError, ImportError):
     from .url_entity import UrlEntity
 from .operation_paged import OperationPaged
 from .alert_rule_paged import AlertRulePaged
-from .action_paged import ActionPaged
+from .action_response_paged import ActionResponsePaged
 from .alert_rule_template_paged import AlertRuleTemplatePaged
 from .case_paged import CasePaged
 from .case_comment_paged import CaseCommentPaged
 from .bookmark_paged import BookmarkPaged
+from .case_relation_paged import CaseRelationPaged
+from .bookmark_relation_paged import BookmarkRelationPaged
 from .data_connector_paged import DataConnectorPaged
 from .entity_paged import EntityPaged
 from .office_consent_paged import OfficeConsentPaged
@@ -196,6 +210,8 @@ from .security_insights_enums import (
     AttackTactic,
     TriggerOperator,
     AlertSeverity,
+    RelationTypes,
+    RelationNodeKind,
     CloseReason,
     CaseSeverity,
     CaseStatus,
@@ -225,7 +241,8 @@ __all__ = [
     'AATPDataConnector',
     'ASCDataConnector',
     'AccountEntity',
-    'Action',
+    'ActionRequest',
+    'ActionResponse',
     'Aggregations',
     'AggregationsKind1',
     'AlertRule',
@@ -237,6 +254,11 @@ __all__ = [
     'AwsCloudTrailDataConnectorDataTypes',
     'AwsCloudTrailDataConnector',
     'AzureResourceEntity',
+    'RelationBase',
+    'CaseRelation',
+    'BookmarkRelation',
+    'RelationNode',
+    'RelationsModelInput',
     'UserInfo',
     'Bookmark',
     'Case',
@@ -304,11 +326,13 @@ __all__ = [
     'UrlEntity',
     'OperationPaged',
     'AlertRulePaged',
-    'ActionPaged',
+    'ActionResponsePaged',
     'AlertRuleTemplatePaged',
     'CasePaged',
     'CaseCommentPaged',
     'BookmarkPaged',
+    'CaseRelationPaged',
+    'BookmarkRelationPaged',
     'DataConnectorPaged',
     'EntityPaged',
     'OfficeConsentPaged',
@@ -320,6 +344,8 @@ __all__ = [
     'AttackTactic',
     'TriggerOperator',
     'AlertSeverity',
+    'RelationTypes',
+    'RelationNodeKind',
     'CloseReason',
     'CaseSeverity',
     'CaseStatus',

@@ -20,6 +20,12 @@ class FusionAlertRule(AlertRule):
 
     All required parameters must be populated in order to send to Azure.
 
+    :ivar id: Azure resource Id
+    :vartype id: str
+    :ivar name: Azure resource name
+    :vartype name: str
+    :ivar type: Azure resource type
+    :vartype type: str
     :param etag: Etag of the azure resource
     :type etag: str
     :param kind: Required. Constant filled by server.
@@ -46,6 +52,9 @@ class FusionAlertRule(AlertRule):
     """
 
     _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'kind': {'required': True},
         'alert_rule_template_name': {'required': True},
         'description': {'readonly': True},
@@ -57,6 +66,9 @@ class FusionAlertRule(AlertRule):
     }
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'alert_rule_template_name': {'key': 'properties.alertRuleTemplateName', 'type': 'str'},

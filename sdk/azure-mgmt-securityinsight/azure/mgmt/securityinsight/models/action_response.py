@@ -9,16 +9,14 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .data_connector import DataConnector
+from .resource import Resource
 
 
-class AwsCloudTrailDataConnector(DataConnector):
-    """Represents Amazon Web Services CloudTrail data connector.
+class ActionResponse(Resource):
+    """Action for alert rule.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
-
-    All required parameters must be populated in order to send to Azure.
 
     :ivar id: Azure resource Id
     :vartype id: str
@@ -26,23 +24,16 @@ class AwsCloudTrailDataConnector(DataConnector):
     :vartype name: str
     :ivar type: Azure resource type
     :vartype type: str
-    :param etag: Etag of the azure resource
+    :param etag: Etag of the action.
     :type etag: str
-    :param kind: Required. Constant filled by server.
-    :type kind: str
-    :param aws_role_arn: The Aws Role Arn (with CloudTrailReadOnly policy)
-     that is used to access the Aws account.
-    :type aws_role_arn: str
-    :param data_types: The available data types for the connector.
-    :type data_types:
-     ~azure.mgmt.securityinsight.models.AwsCloudTrailDataConnectorDataTypes
+    :param workflow_id: The name of the logic app's workflow.
+    :type workflow_id: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'kind': {'required': True},
     }
 
     _attribute_map = {
@@ -50,13 +41,10 @@ class AwsCloudTrailDataConnector(DataConnector):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'aws_role_arn': {'key': 'properties.awsRoleArn', 'type': 'str'},
-        'data_types': {'key': 'properties.dataTypes', 'type': 'AwsCloudTrailDataConnectorDataTypes'},
+        'workflow_id': {'key': 'properties.workflowId', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
-        super(AwsCloudTrailDataConnector, self).__init__(**kwargs)
-        self.aws_role_arn = kwargs.get('aws_role_arn', None)
-        self.data_types = kwargs.get('data_types', None)
-        self.kind = 'AmazonWebServicesCloudTrail'
+        super(ActionResponse, self).__init__(**kwargs)
+        self.etag = kwargs.get('etag', None)
+        self.workflow_id = kwargs.get('workflow_id', None)
