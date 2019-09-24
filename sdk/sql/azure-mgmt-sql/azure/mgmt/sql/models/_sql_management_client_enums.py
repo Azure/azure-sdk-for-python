@@ -484,30 +484,6 @@ class JobTargetGroupMembershipType(str, Enum):
     exclude = "Exclude"
 
 
-class ManagedDatabaseStatus(str, Enum):
-
-    online = "Online"
-    offline = "Offline"
-    shutdown = "Shutdown"
-    creating = "Creating"
-    inaccessible = "Inaccessible"
-    updating = "Updating"
-
-
-class CatalogCollationType(str, Enum):
-
-    database_default = "DATABASE_DEFAULT"
-    sql_latin1_general_cp1_ci_as = "SQL_Latin1_General_CP1_CI_AS"
-
-
-class ManagedDatabaseCreateMode(str, Enum):
-
-    default = "Default"
-    restore_external_backup = "RestoreExternalBackup"
-    point_in_time_restore = "PointInTimeRestore"
-    recovery = "Recovery"
-
-
 class AutomaticTuningServerMode(str, Enum):
 
     custom = "Custom"
@@ -615,6 +591,12 @@ class DatabaseStatus(str, Enum):
     disabled = "Disabled"
 
 
+class CatalogCollationType(str, Enum):
+
+    database_default = "DATABASE_DEFAULT"
+    sql_latin1_general_cp1_ci_as = "SQL_Latin1_General_CP1_CI_AS"
+
+
 class DatabaseLicenseType(str, Enum):
 
     license_included = "LicenseIncluded"
@@ -683,6 +665,25 @@ class ManagedInstanceProxyOverride(str, Enum):
     proxy = "Proxy"
     redirect = "Redirect"
     default = "Default"
+
+
+class ManagedDatabaseStatus(str, Enum):
+
+    online = "Online"
+    offline = "Offline"
+    shutdown = "Shutdown"
+    creating = "Creating"
+    inaccessible = "Inaccessible"
+    restoring = "Restoring"
+    updating = "Updating"
+
+
+class ManagedDatabaseCreateMode(str, Enum):
+
+    default = "Default"
+    restore_external_backup = "RestoreExternalBackup"
+    point_in_time_restore = "PointInTimeRestore"
+    recovery = "Recovery"
 
 
 class LongTermRetentionDatabaseState(str, Enum):
