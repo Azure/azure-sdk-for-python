@@ -95,10 +95,10 @@ class InkRecognizerClient(_InkRecognizerClientBase):
         await self._pipeline_client.__aexit__(*exc_details)
 
     async def _send_request(self, data, config):
-        self._logger.info("Request headers:")
-        self._logger.info(config.headers)
-        self._logger.info("Request data:")
-        self._logger.info(data)
+        logging.info("Request headers:")
+        logging.info(config.headers)
+        logging.info("Request data:")
+        logging.info(data)
 
         request = HttpRequest("PUT", self._generate_url(config), data=data)
         response = await self._pipeline_client._pipeline.run(  # pylint:disable=protected-access

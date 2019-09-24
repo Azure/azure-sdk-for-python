@@ -31,8 +31,6 @@ from ._enums import InkStrokeKind, ApplicationKind, InkPointUnit, ServiceVersion
 from ._models import _parse_recognition_units
 
 
-_LOGGER = logging.getLogger(__name__)
-
 _DEFAULT_ARGUMENTS = {
     "application_kind": ApplicationKind.MIXED,
     "ink_point_unit": InkPointUnit.MM,
@@ -42,14 +40,9 @@ _DEFAULT_ARGUMENTS = {
 }
 
 
-def _validate_param(param, param_name, types):
-    if not isinstance(types, (list, tuple)):
-        types = [types]
-    if not isinstance(param, tuple(types)):
-        if len(types) == 1:
-            supported_type = "<%s>" % types[0].__name__
-        else:
-            supported_type = "in (%s)" % (", ".join(t.__name__ for t in types))
+def _validate_param(param, param_name, valid_type):
+    if not isinstance(param, valid_type):
+        supported_type = "<%s>" % types[0].__name__
         if param is None:
             type_got = "None"
         else:
@@ -58,12 +51,19 @@ def _validate_param(param, param_name, types):
         raise ValueError(error_info)
 
 
-def _get_and_validate_param(kwargs, param_name, types, default=None):
+def _get_and_validate_param(kwargs, param_name, valid_type=None, factory=None, default=None):
     value = kwargs.pop(param_name, None)
     if value is None:
         return default
 
-    _validate_param(value, param_name, types)
+    if valid_type:
+        _validate_param(value, param_name, valid_type)
+    if factory:
+        try:
+            value = factory(value)
+        except ValueError as e:
+            error_info = "%s: %s" % (param_name, str(e))
+            raise ValueError(error_info)
     return value
 
 
@@ -91,36 +91,31 @@ class _AzureConfiguration(Configuration):
 class _InkRecognizerConfiguration():
     def __init__(self, **kwargs):
         # Ink Recognizer request arguments
-        self.application_kind = _get_and_validate_param(kwargs, "application_kind", ApplicationKind)
-        self.ink_point_unit = _get_and_validate_param(kwargs, "ink_point_unit", InkPointUnit)
-        self.language = _get_and_validate_param(kwargs, "language", str)
-        self.unit_multiple = _get_and_validate_param(kwargs, "unit_multiple", (int, float))
-        self.service_version = _get_and_validate_param(kwargs, "service_version", ServiceVersion)
+        self.application_kind = _get_and_validate_param(kwargs, "application_kind", valid_type=ApplicationKind)
+        self.ink_point_unit = _get_and_validate_param(kwargs, "ink_point_unit", valid_type=InkPointUnit)
+        self.language = _get_and_validate_param(kwargs, "language", factory=str)
+        self.unit_multiple = _get_and_validate_param(kwargs, "unit_multiple", factory=float)
+        self.service_version = _get_and_validate_param(kwargs, "service_version", valid_type=ServiceVersion)
         # azure service common arguments
-        self.response_hook = kwargs.get("response_hook", None)
+        self.response_hook = kwargs.get("response_hook", default=None)
         if self.response_hook is not None:
             if not callable(self.response_hook):
                 raise ValueError("response_hook should be callable.")
-        timeout = _get_and_validate_param(kwargs, "timeout", (int, float))
-        client_request_id = _get_and_validate_param(kwargs, "client_request_id", str)
-        self.headers = _get_and_validate_param(kwargs, "headers", dict, {})
-        self.headers["x-ms-client-request-id"] = client_request_id or self._generate_uuid()
+        timeout = _get_and_validate_param(kwargs, "timeout", factory=float)
+        client_request_id = _get_and_validate_param(kwargs, "client_request_id", factory=str)
+        self.headers = _get_and_validate_param(kwargs, "headers", default={})
+        self.headers["x-ms-client-request-id"] = client_request_id or str(uuid.uuid4())  # generate random uuid
         if timeout is not None:
             kwargs["connection_timeout"] = timeout
         self.kwargs = kwargs
-
-    def _generate_uuid(self):  # pylint:disable=no-self-use
-        return str(uuid.uuid4())
 
 
 class _InkRecognizerClientBase:
     def __init__(self, url, credential, **kwargs):
         # type: (str, TokenCredential, Any) -> None
-        _validate_param(url, "url", str)
 
-        self._logger = _LOGGER
-        self._url = url
-        self._default_arguments = _DEFAULT_ARGUMENTS
+        self._url = str(url)
+        self._default_arguments = _DEFAULT_ARGUMENTS.copy()
         self._default_arguments.update(kwargs)
 
         azure_config = _AzureConfiguration(credential, **kwargs)
@@ -151,7 +146,7 @@ class _InkRecognizerClientBase:
         }
         if stroke.kind in [InkStrokeKind.DRAWING, InkStrokeKind.WRITING]:
             stroke_json["kind"] = stroke.kind.value
-        if stroke.language is not None and stroke.language != "":
+        if stroke.language:
             stroke_json["language"] = stroke.language
         return stroke_json
 
@@ -172,10 +167,10 @@ class _InkRecognizerClientBase:
         content = response.body().decode("utf-8")
 
         if status_code == 200:
-            self._logger.info("Response headers:")
-            self._logger.info(headers)
-            self._logger.info("Response content:")
-            self._logger.info(content)
+            logging.info("Response headers:")
+            logging.info(headers)
+            logging.info("Response content:")
+            logging.info(content)
             content_json = json.loads(content, encoding="utf-8")
             if config.response_hook:
                 config.response_hook(headers, content_json)
@@ -189,12 +184,12 @@ class _InkRecognizerClientBase:
 
     def _error_handler(self, status_code, content):
         if status_code == 404:
-            self._logger.warning(content)
+            logging.warning(content)
             raise ResourceNotFoundError(content)
         if status_code == 401:
-            self._logger.warning(content)
+            logging.warning(content)
             raise ClientAuthenticationError(content)
-        self._logger.warning(content)
+        logging.warning(content)
         raise HttpResponseError(content)
 
 
@@ -252,10 +247,10 @@ class InkRecognizerClient(_InkRecognizerClientBase):
     """
 
     def _send_request(self, data, config):
-        self._logger.info("Request headers:")
-        self._logger.info(config.headers)
-        self._logger.info("Request data:")
-        self._logger.info(data)
+        logging.info("Request headers:")
+        logging.info(config.headers)
+        logging.info("Request data:")
+        logging.info(data)
 
         request = HttpRequest("PUT", self._generate_url(config), data=data)
         response = self._pipeline_client._pipeline.run(  # pylint:disable=protected-access
