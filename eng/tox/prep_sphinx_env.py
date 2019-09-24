@@ -70,7 +70,6 @@ def copy_conf(doc_folder):
 def create_index(doc_folder, source_location, package_name):
     index_content = ""
 
-    pdb.set_trace()
     package_rst = "{}.rst".format(package_name.replace("-", "."))
     content_destination = os.path.join(doc_folder, 'index.rst')
 
