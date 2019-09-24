@@ -387,7 +387,7 @@ class CertificateClientTests(KeyVaultTestCase):
             client.purge_deleted_certificate(name=certificate_name)
 
         if not self.is_playback():
-            time.sleep(30)
+            time.sleep(50)
 
         # validate none of our deleted certificates are returned by list_deleted_certificates
         deleted = [parse_vault_id(url=c.id).name for c in client.list_deleted_certificates()]

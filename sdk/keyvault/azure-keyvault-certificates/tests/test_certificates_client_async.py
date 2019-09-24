@@ -381,7 +381,7 @@ class CertificateClientTests(KeyVaultTestCase):
             await client.purge_deleted_certificate(name=certificate_name)
 
         if not self.is_playback():
-            await asyncio.sleep(30)
+            await asyncio.sleep(50)
 
         # validate none of our deleted certificates are returned by list_deleted_certificates
         deleted_certificates = client.list_deleted_certificates()
