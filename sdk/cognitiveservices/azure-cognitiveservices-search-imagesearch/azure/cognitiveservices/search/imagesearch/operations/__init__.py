@@ -9,7 +9,7 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .images_operations import ImagesOperations
+from ._images_operations import ImagesOperations
 
 __all__ = [
     'ImagesOperations',
