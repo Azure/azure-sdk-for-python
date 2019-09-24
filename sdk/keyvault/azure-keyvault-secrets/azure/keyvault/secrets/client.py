@@ -6,7 +6,7 @@ from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.tracing.decorator import distributed_trace
 
 from ._shared import KeyVaultClientBase
-from .models import Secret, DeletedSecret, SecretAttributes
+from .models import Secret, DeletedSecret, SecretProperties
 
 try:
     from typing import TYPE_CHECKING
@@ -118,7 +118,7 @@ class SecretClient(KeyVaultClientBase):
         return Secret._from_secret_bundle(bundle)
 
     @distributed_trace
-    def update_secret(
+    def update_secret_properties(
         self,
         name,  # type: str
         version=None,  # type: Optional[str]
@@ -129,7 +129,7 @@ class SecretClient(KeyVaultClientBase):
         tags=None,  # type: Optional[Dict[str, str]]
         **kwargs  # type: **Any
     ):
-        # type: (...) -> SecretAttributes
+        # type: (...) -> SecretProperties
         """Update a secret's attributes, such as its tags or whether it's enabled. Requires the secrets/set permission.
 
         **This method can't change a secret's value.** Use :func:`set_secret` to change values.
@@ -141,7 +141,7 @@ class SecretClient(KeyVaultClientBase):
         :param datetime.datetime not_before: (optional) Not before date of the secret in UTC
         :param datetime.datetime expires: (optional) Expiry date  of the secret in UTC.
         :param dict tags: (optional) Application specific metadata in the form of key-value pairs
-        :rtype: ~azure.keyvault.secrets.models.SecretAttributes
+        :rtype: ~azure.keyvault.secrets.models.SecretProperties
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the secret doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -169,16 +169,16 @@ class SecretClient(KeyVaultClientBase):
             error_map={404: ResourceNotFoundError},
             **kwargs
         )
-        return SecretAttributes._from_secret_bundle(bundle)  # pylint: disable=protected-access
+        return SecretProperties._from_secret_bundle(bundle)  # pylint: disable=protected-access
 
     @distributed_trace
-    def list_secrets(self, **kwargs):
-        # type: (**Any) -> ItemPaged[SecretAttributes]
+    def list_secret_properties(self, **kwargs):
+        # type: (**Any) -> ItemPaged[SecretProperties]
         """List the latest identifier and attributes of all secrets in the vault, not including their values. Requires
         the secrets/list permission.
 
         :returns: An iterator of secrets
-        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.secrets.models.SecretAttributes]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.secrets.models.SecretProperties]
 
         Example:
             .. literalinclude:: ../tests/test_samples_secrets.py
@@ -193,19 +193,19 @@ class SecretClient(KeyVaultClientBase):
         return self._client.get_secrets(
             self._vault_url,
             maxresults=max_page_size,
-            cls=lambda objs: [SecretAttributes._from_secret_item(x) for x in objs],
+            cls=lambda objs: [SecretProperties._from_secret_item(x) for x in objs],
             **kwargs
         )
 
     @distributed_trace
     def list_secret_versions(self, name, **kwargs):
-        # type: (str, **Any) -> ItemPaged[SecretAttributes]
+        # type: (str, **Any) -> ItemPaged[SecretProperties]
         """List all versions of a secret, including their identifiers and attributes but not their values. Requires the
         secrets/list permission.
 
         :param str name: Name of the secret
         :returns: An iterator of secrets
-        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.secrets.models.SecretAttributes]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.secrets.models.SecretProperties]
 
         Example:
             .. literalinclude:: ../tests/test_samples_secrets.py
@@ -221,7 +221,7 @@ class SecretClient(KeyVaultClientBase):
             self._vault_url,
             name,
             maxresults=max_page_size,
-            cls=lambda objs: [SecretAttributes._from_secret_item(x) for x in objs],
+            cls=lambda objs: [SecretProperties._from_secret_item(x) for x in objs],
             **kwargs
         )
 
@@ -253,12 +253,12 @@ class SecretClient(KeyVaultClientBase):
 
     @distributed_trace
     def restore_secret(self, backup, **kwargs):
-        # type: (bytes, **Any) -> SecretAttributes
+        # type: (bytes, **Any) -> SecretProperties
         """Restore a backed up secret. Requires the secrets/restore permission.
 
         :param bytes backup: The raw bytes of the secret backup
         :returns: The restored secret
-        :rtype: ~azure.keyvault.secrets.models.SecretAttributes
+        :rtype: ~azure.keyvault.secrets.models.SecretProperties
         :raises:
             :class:`~azure.core.exceptions.ResourceExistsError` if the secret's name is already in use,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -273,7 +273,7 @@ class SecretClient(KeyVaultClientBase):
 
         """
         bundle = self._client.restore_secret(self.vault_url, backup, error_map={409: ResourceExistsError}, **kwargs)
-        return SecretAttributes._from_secret_bundle(bundle)
+        return SecretProperties._from_secret_bundle(bundle)
 
     @distributed_trace
     def delete_secret(self, name, **kwargs):
@@ -372,13 +372,13 @@ class SecretClient(KeyVaultClientBase):
 
     @distributed_trace
     def recover_deleted_secret(self, name, **kwargs):
-        # type: (str, **Any) -> SecretAttributes
+        # type: (str, **Any) -> SecretProperties
         """Recover a deleted secret to its latest version. This is only possible in vaults with soft-delete enabled.
         Requires the secrets/recover permission.
 
         :param str name: Name of the secret
         :returns: The recovered secret
-        :rtype: ~azure.keyvault.secrets.models.SecretAttributes
+        :rtype: ~azure.keyvault.secrets.models.SecretProperties
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
@@ -391,4 +391,4 @@ class SecretClient(KeyVaultClientBase):
 
         """
         bundle = self._client.recover_deleted_secret(self.vault_url, name, **kwargs)
-        return SecretAttributes._from_secret_bundle(bundle)
+        return SecretProperties._from_secret_bundle(bundle)

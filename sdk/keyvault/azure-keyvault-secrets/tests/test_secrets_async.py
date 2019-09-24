@@ -15,7 +15,8 @@ from dateutil import parser as date_parse
 
 class KeyVaultSecretTest(AsyncKeyVaultTestCase):
     def _assert_secret_attributes_equal(self, s1, s2):
-        # self.assertEqual(s1.id , s2.id)
+        self.assertEqual(s1.name, s2.name)
+        self.assertEqual(s1.vault_url, s2.vault_url)
         self.assertEqual(s1.content_type, s2.content_type)
         self.assertEqual(s1.enabled, s2.enabled)
         self.assertEqual(s1.not_before, s2.not_before)
@@ -27,21 +28,21 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
 
     def _validate_secret_bundle(self, secret_attributes, vault, secret_name, secret_value):
         prefix = "/".join(s.strip("/") for s in [vault, "secrets", secret_name])
-        id = secret_attributes.id
+        id = secret_attributes.properties.id
         self.assertTrue(id.index(prefix) == 0, "Id should start with '{}', but value is '{}'".format(prefix, id))
         self.assertEqual(
             secret_attributes.value,
             secret_value,
             "value should be '{}', but is '{}'".format(secret_value, secret_attributes.value),
         )
-        self.assertTrue(secret_attributes.created and secret_attributes.updated, "Missing required date attributes.")
+        self.assertTrue(secret_attributes.properties.created and secret_attributes.properties.updated, "Missing required date attributes.")
 
     async def _validate_secret_list(self, secrets, expected):
         async for secret in secrets:
             # TODO: what if secrets contains unexpected entries?
             if secret.name in expected.keys():
                 expected_secret = expected[secret.name]
-                self._assert_secret_attributes_equal(expected_secret, secret)
+                self._assert_secret_attributes_equal(expected_secret.properties, secret)
                 del expected[secret.name]
         self.assertEqual(len(expected), 0)
 
@@ -64,34 +65,34 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
         tags = {"foo": "created tag"}
         created = await client.set_secret(secret_name, secret_value, enabled=enabled, not_before=not_before, tags=tags)
         self._validate_secret_bundle(created, vault_client.vault_url, secret_name, secret_value)
-        self.assertEqual(enabled, created.enabled)
-        self.assertEqual(not_before, created.not_before)
-        self.assertEqual(tags, created.tags)
+        self.assertEqual(enabled, created.properties.enabled)
+        self.assertEqual(not_before, created.properties.not_before)
+        self.assertEqual(tags, created.properties.tags)
 
         # get secret without version
-        retrieved_secret = await client.get_secret(created.name, "")
-        self.assertEqual(created.id, retrieved_secret.id)
-        self._assert_secret_attributes_equal(created, retrieved_secret)
+        retrieved_secret = await client.get_secret(created.properties.name, "")
+        self.assertEqual(created.properties.id, retrieved_secret.properties.id)
+        self._assert_secret_attributes_equal(created.properties, retrieved_secret.properties)
 
         # get secret with version
-        secret_with_version = await client.get_secret(created.name, created.version)
-        self.assertEqual(created.id, retrieved_secret.id)
-        self._assert_secret_attributes_equal(created, secret_with_version)
+        secret_with_version = await client.get_secret(created.properties.name, created.properties.version)
+        self.assertEqual(created.properties.id, retrieved_secret.properties.id)
+        self._assert_secret_attributes_equal(created.properties, secret_with_version.properties)
 
         async def _update_secret(secret):
             content_type = "text/plain"
             expires = date_parse.parse("2050-02-02T08:00:00.000Z")
             tags = {"foo": "updated tag"}
-            enabled = not secret.enabled
-            updated_secret = await client.update_secret(
-                secret.name, secret.version, content_type=content_type, expires=expires, tags=tags, enabled=enabled
+            enabled = not secret.properties.enabled
+            updated_secret = await client.update_secret_properties(
+                secret.properties.name, secret.properties.version, content_type=content_type, expires=expires, tags=tags, enabled=enabled
             )
             self.assertEqual(tags, updated_secret.tags)
-            self.assertEqual(secret.id, updated_secret.id)
+            self.assertEqual(secret.properties.id, updated_secret.id)
             self.assertEqual(content_type, updated_secret.content_type)
             self.assertEqual(expires, updated_secret.expires)
-            self.assertNotEqual(secret.enabled, updated_secret.enabled)
-            self.assertNotEqual(secret.updated, updated_secret.updated)
+            self.assertNotEqual(secret.properties.enabled, updated_secret.enabled)
+            self.assertNotEqual(secret.properties.updated, updated_secret.updated)
             return updated_secret
 
         # update secret with version
@@ -127,7 +128,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
                 expected[secret_name] = secret
 
         # list secrets
-        result = client.list_secrets(max_results=max_secrets)
+        result = client.list_secret_properties(max_results=max_secrets)
         await self._validate_secret_list(result, expected)
 
     @ResourceGroupPreparer()
@@ -158,9 +159,8 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
             self.assertIsNotNone(deleted_secret.deleted_date)
             self.assertIsNotNone(deleted_secret.scheduled_purge_date)
             self.assertIsNotNone(deleted_secret.recovery_id)
-
-        # validate all the deleted secrets are returned by list_deleted_secrets
-        await self._validate_secret_list(list(client.list_deleted_secrets()), expected)
+            expected_secret = expected[deleted_secret.properties.name]
+            self._assert_secret_attributes_equal(expected_secret.properties, deleted_secret.properties)
 
     @ResourceGroupPreparer()
     @AsyncVaultClientPreparer()
@@ -179,7 +179,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
             secret = None
             while not secret:
                 secret = await client.set_secret(secret_name, secret_value)
-                expected[secret.id] = secret
+                expected[secret.properties.id] = secret
 
         # list secret versions
         result = client.list_secret_versions(secret_name)
@@ -189,34 +189,8 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
             if secret.id in expected.keys():
                 expected_secret = expected[secret.id]
                 del expected[secret.id]
-                self._assert_secret_attributes_equal(expected_secret, secret)
+                self._assert_secret_attributes_equal(expected_secret.properties, secret)
         self.assertEqual(len(expected), 0)
-
-    @ResourceGroupPreparer()
-    @AsyncVaultClientPreparer(enable_soft_delete=True)
-    @AsyncKeyVaultTestCase.await_prepared_test
-    async def test_list_deleted_secrets(self, vault_client, **kwargs):
-        self.assertIsNotNone(vault_client)
-        client = vault_client.secrets
-        secret_name = self.get_resource_name("sec")
-        secret_value = self.get_resource_name("secval")
-        expected = {}
-
-        # create secrets to delete
-        for _ in range(0, self.list_test_size):
-            expected[secret_name] = await client.set_secret(secret_name, secret_value)
-
-        # delete all secrets
-        for secret_name in expected.keys():
-            await client.delete_secret(secret_name)
-
-        await self._poll_until_no_exception(
-            client.get_deleted_secret, *expected.keys(), expected_exception=ResourceNotFoundError
-        )
-
-        # validate all our deleted secrets are returned by list_deleted_secrets
-        result = client.list_deleted_secrets()
-        await self._validate_secret_list(result, expected)
 
     @ResourceGroupPreparer()
     @AsyncVaultClientPreparer()
@@ -231,16 +205,16 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
         created_bundle = await client.set_secret(secret_name, secret_value)
 
         # backup secret
-        secret_backup = await client.backup_secret(created_bundle.name)
+        secret_backup = await client.backup_secret(created_bundle.properties.name)
         self.assertIsNotNone(secret_backup, "secret_backup")
 
         # delete secret
-        await client.delete_secret(created_bundle.name)
+        await client.delete_secret(created_bundle.properties.name)
 
         # restore secret
         restored = await client.restore_secret(secret_backup)
-        self.assertEqual(created_bundle.id, restored.id)
-        self._assert_secret_attributes_equal(created_bundle, restored)
+        self.assertEqual(created_bundle.properties.id, restored.id)
+        self._assert_secret_attributes_equal(created_bundle.properties, restored)
 
     @ResourceGroupPreparer()
     @AsyncVaultClientPreparer(enable_soft_delete=True)
@@ -266,7 +240,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
 
         # validate all our deleted secrets are returned by list_deleted_secrets
         async for deleted_secret in client.list_deleted_secrets():
-            assert deleted_secret.name in secrets
+            assert deleted_secret.properties.name in secrets
 
         # recover select secrets
         for secret_name in secrets.keys():
@@ -301,7 +275,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
 
         # validate all our deleted secrets are returned by list_deleted_secrets
         async for deleted_secret in client.list_deleted_secrets():
-            assert deleted_secret.name in secrets
+            assert deleted_secret.properties.name in secrets
 
         # purge secrets
         for secret_name in secrets.keys():

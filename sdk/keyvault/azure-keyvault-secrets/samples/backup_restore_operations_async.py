@@ -42,22 +42,22 @@ async def run_sample():
         # if the secret already exists in the Key Vault, then a new version of the secret is created.
         print("\n.. Create Secret")
         secret = await client.set_secret("backupRestoreSecretName", "backupRestoreSecretValue")
-        print("Secret with name '{0}' created with value '{1}'".format(secret.name, secret.value))
+        print("Secret with name '{0}' created with value '{1}'".format(secret.properties.name, secret.value))
 
         # Backups are good to have, if in case secrets gets deleted accidentally.
         # For long term storage, it is ideal to write the backup to a file.
         print("\n.. Create a backup for an existing Secret")
-        secret_backup = await client.backup_secret(secret.name)
-        print("Backup created for secret with name '{0}'.".format(secret.name))
+        secret_backup = await client.backup_secret(secret.properties.name)
+        print("Backup created for secret with name '{0}'.".format(secret.properties.name))
 
         # The storage account secret is no longer in use, so you delete it.
         await client.delete_secret(secret.name)
-        print("Deleted Secret with name '{0}'".format(secret.name))
+        print("Deleted Secret with name '{0}'".format(secret.properties.name))
 
         # In future, if the secret is required again, we can use the backup value to restore it in the Key Vault.
         print("\n.. Restore the secret using the backed up secret bytes")
         secret = await client.restore_secret(secret_backup)
-        print("Restored Secret with name '{0}'".format(secret.name))
+        print("Restored Secret with name '{0}'".format(secret.properties.name))
 
     except HttpResponseError as e:
         print("\nrun_sample has caught an error. {0}".format(e.message))

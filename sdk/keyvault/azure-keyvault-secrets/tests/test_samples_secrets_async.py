@@ -43,14 +43,14 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         # create a secret, setting optional arguments
         secret = await secret_client.set_secret("secret-name", "secret-value", enabled=True, expires=expires)
 
-        print(secret.id)
-        print(secret.name)
-        print(secret.enabled)
-        print(secret.expires)
+        print(secret.properties.id)
+        print(secret.properties.name)
+        print(secret.properties.enabled)
+        print(secret.properties.expires)
 
         # [END set_secret]
 
-        secret_version = secret.version
+        secret_version = secret.properties.version
         # [START get_secret]
 
         # get the latest version of a secret
@@ -59,10 +59,10 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         # alternatively, specify a version
         secret = await secret_client.get_secret("secret-name", secret_version)
 
-        print(secret.id)
-        print(secret.name)
-        print(secret.version)
-        print(secret.vault_url)
+        print(secret.properties.id)
+        print(secret.properties.name)
+        print(secret.properties.version)
+        print(secret.properties.vault_url)
 
         # [END get_secret]
         # [START update_secret]
@@ -70,12 +70,12 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         # update attributes of an existing secret
         content_type = "text/plain"
         tags = {"foo": "updated tag"}
-        updated_secret = await secret_client.update_secret("secret-name", content_type=content_type, tags=tags)
+        updated_secret_properties = await secret_client.update_secret_properties("secret-name", content_type=content_type, tags=tags)
 
-        print(updated_secret.version)
-        print(updated_secret.updated)
-        print(updated_secret.content_type)
-        print(updated_secret.tags)
+        print(updated_secret_properties.version)
+        print(updated_secret_properties.updated)
+        print(updated_secret_properties.content_type)
+        print(updated_secret_properties.tags)
 
         # [END update_secret]
         # [START delete_secret]
@@ -83,7 +83,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         # delete a secret
         deleted_secret = await secret_client.delete_secret("secret-name")
 
-        print(deleted_secret.name)
+        print(deleted_secret.properties.name)
 
         # if the vault has soft-delete enabled, the secret's deleted_date,
         # scheduled purge date and recovery id are set
@@ -105,7 +105,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         # [START list_secrets]
 
         # gets a list of secrets in the vault
-        secrets = secret_client.list_secrets()
+        secrets = secret_client.list_secret_properties()
 
         async for secret in secrets:
             # the list doesn't include values or versions of the secrets
@@ -147,7 +147,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
     async def test_example_secrets_backup_restore(self, vault_client, **kwargs):
         secret_client = vault_client.secrets
         created_secret = await secret_client.set_secret("secret-name", "secret-value")
-        secret_name = created_secret.name
+        secret_name = created_secret.properties.name
         # [START backup_secret]
 
         # backup secret
@@ -158,9 +158,9 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         # [END backup_secret]
 
-        await secret_client.delete_secret(created_secret.name)
+        await secret_client.delete_secret(created_secret.properties.name)
         await self._poll_until_exception(
-            secret_client.get_secret, created_secret.name, expected_exception=ResourceNotFoundError
+            secret_client.get_secret, created_secret.properties.name, expected_exception=ResourceNotFoundError
         )
 
         # [START restore_secret]
@@ -178,16 +178,16 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
     async def test_example_secrets_recover(self, vault_client, **kwargs):
         secret_client = vault_client.secrets
         created_secret = await secret_client.set_secret("secret-name", "secret-value")
-        await secret_client.delete_secret(created_secret.name)
+        await secret_client.delete_secret(created_secret.properties.name)
 
         await self._poll_until_no_exception(
-            secret_client.get_deleted_secret, created_secret.name, expected_exception=ResourceNotFoundError
+            secret_client.get_deleted_secret, created_secret.properties.name, expected_exception=ResourceNotFoundError
         )
 
         # [START get_deleted_secret]
         # gets a deleted secret (requires soft-delete enabled for the vault)
         deleted_secret = await secret_client.get_deleted_secret("secret-name")
-        print(deleted_secret.name)
+        print(deleted_secret.properties.name)
 
         # [END get_deleted_secret]
         # [START recover_deleted_secret]

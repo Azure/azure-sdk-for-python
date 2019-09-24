@@ -44,24 +44,24 @@ try:
     print("\n.. Create Secret")
     bank_secret = client.set_secret("recoverPurgeBankSecretName", "recoverPurgeSecretValue1")
     storage_secret = client.set_secret("recoverPurgeStorageSecretName", "recoverPurgeSecretValue2")
-    print("Secret with name '{0}' was created.".format(bank_secret.name))
-    print("Secret with name '{0}' was created.".format(storage_secret.name))
+    print("Secret with name '{0}' was created.".format(bank_secret.properties.name))
+    print("Secret with name '{0}' was created.".format(storage_secret.properties.name))
 
     # The storage account was closed, need to delete its credentials from the Key Vault.
     print("\n.. Delete a Secret")
-    secret = client.delete_secret(bank_secret.name)
+    secret = client.delete_secret(bank_secret.properties.name)
     time.sleep(20)
-    print("Secret with name '{0}' was deleted on date {1}.".format(secret.name, secret.deleted_date))
+    print("Secret with name '{0}' was deleted on date {1}.".format(secret.properties.name, secret.deleted_date))
 
     # We accidentally deleted the bank account secret. Let's recover it.
     # A deleted secret can only be recovered if the Key Vault is soft-delete enabled.
     print("\n.. Recover Deleted  Secret")
-    recovered_secret = client.recover_deleted_secret(bank_secret.name)
+    recovered_secret = client.recover_deleted_secret(bank_secret.properties.name)
     print("Recovered Secret with name '{0}'.".format(recovered_secret.name))
 
     # Let's delete storage account now.
     # If the keyvault is soft-delete enabled, then for permanent deletion deleted secret needs to be purged.
-    client.delete_secret(storage_secret.name)
+    client.delete_secret(storage_secret.properties.name)
 
     # To ensure secret is deleted on the server side.
     print("\nDeleting Storage Secret...")
@@ -69,7 +69,7 @@ try:
 
     # To ensure permanent deletion, we might need to purge the secret.
     print("\n.. Purge Deleted Secret")
-    client.purge_deleted_secret(storage_secret.name)
+    client.purge_deleted_secret(storage_secret.properties.name)
     print("Secret has been permanently deleted.")
 
 except HttpResponseError as e:
