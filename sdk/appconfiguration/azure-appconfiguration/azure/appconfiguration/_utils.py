@@ -7,6 +7,10 @@
 from datetime import datetime
 import re
 
+def return_header(response, body, response_headers):
+    # pylint: disable=unused-argument
+    return response_headers
+
 def escape_reserved(value):
     """
     Reserved characters are star(*), comma(,) and backslash(\\)
@@ -25,7 +29,6 @@ def escape_reserved(value):
     # But if a * is at the beginning or the end, don't add the backslash
     return re.sub(r"((?!^)\*(?!$)|\\|,)", r"\\\1", value)
 
-
 def escape_and_tostr(value):
     if value is None:
         return None
@@ -34,6 +37,18 @@ def escape_and_tostr(value):
     value = escape_reserved(value)
     return ','.join(value)
 
+def dequote_etag(etag):
+    if not etag:
+        return etag
+    if etag.startswith('"') and etag.endswith('"'):
+        etag = etag[1:]
+        etag = etag[:-1]
+        return etag
+    if etag.startswith("'") and etag.endswith("'"):
+        etag = etag[1:]
+        etag = etag[:-1]
+        return etag
+    return etag
 
 def quote_etag(etag):
     if etag != "*" and etag is not None:
