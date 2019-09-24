@@ -703,9 +703,11 @@ class MultiPartHelper(object):
         try:
             from email.policy import HTTP
             full_message = main_message.as_bytes(policy=HTTP)
+            eol = b'\r\n'
         except ImportError: # Python 2.7
             full_message = main_message.as_string()
-        _, _, body = full_message.split(b'\r\n', 2)
+            eol = b'\n'
+        _, _, body = full_message.split(eol, 2)
         self.main_request.set_bytes_body(body)
         self.main_request.headers['Content-Type'] = 'multipart/mixed; boundary='+main_message.get_boundary()
 
