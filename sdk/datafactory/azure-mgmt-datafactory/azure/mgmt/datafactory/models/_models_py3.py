@@ -651,27 +651,14 @@ class CopySource(Model):
     """A copy activity source.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AmazonRedshiftSource, GoogleAdWordsSource,
-    OracleServiceCloudSource, DynamicsAXSource, ResponsysSource,
-    SalesforceMarketingCloudSource, VerticaSource, NetezzaSource, ZohoSource,
-    XeroSource, SquareSource, SparkSource, ShopifySource, ServiceNowSource,
-    QuickBooksSource, PrestoSource, PhoenixSource, PaypalSource, MarketoSource,
-    AzureMariaDBSource, MariaDBSource, MagentoSource, JiraSource, ImpalaSource,
-    HubspotSource, HiveSource, HBaseSource, GreenplumSource,
-    GoogleBigQuerySource, EloquaSource, DrillSource, CouchbaseSource,
-    ConcurSource, AzurePostgreSqlSource, AmazonMWSSource, HttpSource,
-    AzureBlobFSSource, AzureDataLakeStoreSource, Office365Source,
-    CosmosDbMongoDbApiSource, MongoDbV2Source, MongoDbSource, CassandraSource,
-    WebSource, TeradataSource, OracleSource, AzureDataExplorerSource,
-    AzureMySqlSource, HdfsSource, FileSystemSource, SqlDWSource, SqlMISource,
-    AzureSqlSource, SqlServerSource, SqlSource, RestSource, SapTableSource,
-    SapOpenHubSource, SapHanaSource, SapEccSource, SapCloudForCustomerSource,
-    SalesforceServiceCloudSource, SalesforceSource, ODataSource, SapBwSource,
-    SybaseSource, PostgreSqlSource, MySqlSource, OdbcSource, Db2Source,
-    MicrosoftAccessSource, InformixSource, RelationalSource,
-    CommonDataServiceForAppsSource, DynamicsCrmSource, DynamicsSource,
-    DocumentDbCollectionSource, BlobSource, AzureTableSource, BinarySource,
-    OrcSource, JsonSource, DelimitedTextSource, ParquetSource, AvroSource
+    sub-classes are: HttpSource, AzureBlobFSSource, AzureDataLakeStoreSource,
+    Office365Source, CosmosDbMongoDbApiSource, MongoDbV2Source, MongoDbSource,
+    WebSource, OracleSource, AzureDataExplorerSource, HdfsSource,
+    FileSystemSource, RestSource, SalesforceServiceCloudSource, ODataSource,
+    MicrosoftAccessSource, RelationalSource, CommonDataServiceForAppsSource,
+    DynamicsCrmSource, DynamicsSource, DocumentDbCollectionSource, BlobSource,
+    TabularSource, BinarySource, OrcSource, JsonSource, DelimitedTextSource,
+    ParquetSource, AvroSource
 
     All required parameters must be populated in order to send to Azure.
 
@@ -706,7 +693,7 @@ class CopySource(Model):
     }
 
     _subtype_map = {
-        'type': {'AmazonRedshiftSource': 'AmazonRedshiftSource', 'GoogleAdWordsSource': 'GoogleAdWordsSource', 'OracleServiceCloudSource': 'OracleServiceCloudSource', 'DynamicsAXSource': 'DynamicsAXSource', 'ResponsysSource': 'ResponsysSource', 'SalesforceMarketingCloudSource': 'SalesforceMarketingCloudSource', 'VerticaSource': 'VerticaSource', 'NetezzaSource': 'NetezzaSource', 'ZohoSource': 'ZohoSource', 'XeroSource': 'XeroSource', 'SquareSource': 'SquareSource', 'SparkSource': 'SparkSource', 'ShopifySource': 'ShopifySource', 'ServiceNowSource': 'ServiceNowSource', 'QuickBooksSource': 'QuickBooksSource', 'PrestoSource': 'PrestoSource', 'PhoenixSource': 'PhoenixSource', 'PaypalSource': 'PaypalSource', 'MarketoSource': 'MarketoSource', 'AzureMariaDBSource': 'AzureMariaDBSource', 'MariaDBSource': 'MariaDBSource', 'MagentoSource': 'MagentoSource', 'JiraSource': 'JiraSource', 'ImpalaSource': 'ImpalaSource', 'HubspotSource': 'HubspotSource', 'HiveSource': 'HiveSource', 'HBaseSource': 'HBaseSource', 'GreenplumSource': 'GreenplumSource', 'GoogleBigQuerySource': 'GoogleBigQuerySource', 'EloquaSource': 'EloquaSource', 'DrillSource': 'DrillSource', 'CouchbaseSource': 'CouchbaseSource', 'ConcurSource': 'ConcurSource', 'AzurePostgreSqlSource': 'AzurePostgreSqlSource', 'AmazonMWSSource': 'AmazonMWSSource', 'HttpSource': 'HttpSource', 'AzureBlobFSSource': 'AzureBlobFSSource', 'AzureDataLakeStoreSource': 'AzureDataLakeStoreSource', 'Office365Source': 'Office365Source', 'CosmosDbMongoDbApiSource': 'CosmosDbMongoDbApiSource', 'MongoDbV2Source': 'MongoDbV2Source', 'MongoDbSource': 'MongoDbSource', 'CassandraSource': 'CassandraSource', 'WebSource': 'WebSource', 'TeradataSource': 'TeradataSource', 'OracleSource': 'OracleSource', 'AzureDataExplorerSource': 'AzureDataExplorerSource', 'AzureMySqlSource': 'AzureMySqlSource', 'HdfsSource': 'HdfsSource', 'FileSystemSource': 'FileSystemSource', 'SqlDWSource': 'SqlDWSource', 'SqlMISource': 'SqlMISource', 'AzureSqlSource': 'AzureSqlSource', 'SqlServerSource': 'SqlServerSource', 'SqlSource': 'SqlSource', 'RestSource': 'RestSource', 'SapTableSource': 'SapTableSource', 'SapOpenHubSource': 'SapOpenHubSource', 'SapHanaSource': 'SapHanaSource', 'SapEccSource': 'SapEccSource', 'SapCloudForCustomerSource': 'SapCloudForCustomerSource', 'SalesforceServiceCloudSource': 'SalesforceServiceCloudSource', 'SalesforceSource': 'SalesforceSource', 'ODataSource': 'ODataSource', 'SapBwSource': 'SapBwSource', 'SybaseSource': 'SybaseSource', 'PostgreSqlSource': 'PostgreSqlSource', 'MySqlSource': 'MySqlSource', 'OdbcSource': 'OdbcSource', 'Db2Source': 'Db2Source', 'MicrosoftAccessSource': 'MicrosoftAccessSource', 'InformixSource': 'InformixSource', 'RelationalSource': 'RelationalSource', 'CommonDataServiceForAppsSource': 'CommonDataServiceForAppsSource', 'DynamicsCrmSource': 'DynamicsCrmSource', 'DynamicsSource': 'DynamicsSource', 'DocumentDbCollectionSource': 'DocumentDbCollectionSource', 'BlobSource': 'BlobSource', 'AzureTableSource': 'AzureTableSource', 'BinarySource': 'BinarySource', 'OrcSource': 'OrcSource', 'JsonSource': 'JsonSource', 'DelimitedTextSource': 'DelimitedTextSource', 'ParquetSource': 'ParquetSource', 'AvroSource': 'AvroSource'}
+        'type': {'HttpSource': 'HttpSource', 'AzureBlobFSSource': 'AzureBlobFSSource', 'AzureDataLakeStoreSource': 'AzureDataLakeStoreSource', 'Office365Source': 'Office365Source', 'CosmosDbMongoDbApiSource': 'CosmosDbMongoDbApiSource', 'MongoDbV2Source': 'MongoDbV2Source', 'MongoDbSource': 'MongoDbSource', 'WebSource': 'WebSource', 'OracleSource': 'OracleSource', 'AzureDataExplorerSource': 'AzureDataExplorerSource', 'HdfsSource': 'HdfsSource', 'FileSystemSource': 'FileSystemSource', 'RestSource': 'RestSource', 'SalesforceServiceCloudSource': 'SalesforceServiceCloudSource', 'ODataSource': 'ODataSource', 'MicrosoftAccessSource': 'MicrosoftAccessSource', 'RelationalSource': 'RelationalSource', 'CommonDataServiceForAppsSource': 'CommonDataServiceForAppsSource', 'DynamicsCrmSource': 'DynamicsCrmSource', 'DynamicsSource': 'DynamicsSource', 'DocumentDbCollectionSource': 'DocumentDbCollectionSource', 'BlobSource': 'BlobSource', 'TabularSource': 'TabularSource', 'BinarySource': 'BinarySource', 'OrcSource': 'OrcSource', 'JsonSource': 'JsonSource', 'DelimitedTextSource': 'DelimitedTextSource', 'ParquetSource': 'ParquetSource', 'AvroSource': 'AvroSource'}
     }
 
     def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, **kwargs) -> None:
@@ -718,7 +705,73 @@ class CopySource(Model):
         self.type = None
 
 
-class AmazonMWSSource(CopySource):
+class TabularSource(CopySource):
+    """Copy activity sources of tabular type.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: AmazonRedshiftSource, GoogleAdWordsSource,
+    OracleServiceCloudSource, DynamicsAXSource, ResponsysSource,
+    SalesforceMarketingCloudSource, VerticaSource, NetezzaSource, ZohoSource,
+    XeroSource, SquareSource, SparkSource, ShopifySource, ServiceNowSource,
+    QuickBooksSource, PrestoSource, PhoenixSource, PaypalSource, MarketoSource,
+    AzureMariaDBSource, MariaDBSource, MagentoSource, JiraSource, ImpalaSource,
+    HubspotSource, HiveSource, HBaseSource, GreenplumSource,
+    GoogleBigQuerySource, EloquaSource, DrillSource, CouchbaseSource,
+    ConcurSource, AzurePostgreSqlSource, AmazonMWSSource, CassandraSource,
+    TeradataSource, AzureMySqlSource, SqlDWSource, SqlMISource, AzureSqlSource,
+    SqlServerSource, SqlSource, SapTableSource, SapOpenHubSource,
+    SapHanaSource, SapEccSource, SapCloudForCustomerSource, SalesforceSource,
+    SapBwSource, SybaseSource, PostgreSqlSource, MySqlSource, OdbcSource,
+    Db2Source, InformixSource, AzureTableSource
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param source_retry_count: Source retry count. Type: integer (or
+     Expression with resultType integer).
+    :type source_retry_count: object
+    :param source_retry_wait: Source retry wait. Type: string (or Expression
+     with resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type source_retry_wait: object
+    :param max_concurrent_connections: The maximum concurrent connection count
+     for the source data store. Type: integer (or Expression with resultType
+     integer).
+    :type max_concurrent_connections: object
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'source_retry_count': {'key': 'sourceRetryCount', 'type': 'object'},
+        'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
+    }
+
+    _subtype_map = {
+        'type': {'AmazonRedshiftSource': 'AmazonRedshiftSource', 'GoogleAdWordsSource': 'GoogleAdWordsSource', 'OracleServiceCloudSource': 'OracleServiceCloudSource', 'DynamicsAXSource': 'DynamicsAXSource', 'ResponsysSource': 'ResponsysSource', 'SalesforceMarketingCloudSource': 'SalesforceMarketingCloudSource', 'VerticaSource': 'VerticaSource', 'NetezzaSource': 'NetezzaSource', 'ZohoSource': 'ZohoSource', 'XeroSource': 'XeroSource', 'SquareSource': 'SquareSource', 'SparkSource': 'SparkSource', 'ShopifySource': 'ShopifySource', 'ServiceNowSource': 'ServiceNowSource', 'QuickBooksSource': 'QuickBooksSource', 'PrestoSource': 'PrestoSource', 'PhoenixSource': 'PhoenixSource', 'PaypalSource': 'PaypalSource', 'MarketoSource': 'MarketoSource', 'AzureMariaDBSource': 'AzureMariaDBSource', 'MariaDBSource': 'MariaDBSource', 'MagentoSource': 'MagentoSource', 'JiraSource': 'JiraSource', 'ImpalaSource': 'ImpalaSource', 'HubspotSource': 'HubspotSource', 'HiveSource': 'HiveSource', 'HBaseSource': 'HBaseSource', 'GreenplumSource': 'GreenplumSource', 'GoogleBigQuerySource': 'GoogleBigQuerySource', 'EloquaSource': 'EloquaSource', 'DrillSource': 'DrillSource', 'CouchbaseSource': 'CouchbaseSource', 'ConcurSource': 'ConcurSource', 'AzurePostgreSqlSource': 'AzurePostgreSqlSource', 'AmazonMWSSource': 'AmazonMWSSource', 'CassandraSource': 'CassandraSource', 'TeradataSource': 'TeradataSource', 'AzureMySqlSource': 'AzureMySqlSource', 'SqlDWSource': 'SqlDWSource', 'SqlMISource': 'SqlMISource', 'AzureSqlSource': 'AzureSqlSource', 'SqlServerSource': 'SqlServerSource', 'SqlSource': 'SqlSource', 'SapTableSource': 'SapTableSource', 'SapOpenHubSource': 'SapOpenHubSource', 'SapHanaSource': 'SapHanaSource', 'SapEccSource': 'SapEccSource', 'SapCloudForCustomerSource': 'SapCloudForCustomerSource', 'SalesforceSource': 'SalesforceSource', 'SapBwSource': 'SapBwSource', 'SybaseSource': 'SybaseSource', 'PostgreSqlSource': 'PostgreSqlSource', 'MySqlSource': 'MySqlSource', 'OdbcSource': 'OdbcSource', 'Db2Source': 'Db2Source', 'InformixSource': 'InformixSource', 'AzureTableSource': 'AzureTableSource'}
+    }
+
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, **kwargs) -> None:
+        super(TabularSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+        self.query_timeout = query_timeout
+        self.type = 'TabularSource'
+
+
+class AmazonMWSSource(TabularSource):
     """A copy activity Amazon Marketplace Web Service source.
 
     All required parameters must be populated in order to send to Azure.
@@ -739,6 +792,10 @@ class AmazonMWSSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -754,11 +811,12 @@ class AmazonMWSSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, **kwargs) -> None:
-        super(AmazonMWSSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, query=None, **kwargs) -> None:
+        super(AmazonMWSSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, **kwargs)
         self.query = query
         self.type = 'AmazonMWSSource'
 
@@ -837,7 +895,7 @@ class AmazonRedshiftLinkedService(LinkedService):
         self.type = 'AmazonRedshift'
 
 
-class AmazonRedshiftSource(CopySource):
+class AmazonRedshiftSource(TabularSource):
     """A copy activity source for Amazon Redshift Source.
 
     All required parameters must be populated in order to send to Azure.
@@ -858,6 +916,10 @@ class AmazonRedshiftSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: Database query. Type: string (or Expression with resultType
      string).
     :type query: object
@@ -879,12 +941,13 @@ class AmazonRedshiftSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
         'redshift_unload_settings': {'key': 'redshiftUnloadSettings', 'type': 'RedshiftUnloadSettings'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, redshift_unload_settings=None, **kwargs) -> None:
-        super(AmazonRedshiftSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, query=None, redshift_unload_settings=None, **kwargs) -> None:
+        super(AmazonRedshiftSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, **kwargs)
         self.query = query
         self.redshift_unload_settings = redshift_unload_settings
         self.type = 'AmazonRedshiftSource'
@@ -3902,7 +3965,7 @@ class AzureMariaDBLinkedService(LinkedService):
         self.type = 'AzureMariaDB'
 
 
-class AzureMariaDBSource(CopySource):
+class AzureMariaDBSource(TabularSource):
     """A copy activity Azure MariaDB source.
 
     All required parameters must be populated in order to send to Azure.
@@ -3923,6 +3986,10 @@ class AzureMariaDBSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -3938,11 +4005,12 @@ class AzureMariaDBSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, **kwargs) -> None:
-        super(AzureMariaDBSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, query=None, **kwargs) -> None:
+        super(AzureMariaDBSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, **kwargs)
         self.query = query
         self.type = 'AzureMariaDBSource'
 
@@ -4372,7 +4440,7 @@ class AzureMySqlSink(CopySink):
         self.type = 'AzureMySqlSink'
 
 
-class AzureMySqlSource(CopySource):
+class AzureMySqlSource(TabularSource):
     """A copy activity Azure MySQL source.
 
     All required parameters must be populated in order to send to Azure.
@@ -4393,6 +4461,10 @@ class AzureMySqlSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: Database query. Type: string (or Expression with resultType
      string).
     :type query: object
@@ -4408,11 +4480,12 @@ class AzureMySqlSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, **kwargs) -> None:
-        super(AzureMySqlSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, query=None, **kwargs) -> None:
+        super(AzureMySqlSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, **kwargs)
         self.query = query
         self.type = 'AzureMySqlSource'
 
@@ -4589,7 +4662,7 @@ class AzurePostgreSqlSink(CopySink):
         self.type = 'AzurePostgreSqlSink'
 
 
-class AzurePostgreSqlSource(CopySource):
+class AzurePostgreSqlSource(TabularSource):
     """A copy activity Azure PostgreSQL source.
 
     All required parameters must be populated in order to send to Azure.
@@ -4610,6 +4683,10 @@ class AzurePostgreSqlSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -4625,11 +4702,12 @@ class AzurePostgreSqlSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, **kwargs) -> None:
-        super(AzurePostgreSqlSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, query=None, **kwargs) -> None:
+        super(AzurePostgreSqlSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, **kwargs)
         self.query = query
         self.type = 'AzurePostgreSqlSource'
 
@@ -5375,7 +5453,7 @@ class AzureSqlSink(CopySink):
         self.type = 'AzureSqlSink'
 
 
-class AzureSqlSource(CopySource):
+class AzureSqlSource(TabularSource):
     """A copy activity Azure SQL source.
 
     All required parameters must be populated in order to send to Azure.
@@ -5396,6 +5474,10 @@ class AzureSqlSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param sql_reader_query: SQL reader query. Type: string (or Expression
      with resultType string).
     :type sql_reader_query: object
@@ -5421,14 +5503,15 @@ class AzureSqlSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'sql_reader_query': {'key': 'sqlReaderQuery', 'type': 'object'},
         'sql_reader_stored_procedure_name': {'key': 'sqlReaderStoredProcedureName', 'type': 'object'},
         'stored_procedure_parameters': {'key': 'storedProcedureParameters', 'type': '{StoredProcedureParameter}'},
         'produce_additional_types': {'key': 'produceAdditionalTypes', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, sql_reader_query=None, sql_reader_stored_procedure_name=None, stored_procedure_parameters=None, produce_additional_types=None, **kwargs) -> None:
-        super(AzureSqlSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, sql_reader_query=None, sql_reader_stored_procedure_name=None, stored_procedure_parameters=None, produce_additional_types=None, **kwargs) -> None:
+        super(AzureSqlSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, **kwargs)
         self.sql_reader_query = sql_reader_query
         self.sql_reader_stored_procedure_name = sql_reader_stored_procedure_name
         self.stored_procedure_parameters = stored_procedure_parameters
@@ -5707,7 +5790,7 @@ class AzureTableSink(CopySink):
         self.type = 'AzureTableSink'
 
 
-class AzureTableSource(CopySource):
+class AzureTableSource(TabularSource):
     """A copy activity Azure Table source.
 
     All required parameters must be populated in order to send to Azure.
@@ -5728,6 +5811,10 @@ class AzureTableSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param azure_table_source_query: Azure Table source query. Type: string
      (or Expression with resultType string).
     :type azure_table_source_query: object
@@ -5747,12 +5834,13 @@ class AzureTableSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'azure_table_source_query': {'key': 'azureTableSourceQuery', 'type': 'object'},
         'azure_table_source_ignore_table_not_found': {'key': 'azureTableSourceIgnoreTableNotFound', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, azure_table_source_query=None, azure_table_source_ignore_table_not_found=None, **kwargs) -> None:
-        super(AzureTableSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, azure_table_source_query=None, azure_table_source_ignore_table_not_found=None, **kwargs) -> None:
+        super(AzureTableSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, **kwargs)
         self.azure_table_source_query = azure_table_source_query
         self.azure_table_source_ignore_table_not_found = azure_table_source_ignore_table_not_found
         self.type = 'AzureTableSource'
@@ -6438,7 +6526,7 @@ class CassandraLinkedService(LinkedService):
         self.type = 'Cassandra'
 
 
-class CassandraSource(CopySource):
+class CassandraSource(TabularSource):
     """A copy activity source for a Cassandra database.
 
     All required parameters must be populated in order to send to Azure.
@@ -6459,6 +6547,10 @@ class CassandraSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: Database query. Should be a SQL-92 query expression or
      Cassandra Query Language (CQL) command. Type: string (or Expression with
      resultType string).
@@ -6485,12 +6577,13 @@ class CassandraSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
         'consistency_level': {'key': 'consistencyLevel', 'type': 'str'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, consistency_level=None, **kwargs) -> None:
-        super(CassandraSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, query=None, consistency_level=None, **kwargs) -> None:
+        super(CassandraSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, **kwargs)
         self.query = query
         self.consistency_level = consistency_level
         self.type = 'CassandraSource'
@@ -7191,7 +7284,7 @@ class ConcurObjectDataset(Dataset):
         self.type = 'ConcurObject'
 
 
-class ConcurSource(CopySource):
+class ConcurSource(TabularSource):
     """A copy activity Concur Service source.
 
     All required parameters must be populated in order to send to Azure.
@@ -7212,6 +7305,10 @@ class ConcurSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -7227,11 +7324,12 @@ class ConcurSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, **kwargs) -> None:
-        super(ConcurSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, query=None, **kwargs) -> None:
+        super(ConcurSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, **kwargs)
         self.query = query
         self.type = 'ConcurSource'
 
@@ -7613,6 +7711,10 @@ class CosmosDbMongoDbApiSource(CopySource):
      main purpose is to avoid hit the limitation of response size. Type:
      integer (or Expression with resultType integer).
     :type batch_size: object
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     """
 
     _validation = {
@@ -7628,13 +7730,15 @@ class CosmosDbMongoDbApiSource(CopySource):
         'filter': {'key': 'filter', 'type': 'object'},
         'cursor_methods': {'key': 'cursorMethods', 'type': 'MongoDbCursorMethodsProperties'},
         'batch_size': {'key': 'batchSize', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, filter=None, cursor_methods=None, batch_size=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, filter=None, cursor_methods=None, batch_size=None, query_timeout=None, **kwargs) -> None:
         super(CosmosDbMongoDbApiSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
         self.filter = filter
         self.cursor_methods = cursor_methods
         self.batch_size = batch_size
+        self.query_timeout = query_timeout
         self.type = 'CosmosDbMongoDbApiSource'
 
 
@@ -7696,7 +7800,7 @@ class CouchbaseLinkedService(LinkedService):
         self.type = 'Couchbase'
 
 
-class CouchbaseSource(CopySource):
+class CouchbaseSource(TabularSource):
     """A copy activity Couchbase server source.
 
     All required parameters must be populated in order to send to Azure.
@@ -7717,6 +7821,10 @@ class CouchbaseSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -7732,11 +7840,12 @@ class CouchbaseSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, **kwargs) -> None:
-        super(CouchbaseSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, query=None, **kwargs) -> None:
+        super(CouchbaseSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, **kwargs)
         self.query = query
         self.type = 'CouchbaseSource'
 
@@ -9236,7 +9345,7 @@ class Db2LinkedService(LinkedService):
         self.type = 'Db2'
 
 
-class Db2Source(CopySource):
+class Db2Source(TabularSource):
     """A copy activity source for Db2 databases.
 
     All required parameters must be populated in order to send to Azure.
@@ -9257,6 +9366,10 @@ class Db2Source(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: Database query. Type: string (or Expression with resultType
      string).
     :type query: object
@@ -9272,11 +9385,12 @@ class Db2Source(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, **kwargs) -> None:
-        super(Db2Source, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, query=None, **kwargs) -> None:
+        super(Db2Source, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, **kwargs)
         self.query = query
         self.type = 'Db2Source'
 
@@ -9968,6 +10082,10 @@ class DocumentDbCollectionSource(CopySource):
     :param nesting_separator: Nested properties separator. Type: string (or
      Expression with resultType string).
     :type nesting_separator: object
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     """
 
     _validation = {
@@ -9982,12 +10100,14 @@ class DocumentDbCollectionSource(CopySource):
         'type': {'key': 'type', 'type': 'str'},
         'query': {'key': 'query', 'type': 'object'},
         'nesting_separator': {'key': 'nestingSeparator', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, nesting_separator=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, nesting_separator=None, query_timeout=None, **kwargs) -> None:
         super(DocumentDbCollectionSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
         self.query = query
         self.nesting_separator = nesting_separator
+        self.query_timeout = query_timeout
         self.type = 'DocumentDbCollectionSource'
 
 
@@ -10048,7 +10168,7 @@ class DrillLinkedService(LinkedService):
         self.type = 'Drill'
 
 
-class DrillSource(CopySource):
+class DrillSource(TabularSource):
     """A copy activity Drill server source.
 
     All required parameters must be populated in order to send to Azure.
@@ -10069,6 +10189,10 @@ class DrillSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -10084,11 +10208,12 @@ class DrillSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, **kwargs) -> None:
-        super(DrillSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, query=None, **kwargs) -> None:
+        super(DrillSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, **kwargs)
         self.query = query
         self.type = 'DrillSource'
 
@@ -10305,7 +10430,7 @@ class DynamicsAXResourceDataset(Dataset):
         self.type = 'DynamicsAXResource'
 
 
-class DynamicsAXSource(CopySource):
+class DynamicsAXSource(TabularSource):
     """A copy activity Dynamics AX source.
 
     All required parameters must be populated in order to send to Azure.
@@ -10326,6 +10451,10 @@ class DynamicsAXSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -10341,11 +10470,12 @@ class DynamicsAXSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, **kwargs) -> None:
-        super(DynamicsAXSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, query=None, **kwargs) -> None:
+        super(DynamicsAXSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, **kwargs)
         self.query = query
         self.type = 'DynamicsAXSource'
 
@@ -11040,7 +11170,7 @@ class EloquaObjectDataset(Dataset):
         self.type = 'EloquaObject'
 
 
-class EloquaSource(CopySource):
+class EloquaSource(TabularSource):
     """A copy activity Eloqua server source.
 
     All required parameters must be populated in order to send to Azure.
@@ -11061,6 +11191,10 @@ class EloquaSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -11076,11 +11210,12 @@ class EloquaSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, **kwargs) -> None:
-        super(EloquaSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, query=None, **kwargs) -> None:
+        super(EloquaSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, **kwargs)
         self.query = query
         self.type = 'EloquaSource'
 
@@ -12750,7 +12885,7 @@ class GoogleAdWordsObjectDataset(Dataset):
         self.type = 'GoogleAdWordsObject'
 
 
-class GoogleAdWordsSource(CopySource):
+class GoogleAdWordsSource(TabularSource):
     """A copy activity Google AdWords service source.
 
     All required parameters must be populated in order to send to Azure.
@@ -12771,6 +12906,10 @@ class GoogleAdWordsSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -12786,11 +12925,12 @@ class GoogleAdWordsSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, **kwargs) -> None:
-        super(GoogleAdWordsSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, query=None, **kwargs) -> None:
+        super(GoogleAdWordsSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, **kwargs)
         self.query = query
         self.type = 'GoogleAdWordsSource'
 
@@ -12977,7 +13117,7 @@ class GoogleBigQueryObjectDataset(Dataset):
         self.type = 'GoogleBigQueryObject'
 
 
-class GoogleBigQuerySource(CopySource):
+class GoogleBigQuerySource(TabularSource):
     """A copy activity Google BigQuery service source.
 
     All required parameters must be populated in order to send to Azure.
@@ -12998,6 +13138,10 @@ class GoogleBigQuerySource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -13013,11 +13157,12 @@ class GoogleBigQuerySource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, **kwargs) -> None:
-        super(GoogleBigQuerySource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, query=None, **kwargs) -> None:
+        super(GoogleBigQuerySource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, **kwargs)
         self.query = query
         self.type = 'GoogleBigQuerySource'
 
@@ -13079,7 +13224,7 @@ class GreenplumLinkedService(LinkedService):
         self.type = 'Greenplum'
 
 
-class GreenplumSource(CopySource):
+class GreenplumSource(TabularSource):
     """A copy activity Greenplum Database source.
 
     All required parameters must be populated in order to send to Azure.
@@ -13100,6 +13245,10 @@ class GreenplumSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -13115,11 +13264,12 @@ class GreenplumSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, **kwargs) -> None:
-        super(GreenplumSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, query=None, **kwargs) -> None:
+        super(GreenplumSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, **kwargs)
         self.query = query
         self.type = 'GreenplumSource'
 
@@ -13356,7 +13506,7 @@ class HBaseObjectDataset(Dataset):
         self.type = 'HBaseObject'
 
 
-class HBaseSource(CopySource):
+class HBaseSource(TabularSource):
     """A copy activity HBase server source.
 
     All required parameters must be populated in order to send to Azure.
@@ -13377,6 +13527,10 @@ class HBaseSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -13392,11 +13546,12 @@ class HBaseSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, **kwargs) -> None:
-        super(HBaseSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, query=None, **kwargs) -> None:
+        super(HBaseSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, **kwargs)
         self.query = query
         self.type = 'HBaseSource'
 
@@ -14576,7 +14731,7 @@ class HiveObjectDataset(Dataset):
         self.type = 'HiveObject'
 
 
-class HiveSource(CopySource):
+class HiveSource(TabularSource):
     """A copy activity Hive Server source.
 
     All required parameters must be populated in order to send to Azure.
@@ -14597,6 +14752,10 @@ class HiveSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -14612,11 +14771,12 @@ class HiveSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, **kwargs) -> None:
-        super(HiveSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, query=None, **kwargs) -> None:
+        super(HiveSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, **kwargs)
         self.query = query
         self.type = 'HiveSource'
 
@@ -15082,7 +15242,7 @@ class HubspotObjectDataset(Dataset):
         self.type = 'HubspotObject'
 
 
-class HubspotSource(CopySource):
+class HubspotSource(TabularSource):
     """A copy activity Hubspot Service source.
 
     All required parameters must be populated in order to send to Azure.
@@ -15103,6 +15263,10 @@ class HubspotSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -15118,11 +15282,12 @@ class HubspotSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, **kwargs) -> None:
-        super(HubspotSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, query=None, **kwargs) -> None:
+        super(HubspotSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, **kwargs)
         self.query = query
         self.type = 'HubspotSource'
 
@@ -15362,7 +15527,7 @@ class ImpalaObjectDataset(Dataset):
         self.type = 'ImpalaObject'
 
 
-class ImpalaSource(CopySource):
+class ImpalaSource(TabularSource):
     """A copy activity Impala server source.
 
     All required parameters must be populated in order to send to Azure.
@@ -15383,6 +15548,10 @@ class ImpalaSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -15398,11 +15567,12 @@ class ImpalaSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, **kwargs) -> None:
-        super(ImpalaSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, query=None, **kwargs) -> None:
+        super(ImpalaSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, **kwargs)
         self.query = query
         self.type = 'ImpalaSource'
 
@@ -15535,7 +15705,7 @@ class InformixSink(CopySink):
         self.type = 'InformixSink'
 
 
-class InformixSource(CopySource):
+class InformixSource(TabularSource):
     """A copy activity source for Informix.
 
     All required parameters must be populated in order to send to Azure.
@@ -15556,6 +15726,10 @@ class InformixSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: Database query. Type: string (or Expression with resultType
      string).
     :type query: object
@@ -15571,11 +15745,12 @@ class InformixSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, **kwargs) -> None:
-        super(InformixSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, query=None, **kwargs) -> None:
+        super(InformixSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, **kwargs)
         self.query = query
         self.type = 'InformixSource'
 
@@ -16435,7 +16610,7 @@ class JiraObjectDataset(Dataset):
         self.type = 'JiraObject'
 
 
-class JiraSource(CopySource):
+class JiraSource(TabularSource):
     """A copy activity Jira Service source.
 
     All required parameters must be populated in order to send to Azure.
@@ -16456,6 +16631,10 @@ class JiraSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -16471,11 +16650,12 @@ class JiraSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, **kwargs) -> None:
-        super(JiraSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, query=None, **kwargs) -> None:
+        super(JiraSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, **kwargs)
         self.query = query
         self.type = 'JiraSource'
 
@@ -17218,7 +17398,7 @@ class MagentoObjectDataset(Dataset):
         self.type = 'MagentoObject'
 
 
-class MagentoSource(CopySource):
+class MagentoSource(TabularSource):
     """A copy activity Magento server source.
 
     All required parameters must be populated in order to send to Azure.
@@ -17239,6 +17419,10 @@ class MagentoSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -17254,11 +17438,12 @@ class MagentoSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, **kwargs) -> None:
-        super(MagentoSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, query=None, **kwargs) -> None:
+        super(MagentoSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, **kwargs)
         self.query = query
         self.type = 'MagentoSource'
 
@@ -17624,7 +17809,7 @@ class MariaDBLinkedService(LinkedService):
         self.type = 'MariaDB'
 
 
-class MariaDBSource(CopySource):
+class MariaDBSource(TabularSource):
     """A copy activity MariaDB server source.
 
     All required parameters must be populated in order to send to Azure.
@@ -17645,6 +17830,10 @@ class MariaDBSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -17660,11 +17849,12 @@ class MariaDBSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, **kwargs) -> None:
-        super(MariaDBSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, query=None, **kwargs) -> None:
+        super(MariaDBSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, **kwargs)
         self.query = query
         self.type = 'MariaDBSource'
 
@@ -17867,7 +18057,7 @@ class MarketoObjectDataset(Dataset):
         self.type = 'MarketoObject'
 
 
-class MarketoSource(CopySource):
+class MarketoSource(TabularSource):
     """A copy activity Marketo server source.
 
     All required parameters must be populated in order to send to Azure.
@@ -17888,6 +18078,10 @@ class MarketoSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -17903,11 +18097,12 @@ class MarketoSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, **kwargs) -> None:
-        super(MarketoSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, query=None, **kwargs) -> None:
+        super(MarketoSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, **kwargs)
         self.query = query
         self.type = 'MarketoSource'
 
@@ -18538,6 +18733,10 @@ class MongoDbV2Source(CopySource):
      main purpose is to avoid hit the limitation of response size. Type:
      integer (or Expression with resultType integer).
     :type batch_size: object
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     """
 
     _validation = {
@@ -18553,13 +18752,15 @@ class MongoDbV2Source(CopySource):
         'filter': {'key': 'filter', 'type': 'object'},
         'cursor_methods': {'key': 'cursorMethods', 'type': 'MongoDbCursorMethodsProperties'},
         'batch_size': {'key': 'batchSize', 'type': 'object'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, filter=None, cursor_methods=None, batch_size=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, filter=None, cursor_methods=None, batch_size=None, query_timeout=None, **kwargs) -> None:
         super(MongoDbV2Source, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
         self.filter = filter
         self.cursor_methods = cursor_methods
         self.batch_size = batch_size
+        self.query_timeout = query_timeout
         self.type = 'MongoDbV2Source'
 
 
@@ -18621,7 +18822,7 @@ class MySqlLinkedService(LinkedService):
         self.type = 'MySql'
 
 
-class MySqlSource(CopySource):
+class MySqlSource(TabularSource):
     """A copy activity source for MySQL databases.
 
     All required parameters must be populated in order to send to Azure.
@@ -18642,6 +18843,10 @@ class MySqlSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: Database query. Type: string (or Expression with resultType
      string).
     :type query: object
@@ -18657,11 +18862,12 @@ class MySqlSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, **kwargs) -> None:
-        super(MySqlSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, query=None, **kwargs) -> None:
+        super(MySqlSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, **kwargs)
         self.query = query
         self.type = 'MySqlSource'
 
@@ -18813,7 +19019,7 @@ class NetezzaPartitionSettings(Model):
         self.partition_lower_bound = partition_lower_bound
 
 
-class NetezzaSource(CopySource):
+class NetezzaSource(TabularSource):
     """A copy activity Netezza source.
 
     All required parameters must be populated in order to send to Azure.
@@ -18834,6 +19040,10 @@ class NetezzaSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -18858,13 +19068,14 @@ class NetezzaSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
         'partition_option': {'key': 'partitionOption', 'type': 'str'},
         'partition_settings': {'key': 'partitionSettings', 'type': 'NetezzaPartitionSettings'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, partition_option=None, partition_settings=None, **kwargs) -> None:
-        super(NetezzaSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, query=None, partition_option=None, partition_settings=None, **kwargs) -> None:
+        super(NetezzaSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, **kwargs)
         self.query = query
         self.partition_option = partition_option
         self.partition_settings = partition_settings
@@ -19289,7 +19500,7 @@ class OdbcSink(CopySink):
         self.type = 'OdbcSink'
 
 
-class OdbcSource(CopySource):
+class OdbcSource(TabularSource):
     """A copy activity source for ODBC databases.
 
     All required parameters must be populated in order to send to Azure.
@@ -19310,6 +19521,10 @@ class OdbcSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: Database query. Type: string (or Expression with resultType
      string).
     :type query: object
@@ -19325,11 +19540,12 @@ class OdbcSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, **kwargs) -> None:
-        super(OdbcSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, query=None, **kwargs) -> None:
+        super(OdbcSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, **kwargs)
         self.query = query
         self.type = 'OdbcSource'
 
@@ -20047,7 +20263,7 @@ class OracleServiceCloudObjectDataset(Dataset):
         self.type = 'OracleServiceCloudObject'
 
 
-class OracleServiceCloudSource(CopySource):
+class OracleServiceCloudSource(TabularSource):
     """A copy activity Oracle Service Cloud source.
 
     All required parameters must be populated in order to send to Azure.
@@ -20068,6 +20284,10 @@ class OracleServiceCloudSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -20083,11 +20303,12 @@ class OracleServiceCloudSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, **kwargs) -> None:
-        super(OracleServiceCloudSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, query=None, **kwargs) -> None:
+        super(OracleServiceCloudSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, **kwargs)
         self.query = query
         self.type = 'OracleServiceCloudSource'
 
@@ -20833,7 +21054,7 @@ class PaypalObjectDataset(Dataset):
         self.type = 'PaypalObject'
 
 
-class PaypalSource(CopySource):
+class PaypalSource(TabularSource):
     """A copy activity Paypal Service source.
 
     All required parameters must be populated in order to send to Azure.
@@ -20854,6 +21075,10 @@ class PaypalSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -20869,11 +21094,12 @@ class PaypalSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, **kwargs) -> None:
-        super(PaypalSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, query=None, **kwargs) -> None:
+        super(PaypalSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, **kwargs)
         self.query = query
         self.type = 'PaypalSource'
 
@@ -21057,7 +21283,7 @@ class PhoenixObjectDataset(Dataset):
         self.type = 'PhoenixObject'
 
 
-class PhoenixSource(CopySource):
+class PhoenixSource(TabularSource):
     """A copy activity Phoenix server source.
 
     All required parameters must be populated in order to send to Azure.
@@ -21078,6 +21304,10 @@ class PhoenixSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -21093,11 +21323,12 @@ class PhoenixSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, **kwargs) -> None:
-        super(PhoenixSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, query=None, **kwargs) -> None:
+        super(PhoenixSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, **kwargs)
         self.query = query
         self.type = 'PhoenixSource'
 
@@ -21482,7 +21713,7 @@ class PostgreSqlLinkedService(LinkedService):
         self.type = 'PostgreSql'
 
 
-class PostgreSqlSource(CopySource):
+class PostgreSqlSource(TabularSource):
     """A copy activity source for PostgreSQL databases.
 
     All required parameters must be populated in order to send to Azure.
@@ -21503,6 +21734,10 @@ class PostgreSqlSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: Database query. Type: string (or Expression with resultType
      string).
     :type query: object
@@ -21518,11 +21753,12 @@ class PostgreSqlSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, **kwargs) -> None:
-        super(PostgreSqlSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, query=None, **kwargs) -> None:
+        super(PostgreSqlSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, **kwargs)
         self.query = query
         self.type = 'PostgreSqlSource'
 
@@ -21787,7 +22023,7 @@ class PrestoObjectDataset(Dataset):
         self.type = 'PrestoObject'
 
 
-class PrestoSource(CopySource):
+class PrestoSource(TabularSource):
     """A copy activity Presto server source.
 
     All required parameters must be populated in order to send to Azure.
@@ -21808,6 +22044,10 @@ class PrestoSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -21823,11 +22063,12 @@ class PrestoSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, **kwargs) -> None:
-        super(PrestoSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, query=None, **kwargs) -> None:
+        super(PrestoSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, **kwargs)
         self.query = query
         self.type = 'PrestoSource'
 
@@ -21980,7 +22221,7 @@ class QuickBooksObjectDataset(Dataset):
         self.type = 'QuickBooksObject'
 
 
-class QuickBooksSource(CopySource):
+class QuickBooksSource(TabularSource):
     """A copy activity QuickBooks server source.
 
     All required parameters must be populated in order to send to Azure.
@@ -22001,6 +22242,10 @@ class QuickBooksSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -22016,11 +22261,12 @@ class QuickBooksSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, **kwargs) -> None:
-        super(QuickBooksSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, query=None, **kwargs) -> None:
+        super(QuickBooksSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, **kwargs)
         self.query = query
         self.type = 'QuickBooksSource'
 
@@ -22550,7 +22796,7 @@ class ResponsysObjectDataset(Dataset):
         self.type = 'ResponsysObject'
 
 
-class ResponsysSource(CopySource):
+class ResponsysSource(TabularSource):
     """A copy activity Responsys source.
 
     All required parameters must be populated in order to send to Azure.
@@ -22571,6 +22817,10 @@ class ResponsysSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -22586,11 +22836,12 @@ class ResponsysSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, **kwargs) -> None:
-        super(ResponsysSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, query=None, **kwargs) -> None:
+        super(ResponsysSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, **kwargs)
         self.query = query
         self.type = 'ResponsysSource'
 
@@ -23197,7 +23448,7 @@ class SalesforceMarketingCloudObjectDataset(Dataset):
         self.type = 'SalesforceMarketingCloudObject'
 
 
-class SalesforceMarketingCloudSource(CopySource):
+class SalesforceMarketingCloudSource(TabularSource):
     """A copy activity Salesforce Marketing Cloud source.
 
     All required parameters must be populated in order to send to Azure.
@@ -23218,6 +23469,10 @@ class SalesforceMarketingCloudSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -23233,11 +23488,12 @@ class SalesforceMarketingCloudSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, **kwargs) -> None:
-        super(SalesforceMarketingCloudSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, query=None, **kwargs) -> None:
+        super(SalesforceMarketingCloudSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, **kwargs)
         self.query = query
         self.type = 'SalesforceMarketingCloudSource'
 
@@ -23632,7 +23888,7 @@ class SalesforceSink(CopySink):
         self.type = 'SalesforceSink'
 
 
-class SalesforceSource(CopySource):
+class SalesforceSource(TabularSource):
     """A copy activity Salesforce source.
 
     All required parameters must be populated in order to send to Azure.
@@ -23653,6 +23909,10 @@ class SalesforceSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: Database query. Type: string (or Expression with resultType
      string).
     :type query: object
@@ -23672,12 +23932,13 @@ class SalesforceSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
         'read_behavior': {'key': 'readBehavior', 'type': 'str'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, read_behavior=None, **kwargs) -> None:
-        super(SalesforceSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, query=None, read_behavior=None, **kwargs) -> None:
+        super(SalesforceSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, **kwargs)
         self.query = query
         self.read_behavior = read_behavior
         self.type = 'SalesforceSource'
@@ -23814,7 +24075,7 @@ class SapBWLinkedService(LinkedService):
         self.type = 'SapBW'
 
 
-class SapBwSource(CopySource):
+class SapBwSource(TabularSource):
     """A copy activity source for SapBW server via MDX.
 
     All required parameters must be populated in order to send to Azure.
@@ -23835,6 +24096,10 @@ class SapBwSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: MDX query. Type: string (or Expression with resultType
      string).
     :type query: object
@@ -23850,11 +24115,12 @@ class SapBwSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, **kwargs) -> None:
-        super(SapBwSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, query=None, **kwargs) -> None:
+        super(SapBwSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, **kwargs)
         self.query = query
         self.type = 'SapBwSource'
 
@@ -24039,7 +24305,7 @@ class SapCloudForCustomerSink(CopySink):
         self.type = 'SapCloudForCustomerSink'
 
 
-class SapCloudForCustomerSource(CopySource):
+class SapCloudForCustomerSource(TabularSource):
     """A copy activity source for SAP Cloud for Customer source.
 
     All required parameters must be populated in order to send to Azure.
@@ -24060,6 +24326,10 @@ class SapCloudForCustomerSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: SAP Cloud for Customer OData query. For example, "$top=1".
      Type: string (or Expression with resultType string).
     :type query: object
@@ -24075,11 +24345,12 @@ class SapCloudForCustomerSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, **kwargs) -> None:
-        super(SapCloudForCustomerSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, query=None, **kwargs) -> None:
+        super(SapCloudForCustomerSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, **kwargs)
         self.query = query
         self.type = 'SapCloudForCustomerSource'
 
@@ -24209,7 +24480,7 @@ class SapEccResourceDataset(Dataset):
         self.type = 'SapEccResource'
 
 
-class SapEccSource(CopySource):
+class SapEccSource(TabularSource):
     """A copy activity source for SAP ECC source.
 
     All required parameters must be populated in order to send to Azure.
@@ -24230,6 +24501,10 @@ class SapEccSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: SAP ECC OData query. For example, "$top=1". Type: string (or
      Expression with resultType string).
     :type query: object
@@ -24245,11 +24520,12 @@ class SapEccSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, **kwargs) -> None:
-        super(SapEccSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, query=None, **kwargs) -> None:
+        super(SapEccSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, **kwargs)
         self.query = query
         self.type = 'SapEccSource'
 
@@ -24327,7 +24603,7 @@ class SapHanaLinkedService(LinkedService):
         self.type = 'SapHana'
 
 
-class SapHanaSource(CopySource):
+class SapHanaSource(TabularSource):
     """A copy activity source for SAP HANA source.
 
     All required parameters must be populated in order to send to Azure.
@@ -24348,6 +24624,10 @@ class SapHanaSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: SAP HANA Sql query. Type: string (or Expression with
      resultType string).
     :type query: object
@@ -24366,12 +24646,13 @@ class SapHanaSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
         'packet_size': {'key': 'packetSize', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, packet_size=None, **kwargs) -> None:
-        super(SapHanaSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, query=None, packet_size=None, **kwargs) -> None:
+        super(SapHanaSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, **kwargs)
         self.query = query
         self.packet_size = packet_size
         self.type = 'SapHanaSource'
@@ -24529,7 +24810,7 @@ class SapOpenHubLinkedService(LinkedService):
         self.type = 'SapOpenHub'
 
 
-class SapOpenHubSource(CopySource):
+class SapOpenHubSource(TabularSource):
     """A copy activity source for SAP Business Warehouse Open Hub Destination
     source.
 
@@ -24551,6 +24832,10 @@ class SapOpenHubSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param exclude_last_request: Whether to exclude the records of the last
      request. The default value is true. Type: boolean (or Expression with
      resultType boolean).
@@ -24572,12 +24857,13 @@ class SapOpenHubSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'exclude_last_request': {'key': 'excludeLastRequest', 'type': 'object'},
         'base_request_id': {'key': 'baseRequestId', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, exclude_last_request=None, base_request_id=None, **kwargs) -> None:
-        super(SapOpenHubSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, exclude_last_request=None, base_request_id=None, **kwargs) -> None:
+        super(SapOpenHubSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, **kwargs)
         self.exclude_last_request = exclude_last_request
         self.base_request_id = base_request_id
         self.type = 'SapOpenHubSource'
@@ -24882,7 +25168,7 @@ class SapTableResourceDataset(Dataset):
         self.type = 'SapTableResource'
 
 
-class SapTableSource(CopySource):
+class SapTableSource(TabularSource):
     """A copy activity source for SAP Table source.
 
     All required parameters must be populated in order to send to Azure.
@@ -24903,6 +25189,10 @@ class SapTableSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param row_count: The number of rows to be retrieved. Type: integer(or
      Expression with resultType integer).
     :type row_count: object
@@ -24947,6 +25237,7 @@ class SapTableSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'row_count': {'key': 'rowCount', 'type': 'object'},
         'row_skips': {'key': 'rowSkips', 'type': 'object'},
         'rfc_table_fields': {'key': 'rfcTableFields', 'type': 'object'},
@@ -24957,8 +25248,8 @@ class SapTableSource(CopySource):
         'partition_settings': {'key': 'partitionSettings', 'type': 'SapTablePartitionSettings'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, row_count=None, row_skips=None, rfc_table_fields=None, rfc_table_options=None, batch_size=None, custom_rfc_read_table_function_module=None, partition_option=None, partition_settings=None, **kwargs) -> None:
-        super(SapTableSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, row_count=None, row_skips=None, rfc_table_fields=None, rfc_table_options=None, batch_size=None, custom_rfc_read_table_function_module=None, partition_option=None, partition_settings=None, **kwargs) -> None:
+        super(SapTableSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, **kwargs)
         self.row_count = row_count
         self.row_skips = row_skips
         self.rfc_table_fields = rfc_table_fields
@@ -25612,7 +25903,7 @@ class ServiceNowObjectDataset(Dataset):
         self.type = 'ServiceNowObject'
 
 
-class ServiceNowSource(CopySource):
+class ServiceNowSource(TabularSource):
     """A copy activity ServiceNow server source.
 
     All required parameters must be populated in order to send to Azure.
@@ -25633,6 +25924,10 @@ class ServiceNowSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -25648,11 +25943,12 @@ class ServiceNowSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, **kwargs) -> None:
-        super(ServiceNowSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, query=None, **kwargs) -> None:
+        super(ServiceNowSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, **kwargs)
         self.query = query
         self.type = 'ServiceNowSource'
 
@@ -26034,7 +26330,7 @@ class ShopifyObjectDataset(Dataset):
         self.type = 'ShopifyObject'
 
 
-class ShopifySource(CopySource):
+class ShopifySource(TabularSource):
     """A copy activity Shopify Service source.
 
     All required parameters must be populated in order to send to Azure.
@@ -26055,6 +26351,10 @@ class ShopifySource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -26070,11 +26370,12 @@ class ShopifySource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, **kwargs) -> None:
-        super(ShopifySource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, query=None, **kwargs) -> None:
+        super(ShopifySource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, **kwargs)
         self.query = query
         self.type = 'ShopifySource'
 
@@ -26268,7 +26569,7 @@ class SparkObjectDataset(Dataset):
         self.type = 'SparkObject'
 
 
-class SparkSource(CopySource):
+class SparkSource(TabularSource):
     """A copy activity Spark Server source.
 
     All required parameters must be populated in order to send to Azure.
@@ -26289,6 +26590,10 @@ class SparkSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -26304,11 +26609,12 @@ class SparkSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, **kwargs) -> None:
-        super(SparkSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, query=None, **kwargs) -> None:
+        super(SparkSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, **kwargs)
         self.query = query
         self.type = 'SparkSource'
 
@@ -26384,7 +26690,7 @@ class SqlDWSink(CopySink):
         self.type = 'SqlDWSink'
 
 
-class SqlDWSource(CopySource):
+class SqlDWSource(TabularSource):
     """A copy activity SQL Data Warehouse source.
 
     All required parameters must be populated in order to send to Azure.
@@ -26405,6 +26711,10 @@ class SqlDWSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param sql_reader_query: SQL Data Warehouse reader query. Type: string (or
      Expression with resultType string).
     :type sql_reader_query: object
@@ -26429,13 +26739,14 @@ class SqlDWSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'sql_reader_query': {'key': 'sqlReaderQuery', 'type': 'object'},
         'sql_reader_stored_procedure_name': {'key': 'sqlReaderStoredProcedureName', 'type': 'object'},
         'stored_procedure_parameters': {'key': 'storedProcedureParameters', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, sql_reader_query=None, sql_reader_stored_procedure_name=None, stored_procedure_parameters=None, **kwargs) -> None:
-        super(SqlDWSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, sql_reader_query=None, sql_reader_stored_procedure_name=None, stored_procedure_parameters=None, **kwargs) -> None:
+        super(SqlDWSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, **kwargs)
         self.sql_reader_query = sql_reader_query
         self.sql_reader_stored_procedure_name = sql_reader_stored_procedure_name
         self.stored_procedure_parameters = stored_procedure_parameters
@@ -26523,7 +26834,7 @@ class SqlMISink(CopySink):
         self.type = 'SqlMISink'
 
 
-class SqlMISource(CopySource):
+class SqlMISource(TabularSource):
     """A copy activity Azure SQL Managed Instance source.
 
     All required parameters must be populated in order to send to Azure.
@@ -26544,6 +26855,10 @@ class SqlMISource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param sql_reader_query: SQL reader query. Type: string (or Expression
      with resultType string).
     :type sql_reader_query: object
@@ -26569,14 +26884,15 @@ class SqlMISource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'sql_reader_query': {'key': 'sqlReaderQuery', 'type': 'object'},
         'sql_reader_stored_procedure_name': {'key': 'sqlReaderStoredProcedureName', 'type': 'object'},
         'stored_procedure_parameters': {'key': 'storedProcedureParameters', 'type': '{StoredProcedureParameter}'},
         'produce_additional_types': {'key': 'produceAdditionalTypes', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, sql_reader_query=None, sql_reader_stored_procedure_name=None, stored_procedure_parameters=None, produce_additional_types=None, **kwargs) -> None:
-        super(SqlMISource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, sql_reader_query=None, sql_reader_stored_procedure_name=None, stored_procedure_parameters=None, produce_additional_types=None, **kwargs) -> None:
+        super(SqlMISource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, **kwargs)
         self.sql_reader_query = sql_reader_query
         self.sql_reader_stored_procedure_name = sql_reader_stored_procedure_name
         self.stored_procedure_parameters = stored_procedure_parameters
@@ -26727,7 +27043,7 @@ class SqlServerSink(CopySink):
         self.type = 'SqlServerSink'
 
 
-class SqlServerSource(CopySource):
+class SqlServerSource(TabularSource):
     """A copy activity SQL server source.
 
     All required parameters must be populated in order to send to Azure.
@@ -26748,6 +27064,10 @@ class SqlServerSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param sql_reader_query: SQL reader query. Type: string (or Expression
      with resultType string).
     :type sql_reader_query: object
@@ -26773,14 +27093,15 @@ class SqlServerSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'sql_reader_query': {'key': 'sqlReaderQuery', 'type': 'object'},
         'sql_reader_stored_procedure_name': {'key': 'sqlReaderStoredProcedureName', 'type': 'object'},
         'stored_procedure_parameters': {'key': 'storedProcedureParameters', 'type': '{StoredProcedureParameter}'},
         'produce_additional_types': {'key': 'produceAdditionalTypes', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, sql_reader_query=None, sql_reader_stored_procedure_name=None, stored_procedure_parameters=None, produce_additional_types=None, **kwargs) -> None:
-        super(SqlServerSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, sql_reader_query=None, sql_reader_stored_procedure_name=None, stored_procedure_parameters=None, produce_additional_types=None, **kwargs) -> None:
+        super(SqlServerSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, **kwargs)
         self.sql_reader_query = sql_reader_query
         self.sql_reader_stored_procedure_name = sql_reader_stored_procedure_name
         self.stored_procedure_parameters = stored_procedure_parameters
@@ -26997,7 +27318,7 @@ class SqlSink(CopySink):
         self.type = 'SqlSink'
 
 
-class SqlSource(CopySource):
+class SqlSource(TabularSource):
     """A copy activity SQL source.
 
     All required parameters must be populated in order to send to Azure.
@@ -27018,6 +27339,10 @@ class SqlSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param sql_reader_query: SQL reader query. Type: string (or Expression
      with resultType string).
     :type sql_reader_query: object
@@ -27041,13 +27366,14 @@ class SqlSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'sql_reader_query': {'key': 'sqlReaderQuery', 'type': 'object'},
         'sql_reader_stored_procedure_name': {'key': 'sqlReaderStoredProcedureName', 'type': 'object'},
         'stored_procedure_parameters': {'key': 'storedProcedureParameters', 'type': '{StoredProcedureParameter}'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, sql_reader_query=None, sql_reader_stored_procedure_name=None, stored_procedure_parameters=None, **kwargs) -> None:
-        super(SqlSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, sql_reader_query=None, sql_reader_stored_procedure_name=None, stored_procedure_parameters=None, **kwargs) -> None:
+        super(SqlSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, **kwargs)
         self.sql_reader_query = sql_reader_query
         self.sql_reader_stored_procedure_name = sql_reader_stored_procedure_name
         self.stored_procedure_parameters = stored_procedure_parameters
@@ -27200,7 +27526,7 @@ class SquareObjectDataset(Dataset):
         self.type = 'SquareObject'
 
 
-class SquareSource(CopySource):
+class SquareSource(TabularSource):
     """A copy activity Square Service source.
 
     All required parameters must be populated in order to send to Azure.
@@ -27221,6 +27547,10 @@ class SquareSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -27236,11 +27566,12 @@ class SquareSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, **kwargs) -> None:
-        super(SquareSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, query=None, **kwargs) -> None:
+        super(SquareSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, **kwargs)
         self.query = query
         self.type = 'SquareSource'
 
@@ -27971,7 +28302,7 @@ class SybaseLinkedService(LinkedService):
         self.type = 'Sybase'
 
 
-class SybaseSource(CopySource):
+class SybaseSource(TabularSource):
     """A copy activity source for Sybase databases.
 
     All required parameters must be populated in order to send to Azure.
@@ -27992,6 +28323,10 @@ class SybaseSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: Database query. Type: string (or Expression with resultType
      string).
     :type query: object
@@ -28007,11 +28342,12 @@ class SybaseSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, **kwargs) -> None:
-        super(SybaseSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, query=None, **kwargs) -> None:
+        super(SybaseSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, **kwargs)
         self.query = query
         self.type = 'SybaseSource'
 
@@ -28178,7 +28514,7 @@ class TeradataPartitionSettings(Model):
         self.partition_lower_bound = partition_lower_bound
 
 
-class TeradataSource(CopySource):
+class TeradataSource(TabularSource):
     """A copy activity Teradata source.
 
     All required parameters must be populated in order to send to Azure.
@@ -28199,6 +28535,10 @@ class TeradataSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: Teradata query. Type: string (or Expression with resultType
      string).
     :type query: object
@@ -28223,13 +28563,14 @@ class TeradataSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
         'partition_option': {'key': 'partitionOption', 'type': 'str'},
         'partition_settings': {'key': 'partitionSettings', 'type': 'TeradataPartitionSettings'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, partition_option=None, partition_settings=None, **kwargs) -> None:
-        super(TeradataSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, query=None, partition_option=None, partition_settings=None, **kwargs) -> None:
+        super(TeradataSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, **kwargs)
         self.query = query
         self.partition_option = partition_option
         self.partition_settings = partition_settings
@@ -29114,7 +29455,7 @@ class VerticaLinkedService(LinkedService):
         self.type = 'Vertica'
 
 
-class VerticaSource(CopySource):
+class VerticaSource(TabularSource):
     """A copy activity Vertica source.
 
     All required parameters must be populated in order to send to Azure.
@@ -29135,6 +29476,10 @@ class VerticaSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -29150,11 +29495,12 @@ class VerticaSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, **kwargs) -> None:
-        super(VerticaSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, query=None, **kwargs) -> None:
+        super(VerticaSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, **kwargs)
         self.query = query
         self.type = 'VerticaSource'
 
@@ -29922,7 +30268,7 @@ class XeroObjectDataset(Dataset):
         self.type = 'XeroObject'
 
 
-class XeroSource(CopySource):
+class XeroSource(TabularSource):
     """A copy activity Xero Service source.
 
     All required parameters must be populated in order to send to Azure.
@@ -29943,6 +30289,10 @@ class XeroSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -29958,11 +30308,12 @@ class XeroSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, **kwargs) -> None:
-        super(XeroSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, query=None, **kwargs) -> None:
+        super(XeroSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, **kwargs)
         self.query = query
         self.type = 'XeroSource'
 
@@ -30100,7 +30451,7 @@ class ZohoObjectDataset(Dataset):
         self.type = 'ZohoObject'
 
 
-class ZohoSource(CopySource):
+class ZohoSource(TabularSource):
     """A copy activity Zoho server source.
 
     All required parameters must be populated in order to send to Azure.
@@ -30121,6 +30472,10 @@ class ZohoSource(CopySource):
     :type max_concurrent_connections: object
     :param type: Required. Constant filled by server.
     :type type: str
+    :param query_timeout: Query timeout. Type: string (or Expression with
+     resultType string), pattern:
+     ((\\d+)\\.)?(\\d\\d):(60|([0-5][0-9])):(60|([0-5][0-9])).
+    :type query_timeout: object
     :param query: A query to retrieve data from source. Type: string (or
      Expression with resultType string).
     :type query: object
@@ -30136,10 +30491,11 @@ class ZohoSource(CopySource):
         'source_retry_wait': {'key': 'sourceRetryWait', 'type': 'object'},
         'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
         'type': {'key': 'type', 'type': 'str'},
+        'query_timeout': {'key': 'queryTimeout', 'type': 'object'},
         'query': {'key': 'query', 'type': 'object'},
     }
 
-    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query=None, **kwargs) -> None:
-        super(ZohoSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, **kwargs)
+    def __init__(self, *, additional_properties=None, source_retry_count=None, source_retry_wait=None, max_concurrent_connections=None, query_timeout=None, query=None, **kwargs) -> None:
+        super(ZohoSource, self).__init__(additional_properties=additional_properties, source_retry_count=source_retry_count, source_retry_wait=source_retry_wait, max_concurrent_connections=max_concurrent_connections, query_timeout=query_timeout, **kwargs)
         self.query = query
         self.type = 'ZohoSource'
