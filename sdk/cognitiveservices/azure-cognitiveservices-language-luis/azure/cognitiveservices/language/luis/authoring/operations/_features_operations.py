@@ -35,6 +35,71 @@ class FeaturesOperations(object):
 
         self.config = config
 
+    def create_pattern_feature(
+            self, app_id, version_id, pattern=None, name=None, custom_headers=None, raw=False, **operation_config):
+        """[DEPRECATED NOTICE: This operation will soon be removed] Creates a new
+        pattern feature in a version of the application.
+
+        :param app_id: The application ID.
+        :type app_id: str
+        :param version_id: The version ID.
+        :type version_id: str
+        :param pattern: The Regular Expression to match.
+        :type pattern: str
+        :param name: Name of the feature.
+        :type name: str
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: int or ClientRawResponse if raw=true
+        :rtype: int or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
+        """
+        pattern_create_object = models.PatternCreateObject(pattern=pattern, name=name)
+
+        # Construct URL
+        url = self.create_pattern_feature.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'appId': self._serialize.url("app_id", app_id, 'str'),
+            'versionId': self._serialize.url("version_id", version_id, 'str')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(pattern_create_object, 'PatternCreateObject')
+
+        # Construct and send request
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [201]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 201:
+            deserialized = self._deserialize('int', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    create_pattern_feature.metadata = {'url': '/apps/{appId}/versions/{versionId}/patterns'}
+
     def list_application_version_pattern_features(
             self, app_id, version_id, skip=0, take=100, custom_headers=None, raw=False, **operation_config):
         """[DEPRECATED NOTICE: This operation will soon be removed] Gets all the
@@ -294,6 +359,197 @@ class FeaturesOperations(object):
 
         return deserialized
     list.metadata = {'url': '/apps/{appId}/versions/{versionId}/features'}
+
+    def get_pattern_feature_info(
+            self, app_id, version_id, pattern_id, custom_headers=None, raw=False, **operation_config):
+        """[DEPRECATED NOTICE: This operation will soon be removed] Gets the
+        specified pattern feature's info in a version of the application.
+
+        :param app_id: The application ID.
+        :type app_id: str
+        :param version_id: The version ID.
+        :type version_id: str
+        :param pattern_id: The pattern feature ID.
+        :type pattern_id: int
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: PatternFeatureInfo or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.cognitiveservices.language.luis.authoring.models.PatternFeatureInfo
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
+        """
+        # Construct URL
+        url = self.get_pattern_feature_info.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'appId': self._serialize.url("app_id", app_id, 'str'),
+            'versionId': self._serialize.url("version_id", version_id, 'str'),
+            'patternId': self._serialize.url("pattern_id", pattern_id, 'int')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.get(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('PatternFeatureInfo', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    get_pattern_feature_info.metadata = {'url': '/apps/{appId}/versions/{versionId}/patterns/{patternId}'}
+
+    def update_pattern_feature(
+            self, app_id, version_id, pattern_id, pattern_update_object, custom_headers=None, raw=False, **operation_config):
+        """[DEPRECATED NOTICE: This operation will soon be removed] Updates the
+        pattern, the name and the state of the pattern feature in a version of
+        the application.
+
+        :param app_id: The application ID.
+        :type app_id: str
+        :param version_id: The version ID.
+        :type version_id: str
+        :param pattern_id: The pattern feature ID.
+        :type pattern_id: int
+        :param pattern_update_object: The new values for: - Just a boolean
+         called IsActive, in which case the status of the feature will be
+         changed. - Name, Pattern and a boolean called IsActive to update the
+         feature.
+        :type pattern_update_object:
+         ~azure.cognitiveservices.language.luis.authoring.models.PatternUpdateObject
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: OperationStatus or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.cognitiveservices.language.luis.authoring.models.OperationStatus
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
+        """
+        # Construct URL
+        url = self.update_pattern_feature.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'appId': self._serialize.url("app_id", app_id, 'str'),
+            'versionId': self._serialize.url("version_id", version_id, 'str'),
+            'patternId': self._serialize.url("pattern_id", pattern_id, 'int')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct body
+        body_content = self._serialize.body(pattern_update_object, 'PatternUpdateObject')
+
+        # Construct and send request
+        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('OperationStatus', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    update_pattern_feature.metadata = {'url': '/apps/{appId}/versions/{versionId}/patterns/{patternId}'}
+
+    def delete_pattern_feature(
+            self, app_id, version_id, pattern_id, custom_headers=None, raw=False, **operation_config):
+        """[DEPRECATED NOTICE: This operation will soon be removed] Deletes a
+        pattern feature in a version of the application.
+
+        :param app_id: The application ID.
+        :type app_id: str
+        :param version_id: The version ID.
+        :type version_id: str
+        :param pattern_id: The pattern feature ID.
+        :type pattern_id: int
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: returns the direct response alongside the
+         deserialized response
+        :param operation_config: :ref:`Operation configuration
+         overrides<msrest:optionsforoperations>`.
+        :return: OperationStatus or ClientRawResponse if raw=true
+        :rtype:
+         ~azure.cognitiveservices.language.luis.authoring.models.OperationStatus
+         or ~msrest.pipeline.ClientRawResponse
+        :raises:
+         :class:`ErrorResponseException<azure.cognitiveservices.language.luis.authoring.models.ErrorResponseException>`
+        """
+        # Construct URL
+        url = self.delete_pattern_feature.metadata['url']
+        path_format_arguments = {
+            'Endpoint': self._serialize.url("self.config.endpoint", self.config.endpoint, 'str', skip_quote=True),
+            'appId': self._serialize.url("app_id", app_id, 'str'),
+            'versionId': self._serialize.url("version_id", version_id, 'str'),
+            'patternId': self._serialize.url("pattern_id", pattern_id, 'int')
+        }
+        url = self._client.format_url(url, **path_format_arguments)
+
+        # Construct parameters
+        query_parameters = {}
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['Accept'] = 'application/json'
+        if custom_headers:
+            header_parameters.update(custom_headers)
+
+        # Construct and send request
+        request = self._client.delete(url, query_parameters, header_parameters)
+        response = self._client.send(request, stream=False, **operation_config)
+
+        if response.status_code not in [200]:
+            raise models.ErrorResponseException(self._deserialize, response)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize('OperationStatus', response)
+
+        if raw:
+            client_raw_response = ClientRawResponse(deserialized, response)
+            return client_raw_response
+
+        return deserialized
+    delete_pattern_feature.metadata = {'url': '/apps/{appId}/versions/{versionId}/patterns/{patternId}'}
 
     def get_phrase_list(
             self, app_id, version_id, phraselist_id, custom_headers=None, raw=False, **operation_config):
