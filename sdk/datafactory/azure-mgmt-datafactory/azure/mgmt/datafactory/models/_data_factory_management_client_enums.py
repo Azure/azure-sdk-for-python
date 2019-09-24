@@ -124,6 +124,13 @@ class TriggerRunStatus(str, Enum):
     inprogress = "Inprogress"
 
 
+class DataFlowDebugCommandType(str, Enum):
+
+    execute_preview_query = "executePreviewQuery"
+    execute_statistics_query = "executeStatisticsQuery"
+    execute_expression_query = "executeExpressionQuery"
+
+
 class TumblingWindowFrequency(str, Enum):
 
     minute = "Minute"
@@ -370,6 +377,19 @@ class WebActivityMethod(str, Enum):
     delete = "DELETE"
 
 
+class OraclePartitionOption(str, Enum):
+
+    none = "None"
+    physical_partitions_of_table = "PhysicalPartitionsOfTable"
+    dynamic_range = "DynamicRange"
+
+
+class SalesforceSourceReadBehavior(str, Enum):
+
+    query = "Query"
+    query_all = "QueryAll"
+
+
 class NetezzaPartitionOption(str, Enum):
 
     none = "None"
@@ -398,13 +418,6 @@ class TeradataPartitionOption(str, Enum):
     dynamic_range = "DynamicRange"
 
 
-class OraclePartitionOption(str, Enum):
-
-    none = "None"
-    physical_partitions_of_table = "PhysicalPartitionsOfTable"
-    dynamic_range = "DynamicRange"
-
-
 class StoredProcedureParameterType(str, Enum):
 
     string = "String"
@@ -424,12 +437,6 @@ class SapTablePartitionOption(str, Enum):
     partition_on_calendar_month = "PartitionOnCalendarMonth"
     partition_on_calendar_date = "PartitionOnCalendarDate"
     partition_on_time = "PartitionOnTime"
-
-
-class SalesforceSourceReadBehavior(str, Enum):
-
-    query = "Query"
-    query_all = "QueryAll"
 
 
 class SsisPackageLocationType(str, Enum):
