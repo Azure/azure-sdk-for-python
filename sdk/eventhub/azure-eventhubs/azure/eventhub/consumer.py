@@ -62,7 +62,6 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         auto_reconnect = kwargs.get("auto_reconnect", True)
 
         super(EventHubConsumer, self).__init__()
-        self._running = False
         self._client = client
         self._source = source
         self._offset = event_position

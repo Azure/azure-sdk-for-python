@@ -72,7 +72,6 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
 
         super(EventHubProducer, self).__init__()
         self._max_message_size_on_link = None
-        self._running = False
         self._client = client
         self._target = target
         self._partition = partition
