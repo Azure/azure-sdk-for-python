@@ -636,8 +636,11 @@ class AppWhitelistingGroup(Model):
     :vartype type: str
     :ivar location: Location where the resource is stored
     :vartype location: str
-    :param enforcement_mode: Possible values include: 'Audit', 'Enforce'
+    :param enforcement_mode: Possible values include: 'Audit', 'Enforce',
+     'None'
     :type enforcement_mode: str or ~azure.mgmt.security.models.enum
+    :param protection_mode:
+    :type protection_mode: ~azure.mgmt.security.models.ProtectionMode
     :param configuration_status: Possible values include: 'Configured',
      'NotConfigured', 'InProgress', 'Failed', 'NoStatus'
     :type configuration_status: str or ~azure.mgmt.security.models.enum
@@ -671,6 +674,7 @@ class AppWhitelistingGroup(Model):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'enforcement_mode': {'key': 'properties.enforcementMode', 'type': 'str'},
+        'protection_mode': {'key': 'properties.protectionMode', 'type': 'ProtectionMode'},
         'configuration_status': {'key': 'properties.configurationStatus', 'type': 'str'},
         'recommendation_status': {'key': 'properties.recommendationStatus', 'type': 'str'},
         'issues': {'key': 'properties.issues', 'type': '[AppWhitelistingIssueSummary]'},
@@ -686,6 +690,7 @@ class AppWhitelistingGroup(Model):
         self.type = None
         self.location = None
         self.enforcement_mode = kwargs.get('enforcement_mode', None)
+        self.protection_mode = kwargs.get('protection_mode', None)
         self.configuration_status = kwargs.get('configuration_status', None)
         self.recommendation_status = kwargs.get('recommendation_status', None)
         self.issues = kwargs.get('issues', None)
@@ -738,8 +743,14 @@ class AppWhitelistingIssueSummary(Model):
 class AppWhitelistingPutGroupData(Model):
     """The altered data of the recommended VM/server group policy.
 
-    :param enforcement_mode: Possible values include: 'Audit', 'Enforce'
+    :param enforcement_mode: The enforcement mode of the group. Can also be
+     defined per collection type by using ProtectionMode. Possible values
+     include: 'Audit', 'Enforce', 'None'
     :type enforcement_mode: str or ~azure.mgmt.security.models.enum
+    :param protection_mode: The protection mode of the group per collection
+     type. Can also be defined for all collection types by using
+     EnforcementMode
+    :type protection_mode: ~azure.mgmt.security.models.ProtectionMode
     :param vm_recommendations:
     :type vm_recommendations:
      list[~azure.mgmt.security.models.VmRecommendation]
@@ -750,6 +761,7 @@ class AppWhitelistingPutGroupData(Model):
 
     _attribute_map = {
         'enforcement_mode': {'key': 'enforcementMode', 'type': 'str'},
+        'protection_mode': {'key': 'protectionMode', 'type': 'ProtectionMode'},
         'vm_recommendations': {'key': 'vmRecommendations', 'type': '[VmRecommendation]'},
         'path_recommendations': {'key': 'pathRecommendations', 'type': '[PathRecommendation]'},
     }
@@ -757,6 +769,7 @@ class AppWhitelistingPutGroupData(Model):
     def __init__(self, **kwargs):
         super(AppWhitelistingPutGroupData, self).__init__(**kwargs)
         self.enforcement_mode = kwargs.get('enforcement_mode', None)
+        self.protection_mode = kwargs.get('protection_mode', None)
         self.vm_recommendations = kwargs.get('vm_recommendations', None)
         self.path_recommendations = kwargs.get('path_recommendations', None)
 
@@ -2774,6 +2787,35 @@ class PricingList(Model):
     def __init__(self, **kwargs):
         super(PricingList, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
+
+
+class ProtectionMode(Model):
+    """The protection mode of the collection/file types. Exe/Msi/Script are used
+    for Windows, Executable is used for Linux.
+
+    :param exe: Possible values include: 'Audit', 'Enforce', 'None'
+    :type exe: str or ~azure.mgmt.security.models.enum
+    :param msi: Possible values include: 'Audit', 'Enforce', 'None'
+    :type msi: str or ~azure.mgmt.security.models.enum
+    :param script: Possible values include: 'Audit', 'Enforce', 'None'
+    :type script: str or ~azure.mgmt.security.models.enum
+    :param executable: Possible values include: 'Audit', 'Enforce', 'None'
+    :type executable: str or ~azure.mgmt.security.models.enum
+    """
+
+    _attribute_map = {
+        'exe': {'key': 'exe', 'type': 'str'},
+        'msi': {'key': 'msi', 'type': 'str'},
+        'script': {'key': 'script', 'type': 'str'},
+        'executable': {'key': 'executable', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ProtectionMode, self).__init__(**kwargs)
+        self.exe = kwargs.get('exe', None)
+        self.msi = kwargs.get('msi', None)
+        self.script = kwargs.get('script', None)
+        self.executable = kwargs.get('executable', None)
 
 
 class PublisherInfo(Model):
