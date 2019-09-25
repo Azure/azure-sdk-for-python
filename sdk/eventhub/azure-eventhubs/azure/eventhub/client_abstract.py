@@ -12,6 +12,8 @@ import functools
 from abc import abstractmethod
 from typing import Dict, Union, Any, TYPE_CHECKING
 
+from azure.core.settings import settings
+
 from azure.eventhub import __version__, EventPosition
 from azure.eventhub.configuration import _Configuration
 from .common import EventHubSharedKeyCredential, EventHubSASTokenCredential, _Address
@@ -218,6 +220,15 @@ class EventHubClientAbstract(object):  # pylint:disable=too-many-instance-attrib
         span.add_attribute("component", "eventhubs")
         span.add_attribute("message_bus.destination", self._address.path)
         span.add_attribute("peer.address", self._address.hostname)
+
+    @staticmethod
+    def _trace_link_message(event_data):
+        span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
+        current_span = span_impl_type(span_impl_type.get_current_span())
+        if current_span and event_data.application_properties:
+            traceparent = event_data.application_properties.get(b"Diagnostic-Id", "").decode('ascii')
+            if traceparent:
+                current_span.link(traceparent)
 
     def _process_redirect_uri(self, redirect):
         redirect_uri = redirect.address.decode('utf-8')

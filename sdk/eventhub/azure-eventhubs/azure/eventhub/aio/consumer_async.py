@@ -11,8 +11,6 @@ import time
 from uamqp import errors, types  # type: ignore
 from uamqp import ReceiveClientAsync, Source  # type: ignore
 
-from azure.core.settings import settings
-
 from azure.eventhub import EventData, EventPosition
 from azure.eventhub.error import EventHubError, ConnectError, _error_handler
 from ._consumer_producer_mixin_async import ConsumerProducerMixin
@@ -104,6 +102,7 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
                     self._messages_iter = self._handler.receive_messages_iter_async()
                 message = await self._messages_iter.__anext__()
                 event_data = EventData._from_message(message)  # pylint:disable=protected-access
+                self._client._trace_link_message(event_data)  # pylint:disable=protected-access
                 self._offset = EventPosition(event_data.offset, inclusive=False)
                 retried_times = 0
                 return event_data
@@ -181,15 +180,7 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
             event_data = EventData._from_message(message)  # pylint:disable=protected-access
             self._offset = EventPosition(event_data.offset)
             data_batch.append(event_data)
-
-            # Tracing
-            span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
-            if span_impl_type is not None:
-                current_span = span_impl_type(span_impl_type.get_current_span())
-                if current_span and event_data.application_properties:
-                    traceparent = event_data.application_properties.get(b"Diagnostic-Id", "").decode('ascii')
-                    if traceparent:
-                        current_span.link(traceparent)
+            self._client._trace_link_message(event_data)  # pylint:disable=protected-access
 
         return data_batch
 
