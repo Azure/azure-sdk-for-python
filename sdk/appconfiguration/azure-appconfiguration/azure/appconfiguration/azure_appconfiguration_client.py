@@ -4,7 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 from requests.structures import CaseInsensitiveDict
-from azure.core.MatchConditions import MatchConditions
+from azure.core import MatchConditions
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import UserAgentPolicy
 from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
