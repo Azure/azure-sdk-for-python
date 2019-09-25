@@ -26,7 +26,6 @@ from .azure_appconfiguration_credential import AppConfigConnectionStringCredenti
 from ._utils import (
     get_endpoint_from_connection_string,
     escape_and_tostr,
-    quote_etag,
     dequote_etag,
     return_header,
     prep_if_match,
@@ -329,7 +328,7 @@ class AzureAppConfigurationClient:
                 409: ResourceReadOnlyError,
                 412: ResourceNotModifiedError,
             }
-        
+
         if match_condition == MatchConditions.IfPresent:
             error_map = {
                 409: ResourceReadOnlyError,
@@ -580,7 +579,7 @@ class AzureAppConfigurationClient:
                 404: ResourceNotFoundError,
                 412: ResourceNotFoundError,
             }
-        
+
         if match_condition == MatchConditions.IfMissing:
             error_map = {
                 404: ResourceNotFoundError,

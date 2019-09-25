@@ -21,7 +21,6 @@ from .._azure_appconfiguration_error import ResourceReadOnlyError
 from .._utils import (
     get_endpoint_from_connection_string,
     escape_and_tostr,
-    quote_etag,
     dequote_etag,
     return_header,
     prep_if_match,
@@ -169,7 +168,7 @@ class AzureAppConfigurationClient:
 
     @distributed_trace_async
     async def get_configuration_setting(
-            self, key, label=None, etag='*', match_condition=MatchConditions.Unconditionally,  **kwargs):
+            self, key, label=None, etag='*', match_condition=MatchConditions.Unconditionally, **kwargs):
         # type: (str, str, str, MatchConditions, dict) -> ConfigurationSetting
 
         """Get the matched ConfigurationSetting from Azure App Configuration service
