@@ -282,7 +282,7 @@ async def test_managed_identity_cloud_shell(monkeypatch):
 
 @pytest.mark.asyncio
 async def test_default_credential_shared_cache_use():
-    with patch("azure.identity.aio.SharedTokenCacheCredential") as mock_credential:
+    with patch("azure.identity.aio._credentials.default.SharedTokenCacheCredential") as mock_credential:
         mock_credential.supported = Mock(return_value=False)
 
         # unsupported platform -> default credential shouldn't use shared cache
