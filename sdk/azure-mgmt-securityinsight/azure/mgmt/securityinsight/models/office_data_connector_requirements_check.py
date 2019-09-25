@@ -9,19 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from msrest.paging import Paged
+from .data_connector_tenant_id import DataConnectorTenantId
 
 
-class ActionPaged(Paged):
-    """
-    A paging container for iterating over a list of :class:`Action <azure.mgmt.securityinsight.models.Action>` object
+class OfficeDataConnectorRequirementsCheck(DataConnectorTenantId):
+    """Office data connector properties.
+
+    :param tenant_id: The tenant id to connect to, and get the data from.
+    :type tenant_id: str
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'current_page': {'key': 'value', 'type': '[Action]'}
+        'tenant_id': {'key': 'tenantId', 'type': 'str'},
     }
 
-    def __init__(self, *args, **kwargs):
-
-        super(ActionPaged, self).__init__(*args, **kwargs)
+    def __init__(self, **kwargs):
+        super(OfficeDataConnectorRequirementsCheck, self).__init__(**kwargs)

@@ -17,7 +17,10 @@ from .cases_operations import CasesOperations
 from .comments_operations import CommentsOperations
 from .case_comments_operations import CaseCommentsOperations
 from .bookmarks_operations import BookmarksOperations
+from .case_relations_operations import CaseRelationsOperations
+from .bookmark_relations_operations import BookmarkRelationsOperations
 from .data_connectors_operations import DataConnectorsOperations
+from .data_connector_requirements_operations import DataConnectorRequirementsOperations
 from .entities_operations import EntitiesOperations
 from .office_consents_operations import OfficeConsentsOperations
 from .product_settings_operations import ProductSettingsOperations
@@ -33,7 +36,10 @@ __all__ = [
     'CommentsOperations',
     'CaseCommentsOperations',
     'BookmarksOperations',
+    'CaseRelationsOperations',
+    'BookmarkRelationsOperations',
     'DataConnectorsOperations',
+    'DataConnectorRequirementsOperations',
     'EntitiesOperations',
     'OfficeConsentsOperations',
     'ProductSettingsOperations',
