@@ -8982,9 +8982,6 @@ class Transformation(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param additional_properties: Unmatched properties from the message are
-     deserialized this collection
-    :type additional_properties: dict[str, object]
     :param name: Required. Transformation name.
     :type name: str
     :param description: Transformation description.
@@ -8996,14 +8993,12 @@ class Transformation(Model):
     }
 
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
     }
 
-    def __init__(self, *, name: str, additional_properties=None, description: str=None, **kwargs) -> None:
+    def __init__(self, *, name: str, description: str=None, **kwargs) -> None:
         super(Transformation, self).__init__(**kwargs)
-        self.additional_properties = additional_properties
         self.name = name
         self.description = description
 
@@ -9013,9 +9008,6 @@ class DataFlowSink(Transformation):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param additional_properties: Unmatched properties from the message are
-     deserialized this collection
-    :type additional_properties: dict[str, object]
     :param name: Required. Transformation name.
     :type name: str
     :param description: Transformation description.
@@ -9029,15 +9021,13 @@ class DataFlowSink(Transformation):
     }
 
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'dataset': {'key': 'dataset', 'type': 'DatasetReference'},
     }
 
-    def __init__(self, *, name: str, additional_properties=None, description: str=None, dataset=None, **kwargs) -> None:
-        super(DataFlowSink, self).__init__(additional_properties=additional_properties, name=name, description=description, **kwargs)
-        self.additional_properties = additional_properties
+    def __init__(self, *, name: str, description: str=None, dataset=None, **kwargs) -> None:
+        super(DataFlowSink, self).__init__(name=name, description=description, **kwargs)
         self.dataset = dataset
 
 
@@ -9046,9 +9036,6 @@ class DataFlowSource(Transformation):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param additional_properties: Unmatched properties from the message are
-     deserialized this collection
-    :type additional_properties: dict[str, object]
     :param name: Required. Transformation name.
     :type name: str
     :param description: Transformation description.
@@ -9062,15 +9049,13 @@ class DataFlowSource(Transformation):
     }
 
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'dataset': {'key': 'dataset', 'type': 'DatasetReference'},
     }
 
-    def __init__(self, *, name: str, additional_properties=None, description: str=None, dataset=None, **kwargs) -> None:
-        super(DataFlowSource, self).__init__(additional_properties=additional_properties, name=name, description=description, **kwargs)
-        self.additional_properties = additional_properties
+    def __init__(self, *, name: str, description: str=None, dataset=None, **kwargs) -> None:
+        super(DataFlowSource, self).__init__(name=name, description=description, **kwargs)
         self.dataset = dataset
 
 
