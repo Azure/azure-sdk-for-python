@@ -202,7 +202,7 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
 
     def test_list_configuration_settings_fields(self):
         items = self.get_config_client().list_configuration_settings(
-            keys=["*"], labels=[LABEL], select=["key", "content_type"]
+            keys=["*"], labels=[LABEL], fields=["key", "content_type"]
         )
         cnt = 0
         for kv in items:
@@ -321,7 +321,7 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
 
     def test_list_revisions_fields(self):
         items = self.get_config_client().list_revisions(
-            keys=["*"], labels=[LABEL], select=["key", "content_type"]
+            keys=["*"], labels=[LABEL], fields=["key", "content_type"]
         )
         for kv in items:
             assert (

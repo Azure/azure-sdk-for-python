@@ -133,7 +133,7 @@ class AzureAppConfigurationClient:
          used as wildcard in the beginning or end of the filter
         :type labels: list[str]
         :keyword datetime accept_datetime: filter out ConfigurationSetting created after this datetime
-        :keyword list[str] select: specify which fields to include in the results. Leave None to include all fields
+        :keyword list[str] fields: specify which fields to include in the results. Leave None to include all fields
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
         :return: An iterator of :class:`ConfigurationSetting`
         :rtype: :class:`azure.core.paging.ItemPaged[ConfigurationSetting]`
@@ -162,6 +162,7 @@ class AzureAppConfigurationClient:
         return self._impl.get_key_values(
             label=encoded_labels,
             key=encoded_keys,
+            select=kwargs.get("fields"),
             cls=lambda objs: [ConfigurationSetting._from_key_value(x) for x in objs],
             **kwargs
         )
@@ -446,7 +447,7 @@ class AzureAppConfigurationClient:
          used as wildcard in the beginning or end of the filter
         :type labels: list[str]
         :keyword datetime accept_datetime: filter out ConfigurationSetting created after this datetime
-        :keyword list[str] select: specify which fields to include in the results. Leave None to include all fields
+        :keyword list[str] fields: specify which fields to include in the results. Leave None to include all fields
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
         :return: An iterator of :class:`ConfigurationSetting`
         :rtype: :class:`azure.core.paging.ItemPaged[ConfigurationSetting]`
@@ -476,6 +477,7 @@ class AzureAppConfigurationClient:
         return self._impl.get_revisions(
             label=encoded_labels,
             key=encoded_keys,
+            select=kwargs.get("fields"),
             cls=lambda objs: [ConfigurationSetting._from_key_value(x) for x in objs],
             **kwargs
         )
