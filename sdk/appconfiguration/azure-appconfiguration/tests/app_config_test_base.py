@@ -8,6 +8,7 @@ import datetime
 import logging
 import pytest
 
+from azure.core.MatchConditions import MatchConditions
 from azure.core.exceptions import (
     ResourceModifiedError,
     ResourceNotFoundError,
