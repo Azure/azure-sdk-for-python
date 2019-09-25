@@ -222,10 +222,10 @@ class EventHubClientAbstract(object):  # pylint:disable=too-many-instance-attrib
         span.add_attribute("peer.address", self._address.hostname)
 
     @staticmethod
-    def _trace_link_message(event_data):
+    def _trace_link_message(event_data, parent_span=None):
         span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
         if span_impl_type is not None:
-            current_span = span_impl_type(span_impl_type.get_current_span())
+            current_span = parent_span or span_impl_type(span_impl_type.get_current_span())
             if current_span and event_data.application_properties:
                 traceparent = event_data.application_properties.get(b"Diagnostic-Id", "").decode('ascii')
                 if traceparent:
