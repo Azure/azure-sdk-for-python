@@ -13,33 +13,15 @@ from msrest.serialization import Model
 from msrest.exceptions import HttpOperationError
 
 
-class Capability(Model):
-    """Cosmos DB capability object.
-
-    :param name: Name of the Cosmos DB capability. For example, "name":
-     "EnableCassandra". Current values also include "EnableTable" and
-     "EnableGremlin".
-    :type name: str
-    """
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-    }
-
-    def __init__(self, *, name: str=None, **kwargs) -> None:
-        super(Capability, self).__init__(**kwargs)
-        self.name = name
-
-
-class Resource(Model):
+class ARMResourceProperties(Model):
     """The core properties of ARM resources.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: The unique resource identifier of the database account.
+    :ivar id: The unique resource identifier of the ARM resource.
     :vartype id: str
-    :ivar name: The name of the database account.
+    :ivar name: The name of the ARM resource.
     :vartype name: str
     :ivar type: The type of Azure resource.
     :vartype type: str
@@ -65,7 +47,7 @@ class Resource(Model):
     }
 
     def __init__(self, *, location: str=None, tags=None, **kwargs) -> None:
-        super(Resource, self).__init__(**kwargs)
+        super(ARMResourceProperties, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -73,17 +55,35 @@ class Resource(Model):
         self.tags = tags
 
 
-class CassandraKeyspace(Resource):
-    """An Azure Cosmos DB Cassandra keyspace.
+class Capability(Model):
+    """Cosmos DB capability object.
+
+    :param name: Name of the Cosmos DB capability. For example, "name":
+     "EnableCassandra". Current values also include "EnableTable" and
+     "EnableGremlin".
+    :type name: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+    }
+
+    def __init__(self, *, name: str=None, **kwargs) -> None:
+        super(Capability, self).__init__(**kwargs)
+        self.name = name
+
+
+class CassandraKeyspaceCreateUpdateParameters(ARMResourceProperties):
+    """Parameters to create and update Cosmos DB Cassandra keyspace.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: The unique resource identifier of the database account.
+    :ivar id: The unique resource identifier of the ARM resource.
     :vartype id: str
-    :ivar name: The name of the database account.
+    :ivar name: The name of the ARM resource.
     :vartype name: str
     :ivar type: The type of Azure resource.
     :vartype type: str
@@ -92,37 +92,6 @@ class CassandraKeyspace(Resource):
     :type location: str
     :param tags:
     :type tags: dict[str, str]
-    :param cassandra_keyspace_id: Required. Name of the Cosmos DB Cassandra
-     keyspace
-    :type cassandra_keyspace_id: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'cassandra_keyspace_id': {'required': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'cassandra_keyspace_id': {'key': 'properties.id', 'type': 'str'},
-    }
-
-    def __init__(self, *, cassandra_keyspace_id: str, location: str=None, tags=None, **kwargs) -> None:
-        super(CassandraKeyspace, self).__init__(location=location, tags=tags, **kwargs)
-        self.cassandra_keyspace_id = cassandra_keyspace_id
-
-
-class CassandraKeyspaceCreateUpdateParameters(Model):
-    """Parameters to create and update Cosmos DB Cassandra keyspace.
-
-    All required parameters must be populated in order to send to Azure.
-
     :param resource: Required. The standard JSON format of a Cassandra
      keyspace
     :type resource: ~azure.mgmt.cosmosdb.models.CassandraKeyspaceResource
@@ -132,23 +101,93 @@ class CassandraKeyspaceCreateUpdateParameters(Model):
     """
 
     _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'resource': {'required': True},
         'options': {'required': True},
     }
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
         'resource': {'key': 'properties.resource', 'type': 'CassandraKeyspaceResource'},
         'options': {'key': 'properties.options', 'type': '{str}'},
     }
 
-    def __init__(self, *, resource, options, **kwargs) -> None:
-        super(CassandraKeyspaceCreateUpdateParameters, self).__init__(**kwargs)
+    def __init__(self, *, resource, options, location: str=None, tags=None, **kwargs) -> None:
+        super(CassandraKeyspaceCreateUpdateParameters, self).__init__(location=location, tags=tags, **kwargs)
         self.resource = resource
         self.options = options
 
 
+class CassandraKeyspaceGetResults(ARMResourceProperties):
+    """An Azure Cosmos DB Cassandra keyspace.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The unique resource identifier of the ARM resource.
+    :vartype id: str
+    :ivar name: The name of the ARM resource.
+    :vartype name: str
+    :ivar type: The type of Azure resource.
+    :vartype type: str
+    :param location: The location of the resource group to which the resource
+     belongs.
+    :type location: str
+    :param tags:
+    :type tags: dict[str, str]
+    :param cassandra_keyspace_get_results_id: Required. Name of the Cosmos DB
+     Cassandra keyspace
+    :type cassandra_keyspace_get_results_id: str
+    :ivar _rid: A system generated property. A unique identifier.
+    :vartype _rid: str
+    :ivar _ts: A system generated property that denotes the last updated
+     timestamp of the resource.
+    :vartype _ts: object
+    :ivar _etag: A system generated property representing the resource etag
+     required for optimistic concurrency control.
+    :vartype _etag: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'cassandra_keyspace_get_results_id': {'required': True},
+        '_rid': {'readonly': True},
+        '_ts': {'readonly': True},
+        '_etag': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'cassandra_keyspace_get_results_id': {'key': 'properties.id', 'type': 'str'},
+        '_rid': {'key': 'properties._rid', 'type': 'str'},
+        '_ts': {'key': 'properties._ts', 'type': 'object'},
+        '_etag': {'key': 'properties._etag', 'type': 'str'},
+    }
+
+    def __init__(self, *, cassandra_keyspace_get_results_id: str, location: str=None, tags=None, **kwargs) -> None:
+        super(CassandraKeyspaceGetResults, self).__init__(location=location, tags=tags, **kwargs)
+        self.cassandra_keyspace_get_results_id = cassandra_keyspace_get_results_id
+        self._rid = None
+        self._ts = None
+        self._etag = None
+
+
 class CassandraKeyspaceResource(Model):
-    """Cosmos DB Cassandra keyspace id object.
+    """Cosmos DB Cassandra keyspace resource object.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -210,17 +249,17 @@ class CassandraSchema(Model):
         self.cluster_keys = cluster_keys
 
 
-class CassandraTable(Resource):
-    """An Azure Cosmos DB Cassandra table.
+class CassandraTableCreateUpdateParameters(ARMResourceProperties):
+    """Parameters to create and update Cosmos DB Cassandra table.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: The unique resource identifier of the database account.
+    :ivar id: The unique resource identifier of the ARM resource.
     :vartype id: str
-    :ivar name: The name of the database account.
+    :ivar name: The name of the ARM resource.
     :vartype name: str
     :ivar type: The type of Azure resource.
     :vartype type: str
@@ -229,44 +268,6 @@ class CassandraTable(Resource):
     :type location: str
     :param tags:
     :type tags: dict[str, str]
-    :param cassandra_table_id: Required. Name of the Cosmos DB Cassandra table
-    :type cassandra_table_id: str
-    :param default_ttl: Time to live of the Cosmos DB Cassandra table
-    :type default_ttl: int
-    :param schema: Schema of the Cosmos DB Cassandra table
-    :type schema: ~azure.mgmt.cosmosdb.models.CassandraSchema
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'cassandra_table_id': {'required': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'cassandra_table_id': {'key': 'properties.id', 'type': 'str'},
-        'default_ttl': {'key': 'properties.defaultTtl', 'type': 'int'},
-        'schema': {'key': 'properties.schema', 'type': 'CassandraSchema'},
-    }
-
-    def __init__(self, *, cassandra_table_id: str, location: str=None, tags=None, default_ttl: int=None, schema=None, **kwargs) -> None:
-        super(CassandraTable, self).__init__(location=location, tags=tags, **kwargs)
-        self.cassandra_table_id = cassandra_table_id
-        self.default_ttl = default_ttl
-        self.schema = schema
-
-
-class CassandraTableCreateUpdateParameters(Model):
-    """Parameters to create and update Cosmos DB Cassandra table.
-
-    All required parameters must be populated in order to send to Azure.
-
     :param resource: Required. The standard JSON format of a Cassandra table
     :type resource: ~azure.mgmt.cosmosdb.models.CassandraTableResource
     :param options: Required. A key-value pair of options to be applied for
@@ -275,23 +276,101 @@ class CassandraTableCreateUpdateParameters(Model):
     """
 
     _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'resource': {'required': True},
         'options': {'required': True},
     }
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
         'resource': {'key': 'properties.resource', 'type': 'CassandraTableResource'},
         'options': {'key': 'properties.options', 'type': '{str}'},
     }
 
-    def __init__(self, *, resource, options, **kwargs) -> None:
-        super(CassandraTableCreateUpdateParameters, self).__init__(**kwargs)
+    def __init__(self, *, resource, options, location: str=None, tags=None, **kwargs) -> None:
+        super(CassandraTableCreateUpdateParameters, self).__init__(location=location, tags=tags, **kwargs)
         self.resource = resource
         self.options = options
 
 
+class CassandraTableGetResults(ARMResourceProperties):
+    """An Azure Cosmos DB Cassandra table.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The unique resource identifier of the ARM resource.
+    :vartype id: str
+    :ivar name: The name of the ARM resource.
+    :vartype name: str
+    :ivar type: The type of Azure resource.
+    :vartype type: str
+    :param location: The location of the resource group to which the resource
+     belongs.
+    :type location: str
+    :param tags:
+    :type tags: dict[str, str]
+    :param cassandra_table_get_results_id: Required. Name of the Cosmos DB
+     Cassandra table
+    :type cassandra_table_get_results_id: str
+    :param default_ttl: Time to live of the Cosmos DB Cassandra table
+    :type default_ttl: int
+    :param schema: Schema of the Cosmos DB Cassandra table
+    :type schema: ~azure.mgmt.cosmosdb.models.CassandraSchema
+    :ivar _rid: A system generated property. A unique identifier.
+    :vartype _rid: str
+    :ivar _ts: A system generated property that denotes the last updated
+     timestamp of the resource.
+    :vartype _ts: object
+    :ivar _etag: A system generated property representing the resource etag
+     required for optimistic concurrency control.
+    :vartype _etag: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'cassandra_table_get_results_id': {'required': True},
+        '_rid': {'readonly': True},
+        '_ts': {'readonly': True},
+        '_etag': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'cassandra_table_get_results_id': {'key': 'properties.id', 'type': 'str'},
+        'default_ttl': {'key': 'properties.defaultTtl', 'type': 'int'},
+        'schema': {'key': 'properties.schema', 'type': 'CassandraSchema'},
+        '_rid': {'key': 'properties._rid', 'type': 'str'},
+        '_ts': {'key': 'properties._ts', 'type': 'object'},
+        '_etag': {'key': 'properties._etag', 'type': 'str'},
+    }
+
+    def __init__(self, *, cassandra_table_get_results_id: str, location: str=None, tags=None, default_ttl: int=None, schema=None, **kwargs) -> None:
+        super(CassandraTableGetResults, self).__init__(location=location, tags=tags, **kwargs)
+        self.cassandra_table_get_results_id = cassandra_table_get_results_id
+        self.default_ttl = default_ttl
+        self.schema = schema
+        self._rid = None
+        self._ts = None
+        self._etag = None
+
+
 class CassandraTableResource(Model):
-    """Cosmos DB Cassandra table id object.
+    """Cosmos DB Cassandra table resource object.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -461,15 +540,150 @@ class ContainerPartitionKey(Model):
         self.kind = kind
 
 
-class DatabaseAccount(Resource):
+class DatabaseAccountConnectionString(Model):
+    """Connection string for the Cosmos DB account.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar connection_string: Value of the connection string
+    :vartype connection_string: str
+    :ivar description: Description of the connection string
+    :vartype description: str
+    """
+
+    _validation = {
+        'connection_string': {'readonly': True},
+        'description': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'connection_string': {'key': 'connectionString', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(DatabaseAccountConnectionString, self).__init__(**kwargs)
+        self.connection_string = None
+        self.description = None
+
+
+class DatabaseAccountCreateUpdateParameters(ARMResourceProperties):
+    """Parameters to create and update Cosmos DB database accounts.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The unique resource identifier of the ARM resource.
+    :vartype id: str
+    :ivar name: The name of the ARM resource.
+    :vartype name: str
+    :ivar type: The type of Azure resource.
+    :vartype type: str
+    :param location: The location of the resource group to which the resource
+     belongs.
+    :type location: str
+    :param tags:
+    :type tags: dict[str, str]
+    :param kind: Indicates the type of database account. This can only be set
+     at database account creation. Possible values include: 'GlobalDocumentDB',
+     'MongoDB', 'Parse'. Default value: "GlobalDocumentDB" .
+    :type kind: str or ~azure.mgmt.cosmosdb.models.DatabaseAccountKind
+    :param consistency_policy: The consistency policy for the Cosmos DB
+     account.
+    :type consistency_policy: ~azure.mgmt.cosmosdb.models.ConsistencyPolicy
+    :param locations: Required. An array that contains the georeplication
+     locations enabled for the Cosmos DB account.
+    :type locations: list[~azure.mgmt.cosmosdb.models.Location]
+    :ivar database_account_offer_type: Required. The offer type for the
+     database. Default value: "Standard" .
+    :vartype database_account_offer_type: str
+    :param ip_range_filter: Cosmos DB Firewall Support: This value specifies
+     the set of IP addresses or IP address ranges in CIDR form to be included
+     as the allowed list of client IPs for a given database account. IP
+     addresses/ranges must be comma separated and must not contain any spaces.
+    :type ip_range_filter: str
+    :param is_virtual_network_filter_enabled: Flag to indicate whether to
+     enable/disable Virtual Network ACL rules.
+    :type is_virtual_network_filter_enabled: bool
+    :param enable_automatic_failover: Enables automatic failover of the write
+     region in the rare event that the region is unavailable due to an outage.
+     Automatic failover will result in a new write region for the account and
+     is chosen based on the failover priorities configured for the account.
+    :type enable_automatic_failover: bool
+    :param capabilities: List of Cosmos DB capabilities for the account
+    :type capabilities: list[~azure.mgmt.cosmosdb.models.Capability]
+    :param virtual_network_rules: List of Virtual Network ACL rules configured
+     for the Cosmos DB account.
+    :type virtual_network_rules:
+     list[~azure.mgmt.cosmosdb.models.VirtualNetworkRule]
+    :param enable_multiple_write_locations: Enables the account to write in
+     multiple locations
+    :type enable_multiple_write_locations: bool
+    :param enable_cassandra_connector: Enables the cassandra connector on the
+     Cosmos DB C* account
+    :type enable_cassandra_connector: bool
+    :param connector_offer: The cassandra connector offer type for the Cosmos
+     DB database C* account. Possible values include: 'Small'
+    :type connector_offer: str or ~azure.mgmt.cosmosdb.models.ConnectorOffer
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'locations': {'required': True},
+        'database_account_offer_type': {'required': True, 'constant': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'consistency_policy': {'key': 'properties.consistencyPolicy', 'type': 'ConsistencyPolicy'},
+        'locations': {'key': 'properties.locations', 'type': '[Location]'},
+        'database_account_offer_type': {'key': 'properties.databaseAccountOfferType', 'type': 'str'},
+        'ip_range_filter': {'key': 'properties.ipRangeFilter', 'type': 'str'},
+        'is_virtual_network_filter_enabled': {'key': 'properties.isVirtualNetworkFilterEnabled', 'type': 'bool'},
+        'enable_automatic_failover': {'key': 'properties.enableAutomaticFailover', 'type': 'bool'},
+        'capabilities': {'key': 'properties.capabilities', 'type': '[Capability]'},
+        'virtual_network_rules': {'key': 'properties.virtualNetworkRules', 'type': '[VirtualNetworkRule]'},
+        'enable_multiple_write_locations': {'key': 'properties.enableMultipleWriteLocations', 'type': 'bool'},
+        'enable_cassandra_connector': {'key': 'properties.enableCassandraConnector', 'type': 'bool'},
+        'connector_offer': {'key': 'properties.connectorOffer', 'type': 'str'},
+    }
+
+    database_account_offer_type = "Standard"
+
+    def __init__(self, *, locations, location: str=None, tags=None, kind="GlobalDocumentDB", consistency_policy=None, ip_range_filter: str=None, is_virtual_network_filter_enabled: bool=None, enable_automatic_failover: bool=None, capabilities=None, virtual_network_rules=None, enable_multiple_write_locations: bool=None, enable_cassandra_connector: bool=None, connector_offer=None, **kwargs) -> None:
+        super(DatabaseAccountCreateUpdateParameters, self).__init__(location=location, tags=tags, **kwargs)
+        self.kind = kind
+        self.consistency_policy = consistency_policy
+        self.locations = locations
+        self.ip_range_filter = ip_range_filter
+        self.is_virtual_network_filter_enabled = is_virtual_network_filter_enabled
+        self.enable_automatic_failover = enable_automatic_failover
+        self.capabilities = capabilities
+        self.virtual_network_rules = virtual_network_rules
+        self.enable_multiple_write_locations = enable_multiple_write_locations
+        self.enable_cassandra_connector = enable_cassandra_connector
+        self.connector_offer = connector_offer
+
+
+class DatabaseAccountGetResults(ARMResourceProperties):
     """An Azure Cosmos DB database account.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
-    :ivar id: The unique resource identifier of the database account.
+    :ivar id: The unique resource identifier of the ARM resource.
     :vartype id: str
-    :ivar name: The name of the database account.
+    :ivar name: The name of the ARM resource.
     :vartype name: str
     :ivar type: The type of Azure resource.
     :vartype type: str
@@ -571,7 +785,7 @@ class DatabaseAccount(Resource):
     }
 
     def __init__(self, *, location: str=None, tags=None, kind="GlobalDocumentDB", provisioning_state: str=None, ip_range_filter: str=None, is_virtual_network_filter_enabled: bool=None, enable_automatic_failover: bool=None, consistency_policy=None, capabilities=None, virtual_network_rules=None, enable_multiple_write_locations: bool=None, enable_cassandra_connector: bool=None, connector_offer=None, **kwargs) -> None:
-        super(DatabaseAccount, self).__init__(location=location, tags=tags, **kwargs)
+        super(DatabaseAccountGetResults, self).__init__(location=location, tags=tags, **kwargs)
         self.kind = kind
         self.provisioning_state = provisioning_state
         self.document_endpoint = None
@@ -584,141 +798,6 @@ class DatabaseAccount(Resource):
         self.write_locations = None
         self.read_locations = None
         self.failover_policies = None
-        self.virtual_network_rules = virtual_network_rules
-        self.enable_multiple_write_locations = enable_multiple_write_locations
-        self.enable_cassandra_connector = enable_cassandra_connector
-        self.connector_offer = connector_offer
-
-
-class DatabaseAccountConnectionString(Model):
-    """Connection string for the Cosmos DB account.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar connection_string: Value of the connection string
-    :vartype connection_string: str
-    :ivar description: Description of the connection string
-    :vartype description: str
-    """
-
-    _validation = {
-        'connection_string': {'readonly': True},
-        'description': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'connection_string': {'key': 'connectionString', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs) -> None:
-        super(DatabaseAccountConnectionString, self).__init__(**kwargs)
-        self.connection_string = None
-        self.description = None
-
-
-class DatabaseAccountCreateUpdateParameters(Resource):
-    """Parameters to create and update Cosmos DB database accounts.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: The unique resource identifier of the database account.
-    :vartype id: str
-    :ivar name: The name of the database account.
-    :vartype name: str
-    :ivar type: The type of Azure resource.
-    :vartype type: str
-    :param location: The location of the resource group to which the resource
-     belongs.
-    :type location: str
-    :param tags:
-    :type tags: dict[str, str]
-    :param kind: Indicates the type of database account. This can only be set
-     at database account creation. Possible values include: 'GlobalDocumentDB',
-     'MongoDB', 'Parse'. Default value: "GlobalDocumentDB" .
-    :type kind: str or ~azure.mgmt.cosmosdb.models.DatabaseAccountKind
-    :param consistency_policy: The consistency policy for the Cosmos DB
-     account.
-    :type consistency_policy: ~azure.mgmt.cosmosdb.models.ConsistencyPolicy
-    :param locations: Required. An array that contains the georeplication
-     locations enabled for the Cosmos DB account.
-    :type locations: list[~azure.mgmt.cosmosdb.models.Location]
-    :ivar database_account_offer_type: Required. The offer type for the
-     database. Default value: "Standard" .
-    :vartype database_account_offer_type: str
-    :param ip_range_filter: Cosmos DB Firewall Support: This value specifies
-     the set of IP addresses or IP address ranges in CIDR form to be included
-     as the allowed list of client IPs for a given database account. IP
-     addresses/ranges must be comma separated and must not contain any spaces.
-    :type ip_range_filter: str
-    :param is_virtual_network_filter_enabled: Flag to indicate whether to
-     enable/disable Virtual Network ACL rules.
-    :type is_virtual_network_filter_enabled: bool
-    :param enable_automatic_failover: Enables automatic failover of the write
-     region in the rare event that the region is unavailable due to an outage.
-     Automatic failover will result in a new write region for the account and
-     is chosen based on the failover priorities configured for the account.
-    :type enable_automatic_failover: bool
-    :param capabilities: List of Cosmos DB capabilities for the account
-    :type capabilities: list[~azure.mgmt.cosmosdb.models.Capability]
-    :param virtual_network_rules: List of Virtual Network ACL rules configured
-     for the Cosmos DB account.
-    :type virtual_network_rules:
-     list[~azure.mgmt.cosmosdb.models.VirtualNetworkRule]
-    :param enable_multiple_write_locations: Enables the account to write in
-     multiple locations
-    :type enable_multiple_write_locations: bool
-    :param enable_cassandra_connector: Enables the cassandra connector on the
-     Cosmos DB C* account
-    :type enable_cassandra_connector: bool
-    :param connector_offer: The cassandra connector offer type for the Cosmos
-     DB database C* account. Possible values include: 'Small'
-    :type connector_offer: str or ~azure.mgmt.cosmosdb.models.ConnectorOffer
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'locations': {'required': True},
-        'database_account_offer_type': {'required': True, 'constant': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'consistency_policy': {'key': 'properties.consistencyPolicy', 'type': 'ConsistencyPolicy'},
-        'locations': {'key': 'properties.locations', 'type': '[Location]'},
-        'database_account_offer_type': {'key': 'properties.databaseAccountOfferType', 'type': 'str'},
-        'ip_range_filter': {'key': 'properties.ipRangeFilter', 'type': 'str'},
-        'is_virtual_network_filter_enabled': {'key': 'properties.isVirtualNetworkFilterEnabled', 'type': 'bool'},
-        'enable_automatic_failover': {'key': 'properties.enableAutomaticFailover', 'type': 'bool'},
-        'capabilities': {'key': 'properties.capabilities', 'type': '[Capability]'},
-        'virtual_network_rules': {'key': 'properties.virtualNetworkRules', 'type': '[VirtualNetworkRule]'},
-        'enable_multiple_write_locations': {'key': 'properties.enableMultipleWriteLocations', 'type': 'bool'},
-        'enable_cassandra_connector': {'key': 'properties.enableCassandraConnector', 'type': 'bool'},
-        'connector_offer': {'key': 'properties.connectorOffer', 'type': 'str'},
-    }
-
-    database_account_offer_type = "Standard"
-
-    def __init__(self, *, locations, location: str=None, tags=None, kind="GlobalDocumentDB", consistency_policy=None, ip_range_filter: str=None, is_virtual_network_filter_enabled: bool=None, enable_automatic_failover: bool=None, capabilities=None, virtual_network_rules=None, enable_multiple_write_locations: bool=None, enable_cassandra_connector: bool=None, connector_offer=None, **kwargs) -> None:
-        super(DatabaseAccountCreateUpdateParameters, self).__init__(location=location, tags=tags, **kwargs)
-        self.kind = kind
-        self.consistency_policy = consistency_policy
-        self.locations = locations
-        self.ip_range_filter = ip_range_filter
-        self.is_virtual_network_filter_enabled = is_virtual_network_filter_enabled
-        self.enable_automatic_failover = enable_automatic_failover
-        self.capabilities = capabilities
         self.virtual_network_rules = virtual_network_rules
         self.enable_multiple_write_locations = enable_multiple_write_locations
         self.enable_cassandra_connector = enable_cassandra_connector
@@ -906,18 +985,27 @@ class ExcludedPath(Model):
 
 
 class ExtendedResourceProperties(Model):
-    """The system generated resource properties associated with SQL databases and
-    SQL containers.
+    """The system generated resource properties associated with SQL databases, SQL
+    containers, Gremlin databases and Gremlin graphs.
 
-    :param _rid: A system generated property. A unique identifier.
-    :type _rid: str
-    :param _ts: A system generated property that denotes the last updated
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar _rid: A system generated property. A unique identifier.
+    :vartype _rid: str
+    :ivar _ts: A system generated property that denotes the last updated
      timestamp of the resource.
-    :type _ts: object
-    :param _etag: A system generated property representing the resource etag
+    :vartype _ts: object
+    :ivar _etag: A system generated property representing the resource etag
      required for optimistic concurrency control.
-    :type _etag: str
+    :vartype _etag: str
     """
+
+    _validation = {
+        '_rid': {'readonly': True},
+        '_ts': {'readonly': True},
+        '_etag': {'readonly': True},
+    }
 
     _attribute_map = {
         '_rid': {'key': '_rid', 'type': 'str'},
@@ -925,11 +1013,11 @@ class ExtendedResourceProperties(Model):
         '_etag': {'key': '_etag', 'type': 'str'},
     }
 
-    def __init__(self, *, _rid: str=None, _ts=None, _etag: str=None, **kwargs) -> None:
+    def __init__(self, **kwargs) -> None:
         super(ExtendedResourceProperties, self).__init__(**kwargs)
-        self._rid = _rid
-        self._ts = _ts
-        self._etag = _etag
+        self._rid = None
+        self._ts = None
+        self._etag = None
 
 
 class FailoverPolicies(Model):
@@ -991,17 +1079,17 @@ class FailoverPolicy(Model):
         self.failover_priority = failover_priority
 
 
-class GremlinDatabase(Resource):
-    """An Azure Cosmos DB Gremlin database.
+class GremlinDatabaseCreateUpdateParameters(ARMResourceProperties):
+    """Parameters to create and update Cosmos DB Gremlin database.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: The unique resource identifier of the database account.
+    :ivar id: The unique resource identifier of the ARM resource.
     :vartype id: str
-    :ivar name: The name of the database account.
+    :ivar name: The name of the ARM resource.
     :vartype name: str
     :ivar type: The type of Azure resource.
     :vartype type: str
@@ -1010,51 +1098,6 @@ class GremlinDatabase(Resource):
     :type location: str
     :param tags:
     :type tags: dict[str, str]
-    :param gremlin_database_id: Required. Name of the Cosmos DB Gremlin
-     database
-    :type gremlin_database_id: str
-    :param _rid: A system generated property. A unique identifier.
-    :type _rid: str
-    :param _ts: A system generated property that denotes the last updated
-     timestamp of the resource.
-    :type _ts: object
-    :param _etag: A system generated property representing the resource etag
-     required for optimistic concurrency control.
-    :type _etag: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'gremlin_database_id': {'required': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'gremlin_database_id': {'key': 'properties.id', 'type': 'str'},
-        '_rid': {'key': 'properties._rid', 'type': 'str'},
-        '_ts': {'key': 'properties._ts', 'type': 'object'},
-        '_etag': {'key': 'properties._etag', 'type': 'str'},
-    }
-
-    def __init__(self, *, gremlin_database_id: str, location: str=None, tags=None, _rid: str=None, _ts=None, _etag: str=None, **kwargs) -> None:
-        super(GremlinDatabase, self).__init__(location=location, tags=tags, **kwargs)
-        self.gremlin_database_id = gremlin_database_id
-        self._rid = _rid
-        self._ts = _ts
-        self._etag = _etag
-
-
-class GremlinDatabaseCreateUpdateParameters(Model):
-    """Parameters to create and update Cosmos DB Gremlin database.
-
-    All required parameters must be populated in order to send to Azure.
-
     :param resource: Required. The standard JSON format of a Gremlin database
     :type resource: ~azure.mgmt.cosmosdb.models.GremlinDatabaseResource
     :param options: Required. A key-value pair of options to be applied for
@@ -1063,23 +1106,93 @@ class GremlinDatabaseCreateUpdateParameters(Model):
     """
 
     _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'resource': {'required': True},
         'options': {'required': True},
     }
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
         'resource': {'key': 'properties.resource', 'type': 'GremlinDatabaseResource'},
         'options': {'key': 'properties.options', 'type': '{str}'},
     }
 
-    def __init__(self, *, resource, options, **kwargs) -> None:
-        super(GremlinDatabaseCreateUpdateParameters, self).__init__(**kwargs)
+    def __init__(self, *, resource, options, location: str=None, tags=None, **kwargs) -> None:
+        super(GremlinDatabaseCreateUpdateParameters, self).__init__(location=location, tags=tags, **kwargs)
         self.resource = resource
         self.options = options
 
 
+class GremlinDatabaseGetResults(ARMResourceProperties):
+    """An Azure Cosmos DB Gremlin database.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The unique resource identifier of the ARM resource.
+    :vartype id: str
+    :ivar name: The name of the ARM resource.
+    :vartype name: str
+    :ivar type: The type of Azure resource.
+    :vartype type: str
+    :param location: The location of the resource group to which the resource
+     belongs.
+    :type location: str
+    :param tags:
+    :type tags: dict[str, str]
+    :param gremlin_database_get_results_id: Required. Name of the Cosmos DB
+     Gremlin database
+    :type gremlin_database_get_results_id: str
+    :ivar _rid: A system generated property. A unique identifier.
+    :vartype _rid: str
+    :ivar _ts: A system generated property that denotes the last updated
+     timestamp of the resource.
+    :vartype _ts: object
+    :ivar _etag: A system generated property representing the resource etag
+     required for optimistic concurrency control.
+    :vartype _etag: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'gremlin_database_get_results_id': {'required': True},
+        '_rid': {'readonly': True},
+        '_ts': {'readonly': True},
+        '_etag': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'gremlin_database_get_results_id': {'key': 'properties.id', 'type': 'str'},
+        '_rid': {'key': 'properties._rid', 'type': 'str'},
+        '_ts': {'key': 'properties._ts', 'type': 'object'},
+        '_etag': {'key': 'properties._etag', 'type': 'str'},
+    }
+
+    def __init__(self, *, gremlin_database_get_results_id: str, location: str=None, tags=None, **kwargs) -> None:
+        super(GremlinDatabaseGetResults, self).__init__(location=location, tags=tags, **kwargs)
+        self.gremlin_database_get_results_id = gremlin_database_get_results_id
+        self._rid = None
+        self._ts = None
+        self._etag = None
+
+
 class GremlinDatabaseResource(Model):
-    """Cosmos DB Gremlin database id object.
+    """Cosmos DB Gremlin database resource object.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -1100,17 +1213,17 @@ class GremlinDatabaseResource(Model):
         self.id = id
 
 
-class GremlinGraph(Resource):
-    """An Azure Cosmos DB Gremlin graph.
+class GremlinGraphCreateUpdateParameters(ARMResourceProperties):
+    """Parameters to create and update Cosmos DB Gremlin graph.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: The unique resource identifier of the database account.
+    :ivar id: The unique resource identifier of the ARM resource.
     :vartype id: str
-    :ivar name: The name of the database account.
+    :ivar name: The name of the ARM resource.
     :vartype name: str
     :ivar type: The type of Azure resource.
     :vartype type: str
@@ -1119,8 +1232,59 @@ class GremlinGraph(Resource):
     :type location: str
     :param tags:
     :type tags: dict[str, str]
-    :param gremlin_graph_id: Required. Name of the Cosmos DB Gremlin graph
-    :type gremlin_graph_id: str
+    :param resource: Required. The standard JSON format of a Gremlin graph
+    :type resource: ~azure.mgmt.cosmosdb.models.GremlinGraphResource
+    :param options: Required. A key-value pair of options to be applied for
+     the request. This corresponds to the headers sent with the request.
+    :type options: dict[str, str]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'resource': {'required': True},
+        'options': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'resource': {'key': 'properties.resource', 'type': 'GremlinGraphResource'},
+        'options': {'key': 'properties.options', 'type': '{str}'},
+    }
+
+    def __init__(self, *, resource, options, location: str=None, tags=None, **kwargs) -> None:
+        super(GremlinGraphCreateUpdateParameters, self).__init__(location=location, tags=tags, **kwargs)
+        self.resource = resource
+        self.options = options
+
+
+class GremlinGraphGetResults(ARMResourceProperties):
+    """An Azure Cosmos DB Gremlin graph.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The unique resource identifier of the ARM resource.
+    :vartype id: str
+    :ivar name: The name of the ARM resource.
+    :vartype name: str
+    :ivar type: The type of Azure resource.
+    :vartype type: str
+    :param location: The location of the resource group to which the resource
+     belongs.
+    :type location: str
+    :param tags:
+    :type tags: dict[str, str]
+    :param gremlin_graph_get_results_id: Required. Name of the Cosmos DB
+     Gremlin graph
+    :type gremlin_graph_get_results_id: str
     :param indexing_policy: The configuration of the indexing policy. By
      default, the indexing is automatic for all document paths within the graph
     :type indexing_policy: ~azure.mgmt.cosmosdb.models.IndexingPolicy
@@ -1137,21 +1301,24 @@ class GremlinGraph(Resource):
      graph.
     :type conflict_resolution_policy:
      ~azure.mgmt.cosmosdb.models.ConflictResolutionPolicy
-    :param _rid: A system generated property. A unique identifier.
-    :type _rid: str
-    :param _ts: A system generated property that denotes the last updated
+    :ivar _rid: A system generated property. A unique identifier.
+    :vartype _rid: str
+    :ivar _ts: A system generated property that denotes the last updated
      timestamp of the resource.
-    :type _ts: object
-    :param _etag: A system generated property representing the resource etag
+    :vartype _ts: object
+    :ivar _etag: A system generated property representing the resource etag
      required for optimistic concurrency control.
-    :type _etag: str
+    :vartype _etag: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'gremlin_graph_id': {'required': True},
+        'gremlin_graph_get_results_id': {'required': True},
+        '_rid': {'readonly': True},
+        '_ts': {'readonly': True},
+        '_etag': {'readonly': True},
     }
 
     _attribute_map = {
@@ -1160,7 +1327,7 @@ class GremlinGraph(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'gremlin_graph_id': {'key': 'properties.id', 'type': 'str'},
+        'gremlin_graph_get_results_id': {'key': 'properties.id', 'type': 'str'},
         'indexing_policy': {'key': 'properties.indexingPolicy', 'type': 'IndexingPolicy'},
         'partition_key': {'key': 'properties.partitionKey', 'type': 'ContainerPartitionKey'},
         'default_ttl': {'key': 'properties.defaultTtl', 'type': 'int'},
@@ -1171,45 +1338,17 @@ class GremlinGraph(Resource):
         '_etag': {'key': 'properties._etag', 'type': 'str'},
     }
 
-    def __init__(self, *, gremlin_graph_id: str, location: str=None, tags=None, indexing_policy=None, partition_key=None, default_ttl: int=None, unique_key_policy=None, conflict_resolution_policy=None, _rid: str=None, _ts=None, _etag: str=None, **kwargs) -> None:
-        super(GremlinGraph, self).__init__(location=location, tags=tags, **kwargs)
-        self.gremlin_graph_id = gremlin_graph_id
+    def __init__(self, *, gremlin_graph_get_results_id: str, location: str=None, tags=None, indexing_policy=None, partition_key=None, default_ttl: int=None, unique_key_policy=None, conflict_resolution_policy=None, **kwargs) -> None:
+        super(GremlinGraphGetResults, self).__init__(location=location, tags=tags, **kwargs)
+        self.gremlin_graph_get_results_id = gremlin_graph_get_results_id
         self.indexing_policy = indexing_policy
         self.partition_key = partition_key
         self.default_ttl = default_ttl
         self.unique_key_policy = unique_key_policy
         self.conflict_resolution_policy = conflict_resolution_policy
-        self._rid = _rid
-        self._ts = _ts
-        self._etag = _etag
-
-
-class GremlinGraphCreateUpdateParameters(Model):
-    """Parameters to create and update Cosmos DB Gremlin graph.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param resource: Required. The standard JSON format of a Gremlin graph
-    :type resource: ~azure.mgmt.cosmosdb.models.GremlinGraphResource
-    :param options: Required. A key-value pair of options to be applied for
-     the request. This corresponds to the headers sent with the request.
-    :type options: dict[str, str]
-    """
-
-    _validation = {
-        'resource': {'required': True},
-        'options': {'required': True},
-    }
-
-    _attribute_map = {
-        'resource': {'key': 'properties.resource', 'type': 'GremlinGraphResource'},
-        'options': {'key': 'properties.options', 'type': '{str}'},
-    }
-
-    def __init__(self, *, resource, options, **kwargs) -> None:
-        super(GremlinGraphCreateUpdateParameters, self).__init__(**kwargs)
-        self.resource = resource
-        self.options = options
+        self._rid = None
+        self._ts = None
+        self._etag = None
 
 
 class GremlinGraphResource(Model):
@@ -1480,7 +1619,7 @@ class MetricDefinition(Model):
     :vartype metric_availabilities:
      list[~azure.mgmt.cosmosdb.models.MetricAvailability]
     :ivar primary_aggregation_type: The primary aggregation type of the
-     metric. Possible values include: 'None', 'Average', 'Total', 'Minimimum',
+     metric. Possible values include: 'None', 'Average', 'Total', 'Minimum',
      'Maximum', 'Last'
     :vartype primary_aggregation_type: str or
      ~azure.mgmt.cosmosdb.models.PrimaryAggregationType
@@ -1594,17 +1733,17 @@ class MetricValue(Model):
         self.total = None
 
 
-class MongoDBCollection(Resource):
-    """An Azure Cosmos DB MongoDB collection.
+class MongoDBCollectionCreateUpdateParameters(ARMResourceProperties):
+    """Parameters to create and update Cosmos DB MongoDB collection.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: The unique resource identifier of the database account.
+    :ivar id: The unique resource identifier of the ARM resource.
     :vartype id: str
-    :ivar name: The name of the database account.
+    :ivar name: The name of the ARM resource.
     :vartype name: str
     :ivar type: The type of Azure resource.
     :vartype type: str
@@ -1613,46 +1752,6 @@ class MongoDBCollection(Resource):
     :type location: str
     :param tags:
     :type tags: dict[str, str]
-    :param mongo_db_collection_id: Required. Name of the Cosmos DB MongoDB
-     collection
-    :type mongo_db_collection_id: str
-    :param shard_key: A key-value pair of shard keys to be applied for the
-     request.
-    :type shard_key: dict[str, str]
-    :param indexes: List of index keys
-    :type indexes: list[~azure.mgmt.cosmosdb.models.MongoIndex]
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'mongo_db_collection_id': {'required': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'mongo_db_collection_id': {'key': 'properties.id', 'type': 'str'},
-        'shard_key': {'key': 'properties.shardKey', 'type': '{str}'},
-        'indexes': {'key': 'properties.indexes', 'type': '[MongoIndex]'},
-    }
-
-    def __init__(self, *, mongo_db_collection_id: str, location: str=None, tags=None, shard_key=None, indexes=None, **kwargs) -> None:
-        super(MongoDBCollection, self).__init__(location=location, tags=tags, **kwargs)
-        self.mongo_db_collection_id = mongo_db_collection_id
-        self.shard_key = shard_key
-        self.indexes = indexes
-
-
-class MongoDBCollectionCreateUpdateParameters(Model):
-    """Parameters to create and update Cosmos DB MongoDB collection.
-
-    All required parameters must be populated in order to send to Azure.
-
     :param resource: Required. The standard JSON format of a MongoDB
      collection
     :type resource: ~azure.mgmt.cosmosdb.models.MongoDBCollectionResource
@@ -1662,19 +1761,98 @@ class MongoDBCollectionCreateUpdateParameters(Model):
     """
 
     _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'resource': {'required': True},
         'options': {'required': True},
     }
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
         'resource': {'key': 'properties.resource', 'type': 'MongoDBCollectionResource'},
         'options': {'key': 'properties.options', 'type': '{str}'},
     }
 
-    def __init__(self, *, resource, options, **kwargs) -> None:
-        super(MongoDBCollectionCreateUpdateParameters, self).__init__(**kwargs)
+    def __init__(self, *, resource, options, location: str=None, tags=None, **kwargs) -> None:
+        super(MongoDBCollectionCreateUpdateParameters, self).__init__(location=location, tags=tags, **kwargs)
         self.resource = resource
         self.options = options
+
+
+class MongoDBCollectionGetResults(ARMResourceProperties):
+    """An Azure Cosmos DB MongoDB collection.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The unique resource identifier of the ARM resource.
+    :vartype id: str
+    :ivar name: The name of the ARM resource.
+    :vartype name: str
+    :ivar type: The type of Azure resource.
+    :vartype type: str
+    :param location: The location of the resource group to which the resource
+     belongs.
+    :type location: str
+    :param tags:
+    :type tags: dict[str, str]
+    :param mongo_db_collection_get_results_id: Required. Name of the Cosmos DB
+     MongoDB collection
+    :type mongo_db_collection_get_results_id: str
+    :param shard_key: A key-value pair of shard keys to be applied for the
+     request.
+    :type shard_key: dict[str, str]
+    :param indexes: List of index keys
+    :type indexes: list[~azure.mgmt.cosmosdb.models.MongoIndex]
+    :ivar _rid: A system generated property. A unique identifier.
+    :vartype _rid: str
+    :ivar _ts: A system generated property that denotes the last updated
+     timestamp of the resource.
+    :vartype _ts: object
+    :ivar _etag: A system generated property representing the resource etag
+     required for optimistic concurrency control.
+    :vartype _etag: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'mongo_db_collection_get_results_id': {'required': True},
+        '_rid': {'readonly': True},
+        '_ts': {'readonly': True},
+        '_etag': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'mongo_db_collection_get_results_id': {'key': 'properties.id', 'type': 'str'},
+        'shard_key': {'key': 'properties.shardKey', 'type': '{str}'},
+        'indexes': {'key': 'properties.indexes', 'type': '[MongoIndex]'},
+        '_rid': {'key': 'properties._rid', 'type': 'str'},
+        '_ts': {'key': 'properties._ts', 'type': 'object'},
+        '_etag': {'key': 'properties._etag', 'type': 'str'},
+    }
+
+    def __init__(self, *, mongo_db_collection_get_results_id: str, location: str=None, tags=None, shard_key=None, indexes=None, **kwargs) -> None:
+        super(MongoDBCollectionGetResults, self).__init__(location=location, tags=tags, **kwargs)
+        self.mongo_db_collection_get_results_id = mongo_db_collection_get_results_id
+        self.shard_key = shard_key
+        self.indexes = indexes
+        self._rid = None
+        self._ts = None
+        self._etag = None
 
 
 class MongoDBCollectionResource(Model):
@@ -1708,17 +1886,17 @@ class MongoDBCollectionResource(Model):
         self.indexes = indexes
 
 
-class MongoDBDatabase(Resource):
-    """An Azure Cosmos DB MongoDB database.
+class MongoDBDatabaseCreateUpdateParameters(ARMResourceProperties):
+    """Parameters to create and update Cosmos DB MongoDB database.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: The unique resource identifier of the database account.
+    :ivar id: The unique resource identifier of the ARM resource.
     :vartype id: str
-    :ivar name: The name of the database account.
+    :ivar name: The name of the ARM resource.
     :vartype name: str
     :ivar type: The type of Azure resource.
     :vartype type: str
@@ -1727,37 +1905,6 @@ class MongoDBDatabase(Resource):
     :type location: str
     :param tags:
     :type tags: dict[str, str]
-    :param mongo_db_database_id: Required. Name of the Cosmos DB MongoDB
-     database
-    :type mongo_db_database_id: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'mongo_db_database_id': {'required': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'mongo_db_database_id': {'key': 'properties.id', 'type': 'str'},
-    }
-
-    def __init__(self, *, mongo_db_database_id: str, location: str=None, tags=None, **kwargs) -> None:
-        super(MongoDBDatabase, self).__init__(location=location, tags=tags, **kwargs)
-        self.mongo_db_database_id = mongo_db_database_id
-
-
-class MongoDBDatabaseCreateUpdateParameters(Model):
-    """Parameters to create and update Cosmos DB MongoDB database.
-
-    All required parameters must be populated in order to send to Azure.
-
     :param resource: Required. The standard JSON format of a MongoDB database
     :type resource: ~azure.mgmt.cosmosdb.models.MongoDBDatabaseResource
     :param options: Required. A key-value pair of options to be applied for
@@ -1766,23 +1913,93 @@ class MongoDBDatabaseCreateUpdateParameters(Model):
     """
 
     _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'resource': {'required': True},
         'options': {'required': True},
     }
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
         'resource': {'key': 'properties.resource', 'type': 'MongoDBDatabaseResource'},
         'options': {'key': 'properties.options', 'type': '{str}'},
     }
 
-    def __init__(self, *, resource, options, **kwargs) -> None:
-        super(MongoDBDatabaseCreateUpdateParameters, self).__init__(**kwargs)
+    def __init__(self, *, resource, options, location: str=None, tags=None, **kwargs) -> None:
+        super(MongoDBDatabaseCreateUpdateParameters, self).__init__(location=location, tags=tags, **kwargs)
         self.resource = resource
         self.options = options
 
 
+class MongoDBDatabaseGetResults(ARMResourceProperties):
+    """An Azure Cosmos DB MongoDB database.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The unique resource identifier of the ARM resource.
+    :vartype id: str
+    :ivar name: The name of the ARM resource.
+    :vartype name: str
+    :ivar type: The type of Azure resource.
+    :vartype type: str
+    :param location: The location of the resource group to which the resource
+     belongs.
+    :type location: str
+    :param tags:
+    :type tags: dict[str, str]
+    :param mongo_db_database_get_results_id: Required. Name of the Cosmos DB
+     MongoDB database
+    :type mongo_db_database_get_results_id: str
+    :ivar _rid: A system generated property. A unique identifier.
+    :vartype _rid: str
+    :ivar _ts: A system generated property that denotes the last updated
+     timestamp of the resource.
+    :vartype _ts: object
+    :ivar _etag: A system generated property representing the resource etag
+     required for optimistic concurrency control.
+    :vartype _etag: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'mongo_db_database_get_results_id': {'required': True},
+        '_rid': {'readonly': True},
+        '_ts': {'readonly': True},
+        '_etag': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'mongo_db_database_get_results_id': {'key': 'properties.id', 'type': 'str'},
+        '_rid': {'key': 'properties._rid', 'type': 'str'},
+        '_ts': {'key': 'properties._ts', 'type': 'object'},
+        '_etag': {'key': 'properties._etag', 'type': 'str'},
+    }
+
+    def __init__(self, *, mongo_db_database_get_results_id: str, location: str=None, tags=None, **kwargs) -> None:
+        super(MongoDBDatabaseGetResults, self).__init__(location=location, tags=tags, **kwargs)
+        self.mongo_db_database_get_results_id = mongo_db_database_get_results_id
+        self._rid = None
+        self._ts = None
+        self._etag = None
+
+
 class MongoDBDatabaseResource(Model):
-    """Cosmos DB MongoDB database id object.
+    """Cosmos DB MongoDB database resource object.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -2212,17 +2429,17 @@ class RegionForOnlineOffline(Model):
         self.region = region
 
 
-class SqlContainer(Resource):
-    """An Azure Cosmos DB container.
+class SqlContainerCreateUpdateParameters(ARMResourceProperties):
+    """Parameters to create and update Cosmos DB container.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: The unique resource identifier of the database account.
+    :ivar id: The unique resource identifier of the ARM resource.
     :vartype id: str
-    :ivar name: The name of the database account.
+    :ivar name: The name of the ARM resource.
     :vartype name: str
     :ivar type: The type of Azure resource.
     :vartype type: str
@@ -2231,8 +2448,59 @@ class SqlContainer(Resource):
     :type location: str
     :param tags:
     :type tags: dict[str, str]
-    :param sql_container_id: Required. Name of the Cosmos DB SQL container
-    :type sql_container_id: str
+    :param resource: Required. The standard JSON format of a container
+    :type resource: ~azure.mgmt.cosmosdb.models.SqlContainerResource
+    :param options: Required. A key-value pair of options to be applied for
+     the request. This corresponds to the headers sent with the request.
+    :type options: dict[str, str]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'resource': {'required': True},
+        'options': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'resource': {'key': 'properties.resource', 'type': 'SqlContainerResource'},
+        'options': {'key': 'properties.options', 'type': '{str}'},
+    }
+
+    def __init__(self, *, resource, options, location: str=None, tags=None, **kwargs) -> None:
+        super(SqlContainerCreateUpdateParameters, self).__init__(location=location, tags=tags, **kwargs)
+        self.resource = resource
+        self.options = options
+
+
+class SqlContainerGetResults(ARMResourceProperties):
+    """An Azure Cosmos DB container.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The unique resource identifier of the ARM resource.
+    :vartype id: str
+    :ivar name: The name of the ARM resource.
+    :vartype name: str
+    :ivar type: The type of Azure resource.
+    :vartype type: str
+    :param location: The location of the resource group to which the resource
+     belongs.
+    :type location: str
+    :param tags:
+    :type tags: dict[str, str]
+    :param sql_container_get_results_id: Required. Name of the Cosmos DB SQL
+     container
+    :type sql_container_get_results_id: str
     :param indexing_policy: The configuration of the indexing policy. By
      default, the indexing is automatic for all document paths within the
      container
@@ -2250,21 +2518,24 @@ class SqlContainer(Resource):
      container.
     :type conflict_resolution_policy:
      ~azure.mgmt.cosmosdb.models.ConflictResolutionPolicy
-    :param _rid: A system generated property. A unique identifier.
-    :type _rid: str
-    :param _ts: A system generated property that denotes the last updated
+    :ivar _rid: A system generated property. A unique identifier.
+    :vartype _rid: str
+    :ivar _ts: A system generated property that denotes the last updated
      timestamp of the resource.
-    :type _ts: object
-    :param _etag: A system generated property representing the resource etag
+    :vartype _ts: object
+    :ivar _etag: A system generated property representing the resource etag
      required for optimistic concurrency control.
-    :type _etag: str
+    :vartype _etag: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'sql_container_id': {'required': True},
+        'sql_container_get_results_id': {'required': True},
+        '_rid': {'readonly': True},
+        '_ts': {'readonly': True},
+        '_etag': {'readonly': True},
     }
 
     _attribute_map = {
@@ -2273,7 +2544,7 @@ class SqlContainer(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'sql_container_id': {'key': 'properties.id', 'type': 'str'},
+        'sql_container_get_results_id': {'key': 'properties.id', 'type': 'str'},
         'indexing_policy': {'key': 'properties.indexingPolicy', 'type': 'IndexingPolicy'},
         'partition_key': {'key': 'properties.partitionKey', 'type': 'ContainerPartitionKey'},
         'default_ttl': {'key': 'properties.defaultTtl', 'type': 'int'},
@@ -2284,45 +2555,17 @@ class SqlContainer(Resource):
         '_etag': {'key': 'properties._etag', 'type': 'str'},
     }
 
-    def __init__(self, *, sql_container_id: str, location: str=None, tags=None, indexing_policy=None, partition_key=None, default_ttl: int=None, unique_key_policy=None, conflict_resolution_policy=None, _rid: str=None, _ts=None, _etag: str=None, **kwargs) -> None:
-        super(SqlContainer, self).__init__(location=location, tags=tags, **kwargs)
-        self.sql_container_id = sql_container_id
+    def __init__(self, *, sql_container_get_results_id: str, location: str=None, tags=None, indexing_policy=None, partition_key=None, default_ttl: int=None, unique_key_policy=None, conflict_resolution_policy=None, **kwargs) -> None:
+        super(SqlContainerGetResults, self).__init__(location=location, tags=tags, **kwargs)
+        self.sql_container_get_results_id = sql_container_get_results_id
         self.indexing_policy = indexing_policy
         self.partition_key = partition_key
         self.default_ttl = default_ttl
         self.unique_key_policy = unique_key_policy
         self.conflict_resolution_policy = conflict_resolution_policy
-        self._rid = _rid
-        self._ts = _ts
-        self._etag = _etag
-
-
-class SqlContainerCreateUpdateParameters(Model):
-    """Parameters to create and update Cosmos DB container.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param resource: Required. The standard JSON format of a container
-    :type resource: ~azure.mgmt.cosmosdb.models.SqlContainerResource
-    :param options: Required. A key-value pair of options to be applied for
-     the request. This corresponds to the headers sent with the request.
-    :type options: dict[str, str]
-    """
-
-    _validation = {
-        'resource': {'required': True},
-        'options': {'required': True},
-    }
-
-    _attribute_map = {
-        'resource': {'key': 'properties.resource', 'type': 'SqlContainerResource'},
-        'options': {'key': 'properties.options', 'type': '{str}'},
-    }
-
-    def __init__(self, *, resource, options, **kwargs) -> None:
-        super(SqlContainerCreateUpdateParameters, self).__init__(**kwargs)
-        self.resource = resource
-        self.options = options
+        self._rid = None
+        self._ts = None
+        self._etag = None
 
 
 class SqlContainerResource(Model):
@@ -2374,17 +2617,17 @@ class SqlContainerResource(Model):
         self.conflict_resolution_policy = conflict_resolution_policy
 
 
-class SqlDatabase(Resource):
-    """An Azure Cosmos DB SQL database.
+class SqlDatabaseCreateUpdateParameters(ARMResourceProperties):
+    """Parameters to create and update Cosmos DB SQL database.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: The unique resource identifier of the database account.
+    :ivar id: The unique resource identifier of the ARM resource.
     :vartype id: str
-    :ivar name: The name of the database account.
+    :ivar name: The name of the ARM resource.
     :vartype name: str
     :ivar type: The type of Azure resource.
     :vartype type: str
@@ -2393,16 +2636,67 @@ class SqlDatabase(Resource):
     :type location: str
     :param tags:
     :type tags: dict[str, str]
-    :param sql_database_id: Required. Name of the Cosmos DB SQL database
-    :type sql_database_id: str
-    :param _rid: A system generated property. A unique identifier.
-    :type _rid: str
-    :param _ts: A system generated property that denotes the last updated
+    :param resource: Required. The standard JSON format of a SQL database
+    :type resource: ~azure.mgmt.cosmosdb.models.SqlDatabaseResource
+    :param options: Required. A key-value pair of options to be applied for
+     the request. This corresponds to the headers sent with the request.
+    :type options: dict[str, str]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'resource': {'required': True},
+        'options': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'resource': {'key': 'properties.resource', 'type': 'SqlDatabaseResource'},
+        'options': {'key': 'properties.options', 'type': '{str}'},
+    }
+
+    def __init__(self, *, resource, options, location: str=None, tags=None, **kwargs) -> None:
+        super(SqlDatabaseCreateUpdateParameters, self).__init__(location=location, tags=tags, **kwargs)
+        self.resource = resource
+        self.options = options
+
+
+class SqlDatabaseGetResults(ARMResourceProperties):
+    """An Azure Cosmos DB SQL database.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The unique resource identifier of the ARM resource.
+    :vartype id: str
+    :ivar name: The name of the ARM resource.
+    :vartype name: str
+    :ivar type: The type of Azure resource.
+    :vartype type: str
+    :param location: The location of the resource group to which the resource
+     belongs.
+    :type location: str
+    :param tags:
+    :type tags: dict[str, str]
+    :param sql_database_get_results_id: Required. Name of the Cosmos DB SQL
+     database
+    :type sql_database_get_results_id: str
+    :ivar _rid: A system generated property. A unique identifier.
+    :vartype _rid: str
+    :ivar _ts: A system generated property that denotes the last updated
      timestamp of the resource.
-    :type _ts: object
-    :param _etag: A system generated property representing the resource etag
+    :vartype _ts: object
+    :ivar _etag: A system generated property representing the resource etag
      required for optimistic concurrency control.
-    :type _etag: str
+    :vartype _etag: str
     :param _colls: A system generated property that specified the addressable
      path of the collections resource.
     :type _colls: str
@@ -2415,7 +2709,10 @@ class SqlDatabase(Resource):
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'sql_database_id': {'required': True},
+        'sql_database_get_results_id': {'required': True},
+        '_rid': {'readonly': True},
+        '_ts': {'readonly': True},
+        '_etag': {'readonly': True},
     }
 
     _attribute_map = {
@@ -2424,7 +2721,7 @@ class SqlDatabase(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'sql_database_id': {'key': 'properties.id', 'type': 'str'},
+        'sql_database_get_results_id': {'key': 'properties.id', 'type': 'str'},
         '_rid': {'key': 'properties._rid', 'type': 'str'},
         '_ts': {'key': 'properties._ts', 'type': 'object'},
         '_etag': {'key': 'properties._etag', 'type': 'str'},
@@ -2432,46 +2729,18 @@ class SqlDatabase(Resource):
         '_users': {'key': 'properties._users', 'type': 'str'},
     }
 
-    def __init__(self, *, sql_database_id: str, location: str=None, tags=None, _rid: str=None, _ts=None, _etag: str=None, _colls: str=None, _users: str=None, **kwargs) -> None:
-        super(SqlDatabase, self).__init__(location=location, tags=tags, **kwargs)
-        self.sql_database_id = sql_database_id
-        self._rid = _rid
-        self._ts = _ts
-        self._etag = _etag
+    def __init__(self, *, sql_database_get_results_id: str, location: str=None, tags=None, _colls: str=None, _users: str=None, **kwargs) -> None:
+        super(SqlDatabaseGetResults, self).__init__(location=location, tags=tags, **kwargs)
+        self.sql_database_get_results_id = sql_database_get_results_id
+        self._rid = None
+        self._ts = None
+        self._etag = None
         self._colls = _colls
         self._users = _users
 
 
-class SqlDatabaseCreateUpdateParameters(Model):
-    """Parameters to create and update Cosmos DB SQL database.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param resource: Required. The standard JSON format of a SQL database
-    :type resource: ~azure.mgmt.cosmosdb.models.SqlDatabaseResource
-    :param options: Required. A key-value pair of options to be applied for
-     the request. This corresponds to the headers sent with the request.
-    :type options: dict[str, str]
-    """
-
-    _validation = {
-        'resource': {'required': True},
-        'options': {'required': True},
-    }
-
-    _attribute_map = {
-        'resource': {'key': 'properties.resource', 'type': 'SqlDatabaseResource'},
-        'options': {'key': 'properties.options', 'type': '{str}'},
-    }
-
-    def __init__(self, *, resource, options, **kwargs) -> None:
-        super(SqlDatabaseCreateUpdateParameters, self).__init__(**kwargs)
-        self.resource = resource
-        self.options = options
-
-
 class SqlDatabaseResource(Model):
-    """Cosmos DB SQL database id object.
+    """Cosmos DB SQL database resource object.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -2492,17 +2761,17 @@ class SqlDatabaseResource(Model):
         self.id = id
 
 
-class Table(Resource):
-    """An Azure Cosmos DB Table.
+class SqlStoredProcedureCreateUpdateParameters(ARMResourceProperties):
+    """Parameters to create and update Cosmos DB storedProcedure.
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: The unique resource identifier of the database account.
+    :ivar id: The unique resource identifier of the ARM resource.
     :vartype id: str
-    :ivar name: The name of the database account.
+    :ivar name: The name of the ARM resource.
     :vartype name: str
     :ivar type: The type of Azure resource.
     :vartype type: str
@@ -2511,15 +2780,19 @@ class Table(Resource):
     :type location: str
     :param tags:
     :type tags: dict[str, str]
-    :param table_id: Required. Name of the Cosmos DB table
-    :type table_id: str
+    :param resource: Required. The standard JSON format of a storedProcedure
+    :type resource: ~azure.mgmt.cosmosdb.models.SqlStoredProcedureResource
+    :param options: Required. A key-value pair of options to be applied for
+     the request. This corresponds to the headers sent with the request.
+    :type options: dict[str, str]
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'table_id': {'required': True},
+        'resource': {'required': True},
+        'options': {'required': True},
     }
 
     _attribute_map = {
@@ -2528,19 +2801,434 @@ class Table(Resource):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
-        'table_id': {'key': 'properties.id', 'type': 'str'},
+        'resource': {'key': 'properties.resource', 'type': 'SqlStoredProcedureResource'},
+        'options': {'key': 'properties.options', 'type': '{str}'},
     }
 
-    def __init__(self, *, table_id: str, location: str=None, tags=None, **kwargs) -> None:
-        super(Table, self).__init__(location=location, tags=tags, **kwargs)
-        self.table_id = table_id
+    def __init__(self, *, resource, options, location: str=None, tags=None, **kwargs) -> None:
+        super(SqlStoredProcedureCreateUpdateParameters, self).__init__(location=location, tags=tags, **kwargs)
+        self.resource = resource
+        self.options = options
 
 
-class TableCreateUpdateParameters(Model):
-    """Parameters to create and update Cosmos DB Table.
+class SqlStoredProcedureGetResults(ARMResourceProperties):
+    """An Azure Cosmos DB storedProcedure.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
+    :ivar id: The unique resource identifier of the ARM resource.
+    :vartype id: str
+    :ivar name: The name of the ARM resource.
+    :vartype name: str
+    :ivar type: The type of Azure resource.
+    :vartype type: str
+    :param location: The location of the resource group to which the resource
+     belongs.
+    :type location: str
+    :param tags:
+    :type tags: dict[str, str]
+    :param sql_stored_procedure_get_results_id: Required. Name of the Cosmos
+     DB SQL storedProcedure
+    :type sql_stored_procedure_get_results_id: str
+    :param body: Body of the Stored Procedure
+    :type body: str
+    :ivar _rid: A system generated property. A unique identifier.
+    :vartype _rid: str
+    :ivar _ts: A system generated property that denotes the last updated
+     timestamp of the resource.
+    :vartype _ts: object
+    :ivar _etag: A system generated property representing the resource etag
+     required for optimistic concurrency control.
+    :vartype _etag: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'sql_stored_procedure_get_results_id': {'required': True},
+        '_rid': {'readonly': True},
+        '_ts': {'readonly': True},
+        '_etag': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'sql_stored_procedure_get_results_id': {'key': 'properties.id', 'type': 'str'},
+        'body': {'key': 'properties.body', 'type': 'str'},
+        '_rid': {'key': 'properties._rid', 'type': 'str'},
+        '_ts': {'key': 'properties._ts', 'type': 'object'},
+        '_etag': {'key': 'properties._etag', 'type': 'str'},
+    }
+
+    def __init__(self, *, sql_stored_procedure_get_results_id: str, location: str=None, tags=None, body: str=None, **kwargs) -> None:
+        super(SqlStoredProcedureGetResults, self).__init__(location=location, tags=tags, **kwargs)
+        self.sql_stored_procedure_get_results_id = sql_stored_procedure_get_results_id
+        self.body = body
+        self._rid = None
+        self._ts = None
+        self._etag = None
+
+
+class SqlStoredProcedureResource(Model):
+    """Cosmos DB SQL storedProcedure resource object.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. Name of the Cosmos DB SQL storedProcedure
+    :type id: str
+    :param body: Body of the Stored Procedure
+    :type body: str
+    """
+
+    _validation = {
+        'id': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'body': {'key': 'body', 'type': 'str'},
+    }
+
+    def __init__(self, *, id: str, body: str=None, **kwargs) -> None:
+        super(SqlStoredProcedureResource, self).__init__(**kwargs)
+        self.id = id
+        self.body = body
+
+
+class SqlTriggerCreateUpdateParameters(ARMResourceProperties):
+    """Parameters to create and update Cosmos DB trigger.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The unique resource identifier of the ARM resource.
+    :vartype id: str
+    :ivar name: The name of the ARM resource.
+    :vartype name: str
+    :ivar type: The type of Azure resource.
+    :vartype type: str
+    :param location: The location of the resource group to which the resource
+     belongs.
+    :type location: str
+    :param tags:
+    :type tags: dict[str, str]
+    :param resource: Required. The standard JSON format of a trigger
+    :type resource: ~azure.mgmt.cosmosdb.models.SqlTriggerResource
+    :param options: Required. A key-value pair of options to be applied for
+     the request. This corresponds to the headers sent with the request.
+    :type options: dict[str, str]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'resource': {'required': True},
+        'options': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'resource': {'key': 'properties.resource', 'type': 'SqlTriggerResource'},
+        'options': {'key': 'properties.options', 'type': '{str}'},
+    }
+
+    def __init__(self, *, resource, options, location: str=None, tags=None, **kwargs) -> None:
+        super(SqlTriggerCreateUpdateParameters, self).__init__(location=location, tags=tags, **kwargs)
+        self.resource = resource
+        self.options = options
+
+
+class SqlTriggerGetResults(ARMResourceProperties):
+    """An Azure Cosmos DB trigger.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The unique resource identifier of the ARM resource.
+    :vartype id: str
+    :ivar name: The name of the ARM resource.
+    :vartype name: str
+    :ivar type: The type of Azure resource.
+    :vartype type: str
+    :param location: The location of the resource group to which the resource
+     belongs.
+    :type location: str
+    :param tags:
+    :type tags: dict[str, str]
+    :param sql_trigger_get_results_id: Required. Name of the Cosmos DB SQL
+     trigger
+    :type sql_trigger_get_results_id: str
+    :param body: Body of the Trigger
+    :type body: str
+    :param trigger_type: Type of the Trigger. Possible values include: 'Pre',
+     'Post'
+    :type trigger_type: str or ~azure.mgmt.cosmosdb.models.TriggerType
+    :param trigger_operation: The operation the trigger is associated with.
+     Possible values include: 'All', 'Create', 'Update', 'Delete', 'Replace'
+    :type trigger_operation: str or
+     ~azure.mgmt.cosmosdb.models.TriggerOperation
+    :ivar _rid: A system generated property. A unique identifier.
+    :vartype _rid: str
+    :ivar _ts: A system generated property that denotes the last updated
+     timestamp of the resource.
+    :vartype _ts: object
+    :ivar _etag: A system generated property representing the resource etag
+     required for optimistic concurrency control.
+    :vartype _etag: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'sql_trigger_get_results_id': {'required': True},
+        '_rid': {'readonly': True},
+        '_ts': {'readonly': True},
+        '_etag': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'sql_trigger_get_results_id': {'key': 'properties.id', 'type': 'str'},
+        'body': {'key': 'properties.body', 'type': 'str'},
+        'trigger_type': {'key': 'properties.triggerType', 'type': 'str'},
+        'trigger_operation': {'key': 'properties.triggerOperation', 'type': 'str'},
+        '_rid': {'key': 'properties._rid', 'type': 'str'},
+        '_ts': {'key': 'properties._ts', 'type': 'object'},
+        '_etag': {'key': 'properties._etag', 'type': 'str'},
+    }
+
+    def __init__(self, *, sql_trigger_get_results_id: str, location: str=None, tags=None, body: str=None, trigger_type=None, trigger_operation=None, **kwargs) -> None:
+        super(SqlTriggerGetResults, self).__init__(location=location, tags=tags, **kwargs)
+        self.sql_trigger_get_results_id = sql_trigger_get_results_id
+        self.body = body
+        self.trigger_type = trigger_type
+        self.trigger_operation = trigger_operation
+        self._rid = None
+        self._ts = None
+        self._etag = None
+
+
+class SqlTriggerResource(Model):
+    """Cosmos DB SQL trigger resource object.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. Name of the Cosmos DB SQL trigger
+    :type id: str
+    :param body: Body of the Trigger
+    :type body: str
+    :param trigger_type: Type of the Trigger. Possible values include: 'Pre',
+     'Post'
+    :type trigger_type: str or ~azure.mgmt.cosmosdb.models.TriggerType
+    :param trigger_operation: The operation the trigger is associated with.
+     Possible values include: 'All', 'Create', 'Update', 'Delete', 'Replace'
+    :type trigger_operation: str or
+     ~azure.mgmt.cosmosdb.models.TriggerOperation
+    """
+
+    _validation = {
+        'id': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'body': {'key': 'body', 'type': 'str'},
+        'trigger_type': {'key': 'triggerType', 'type': 'str'},
+        'trigger_operation': {'key': 'triggerOperation', 'type': 'str'},
+    }
+
+    def __init__(self, *, id: str, body: str=None, trigger_type=None, trigger_operation=None, **kwargs) -> None:
+        super(SqlTriggerResource, self).__init__(**kwargs)
+        self.id = id
+        self.body = body
+        self.trigger_type = trigger_type
+        self.trigger_operation = trigger_operation
+
+
+class SqlUserDefinedFunctionCreateUpdateParameters(ARMResourceProperties):
+    """Parameters to create and update Cosmos DB userDefinedFunction.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The unique resource identifier of the ARM resource.
+    :vartype id: str
+    :ivar name: The name of the ARM resource.
+    :vartype name: str
+    :ivar type: The type of Azure resource.
+    :vartype type: str
+    :param location: The location of the resource group to which the resource
+     belongs.
+    :type location: str
+    :param tags:
+    :type tags: dict[str, str]
+    :param resource: Required. The standard JSON format of a
+     userDefinedFunction
+    :type resource: ~azure.mgmt.cosmosdb.models.SqlUserDefinedFunctionResource
+    :param options: Required. A key-value pair of options to be applied for
+     the request. This corresponds to the headers sent with the request.
+    :type options: dict[str, str]
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'resource': {'required': True},
+        'options': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'resource': {'key': 'properties.resource', 'type': 'SqlUserDefinedFunctionResource'},
+        'options': {'key': 'properties.options', 'type': '{str}'},
+    }
+
+    def __init__(self, *, resource, options, location: str=None, tags=None, **kwargs) -> None:
+        super(SqlUserDefinedFunctionCreateUpdateParameters, self).__init__(location=location, tags=tags, **kwargs)
+        self.resource = resource
+        self.options = options
+
+
+class SqlUserDefinedFunctionGetResults(ARMResourceProperties):
+    """An Azure Cosmos DB userDefinedFunction.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The unique resource identifier of the ARM resource.
+    :vartype id: str
+    :ivar name: The name of the ARM resource.
+    :vartype name: str
+    :ivar type: The type of Azure resource.
+    :vartype type: str
+    :param location: The location of the resource group to which the resource
+     belongs.
+    :type location: str
+    :param tags:
+    :type tags: dict[str, str]
+    :param sql_user_defined_function_get_results_id: Required. Name of the
+     Cosmos DB SQL userDefinedFunction
+    :type sql_user_defined_function_get_results_id: str
+    :param body: Body of the User Defined Function
+    :type body: str
+    :ivar _rid: A system generated property. A unique identifier.
+    :vartype _rid: str
+    :ivar _ts: A system generated property that denotes the last updated
+     timestamp of the resource.
+    :vartype _ts: object
+    :ivar _etag: A system generated property representing the resource etag
+     required for optimistic concurrency control.
+    :vartype _etag: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'sql_user_defined_function_get_results_id': {'required': True},
+        '_rid': {'readonly': True},
+        '_ts': {'readonly': True},
+        '_etag': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'sql_user_defined_function_get_results_id': {'key': 'properties.id', 'type': 'str'},
+        'body': {'key': 'properties.body', 'type': 'str'},
+        '_rid': {'key': 'properties._rid', 'type': 'str'},
+        '_ts': {'key': 'properties._ts', 'type': 'object'},
+        '_etag': {'key': 'properties._etag', 'type': 'str'},
+    }
+
+    def __init__(self, *, sql_user_defined_function_get_results_id: str, location: str=None, tags=None, body: str=None, **kwargs) -> None:
+        super(SqlUserDefinedFunctionGetResults, self).__init__(location=location, tags=tags, **kwargs)
+        self.sql_user_defined_function_get_results_id = sql_user_defined_function_get_results_id
+        self.body = body
+        self._rid = None
+        self._ts = None
+        self._etag = None
+
+
+class SqlUserDefinedFunctionResource(Model):
+    """Cosmos DB SQL userDefinedFunction resource object.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param id: Required. Name of the Cosmos DB SQL userDefinedFunction
+    :type id: str
+    :param body: Body of the User Defined Function
+    :type body: str
+    """
+
+    _validation = {
+        'id': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'body': {'key': 'body', 'type': 'str'},
+    }
+
+    def __init__(self, *, id: str, body: str=None, **kwargs) -> None:
+        super(SqlUserDefinedFunctionResource, self).__init__(**kwargs)
+        self.id = id
+        self.body = body
+
+
+class TableCreateUpdateParameters(ARMResourceProperties):
+    """Parameters to create and update Cosmos DB Table.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The unique resource identifier of the ARM resource.
+    :vartype id: str
+    :ivar name: The name of the ARM resource.
+    :vartype name: str
+    :ivar type: The type of Azure resource.
+    :vartype type: str
+    :param location: The location of the resource group to which the resource
+     belongs.
+    :type location: str
+    :param tags:
+    :type tags: dict[str, str]
     :param resource: Required. The standard JSON format of a Table
     :type resource: ~azure.mgmt.cosmosdb.models.TableResource
     :param options: Required. A key-value pair of options to be applied for
@@ -2549,23 +3237,92 @@ class TableCreateUpdateParameters(Model):
     """
 
     _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'resource': {'required': True},
         'options': {'required': True},
     }
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
         'resource': {'key': 'properties.resource', 'type': 'TableResource'},
         'options': {'key': 'properties.options', 'type': '{str}'},
     }
 
-    def __init__(self, *, resource, options, **kwargs) -> None:
-        super(TableCreateUpdateParameters, self).__init__(**kwargs)
+    def __init__(self, *, resource, options, location: str=None, tags=None, **kwargs) -> None:
+        super(TableCreateUpdateParameters, self).__init__(location=location, tags=tags, **kwargs)
         self.resource = resource
         self.options = options
 
 
+class TableGetResults(ARMResourceProperties):
+    """An Azure Cosmos DB Table.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The unique resource identifier of the ARM resource.
+    :vartype id: str
+    :ivar name: The name of the ARM resource.
+    :vartype name: str
+    :ivar type: The type of Azure resource.
+    :vartype type: str
+    :param location: The location of the resource group to which the resource
+     belongs.
+    :type location: str
+    :param tags:
+    :type tags: dict[str, str]
+    :param table_get_results_id: Required. Name of the Cosmos DB table
+    :type table_get_results_id: str
+    :ivar _rid: A system generated property. A unique identifier.
+    :vartype _rid: str
+    :ivar _ts: A system generated property that denotes the last updated
+     timestamp of the resource.
+    :vartype _ts: object
+    :ivar _etag: A system generated property representing the resource etag
+     required for optimistic concurrency control.
+    :vartype _etag: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'table_get_results_id': {'required': True},
+        '_rid': {'readonly': True},
+        '_ts': {'readonly': True},
+        '_etag': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'table_get_results_id': {'key': 'properties.id', 'type': 'str'},
+        '_rid': {'key': 'properties._rid', 'type': 'str'},
+        '_ts': {'key': 'properties._ts', 'type': 'object'},
+        '_etag': {'key': 'properties._etag', 'type': 'str'},
+    }
+
+    def __init__(self, *, table_get_results_id: str, location: str=None, tags=None, **kwargs) -> None:
+        super(TableGetResults, self).__init__(location=location, tags=tags, **kwargs)
+        self.table_get_results_id = table_get_results_id
+        self._rid = None
+        self._ts = None
+        self._etag = None
+
+
 class TableResource(Model):
-    """Cosmos DB table id object.
+    """Cosmos DB table resource object.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -2586,7 +3343,7 @@ class TableResource(Model):
         self.id = id
 
 
-class Throughput(Resource):
+class ThroughputSettingsGetResults(ARMResourceProperties):
     """An Azure Cosmos DB resource throughput.
 
     Variables are only populated by the server, and will be ignored when
@@ -2594,9 +3351,9 @@ class Throughput(Resource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: The unique resource identifier of the database account.
+    :ivar id: The unique resource identifier of the ARM resource.
     :vartype id: str
-    :ivar name: The name of the database account.
+    :ivar name: The name of the ARM resource.
     :vartype name: str
     :ivar type: The type of Azure resource.
     :vartype type: str
@@ -2607,6 +3364,10 @@ class Throughput(Resource):
     :type tags: dict[str, str]
     :param throughput: Required. Value of the Cosmos DB resource throughput
     :type throughput: int
+    :ivar minimum_throughput: The minimum throughput of the resource
+    :vartype minimum_throughput: str
+    :ivar offer_replace_pending: The throughput replace is pending
+    :vartype offer_replace_pending: str
     """
 
     _validation = {
@@ -2614,6 +3375,8 @@ class Throughput(Resource):
         'name': {'readonly': True},
         'type': {'readonly': True},
         'throughput': {'required': True},
+        'minimum_throughput': {'readonly': True},
+        'offer_replace_pending': {'readonly': True},
     }
 
     _attribute_map = {
@@ -2623,55 +3386,94 @@ class Throughput(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'throughput': {'key': 'properties.throughput', 'type': 'int'},
+        'minimum_throughput': {'key': 'properties.minimumThroughput', 'type': 'str'},
+        'offer_replace_pending': {'key': 'properties.offerReplacePending', 'type': 'str'},
     }
 
     def __init__(self, *, throughput: int, location: str=None, tags=None, **kwargs) -> None:
-        super(Throughput, self).__init__(location=location, tags=tags, **kwargs)
+        super(ThroughputSettingsGetResults, self).__init__(location=location, tags=tags, **kwargs)
         self.throughput = throughput
+        self.minimum_throughput = None
+        self.offer_replace_pending = None
 
 
-class ThroughputResource(Model):
+class ThroughputSettingsResource(Model):
     """Cosmos DB resource throughput object.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
     :param throughput: Required. Value of the Cosmos DB resource throughput
     :type throughput: int
+    :ivar minimum_throughput: The minimum throughput of the resource
+    :vartype minimum_throughput: str
+    :ivar offer_replace_pending: The throughput replace is pending
+    :vartype offer_replace_pending: str
     """
 
     _validation = {
         'throughput': {'required': True},
+        'minimum_throughput': {'readonly': True},
+        'offer_replace_pending': {'readonly': True},
     }
 
     _attribute_map = {
         'throughput': {'key': 'throughput', 'type': 'int'},
+        'minimum_throughput': {'key': 'minimumThroughput', 'type': 'str'},
+        'offer_replace_pending': {'key': 'offerReplacePending', 'type': 'str'},
     }
 
     def __init__(self, *, throughput: int, **kwargs) -> None:
-        super(ThroughputResource, self).__init__(**kwargs)
+        super(ThroughputSettingsResource, self).__init__(**kwargs)
         self.throughput = throughput
+        self.minimum_throughput = None
+        self.offer_replace_pending = None
 
 
-class ThroughputUpdateParameters(Model):
+class ThroughputSettingsUpdateParameters(ARMResourceProperties):
     """Parameters to update Cosmos DB resource throughput.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
+    :ivar id: The unique resource identifier of the ARM resource.
+    :vartype id: str
+    :ivar name: The name of the ARM resource.
+    :vartype name: str
+    :ivar type: The type of Azure resource.
+    :vartype type: str
+    :param location: The location of the resource group to which the resource
+     belongs.
+    :type location: str
+    :param tags:
+    :type tags: dict[str, str]
     :param resource: Required. The standard JSON format of a resource
      throughput
-    :type resource: ~azure.mgmt.cosmosdb.models.ThroughputResource
+    :type resource: ~azure.mgmt.cosmosdb.models.ThroughputSettingsResource
     """
 
     _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'resource': {'required': True},
     }
 
     _attribute_map = {
-        'resource': {'key': 'properties.resource', 'type': 'ThroughputResource'},
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'tags': {'key': 'tags', 'type': '{str}'},
+        'resource': {'key': 'properties.resource', 'type': 'ThroughputSettingsResource'},
     }
 
-    def __init__(self, *, resource, **kwargs) -> None:
-        super(ThroughputUpdateParameters, self).__init__(**kwargs)
+    def __init__(self, *, resource, location: str=None, tags=None, **kwargs) -> None:
+        super(ThroughputSettingsUpdateParameters, self).__init__(location=location, tags=tags, **kwargs)
         self.resource = resource
 
 

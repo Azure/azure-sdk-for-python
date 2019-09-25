@@ -74,6 +74,21 @@ class ConflictResolutionMode(str, Enum):
     custom = "Custom"
 
 
+class TriggerType(str, Enum):
+
+    pre = "Pre"
+    post = "Post"
+
+
+class TriggerOperation(str, Enum):
+
+    all = "All"
+    create = "Create"
+    update = "Update"
+    delete = "Delete"
+    replace = "Replace"
+
+
 class KeyKind(str, Enum):
 
     primary = "primary"
@@ -98,6 +113,6 @@ class PrimaryAggregationType(str, Enum):
     none = "None"
     average = "Average"
     total = "Total"
-    minimimum = "Minimimum"
+    minimum = "Minimum"
     maximum = "Maximum"
     last = "Last"
