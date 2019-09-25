@@ -179,7 +179,7 @@ class AzureAppConfigurationClient:
         :param label: label of the ConfigurationSetting
         :type label: str
         :param etag: check if the ConfigurationSetting is changed. Set None to skip checking etag
-        :type etag: str
+        :type etag: str or None
         :param match_condition: the match condition to use upon the etag
         :type MatchConditions: :class:`MatchConditions`
         :keyword datetime accept_datetime: the retrieved ConfigurationSetting that created no later than this datetime
@@ -376,7 +376,7 @@ class AzureAppConfigurationClient:
         :param label: label used to identify the ConfigurationSetting
         :type label: str
         :param etag: check if the ConfigurationSetting is changed. Set None to skip checking etag
-        :type etag: str
+        :type etag: str or None
         :param match_condition: the match condition to use upon the etag
         :type MatchConditions: :class:`MatchConditions`
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request
