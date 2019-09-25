@@ -220,6 +220,4 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
                 :caption: Close down the handler.
 
         """
-        if self._handler:
-            await self._handler.close_async()
         await super(EventHubConsumer, self).close()

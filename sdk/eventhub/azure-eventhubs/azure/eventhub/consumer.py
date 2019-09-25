@@ -215,8 +215,6 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
                 :caption: Close down the handler.
 
         """
-        if self._handler:
-            self._handler.close()
         super(EventHubConsumer, self).close()
 
     next = __next__  # for python2.7
