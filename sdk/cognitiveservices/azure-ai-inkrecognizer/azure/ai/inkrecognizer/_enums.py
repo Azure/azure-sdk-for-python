@@ -183,7 +183,7 @@ class ShapeKind(Enum):
 class ServiceVersion(Enum):
     """ Target version of Ink Recognizer service. """
 
-    PREVIEW = "preview"
+    PREVIEW = "v1.0-preview"
     """ Preview service version. """
 
     def _to_string(self):

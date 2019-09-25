@@ -13,7 +13,6 @@ import asyncio
 from unittest.mock import Mock
 import pytest
 from azure.ai.inkrecognizer.aio import InkRecognizerClient
-from unit_test import parse_result_from_json
 
 
 RAISE_ONLINE_TEST_ERRORS = False

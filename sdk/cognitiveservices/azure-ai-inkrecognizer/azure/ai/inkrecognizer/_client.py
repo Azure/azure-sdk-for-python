@@ -42,7 +42,7 @@ _DEFAULT_ARGUMENTS = {
 
 def _validate_param(param, param_name, valid_type):
     if not isinstance(param, valid_type):
-        supported_type = "<%s>" % types[0].__name__
+        supported_type = "<%s>" % valid_type.__name__
         if param is None:
             type_got = "None"
         else:
@@ -182,7 +182,7 @@ class _InkRecognizerClientBase:
         else:
             self._error_handler(status_code, content)
 
-    def _error_handler(self, status_code, content):
+    def _error_handler(self, status_code, content):  # pylint:disable=no-self-use
         if status_code == 404:
             logging.warning(content)
             raise ResourceNotFoundError(content)

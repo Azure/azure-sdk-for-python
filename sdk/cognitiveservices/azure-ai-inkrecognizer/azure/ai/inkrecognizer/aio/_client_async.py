@@ -4,6 +4,7 @@
 # license information.
 #--------------------------------------------------------------------------
 
+import logging
 from azure.core import AsyncPipelineClient
 from azure.core.pipeline.transport import HttpRequest, AioHttpTransport
 from azure.core.pipeline.policies import (
