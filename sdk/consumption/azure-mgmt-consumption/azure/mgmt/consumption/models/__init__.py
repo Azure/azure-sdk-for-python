@@ -36,8 +36,10 @@ try:
     from ._models_py3 import ReservationDetail
     from ._models_py3 import ReservationRecommendation
     from ._models_py3 import ReservationSummary
+    from ._models_py3 import ReservationTransaction
     from ._models_py3 import Resource
     from ._models_py3 import ResourceAttributes
+    from ._models_py3 import SkuProperty
     from ._models_py3 import Tag
     from ._models_py3 import TagsResult
     from ._models_py3 import UsageDetail
@@ -68,8 +70,10 @@ except (SyntaxError, ImportError):
     from ._models import ReservationDetail
     from ._models import ReservationRecommendation
     from ._models import ReservationSummary
+    from ._models import ReservationTransaction
     from ._models import Resource
     from ._models import ResourceAttributes
+    from ._models import SkuProperty
     from ._models import Tag
     from ._models import TagsResult
     from ._models import UsageDetail
@@ -80,6 +84,7 @@ from ._paged_models import OperationPaged
 from ._paged_models import ReservationDetailPaged
 from ._paged_models import ReservationRecommendationPaged
 from ._paged_models import ReservationSummaryPaged
+from ._paged_models import ReservationTransactionPaged
 from ._paged_models import UsageDetailPaged
 from ._consumption_management_client_enums import (
     BillingFrequency,
@@ -120,8 +125,10 @@ __all__ = [
     'ReservationDetail',
     'ReservationRecommendation',
     'ReservationSummary',
+    'ReservationTransaction',
     'Resource',
     'ResourceAttributes',
+    'SkuProperty',
     'Tag',
     'TagsResult',
     'UsageDetail',
@@ -131,6 +138,7 @@ __all__ = [
     'ReservationSummaryPaged',
     'ReservationDetailPaged',
     'ReservationRecommendationPaged',
+    'ReservationTransactionPaged',
     'ForecastPaged',
     'OperationPaged',
     'BillingFrequency',

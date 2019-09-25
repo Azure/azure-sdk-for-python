@@ -22,6 +22,7 @@ from .operations import BalancesOperations
 from .operations import ReservationsSummariesOperations
 from .operations import ReservationsDetailsOperations
 from .operations import ReservationRecommendationsOperations
+from .operations import ReservationTransactionsOperations
 from .operations import PriceSheetOperations
 from .operations import ForecastsOperations
 from .operations import Operations
@@ -53,6 +54,8 @@ class ConsumptionManagementClient(SDKClient):
     :vartype reservations_details: azure.mgmt.consumption.operations.ReservationsDetailsOperations
     :ivar reservation_recommendations: ReservationRecommendations operations
     :vartype reservation_recommendations: azure.mgmt.consumption.operations.ReservationRecommendationsOperations
+    :ivar reservation_transactions: ReservationTransactions operations
+    :vartype reservation_transactions: azure.mgmt.consumption.operations.ReservationTransactionsOperations
     :ivar price_sheet: PriceSheet operations
     :vartype price_sheet: azure.mgmt.consumption.operations.PriceSheetOperations
     :ivar forecasts: Forecasts operations
@@ -77,7 +80,7 @@ class ConsumptionManagementClient(SDKClient):
         super(ConsumptionManagementClient, self).__init__(self.config.credentials, self.config)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2019-05-01'
+        self.api_version = '2019-06-01'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
@@ -98,6 +101,8 @@ class ConsumptionManagementClient(SDKClient):
         self.reservations_details = ReservationsDetailsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.reservation_recommendations = ReservationRecommendationsOperations(
+            self._client, self.config, self._serialize, self._deserialize)
+        self.reservation_transactions = ReservationTransactionsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.price_sheet = PriceSheetOperations(
             self._client, self.config, self._serialize, self._deserialize)

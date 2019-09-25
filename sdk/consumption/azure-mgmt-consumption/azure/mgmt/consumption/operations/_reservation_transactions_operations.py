@@ -15,8 +15,8 @@ from msrest.pipeline import ClientRawResponse
 from .. import models
 
 
-class ForecastsOperations(object):
-    """ForecastsOperations operations.
+class ReservationTransactionsOperations(object):
+    """ReservationTransactionsOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -38,32 +38,33 @@ class ForecastsOperations(object):
 
         self.config = config
 
-    def list(
-            self, filter=None, custom_headers=None, raw=False, **operation_config):
-        """Lists the forecast charges by subscriptionId.
+    def list_by_billing_account_id(
+            self, billing_account_id, filter=None, custom_headers=None, raw=False, **operation_config):
+        """List of transactions for reserved instances on billing account scope.
 
-        :param filter: May be used to filter forecasts by properties/usageDate
-         (Utc time), properties/chargeType or properties/grain. The filter
-         supports 'eq', 'lt', 'gt', 'le', 'ge', and 'and'. It does not
-         currently support 'ne', 'or', or 'not'.
+        :param billing_account_id: BillingAccount ID
+        :type billing_account_id: str
+        :param filter: Filter reservation transactions by date range. The
+         properties/UsageDate for start date and end date. The filter supports
+         'le' and  'ge'
         :type filter: str
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
         :param operation_config: :ref:`Operation configuration
          overrides<msrest:optionsforoperations>`.
-        :return: An iterator like instance of Forecast
+        :return: An iterator like instance of ReservationTransaction
         :rtype:
-         ~azure.mgmt.consumption.models.ForecastPaged[~azure.mgmt.consumption.models.Forecast]
+         ~azure.mgmt.consumption.models.ReservationTransactionPaged[~azure.mgmt.consumption.models.ReservationTransaction]
         :raises:
          :class:`ErrorResponseException<azure.mgmt.consumption.models.ErrorResponseException>`
         """
         def prepare_request(next_link=None):
             if not next_link:
                 # Construct URL
-                url = self.list.metadata['url']
+                url = self.list_by_billing_account_id.metadata['url']
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str')
+                    'billingAccountId': self._serialize.url("billing_account_id", billing_account_id, 'str')
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -105,7 +106,7 @@ class ForecastsOperations(object):
         header_dict = None
         if raw:
             header_dict = {}
-        deserialized = models.ForecastPaged(internal_paging, self._deserialize.dependencies, header_dict)
+        deserialized = models.ReservationTransactionPaged(internal_paging, self._deserialize.dependencies, header_dict)
 
         return deserialized
-    list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.Consumption/forecasts'}
+    list_by_billing_account_id.metadata = {'url': '/providers/Microsoft.Billing/billingAccounts/{billingAccountId}/providers/Microsoft.Consumption/reservationTransactions'}
