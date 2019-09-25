@@ -5,7 +5,7 @@
 import uuid
 import asyncio
 import logging
-from typing import Iterable, Union, Any
+from typing import Iterable, Union
 import time
 
 from uamqp import types, constants, errors  # type: ignore
@@ -218,25 +218,17 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
         """
         # Tracing code
         span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
+        child = None
         if span_impl_type is not None:
             child = span_impl_type(name="Azure.EventHubs.send")
             child.kind = SpanKind.CLIENT  # Should be PRODUCER
-
-        def trace_message(message):
-            if span_impl_type is not None:
-                message_span = child.span(name="Azure.EventHubs.message")
-                message_span.start()
-                app_prop = dict(message.application_properties)
-                app_prop.setdefault(b"Diagnostic-Id", message_span.get_trace_parent().encode('ascii'))
-                message.application_properties = app_prop
-                message_span.finish()
 
         self._check_closed()
         if isinstance(event_data, EventData):
             if partition_key:
                 event_data._set_partition_key(partition_key)  # pylint: disable=protected-access
             wrapper_event_data = event_data
-            trace_message(wrapper_event_data)
+            self._client._trace_message(child, wrapper_event_data)  # pylint: disable=protected-access
         else:
             if isinstance(event_data, EventDataBatch):
                 if partition_key and partition_key != event_data._partition_key:  # pylint: disable=protected-access
@@ -247,7 +239,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
                     event_data = _set_partition_key(event_data, partition_key)
                 wrapper_event_data = EventDataBatch._from_batch(event_data, partition_key)  # pylint: disable=protected-access
             for internal_message in wrapper_event_data.message._body_gen:  # pylint: disable=protected-access
-                trace_message(internal_message)
+                self._client._trace_message(child, internal_message)  # pylint: disable=protected-access
 
         wrapper_event_data.message.on_send_complete = self._on_outcome
         self._unsent_events = [wrapper_event_data.message]

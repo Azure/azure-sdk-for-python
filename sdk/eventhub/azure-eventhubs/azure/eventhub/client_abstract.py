@@ -224,11 +224,23 @@ class EventHubClientAbstract(object):  # pylint:disable=too-many-instance-attrib
     @staticmethod
     def _trace_link_message(event_data):
         span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
-        current_span = span_impl_type(span_impl_type.get_current_span())
-        if current_span and event_data.application_properties:
-            traceparent = event_data.application_properties.get(b"Diagnostic-Id", "").decode('ascii')
-            if traceparent:
-                current_span.link(traceparent)
+        if span_impl_type is not None:
+            current_span = span_impl_type(span_impl_type.get_current_span())
+            if current_span and event_data.application_properties:
+                traceparent = event_data.application_properties.get(b"Diagnostic-Id", "").decode('ascii')
+                if traceparent:
+                    current_span.link(traceparent)
+
+    @staticmethod
+    def _trace_message(parent_span, message):
+        span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
+        if span_impl_type is not None and parent_span is not None:
+            message_span = parent_span.span(name="Azure.EventHubs.message")
+            message_span.start()
+            app_prop = dict(message.application_properties)
+            app_prop.setdefault(b"Diagnostic-Id", message_span.get_trace_parent().encode('ascii'))
+            message.application_properties = app_prop
+            message_span.finish()
 
     def _process_redirect_uri(self, redirect):
         redirect_uri = redirect.address.decode('utf-8')
