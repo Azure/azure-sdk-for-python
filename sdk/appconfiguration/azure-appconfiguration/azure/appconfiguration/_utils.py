@@ -6,6 +6,7 @@
 
 from datetime import datetime
 import re
+from azure.core import MatchConditions
 
 def return_header(response, body, response_headers):
     # pylint: disable=unused-argument
@@ -54,6 +55,24 @@ def quote_etag(etag):
     if etag != "*" and etag is not None:
         return '"' + etag + '"'
     return etag
+
+def prep_if_match(etag, match_condition):
+    # type: (str, MatchConditions) -> str
+    if match_condition == MatchConditions.IfNotModified:
+        if_match = quote_etag(etag) if etag else None
+        return if_match
+    if match_condition == MatchConditions.IfPresent:
+        return "*"
+    return None
+
+def prep_if_none_match(etag, match_condition):
+    # type: (str, MatchConditions) -> str
+    if match_condition == MatchConditions.IfModified:
+        if_none_match = quote_etag(etag) if etag else None
+        return if_none_match
+    if match_condition == MatchConditions.IfMissing:
+        return "*"
+    return None
 
 def get_endpoint_from_connection_string(connection_string):
     endpoint, _, _ = parse_connection_string(connection_string)

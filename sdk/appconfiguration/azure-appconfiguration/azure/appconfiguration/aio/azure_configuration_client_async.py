@@ -24,6 +24,8 @@ from .._utils import (
     quote_etag,
     dequote_etag,
     return_header,
+    prep_if_match,
+    prep_if_none_match,
 )
 from .._generated.aio import AzureAppConfiguration
 from .._generated.aio._configuration_async import AzureAppConfigurationConfiguration
@@ -196,74 +198,43 @@ class AzureAppConfigurationClient:
             )
         """
         if match_condition == MatchConditions.Unconditionally:
-            error_map = {404: ResourceNotFoundError}
-            key_value = await self._impl.get_key_value(
-                key=key,
-                label=label,
-                error_map=error_map,
-                **kwargs
-            )
-            return ConfigurationSetting._from_key_value(key_value)
+            error_map = {
+                404: ResourceNotFoundError
+            }
 
         if match_condition == MatchConditions.IfNotModified:
-            if_none_match = quote_etag(etag) if etag else None
             error_map = {
                 404: ResourceNotFoundError,
                 412: ResourceModifiedError,
             }
-            key_value = await self._impl.get_key_value(
-                key=key,
-                label=label,
-                if_none_match=if_none_match,
-                error_map=error_map,
-                **kwargs
-            )
-            return ConfigurationSetting._from_key_value(key_value)
 
         if match_condition == MatchConditions.IfModified:
-            if_none_match = quote_etag(etag) if etag else None
             error_map = {
                 304: ResourceNotModifiedError,
                 404: ResourceNotFoundError
             }
-            key_value = await self._impl.get_key_value(
-                key=key,
-                label=label,
-                if_none_match=if_none_match,
-                error_map=error_map,
-                **kwargs
-            )
-            return ConfigurationSetting._from_key_value(key_value)
 
         if match_condition == MatchConditions.IfPresent:
-            if_match = "*"
             error_map = {
                 404: ResourceNotFoundError,
                 412: ResourceNotFoundError
             }
-            key_value = await self._impl.get_key_value(
-                key=key,
-                label=label,
-                if_match=if_match,
-                error_map=error_map,
-                **kwargs
-            )
-            return ConfigurationSetting._from_key_value(key_value)
 
-        if match_condition == MatchConditions.IfPresent:
-            if_none_match = "*"
+        if match_condition == MatchConditions.IfMissing:
             error_map = {
                 404: ResourceNotFoundError,
                 412: ResourceExistsError
             }
-            key_value = await self._impl.get_key_value(
-                key=key,
-                label=label,
-                if_none_match=if_none_match,
-                error_map=error_map,
-                **kwargs
-            )
-            return ConfigurationSetting._from_key_value(key_value)
+
+        key_value = await self._impl.get_key_value(
+            key=key,
+            label=label,
+            if_match=prep_if_match(etag, match_condition),
+            if_none_match=prep_if_none_match(etag, match_condition),
+            error_map=error_map,
+            **kwargs
+        )
+        return ConfigurationSetting._from_key_value(key_value)
 
     @distributed_trace_async
     async def add_configuration_setting(self, configuration_setting, **kwargs):
@@ -300,13 +271,16 @@ class AzureAppConfigurationClient:
             tags=configuration_setting.tags
         )
         custom_headers = CaseInsensitiveDict(kwargs.get("headers"))
+        error_map = {
+            412: ResourceExistsError
+        }
         key_value_added = await self._impl.put_key_value(
             entity=key_value,
             key=key_value.key,
             label=key_value.label,
             if_none_match="*",
             headers=custom_headers,
-            error_map={412: ResourceExistsError},
+            error_map=error_map,
         )
         return ConfigurationSetting._from_key_value(key_value_added)
 
@@ -352,79 +326,43 @@ class AzureAppConfigurationClient:
         )
         custom_headers = CaseInsensitiveDict(kwargs.get("headers"))
         if match_condition == MatchConditions.Unconditionally:
-            key_value_set = await self._impl.put_key_value(
-                entity=key_value,
-                key=key_value.key,
-                label=key_value.label,
-                headers=custom_headers,
-                error_map={
-                    409: ResourceReadOnlyError,
-                },
-            )
-            return ConfigurationSetting._from_key_value(key_value_set)
+            error_map = {
+                409: ResourceReadOnlyError,
+            }
 
         if match_condition == MatchConditions.IfNotModified:
-            etag = configuration_setting.etag
-            if_match = quote_etag(etag) if etag else None
-            key_value_set = await self._impl.put_key_value(
-                entity=key_value,
-                key=key_value.key,
-                label=key_value.label,
-                if_match=if_match,
-                headers=custom_headers,
-                error_map={
-                    409: ResourceReadOnlyError,
-                    412: ResourceModifiedError,
-                },
-            )
-            return ConfigurationSetting._from_key_value(key_value_set)
+            error_map = {
+                409: ResourceReadOnlyError,
+                412: ResourceModifiedError,
+            }
 
         if match_condition == MatchConditions.IfModified:
-            etag = configuration_setting.etag
-            if_none_match = quote_etag(etag) if etag else None
-            key_value_set = await self._impl.put_key_value(
-                entity=key_value,
-                key=key_value.key,
-                label=key_value.label,
-                if_none_match=if_none_match,
-                headers=custom_headers,
-                error_map={
-                    409: ResourceReadOnlyError,
-                    412: ResourceNotModifiedError,
-                },
-            )
-            return ConfigurationSetting._from_key_value(key_value_set)
+            error_map = {
+                409: ResourceReadOnlyError,
+                412: ResourceNotModifiedError,
+            }
 
         if match_condition == MatchConditions.IfPresent:
-            etag = configuration_setting.etag
-            if_match = "*"
-            key_value_set = await self._impl.put_key_value(
-                entity=key_value,
-                key=key_value.key,
-                label=key_value.label,
-                if_match=if_match,
-                headers=custom_headers,
-                error_map={
-                    409: ResourceReadOnlyError,
-                    412: ResourceNotFoundError,
-                },
-            )
-            return ConfigurationSetting._from_key_value(key_value_set)
+            error_map = {
+                409: ResourceReadOnlyError,
+                412: ResourceNotFoundError,
+            }
 
         if match_condition == MatchConditions.IfMissing:
-            etag = configuration_setting.etag
-            if_none_match = "*"
-            key_value_set = await self._impl.put_key_value(
-                entity=key_value,
-                key=key_value.key,
-                label=key_value.label,
-                if_none_match=if_none_match,
-                headers=custom_headers,
-                error_map={
-                    412: ResourceExistsError,
-                },
-            )
-            return ConfigurationSetting._from_key_value(key_value_set)
+            error_map = {
+                412: ResourceExistsError,
+            }
+
+        key_value_set = await self._impl.put_key_value(
+            entity=key_value,
+            key=key_value.key,
+            label=key_value.label,
+            if_match=prep_if_match(configuration_setting.etag, match_condition),
+            if_none_match=prep_if_none_match(configuration_setting.etag, match_condition),
+            headers=custom_headers,
+            error_map=error_map,
+        )
+        return ConfigurationSetting._from_key_value(key_value_set)
 
     @distributed_trace_async
     async def delete_configuration_setting(
@@ -457,71 +395,42 @@ class AzureAppConfigurationClient:
         """
         custom_headers = CaseInsensitiveDict(kwargs.get("headers"))
         if match_condition == MatchConditions.Unconditionally:
-            key_value_deleted = await self._impl.delete_key_value(
-                key=key,
-                label=label,
-                headers=custom_headers,
-                error_map={
-                    409: ResourceReadOnlyError,
-                },
-            )
-            return ConfigurationSetting._from_key_value(key_value_deleted)
+            error_map = {
+                409: ResourceReadOnlyError,
+            }
 
         if match_condition == MatchConditions.IfNotModified:
-            if_match = quote_etag(etag) if etag else None
-            key_value_deleted = await self._impl.delete_key_value(
-                key=key,
-                label=label,
-                if_match=if_match,
-                headers=custom_headers,
-                error_map={
-                    409: ResourceReadOnlyError,
-                    412: ResourceModifiedError,
-                },
-            )
-            return ConfigurationSetting._from_key_value(key_value_deleted)
+            error_map = {
+                409: ResourceReadOnlyError,
+                412: ResourceModifiedError,
+            }
 
         if match_condition == MatchConditions.IfModified:
-            if_none_match = quote_etag(etag) if etag else None
-            key_value_deleted = await self._impl.delete_key_value(
-                key=key,
-                label=label,
-                if_none_match=if_none_match,
-                headers=custom_headers,
-                error_map={
-                    409: ResourceReadOnlyError,
-                    412: ResourceNotModifiedError,
-                },
-            )
-            return ConfigurationSetting._from_key_value(key_value_deleted)
+            error_map = {
+                409: ResourceReadOnlyError,
+                412: ResourceNotModifiedError,
+            }
 
         if match_condition == MatchConditions.IfPresent:
-            if_match = "*"
-            key_value_deleted = await self._impl.delete_key_value(
-                key=key,
-                label=label,
-                if_match=if_match,
-                headers=custom_headers,
-                error_map={
-                    409: ResourceReadOnlyError,
-                    412: ResourceNotFoundError,
-                },
-            )
-            return ConfigurationSetting._from_key_value(key_value_deleted)
+            error_map = {
+                409: ResourceReadOnlyError,
+                412: ResourceNotFoundError,
+            }
 
         if match_condition == MatchConditions.IfMissing:
-            if_none_match = "*"
-            key_value_deleted = await self._impl.delete_key_value(
-                key=key,
-                label=label,
-                if_none_match=if_none_match,
-                headers=custom_headers,
-                error_map={
-                    409: ResourceReadOnlyError,
-                    412: ResourceExistsError,
-                },
-            )
-            return ConfigurationSetting._from_key_value(key_value_deleted)
+            error_map = {
+                409: ResourceReadOnlyError,
+                412: ResourceExistsError,
+            }
+
+        key_value_deleted = await self._impl.delete_key_value(
+            key=key,
+            label=label,
+            if_match=prep_if_match(etag, match_condition),
+            headers=custom_headers,
+            error_map=error_map,
+        )
+        return ConfigurationSetting._from_key_value(key_value_deleted)
 
     @distributed_trace
     def list_revisions(
@@ -602,75 +511,40 @@ class AzureAppConfigurationClient:
             error_map = {
                 404: ResourceNotFoundError,
             }
-            key_value = await self._impl.put_lock(
-                key=configuration_setting.key,
-                label=configuration_setting.label,
-                error_map=error_map,
-                **kwargs
-            )
-            return ConfigurationSetting._from_key_value(key_value)
 
         if match_condition == MatchConditions.IfNotModified:
-            etag = configuration_setting.etag
-            if_match = quote_etag(etag) if etag else None
             error_map = {
                 404: ResourceNotFoundError,
                 412: ResourceModifiedError,
             }
-            key_value = await self._impl.put_lock(
-                key=configuration_setting.key,
-                label=configuration_setting.label,
-                if_match=if_match,
-                error_map=error_map,
-                **kwargs
-            )
-            return ConfigurationSetting._from_key_value(key_value)
 
         if match_condition == MatchConditions.IfModified:
-            etag = configuration_setting.etag
-            if_none_match = quote_etag(etag) if etag else None
             error_map = {
                 404: ResourceNotFoundError,
                 412: ResourceNotModifiedError,
             }
-            key_value =await  self._impl.put_lock(
-                key=configuration_setting.key,
-                label=configuration_setting.label,
-                if_none_match=if_none_match,
-                error_map=error_map,
-                **kwargs
-            )
-            return ConfigurationSetting._from_key_value(key_value)
 
         if match_condition == MatchConditions.IfPresent:
-            if_match = "*"
             error_map = {
                 404: ResourceNotFoundError,
                 412: ResourceNotFoundError,
             }
-            key_value = await self._impl.put_lock(
-                key=configuration_setting.key,
-                label=configuration_setting.label,
-                if_match=if_match,
-                error_map=error_map,
-                **kwargs
-            )
-            return ConfigurationSetting._from_key_value(key_value)
 
         if match_condition == MatchConditions.IfMissing:
-            if_none_match = "*"
             error_map = {
                 404: ResourceNotFoundError,
                 412: ResourceExistsError,
             }
-            key_value = await self._impl.put_lock(
-                key=configuration_setting.key,
-                label=configuration_setting.label,
-                if_none_match=if_none_match,
-                error_map=error_map,
-                **kwargs
-            )
-            return ConfigurationSetting._from_key_value(key_value)
+
+        key_value = await self._impl.put_lock(
+            key=configuration_setting.key,
+            label=configuration_setting.label,
+            if_match=prep_if_match(configuration_setting.etag, match_condition),
+            if_none_match=prep_if_none_match(configuration_setting.etag, match_condition),
+            error_map=error_map,
+            **kwargs
+        )
+        return ConfigurationSetting._from_key_value(key_value)
 
     @distributed_trace
     async def clear_read_only(
@@ -702,75 +576,40 @@ class AzureAppConfigurationClient:
             error_map = {
                 404: ResourceNotFoundError,
             }
-            key_value = await self._impl.delete_lock(
-                key=configuration_setting.key,
-                label=configuration_setting.label,
-                error_map=error_map,
-                **kwargs
-            )
-            return ConfigurationSetting._from_key_value(key_value)
 
         if match_condition == MatchConditions.IfNotModified:
-            etag = configuration_setting.etag
-            if_match = quote_etag(etag) if etag else None
             error_map = {
                 404: ResourceNotFoundError,
                 412: ResourceModifiedError,
             }
-            key_value = await self._impl.delete_lock(
-                key=configuration_setting.key,
-                label=configuration_setting.label,
-                if_match=if_match,
-                error_map=error_map,
-                **kwargs
-            )
-            return ConfigurationSetting._from_key_value(key_value)
 
         if match_condition == MatchConditions.IfModified:
-            etag = configuration_setting.etag
-            if_none_match = quote_etag(etag) if etag else None
             error_map = {
                 404: ResourceNotFoundError,
                 412: ResourceNotModifiedError,
             }
-            key_value = await self._impl.delete_lock(
-                key=configuration_setting.key,
-                label=configuration_setting.label,
-                if_none_match=if_none_match,
-                error_map=error_map,
-                **kwargs
-            )
-            return ConfigurationSetting._from_key_value(key_value)
 
         if match_condition == MatchConditions.IfPresent:
-            if_match = "*"
             error_map = {
                 404: ResourceNotFoundError,
                 412: ResourceNotFoundError,
             }
-            key_value = await self._impl.delete_lock(
-                key=configuration_setting.key,
-                label=configuration_setting.label,
-                if_match=if_match,
-                error_map=error_map,
-                **kwargs
-            )
-            return ConfigurationSetting._from_key_value(key_value)
 
         if match_condition == MatchConditions.IfMissing:
-            if_none_match = "*"
             error_map = {
                 404: ResourceNotFoundError,
                 412: ResourceExistsError,
             }
-            key_value = await self._impl.delete_lock(
-                key=configuration_setting.key,
-                label=configuration_setting.label,
-                if_none_match=if_none_match,
-                error_map=error_map,
-                **kwargs
-            )
-            return ConfigurationSetting._from_key_value(key_value)
+
+        key_value = await self._impl.delete_lock(
+            key=configuration_setting.key,
+            label=configuration_setting.label,
+            if_match=prep_if_match(configuration_setting.etag, match_condition),
+            if_none_match=prep_if_none_match(configuration_setting.etag, match_condition),
+            error_map=error_map,
+            **kwargs
+        )
+        return ConfigurationSetting._from_key_value(key_value)
 
     @distributed_trace
     async def has_changed(
