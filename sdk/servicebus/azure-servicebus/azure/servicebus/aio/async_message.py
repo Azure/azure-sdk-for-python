@@ -59,7 +59,11 @@ class Message(message.Message):
         if hasattr(self._receiver, 'locked_until'):
             raise TypeError("Session messages cannot be renewed. Please renew the Session lock instead.")
         self._is_live('renew')
-        expiry = await self._receiver._renew_locks(self.lock_token)  # pylint: disable=protected-access
+        token = self.lock_token
+        if not token:
+            raise ValueError("Unable to renew lock - no lock token found.")
+
+        expiry = await self._receiver._renew_locks(token)  # pylint: disable=protected-access
         self._expiry = datetime.datetime.fromtimestamp(expiry[b'expirations'][0]/1000.0)
 
     async def complete(self):
@@ -155,6 +159,8 @@ class DeferredMessage(Message):
     def lock_token(self):
         if self.settled:
             return None
+        if hasattr(self.message, 'delivery_tag') and self.message.delivery_tag:
+            return uuid.UUID(bytes_le=self.message.delivery_tag)
         delivery_annotations = self.message.delivery_annotations
         if delivery_annotations:
             return delivery_annotations.get(self._x_OPT_LOCK_TOKEN)

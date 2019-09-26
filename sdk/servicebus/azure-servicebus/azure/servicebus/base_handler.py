@@ -133,6 +133,7 @@ class BaseHandler(object):  # pylint: disable=too-many-instance-attributes
         This method will be called automatically for most retryable errors.
         """
         self._handler.close()
+        self.running = False
         self._build_handler()
         self.open()
 

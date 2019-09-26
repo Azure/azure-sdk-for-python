@@ -9,6 +9,7 @@ import sys
 import os
 import pytest
 import time
+import uuid
 from datetime import datetime, timedelta
 
 from azure.servicebus import ServiceBusClient, QueueClient, AutoLockRenew
@@ -57,6 +58,47 @@ def print_message(message):
         pass
     _logger.debug("Enqueued time: {}".format(message.enqueued_time))
 
+@pytest.mark.skip
+@pytest.mark.liveTest
+def test_github_issue_7079(live_servicebus_config, standard_queue):
+    pytest.skip("Pending fix for #7079")
+    sb_client = ServiceBusClient.from_connection_string(
+        live_servicebus_config['conn_str'], debug=True)
+    queue = sb_client.get_queue(standard_queue)
+
+    with queue.get_sender() as sender:
+        for i in range(5):
+            sender.send(Message(f"Message {i}"))
+    messages = queue.get_receiver(mode=ReceiveSettleMode.ReceiveAndDelete, idle_timeout=5)
+    batch = messages.fetch_next()
+    count = len(batch)
+
+    messages.reconnect()
+    for message in messages:
+       _logger.debug(message)
+       count += 1
+    assert count == 5
+
+@pytest.mark.skip
+@pytest.mark.liveTest
+def test_github_issue_6178(live_servicebus_config, standard_queue):
+    pytest.skip("Pending fix for #6178")
+    sb_client = ServiceBusClient.from_connection_string(
+        live_servicebus_config['conn_str'], debug=False)
+    queue = sb_client.get_queue(standard_queue)
+
+    for i in range(3):
+        queue.send(Message(f"Message {i}"))
+
+    messages = queue.get_receiver()
+    for message in messages:
+        _logger.debug(message)
+        _logger.debug(message.sequence_number)
+        _logger.debug(message.enqueued_time)
+        _logger.debug(message.expired)
+        message.complete()
+        time.sleep(40)
+
 @pytest.mark.liveTest
 def test_queue_by_queue_client_conn_str_receive_handler_peeklock(live_servicebus_config, standard_queue):
     queue_client = QueueClient.from_connection_string(
@@ -74,6 +116,9 @@ def test_queue_by_queue_client_conn_str_receive_handler_peeklock(live_servicebus
     count = 0
     for message in receiver:
         print_message(message)
+        assert message.message.delivery_tag is not None
+        assert message.lock_token == message.message.delivery_annotations.get(message._x_OPT_LOCK_TOKEN)
+        assert message.lock_token == uuid.UUID(bytes_le=message.message.delivery_tag)
         count += 1
         message.complete()
 
