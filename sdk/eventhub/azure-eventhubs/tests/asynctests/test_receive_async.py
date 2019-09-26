@@ -340,8 +340,8 @@ async def test_receive_run_time_metric_async(connstr_senders):
 
         received = await receiver.receive(max_batch_size=50, timeout=5)
         assert len(received) == 20
-        assert receiver.runtime_info
-        assert receiver.runtime_info.get('last_enqueued_sequence_number', None)
-        assert receiver.runtime_info.get('last_enqueued_offset', None)
-        assert receiver.runtime_info.get('last_enqueued_time_utc', None)
-        assert receiver.runtime_info.get('runtime_info_retrieval_time_utc', None)
+        assert receiver.last_enqueued_event_info
+        assert receiver.last_enqueued_event_info.get('last_enqueued_sequence_number', None)
+        assert receiver.last_enqueued_event_info.get('last_enqueued_offset', None)
+        assert receiver.last_enqueued_event_info.get('last_enqueued_time_utc', None)
+        assert receiver.last_enqueued_event_info.get('runtime_info_retrieval_time_utc', None)

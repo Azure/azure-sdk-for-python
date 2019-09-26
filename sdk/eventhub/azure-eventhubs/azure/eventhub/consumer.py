@@ -87,7 +87,7 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         self._link_properties[types.AMQPSymbol(self._timeout_symbol)] = types.AMQPLong(int(link_property_timeout_ms))
         self._handler = None
         self._track_last_enqueued_event_info = track_last_enqueued_event_info
-        self._runtime_info = {}
+        self._last_enqueued_event_info = {}
 
     def __iter__(self):
         return self
@@ -105,7 +105,7 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
                 self._offset = EventPosition(event_data.offset, inclusive=False)
                 retried_times = 0
                 if self._track_last_enqueued_event_info:
-                    self._runtime_info = event_data._runtime_info  # pylint:disable=protected-access
+                    self._last_enqueued_event_info_info = event_data._runtime_info  # pylint:disable=protected-access
                 return event_data
             except Exception as exception:  # pylint:disable=broad-except
                 last_exception = self._handle_exception(exception)
@@ -188,7 +188,7 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
             data_batch.append(event_data)
 
         if self._track_last_enqueued_event_info and len(data_batch):
-            self._runtime_info = data_batch[-1]._runtime_info  # pylint:disable=protected-access
+            self._last_enqueued_event_info = data_batch[-1]._runtime_info  # pylint:disable=protected-access
         return data_batch
 
     def _receive_with_retry(self, timeout=None, max_batch_size=None, **kwargs):
@@ -196,7 +196,7 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
                                             max_batch_size=max_batch_size, **kwargs)
 
     @property
-    def runtime_info(self):
+    def last_enqueued_event_info(self):
         """
         The latest enqueued event information. This property will be updated each time an event is received when
         the receiver is created with `track_last_enqueued_event_info` being `True`.
@@ -209,7 +209,7 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
 
         :rtype: dict or None
         """
-        return self._runtime_info if self._track_last_enqueued_event_info else None
+        return self._last_enqueued_event_info if self._track_last_enqueued_event_info else None
 
     @property
     def queue_size(self):

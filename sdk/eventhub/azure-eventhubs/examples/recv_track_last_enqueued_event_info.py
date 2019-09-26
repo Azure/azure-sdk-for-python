@@ -41,5 +41,5 @@ with consumer:
         print(event_data.body_as_str())
         total += 1
     batch = consumer.receive(timeout=5)
-    print("Consumer runtime information: {}.".format(consumer.runtime_info))
+    print("Consumer runtime information: {}.".format(consumer.last_enqueued_event_info))
     print("Received {} messages in {} seconds".format(total, time.time() - start_time))

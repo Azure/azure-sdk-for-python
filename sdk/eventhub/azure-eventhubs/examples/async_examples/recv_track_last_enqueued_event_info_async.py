@@ -37,7 +37,7 @@ async def pump(client, partition):
             total += 1
         end_time = time.time()
         run_time = end_time - start_time
-        print("Consumer runtime information: {}.".format(consumer.runtime_info))
+        print("Consumer runtime information: {}.".format(consumer.last_enqueued_event_info))
         print("Received {} messages in {} seconds".format(total, run_time))
 
 
