@@ -10,7 +10,7 @@ import webbrowser
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 
-from ._internal import AuthCodeRedirectServer, ConfidentialClientCredential, wrap_exceptions
+from .._internal import AuthCodeRedirectServer, ConfidentialClientCredential, wrap_exceptions
 
 try:
     from typing import TYPE_CHECKING

@@ -3,24 +3,56 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
-from typing import Any, Optional
+from typing import TYPE_CHECKING
 
-from azure.core import Configuration
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 from azure.core.pipeline.policies import AsyncRetryPolicy
 
-from ._authn_client import AsyncAuthnClient
-from .._constants import Endpoints, EnvironmentVariables
-from .._managed_identity import _ManagedIdentityBase
+from azure.identity._credentials.managed_identity import _ManagedIdentityBase
+from .._authn_client import AsyncAuthnClient
+from ..._constants import Endpoints, EnvironmentVariables
+
+if TYPE_CHECKING:
+    from typing import Any, Optional
+    from azure.core import Configuration
+
+
+class ManagedIdentityCredential(object):
+    """
+    Authenticates with a managed identity in an App Service, Azure VM or Cloud Shell environment.
+
+    :param str client_id:
+        (optional) client ID of a user-assigned identity. Leave unspecified to use a system-assigned identity.
+    """
+
+    def __new__(cls, *args, **kwargs):
+        if os.environ.get(EnvironmentVariables.MSI_ENDPOINT):
+            return MsiCredential(*args, **kwargs)
+        return ImdsCredential(*args, **kwargs)
+
+    # the below methods are never called, because ManagedIdentityCredential can't be instantiated;
+    # they exist so tooling gets accurate signatures for Imds- and MsiCredential
+    def __init__(self, client_id: "Optional[str]" = None, **kwargs: "Any") -> None:
+        pass
+
+    async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":  # pylint:disable=unused-argument
+        """
+        Asynchronously request an access token for `scopes`.
+
+        :param str scopes: desired scopes for the token
+        :rtype: :class:`azure.core.credentials.AccessToken`
+        :raises: :class:`azure.core.exceptions.ClientAuthenticationError`
+        """
+        return AccessToken()
 
 
 class _AsyncManagedIdentityBase(_ManagedIdentityBase):
-    def __init__(self, endpoint: str, config: Optional[Configuration] = None, **kwargs: Any) -> None:
+    def __init__(self, endpoint: str, config: "Optional[Configuration]" = None, **kwargs: "Any") -> None:
         super().__init__(endpoint=endpoint, config=config, client_cls=AsyncAuthnClient, **kwargs)
 
     @staticmethod
-    def _create_config(**kwargs: Any) -> Configuration:  # type: ignore
+    def _create_config(**kwargs: "Any") -> "Configuration":  # type: ignore
         """
         Build a default configuration for the credential's HTTP pipeline.
 
@@ -37,11 +69,11 @@ class ImdsCredential(_AsyncManagedIdentityBase):
     :type config: :class:`azure.core.configuration`
     """
 
-    def __init__(self, config: Optional[Configuration] = None, **kwargs: Any) -> None:
+    def __init__(self, config: "Optional[Configuration]" = None, **kwargs: "Any") -> None:
         super().__init__(endpoint=Endpoints.IMDS, config=config, **kwargs)
         self._endpoint_available = None  # type: Optional[bool]
 
-    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:  # pylint:disable=unused-argument
+    async def get_token(self, *scopes: str, **kwargs: "Any") -> AccessToken:  # pylint:disable=unused-argument
         """
         Asynchronously request an access token for `scopes`.
 
@@ -90,13 +122,13 @@ class MsiCredential(_AsyncManagedIdentityBase):
     :type config: :class:`azure.core.configuration`
     """
 
-    def __init__(self, config: Optional[Configuration] = None, **kwargs: Any) -> None:
+    def __init__(self, config: "Optional[Configuration]" = None, **kwargs: "Any") -> None:
         endpoint = os.environ.get(EnvironmentVariables.MSI_ENDPOINT)
         self._endpoint_available = endpoint is not None
         if self._endpoint_available:
             super().__init__(endpoint=endpoint, config=config, **kwargs)  # type: ignore
 
-    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:  # pylint:disable=unused-argument
+    async def get_token(self, *scopes: str, **kwargs: "Any") -> AccessToken:  # pylint:disable=unused-argument
         """
         Asynchronously request an access token for `scopes`.
 
