@@ -1019,15 +1019,38 @@ class ClusterUpdateParameters(Model):
      amlCompute.
     :type scale_settings:
      ~azure.mgmt.machinelearningservices.models.ScaleSettings
+    :param data_stores_mount_settings: Describes what data stores will be
+     mounted on this compute instance.
+    :type data_stores_mount_settings:
+     ~azure.mgmt.machinelearningservices.models.AmlInstanceDataStoresMountSettings
+    :param custom_script_settings: Specification for initialization scripts to
+     customize this AmlInstance.
+    :type custom_script_settings:
+     ~azure.mgmt.machinelearningservices.models.AmlInstanceCustomScriptSettings
+    :param software_update_settings: Specifies policies for operating system
+     and Azure ML environment (example packages and SDK) updates.
+    :type software_update_settings:
+     ~azure.mgmt.machinelearningservices.models.AmlInstanceSoftwareUpdateSettings
+    :param ssh_settings: Specifies policy and settings for SSH access.
+    :type ssh_settings:
+     ~azure.mgmt.machinelearningservices.models.AmlInstanceSshSettings
     """
 
     _attribute_map = {
         'scale_settings': {'key': 'properties.scaleSettings', 'type': 'ScaleSettings'},
+        'data_stores_mount_settings': {'key': 'properties.dataStoresMountSettings', 'type': 'AmlInstanceDataStoresMountSettings'},
+        'custom_script_settings': {'key': 'properties.customScriptSettings', 'type': 'AmlInstanceCustomScriptSettings'},
+        'software_update_settings': {'key': 'properties.softwareUpdateSettings', 'type': 'AmlInstanceSoftwareUpdateSettings'},
+        'ssh_settings': {'key': 'properties.sshSettings', 'type': 'AmlInstanceSshSettings'},
     }
 
     def __init__(self, **kwargs):
         super(ClusterUpdateParameters, self).__init__(**kwargs)
         self.scale_settings = kwargs.get('scale_settings', None)
+        self.data_stores_mount_settings = kwargs.get('data_stores_mount_settings', None)
+        self.custom_script_settings = kwargs.get('custom_script_settings', None)
+        self.software_update_settings = kwargs.get('software_update_settings', None)
+        self.ssh_settings = kwargs.get('ssh_settings', None)
 
 
 class Resource(Model):

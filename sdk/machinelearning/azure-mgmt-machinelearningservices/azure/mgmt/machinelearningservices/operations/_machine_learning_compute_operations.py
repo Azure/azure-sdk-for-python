@@ -305,9 +305,7 @@ class MachineLearningComputeOperations(object):
 
 
     def _update_initial(
-            self, resource_group_name, workspace_name, compute_name, scale_settings=None, custom_headers=None, raw=False, **operation_config):
-        parameters = models.ClusterUpdateParameters(scale_settings=scale_settings)
-
+            self, resource_group_name, workspace_name, compute_name, parameters, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.update.metadata['url']
         path_format_arguments = {
@@ -355,7 +353,7 @@ class MachineLearningComputeOperations(object):
         return deserialized
 
     def update(
-            self, resource_group_name, workspace_name, compute_name, scale_settings=None, custom_headers=None, raw=False, polling=True, **operation_config):
+            self, resource_group_name, workspace_name, compute_name, parameters, custom_headers=None, raw=False, polling=True, **operation_config):
         """Updates properties of a compute. This call will overwrite a compute if
         it exists. This is a nonrecoverable operation.
 
@@ -366,10 +364,9 @@ class MachineLearningComputeOperations(object):
         :type workspace_name: str
         :param compute_name: Name of the Azure Machine Learning compute.
         :type compute_name: str
-        :param scale_settings: Scale settings. Desired scale settings for the
-         amlCompute.
-        :type scale_settings:
-         ~azure.mgmt.machinelearningservices.models.ScaleSettings
+        :param parameters: Additional parameters for cluster update.
+        :type parameters:
+         ~azure.mgmt.machinelearningservices.models.ClusterUpdateParameters
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: The poller return type is ClientRawResponse, the
          direct response alongside the deserialized response
@@ -388,7 +385,7 @@ class MachineLearningComputeOperations(object):
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             compute_name=compute_name,
-            scale_settings=scale_settings,
+            parameters=parameters,
             custom_headers=custom_headers,
             raw=True,
             **operation_config
