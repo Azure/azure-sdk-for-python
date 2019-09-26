@@ -478,15 +478,20 @@ class OpenShiftManagedClusterMonitorProfile(Model):
     :param workspace_resource_id: Azure Resource Manager Resource ID for the
      Log Analytics workspace to integrate with.
     :type workspace_resource_id: str
+    :param enabled: If the Log analytics integration should be turned on or
+     off
+    :type enabled: bool
     """
 
     _attribute_map = {
         'workspace_resource_id': {'key': 'workspaceResourceID', 'type': 'str'},
+        'enabled': {'key': 'enabled', 'type': 'bool'},
     }
 
     def __init__(self, **kwargs):
         super(OpenShiftManagedClusterMonitorProfile, self).__init__(**kwargs)
         self.workspace_resource_id = kwargs.get('workspace_resource_id', None)
+        self.enabled = kwargs.get('enabled', None)
 
 
 class OpenShiftRouterProfile(Model):
