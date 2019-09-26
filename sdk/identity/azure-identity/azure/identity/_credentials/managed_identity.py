@@ -5,11 +5,12 @@
 import os
 
 from azure.core import Configuration
+from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 from azure.core.pipeline.policies import ContentDecodePolicy, HeadersPolicy, NetworkTraceLoggingPolicy, RetryPolicy
 
-from ._authn_client import AuthnClient
-from ._constants import Endpoints, EnvironmentVariables
+from .._authn_client import AuthnClient
+from .._constants import Endpoints, EnvironmentVariables
 
 try:
     from typing import TYPE_CHECKING
@@ -19,7 +20,37 @@ except ImportError:
 if TYPE_CHECKING:
     # pylint:disable=unused-import
     from typing import Any, Mapping, Optional, Type
-    from azure.core.credentials import AccessToken
+
+
+class ManagedIdentityCredential(object):
+    """
+    Authenticates with a managed identity in an App Service, Azure VM or Cloud Shell environment.
+
+    :param str client_id:
+        (optional) client ID of a user-assigned identity. Leave unspecified to use a system-assigned identity.
+    """
+
+    def __new__(cls, *args, **kwargs):
+        if os.environ.get(EnvironmentVariables.MSI_ENDPOINT):
+            return MsiCredential(*args, **kwargs)
+        return ImdsCredential(*args, **kwargs)
+
+    # the below methods are never called, because ManagedIdentityCredential can't be instantiated;
+    # they exist so tooling gets accurate signatures for Imds- and MsiCredential
+    def __init__(self, client_id=None, **kwargs):
+        # type: (Optional[str], Any) -> None
+        pass
+
+    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument,no-self-use
+        # type: (*str, **Any) -> AccessToken
+        """
+        Request an access token for `scopes`.
+
+        :param str scopes: desired scopes for the token
+        :rtype: :class:`azure.core.credentials.AccessToken`
+        :raises: :class:`azure.core.exceptions.ClientAuthenticationError`
+        """
+        return AccessToken()
 
 
 class _ManagedIdentityBase(object):

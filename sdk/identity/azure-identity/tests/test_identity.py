@@ -25,7 +25,7 @@ from azure.identity import (
     InteractiveBrowserCredential,
     UsernamePasswordCredential,
 )
-from azure.identity._managed_identity import ImdsCredential
+from azure.identity._credentials.managed_identity import ImdsCredential
 from azure.identity._constants import EnvironmentVariables
 import pytest
 
@@ -236,7 +236,7 @@ def test_imds_credential_retries():
         assert mock_send.call_count == 2 + total_retries
 
 
-@patch("azure.identity.SharedTokenCacheCredential")
+@patch("azure.identity._credentials.default.SharedTokenCacheCredential")
 def test_default_credential_shared_cache_use(mock_credential):
     mock_credential.supported = Mock(return_value=False)
 
@@ -341,7 +341,7 @@ def test_device_code_credential_timeout():
     assert "timed out" in ex.value.message.lower()
 
 
-@patch("azure.identity._browser_auth.webbrowser.open", lambda _: None)  # prevent the credential opening a browser
+@patch("azure.identity._credentials.browser.webbrowser.open", lambda _: None)  # prevent the credential opening a browser
 def test_interactive_credential():
     oauth_state = "state"
     expected_token = "access-token"
@@ -375,12 +375,12 @@ def test_interactive_credential():
     )
 
     # ensure the request beginning the flow has a known state value
-    with patch("azure.identity._browser_auth.uuid.uuid4", lambda: oauth_state):
+    with patch("azure.identity._credentials.browser.uuid.uuid4", lambda: oauth_state):
         token = credential.get_token("scope")
     assert token.token == expected_token
 
 
-@patch("azure.identity._browser_auth.webbrowser.open", lambda _: None)  # prevent the credential opening a browser
+@patch("azure.identity._credentials.browser.webbrowser.open", lambda _: None)  # prevent the credential opening a browser
 def test_interactive_credential_timeout():
     # mock transport handles MSAL's tenant discovery
     transport = Mock(
