@@ -168,7 +168,7 @@ class EventHubClient(EventHubClientAbstract):
             -'partition_ids'
 
         :rtype: dict
-        :raises: ~azure.eventhub.ConnectError
+        :raises: ~azure.eventhub.EventHubError
         """
         if self._is_iothub and not self._iothub_redirect_info:
             self._iothub_redirect()
@@ -188,7 +188,7 @@ class EventHubClient(EventHubClientAbstract):
         Get partition ids of the specified EventHub.
 
         :rtype: list[str]
-        :raises: ~azure.eventhub.ConnectError
+        :raises: ~azure.eventhub.EventHubError
         """
         return self.get_properties()['partition_ids']
 

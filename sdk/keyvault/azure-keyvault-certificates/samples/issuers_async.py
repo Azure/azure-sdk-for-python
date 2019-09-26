@@ -9,19 +9,13 @@ from azure.keyvault.certificates.aio import AdministratorDetails, CertificateCli
 from azure.core.exceptions import HttpResponseError
 
 # ----------------------------------------------------------------------------------------------------------
-# Prerequistes -
+# Prerequisites:
+# 1. An Azure Key Vault (https://docs.microsoft.com/en-us/azure/key-vault/quick-create-cli)
 #
-# 1. An Azure Key Vault-
-#    https://docs.microsoft.com/en-us/azure/key-vault/quick-create-cli
+# 2. azure-keyvault-certificates and azure-identity packages (pip install these)
 #
-#  2. Microsoft Azure Key Vault PyPI package -
-#    https://pypi.python.org/pypi/azure-keyvault-certificates/
-#
-# 3. Microsoft Azure Identity package -
-#    https://pypi.python.org/pypi/azure-identity/
-#
-# 4. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL.
-# How to do this - https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-certificates#createget-credentials)
+# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL
+#    (See https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys#authenticate-the-client)
 #
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates basic CRUD operations for certificate issuers.
@@ -58,7 +52,7 @@ async def run_sample():
         # The name field refers to the name you would like to get the issuer. There are also pre-set names, such as 'Self' and 'Unknown'
         await client.create_issuer(
             name="issuer1",
-            provider="Sample",
+            provider="Test",
             account_id="keyvaultuser",
             admin_details=admin_details,
             enabled=True
@@ -70,15 +64,17 @@ async def run_sample():
         print(issuer1.name)
         print(issuer1.provider)
         print(issuer1.account_id)
-        print(issuer1.admin_details.first_name)
-        print(issuer1.admin_details.last_name)
-        print(issuer1.admin_details.email)
-        print(issuer1.admin_details.phone)
+
+        for admin_detail in issuer1.admin_details:
+            print(admin_detail.first_name)
+            print(admin_detail.last_name)
+            print(admin_detail.email)
+            print(admin_detail.phone)
 
         # Now we will list all of the certificate issuers for this key vault. To better demonstrate this, we will first create another issuer.
         await client.create_issuer(
             name="issuer2",
-            provider="Sample",
+            provider="Test",
             account_id="keyvaultuser",
             enabled=True
         )

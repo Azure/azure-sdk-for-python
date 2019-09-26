@@ -65,8 +65,9 @@ def prep_tests(targeted_packages, python_version):
         [
             python_version,
             dev_setup_script_location,
+            "--disabledevelop",
             "-p",
-            ",".join([os.path.basename(p) for p in targeted_packages]),
+            ",".join([os.path.basename(p) for p in targeted_packages])
         ],
         root_dir,
     )
@@ -239,6 +240,14 @@ if __name__ == "__main__":
         help="Location for prebuilt artifacts (if any)",
     )
 
+    parser.add_argument(
+        "-x",
+        "--xdist",
+        default=False,
+        help=("Flag that enables xdist (requires pip install)"),
+        action="store_true"
+    )
+
     args = parser.parse_args()
 
     # We need to support both CI builds of everything and individual service
@@ -252,11 +261,17 @@ if __name__ == "__main__":
     targeted_packages = process_glob_string(args.glob_string, target_dir)
     extended_pytest_args = []
 
+    if len(targeted_packages) == 0:
+        exit(0) 
+
     # common argument handling
     if args.disablecov:
         extended_pytest_args.append("--no-cov")
     else:
         extended_pytest_args.extend(["--durations=10", "--cov", "--cov-report="])
+
+    if args.xdist:
+        extended_pytest_args.extend(["-n", "8"])
 
     if args.runtype != "none":
         execute_global_install_and_test(args, targeted_packages, extended_pytest_args)

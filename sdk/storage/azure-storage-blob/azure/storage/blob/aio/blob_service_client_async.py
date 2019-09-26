@@ -10,13 +10,18 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING
 )
 
+from azure.core.tracing.decorator import distributed_trace
+from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged
+
 from .._shared.models import LocationMode
 from .._shared.policies_async import ExponentialRetry
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._shared.response_handlers import return_response_headers, process_storage_error
+from .._shared.parser import _to_utc_datetime
+from .._shared.response_handlers import parse_to_internal_user_delegation_key
 from .._generated.aio import AzureBlobStorage
-from .._generated.models import StorageErrorException, StorageServiceProperties
+from .._generated.models import StorageErrorException, StorageServiceProperties, KeyInfo
 from ..blob_service_client import BlobServiceClient as BlobServiceClientBase
 from .container_client_async import ContainerClient
 from .blob_client_async import BlobClient
@@ -107,6 +112,37 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         self._client = AzureBlobStorage(url=self.url, pipeline=self._pipeline, loop=loop)
         self._loop = loop
 
+    @distributed_trace_async
+    async def get_user_delegation_key(self, key_start_time,  # type: datetime
+                                      key_expiry_time,  # type: datetime
+                                      timeout=None,  # type: Optional[int]
+                                      **kwargs  # type: Any
+                                      ):
+        # type: (datetime, datetime, Optional[int]) -> UserDelegationKey
+        """
+        Obtain a user delegation key for the purpose of signing SAS tokens.
+        A token credential must be present on the service object for this request to succeed.
+
+        :param datetime key_start_time:
+            A DateTime value. Indicates when the key becomes valid.
+        :param datetime key_expiry_time:
+            A DateTime value. Indicates when the key stops being valid.
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
+        :return: The user delegation key.
+        :rtype: ~azure.storage.blob._shared.models.UserDelegationKey
+        """
+        key_info = KeyInfo(start=_to_utc_datetime(key_start_time), expiry=_to_utc_datetime(key_expiry_time))
+        try:
+            user_delegation_key = await self._client.service.get_user_delegation_key(key_info=key_info,
+                                                                                     timeout=timeout,
+                                                                                     **kwargs)  # type: ignore
+        except StorageErrorException as error:
+            process_storage_error(error)
+
+        return parse_to_internal_user_delegation_key(user_delegation_key)  # type: ignore
+
+    @distributed_trace_async
     async def get_account_information(self, **kwargs): # type: ignore
         # type: (Optional[int]) -> Dict[str, str]
         """Gets information related to the storage account.
@@ -130,6 +166,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace_async
     async def get_service_stats(self, timeout=None, **kwargs): # type: ignore
         # type: (Optional[int], **Any) -> Dict[str, Any]
         """Retrieves statistics related to replication for the Blob service.
@@ -169,8 +206,9 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace_async
     async def get_service_properties(self, timeout=None, **kwargs):
-        # type(Optional[int]) -> Dict[str, Any]
+        # type: (Optional[int], Any) -> Dict[str, Any]
         """Gets the properties of a storage account's Blob service, including
         Azure Storage Analytics.
 
@@ -191,6 +229,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace_async
     async def set_service_properties(
             self, logging=None,  # type: Optional[Logging]
             hour_metrics=None,  # type: Optional[Metrics]
@@ -267,6 +306,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         except StorageErrorException as error:
             process_storage_error(error)
 
+    @distributed_trace
     def list_containers(
             self, name_starts_with=None,  # type: Optional[str]
             include_metadata=False,  # type: Optional[bool]
@@ -316,6 +356,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
             page_iterator_class=ContainerPropertiesPaged
         )
 
+    @distributed_trace_async
     async def create_container(
             self, name,  # type: str
             metadata=None,  # type: Optional[Dict[str, str]]
@@ -351,10 +392,12 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
                 :caption: Creating a container in the blob service.
         """
         container = self.get_container_client(name)
+        kwargs.setdefault('merge_span', True)
         await container.create_container(
             metadata=metadata, public_access=public_access, timeout=timeout, **kwargs)
         return container
 
+    @distributed_trace_async
     async def delete_container(
             self, container,  # type: Union[ContainerProperties, str]
             lease=None,  # type: Optional[Union[LeaseClient, str]]
@@ -409,6 +452,7 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
                 :caption: Deleting a container in the blob service.
         """
         container = self.get_container_client(container) # type: ignore
+        kwargs.setdefault('merge_span', True)
         await container.delete_container( # type: ignore
             lease=lease,
             timeout=timeout,
@@ -462,7 +506,8 @@ class BlobServiceClient(AsyncStorageAccountHostsMixin, BlobServiceClientBase):
         :type blob: str or ~azure.storage.blob.models.BlobProperties
         :param snapshot:
             The optional blob snapshot on which to operate. This can either be the ID of the snapshot,
-            or a dictionary output returned by :func:`~azure.storage.blob.aio.blob_client_async.BlobClient.create_snapshot()`.
+            or a dictionary output returned by
+            :func:`~azure.storage.blob.aio.blob_client_async.BlobClient.create_snapshot()`.
         :type snapshot: str or dict(str, Any)
         :returns: A BlobClient.
         :rtype: ~azure.storage.blob.aio.blob_client_async.BlobClient

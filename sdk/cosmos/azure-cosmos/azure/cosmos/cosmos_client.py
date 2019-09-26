@@ -31,6 +31,7 @@ from ._cosmos_client_connection import CosmosClientConnection
 from ._base import build_options
 from .database import DatabaseProxy
 from .documents import ConnectionPolicy, DatabaseAccount
+from .errors import CosmosResourceNotFoundError
 
 __all__ = ("CosmosClient",)
 
@@ -138,7 +139,7 @@ class CosmosClient(object):
         and so on.
     *connection_policy* - An instance of ~azure.cosmos.documents.ConnectionPolicy
 
-    .. literalinclude:: ../../examples/examples.py
+    .. literalinclude:: ../../samples/examples.py
         :start-after: [START create_client]
         :end-before: [END create_client]
         :language: python
@@ -222,7 +223,7 @@ class CosmosClient(object):
         :rtype: ~azure.cosmos.database.DatabaseProxy
         :raises `CosmosResourceExistsError`: If database with the given ID already exists.
 
-        .. literalinclude:: ../../examples/examples.py
+        .. literalinclude:: ../../samples/examples.py
             :start-after: [START create_database]
             :end-before: [END create_database]
             :language: python
@@ -243,6 +244,49 @@ class CosmosClient(object):
         if response_hook:
             response_hook(self.client_connection.last_response_headers)
         return DatabaseProxy(self.client_connection, id=result["id"], properties=result)
+
+    @distributed_trace
+    def create_database_if_not_exists(  # pylint: disable=redefined-builtin
+        self,
+        id,  # type: str
+        populate_query_metrics=None,  # type: Optional[bool]
+        offer_throughput=None,  # type: Optional[int]
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> DatabaseProxy
+        """
+        Create the database if it does not exist already.
+
+        If the database already exists, the existing settings are returned.
+        Note: it does not check or update the existing database settings or offer throughput
+        if they differ from what was passed into the method.
+
+        :param id: ID (name) of the database to read or create.
+        :param str session_token: Token for use with Session consistency.
+        :param dict(str, str) initial_headers: Initial headers to be sent as part of the request.
+        :param dict(str, str) access_condition: Conditions Associated with the request.
+        :param bool populate_query_metrics: Enable returning query metrics in response headers.
+        :param int offer_throughput: The provisioned throughput for this offer.
+        :param dict(str, Any) request_options: Dictionary of additional properties to be used for the request.
+        :param Callable response_hook: a callable invoked with the response metadata
+        :returns: A DatabaseProxy instance representing the database.
+        :rtype: ~azure.cosmos.database.DatabaseProxy
+        :raise CosmosHttpResponseError: The database read or creation failed.
+        """
+        try:
+            database_proxy = self.get_database_client(id)
+            database_proxy.read(
+                populate_query_metrics=populate_query_metrics,
+                **kwargs
+            )
+            return database_proxy
+        except CosmosResourceNotFoundError:
+            return self.create_database(
+                id,
+                populate_query_metrics=populate_query_metrics,
+                offer_throughput=offer_throughput,
+                **kwargs
+            )
 
     def get_database_client(self, database):
         # type: (Union[str, DatabaseProxy, Dict[str, Any]]) -> DatabaseProxy

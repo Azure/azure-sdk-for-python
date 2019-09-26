@@ -56,7 +56,7 @@ pip install azure-keyvault-certificates
     > The `"vaultUri"` property is the `vault_url` used by `CertificateClient`.
 
 ### Authenticate the client
-In order to interact with a Key Vault's certificates, you'll need an instance of the [CertificateClient][certificate_client_docs] 
+In order to interact with a Key Vault's certificates, you'll need an instance of the [CertificateClient][certificate_client_docs]
 class. Creating one requires a **vault url** and
 **credential**. This document demonstrates using `DefaultAzureCredential` as
 the credential, authenticating with a service principal's client id, secret,
@@ -83,7 +83,7 @@ service principal:
     ```
 
 * Use the output to set **AZURE_CLIENT_ID** (appId), **AZURE_CLIENT_SECRET**
-(password) and **AZURE_TENANT_ID** (tenant) environment variables. The
+(password), and **AZURE_TENANT_ID** (tenant) environment variables. The
 following example shows a way to do this in Bash:
   ```Bash
    export AZURE_CLIENT_ID="generated app id"
@@ -111,14 +111,14 @@ credential = DefaultAzureCredential()
 certificate_client = CertificateClient(vault_url=<your-vault-url>, credential=credential)
 ```
 ## Key concepts
-With a `CertificateClient` you can get certificates from the vault, create new certificates and 
-new versions of existing certificates, update certificate metadata, and delete certificates. You 
-can also manage certificate issuers, contacts, and management policies of certificates. This is 
-illustrated in the [examples](#examples) below..
+With a `CertificateClient` you can get certificates from the vault, create new certificates and
+new versions of existing certificates, update certificate metadata, and delete certificates. You
+can also manage certificate issuers, contacts, and management policies of certificates. This is
+illustrated in the [examples](#examples) below.
 
 ### Certificate
-  A certificate is the fundamental resource within Azure KeyVault. From a developer's perspective, 
-  Key Vault APIs accept and return certificates as the Certificate type. In addition to the 
+  A certificate is the fundamental resource within Azure KeyVault. From a developer's perspective,
+  Key Vault APIs accept and return certificates as the Certificate type. In addition to the
   certificate data, the following attributes may be specified:
 * expires: Identifies the expiration time on or after which the certificate data should not be retrieved.
 * not_before: Identifies the time after which the certificate will be active.
@@ -135,12 +135,13 @@ This section contains code snippets covering common tasks:
 * [Update an existing Certificate](#update-an-existing-certificate)
 * [Delete a Certificate](#delete-a-certificate)
 * [List Certificates](#list-certificates)
-* 
+* [Asynchronously create a Certificate](#asynchronously-create-a-certificate)
+* [Asynchronously list certificates](#asynchronously-list-certificates)
 
 ### Create a Certificate
-`create_certificate` creates a Certificate to be stored in the Azure Key Vault. If a certificate with 
+`create_certificate` creates a Certificate to be stored in the Azure Key Vault. If a certificate with
 the same name already exists, then a new version of the certificate is created.
-Before creating a certificate, a management policy for the certificate can be created or our default 
+Before creating a certificate, a management policy for the certificate can be created or our default
 policy will be used. The `create_certificate` operation returns a long running operation poller.
 ```python
 create_certificate_poller = certificate_client.create_certificate(name="cert-name")
@@ -150,11 +151,20 @@ print(create_certificate_poller.result())
 ```
 
 ### Retrieve a Certificate
-`get_certificate_with_policy` retrieves a certificate previously stored in the Key Vault without 
+`get_certificate_with_policy` retrieves a certificate previously stored in the Key Vault without
 having to specify version.
 ```python
 certificate = certificate_client.get_certificate_with_policy(name="cert-name")
 
+print(certificate.name)
+print(certificate.version)
+print(certificate.policy.id)
+```
+
+`get_certificate` retrieves a certificate based on the certificate name and the version of the certificate.
+Version is required.
+```python
+certificate = certificate_client.get_certificate(name="cert-name", version="cert-version")
 print(certificate.name)
 print(certificate.version)
 ```
@@ -175,7 +185,7 @@ print(updated_certificate.tags)
 ```
 
 ### Delete a Certificate
-`delete_certificate` deletes a certificate previously stored in the Key Vault. When [soft-delete][soft_delete] 
+`delete_certificate` deletes a certificate previously stored in the Key Vault. When [soft-delete][soft_delete]
 is not enabled for the Key Vault, this operation permanently deletes the certificate.
 ```python
 deleted_certificate = certificate_client.delete_certificate(name="cert-name")
@@ -201,9 +211,9 @@ See
 for more information.
 
 ### Asynchronously create a Certificate
-`create_certificate` creates a Certificate to be stored in the Azure Key Vault. If a certificate with the 
+`create_certificate` creates a Certificate to be stored in the Azure Key Vault. If a certificate with the
 same name already exists, then a new version of the certificate is created.
-Before creating a certificate, a management policy for the certificate can be created or our default policy 
+Before creating a certificate, a management policy for the certificate can be created or our default policy
 will be used. The `create_certificate` operation returns an async long running operation poller.
 ```python
 create_certificate_poller = await certificate_client.create_certificate(name="cert-name")
@@ -225,8 +235,8 @@ async for certificate in certificates:
 ### General
 Key Vault clients raise exceptions defined in [`azure-core`][azure_core_exceptions].
 
-For example, if you try to retrieve a certificate after it is deleted a `404` error is returned, indicating 
-resource not found. In the following snippet, the error is handled gracefully by catching the exception and 
+For example, if you try to retrieve a certificate after it is deleted a `404` error is returned, indicating
+resource not found. In the following snippet, the error is handled gracefully by catching the exception and
 displaying additional information about the error.
 ```python
 from azure.core.exceptions import HttpResponseError
@@ -259,9 +269,8 @@ logger.addHandler(handler)
 file_handler = logging.FileHandler(filename)
 logger.addHandler(file_handler)
 
-# Enable network trace logging. This will be logged at DEBUG level.
-config = CertificateClient.create_config(credential=credential, logging_enable=True)
-client = CertificateClient(vault_url=url, credential=credential, config=config)
+# Enable network trace logging. Each HTTP request will be logged at DEBUG level.
+client = CertificateClient(vault_url=url, credential=credential, logging_enable=True))
 ```
 
 Network trace logging can also be enabled for any single operation:
@@ -313,7 +322,7 @@ additional questions or comments.
 [pip]: https://pypi.org/project/pip/
 [pypi_package_certificates]: https://pypi.org/project/azure-keyvault-certificates/
 [reference_docs]: https://azure.github.io/azure-sdk-for-python/ref/azure.keyvault.certificates.html
-[certificates_client_src]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault/azure/keyvault/certificates
+[certificates_client_src]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-certificates/azure/keyvault/certificates
 [certificates_samples]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-certificates/samples
 [soft_delete]: https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete
 [test_example_certificates]: https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/keyvault/azure-keyvault-certificates/tests/test_examples_certificates.py

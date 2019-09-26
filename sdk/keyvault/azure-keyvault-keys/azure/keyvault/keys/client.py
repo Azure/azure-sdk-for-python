@@ -2,10 +2,10 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.core.tracing.decorator import distributed_trace
 
 from ._shared import KeyVaultClientBase
+from ._shared.exceptions import error_map
 from .crypto import CryptographyClient
 from .models import Key, KeyBase, DeletedKey
 
@@ -24,9 +24,9 @@ if TYPE_CHECKING:
 class KeyClient(KeyVaultClientBase):
     """A high-level interface for managing a vault's keys.
 
+    :param str vault_url: URL of the vault the client will access
     :param credential: An object which can provide an access token for the vault, such as a credential from
         :mod:`azure.identity`
-    :param str vault_url: URL of the vault the client will access
 
     Example:
         .. literalinclude:: ../tests/test_samples_keys.py
@@ -41,6 +41,17 @@ class KeyClient(KeyVaultClientBase):
 
     def get_cryptography_client(self, key, **kwargs):
         # type: (Union[Key, str], **Any) -> CryptographyClient
+        """
+        Get a :class:`~azure.keyvault.keys.crypto.CryptographyClient` capable of performing cryptographic operations
+        with a key.
+
+        :param key:
+            Either a :class:`~azure.keyvault.keys.Key` instance as returned by
+            :func:`~azure.keyvault.keys.KeyClient.get_key`, or a string. If a string, the value must be the full
+            identifier of an Azure Key Vault key with a version.
+        :type key: str or :class:`~azure.keyvault.keys.Key`
+        :rtype: :class:`~azure.keyvault.keys.crypto.CryptographyClient`
+        """
 
         # the initializer requires a credential but won't actually use it in this case because we pass in this
         # KeyClient's generated client, whose pipeline (and auth policy) is fully configured
@@ -59,7 +70,7 @@ class KeyClient(KeyVaultClientBase):
         not_before=None,  # type: Optional[datetime]
         tags=None,  # type: Optional[Dict[str, str]]
         curve=None,  # type: Optional[str]
-        **kwargs  # type: **Any
+        **kwargs  # type: Any
     ):
         # type: (...) -> Key
         """Create a key. If ``name`` is already in use, create a new version of the key. Requires the keys/create
@@ -67,18 +78,19 @@ class KeyClient(KeyVaultClientBase):
 
         :param str name: The name of the new key. Key Vault will generate the key's version.
         :param key_type: The type of key to create
-        :type key_type: str or ~azure.keyvault.keys.enums.JsonWebKeyType
+        :type key_type: str or ~azure.keyvault.keys.enums.KeyType
         :param int size: (optional) RSA key size in bits, for example 2048, 3072, or 4096.
         :param key_operations: (optional) Allowed key operations
-        :type key_operations: list(str or ~azure.keyvault.keys.enums.JsonWebKeyOperation)
+        :type key_operations: list(str or ~azure.keyvault.keys.enums.KeyOperation)
         :param bool enabled: (optional) Whether the key is enabled for use
         :param expires: (optional) Expiry date of the key in UTC
         :param datetime.datetime not_before: (optional) Not before date of the key in UTC
         :param dict tags: (optional) Application specific metadata in the form of key-value pairs
         :param curve: (optional) Elliptic curve name. Defaults to the NIST P-256 elliptic curve.
-        :type curve: ~azure.keyvault.keys.enums.JsonWebKeyCurveName or str
+        :type curve: ~azure.keyvault.keys.enums.KeyCurveName or str
         :returns: The created key
         :rtype: ~azure.keyvault.keys.models.Key
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys.py
@@ -117,7 +129,7 @@ class KeyClient(KeyVaultClientBase):
         expires=None,  # type: Optional[datetime]
         not_before=None,  # type: Optional[datetime]
         tags=None,  # type: Optional[Dict[str, str]]
-        **kwargs  # type: **Any
+        **kwargs  # type: Any
     ):
         # type: (...) -> Key
         """Create a new RSA key. If ``name`` is already in use, create a new version of the key. Requires the
@@ -127,13 +139,14 @@ class KeyClient(KeyVaultClientBase):
         :param bool hsm: Whether to create a hardware key (HSM) or software key
         :param int size: (optional) Key size in bits, for example 2048, 3072, or 4096
         :param key_operations: (optional) Allowed key operations
-        :type key_operations: list(str or ~azure.keyvault.keys.enums.JsonWebKeyOperation)
+        :type key_operations: list(str or ~azure.keyvault.keys.enums.KeyOperation)
         :param bool enabled: (optional) Whether the key is enabled for use
         :param expires: (optional) Expiry date of the key in UTC
         :param datetime.datetime not_before: (optional) Not before date of the key in UTC
         :param dict tags: (optional) Application specific metadata in the form of key-value pairs
         :returns: The created key
         :rtype: ~azure.keyvault.keys.models.Key
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys.py
@@ -168,7 +181,7 @@ class KeyClient(KeyVaultClientBase):
         expires=None,  # type: Optional[datetime]
         not_before=None,  # type: Optional[datetime]
         tags=None,  # type: Optional[Dict[str, str]]
-        **kwargs  # type: **Any
+        **kwargs  # type: Any
     ):
         # type: (...) -> Key
         """Create a new elliptic curve key. If ``name`` is already in use, create a new version of the key. Requires
@@ -177,15 +190,16 @@ class KeyClient(KeyVaultClientBase):
         :param str name: The name for the new key. Key Vault will generate the key's version.
         :param bool hsm: Whether to create as a hardware key (HSM) or software key.
         :param curve: (optional) Elliptic curve name. Defaults to the NIST P-256 elliptic curve.
-        :type curve: ~azure.keyvault.keys.enums.JsonWebKeyCurveName or str
+        :type curve: ~azure.keyvault.keys.enums.KeyCurveName or str
         :param key_operations: (optional) Allowed key operations
-        :type key_operations: list(~azure.keyvault.keys.enums.JsonWebKeyOperation)
+        :type key_operations: list(~azure.keyvault.keys.enums.KeyOperation)
         :param bool enabled: (optional) Whether the key is enabled for use
         :param datetime.datetime expires: (optional) Expiry date of the key in UTC
         :param datetime.datetime not_before: (optional) Not before date of the key in UTC
         :param dict tags: (optional) Application specific metadata in the form of key-value pairs
         :returns: The created key
         :rtype: ~azure.keyvault.keys.models.Key
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys.py
@@ -218,7 +232,9 @@ class KeyClient(KeyVaultClientBase):
         :param str name: The name of the key to delete.
         :returns: The deleted key
         :rtype: ~azure.keyvault.keys.models.DeletedKey
-        :raises: ~azure.core.exceptions.ResourceNotFoundError if the key doesn't exist
+        :raises:
+            :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
+            :class:`~azure.core.exceptions.HttpResponseError` for other errors
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys.py
@@ -228,7 +244,7 @@ class KeyClient(KeyVaultClientBase):
                 :caption: Delete a key
                 :dedent: 8
         """
-        bundle = self._client.delete_key(self.vault_url, name, error_map={404: ResourceNotFoundError}, **kwargs)
+        bundle = self._client.delete_key(self.vault_url, name, error_map=error_map, **kwargs)
         return DeletedKey._from_deleted_key_bundle(bundle)
 
     @distributed_trace
@@ -240,7 +256,9 @@ class KeyClient(KeyVaultClientBase):
         :param str version: (optional) A specific version of the key to get. If not specified, gets the latest version
             of the key.
         :rtype: ~azure.keyvault.keys.models.Key
-        :raises: ~azure.core.exceptions.ResourceNotFoundError if the key doesn't exist
+        :raises:
+            :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
+            :class:`~azure.core.exceptions.HttpResponseError` for other errors
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys.py
@@ -250,9 +268,7 @@ class KeyClient(KeyVaultClientBase):
                 :caption: Get a key
                 :dedent: 8
         """
-        bundle = self._client.get_key(
-            self.vault_url, name, key_version=version or "", error_map={404: ResourceNotFoundError}, **kwargs
-        )
+        bundle = self._client.get_key(self.vault_url, name, key_version=version or "", error_map=error_map, **kwargs)
         return Key._from_key_bundle(bundle)
 
     @distributed_trace
@@ -264,6 +280,9 @@ class KeyClient(KeyVaultClientBase):
         :param str name: The name of the key
         :returns: The deleted key
         :rtype: ~azure.keyvault.keys.models.DeletedKey
+        :raises:
+            :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
+            :class:`~azure.core.exceptions.HttpResponseError` for other errors
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys.py
@@ -274,7 +293,7 @@ class KeyClient(KeyVaultClientBase):
                 :dedent: 8
         """
         # TODO: which exception is raised when soft-delete is not enabled
-        bundle = self._client.get_deleted_key(self.vault_url, name, error_map={404: ResourceNotFoundError}, **kwargs)
+        bundle = self._client.get_deleted_key(self.vault_url, name, error_map=error_map, **kwargs)
         return DeletedKey._from_deleted_key_bundle(bundle)
 
     @distributed_trace
@@ -362,6 +381,7 @@ class KeyClient(KeyVaultClientBase):
 
         :param str name: The name of the key
         :returns: None
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
             .. code-block:: python
@@ -371,11 +391,7 @@ class KeyClient(KeyVaultClientBase):
                 key_client.purge_deleted_key("key-name")
 
         """
-        self._client.purge_deleted_key(
-            vault_base_url=self.vault_url,
-            key_name=name,
-            **kwargs
-        )
+        self._client.purge_deleted_key(vault_base_url=self.vault_url, key_name=name, **kwargs)
 
     @distributed_trace
     def recover_deleted_key(self, name, **kwargs):
@@ -389,6 +405,7 @@ class KeyClient(KeyVaultClientBase):
         :param str name: The name of the deleted key
         :returns: The recovered key
         :rtype: ~azure.keyvault.keys.models.Key
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys.py
@@ -398,11 +415,7 @@ class KeyClient(KeyVaultClientBase):
                 :caption: Recover a deleted key
                 :dedent: 8
         """
-        bundle = self._client.recover_deleted_key(
-            vault_base_url=self.vault_url,
-            key_name=name,
-            **kwargs
-        )
+        bundle = self._client.recover_deleted_key(vault_base_url=self.vault_url, key_name=name, **kwargs)
         return Key._from_key_bundle(bundle)
 
     @distributed_trace
@@ -415,7 +428,7 @@ class KeyClient(KeyVaultClientBase):
         expires=None,  # type: Optional[datetime]
         not_before=None,  # type: Optional[datetime]
         tags=None,  # type: Optional[Dict[str, str]]
-        **kwargs  # type: **Any
+        **kwargs  # type: Any
     ):
         # type: (...) -> Key
         """Change attributes of a key. Cannot change a key's cryptographic material. Requires the keys/update
@@ -424,14 +437,16 @@ class KeyClient(KeyVaultClientBase):
         :param str name: The name of key to update
         :param str version: (optional) The version of the key to update
         :param key_operations: (optional) Allowed key operations
-        :type key_operations: list(str or ~azure.keyvault.keys.enums.JsonWebKeyOperation)
+        :type key_operations: list(str or ~azure.keyvault.keys.enums.KeyOperation)
         :param bool enabled: (optional) Whether the key is enabled for use
         :param datetime.datetime expires: (optional) Expiry date of the key in UTC
         :param datetime.datetime not_before: (optional) Not before date of the key in UTC
         :param dict tags: (optional) Application specific metadata in the form of key-value pairs
         :returns: The updated key
         :rtype: ~azure.keyvault.keys.models.Key
-        :raises: ~azure.core.exceptions.ResourceNotFoundError if the key doesn't exist
+        :raises:
+            :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
+            :class:`~azure.core.exceptions.HttpResponseError` for other errors
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys.py
@@ -452,7 +467,7 @@ class KeyClient(KeyVaultClientBase):
             key_ops=key_operations,
             tags=tags,
             key_attributes=attributes,
-            error_map={404: ResourceNotFoundError},
+            error_map=error_map,
             **kwargs
         )
         return Key._from_key_bundle(bundle)
@@ -469,7 +484,9 @@ class KeyClient(KeyVaultClientBase):
         :param str name: The name of the key
         :returns: The raw bytes of the key backup
         :rtype: bytes
-        :raises: ~azure.core.exceptions.ResourceNotFoundError if the key doesn't exist
+        :raises:
+            :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
+            :class:`~azure.core.exceptions.HttpResponseError` for other errors
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys.py
@@ -479,7 +496,7 @@ class KeyClient(KeyVaultClientBase):
                 :caption: Get a key backup
                 :dedent: 8
         """
-        backup_result = self._client.backup_key(self.vault_url, name, error_map={404: ResourceNotFoundError}, **kwargs)
+        backup_result = self._client.backup_key(self.vault_url, name, error_map=error_map, **kwargs)
         return backup_result.value
 
     @distributed_trace
@@ -494,7 +511,9 @@ class KeyClient(KeyVaultClientBase):
         :param bytes backup: The raw bytes of the key backup
         :returns: The restored key
         :rtype: ~azure.keyvault.keys.models.Key
-        :raises: ~azure.core.exceptions.ResourceExistsError if the backed up key's name is already in use
+        :raises:
+            :class:`~azure.core.exceptions.ResourceExistsError` if the backed up key's name is already in use,
+            :class:`~azure.core.exceptions.HttpResponseError` for other errors
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys.py
@@ -504,7 +523,7 @@ class KeyClient(KeyVaultClientBase):
                 :caption: Restore a key backup
                 :dedent: 8
         """
-        bundle = self._client.restore_key(self.vault_url, backup, error_map={409: ResourceExistsError}, **kwargs)
+        bundle = self._client.restore_key(self.vault_url, backup, error_map=error_map, **kwargs)
         return Key._from_key_bundle(bundle)
 
     @distributed_trace
@@ -517,7 +536,7 @@ class KeyClient(KeyVaultClientBase):
         not_before=None,  # type: Optional[datetime]
         expires=None,  # type: Optional[datetime]
         tags=None,  # type: Optional[Dict[str, str]]
-        **kwargs  # type: **Any
+        **kwargs  # type: Any
     ):
         # type: (...) -> Key
         """Import an externally created key. If ``name`` is already in use, import the key as a new version. Requires
@@ -533,6 +552,7 @@ class KeyClient(KeyVaultClientBase):
         :param dict tags: (optional) Application specific metadata in the form of key-value pairs
         :returns: The imported key
         :rtype: ~azure.keyvault.keys.models.Key
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         """
         if enabled is not None or not_before is not None or expires is not None:

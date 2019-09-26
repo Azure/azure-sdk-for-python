@@ -21,16 +21,18 @@ class PartitionProcessor(ABC):
     """
     PartitionProcessor processes events received from the Azure Event Hubs service. A single instance of a class
     implementing this abstract class will be created for every partition the associated
-    ~azure.eventhub.eventprocessor.EventProcessor owns.
+    ~azure.eventhub.aio.eventprocessor.EventProcessor owns.
 
     """
 
     async def initialize(self, partition_context: PartitionContext):
-        """
+        """This method will be called when `EventProcessor` creates a `PartitionProcessor`.
 
         :param partition_context: The context information of this partition.
         :type partition_context: ~azure.eventhub.aio.eventprocessor.PartitionContext
         """
+
+        # Please put the code for initialization of PartitionProcessor here.
 
     async def close(self, reason, partition_context: PartitionContext):
         """Called when EventProcessor stops processing this PartitionProcessor.
@@ -41,10 +43,12 @@ class PartitionProcessor(ABC):
         :param reason: Reason for closing the PartitionProcessor.
         :type reason: ~azure.eventhub.eventprocessor.CloseReason
         :param partition_context: The context information of this partition.
-        Use its method update_checkpoint to save checkpoint to the data store.
+         Use its method update_checkpoint to save checkpoint to the data store.
         :type partition_context: ~azure.eventhub.aio.eventprocessor.PartitionContext
 
         """
+
+        # Please put the code for closing PartitionProcessor here.
 
     @abstractmethod
     async def process_events(self, events: List[EventData], partition_context: PartitionContext):
@@ -53,18 +57,22 @@ class PartitionProcessor(ABC):
         :param events: Received events.
         :type events: list[~azure.eventhub.common.EventData]
         :param partition_context: The context information of this partition.
-        Use its method update_checkpoint to save checkpoint to the data store.
+         Use its method update_checkpoint to save checkpoint to the data store.
         :type partition_context: ~azure.eventhub.aio.eventprocessor.PartitionContext
 
         """
 
+        # Please put the code for processing events here.
+
     async def process_error(self, error, partition_context: PartitionContext):
-        """Called when an error happens
+        """Called when an error happens when receiving or processing events
 
         :param error: The error that happens.
         :type error: Exception
         :param partition_context: The context information of this partition.
-        Use its method update_checkpoint to save checkpoint to the data store.
+         Use its method update_checkpoint to save checkpoint to the data store.
         :type partition_context: ~azure.eventhub.aio.eventprocessor.PartitionContext
 
         """
+
+        # Please put the code for processing error here.

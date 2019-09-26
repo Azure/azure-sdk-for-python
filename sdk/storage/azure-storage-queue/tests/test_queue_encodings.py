@@ -8,6 +8,7 @@
 import unittest
 
 from azure.core.exceptions import HttpResponseError, DecodeError, ResourceExistsError
+from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
 from azure.storage.queue import (
     QueueClient,
     QueueServiceClient,
@@ -21,8 +22,7 @@ from azure.storage.queue import (
     NoDecodePolicy)
 
 from queuetestcase import (
-    QueueTestCase,
-    record,
+    QueueTestCase
 )
 
 # ------------------------------------------------------------------------------
@@ -32,32 +32,14 @@ TEST_QUEUE_PREFIX = 'mytestqueue'
 # ------------------------------------------------------------------------------
 
 class StorageQueueEncodingTest(QueueTestCase):
-    def setUp(self):
-        super(StorageQueueEncodingTest, self).setUp()
-
-        queue_url = self._get_queue_url()
-        credentials = self._get_shared_key_credential()
-        self.qsc = QueueServiceClient(account_url=queue_url, credential=credentials)
-        self.test_queues = []
-
-    def tearDown(self):
-        if not self.is_playback():
-            for queue in self.test_queues:
-                try:
-                    self.qsc.delete_queue(queue.queue_name)
-                except:
-                    pass
-        return super(StorageQueueEncodingTest, self).tearDown()
-
     # --Helpers-----------------------------------------------------------------
-    def _get_queue_reference(self, prefix=TEST_QUEUE_PREFIX):
+    def _get_queue_reference(self, qsc, prefix=TEST_QUEUE_PREFIX):
         queue_name = self.get_resource_name(prefix)
-        queue = self.qsc.get_queue_client(queue_name)
-        self.test_queues.append(queue)
+        queue = qsc.get_queue_client(queue_name)
         return queue
 
-    def _create_queue(self, prefix=TEST_QUEUE_PREFIX):
-        queue = self._get_queue_reference(prefix)
+    def _create_queue(self, qsc, prefix=TEST_QUEUE_PREFIX):
+        queue = self._get_queue_reference(qsc, prefix)
         try:
             created = queue.create_queue()
         except ResourceExistsError:
@@ -80,43 +62,49 @@ class StorageQueueEncodingTest(QueueTestCase):
 
     # --------------------------------------------------------------------------
 
-    @record
-    def test_message_text_xml(self):
+    @ResourceGroupPreparer()              
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_message_text_xml(self, resource_group, location, storage_account, storage_account_key):
         # Arrange.
+        qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)
         message = u'<message1>'
-        queue = self.qsc.get_queue_client(self.get_resource_name(TEST_QUEUE_PREFIX))
+        queue = qsc.get_queue_client(self.get_resource_name(TEST_QUEUE_PREFIX))
 
         # Asserts
         self._validate_encoding(queue, message)
 
-    @record
-    def test_message_text_xml_whitespace(self):
+    @ResourceGroupPreparer()          
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_message_text_xml_whitespace(self, resource_group, location, storage_account, storage_account_key):
         # Arrange.
+        qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)
         message = u'  mess\t age1\n'
-        queue = self.qsc.get_queue_client(self.get_resource_name(TEST_QUEUE_PREFIX))
+        queue = qsc.get_queue_client(self.get_resource_name(TEST_QUEUE_PREFIX))
 
         # Asserts
         self._validate_encoding(queue, message)
 
-    @record
-    def test_message_text_xml_invalid_chars(self):
+    @ResourceGroupPreparer()          
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_message_text_xml_invalid_chars(self, resource_group, location, storage_account, storage_account_key):
         # Action.
-        queue = self._get_queue_reference()
+        qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)
+        queue = self._get_queue_reference(qsc)
         message = u'\u0001'
 
         # Asserts
         with self.assertRaises(HttpResponseError):
             queue.enqueue_message(message)
 
-    @record
-    def test_message_text_base64(self):
+    @ResourceGroupPreparer()          
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_message_text_base64(self, resource_group, location, storage_account, storage_account_key):
         # Arrange.
-        queue_url = self._get_queue_url()
-        credentials = self._get_shared_key_credential()
+        qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)
         queue = QueueClient(
-            queue_url=queue_url,
+            queue_url=self._account_url(storage_account.name),
             queue=self.get_resource_name(TEST_QUEUE_PREFIX),
-            credential=credentials,
+            credential=storage_account_key,
             message_encode_policy=TextBase64EncodePolicy(),
             message_decode_policy=TextBase64DecodePolicy())
 
@@ -125,15 +113,15 @@ class StorageQueueEncodingTest(QueueTestCase):
         # Asserts
         self._validate_encoding(queue, message)
 
-    @record
-    def test_message_bytes_base64(self):
+    @ResourceGroupPreparer()          
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_message_bytes_base64(self, resource_group, location, storage_account, storage_account_key):
         # Arrange.
-        queue_url = self._get_queue_url()
-        credentials = self._get_shared_key_credential()
+        qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)
         queue = QueueClient(
-            queue_url=queue_url,
+            queue_url=self._account_url(storage_account.name),
             queue=self.get_resource_name(TEST_QUEUE_PREFIX),
-            credential=credentials,
+            credential=storage_account_key,
             message_encode_policy=BinaryBase64EncodePolicy(),
             message_decode_policy=BinaryBase64DecodePolicy())
 
@@ -142,10 +130,12 @@ class StorageQueueEncodingTest(QueueTestCase):
         # Asserts
         self._validate_encoding(queue, message)
 
-    @record
-    def test_message_bytes_fails(self):
+    @ResourceGroupPreparer()          
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_message_bytes_fails(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        queue = self._get_queue_reference()
+        qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)
+        queue = self._get_queue_reference(qsc)
 
         # Action.
         with self.assertRaises(TypeError) as e:
@@ -155,15 +145,15 @@ class StorageQueueEncodingTest(QueueTestCase):
         # Asserts
         self.assertTrue(str(e.exception).startswith('Message content must be text'))
 
-    @record
-    def test_message_text_fails(self):
+    @ResourceGroupPreparer()          
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_message_text_fails(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        queue_url = self._get_queue_url()
-        credentials = self._get_shared_key_credential()
+        qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)
         queue = QueueClient(
-            queue_url=queue_url,
+            queue_url=self._account_url(storage_account.name),
             queue=self.get_resource_name(TEST_QUEUE_PREFIX),
-            credential=credentials,
+            credential=storage_account_key,
             message_encode_policy=BinaryBase64EncodePolicy(),
             message_decode_policy=BinaryBase64DecodePolicy())
 
@@ -175,15 +165,15 @@ class StorageQueueEncodingTest(QueueTestCase):
         # Asserts
         self.assertTrue(str(e.exception).startswith('Message content must be bytes'))
 
-    @record
-    def test_message_base64_decode_fails(self):
+    @ResourceGroupPreparer()          
+    @StorageAccountPreparer(name_prefix='pyacrstorage')
+    def test_message_base64_decode_fails(self, resource_group, location, storage_account, storage_account_key):
         # Arrange
-        queue_url = self._get_queue_url()
-        credentials = self._get_shared_key_credential()
+        qsc = QueueServiceClient(self._account_url(storage_account.name), storage_account_key)
         queue = QueueClient(
-            queue_url=queue_url,
+            queue_url=self._account_url(storage_account.name),
             queue=self.get_resource_name(TEST_QUEUE_PREFIX),
-            credential=credentials,
+            credential=storage_account_key,
             message_encode_policy=TextXMLEncodePolicy(),
             message_decode_policy=BinaryBase64DecodePolicy())
         try:

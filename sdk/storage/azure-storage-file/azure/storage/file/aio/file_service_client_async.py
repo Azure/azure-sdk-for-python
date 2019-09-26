@@ -91,7 +91,7 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
 
     @distributed_trace_async
     async def get_service_properties(self, timeout=None, **kwargs):
-        # type(Optional[int]) -> Dict[str, Any]
+        # type: (Optional[int], Any) -> Dict[str, Any]
         """Gets the properties of a storage account's File service, including
         Azure Storage Analytics.
 
@@ -166,8 +166,8 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
             include_metadata=False,  # type: Optional[bool]
             include_snapshots=False, # type: Optional[bool]
             timeout=None,  # type: Optional[int]
-            **kwargs
-        ) -> AsyncItemPaged:
+            **kwargs  # type: Any
+        ):  # type: (...) -> AsyncItemPaged
         """Returns auto-paging iterable of dict-like ShareProperties under the specified account.
         The generator will lazily follow the continuation tokens returned by
         the service and stop when all shares have been returned.
@@ -240,6 +240,7 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
                 :caption: Create a share in the file service.
         """
         share = self.get_share_client(share_name)
+        kwargs.setdefault('merge_span', True)
         await share.create_share(metadata, quota, timeout, **kwargs)
         return share
 
@@ -273,6 +274,7 @@ class FileServiceClient(AsyncStorageAccountHostsMixin, FileServiceClientBase):
                 :caption: Delete a share in the file service.
         """
         share = self.get_share_client(share_name)
+        kwargs.setdefault('merge_span', True)
         await share.delete_share(
             delete_snapshots=delete_snapshots, timeout=timeout, **kwargs)
 

@@ -338,7 +338,7 @@ class FileChunkUploader(_ChunkUploader):  # pylint: disable=abstract-method
 
     async def _upload_chunk(self, chunk_offset, chunk_data):
         chunk_end = chunk_offset + len(chunk_data) - 1
-        await self.service.upload_range(
+        response = await self.service.upload_range(
             chunk_data,
             chunk_offset,
             chunk_end,
@@ -347,4 +347,4 @@ class FileChunkUploader(_ChunkUploader):  # pylint: disable=abstract-method
             **self.request_options
         )
         range_id = 'bytes={0}-{1}'.format(chunk_offset, chunk_end)
-        return range_id
+        return range_id, response

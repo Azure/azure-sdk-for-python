@@ -9,17 +9,17 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - cc8fbf86-b636-11e9-bfe2-2816a845e8c6
+      - c7134c1e-d052-11e9-a99e-001a7dda7113
       x-ms-date:
-      - Sat, 03 Aug 2019 21:36:48 GMT
+      - Fri, 06 Sep 2019 03:02:35 GMT
       x-ms-range:
       - bytes=0-32767
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: GET
     uri: https://storagename.file.core.windows.net/utshare4cf71030/utdir4cf71030/bytefile4cf71030
   response:
@@ -610,23 +610,37 @@ interactions:
       Content-Type:
       - application/xml; charset=utf-8
       Date:
-      - Sat, 03 Aug 2019 21:36:47 GMT
+      - Fri, 06 Sep 2019 03:02:35 GMT
       ETag:
-      - '"0x8D7185AB001EE5E"'
+      - '"0x8D73276AB39C8AB"'
       Last-Modified:
-      - Sat, 03 Aug 2019 21:36:47 GMT
+      - Fri, 06 Sep 2019 03:02:35 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
+      x-ms-client-request-id:
+      - c7134c1e-d052-11e9-a99e-001a7dda7113
+      x-ms-file-attributes:
+      - Archive
+      x-ms-file-change-time:
+      - '2019-09-06T03:02:35.6134835Z'
+      x-ms-file-creation-time:
+      - '2019-09-06T03:02:35.6134835Z'
+      x-ms-file-id:
+      - '13835093239654252544'
+      x-ms-file-last-write-time:
+      - '2019-09-06T03:02:35.6134835Z'
+      x-ms-file-parent-id:
+      - '13835128424026341376'
+      x-ms-file-permission-key:
+      - 4099112195243312672*10394889115079208622
       x-ms-request-id:
-      - 5c92005f-601a-0099-7343-4aebc2000000
+      - e2d04b24-301a-004e-015f-647d7c000000
       x-ms-server-encrypted:
       - 'true'
       x-ms-type:
       - File
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 206
       message: Partial Content
@@ -640,17 +654,17 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - cce756a6-b636-11e9-863d-2816a845e8c6
+      - c72e4fe4-d052-11e9-a753-001a7dda7113
       x-ms-date:
-      - Sat, 03 Aug 2019 21:36:49 GMT
+      - Fri, 06 Sep 2019 03:02:35 GMT
       x-ms-range:
       - bytes=32768-36863
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: GET
     uri: https://storagename.file.core.windows.net/utshare4cf71030/utdir4cf71030/bytefile4cf71030
   response:
@@ -738,23 +752,37 @@ interactions:
       Content-Type:
       - application/xml; charset=utf-8
       Date:
-      - Sat, 03 Aug 2019 21:36:48 GMT
+      - Fri, 06 Sep 2019 03:02:36 GMT
       ETag:
-      - '"0x8D7185AB001EE5E"'
+      - '"0x8D73276AB39C8AB"'
       Last-Modified:
-      - Sat, 03 Aug 2019 21:36:47 GMT
+      - Fri, 06 Sep 2019 03:02:35 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
+      x-ms-client-request-id:
+      - c72e4fe4-d052-11e9-a753-001a7dda7113
+      x-ms-file-attributes:
+      - Archive
+      x-ms-file-change-time:
+      - '2019-09-06T03:02:35.6134835Z'
+      x-ms-file-creation-time:
+      - '2019-09-06T03:02:35.6134835Z'
+      x-ms-file-id:
+      - '13835093239654252544'
+      x-ms-file-last-write-time:
+      - '2019-09-06T03:02:35.6134835Z'
+      x-ms-file-parent-id:
+      - '13835128424026341376'
+      x-ms-file-permission-key:
+      - 4099112195243312672*10394889115079208622
       x-ms-request-id:
-      - 5c920063-601a-0099-7443-4aebc2000000
+      - e2d04b28-301a-004e-035f-647d7c000000
       x-ms-server-encrypted:
       - 'true'
       x-ms-type:
       - File
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 206
       message: Partial Content
@@ -768,17 +796,17 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - ccf9c876-b636-11e9-a927-2816a845e8c6
+      - c7548052-d052-11e9-87c2-001a7dda7113
       x-ms-date:
-      - Sat, 03 Aug 2019 21:36:49 GMT
+      - Fri, 06 Sep 2019 03:02:36 GMT
       x-ms-range:
       - bytes=36864-40959
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: GET
     uri: https://storagename.file.core.windows.net/utshare4cf71030/utdir4cf71030/bytefile4cf71030
   response:
@@ -866,23 +894,37 @@ interactions:
       Content-Type:
       - application/xml; charset=utf-8
       Date:
-      - Sat, 03 Aug 2019 21:36:48 GMT
+      - Fri, 06 Sep 2019 03:02:36 GMT
       ETag:
-      - '"0x8D7185AB001EE5E"'
+      - '"0x8D73276AB39C8AB"'
       Last-Modified:
-      - Sat, 03 Aug 2019 21:36:47 GMT
+      - Fri, 06 Sep 2019 03:02:35 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
+      x-ms-client-request-id:
+      - c7548052-d052-11e9-87c2-001a7dda7113
+      x-ms-file-attributes:
+      - Archive
+      x-ms-file-change-time:
+      - '2019-09-06T03:02:35.6134835Z'
+      x-ms-file-creation-time:
+      - '2019-09-06T03:02:35.6134835Z'
+      x-ms-file-id:
+      - '13835093239654252544'
+      x-ms-file-last-write-time:
+      - '2019-09-06T03:02:35.6134835Z'
+      x-ms-file-parent-id:
+      - '13835128424026341376'
+      x-ms-file-permission-key:
+      - 4099112195243312672*10394889115079208622
       x-ms-request-id:
-      - 5c920064-601a-0099-7543-4aebc2000000
+      - e2d04b2a-301a-004e-055f-647d7c000000
       x-ms-server-encrypted:
       - 'true'
       x-ms-type:
       - File
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 206
       message: Partial Content
@@ -896,17 +938,17 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - cd1e1fda-b636-11e9-bba2-2816a845e8c6
+      - c75b3f50-d052-11e9-b544-001a7dda7113
       x-ms-date:
-      - Sat, 03 Aug 2019 21:36:49 GMT
+      - Fri, 06 Sep 2019 03:02:36 GMT
       x-ms-range:
       - bytes=40960-45055
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: GET
     uri: https://storagename.file.core.windows.net/utshare4cf71030/utdir4cf71030/bytefile4cf71030
   response:
@@ -994,23 +1036,37 @@ interactions:
       Content-Type:
       - application/xml; charset=utf-8
       Date:
-      - Sat, 03 Aug 2019 21:36:48 GMT
+      - Fri, 06 Sep 2019 03:02:36 GMT
       ETag:
-      - '"0x8D7185AB001EE5E"'
+      - '"0x8D73276AB39C8AB"'
       Last-Modified:
-      - Sat, 03 Aug 2019 21:36:47 GMT
+      - Fri, 06 Sep 2019 03:02:35 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
+      x-ms-client-request-id:
+      - c75b3f50-d052-11e9-b544-001a7dda7113
+      x-ms-file-attributes:
+      - Archive
+      x-ms-file-change-time:
+      - '2019-09-06T03:02:35.6134835Z'
+      x-ms-file-creation-time:
+      - '2019-09-06T03:02:35.6134835Z'
+      x-ms-file-id:
+      - '13835093239654252544'
+      x-ms-file-last-write-time:
+      - '2019-09-06T03:02:35.6134835Z'
+      x-ms-file-parent-id:
+      - '13835128424026341376'
+      x-ms-file-permission-key:
+      - 4099112195243312672*10394889115079208622
       x-ms-request-id:
-      - 5c920065-601a-0099-7643-4aebc2000000
+      - e2d04b2b-301a-004e-065f-647d7c000000
       x-ms-server-encrypted:
       - 'true'
       x-ms-type:
       - File
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 206
       message: Partial Content
@@ -1024,17 +1080,17 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - cd2fdd0c-b636-11e9-8ec0-2816a845e8c6
+      - c761a464-d052-11e9-a983-001a7dda7113
       x-ms-date:
-      - Sat, 03 Aug 2019 21:36:49 GMT
+      - Fri, 06 Sep 2019 03:02:36 GMT
       x-ms-range:
       - bytes=45056-49151
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: GET
     uri: https://storagename.file.core.windows.net/utshare4cf71030/utdir4cf71030/bytefile4cf71030
   response:
@@ -1122,23 +1178,37 @@ interactions:
       Content-Type:
       - application/xml; charset=utf-8
       Date:
-      - Sat, 03 Aug 2019 21:36:48 GMT
+      - Fri, 06 Sep 2019 03:02:36 GMT
       ETag:
-      - '"0x8D7185AB001EE5E"'
+      - '"0x8D73276AB39C8AB"'
       Last-Modified:
-      - Sat, 03 Aug 2019 21:36:47 GMT
+      - Fri, 06 Sep 2019 03:02:35 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
+      x-ms-client-request-id:
+      - c761a464-d052-11e9-a983-001a7dda7113
+      x-ms-file-attributes:
+      - Archive
+      x-ms-file-change-time:
+      - '2019-09-06T03:02:35.6134835Z'
+      x-ms-file-creation-time:
+      - '2019-09-06T03:02:35.6134835Z'
+      x-ms-file-id:
+      - '13835093239654252544'
+      x-ms-file-last-write-time:
+      - '2019-09-06T03:02:35.6134835Z'
+      x-ms-file-parent-id:
+      - '13835128424026341376'
+      x-ms-file-permission-key:
+      - 4099112195243312672*10394889115079208622
       x-ms-request-id:
-      - 5c920067-601a-0099-7743-4aebc2000000
+      - e2d04b2d-301a-004e-085f-647d7c000000
       x-ms-server-encrypted:
       - 'true'
       x-ms-type:
       - File
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 206
       message: Partial Content
@@ -1152,17 +1222,17 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - cd5c6c06-b636-11e9-9025-2816a845e8c6
+      - c767c7a4-d052-11e9-bb5a-001a7dda7113
       x-ms-date:
-      - Sat, 03 Aug 2019 21:36:50 GMT
+      - Fri, 06 Sep 2019 03:02:36 GMT
       x-ms-range:
       - bytes=49152-53247
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: GET
     uri: https://storagename.file.core.windows.net/utshare4cf71030/utdir4cf71030/bytefile4cf71030
   response:
@@ -1250,23 +1320,37 @@ interactions:
       Content-Type:
       - application/xml; charset=utf-8
       Date:
-      - Sat, 03 Aug 2019 21:36:48 GMT
+      - Fri, 06 Sep 2019 03:02:36 GMT
       ETag:
-      - '"0x8D7185AB001EE5E"'
+      - '"0x8D73276AB39C8AB"'
       Last-Modified:
-      - Sat, 03 Aug 2019 21:36:47 GMT
+      - Fri, 06 Sep 2019 03:02:35 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
+      x-ms-client-request-id:
+      - c767c7a4-d052-11e9-bb5a-001a7dda7113
+      x-ms-file-attributes:
+      - Archive
+      x-ms-file-change-time:
+      - '2019-09-06T03:02:35.6134835Z'
+      x-ms-file-creation-time:
+      - '2019-09-06T03:02:35.6134835Z'
+      x-ms-file-id:
+      - '13835093239654252544'
+      x-ms-file-last-write-time:
+      - '2019-09-06T03:02:35.6134835Z'
+      x-ms-file-parent-id:
+      - '13835128424026341376'
+      x-ms-file-permission-key:
+      - 4099112195243312672*10394889115079208622
       x-ms-request-id:
-      - 5c920068-601a-0099-7843-4aebc2000000
+      - e2d04b2e-301a-004e-095f-647d7c000000
       x-ms-server-encrypted:
       - 'true'
       x-ms-type:
       - File
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 206
       message: Partial Content
@@ -1280,17 +1364,17 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - cd730966-b636-11e9-a7fd-2816a845e8c6
+      - c76e53b6-d052-11e9-80b5-001a7dda7113
       x-ms-date:
-      - Sat, 03 Aug 2019 21:36:50 GMT
+      - Fri, 06 Sep 2019 03:02:36 GMT
       x-ms-range:
       - bytes=53248-57343
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: GET
     uri: https://storagename.file.core.windows.net/utshare4cf71030/utdir4cf71030/bytefile4cf71030
   response:
@@ -1378,23 +1462,37 @@ interactions:
       Content-Type:
       - application/xml; charset=utf-8
       Date:
-      - Sat, 03 Aug 2019 21:36:48 GMT
+      - Fri, 06 Sep 2019 03:02:36 GMT
       ETag:
-      - '"0x8D7185AB001EE5E"'
+      - '"0x8D73276AB39C8AB"'
       Last-Modified:
-      - Sat, 03 Aug 2019 21:36:47 GMT
+      - Fri, 06 Sep 2019 03:02:35 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
+      x-ms-client-request-id:
+      - c76e53b6-d052-11e9-80b5-001a7dda7113
+      x-ms-file-attributes:
+      - Archive
+      x-ms-file-change-time:
+      - '2019-09-06T03:02:35.6134835Z'
+      x-ms-file-creation-time:
+      - '2019-09-06T03:02:35.6134835Z'
+      x-ms-file-id:
+      - '13835093239654252544'
+      x-ms-file-last-write-time:
+      - '2019-09-06T03:02:35.6134835Z'
+      x-ms-file-parent-id:
+      - '13835128424026341376'
+      x-ms-file-permission-key:
+      - 4099112195243312672*10394889115079208622
       x-ms-request-id:
-      - 5c920069-601a-0099-7943-4aebc2000000
+      - e2d04b2f-301a-004e-0a5f-647d7c000000
       x-ms-server-encrypted:
       - 'true'
       x-ms-type:
       - File
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 206
       message: Partial Content
@@ -1408,17 +1506,17 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - cd9ac75e-b636-11e9-b90a-2816a845e8c6
+      - c7747b98-d052-11e9-91b8-001a7dda7113
       x-ms-date:
-      - Sat, 03 Aug 2019 21:36:50 GMT
+      - Fri, 06 Sep 2019 03:02:36 GMT
       x-ms-range:
       - bytes=57344-61439
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: GET
     uri: https://storagename.file.core.windows.net/utshare4cf71030/utdir4cf71030/bytefile4cf71030
   response:
@@ -1506,23 +1604,37 @@ interactions:
       Content-Type:
       - application/xml; charset=utf-8
       Date:
-      - Sat, 03 Aug 2019 21:36:49 GMT
+      - Fri, 06 Sep 2019 03:02:36 GMT
       ETag:
-      - '"0x8D7185AB001EE5E"'
+      - '"0x8D73276AB39C8AB"'
       Last-Modified:
-      - Sat, 03 Aug 2019 21:36:47 GMT
+      - Fri, 06 Sep 2019 03:02:35 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
+      x-ms-client-request-id:
+      - c7747b98-d052-11e9-91b8-001a7dda7113
+      x-ms-file-attributes:
+      - Archive
+      x-ms-file-change-time:
+      - '2019-09-06T03:02:35.6134835Z'
+      x-ms-file-creation-time:
+      - '2019-09-06T03:02:35.6134835Z'
+      x-ms-file-id:
+      - '13835093239654252544'
+      x-ms-file-last-write-time:
+      - '2019-09-06T03:02:35.6134835Z'
+      x-ms-file-parent-id:
+      - '13835128424026341376'
+      x-ms-file-permission-key:
+      - 4099112195243312672*10394889115079208622
       x-ms-request-id:
-      - 5c92006a-601a-0099-7a43-4aebc2000000
+      - e2d04b30-301a-004e-0b5f-647d7c000000
       x-ms-server-encrypted:
       - 'true'
       x-ms-type:
       - File
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 206
       message: Partial Content
@@ -1536,17 +1648,17 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - cdace108-b636-11e9-ba4d-2816a845e8c6
+      - c77d6c58-d052-11e9-962e-001a7dda7113
       x-ms-date:
-      - Sat, 03 Aug 2019 21:36:50 GMT
+      - Fri, 06 Sep 2019 03:02:36 GMT
       x-ms-range:
       - bytes=61440-65535
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: GET
     uri: https://storagename.file.core.windows.net/utshare4cf71030/utdir4cf71030/bytefile4cf71030
   response:
@@ -1634,23 +1746,37 @@ interactions:
       Content-Type:
       - application/xml; charset=utf-8
       Date:
-      - Sat, 03 Aug 2019 21:36:49 GMT
+      - Fri, 06 Sep 2019 03:02:36 GMT
       ETag:
-      - '"0x8D7185AB001EE5E"'
+      - '"0x8D73276AB39C8AB"'
       Last-Modified:
-      - Sat, 03 Aug 2019 21:36:47 GMT
+      - Fri, 06 Sep 2019 03:02:35 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
+      x-ms-client-request-id:
+      - c77d6c58-d052-11e9-962e-001a7dda7113
+      x-ms-file-attributes:
+      - Archive
+      x-ms-file-change-time:
+      - '2019-09-06T03:02:35.6134835Z'
+      x-ms-file-creation-time:
+      - '2019-09-06T03:02:35.6134835Z'
+      x-ms-file-id:
+      - '13835093239654252544'
+      x-ms-file-last-write-time:
+      - '2019-09-06T03:02:35.6134835Z'
+      x-ms-file-parent-id:
+      - '13835128424026341376'
+      x-ms-file-permission-key:
+      - 4099112195243312672*10394889115079208622
       x-ms-request-id:
-      - 5c92006b-601a-0099-7b43-4aebc2000000
+      - e2d04b31-301a-004e-0c5f-647d7c000000
       x-ms-server-encrypted:
       - 'true'
       x-ms-type:
       - File
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 206
       message: Partial Content
@@ -1664,17 +1790,17 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - cdd8d2a6-b636-11e9-bfad-2816a845e8c6
+      - c784eb76-d052-11e9-a6e4-001a7dda7113
       x-ms-date:
-      - Sat, 03 Aug 2019 21:36:50 GMT
+      - Fri, 06 Sep 2019 03:02:36 GMT
       x-ms-range:
       - bytes=65536-65540
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: GET
     uri: https://storagename.file.core.windows.net/utshare4cf71030/utdir4cf71030/bytefile4cf71030
   response:
@@ -1691,23 +1817,37 @@ interactions:
       Content-Type:
       - application/xml; charset=utf-8
       Date:
-      - Sat, 03 Aug 2019 21:36:49 GMT
+      - Fri, 06 Sep 2019 03:02:36 GMT
       ETag:
-      - '"0x8D7185AB001EE5E"'
+      - '"0x8D73276AB39C8AB"'
       Last-Modified:
-      - Sat, 03 Aug 2019 21:36:47 GMT
+      - Fri, 06 Sep 2019 03:02:35 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
+      x-ms-client-request-id:
+      - c784eb76-d052-11e9-a6e4-001a7dda7113
+      x-ms-file-attributes:
+      - Archive
+      x-ms-file-change-time:
+      - '2019-09-06T03:02:35.6134835Z'
+      x-ms-file-creation-time:
+      - '2019-09-06T03:02:35.6134835Z'
+      x-ms-file-id:
+      - '13835093239654252544'
+      x-ms-file-last-write-time:
+      - '2019-09-06T03:02:35.6134835Z'
+      x-ms-file-parent-id:
+      - '13835128424026341376'
+      x-ms-file-permission-key:
+      - 4099112195243312672*10394889115079208622
       x-ms-request-id:
-      - 5c92006c-601a-0099-7c43-4aebc2000000
+      - e2d04b32-301a-004e-0d5f-647d7c000000
       x-ms-server-encrypted:
       - 'true'
       x-ms-type:
       - File
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 206
       message: Partial Content

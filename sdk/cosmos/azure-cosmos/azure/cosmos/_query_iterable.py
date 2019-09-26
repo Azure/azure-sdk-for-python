@@ -79,7 +79,6 @@ class QueryIterable(PageIterator):
         )
         super(QueryIterable, self).__init__(self._fetch_next, self._unpack, continuation_token=continuation_token)
 
-
     def _unpack(self, block):
         continuation = None
         if self._client.last_response_headers:

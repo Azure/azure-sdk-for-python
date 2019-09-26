@@ -13,12 +13,17 @@ from azure.core.pipeline.policies import ContentDecodePolicy, NetworkTraceLoggin
 from azure.core.pipeline.transport import HttpRequest, RequestsTransport
 
 try:
+    from unittest import mock
+except ImportError:  # python < 3.3
+    import mock  # type: ignore
+
+try:
     from typing import TYPE_CHECKING
 except ImportError:
     TYPE_CHECKING = False
 
 if TYPE_CHECKING:
-    # pylint:disable=unused-import
+    # pylint:disable=unused-import,ungrouped-imports
     from typing import Any, Dict, Mapping, Optional
     from azure.core.pipeline import PipelineResponse
 
@@ -38,16 +43,29 @@ class MsalTransportResponse:
 
     def raise_for_status(self):
         # type: () -> None
-        raise ClientAuthenticationError("authentication failed", self._response)
+        if self.status_code >= 400:
+            raise ClientAuthenticationError("authentication failed", self._response)
 
 
 class MsalTransportAdapter(object):
-    """Wraps an azure-core pipeline with the shape of requests.Session"""
+    """
+    Wraps an azure-core pipeline with the shape of requests.Session.
+
+    Used as a context manager, patches msal.authority to intercept calls to requests.
+    """
 
     def __init__(self, **kwargs):
         # type: (Any) -> None
         super(MsalTransportAdapter, self).__init__()
+        self._patch = mock.patch("msal.authority.requests", self)
         self._pipeline = self._build_pipeline(**kwargs)
+
+    def __enter__(self):
+        self._patch.__enter__()
+        return self
+
+    def __exit__(self, *args):
+        self._patch.__exit__(*args)
 
     @staticmethod
     def _create_config(**kwargs):

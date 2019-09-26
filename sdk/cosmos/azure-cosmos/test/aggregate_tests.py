@@ -183,7 +183,6 @@ class AggregationQueryTest(unittest.TestCase):
             ),
             offer_throughput=10100
         )
-
         return created_collection
 
     @classmethod

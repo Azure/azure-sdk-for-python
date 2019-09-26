@@ -7,6 +7,7 @@
 # pylint: disable=super-init-not-called, too-many-lines
 
 from azure.core.paging import PageIterator
+from azure.storage.file._parser import _parse_datetime_from_str
 from ._shared.response_handlers import return_context_and_deserialized, process_storage_error
 from ._shared.models import DictMixin, get_enum_value
 from ._generated.models import StorageErrorException
@@ -413,6 +414,13 @@ class DirectoryProperties(DictMixin):
         self.etag = kwargs.get('ETag')
         self.server_encrypted = kwargs.get('x-ms-server-encrypted')
         self.metadata = kwargs.get('metadata')
+        self.change_time = _parse_datetime_from_str(kwargs.get('x-ms-file-change-time'))
+        self.creation_time = _parse_datetime_from_str(kwargs.get('x-ms-file-creation-time'))
+        self.last_write_time = _parse_datetime_from_str(kwargs.get('x-ms-file-last-write-time'))
+        self.file_attributes = kwargs.get('x-ms-file-attributes')
+        self.permission_key = kwargs.get('x-ms-file-permission-key')
+        self.file_id = kwargs.get('x-ms-file-id')
+        self.parent_id = kwargs.get('x-ms-file-parent-id')
 
     @classmethod
     def _from_generated(cls, generated):
@@ -536,6 +544,13 @@ class FileProperties(DictMixin):
         self.server_encrypted = kwargs.get('x-ms-server-encrypted')
         self.copy = CopyProperties(**kwargs)
         self.content_settings = ContentSettings(**kwargs)
+        self.change_time = _parse_datetime_from_str(kwargs.get('x-ms-file-change-time'))
+        self.creation_time = _parse_datetime_from_str(kwargs.get('x-ms-file-creation-time'))
+        self.last_write_time = _parse_datetime_from_str(kwargs.get('x-ms-file-last-write-time'))
+        self.file_attributes = kwargs.get('x-ms-file-attributes')
+        self.permission_key = kwargs.get('x-ms-file-permission-key')
+        self.file_id = kwargs.get('x-ms-file-id')
+        self.parent_id = kwargs.get('x-ms-file-parent-id')
 
     @classmethod
     def _from_generated(cls, generated):
@@ -745,3 +760,77 @@ SharePermissions.DELETE = SharePermissions(delete=True) # type: ignore
 SharePermissions.LIST = SharePermissions(list=True) # type: ignore
 SharePermissions.READ = SharePermissions(read=True) # type: ignore
 SharePermissions.WRITE = SharePermissions(write=True) # type: ignore
+
+
+class NTFSAttributes(object):
+    """
+    Valid set of attributes to set for file or directory.
+    To set attribute for directory, 'Directory' should always be enabled except setting 'None' for directory.
+
+    :ivar bool read_only:
+        Enable/disable 'ReadOnly' attribute for DIRECTORY or FILE
+    :ivar bool hidden:
+        Enable/disable 'Hidden' attribute for DIRECTORY or FILE
+    :ivar bool system:
+        Enable/disable 'System' attribute for DIRECTORY or FILE
+    :ivar bool none:
+        Enable/disable 'None' attribute for DIRECTORY or FILE to clear all attributes of FILE/DIRECTORY
+    :ivar bool directory:
+        Enable/disable 'Directory' attribute for DIRECTORY
+    :ivar bool archive:
+        Enable/disable 'Archive' attribute for DIRECTORY or FILE
+    :ivar bool temporary:
+        Enable/disable 'Temporary' attribute for FILE
+    :ivar bool offline:
+        Enable/disable 'Offline' attribute for DIRECTORY or FILE
+    :ivar bool not_content_indexed:
+        Enable/disable 'NotContentIndexed' attribute for DIRECTORY or FILE
+    :ivar bool no_scrub_data:
+        Enable/disable 'NoScrubData' attribute for DIRECTORY or FILE
+    """
+    def __init__(self, read_only=False, hidden=False, system=False, none=False, directory=False, archive=False,
+                 temporary=False, offline=False, not_content_indexed=False, no_scrub_data=False, _str=None):
+        if not _str:
+            _str = ''
+        self.read_only = read_only or ('ReadOnly' in _str)
+        self.hidden = hidden or ('Hidden' in _str)
+        self.system = system or ('System' in _str)
+        self.none = none or ('None' in _str)
+        self.directory = directory or ('Directory' in _str)
+        self.archive = archive or ('Archive' in _str)
+        self.temporary = temporary or ('Temporary' in _str)
+        self.offline = offline or ('Offline' in _str)
+        self.not_content_indexed = not_content_indexed or ('NotContentIndexed' in _str)
+        self.no_scrub_data = no_scrub_data or ('NoScrubData' in _str)
+
+    def __or__(self, other):
+        return NTFSAttributes(_str=str(self) + str(other))
+
+    def __add__(self, other):
+        return NTFSAttributes(_str=str(self) + str(other))
+
+    def __str__(self):
+        concatenated_params = (('ReadOnly|' if self.read_only else '') +
+                               ('Hidden|' if self.hidden else '') +
+                               ('System|' if self.system else '') +
+                               ('None|' if self.none else '') +
+                               ('Directory|' if self.directory else '') +
+                               ('Archive|' if self.archive else '') +
+                               ('Temporary|' if self.temporary else '') +
+                               ('Offline|' if self.offline else '') +
+                               ('NotContentIndexed|' if self.not_content_indexed else '') +
+                               ('NoScrubData|' if self.no_scrub_data else ''))
+
+        return concatenated_params.strip('|')
+
+
+NTFSAttributes.READ_ONLY = NTFSAttributes(read_only=True)
+NTFSAttributes.HIDDEN = NTFSAttributes(hidden=True)
+NTFSAttributes.SYSTEM = NTFSAttributes(system=True)
+NTFSAttributes.NONE = NTFSAttributes(none=True)
+NTFSAttributes.DIRECTORY = NTFSAttributes(directory=True)
+NTFSAttributes.ARCHIVE = NTFSAttributes(archive=True)
+NTFSAttributes.TEMPORARY = NTFSAttributes(temporary=True)
+NTFSAttributes.OFFLINE = NTFSAttributes(offline=True)
+NTFSAttributes.NOT_CONTENT_INDEXED = NTFSAttributes(not_content_indexed=True)
+NTFSAttributes.NO_SCRUB_DATA = NTFSAttributes(no_scrub_data=True)

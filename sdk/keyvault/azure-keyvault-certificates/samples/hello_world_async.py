@@ -3,7 +3,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import asyncio
-import datetime
 import os
 from azure.identity.aio import DefaultAzureCredential
 from azure.keyvault.certificates.aio import CertificateClient
@@ -11,19 +10,13 @@ from azure.keyvault.certificates import CertificatePolicy, KeyProperties, Secret
 from azure.core.exceptions import HttpResponseError
 
 # ----------------------------------------------------------------------------------------------------------
-# Prerequistes -
+# Prerequisites:
+# 1. An Azure Key Vault (https://docs.microsoft.com/en-us/azure/key-vault/quick-create-cli)
 #
-# 1. An Azure Key Vault-
-#    https://docs.microsoft.com/en-us/azure/key-vault/quick-create-cli
+# 2. azure-keyvault-certificates and azure-identity packages (pip install these)
 #
-#  2. Microsoft Azure Key Vault PyPI package -
-#    https://pypi.python.org/pypi/azure-keyvault-certificates/
-#
-# 3. Microsoft Azure Identity package -
-#    https://pypi.python.org/pypi/azure-identity/
-#
-# 4. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL.
-# How to do this - https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-certificates#createget-credentials)
+# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL
+#    (See https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys#authenticate-the-client)
 #
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates the basic CRUD operations on a vault(certificate) resource for Azure Key Vault
@@ -49,7 +42,7 @@ async def run_sample():
     try:
         # Let's create a certificate for holding bank account credentials valid for 1 year.
         # if the certificate already exists in the Key Vault, then a new version of the certificate is created.
-        print("\n1. Create Certificate")
+        print("\n.. Create Certificate")
 
         # Before creating your certificate, let's create the management policy for your certificate.
         # Here you specify the properties of the key, secret, and issuer backing your certificate,
@@ -68,27 +61,34 @@ async def run_sample():
                                         validity_in_months=24,
                                         san_dns_names=['sdk.azure-int.net']
                                         )
-        cert_name="HelloWorldCertificate"
-        expires = datetime.datetime.utcnow() + datetime.timedelta(days=365)
-        create_certificate_poller = await client.create_certificate(name=cert_name, policy=cert_policy, expires=expires)
-        await create_certificate_poller
-        print("Certificate with name '{0}' created".format(cert_name))
+        cert_name = "HelloWorldCertificate"
+
+        # create_certificate returns a poller. Awaiting the poller will return the certificate
+        # if creation is successful, and the CertificateOperation if not.
+        create_certificate_poller = await client.create_certificate(name=cert_name, policy=cert_policy)
+        certificate = await create_certificate_poller
+        print("Certificate with name '{0}' created".format(certificate.name))
 
         # Let's get the bank certificate using its name
-        print("\n2. Get a Certificate by name")
-        bank_certificate = await client.get_certificate(name=cert_name)
-        print("Certificate with name '{0}' was found with expiration date '{1}'.".format(bank_certificate.name, bank_certificate.expires))
+        print("\n.. Get a Certificate by name")
+        bank_certificate = await client.get_certificate_with_policy(name=cert_name)
+        print("Certificate with name '{0}' was found.".format(bank_certificate.name))
 
-        # After one year, the bank account is still active, we need to update the expiry time of the certificate.
-        # The update method can be used to update the expiry attribute of the certificate.
-        print("\n3. Update a Certificate by name")
-        expires = bank_certificate.expires + datetime.timedelta(days=365)
-        updated_certificate = await client.update_certificate(name=bank_certificate.name, expires=expires)
-        print("Certificate with name '{0}' was updated on date '{1}'".format(bank_certificate.name, updated_certificate.updated))
-        print("Certificate with name '{0}' was updated to expire on '{1}'".format(bank_certificate.name, updated_certificate.expires))
+        # After one year, the bank account is still active, and we have decided to update the tags.
+        print("\n.. Update a Certificate by name")
+        tags = {"a": "b"}
+        updated_certificate = await client.update_certificate(name=bank_certificate.name, tags=tags)
+        print("Certificate with name '{0}' was updated on date '{1}'".format(
+            bank_certificate.name,
+            updated_certificate.updated)
+        )
+        print("Certificate with name '{0}' was updated with tags '{1}'".format(
+            bank_certificate.name,
+            updated_certificate.tags)
+        )
 
         # The bank account was closed, need to delete its credentials from the Key Vault.
-        print("\n4. Delete Certificate")
+        print("\n.. Delete Certificate")
         deleted_certificate = await client.delete_certificate(name=bank_certificate.name)
         print("Deleting Certificate..")
         print("Certificate with name '{0}' was deleted.".format(deleted_certificate.name))

@@ -5,7 +5,7 @@
 import codecs
 import hashlib
 
-from azure.keyvault.keys import JsonWebKeyCurveName
+from azure.keyvault.keys import KeyCurveName
 from azure.keyvault.keys.crypto import EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
 from azure.keyvault.keys._shared._generated.v7_0.models import JsonWebKey
 from azure.mgmt.keyvault.models import KeyPermissions, Permissions
@@ -189,10 +189,10 @@ class CryptoClientTests(KeyVaultTestCase):
         key_client = vault_client.keys
 
         matrix = {
-            JsonWebKeyCurveName.p_256: (SignatureAlgorithm.es256, hashlib.sha256),
-            JsonWebKeyCurveName.p_256_k: (SignatureAlgorithm.es256_k, hashlib.sha256),
-            JsonWebKeyCurveName.p_384: (SignatureAlgorithm.es384, hashlib.sha384),
-            JsonWebKeyCurveName.p_521: (SignatureAlgorithm.es512, hashlib.sha512),
+            KeyCurveName.p_256: (SignatureAlgorithm.es256, hashlib.sha256),
+            KeyCurveName.p_256_k: (SignatureAlgorithm.es256_k, hashlib.sha256),
+            KeyCurveName.p_384: (SignatureAlgorithm.es384, hashlib.sha384),
+            KeyCurveName.p_521: (SignatureAlgorithm.es512, hashlib.sha512),
         }
 
         for curve, (signature_algorithm, hash_function) in matrix.items():

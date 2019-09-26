@@ -1,5 +1,12 @@
 # Release History
 
+## 4.0.0b4
+### Fixes and improvements
+- `list_secrets` and `list_secret_versions` return the correct type
+
+## 4.0.0b3 (2019-09-11)
+This release includes only internal changes.
+
 ## 4.0.0b2 (2019-08-06)
 ### Breaking changes:
 - Removed `azure.core.Configuration` from the public API in preparation for a

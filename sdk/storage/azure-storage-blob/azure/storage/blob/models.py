@@ -413,6 +413,7 @@ class BlobProperties(DictMixin):
         self.snapshot = kwargs.get('x-ms-snapshot')
         self.blob_type = BlobType(kwargs['x-ms-blob-type']) if kwargs.get('x-ms-blob-type') else None
         self.metadata = kwargs.get('metadata')
+        self.encrypted_metadata = kwargs.get('encrypted_metadata')
         self.last_modified = kwargs.get('Last-Modified')
         self.etag = kwargs.get('ETag')
         self.size = kwargs.get('Content-Length')
@@ -431,6 +432,8 @@ class BlobProperties(DictMixin):
         self.remaining_retention_days = None
         self.creation_time = kwargs.get('x-ms-creation-time')
         self.archive_status = kwargs.get('x-ms-archive-status')
+        self.encryption_key_sha256 = kwargs.get('x-ms-encryption-key-sha256')
+        self.request_server_encrypted = kwargs.get('x-ms-server-encrypted')
 
     @classmethod
     def _from_generated(cls, generated):
@@ -441,7 +444,8 @@ class BlobProperties(DictMixin):
         blob.etag = generated.properties.etag
         blob.deleted = generated.deleted
         blob.snapshot = generated.snapshot
-        blob.metadata = generated.metadata
+        blob.metadata = generated.metadata.additional_properties if generated.metadata else {}
+        blob.encrypted_metadata = generated.metadata.encrypted if generated.metadata else None
         blob.lease = LeaseProperties._from_generated(generated)  # pylint: disable=protected-access
         blob.copy = CopyProperties._from_generated(generated)  # pylint: disable=protected-access
         blob.last_modified = generated.properties.last_modified
@@ -980,3 +984,31 @@ BlobPermissions.CREATE = BlobPermissions(create=True)
 BlobPermissions.DELETE = BlobPermissions(delete=True)
 BlobPermissions.READ = BlobPermissions(read=True)
 BlobPermissions.WRITE = BlobPermissions(write=True)
+
+
+class CustomerProvidedEncryptionKey(object):
+    """
+    All data in Azure Storage is encrypted at-rest using an account-level encryption key.
+    In versions 2018-06-17 and newer, you can manage the key used to encrypt blob contents
+    and application metadata per-blob by providing an AES-256 encryption key in requests to the storage service.
+
+    When you use a customer-provided key, Azure Storage does not manage or persist your key.
+    When writing data to a blob, the provided key is used to encrypt your data before writing it to disk.
+    A SHA-256 hash of the encryption key is written alongside the blob contents,
+    and is used to verify that all subsequent operations against the blob use the same encryption key.
+    This hash cannot be used to retrieve the encryption key or decrypt the contents of the blob.
+    When reading a blob, the provided key is used to decrypt your data after reading it from disk.
+    In both cases, the provided encryption key is securely discarded
+    as soon as the encryption or decryption process completes.
+
+    :ivar str key_value:
+        Base64-encoded AES-256 encryption key value.
+    :ivar str key_hash:
+        Base64-encoded SHA256 of the encryption key.
+    :ivar str algorithm:
+        Specifies the algorithm to use when encrypting data using the given key. Must be AES256.
+    """
+    def __init__(self, key_value, key_hash):
+        self.key_value = key_value
+        self.key_hash = key_hash
+        self.algorithm = 'AES256'

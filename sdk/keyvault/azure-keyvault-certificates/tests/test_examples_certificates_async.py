@@ -50,8 +50,11 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         create_certificate_poller = await certificate_client.create_certificate(name=cert_name, policy=cert_policy)
 
         # awaiting the certificate poller gives us the result of the long running operation
-        create_certificate_result = await create_certificate_poller
-        print(create_certificate_result)
+        certificate = await create_certificate_poller
+
+        print(certificate.id)
+        print(certificate.name)
+        print(certificate.policy.issuer_name)
 
         # [END create_certificate]
 
@@ -62,15 +65,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         print(certificate.id)
         print(certificate.name)
-        print(certificate.policy.key_properties.exportable)
-        print(certificate.policy.key_properties.key_type)
-        print(certificate.policy.key_properties.key_size)
-        print(certificate.policy.key_properties.reuse_key)
-        print(certificate.policy.content_type)
         print(certificate.policy.issuer_name)
-        print(certificate.policy.subject_name)
-        print(certificate.policy.san_dns_names)
-        print(certificate.policy.validity_in_months)
 
         # [END get_certificate]
         # [START update_certificate]
@@ -193,7 +188,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         # backup certificate
         certificate_backup = await certificate_client.backup_certificate(name=cert_name)
 
-        # returns the raw byte sof the backed up certificate
+        # returns the raw bytes of the backed up certificate
         print(certificate_backup)
 
         # [END backup_certificate]

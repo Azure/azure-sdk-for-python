@@ -98,7 +98,7 @@ class FileServiceClient(StorageAccountHostsMixin):
             raise ValueError(
                 'You need to provide either an account key or SAS token when creating a storage service.')
         self._query_str, credential = self._format_query_string(sas_token, credential)
-        super(FileServiceClient, self).__init__(parsed_url, 'file', credential, **kwargs)
+        super(FileServiceClient, self).__init__(parsed_url, service='file', credential=credential, **kwargs)
         self._client = AzureFileStorage(version=VERSION, url=self.url, pipeline=self._pipeline)
 
     def _format_url(self, hostname):
@@ -112,7 +112,7 @@ class FileServiceClient(StorageAccountHostsMixin):
             cls, conn_str,  # type: str
             credential=None, # type: Optional[Any]
             **kwargs  # type: Any
-        ):
+        ):  # type: (...) -> FileServiceClient
         """Create FileServiceClient from a Connection String.
 
         :param str conn_str:
@@ -142,7 +142,7 @@ class FileServiceClient(StorageAccountHostsMixin):
             start=None,  # type: Optional[Union[datetime, str]]
             ip=None,  # type: Optional[str]
             protocol=None  # type: Optional[str]
-        ):
+        ):  # type: (...) -> str
         """Generates a shared access signature for the file service.
 
         Use the returned signature with the credential parameter of any FileServiceClient,
@@ -195,11 +195,18 @@ class FileServiceClient(StorageAccountHostsMixin):
 
         sas = SharedAccessSignature(self.credential.account_name, self.credential.account_key)
         return sas.generate_account(
-            Services.FILE, resource_types, permission, expiry, start=start, ip=ip, protocol=protocol) # type: ignore
+            services=Services.FILE,
+            resource_types=resource_types,
+            permission=permission,
+            expiry=expiry,
+            start=start,
+            ip=ip,
+            protocol=protocol
+        ) # type: ignore
 
     @distributed_trace
     def get_service_properties(self, timeout=None, **kwargs):
-        # type(Optional[int]) -> Dict[str, Any]
+        # type: (Optional[int], Any) -> Dict[str, Any]
         """Gets the properties of a storage account's File service, including
         Azure Storage Analytics.
 
@@ -349,7 +356,8 @@ class FileServiceClient(StorageAccountHostsMixin):
                 :caption: Create a share in the file service.
         """
         share = self.get_share_client(share_name)
-        share.create_share(metadata, quota, timeout, **kwargs)
+        kwargs.setdefault('merge_span', True)
+        share.create_share(metadata, quota=quota, timeout=timeout, **kwargs)
         return share
 
     @distributed_trace
@@ -382,6 +390,7 @@ class FileServiceClient(StorageAccountHostsMixin):
                 :caption: Delete a share in the file service.
         """
         share = self.get_share_client(share_name)
+        kwargs.setdefault('merge_span', True)
         share.delete_share(
             delete_snapshots=delete_snapshots, timeout=timeout, **kwargs)
 

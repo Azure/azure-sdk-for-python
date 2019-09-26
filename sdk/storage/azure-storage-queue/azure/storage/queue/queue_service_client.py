@@ -108,7 +108,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
         if not sas_token and not credential:
             raise ValueError("You need to provide either a SAS token or an account key to authenticate.")
         self._query_str, credential = self._format_query_string(sas_token, credential)
-        super(QueueServiceClient, self).__init__(parsed_url, 'queue', credential, **kwargs)
+        super(QueueServiceClient, self).__init__(parsed_url, service='queue', credential=credential, **kwargs)
         self._client = AzureQueueStorage(self.url, pipeline=self._pipeline)
 
     def _format_url(self, hostname):
@@ -122,7 +122,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
             cls, conn_str,  # type: str
             credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
-        ):
+        ):  # type: (...) -> QueueServiceClient
         """Create QueueServiceClient from a Connection String.
 
         :param str conn_str:
@@ -154,7 +154,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
             start=None,  # type: Optional[Union[datetime, str]]
             ip=None,  # type: Optional[str]
             protocol=None  # type: Optional[str]
-        ):
+        ):  # type: (...) -> str
         """Generates a shared access signature for the queue service.
 
         Use the returned signature with the credential parameter of any Queue Service.
@@ -196,7 +196,14 @@ class QueueServiceClient(StorageAccountHostsMixin):
 
         sas = SharedAccessSignature(self.credential.account_name, self.credential.account_key)
         return sas.generate_account(
-            Services.QUEUE, resource_types, permission, expiry, start=start, ip=ip, protocol=protocol) # type: ignore
+            services=Services.QUEUE,
+            resource_types=resource_types,
+            permission=permission,
+            expiry=expiry,
+            start=start,
+            ip=ip,
+            protocol=protocol
+        ) # type: ignore
 
     @distributed_trace
     def get_service_stats(self, timeout=None, **kwargs): # type: ignore
@@ -388,6 +395,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
                 :caption: Create a queue in the service.
         """
         queue = self.get_queue_client(name)
+        kwargs.setdefault('merge_span', True)
         queue.create_queue(
             metadata=metadata, timeout=timeout, **kwargs)
         return queue
@@ -426,6 +434,7 @@ class QueueServiceClient(StorageAccountHostsMixin):
                 :caption: Delete a queue in the service.
         """
         queue_client = self.get_queue_client(queue)
+        kwargs.setdefault('merge_span', True)
         queue_client.delete_queue(timeout=timeout, **kwargs)
 
     def get_queue_client(self, queue, **kwargs):

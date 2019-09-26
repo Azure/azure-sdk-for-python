@@ -13,7 +13,7 @@ from math import ceil
 
 import six
 
-from azure.core.tracing.context import tracing_context
+from azure.core.tracing.common import with_current_context
 
 from . import encode_base64, url_quote
 from .request_handlers import get_length
@@ -36,7 +36,7 @@ def _parallel_uploads(executor, uploader, pending, running):
         except StopIteration:
             break
         else:
-            running.add(executor.submit(tracing_context.with_current_context(uploader), next_chunk))
+            running.add(executor.submit(with_current_context(uploader), next_chunk))
 
     # Wait for the remaining uploads to finish
     done, _running = futures.wait(running)
@@ -80,7 +80,7 @@ def upload_data_chunks(
         executor = futures.ThreadPoolExecutor(max_connections)
         upload_tasks = uploader.get_chunk_streams()
         running_futures = [
-            executor.submit(tracing_context.with_current_context(uploader.process_chunk), u)
+            executor.submit(with_current_context(uploader.process_chunk), u)
             for u in islice(upload_tasks, 0, max_connections)
         ]
         range_ids = _parallel_uploads(executor, uploader.process_chunk, upload_tasks, running_futures)
@@ -115,7 +115,7 @@ def upload_substream_blocks(
         executor = futures.ThreadPoolExecutor(max_connections)
         upload_tasks = uploader.get_substream_blocks()
         running_futures = [
-            executor.submit(tracing_context.with_current_context(uploader.process_substream_block), u)
+            executor.submit(with_current_context(uploader.process_substream_block), u)
             for u in islice(upload_tasks, 0, max_connections)
         ]
         range_ids = _parallel_uploads(executor, uploader.process_substream_block, upload_tasks, running_futures)
@@ -340,7 +340,7 @@ class FileChunkUploader(_ChunkUploader):  # pylint: disable=abstract-method
 
     def _upload_chunk(self, chunk_offset, chunk_data):
         chunk_end = chunk_offset + len(chunk_data) - 1
-        self.service.upload_range(
+        response = self.service.upload_range(
             chunk_data,
             chunk_offset,
             chunk_end,
@@ -348,7 +348,7 @@ class FileChunkUploader(_ChunkUploader):  # pylint: disable=abstract-method
             upload_stream_current=self.progress_total,
             **self.request_options
         )
-        return 'bytes={0}-{1}'.format(chunk_offset, chunk_end)
+        return 'bytes={0}-{1}'.format(chunk_offset, chunk_end), response
 
 
 class SubStream(IOBase):

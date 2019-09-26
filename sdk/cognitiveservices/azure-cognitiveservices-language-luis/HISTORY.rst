@@ -3,6 +3,15 @@
 Release History
 ===============
 
+0.3.1 (2019-09-11)
+++++++++++++++++++
+
+*Authoring*
+
+**Bugfixes**
+
+- Removed duplicate enum
+
 0.3.0 (2019-08-27)
 ++++++++++++++++++
 

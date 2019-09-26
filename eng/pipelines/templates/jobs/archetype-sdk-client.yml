@@ -3,6 +3,7 @@ parameters:
   BeforePublishSteps: []
   TestMarkArgument: ''
   BuildTargetingString: 'azure-*'
+  TestTimeoutInMinutes: 0
 
 jobs:
   - job: 'Build'
@@ -33,6 +34,7 @@ jobs:
     - template: ../steps/analyze.yml
 
   - job: 'Test'
+    timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
     variables:
     - template: ../variables/globals.yml
 

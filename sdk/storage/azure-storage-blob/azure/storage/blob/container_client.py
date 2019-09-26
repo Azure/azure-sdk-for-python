@@ -16,12 +16,11 @@ except ImportError:
     from urlparse import urlparse # type: ignore
     from urllib2 import quote, unquote # type: ignore
 
+import six
+
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 
-import six
-
-from ._shared.shared_access_signature import BlobSharedAccessSignature
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
 from ._shared.request_handlers import add_metadata_headers, serialize_iso
 from ._shared.response_handlers import (
@@ -42,6 +41,7 @@ from .models import ( # pylint: disable=unused-import
     BlobPrefix)
 from .lease import LeaseClient, get_access_conditions
 from .blob_client import BlobClient
+from ._shared_access_signature import BlobSharedAccessSignature
 
 if TYPE_CHECKING:
     from azure.core.pipeline.transport import HttpTransport  # pylint: disable=ungrouped-imports
@@ -119,6 +119,7 @@ class ContainerClient(StorageAccountHostsMixin):
         except AttributeError:
             raise ValueError("Container URL must be a string.")
         parsed_url = urlparse(container_url.rstrip('/'))
+
         if not parsed_url.path and not container:
             raise ValueError("Please specify a container name.")
         if not parsed_url.netloc:
@@ -133,7 +134,7 @@ class ContainerClient(StorageAccountHostsMixin):
         except AttributeError:
             self.container_name = container or unquote(path_container) # type: ignore
         self._query_str, credential = self._format_query_string(sas_token, credential)
-        super(ContainerClient, self).__init__(parsed_url, 'blob', credential, **kwargs)
+        super(ContainerClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
         self._client = AzureBlobStorage(self.url, pipeline=self._pipeline)
 
     def _format_url(self, hostname):
@@ -152,7 +153,7 @@ class ContainerClient(StorageAccountHostsMixin):
             container,  # type: Union[str, ContainerProperties]
             credential=None,  # type: Optional[Any]
             **kwargs  # type: Any
-        ):
+        ):  # type: (...) -> ContainerClient
         """Create ContainerClient from a Connection String.
 
         :param str conn_str:
@@ -188,11 +189,13 @@ class ContainerClient(StorageAccountHostsMixin):
             policy_id=None,  # type: Optional[str]
             ip=None,  # type: Optional[str]
             protocol=None,  # type: Optional[str]
+            account_name=None,  # type: Optional[str]
             cache_control=None,  # type: Optional[str]
             content_disposition=None,  # type: Optional[str]
             content_encoding=None,  # type: Optional[str]
             content_language=None,  # type: Optional[str]
-            content_type=None  # type: Optional[str]
+            content_type=None,  # type: Optional[str]
+            user_delegation_key=None  # type Optional[]
         ):
         # type: (...) -> Any
         """Generates a shared access signature for the container.
@@ -233,6 +236,8 @@ class ContainerClient(StorageAccountHostsMixin):
             restricts the request to those IP addresses.
         :param str protocol:
             Specifies the protocol permitted for a request made. The default value is https.
+        :param str account_name:
+            Specifies the account_name when using oauth token as credential. If you use oauth token as credential.
         :param str cache_control:
             Response header value for Cache-Control when resource is accessed
             using this shared access signature.
@@ -248,6 +253,11 @@ class ContainerClient(StorageAccountHostsMixin):
         :param str content_type:
             Response header value for Content-Type when resource is accessed
             using this shared access signature.
+        :param ~azure.storage.blob._shared.models.UserDelegationKey user_delegation_key:
+            Instead of an account key, the user could pass in a user delegation key.
+            A user delegation key can be obtained from the service by authenticating with an AAD identity;
+            this can be accomplished by calling get_user_delegation_key.
+            When present, the SAS is signed with the user delegation key instead.
         :return: A Shared Access Signature (sas) token.
         :rtype: str
 
@@ -259,9 +269,16 @@ class ContainerClient(StorageAccountHostsMixin):
                 :dedent: 12
                 :caption: Generating a sas token.
         """
-        if not hasattr(self.credential, 'account_key') and not self.credential.account_key:
-            raise ValueError("No account SAS key available.")
-        sas = BlobSharedAccessSignature(self.credential.account_name, self.credential.account_key)
+        if user_delegation_key is not None:
+            if not hasattr(self.credential, 'account_name') and not account_name:
+                raise ValueError("No account_name available. Please provide account_name parameter.")
+
+            account_name = self.credential.account_name if hasattr(self.credential, 'account_name') else account_name
+            sas = BlobSharedAccessSignature(account_name, user_delegation_key=user_delegation_key)
+        else:
+            if not hasattr(self.credential, 'account_key') and not self.credential.account_key:
+                raise ValueError("No account SAS key available.")
+            sas = BlobSharedAccessSignature(self.credential.account_name, self.credential.account_key)
         return sas.generate_container(
             self.container_name,
             permission=permission,
@@ -432,6 +449,7 @@ class ContainerClient(StorageAccountHostsMixin):
                 :caption: Acquiring a lease on the container.
         """
         lease = LeaseClient(self, lease_id=lease_id) # type: ignore
+        kwargs.setdefault('merge_span', True)
         lease.acquire(lease_duration=lease_duration, timeout=timeout, **kwargs)
         return lease
 
@@ -581,7 +599,7 @@ class ContainerClient(StorageAccountHostsMixin):
             lease=None,  # type: Optional[Union[str, LeaseClient]]
             timeout=None,  # type: Optional[int]
             **kwargs
-        ):
+        ):  # type: (...) -> Dict[str, Union[str, datetime]]
         """Sets the permissions for the specified container or stored access
         policies that may be used with Shared Access Signatures. The permissions
         indicate whether blobs in a container may be accessed publicly.
@@ -688,7 +706,6 @@ class ContainerClient(StorageAccountHostsMixin):
         return ItemPaged(
             command, prefix=name_starts_with, results_per_page=results_per_page,
             page_iterator_class=BlobPropertiesPaged)
-
 
     @distributed_trace
     def walk_blobs(
@@ -839,6 +856,7 @@ class ContainerClient(StorageAccountHostsMixin):
                 :caption: Upload blob to the container.
         """
         blob = self.get_blob_client(name)
+        kwargs.setdefault('merge_span', True)
         blob.upload_blob(
             data,
             blob_type=blob_type,
@@ -918,6 +936,7 @@ class ContainerClient(StorageAccountHostsMixin):
         :rtype: None
         """
         blob = self.get_blob_client(blob) # type: ignore
+        kwargs.setdefault('merge_span', True)
         blob.delete_blob( # type: ignore
             delete_snapshots=delete_snapshots,
             lease=lease,

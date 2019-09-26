@@ -10,7 +10,7 @@ from abc import ABC, abstractmethod
 class PartitionManager(ABC):
     """
     PartitionManager deals with the interaction with the chosen storage service.
-    It's able to list/claim ownership and create checkpoint.
+    It's able to list/claim ownership and save checkpoint.
     """
 
     @abstractmethod
@@ -73,14 +73,14 @@ class PartitionManager(ABC):
         :param offset: The offset of the ~azure.eventhub.EventData the new checkpoint will be associated with.
         :type offset: str
         :param sequence_number: The sequence_number of the ~azure.eventhub.EventData the new checkpoint
-        will be associated with.
+         will be associated with.
         :type sequence_number: int
         :return: None
-        :raise: `OwnershipLostError`, `CheckpointError`
+        :raise: `OwnershipLostError`
         """
 
 
 class OwnershipLostError(Exception):
-    """Raises when update_checkpoint detects the ownership has been lost
+    """Raises when update_checkpoint detects the ownership to a partition has been lost
 
     """

@@ -3,5 +3,6 @@
 -e ../../identity/azure-identity
 -e ../azure-mgmt-keyvault
 -e ../../../tools/azure-sdk-tools
+../azure-keyvault-nspkg
 aiohttp>=3.0; python_version >= '3.5'
 pytest-asyncio>=0.8.0; python_version > '3.4'

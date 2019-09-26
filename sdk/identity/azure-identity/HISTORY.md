@@ -1,5 +1,12 @@
 # Release History
 
+## 1.0.0b4
+### Fixes and improvements:
+- `UsernamePasswordCredential` correctly handles environment configuration with
+no tenant information (#7260)
+- MSAL's user realm discovery requests are sent through credential
+pipelines (#7260)
+
 ## 1.0.0b3 (2019-09-10)
 ### New features:
 - `SharedTokenCacheCredential` authenticates with tokens stored in a local
@@ -8,7 +15,7 @@ authenticate silently after you've signed in to Visual Studio 2019, for
 example. `DefaultAzureCredential` includes `SharedTokenCacheCredential` when
 the shared cache is available, and environment variable `AZURE_USERNAME`
 is set. See the
-[README](https://github.com/Azure/azure-sdk-for-python/blob/tree/master/sdk/identity/azure-identity/README.md#single-sign-on)
+[README](https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/README.md#single-sign-on)
 for more information.
 
 ### Dependency changes:

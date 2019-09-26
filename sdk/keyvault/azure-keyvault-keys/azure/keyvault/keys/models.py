@@ -24,9 +24,9 @@ class JsonWebKey(object):
 
     :param str kid: Key identifier.
     :param kty: Key Type (kty), as defined in https://tools.ietf.org/html/draft-ietf-jose-json-web-algorithms-40
-    :type kty: str or ~azure.keyvault.keys.enums.JsonWebKeyType
+    :type kty: str or ~azure.keyvault.keys.enums.KeyType
     :param key_ops: Allowed operations for the key
-    :type key_ops: list(~azure.keyvault.keys.enums.JsonWebKeyOperation)
+    :type key_ops: list(~azure.keyvault.keys.enums.KeyOperation)
     :param bytes n: RSA modulus.
     :param bytes e: RSA public exponent.
     :param bytes d: RSA private exponent, or the D component of an EC private key.
@@ -38,7 +38,7 @@ class JsonWebKey(object):
     :param bytes k: Symmetric key.
     :param bytes t: HSM Token, used with 'Bring Your Own Key'.
     :param crv: Elliptic curve name.
-    :type crv: str or ~azure.keyvault.keys.enums.JsonWebKeyCurveName
+    :type crv: str or ~azure.keyvault.keys.enums.KeyCurveName
     :param bytes x: X component of an EC public key.
     :param bytes y: Y component of an EC public key.
     """

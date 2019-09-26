@@ -176,7 +176,7 @@ class ContainerProxy(object):
         :raise `CosmosHttpResponseError`: If the given item couldn't be retrieved.
         :rtype: dict[str, Any]
 
-        .. literalinclude:: ../../examples/examples.py
+        .. literalinclude:: ../../samples/examples.py
             :start-after: [START update_item]
             :end-before: [END update_item]
             :language: python
@@ -320,7 +320,7 @@ class ContainerProxy(object):
         :returns: An Iterable of items (dicts).
         :rtype: Iterable[dict[str, Any]]
 
-        .. literalinclude:: ../../examples/examples.py
+        .. literalinclude:: ../../samples/examples.py
             :start-after: [START query_items]
             :end-before: [END query_items]
             :language: python
@@ -328,7 +328,7 @@ class ContainerProxy(object):
             :caption: Get all products that have not been discontinued:
             :name: query_items
 
-        .. literalinclude:: ../../examples/examples.py
+        .. literalinclude:: ../../samples/examples.py
             :start-after: [START query_items_param]
             :end-before: [END query_items_param]
             :language: python
@@ -683,6 +683,7 @@ class ContainerProxy(object):
         # type: (Union[str, Dict[str, Any]], Any, Any) -> Dict[str, str]
         """
         Get the conflict identified by `conflict`.
+
         :param conflict: The ID (name) or dict representing the conflict to retrieve.
         :param partition_key: Partition key for the conflict to retrieve.
         :param request_options: Dictionary of additional properties to be used for the request.
@@ -692,7 +693,6 @@ class ContainerProxy(object):
         :rtype: dict[str, Any]
         """
         request_options = build_options(kwargs)
-        response_hook = kwargs.pop('response_hook', None)
         response_hook = kwargs.pop('response_hook', None)
         if partition_key is not None:
             request_options["partitionKey"] = self._set_partition_key(partition_key)

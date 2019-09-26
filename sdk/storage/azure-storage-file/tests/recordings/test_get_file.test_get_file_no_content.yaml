@@ -11,19 +11,27 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - cb43fb5a-b636-11e9-82d3-2816a845e8c6
+      - c66339ca-d052-11e9-95f4-001a7dda7113
       x-ms-content-length:
       - '0'
       x-ms-date:
-      - Sat, 03 Aug 2019 21:36:46 GMT
+      - Fri, 06 Sep 2019 03:02:34 GMT
+      x-ms-file-attributes:
+      - none
+      x-ms-file-creation-time:
+      - now
+      x-ms-file-last-write-time:
+      - now
+      x-ms-file-permission:
+      - Inherit
       x-ms-type:
       - file
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: PUT
     uri: https://storagename.file.core.windows.net/utshare2d0b0f81/utdir2d0b0f81/file2d0b0f81
   response:
@@ -33,19 +41,35 @@ interactions:
       Content-Length:
       - '0'
       Date:
-      - Sat, 03 Aug 2019 21:36:45 GMT
+      - Fri, 06 Sep 2019 03:02:34 GMT
       ETag:
-      - '"0x8D7185AAEFE5936"'
+      - '"0x8D73276AAA75048"'
       Last-Modified:
-      - Sat, 03 Aug 2019 21:36:45 GMT
+      - Fri, 06 Sep 2019 03:02:34 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
+      x-ms-client-request-id:
+      - c66339ca-d052-11e9-95f4-001a7dda7113
+      x-ms-file-attributes:
+      - Archive
+      x-ms-file-change-time:
+      - '2019-09-06T03:02:34.6836040Z'
+      x-ms-file-creation-time:
+      - '2019-09-06T03:02:34.6836040Z'
+      x-ms-file-id:
+      - '13835163608398430208'
+      x-ms-file-last-write-time:
+      - '2019-09-06T03:02:34.6836040Z'
+      x-ms-file-parent-id:
+      - '13835128424026341376'
+      x-ms-file-permission-key:
+      - 4099112195243312672*10394889115079208622
       x-ms-request-id:
-      - 03457adf-c01a-0094-5b43-4a04ce000000
+      - e729e9be-b01a-00b4-185f-649f3a000000
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 201
       message: Created
@@ -59,23 +83,23 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - cb877990-b636-11e9-bd69-2816a845e8c6
+      - c67bdbee-d052-11e9-a14b-001a7dda7113
       x-ms-date:
-      - Sat, 03 Aug 2019 21:36:47 GMT
+      - Fri, 06 Sep 2019 03:02:34 GMT
       x-ms-range:
       - bytes=0-32767
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: GET
     uri: https://storagename.file.core.windows.net/utshare2d0b0f81/utdir2d0b0f81/file2d0b0f81
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>InvalidRange</Code><Message>The
-        range specified is invalid for the current size of the resource.\nRequestId:03457ae1-c01a-0094-5c43-4a04ce000000\nTime:2019-08-03T21:36:45.9813844Z</Message></Error>"
+        range specified is invalid for the current size of the resource.\nRequestId:e729e9c0-b01a-00b4-195f-649f3a000000\nTime:2019-09-06T03:02:34.7287991Z</Message></Error>"
     headers:
       Content-Length:
       - '249'
@@ -84,17 +108,17 @@ interactions:
       Content-Type:
       - application/xml
       Date:
-      - Sat, 03 Aug 2019 21:36:45 GMT
+      - Fri, 06 Sep 2019 03:02:34 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
+      x-ms-client-request-id:
+      - c67bdbee-d052-11e9-a14b-001a7dda7113
       x-ms-error-code:
       - InvalidRange
       x-ms-request-id:
-      - 03457ae1-c01a-0094-5c43-4a04ce000000
+      - e729e9c0-b01a-00b4-195f-649f3a000000
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 416
       message: The range specified is invalid for the current size of the resource.
@@ -108,15 +132,15 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-file/12.0.0b1 Python/3.7.3 (Windows-10-10.0.17763-SP0)
+      - azsdk-python-storage-file/12.0.0b2 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       content-type:
       - application/xml; charset=utf-8
       x-ms-client-request-id:
-      - cba68e8a-b636-11e9-bbfe-2816a845e8c6
+      - c68265cc-d052-11e9-ab38-001a7dda7113
       x-ms-date:
-      - Sat, 03 Aug 2019 21:36:47 GMT
+      - Fri, 06 Sep 2019 03:02:34 GMT
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     method: GET
     uri: https://storagename.file.core.windows.net/utshare2d0b0f81/utdir2d0b0f81/file2d0b0f81
   response:
@@ -130,23 +154,37 @@ interactions:
       Content-Type:
       - application/xml; charset=utf-8
       Date:
-      - Sat, 03 Aug 2019 21:36:45 GMT
+      - Fri, 06 Sep 2019 03:02:34 GMT
       ETag:
-      - '"0x8D7185AAEFE5936"'
+      - '"0x8D73276AAA75048"'
       Last-Modified:
-      - Sat, 03 Aug 2019 21:36:45 GMT
+      - Fri, 06 Sep 2019 03:02:34 GMT
       Server:
       - Windows-Azure-File/1.0 Microsoft-HTTPAPI/2.0
-      Vary:
-      - Origin
+      x-ms-client-request-id:
+      - c68265cc-d052-11e9-ab38-001a7dda7113
+      x-ms-file-attributes:
+      - Archive
+      x-ms-file-change-time:
+      - '2019-09-06T03:02:34.6836040Z'
+      x-ms-file-creation-time:
+      - '2019-09-06T03:02:34.6836040Z'
+      x-ms-file-id:
+      - '13835163608398430208'
+      x-ms-file-last-write-time:
+      - '2019-09-06T03:02:34.6836040Z'
+      x-ms-file-parent-id:
+      - '13835128424026341376'
+      x-ms-file-permission-key:
+      - 4099112195243312672*10394889115079208622
       x-ms-request-id:
-      - 03457ae2-c01a-0094-5d43-4a04ce000000
+      - e729e9c2-b01a-00b4-1b5f-649f3a000000
       x-ms-server-encrypted:
       - 'true'
       x-ms-type:
       - File
       x-ms-version:
-      - '2018-11-09'
+      - '2019-02-02'
     status:
       code: 200
       message: OK
