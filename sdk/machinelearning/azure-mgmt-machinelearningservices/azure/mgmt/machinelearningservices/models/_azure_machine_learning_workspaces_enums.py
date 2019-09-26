@@ -97,6 +97,40 @@ class SshPublicAccess(str, Enum):
     disabled = "Disabled"
 
 
+class AmlInstanceState(str, Enum):
+
+    creating = "Creating"
+    deleting = "Deleting"
+    ready = "Ready"
+    restarting = "Restarting"
+    running = "Running"
+    setting_up = "SettingUp"
+    setup_failed = "SetupFailed"
+    starting = "Starting"
+    stopped = "Stopped"
+    stopping = "Stopping"
+    user_setting_up = "UserSettingUp"
+    user_setup_failed = "UserSetupFailed"
+    unknown = "Unknown"
+    unusable = "Unusable"
+
+
+class AmlInstanceLastOperation(str, Enum):
+
+    create = "Create"
+    delete = "Delete"
+    restart = "Restart"
+    start = "Start"
+    stop = "Stop"
+
+
+class AmlInstanceLastOperationStatus(str, Enum):
+
+    failed = "Failed"
+    in_progress = "InProgress"
+    succeeded = "Succeeded"
+
+
 class NodeState(str, Enum):
 
     idle = "idle"
