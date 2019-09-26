@@ -61,8 +61,6 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         print(certificate.id)
         print(certificate.name)
-        print(certificate.policy.key_properties.key_type)
-        print(certificate.policy.content_type)
         print(certificate.policy.issuer_name)
 
         # [END create_certificate]
@@ -74,8 +72,6 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         print(certificate.id)
         print(certificate.name)
-        print(certificate.policy.key_properties.key_type)
-        print(certificate.policy.content_type)
         print(certificate.policy.issuer_name)
 
         # [END get_certificate]

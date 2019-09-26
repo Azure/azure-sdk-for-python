@@ -119,16 +119,16 @@ class CertificateClient(KeyVaultClientBase):
                                        subject_name="CN=DefaultPolicy",
                                        validity_in_months=12)
 
-        create_certificate_operation = CertificateOperation._from_certificate_operation_bundle(
-                self._client.create_certificate(
-                vault_base_url=self.vault_url,
-                certificate_name=name,
-                certificate_policy=policy._to_certificate_policy_bundle(),
-                certificate_attributes=attributes,
-                tags=tags,
-                **kwargs
-            )
+        cert_bundle = self._client.create_certificate(
+            vault_base_url=self.vault_url,
+            certificate_name=name,
+            certificate_policy=policy._to_certificate_policy_bundle(),
+            certificate_attributes=attributes,
+            tags=tags,
+            **kwargs
         )
+
+        create_certificate_operation = CertificateOperation._from_certificate_operation_bundle(cert_bundle)
 
         command = partial(
             self.get_certificate_operation,

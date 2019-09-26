@@ -51,17 +51,10 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         # awaiting the certificate poller gives us the result of the long running operation
         certificate = await create_certificate_poller
+
         print(certificate.id)
         print(certificate.name)
-        print(certificate.policy.key_properties.exportable)
-        print(certificate.policy.key_properties.key_type)
-        print(certificate.policy.key_properties.key_size)
-        print(certificate.policy.key_properties.reuse_key)
-        print(certificate.policy.content_type)
         print(certificate.policy.issuer_name)
-        print(certificate.policy.subject_name)
-        print(certificate.policy.san_dns_names)
-        print(certificate.policy.validity_in_months)
 
         # [END create_certificate]
 
@@ -72,15 +65,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         print(certificate.id)
         print(certificate.name)
-        print(certificate.policy.key_properties.exportable)
-        print(certificate.policy.key_properties.key_type)
-        print(certificate.policy.key_properties.key_size)
-        print(certificate.policy.key_properties.reuse_key)
-        print(certificate.policy.content_type)
         print(certificate.policy.issuer_name)
-        print(certificate.policy.subject_name)
-        print(certificate.policy.san_dns_names)
-        print(certificate.policy.validity_in_months)
 
         # [END get_certificate]
         # [START update_certificate]
