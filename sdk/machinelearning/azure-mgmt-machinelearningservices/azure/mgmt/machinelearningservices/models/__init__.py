@@ -18,6 +18,17 @@ try:
     from ._models_py3 import AmlComputeNodeInformation
     from ._models_py3 import AmlComputeNodesInformation
     from ._models_py3 import AmlComputeProperties
+    from ._models_py3 import AmlInstance
+    from ._models_py3 import AmlInstanceDatastore
+    from ._models_py3 import AmlInstanceProperties
+    from ._models_py3 import AmlInstancePropertiesCustomScriptSettings
+    from ._models_py3 import AmlInstancePropertiesCustomScriptSettingsStartupScript
+    from ._models_py3 import AmlInstancePropertiesDataStoresMountSettings
+    from ._models_py3 import AmlInstancePropertiesSoftwareUpdateSettings
+    from ._models_py3 import AmlInstancePropertiesSoftwareUpdateSettingsOsUpdateSettings
+    from ._models_py3 import AmlInstancePropertiesSoftwareUpdateSettingsSdkUpdateSettings
+    from ._models_py3 import AmlInstancePropertiesSshSettings
+    from ._models_py3 import AmlInstanceSdkUpdate
     from ._models_py3 import ClusterUpdateParameters
     from ._models_py3 import Compute
     from ._models_py3 import ComputeNodesInformation
@@ -73,6 +84,17 @@ except (SyntaxError, ImportError):
     from ._models import AmlComputeNodeInformation
     from ._models import AmlComputeNodesInformation
     from ._models import AmlComputeProperties
+    from ._models import AmlInstance
+    from ._models import AmlInstanceDatastore
+    from ._models import AmlInstanceProperties
+    from ._models import AmlInstancePropertiesCustomScriptSettings
+    from ._models import AmlInstancePropertiesCustomScriptSettingsStartupScript
+    from ._models import AmlInstancePropertiesDataStoresMountSettings
+    from ._models import AmlInstancePropertiesSoftwareUpdateSettings
+    from ._models import AmlInstancePropertiesSoftwareUpdateSettingsOsUpdateSettings
+    from ._models import AmlInstancePropertiesSoftwareUpdateSettingsSdkUpdateSettings
+    from ._models import AmlInstancePropertiesSshSettings
+    from ._models import AmlInstanceSdkUpdate
     from ._models import ClusterUpdateParameters
     from ._models import Compute
     from ._models import ComputeNodesInformation
@@ -133,6 +155,11 @@ from ._azure_machine_learning_workspaces_enums import (
     VmPriority,
     RemoteLoginPortPublicAccess,
     AllocationState,
+    DataStoreSelection,
+    DatastoreState,
+    OsUpdateType,
+    UpdateOnNextStart,
+    SshPublicAccess,
     NodeState,
     ComputeType,
     UnderlyingResourceAction,
@@ -147,6 +174,17 @@ __all__ = [
     'AmlComputeNodeInformation',
     'AmlComputeNodesInformation',
     'AmlComputeProperties',
+    'AmlInstance',
+    'AmlInstanceDatastore',
+    'AmlInstanceProperties',
+    'AmlInstancePropertiesCustomScriptSettings',
+    'AmlInstancePropertiesCustomScriptSettingsStartupScript',
+    'AmlInstancePropertiesDataStoresMountSettings',
+    'AmlInstancePropertiesSoftwareUpdateSettings',
+    'AmlInstancePropertiesSoftwareUpdateSettingsOsUpdateSettings',
+    'AmlInstancePropertiesSoftwareUpdateSettingsSdkUpdateSettings',
+    'AmlInstancePropertiesSshSettings',
+    'AmlInstanceSdkUpdate',
     'ClusterUpdateParameters',
     'Compute',
     'ComputeNodesInformation',
@@ -206,6 +244,11 @@ __all__ = [
     'VmPriority',
     'RemoteLoginPortPublicAccess',
     'AllocationState',
+    'DataStoreSelection',
+    'DatastoreState',
+    'OsUpdateType',
+    'UpdateOnNextStart',
+    'SshPublicAccess',
     'NodeState',
     'ComputeType',
     'UnderlyingResourceAction',

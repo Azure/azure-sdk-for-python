@@ -67,6 +67,36 @@ class AllocationState(str, Enum):
     resizing = "Resizing"
 
 
+class DataStoreSelection(str, Enum):
+
+    all = "All"
+    user_specified = "UserSpecified"
+
+
+class DatastoreState(str, Enum):
+
+    mounted = "Mounted"
+    mount_failed = "MountFailed"
+
+
+class OsUpdateType(str, Enum):
+
+    critical = "Critical"
+    recommended = "Recommended"
+
+
+class UpdateOnNextStart(str, Enum):
+
+    disabled = "Disabled"
+    enabled = "Enabled"
+
+
+class SshPublicAccess(str, Enum):
+
+    enabled = "Enabled"
+    disabled = "Disabled"
+
+
 class NodeState(str, Enum):
 
     idle = "idle"
@@ -81,6 +111,7 @@ class ComputeType(str, Enum):
 
     aks = "AKS"
     aml_compute = "AmlCompute"
+    aml_instance = "AmlInstance"
     data_factory = "DataFactory"
     virtual_machine = "VirtualMachine"
     hd_insight = "HDInsight"
