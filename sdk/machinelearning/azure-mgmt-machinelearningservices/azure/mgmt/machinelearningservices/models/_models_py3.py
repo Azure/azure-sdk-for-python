@@ -970,7 +970,7 @@ class AmlInstancePropertiesSshSettings(Model):
 
 
 class AmlInstanceSdkUpdate(Model):
-    """AmlInstanceSdkUpdate.
+    """Describes a specific update for AmlInstance SDK.
 
     :param update_name: Short name of the update.
     :type update_name: str
