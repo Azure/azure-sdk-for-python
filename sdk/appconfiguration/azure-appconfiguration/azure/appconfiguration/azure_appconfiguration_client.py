@@ -4,6 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 from requests.structures import CaseInsensitiveDict
+from azure.core import MatchConditions
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import UserAgentPolicy
 from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy
@@ -13,6 +14,7 @@ from azure.core.exceptions import (
     ResourceExistsError,
     ResourceNotFoundError,
     ResourceModifiedError,
+    ResourceNotModifiedError,
 )
 from ._azure_appconfiguration_error import ResourceReadOnlyError
 from ._generated.models import KeyValue
@@ -24,9 +26,10 @@ from .azure_appconfiguration_credential import AppConfigConnectionStringCredenti
 from ._utils import (
     get_endpoint_from_connection_string,
     escape_and_tostr,
-    quote_etag,
     dequote_etag,
     return_header,
+    prep_if_match,
+    prep_if_none_match,
 )
 from ._user_agent import USER_AGENT
 
@@ -121,7 +124,7 @@ class AzureAppConfigurationClient:
          used as wildcard in the beginning or end of the filter
         :type labels: list[str]
         :keyword datetime accept_datetime: filter out ConfigurationSetting created after this datetime
-        :keyword list[str] select: specify which fields to include in the results. Leave None to include all fields
+        :keyword list[str] fields: specify which fields to include in the results. Leave None to include all fields
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
         :return: An iterator of :class:`ConfigurationSetting`
         :rtype: :class:`azure.core.paging.ItemPaged[ConfigurationSetting]`
@@ -150,14 +153,15 @@ class AzureAppConfigurationClient:
         return self._impl.get_key_values(
             label=encoded_labels,
             key=encoded_keys,
+            select=kwargs.get("fields"),
             cls=lambda objs: [ConfigurationSetting._from_key_value(x) for x in objs],
             **kwargs
         )
 
     @distributed_trace
     def get_configuration_setting(
-        self, key, label=None, **kwargs
-    ):  # type: (str, str, dict) -> ConfigurationSetting
+        self, key, label=None, etag='*', match_condition=MatchConditions.Unconditionally, **kwargs
+    ):  # type: (str, str, str, MatchConditions, dict) -> ConfigurationSetting
 
         """Get the matched ConfigurationSetting from Azure App Configuration service
 
@@ -165,11 +169,15 @@ class AzureAppConfigurationClient:
         :type key: str
         :param label: label of the ConfigurationSetting
         :type label: str
+        :param etag: check if the ConfigurationSetting is changed. Set None to skip checking etag
+        :type etag: str or None
+        :param match_condition: the match condition to use upon the etag
+        :type MatchConditions: :class:`MatchConditions`
         :keyword datetime accept_datetime: the retrieved ConfigurationSetting that created no later than this datetime
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
         :return: The matched ConfigurationSetting object
         :rtype: :class:`ConfigurationSetting`
-        :raises: :class:`ResourceNotFoundError`, :class:`HttpRequestError`
+        :raises: :class:`ResourceNotFoundError`, :class:`ResourceNotModifiedError`, :class:`HttpRequestError`
 
         Example
 
@@ -179,14 +187,43 @@ class AzureAppConfigurationClient:
                 key="MyKey", label="MyLabel"
             )
         """
-        error_map = {404: ResourceNotFoundError}
+        if match_condition == MatchConditions.Unconditionally:
+            error_map = {
+                404: ResourceNotFoundError
+            }
+
+        if match_condition == MatchConditions.IfNotModified:
+            error_map = {
+                404: ResourceNotFoundError,
+                412: ResourceModifiedError,
+            }
+
+        if match_condition == MatchConditions.IfModified:
+            error_map = {
+                304: ResourceNotModifiedError,
+                404: ResourceNotFoundError
+            }
+
+        if match_condition == MatchConditions.IfPresent:
+            error_map = {
+                404: ResourceNotFoundError,
+                412: ResourceNotFoundError
+            }
+
+        if match_condition == MatchConditions.IfMissing:
+            error_map = {
+                404: ResourceNotFoundError,
+                412: ResourceExistsError
+            }
+
         key_value = self._impl.get_key_value(
             key=key,
             label=label,
+            if_match=prep_if_match(etag, match_condition),
+            if_none_match=prep_if_none_match(etag, match_condition),
             error_map=error_map,
             **kwargs
         )
-
         return ConfigurationSetting._from_key_value(key_value)
 
     @distributed_trace
@@ -223,20 +260,23 @@ class AzureAppConfigurationClient:
             tags=configuration_setting.tags
         )
         custom_headers = CaseInsensitiveDict(kwargs.get("headers"))
+        error_map = {
+            412: ResourceExistsError
+        }
         key_value_added = self._impl.put_key_value(
             entity=key_value,
             key=key_value.key,
             label=key_value.label,
             if_none_match="*",
             headers=custom_headers,
-            error_map={412: ResourceExistsError},
+            error_map=error_map,
         )
         return ConfigurationSetting._from_key_value(key_value_added)
 
     @distributed_trace
     def set_configuration_setting(
-        self, configuration_setting, **kwargs
-    ):  # type: (ConfigurationSetting, dict) -> ConfigurationSetting
+        self, configuration_setting, match_condition=MatchConditions.Unconditionally, **kwargs
+    ):  # type: (ConfigurationSetting, MatchConditions, dict) -> ConfigurationSetting
 
         """Add or update a ConfigurationSetting.
         If the configuration setting identified by key and label does not exist, this is a create.
@@ -245,6 +285,8 @@ class AzureAppConfigurationClient:
         :param configuration_setting: the ConfigurationSetting to be added (if not exists)
         or updated (if exists) to the service
         :type configuration_setting: :class:`ConfigurationSetting`
+        :param match_condition: the match condition to use upon the etag
+        :type MatchConditions: :class:`MatchConditions`
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
         :return: The ConfigurationSetting returned from the service
         :rtype: :class:`ConfigurationSetting`
@@ -271,25 +313,49 @@ class AzureAppConfigurationClient:
             tags=configuration_setting.tags
         )
         custom_headers = CaseInsensitiveDict(kwargs.get("headers"))
-        etag = configuration_setting.etag
-        if_match = quote_etag(etag) if etag else None
+        if match_condition == MatchConditions.Unconditionally:
+            error_map = {
+                409: ResourceReadOnlyError,
+            }
+
+        if match_condition == MatchConditions.IfNotModified:
+            error_map = {
+                409: ResourceReadOnlyError,
+                412: ResourceModifiedError,
+            }
+
+        if match_condition == MatchConditions.IfModified:
+            error_map = {
+                409: ResourceReadOnlyError,
+                412: ResourceNotModifiedError,
+            }
+
+        if match_condition == MatchConditions.IfPresent:
+            error_map = {
+                409: ResourceReadOnlyError,
+                412: ResourceNotFoundError,
+            }
+
+        if match_condition == MatchConditions.IfMissing:
+            error_map = {
+                412: ResourceExistsError,
+            }
+
         key_value_set = self._impl.put_key_value(
             entity=key_value,
             key=key_value.key,
             label=key_value.label,
-            if_match=if_match,
+            if_match=prep_if_match(configuration_setting.etag, match_condition),
+            if_none_match=prep_if_none_match(configuration_setting.etag, match_condition),
             headers=custom_headers,
-            error_map={
-                409: ResourceReadOnlyError,
-                412: ResourceModifiedError,
-            },
+            error_map=error_map,
         )
         return ConfigurationSetting._from_key_value(key_value_set)
 
     @distributed_trace
     def delete_configuration_setting(
-        self, key, label=None, etag=None, **kwargs
-    ):  # type: (str, str, str, dict) -> ConfigurationSetting
+        self, key, label=None, etag=None, match_condition=MatchConditions.Unconditionally, **kwargs
+    ):  # type: (str, str, str, MatchConditions, dict) -> ConfigurationSetting
 
         """Delete a ConfigurationSetting if it exists
 
@@ -298,7 +364,9 @@ class AzureAppConfigurationClient:
         :param label: label used to identify the ConfigurationSetting
         :type label: str
         :param etag: check if the ConfigurationSetting is changed. Set None to skip checking etag
-        :type etag: str
+        :type etag: str or None
+        :param match_condition: the match condition to use upon the etag
+        :type MatchConditions: :class:`MatchConditions`
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request
         :return: The deleted ConfigurationSetting returned from the service, or None if it doesn't exist.
         :rtype: :class:`ConfigurationSetting`
@@ -313,16 +381,41 @@ class AzureAppConfigurationClient:
             )
         """
         custom_headers = CaseInsensitiveDict(kwargs.get("headers"))
-        if_match = quote_etag(etag) if etag else None
+        if match_condition == MatchConditions.Unconditionally:
+            error_map = {
+                409: ResourceReadOnlyError,
+            }
+
+        if match_condition == MatchConditions.IfNotModified:
+            error_map = {
+                409: ResourceReadOnlyError,
+                412: ResourceModifiedError,
+            }
+
+        if match_condition == MatchConditions.IfModified:
+            error_map = {
+                409: ResourceReadOnlyError,
+                412: ResourceNotModifiedError,
+            }
+
+        if match_condition == MatchConditions.IfPresent:
+            error_map = {
+                409: ResourceReadOnlyError,
+                412: ResourceNotFoundError,
+            }
+
+        if match_condition == MatchConditions.IfMissing:
+            error_map = {
+                409: ResourceReadOnlyError,
+                412: ResourceExistsError,
+            }
+
         key_value_deleted = self._impl.delete_key_value(
             key=key,
             label=label,
-            if_match=if_match,
+            if_match=prep_if_match(etag, match_condition),
             headers=custom_headers,
-            error_map={
-                409: ResourceReadOnlyError,
-                412: ResourceModifiedError,
-            },
+            error_map=error_map,
         )
         return ConfigurationSetting._from_key_value(key_value_deleted)
 
@@ -341,7 +434,7 @@ class AzureAppConfigurationClient:
          used as wildcard in the beginning or end of the filter
         :type labels: list[str]
         :keyword datetime accept_datetime: filter out ConfigurationSetting created after this datetime
-        :keyword list[str] select: specify which fields to include in the results. Leave None to include all fields
+        :keyword list[str] fields: specify which fields to include in the results. Leave None to include all fields
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
         :return: An iterator of :class:`ConfigurationSetting`
         :rtype: :class:`azure.core.paging.ItemPaged[ConfigurationSetting]`
@@ -370,19 +463,22 @@ class AzureAppConfigurationClient:
         return self._impl.get_revisions(
             label=encoded_labels,
             key=encoded_keys,
+            select=kwargs.get("fields"),
             cls=lambda objs: [ConfigurationSetting._from_key_value(x) for x in objs],
             **kwargs
         )
 
     @distributed_trace
     def set_read_only(
-        self, configuration_setting, **kwargs
-    ):  # type: (ConfigurationSetting, dict) -> ConfigurationSetting
+        self, configuration_setting, match_condition=MatchConditions.Unconditionally, **kwargs
+    ):  # type: (ConfigurationSetting, MatchConditions, dict) -> ConfigurationSetting
 
         """Set a configuration setting read only
 
         :param configuration_setting: the ConfigurationSetting to be set read only
         :type configuration_setting: :class:`ConfigurationSetting`
+        :param match_condition: the match condition to use upon the etag
+        :type MatchConditions: :class:`MatchConditions`
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
         :return: The ConfigurationSetting returned from the service
         :rtype: :class:`ConfigurationSetting`
@@ -398,16 +494,40 @@ class AzureAppConfigurationClient:
 
             read_only_config_setting = client.set_read_only(config_setting)
         """
-        etag = configuration_setting.etag
-        if_match = quote_etag(etag) if etag else None
-        error_map = {
-            404: ResourceNotFoundError,
-            412: ResourceModifiedError,
-        }
+        if match_condition == MatchConditions.Unconditionally:
+            error_map = {
+                404: ResourceNotFoundError,
+            }
+
+        if match_condition == MatchConditions.IfNotModified:
+            error_map = {
+                404: ResourceNotFoundError,
+                412: ResourceModifiedError,
+            }
+
+        if match_condition == MatchConditions.IfModified:
+            error_map = {
+                404: ResourceNotFoundError,
+                412: ResourceNotModifiedError,
+            }
+
+        if match_condition == MatchConditions.IfPresent:
+            error_map = {
+                404: ResourceNotFoundError,
+                412: ResourceNotFoundError,
+            }
+
+        if match_condition == MatchConditions.IfMissing:
+            error_map = {
+                404: ResourceNotFoundError,
+                412: ResourceExistsError,
+            }
+
         key_value = self._impl.put_lock(
             key=configuration_setting.key,
             label=configuration_setting.label,
-            if_match=if_match,
+            if_match=prep_if_match(configuration_setting.etag, match_condition),
+            if_none_match=prep_if_none_match(configuration_setting.etag, match_condition),
             error_map=error_map,
             **kwargs
         )
@@ -415,13 +535,15 @@ class AzureAppConfigurationClient:
 
     @distributed_trace
     def clear_read_only(
-            self, configuration_setting, **kwargs
-    ):  # type: (ConfigurationSetting, dict) -> ConfigurationSetting
+            self, configuration_setting, match_condition=MatchConditions.Unconditionally, **kwargs
+    ):  # type: (ConfigurationSetting, MatchConditions, dict) -> ConfigurationSetting
 
         """Clear read only flag for a configuration setting
 
         :param configuration_setting: the ConfigurationSetting to be read only clear
         :type configuration_setting: :class:`ConfigurationSetting`
+        :param match_condition: the match condition to use upon the etag
+        :type MatchConditions: :class:`MatchConditions`
         :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
         :return: The ConfigurationSetting returned from the service
         :rtype: :class:`ConfigurationSetting`
@@ -437,16 +559,40 @@ class AzureAppConfigurationClient:
 
             read_only_config_setting = client.clear_read_only(config_setting)
         """
-        etag = configuration_setting.etag
-        if_match = quote_etag(etag) if etag else None
-        error_map = {
-            404: ResourceNotFoundError,
-            412: ResourceModifiedError,
-        }
+        if match_condition == MatchConditions.Unconditionally:
+            error_map = {
+                404: ResourceNotFoundError,
+            }
+
+        if match_condition == MatchConditions.IfNotModified:
+            error_map = {
+                404: ResourceNotFoundError,
+                412: ResourceModifiedError,
+            }
+
+        if match_condition == MatchConditions.IfModified:
+            error_map = {
+                404: ResourceNotFoundError,
+                412: ResourceNotModifiedError,
+            }
+
+        if match_condition == MatchConditions.IfPresent:
+            error_map = {
+                404: ResourceNotFoundError,
+                412: ResourceNotFoundError,
+            }
+
+        if match_condition == MatchConditions.IfMissing:
+            error_map = {
+                404: ResourceNotFoundError,
+                412: ResourceExistsError,
+            }
+
         key_value = self._impl.delete_lock(
             key=configuration_setting.key,
             label=configuration_setting.label,
-            if_match=if_match,
+            if_match=prep_if_match(configuration_setting.etag, match_condition),
+            if_none_match=prep_if_none_match(configuration_setting.etag, match_condition),
             error_map=error_map,
             **kwargs
         )

@@ -65,7 +65,7 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
         to_set_kv.tags = {"a": "b", "c": "d"}
         to_set_kv.etag = "wrong etag"
         with pytest.raises(ResourceModifiedError):
-            self.get_config_client().set_configuration_setting(to_set_kv)
+            self.get_config_client().set_configuration_setting(to_set_kv, match_condition=MatchConditions.IfNotModified)
 
     def test_set_configuration_setting_etag(self):
         kv = ConfigurationSetting(
@@ -77,7 +77,7 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
         )
         kv.etag = "random etag"
         with pytest.raises(ResourceModifiedError):
-            self.get_config_client().set_configuration_setting(kv)
+            self.get_config_client().set_configuration_setting(kv, match_condition=MatchConditions.IfNotModified)
 
     def test_set_configuration_setting_no_etag(self):
         to_set_kv = ConfigurationSetting(
@@ -169,7 +169,7 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
         to_delete_kv = self.test_config_setting_no_label
         with pytest.raises(ResourceModifiedError):
             self.get_config_client().delete_configuration_setting(
-                to_delete_kv.key, etag="wrong etag"
+                to_delete_kv.key, etag="wrong etag", match_condition=MatchConditions.IfNotModified
             )
 
     # method: list_configuration_settings
@@ -201,7 +201,7 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
 
     def test_list_configuration_settings_fields(self):
         items = self.get_config_client().list_configuration_settings(
-            keys=["*"], labels=[LABEL], select=["key", "content_type"]
+            keys=["*"], labels=[LABEL], fields=["key", "content_type"]
         )
         cnt = 0
         for kv in items:
@@ -320,7 +320,7 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
 
     def test_list_revisions_fields(self):
         items = self.get_config_client().list_revisions(
-            keys=["*"], labels=[LABEL], select=["key", "content_type"]
+            keys=["*"], labels=[LABEL], fields=["key", "content_type"]
         )
         for kv in items:
             assert (
