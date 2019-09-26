@@ -90,7 +90,7 @@ def with_current_context(func):
     :return: The target the pass in instead of the function
     """
     span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
-    if span_impl_type is not None:
+    if span_impl_type is None:
         return func
 
     return span_impl_type.with_current_context(func)
