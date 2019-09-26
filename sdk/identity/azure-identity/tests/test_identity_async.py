@@ -91,7 +91,7 @@ async def test_client_secret_credential():
 
 
 @pytest.mark.asyncio
-async def test_client_secret_environment_credential(monkeypatch):
+async def test_client_secret_environment_credential():
     client_id = "fake-client-id"
     secret = "fake-client-secret"
     tenant_id = "fake-tenant-id"
@@ -111,11 +111,13 @@ async def test_client_secret_environment_credential(monkeypatch):
         ],
     )
 
-    monkeypatch.setenv(EnvironmentVariables.AZURE_CLIENT_ID, client_id)
-    monkeypatch.setenv(EnvironmentVariables.AZURE_CLIENT_SECRET, secret)
-    monkeypatch.setenv(EnvironmentVariables.AZURE_TENANT_ID, tenant_id)
-
-    token = await EnvironmentCredential(transport=transport).get_token("scope")
+    environment = {
+        EnvironmentVariables.AZURE_CLIENT_ID: client_id,
+        EnvironmentVariables.AZURE_CLIENT_SECRET: secret,
+        EnvironmentVariables.AZURE_TENANT_ID: tenant_id,
+    }
+    with patch("os.environ", environment):
+        token = await EnvironmentCredential(transport=transport).get_token("scope")
 
     # not validating expires_on because doing so requires monkeypatching time, and this is tested elsewhere
     assert token.token == access_token
@@ -240,11 +242,9 @@ async def test_imds_credential_retries():
 
 
 @pytest.mark.asyncio
-async def test_managed_identity_app_service(monkeypatch):
+async def test_managed_identity_app_service():
     # in App Service, MSI_SECRET and MSI_ENDPOINT are set
     msi_secret = "secret"
-    monkeypatch.setenv(EnvironmentVariables.MSI_SECRET, msi_secret)
-    monkeypatch.setenv(EnvironmentVariables.MSI_ENDPOINT, "https://foo.bar")
 
     success_message = "test passed"
 
@@ -255,16 +255,21 @@ async def test_managed_identity_app_service(monkeypatch):
         exception.message = success_message
         raise exception
 
+    environment = {
+        EnvironmentVariables.MSI_SECRET: msi_secret,
+        EnvironmentVariables.MSI_ENDPOINT: "https://foo.bar",
+    }
     with pytest.raises(Exception) as ex:
-        await ManagedIdentityCredential(transport=Mock(send=validate_request)).get_token("https://scope")
+        with patch("os.environ", environment):
+            await ManagedIdentityCredential(transport=Mock(send=validate_request)).get_token("https://scope")
+
     assert ex.value.message is success_message
 
 
 @pytest.mark.asyncio
-async def test_managed_identity_cloud_shell(monkeypatch):
+async def test_managed_identity_cloud_shell():
     # in Cloud Shell, only MSI_ENDPOINT is set
     msi_endpoint = "https://localhost:50432"
-    monkeypatch.setenv(EnvironmentVariables.MSI_ENDPOINT, msi_endpoint)
 
     success_message = "test passed"
 
@@ -275,8 +280,11 @@ async def test_managed_identity_cloud_shell(monkeypatch):
         exception.message = success_message
         raise exception
 
+    environment = {EnvironmentVariables.MSI_ENDPOINT: msi_endpoint}
     with pytest.raises(Exception) as ex:
-        await ManagedIdentityCredential(transport=Mock(send=validate_request)).get_token("https://scope")
+        with patch("os.environ", environment):
+            await ManagedIdentityCredential(transport=Mock(send=validate_request)).get_token("https://scope")
+
     assert ex.value.message is success_message
 
 
