@@ -493,6 +493,39 @@ class CertificateOperation(object):
         return self._request_id
 
 
+class X509Properties(object):
+    """Properties of the X509 component of a certificate.
+
+    :param subject_name: The subject name. Should be a valid X509 distinguished
+     Name.
+    :type subject_name: str
+    :param ekus: The enhanced key usage.
+    :type ekus: list[str]
+    :param key_usage: List of key usages.
+    :type key_usage: list[str or ~azure.keyvault.certificates.enums.KeyUsageType]
+    :param validity_in_months: The duration that the certificate is valid in
+     months.
+    :type validity_in_months: int
+    :param san_emails: Subject alternative emails of the X509 object. Only one out of san_emails,
+     san_dns_names, and san_upns may be set.
+    :type san_emails: Iterable[str]
+    :param san_dns_names: Subject alternative DNS names of the X509 object. Only one out of
+     san_emails, san_dns_names, and san_upns may be set.
+    :type san_dns_names: Iterable[str]
+    :param san_upns: Subject alternative user principal names. Only one out of san_emails,
+     san_dns_names, and san_upns may be set.
+    :type san_upns: Iterable[str]
+    """
+    def __init__(
+        subject_name,  # type: str
+        ekus=None,  # type: Optional[list[str]]
+        key_usage=None,  # type: Optional[list[str]]
+        validity_in_months=None,  # type: Optional[int]
+        **kwargs  # type: Any
+    ):
+        #  type: (...) -> None
+
+
 class CertificatePolicy(object):
     """Management policy for a certificate.
 
@@ -534,7 +567,7 @@ class CertificatePolicy(object):
         subject_name=None,  # type: Optional[str]
         validity_in_months=None,  # type: Optional[int]
         lifetime_actions=None,  # type: Optional[list[LifetimeAction]]
-        issuer_name=None,  # type: Optional[str]
+        issuer_parameters=None,  # type:
         certificate_type=None,  # type: Optional[str]
         certificate_transparency=None,  # type: Optional[bool]
         **kwargs  # type: **Any
