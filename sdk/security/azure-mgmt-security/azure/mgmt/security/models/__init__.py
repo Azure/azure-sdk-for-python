@@ -79,6 +79,7 @@ try:
     from ._models_py3 import PathRecommendation
     from ._models_py3 import Pricing
     from ._models_py3 import PricingList
+    from ._models_py3 import ProtectionMode
     from ._models_py3 import PublisherInfo
     from ._models_py3 import RecommendationConfigurationProperties
     from ._models_py3 import RegulatoryComplianceAssessment
@@ -181,6 +182,7 @@ except (SyntaxError, ImportError):
     from ._models import PathRecommendation
     from ._models import Pricing
     from ._models import PricingList
+    from ._models import ProtectionMode
     from ._models import PublisherInfo
     from ._models import RecommendationConfigurationProperties
     from ._models import RegulatoryComplianceAssessment
@@ -333,6 +335,7 @@ __all__ = [
     'PathRecommendation',
     'Pricing',
     'PricingList',
+    'ProtectionMode',
     'PublisherInfo',
     'RecommendationConfigurationProperties',
     'RegulatoryComplianceAssessment',

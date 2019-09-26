@@ -666,8 +666,11 @@ class AppWhitelistingGroup(Model):
     :vartype type: str
     :ivar location: Location where the resource is stored
     :vartype location: str
-    :param enforcement_mode: Possible values include: 'Audit', 'Enforce'
+    :param enforcement_mode: Possible values include: 'Audit', 'Enforce',
+     'None'
     :type enforcement_mode: str or ~azure.mgmt.security.models.enum
+    :param protection_mode:
+    :type protection_mode: ~azure.mgmt.security.models.ProtectionMode
     :param configuration_status: Possible values include: 'Configured',
      'NotConfigured', 'InProgress', 'Failed', 'NoStatus'
     :type configuration_status: str or ~azure.mgmt.security.models.enum
@@ -701,6 +704,7 @@ class AppWhitelistingGroup(Model):
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
         'enforcement_mode': {'key': 'properties.enforcementMode', 'type': 'str'},
+        'protection_mode': {'key': 'properties.protectionMode', 'type': 'ProtectionMode'},
         'configuration_status': {'key': 'properties.configurationStatus', 'type': 'str'},
         'recommendation_status': {'key': 'properties.recommendationStatus', 'type': 'str'},
         'issues': {'key': 'properties.issues', 'type': '[AppWhitelistingIssueSummary]'},
@@ -709,13 +713,14 @@ class AppWhitelistingGroup(Model):
         'path_recommendations': {'key': 'properties.pathRecommendations', 'type': '[PathRecommendation]'},
     }
 
-    def __init__(self, *, enforcement_mode=None, configuration_status=None, recommendation_status=None, issues=None, source_system=None, vm_recommendations=None, path_recommendations=None, **kwargs) -> None:
+    def __init__(self, *, enforcement_mode=None, protection_mode=None, configuration_status=None, recommendation_status=None, issues=None, source_system=None, vm_recommendations=None, path_recommendations=None, **kwargs) -> None:
         super(AppWhitelistingGroup, self).__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
         self.location = None
         self.enforcement_mode = enforcement_mode
+        self.protection_mode = protection_mode
         self.configuration_status = configuration_status
         self.recommendation_status = recommendation_status
         self.issues = issues
@@ -768,8 +773,14 @@ class AppWhitelistingIssueSummary(Model):
 class AppWhitelistingPutGroupData(Model):
     """The altered data of the recommended VM/server group policy.
 
-    :param enforcement_mode: Possible values include: 'Audit', 'Enforce'
+    :param enforcement_mode: The enforcement mode of the group. Can also be
+     defined per collection type by using ProtectionMode. Possible values
+     include: 'Audit', 'Enforce', 'None'
     :type enforcement_mode: str or ~azure.mgmt.security.models.enum
+    :param protection_mode: The protection mode of the group per collection
+     type. Can also be defined for all collection types by using
+     EnforcementMode
+    :type protection_mode: ~azure.mgmt.security.models.ProtectionMode
     :param vm_recommendations:
     :type vm_recommendations:
      list[~azure.mgmt.security.models.VmRecommendation]
@@ -780,13 +791,15 @@ class AppWhitelistingPutGroupData(Model):
 
     _attribute_map = {
         'enforcement_mode': {'key': 'enforcementMode', 'type': 'str'},
+        'protection_mode': {'key': 'protectionMode', 'type': 'ProtectionMode'},
         'vm_recommendations': {'key': 'vmRecommendations', 'type': '[VmRecommendation]'},
         'path_recommendations': {'key': 'pathRecommendations', 'type': '[PathRecommendation]'},
     }
 
-    def __init__(self, *, enforcement_mode=None, vm_recommendations=None, path_recommendations=None, **kwargs) -> None:
+    def __init__(self, *, enforcement_mode=None, protection_mode=None, vm_recommendations=None, path_recommendations=None, **kwargs) -> None:
         super(AppWhitelistingPutGroupData, self).__init__(**kwargs)
         self.enforcement_mode = enforcement_mode
+        self.protection_mode = protection_mode
         self.vm_recommendations = vm_recommendations
         self.path_recommendations = path_recommendations
 
@@ -3017,6 +3030,35 @@ class PricingList(Model):
     def __init__(self, *, value, **kwargs) -> None:
         super(PricingList, self).__init__(**kwargs)
         self.value = value
+
+
+class ProtectionMode(Model):
+    """The protection mode of the collection/file types. Exe/Msi/Script are used
+    for Windows, Executable is used for Linux.
+
+    :param exe: Possible values include: 'Audit', 'Enforce', 'None'
+    :type exe: str or ~azure.mgmt.security.models.enum
+    :param msi: Possible values include: 'Audit', 'Enforce', 'None'
+    :type msi: str or ~azure.mgmt.security.models.enum
+    :param script: Possible values include: 'Audit', 'Enforce', 'None'
+    :type script: str or ~azure.mgmt.security.models.enum
+    :param executable: Possible values include: 'Audit', 'Enforce', 'None'
+    :type executable: str or ~azure.mgmt.security.models.enum
+    """
+
+    _attribute_map = {
+        'exe': {'key': 'exe', 'type': 'str'},
+        'msi': {'key': 'msi', 'type': 'str'},
+        'script': {'key': 'script', 'type': 'str'},
+        'executable': {'key': 'executable', 'type': 'str'},
+    }
+
+    def __init__(self, *, exe=None, msi=None, script=None, executable=None, **kwargs) -> None:
+        super(ProtectionMode, self).__init__(**kwargs)
+        self.exe = exe
+        self.msi = msi
+        self.script = script
+        self.executable = executable
 
 
 class PublisherInfo(Model):
