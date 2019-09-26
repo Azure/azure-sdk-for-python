@@ -146,9 +146,9 @@ already exists, a new version of that secret is created.
 ```python
     secret = secret_client.set_secret("secret-name", "secret-value")
 
-    print(secret.properties.name)
-    print(secret.properties.value)
-    print(secret.properties.version)
+    print(secret.name)
+    print(secret.value)
+    print(secret.version)
 ```
 
 ### Retrieve a Secret
@@ -157,8 +157,8 @@ already exists, a new version of that secret is created.
 ```python
     secret = secret_client.get_secret("secret-name")
 
-    print(secret.properties.name)
-    print(secret.properties.value)
+    print(secret.name)
+    print(secret.value)
 ```
 
 ### Update Secret metadata
@@ -185,7 +185,7 @@ for the vault, this permanently deletes the secret.
 ```python
     deleted_secret = secret_client.delete_secret("secret-name")
 
-    print(deleted_secret.properties.name)
+    print(deleted_secret.name)
     print(deleted_secret.properties.deleted_date)
 ```
 
@@ -194,7 +194,7 @@ This example lists all the secrets in the vault. The list doesn't include
 secret values; use [`get_secret`](#retrieve-a-secret) to get a secret's value.
 
 ```python
-    secret_properties = secret_client.list_secret_properties()
+    secret_properties = secret_client.list_secrets()
 
     for secret_property in secret_properties:
         # the list doesn't include values or versions of the secrets
@@ -219,16 +219,16 @@ This example creates a secret in the Key Vault with the specified optional argum
 
     secret = await secret_client.set_secret("secret-name", "secret-value")
 
-    print(secret.properties.name)
-    print(secret.properties.value)
-    print(secret.properties.version)
+    print(secret.name)
+    print(secret.value)
+    print(secret.version)
 ```
 
 ### Async list secrets
 This example lists all the secrets in the specified Key Vault.
 
 ```python
-    secret_properties = secret_client.list_secret_properties()
+    secret_properties = secret_client.list_secrets()
 
     async for secret_property in secret_properties:
         # the list doesn't include values or versions of the secrets

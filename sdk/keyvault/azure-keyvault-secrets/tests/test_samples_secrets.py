@@ -44,8 +44,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # create a secret, setting optional arguments
         secret = secret_client.set_secret("secret-name", "secret-value", expires=expires)
 
-        print(secret.properties.name)
-        print(secret.properties.version)
+        print(secret.name)
+        print(secret.version)
         print(secret.properties.expires)
 
         # [END set_secret]
@@ -55,12 +55,12 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         secret = secret_client.get_secret("secret-name")
 
         # alternatively, specify a version
-        secret = secret_client.get_secret("secret-name", secret.properties.version)
+        secret = secret_client.get_secret("secret-name", secret.version)
 
-        print(secret.properties.id)
-        print(secret.properties.name)
-        print(secret.properties.version)
-        print(secret.properties.vault_url)
+        print(secret.id)
+        print(secret.name)
+        print(secret.version)
+        print(secret.vault_url)
 
         # [END get_secret]
         # [START update_secret]
@@ -82,7 +82,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # delete a secret
         deleted_secret = secret_client.delete_secret("secret-name")
 
-        print(deleted_secret.properties.name)
+        print(deleted_secret.name)
 
         # if the vault has soft-delete enabled, the secret's, deleted_date
         # scheduled purge date and recovery id are set
@@ -103,7 +103,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         # [START list_secrets]
 
         # list secrets
-        secrets = secret_client.list_secret_properties()
+        secrets = secret_client.list_secrets()
 
         for secret in secrets:
             # the list doesn't include values or versions of the secrets
@@ -145,7 +145,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     def test_example_secrets_backup_restore(self, vault_client, **kwargs):
         secret_client = vault_client.secrets
         created_secret = secret_client.set_secret("secret-name", "secret-value")
-        secret_name = created_secret.properties.name
+        secret_name = created_secret.name
         # [START backup_secret]
         # backup secret
         # returns the raw bytes of the backed up secret
@@ -169,16 +169,16 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     def test_example_secrets_recover(self, vault_client, **kwargs):
         secret_client = vault_client.secrets
         created_secret = secret_client.set_secret("secret-name", "secret-value")
-        secret_client.delete_secret(created_secret.properties.name)
+        secret_client.delete_secret(created_secret.name)
 
         self._poll_until_no_exception(
-            functools.partial(secret_client.get_deleted_secret, created_secret.properties.name), ResourceNotFoundError
+            functools.partial(secret_client.get_deleted_secret, created_secret.name), ResourceNotFoundError
         )
 
         # [START get_deleted_secret]
         # gets a deleted secret (requires soft-delete enabled for the vault)
         deleted_secret = secret_client.get_deleted_secret("secret-name")
-        print(deleted_secret.properties.name)
+        print(deleted_secret.name)
 
         # [END get_deleted_secret]
         # [START recover_deleted_secret]

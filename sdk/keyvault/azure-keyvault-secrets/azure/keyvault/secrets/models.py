@@ -19,7 +19,7 @@ class SecretProperties(object):
     """A secret's id and attributes."""
 
     def __init__(self, attributes, vault_id, **kwargs):
-        # type: (_models.SecretProperties, str, **Any) -> None
+        # type: (_models.SecretAttributes, str, **Any) -> None
         self._attributes = attributes
         self._id = vault_id
         self._vault_id = parse_vault_id(vault_id)
@@ -166,7 +166,8 @@ class SecretProperties(object):
 class Secret(object):
     """All of a secret's properties, and its value."""
 
-    def __init__(self, properties, value, **kwargs):
+    def __init__(self, properties, value):
+        # type: (SecretProperties, str) -> None
         self._properties = properties
         self._value = value
 
@@ -175,22 +176,43 @@ class Secret(object):
         # type: (_models.SecretBundle) -> Secret
         """Construct a Secret from an autorest-generated SecretBundle"""
         return cls(
-            properties=SecretProperties(
-                attributes=secret_bundle.attributes,
-                vault_id=secret_bundle.id,
-                content_type=secret_bundle.content_type,
-                key_id=secret_bundle.kid,
-                managed=secret_bundle.managed,
-                tags=secret_bundle.tags
-            ),
+            properties=SecretProperties._from_secret_bundle(secret_bundle),  #pylint: disable=protected-access
             value=secret_bundle.value
         )
+
+    @property
+    def vault_url(self):
+        # type: () -> str
+        """
+        URL of the vault containing the secret
+
+        :rtype: str
+        """
+        return self._properties.vault_url
+
+    @property
+    def name(self):
+        # type: () -> str
+        """:rtype: str"""
+        return self._properties.name
+
+    @property
+    def version(self):
+        # type: () -> str
+        """:rtype: str"""
+        return self._properties.version
+
+    @property
+    def id(self):
+        # type: () -> str
+        """:rtype: str"""
+        return self._properties.id
 
     @property
     def properties(self):
         # type: () -> SecretProperties
         """
-        The secret properties
+        The secret's properties
 
         :rtype: ~azure.keyvault.secrets.models.SecretProperties
         """
@@ -215,8 +237,7 @@ class DeletedSecret(object):
         properties, # type: SecretProperties
         deleted_date=None,  # type: Optional[datetime]
         recovery_id=None,  # type: Optional[str]
-        scheduled_purge_date=None,  # type: Optional[datetime]
-        **kwargs  # type: **Any
+        scheduled_purge_date=None  # type: Optional[datetime]
     ):
         # type: (...) -> None
         self._properties = properties
@@ -229,14 +250,7 @@ class DeletedSecret(object):
         # type: (_models.DeletedSecretBundle) -> DeletedSecret
         """Construct a DeletedSecret from an autorest-generated DeletedSecretBundle"""
         return cls(
-            properties=SecretProperties(
-                attributes=deleted_secret_bundle.attributes,
-                vault_id=deleted_secret_bundle.id,
-                content_type=deleted_secret_bundle.content_type,
-                key_id=deleted_secret_bundle.kid,
-                managed=deleted_secret_bundle.managed,
-                tags=deleted_secret_bundle.tags
-            ),
+            properties=SecretProperties._from_secret_bundle(deleted_secret_bundle), #pylint: disable=protected-access
             deleted_date=deleted_secret_bundle.deleted_date,
             recovery_id=deleted_secret_bundle.recovery_id,
             scheduled_purge_date=deleted_secret_bundle.scheduled_purge_date,
@@ -247,17 +261,39 @@ class DeletedSecret(object):
         # type: (_models.DeletedSecretItem) -> DeletedSecret
         """Construct a DeletedSecret from an autorest-generated DeletedSecretItem"""
         return cls(
-            properties=SecretProperties(
-                attributes=deleted_secret_item.attributes,
-                vault_id=deleted_secret_item.id,
-                content_type=deleted_secret_item.content_type,
-                managed=deleted_secret_item.managed,
-                tags=deleted_secret_item.tags
-            ),
+            properties=SecretProperties._from_secret_item(deleted_secret_item), #pylint: disable=protected-access
             deleted_date=deleted_secret_item.deleted_date,
             recovery_id=deleted_secret_item.recovery_id,
             scheduled_purge_date=deleted_secret_item.scheduled_purge_date,
         )
+
+    @property
+    def vault_url(self):
+        # type: () -> str
+        """
+        URL of the vault containing the secret
+
+        :rtype: str
+        """
+        return self._properties.vault_url
+
+    @property
+    def name(self):
+        # type: () -> str
+        """:rtype: str"""
+        return self._properties.name
+
+    @property
+    def version(self):
+        # type: () -> str
+        """:rtype: str"""
+        return self._properties.version
+
+    @property
+    def id(self):
+        # type: () -> str
+        """:rtype: str"""
+        return self._properties.id
 
     @property
     def properties(self):

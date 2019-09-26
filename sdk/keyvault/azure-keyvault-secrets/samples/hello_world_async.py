@@ -44,20 +44,20 @@ async def run_sample():
         print("\n.. Create Secret")
         expires = datetime.datetime.utcnow() + datetime.timedelta(days=365)
         secret = await client.set_secret("helloWorldSecretName", "helloWorldSecretValue", expires=expires)
-        print("Secret with name '{0}' created with value '{1}'".format(secret.properties.name, secret.value))
-        print("Secret with name '{0}' expires on '{1}'".format(secret.properties.name, secret.properties.expires))
+        print("Secret with name '{0}' created with value '{1}'".format(secret.name, secret.value))
+        print("Secret with name '{0}' expires on '{1}'".format(secret.name, secret.properties.expires))
 
         # Let's get the bank secret using its name
         print("\n.. Get a Secret by name")
-        bank_secret = await client.get_secret(secret.properties.name)
-        print("Secret with name '{0}' was found with value '{1}'.".format(bank_secret.properties.name, bank_secret.value))
+        bank_secret = await client.get_secret(secret.name)
+        print("Secret with name '{0}' was found with value '{1}'.".format(bank_secret.name, bank_secret.value))
 
         # After one year, the bank account is still active, we need to update the expiry time of the secret.
         # The update method can be used to update the expiry attribute of the secret. It cannot be used to update
         # the value of the secret.
         print("\n.. Update a Secret by name")
         expires = bank_secret.properties.expires + datetime.timedelta(days=365)
-        updated_secret_properties = await client.update_secret_properties(secret.properties.name, expires=expires)
+        updated_secret_properties = await client.update_secret_properties(secret.name, expires=expires)
         print("Secret with name '{0}' was updated on date '{1}'".format(updated_secret_properties.name, updated_secret_properties.updated))
         print(
             "Secret with name '{0}' was updated to expire on '{1}'".format(updated_secret_properties.name, updated_secret_properties.expires)
