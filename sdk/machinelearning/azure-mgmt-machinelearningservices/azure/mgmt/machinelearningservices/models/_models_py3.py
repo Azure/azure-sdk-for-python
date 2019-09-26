@@ -687,6 +687,47 @@ class AmlInstance(Compute):
         self.compute_type = 'AmlInstance'
 
 
+class AmlInstanceCustomScriptSettings(Model):
+    """Specification for initialization scripts to customize this AmlInstance.
+
+    :param startup_script: Specifies properties of initialization script to be
+     run during every start of this instance.
+    :type startup_script:
+     ~azure.mgmt.machinelearningservices.models.AmlInstanceCustomScriptSettingsStartupScript
+    """
+
+    _attribute_map = {
+        'startup_script': {'key': 'startupScript', 'type': 'AmlInstanceCustomScriptSettingsStartupScript'},
+    }
+
+    def __init__(self, *, startup_script=None, **kwargs) -> None:
+        super(AmlInstanceCustomScriptSettings, self).__init__(**kwargs)
+        self.startup_script = startup_script
+
+
+class AmlInstanceCustomScriptSettingsStartupScript(Model):
+    """Specifies properties of initialization script to be run during every start
+    of this instance.
+
+    :param script_location: The location of customization script. Could be a
+     URI or a relative file path in the default fileshare in the parent
+     workspace.
+    :type script_location: str
+    :param script_parameters: Parameters required for this script if any.
+    :type script_parameters: str
+    """
+
+    _attribute_map = {
+        'script_location': {'key': 'scriptLocation', 'type': 'str'},
+        'script_parameters': {'key': 'scriptParameters', 'type': 'str'},
+    }
+
+    def __init__(self, *, script_location: str=None, script_parameters: str=None, **kwargs) -> None:
+        super(AmlInstanceCustomScriptSettingsStartupScript, self).__init__(**kwargs)
+        self.script_location = script_location
+        self.script_parameters = script_parameters
+
+
 class AmlInstanceDatastore(Model):
     """Represents specification for datastore requested to be mounted on an
     AzureML instance as well as its mounting status.
@@ -723,6 +764,63 @@ class AmlInstanceDatastore(Model):
         self.error = None
 
 
+class AmlInstanceDataStoresMountSettings(Model):
+    """Describes what data stores will be mounted on this compute instance.
+
+    :param data_store_selection: Allows users to select between mounting All
+     vs Selected datastores from the parent workspace. The 'All' setting also
+     implies that any datastores that later become part of the workspace will
+     be automatically mounted to the compute instance on next start. Possible
+     values include: 'All', 'UserSpecified'. Default value: "All" .
+    :type data_store_selection: str or
+     ~azure.mgmt.machinelearningservices.models.DataStoreSelection
+    :param data_stores: Specifies the set of data stores that will be mounted
+     on this compute instance. This should only be specified if
+     dataStoreSelection is set to 'UserSpecified'.
+    :type data_stores:
+     list[~azure.mgmt.machinelearningservices.models.AmlInstanceDatastore]
+    """
+
+    _attribute_map = {
+        'data_store_selection': {'key': 'dataStoreSelection', 'type': 'str'},
+        'data_stores': {'key': 'dataStores', 'type': '[AmlInstanceDatastore]'},
+    }
+
+    def __init__(self, *, data_store_selection="All", data_stores=None, **kwargs) -> None:
+        super(AmlInstanceDataStoresMountSettings, self).__init__(**kwargs)
+        self.data_store_selection = data_store_selection
+        self.data_stores = data_stores
+
+
+class AmlInstanceOSUpdateSettings(Model):
+    """Specifies policy for installing operation system updates.
+
+    :param os_update_type: Type of automatic operating system updates to
+     install. Possible values include: 'Critical', 'Recommended'. Default
+     value: "Recommended" .
+    :type os_update_type: str or
+     ~azure.mgmt.machinelearningservices.models.OsUpdateType
+    :param update_frequency_in_days: Frequency of update checks and
+     installation. Maximum allowable frequency is 30 days.
+    :type update_frequency_in_days: long
+    :param update_hour_in_utc: Hour of the day (0-23) in Universal Time at
+     which software updates can be installed, potentially requiring VM reboot.
+    :type update_hour_in_utc: long
+    """
+
+    _attribute_map = {
+        'os_update_type': {'key': 'osUpdateType', 'type': 'str'},
+        'update_frequency_in_days': {'key': 'updateFrequencyInDays', 'type': 'long'},
+        'update_hour_in_utc': {'key': 'updateHourInUtc', 'type': 'long'},
+    }
+
+    def __init__(self, *, os_update_type="Recommended", update_frequency_in_days: int=None, update_hour_in_utc: int=None, **kwargs) -> None:
+        super(AmlInstanceOSUpdateSettings, self).__init__(**kwargs)
+        self.os_update_type = os_update_type
+        self.update_frequency_in_days = update_frequency_in_days
+        self.update_hour_in_utc = update_hour_in_utc
+
+
 class AmlInstanceProperties(Model):
     """AML Instance properties.
 
@@ -737,18 +835,18 @@ class AmlInstanceProperties(Model):
     :param data_stores_mount_settings: Describes what data stores will be
      mounted on this compute instance.
     :type data_stores_mount_settings:
-     ~azure.mgmt.machinelearningservices.models.AmlInstancePropertiesDataStoresMountSettings
+     ~azure.mgmt.machinelearningservices.models.AmlInstanceDataStoresMountSettings
     :param custom_script_settings: Specification for initialization scripts to
      customize this AmlInstance.
     :type custom_script_settings:
-     ~azure.mgmt.machinelearningservices.models.AmlInstancePropertiesCustomScriptSettings
+     ~azure.mgmt.machinelearningservices.models.AmlInstanceCustomScriptSettings
     :param software_update_settings: Specifies policies for operating system
      and Azure ML environment (example packages and SDK) updates.
     :type software_update_settings:
-     ~azure.mgmt.machinelearningservices.models.AmlInstancePropertiesSoftwareUpdateSettings
+     ~azure.mgmt.machinelearningservices.models.AmlInstanceSoftwareUpdateSettings
     :param ssh_settings: Specifies policy and settings for SSH access.
     :type ssh_settings:
-     ~azure.mgmt.machinelearningservices.models.AmlInstancePropertiesSshSettings
+     ~azure.mgmt.machinelearningservices.models.AmlInstanceSshSettings
     :ivar errors: Errors. Collection of errors encountered by various compute
      nodes during node setup.
     :vartype errors:
@@ -776,10 +874,10 @@ class AmlInstanceProperties(Model):
     _attribute_map = {
         'vm_size': {'key': 'vmSize', 'type': 'str'},
         'subnet': {'key': 'subnet', 'type': 'ResourceId'},
-        'data_stores_mount_settings': {'key': 'dataStoresMountSettings', 'type': 'AmlInstancePropertiesDataStoresMountSettings'},
-        'custom_script_settings': {'key': 'customScriptSettings', 'type': 'AmlInstancePropertiesCustomScriptSettings'},
-        'software_update_settings': {'key': 'softwareUpdateSettings', 'type': 'AmlInstancePropertiesSoftwareUpdateSettings'},
-        'ssh_settings': {'key': 'sshSettings', 'type': 'AmlInstancePropertiesSshSettings'},
+        'data_stores_mount_settings': {'key': 'dataStoresMountSettings', 'type': 'AmlInstanceDataStoresMountSettings'},
+        'custom_script_settings': {'key': 'customScriptSettings', 'type': 'AmlInstanceCustomScriptSettings'},
+        'software_update_settings': {'key': 'softwareUpdateSettings', 'type': 'AmlInstanceSoftwareUpdateSettings'},
+        'ssh_settings': {'key': 'sshSettings', 'type': 'AmlInstanceSshSettings'},
         'errors': {'key': 'errors', 'type': '[MachineLearningServiceError]'},
         'state': {'key': 'state', 'type': 'str'},
         'last_operation': {'key': 'lastOperation', 'type': 'str'},
@@ -800,130 +898,28 @@ class AmlInstanceProperties(Model):
         self.last_operation_status = last_operation_status
 
 
-class AmlInstancePropertiesCustomScriptSettings(Model):
-    """Specification for initialization scripts to customize this AmlInstance.
+class AmlInstanceSdkUpdate(Model):
+    """Describes a specific update for AmlInstance SDK.
 
-    :param startup_script: Specifies properties of initialization script to be
-     run during every start of this instance.
-    :type startup_script:
-     ~azure.mgmt.machinelearningservices.models.AmlInstancePropertiesCustomScriptSettingsStartupScript
+    :param update_name: Short name of the update.
+    :type update_name: str
+    :param update_description: Detailed description of the available SDK
+     update.
+    :type update_description: str
     """
 
     _attribute_map = {
-        'startup_script': {'key': 'startupScript', 'type': 'AmlInstancePropertiesCustomScriptSettingsStartupScript'},
+        'update_name': {'key': 'updateName', 'type': 'str'},
+        'update_description': {'key': 'updateDescription', 'type': 'str'},
     }
 
-    def __init__(self, *, startup_script=None, **kwargs) -> None:
-        super(AmlInstancePropertiesCustomScriptSettings, self).__init__(**kwargs)
-        self.startup_script = startup_script
+    def __init__(self, *, update_name: str=None, update_description: str=None, **kwargs) -> None:
+        super(AmlInstanceSdkUpdate, self).__init__(**kwargs)
+        self.update_name = update_name
+        self.update_description = update_description
 
 
-class AmlInstancePropertiesCustomScriptSettingsStartupScript(Model):
-    """Specifies properties of initialization script to be run during every start
-    of this instance.
-
-    :param script_location: The location of customization script. Could be a
-     URI or a relative file path in the default fileshare in the parent
-     workspace.
-    :type script_location: str
-    :param script_parameters: Parameters required for this script if any.
-    :type script_parameters: str
-    """
-
-    _attribute_map = {
-        'script_location': {'key': 'scriptLocation', 'type': 'str'},
-        'script_parameters': {'key': 'scriptParameters', 'type': 'str'},
-    }
-
-    def __init__(self, *, script_location: str=None, script_parameters: str=None, **kwargs) -> None:
-        super(AmlInstancePropertiesCustomScriptSettingsStartupScript, self).__init__(**kwargs)
-        self.script_location = script_location
-        self.script_parameters = script_parameters
-
-
-class AmlInstancePropertiesDataStoresMountSettings(Model):
-    """Describes what data stores will be mounted on this compute instance.
-
-    :param data_store_selection: Allows users to select between mounting All
-     vs Selected datastores from the parent workspace. The 'All' setting also
-     implies that any datastores that later become part of the workspace will
-     be automatically mounted to the compute instance on next start. Possible
-     values include: 'All', 'UserSpecified'. Default value: "All" .
-    :type data_store_selection: str or
-     ~azure.mgmt.machinelearningservices.models.DataStoreSelection
-    :param data_stores: Specifies the set of data stores that will be mounted
-     on this compute instance. This should only be specified if
-     dataStoreSelection is set to 'UserSpecified'.
-    :type data_stores:
-     list[~azure.mgmt.machinelearningservices.models.AmlInstanceDatastore]
-    """
-
-    _attribute_map = {
-        'data_store_selection': {'key': 'dataStoreSelection', 'type': 'str'},
-        'data_stores': {'key': 'dataStores', 'type': '[AmlInstanceDatastore]'},
-    }
-
-    def __init__(self, *, data_store_selection="All", data_stores=None, **kwargs) -> None:
-        super(AmlInstancePropertiesDataStoresMountSettings, self).__init__(**kwargs)
-        self.data_store_selection = data_store_selection
-        self.data_stores = data_stores
-
-
-class AmlInstancePropertiesSoftwareUpdateSettings(Model):
-    """Specifies policies for operating system and Azure ML environment (example
-    packages and SDK) updates.
-
-    :param os_update_settings: Specifies policy for installing operation
-     system updates.
-    :type os_update_settings:
-     ~azure.mgmt.machinelearningservices.models.AmlInstancePropertiesSoftwareUpdateSettingsOsUpdateSettings
-    :param sdk_update_settings: Specifies policy for installing Azure ML
-     environment (example packages and SDK) updates.
-    :type sdk_update_settings:
-     ~azure.mgmt.machinelearningservices.models.AmlInstancePropertiesSoftwareUpdateSettingsSdkUpdateSettings
-    """
-
-    _attribute_map = {
-        'os_update_settings': {'key': 'osUpdateSettings', 'type': 'AmlInstancePropertiesSoftwareUpdateSettingsOsUpdateSettings'},
-        'sdk_update_settings': {'key': 'sdkUpdateSettings', 'type': 'AmlInstancePropertiesSoftwareUpdateSettingsSdkUpdateSettings'},
-    }
-
-    def __init__(self, *, os_update_settings=None, sdk_update_settings=None, **kwargs) -> None:
-        super(AmlInstancePropertiesSoftwareUpdateSettings, self).__init__(**kwargs)
-        self.os_update_settings = os_update_settings
-        self.sdk_update_settings = sdk_update_settings
-
-
-class AmlInstancePropertiesSoftwareUpdateSettingsOsUpdateSettings(Model):
-    """Specifies policy for installing operation system updates.
-
-    :param os_update_type: Type of automatic operating system updates to
-     install. Possible values include: 'Critical', 'Recommended'. Default
-     value: "Recommended" .
-    :type os_update_type: str or
-     ~azure.mgmt.machinelearningservices.models.OsUpdateType
-    :param update_frequency_in_days: Frequency of update checks and
-     installation. Maximum allowable frequency is 30 days.
-    :type update_frequency_in_days: long
-    :param update_hour_in_utc: Hour of the day (0-23) in Universal Time at
-     which software updates can be installed, potentially requiring VM reboot.
-    :type update_hour_in_utc: long
-    """
-
-    _attribute_map = {
-        'os_update_type': {'key': 'osUpdateType', 'type': 'str'},
-        'update_frequency_in_days': {'key': 'updateFrequencyInDays', 'type': 'long'},
-        'update_hour_in_utc': {'key': 'updateHourInUtc', 'type': 'long'},
-    }
-
-    def __init__(self, *, os_update_type="Recommended", update_frequency_in_days: int=None, update_hour_in_utc: int=None, **kwargs) -> None:
-        super(AmlInstancePropertiesSoftwareUpdateSettingsOsUpdateSettings, self).__init__(**kwargs)
-        self.os_update_type = os_update_type
-        self.update_frequency_in_days = update_frequency_in_days
-        self.update_hour_in_utc = update_hour_in_utc
-
-
-class AmlInstancePropertiesSoftwareUpdateSettingsSdkUpdateSettings(Model):
+class AmlInstanceSdkUpdateSettings(Model):
     """Specifies policy for installing Azure ML environment (example packages and
     SDK) updates.
 
@@ -951,12 +947,37 @@ class AmlInstancePropertiesSoftwareUpdateSettingsSdkUpdateSettings(Model):
     }
 
     def __init__(self, *, update_on_next_start="Disabled", **kwargs) -> None:
-        super(AmlInstancePropertiesSoftwareUpdateSettingsSdkUpdateSettings, self).__init__(**kwargs)
+        super(AmlInstanceSdkUpdateSettings, self).__init__(**kwargs)
         self.update_on_next_start = update_on_next_start
         self.available_updates = None
 
 
-class AmlInstancePropertiesSshSettings(Model):
+class AmlInstanceSoftwareUpdateSettings(Model):
+    """Specifies policies for operating system and Azure ML environment (example
+    packages and SDK) updates.
+
+    :param os_update_settings: Specifies policy for installing operation
+     system updates.
+    :type os_update_settings:
+     ~azure.mgmt.machinelearningservices.models.AmlInstanceOSUpdateSettings
+    :param sdk_update_settings: Specifies policy for installing Azure ML
+     environment (example packages and SDK) updates.
+    :type sdk_update_settings:
+     ~azure.mgmt.machinelearningservices.models.AmlInstanceSdkUpdateSettings
+    """
+
+    _attribute_map = {
+        'os_update_settings': {'key': 'osUpdateSettings', 'type': 'AmlInstanceOSUpdateSettings'},
+        'sdk_update_settings': {'key': 'sdkUpdateSettings', 'type': 'AmlInstanceSdkUpdateSettings'},
+    }
+
+    def __init__(self, *, os_update_settings=None, sdk_update_settings=None, **kwargs) -> None:
+        super(AmlInstanceSoftwareUpdateSettings, self).__init__(**kwargs)
+        self.os_update_settings = os_update_settings
+        self.sdk_update_settings = sdk_update_settings
+
+
+class AmlInstanceSshSettings(Model):
     """Specifies policy and settings for SSH access.
 
     :param ssh_public_access: Access policy for SSH. State of the public SSH
@@ -978,30 +999,9 @@ class AmlInstancePropertiesSshSettings(Model):
     }
 
     def __init__(self, *, ssh_public_access="Disabled", admin_public_key: str=None, **kwargs) -> None:
-        super(AmlInstancePropertiesSshSettings, self).__init__(**kwargs)
+        super(AmlInstanceSshSettings, self).__init__(**kwargs)
         self.ssh_public_access = ssh_public_access
         self.admin_public_key = admin_public_key
-
-
-class AmlInstanceSdkUpdate(Model):
-    """Describes a specific update for AmlInstance SDK.
-
-    :param update_name: Short name of the update.
-    :type update_name: str
-    :param update_description: Detailed description of the available SDK
-     update.
-    :type update_description: str
-    """
-
-    _attribute_map = {
-        'update_name': {'key': 'updateName', 'type': 'str'},
-        'update_description': {'key': 'updateDescription', 'type': 'str'},
-    }
-
-    def __init__(self, *, update_name: str=None, update_description: str=None, **kwargs) -> None:
-        super(AmlInstanceSdkUpdate, self).__init__(**kwargs)
-        self.update_name = update_name
-        self.update_description = update_description
 
 
 class CloudError(Model):

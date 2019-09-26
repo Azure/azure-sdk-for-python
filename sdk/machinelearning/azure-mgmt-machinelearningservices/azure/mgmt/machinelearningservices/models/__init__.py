@@ -19,16 +19,16 @@ try:
     from ._models_py3 import AmlComputeNodesInformation
     from ._models_py3 import AmlComputeProperties
     from ._models_py3 import AmlInstance
+    from ._models_py3 import AmlInstanceCustomScriptSettings
+    from ._models_py3 import AmlInstanceCustomScriptSettingsStartupScript
     from ._models_py3 import AmlInstanceDatastore
+    from ._models_py3 import AmlInstanceDataStoresMountSettings
+    from ._models_py3 import AmlInstanceOSUpdateSettings
     from ._models_py3 import AmlInstanceProperties
-    from ._models_py3 import AmlInstancePropertiesCustomScriptSettings
-    from ._models_py3 import AmlInstancePropertiesCustomScriptSettingsStartupScript
-    from ._models_py3 import AmlInstancePropertiesDataStoresMountSettings
-    from ._models_py3 import AmlInstancePropertiesSoftwareUpdateSettings
-    from ._models_py3 import AmlInstancePropertiesSoftwareUpdateSettingsOsUpdateSettings
-    from ._models_py3 import AmlInstancePropertiesSoftwareUpdateSettingsSdkUpdateSettings
-    from ._models_py3 import AmlInstancePropertiesSshSettings
     from ._models_py3 import AmlInstanceSdkUpdate
+    from ._models_py3 import AmlInstanceSdkUpdateSettings
+    from ._models_py3 import AmlInstanceSoftwareUpdateSettings
+    from ._models_py3 import AmlInstanceSshSettings
     from ._models_py3 import ClusterUpdateParameters
     from ._models_py3 import Compute
     from ._models_py3 import ComputeNodesInformation
@@ -85,16 +85,16 @@ except (SyntaxError, ImportError):
     from ._models import AmlComputeNodesInformation
     from ._models import AmlComputeProperties
     from ._models import AmlInstance
+    from ._models import AmlInstanceCustomScriptSettings
+    from ._models import AmlInstanceCustomScriptSettingsStartupScript
     from ._models import AmlInstanceDatastore
+    from ._models import AmlInstanceDataStoresMountSettings
+    from ._models import AmlInstanceOSUpdateSettings
     from ._models import AmlInstanceProperties
-    from ._models import AmlInstancePropertiesCustomScriptSettings
-    from ._models import AmlInstancePropertiesCustomScriptSettingsStartupScript
-    from ._models import AmlInstancePropertiesDataStoresMountSettings
-    from ._models import AmlInstancePropertiesSoftwareUpdateSettings
-    from ._models import AmlInstancePropertiesSoftwareUpdateSettingsOsUpdateSettings
-    from ._models import AmlInstancePropertiesSoftwareUpdateSettingsSdkUpdateSettings
-    from ._models import AmlInstancePropertiesSshSettings
     from ._models import AmlInstanceSdkUpdate
+    from ._models import AmlInstanceSdkUpdateSettings
+    from ._models import AmlInstanceSoftwareUpdateSettings
+    from ._models import AmlInstanceSshSettings
     from ._models import ClusterUpdateParameters
     from ._models import Compute
     from ._models import ComputeNodesInformation
@@ -179,16 +179,16 @@ __all__ = [
     'AmlComputeNodesInformation',
     'AmlComputeProperties',
     'AmlInstance',
+    'AmlInstanceCustomScriptSettings',
+    'AmlInstanceCustomScriptSettingsStartupScript',
     'AmlInstanceDatastore',
+    'AmlInstanceDataStoresMountSettings',
+    'AmlInstanceOSUpdateSettings',
     'AmlInstanceProperties',
-    'AmlInstancePropertiesCustomScriptSettings',
-    'AmlInstancePropertiesCustomScriptSettingsStartupScript',
-    'AmlInstancePropertiesDataStoresMountSettings',
-    'AmlInstancePropertiesSoftwareUpdateSettings',
-    'AmlInstancePropertiesSoftwareUpdateSettingsOsUpdateSettings',
-    'AmlInstancePropertiesSoftwareUpdateSettingsSdkUpdateSettings',
-    'AmlInstancePropertiesSshSettings',
     'AmlInstanceSdkUpdate',
+    'AmlInstanceSdkUpdateSettings',
+    'AmlInstanceSoftwareUpdateSettings',
+    'AmlInstanceSshSettings',
     'ClusterUpdateParameters',
     'Compute',
     'ComputeNodesInformation',
