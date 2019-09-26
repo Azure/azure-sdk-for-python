@@ -19,6 +19,7 @@ from azure.core.pipeline.policies import (
     NetworkTraceLoggingPolicy,
     BearerTokenCredentialPolicy
 )
+from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import (
     HttpResponseError,
     ResourceNotFoundError,
@@ -71,9 +72,7 @@ class _AzureConfiguration(Configuration):
     def __init__(self, credential, **kwargs):  # pylint:disable=super-init-not-called
         self._set_universal(**kwargs)
         # sync-specific azure pipeline policies
-        scopes = []
-        if "scopes" in kwargs:
-            scopes = kwargs.pop("scopes")
+        scopes = kwargs.pop("scopes", [])
         self.authentication_policy = BearerTokenCredentialPolicy(credential, *scopes, **kwargs)
         self.retry_policy = kwargs.get("retry_policy", RetryPolicy(**kwargs))
         self.redirect_policy = kwargs.get("redirect_policy", RedirectPolicy(**kwargs))
@@ -88,7 +87,7 @@ class _AzureConfiguration(Configuration):
         self.headers_policy = kwargs.get("headers_policy", HeadersPolicy(**kwargs))
 
 
-class _InkRecognizerConfiguration():
+class _InkRecognizerConfiguration(object):
     def __init__(self, **kwargs):
         # Ink Recognizer request arguments
         self.application_kind = _get_and_validate_param(kwargs, "application_kind", valid_type=ApplicationKind)
@@ -110,7 +109,7 @@ class _InkRecognizerConfiguration():
         self.kwargs = kwargs
 
 
-class _InkRecognizerClientBase:
+class _InkRecognizerClientBase(object):
     def __init__(self, url, credential, **kwargs):
         # type: (str, TokenCredential, Any) -> None
 
@@ -175,7 +174,7 @@ class _InkRecognizerClientBase:
             if config.response_hook:
                 config.response_hook(headers, content_json)
             try:
-                return _parse_recognition_units(content_json, status_code)
+                return _parse_recognition_units(content_json)
             except Exception as err:  # pylint:disable=broad-except
                 msg = "Cannot parse response from server."
                 raise_with_traceback(ServiceResponseError, msg, err)
@@ -257,19 +256,20 @@ class InkRecognizerClient(_InkRecognizerClientBase):
             request, headers=config.headers, **config.kwargs)
         return response.http_response
 
+    @distributed_trace
     def recognize_ink(self, ink_stroke_list, **kwargs):
-        # type: (List[IInkStroke], Any) -> InkRecognitionRoot
+        # type: (Iterable[IInkStroke], Any) -> InkRecognitionRoot
         """
         Synchronously sends data to the service and returns a tree structure
         containing all the recognition units from Ink Recognizer Service.
 
-        :param List[IInkStroke] ink_stroke_list: a iterable that contanins
+        :param Iterable[IInkStroke] ink_stroke_list: an iterable that contanins
         stroke instances.
 
         Key word arguments include Ink Recognizer specific arguments, azure
         service common arguments and azure pipline policies.
 
-        Ink Recognizer spicific arguments:
+        Ink Recognizer specific arguments:
 
         :param ServiceVersion service_version: Version of Ink Recognizer Service.
         Default is ServiceVersion.Preview.

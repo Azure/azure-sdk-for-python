@@ -17,7 +17,7 @@ def _truncate(string):
     return string
 
 
-class Point:
+class Point(object):
     """
     The Point class, unlike the IInkPoint interface, represents a single
     geometric position on a plane. The point is used to specify the center
@@ -41,7 +41,7 @@ class Point:
         return self._y
 
 
-class Rectangle:
+class Rectangle(object):
     """
     The class represents a rectangle used to identify the boundary of the
     strokes in a recognition unit.
@@ -74,7 +74,7 @@ class Rectangle:
         return self._height
 
 
-class InkRecognitionUnit:
+class InkRecognitionUnit(object):
     """
     An InkRecognitionUnit instance represents a single entity recognized by
     the Ink Recognizer Service.
@@ -550,7 +550,7 @@ class ListItem(InkRecognitionUnit):
         return self.children
 
 
-class InkRecognitionRoot():
+class InkRecognitionRoot(object):
     """
     An InkRecognitionRoot instance is the return type from the recognize_ink method in
     InkRecognizerClient. It is the root of the of recognition unit tree.
@@ -558,9 +558,8 @@ class InkRecognitionRoot():
     WritingRegions and Shapes are the only top-level objects under an InkRecognitionRoot.
     """
 
-    def __init__(self, units, status_code):
+    def __init__(self, units):
         self._units = units
-        self._status_code = status_code
         self._unit_kind_map = {}
         for unit in units:
             if unit.kind in [InkRecognitionUnitKind.INK_DRAWING,
@@ -575,15 +574,6 @@ class InkRecognitionRoot():
 
         self._unit_kind_map[unit_kind] = [unit for unit in self._units if unit.kind == unit_kind]
         return self._unit_kind_map[unit_kind]
-
-    @property
-    def status_code(self):
-        """
-        HTTP status code returned by the service.
-
-        :rtype: int
-        """
-        return self._status_code
 
     @property
     def ink_words(self):
@@ -704,7 +694,7 @@ def _parse_one_recognition_unit(json_object):
     return InkRecognitionUnit(json_object)
 
 
-def _parse_recognition_units(content_json, status_code):
+def _parse_recognition_units(content_json):
     # parse raw result into InkRecognitionUnit tree
     units = OrderedDict()
     recognition_unit_list = content_json.get("recognitionUnits", [])
@@ -718,5 +708,5 @@ def _parse_recognition_units(content_json, status_code):
         unit._children = [units[child_id] for child_id in unit._child_ids]  # pylint:disable=protected-access
         unit._parent = units.get(unit._parent_id, None)  # pylint:disable=protected-access
 
-    root = InkRecognitionRoot(units.values(), status_code)
+    root = InkRecognitionRoot(units.values())
     return root

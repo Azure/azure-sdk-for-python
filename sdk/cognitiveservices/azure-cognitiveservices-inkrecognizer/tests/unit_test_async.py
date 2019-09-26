@@ -4,10 +4,6 @@
 # license information.
 #--------------------------------------------------------------------------
 
-import platform
-if platform.python_version() < "3.5.3":
-    raise ImportError("Asynchronous client supports Python 3.5.3+ only.")
-
 import time
 import asyncio
 from unittest.mock import Mock

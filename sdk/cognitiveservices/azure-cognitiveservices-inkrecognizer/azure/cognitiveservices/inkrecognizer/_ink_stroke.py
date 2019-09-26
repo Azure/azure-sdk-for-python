@@ -8,7 +8,7 @@ import abc
 import six
 if six.PY2:
     from abc import ABCMeta
-    class ABC:
+    class ABC(object):
         __metaclass__ = ABCMeta
 else:
     from abc import ABC

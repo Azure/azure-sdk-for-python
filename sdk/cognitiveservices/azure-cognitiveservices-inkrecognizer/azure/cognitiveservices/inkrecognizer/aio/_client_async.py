@@ -12,7 +12,7 @@ from azure.core.pipeline.policies import (
     AsyncRetryPolicy,
     AsyncBearerTokenCredentialPolicy
 )
-
+from azure.core.tracing.decorator_async import distributed_trace_async
 from .._client import _InkRecognizerClientBase, _AzureConfiguration
 
 
@@ -106,20 +106,21 @@ class InkRecognizerClient(_InkRecognizerClientBase):
             request, headers=config.headers, **config.kwargs)
         return response.http_response
 
+    @distributed_trace_async
     async def recognize_ink(self, ink_stroke_list, **kwargs):
-        # type: (List[IInkStroke], Any) -> InkRecognitionRoot
+        # type: (Iterable[IInkStroke], Any) -> InkRecognitionRoot
         """
         Asynchronously sends data to the service and returns a tree structure
         containing all the recognition units from Ink Recognizer Service. This
         method is thread-safe.
 
-        :param List[IInkStroke] ink_stroke_list: a iterable that contanins
+        :param Iterable[IInkStroke] ink_stroke_list: an iterable that contanins
         stroke instances.
 
         Key word arguments include Ink Recognizer specific arguments, azure
         service common arguments and azure pipline policies.
 
-        Ink Recognizer spicific arguments:
+        Ink Recognizer specific arguments:
 
         :param ServiceVersion service_version: Version of Ink Recognizer Service.
         Default is ServiceVersion.Preview.
