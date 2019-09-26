@@ -24,7 +24,6 @@ from .operations.bookmarks_operations import BookmarksOperations
 from .operations.case_relations_operations import CaseRelationsOperations
 from .operations.bookmark_relations_operations import BookmarkRelationsOperations
 from .operations.data_connectors_operations import DataConnectorsOperations
-from .operations.data_connector_requirements_operations import DataConnectorRequirementsOperations
 from .operations.entities_operations import EntitiesOperations
 from .operations.office_consents_operations import OfficeConsentsOperations
 from .operations.product_settings_operations import ProductSettingsOperations
@@ -93,8 +92,6 @@ class SecurityInsights(SDKClient):
     :vartype bookmark_relations: azure.mgmt.securityinsight.operations.BookmarkRelationsOperations
     :ivar data_connectors: DataConnectors operations
     :vartype data_connectors: azure.mgmt.securityinsight.operations.DataConnectorsOperations
-    :ivar data_connector_requirements: DataConnectorRequirements operations
-    :vartype data_connector_requirements: azure.mgmt.securityinsight.operations.DataConnectorRequirementsOperations
     :ivar entities: Entities operations
     :vartype entities: azure.mgmt.securityinsight.operations.EntitiesOperations
     :ivar office_consents: OfficeConsents operations
@@ -146,8 +143,6 @@ class SecurityInsights(SDKClient):
         self.bookmark_relations = BookmarkRelationsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.data_connectors = DataConnectorsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
-        self.data_connector_requirements = DataConnectorRequirementsOperations(
             self._client, self.config, self._serialize, self._deserialize)
         self.entities = EntitiesOperations(
             self._client, self.config, self._serialize, self._deserialize)

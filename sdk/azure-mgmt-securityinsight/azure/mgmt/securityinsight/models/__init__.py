@@ -13,11 +13,8 @@ try:
     from .alerts_data_type_of_data_connector_alerts_py3 import AlertsDataTypeOfDataConnectorAlerts
     from .alerts_data_type_of_data_connector_py3 import AlertsDataTypeOfDataConnector
     from .aad_data_connector_py3 import AADDataConnector
-    from .aad_check_requirements_py3 import AADCheckRequirements
     from .aatp_data_connector_py3 import AATPDataConnector
-    from .aatp_check_requirements_py3 import AATPCheckRequirements
     from .asc_data_connector_py3 import ASCDataConnector
-    from .asc_check_requirements_py3 import ASCCheckRequirements
     from .account_entity_py3 import AccountEntity
     from .action_request_py3 import ActionRequest
     from .action_response_py3 import ActionResponse
@@ -31,7 +28,6 @@ try:
     from .aws_cloud_trail_data_connector_data_types_logs_py3 import AwsCloudTrailDataConnectorDataTypesLogs
     from .aws_cloud_trail_data_connector_data_types_py3 import AwsCloudTrailDataConnectorDataTypes
     from .aws_cloud_trail_data_connector_py3 import AwsCloudTrailDataConnector
-    from .aws_cloud_trail_check_requirements_py3 import AwsCloudTrailCheckRequirements
     from .azure_resource_entity_py3 import AzureResourceEntity
     from .relation_base_py3 import RelationBase
     from .case_relation_py3 import CaseRelation
@@ -47,10 +43,8 @@ try:
     from .cases_aggregation_py3 import CasesAggregation
     from .cloud_application_entity_py3 import CloudApplicationEntity
     from .data_connector_py3 import DataConnector
-    from .data_connectors_check_requirements_py3 import DataConnectorsCheckRequirements
     from .data_connector_data_type_common_py3 import DataConnectorDataTypeCommon
     from .data_connector_kind1_py3 import DataConnectorKind1
-    from .data_connector_requirements_state_py3 import DataConnectorRequirementsState
     from .data_connector_tenant_id_py3 import DataConnectorTenantId
     from .data_connector_with_alerts_properties_py3 import DataConnectorWithAlertsProperties
     from .dns_entity_py3 import DnsEntity
@@ -74,9 +68,7 @@ try:
     from .mcas_data_connector_data_types_discovery_logs_py3 import MCASDataConnectorDataTypesDiscoveryLogs
     from .mcas_data_connector_data_types_py3 import MCASDataConnectorDataTypes
     from .mcas_data_connector_py3 import MCASDataConnector
-    from .mcas_check_requirements_py3 import MCASCheckRequirements
     from .mdatp_data_connector_py3 import MDATPDataConnector
-    from .mdatp_check_requirements_py3 import MDATPCheckRequirements
     from .malware_entity_py3 import MalwareEntity
     from .microsoft_security_incident_creation_alert_rule_py3 import MicrosoftSecurityIncidentCreationAlertRule
     from .microsoft_security_incident_creation_alert_rule_common_properties_py3 import MicrosoftSecurityIncidentCreationAlertRuleCommonProperties
@@ -86,7 +78,6 @@ try:
     from .office_data_connector_data_types_share_point_py3 import OfficeDataConnectorDataTypesSharePoint
     from .office_data_connector_data_types_py3 import OfficeDataConnectorDataTypes
     from .office_data_connector_py3 import OfficeDataConnector
-    from .office_data_connector_requirements_check_py3 import OfficeDataConnectorRequirementsCheck
     from .operation_display_py3 import OperationDisplay
     from .operation_py3 import Operation
     from .process_entity_py3 import ProcessEntity
@@ -105,7 +96,6 @@ try:
     from .ti_data_connector_data_types_indicators_py3 import TIDataConnectorDataTypesIndicators
     from .ti_data_connector_data_types_py3 import TIDataConnectorDataTypes
     from .ti_data_connector_py3 import TIDataConnector
-    from .ti_check_requirements_py3 import TICheckRequirements
     from .toggle_settings_py3 import ToggleSettings
     from .ueba_settings_py3 import UebaSettings
     from .url_entity_py3 import UrlEntity
@@ -113,11 +103,8 @@ except (SyntaxError, ImportError):
     from .alerts_data_type_of_data_connector_alerts import AlertsDataTypeOfDataConnectorAlerts
     from .alerts_data_type_of_data_connector import AlertsDataTypeOfDataConnector
     from .aad_data_connector import AADDataConnector
-    from .aad_check_requirements import AADCheckRequirements
     from .aatp_data_connector import AATPDataConnector
-    from .aatp_check_requirements import AATPCheckRequirements
     from .asc_data_connector import ASCDataConnector
-    from .asc_check_requirements import ASCCheckRequirements
     from .account_entity import AccountEntity
     from .action_request import ActionRequest
     from .action_response import ActionResponse
@@ -131,7 +118,6 @@ except (SyntaxError, ImportError):
     from .aws_cloud_trail_data_connector_data_types_logs import AwsCloudTrailDataConnectorDataTypesLogs
     from .aws_cloud_trail_data_connector_data_types import AwsCloudTrailDataConnectorDataTypes
     from .aws_cloud_trail_data_connector import AwsCloudTrailDataConnector
-    from .aws_cloud_trail_check_requirements import AwsCloudTrailCheckRequirements
     from .azure_resource_entity import AzureResourceEntity
     from .relation_base import RelationBase
     from .case_relation import CaseRelation
@@ -147,10 +133,8 @@ except (SyntaxError, ImportError):
     from .cases_aggregation import CasesAggregation
     from .cloud_application_entity import CloudApplicationEntity
     from .data_connector import DataConnector
-    from .data_connectors_check_requirements import DataConnectorsCheckRequirements
     from .data_connector_data_type_common import DataConnectorDataTypeCommon
     from .data_connector_kind1 import DataConnectorKind1
-    from .data_connector_requirements_state import DataConnectorRequirementsState
     from .data_connector_tenant_id import DataConnectorTenantId
     from .data_connector_with_alerts_properties import DataConnectorWithAlertsProperties
     from .dns_entity import DnsEntity
@@ -174,9 +158,7 @@ except (SyntaxError, ImportError):
     from .mcas_data_connector_data_types_discovery_logs import MCASDataConnectorDataTypesDiscoveryLogs
     from .mcas_data_connector_data_types import MCASDataConnectorDataTypes
     from .mcas_data_connector import MCASDataConnector
-    from .mcas_check_requirements import MCASCheckRequirements
     from .mdatp_data_connector import MDATPDataConnector
-    from .mdatp_check_requirements import MDATPCheckRequirements
     from .malware_entity import MalwareEntity
     from .microsoft_security_incident_creation_alert_rule import MicrosoftSecurityIncidentCreationAlertRule
     from .microsoft_security_incident_creation_alert_rule_common_properties import MicrosoftSecurityIncidentCreationAlertRuleCommonProperties
@@ -186,7 +168,6 @@ except (SyntaxError, ImportError):
     from .office_data_connector_data_types_share_point import OfficeDataConnectorDataTypesSharePoint
     from .office_data_connector_data_types import OfficeDataConnectorDataTypes
     from .office_data_connector import OfficeDataConnector
-    from .office_data_connector_requirements_check import OfficeDataConnectorRequirementsCheck
     from .operation_display import OperationDisplay
     from .operation import Operation
     from .process_entity import ProcessEntity
@@ -205,7 +186,6 @@ except (SyntaxError, ImportError):
     from .ti_data_connector_data_types_indicators import TIDataConnectorDataTypesIndicators
     from .ti_data_connector_data_types import TIDataConnectorDataTypes
     from .ti_data_connector import TIDataConnector
-    from .ti_check_requirements import TICheckRequirements
     from .toggle_settings import ToggleSettings
     from .ueba_settings import UebaSettings
     from .url_entity import UrlEntity
@@ -235,8 +215,6 @@ from .security_insights_enums import (
     CloseReason,
     CaseSeverity,
     CaseStatus,
-    DataConnectorAuthorizationState,
-    DataConnectorLicenseState,
     DataTypeState,
     DataConnectorKind,
     EntityKind,
@@ -260,11 +238,8 @@ __all__ = [
     'AlertsDataTypeOfDataConnectorAlerts',
     'AlertsDataTypeOfDataConnector',
     'AADDataConnector',
-    'AADCheckRequirements',
     'AATPDataConnector',
-    'AATPCheckRequirements',
     'ASCDataConnector',
-    'ASCCheckRequirements',
     'AccountEntity',
     'ActionRequest',
     'ActionResponse',
@@ -278,7 +253,6 @@ __all__ = [
     'AwsCloudTrailDataConnectorDataTypesLogs',
     'AwsCloudTrailDataConnectorDataTypes',
     'AwsCloudTrailDataConnector',
-    'AwsCloudTrailCheckRequirements',
     'AzureResourceEntity',
     'RelationBase',
     'CaseRelation',
@@ -294,10 +268,8 @@ __all__ = [
     'CasesAggregation',
     'CloudApplicationEntity',
     'DataConnector',
-    'DataConnectorsCheckRequirements',
     'DataConnectorDataTypeCommon',
     'DataConnectorKind1',
-    'DataConnectorRequirementsState',
     'DataConnectorTenantId',
     'DataConnectorWithAlertsProperties',
     'DnsEntity',
@@ -321,9 +293,7 @@ __all__ = [
     'MCASDataConnectorDataTypesDiscoveryLogs',
     'MCASDataConnectorDataTypes',
     'MCASDataConnector',
-    'MCASCheckRequirements',
     'MDATPDataConnector',
-    'MDATPCheckRequirements',
     'MalwareEntity',
     'MicrosoftSecurityIncidentCreationAlertRule',
     'MicrosoftSecurityIncidentCreationAlertRuleCommonProperties',
@@ -333,7 +303,6 @@ __all__ = [
     'OfficeDataConnectorDataTypesSharePoint',
     'OfficeDataConnectorDataTypes',
     'OfficeDataConnector',
-    'OfficeDataConnectorRequirementsCheck',
     'OperationDisplay',
     'Operation',
     'ProcessEntity',
@@ -352,7 +321,6 @@ __all__ = [
     'TIDataConnectorDataTypesIndicators',
     'TIDataConnectorDataTypes',
     'TIDataConnector',
-    'TICheckRequirements',
     'ToggleSettings',
     'UebaSettings',
     'UrlEntity',
@@ -381,8 +349,6 @@ __all__ = [
     'CloseReason',
     'CaseSeverity',
     'CaseStatus',
-    'DataConnectorAuthorizationState',
-    'DataConnectorLicenseState',
     'DataTypeState',
     'DataConnectorKind',
     'EntityKind',

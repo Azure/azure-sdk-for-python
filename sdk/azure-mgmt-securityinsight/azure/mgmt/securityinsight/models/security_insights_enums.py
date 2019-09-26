@@ -106,24 +106,6 @@ class CaseStatus(str, Enum):
     closed = "Closed"  #: A non active case
 
 
-class DataConnectorAuthorizationState(str, Enum):
-
-    valid = "Valid"
-    invalid = "Invalid"
-
-
-class DataConnectorLicenseState(str, Enum):
-
-    valid = "Valid"
-    unknown = "Unknown"
-    subscription_standard_tier_license_required = "SubscriptionStandardTierLicenseRequired"
-    aadp1_or_p2_license_required = "AADP1OrP2LicenseRequired"
-    microsoft_cloud_app_security_license_required = "MicrosoftCloudAppSecurityLicenseRequired"
-    azure_advanced_threat_protection_license_required = "AzureAdvancedThreatProtectionLicenseRequired"
-    azure_information_protection_license_required = "AzureInformationProtectionLicenseRequired"
-    microsoft_defender_advanced_threat_protection_enable_required = "MicrosoftDefenderAdvancedThreatProtectionEnableRequired"
-
-
 class DataTypeState(str, Enum):
 
     enabled = "Enabled"
