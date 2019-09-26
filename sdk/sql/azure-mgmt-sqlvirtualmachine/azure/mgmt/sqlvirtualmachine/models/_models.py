@@ -861,13 +861,13 @@ class SqlWorkloadTypeUpdateSettings(Model):
 class StorageConfigurationSettings(Model):
     """Storage Configurations for SQL Data, Log and TempDb.
 
-    :param sql_data_settings: SQL Server Data Stroage Settings.
+    :param sql_data_settings: SQL Server Data Storage Settings.
     :type sql_data_settings:
      ~azure.mgmt.sqlvirtualmachine.models.SQLStorageSettings
-    :param sql_log_settings: SQL Server Log Stroage Settings.
+    :param sql_log_settings: SQL Server Log Storage Settings.
     :type sql_log_settings:
      ~azure.mgmt.sqlvirtualmachine.models.SQLStorageSettings
-    :param sql_temp_db_settings: SQL Server TempDb Stroage Settings.
+    :param sql_temp_db_settings: SQL Server TempDb Storage Settings.
     :type sql_temp_db_settings:
      ~azure.mgmt.sqlvirtualmachine.models.SQLStorageSettings
     :param disk_configuration_type: Disk configuration to apply to SQL Server.
