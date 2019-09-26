@@ -10,58 +10,62 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .private_ip_address_py3 import PrivateIPAddress
-    from .load_balancer_configuration_py3 import LoadBalancerConfiguration
-    from .resource_py3 import Resource
-    from .proxy_resource_py3 import ProxyResource
-    from .availability_group_listener_py3 import AvailabilityGroupListener
-    from .operation_display_py3 import OperationDisplay
-    from .operation_py3 import Operation
-    from .wsfc_domain_profile_py3 import WsfcDomainProfile
-    from .tracked_resource_py3 import TrackedResource
-    from .sql_virtual_machine_group_py3 import SqlVirtualMachineGroup
-    from .sql_virtual_machine_group_update_py3 import SqlVirtualMachineGroupUpdate
-    from .resource_identity_py3 import ResourceIdentity
-    from .wsfc_domain_credentials_py3 import WsfcDomainCredentials
-    from .auto_patching_settings_py3 import AutoPatchingSettings
-    from .auto_backup_settings_py3 import AutoBackupSettings
-    from .key_vault_credential_settings_py3 import KeyVaultCredentialSettings
-    from .sql_connectivity_update_settings_py3 import SqlConnectivityUpdateSettings
-    from .sql_workload_type_update_settings_py3 import SqlWorkloadTypeUpdateSettings
-    from .sql_storage_update_settings_py3 import SqlStorageUpdateSettings
-    from .additional_features_server_configurations_py3 import AdditionalFeaturesServerConfigurations
-    from .server_configurations_management_settings_py3 import ServerConfigurationsManagementSettings
-    from .sql_virtual_machine_py3 import SqlVirtualMachine
-    from .sql_virtual_machine_update_py3 import SqlVirtualMachineUpdate
+    from ._models_py3 import AdditionalFeaturesServerConfigurations
+    from ._models_py3 import AutoBackupSettings
+    from ._models_py3 import AutoPatchingSettings
+    from ._models_py3 import AvailabilityGroupListener
+    from ._models_py3 import KeyVaultCredentialSettings
+    from ._models_py3 import LoadBalancerConfiguration
+    from ._models_py3 import Operation
+    from ._models_py3 import OperationDisplay
+    from ._models_py3 import PrivateIPAddress
+    from ._models_py3 import ProxyResource
+    from ._models_py3 import Resource
+    from ._models_py3 import ResourceIdentity
+    from ._models_py3 import ServerConfigurationsManagementSettings
+    from ._models_py3 import SqlConnectivityUpdateSettings
+    from ._models_py3 import SQLStorageSettings
+    from ._models_py3 import SqlStorageUpdateSettings
+    from ._models_py3 import SqlVirtualMachine
+    from ._models_py3 import SqlVirtualMachineGroup
+    from ._models_py3 import SqlVirtualMachineGroupUpdate
+    from ._models_py3 import SqlVirtualMachineUpdate
+    from ._models_py3 import SqlWorkloadTypeUpdateSettings
+    from ._models_py3 import StorageConfigurationSettings
+    from ._models_py3 import TrackedResource
+    from ._models_py3 import WsfcDomainCredentials
+    from ._models_py3 import WsfcDomainProfile
 except (SyntaxError, ImportError):
-    from .private_ip_address import PrivateIPAddress
-    from .load_balancer_configuration import LoadBalancerConfiguration
-    from .resource import Resource
-    from .proxy_resource import ProxyResource
-    from .availability_group_listener import AvailabilityGroupListener
-    from .operation_display import OperationDisplay
-    from .operation import Operation
-    from .wsfc_domain_profile import WsfcDomainProfile
-    from .tracked_resource import TrackedResource
-    from .sql_virtual_machine_group import SqlVirtualMachineGroup
-    from .sql_virtual_machine_group_update import SqlVirtualMachineGroupUpdate
-    from .resource_identity import ResourceIdentity
-    from .wsfc_domain_credentials import WsfcDomainCredentials
-    from .auto_patching_settings import AutoPatchingSettings
-    from .auto_backup_settings import AutoBackupSettings
-    from .key_vault_credential_settings import KeyVaultCredentialSettings
-    from .sql_connectivity_update_settings import SqlConnectivityUpdateSettings
-    from .sql_workload_type_update_settings import SqlWorkloadTypeUpdateSettings
-    from .sql_storage_update_settings import SqlStorageUpdateSettings
-    from .additional_features_server_configurations import AdditionalFeaturesServerConfigurations
-    from .server_configurations_management_settings import ServerConfigurationsManagementSettings
-    from .sql_virtual_machine import SqlVirtualMachine
-    from .sql_virtual_machine_update import SqlVirtualMachineUpdate
-from .availability_group_listener_paged import AvailabilityGroupListenerPaged
-from .operation_paged import OperationPaged
-from .sql_virtual_machine_group_paged import SqlVirtualMachineGroupPaged
-from .sql_virtual_machine_paged import SqlVirtualMachinePaged
-from .sql_virtual_machine_management_client_enums import (
+    from ._models import AdditionalFeaturesServerConfigurations
+    from ._models import AutoBackupSettings
+    from ._models import AutoPatchingSettings
+    from ._models import AvailabilityGroupListener
+    from ._models import KeyVaultCredentialSettings
+    from ._models import LoadBalancerConfiguration
+    from ._models import Operation
+    from ._models import OperationDisplay
+    from ._models import PrivateIPAddress
+    from ._models import ProxyResource
+    from ._models import Resource
+    from ._models import ResourceIdentity
+    from ._models import ServerConfigurationsManagementSettings
+    from ._models import SqlConnectivityUpdateSettings
+    from ._models import SQLStorageSettings
+    from ._models import SqlStorageUpdateSettings
+    from ._models import SqlVirtualMachine
+    from ._models import SqlVirtualMachineGroup
+    from ._models import SqlVirtualMachineGroupUpdate
+    from ._models import SqlVirtualMachineUpdate
+    from ._models import SqlWorkloadTypeUpdateSettings
+    from ._models import StorageConfigurationSettings
+    from ._models import TrackedResource
+    from ._models import WsfcDomainCredentials
+    from ._models import WsfcDomainProfile
+from ._paged_models import AvailabilityGroupListenerPaged
+from ._paged_models import OperationPaged
+from ._paged_models import SqlVirtualMachineGroupPaged
+from ._paged_models import SqlVirtualMachinePaged
+from ._sql_virtual_machine_management_client_enums import (
     OperationOrigin,
     SqlVmGroupImageSku,
     ScaleType,
@@ -77,32 +81,35 @@ from .sql_virtual_machine_management_client_enums import (
     ConnectivityType,
     SqlWorkloadType,
     DiskConfigurationType,
+    StorageWorkloadType,
 )
 
 __all__ = [
-    'PrivateIPAddress',
-    'LoadBalancerConfiguration',
-    'Resource',
-    'ProxyResource',
+    'AdditionalFeaturesServerConfigurations',
+    'AutoBackupSettings',
+    'AutoPatchingSettings',
     'AvailabilityGroupListener',
-    'OperationDisplay',
+    'KeyVaultCredentialSettings',
+    'LoadBalancerConfiguration',
     'Operation',
-    'WsfcDomainProfile',
-    'TrackedResource',
+    'OperationDisplay',
+    'PrivateIPAddress',
+    'ProxyResource',
+    'Resource',
+    'ResourceIdentity',
+    'ServerConfigurationsManagementSettings',
+    'SqlConnectivityUpdateSettings',
+    'SQLStorageSettings',
+    'SqlStorageUpdateSettings',
+    'SqlVirtualMachine',
     'SqlVirtualMachineGroup',
     'SqlVirtualMachineGroupUpdate',
-    'ResourceIdentity',
-    'WsfcDomainCredentials',
-    'AutoPatchingSettings',
-    'AutoBackupSettings',
-    'KeyVaultCredentialSettings',
-    'SqlConnectivityUpdateSettings',
-    'SqlWorkloadTypeUpdateSettings',
-    'SqlStorageUpdateSettings',
-    'AdditionalFeaturesServerConfigurations',
-    'ServerConfigurationsManagementSettings',
-    'SqlVirtualMachine',
     'SqlVirtualMachineUpdate',
+    'SqlWorkloadTypeUpdateSettings',
+    'StorageConfigurationSettings',
+    'TrackedResource',
+    'WsfcDomainCredentials',
+    'WsfcDomainProfile',
     'AvailabilityGroupListenerPaged',
     'OperationPaged',
     'SqlVirtualMachineGroupPaged',
@@ -122,4 +129,5 @@ __all__ = [
     'ConnectivityType',
     'SqlWorkloadType',
     'DiskConfigurationType',
+    'StorageWorkloadType',
 ]

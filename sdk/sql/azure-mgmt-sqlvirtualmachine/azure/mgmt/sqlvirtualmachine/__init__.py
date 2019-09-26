@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .sql_virtual_machine_management_client import SqlVirtualMachineManagementClient
-from .version import VERSION
+from ._configuration import SqlVirtualMachineManagementClientConfiguration
+from ._sql_virtual_machine_management_client import SqlVirtualMachineManagementClient
+__all__ = ['SqlVirtualMachineManagementClient', 'SqlVirtualMachineManagementClientConfiguration']
 
-__all__ = ['SqlVirtualMachineManagementClient']
+from .version import VERSION
 
 __version__ = VERSION
 
