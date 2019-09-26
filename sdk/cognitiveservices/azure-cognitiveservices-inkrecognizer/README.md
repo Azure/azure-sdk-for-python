@@ -17,7 +17,7 @@ Features:
 Install the Azure Cosmos DB client library for Python with [pip][pip]:
 
 ```Bash
-pip install azure-ai-inkrecognizer
+pip install azure-cognitiveservices-inkrecognizer
 ```
 
 **Prerequisites**: You must have an [Azure subscription][azure_sub]. You must have [Python 2.7][python] or [Python 3.5.3+][python] to use this package. Asynchronous features supports Python 3.5.3+ only.
@@ -49,7 +49,7 @@ The [Samples][samples] provide several code snippets covering some of the most c
 If you don't have any pre-defined ink point or ink stroke classes, you can either follow the [Ink Stroke Interfaces][ink_stroke_file] to build your stroke, or build your own class that has all required fields. If you already defined ink strokes yourself, you should feed attributes in your class according to the interfaces.
 
 ```Python
-from azure.ai.inkrecognizer import InkStrokeKind
+from azure.cognitiveservices.inkrecognizer import InkStrokeKind
 
 InkPoint = namedtuple("InkPoint", "x y")
 
@@ -72,14 +72,14 @@ You can then create a list (or any iterable object) of ink strokes for recogniti
 Once you got the url for ink recognizer service and an Azure credential instance, you can create an InkRecognizerClient
 
 ```Python
-from azure.ai.inkrecognizer import InkRecognizerClient
+from azure.cognitiveservices.inkrecognizer import InkRecognizerClient
 client = InkRecognizerClient(url, credential)
 ```
 
 Or use Async version (Python 3.5.3+ only)
 
 ```Python
-from azure.ai.inkrecognizer.aio import InkRecognizerClient
+from azure.cognitiveservices.inkrecognizer.aio import InkRecognizerClient
 client = InkRecognizerClient(url, credential)
 ```
 
@@ -139,7 +139,7 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 [pypi]: https://pypi.org/project/azure-cosmos/
 [python]: https://www.python.org/downloads/
 [ref_inkrecognizer_sdk]: https://
-[ref_ink_stroke_file]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cognitiveservices/azure-ai-inkrecognizer/azure/ai/inkrecognizer/_ink_stroke.py
-[ref_inkrecognizer_client]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cognitiveservices/azure-ai-inkrecognizer/azure/ai/inkrecognizer/_client.py
+[ref_ink_stroke_file]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cognitiveservices/azure-cognitiveservices-inkrecognizer/azure/cognitiveservices/inkrecognizer/_ink_stroke.py
+[ref_inkrecognizer_client]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cognitiveservices/azure-cognitiveservices-inkrecognizer/azure/cognitiveservices/inkrecognizer/_client.py
 [samples]: https://github.com/Azure-Samples/cognitive-services-python-sdk-samples/tree/master/samples/vision
-[source_code]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cognitiveservices/azure-ai-inkrecognizer
+[source_code]: https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cognitiveservices/azure-cognitiveservices-inkrecognizer

@@ -27,7 +27,7 @@ from azure.core.exceptions import (
     ClientAuthenticationError,
     ServiceResponseError
 )
-from azure.ai.inkrecognizer import (
+from azure.cognitiveservices.inkrecognizer import (
     InkStrokeKind,
     InkRecognitionUnitKind,
     ShapeKind,
@@ -35,8 +35,8 @@ from azure.ai.inkrecognizer import (
     ApplicationKind,
     ServiceVersion
 )
-from azure.ai.inkrecognizer import InkRecognizerClient
-from azure.ai.inkrecognizer import (
+from azure.cognitiveservices.inkrecognizer import InkRecognizerClient
+from azure.cognitiveservices.inkrecognizer import (
     Point,
     Rectangle,
     InkRecognitionUnit,

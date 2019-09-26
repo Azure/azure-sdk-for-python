@@ -12,7 +12,7 @@ from io import open
 from setuptools import find_packages, setup  # type: ignore
 
 # Change the PACKAGE_NAME only to change folder and different name
-PACKAGE_NAME = "azure-ai-inkrecognizer"
+PACKAGE_NAME = "azure-cognitiveservices-inkrecognizer"
 PACKAGE_PPRINT_NAME = "Ink Recognizer"
 
 # a-b-c => a/b/c
@@ -42,7 +42,7 @@ setup(
     license='MIT License',
     author='Microsoft Corporation',
     author_email='azpysdkhelp@microsoft.com',
-    url='https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cognitiveservices/azure-ai-inkrecognizer',
+    url='https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/cognitiveservices/azure-cognitiveservices-inkrecognizer',
     classifiers=[
         'Development Status :: 4 - Beta',
         'Programming Language :: Python',
@@ -66,6 +66,6 @@ setup(
         'azure-core<2.0.0,>=1.0.0b2'
     ],
     extras_require={
-        ":python_version<'3.0'": ['azure-nspkg'],
+        ":python_version<'3.0'": ['azure-cognitiveservices-nspkg'],
     }
 )

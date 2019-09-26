@@ -12,7 +12,7 @@ import time
 import asyncio
 from unittest.mock import Mock
 import pytest
-from azure.ai.inkrecognizer.aio import InkRecognizerClient
+from azure.cognitiveservices.inkrecognizer.aio import InkRecognizerClient
 
 
 RAISE_ONLINE_TEST_ERRORS = False
