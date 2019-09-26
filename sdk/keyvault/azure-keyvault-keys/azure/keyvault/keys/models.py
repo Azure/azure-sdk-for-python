@@ -185,7 +185,7 @@ class KeyProperties(object):
 class Key(object):
     """A key's attributes and cryptographic material"""
 
-    def __init__(self, properties, key_material, **kwargs):
+    def __init__(self, properties, key_material):
         # type: (KeyProperties, _models.JsonWebKey, **Any) -> None
         self._properties = properties
         self._key_material = key_material
@@ -195,10 +195,10 @@ class Key(object):
         # type: (_models.KeyBundle) -> Key
         """Construct a Key from an autorest-generated KeyBundle"""
         return cls(
-            properties=KeyProperties._from_key_bundle(key_bundle),
+            properties=KeyProperties._from_key_bundle(key_bundle),  #pylint: disable=protected-access
             key_material=key_bundle.key
         )
-    
+
     @property
     def id(self):
         # type: () -> str
@@ -263,7 +263,7 @@ class DeletedKey(Key):
         # type: (_models.DeletedKeyBundle) -> DeletedKey
         """Construct a DeletedKey from an autorest-generated DeletedKeyBundle"""
         return cls(
-            properties=KeyProperties._from_key_bundle(deleted_key_bundle),
+            properties=KeyProperties._from_key_bundle(deleted_key_bundle),  #pylint: disable=protected-access
             key_material=deleted_key_bundle.key,
             deleted_date=deleted_key_bundle.deleted_date,
             recovery_id=deleted_key_bundle.recovery_id,
@@ -277,7 +277,7 @@ class DeletedKey(Key):
         # type: (_models.DeletedKeyItem) -> DeletedKey
         """Construct a DeletedKey from an autorest-generated DeletedKeyItem"""
         return cls(
-            properties=KeyProperties._from_key_item(deleted_key_item),
+            properties=KeyProperties._from_key_item(deleted_key_item),  #pylint: disable=protected-access
             deleted_date=deleted_key_item.deleted_date,
             recovery_id=deleted_key_item.recovery_id,
             scheduled_purge_date=deleted_key_item.scheduled_purge_date,

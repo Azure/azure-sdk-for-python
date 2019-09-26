@@ -324,7 +324,10 @@ class KeyClient(AsyncKeyVaultClientBase):
         """
         max_results = kwargs.get("max_page_size")
         return self._client.get_keys(
-            self.vault_url, maxresults=max_results, cls=lambda objs: [KeyProperties._from_key_item(x) for x in objs], **kwargs
+            self.vault_url,
+            maxresults=max_results,
+            cls=lambda objs: [KeyProperties._from_key_item(x) for x in objs],
+            **kwargs
         )
 
     @distributed_trace
@@ -408,7 +411,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         expires: Optional[datetime] = None,
         tags: Optional[Dict[str, str]] = None,
         **kwargs: "**Any"
-    ) -> KeyProperties:
+    ) -> Key:
         """Change attributes of a key. Cannot change a key's cryptographic material. Requires the keys/update
         permission.
 
@@ -420,8 +423,8 @@ class KeyClient(AsyncKeyVaultClientBase):
         :param datetime.datetime expires: (optional) Expiry date of the key in UTC
         :param datetime.datetime not_before: (optional) Not before date of the key in UTC
         :param dict tags: (optional) Application specific metadata in the form of key-value pairs
-        :returns: The updated key properties
-        :rtype: ~azure.keyvault.keys.models.KeyProperties
+        :returns: The updated key
+        :rtype: ~azure.keyvault.keys.models.Key
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -449,7 +452,7 @@ class KeyClient(AsyncKeyVaultClientBase):
             error_map=error_map,
             **kwargs,
         )
-        return KeyProperties._from_key_bundle(bundle)
+        return Key._from_key_bundle(bundle)
 
     @distributed_trace_async
     async def backup_key(self, name: str, **kwargs: "**Any") -> bytes:

@@ -430,7 +430,7 @@ class KeyClient(KeyVaultClientBase):
         tags=None,  # type: Optional[Dict[str, str]]
         **kwargs  # type: Any
     ):
-        # type: (...) -> KeyProperties
+        # type: (...) -> Key
         """Change attributes of a key. Cannot change a key's cryptographic material. Requires the keys/update
         permission.
 
@@ -442,8 +442,8 @@ class KeyClient(KeyVaultClientBase):
         :param datetime.datetime expires: (optional) Expiry date of the key in UTC
         :param datetime.datetime not_before: (optional) Not before date of the key in UTC
         :param dict tags: (optional) Application specific metadata in the form of key-value pairs
-        :returns: The updated key properties
-        :rtype: ~azure.keyvault.keys.models.KeyProperties
+        :returns: The updated key
+        :rtype: ~azure.keyvault.keys.models.Key
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -470,7 +470,7 @@ class KeyClient(KeyVaultClientBase):
             error_map=error_map,
             **kwargs
         )
-        return KeyProperties._from_key_bundle(bundle)
+        return Key._from_key_bundle(bundle)
 
     @distributed_trace
     def backup_key(self, name, **kwargs):
