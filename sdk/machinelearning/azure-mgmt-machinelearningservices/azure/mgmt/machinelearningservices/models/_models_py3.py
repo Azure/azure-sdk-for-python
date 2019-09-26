@@ -514,6 +514,16 @@ class AmlComputeProperties(Model):
      'Dedicated', 'LowPriority'
     :type vm_priority: str or
      ~azure.mgmt.machinelearningservices.models.VmPriority
+    :param os_type: OS Type. Possible values include: 'Linux', 'Windows'
+    :type os_type: str or ~azure.mgmt.machinelearningservices.models.OsType
+    :param virtual_machine_image_id: Custom VM image. The ARM resource
+     identifier of the virtual machine image for the compute nodes. This is of
+     the form
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/galleries/{gallery
+     name}/images/{image definition name}/versions/{version id}. The virtual
+     machine image must be in the same region and subscription as the cluster.
+    :type virtual_machine_image_id:
+     ~azure.mgmt.machinelearningservices.models.ResourceId
     :param scale_settings: Scale settings for AML Compute
     :type scale_settings:
      ~azure.mgmt.machinelearningservices.models.ScaleSettings
@@ -579,6 +589,8 @@ class AmlComputeProperties(Model):
     _attribute_map = {
         'vm_size': {'key': 'vmSize', 'type': 'str'},
         'vm_priority': {'key': 'vmPriority', 'type': 'str'},
+        'os_type': {'key': 'osType', 'type': 'str'},
+        'virtual_machine_image_id': {'key': 'virtualMachineImageId', 'type': 'ResourceId'},
         'scale_settings': {'key': 'scaleSettings', 'type': 'ScaleSettings'},
         'user_account_credentials': {'key': 'userAccountCredentials', 'type': 'UserAccountCredentials'},
         'subnet': {'key': 'subnet', 'type': 'ResourceId'},
@@ -591,10 +603,12 @@ class AmlComputeProperties(Model):
         'node_state_counts': {'key': 'nodeStateCounts', 'type': 'NodeStateCounts'},
     }
 
-    def __init__(self, *, vm_size: str=None, vm_priority=None, scale_settings=None, user_account_credentials=None, subnet=None, remote_login_port_public_access="NotSpecified", **kwargs) -> None:
+    def __init__(self, *, vm_size: str=None, vm_priority=None, os_type=None, virtual_machine_image_id=None, scale_settings=None, user_account_credentials=None, subnet=None, remote_login_port_public_access="NotSpecified", **kwargs) -> None:
         super(AmlComputeProperties, self).__init__(**kwargs)
         self.vm_size = vm_size
         self.vm_priority = vm_priority
+        self.os_type = os_type
+        self.virtual_machine_image_id = virtual_machine_image_id
         self.scale_settings = scale_settings
         self.user_account_credentials = user_account_credentials
         self.subnet = subnet
@@ -2205,7 +2219,8 @@ class UserAccountCredentials(Model):
      user account which can be used to SSH to nodes.
     :type admin_user_name: str
     :param admin_user_ssh_public_key: SSH public key. SSH public key of the
-     administrator user account.
+     administrator user account. This property is only supported on Linux based
+     clusters.
     :type admin_user_ssh_public_key: str
     :param admin_user_password: Password. Password of the administrator user
      account.

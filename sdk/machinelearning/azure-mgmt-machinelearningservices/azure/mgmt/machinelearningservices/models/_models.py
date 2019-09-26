@@ -514,6 +514,16 @@ class AmlComputeProperties(Model):
      'Dedicated', 'LowPriority'
     :type vm_priority: str or
      ~azure.mgmt.machinelearningservices.models.VmPriority
+    :param os_type: OS Type. Possible values include: 'Linux', 'Windows'
+    :type os_type: str or ~azure.mgmt.machinelearningservices.models.OsType
+    :param virtual_machine_image_id: Custom VM image. The ARM resource
+     identifier of the virtual machine image for the compute nodes. This is of
+     the form
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Compute/galleries/{gallery
+     name}/images/{image definition name}/versions/{version id}. The virtual
+     machine image must be in the same region and subscription as the cluster.
+    :type virtual_machine_image_id:
+     ~azure.mgmt.machinelearningservices.models.ResourceId
     :param scale_settings: Scale settings for AML Compute
     :type scale_settings:
      ~azure.mgmt.machinelearningservices.models.ScaleSettings
@@ -579,6 +589,8 @@ class AmlComputeProperties(Model):
     _attribute_map = {
         'vm_size': {'key': 'vmSize', 'type': 'str'},
         'vm_priority': {'key': 'vmPriority', 'type': 'str'},
+        'os_type': {'key': 'osType', 'type': 'str'},
+        'virtual_machine_image_id': {'key': 'virtualMachineImageId', 'type': 'ResourceId'},
         'scale_settings': {'key': 'scaleSettings', 'type': 'ScaleSettings'},
         'user_account_credentials': {'key': 'userAccountCredentials', 'type': 'UserAccountCredentials'},
         'subnet': {'key': 'subnet', 'type': 'ResourceId'},
@@ -595,6 +607,8 @@ class AmlComputeProperties(Model):
         super(AmlComputeProperties, self).__init__(**kwargs)
         self.vm_size = kwargs.get('vm_size', None)
         self.vm_priority = kwargs.get('vm_priority', None)
+        self.os_type = kwargs.get('os_type', None)
+        self.virtual_machine_image_id = kwargs.get('virtual_machine_image_id', None)
         self.scale_settings = kwargs.get('scale_settings', None)
         self.user_account_credentials = kwargs.get('user_account_credentials', None)
         self.subnet = kwargs.get('subnet', None)
@@ -2205,7 +2219,8 @@ class UserAccountCredentials(Model):
      user account which can be used to SSH to nodes.
     :type admin_user_name: str
     :param admin_user_ssh_public_key: SSH public key. SSH public key of the
-     administrator user account.
+     administrator user account. This property is only supported on Linux based
+     clusters.
     :type admin_user_ssh_public_key: str
     :param admin_user_password: Password. Password of the administrator user
      account.

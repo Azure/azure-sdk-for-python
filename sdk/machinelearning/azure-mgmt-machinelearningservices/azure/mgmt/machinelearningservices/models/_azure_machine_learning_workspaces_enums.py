@@ -54,6 +54,12 @@ class VmPriority(str, Enum):
     low_priority = "LowPriority"
 
 
+class OsType(str, Enum):
+
+    linux = "Linux"
+    windows = "Windows"
+
+
 class RemoteLoginPortPublicAccess(str, Enum):
 
     enabled = "Enabled"
