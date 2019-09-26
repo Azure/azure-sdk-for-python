@@ -49,11 +49,11 @@ async def run_sample():
         storage_certificate_poller = await client.create_certificate(name=storage_cert_name)
 
         # await the creation of the bank and storage certificate
-        await bank_certificate_poller
-        await storage_certificate_poller
+        bank_certificate = await bank_certificate_poller
+        storage_certificate = await storage_certificate_poller
 
-        print("Certificate with name '{0}' was created.".format(bank_cert_name))
-        print("Certificate with name '{0}' was created.".format(storage_cert_name))
+        print("Certificate with name '{0}' was created.".format(bank_certificate.name))
+        print("Certificate with name '{0}' was created.".format(storage_certificate.name))
 
         # Let's list the certificates.
         print("\n.. List certificates from the Key Vault")
@@ -67,9 +67,12 @@ async def run_sample():
         tags = {"a": "b"}
 
         updated_bank_certificate_poller = await client.create_certificate(name=bank_cert_name, tags=tags)
-        await updated_bank_certificate_poller
+        bank_certificate = await updated_bank_certificate_poller
         print(
-            "Certificate with name '{0}' was created again with tags '{1}'".format(bank_cert_name, tags)
+            "Certificate with name '{0}' was created again with tags '{1}'".format(
+                bank_certificate.name,
+                bank_certificate.tags
+            )
         )
 
         # You need to check all the different tags your bank account certificate had previously. Lets print all the versions of this certificate.
