@@ -552,6 +552,13 @@ class IntegrationRuntimeEdition(str, Enum):
     enterprise = "Enterprise"
 
 
+class DataFlowComputeType(str, Enum):
+
+    general = "General"
+    memory_optimized = "MemoryOptimized"
+    compute_optimized = "ComputeOptimized"
+
+
 class SsisObjectMetadataType(str, Enum):
 
     folder = "Folder"
