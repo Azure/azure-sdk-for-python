@@ -2,21 +2,32 @@ interactions:
 - request:
     body: null
     headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      User-Agent: [pyazure/0.20.0]
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azure-servicebus/0.50.0 Azure-SDK-For-Python
     method: GET
-    uri: https://fakesbnamespace.servicebus.windows.net/uttopic7d681b0d
+    uri: https://fakesbnamespace.servicebus.windows.net/uttopic7d681b0d?api-version=2017-04
   response:
-    body: {string: '<feed xmlns="http://www.w3.org/2005/Atom"><title type="text">Publicly
+    body:
+      string: <feed xmlns="http://www.w3.org/2005/Atom"><title type="text">Publicly
         Listed Services</title><subtitle type="text">This is the list of publicly-listed
-        services currently available.</subtitle><id>uuid:5f9ba3ea-cd02-4477-82da-2ece37741e65;id=337</id><updated>2015-06-30T20:54:54Z</updated><generator>Service
-        Bus 1.1</generator></feed>'}
+        services currently available.</subtitle><id>uuid:75026b99-ee1c-48d1-8b36-cb4e16385474;id=1177041</id><updated>2019-04-25T06:36:40Z</updated><generator>Service
+        Bus 1.1</generator></feed>
     headers:
-      Content-Type: [application/atom+xml;type=feed;charset=utf-8]
-      Date: ['Tue, 30 Jun 2015 20:54:54 GMT']
-      Server: [Microsoft-HTTPAPI/2.0]
-      Transfer-Encoding: [chunked]
-    status: {code: 200, message: OK}
+      Content-Type:
+      - application/atom+xml;type=feed;charset=utf-8
+      Date:
+      - Thu, 25 Apr 2019 06:36:41 GMT
+      Server:
+      - Microsoft-HTTPAPI/2.0
+      Strict-Transport-Security:
+      - max-age=31536000
+      Transfer-Encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
 version: 1

@@ -1,68 +1,112 @@
 interactions:
 - request:
     body: <?xml version="1.0" encoding="utf-8" standalone="yes"?><entry xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices"
-      xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns="http://www.w3.org/2005/Atom"><title></title><updated>2017-01-12T00:27:52.467928+00:00</updated><author><name></name></author><id></id><content
+      xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns="http://www.w3.org/2005/Atom"><title></title><updated>2019-04-25T06:37:49.912091+00:00</updated><author><name></name></author><id></id><content
       type="application/xml"><QueueDescription xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
       xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"></QueueDescription></content></entry>
     headers:
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['555']
-      Content-Type: [application/atom+xml;type=entry;charset=utf-8]
-      User-Agent: [pyazure/0.20.3]
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '555'
+      Content-Type:
+      - application/atom+xml;type=entry;charset=utf-8
+      User-Agent:
+      - azure-servicebus/0.50.0 Azure-SDK-For-Python
     method: PUT
-    uri: https://fakesbnamespace.servicebus.windows.net/utqueuec7f517fa
+    uri: https://fakesbnamespace.servicebus.windows.net/utqueuec7f517fa?api-version=2017-04
   response:
-    body: {string: '<entry xmlns="http://www.w3.org/2005/Atom"><id>https://fakesbnamespace.servicebus.windows.net/utqueuec7f517fa</id><title
-        type="text">utqueuec7f517fa</title><published>2017-01-12T00:27:54Z</published><updated>2017-01-12T00:27:54Z</updated><author><name>fakesbnamespace</name></author><link
-        rel="self" href="https://fakesbnamespace.servicebus.windows.net/utqueuec7f517fa"/><content
+    body:
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://fakesbnamespace.servicebus.windows.net/utqueuec7f517fa?api-version=2017-04</id><title
+        type="text">utqueuec7f517fa</title><published>2019-04-25T06:37:50Z</published><updated>2019-04-25T06:37:50Z</updated><author><name>fakesbnamespace</name></author><link
+        rel="self" href="https://fakesbnamespace.servicebus.windows.net/utqueuec7f517fa?api-version=2017-04"/><content
         type="application/xml"><QueueDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><CreatedAt>2017-01-12T00:27:54.413</CreatedAt><UpdatedAt>2017-01-12T00:27:54.507</UpdatedAt></QueueDescription></content></entry>'}
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2019-04-25T06:37:50.27Z</CreatedAt><UpdatedAt>2019-04-25T06:37:50.54Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>false</EnableExpress></QueueDescription></content></entry>
     headers:
-      Content-Type: [application/atom+xml;type=entry;charset=utf-8]
-      Date: ['Thu, 12 Jan 2017 00:27:52 GMT']
-      Server: [Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000]
-      Transfer-Encoding: [chunked]
-    status: {code: 201, message: Created}
+      Content-Type:
+      - application/atom+xml;type=entry;charset=utf-8
+      Date:
+      - Thu, 25 Apr 2019 06:37:50 GMT
+      Server:
+      - Microsoft-HTTPAPI/2.0
+      Strict-Transport-Security:
+      - max-age=31536000
+      Transfer-Encoding:
+      - chunked
+    status:
+      code: 201
+      message: Created
 - request:
     body: "receive message\u554A\u9F44\u4E02\u72DB\u72DC"
     headers:
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['30']
-      Content-Type: [application/atom+xml;type=entry;charset=utf-8]
-      User-Agent: [pyazure/0.20.3]
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '30'
+      Content-Type:
+      - application/atom+xml;type=entry;charset=utf-8
+      User-Agent:
+      - azure-servicebus/0.50.0 Azure-SDK-For-Python
     method: POST
-    uri: https://fakesbnamespace.servicebus.windows.net/utqueuec7f517fa/messages
+    uri: https://fakesbnamespace.servicebus.windows.net/utqueuec7f517fa/messages?api-version=2017-04
   response:
-    body: {string: ''}
+    body:
+      string: ''
     headers:
-      Content-Type: [application/xml; charset=utf-8]
-      Date: ['Thu, 12 Jan 2017 00:27:52 GMT']
-      Server: [Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000]
-      Transfer-Encoding: [chunked]
-    status: {code: 201, message: Created}
+      Content-Type:
+      - application/xml; charset=utf-8
+      Date:
+      - Thu, 25 Apr 2019 06:37:50 GMT
+      ETag:
+      - '636917710705400000'
+      Server:
+      - Microsoft-HTTPAPI/2.0
+      Strict-Transport-Security:
+      - max-age=31536000
+      Transfer-Encoding:
+      - chunked
+    status:
+      code: 201
+      message: Created
 - request:
     body: null
     headers:
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['0']
-      Content-Type: [application/atom+xml;type=entry;charset=utf-8]
-      User-Agent: [pyazure/0.20.3]
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Content-Type:
+      - application/atom+xml;type=entry;charset=utf-8
+      User-Agent:
+      - azure-servicebus/0.50.0 Azure-SDK-For-Python
     method: DELETE
-    uri: https://fakesbnamespace.servicebus.windows.net/utqueuec7f517fa/messages/head?timeout=60
+    uri: https://fakesbnamespace.servicebus.windows.net/utqueuec7f517fa/messages/head?timeout=60&api-version=2017-04
   response:
-    body: {string: "receive message\u554A\u9F44\u4E02\u72DB\u72DC"}
+    body:
+      string: "receive message\u554A\u9F44\u4E02\u72DB\u72DC"
     headers:
-      BrokerProperties: ['{"DeliveryCount":1,"EnqueuedSequenceNumber":0,"EnqueuedTimeUtc":"Thu,
-          12 Jan 2017 00:27:53 GMT","MessageId":"513a6c095d30400f83915d2c0e6e5116","SequenceNumber":1,"State":"Active","TimeToLive":922337203685.47754}']
-      Content-Type: [application/atom+xml;type=entry;charset=utf-8]
-      Date: ['Thu, 12 Jan 2017 00:27:52 GMT']
-      Server: [Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000]
-      Transfer-Encoding: [chunked]
-    status: {code: 200, message: OK}
+      BrokerProperties:
+      - '{"DeliveryCount":1,"EnqueuedSequenceNumber":0,"EnqueuedTimeUtc":"Thu, 25
+        Apr 2019 06:37:51 GMT","MessageId":"633640cfab1f4eefb75b7c90e837e7d0","SequenceNumber":1,"State":"Active","TimeToLive":922337203685.47754}'
+      Content-Type:
+      - application/atom+xml;type=entry;charset=utf-8
+      Date:
+      - Thu, 25 Apr 2019 06:37:51 GMT
+      ETag:
+      - '636917710705400000'
+      Server:
+      - Microsoft-HTTPAPI/2.0
+      Strict-Transport-Security:
+      - max-age=31536000
+      Transfer-Encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
 version: 1

@@ -1,58 +1,99 @@
 interactions:
 - request:
-    body: !!binary |
-      PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiIHN0YW5kYWxvbmU9InllcyI/Pjxl
-      bnRyeSB4bWxuczpkPSJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL2Fkby8yMDA3LzA4L2Rh
-      dGFzZXJ2aWNlcyIgeG1sbnM6bT0iaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS9hZG8vMjAw
-      Ny8wOC9kYXRhc2VydmljZXMvbWV0YWRhdGEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDA1
-      L0F0b20iPjx0aXRsZT48L3RpdGxlPjx1cGRhdGVkPjIwMTUtMDYtMzBUMjA6NTI6MDguNjU0MTgx
-      KzAwOjAwPC91cGRhdGVkPjxhdXRob3I+PG5hbWU+PC9uYW1lPjwvYXV0aG9yPjxpZD48L2lkPjxj
-      b250ZW50IHR5cGU9ImFwcGxpY2F0aW9uL3htbCI+PFF1ZXVlRGVzY3JpcHRpb24geG1sbnM6aT0i
-      aHR0cDovL3d3dy53My5vcmcvMjAwMS9YTUxTY2hlbWEtaW5zdGFuY2UiIHhtbG5zPSJodHRwOi8v
-      c2NoZW1hcy5taWNyb3NvZnQuY29tL25ldHNlcnZpY2VzLzIwMTAvMTAvc2VydmljZWJ1cy9jb25u
-      ZWN0Ij48L1F1ZXVlRGVzY3JpcHRpb24+PC9jb250ZW50PjwvZW50cnk+
+    body: <?xml version="1.0" encoding="utf-8" standalone="yes"?><entry xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices"
+      xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns="http://www.w3.org/2005/Atom"><title></title><updated>2019-04-25T06:36:42.276395+00:00</updated><author><name></name></author><id></id><content
+      type="application/xml"><QueueDescription xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"></QueueDescription></content></entry>
     headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['555']
-      Content-Type: [application/atom+xml;type=entry;charset=utf-8]
-      User-Agent: [pyazure/0.20.0]
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '555'
+      Content-Type:
+      - application/atom+xml;type=entry;charset=utf-8
+      User-Agent:
+      - azure-servicebus/0.50.0 Azure-SDK-For-Python
     method: PUT
-    uri: https://fakesbnamespace.servicebus.windows.net/utqueue8bad11f5
+    uri: https://fakesbnamespace.servicebus.windows.net/utqueue8bad11f5?api-version=2017-04
   response:
-    body: {string: '<entry xmlns="http://www.w3.org/2005/Atom"><id>https://fakesbnamespace.servicebus.windows.net/utqueue8bad11f5</id><title
-        type="text">utqueue8bad11f5</title><published>2015-06-30T20:52:11Z</published><updated>2015-06-30T20:52:11Z</updated><author><name>fakesbnamespace</name></author><link
-        rel="self" href="https://fakesbnamespace.servicebus.windows.net/utqueue8bad11f5"/><content
+    body:
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://fakesbnamespace.servicebus.windows.net/utqueue8bad11f5?api-version=2017-04</id><title
+        type="text">utqueue8bad11f5</title><published>2019-04-25T06:36:42Z</published><updated>2019-04-25T06:36:42Z</updated><author><name>fakesbnamespace</name></author><link
+        rel="self" href="https://fakesbnamespace.servicebus.windows.net/utqueue8bad11f5?api-version=2017-04"/><content
         type="application/xml"><QueueDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><CreatedAt>2015-06-30T20:52:11.33</CreatedAt><UpdatedAt>2015-06-30T20:52:11.473</UpdatedAt></QueueDescription></content></entry>'}
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2019-04-25T06:36:42.673Z</CreatedAt><UpdatedAt>2019-04-25T06:36:42.747Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>false</EnableExpress></QueueDescription></content></entry>
     headers:
-      Content-Type: [application/atom+xml;type=entry;charset=utf-8]
-      Date: ['Tue, 30 Jun 2015 20:52:10 GMT']
-      Server: [Microsoft-HTTPAPI/2.0]
-      Transfer-Encoding: [chunked]
-    status: {code: 201, message: Created}
+      Content-Type:
+      - application/atom+xml;type=entry;charset=utf-8
+      Date:
+      - Thu, 25 Apr 2019 06:36:42 GMT
+      Server:
+      - Microsoft-HTTPAPI/2.0
+      Strict-Transport-Security:
+      - max-age=31536000
+      Transfer-Encoding:
+      - chunked
+    status:
+      code: 201
+      message: Created
 - request:
     body: null
     headers:
-      Accept: ['*/*']
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      User-Agent: [pyazure/0.20.0]
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azure-servicebus/0.50.0 Azure-SDK-For-Python
     method: GET
-    uri: https://fakesbnamespace.servicebus.windows.net/$Resources/Queues
+    uri: https://fakesbnamespace.servicebus.windows.net/$Resources/Queues?api-version=2017-04
   response:
-    body: {string: '<feed xmlns="http://www.w3.org/2005/Atom"><title type="text">Queues</title><id>https://fakesbnamespace.servicebus.windows.net/$Resources/Queues</id><updated>2015-06-30T20:52:11Z</updated><link
-        rel="self" href="https://fakesbnamespace.servicebus.windows.net/$Resources/Queues"/><entry
-        xml:base="https://fakesbnamespace.servicebus.windows.net/$Resources/Queues"><id>https://fakesbnamespace.servicebus.windows.net/utqueue8bad11f5</id><title
-        type="text">utqueue8bad11f5</title><published>2015-06-30T20:52:11Z</published><updated>2015-06-30T20:52:11Z</updated><author><name>fakesbnamespace</name></author><link
-        rel="self" href="../utqueue8bad11f5"/><content type="application/xml"><QueueDescription
+    body:
+      string: <feed xmlns="http://www.w3.org/2005/Atom"><title type="text">Queues</title><id>https://fakesbnamespace.servicebus.windows.net/$Resources/Queues?api-version=2017-04</id><updated>2019-04-25T06:36:43Z</updated><link
+        rel="self" href="https://fakesbnamespace.servicebus.windows.net/$Resources/Queues?api-version=2017-04"/><entry
+        xml:base="https://fakesbnamespace.servicebus.windows.net/$Resources/Queues?api-version=2017-04"><id>https://fakesbnamespace.servicebus.windows.net/727eafb5-69f2-449e-92b5-6ef118e2ed38?api-version=2017-04</id><title
+        type="text">727eafb5-69f2-449e-92b5-6ef118e2ed38</title><published>2019-04-19T00:50:07Z</published><updated>2019-04-19T00:50:08Z</updated><author><name>fakesbnamespace</name></author><link
+        rel="self" href="../727eafb5-69f2-449e-92b5-6ef118e2ed38?api-version=2017-04"/><content
+        type="application/xml"><QueueDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT30S</LockDuration><MaxSizeInMegabytes>16384</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>true</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2019-04-19T00:50:07.7Z</CreatedAt><UpdatedAt>2019-04-19T00:50:08.367Z</UpdatedAt><AccessedAt>0001-01-01T00:00:00Z</AccessedAt><SupportOrdering>false</SupportOrdering><CountDetails
+        xmlns:d2p1="http://schemas.microsoft.com/netservices/2011/06/servicebus"><d2p1:ActiveMessageCount>0</d2p1:ActiveMessageCount><d2p1:DeadLetterMessageCount>0</d2p1:DeadLetterMessageCount><d2p1:ScheduledMessageCount>0</d2p1:ScheduledMessageCount><d2p1:TransferMessageCount>0</d2p1:TransferMessageCount><d2p1:TransferDeadLetterMessageCount>0</d2p1:TransferDeadLetterMessageCount></CountDetails><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>true</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>false</EnableExpress></QueueDescription></content></entry><entry
+        xml:base="https://fakesbnamespace.servicebus.windows.net/$Resources/Queues?api-version=2017-04"><id>https://fakesbnamespace.servicebus.windows.net/f475c77c-fc58-4528-9e24-d68c8c08b181?api-version=2017-04</id><title
+        type="text">f475c77c-fc58-4528-9e24-d68c8c08b181</title><published>2019-04-24T21:58:53Z</published><updated>2019-04-24T21:58:53Z</updated><author><name>fakesbnamespace</name></author><link
+        rel="self" href="../f475c77c-fc58-4528-9e24-d68c8c08b181?api-version=2017-04"/><content
+        type="application/xml"><QueueDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT30S</LockDuration><MaxSizeInMegabytes>16384</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>true</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>352</SizeInBytes><MessageCount>1</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2019-04-24T21:58:53.157Z</CreatedAt><UpdatedAt>2019-04-24T21:58:53.987Z</UpdatedAt><AccessedAt>2019-04-24T22:00:54.4279332Z</AccessedAt><SupportOrdering>false</SupportOrdering><CountDetails
+        xmlns:d2p1="http://schemas.microsoft.com/netservices/2011/06/servicebus"><d2p1:ActiveMessageCount>1</d2p1:ActiveMessageCount><d2p1:DeadLetterMessageCount>0</d2p1:DeadLetterMessageCount><d2p1:ScheduledMessageCount>0</d2p1:ScheduledMessageCount><d2p1:TransferMessageCount>0</d2p1:TransferMessageCount><d2p1:TransferDeadLetterMessageCount>0</d2p1:TransferDeadLetterMessageCount></CountDetails><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>true</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>false</EnableExpress></QueueDescription></content></entry><entry
+        xml:base="https://fakesbnamespace.servicebus.windows.net/$Resources/Queues?api-version=2017-04"><id>https://fakesbnamespace.servicebus.windows.net/test_sb_queue?api-version=2017-04</id><title
+        type="text">test_sb_queue</title><published>2019-04-15T23:25:46Z</published><updated>2019-04-15T23:26:14Z</updated><author><name>fakesbnamespace</name></author><link
+        rel="self" href="../test_sb_queue?api-version=2017-04"/><content type="application/xml"><QueueDescription
         xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount></QueueDescription></content></entry></feed>'}
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT30S</LockDuration><MaxSizeInMegabytes>16384</MaxSizeInMegabytes><RequiresDuplicateDetection>true</RequiresDuplicateDetection><RequiresSession>true</RequiresSession><DefaultMessageTimeToLive>P14D</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>true</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT30S</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules><AuthorizationRule
+        i:type="SharedAccessAuthorizationRule"><ClaimType>SharedAccessKey</ClaimType><ClaimValue>None</ClaimValue><Rights><AccessRights>Manage</AccessRights><AccessRights>Listen</AccessRights><AccessRights>Send</AccessRights></Rights><CreatedTime>2019-04-15T23:26:14.1538316Z</CreatedTime><ModifiedTime>2019-04-15T23:26:14.1538316Z</ModifiedTime><KeyName>RootManageSharedAccessKey</KeyName><PrimaryKey>SxlUSH9bHvsXkBbFGyQtBAy+fzj/inP47iU7i5CNloc=</PrimaryKey><SecondaryKey>wyCJDDyA28EACYnfKwMJr8hQzd3aVKGt07TLeViO048=</SecondaryKey></AuthorizationRule></AuthorizationRules><Status>Active</Status><CreatedAt>2019-04-15T23:25:46.177Z</CreatedAt><UpdatedAt>2019-04-15T23:26:14.39Z</UpdatedAt><AccessedAt>0001-01-01T00:00:00Z</AccessedAt><SupportOrdering>false</SupportOrdering><CountDetails
+        xmlns:d2p1="http://schemas.microsoft.com/netservices/2011/06/servicebus"><d2p1:ActiveMessageCount>0</d2p1:ActiveMessageCount><d2p1:DeadLetterMessageCount>0</d2p1:DeadLetterMessageCount><d2p1:ScheduledMessageCount>0</d2p1:ScheduledMessageCount><d2p1:TransferMessageCount>0</d2p1:TransferMessageCount><d2p1:TransferDeadLetterMessageCount>0</d2p1:TransferDeadLetterMessageCount></CountDetails><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>true</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>false</EnableExpress></QueueDescription></content></entry><entry
+        xml:base="https://fakesbnamespace.servicebus.windows.net/$Resources/Queues?api-version=2017-04"><id>https://fakesbnamespace.servicebus.windows.net/test_session_par?api-version=2017-04</id><title
+        type="text">test_session_par</title><published>2019-04-17T22:15:40Z</published><updated>2019-04-17T22:15:41Z</updated><author><name>fakesbnamespace</name></author><link
+        rel="self" href="../test_session_par?api-version=2017-04"/><content type="application/xml"><QueueDescription
+        xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT30S</LockDuration><MaxSizeInMegabytes>16384</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>true</RequiresSession><DefaultMessageTimeToLive>P14D</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>6119</SizeInBytes><MessageCount>30</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2019-04-17T22:15:40.793Z</CreatedAt><UpdatedAt>2019-04-17T22:15:41.413Z</UpdatedAt><AccessedAt>2019-04-17T22:22:35.4463787Z</AccessedAt><SupportOrdering>false</SupportOrdering><CountDetails
+        xmlns:d2p1="http://schemas.microsoft.com/netservices/2011/06/servicebus"><d2p1:ActiveMessageCount>30</d2p1:ActiveMessageCount><d2p1:DeadLetterMessageCount>0</d2p1:DeadLetterMessageCount><d2p1:ScheduledMessageCount>0</d2p1:ScheduledMessageCount><d2p1:TransferMessageCount>0</d2p1:TransferMessageCount><d2p1:TransferDeadLetterMessageCount>0</d2p1:TransferDeadLetterMessageCount></CountDetails><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>true</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>false</EnableExpress></QueueDescription></content></entry><entry
+        xml:base="https://fakesbnamespace.servicebus.windows.net/$Resources/Queues?api-version=2017-04"><id>https://fakesbnamespace.servicebus.windows.net/utqueue8bad11f5?api-version=2017-04</id><title
+        type="text">utqueue8bad11f5</title><published>2019-04-25T06:36:42Z</published><updated>2019-04-25T06:36:42Z</updated><author><name>fakesbnamespace</name></author><link
+        rel="self" href="../utqueue8bad11f5?api-version=2017-04"/><content type="application/xml"><QueueDescription
+        xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><MessageCount>0</MessageCount><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2019-04-25T06:36:42.673Z</CreatedAt><UpdatedAt>2019-04-25T06:36:42.747Z</UpdatedAt><AccessedAt>0001-01-01T00:00:00Z</AccessedAt><SupportOrdering>true</SupportOrdering><CountDetails
+        xmlns:d2p1="http://schemas.microsoft.com/netservices/2011/06/servicebus"><d2p1:ActiveMessageCount>0</d2p1:ActiveMessageCount><d2p1:DeadLetterMessageCount>0</d2p1:DeadLetterMessageCount><d2p1:ScheduledMessageCount>0</d2p1:ScheduledMessageCount><d2p1:TransferMessageCount>0</d2p1:TransferMessageCount><d2p1:TransferDeadLetterMessageCount>0</d2p1:TransferDeadLetterMessageCount></CountDetails><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableExpress>false</EnableExpress></QueueDescription></content></entry></feed>
     headers:
-      Content-Type: [application/atom+xml;type=feed;charset=utf-8]
-      Date: ['Tue, 30 Jun 2015 20:52:10 GMT']
-      Server: [Microsoft-HTTPAPI/2.0]
-      Transfer-Encoding: [chunked]
-    status: {code: 200, message: OK}
+      Content-Type:
+      - application/atom+xml;type=feed;charset=utf-8
+      Date:
+      - Thu, 25 Apr 2019 06:36:43 GMT
+      Server:
+      - Microsoft-HTTPAPI/2.0
+      Transfer-Encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
 version: 1

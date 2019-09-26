@@ -42,21 +42,22 @@ def create_standard_queue(servicebus_config, client=None):
     raise ValueError("Queue creation failed.")
 
 
-# def create_partitioned_queue(servicebus_config, client=None):
-#     from azure.servicebus.control_client import ServiceBusService, Queue
-#     queue_name = str(uuid.uuid4())
-#     queue_value = Queue(
-#         lock_duration='PT30S',
-#         requires_duplicate_detection=False,
-#         dead_lettering_on_message_expiration=True,
-#         requires_session=False)
-#     client = client or ServiceBusService(
-#         service_namespace=servicebus_config['hostname'],
-#         shared_access_key_name=servicebus_config['key_name'],
-#         shared_access_key_value=servicebus_config['access_key'])
-#     if client.create_queue(queue_name, queue=queue_value, fail_on_exist=True):
-#         return queue_name
-#     raise ValueError("Queue creation failed.")
+def create_partitioned_queue(servicebus_config, client=None):
+    from azure.servicebus.control_client import ServiceBusService, Queue
+    queue_name = str(uuid.uuid4())
+    queue_value = Queue(
+        lock_duration='PT30S',
+        requires_duplicate_detection=False,
+        dead_lettering_on_message_expiration=True,
+        requires_session=False,
+        enable_partitioning=True)
+    client = client or ServiceBusService(
+        service_namespace=servicebus_config['hostname'],
+        shared_access_key_name=servicebus_config['key_name'],
+        shared_access_key_value=servicebus_config['access_key'])
+    if client.create_queue(queue_name, queue=queue_value, fail_on_exist=True):
+        return queue_name
+    raise ValueError("Queue creation failed.")
 
 
 def create_duplicate_queue(servicebus_config, client=None):
@@ -109,20 +110,21 @@ def create_session_queue(servicebus_config, client=None):
     raise ValueError("Queue creation failed.")
 
 
-# def create_partitioned_session_queue(servicebus_config, client=None):
-#     from azure.servicebus.control_client import ServiceBusService, Queue
-#     queue_name = str(uuid.uuid4())
-#     queue_value = Queue(
-#         lock_duration='PT30S',
-#         requires_duplicate_detection=False,
-#         requires_session=True)
-#     client = client or ServiceBusService(
-#         service_namespace=servicebus_config['hostname'],
-#         shared_access_key_name=servicebus_config['key_name'],
-#         shared_access_key_value=servicebus_config['access_key'])
-#     if client.create_queue(queue_name, queue=queue_value, fail_on_exist=True):
-#         return queue_name
-#     raise ValueError("Queue creation failed.")
+def create_partitioned_session_queue(servicebus_config, client=None):
+    from azure.servicebus.control_client import ServiceBusService, Queue
+    queue_name = str(uuid.uuid4())
+    queue_value = Queue(
+        lock_duration='PT30S',
+        requires_duplicate_detection=False,
+        requires_session=True,
+        enable_partitioning=True)
+    client = client or ServiceBusService(
+        service_namespace=servicebus_config['hostname'],
+        shared_access_key_name=servicebus_config['key_name'],
+        shared_access_key_value=servicebus_config['access_key'])
+    if client.create_queue(queue_name, queue=queue_value, fail_on_exist=True):
+        return queue_name
+    raise ValueError("Queue creation failed.")
 
 
 def create_standard_topic(servicebus_config, client=None):
@@ -138,7 +140,36 @@ def create_standard_topic(servicebus_config, client=None):
     raise ValueError("Queue creation failed.")
 
 
+def create_partitioned_topic(servicebus_config, client=None):
+    from azure.servicebus.control_client import ServiceBusService, Topic
+    topic_name = str(uuid.uuid4())
+    topic_value = Topic(requires_duplicate_detection=False,
+                        enable_partitioning=True)
+    client = client or ServiceBusService(
+        service_namespace=servicebus_config['hostname'],
+        shared_access_key_name=servicebus_config['key_name'],
+        shared_access_key_value=servicebus_config['access_key'])
+    if client.create_topic(topic_name, topic=topic_value, fail_on_exist=True):
+        return topic_name
+    raise ValueError("Queue creation failed.")
+
+
 def create_standard_subscription(servicebus_config, topic_name, client=None):
+    from azure.servicebus.control_client import ServiceBusService, Subscription
+    subscription_name = str(uuid.uuid4())
+    sub_value = Subscription(dead_lettering_on_message_expiration=True)
+    client = client or ServiceBusService(
+        service_namespace=servicebus_config['hostname'],
+        shared_access_key_name=servicebus_config['key_name'],
+        shared_access_key_value=servicebus_config['access_key'])
+    if client.create_subscription(
+            topic_name, subscription_name,
+            subscription=sub_value, fail_on_exist=True):
+        return (topic_name, subscription_name)
+    raise ValueError("Queue creation failed.")
+
+
+def create_partitioned_topic_subscription(servicebus_config, topic_name, client=None):
     from azure.servicebus.control_client import ServiceBusService, Subscription
     subscription_name = str(uuid.uuid4())
     sub_value = Subscription(dead_lettering_on_message_expiration=True)
@@ -249,7 +280,16 @@ def standard_queue(live_servicebus_config):  # pylint: disable=redefined-outer-n
 
 @pytest.fixture()
 def partitioned_queue(live_servicebus_config):  # pylint: disable=redefined-outer-name,unused-argument
-    pytest.skip("Pending API version update")
+    from azure.servicebus.control_client import ServiceBusService
+    client = ServiceBusService(
+        service_namespace=live_servicebus_config['hostname'],
+        shared_access_key_name=live_servicebus_config['key_name'],
+        shared_access_key_value=live_servicebus_config['access_key'])
+    try:
+        queue_name = create_partitioned_queue(live_servicebus_config, client=client)
+        yield queue_name
+    finally:
+        cleanup_queue(live_servicebus_config, queue_name, client=client)
 
 
 @pytest.fixture()
@@ -268,7 +308,16 @@ def session_queue(live_servicebus_config):  # pylint: disable=redefined-outer-na
 
 @pytest.fixture()
 def partitioned_session_queue(live_servicebus_config):  # pylint: disable=redefined-outer-name,unused-argument
-    pytest.skip("Pending API version update")
+    from azure.servicebus.control_client import ServiceBusService
+    client = ServiceBusService(
+        service_namespace=live_servicebus_config['hostname'],
+        shared_access_key_name=live_servicebus_config['key_name'],
+        shared_access_key_value=live_servicebus_config['access_key'])
+    try:
+        queue_name = create_partitioned_session_queue(live_servicebus_config, client=client)
+        yield queue_name
+    finally:
+        cleanup_queue(live_servicebus_config, queue_name, client=client)
 
 
 @pytest.fixture()
@@ -300,6 +349,20 @@ def standard_topic(live_servicebus_config):  # pylint: disable=redefined-outer-n
 
 
 @pytest.fixture()
+def partitioned_topic(live_servicebus_config):  # pylint: disable=redefined-outer-name
+    from azure.servicebus.control_client import ServiceBusService
+    client = ServiceBusService(
+        service_namespace=live_servicebus_config['hostname'],
+        shared_access_key_name=live_servicebus_config['key_name'],
+        shared_access_key_value=live_servicebus_config['access_key'])
+    try:
+        topic_name = create_partitioned_topic(live_servicebus_config, client=client)
+        yield topic_name
+    finally:
+        cleanup_topic(live_servicebus_config, topic_name, client=client)
+
+
+@pytest.fixture()
 def standard_subscription(live_servicebus_config, standard_topic):  # pylint: disable=redefined-outer-name
     from azure.servicebus.control_client import ServiceBusService
     client = ServiceBusService(
@@ -308,6 +371,20 @@ def standard_subscription(live_servicebus_config, standard_topic):  # pylint: di
         shared_access_key_value=live_servicebus_config['access_key'])
     try:
         topic, subscription = create_standard_subscription(live_servicebus_config, standard_topic, client=client)
+        yield (topic, subscription)
+    finally:
+        cleanup_subscription(live_servicebus_config, topic, subscription, client=client)
+
+
+@pytest.fixture()
+def partitioned_topic_subscription(live_servicebus_config, partitioned_topic):  # pylint: disable=redefined-outer-name
+    from azure.servicebus.control_client import ServiceBusService
+    client = ServiceBusService(
+        service_namespace=live_servicebus_config['hostname'],
+        shared_access_key_name=live_servicebus_config['key_name'],
+        shared_access_key_value=live_servicebus_config['access_key'])
+    try:
+        topic, subscription = create_partitioned_topic_subscription(live_servicebus_config, partitioned_topic, client=client)
         yield (topic, subscription)
     finally:
         cleanup_subscription(live_servicebus_config, topic, subscription, client=client)

@@ -100,7 +100,7 @@ class ServiceBusService(object):  # pylint: disable=too-many-public-methods
             Optional. Session object to use for HTTP requests.
         '''
         self.requestid = None
-        x_ms_version = None
+        x_ms_version = "2017-04"
         api_version = x_ms_version  # Waiting is updated API version support
         self.service_namespace = service_namespace
         self.host_base = host_base
@@ -1111,7 +1111,8 @@ class ServiceBusService(object):  # pylint: disable=too-many-public-methods
         request = HTTPRequest()
         request.method = 'PUT'
         request.host = self._get_host()
-        request.path = '/' + _str(hub_name) + '?api-version=2014-01'
+        #request.path = '/' + _str(hub_name) + '?api-version=2014-01'
+        request.path = '/' + _str(hub_name)
         request.body = _get_request_body(_convert_event_hub_to_xml(hub))
         request.path, request.query = self._httpclient._update_request_uri_query(request)  # pylint: disable=protected-access
         request.headers = self._update_service_bus_header(request)
@@ -1141,7 +1142,8 @@ class ServiceBusService(object):  # pylint: disable=too-many-public-methods
         request = HTTPRequest()
         request.method = 'PUT'
         request.host = self._get_host()
-        request.path = '/' + _str(hub_name) + '?api-version=2014-01'
+        #request.path = '/' + _str(hub_name) + '?api-version=2014-01'
+        request.path = '/' + _str(hub_name)
         request.body = _get_request_body(_convert_event_hub_to_xml(hub))
         request.path, request.query = self._httpclient._update_request_uri_query(request)  # pylint: disable=protected-access
         request.headers.append(('If-Match', '*'))
@@ -1164,7 +1166,8 @@ class ServiceBusService(object):  # pylint: disable=too-many-public-methods
         request = HTTPRequest()
         request.method = 'DELETE'
         request.host = self._get_host()
-        request.path = '/' + _str(hub_name) + '?api-version=2014-01'
+        #request.path = '/' + _str(hub_name) + '?api-version=2014-01'
+        request.path = '/' + _str(hub_name)
         request.path, request.query = self._httpclient._update_request_uri_query(request)  # pylint: disable=protected-access
         request.headers = self._update_service_bus_header(request)
         if not fail_not_exist:
@@ -1206,9 +1209,11 @@ class ServiceBusService(object):  # pylint: disable=too-many-public-methods
         request.method = 'POST'
         request.host = self._get_host()
         if device_id:
-            request.path = '/{0}/publishers/{1}/messages?api-version=2014-01'.format(hub_name, device_id)
+            #request.path = '/{0}/publishers/{1}/messages?api-version=2014-01'.format(hub_name, device_id)
+            request.path = '/{0}/publishers/{1}/messages'.format(hub_name, device_id)
         else:
-            request.path = '/{0}/messages?api-version=2014-01'.format(hub_name)
+            #request.path = '/{0}/messages?api-version=2014-01'.format(hub_name)
+            request.path = '/{0}/messages'.format(hub_name)
         if broker_properties:
             request.headers.append(
                 ('BrokerProperties', str(broker_properties)))

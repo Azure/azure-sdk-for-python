@@ -1,143 +1,237 @@
 interactions:
 - request:
     body: <?xml version="1.0" encoding="utf-8" standalone="yes"?><entry xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices"
-      xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns="http://www.w3.org/2005/Atom"><title></title><updated>2017-01-12T00:11:57.418988+00:00</updated><author><name></name></author><id></id><content
+      xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns="http://www.w3.org/2005/Atom"><title></title><updated>2019-04-25T06:38:01.210956+00:00</updated><author><name></name></author><id></id><content
       type="application/xml"><TopicDescription xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
       xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"></TopicDescription></content></entry>
     headers:
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['555']
-      Content-Type: [application/atom+xml;type=entry;charset=utf-8]
-      User-Agent: [pyazure/0.20.3]
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '555'
+      Content-Type:
+      - application/atom+xml;type=entry;charset=utf-8
+      User-Agent:
+      - azure-servicebus/0.50.0 Azure-SDK-For-Python
     method: PUT
-    uri: https://fakesbnamespace.servicebus.windows.net/uttopic9797170f
+    uri: https://fakesbnamespace.servicebus.windows.net/uttopic9797170f?api-version=2017-04
   response:
-    body: {string: '<entry xmlns="http://www.w3.org/2005/Atom"><id>https://fakesbnamespace.servicebus.windows.net/uttopic9797170f</id><title
-        type="text">uttopic9797170f</title><published>2017-01-12T00:11:59Z</published><updated>2017-01-12T00:11:59Z</updated><author><name>fakesbnamespace</name></author><link
-        rel="self" href="https://fakesbnamespace.servicebus.windows.net/uttopic9797170f"/><content
+    body:
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://fakesbnamespace.servicebus.windows.net/uttopic9797170f?api-version=2017-04</id><title
+        type="text">uttopic9797170f</title><published>2019-04-25T06:38:01Z</published><updated>2019-04-25T06:38:01Z</updated><author><name>fakesbnamespace</name></author><link
+        rel="self" href="https://fakesbnamespace.servicebus.windows.net/uttopic9797170f?api-version=2017-04"/><content
         type="application/xml"><TopicDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><CreatedAt>2017-01-12T00:11:59.187</CreatedAt><UpdatedAt>2017-01-12T00:11:59.217</UpdatedAt></TopicDescription></content></entry>'}
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><MaxSizeInMegabytes>1024</MaxSizeInMegabytes><RequiresDuplicateDetection>false</RequiresDuplicateDetection><DuplicateDetectionHistoryTimeWindow>PT10M</DuplicateDetectionHistoryTimeWindow><EnableBatchedOperations>true</EnableBatchedOperations><SizeInBytes>0</SizeInBytes><FilteringMessagesBeforePublishing>false</FilteringMessagesBeforePublishing><IsAnonymousAccessible>false</IsAnonymousAccessible><AuthorizationRules></AuthorizationRules><Status>Active</Status><CreatedAt>2019-04-25T06:38:01.683Z</CreatedAt><UpdatedAt>2019-04-25T06:38:01.74Z</UpdatedAt><SupportOrdering>true</SupportOrdering><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EnablePartitioning>false</EnablePartitioning><IsExpress>false</IsExpress><EntityAvailabilityStatus>Available</EntityAvailabilityStatus><EnableSubscriptionPartitioning>false</EnableSubscriptionPartitioning><EnableExpress>false</EnableExpress></TopicDescription></content></entry>
     headers:
-      Content-Type: [application/atom+xml;type=entry;charset=utf-8]
-      Date: ['Thu, 12 Jan 2017 00:11:57 GMT']
-      Server: [Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000]
-      Transfer-Encoding: [chunked]
-    status: {code: 201, message: Created}
+      Content-Type:
+      - application/atom+xml;type=entry;charset=utf-8
+      Date:
+      - Thu, 25 Apr 2019 06:38:01 GMT
+      Server:
+      - Microsoft-HTTPAPI/2.0
+      Strict-Transport-Security:
+      - max-age=31536000
+      Transfer-Encoding:
+      - chunked
+    status:
+      code: 201
+      message: Created
 - request:
     body: <?xml version="1.0" encoding="utf-8" standalone="yes"?><entry xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices"
-      xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns="http://www.w3.org/2005/Atom"><title></title><updated>2017-01-12T00:11:58.462997+00:00</updated><author><name></name></author><id></id><content
+      xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns="http://www.w3.org/2005/Atom"><title></title><updated>2019-04-25T06:38:02.332442+00:00</updated><author><name></name></author><id></id><content
       type="application/xml"><SubscriptionDescription xmlns:i="http://www.w3.org/2001/XMLSchema-instance"
       xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"></SubscriptionDescription></content></entry>
     headers:
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['569']
-      Content-Type: [application/atom+xml;type=entry;charset=utf-8]
-      User-Agent: [pyazure/0.20.3]
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '569'
+      Content-Type:
+      - application/atom+xml;type=entry;charset=utf-8
+      User-Agent:
+      - azure-servicebus/0.50.0 Azure-SDK-For-Python
     method: PUT
-    uri: https://fakesbnamespace.servicebus.windows.net/uttopic9797170f/subscriptions/MySubscription
+    uri: https://fakesbnamespace.servicebus.windows.net/uttopic9797170f/subscriptions/MySubscription?api-version=2017-04
   response:
-    body: {string: '<entry xmlns="http://www.w3.org/2005/Atom"><id>https://fakesbnamespace.servicebus.windows.net/uttopic9797170f/subscriptions/MySubscription</id><title
-        type="text">MySubscription</title><published>2017-01-12T00:11:58Z</published><updated>2017-01-12T00:11:58Z</updated><link
-        rel="self" href="https://fakesbnamespace.servicebus.windows.net/uttopic9797170f/subscriptions/MySubscription"/><content
+    body:
+      string: <entry xmlns="http://www.w3.org/2005/Atom"><id>https://fakesbnamespace.servicebus.windows.net/uttopic9797170f/subscriptions/MySubscription?api-version=2017-04</id><title
+        type="text">MySubscription</title><published>2019-04-25T06:38:02Z</published><updated>2019-04-25T06:38:02Z</updated><link
+        rel="self" href="https://fakesbnamespace.servicebus.windows.net/uttopic9797170f/subscriptions/MySubscription?api-version=2017-04"/><content
         type="application/xml"><SubscriptionDescription xmlns="http://schemas.microsoft.com/netservices/2010/10/servicebus/connect"
-        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DeadLetteringOnFilterEvaluationExceptions>true</DeadLetteringOnFilterEvaluationExceptions><MessageCount>0</MessageCount><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations></SubscriptionDescription></content></entry>'}
+        xmlns:i="http://www.w3.org/2001/XMLSchema-instance"><LockDuration>PT1M</LockDuration><RequiresSession>false</RequiresSession><DefaultMessageTimeToLive>P10675199DT2H48M5.4775807S</DefaultMessageTimeToLive><DeadLetteringOnMessageExpiration>false</DeadLetteringOnMessageExpiration><DeadLetteringOnFilterEvaluationExceptions>true</DeadLetteringOnFilterEvaluationExceptions><MessageCount>0</MessageCount><MaxDeliveryCount>10</MaxDeliveryCount><EnableBatchedOperations>true</EnableBatchedOperations><Status>Active</Status><CreatedAt>2019-04-25T06:38:02.344149Z</CreatedAt><UpdatedAt>2019-04-25T06:38:02.344149Z</UpdatedAt><AccessedAt>0001-01-01T00:00:00</AccessedAt><AutoDeleteOnIdle>P10675199DT2H48M5.4775807S</AutoDeleteOnIdle><EntityAvailabilityStatus>Available</EntityAvailabilityStatus></SubscriptionDescription></content></entry>
     headers:
-      Content-Type: [application/atom+xml;type=entry;charset=utf-8]
-      Date: ['Thu, 12 Jan 2017 00:11:57 GMT']
-      Server: [Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000]
-      Transfer-Encoding: [chunked]
-    status: {code: 201, message: Created}
+      Content-Type:
+      - application/atom+xml;type=entry;charset=utf-8
+      Date:
+      - Thu, 25 Apr 2019 06:38:02 GMT
+      ETag:
+      - '636917710817400000'
+      Server:
+      - Microsoft-HTTPAPI/2.0
+      Strict-Transport-Security:
+      - max-age=31536000
+      Transfer-Encoding:
+      - chunked
+    status:
+      code: 201
+      message: Created
 - request:
-    body: '[{"BrokerProperties": {"Label": "M1", "TimeToLiveTimeSpan": "0.00:00:40"},
-      "Body": "This is the first message"}, {"UserProperties": {"Priority": "Low"},
-      "BrokerProperties": {"Label": "M2"}, "Body": "This is the second message"},
-      {"UserProperties": {"Priority": "Medium", "Customer": "ABC"}, "BrokerProperties":
-      {"Label": "M3"}, "Body": "This is the third message"}]'
+    body: '[{"Body": "This is the first message", "BrokerProperties": {"Label": "M1",
+      "TimeToLiveTimeSpan": "0.00:00:40"}}, {"Body": "This is the second message",
+      "UserProperties": {"Priority": "Low"}, "BrokerProperties": {"Label": "M2"}},
+      {"Body": "This is the third message", "UserProperties": {"Priority": "Medium",
+      "Customer": "ABC"}, "BrokerProperties": {"Label": "M3"}}]'
     headers:
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['365']
-      Content-Type: [application/vnd.microsoft.servicebus.json]
-      User-Agent: [pyazure/0.20.3]
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '365'
+      Content-Type:
+      - application/vnd.microsoft.servicebus.json
+      User-Agent:
+      - azure-servicebus/0.50.0 Azure-SDK-For-Python
     method: POST
-    uri: https://fakesbnamespace.servicebus.windows.net/uttopic9797170f/messages
+    uri: https://fakesbnamespace.servicebus.windows.net/uttopic9797170f/messages?api-version=2017-04
   response:
-    body: {string: ''}
+    body:
+      string: ''
     headers:
-      Content-Type: [application/xml; charset=utf-8]
-      Date: ['Thu, 12 Jan 2017 00:11:58 GMT']
-      Server: [Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000]
-      Transfer-Encoding: [chunked]
-    status: {code: 201, message: Created}
+      Content-Type:
+      - application/xml; charset=utf-8
+      Date:
+      - Thu, 25 Apr 2019 06:38:02 GMT
+      ETag:
+      - '636917710817400000'
+      Server:
+      - Microsoft-HTTPAPI/2.0
+      Strict-Transport-Security:
+      - max-age=31536000
+      Transfer-Encoding:
+      - chunked
+    status:
+      code: 201
+      message: Created
 - request:
     body: null
     headers:
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['0']
-      Content-Type: [application/atom+xml;type=entry;charset=utf-8]
-      User-Agent: [pyazure/0.20.3]
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Content-Type:
+      - application/atom+xml;type=entry;charset=utf-8
+      User-Agent:
+      - azure-servicebus/0.50.0 Azure-SDK-For-Python
     method: DELETE
-    uri: https://fakesbnamespace.servicebus.windows.net/uttopic9797170f/subscriptions/MySubscription/messages/head?timeout=60
+    uri: https://fakesbnamespace.servicebus.windows.net/uttopic9797170f/subscriptions/MySubscription/messages/head?timeout=60&api-version=2017-04
   response:
-    body: {string: This is the first message}
+    body:
+      string: This is the first message
     headers:
-      BrokerProperties: ['{"DeliveryCount":1,"EnqueuedSequenceNumber":1,"EnqueuedTimeUtc":"Thu,
-          12 Jan 2017 00:11:57 GMT","Label":"M1","MessageId":"152222cc675d4351b5a9182f7f67be38","SequenceNumber":1,"State":"Active","TimeToLive":40}']
-      Content-Type: [application/xml; charset=utf-8]
-      Date: ['Thu, 12 Jan 2017 00:11:58 GMT']
-      Server: [Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000]
-      Transfer-Encoding: [chunked]
-    status: {code: 200, message: OK}
+      BrokerProperties:
+      - '{"DeliveryCount":1,"EnqueuedSequenceNumber":1,"EnqueuedTimeUtc":"Thu, 25
+        Apr 2019 06:38:02 GMT","Label":"M1","MessageId":"b3ad62d083384af7aca0ff73aaa43c33","SequenceNumber":1,"State":"Active","TimeToLive":40}'
+      Content-Type:
+      - application/xml; charset=utf-8
+      Date:
+      - Thu, 25 Apr 2019 06:38:02 GMT
+      ETag:
+      - '636917710817400000'
+      Server:
+      - Microsoft-HTTPAPI/2.0
+      Strict-Transport-Security:
+      - max-age=31536000
+      Transfer-Encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
 - request:
     body: null
     headers:
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['0']
-      Content-Type: [application/atom+xml;type=entry;charset=utf-8]
-      User-Agent: [pyazure/0.20.3]
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Content-Type:
+      - application/atom+xml;type=entry;charset=utf-8
+      User-Agent:
+      - azure-servicebus/0.50.0 Azure-SDK-For-Python
     method: DELETE
-    uri: https://fakesbnamespace.servicebus.windows.net/uttopic9797170f/subscriptions/MySubscription/messages/head?timeout=60
+    uri: https://fakesbnamespace.servicebus.windows.net/uttopic9797170f/subscriptions/MySubscription/messages/head?timeout=60&api-version=2017-04
   response:
-    body: {string: This is the second message}
+    body:
+      string: This is the second message
     headers:
-      BrokerProperties: ['{"DeliveryCount":1,"EnqueuedSequenceNumber":2,"EnqueuedTimeUtc":"Thu,
-          12 Jan 2017 00:11:57 GMT","Label":"M2","MessageId":"c98d214ef1cd489ab26d5b4b3dc86ea7","SequenceNumber":2,"State":"Active","TimeToLive":922337203685.47754}']
-      Content-Type: [application/xml; charset=utf-8]
-      Date: ['Thu, 12 Jan 2017 00:11:58 GMT']
-      Priority: ['"Low"']
-      Server: [Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000]
-      Transfer-Encoding: [chunked]
-    status: {code: 200, message: OK}
+      BrokerProperties:
+      - '{"DeliveryCount":1,"EnqueuedSequenceNumber":2,"EnqueuedTimeUtc":"Thu, 25
+        Apr 2019 06:38:02 GMT","Label":"M2","MessageId":"d6e4ec0448894a5c806b791e40bcb791","SequenceNumber":2,"State":"Active","TimeToLive":922337203685.47754}'
+      Content-Type:
+      - application/xml; charset=utf-8
+      Date:
+      - Thu, 25 Apr 2019 06:38:02 GMT
+      ETag:
+      - '636917710817400000'
+      Priority:
+      - '"Low"'
+      Server:
+      - Microsoft-HTTPAPI/2.0
+      Strict-Transport-Security:
+      - max-age=31536000
+      Transfer-Encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
 - request:
     body: null
     headers:
-      Accept-Encoding: ['gzip, deflate']
-      Connection: [keep-alive]
-      Content-Length: ['0']
-      Content-Type: [application/atom+xml;type=entry;charset=utf-8]
-      User-Agent: [pyazure/0.20.3]
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      Content-Type:
+      - application/atom+xml;type=entry;charset=utf-8
+      User-Agent:
+      - azure-servicebus/0.50.0 Azure-SDK-For-Python
     method: DELETE
-    uri: https://fakesbnamespace.servicebus.windows.net/uttopic9797170f/subscriptions/MySubscription/messages/head?timeout=60
+    uri: https://fakesbnamespace.servicebus.windows.net/uttopic9797170f/subscriptions/MySubscription/messages/head?timeout=60&api-version=2017-04
   response:
-    body: {string: This is the third message}
+    body:
+      string: This is the third message
     headers:
-      BrokerProperties: ['{"DeliveryCount":1,"EnqueuedSequenceNumber":3,"EnqueuedTimeUtc":"Thu,
-          12 Jan 2017 00:11:57 GMT","Label":"M3","MessageId":"74ada69b2f004e36959ee6693a587bba","SequenceNumber":3,"State":"Active","TimeToLive":922337203685.47754}']
-      Content-Type: [application/xml; charset=utf-8]
-      Customer: ['"ABC"']
-      Date: ['Thu, 12 Jan 2017 00:11:58 GMT']
-      Priority: ['"Medium"']
-      Server: [Microsoft-HTTPAPI/2.0]
-      Strict-Transport-Security: [max-age=31536000]
-      Transfer-Encoding: [chunked]
-    status: {code: 200, message: OK}
+      BrokerProperties:
+      - '{"DeliveryCount":1,"EnqueuedSequenceNumber":3,"EnqueuedTimeUtc":"Thu, 25
+        Apr 2019 06:38:02 GMT","Label":"M3","MessageId":"4325a74da71440c2b6b7e2c865712643","SequenceNumber":3,"State":"Active","TimeToLive":922337203685.47754}'
+      Content-Type:
+      - application/xml; charset=utf-8
+      Customer:
+      - '"ABC"'
+      Date:
+      - Thu, 25 Apr 2019 06:38:03 GMT
+      ETag:
+      - '636917710817400000'
+      Priority:
+      - '"Medium"'
+      Server:
+      - Microsoft-HTTPAPI/2.0
+      Strict-Transport-Security:
+      - max-age=31536000
+      Transfer-Encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
 version: 1

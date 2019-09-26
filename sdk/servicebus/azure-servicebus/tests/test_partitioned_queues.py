@@ -274,8 +274,8 @@ def test_pqueue_by_servicebus_client_iter_messages_with_retrieve_deferred_client
             message.complete()
 
     with pytest.raises(ValueError):
-        queue_client.settle_deferred_messages('foo', message)
-    queue_client.settle_deferred_messages('completed', message)
+        queue_client.settle_deferred_messages('foo', deferred)
+    queue_client.settle_deferred_messages('completed', deferred)
 
     with pytest.raises(ServiceBusError):
         queue_client.receive_deferred_messages(deferred_messages)
