@@ -18,6 +18,7 @@ try:
     from ._models_py3 import AlertConfidenceReason
     from ._models_py3 import AlertEntity
     from ._models_py3 import AllowedConnectionsResource
+    from ._models_py3 import AllowlistCustomAlertRule
     from ._models_py3 import AppWhitelistingGroup
     from ._models_py3 import AppWhitelistingGroups
     from ._models_py3 import AppWhitelistingIssueSummary
@@ -34,7 +35,10 @@ try:
     from ._models_py3 import ConnectableResource
     from ._models_py3 import ConnectedResource
     from ._models_py3 import ConnectedWorkspace
+    from ._models_py3 import CustomAlertRule
     from ._models_py3 import DataExportSetting
+    from ._models_py3 import DenylistCustomAlertRule
+    from ._models_py3 import DeviceSecurityGroup
     from ._models_py3 import DiscoveredSecuritySolution
     from ._models_py3 import ETag
     from ._models_py3 import ExternalSecuritySolution
@@ -46,11 +50,8 @@ try:
     from ._models_py3 import IoTSecurityAggregatedAlert
     from ._models_py3 import IoTSecurityAggregatedRecommendation
     from ._models_py3 import IoTSecurityAlertedDevice
-    from ._models_py3 import IoTSecurityAlertedDevicesList
     from ._models_py3 import IoTSecurityDeviceAlert
-    from ._models_py3 import IoTSecurityDeviceAlertsList
     from ._models_py3 import IoTSecurityDeviceRecommendation
-    from ._models_py3 import IoTSecurityDeviceRecommendationsList
     from ._models_py3 import IoTSecuritySolutionAnalyticsModel
     from ._models_py3 import IoTSecuritySolutionAnalyticsModelList
     from ._models_py3 import IoTSecuritySolutionAnalyticsModelPropertiesDevicesMetricsItem
@@ -66,12 +67,14 @@ try:
     from ._models_py3 import JitNetworkAccessRequestPort
     from ._models_py3 import JitNetworkAccessRequestVirtualMachine
     from ._models_py3 import Kind
+    from ._models_py3 import ListCustomAlertRule
     from ._models_py3 import Location
     from ._models_py3 import Operation
     from ._models_py3 import OperationDisplay
     from ._models_py3 import PathRecommendation
     from ._models_py3 import Pricing
     from ._models_py3 import PricingList
+    from ._models_py3 import ProtectionMode
     from ._models_py3 import PublisherInfo
     from ._models_py3 import RecommendationConfigurationProperties
     from ._models_py3 import RegulatoryComplianceAssessment
@@ -88,6 +91,8 @@ try:
     from ._models_py3 import SettingResource
     from ._models_py3 import Tags
     from ._models_py3 import TagsResource
+    from ._models_py3 import ThresholdCustomAlertRule
+    from ._models_py3 import TimeWindowCustomAlertRule
     from ._models_py3 import TopologyResource
     from ._models_py3 import TopologySingleResource
     from ._models_py3 import TopologySingleResourceChild
@@ -107,6 +112,7 @@ except (SyntaxError, ImportError):
     from ._models import AlertConfidenceReason
     from ._models import AlertEntity
     from ._models import AllowedConnectionsResource
+    from ._models import AllowlistCustomAlertRule
     from ._models import AppWhitelistingGroup
     from ._models import AppWhitelistingGroups
     from ._models import AppWhitelistingIssueSummary
@@ -123,7 +129,10 @@ except (SyntaxError, ImportError):
     from ._models import ConnectableResource
     from ._models import ConnectedResource
     from ._models import ConnectedWorkspace
+    from ._models import CustomAlertRule
     from ._models import DataExportSetting
+    from ._models import DenylistCustomAlertRule
+    from ._models import DeviceSecurityGroup
     from ._models import DiscoveredSecuritySolution
     from ._models import ETag
     from ._models import ExternalSecuritySolution
@@ -135,11 +144,8 @@ except (SyntaxError, ImportError):
     from ._models import IoTSecurityAggregatedAlert
     from ._models import IoTSecurityAggregatedRecommendation
     from ._models import IoTSecurityAlertedDevice
-    from ._models import IoTSecurityAlertedDevicesList
     from ._models import IoTSecurityDeviceAlert
-    from ._models import IoTSecurityDeviceAlertsList
     from ._models import IoTSecurityDeviceRecommendation
-    from ._models import IoTSecurityDeviceRecommendationsList
     from ._models import IoTSecuritySolutionAnalyticsModel
     from ._models import IoTSecuritySolutionAnalyticsModelList
     from ._models import IoTSecuritySolutionAnalyticsModelPropertiesDevicesMetricsItem
@@ -155,12 +161,14 @@ except (SyntaxError, ImportError):
     from ._models import JitNetworkAccessRequestPort
     from ._models import JitNetworkAccessRequestVirtualMachine
     from ._models import Kind
+    from ._models import ListCustomAlertRule
     from ._models import Location
     from ._models import Operation
     from ._models import OperationDisplay
     from ._models import PathRecommendation
     from ._models import Pricing
     from ._models import PricingList
+    from ._models import ProtectionMode
     from ._models import PublisherInfo
     from ._models import RecommendationConfigurationProperties
     from ._models import RegulatoryComplianceAssessment
@@ -177,6 +185,8 @@ except (SyntaxError, ImportError):
     from ._models import SettingResource
     from ._models import Tags
     from ._models import TagsResource
+    from ._models import ThresholdCustomAlertRule
+    from ._models import TimeWindowCustomAlertRule
     from ._models import TopologyResource
     from ._models import TopologySingleResource
     from ._models import TopologySingleResourceChild
@@ -193,6 +203,7 @@ from ._paged_models import AscLocationPaged
 from ._paged_models import AutoProvisioningSettingPaged
 from ._paged_models import CompliancePaged
 from ._paged_models import ComplianceResultPaged
+from ._paged_models import DeviceSecurityGroupPaged
 from ._paged_models import DiscoveredSecuritySolutionPaged
 from ._paged_models import ExternalSecuritySolutionPaged
 from ._paged_models import InformationProtectionPolicyPaged
@@ -214,6 +225,7 @@ from ._security_center_enums import (
     PricingTier,
     ReportedSeverity,
     SettingKind,
+    ValueType,
     SecuritySolutionStatus,
     ExportData,
     DataSource,
@@ -241,6 +253,7 @@ __all__ = [
     'AlertConfidenceReason',
     'AlertEntity',
     'AllowedConnectionsResource',
+    'AllowlistCustomAlertRule',
     'AppWhitelistingGroup',
     'AppWhitelistingGroups',
     'AppWhitelistingIssueSummary',
@@ -257,7 +270,10 @@ __all__ = [
     'ConnectableResource',
     'ConnectedResource',
     'ConnectedWorkspace',
+    'CustomAlertRule',
     'DataExportSetting',
+    'DenylistCustomAlertRule',
+    'DeviceSecurityGroup',
     'DiscoveredSecuritySolution',
     'ETag',
     'ExternalSecuritySolution',
@@ -269,11 +285,8 @@ __all__ = [
     'IoTSecurityAggregatedAlert',
     'IoTSecurityAggregatedRecommendation',
     'IoTSecurityAlertedDevice',
-    'IoTSecurityAlertedDevicesList',
     'IoTSecurityDeviceAlert',
-    'IoTSecurityDeviceAlertsList',
     'IoTSecurityDeviceRecommendation',
-    'IoTSecurityDeviceRecommendationsList',
     'IoTSecuritySolutionAnalyticsModel',
     'IoTSecuritySolutionAnalyticsModelList',
     'IoTSecuritySolutionAnalyticsModelPropertiesDevicesMetricsItem',
@@ -289,12 +302,14 @@ __all__ = [
     'JitNetworkAccessRequestPort',
     'JitNetworkAccessRequestVirtualMachine',
     'Kind',
+    'ListCustomAlertRule',
     'Location',
     'Operation',
     'OperationDisplay',
     'PathRecommendation',
     'Pricing',
     'PricingList',
+    'ProtectionMode',
     'PublisherInfo',
     'RecommendationConfigurationProperties',
     'RegulatoryComplianceAssessment',
@@ -311,6 +326,8 @@ __all__ = [
     'SettingResource',
     'Tags',
     'TagsResource',
+    'ThresholdCustomAlertRule',
+    'TimeWindowCustomAlertRule',
     'TopologyResource',
     'TopologySingleResource',
     'TopologySingleResourceChild',
@@ -324,6 +341,7 @@ __all__ = [
     'ComplianceResultPaged',
     'AlertPaged',
     'SettingPaged',
+    'DeviceSecurityGroupPaged',
     'IoTSecuritySolutionModelPaged',
     'IoTSecurityAggregatedAlertPaged',
     'IoTSecurityAggregatedRecommendationPaged',
@@ -347,6 +365,7 @@ __all__ = [
     'PricingTier',
     'ReportedSeverity',
     'SettingKind',
+    'ValueType',
     'SecuritySolutionStatus',
     'ExportData',
     'DataSource',
