@@ -851,24 +851,27 @@ class AmlInstanceProperties(Model):
      nodes during node setup.
     :vartype errors:
      list[~azure.mgmt.machinelearningservices.models.MachineLearningServiceError]
-    :param state: The current state of this AmlInstance. Possible values
+    :ivar state: The current state of this AmlInstance. Possible values
      include: 'Creating', 'Deleting', 'Ready', 'Restarting', 'Running',
      'SettingUp', 'SetupFailed', 'Starting', 'Stopped', 'Stopping',
      'UserSettingUp', 'UserSetupFailed', 'Unknown', 'Unusable'
-    :type state: str or
+    :vartype state: str or
      ~azure.mgmt.machinelearningservices.models.AmlInstanceState
-    :param last_operation: Last operation performed on this AmlInstance.
+    :ivar last_operation: Last operation performed on this AmlInstance.
      Possible values include: 'Create', 'Delete', 'Restart', 'Start', 'Stop'
-    :type last_operation: str or
+    :vartype last_operation: str or
      ~azure.mgmt.machinelearningservices.models.AmlInstanceLastOperation
-    :param last_operation_status: Status of last operation performed on this
+    :ivar last_operation_status: Status of last operation performed on this
      AmlInstance. Possible values include: 'Failed', 'InProgress', 'Succeeded'
-    :type last_operation_status: str or
+    :vartype last_operation_status: str or
      ~azure.mgmt.machinelearningservices.models.AmlInstanceLastOperationStatus
     """
 
     _validation = {
         'errors': {'readonly': True},
+        'state': {'readonly': True},
+        'last_operation': {'readonly': True},
+        'last_operation_status': {'readonly': True},
     }
 
     _attribute_map = {
@@ -884,7 +887,7 @@ class AmlInstanceProperties(Model):
         'last_operation_status': {'key': 'lastOperationStatus', 'type': 'str'},
     }
 
-    def __init__(self, *, vm_size: str=None, subnet=None, data_stores_mount_settings=None, custom_script_settings=None, software_update_settings=None, ssh_settings=None, state=None, last_operation=None, last_operation_status=None, **kwargs) -> None:
+    def __init__(self, *, vm_size: str=None, subnet=None, data_stores_mount_settings=None, custom_script_settings=None, software_update_settings=None, ssh_settings=None, **kwargs) -> None:
         super(AmlInstanceProperties, self).__init__(**kwargs)
         self.vm_size = vm_size
         self.subnet = subnet
@@ -893,9 +896,9 @@ class AmlInstanceProperties(Model):
         self.software_update_settings = software_update_settings
         self.ssh_settings = ssh_settings
         self.errors = None
-        self.state = state
-        self.last_operation = last_operation
-        self.last_operation_status = last_operation_status
+        self.state = None
+        self.last_operation = None
+        self.last_operation_status = None
 
 
 class AmlInstanceSdkUpdate(Model):
