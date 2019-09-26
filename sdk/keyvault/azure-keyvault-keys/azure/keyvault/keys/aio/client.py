@@ -7,7 +7,7 @@ from typing import Any, AsyncIterable, Optional, Dict, List, Union
 
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.keyvault.keys.models import DeletedKey, JsonWebKey, Key, KeyBase
+from azure.keyvault.keys.models import DeletedKey, JsonWebKey, Key, KeyProperties
 from azure.keyvault.keys._shared import AsyncKeyVaultClientBase
 
 from .._shared.exceptions import error_map
@@ -308,11 +308,11 @@ class KeyClient(AsyncKeyVaultClientBase):
         )
 
     @distributed_trace
-    def list_keys(self, **kwargs: "**Any") -> AsyncIterable[KeyBase]:
+    def list_keys(self, **kwargs: "**Any") -> AsyncIterable[KeyProperties]:
         """List identifiers, attributes, and tags of all keys in the vault. Requires the keys/list permission.
 
         :returns: An iterator of keys without their cryptographic material or version information
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.keys.models.KeyBase]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.keys.models.KeyProperties]
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys_async.py
@@ -324,16 +324,16 @@ class KeyClient(AsyncKeyVaultClientBase):
         """
         max_results = kwargs.get("max_page_size")
         return self._client.get_keys(
-            self.vault_url, maxresults=max_results, cls=lambda objs: [KeyBase._from_key_item(x) for x in objs], **kwargs
+            self.vault_url, maxresults=max_results, cls=lambda objs: [KeyProperties._from_key_item(x) for x in objs], **kwargs
         )
 
     @distributed_trace
-    def list_key_versions(self, name: str, **kwargs: "**Any") -> AsyncIterable[KeyBase]:
+    def list_key_versions(self, name: str, **kwargs: "**Any") -> AsyncIterable[KeyProperties]:
         """List the identifiers, attributes, and tags of a key's versions. Requires the keys/list permission.
 
         :param str name: The name of the key
         :returns: An iterator of keys without their cryptographic material
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.keys.models.KeyBase]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.keys.models.KeyProperties]
 
         Example:
             .. literalinclude:: ../tests/test_samples_keys_async.py
@@ -348,7 +348,7 @@ class KeyClient(AsyncKeyVaultClientBase):
             self.vault_url,
             name,
             maxresults=max_results,
-            cls=lambda objs: [KeyBase._from_key_item(x) for x in objs],
+            cls=lambda objs: [KeyProperties._from_key_item(x) for x in objs],
             **kwargs,
         )
 
@@ -398,7 +398,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         return Key._from_key_bundle(bundle)
 
     @distributed_trace_async
-    async def update_key(
+    async def update_key_properties(
         self,
         name: str,
         version: Optional[str] = None,
@@ -408,7 +408,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         expires: Optional[datetime] = None,
         tags: Optional[Dict[str, str]] = None,
         **kwargs: "**Any"
-    ) -> Key:
+    ) -> KeyProperties:
         """Change attributes of a key. Cannot change a key's cryptographic material. Requires the keys/update
         permission.
 
@@ -420,8 +420,8 @@ class KeyClient(AsyncKeyVaultClientBase):
         :param datetime.datetime expires: (optional) Expiry date of the key in UTC
         :param datetime.datetime not_before: (optional) Not before date of the key in UTC
         :param dict tags: (optional) Application specific metadata in the form of key-value pairs
-        :returns: The updated key
-        :rtype: ~azure.keyvault.keys.models.Key
+        :returns: The updated key properties
+        :rtype: ~azure.keyvault.keys.models.KeyProperties
         :raises:
             :class:`~azure.core.exceptions.ResourceNotFoundError` if the key doesn't exist,
             :class:`~azure.core.exceptions.HttpResponseError` for other errors
@@ -449,7 +449,7 @@ class KeyClient(AsyncKeyVaultClientBase):
             error_map=error_map,
             **kwargs,
         )
-        return Key._from_key_bundle(bundle)
+        return KeyProperties._from_key_bundle(bundle)
 
     @distributed_trace_async
     async def backup_key(self, name: str, **kwargs: "**Any") -> bytes:

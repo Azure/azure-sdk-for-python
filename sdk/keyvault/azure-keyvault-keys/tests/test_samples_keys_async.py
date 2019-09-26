@@ -47,8 +47,8 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         print(key.id)
         print(key.name)
         print(key.key_material.kty)
-        print(key.enabled)
-        print(key.expires)
+        print(key.properties.enabled)
+        print(key.properties.expires)
 
         # [END create_key]
         # [START create_rsa_key]
@@ -94,12 +94,12 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         # update attributes of an existing key
         expires = date_parse.parse("2050-01-02T08:00:00.000Z")
         tags = {"foo": "updated tag"}
-        updated_key = await key_client.update_key(key.name, expires=expires, tags=tags)
+        updated_key = await key_client.update_key_properties(key.name, expires=expires, tags=tags)
 
         print(updated_key.version)
-        print(updated_key.updated)
-        print(updated_key.expires)
-        print(updated_key.tags)
+        print(updated_key.properties.updated)
+        print(updated_key.properties.expires)
+        print(updated_key.properties.tags)
         print(updated_key.key_material.kty)
 
         # [END update_key]

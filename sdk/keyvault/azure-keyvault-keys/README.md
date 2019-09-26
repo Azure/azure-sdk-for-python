@@ -171,12 +171,12 @@ print(key.name)
 # Clients may specify additional application-specific metadata in the form of tags.
 tags = {"foo": "updated tag"}
 
-updated_key = key_client.update_key("key-name", tags=tags)
+updated_key = key_client.update_key_properties("key-name", tags=tags)
 
 print(updated_key.name)
 print(updated_key.version)
-print(updated_key.updated)
-print(updated_key.tags)
+print(updated_key.properties.updated)
+print(updated_key.properties.tags)
 ```
 
 ### Delete a Key
