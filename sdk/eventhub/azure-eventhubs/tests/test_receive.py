@@ -272,3 +272,33 @@ def test_receive_over_websocket_sync(connstr_senders):
 
         received = receiver.receive(max_batch_size=50, timeout=5)
         assert len(received) == 20
+
+
+@pytest.mark.liveTest
+def test_receive_run_time_metric(connstr_senders):
+    connection_str, senders = connstr_senders
+    client = EventHubClient.from_connection_string(connection_str, transport_type=TransportType.AmqpOverWebsocket,
+                                                   network_tracing=False)
+    receiver = client.create_consumer(consumer_group="$default", partition_id="0",
+                                      event_position=EventPosition('@latest'), prefetch=500,
+                                      track_last_enqueued_event_info=True)
+
+    event_list = []
+    for i in range(20):
+        event_list.append(EventData("Event Number {}".format(i)))
+
+    with receiver:
+        received = receiver.receive(timeout=5)
+        assert len(received) == 0
+
+        senders[0].send(event_list)
+
+        time.sleep(1)
+
+        received = receiver.receive(max_batch_size=50, timeout=5)
+        assert len(received) == 20
+        assert receiver.runtime_info
+        assert receiver.runtime_info.get('last_enqueued_sequence_number', None)
+        assert receiver.runtime_info.get('last_enqueued_offset', None)
+        assert receiver.runtime_info.get('last_enqueued_time_utc', None)
+        assert receiver.runtime_info.get('runtime_info_retrieval_time_utc', None)
