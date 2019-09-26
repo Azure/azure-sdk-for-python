@@ -39,7 +39,6 @@ VAULT_URL = os.environ["VAULT_URL"]
 credential = DefaultAzureCredential()
 client = CertificateClient(vault_url=VAULT_URL, credential=credential)
 try:
-
     print("\n.. Create Certificate")
     cert_name = 'BackupRestoreCertificate'
 
@@ -48,8 +47,9 @@ try:
     # A long running poller is returned for the create certificate operation.
     create_certificate_poller = client.create_certificate(name=cert_name)
 
-    # The wait call awaits the completion of the create certificate operation
-    create_certificate_poller.wait()
+    # The result call awaits the completion of the create certificate operation and returns the final result.
+    # It will return a certificate if creation is successful, and will return the CertificateOperation if not.
+    certificate = create_certificate_poller.result()
     print("Certificate with name '{0}' created.".format(cert_name))
 
     # Backups are good to have, if in case certificates gets deleted accidentally.
@@ -59,22 +59,12 @@ try:
     print("Backup created for certificate with name '{0}'.".format(cert_name))
 
     # The storage account certificate is no longer in use, so you can delete it.
+    print("\n.. Delete the certificate")
     client.delete_certificate(name=cert_name)
-    # To ensure certificate is deleted on the server side.
-    time.sleep(30)
-    print("Deleted Certificate with name '{0}'".format(cert_name))
-
-    # Even though the certificate is deleted, it can still be recovered so its name cannot be reused.
-    # In order to be able to reuse the name during restoration, we must purge the certificate
-    # after the initial deletion.
-    print("\nPurging certificate...")
-    client.purge_deleted_certificate(name=cert_name)
-    # To ensure certificate is purged on the server side.
-    time.sleep(30)
-    print("Purged Certificate with name '{0}'".format(cert_name))
+    print("Deleted certificate '{0}'".format(cert_name))
 
     # In future, if the certificate is required again, we can use the backup value to restore it in the Key Vault.
-    print("\n.. Restore the certificate using the backed up certificate bytes")
+    print("\n.. Restore the certificate from the backup")
     certificate = client.restore_certificate(certificate_backup)
     print("Restored Certificate with name '{0}'".format(certificate.name))
 

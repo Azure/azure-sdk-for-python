@@ -1,3 +1,7 @@
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
 import asyncio
 import os
 from azure.keyvault.secrets.aio import SecretClient
@@ -5,19 +9,14 @@ from azure.identity.aio import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 
 # ----------------------------------------------------------------------------------------------------------
-# Prerequistes -
-#
-# 1. An Azure Key Vault-
-#    https://docs.microsoft.com/en-us/azure/key-vault/quick-create-cli
+# Prerequisites:
+# 1. An Azure Key Vault (https://docs.microsoft.com/en-us/azure/key-vault/quick-create-cli)
 #
 #  2. Microsoft Azure Key Vault PyPI package -
 #    https://pypi.python.org/pypi/azure-keyvault-secrets/
 #
-# 3. Microsoft Azure Identity package -
-#    https://pypi.python.org/pypi/azure-identity/
-#
-# 4. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL.
-# How to do this - https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys#createget-credentials)
+# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL
+#    (See https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys#authenticate-the-client)
 #
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates the basic backup and restore operations on a vault(secret) resource for Azure Key Vault
@@ -41,13 +40,13 @@ async def run_sample():
     try:
         # Let's create a secret holding storage account credentials.
         # if the secret already exists in the Key Vault, then a new version of the secret is created.
-        print("\n1. Create Secret")
+        print("\n.. Create Secret")
         secret = await client.set_secret("backupRestoreSecretName", "backupRestoreSecretValue")
         print("Secret with name '{0}' created with value '{1}'".format(secret.name, secret.value))
 
         # Backups are good to have, if in case secrets gets deleted accidentally.
         # For long term storage, it is ideal to write the backup to a file.
-        print("\n1. Create a backup for an existing Secret")
+        print("\n.. Create a backup for an existing Secret")
         secret_backup = await client.backup_secret(secret.name)
         print("Backup created for secret with name '{0}'.".format(secret.name))
 
@@ -56,7 +55,7 @@ async def run_sample():
         print("Deleted Secret with name '{0}'".format(secret.name))
 
         # In future, if the secret is required again, we can use the backup value to restore it in the Key Vault.
-        print("\n2. Restore the secret using the backed up secret bytes")
+        print("\n.. Restore the secret using the backed up secret bytes")
         secret = await client.restore_secret(secret_backup)
         print("Restored Secret with name '{0}'".format(secret.name))
 

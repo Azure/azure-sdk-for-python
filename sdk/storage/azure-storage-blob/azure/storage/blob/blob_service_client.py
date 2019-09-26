@@ -506,6 +506,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
                 :caption: Creating a container in the blob service.
         """
         container = self.get_container_client(name)
+        kwargs.setdefault('merge_span', True)
         container.create_container(
             metadata=metadata, public_access=public_access, timeout=timeout, **kwargs)
         return container
@@ -565,6 +566,7 @@ class BlobServiceClient(StorageAccountHostsMixin):
                 :caption: Deleting a container in the blob service.
         """
         container = self.get_container_client(container) # type: ignore
+        kwargs.setdefault('merge_span', True)
         container.delete_container( # type: ignore
             lease=lease,
             timeout=timeout,

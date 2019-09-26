@@ -32,8 +32,8 @@ except ImportError:
 
 from typing import Any, Callable, Union, List, Optional, TYPE_CHECKING
 from azure.core.pipeline.transport.base import HttpResponse  # type: ignore
-from azure.core.tracing.context import tracing_context
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.tracing.common import with_current_context
 
 if TYPE_CHECKING:
     import requests
@@ -139,7 +139,7 @@ class LROPoller(object):
         if not self._polling_method.finished():
             self._done = threading.Event()
             self._thread = threading.Thread(
-                target=tracing_context.with_current_context(self._start),
+                target=with_current_context(self._start),
                 name="LROPoller({})".format(uuid.uuid4()))
             self._thread.daemon = True
             self._thread.start()
