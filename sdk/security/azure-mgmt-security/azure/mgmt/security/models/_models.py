@@ -164,6 +164,36 @@ class AadSolutionProperties(Model):
         self.connectivity_state = kwargs.get('connectivity_state', None)
 
 
+class AdditionalData(Model):
+    """Details of the sub-assessment.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: SqlServerVulnerabilityProperties,
+    ContainerRegistryVulnerabilityProperties, ServerVulnerabilityProperties
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param assessed_resource_type: Required. Constant filled by server.
+    :type assessed_resource_type: str
+    """
+
+    _validation = {
+        'assessed_resource_type': {'required': True},
+    }
+
+    _attribute_map = {
+        'assessed_resource_type': {'key': 'assessedResourceType', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'assessed_resource_type': {'SqlServerVulnerability': 'SqlServerVulnerabilityProperties', 'ContainerRegistryVulnerability': 'ContainerRegistryVulnerabilityProperties', 'ServerVulnerabilityAssessment': 'ServerVulnerabilityProperties'}
+    }
+
+    def __init__(self, **kwargs):
+        super(AdditionalData, self).__init__(**kwargs)
+        self.assessed_resource_type = None
+
+
 class Resource(Model):
     """Describes an Azure resource.
 
@@ -949,6 +979,100 @@ class AutoProvisioningSetting(Resource):
         self.auto_provision = kwargs.get('auto_provision', None)
 
 
+class ResourceDetails(Model):
+    """Details of the resource that was assessed.
+
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: AzureResourceDetails, AwsResourceDetails
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param source: Required. Constant filled by server.
+    :type source: str
+    """
+
+    _validation = {
+        'source': {'required': True},
+    }
+
+    _attribute_map = {
+        'source': {'key': 'source', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'source': {'Azure': 'AzureResourceDetails', 'Aws': 'AwsResourceDetails'}
+    }
+
+    def __init__(self, **kwargs):
+        super(ResourceDetails, self).__init__(**kwargs)
+        self.source = None
+
+
+class AwsResourceDetails(ResourceDetails):
+    """Details of the resource that was assessed.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param source: Required. Constant filled by server.
+    :type source: str
+    :ivar account_id: AWS account ID
+    :vartype account_id: str
+    :ivar aws_resource_id: AWS resource ID. can be ARN or other
+    :vartype aws_resource_id: str
+    """
+
+    _validation = {
+        'source': {'required': True},
+        'account_id': {'readonly': True},
+        'aws_resource_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'source': {'key': 'source', 'type': 'str'},
+        'account_id': {'key': 'accountId', 'type': 'str'},
+        'aws_resource_id': {'key': 'awsResourceId', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(AwsResourceDetails, self).__init__(**kwargs)
+        self.account_id = None
+        self.aws_resource_id = None
+        self.source = 'Aws'
+
+
+class AzureResourceDetails(ResourceDetails):
+    """Details of the resource that was assessed.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param source: Required. Constant filled by server.
+    :type source: str
+    :ivar id: Azure resource ID of the assessed resource
+    :vartype id: str
+    """
+
+    _validation = {
+        'source': {'required': True},
+        'id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'source': {'key': 'source', 'type': 'str'},
+        'id': {'key': 'id', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(AzureResourceDetails, self).__init__(**kwargs)
+        self.id = None
+        self.source = 'Azure'
+
+
 class CefExternalSecuritySolution(ExternalSecuritySolution):
     """Represents a security solution which sends CEF logs to an OMS workspace.
 
@@ -1275,6 +1399,125 @@ class ConnectedWorkspace(Model):
     def __init__(self, **kwargs):
         super(ConnectedWorkspace, self).__init__(**kwargs)
         self.id = kwargs.get('id', None)
+
+
+class ContainerRegistryVulnerabilityProperties(AdditionalData):
+    """Additional context fields for container registry Vulnerability assessment.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param assessed_resource_type: Required. Constant filled by server.
+    :type assessed_resource_type: str
+    :ivar type: Vulnerability Type. e.g: Vulnerability, Potential
+     Vulnerability, Information Gathered, Vulnerability
+    :vartype type: str
+    :ivar cvss: Dictionary from cvss version to cvss details object
+    :vartype cvss: dict[str, ~azure.mgmt.security.models.CVSS]
+    :ivar patchable: Indicates whether a patch is available or not
+    :vartype patchable: bool
+    :ivar cve: List of CVEs
+    :vartype cve: list[~azure.mgmt.security.models.CVE]
+    :ivar published_time: Published time
+    :vartype published_time: datetime
+    :ivar vendor_references:
+    :vartype vendor_references:
+     list[~azure.mgmt.security.models.VendorReference]
+    :ivar repository_name: Name of the repository which the vulnerable image
+     belongs to
+    :vartype repository_name: str
+    :ivar image_digest: Digest of the vulnerable image
+    :vartype image_digest: str
+    """
+
+    _validation = {
+        'assessed_resource_type': {'required': True},
+        'type': {'readonly': True},
+        'cvss': {'readonly': True},
+        'patchable': {'readonly': True},
+        'cve': {'readonly': True},
+        'published_time': {'readonly': True},
+        'vendor_references': {'readonly': True},
+        'repository_name': {'readonly': True},
+        'image_digest': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'assessed_resource_type': {'key': 'assessedResourceType', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'cvss': {'key': 'cvss', 'type': '{CVSS}'},
+        'patchable': {'key': 'patchable', 'type': 'bool'},
+        'cve': {'key': 'cve', 'type': '[CVE]'},
+        'published_time': {'key': 'publishedTime', 'type': 'iso-8601'},
+        'vendor_references': {'key': 'vendorReferences', 'type': '[VendorReference]'},
+        'repository_name': {'key': 'repositoryName', 'type': 'str'},
+        'image_digest': {'key': 'imageDigest', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ContainerRegistryVulnerabilityProperties, self).__init__(**kwargs)
+        self.type = None
+        self.cvss = None
+        self.patchable = None
+        self.cve = None
+        self.published_time = None
+        self.vendor_references = None
+        self.repository_name = None
+        self.image_digest = None
+        self.assessed_resource_type = 'ContainerRegistryVulnerability'
+
+
+class CVE(Model):
+    """CVE details.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar title: CVE title
+    :vartype title: str
+    :ivar link: Link url
+    :vartype link: str
+    """
+
+    _validation = {
+        'title': {'readonly': True},
+        'link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'title': {'key': 'title', 'type': 'str'},
+        'link': {'key': 'link', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(CVE, self).__init__(**kwargs)
+        self.title = None
+        self.link = None
+
+
+class CVSS(Model):
+    """CVSS details.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar base: CVSS base
+    :vartype base: float
+    """
+
+    _validation = {
+        'base': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'base': {'key': 'base', 'type': 'float'},
+    }
+
+    def __init__(self, **kwargs):
+        super(CVSS, self).__init__(**kwargs)
+        self.base = None
 
 
 class SettingResource(Resource):
@@ -3157,6 +3400,83 @@ class SecurityContact(Resource):
         self.alerts_to_admins = kwargs.get('alerts_to_admins', None)
 
 
+class SecuritySubAssessment(Resource):
+    """Security sub-assessment on a resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Resource Id
+    :vartype id: str
+    :ivar name: Resource name
+    :vartype name: str
+    :ivar type: Resource type
+    :vartype type: str
+    :ivar security_sub_assessment_id: Vulnerability ID
+    :vartype security_sub_assessment_id: str
+    :ivar display_name: User friendly display name of the sub-assessment
+    :vartype display_name: str
+    :param status:
+    :type status: ~azure.mgmt.security.models.SubAssessmentStatus
+    :ivar remediation: Information on how to remediate this sub-assessment
+    :vartype remediation: str
+    :ivar impact: Description of the impact of this sub-assessment
+    :vartype impact: str
+    :ivar category: Category of the sub-assessment
+    :vartype category: str
+    :ivar description: Human readable description of the assessment status
+    :vartype description: str
+    :ivar time_generated: The date and time the sub-assessment was generated
+    :vartype time_generated: datetime
+    :param resource_details:
+    :type resource_details: ~azure.mgmt.security.models.ResourceDetails
+    :param additional_data:
+    :type additional_data: ~azure.mgmt.security.models.AdditionalData
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'security_sub_assessment_id': {'readonly': True},
+        'display_name': {'readonly': True},
+        'remediation': {'readonly': True},
+        'impact': {'readonly': True},
+        'category': {'readonly': True},
+        'description': {'readonly': True},
+        'time_generated': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'security_sub_assessment_id': {'key': 'properties.id', 'type': 'str'},
+        'display_name': {'key': 'properties.displayName', 'type': 'str'},
+        'status': {'key': 'properties.status', 'type': 'SubAssessmentStatus'},
+        'remediation': {'key': 'properties.remediation', 'type': 'str'},
+        'impact': {'key': 'properties.impact', 'type': 'str'},
+        'category': {'key': 'properties.category', 'type': 'str'},
+        'description': {'key': 'properties.description', 'type': 'str'},
+        'time_generated': {'key': 'properties.timeGenerated', 'type': 'iso-8601'},
+        'resource_details': {'key': 'properties.resourceDetails', 'type': 'ResourceDetails'},
+        'additional_data': {'key': 'properties.additionalData', 'type': 'AdditionalData'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SecuritySubAssessment, self).__init__(**kwargs)
+        self.security_sub_assessment_id = None
+        self.display_name = None
+        self.status = kwargs.get('status', None)
+        self.remediation = None
+        self.impact = None
+        self.category = None
+        self.description = None
+        self.time_generated = None
+        self.resource_details = kwargs.get('resource_details', None)
+        self.additional_data = kwargs.get('additional_data', None)
+
+
 class SecurityTask(Resource):
     """Security task that we recommend to do in order to strengthen security.
 
@@ -3318,6 +3638,145 @@ class ServerVulnerabilityAssessmentsList(Model):
     def __init__(self, **kwargs):
         super(ServerVulnerabilityAssessmentsList, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
+
+
+class ServerVulnerabilityProperties(AdditionalData):
+    """Additional context fields for server vulnerability assessment.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param assessed_resource_type: Required. Constant filled by server.
+    :type assessed_resource_type: str
+    :ivar type: Vulnerability Type. e.g: Vulnerability, Potential
+     Vulnerability, Information Gathered
+    :vartype type: str
+    :ivar cvss: Dictionary from cvss version to cvss details object
+    :vartype cvss: dict[str, ~azure.mgmt.security.models.CVSS]
+    :ivar patchable: Indicates whether a patch is available or not
+    :vartype patchable: bool
+    :ivar cve: List of CVEs
+    :vartype cve: list[~azure.mgmt.security.models.CVE]
+    :ivar threat: Threat name
+    :vartype threat: str
+    :ivar published_time: Published time
+    :vartype published_time: datetime
+    :ivar vendor_references:
+    :vartype vendor_references:
+     list[~azure.mgmt.security.models.VendorReference]
+    """
+
+    _validation = {
+        'assessed_resource_type': {'required': True},
+        'type': {'readonly': True},
+        'cvss': {'readonly': True},
+        'patchable': {'readonly': True},
+        'cve': {'readonly': True},
+        'threat': {'readonly': True},
+        'published_time': {'readonly': True},
+        'vendor_references': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'assessed_resource_type': {'key': 'assessedResourceType', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'cvss': {'key': 'cvss', 'type': '{CVSS}'},
+        'patchable': {'key': 'patchable', 'type': 'bool'},
+        'cve': {'key': 'cve', 'type': '[CVE]'},
+        'threat': {'key': 'threat', 'type': 'str'},
+        'published_time': {'key': 'publishedTime', 'type': 'iso-8601'},
+        'vendor_references': {'key': 'vendorReferences', 'type': '[VendorReference]'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ServerVulnerabilityProperties, self).__init__(**kwargs)
+        self.type = None
+        self.cvss = None
+        self.patchable = None
+        self.cve = None
+        self.threat = None
+        self.published_time = None
+        self.vendor_references = None
+        self.assessed_resource_type = 'ServerVulnerabilityAssessment'
+
+
+class SqlServerVulnerabilityProperties(AdditionalData):
+    """Details of the resource that was assessed.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param assessed_resource_type: Required. Constant filled by server.
+    :type assessed_resource_type: str
+    :ivar type: The resource type the sub assessment refers to in its resource
+     details
+    :vartype type: str
+    :ivar query: The T-SQL query that runs on your SQL database to perform the
+     particular check
+    :vartype query: str
+    """
+
+    _validation = {
+        'assessed_resource_type': {'required': True},
+        'type': {'readonly': True},
+        'query': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'assessed_resource_type': {'key': 'assessedResourceType', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'query': {'key': 'query', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SqlServerVulnerabilityProperties, self).__init__(**kwargs)
+        self.type = None
+        self.query = None
+        self.assessed_resource_type = 'SqlServerVulnerability'
+
+
+class SubAssessmentStatus(Model):
+    """Status of the sub-assessment.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar code: Programmatic code for the status of the assessment. Possible
+     values include: 'Healthy', 'Unhealthy', 'NotApplicable'
+    :vartype code: str or ~azure.mgmt.security.models.SubAssessmentStatusCode
+    :ivar cause: Programmatic code for the cause of the assessment status
+    :vartype cause: str
+    :ivar description: Human readable description of the assessment status
+    :vartype description: str
+    :ivar severity: The sub-assessment severity level. Possible values
+     include: 'Low', 'Medium', 'High'
+    :vartype severity: str or ~azure.mgmt.security.models.Severity
+    """
+
+    _validation = {
+        'code': {'readonly': True},
+        'cause': {'readonly': True},
+        'description': {'readonly': True},
+        'severity': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'cause': {'key': 'cause', 'type': 'str'},
+        'description': {'key': 'description', 'type': 'str'},
+        'severity': {'key': 'severity', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SubAssessmentStatus, self).__init__(**kwargs)
+        self.code = None
+        self.cause = None
+        self.description = None
+        self.severity = None
 
 
 class TagsResource(Model):
@@ -3672,6 +4131,34 @@ class UserRecommendation(Model):
         super(UserRecommendation, self).__init__(**kwargs)
         self.username = kwargs.get('username', None)
         self.recommendation_action = kwargs.get('recommendation_action', None)
+
+
+class VendorReference(Model):
+    """Vendor reference.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar title: Link title
+    :vartype title: str
+    :ivar link: Link url
+    :vartype link: str
+    """
+
+    _validation = {
+        'title': {'readonly': True},
+        'link': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'title': {'key': 'title', 'type': 'str'},
+        'link': {'key': 'link', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(VendorReference, self).__init__(**kwargs)
+        self.title = None
+        self.link = None
 
 
 class VmRecommendation(Model):
