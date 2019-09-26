@@ -19,7 +19,7 @@ from azure.identity.aio import (
     EnvironmentCredential,
     ManagedIdentityCredential,
 )
-from azure.identity.aio._managed_identity import ImdsCredential
+from azure.identity.aio._credentials.managed_identity import ImdsCredential
 from azure.identity._constants import EnvironmentVariables
 
 from helpers import mock_response, Request, async_validating_transport
@@ -282,7 +282,7 @@ async def test_managed_identity_cloud_shell(monkeypatch):
 
 @pytest.mark.asyncio
 async def test_default_credential_shared_cache_use():
-    with patch("azure.identity.aio.SharedTokenCacheCredential") as mock_credential:
+    with patch("azure.identity.aio._credentials.default.SharedTokenCacheCredential") as mock_credential:
         mock_credential.supported = Mock(return_value=False)
 
         # unsupported platform -> default credential shouldn't use shared cache

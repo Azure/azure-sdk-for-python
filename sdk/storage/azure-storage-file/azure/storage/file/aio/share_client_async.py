@@ -526,5 +526,6 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
         :rtype: ~azure.storage.file.aio.directory_client_async.DirectoryClient
         """
         directory = self.get_directory_client(directory_name)
+        kwargs.setdefault('merge_span', True)
         await directory.create_directory(metadata, timeout, **kwargs)
         return directory # type: ignore

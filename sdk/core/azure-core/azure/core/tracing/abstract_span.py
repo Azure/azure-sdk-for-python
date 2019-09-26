@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """Protocol that defines what functions wrappers of tracing libraries should implement."""
+from enum import Enum
 
 try:
     from typing import TYPE_CHECKING
@@ -10,7 +11,7 @@ except ImportError:
     TYPE_CHECKING = False
 
 if TYPE_CHECKING:
-    from typing import Any, Dict, Optional, Union
+    from typing import Any, Dict, Optional, Union, Callable
 
     from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
@@ -18,6 +19,15 @@ try:
     from typing_extensions import Protocol
 except ImportError:
     Protocol = object  # type: ignore
+
+
+class SpanKind(Enum):
+    UNSPECIFIED = 1
+    SERVER = 2
+    CLIENT = 3
+    PRODUCER = 4
+    CONSUMER = 5
+    INTERNAL = 6
 
 
 class AbstractSpan(Protocol):
@@ -36,6 +46,22 @@ class AbstractSpan(Protocol):
         Create a child span for the current span and append it to the child spans list.
         The child span must be wrapped by an implementation of AbstractSpan
         """
+
+    @property
+    def kind(self):
+        # type: () -> Optional[SpanKind]
+        """Get the span kind of this span."""
+
+    @kind.setter
+    def kind(self, value):
+        # type: (SpanKind) -> None
+        """Set the span kind of this span."""
+
+    def __enter__(self):
+        """Start a span."""
+
+    def __exit__(self, exception_type, exception_value, traceback):
+        """Finish a span."""
 
     def start(self):
         # type: () -> None
@@ -73,6 +99,14 @@ class AbstractSpan(Protocol):
         :type response: HttpResponse
         """
 
+    def get_trace_parent(self):
+        # type: () -> str
+        """Return traceparent string.
+
+        :return: a traceparent string
+        :rtype: str
+        """
+
     @property
     def span_instance(self):
         # type: () -> Any
@@ -81,7 +115,17 @@ class AbstractSpan(Protocol):
         """
 
     @classmethod
-    def link(cls, headers):
+    def link(cls, traceparent):
+        # type: (Dict[str, str]) -> None
+        """
+        Given a traceparent, extracts the context and links the context to the current tracer.
+
+        :param traceparent: A string representing a traceparent
+        :type traceparent: str
+        """
+
+    @classmethod
+    def link_from_headers(cls, headers):
         # type: (Dict[str, str]) -> None
         """
         Given a dictionary, extracts the context and links the context to the current tracer.
@@ -116,4 +160,13 @@ class AbstractSpan(Protocol):
         # type: (Any) -> None
         """
         Set the given tracer as the current tracer in the execution context.
+        """
+
+    @classmethod
+    def with_current_context(cls, func):
+        # type: (Callable) -> Callable
+        """Passes the current spans to the new context the function will be run in.
+
+        :param func: The function that will be run in the new context
+        :return: The target the pass in instead of the function
         """
