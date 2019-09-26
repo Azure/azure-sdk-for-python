@@ -166,10 +166,6 @@ class _InkRecognizerClientBase(object):
         content = response.body().decode("utf-8")
 
         if status_code == 200:
-            logging.info("Response headers:")
-            logging.info(headers)
-            logging.info("Response content:")
-            logging.info(content)
             content_json = json.loads(content, encoding="utf-8")
             if config.response_hook:
                 config.response_hook(headers, content_json)
@@ -246,11 +242,6 @@ class InkRecognizerClient(_InkRecognizerClientBase):
     """
 
     def _send_request(self, data, config):
-        logging.info("Request headers:")
-        logging.info(config.headers)
-        logging.info("Request data:")
-        logging.info(data)
-
         request = HttpRequest("PUT", self._generate_url(config), data=data)
         response = self._pipeline_client._pipeline.run(  # pylint:disable=protected-access
             request, headers=config.headers, **config.kwargs)

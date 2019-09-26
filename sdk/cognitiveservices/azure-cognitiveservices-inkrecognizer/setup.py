@@ -59,13 +59,13 @@ setup(
         'tests',
         # Exclude packages that will be covered by PEP420 or nspkg
         'azure',
+        'azure.cognitiveservices'
     ]),
     install_requires=[
         'six>=1.6',
-        'enum34>=1.0.4',
         'azure-core<2.0.0,>=1.0.0b2'
     ],
     extras_require={
-        ":python_version<'3.0'": ['azure-cognitiveservices-nspkg'],
+        ":python_version<'3.0'": ['azure-cognitiveservices-nspkg', 'enum34>=1.0.4'],
     }
 )

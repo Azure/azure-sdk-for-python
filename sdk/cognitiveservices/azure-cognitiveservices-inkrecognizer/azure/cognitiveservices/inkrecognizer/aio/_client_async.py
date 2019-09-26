@@ -4,7 +4,6 @@
 # license information.
 #--------------------------------------------------------------------------
 
-import logging
 from azure.core import AsyncPipelineClient
 from azure.core.pipeline.transport import HttpRequest, AioHttpTransport
 from azure.core.pipeline.policies import (
@@ -96,11 +95,6 @@ class InkRecognizerClient(_InkRecognizerClientBase):
         await self._pipeline_client.__aexit__(*exc_details)
 
     async def _send_request(self, data, config):
-        logging.info("Request headers:")
-        logging.info(config.headers)
-        logging.info("Request data:")
-        logging.info(data)
-
         request = HttpRequest("PUT", self._generate_url(config), data=data)
         response = await self._pipeline_client._pipeline.run(  # pylint:disable=protected-access
             request, headers=config.headers, **config.kwargs)
