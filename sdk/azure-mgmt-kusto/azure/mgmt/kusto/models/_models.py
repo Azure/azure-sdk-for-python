@@ -13,6 +13,147 @@ from msrest.serialization import Model
 from msrest.exceptions import HttpOperationError
 
 
+class Resource(Model):
+    """Resource.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(Resource, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+
+
+class ProxyResource(Resource):
+    """The resource model definition for a ARM proxy resource. It will have
+    everything other than required location and tags.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :vartype type: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ProxyResource, self).__init__(**kwargs)
+
+
+class AttachedDatabaseConfiguration(ProxyResource):
+    """Class representing an attached database configuration.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :vartype type: str
+    :param location: Resource location.
+    :type location: str
+    :ivar provisioning_state: The provisioned state of the resource. Possible
+     values include: 'Running', 'Creating', 'Deleting', 'Succeeded', 'Failed',
+     'Moving'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.kusto.models.ProvisioningState
+    :param database_name: Required. The name of the database which you would
+     like to attach, use * if you want to follow all current and future
+     databases.
+    :type database_name: str
+    :param cluster_resource_id: Required. The resource id of the cluster where
+     the databases you would like to attach reside.
+    :type cluster_resource_id: str
+    :ivar attached_database_names: The list of databases from the
+     clusterResourceId which are currently attached to the cluster.
+    :vartype attached_database_names: list[str]
+    :param default_principals_modification_kind: Required. The default
+     principals modification kind. Possible values include: 'Union', 'Replace',
+     'None'
+    :type default_principals_modification_kind: str or
+     ~azure.mgmt.kusto.models.DefaultPrincipalsModificationKind
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'provisioning_state': {'readonly': True},
+        'database_name': {'required': True},
+        'cluster_resource_id': {'required': True},
+        'attached_database_names': {'readonly': True},
+        'default_principals_modification_kind': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'database_name': {'key': 'properties.databaseName', 'type': 'str'},
+        'cluster_resource_id': {'key': 'properties.clusterResourceId', 'type': 'str'},
+        'attached_database_names': {'key': 'properties.attachedDatabaseNames', 'type': '[str]'},
+        'default_principals_modification_kind': {'key': 'properties.defaultPrincipalsModificationKind', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(AttachedDatabaseConfiguration, self).__init__(**kwargs)
+        self.location = kwargs.get('location', None)
+        self.provisioning_state = None
+        self.database_name = kwargs.get('database_name', None)
+        self.cluster_resource_id = kwargs.get('cluster_resource_id', None)
+        self.attached_database_names = None
+        self.default_principals_modification_kind = kwargs.get('default_principals_modification_kind', None)
+
+
 class AzureCapacity(Model):
     """Azure capacity definition.
 
@@ -49,41 +190,6 @@ class AzureCapacity(Model):
         self.minimum = kwargs.get('minimum', None)
         self.maximum = kwargs.get('maximum', None)
         self.default = kwargs.get('default', None)
-
-
-class Resource(Model):
-    """Resource.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: Fully qualified resource Id for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
-    :vartype id: str
-    :ivar name: The name of the resource
-    :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
-    :vartype type: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(Resource, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
 
 
 class AzureEntityResource(Resource):
@@ -182,6 +288,36 @@ class AzureSku(Model):
         self.name = kwargs.get('name', None)
         self.capacity = kwargs.get('capacity', None)
         self.tier = kwargs.get('tier', None)
+
+
+class CheckNameRequest(Model):
+    """The result returned from a database check name availability request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: Required. Resource name.
+    :type name: str
+    :param type: Required. The type of resource, for instance
+     Microsoft.Kusto/clusters/databases. Possible values include:
+     'Microsoft.Kusto/clusters/databases',
+     'Microsoft.Kusto/clusters/attachedDatabaseConfigurations'
+    :type type: str or ~azure.mgmt.kusto.models.Type
+    """
+
+    _validation = {
+        'name': {'required': True},
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'Type'},
+    }
+
+    def __init__(self, **kwargs):
+        super(CheckNameRequest, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+        self.type = kwargs.get('type', None)
 
 
 class CheckNameResult(Model):
@@ -559,44 +695,16 @@ class ClusterUpdate(Resource):
         self.key_vault_properties = kwargs.get('key_vault_properties', None)
 
 
-class ProxyResource(Resource):
-    """The resource model definition for a ARM proxy resource. It will have
-    everything other than required location and tags.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: Fully qualified resource Id for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
-    :vartype id: str
-    :ivar name: The name of the resource
-    :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
-    :vartype type: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(self, **kwargs):
-        super(ProxyResource, self).__init__(**kwargs)
-
-
 class Database(ProxyResource):
     """Class representing a Kusto database.
 
+    You probably want to use the sub-classes and not this class directly. Known
+    sub-classes are: ReadWriteDatabase, ReadOnlyFollowingDatabase
+
     Variables are only populated by the server, and will be ignored when
     sending a request.
+
+    All required parameters must be populated in order to send to Azure.
 
     :ivar id: Fully qualified resource Id for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
@@ -608,26 +716,15 @@ class Database(ProxyResource):
     :vartype type: str
     :param location: Resource location.
     :type location: str
-    :ivar provisioning_state: The provisioned state of the resource. Possible
-     values include: 'Running', 'Creating', 'Deleting', 'Succeeded', 'Failed',
-     'Moving'
-    :vartype provisioning_state: str or
-     ~azure.mgmt.kusto.models.ProvisioningState
-    :param soft_delete_period: The time the data should be kept before it
-     stops being accessible to queries in TimeSpan.
-    :type soft_delete_period: timedelta
-    :param hot_cache_period: The time the data should be kept in cache for
-     fast queries in TimeSpan.
-    :type hot_cache_period: timedelta
-    :param statistics: The statistics of the database.
-    :type statistics: ~azure.mgmt.kusto.models.DatabaseStatistics
+    :param kind: Required. Constant filled by server.
+    :type kind: str
     """
 
     _validation = {
         'id': {'readonly': True},
         'name': {'readonly': True},
         'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        'kind': {'required': True},
     }
 
     _attribute_map = {
@@ -635,52 +732,18 @@ class Database(ProxyResource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'location': {'key': 'location', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'soft_delete_period': {'key': 'properties.softDeletePeriod', 'type': 'duration'},
-        'hot_cache_period': {'key': 'properties.hotCachePeriod', 'type': 'duration'},
-        'statistics': {'key': 'properties.statistics', 'type': 'DatabaseStatistics'},
+        'kind': {'key': 'kind', 'type': 'str'},
+    }
+
+    _subtype_map = {
+        'kind': {'ReadWrite': 'ReadWriteDatabase', 'ReadOnlyFollowing': 'ReadOnlyFollowingDatabase'}
     }
 
     def __init__(self, **kwargs):
         super(Database, self).__init__(**kwargs)
         self.location = kwargs.get('location', None)
-        self.provisioning_state = None
-        self.soft_delete_period = kwargs.get('soft_delete_period', None)
-        self.hot_cache_period = kwargs.get('hot_cache_period', None)
-        self.statistics = kwargs.get('statistics', None)
-
-
-class DatabaseCheckNameRequest(Model):
-    """The result returned from a database check name availability request.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param name: Required. Database name.
-    :type name: str
-    :ivar type: Required. The type of resource,
-     Microsoft.Kusto/clusters/databases. Default value:
-     "Microsoft.Kusto/clusters/databases" .
-    :vartype type: str
-    """
-
-    _validation = {
-        'name': {'required': True},
-        'type': {'required': True, 'constant': True},
-    }
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    type = "Microsoft.Kusto/clusters/databases"
-
-    def __init__(self, **kwargs):
-        super(DatabaseCheckNameRequest, self).__init__(**kwargs)
-        self.name = kwargs.get('name', None)
+        self.kind = None
+        self.kind = 'Database'
 
 
 class DatabasePrincipal(Model):
@@ -785,64 +848,6 @@ class DatabaseStatistics(Model):
     def __init__(self, **kwargs):
         super(DatabaseStatistics, self).__init__(**kwargs)
         self.size = kwargs.get('size', None)
-
-
-class DatabaseUpdate(Resource):
-    """Class representing an update to a Kusto database.
-
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
-
-    :ivar id: Fully qualified resource Id for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
-    :vartype id: str
-    :ivar name: The name of the resource
-    :vartype name: str
-    :ivar type: The type of the resource. Ex-
-     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
-    :vartype type: str
-    :param location: Resource location.
-    :type location: str
-    :ivar provisioning_state: The provisioned state of the resource. Possible
-     values include: 'Running', 'Creating', 'Deleting', 'Succeeded', 'Failed',
-     'Moving'
-    :vartype provisioning_state: str or
-     ~azure.mgmt.kusto.models.ProvisioningState
-    :param soft_delete_period: The time the data should be kept before it
-     stops being accessible to queries in TimeSpan.
-    :type soft_delete_period: timedelta
-    :param hot_cache_period: The time the data should be kept in cache for
-     fast queries in TimeSpan.
-    :type hot_cache_period: timedelta
-    :param statistics: The statistics of the database.
-    :type statistics: ~azure.mgmt.kusto.models.DatabaseStatistics
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'soft_delete_period': {'key': 'properties.softDeletePeriod', 'type': 'duration'},
-        'hot_cache_period': {'key': 'properties.hotCachePeriod', 'type': 'duration'},
-        'statistics': {'key': 'properties.statistics', 'type': 'DatabaseStatistics'},
-    }
-
-    def __init__(self, **kwargs):
-        super(DatabaseUpdate, self).__init__(**kwargs)
-        self.location = kwargs.get('location', None)
-        self.provisioning_state = None
-        self.soft_delete_period = kwargs.get('soft_delete_period', None)
-        self.hot_cache_period = kwargs.get('hot_cache_period', None)
-        self.statistics = kwargs.get('statistics', None)
 
 
 class DataConnection(ProxyResource):
@@ -1136,6 +1141,44 @@ class EventHubDataConnection(DataConnection):
         self.kind = 'EventHub'
 
 
+class FollowerDatabaseDefinition(Model):
+    """A class representing follower database request.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param cluster_resource_id: Required. Resource id of the cluster that
+     follows a database owned by this cluster.
+    :type cluster_resource_id: str
+    :param attached_database_configuration_name: Required. Resource name of
+     the attached database configuration in the follower cluster.
+    :type attached_database_configuration_name: str
+    :ivar database_name: The database name owned by this cluster that was
+     followed. * in case following all databases.
+    :vartype database_name: str
+    """
+
+    _validation = {
+        'cluster_resource_id': {'required': True},
+        'attached_database_configuration_name': {'required': True},
+        'database_name': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'cluster_resource_id': {'key': 'clusterResourceId', 'type': 'str'},
+        'attached_database_configuration_name': {'key': 'attachedDatabaseConfigurationName', 'type': 'str'},
+        'database_name': {'key': 'databaseName', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(FollowerDatabaseDefinition, self).__init__(**kwargs)
+        self.cluster_resource_id = kwargs.get('cluster_resource_id', None)
+        self.attached_database_configuration_name = kwargs.get('attached_database_configuration_name', None)
+        self.database_name = None
+
+
 class Identity(Model):
     """Identity for the resource.
 
@@ -1414,6 +1457,153 @@ class OptimizedAutoscale(Model):
         self.is_enabled = kwargs.get('is_enabled', None)
         self.minimum = kwargs.get('minimum', None)
         self.maximum = kwargs.get('maximum', None)
+
+
+class ReadOnlyFollowingDatabase(Database):
+    """Class representing a read only following database.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :vartype type: str
+    :param location: Resource location.
+    :type location: str
+    :param kind: Required. Constant filled by server.
+    :type kind: str
+    :ivar provisioning_state: The provisioned state of the resource. Possible
+     values include: 'Running', 'Creating', 'Deleting', 'Succeeded', 'Failed',
+     'Moving'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.kusto.models.ProvisioningState
+    :ivar soft_delete_period: The time the data should be kept before it stops
+     being accessible to queries in TimeSpan.
+    :vartype soft_delete_period: timedelta
+    :param hot_cache_period: The time the data should be kept in cache for
+     fast queries in TimeSpan.
+    :type hot_cache_period: timedelta
+    :param statistics: The statistics of the database.
+    :type statistics: ~azure.mgmt.kusto.models.DatabaseStatistics
+    :ivar leader_cluster_resource_id: The name of the leader cluster
+    :vartype leader_cluster_resource_id: str
+    :ivar attached_database_configuration_name: The name of the attached
+     database configuration cluster
+    :vartype attached_database_configuration_name: str
+    :ivar principals_modification_kind: The principals modification kind of
+     the database. Possible values include: 'Union', 'Replace', 'None'
+    :vartype principals_modification_kind: str or
+     ~azure.mgmt.kusto.models.PrincipalsModificationKind
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'kind': {'required': True},
+        'provisioning_state': {'readonly': True},
+        'soft_delete_period': {'readonly': True},
+        'leader_cluster_resource_id': {'readonly': True},
+        'attached_database_configuration_name': {'readonly': True},
+        'principals_modification_kind': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'soft_delete_period': {'key': 'properties.softDeletePeriod', 'type': 'duration'},
+        'hot_cache_period': {'key': 'properties.hotCachePeriod', 'type': 'duration'},
+        'statistics': {'key': 'properties.statistics', 'type': 'DatabaseStatistics'},
+        'leader_cluster_resource_id': {'key': 'properties.leaderClusterResourceId', 'type': 'str'},
+        'attached_database_configuration_name': {'key': 'properties.attachedDatabaseConfigurationName', 'type': 'str'},
+        'principals_modification_kind': {'key': 'properties.principalsModificationKind', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ReadOnlyFollowingDatabase, self).__init__(**kwargs)
+        self.provisioning_state = None
+        self.soft_delete_period = None
+        self.hot_cache_period = kwargs.get('hot_cache_period', None)
+        self.statistics = kwargs.get('statistics', None)
+        self.leader_cluster_resource_id = None
+        self.attached_database_configuration_name = None
+        self.principals_modification_kind = None
+        self.kind = 'ReadOnlyFollowing'
+
+
+class ReadWriteDatabase(Database):
+    """Class representing a read write database.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :vartype type: str
+    :param location: Resource location.
+    :type location: str
+    :param kind: Required. Constant filled by server.
+    :type kind: str
+    :ivar provisioning_state: The provisioned state of the resource. Possible
+     values include: 'Running', 'Creating', 'Deleting', 'Succeeded', 'Failed',
+     'Moving'
+    :vartype provisioning_state: str or
+     ~azure.mgmt.kusto.models.ProvisioningState
+    :param soft_delete_period: The time the data should be kept before it
+     stops being accessible to queries in TimeSpan.
+    :type soft_delete_period: timedelta
+    :param hot_cache_period: The time the data should be kept in cache for
+     fast queries in TimeSpan.
+    :type hot_cache_period: timedelta
+    :param statistics: The statistics of the database.
+    :type statistics: ~azure.mgmt.kusto.models.DatabaseStatistics
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'kind': {'required': True},
+        'provisioning_state': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'location': {'key': 'location', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        'soft_delete_period': {'key': 'properties.softDeletePeriod', 'type': 'duration'},
+        'hot_cache_period': {'key': 'properties.hotCachePeriod', 'type': 'duration'},
+        'statistics': {'key': 'properties.statistics', 'type': 'DatabaseStatistics'},
+    }
+
+    def __init__(self, **kwargs):
+        super(ReadWriteDatabase, self).__init__(**kwargs)
+        self.provisioning_state = None
+        self.soft_delete_period = kwargs.get('soft_delete_period', None)
+        self.hot_cache_period = kwargs.get('hot_cache_period', None)
+        self.statistics = kwargs.get('statistics', None)
+        self.kind = 'ReadWrite'
 
 
 class SkuDescription(Model):
