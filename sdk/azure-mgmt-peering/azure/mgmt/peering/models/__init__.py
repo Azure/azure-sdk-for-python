@@ -10,68 +10,68 @@
 # --------------------------------------------------------------------------
 
 try:
-    from .check_service_provider_availability_input_py3 import CheckServiceProviderAvailabilityInput
-    from .peering_sku_py3 import PeeringSku
-    from .bgp_session_py3 import BgpSession
-    from .direct_connection_py3 import DirectConnection
-    from .sub_resource_py3 import SubResource
-    from .peering_properties_direct_py3 import PeeringPropertiesDirect
-    from .exchange_connection_py3 import ExchangeConnection
-    from .peering_properties_exchange_py3 import PeeringPropertiesExchange
-    from .peering_py3 import Peering
-    from .operation_display_info_py3 import OperationDisplayInfo
-    from .operation_py3 import Operation
-    from .contact_info_py3 import ContactInfo
-    from .peer_asn_py3 import PeerAsn
-    from .direct_peering_facility_py3 import DirectPeeringFacility
-    from .peering_bandwidth_offer_py3 import PeeringBandwidthOffer
-    from .peering_location_properties_direct_py3 import PeeringLocationPropertiesDirect
-    from .exchange_peering_facility_py3 import ExchangePeeringFacility
-    from .peering_location_properties_exchange_py3 import PeeringLocationPropertiesExchange
-    from .peering_location_py3 import PeeringLocation
-    from .resource_tags_py3 import ResourceTags
-    from .peering_service_location_py3 import PeeringServiceLocation
-    from .peering_service_prefix_py3 import PeeringServicePrefix
-    from .peering_service_provider_py3 import PeeringServiceProvider
-    from .peering_service_py3 import PeeringService
-    from .error_response_py3 import ErrorResponse, ErrorResponseException
-    from .resource_py3 import Resource
+    from ._models_py3 import BgpSession
+    from ._models_py3 import CheckServiceProviderAvailabilityInput
+    from ._models_py3 import ContactInfo
+    from ._models_py3 import DirectConnection
+    from ._models_py3 import DirectPeeringFacility
+    from ._models_py3 import ErrorResponse, ErrorResponseException
+    from ._models_py3 import ExchangeConnection
+    from ._models_py3 import ExchangePeeringFacility
+    from ._models_py3 import Operation
+    from ._models_py3 import OperationDisplayInfo
+    from ._models_py3 import PeerAsn
+    from ._models_py3 import Peering
+    from ._models_py3 import PeeringBandwidthOffer
+    from ._models_py3 import PeeringLocation
+    from ._models_py3 import PeeringLocationPropertiesDirect
+    from ._models_py3 import PeeringLocationPropertiesExchange
+    from ._models_py3 import PeeringPropertiesDirect
+    from ._models_py3 import PeeringPropertiesExchange
+    from ._models_py3 import PeeringService
+    from ._models_py3 import PeeringServiceLocation
+    from ._models_py3 import PeeringServicePrefix
+    from ._models_py3 import PeeringServiceProvider
+    from ._models_py3 import PeeringSku
+    from ._models_py3 import Resource
+    from ._models_py3 import ResourceTags
+    from ._models_py3 import SubResource
 except (SyntaxError, ImportError):
-    from .check_service_provider_availability_input import CheckServiceProviderAvailabilityInput
-    from .peering_sku import PeeringSku
-    from .bgp_session import BgpSession
-    from .direct_connection import DirectConnection
-    from .sub_resource import SubResource
-    from .peering_properties_direct import PeeringPropertiesDirect
-    from .exchange_connection import ExchangeConnection
-    from .peering_properties_exchange import PeeringPropertiesExchange
-    from .peering import Peering
-    from .operation_display_info import OperationDisplayInfo
-    from .operation import Operation
-    from .contact_info import ContactInfo
-    from .peer_asn import PeerAsn
-    from .direct_peering_facility import DirectPeeringFacility
-    from .peering_bandwidth_offer import PeeringBandwidthOffer
-    from .peering_location_properties_direct import PeeringLocationPropertiesDirect
-    from .exchange_peering_facility import ExchangePeeringFacility
-    from .peering_location_properties_exchange import PeeringLocationPropertiesExchange
-    from .peering_location import PeeringLocation
-    from .resource_tags import ResourceTags
-    from .peering_service_location import PeeringServiceLocation
-    from .peering_service_prefix import PeeringServicePrefix
-    from .peering_service_provider import PeeringServiceProvider
-    from .peering_service import PeeringService
-    from .error_response import ErrorResponse, ErrorResponseException
-    from .resource import Resource
-from .peering_paged import PeeringPaged
-from .operation_paged import OperationPaged
-from .peer_asn_paged import PeerAsnPaged
-from .peering_location_paged import PeeringLocationPaged
-from .peering_service_location_paged import PeeringServiceLocationPaged
-from .peering_service_prefix_paged import PeeringServicePrefixPaged
-from .peering_service_provider_paged import PeeringServiceProviderPaged
-from .peering_service_paged import PeeringServicePaged
-from .peering_management_client_enums import (
+    from ._models import BgpSession
+    from ._models import CheckServiceProviderAvailabilityInput
+    from ._models import ContactInfo
+    from ._models import DirectConnection
+    from ._models import DirectPeeringFacility
+    from ._models import ErrorResponse, ErrorResponseException
+    from ._models import ExchangeConnection
+    from ._models import ExchangePeeringFacility
+    from ._models import Operation
+    from ._models import OperationDisplayInfo
+    from ._models import PeerAsn
+    from ._models import Peering
+    from ._models import PeeringBandwidthOffer
+    from ._models import PeeringLocation
+    from ._models import PeeringLocationPropertiesDirect
+    from ._models import PeeringLocationPropertiesExchange
+    from ._models import PeeringPropertiesDirect
+    from ._models import PeeringPropertiesExchange
+    from ._models import PeeringService
+    from ._models import PeeringServiceLocation
+    from ._models import PeeringServicePrefix
+    from ._models import PeeringServiceProvider
+    from ._models import PeeringSku
+    from ._models import Resource
+    from ._models import ResourceTags
+    from ._models import SubResource
+from ._paged_models import OperationPaged
+from ._paged_models import PeerAsnPaged
+from ._paged_models import PeeringLocationPaged
+from ._paged_models import PeeringPaged
+from ._paged_models import PeeringServiceLocationPaged
+from ._paged_models import PeeringServicePaged
+from ._paged_models import PeeringServicePrefixPaged
+from ._paged_models import PeeringServiceProviderPaged
+from ._peering_management_client_enums import (
     Name,
     Tier,
     Family,
@@ -89,32 +89,32 @@ from .peering_management_client_enums import (
 )
 
 __all__ = [
-    'CheckServiceProviderAvailabilityInput',
-    'PeeringSku',
     'BgpSession',
-    'DirectConnection',
-    'SubResource',
-    'PeeringPropertiesDirect',
-    'ExchangeConnection',
-    'PeeringPropertiesExchange',
-    'Peering',
-    'OperationDisplayInfo',
-    'Operation',
+    'CheckServiceProviderAvailabilityInput',
     'ContactInfo',
-    'PeerAsn',
+    'DirectConnection',
     'DirectPeeringFacility',
-    'PeeringBandwidthOffer',
-    'PeeringLocationPropertiesDirect',
+    'ErrorResponse', 'ErrorResponseException',
+    'ExchangeConnection',
     'ExchangePeeringFacility',
-    'PeeringLocationPropertiesExchange',
+    'Operation',
+    'OperationDisplayInfo',
+    'PeerAsn',
+    'Peering',
+    'PeeringBandwidthOffer',
     'PeeringLocation',
-    'ResourceTags',
+    'PeeringLocationPropertiesDirect',
+    'PeeringLocationPropertiesExchange',
+    'PeeringPropertiesDirect',
+    'PeeringPropertiesExchange',
+    'PeeringService',
     'PeeringServiceLocation',
     'PeeringServicePrefix',
     'PeeringServiceProvider',
-    'PeeringService',
-    'ErrorResponse', 'ErrorResponseException',
+    'PeeringSku',
     'Resource',
+    'ResourceTags',
+    'SubResource',
     'PeeringPaged',
     'OperationPaged',
     'PeerAsnPaged',

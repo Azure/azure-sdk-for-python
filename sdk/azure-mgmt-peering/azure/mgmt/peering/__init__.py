@@ -9,10 +9,11 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .peering_management_client import PeeringManagementClient
-from .version import VERSION
+from ._configuration import PeeringManagementClientConfiguration
+from ._peering_management_client import PeeringManagementClient
+__all__ = ['PeeringManagementClient', 'PeeringManagementClientConfiguration']
 
-__all__ = ['PeeringManagementClient']
+from .version import VERSION
 
 __version__ = VERSION
 

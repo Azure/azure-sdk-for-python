@@ -9,16 +9,17 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .legacy_peerings_operations import LegacyPeeringsOperations
-from .operations import Operations
-from .peer_asns_operations import PeerAsnsOperations
-from .peering_locations_operations import PeeringLocationsOperations
-from .peerings_operations import PeeringsOperations
-from .peering_service_locations_operations import PeeringServiceLocationsOperations
-from .peering_service_prefixes_operations import PeeringServicePrefixesOperations
-from .prefixes_operations import PrefixesOperations
-from .peering_service_providers_operations import PeeringServiceProvidersOperations
-from .peering_services_operations import PeeringServicesOperations
+from ._legacy_peerings_operations import LegacyPeeringsOperations
+from ._operations import Operations
+from ._peer_asns_operations import PeerAsnsOperations
+from ._peering_locations_operations import PeeringLocationsOperations
+from ._peerings_operations import PeeringsOperations
+from ._peering_service_locations_operations import PeeringServiceLocationsOperations
+from ._peering_service_prefixes_operations import PeeringServicePrefixesOperations
+from ._prefixes_operations import PrefixesOperations
+from ._peering_service_providers_operations import PeeringServiceProvidersOperations
+from ._peering_services_operations import PeeringServicesOperations
+from ._peering_management_client_operations import PeeringManagementClientOperationsMixin
 
 __all__ = [
     'LegacyPeeringsOperations',
@@ -31,4 +32,5 @@ __all__ = [
     'PrefixesOperations',
     'PeeringServiceProvidersOperations',
     'PeeringServicesOperations',
+    'PeeringManagementClientOperationsMixin',
 ]
