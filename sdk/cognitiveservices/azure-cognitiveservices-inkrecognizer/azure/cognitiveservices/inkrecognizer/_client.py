@@ -27,7 +27,6 @@ from azure.core.exceptions import (
     ServiceResponseError,
     raise_with_traceback
 )
-
 from ._enums import InkStrokeKind, ApplicationKind, InkPointUnit, ServiceVersion
 from ._models import _parse_recognition_units
 
@@ -72,8 +71,11 @@ class _AzureConfiguration(Configuration):
     def __init__(self, credential, **kwargs):  # pylint:disable=super-init-not-called
         self._set_universal(**kwargs)
         # sync-specific azure pipeline policies
-        scopes = kwargs.pop("scopes", [])
-        self.authentication_policy = BearerTokenCredentialPolicy(credential, *scopes, **kwargs)
+        if isinstance(credential, str):
+            self.headers_policy.add_header("Ocp-Apim-Subscription-Key", credential)
+        else:
+            scopes = kwargs.pop("scopes", [])
+            self.authentication_policy = BearerTokenCredentialPolicy(credential, *scopes, **kwargs)
         self.retry_policy = kwargs.get("retry_policy", RetryPolicy(**kwargs))
         self.redirect_policy = kwargs.get("redirect_policy", RedirectPolicy(**kwargs))
         self.transport = kwargs.get("transport", RequestsTransport())

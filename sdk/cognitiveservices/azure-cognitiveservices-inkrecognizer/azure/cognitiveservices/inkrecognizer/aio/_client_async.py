@@ -19,10 +19,11 @@ class _AzureConfigurationAsync(_AzureConfiguration):
     def __init__(self, credential, **kwargs): # pylint:disable=super-init-not-called
         self._set_universal(**kwargs)
         # async-specific azure pipeline policies
-        scopes = []
-        if "scopes" in kwargs:
-            scopes = kwargs.pop("scopes")
-        self.authentication_policy = AsyncBearerTokenCredentialPolicy(credential, *scopes, **kwargs)
+        if isinstance(credential, str):
+            self.headers_policy.add_header("Ocp-Apim-Subscription-Key", credential)
+        else:
+            scopes = kwargs.pop("scopes", [])
+            self.authentication_policy = AsyncBearerTokenCredentialPolicy(credential, *scopes, **kwargs)
         self.retry_policy = kwargs.get("retry_policy", AsyncRetryPolicy(**kwargs))
         self.redirect_policy = kwargs.get("redirect_policy", AsyncRedirectPolicy(**kwargs))
         self.transport = kwargs.get("transport", AioHttpTransport())
