@@ -34,7 +34,7 @@ class LUISRuntimeClientConfiguration(Configuration):
             raise ValueError("Parameter 'endpoint' must not be None.")
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
-        base_url = '{Endpoint}/luis/v3.0'
+        base_url = '{Endpoint}/luis/prediction/v3.0'
 
         super(LUISRuntimeClientConfiguration, self).__init__(base_url)
 
