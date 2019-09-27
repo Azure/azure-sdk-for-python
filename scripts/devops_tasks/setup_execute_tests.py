@@ -254,7 +254,7 @@ if __name__ == "__main__":
     # folders. This logic allows us to do both.
     if args.service:
         targeted_packages = []
-        dirs = [s.trim() for s in args.service.split(',')]
+        dirs = [s.strip() for s in args.service.split(',')]
 
         for service_dir in dirs:
             target_dir = os.path.join(root_dir, "sdk", service_dir)
