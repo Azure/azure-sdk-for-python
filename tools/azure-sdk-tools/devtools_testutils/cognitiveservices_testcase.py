@@ -33,7 +33,7 @@ class CognitiveServicesAccountPreparer(AzureMgmtPreparer):
                  name_prefix='',
                  sku='S0', location='westus', kind='cognitiveservices',
                  parameter_name='cognitiveservices_account',
-                 use_core=False,
+                 legacy=False,
                  resource_group_parameter_name=RESOURCE_GROUP_PARAM,
                  disable_recording=True, playback_fake_resource=None,
                  client_kwargs=None):
@@ -47,7 +47,7 @@ class CognitiveServicesAccountPreparer(AzureMgmtPreparer):
         self.resource_group_parameter_name = resource_group_parameter_name
         self.parameter_name = parameter_name
         self.cogsci_key = ''
-        self.use_core = use_core
+        self.legacy = legacy
 
     def create_resource(self, name, **kwargs):
         if self.is_live:
@@ -72,15 +72,15 @@ class CognitiveServicesAccountPreparer(AzureMgmtPreparer):
             self.resource = FakeCognitiveServicesAccount("https://{}.api.cognitive.microsoft.com".format(self.location))
             self.cogsci_key = 'ZmFrZV9hY29jdW50X2tleQ=='
 
-        if self.use_core:
+        if self.legacy:
             return {
                 self.parameter_name: self.resource.endpoint,
-                '{}_key'.format(self.parameter_name): self.cogsci_key,
+                '{}_key'.format(self.parameter_name): CognitiveServicesCredentials(self.cogsci_key),
             }
         else:
             return {
                 self.parameter_name: self.resource.endpoint,
-                '{}_key'.format(self.parameter_name): CognitiveServicesCredentials(self.cogsci_key),
+                '{}_key'.format(self.parameter_name): self.cogsci_key,
             }
 
     def remove_resource(self, name, **kwargs):
