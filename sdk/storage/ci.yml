@@ -23,6 +23,13 @@ pr:
     - sdk/storage/
     - sdk/core/
 
+resources:
+  repositories:
+    - repository: azure-sdk-tools
+      type: github
+      name: Azure/azure-sdk-tools
+      endpoint: azure
+
 jobs:
 - template: ../../eng/pipelines/templates/jobs/archetype-sdk-client.yml
   parameters:
