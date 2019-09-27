@@ -95,6 +95,8 @@ from ._managed_database_restore_details_operations import ManagedDatabaseRestore
 from ._managed_databases_operations import ManagedDatabasesOperations
 from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
 from ._private_link_resources_operations import PrivateLinkResourcesOperations
+from ._data_warehouse_workload_groups_operations import DataWarehouseWorkloadGroupsOperations
+from ._data_warehouse_workload_classifiers_operations import DataWarehouseWorkloadClassifiersOperations
 
 __all__ = [
     'RecoverableDatabasesOperations',
@@ -183,4 +185,6 @@ __all__ = [
     'ManagedDatabasesOperations',
     'PrivateEndpointConnectionsOperations',
     'PrivateLinkResourcesOperations',
+    'DataWarehouseWorkloadGroupsOperations',
+    'DataWarehouseWorkloadClassifiersOperations',
 ]

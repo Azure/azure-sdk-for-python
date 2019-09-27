@@ -480,6 +480,32 @@ class VirtualNetworkRulePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(VirtualNetworkRulePaged, self).__init__(*args, **kwargs)
+class ServerBlobAuditingPolicyPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`ServerBlobAuditingPolicy <azure.mgmt.sql.models.ServerBlobAuditingPolicy>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ServerBlobAuditingPolicy]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(ServerBlobAuditingPolicyPaged, self).__init__(*args, **kwargs)
+class DatabaseBlobAuditingPolicyPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`DatabaseBlobAuditingPolicy <azure.mgmt.sql.models.DatabaseBlobAuditingPolicy>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[DatabaseBlobAuditingPolicy]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(DatabaseBlobAuditingPolicyPaged, self).__init__(*args, **kwargs)
 class DatabaseVulnerabilityAssessmentPaged(Paged):
     """
     A paging container for iterating over a list of :class:`DatabaseVulnerabilityAssessment <azure.mgmt.sql.models.DatabaseVulnerabilityAssessment>` object
@@ -922,3 +948,29 @@ class PrivateLinkResourcePaged(Paged):
     def __init__(self, *args, **kwargs):
 
         super(PrivateLinkResourcePaged, self).__init__(*args, **kwargs)
+class DataWarehouseWorkloadGroupPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`DataWarehouseWorkloadGroup <azure.mgmt.sql.models.DataWarehouseWorkloadGroup>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[DataWarehouseWorkloadGroup]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(DataWarehouseWorkloadGroupPaged, self).__init__(*args, **kwargs)
+class DataWarehouseWorkloadClassifierPaged(Paged):
+    """
+    A paging container for iterating over a list of :class:`DataWarehouseWorkloadClassifier <azure.mgmt.sql.models.DataWarehouseWorkloadClassifier>` object
+    """
+
+    _attribute_map = {
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[DataWarehouseWorkloadClassifier]'}
+    }
+
+    def __init__(self, *args, **kwargs):
+
+        super(DataWarehouseWorkloadClassifierPaged, self).__init__(*args, **kwargs)

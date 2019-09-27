@@ -31,6 +31,8 @@ try:
     from ._models_py3 import DatabaseVulnerabilityAssessmentScansExport
     from ._models_py3 import DataMaskingPolicy
     from ._models_py3 import DataMaskingRule
+    from ._models_py3 import DataWarehouseWorkloadClassifier
+    from ._models_py3 import DataWarehouseWorkloadGroup
     from ._models_py3 import EditionCapability
     from ._models_py3 import ElasticPool
     from ._models_py3 import ElasticPoolActivity
@@ -194,6 +196,8 @@ except (SyntaxError, ImportError):
     from ._models import DatabaseVulnerabilityAssessmentScansExport
     from ._models import DataMaskingPolicy
     from ._models import DataMaskingRule
+    from ._models import DataWarehouseWorkloadClassifier
+    from ._models import DataWarehouseWorkloadGroup
     from ._models import EditionCapability
     from ._models import ElasticPool
     from ._models import ElasticPoolActivity
@@ -336,11 +340,14 @@ except (SyntaxError, ImportError):
     from ._models import VulnerabilityAssessmentScanError
     from ._models import VulnerabilityAssessmentScanRecord
 from ._paged_models import BackupShortTermRetentionPolicyPaged
+from ._paged_models import DatabaseBlobAuditingPolicyPaged
 from ._paged_models import DatabaseOperationPaged
 from ._paged_models import DatabasePaged
 from ._paged_models import DatabaseUsagePaged
 from ._paged_models import DatabaseVulnerabilityAssessmentPaged
 from ._paged_models import DataMaskingRulePaged
+from ._paged_models import DataWarehouseWorkloadClassifierPaged
+from ._paged_models import DataWarehouseWorkloadGroupPaged
 from ._paged_models import ElasticPoolActivityPaged
 from ._paged_models import ElasticPoolDatabaseActivityPaged
 from ._paged_models import ElasticPoolOperationPaged
@@ -383,6 +390,7 @@ from ._paged_models import RestorableDroppedManagedDatabasePaged
 from ._paged_models import RestorePointPaged
 from ._paged_models import SensitivityLabelPaged
 from ._paged_models import ServerAzureADAdministratorPaged
+from ._paged_models import ServerBlobAuditingPolicyPaged
 from ._paged_models import ServerCommunicationLinkPaged
 from ._paged_models import ServerDnsAliasPaged
 from ._paged_models import ServerKeyPaged
@@ -511,6 +519,8 @@ __all__ = [
     'DatabaseVulnerabilityAssessmentScansExport',
     'DataMaskingPolicy',
     'DataMaskingRule',
+    'DataWarehouseWorkloadClassifier',
+    'DataWarehouseWorkloadGroup',
     'EditionCapability',
     'ElasticPool',
     'ElasticPoolActivity',
@@ -688,6 +698,8 @@ __all__ = [
     'SubscriptionUsagePaged',
     'VirtualClusterPaged',
     'VirtualNetworkRulePaged',
+    'ServerBlobAuditingPolicyPaged',
+    'DatabaseBlobAuditingPolicyPaged',
     'DatabaseVulnerabilityAssessmentPaged',
     'JobAgentPaged',
     'JobCredentialPaged',
@@ -722,6 +734,8 @@ __all__ = [
     'ManagedDatabasePaged',
     'PrivateEndpointConnectionPaged',
     'PrivateLinkResourcePaged',
+    'DataWarehouseWorkloadGroupPaged',
+    'DataWarehouseWorkloadClassifierPaged',
     'CheckNameAvailabilityReason',
     'ServerConnectionType',
     'SecurityAlertPolicyState',
