@@ -1,5 +1,11 @@
 # Release History
 
+## 5.0.0b4 (2019-XX-XX)
+
+**New features**
+
+- Support for tracing  #7153
+
 ## 5.0.0b3 (2019-09-10)
 
 **New features**
