@@ -6,13 +6,14 @@ from __future__ import unicode_literals
 
 import logging
 import sys
+import platform
 import uuid
 import time
-import functools
 from abc import abstractmethod
-from typing import Dict, Union, Any, TYPE_CHECKING
+from typing import Union, Any, TYPE_CHECKING
 
-from azure.eventhub import __version__, EventPosition
+from uamqp import types
+from azure.eventhub import __version__
 from azure.eventhub.configuration import _Configuration
 from .common import EventHubSharedKeyCredential, EventHubSASTokenCredential, _Address
 
@@ -161,13 +162,15 @@ class EventHubClientAbstract(object):  # pylint:disable=too-many-instance-attrib
         :rtype: dict
         """
         properties = {}
-        properties["product"] = "eventhub.python"
-        properties["version"] = __version__
-        properties["framework"] = "Python {}.{}.{}".format(*sys.version_info[0:3])
-        properties["platform"] = sys.platform
+        product = "azsdk-python-eventhubs"
+        properties[types.AMQPSymbol("product")] = product
+        properties[types.AMQPSymbol("version")] = __version__
+        framework = "Python {}.{}.{}, {}".format(*sys.version_info[0:3], platform.python_implementation())
+        properties[types.AMQPSymbol("framework")] = framework
+        platform_str = platform.platform()
+        properties[types.AMQPSymbol("platform")] = platform_str
 
-        final_user_agent = 'azsdk-python-eventhub/{} ({}; {})'.format(
-            __version__, properties["framework"], sys.platform)
+        final_user_agent = '{}/{} ({}, {})'.format(product, __version__, framework, platform_str)
         if user_agent:
             final_user_agent = '{}, {}'.format(final_user_agent, user_agent)
 
@@ -175,8 +178,7 @@ class EventHubClientAbstract(object):  # pylint:disable=too-many-instance-attrib
             raise ValueError("The user-agent string cannot be more than {} in length."
                              "Current user_agent string is: {} with length: {}".format(
                                 MAX_USER_AGENT_LENGTH, final_user_agent, len(final_user_agent)))
-
-        properties["user-agent"] = final_user_agent
+        properties[types.AMQPSymbol("user-agent")] = final_user_agent
         return properties
 
     @classmethod
