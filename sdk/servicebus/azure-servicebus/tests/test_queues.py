@@ -58,12 +58,10 @@ def print_message(message):
         pass
     _logger.debug("Enqueued time: {}".format(message.enqueued_time))
 
-@pytest.mark.skip
 @pytest.mark.liveTest
 def test_github_issue_7079(live_servicebus_config, standard_queue):
-    pytest.skip("Pending fix for #7079")
     sb_client = ServiceBusClient.from_connection_string(
-        live_servicebus_config['conn_str'], debug=True)
+        live_servicebus_config['conn_str'], debug=False)
     queue = sb_client.get_queue(standard_queue)
 
     with queue.get_sender() as sender:
@@ -79,10 +77,8 @@ def test_github_issue_7079(live_servicebus_config, standard_queue):
        count += 1
     assert count == 5
 
-@pytest.mark.skip
 @pytest.mark.liveTest
 def test_github_issue_6178(live_servicebus_config, standard_queue):
-    pytest.skip("Pending fix for #6178")
     sb_client = ServiceBusClient.from_connection_string(
         live_servicebus_config['conn_str'], debug=False)
     queue = sb_client.get_queue(standard_queue)
@@ -90,7 +86,7 @@ def test_github_issue_6178(live_servicebus_config, standard_queue):
     for i in range(3):
         queue.send(Message(f"Message {i}"))
 
-    messages = queue.get_receiver()
+    messages = queue.get_receiver(idle_timeout=60)
     for message in messages:
         _logger.debug(message)
         _logger.debug(message.sequence_number)
