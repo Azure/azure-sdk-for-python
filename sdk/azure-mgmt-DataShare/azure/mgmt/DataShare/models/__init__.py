@@ -52,6 +52,10 @@ try:
     from ._models_py3 import ShareSubscriptionSynchronization
     from ._models_py3 import ShareSynchronization
     from ._models_py3 import SourceShareSynchronizationSetting
+    from ._models_py3 import SqlDBTableDataSet
+    from ._models_py3 import SqlDBTableDataSetMapping
+    from ._models_py3 import SqlDWTableDataSet
+    from ._models_py3 import SqlDWTableDataSetMapping
     from ._models_py3 import SynchronizationDetails
     from ._models_py3 import SynchronizationSetting
     from ._models_py3 import Synchronize
@@ -99,6 +103,10 @@ except (SyntaxError, ImportError):
     from ._models import ShareSubscriptionSynchronization
     from ._models import ShareSynchronization
     from ._models import SourceShareSynchronizationSetting
+    from ._models import SqlDBTableDataSet
+    from ._models import SqlDBTableDataSetMapping
+    from ._models import SqlDWTableDataSet
+    from ._models import SqlDWTableDataSetMapping
     from ._models import SynchronizationDetails
     from ._models import SynchronizationSetting
     from ._models import Synchronize
@@ -131,6 +139,7 @@ from ._data_share_management_client_enums import (
     RecurrenceInterval,
     TriggerStatus,
     DataSetMappingStatus,
+    OutputType,
 )
 
 __all__ = [
@@ -176,6 +185,10 @@ __all__ = [
     'ShareSubscriptionSynchronization',
     'ShareSynchronization',
     'SourceShareSynchronizationSetting',
+    'SqlDBTableDataSet',
+    'SqlDBTableDataSetMapping',
+    'SqlDWTableDataSet',
+    'SqlDWTableDataSetMapping',
     'SynchronizationDetails',
     'SynchronizationSetting',
     'Synchronize',
@@ -207,4 +220,5 @@ __all__ = [
     'RecurrenceInterval',
     'TriggerStatus',
     'DataSetMappingStatus',
+    'OutputType',
 ]
