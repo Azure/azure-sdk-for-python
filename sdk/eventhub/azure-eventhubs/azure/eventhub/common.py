@@ -12,6 +12,9 @@ import six
 
 from uamqp import BatchMessage, Message, types, constants  # type: ignore
 from uamqp.message import MessageHeader, MessageProperties  # type: ignore
+
+from azure.core.settings import settings
+
 from azure.eventhub.error import EventDataError
 
 log = logging.getLogger(__name__)
@@ -119,6 +122,35 @@ class EventData(object):
         self.message.annotations = annotations
         self.message.header = header
         self._annotations = annotations
+
+    def _trace_message(self, parent_span=None):
+        """Add tracing information to this message.
+
+        Will open and close a "Azure.EventHubs.message" span, and
+        add the "DiagnosticId" as app properties of the message.
+        """
+        span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
+        if span_impl_type is not None:
+            current_span = parent_span or span_impl_type(span_impl_type.get_current_span())
+            message_span = current_span.span(name="Azure.EventHubs.message")
+            message_span.start()
+            app_prop = dict(self.application_properties)
+            app_prop.setdefault(b"Diagnostic-Id", message_span.get_trace_parent().encode('ascii'))
+            self.application_properties = app_prop
+            message_span.finish()
+
+    def _trace_link_message(self, parent_span=None):
+        """Link the current message to current span.
+
+        Will extract DiagnosticId if available.
+        """
+        span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
+        if span_impl_type is not None:
+            current_span = parent_span or span_impl_type(span_impl_type.get_current_span())
+            if current_span and self.application_properties:
+                traceparent = self.application_properties.get(b"Diagnostic-Id", "").decode('ascii')
+                if traceparent:
+                    current_span.link(traceparent)
 
     @staticmethod
     def _from_message(message):
@@ -346,6 +378,8 @@ class EventDataBatch(object):
                 raise EventDataError('The partition_key of event_data does not match the one of the EventDataBatch')
             if not event_data.partition_key:
                 event_data._set_partition_key(self._partition_key)  # pylint:disable=protected-access
+
+        event_data._trace_message()  # pylint:disable=protected-access
 
         event_data_size = event_data.message.get_message_encoded_size()
 

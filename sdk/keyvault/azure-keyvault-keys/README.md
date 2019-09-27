@@ -302,9 +302,8 @@ logger.addHandler(handler)
 file_handler = logging.FileHandler(filename)
 logger.addHandler(file_handler)
 
-# Enable network trace logging to log all HTTP requests at DEBUG level
-config = KeyClient.create_config(credential, logging_enable=True)
-client = KeyClient(vault_url, credential, config=config)
+# Enable network trace logging. Each HTTP request will be logged at DEBUG level.
+client = KeyClient(vault_url=url, credential=credential, logging_enable=True)
 ```
 
 Network trace logging can also be enabled for any single operation:

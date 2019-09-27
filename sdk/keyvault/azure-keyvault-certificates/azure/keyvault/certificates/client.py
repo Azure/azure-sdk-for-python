@@ -11,6 +11,7 @@ from azure.core.polling import LROPoller
 from azure.core.tracing.decorator import distributed_trace
 
 from ._shared import KeyVaultClientBase
+from ._shared.exceptions import error_map
 from .models import (
     Certificate,
     CertificateBase,
@@ -58,9 +59,9 @@ class CertificateClient(KeyVaultClientBase):
             policy=None,  # type: Optional[CertificatePolicy]
             enabled=None,  # type: Optional[bool]
             tags=None,  # type: Optional[Dict[str, str]]
-            **kwargs  # type: **Any
+            **kwargs  # type: Any
     ):
-        # type: (...) -> CertificateOperation
+        # type: (...) -> LROPoller
         """Creates a new certificate.
 
         If this is the first version, the certificate resource is created. This
@@ -73,8 +74,10 @@ class CertificateClient(KeyVaultClientBase):
         :param bool enabled: Determines whether the object is enabled.
         :param tags: Application specific metadata in the form of key-value pairs.
         :type tags: dict(str, str)
-        :returns: The created CertificateOperation
-        :rtype: ~azure.core.polling.LROPoller
+        :returns: An LROPoller for the create certificate operation. Waiting on the poller
+         gives you the certificate if creation is successful, the CertificateOperation if not.
+        :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.certificates.models.Certificate or
+         ~azure.keyvault.certificates.models.CertificateOperation]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
@@ -116,7 +119,7 @@ class CertificateClient(KeyVaultClientBase):
                                        subject_name="CN=DefaultPolicy",
                                        validity_in_months=12)
 
-        create_certificate_operation = self._client.create_certificate(
+        cert_bundle = self._client.create_certificate(
             vault_base_url=self.vault_url,
             certificate_name=name,
             certificate_policy=policy._to_certificate_policy_bundle(),
@@ -125,17 +128,24 @@ class CertificateClient(KeyVaultClientBase):
             **kwargs
         )
 
+        create_certificate_operation = CertificateOperation._from_certificate_operation_bundle(cert_bundle)
+
         command = partial(
-            self._client.get_certificate_operation,
-            vault_base_url=self.vault_url,
-            certificate_name=name,
+            self.get_certificate_operation,
+            name=name,
             **kwargs
         )
 
-        create_certificate_polling = CreateCertificatePoller(unknown_issuer=(policy.issuer_name.lower() == 'unknown'))
+        get_certificate_command = partial(
+            self.get_certificate_with_policy,
+            name=name,
+            **kwargs
+        )
+
+        create_certificate_polling = CreateCertificatePoller(get_certificate_command=get_certificate_command)
         return LROPoller(
             command,
-            create_certificate_operation.status.lower(),
+            create_certificate_operation,
             None,
             create_certificate_polling
         )
@@ -154,7 +164,9 @@ class CertificateClient(KeyVaultClientBase):
         :param str name: The name of the certificate in the given vault.
         :returns: An instance of Certificate
         :rtype: ~azure.keyvault.certificates.models.Certificate
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises:
+            :class:`~azure.core.exceptions.ResourceNotFoundError` if the certificate doesn't exist,
+            :class:`~azure.core.exceptions.HttpResponseError` for other errors
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
@@ -168,6 +180,7 @@ class CertificateClient(KeyVaultClientBase):
             vault_base_url=self.vault_url,
             certificate_name=name,
             certificate_version="",
+            error_map=error_map,
             **kwargs
         )
         return Certificate._from_certificate_bundle(certificate_bundle=bundle)
@@ -184,7 +197,9 @@ class CertificateClient(KeyVaultClientBase):
         :param str version: The version of the certificate.
         :returns: An instance of Certificate
         :rtype: ~azure.keyvault.certificates.models.Certificate
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises:
+            :class:`~azure.core.exceptions.ResourceNotFoundError` if the certificate doesn't exist,
+            :class:`~azure.core.exceptions.HttpResponseError` for other errors
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
@@ -198,6 +213,7 @@ class CertificateClient(KeyVaultClientBase):
             vault_base_url=self.vault_url,
             certificate_name=name,
             certificate_version=version,
+            error_map=error_map,
             **kwargs
         )
         return Certificate._from_certificate_bundle(certificate_bundle=bundle)
@@ -215,7 +231,9 @@ class CertificateClient(KeyVaultClientBase):
         :param str name: The name of the certificate.
         :returns: The deleted certificate
         :rtype: ~azure.keyvault.certificates.models.DeletedCertificate
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises:
+            :class:`~azure.core.exceptions.ResourceNotFoundError` if the certificate doesn't exist,
+            :class:`~azure.core.exceptions.HttpResponseError` for other errors
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
@@ -228,6 +246,7 @@ class CertificateClient(KeyVaultClientBase):
         bundle = self._client.delete_certificate(
             vault_base_url=self.vault_url,
             certificate_name=name,
+            error_map=error_map,
             **kwargs
         )
         return DeletedCertificate._from_deleted_certificate_bundle(deleted_certificate_bundle=bundle)
@@ -239,13 +258,15 @@ class CertificateClient(KeyVaultClientBase):
 
         Retrieves the deleted certificate information plus its attributes,
         such as retention interval, scheduled permanent deletion, and the
-        current deletion recovery level. This operaiton requires the certificates/
+        current deletion recovery level. This operation requires the certificates/
         get permission.
 
         :param str name: The name of the certificate.
         :return: The deleted certificate
         :rtype: ~azure.keyvault.certificates.models.DeletedCertificate
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises:
+            :class:`~azure.core.exceptions.ResourceNotFoundError` if the certificate doesn't exist,
+            :class:`~azure.core.exceptions.HttpResponseError` for other errors
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
@@ -258,6 +279,7 @@ class CertificateClient(KeyVaultClientBase):
         bundle = self._client.get_deleted_certificate(
             vault_base_url=self.vault_url,
             certificate_name=name,
+            error_map=error_map,
             **kwargs
         )
         return DeletedCertificate._from_deleted_certificate_bundle(deleted_certificate_bundle=bundle)
@@ -475,7 +497,9 @@ class CertificateClient(KeyVaultClientBase):
         :param str name: The name of the certificate.
         :return: the backup blob containing the backed up certificate.
         :rtype: bytes
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises:
+            :class:`~azure.core.exceptions.ResourceNotFoundError` if the certificate doesn't exist,
+            :class:`~azure.core.exceptions.HttpResponseError` for other errors
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
@@ -488,6 +512,7 @@ class CertificateClient(KeyVaultClientBase):
         backup_result = self._client.backup_certificate(
             vault_base_url=self.vault_url,
             certificate_name=name,
+            error_map=error_map,
             **kwargs
         )
         return backup_result.value
@@ -709,12 +734,15 @@ class CertificateClient(KeyVaultClientBase):
         :param str name: The name of the certificate.
         :returns: The created CertificateOperation
         :rtype: ~azure.keyvault.certificates.models.CertificateOperation
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises:
+            :class:`~azure.core.exceptions.ResourceNotFoundError` if the certificate doesn't exist,
+            :class:`~azure.core.exceptions.HttpResponseError` for other errors
         """
 
         bundle = self._client.get_certificate_operation(
             vault_base_url=self.vault_url,
             certificate_name=name,
+            error_map=error_map,
             **kwargs
         )
         return CertificateOperation._from_certificate_operation_bundle(certificate_operation_bundle=bundle)
@@ -821,7 +849,6 @@ class CertificateClient(KeyVaultClientBase):
         :rtype: str
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
-        error_map = kwargs.pop("error_map", None)
         vault_base_url = self.vault_url
         # Construct URL
         url = '/certificates/{certificate-name}/pending'
@@ -876,7 +903,9 @@ class CertificateClient(KeyVaultClientBase):
         :param str name: The name of the issuer.
         :return: The specified certificate issuer.
         :rtype: ~azure.keyvault.certificates.models.Issuer
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        :raises:
+            :class:`~azure.core.exceptions.ResourceNotFoundError` if the issuer doesn't exist,
+            :class:`~azure.core.exceptions.HttpResponseError` for other errors
 
         Example:
             .. literalinclude:: ../tests/test_examples_certificates.py
@@ -889,6 +918,7 @@ class CertificateClient(KeyVaultClientBase):
         issuer_bundle = self._client.get_certificate_issuer(
             vault_base_url=self.vault_url,
             issuer_name=name,
+            error_map=error_map,
             **kwargs
         )
         return Issuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
