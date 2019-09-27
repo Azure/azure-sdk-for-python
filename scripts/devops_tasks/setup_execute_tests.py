@@ -253,12 +253,15 @@ if __name__ == "__main__":
     # We need to support both CI builds of everything and individual service
     # folders. This logic allows us to do both.
     if args.service:
-        service_dir = os.path.join("sdk", args.service)
-        target_dir = os.path.join(root_dir, service_dir)
-    else:
-        target_dir = root_dir
+        targeted_packages = []
+        dirs = [s.trim() for s in args.service.split(',')]
 
-    targeted_packages = process_glob_string(args.glob_string, target_dir)
+        for service_dir in dirs:
+            target_dir = os.path.join(root_dir, "sdk", service_dir)
+            targeted_packages.extend(process_glob_string(args.glob_string, target_dir))
+    else:
+        targeted_packages = process_glob_string(args.glob_string, root_dir)
+    
     extended_pytest_args = []
 
     if len(targeted_packages) == 0:
