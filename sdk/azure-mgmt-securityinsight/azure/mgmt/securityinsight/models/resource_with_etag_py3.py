@@ -9,10 +9,10 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from .resource_py3 import Resource
+from msrest.serialization import Model
 
 
-class ResourceWithEtag(Resource):
+class ResourceWithEtag(Model):
     """An azure resource object with an Etag property.
 
     Variables are only populated by the server, and will be ignored when
@@ -43,4 +43,7 @@ class ResourceWithEtag(Resource):
 
     def __init__(self, *, etag: str=None, **kwargs) -> None:
         super(ResourceWithEtag, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
         self.etag = etag

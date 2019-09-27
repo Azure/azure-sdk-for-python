@@ -20,6 +20,12 @@ class UebaSettings(Settings):
 
     All required parameters must be populated in order to send to Azure.
 
+    :ivar id: Azure resource Id
+    :vartype id: str
+    :ivar name: Azure resource name
+    :vartype name: str
+    :ivar type: Azure resource type
+    :vartype type: str
     :param etag: Etag of the azure resource
     :type etag: str
     :param kind: Required. Constant filled by server.
@@ -39,12 +45,18 @@ class UebaSettings(Settings):
     """
 
     _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'kind': {'required': True},
         'atp_license_status': {'readonly': True},
         'status_in_mcas': {'readonly': True},
     }
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
         'atp_license_status': {'key': 'properties.atpLicenseStatus', 'type': 'str'},

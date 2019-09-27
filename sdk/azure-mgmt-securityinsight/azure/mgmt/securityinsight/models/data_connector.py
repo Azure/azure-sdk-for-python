@@ -20,8 +20,17 @@ class DataConnector(Model):
     AwsCloudTrailDataConnector, MCASDataConnector, MDATPDataConnector,
     OfficeDataConnector, TIDataConnector
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     All required parameters must be populated in order to send to Azure.
 
+    :ivar id: Azure resource Id
+    :vartype id: str
+    :ivar name: Azure resource name
+    :vartype name: str
+    :ivar type: Azure resource type
+    :vartype type: str
     :param etag: Etag of the azure resource
     :type etag: str
     :param kind: Required. Constant filled by server.
@@ -29,10 +38,16 @@ class DataConnector(Model):
     """
 
     _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
         'kind': {'required': True},
     }
 
     _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
         'etag': {'key': 'etag', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
     }
@@ -43,5 +58,8 @@ class DataConnector(Model):
 
     def __init__(self, **kwargs):
         super(DataConnector, self).__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
         self.etag = kwargs.get('etag', None)
         self.kind = None
