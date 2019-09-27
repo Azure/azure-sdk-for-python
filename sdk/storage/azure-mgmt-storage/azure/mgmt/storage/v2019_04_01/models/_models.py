@@ -2326,11 +2326,6 @@ class StorageAccount(TrackedResource):
     :ivar failover_in_progress: If the failover is in progress, the value will
      be true, otherwise, it will be null.
     :vartype failover_in_progress: bool
-    :param large_file_shares_state: Allow large file shares if sets to
-     Enabled. It cannot be disabled once it is enabled. Possible values
-     include: 'Disabled', 'Enabled'
-    :type large_file_shares_state: str or
-     ~azure.mgmt.storage.v2019_04_01.models.LargeFileSharesState
     """
 
     _validation = {
@@ -2384,7 +2379,6 @@ class StorageAccount(TrackedResource):
         'is_hns_enabled': {'key': 'properties.isHnsEnabled', 'type': 'bool'},
         'geo_replication_stats': {'key': 'properties.geoReplicationStats', 'type': 'GeoReplicationStats'},
         'failover_in_progress': {'key': 'properties.failoverInProgress', 'type': 'bool'},
-        'large_file_shares_state': {'key': 'properties.largeFileSharesState', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -2410,7 +2404,6 @@ class StorageAccount(TrackedResource):
         self.is_hns_enabled = kwargs.get('is_hns_enabled', None)
         self.geo_replication_stats = None
         self.failover_in_progress = None
-        self.large_file_shares_state = kwargs.get('large_file_shares_state', None)
 
 
 class StorageAccountCheckNameAvailabilityParameters(Model):
@@ -2498,11 +2491,6 @@ class StorageAccountCreateParameters(Model):
     :param is_hns_enabled: Account HierarchicalNamespace enabled if sets to
      true.
     :type is_hns_enabled: bool
-    :param large_file_shares_state: Allow large file shares if sets to
-     Enabled. It cannot be disabled once it is enabled. Possible values
-     include: 'Disabled', 'Enabled'
-    :type large_file_shares_state: str or
-     ~azure.mgmt.storage.v2019_04_01.models.LargeFileSharesState
     """
 
     _validation = {
@@ -2524,7 +2512,6 @@ class StorageAccountCreateParameters(Model):
         'azure_files_identity_based_authentication': {'key': 'properties.azureFilesIdentityBasedAuthentication', 'type': 'AzureFilesIdentityBasedAuthentication'},
         'enable_https_traffic_only': {'key': 'properties.supportsHttpsTrafficOnly', 'type': 'bool'},
         'is_hns_enabled': {'key': 'properties.isHnsEnabled', 'type': 'bool'},
-        'large_file_shares_state': {'key': 'properties.largeFileSharesState', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
@@ -2541,7 +2528,6 @@ class StorageAccountCreateParameters(Model):
         self.azure_files_identity_based_authentication = kwargs.get('azure_files_identity_based_authentication', None)
         self.enable_https_traffic_only = kwargs.get('enable_https_traffic_only', None)
         self.is_hns_enabled = kwargs.get('is_hns_enabled', None)
-        self.large_file_shares_state = kwargs.get('large_file_shares_state', None)
 
 
 class StorageAccountKey(Model):
@@ -2666,11 +2652,6 @@ class StorageAccountUpdateParameters(Model):
     :param network_rule_set: Network rule set
     :type network_rule_set:
      ~azure.mgmt.storage.v2019_04_01.models.NetworkRuleSet
-    :param large_file_shares_state: Allow large file shares if sets to
-     Enabled. It cannot be disabled once it is enabled. Possible values
-     include: 'Disabled', 'Enabled'
-    :type large_file_shares_state: str or
-     ~azure.mgmt.storage.v2019_04_01.models.LargeFileSharesState
     :param kind: Optional. Indicates the type of storage account. Currently
      only StorageV2 value supported by server. Possible values include:
      'Storage', 'StorageV2', 'BlobStorage', 'FileStorage', 'BlockBlobStorage'
@@ -2687,7 +2668,6 @@ class StorageAccountUpdateParameters(Model):
         'azure_files_identity_based_authentication': {'key': 'properties.azureFilesIdentityBasedAuthentication', 'type': 'AzureFilesIdentityBasedAuthentication'},
         'enable_https_traffic_only': {'key': 'properties.supportsHttpsTrafficOnly', 'type': 'bool'},
         'network_rule_set': {'key': 'properties.networkAcls', 'type': 'NetworkRuleSet'},
-        'large_file_shares_state': {'key': 'properties.largeFileSharesState', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
     }
 
@@ -2702,7 +2682,6 @@ class StorageAccountUpdateParameters(Model):
         self.azure_files_identity_based_authentication = kwargs.get('azure_files_identity_based_authentication', None)
         self.enable_https_traffic_only = kwargs.get('enable_https_traffic_only', None)
         self.network_rule_set = kwargs.get('network_rule_set', None)
-        self.large_file_shares_state = kwargs.get('large_file_shares_state', None)
         self.kind = kwargs.get('kind', None)
 
 
