@@ -23,7 +23,7 @@ class ManagedRuleExclusion(Model):
     :type match_variable: str or
      ~azure.mgmt.frontdoor.models.ManagedRuleExclusionMatchVariable
     :param selector_match_operator: Required. Comparison operator to apply to
-     the selector when specifing which elements in the collection this
+     the selector when specifying which elements in the collection this
      exclusion applies to. Possible values include: 'Equals', 'Contains',
      'StartsWith', 'EndsWith', 'EqualsAny'
     :type selector_match_operator: str or

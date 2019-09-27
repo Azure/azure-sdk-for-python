@@ -20,20 +20,22 @@ class ManagedRuleDefinition(Model):
 
     :ivar rule_id: Identifier for the managed rule.
     :vartype rule_id: str
-    :param default_state: Describes the default state for the managed rule.
+    :ivar default_state: Describes the default state for the managed rule.
      Possible values include: 'Disabled', 'Enabled'
-    :type default_state: str or
+    :vartype default_state: str or
      ~azure.mgmt.frontdoor.models.ManagedRuleEnabledState
-    :param default_action: Describes the default action to be applied when the
+    :ivar default_action: Describes the default action to be applied when the
      managed rule matches. Possible values include: 'Allow', 'Block', 'Log',
      'Redirect'
-    :type default_action: str or ~azure.mgmt.frontdoor.models.ActionType
+    :vartype default_action: str or ~azure.mgmt.frontdoor.models.ActionType
     :ivar description: Describes the functionality of the managed rule.
     :vartype description: str
     """
 
     _validation = {
         'rule_id': {'readonly': True},
+        'default_state': {'readonly': True},
+        'default_action': {'readonly': True},
         'description': {'readonly': True},
     }
 
@@ -47,6 +49,6 @@ class ManagedRuleDefinition(Model):
     def __init__(self, **kwargs):
         super(ManagedRuleDefinition, self).__init__(**kwargs)
         self.rule_id = None
-        self.default_state = kwargs.get('default_state', None)
-        self.default_action = kwargs.get('default_action', None)
+        self.default_state = None
+        self.default_action = None
         self.description = None
