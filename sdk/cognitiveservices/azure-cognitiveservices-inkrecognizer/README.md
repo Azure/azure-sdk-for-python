@@ -24,29 +24,17 @@ pip install azure-cognitiveservices-inkrecognizer
 
 #### Get URL
 
-TODO.
+Please find the URL at [Ink Recognizer Rest API documentation][ink_recognizer_restapi_docs]
 
 #### Get credentials
 
-TODO.
+Please follow the instructions on [Ink Recognizer][azure_ink_recognizer_home].
 
 ## Key concepts
 
-TODO.
-
-## Examples
-
-The [Samples][samples] provide several code snippets covering some of the most common Ink Recognizer SDK tasks, including:
-
-* Implement InkPoint and InkStroke classes
-* Convert stroke unit from pixel to mm
-* Set language recognition locale
-* Indexing a key word from recognition results
-* Set application kind if user know expected type of ink content
-
 ### Implement ink stroke
 
-If you don't have any pre-defined ink point or ink stroke classes, you can either follow the [Ink Stroke Interfaces][ink_stroke_file] to build your stroke, or build your own class that has all required fields. If you already defined ink strokes yourself, you should feed attributes in your class according to the interfaces.
+If you don't have any pre-defined ink point or ink stroke classes, you can either follow the [Ink Stroke Interfaces][ref_ink_stroke_file] to build your stroke, or build your own class that has all required fields. If you already defined ink strokes yourself, you should feed attributes in your class according to the interfaces.
 
 ```Python
 from azure.cognitiveservices.inkrecognizer import InkStrokeKind
@@ -73,14 +61,14 @@ Once you got the url for ink recognizer service and an Azure credential instance
 
 ```Python
 from azure.cognitiveservices.inkrecognizer import InkRecognizerClient
-client = InkRecognizerClient(url, credential)
+client = InkRecognizerClient(url, api_key)  # api_key is your key as string
 ```
 
 Or use Async version (Python 3.5.3+ only)
 
 ```Python
 from azure.cognitiveservices.inkrecognizer.aio import InkRecognizerClient
-client = InkRecognizerClient(url, credential)
+client = InkRecognizerClient(url, api_key)  # api_key is your key as string
 ```
 
 ### Send a request
@@ -106,13 +94,59 @@ for line in lines:
         print(word.recognized_text)
 ```
 
+## Examples
+
+The [Samples][samples] provide several code snippets covering some of the most common Ink Recognizer SDK tasks, including:
+
+* Implement InkPoint and InkStroke classes
+* Convert stroke unit from pixel to mm
+* Set language recognition locale
+* Indexing a key word from recognition results
+* Set application kind if user know expected type of ink content
+
 ## Troubleshooting
 
-TODO.
+### General
+
+Ink Recognizer clients raise exceptions defined in azure-core. For example, if you try to reach an invalid URL, InkRecognizerClient raises ResourceNotFoundError:
+
+```Python
+from azure.core.exceptions import ResourceNotFoundError
+client = InkRecognizerClient("invalid_url", credential)
+
+try:
+    client.recognize_ink(ink_strokes)
+except ResourceNotFoundError as e:
+    print(e.message)
+```
+
+### Logging
+
+Network trace logging is disabled by default for this library. When enabled, HTTP requests will be logged at DEBUG level using the logging library. You can configure logging to print debugging information to stdout or write it to a file:
+
+```Python
+import sys
+import logging
+
+# Create a logger for the 'azure' SDK
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
+# Configure a console output
+handler = logging.StreamHandler(stream=sys.stdout)
+logger.addHandler(handler)
+
+# Configure a file output
+file_handler = logging.FileHandler(filename)
+logger.addHandler(file_handler)
+
+# Enable network trace logging. Each HTTP request will be logged at DEBUG level.
+client = InkRecognizerClient(url=url, credential=credential, logging_enable=True)
+```
 
 ## Next steps
 
-TODO.
+Please find interactive inking samples at [tkinter sample](https://github.com/Azure-Samples/cognitive-services-python-sdk-samples/tree/master/samples/vision/inkrecognizer_tkinter_sample.py) and [wxpython sample](https://github.com/Azure-Samples/cognitive-services-python-sdk-samples/tree/master/samples/vision/inkrecognizer_tkinter_sample.py).
 
 ### Additional documentation
 
@@ -134,7 +168,9 @@ contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additio
 
 <!-- LINKS -->
 [azure_sub]: https://azure.microsoft.com/free/
-[ink_recognizer_docs]: https://docs.microsoft.com/en-us/azure/cognitive-services/ink-recognizer/
+[ink_recognizer_docs]: https://docs.microsoft.com/azure/cognitive-services/ink-recognizer/
+[ink_recognizer_restapi_docs]: https://docs.microsoft.com/rest/api/cognitiveservices/inkrecognizer/inkrecognizer/recognize
+[azure_ink_recognizer_home]: https://azure.microsoft.com/services/cognitive-services/ink-recognizer/
 [pip]: https://pypi.org/project/pip/
 [pypi]: https://pypi.org/project/azure-cosmos/
 [python]: https://www.python.org/downloads/
