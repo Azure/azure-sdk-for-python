@@ -13,7 +13,7 @@ interactions:
       x-ms-content-sha256:
       - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
       x-ms-date:
-      - Sep, 24 2019 16:40:04 GMT
+      - Sep, 26 2019 16:51:29 GMT
     method: GET
     uri: https://xyazconfig.azconfig.io/kv?key=PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309&label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309&api-version=1.0
   response:
@@ -43,7 +43,7 @@ interactions:
       content-type:
       - application/vnd.microsoft.appconfig.kvset+json; charset=utf-8
       date:
-      - Tue, 24 Sep 2019 16:40:05 GMT
+      - Thu, 26 Sep 2019 16:51:29 GMT
       server:
       - nginx/1.13.12
       strict-transport-security:
@@ -75,13 +75,13 @@ interactions:
       x-ms-content-sha256:
       - 5b/E4qQlXHTRod+n+f+xjK6c/tRVR8uxoC62FjvGJPw=
       x-ms-date:
-      - Sep, 24 2019 16:40:05 GMT
+      - Sep, 26 2019 16:51:29 GMT
     method: PUT
     uri: https://xyazconfig.azconfig.io/kv/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309?label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309&api-version=1.0
   response:
     body:
-      string: '{"etag":"0kzAerEzvznXb3d4MWZCCisQUxz","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-24T16:40:05+00:00"}'
+      string: '{"etag":"gd6ftA8xFJyslbseungL65TddXY","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-26T16:51:30+00:00"}'
     headers:
       access-control-allow-credentials:
       - 'true'
@@ -106,17 +106,17 @@ interactions:
       content-type:
       - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
       date:
-      - Tue, 24 Sep 2019 16:40:05 GMT
+      - Thu, 26 Sep 2019 16:51:29 GMT
       etag:
-      - '"0kzAerEzvznXb3d4MWZCCisQUxz"'
+      - '"gd6ftA8xFJyslbseungL65TddXY"'
       last-modified:
-      - Tue, 24 Sep 2019 16:40:05 GMT
+      - Thu, 26 Sep 2019 16:51:30 GMT
       server:
       - nginx/1.13.12
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=MzotMSM2MjA4NjU=;sn=620865
+      - zAJw6V16=MzotMSM2NDU2ODk=;sn=645689
       transfer-encoding:
       - chunked
     status:
@@ -136,13 +136,13 @@ interactions:
       x-ms-content-sha256:
       - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
       x-ms-date:
-      - Sep, 24 2019 16:40:05 GMT
+      - Sep, 26 2019 16:51:29 GMT
     method: GET
     uri: https://xyazconfig.azconfig.io/kv?key=PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309&api-version=1.0
   response:
     body:
-      string: '{"items":[{"etag":"0kzAerEzvznXb3d4MWZCCisQUxz","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-24T16:40:05+00:00"}]}'
+      string: '{"items":[{"etag":"gd6ftA8xFJyslbseungL65TddXY","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-26T16:51:30+00:00"}]}'
     headers:
       access-control-allow-credentials:
       - 'true'
@@ -167,13 +167,13 @@ interactions:
       content-type:
       - application/vnd.microsoft.appconfig.kvset+json; charset=utf-8
       date:
-      - Tue, 24 Sep 2019 16:40:05 GMT
+      - Thu, 26 Sep 2019 16:51:29 GMT
       server:
       - nginx/1.13.12
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=MzotMSM2MjA4NjU=;sn=620865
+      - zAJw6V16=MzotMSM2NDU2ODk=;sn=645689
       transfer-encoding:
       - chunked
     status:
@@ -195,7 +195,7 @@ interactions:
       x-ms-content-sha256:
       - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
       x-ms-date:
-      - Sep, 24 2019 16:40:05 GMT
+      - Sep, 26 2019 16:51:29 GMT
     method: DELETE
     uri: https://xyazconfig.azconfig.io/kv/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309?api-version=1.0
   response:
@@ -225,7 +225,7 @@ interactions:
       content-type:
       - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
       date:
-      - Tue, 24 Sep 2019 16:40:05 GMT
+      - Thu, 26 Sep 2019 16:51:30 GMT
       server:
       - nginx/1.13.12
       strict-transport-security:
@@ -255,13 +255,13 @@ interactions:
       x-ms-content-sha256:
       - 4rt07HteiPg5NxofrgzMmlQPTVbo1no7aKxDSI5uUU4=
       x-ms-date:
-      - Sep, 24 2019 16:40:05 GMT
+      - Sep, 26 2019 16:51:29 GMT
     method: PUT
     uri: https://xyazconfig.azconfig.io/kv/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309?api-version=1.0
   response:
     body:
-      string: '{"etag":"xqkQGIViKttg1CE2e1fRIKIWaKa","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-24T16:40:06+00:00"}'
+      string: '{"etag":"Ma4yPBfs3hJVGrGbaiN3oN2K95I","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-26T16:51:30+00:00"}'
     headers:
       access-control-allow-credentials:
       - 'true'
@@ -286,17 +286,17 @@ interactions:
       content-type:
       - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
       date:
-      - Tue, 24 Sep 2019 16:40:05 GMT
+      - Thu, 26 Sep 2019 16:51:30 GMT
       etag:
-      - '"xqkQGIViKttg1CE2e1fRIKIWaKa"'
+      - '"Ma4yPBfs3hJVGrGbaiN3oN2K95I"'
       last-modified:
-      - Tue, 24 Sep 2019 16:40:06 GMT
+      - Thu, 26 Sep 2019 16:51:30 GMT
       server:
       - nginx/1.13.12
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=MzotMSM2MjA4NjY=;sn=620866
+      - zAJw6V16=MzotMSM2NDU2OTA=;sn=645690
       transfer-encoding:
       - chunked
     status:
@@ -323,13 +323,13 @@ interactions:
       x-ms-content-sha256:
       - lvT+XdrMdKjmS0onqG2sgqDGLTxt/JmEqzTryKHe2Bk=
       x-ms-date:
-      - Sep, 24 2019 16:40:05 GMT
+      - Sep, 26 2019 16:51:30 GMT
     method: PUT
     uri: https://xyazconfig.azconfig.io/kv/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309_SET?label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309&api-version=1.0
   response:
     body:
-      string: '{"etag":"WtU0QSdH2ka0eDV4jMNk5h50CIa","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309_SET","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-24T16:40:06+00:00"}'
+      string: '{"etag":"SOb9rbFwtOVyEuxbWZ3oweCH6Jz","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309_SET","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-26T16:51:30+00:00"}'
     headers:
       access-control-allow-credentials:
       - 'true'
@@ -354,17 +354,17 @@ interactions:
       content-type:
       - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
       date:
-      - Tue, 24 Sep 2019 16:40:05 GMT
+      - Thu, 26 Sep 2019 16:51:30 GMT
       etag:
-      - '"WtU0QSdH2ka0eDV4jMNk5h50CIa"'
+      - '"SOb9rbFwtOVyEuxbWZ3oweCH6Jz"'
       last-modified:
-      - Tue, 24 Sep 2019 16:40:06 GMT
+      - Thu, 26 Sep 2019 16:51:30 GMT
       server:
       - nginx/1.13.12
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=MzotMSM2MjA4Njc=;sn=620867
+      - zAJw6V16=MzotMSM2NDU2OTE=;sn=645691
       transfer-encoding:
       - chunked
     status:
@@ -386,13 +386,13 @@ interactions:
       x-ms-content-sha256:
       - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
       x-ms-date:
-      - Sep, 24 2019 16:40:05 GMT
+      - Sep, 26 2019 16:51:30 GMT
     method: DELETE
     uri: https://xyazconfig.azconfig.io/kv/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309?label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309&api-version=1.0
   response:
     body:
-      string: '{"etag":"0kzAerEzvznXb3d4MWZCCisQUxz","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-24T16:40:05+00:00"}'
+      string: '{"etag":"gd6ftA8xFJyslbseungL65TddXY","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-26T16:51:30+00:00"}'
     headers:
       access-control-allow-credentials:
       - 'true'
@@ -417,17 +417,17 @@ interactions:
       content-type:
       - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
       date:
-      - Tue, 24 Sep 2019 16:40:05 GMT
+      - Thu, 26 Sep 2019 16:51:30 GMT
       etag:
-      - '"0kzAerEzvznXb3d4MWZCCisQUxz"'
+      - '"gd6ftA8xFJyslbseungL65TddXY"'
       last-modified:
-      - Tue, 24 Sep 2019 16:40:05 GMT
+      - Thu, 26 Sep 2019 16:51:30 GMT
       server:
       - nginx/1.13.12
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=MzotMSM2MjA4Njg=;sn=620868
+      - zAJw6V16=MzotMSM2NDU2OTI=;sn=645692
       transfer-encoding:
       - chunked
     status:
@@ -449,13 +449,13 @@ interactions:
       x-ms-content-sha256:
       - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
       x-ms-date:
-      - Sep, 24 2019 16:40:05 GMT
+      - Sep, 26 2019 16:51:30 GMT
     method: DELETE
     uri: https://xyazconfig.azconfig.io/kv/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309?api-version=1.0
   response:
     body:
-      string: '{"etag":"xqkQGIViKttg1CE2e1fRIKIWaKa","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-24T16:40:06+00:00"}'
+      string: '{"etag":"Ma4yPBfs3hJVGrGbaiN3oN2K95I","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309","label":null,"content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-26T16:51:30+00:00"}'
     headers:
       access-control-allow-credentials:
       - 'true'
@@ -480,17 +480,17 @@ interactions:
       content-type:
       - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
       date:
-      - Tue, 24 Sep 2019 16:40:05 GMT
+      - Thu, 26 Sep 2019 16:51:30 GMT
       etag:
-      - '"xqkQGIViKttg1CE2e1fRIKIWaKa"'
+      - '"Ma4yPBfs3hJVGrGbaiN3oN2K95I"'
       last-modified:
-      - Tue, 24 Sep 2019 16:40:06 GMT
+      - Thu, 26 Sep 2019 16:51:30 GMT
       server:
       - nginx/1.13.12
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=MzotMSM2MjA4Njk=;sn=620869
+      - zAJw6V16=MzotMSM2NDU2OTM=;sn=645693
       transfer-encoding:
       - chunked
     status:
@@ -512,13 +512,13 @@ interactions:
       x-ms-content-sha256:
       - 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
       x-ms-date:
-      - Sep, 24 2019 16:40:05 GMT
+      - Sep, 26 2019 16:51:30 GMT
     method: DELETE
     uri: https://xyazconfig.azconfig.io/kv/PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309_SET?label=test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309&api-version=1.0
   response:
     body:
-      string: '{"etag":"WtU0QSdH2ka0eDV4jMNk5h50CIa","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309_SET","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
-        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-24T16:40:06+00:00"}'
+      string: '{"etag":"SOb9rbFwtOVyEuxbWZ3oweCH6Jz","key":"PYTHON_UNIT_test_key_a6af8952-54a6-11e9-b600-2816a84d0309_SET","label":"test_label1_1d7b2b28-549e-11e9-b51c-2816a84d0309","content_type":"test
+        content type","value":"test value","tags":{"tag1":"tag1","tag2":"tag2"},"locked":false,"last_modified":"2019-09-26T16:51:30+00:00"}'
     headers:
       access-control-allow-credentials:
       - 'true'
@@ -543,17 +543,17 @@ interactions:
       content-type:
       - application/vnd.microsoft.appconfig.kv+json; charset=utf-8
       date:
-      - Tue, 24 Sep 2019 16:40:05 GMT
+      - Thu, 26 Sep 2019 16:51:30 GMT
       etag:
-      - '"WtU0QSdH2ka0eDV4jMNk5h50CIa"'
+      - '"SOb9rbFwtOVyEuxbWZ3oweCH6Jz"'
       last-modified:
-      - Tue, 24 Sep 2019 16:40:06 GMT
+      - Thu, 26 Sep 2019 16:51:30 GMT
       server:
       - nginx/1.13.12
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       sync-token:
-      - zAJw6V16=MzotMSM2MjA4NzA=;sn=620870
+      - zAJw6V16=MzotMSM2NDU2OTQ=;sn=645694
       transfer-encoding:
       - chunked
     status:
