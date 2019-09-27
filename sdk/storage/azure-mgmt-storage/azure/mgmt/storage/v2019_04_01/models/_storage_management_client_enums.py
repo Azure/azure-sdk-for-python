@@ -98,12 +98,6 @@ class AccessTier(str, Enum):
     cool = "Cool"
 
 
-class LargeFileSharesState(str, Enum):
-
-    disabled = "Disabled"
-    enabled = "Enabled"
-
-
 class GeoReplicationStatus(str, Enum):
 
     live = "Live"

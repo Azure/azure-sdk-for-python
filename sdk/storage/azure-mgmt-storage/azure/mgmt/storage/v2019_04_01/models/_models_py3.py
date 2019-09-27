@@ -2381,11 +2381,6 @@ class StorageAccount(TrackedResource):
     :ivar failover_in_progress: If the failover is in progress, the value will
      be true, otherwise, it will be null.
     :vartype failover_in_progress: bool
-    :param large_file_shares_state: Allow large file shares if sets to
-     Enabled. It cannot be disabled once it is enabled. Possible values
-     include: 'Disabled', 'Enabled'
-    :type large_file_shares_state: str or
-     ~azure.mgmt.storage.v2019_04_01.models.LargeFileSharesState
     """
 
     _validation = {
@@ -2439,10 +2434,9 @@ class StorageAccount(TrackedResource):
         'is_hns_enabled': {'key': 'properties.isHnsEnabled', 'type': 'bool'},
         'geo_replication_stats': {'key': 'properties.geoReplicationStats', 'type': 'GeoReplicationStats'},
         'failover_in_progress': {'key': 'properties.failoverInProgress', 'type': 'bool'},
-        'large_file_shares_state': {'key': 'properties.largeFileSharesState', 'type': 'str'},
     }
 
-    def __init__(self, *, location: str, tags=None, identity=None, azure_files_identity_based_authentication=None, enable_https_traffic_only: bool=None, is_hns_enabled: bool=None, large_file_shares_state=None, **kwargs) -> None:
+    def __init__(self, *, location: str, tags=None, identity=None, azure_files_identity_based_authentication=None, enable_https_traffic_only: bool=None, is_hns_enabled: bool=None, **kwargs) -> None:
         super(StorageAccount, self).__init__(tags=tags, location=location, **kwargs)
         self.sku = None
         self.kind = None
@@ -2465,7 +2459,6 @@ class StorageAccount(TrackedResource):
         self.is_hns_enabled = is_hns_enabled
         self.geo_replication_stats = None
         self.failover_in_progress = None
-        self.large_file_shares_state = large_file_shares_state
 
 
 class StorageAccountCheckNameAvailabilityParameters(Model):
@@ -2553,11 +2546,6 @@ class StorageAccountCreateParameters(Model):
     :param is_hns_enabled: Account HierarchicalNamespace enabled if sets to
      true.
     :type is_hns_enabled: bool
-    :param large_file_shares_state: Allow large file shares if sets to
-     Enabled. It cannot be disabled once it is enabled. Possible values
-     include: 'Disabled', 'Enabled'
-    :type large_file_shares_state: str or
-     ~azure.mgmt.storage.v2019_04_01.models.LargeFileSharesState
     """
 
     _validation = {
@@ -2579,10 +2567,9 @@ class StorageAccountCreateParameters(Model):
         'azure_files_identity_based_authentication': {'key': 'properties.azureFilesIdentityBasedAuthentication', 'type': 'AzureFilesIdentityBasedAuthentication'},
         'enable_https_traffic_only': {'key': 'properties.supportsHttpsTrafficOnly', 'type': 'bool'},
         'is_hns_enabled': {'key': 'properties.isHnsEnabled', 'type': 'bool'},
-        'large_file_shares_state': {'key': 'properties.largeFileSharesState', 'type': 'str'},
     }
 
-    def __init__(self, *, sku, kind, location: str, tags=None, identity=None, custom_domain=None, encryption=None, network_rule_set=None, access_tier=None, azure_files_identity_based_authentication=None, enable_https_traffic_only: bool=None, is_hns_enabled: bool=None, large_file_shares_state=None, **kwargs) -> None:
+    def __init__(self, *, sku, kind, location: str, tags=None, identity=None, custom_domain=None, encryption=None, network_rule_set=None, access_tier=None, azure_files_identity_based_authentication=None, enable_https_traffic_only: bool=None, is_hns_enabled: bool=None, **kwargs) -> None:
         super(StorageAccountCreateParameters, self).__init__(**kwargs)
         self.sku = sku
         self.kind = kind
@@ -2596,7 +2583,6 @@ class StorageAccountCreateParameters(Model):
         self.azure_files_identity_based_authentication = azure_files_identity_based_authentication
         self.enable_https_traffic_only = enable_https_traffic_only
         self.is_hns_enabled = is_hns_enabled
-        self.large_file_shares_state = large_file_shares_state
 
 
 class StorageAccountKey(Model):
@@ -2721,11 +2707,6 @@ class StorageAccountUpdateParameters(Model):
     :param network_rule_set: Network rule set
     :type network_rule_set:
      ~azure.mgmt.storage.v2019_04_01.models.NetworkRuleSet
-    :param large_file_shares_state: Allow large file shares if sets to
-     Enabled. It cannot be disabled once it is enabled. Possible values
-     include: 'Disabled', 'Enabled'
-    :type large_file_shares_state: str or
-     ~azure.mgmt.storage.v2019_04_01.models.LargeFileSharesState
     :param kind: Optional. Indicates the type of storage account. Currently
      only StorageV2 value supported by server. Possible values include:
      'Storage', 'StorageV2', 'BlobStorage', 'FileStorage', 'BlockBlobStorage'
@@ -2742,11 +2723,10 @@ class StorageAccountUpdateParameters(Model):
         'azure_files_identity_based_authentication': {'key': 'properties.azureFilesIdentityBasedAuthentication', 'type': 'AzureFilesIdentityBasedAuthentication'},
         'enable_https_traffic_only': {'key': 'properties.supportsHttpsTrafficOnly', 'type': 'bool'},
         'network_rule_set': {'key': 'properties.networkAcls', 'type': 'NetworkRuleSet'},
-        'large_file_shares_state': {'key': 'properties.largeFileSharesState', 'type': 'str'},
         'kind': {'key': 'kind', 'type': 'str'},
     }
 
-    def __init__(self, *, sku=None, tags=None, identity=None, custom_domain=None, encryption=None, access_tier=None, azure_files_identity_based_authentication=None, enable_https_traffic_only: bool=None, network_rule_set=None, large_file_shares_state=None, kind=None, **kwargs) -> None:
+    def __init__(self, *, sku=None, tags=None, identity=None, custom_domain=None, encryption=None, access_tier=None, azure_files_identity_based_authentication=None, enable_https_traffic_only: bool=None, network_rule_set=None, kind=None, **kwargs) -> None:
         super(StorageAccountUpdateParameters, self).__init__(**kwargs)
         self.sku = sku
         self.tags = tags
@@ -2757,7 +2737,6 @@ class StorageAccountUpdateParameters(Model):
         self.azure_files_identity_based_authentication = azure_files_identity_based_authentication
         self.enable_https_traffic_only = enable_https_traffic_only
         self.network_rule_set = network_rule_set
-        self.large_file_shares_state = large_file_shares_state
         self.kind = kind
 
 
