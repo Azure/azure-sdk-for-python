@@ -24,8 +24,10 @@ class PaymentProperties(Model):
     :vartype amount: ~azure.mgmt.billing.models.Amount
     :ivar date_property: The date of the payment.
     :vartype date_property: datetime
-    :ivar payment_method_family: The payment method family.
-    :vartype payment_method_family: str
+    :param payment_method_family: The payment method family. Possible values
+     include: 'Credits', 'CheckWire', 'CreditCard', 'None'
+    :type payment_method_family: str or
+     ~azure.mgmt.billing.models.PaymentMethodFamily
     :ivar payment_method_type: The type of payment method.
     :vartype payment_method_type: str
     """
@@ -34,7 +36,6 @@ class PaymentProperties(Model):
         'payment_type': {'readonly': True},
         'amount': {'readonly': True},
         'date_property': {'readonly': True},
-        'payment_method_family': {'readonly': True},
         'payment_method_type': {'readonly': True},
     }
 
@@ -46,10 +47,10 @@ class PaymentProperties(Model):
         'payment_method_type': {'key': 'paymentMethodType', 'type': 'str'},
     }
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, *, payment_method_family=None, **kwargs) -> None:
         super(PaymentProperties, self).__init__(**kwargs)
         self.payment_type = None
         self.amount = None
         self.date_property = None
-        self.payment_method_family = None
+        self.payment_method_family = payment_method_family
         self.payment_method_type = None
