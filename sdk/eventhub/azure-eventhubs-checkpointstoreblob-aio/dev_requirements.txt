@@ -1,3 +1,4 @@
 -e ../../core/azure-core
 ../azure-eventhubs
+-e ../../storage/azure-storage-blob
 pytest-asyncio>=0.8.0; python_version >= '3.5'
