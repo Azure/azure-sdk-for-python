@@ -201,7 +201,7 @@ class EventProcessor(object):  # pylint:disable=too-many-instance-attributes
             child.kind = SpanKind.SERVER
 
             for event in events:
-                self._eventhub_client._trace_link_message(event, child)  # pylint: disable=protected-access
+                event._trace_link_message(child)  # pylint: disable=protected-access
             with child:
                 yield
 

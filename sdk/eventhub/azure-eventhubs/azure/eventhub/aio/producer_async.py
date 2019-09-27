@@ -16,7 +16,7 @@ from azure.core.settings import settings
 
 from azure.eventhub.common import EventData, EventDataBatch
 from azure.eventhub.error import _error_handler, OperationTimeoutError, EventDataError
-from ..producer import _error, _set_partition_key
+from ..producer import _error, _set_partition_key, _set_trace_message
 from ._consumer_producer_mixin_async import ConsumerProducerMixin
 
 log = logging.getLogger(__name__)
@@ -228,7 +228,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
             if partition_key:
                 event_data._set_partition_key(partition_key)  # pylint: disable=protected-access
             wrapper_event_data = event_data
-            self._client._trace_message(child, wrapper_event_data)  # pylint: disable=protected-access
+            wrapper_event_data._trace_message(child)  # pylint: disable=protected-access
         else:
             if isinstance(event_data, EventDataBatch):
                 if partition_key and partition_key != event_data._partition_key:  # pylint: disable=protected-access
@@ -237,9 +237,8 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint: disable=too-many-insta
             else:
                 if partition_key:
                     event_data = _set_partition_key(event_data, partition_key)
+                event_data = _set_trace_message(event_data, child)
                 wrapper_event_data = EventDataBatch._from_batch(event_data, partition_key)  # pylint: disable=protected-access
-            for internal_message in wrapper_event_data.message._body_gen:  # pylint: disable=protected-access
-                self._client._trace_message(child, internal_message)  # pylint: disable=protected-access
 
         wrapper_event_data.message.on_send_complete = self._on_outcome
         self._unsent_events = [wrapper_event_data.message]

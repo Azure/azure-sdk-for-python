@@ -35,6 +35,13 @@ def _set_partition_key(event_datas, partition_key):
         yield ed
 
 
+def _set_trace_message(event_datas, parent_span=None):
+    ed_iter = iter(event_datas)
+    for ed in ed_iter:
+        ed._trace_message(parent_span)  # pylint:disable=protected-access
+        yield ed
+
+
 class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instance-attributes
     """
     A producer responsible for transmitting EventData to a specific Event Hub,
@@ -233,7 +240,7 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
             if partition_key:
                 event_data._set_partition_key(partition_key)  # pylint: disable=protected-access
             wrapper_event_data = event_data
-            self._client._trace_message(child, wrapper_event_data)  # pylint: disable=protected-access
+            wrapper_event_data._trace_message(child)  # pylint: disable=protected-access
         else:
             if isinstance(event_data, EventDataBatch):  # The partition_key in the param will be omitted.
                 if partition_key and partition_key != event_data._partition_key:  # pylint: disable=protected-access
@@ -242,9 +249,8 @@ class EventHubProducer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
             else:
                 if partition_key:
                     event_data = _set_partition_key(event_data, partition_key)
+                event_data = _set_trace_message(event_data, child)
                 wrapper_event_data = EventDataBatch._from_batch(event_data, partition_key)  # pylint: disable=protected-access
-            for internal_message in wrapper_event_data.message._body_gen:  # pylint: disable=protected-access
-                self._client._trace_message(child, internal_message)  # pylint: disable=protected-access
         wrapper_event_data.message.on_send_complete = self._on_outcome
         self._unsent_events = [wrapper_event_data.message]
 
