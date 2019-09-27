@@ -5,13 +5,13 @@
 #--------------------------------------------------------------------------
 
 import abc
-import six
-if six.PY2:
+try:
+    from abc import ABC
+except:
+    # python <= 2.7
     from abc import ABCMeta
     class ABC(object):
         __metaclass__ = ABCMeta
-else:
-    from abc import ABC
 
 
 class IInkPoint(ABC):

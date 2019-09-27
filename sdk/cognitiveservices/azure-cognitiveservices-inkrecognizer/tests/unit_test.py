@@ -7,12 +7,11 @@
 import os
 import json
 import random
-import six
-if six.PY2:
-    TYPE_TEXT_STRING = (str, unicode)
-else:
+try:
+    # python <= 2.7
+    TYPE_TEXT_STRING = (str, unicode)  
+except NameError: 
     TYPE_TEXT_STRING = (str, )
-import platform
 try:
     from unittest import mock
     from unittest.mock import Mock
