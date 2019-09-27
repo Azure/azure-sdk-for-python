@@ -26,7 +26,7 @@ EVENT_POSITION = EventPosition("-1")
 
 async def pump(client, partition):
     consumer = client.create_consumer(consumer_group="$default", partition_id=partition, event_position=EVENT_POSITION,
-                                      prefetch=5, track_last_enqueued_event_info=True)
+                                      prefetch=5, track_last_enqueued_event_properties=True)
     async with consumer:
         total = 0
         start_time = time.time()
@@ -37,7 +37,7 @@ async def pump(client, partition):
             total += 1
         end_time = time.time()
         run_time = end_time - start_time
-        print("Consumer runtime information: {}.".format(consumer.last_enqueued_event_info))
+        print("Consumer last enqueued event properties: {}.".format(consumer.last_enqueued_event_properties))
         print("Received {} messages in {} seconds".format(total, run_time))
 
 

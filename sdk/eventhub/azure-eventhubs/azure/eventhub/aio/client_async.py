@@ -251,9 +251,9 @@ class EventHubClient(EventHubClientAbstract):
         :type operation: str
         :param prefetch: The message prefetch count of the consumer. Default is 300.
         :type prefetch: int
-        :type track_last_enqueued_event_info: bool
-        :param track_last_enqueued_event_info: Indicates whether or not the consumer should request information on the
-         last enqueued event on its associated partition, and track that information as events are received.
+        :type track_last_enqueued_event_properties: bool
+        :param track_last_enqueued_event_properties: Indicates whether or not the consumer should request information
+         on the last enqueued event on its associated partition, and track that information as events are received.
          When information about the partition's last enqueued event is being tracked, each event received from the
          Event Hubs service will carry metadata about the partition. This results in a small amount of additional
          network bandwidth consumption that is generally a favorable trade-off when considered against periodically
@@ -274,7 +274,7 @@ class EventHubClient(EventHubClientAbstract):
         owner_level = kwargs.get("owner_level")
         operation = kwargs.get("operation")
         prefetch = kwargs.get("prefetch") or self._config.prefetch
-        track_last_enqueued_event_info = kwargs.get("track_last_enqueued_event_info", False)
+        track_last_enqueued_event_properties = kwargs.get("track_last_enqueued_event_properties", False)
         loop = kwargs.get("loop")
 
         path = self._address.path + operation if operation else self._address.path
@@ -283,7 +283,7 @@ class EventHubClient(EventHubClientAbstract):
         handler = EventHubConsumer(
             self, source_url, event_position=event_position, owner_level=owner_level,
             prefetch=prefetch,
-            track_last_enqueued_event_info=track_last_enqueued_event_info, loop=loop)
+            track_last_enqueued_event_properties=track_last_enqueued_event_properties, loop=loop)
         return handler
 
     def create_producer(

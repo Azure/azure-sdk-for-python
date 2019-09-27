@@ -55,13 +55,21 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         :param owner_level: The priority of the exclusive consumer. An exclusive
          consumer will be created if owner_level is set.
         :type owner_level: int
+        :type track_last_enqueued_event_properties: bool
+        :param track_last_enqueued_event_properties: Indicates whether or not the consumer should request information
+         on the last enqueued event on its associated partition, and track that information as events are received.
+         When information about the partition's last enqueued event is being tracked, each event received from the
+         Event Hubs service will carry metadata about the partition. This results in a small amount of additional
+         network bandwidth consumption that is generally a favorable trade-off when considered against periodically
+         making requests for partition properties using the Event Hub client.
+         It is set to `False` by default.
         """
         event_position = kwargs.get("event_position", None)
         prefetch = kwargs.get("prefetch", 300)
         owner_level = kwargs.get("owner_level", None)
         keep_alive = kwargs.get("keep_alive", None)
         auto_reconnect = kwargs.get("auto_reconnect", True)
-        track_last_enqueued_event_info = kwargs.get("track_last_enqueued_event_info", False)
+        track_last_enqueued_event_properties = kwargs.get("track_last_enqueued_event_properties", False)
 
         super(EventHubConsumer, self).__init__()
         self._running = False
@@ -73,7 +81,7 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         self._owner_level = owner_level
         self._keep_alive = keep_alive
         self._auto_reconnect = auto_reconnect
-        self._retry_policy = errors.ErrorPolicy(max_retries=self._client._config.max_retries, on_error=_error_handler)    # pylint:disable=protected-access
+        self._retry_policy = errors.ErrorPolicy(max_retries=self._client._config.max_retries, on_error=_error_handler)  # pylint:disable=protected-access
         self._reconnect_backoff = 1
         self._link_properties = {}
         self._redirected = None
@@ -86,8 +94,8 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         link_property_timeout_ms = (self._client._config.receive_timeout or self._timeout) * 1000  # pylint:disable=protected-access
         self._link_properties[types.AMQPSymbol(self._timeout_symbol)] = types.AMQPLong(int(link_property_timeout_ms))
         self._handler = None
-        self._track_last_enqueued_event_info = track_last_enqueued_event_info
-        self._last_enqueued_event_info = {}
+        self._track_last_enqueued_event_properties = track_last_enqueued_event_properties
+        self._last_enqueued_event_properties = {}
 
     def __iter__(self):
         return self
@@ -104,8 +112,8 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
                 event_data = EventData._from_message(message)  # pylint:disable=protected-access
                 self._offset = EventPosition(event_data.offset, inclusive=False)
                 retried_times = 0
-                if self._track_last_enqueued_event_info:
-                    self._last_enqueued_event_info_info = event_data._runtime_info  # pylint:disable=protected-access
+                if self._track_last_enqueued_event_properties:
+                    self._last_enqueued_event_properties = event_data._runtime_info  # pylint:disable=protected-access
                 return event_data
             except Exception as exception:  # pylint:disable=broad-except
                 last_exception = self._handle_exception(exception)
@@ -126,7 +134,7 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
             source.set_filter(self._offset._selector())  # pylint:disable=protected-access
 
         desired_capabilities = None
-        if self._track_last_enqueued_event_info:
+        if self._track_last_enqueued_event_properties:
             symbol_array = [types.AMQPSymbol(self._receiver_runtime_metric_symbol)]
             desired_capabilities = utils.data_factory(types.AMQPArray(symbol_array))
 
@@ -187,8 +195,8 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
             self._offset = EventPosition(event_data.offset)
             data_batch.append(event_data)
 
-        if self._track_last_enqueued_event_info and len(data_batch):
-            self._last_enqueued_event_info = data_batch[-1]._runtime_info  # pylint:disable=protected-access
+        if self._track_last_enqueued_event_properties and len(data_batch):
+            self._last_enqueued_event_properties = data_batch[-1]._runtime_info  # pylint:disable=protected-access
         return data_batch
 
     def _receive_with_retry(self, timeout=None, max_batch_size=None, **kwargs):
@@ -196,20 +204,20 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
                                             max_batch_size=max_batch_size, **kwargs)
 
     @property
-    def last_enqueued_event_info(self):
+    def last_enqueued_event_properties(self):
         """
         The latest enqueued event information. This property will be updated each time an event is received when
-        the receiver is created with `track_last_enqueued_event_info` being `True`.
+        the receiver is created with `track_last_enqueued_event_properties` being `True`.
         The dict includes following information of the partition:
 
-            - `last_enqueued_sequence_number`
-            - `last_enqueued_offset`
-            - `last_enqueued_time_utc`
-            - `runtime_info_retrieval_time_utc`
+            - `sequence_number`
+            - `offset`
+            - `enqueued_time`
+            - `retrieval_time`
 
         :rtype: dict or None
         """
-        return self._last_enqueued_event_info if self._track_last_enqueued_event_info else None
+        return self._last_enqueued_event_properties if self._track_last_enqueued_event_properties else None
 
     @property
     def queue_size(self):

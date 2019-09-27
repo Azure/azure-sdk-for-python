@@ -30,7 +30,7 @@ client = EventHubClient(host=HOSTNAME, event_hub_path=EVENT_HUB, credential=Even
 
 consumer = client.create_consumer(consumer_group="$default", partition_id=PARTITION,
                                   event_position=EVENT_POSITION, prefetch=5000,
-                                  track_last_enqueued_event_info=True)
+                                  track_last_enqueued_event_properties=True)
 with consumer:
     start_time = time.time()
     batch = consumer.receive(timeout=5)
@@ -41,5 +41,5 @@ with consumer:
         print(event_data.body_as_str())
         total += 1
     batch = consumer.receive(timeout=5)
-    print("Consumer runtime information: {}.".format(consumer.last_enqueued_event_info))
+    print("Consumer last enqueued event properties: {}.".format(consumer.last_enqueued_event_properties))
     print("Received {} messages in {} seconds".format(total, time.time() - start_time))

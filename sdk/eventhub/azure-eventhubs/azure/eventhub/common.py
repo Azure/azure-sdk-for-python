@@ -131,13 +131,13 @@ class EventData(object):
         event_data._delivery_annotations = message.delivery_annotations
         if event_data._delivery_annotations:
             event_data._runtime_info = {
-                "last_enqueued_sequence_number":
+                "sequence_number":
                     event_data._delivery_annotations.get(EventData.PROP_LAST_ENQUEUED_SEQUENCE_NUMBER, None),
-                "last_enqueued_offset":
+                "offset":
                     event_data._delivery_annotations.get(EventData.PROP_LAST_ENQUEUED_OFFSET, None),
-                "last_enqueued_time_utc":
+                "enqueued_time":
                     event_data._delivery_annotations.get(EventData.PROP_LAST_ENQUEUED_TIME_UTC, None),
-                "runtime_info_retrieval_time_utc":
+                "retrieval_time":
                     event_data._delivery_annotations.get(EventData.PROP_RUNTIME_INFO_RETRIEVAL_TIME_UTC, None)
             }
         return event_data

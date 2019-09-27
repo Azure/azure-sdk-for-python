@@ -281,7 +281,7 @@ def test_receive_run_time_metric(connstr_senders):
                                                    network_tracing=False)
     receiver = client.create_consumer(consumer_group="$default", partition_id="0",
                                       event_position=EventPosition('@latest'), prefetch=500,
-                                      track_last_enqueued_event_info=True)
+                                      track_last_enqueued_event_properties=True)
 
     event_list = []
     for i in range(20):
@@ -297,8 +297,8 @@ def test_receive_run_time_metric(connstr_senders):
 
         received = receiver.receive(max_batch_size=50, timeout=5)
         assert len(received) == 20
-        assert receiver.last_enqueued_event_info
-        assert receiver.last_enqueued_event_info.get('last_enqueued_sequence_number', None)
-        assert receiver.last_enqueued_event_info.get('last_enqueued_offset', None)
-        assert receiver.last_enqueued_event_info.get('last_enqueued_time_utc', None)
-        assert receiver.last_enqueued_event_info.get('runtime_info_retrieval_time_utc', None)
+        assert receiver.last_enqueued_event_properties
+        assert receiver.last_enqueued_event_properties.get('sequence_number', None)
+        assert receiver.last_enqueued_event_properties.get('offset', None)
+        assert receiver.last_enqueued_event_properties.get('enqueued_time', None)
+        assert receiver.last_enqueued_event_properties.get('retrieval_time', None)
