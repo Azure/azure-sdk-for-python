@@ -86,8 +86,8 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         updated_certificate = certificate_client.update_certificate(name=certificate.name, tags=tags)
 
         print(updated_certificate.version)
-        print(updated_certificate.updated)
-        print(updated_certificate.tags)
+        print(updated_certificate.properties.updated)
+        print(updated_certificate.properties.tags)
 
         # [END update_certificate]
         # [START delete_certificate]

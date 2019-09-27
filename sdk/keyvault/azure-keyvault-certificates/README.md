@@ -179,8 +179,8 @@ updated_certificate= certificate_client.update_certificate(name="cert-name", tag
 
 print(updated_certificate.name)
 print(updated_certificate.version)
-print(updated_certificate.updated)
-print(updated_certificate.tags)
+print(updated_certificate.properties.updated)
+print(updated_certificate.properties.tags)
 
 ```
 

@@ -80,8 +80,8 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         updated_certificate = await certificate_client.update_certificate(certificate.name, tags=tags)
 
         print(updated_certificate.version)
-        print(updated_certificate.updated)
-        print(updated_certificate.tags)
+        print(updated_certificate.properties.updated)
+        print(updated_certificate.properties.tags)
 
         # [END update_certificate]
         # [START delete_certificate]
@@ -145,7 +145,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         async for certificate in certificate_versions:
             print(certificate.id)
-            print(certificate.updated)
+            print(certificate.properties.updated)
             print(certificate.version)
 
         # [END list_certificate_versions]

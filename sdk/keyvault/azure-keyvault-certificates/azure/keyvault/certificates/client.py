@@ -14,7 +14,7 @@ from ._shared import KeyVaultClientBase
 from ._shared.exceptions import error_map
 from .models import (
     Certificate,
-    CertificateBase,
+    CertificateProperties,
     CertificatePolicy,
     DeletedCertificate,
     Issuer,
@@ -576,7 +576,7 @@ class CertificateClient(KeyVaultClientBase):
 
     @distributed_trace
     def list_certificates(self, include_pending=None, **kwargs):
-        # type: (Optional[bool], **Any) -> Iterable[CertificateBase]
+        # type: (Optional[bool], **Any) -> Iterable[CertificateProperties]
         """List certificates in the key vault.
 
         The GetCertificates operation returns the set of certificates resources
@@ -585,9 +585,9 @@ class CertificateClient(KeyVaultClientBase):
 
         :param bool include_pending: Specifies whether to include certificates
             which are not completely provisioned.
-        :returns: An iterator like instance of CertificateBase
+        :returns: An iterator like instance of CertificateProperties
         :rtype:
-         ~azure.core.paging.ItemPaged[~azure.keyvault.certificates.models.CertificateBase]
+         ~azure.core.paging.ItemPaged[~azure.keyvault.certificates.models.CertificateProperties]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
@@ -603,13 +603,13 @@ class CertificateClient(KeyVaultClientBase):
             vault_base_url=self._vault_url,
             maxresults=max_page_size,
             include_pending=include_pending,
-            cls=lambda objs: [CertificateBase._from_certificate_item(certificate_item=x) for x in objs],
+            cls=lambda objs: [CertificateProperties._from_certificate_item(certificate_item=x) for x in objs],
             **kwargs
         )
 
     @distributed_trace
     def list_certificate_versions(self, name, **kwargs):
-        # type: (str, **Any) -> Iterable[CertificateBase]
+        # type: (str, **Any) -> Iterable[CertificateProperties]
         """List the versions of a certificate.
 
         The GetCertificateVersions operation returns the versions of a
@@ -617,9 +617,9 @@ class CertificateClient(KeyVaultClientBase):
         certificates/list permission.
 
         :param str name: The name of the certificate.
-        :returns: An iterator like instance of CertificateBase
+        :returns: An iterator like instance of CertificateProperties
         :rtype:
-         ~azure.core.paging.ItemPaged[~azure.keyvault.certificates.models.CertificateBase]
+         ~azure.core.paging.ItemPaged[~azure.keyvault.certificates.models.CertificateProperties]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
@@ -635,7 +635,7 @@ class CertificateClient(KeyVaultClientBase):
             vault_base_url=self._vault_url,
             certificate_name=name,
             maxresults=max_page_size,
-            cls=lambda objs: [CertificateBase._from_certificate_item(certificate_item=x) for x in objs],
+            cls=lambda objs: [CertificateProperties._from_certificate_item(certificate_item=x) for x in objs],
             **kwargs)
 
     @distributed_trace

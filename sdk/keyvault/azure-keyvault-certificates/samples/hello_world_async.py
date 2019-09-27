@@ -77,11 +77,11 @@ async def run_sample():
         updated_certificate = await client.update_certificate(name=bank_certificate.name, tags=tags)
         print("Certificate with name '{0}' was updated on date '{1}'".format(
             bank_certificate.name,
-            updated_certificate.updated)
+            updated_certificate.properties.updated)
         )
         print("Certificate with name '{0}' was updated with tags '{1}'".format(
             bank_certificate.name,
-            updated_certificate.tags)
+            updated_certificate.properties.tags)
         )
 
         # The bank account was closed, need to delete its credentials from the Key Vault.
