@@ -162,7 +162,7 @@ class EventHubClientAbstract(object):  # pylint:disable=too-many-instance-attrib
         :rtype: dict
         """
         properties = {}
-        product = "azsdk-python-eventhubs"
+        product = "azure-eventhub"
         properties[types.AMQPSymbol("product")] = product
         properties[types.AMQPSymbol("version")] = __version__
         framework = "Python {}.{}.{}, {}".format(*sys.version_info[0:3], platform.python_implementation())
