@@ -59,6 +59,10 @@ class EventData(object):
     PROP_PARTITION_KEY_AMQP_SYMBOL = types.AMQPSymbol(PROP_PARTITION_KEY)
     PROP_TIMESTAMP = b"x-opt-enqueued-time"
     PROP_DEVICE_ID = b"iothub-connection-device-id"
+    PROP_LAST_ENQUEUED_SEQUENCE_NUMBER = b"last_enqueued_sequence_number"
+    PROP_LAST_ENQUEUED_OFFSET = b"last_enqueued_offset"
+    PROP_LAST_ENQUEUED_TIME_UTC = b"last_enqueued_time_utc"
+    PROP_RUNTIME_INFO_RETRIEVAL_TIME_UTC = b"runtime_info_retrieval_time_utc"
 
     def __init__(self, body=None, to_device=None):
         """
@@ -71,8 +75,10 @@ class EventData(object):
         """
 
         self._annotations = {}
+        self._delivery_annotations = {}
         self._app_properties = {}
         self._msg_properties = MessageProperties()
+        self._runtime_info = {}
         if to_device:
             self._msg_properties.to = '/devices/{}/messages/devicebound'.format(to_device)
         if body and isinstance(body, list):
@@ -148,11 +154,24 @@ class EventData(object):
 
     @staticmethod
     def _from_message(message):
+        # pylint:disable=protected-access
         event_data = EventData(body='')
         event_data.message = message
-        event_data._msg_properties = message.properties  # pylint:disable=protected-access
-        event_data._annotations = message.annotations  # pylint:disable=protected-access
-        event_data._app_properties = message.application_properties  # pylint:disable=protected-access
+        event_data._msg_properties = message.properties
+        event_data._annotations = message.annotations
+        event_data._app_properties = message.application_properties
+        event_data._delivery_annotations = message.delivery_annotations
+        if event_data._delivery_annotations:
+            event_data._runtime_info = {
+                "sequence_number":
+                    event_data._delivery_annotations.get(EventData.PROP_LAST_ENQUEUED_SEQUENCE_NUMBER, None),
+                "offset":
+                    event_data._delivery_annotations.get(EventData.PROP_LAST_ENQUEUED_OFFSET, None),
+                "enqueued_time":
+                    event_data._delivery_annotations.get(EventData.PROP_LAST_ENQUEUED_TIME_UTC, None),
+                "retrieval_time":
+                    event_data._delivery_annotations.get(EventData.PROP_RUNTIME_INFO_RETRIEVAL_TIME_UTC, None)
+            }
         return event_data
 
     @property
