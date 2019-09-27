@@ -517,6 +517,7 @@ class X509Properties(object):
     :type san_upns: Iterable[str]
     """
     def __init__(
+        self,
         subject_name,  # type: str
         ekus=None,  # type: Optional[list[str]]
         key_usage=None,  # type: Optional[list[str]]
@@ -524,11 +525,193 @@ class X509Properties(object):
         **kwargs  # type: Any
     ):
         #  type: (...) -> None
+        self._subject_name = subject_name
+        self._ekus = ekus
+        self._key_usage = key_usage
+        self._validity_in_months = validity_in_months
+        self._san_emails = kwargs.pop('san_emails', None)
+        self._san_dns_names = kwargs.pop('san_dns_names', None)
+        self._san_upns = kwargs.pop('san_upns', None)
 
+        sans = [self._san_emails, self._san_upns, self._san_dns_names]
+        if len([x for x in sans if x is not None]) > 1:
+            raise ValueError("You can only set at most one of san_emails, san_dns_names, and san_upns")
+
+    @classmethod
+    def _from_x509_properties_bundle(cls, x509_properties_bundle):
+        # type: (models.X509CertificateProperties) -> X509Properties
+        """Construct a X509Properties from an autorest-generated X509CertificateProperties"""
+        if x509_properties_bundle.subject_alternative_names:
+            san_emails = x509_properties_bundle.subject_alternative_names.emails
+            san_upns = x509_properties_bundle.subject_alternative_names.upns
+            san_dns_names = x509_properties_bundle.subject_alternative_names.dns_names
+        else:
+            san_emails = None
+            san_upns = None
+            san_dns_names = None
+        return cls(
+            subject_name=x509_properties_bundle.subject,
+            ekus=x509_properties_bundle.ekus,
+            key_usage=x509_properties_bundle.key_usage,
+            validity_in_months=x509_properties_bundle.validity_in_months,
+            san_emails=san_emails,
+            san_dns_names=san_dns_names,
+            san_upns=san_upns
+        )
+
+    def _to_x509_properties_bundle(self):
+        sans = models.SubjectAlternativeNames(
+            emails=self.san_emails,
+            dns_names=self.san_dns_names,
+            upns=self.san_upns
+        )
+        return models.X509CertificateProperties(
+            subject=self.subject_name,
+            ekus=self.ekus,
+            key_usage=self.key_usage,
+            validity_in_months=self.validity_in_months,
+            subject_alternative_names=sans
+        )
+
+    @property
+    def subject_name(self):
+        # type: () -> str
+        """:rtype: str"""
+        return self._subject_name
+
+    @property
+    def ekus(self):
+        # type: () -> list[str]
+        """The enhanced key usage.
+
+        :rtype: list[str]
+        """
+        return self._ekus
+
+    @property
+    def key_usage(self):
+        # type: () -> list[KeyUsageType]
+        """List of key usages.
+
+        :rtype: list[~azure.keyvault.certificates.enums.KeyUsageType]
+        """
+        return self._key_usage
+
+    @property
+    def validity_in_months(self):
+        # type: () -> int
+        """The duration that the certificate is valid for in months.
+
+        :rtype: int
+        """
+        return self._validity_in_months
+
+    @property
+    def san_emails(self):
+        # type: () -> list[str]
+        """The subject alternative email addresses.
+
+        :rtype: list[str]
+        """
+        return self._san_emails
+
+    @property
+    def san_dns_names(self):
+        # type: () -> list[str]
+        """The subject alternative domain names.
+
+        :rtype: list[str]
+        """
+        return self._san_dns_names
+
+    @property
+    def san_upns(self):
+        # type: () -> list[str]
+        """The subject alternative user principal names.
+
+        :rtype: list[str]
+        """
+        return self._san_upns
+
+
+class IssuerParameters(object):
+    """Parameters for the issuer of the X509 component of a certificate.
+
+    :param issuer_name: Name of the referenced issuer object or reserved names; for
+     example, 'Self' or 'Unknown'.
+    :type name: str
+    :param certificate_type: Type of certificate to be requested from the
+     issuer provider.
+    :type certificate_type: str
+    :param certificate_transparency: Indicates if the certificates generated
+     under this policy should be published to certificate transparency logs.
+    :type certificate_transparency: bool
+    """
+
+    def __init__(
+        self,
+        issuer_name,  # type: str
+        certificate_type=None,  # type: str
+        certificate_transparency=None,  # type: bool
+        **kwargs
+    ):
+        self._issuer_name = issuer_name
+        self._certificate_type = certificate_type
+        self._certificate_transparency = certificate_transparency
+
+    @classmethod
+    def _from_issuer_parameters_bundle(cls, issuer_parameters_bundle):
+        # type: (models.IssuerParameters) -> IssuerParameters
+        return cls(
+            issuer_name=issuer_parameters_bundle.name,
+            certificate_type=issuer_parameters_bundle.certificate_type,
+            certificate_transparency=issuer_parameters_bundle.certificate_transparency
+        )
+
+    def _to_issuer_parameters_bundle(self):
+        return models.IssuerParameters(
+            name=self.issuer_name,
+            certificate_type=self.certificate_type,
+            certificate_transparency=self.certificate_transparency
+        )
+
+    @property
+    def issuer_name(self):
+        # type: () -> str
+        """Name of the referenced issuer object or reserved names for the issuer
+        of the certificate.
+
+        :rtype: str
+        """
+        return self._issuer_name
+
+    @property
+    def certificate_type(self):
+        # type: () -> str
+        """Type of certificate requested from the issuer provider.
+
+        :rtype: str
+        """
+        return self._certificate_type
+
+    @property
+    def certificate_transparency(self):
+        # type: () -> bool
+        """Whether the certificates generated under this policy should be published
+        to certificate transparency logs.
+
+        :rtype: bool
+        """
+        return self._certificate_transparency
 
 class CertificatePolicy(object):
     """Management policy for a certificate.
 
+    :param x509_properties: Properties of the X509 component of a certificate.
+    :type x509_properties: ~azure.keyvault.certificates.models.X509Properties
+    :param issuer_parameters: Parameters for the issuer of the X509 component
+     of a certificate.
+    :type issuer_parameters: ~azure.keyvault.certificates.models.IssuerParameters
     :param attributes: the certificate attributes.
     :type attributes: ~azure.keyvault.certificates.models.CertificateAttributes
     :param str cert_policy_id: The certificate id.
@@ -536,8 +719,6 @@ class CertificatePolicy(object):
     :type key_properties: ~azure.keyvault.certificates.models.KeyProperties
     :param content_type: The media type (MIME type) of the secret backing the certificate.
     :type content_type: ~azure.keyvault.certificates.enums.SecretContentType or str
-    :param str subject_name: The subject name of the certificate. Should be a valid X509
-        distinguished name.
     :param int validity_in_months: The duration that the certificate is valid in months.
     :param lifetime_actions: Actions that will be performed by Key Vault over the lifetime
         of a certificate
@@ -560,50 +741,33 @@ class CertificatePolicy(object):
     # pylint:disable=too-many-instance-attributes
     def __init__(
         self,
+        x509_properties,  # type: X509Properties
+        issuer_parameters,  # type: IssuerParameters
         attributes=None,  # type: Optional[models.CertificateAttributes]
         cert_policy_id=None,  # type: Optional[str]
         key_properties=None,  # type: Optional[KeyProperties]
         content_type=None,  # type: Optional[models.SecretContentType] or str
-        subject_name=None,  # type: Optional[str]
-        validity_in_months=None,  # type: Optional[int]
         lifetime_actions=None,  # type: Optional[list[LifetimeAction]]
-        issuer_parameters=None,  # type:
+        issuer_name=None,  # type: Optional[str]
         certificate_type=None,  # type: Optional[str]
         certificate_transparency=None,  # type: Optional[bool]
         **kwargs  # type: **Any
     ):
         # type: (...) -> None
+        self._x509_properties = x509_properties
+        self._issuer_parameters = issuer_parameters
         self._attributes = attributes
         self._id = cert_policy_id
         self._key_properties = key_properties
         self._content_type = content_type
-        self._subject_name = subject_name
-        self._validity_in_months = validity_in_months
         self._lifetime_actions = lifetime_actions
         self._issuer_name = issuer_name
         self._certificate_type = certificate_type
         self._certificate_transparency = certificate_transparency
-        self._san_emails = kwargs.pop('san_emails', None)
-        self._san_dns_names = kwargs.pop('san_dns_names', None)
-        self._san_upns = kwargs.pop('san_upns', None)
-
-        sans = [self._san_emails, self._san_upns, self._san_dns_names]
-        if len([x for x in sans if x is not None]) > 1:
-            raise ValueError("You can only set at most one of san_emails, san_dns_names, and san_upns")
-
+        
     def _to_certificate_policy_bundle(self):
         # type: (CertificatePolicy) -> models.CertificatePolicy
-
         """Construct a version emulating the generated CertificatePolicy from a wrapped CertificatePolicy"""
-        if self.issuer_name or self.certificate_type or self.certificate_transparency:
-            issuer_parameters = models.IssuerParameters(
-                name=self.issuer_name,
-                certificate_type=self.certificate_type,
-                certificate_transparency=self.certificate_transparency
-            )
-        else:
-            issuer_parameters = None
-
         # pylint:disable=too-many-boolean-expressions
         if (self.enabled is not None or
                 self.not_before is not None or
@@ -640,37 +804,6 @@ class CertificatePolicy(object):
         else:
             lifetime_actions = None
 
-        # pylint:disable=too-many-boolean-expressions
-        if(self.subject_name or
-                (self.key_properties and self.key_properties.ekus) or
-                (self.key_properties and self.key_properties.key_usage) or
-                self.san_emails or
-                self.san_upns or
-                self.san_dns_names or
-                self.validity_in_months):
-            if self.key_properties and self.key_properties.key_usage:
-                key_usage = [k.value if not isinstance(k, str) else k for k in self.key_properties.key_usage]
-            else:
-                key_usage = None
-
-            sans = [self._san_emails, self._san_upns, self._san_dns_names]
-            if len([x for x in sans if x is not None]) > 1:
-                raise ValueError("You can only set at most one of san_emails, san_dns_names, and san_upns")
-
-            x509_certificate_properties = models.X509CertificateProperties(
-                subject=self.subject_name,
-                ekus=self.key_properties.ekus if self.key_properties else None,
-                subject_alternative_names=models.SubjectAlternativeNames(
-                    emails=self.san_emails,
-                    upns=self.san_upns,
-                    dns_names=self.san_dns_names
-                ),
-                key_usage=key_usage,
-                validity_in_months=self.validity_in_months
-            )
-        else:
-            x509_certificate_properties = None
-
         if (self.key_properties and
                 (self.key_properties.exportable or
                 self.key_properties.key_type or
@@ -702,9 +835,9 @@ class CertificatePolicy(object):
             id=self.id,
             key_properties=key_properties,
             secret_properties=secret_properties,
-            x509_certificate_properties=x509_certificate_properties,
+            x509_certificate_properties=self.x509_properties._to_x509_properties_bundle(),
             lifetime_actions=lifetime_actions,
-            issuer_parameters=issuer_parameters,
+            issuer_parameters=self._issuer_parameters._to_issuer_parameters_bundle(),
             attributes=attributes
         )
         return policy_bundle
@@ -741,40 +874,41 @@ class CertificatePolicy(object):
                 key_size=certificate_policy_bundle.key_properties.key_size,
                 reuse_key=certificate_policy_bundle.key_properties.reuse_key,
                 curve=(KeyCurveName(certificate_policy_bundle.key_properties.curve)
-                       if certificate_policy_bundle.key_properties.curve else None),
-                ekus=(certificate_policy_bundle.x509_certificate_properties.ekus
-                      if certificate_policy_bundle.x509_certificate_properties else None),
-                key_usage=key_usage,
+                       if certificate_policy_bundle.key_properties.curve else None)
             )
         else:
             key_properties = None
         return cls(
+            x509_properties=X509Properties._from_x509_properties_bundle(
+                                certificate_policy_bundle.x509_certificate_properties
+                            ),
             attributes=certificate_policy_bundle.attributes,
             cert_policy_id=certificate_policy_bundle.id,
-            issuer_name=(certificate_policy_bundle.issuer_parameters.name
-                         if certificate_policy_bundle.issuer_parameters else None),
-            certificate_type=(certificate_policy_bundle.issuer_parameters.certificate_type
-                              if certificate_policy_bundle.issuer_parameters else None),
-            certificate_transparency=(certificate_policy_bundle.issuer_parameters.certificate_transparency
-                                      if certificate_policy_bundle.issuer_parameters else None),
+            issuer_parameters=IssuerParameters._from_issuer_parameters_bundle(
+                            certificate_policy_bundle.issuer_parameters),
             lifetime_actions=lifetime_actions,
-            subject_name=(certificate_policy_bundle.x509_certificate_properties.subject
-                          if certificate_policy_bundle.x509_certificate_properties else None),
             key_properties=key_properties,
             content_type=(SecretContentType(certificate_policy_bundle.secret_properties.content_type)
                           if certificate_policy_bundle.secret_properties else None),
-            san_emails=(certificate_policy_bundle.x509_certificate_properties.subject_alternative_names.emails
-                        if certificate_policy_bundle.x509_certificate_properties and
-                        certificate_policy_bundle.x509_certificate_properties.subject_alternative_names else None),
-            san_upns=(certificate_policy_bundle.x509_certificate_properties.subject_alternative_names.upns
-                      if certificate_policy_bundle.x509_certificate_properties and
-                      certificate_policy_bundle.x509_certificate_properties.subject_alternative_names else None),
-            san_dns_names=(certificate_policy_bundle.x509_certificate_properties.subject_alternative_names.dns_names
-                           if certificate_policy_bundle.x509_certificate_properties and
-                           certificate_policy_bundle.x509_certificate_properties.subject_alternative_names else None),
-            validity_in_months=(certificate_policy_bundle.x509_certificate_properties.validity_in_months
-                                if certificate_policy_bundle.x509_certificate_properties else None)
         )
+
+    @property
+    def x509_properties(self):
+        # type: () -> X509Properties
+        """Properties of the X509 component of the certificate.
+
+        :rtype: ~azure.keyvault.certificates.models.X509Properties
+        """
+        return self._x509_properties
+
+    @property
+    def issuer_parameters(self):
+        # type: () -> IssuerParameters
+        """Parameters for the issuer of the X509 component of a certificate.
+
+        :rtype: ~azure.keyvault.certificates.models.IssuerParameters
+        """
+        return self._issuer_parameters
 
     @property
     def id(self):
@@ -801,48 +935,6 @@ class CertificatePolicy(object):
         return self._content_type
 
     @property
-    def subject_name(self):
-        # type: () -> str
-        """:rtype: str"""
-        return self._subject_name
-
-    @property
-    def san_emails(self):
-        # type: () -> list[str]
-        """The subject alternative email addresses.
-
-        :rtype: list[str]
-        """
-        return self._san_emails
-
-    @property
-    def san_dns_names(self):
-        # type: () -> list[str]
-        """The subject alternative domain names.
-
-        :rtype: list[str]
-        """
-        return self._san_dns_names
-
-    @property
-    def san_upns(self):
-        # type: () -> list[str]
-        """The subject alternative user principal names.
-
-        :rtype: list[str]
-        """
-        return self._san_upns
-
-    @property
-    def validity_in_months(self):
-        # type: () -> int
-        """The duration that the certificate is valid for in months.
-
-        :rtype: int
-        """
-        return self._validity_in_months
-
-    @property
     def lifetime_actions(self):
         # type: () -> list[LifetimeAction]
         """Actions and their triggers that will be performed by Key Vault over
@@ -851,35 +943,6 @@ class CertificatePolicy(object):
         :rtype: list[~azure.keyvault.certificates.models.LifetimeAction]
         """
         return self._lifetime_actions
-
-    @property
-    def issuer_name(self):
-        # type: () -> str
-        """Name of the referenced issuer object or reserved names for the issuer
-        of the certificate.
-
-        :rtype: str
-        """
-        return self._issuer_name
-
-    @property
-    def certificate_type(self):
-        # type: () -> str
-        """Type of certificate requested from the issuer provider.
-
-        :rtype: str
-        """
-        return self._certificate_type
-
-    @property
-    def certificate_transparency(self):
-        # type: () -> bool
-        """Whether the certificates generated under this policy should be published
-        to certificate transparency logs.
-
-        :rtype: bool
-        """
-        return self._certificate_transparency
 
     @property
     def enabled(self):
@@ -1157,10 +1220,6 @@ class KeyProperties(object):
     :param curve: Elliptic curve name. For valid values, see KeyCurveName.
         Possible values include: 'P-256', 'P-384', 'P-521', 'P-256K'
     :type curve: str or ~azure.keyvault.certificates.enums.KeyCurveName
-    :param ekus: The enhanced key usages.
-    :type ekus: list[str]
-    :param key_usage: List of key usages.
-    :type key_usage: list[str or ~azure.keyvault.certificates.enums.KeyUsageType]
     """
     def __init__(
         self,
@@ -1168,9 +1227,7 @@ class KeyProperties(object):
         key_type=None,  # type: Optional[KeyType]
         key_size=None,  # type: Optional[str]
         reuse_key=None,  # type: Optional[bool]
-        curve=None,  # type: Optional[KeyCurveName]
-        ekus=None,  # type: Optional[list[str]]
-        key_usage=None  # type: Optional[list[KeyUsageType]]
+        curve=None  # type: Optional[KeyCurveName]
     ):
         # type: (...) -> None
         self._exportable = exportable
@@ -1178,8 +1235,6 @@ class KeyProperties(object):
         self._key_size = key_size
         self._reuse_key = reuse_key
         self._curve = curve
-        self._ekus = ekus
-        self._key_usage = key_usage
 
     @property
     def exportable(self):
@@ -1225,24 +1280,6 @@ class KeyProperties(object):
         :rtype: ~azure.keyvault.certificates.enums.KeyCurveName
         """
         return self._curve
-
-    @property
-    def ekus(self):
-        # type: () -> list[str]
-        """The enhanced key usage.
-
-        :rtype: list[str]
-        """
-        return self._ekus
-
-    @property
-    def key_usage(self):
-        # type: () -> list[KeyUsageType]
-        """List of key usages.
-
-        :rtype: list[~azure.keyvault.certificates.enums.KeyUsageType]
-        """
-        return self._key_usage
 
 
 class LifetimeAction(object):

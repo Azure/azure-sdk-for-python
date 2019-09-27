@@ -8,8 +8,10 @@ from .models import (
     AdministratorDetails,
     CertificatePolicy,
     Contact,
+    IssuerParameters,
     KeyProperties,
-    LifetimeAction
+    LifetimeAction,
+    X509Properties
 )
 
 __all__ = [
@@ -18,10 +20,12 @@ __all__ = [
     "CertificateClient",
     "CertificatePolicy",
     "Contact",
+    "IssuerParameters",
     "KeyCurveName",
     "KeyType",
     "KeyProperties",
     "KeyUsageType",
     "LifetimeAction",
-    "SecretContentType"
+    "SecretContentType",
+    "X509Properties"
 ]

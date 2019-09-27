@@ -19,12 +19,14 @@ from .models import (
     DeletedCertificate,
     Issuer,
     IssuerBase,
+    IssuerParameters,
     Contact,
     CertificateOperation,
     LifetimeAction,
     KeyProperties,
     KeyUsageType,
-    SecretContentType
+    SecretContentType,
+    X509Properties
 )
 from ._polling import CreateCertificatePoller
 
@@ -99,23 +101,26 @@ class CertificateClient(KeyVaultClientBase):
                 days_before_expiry=90,
                 action_type="AutoRenew"
             )]
-            policy = CertificatePolicy(key_properties=KeyProperties(exportable=True,
+            policy = CertificatePolicy(x509_properties=X509Properties(
+                                            subject_name="CN=DefaultPolicy",
+                                            key_usage=[
+                                                KeyUsageType.c_rl_sign,
+                                                KeyUsageType.data_encipherment,
+                                                KeyUsageType.digital_signature,
+                                                KeyUsageType.key_agreement,
+                                                KeyUsageType.key_cert_sign,
+                                                KeyUsageType.key_encipherment
+                                            ],
+                                            validity_in_months=12
+                                        ),
+                                        issuer_parameters=IssuerParameters(issuer_name="Self"),
+                                        key_properties=KeyProperties(exportable=True,
                                                                     key_type='RSA',
                                                                     key_size=2048,
-                                                                    reuse_key=True,
-                                                                    key_usage=[
-                                                                        KeyUsageType.c_rl_sign,
-                                                                        KeyUsageType.data_encipherment,
-                                                                        KeyUsageType.digital_signature,
-                                                                        KeyUsageType.key_agreement,
-                                                                        KeyUsageType.key_cert_sign,
-                                                                        KeyUsageType.key_encipherment
-                                                                    ]),
-                                       issuer_name="Self",
+                                                                    reuse_key=True),
                                        lifetime_actions=lifetime_actions,
-                                       content_type=SecretContentType.PKCS12,
-                                       subject_name="CN=DefaultPolicy",
-                                       validity_in_months=12)
+                                       content_type=SecretContentType.PKCS12
+                                       )
 
         create_certificate_operation = self._client.create_certificate(
             vault_base_url=self.vault_url,
@@ -133,7 +138,9 @@ class CertificateClient(KeyVaultClientBase):
             **kwargs
         )
 
-        create_certificate_polling = CreateCertificatePoller(unknown_issuer=(policy.issuer_name.lower() == 'unknown'))
+        create_certificate_polling = CreateCertificatePoller(
+            unknown_issuer=(policy.issuer_parameters.issuer_name.lower() == 'unknown')
+        )
         return LROPoller(
             command,
             create_certificate_operation.status.lower(),

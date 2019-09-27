@@ -4,7 +4,14 @@
 # ------------------------------------
 import os
 from azure.identity import DefaultAzureCredential
-from azure.keyvault.certificates import CertificateClient, CertificatePolicy, KeyProperties, SecretContentType
+from azure.keyvault.certificates import(
+    CertificateClient,
+    CertificatePolicy,
+    IssuerParameters
+    KeyProperties,
+    SecretContentType,
+    X509Properties
+)
 from azure.core.exceptions import HttpResponseError
 
 # ----------------------------------------------------------------------------------------------------------
@@ -48,15 +55,15 @@ try:
 
     # Alternatively, if you would like to use our default policy, don't pass a policy parameter to
     # our certificate creation method
-    cert_policy = CertificatePolicy(key_properties=KeyProperties(exportable=True,
+    cert_policy = CertificatePolicy(x509_properties=X509Properties(subject_name='CN=*.microsoft.com',
+                                                                   validity_in_months=24,
+                                                                   san_dns_names=['sdk.azure-int.net']),
+                                    issuer_parameters=IssuerParameters(issuer_name='Self'),
+                                    key_properties=KeyProperties(exportable=True,
                                                                  key_type='RSA',
                                                                  key_size=2048,
                                                                  reuse_key=False),
-                                    content_type=SecretContentType.PKCS12,
-                                    issuer_name='Self',
-                                    subject_name='CN=*.microsoft.com',
-                                    validity_in_months=24,
-                                    san_dns_names=['sdk.azure-int.net']
+                                    content_type=SecretContentType.PKCS12
                                     )
     cert_name = "HelloWorldCertificate"
     create_certificate_poller = client.create_certificate(name=cert_name, policy=cert_policy)

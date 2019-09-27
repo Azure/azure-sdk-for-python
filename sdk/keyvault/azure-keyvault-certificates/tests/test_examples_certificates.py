@@ -36,17 +36,23 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         certificate_client = vault_client.certificates
         # [START create_certificate]
-        from azure.keyvault.certificates import CertificatePolicy, KeyProperties, SecretContentType
+        from azure.keyvault.certificates import(
+            CertificatePolicy,
+            IssuerParameters,
+            KeyProperties,
+            SecretContentType,
+            X509Properties
+        )
         # specify the certificate policy
-        cert_policy = CertificatePolicy(key_properties=KeyProperties(exportable=True,
+        cert_policy = CertificatePolicy(x509_properties=X509Properties(subject_name='CN=*.microsoft.com',
+                                                                       validity_in_months=24,
+                                                                       san_dns_names=['sdk.azure-int.net']),
+                                        issuer_parameters=IssuerParameters(issuer_name='Self'),
+                                        key_properties=KeyProperties(exportable=True,
                                                                      key_type='RSA',
                                                                      key_size=2048,
                                                                      reuse_key=False),
-                                        content_type=SecretContentType.PKCS12,
-                                        issuer_name='Self',
-                                        subject_name='CN=*.microsoft.com',
-                                        validity_in_months=24,
-                                        san_dns_names=['sdk.azure-int.net']
+                                        content_type=SecretContentType.PKCS12
                                         )
 
         cert_name = "cert-name"
@@ -73,10 +79,10 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         print(certificate.policy.key_properties.key_size)
         print(certificate.policy.key_properties.reuse_key)
         print(certificate.policy.content_type)
-        print(certificate.policy.issuer_name)
-        print(certificate.policy.subject_name)
-        print(certificate.policy.san_dns_names)
-        print(certificate.policy.validity_in_months)
+        print(certificate.policy.issuer_parameters.issuer_name)
+        print(certificate.policy.x509_properties.subject_name)
+        print(certificate.policy.x509_properties.san_dns_names)
+        print(certificate.policy.x509_properties.validity_in_months)
 
         # [END get_certificate]
         # [START update_certificate]
@@ -108,19 +114,25 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @ResourceGroupPreparer()
     @VaultClientPreparer(enable_soft_delete=True)
     def test_example_certificate_list_operations(self, vault_client, **kwargs):
-        from azure.keyvault.certificates import CertificatePolicy, KeyProperties, SecretContentType
+        from azure.keyvault.certificates import(
+            CertificatePolicy,
+            IssuerParameters,
+            KeyProperties,
+            SecretContentType,
+            X509Properties
+        )
         certificate_client = vault_client.certificates
 
         # specify the certificate policy
-        cert_policy = CertificatePolicy(key_properties=KeyProperties(exportable=True,
+        cert_policy = CertificatePolicy(x509_properties=X509Properties(subject_name='CN=*.microsoft.com',
+                                                                       validity_in_months=24,
+                                                                       san_dns_names=['sdk.azure-int.net']),
+                                        issuer_parameters=IssuerParameters(issuer_name='Self'),
+                                        key_properties=KeyProperties(exportable=True,
                                                                      key_type='RSA',
                                                                      key_size=2048,
                                                                      reuse_key=False),
-                                        content_type=SecretContentType.PKCS12,
-                                        issuer_name='Self',
-                                        subject_name='CN=*.microsoft.com',
-                                        validity_in_months=24,
-                                        san_dns_names=['sdk.azure-int.net']
+                                        content_type=SecretContentType.PKCS12
                                         )
 
         for i in range(4):
@@ -168,19 +180,25 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @ResourceGroupPreparer()
     @VaultClientPreparer()
     def test_example_certificate_backup_restore(self, vault_client, **kwargs):
-        from azure.keyvault.certificates import CertificatePolicy, KeyProperties, SecretContentType
+        from azure.keyvault.certificates import(
+            CertificatePolicy,
+            IssuerParameters,
+            KeyProperties,
+            SecretContentType,
+            X509Properties
+        )
         certificate_client = vault_client.certificates
 
         # specify the certificate policy
-        cert_policy = CertificatePolicy(key_properties=KeyProperties(exportable=True,
+        cert_policy = CertificatePolicy(x509_properties=X509Properties(subject_name='CN=*.microsoft.com',
+                                                                       validity_in_months=24,
+                                                                       san_dns_names=['sdk.azure-int.net']),
+                                        issuer_parameters=IssuerParameters(issuer_name='Self'),
+                                        key_properties=KeyProperties(exportable=True,
                                                                      key_type='RSA',
                                                                      key_size=2048,
                                                                      reuse_key=False),
-                                        content_type=SecretContentType.PKCS12,
-                                        issuer_name='Self',
-                                        subject_name='CN=*.microsoft.com',
-                                        validity_in_months=24,
-                                        san_dns_names=['sdk.azure-int.net']
+                                        content_type=SecretContentType.PKCS12
                                         )
 
         cert_name = "cert-name"
@@ -213,20 +231,26 @@ class TestExamplesKeyVault(KeyVaultTestCase):
     @ResourceGroupPreparer()
     @VaultClientPreparer(enable_soft_delete=True)
     def test_example_certificate_recover(self, vault_client, **kwargs):
-        from azure.keyvault.certificates import CertificatePolicy, KeyProperties, SecretContentType
+        from azure.keyvault.certificates import(
+            CertificatePolicy,
+            IssuerParameters,
+            KeyProperties,
+            SecretContentType,
+            X509Properties
+        )
         from azure.core.exceptions import HttpResponseError
         certificate_client = vault_client.certificates
 
         # specify the certificate policy
-        cert_policy = CertificatePolicy(key_properties=KeyProperties(exportable=True,
+        cert_policy = CertificatePolicy(x509_properties=X509Properties(subject_name='CN=*.microsoft.com',
+                                                                       validity_in_months=24,
+                                                                       san_dns_names=['sdk.azure-int.net']),
+                                        issuer_parameters=IssuerParameters(issuer_name='Self'),
+                                        key_properties=KeyProperties(exportable=True,
                                                                      key_type='RSA',
                                                                      key_size=2048,
                                                                      reuse_key=False),
-                                        content_type=SecretContentType.PKCS12,
-                                        issuer_name='Self',
-                                        subject_name='CN=*.microsoft.com',
-                                        validity_in_months=24,
-                                        san_dns_names=['sdk.azure-int.net']
+                                        content_type=SecretContentType.PKCS12
                                         )
 
         cert_name = "cert-name"
