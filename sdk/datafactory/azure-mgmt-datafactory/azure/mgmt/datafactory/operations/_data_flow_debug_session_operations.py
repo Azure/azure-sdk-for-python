@@ -12,6 +12,8 @@
 import uuid
 from msrest.pipeline import ClientRawResponse
 from msrestazure.azure_exceptions import CloudError
+from msrest.polling import LROPoller, NoPolling
+from msrestazure.polling.arm_polling import ARMPolling
 
 from .. import models
 
@@ -39,29 +41,9 @@ class DataFlowDebugSessionOperations(object):
 
         self.config = config
 
-    def create(
-            self, resource_group_name, factory_name, request, custom_headers=None, raw=False, **operation_config):
-        """Creates a data flow debug session.
 
-        :param resource_group_name: The resource group name.
-        :type resource_group_name: str
-        :param factory_name: The factory name.
-        :type factory_name: str
-        :param request: Data flow debug session definition
-        :type request:
-         ~azure.mgmt.datafactory.models.CreateDataFlowDebugSessionRequest
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: CreateDataFlowDebugSessionResponse or ClientRawResponse if
-         raw=true
-        :rtype:
-         ~azure.mgmt.datafactory.models.CreateDataFlowDebugSessionResponse or
-         ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _create_initial(
+            self, resource_group_name, factory_name, request, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.create.metadata['url']
         path_format_arguments = {
@@ -98,8 +80,9 @@ class DataFlowDebugSessionOperations(object):
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
 
-        header_dict = {}
         deserialized = None
+        header_dict = {}
+
         if response.status_code == 200:
             deserialized = self._deserialize('CreateDataFlowDebugSessionResponse', response)
             header_dict = {
@@ -112,6 +95,61 @@ class DataFlowDebugSessionOperations(object):
             return client_raw_response
 
         return deserialized
+
+    def create(
+            self, resource_group_name, factory_name, request, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Creates a data flow debug session.
+
+        :param resource_group_name: The resource group name.
+        :type resource_group_name: str
+        :param factory_name: The factory name.
+        :type factory_name: str
+        :param request: Data flow debug session definition
+        :type request:
+         ~azure.mgmt.datafactory.models.CreateDataFlowDebugSessionRequest
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns
+         CreateDataFlowDebugSessionResponse or
+         ClientRawResponse<CreateDataFlowDebugSessionResponse> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.datafactory.models.CreateDataFlowDebugSessionResponse]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.datafactory.models.CreateDataFlowDebugSessionResponse]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._create_initial(
+            resource_group_name=resource_group_name,
+            factory_name=factory_name,
+            request=request,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            header_dict = {
+                'location': 'str',
+            }
+            deserialized = self._deserialize('CreateDataFlowDebugSessionResponse', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                client_raw_response.add_headers(header_dict)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/createDataFlowDebugSession'}
 
     def query_by_factory(
@@ -316,27 +354,9 @@ class DataFlowDebugSessionOperations(object):
             return client_raw_response
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/deleteDataFlowDebugSession'}
 
-    def execute_command(
-            self, resource_group_name, factory_name, request, custom_headers=None, raw=False, **operation_config):
-        """Execute a data flow debug command.
 
-        :param resource_group_name: The resource group name.
-        :type resource_group_name: str
-        :param factory_name: The factory name.
-        :type factory_name: str
-        :param request: Data flow debug command definition.
-        :type request:
-         ~azure.mgmt.datafactory.models.DataFlowDebugCommandRequest
-        :param dict custom_headers: headers that will be added to the request
-        :param bool raw: returns the direct response alongside the
-         deserialized response
-        :param operation_config: :ref:`Operation configuration
-         overrides<msrest:optionsforoperations>`.
-        :return: DataFlowDebugCommandResponse or ClientRawResponse if raw=true
-        :rtype: ~azure.mgmt.datafactory.models.DataFlowDebugCommandResponse or
-         ~msrest.pipeline.ClientRawResponse
-        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
-        """
+    def _execute_command_initial(
+            self, resource_group_name, factory_name, request, custom_headers=None, raw=False, **operation_config):
         # Construct URL
         url = self.execute_command.metadata['url']
         path_format_arguments = {
@@ -373,8 +393,9 @@ class DataFlowDebugSessionOperations(object):
             exp.request_id = response.headers.get('x-ms-request-id')
             raise exp
 
-        header_dict = {}
         deserialized = None
+        header_dict = {}
+
         if response.status_code == 200:
             deserialized = self._deserialize('DataFlowDebugCommandResponse', response)
             header_dict = {
@@ -387,4 +408,59 @@ class DataFlowDebugSessionOperations(object):
             return client_raw_response
 
         return deserialized
+
+    def execute_command(
+            self, resource_group_name, factory_name, request, custom_headers=None, raw=False, polling=True, **operation_config):
+        """Execute a data flow debug command.
+
+        :param resource_group_name: The resource group name.
+        :type resource_group_name: str
+        :param factory_name: The factory name.
+        :type factory_name: str
+        :param request: Data flow debug command definition.
+        :type request:
+         ~azure.mgmt.datafactory.models.DataFlowDebugCommandRequest
+        :param dict custom_headers: headers that will be added to the request
+        :param bool raw: The poller return type is ClientRawResponse, the
+         direct response alongside the deserialized response
+        :param polling: True for ARMPolling, False for no polling, or a
+         polling object for personal polling strategy
+        :return: An instance of LROPoller that returns
+         DataFlowDebugCommandResponse or
+         ClientRawResponse<DataFlowDebugCommandResponse> if raw==True
+        :rtype:
+         ~msrestazure.azure_operation.AzureOperationPoller[~azure.mgmt.datafactory.models.DataFlowDebugCommandResponse]
+         or
+         ~msrestazure.azure_operation.AzureOperationPoller[~msrest.pipeline.ClientRawResponse[~azure.mgmt.datafactory.models.DataFlowDebugCommandResponse]]
+        :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
+        """
+        raw_result = self._execute_command_initial(
+            resource_group_name=resource_group_name,
+            factory_name=factory_name,
+            request=request,
+            custom_headers=custom_headers,
+            raw=True,
+            **operation_config
+        )
+
+        def get_long_running_output(response):
+            header_dict = {
+                'location': 'str',
+            }
+            deserialized = self._deserialize('DataFlowDebugCommandResponse', response)
+
+            if raw:
+                client_raw_response = ClientRawResponse(deserialized, response)
+                client_raw_response.add_headers(header_dict)
+                return client_raw_response
+
+            return deserialized
+
+        lro_delay = operation_config.get(
+            'long_running_operation_timeout',
+            self.config.long_running_operation_timeout)
+        if polling is True: polling_method = ARMPolling(lro_delay, **operation_config)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
     execute_command.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataFactory/factories/{factoryName}/executeDataFlowDebugCommand'}

@@ -16059,6 +16059,10 @@ class IntegrationRuntimeComputeProperties(Model):
     :param max_parallel_executions_per_node: Maximum parallel executions count
      per node for managed integration runtime.
     :type max_parallel_executions_per_node: int
+    :param data_flow_properties: Data flow properties for managed integration
+     runtime.
+    :type data_flow_properties:
+     ~azure.mgmt.datafactory.models.IntegrationRuntimeDataFlowProperties
     :param v_net_properties: VNet properties for managed integration runtime.
     :type v_net_properties:
      ~azure.mgmt.datafactory.models.IntegrationRuntimeVNetProperties
@@ -16075,6 +16079,7 @@ class IntegrationRuntimeComputeProperties(Model):
         'node_size': {'key': 'nodeSize', 'type': 'str'},
         'number_of_nodes': {'key': 'numberOfNodes', 'type': 'int'},
         'max_parallel_executions_per_node': {'key': 'maxParallelExecutionsPerNode', 'type': 'int'},
+        'data_flow_properties': {'key': 'dataFlowProperties', 'type': 'IntegrationRuntimeDataFlowProperties'},
         'v_net_properties': {'key': 'vNetProperties', 'type': 'IntegrationRuntimeVNetProperties'},
     }
 
@@ -16085,6 +16090,7 @@ class IntegrationRuntimeComputeProperties(Model):
         self.node_size = kwargs.get('node_size', None)
         self.number_of_nodes = kwargs.get('number_of_nodes', None)
         self.max_parallel_executions_per_node = kwargs.get('max_parallel_executions_per_node', None)
+        self.data_flow_properties = kwargs.get('data_flow_properties', None)
         self.v_net_properties = kwargs.get('v_net_properties', None)
 
 
@@ -16165,6 +16171,44 @@ class IntegrationRuntimeCustomSetupScriptProperties(Model):
         super(IntegrationRuntimeCustomSetupScriptProperties, self).__init__(**kwargs)
         self.blob_container_uri = kwargs.get('blob_container_uri', None)
         self.sas_token = kwargs.get('sas_token', None)
+
+
+class IntegrationRuntimeDataFlowProperties(Model):
+    """Data flow properties for managed integration runtime.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param compute_type: Compute type of the cluster which will execute data
+     flow job. Possible values include: 'General', 'MemoryOptimized',
+     'ComputeOptimized'
+    :type compute_type: str or
+     ~azure.mgmt.datafactory.models.DataFlowComputeType
+    :param core_count: Core count of the cluster which will execute data flow
+     job. Supported values are: 8, 16, 32, 48, 80, 144 and 272.
+    :type core_count: int
+    :param time_to_live: Time to live (in minutes) setting of the cluster
+     which will execute data flow job.
+    :type time_to_live: int
+    """
+
+    _validation = {
+        'time_to_live': {'minimum': 0},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'compute_type': {'key': 'computeType', 'type': 'str'},
+        'core_count': {'key': 'coreCount', 'type': 'int'},
+        'time_to_live': {'key': 'timeToLive', 'type': 'int'},
+    }
+
+    def __init__(self, **kwargs):
+        super(IntegrationRuntimeDataFlowProperties, self).__init__(**kwargs)
+        self.additional_properties = kwargs.get('additional_properties', None)
+        self.compute_type = kwargs.get('compute_type', None)
+        self.core_count = kwargs.get('core_count', None)
+        self.time_to_live = kwargs.get('time_to_live', None)
 
 
 class IntegrationRuntimeDataProxyProperties(Model):
