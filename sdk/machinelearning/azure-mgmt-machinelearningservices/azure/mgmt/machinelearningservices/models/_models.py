@@ -709,23 +709,35 @@ class AmlInstanceCustomScriptSettingsStartupScript(Model):
     """Specifies properties of initialization script to be run during every start
     of this instance.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param script_location: The location of customization script. Could be a
      URI or a relative file path in the default fileshare in the parent
      workspace.
     :type script_location: str
     :param script_parameters: Parameters required for this script if any.
     :type script_parameters: str
+    :ivar script_log_location: Location of the script's output logs in the
+     default fileshare.
+    :vartype script_log_location: str
     """
+
+    _validation = {
+        'script_log_location': {'readonly': True},
+    }
 
     _attribute_map = {
         'script_location': {'key': 'scriptLocation', 'type': 'str'},
         'script_parameters': {'key': 'scriptParameters', 'type': 'str'},
+        'script_log_location': {'key': 'scriptLogLocation', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(AmlInstanceCustomScriptSettingsStartupScript, self).__init__(**kwargs)
         self.script_location = kwargs.get('script_location', None)
         self.script_parameters = kwargs.get('script_parameters', None)
+        self.script_log_location = None
 
 
 class AmlInstanceDatastore(Model):
@@ -738,7 +750,7 @@ class AmlInstanceDatastore(Model):
     :param name: Name of the datastore to be mounted on an AzureML instance.
     :type name: str
     :ivar state: Current state of the datastore on the parent AzureML
-     instance. Possible values include: 'Mounted', 'MountFailed'
+     instance. Possible values include: 'Mounted', 'MountFailed', 'Unmounted'
     :vartype state: str or
      ~azure.mgmt.machinelearningservices.models.DatastoreState
     :ivar error: Describes the error if datastore could not be successfully

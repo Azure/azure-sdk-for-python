@@ -83,6 +83,7 @@ class DatastoreState(str, Enum):
 
     mounted = "Mounted"
     mount_failed = "MountFailed"
+    unmounted = "Unmounted"
 
 
 class OsUpdateType(str, Enum):
