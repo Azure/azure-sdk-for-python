@@ -169,7 +169,8 @@ class DataSet(ProxyDto):
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: BlobDataSet, BlobFolderDataSet, BlobContainerDataSet,
     ADLSGen2FileDataSet, ADLSGen2FolderDataSet, ADLSGen2FileSystemDataSet,
-    ADLSGen1FolderDataSet, ADLSGen1FileDataSet
+    ADLSGen1FolderDataSet, ADLSGen1FileDataSet, SqlDWTableDataSet,
+    SqlDBTableDataSet
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -201,7 +202,7 @@ class DataSet(ProxyDto):
     }
 
     _subtype_map = {
-        'kind': {'Blob': 'BlobDataSet', 'BlobFolder': 'BlobFolderDataSet', 'Container': 'BlobContainerDataSet', 'AdlsGen2File': 'ADLSGen2FileDataSet', 'AdlsGen2Folder': 'ADLSGen2FolderDataSet', 'AdlsGen2FileSystem': 'ADLSGen2FileSystemDataSet', 'AdlsGen1Folder': 'ADLSGen1FolderDataSet', 'AdlsGen1File': 'ADLSGen1FileDataSet'}
+        'kind': {'Blob': 'BlobDataSet', 'BlobFolder': 'BlobFolderDataSet', 'Container': 'BlobContainerDataSet', 'AdlsGen2File': 'ADLSGen2FileDataSet', 'AdlsGen2Folder': 'ADLSGen2FolderDataSet', 'AdlsGen2FileSystem': 'ADLSGen2FileSystemDataSet', 'AdlsGen1Folder': 'ADLSGen1FolderDataSet', 'AdlsGen1File': 'ADLSGen1FileDataSet', 'SqlDWTable': 'SqlDWTableDataSet', 'SqlDBTable': 'SqlDBTableDataSet'}
     }
 
     def __init__(self, **kwargs) -> None:
@@ -228,7 +229,7 @@ class ADLSGen1FileDataSet(DataSet):
     :type kind: str
     :param account_name: Required. The ADLS account name.
     :type account_name: str
-    :ivar data_set_id: Unique DataSet id.
+    :ivar data_set_id: Unique id for identifying a data set resource
     :vartype data_set_id: str
     :param file_name: Required. The file name in the ADLS account.
     :type file_name: str
@@ -295,7 +296,7 @@ class ADLSGen1FolderDataSet(DataSet):
     :type kind: str
     :param account_name: Required. The ADLS account name.
     :type account_name: str
-    :ivar data_set_id: Unique DataSet id.
+    :ivar data_set_id: Unique id for identifying a data set resource
     :vartype data_set_id: str
     :param folder_path: Required. The folder path within the ADLS account.
     :type folder_path: str
@@ -355,7 +356,7 @@ class ADLSGen2FileDataSet(DataSet):
     :vartype type: str
     :param kind: Required. Constant filled by server.
     :type kind: str
-    :ivar data_set_id: Unique DataSet id.
+    :ivar data_set_id: Unique id for identifying a data set resource
     :vartype data_set_id: str
     :param file_path: Required. File path within the file system.
     :type file_path: str
@@ -413,7 +414,8 @@ class DataSetMapping(ProxyDto):
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: BlobDataSetMapping, BlobFolderDataSetMapping,
     BlobContainerDataSetMapping, ADLSGen2FileDataSetMapping,
-    ADLSGen2FolderDataSetMapping, ADLSGen2FileSystemDataSetMapping
+    ADLSGen2FolderDataSetMapping, ADLSGen2FileSystemDataSetMapping,
+    SqlDWTableDataSetMapping, SqlDBTableDataSetMapping
 
     Variables are only populated by the server, and will be ignored when
     sending a request.
@@ -445,7 +447,7 @@ class DataSetMapping(ProxyDto):
     }
 
     _subtype_map = {
-        'kind': {'Blob': 'BlobDataSetMapping', 'BlobFolder': 'BlobFolderDataSetMapping', 'Container': 'BlobContainerDataSetMapping', 'AdlsGen2File': 'ADLSGen2FileDataSetMapping', 'AdlsGen2Folder': 'ADLSGen2FolderDataSetMapping', 'AdlsGen2FileSystem': 'ADLSGen2FileSystemDataSetMapping'}
+        'kind': {'Blob': 'BlobDataSetMapping', 'BlobFolder': 'BlobFolderDataSetMapping', 'Container': 'BlobContainerDataSetMapping', 'AdlsGen2File': 'ADLSGen2FileDataSetMapping', 'AdlsGen2Folder': 'ADLSGen2FolderDataSetMapping', 'AdlsGen2FileSystem': 'ADLSGen2FileSystemDataSetMapping', 'SqlDWTable': 'SqlDWTableDataSetMapping', 'SqlDBTable': 'SqlDBTableDataSetMapping'}
     }
 
     def __init__(self, **kwargs) -> None:
@@ -480,6 +482,9 @@ class ADLSGen2FileDataSetMapping(DataSetMapping):
     :type file_path: str
     :param file_system: Required. File system to which the file belongs.
     :type file_system: str
+    :param output_type: Type of output file. Possible values include: 'Csv',
+     'Parquet'
+    :type output_type: str or ~azure.mgmt.datashare.models.OutputType
     :param resource_group: Required. Resource group of storage account.
     :type resource_group: str
     :param storage_account_name: Required. Storage account name of the source
@@ -510,17 +515,19 @@ class ADLSGen2FileDataSetMapping(DataSetMapping):
         'data_set_mapping_status': {'key': 'properties.dataSetMappingStatus', 'type': 'str'},
         'file_path': {'key': 'properties.filePath', 'type': 'str'},
         'file_system': {'key': 'properties.fileSystem', 'type': 'str'},
+        'output_type': {'key': 'properties.outputType', 'type': 'str'},
         'resource_group': {'key': 'properties.resourceGroup', 'type': 'str'},
         'storage_account_name': {'key': 'properties.storageAccountName', 'type': 'str'},
         'subscription_id': {'key': 'properties.subscriptionId', 'type': 'str'},
     }
 
-    def __init__(self, *, file_path: str, file_system: str, resource_group: str, storage_account_name: str, subscription_id: str, data_set_id: str=None, data_set_mapping_status=None, **kwargs) -> None:
+    def __init__(self, *, file_path: str, file_system: str, resource_group: str, storage_account_name: str, subscription_id: str, data_set_id: str=None, data_set_mapping_status=None, output_type=None, **kwargs) -> None:
         super(ADLSGen2FileDataSetMapping, self).__init__(**kwargs)
         self.data_set_id = data_set_id
         self.data_set_mapping_status = data_set_mapping_status
         self.file_path = file_path
         self.file_system = file_system
+        self.output_type = output_type
         self.resource_group = resource_group
         self.storage_account_name = storage_account_name
         self.subscription_id = subscription_id
@@ -543,7 +550,7 @@ class ADLSGen2FileSystemDataSet(DataSet):
     :vartype type: str
     :param kind: Required. Constant filled by server.
     :type kind: str
-    :ivar data_set_id: Unique DataSet id.
+    :ivar data_set_id: Unique id for identifying a data set resource
     :vartype data_set_id: str
     :param file_system: Required. The file system name.
     :type file_system: str
@@ -674,7 +681,7 @@ class ADLSGen2FolderDataSet(DataSet):
     :vartype type: str
     :param kind: Required. Constant filled by server.
     :type kind: str
-    :ivar data_set_id: Unique DataSet id.
+    :ivar data_set_id: Unique id for identifying a data set resource
     :vartype data_set_id: str
     :param file_system: Required. File system to which the folder belongs.
     :type file_system: str
@@ -817,7 +824,7 @@ class BlobContainerDataSet(DataSet):
     :type kind: str
     :param container_name: Required. BLOB Container name.
     :type container_name: str
-    :ivar data_set_id: Unique DataSet id.
+    :ivar data_set_id: Unique id for identifying a data set resource
     :vartype data_set_id: str
     :param resource_group: Required. Resource group of storage account
     :type resource_group: str
@@ -948,7 +955,7 @@ class BlobDataSet(DataSet):
     :type kind: str
     :param container_name: Required. Container that has the file path.
     :type container_name: str
-    :ivar data_set_id: Unique DataSet id.
+    :ivar data_set_id: Unique id for identifying a data set resource
     :vartype data_set_id: str
     :param file_path: Required. File path within the source data set
     :type file_path: str
@@ -1024,6 +1031,9 @@ class BlobDataSetMapping(DataSetMapping):
      ~azure.mgmt.datashare.models.DataSetMappingStatus
     :param file_path: Required. File path within the source data set
     :type file_path: str
+    :param output_type: File output type. Possible values include: 'Csv',
+     'Parquet'
+    :type output_type: str or ~azure.mgmt.datashare.models.OutputType
     :param resource_group: Required. Resource group of storage account.
     :type resource_group: str
     :param storage_account_name: Required. Storage account name of the source
@@ -1054,17 +1064,19 @@ class BlobDataSetMapping(DataSetMapping):
         'data_set_id': {'key': 'properties.dataSetId', 'type': 'str'},
         'data_set_mapping_status': {'key': 'properties.dataSetMappingStatus', 'type': 'str'},
         'file_path': {'key': 'properties.filePath', 'type': 'str'},
+        'output_type': {'key': 'properties.outputType', 'type': 'str'},
         'resource_group': {'key': 'properties.resourceGroup', 'type': 'str'},
         'storage_account_name': {'key': 'properties.storageAccountName', 'type': 'str'},
         'subscription_id': {'key': 'properties.subscriptionId', 'type': 'str'},
     }
 
-    def __init__(self, *, container_name: str, file_path: str, resource_group: str, storage_account_name: str, subscription_id: str, data_set_id: str=None, data_set_mapping_status=None, **kwargs) -> None:
+    def __init__(self, *, container_name: str, file_path: str, resource_group: str, storage_account_name: str, subscription_id: str, data_set_id: str=None, data_set_mapping_status=None, output_type=None, **kwargs) -> None:
         super(BlobDataSetMapping, self).__init__(**kwargs)
         self.container_name = container_name
         self.data_set_id = data_set_id
         self.data_set_mapping_status = data_set_mapping_status
         self.file_path = file_path
+        self.output_type = output_type
         self.resource_group = resource_group
         self.storage_account_name = storage_account_name
         self.subscription_id = subscription_id
@@ -1089,7 +1101,7 @@ class BlobFolderDataSet(DataSet):
     :type kind: str
     :param container_name: Required. Container that has the file path.
     :type container_name: str
-    :ivar data_set_id: Unique DataSet id.
+    :ivar data_set_id: Unique id for identifying a data set resource
     :vartype data_set_id: str
     :param prefix: Required. Prefix for blob folder
     :type prefix: str
@@ -1327,7 +1339,8 @@ class ConsumerSourceDataSet(ProxyDto):
     :vartype data_set_name: str
     :ivar data_set_type: Type of dataSet. Possible values include: 'Blob',
      'Container', 'BlobFolder', 'AdlsGen2FileSystem', 'AdlsGen2Folder',
-     'AdlsGen2File', 'AdlsGen1Folder', 'AdlsGen1File'
+     'AdlsGen2File', 'AdlsGen1Folder', 'AdlsGen1File', 'SqlDBTable',
+     'SqlDWTable'
     :vartype data_set_type: str or ~azure.mgmt.datashare.models.DataSetType
     """
 
@@ -2355,6 +2368,239 @@ class ShareSynchronization(Model):
         self.synchronization_id = synchronization_id
 
 
+class SqlDBTableDataSet(DataSet):
+    """A SQL DB table dataset.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The resource id of the azure resource
+    :vartype id: str
+    :ivar name: Name of the azure resource
+    :vartype name: str
+    :ivar type: Type of the azure resource
+    :vartype type: str
+    :param kind: Required. Constant filled by server.
+    :type kind: str
+    :param database_name: Database name of the source data set
+    :type database_name: str
+    :ivar data_set_id: Unique id for identifying a data set resource
+    :vartype data_set_id: str
+    :param sql_server_resource_id: Resource id of SQL server
+    :type sql_server_resource_id: str
+    :param table_name: SQL DB table name.
+    :type table_name: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'kind': {'required': True},
+        'data_set_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'database_name': {'key': 'properties.databaseName', 'type': 'str'},
+        'data_set_id': {'key': 'properties.dataSetId', 'type': 'str'},
+        'sql_server_resource_id': {'key': 'properties.sqlServerResourceId', 'type': 'str'},
+        'table_name': {'key': 'properties.tableName', 'type': 'str'},
+    }
+
+    def __init__(self, *, database_name: str=None, sql_server_resource_id: str=None, table_name: str=None, **kwargs) -> None:
+        super(SqlDBTableDataSet, self).__init__(**kwargs)
+        self.database_name = database_name
+        self.data_set_id = None
+        self.sql_server_resource_id = sql_server_resource_id
+        self.table_name = table_name
+        self.kind = 'SqlDBTable'
+
+
+class SqlDBTableDataSetMapping(DataSetMapping):
+    """A SQL DB Table dataset mapping.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The resource id of the azure resource
+    :vartype id: str
+    :ivar name: Name of the azure resource
+    :vartype name: str
+    :ivar type: Type of the azure resource
+    :vartype type: str
+    :param kind: Required. Constant filled by server.
+    :type kind: str
+    :param database_name: Required. DatabaseName name of the sink data set
+    :type database_name: str
+    :param data_set_id: Gets the id of source dataset.
+    :type data_set_id: str
+    :param data_set_mapping_status: Gets the status of the dataset mapping.
+     Possible values include: 'Ok', 'Broken'
+    :type data_set_mapping_status: str or
+     ~azure.mgmt.datashare.models.DataSetMappingStatus
+    :param sql_server_resource_id: Required. Resource id of SQL server
+    :type sql_server_resource_id: str
+    :param table_name: Required. SQL DB table name.
+    :type table_name: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'kind': {'required': True},
+        'database_name': {'required': True},
+        'sql_server_resource_id': {'required': True},
+        'table_name': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'database_name': {'key': 'properties.databaseName', 'type': 'str'},
+        'data_set_id': {'key': 'properties.dataSetId', 'type': 'str'},
+        'data_set_mapping_status': {'key': 'properties.dataSetMappingStatus', 'type': 'str'},
+        'sql_server_resource_id': {'key': 'properties.sqlServerResourceId', 'type': 'str'},
+        'table_name': {'key': 'properties.tableName', 'type': 'str'},
+    }
+
+    def __init__(self, *, database_name: str, sql_server_resource_id: str, table_name: str, data_set_id: str=None, data_set_mapping_status=None, **kwargs) -> None:
+        super(SqlDBTableDataSetMapping, self).__init__(**kwargs)
+        self.database_name = database_name
+        self.data_set_id = data_set_id
+        self.data_set_mapping_status = data_set_mapping_status
+        self.sql_server_resource_id = sql_server_resource_id
+        self.table_name = table_name
+        self.kind = 'SqlDBTable'
+
+
+class SqlDWTableDataSet(DataSet):
+    """A SQL DW table dataset.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The resource id of the azure resource
+    :vartype id: str
+    :ivar name: Name of the azure resource
+    :vartype name: str
+    :ivar type: Type of the azure resource
+    :vartype type: str
+    :param kind: Required. Constant filled by server.
+    :type kind: str
+    :ivar data_set_id: Unique id for identifying a data set resource
+    :vartype data_set_id: str
+    :param data_warehouse_name: DataWarehouse name of the source data set
+    :type data_warehouse_name: str
+    :param sql_server_resource_id: Resource id of SQL server
+    :type sql_server_resource_id: str
+    :param table_name: SQL DW table name.
+    :type table_name: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'kind': {'required': True},
+        'data_set_id': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'data_set_id': {'key': 'properties.dataSetId', 'type': 'str'},
+        'data_warehouse_name': {'key': 'properties.dataWarehouseName', 'type': 'str'},
+        'sql_server_resource_id': {'key': 'properties.sqlServerResourceId', 'type': 'str'},
+        'table_name': {'key': 'properties.tableName', 'type': 'str'},
+    }
+
+    def __init__(self, *, data_warehouse_name: str=None, sql_server_resource_id: str=None, table_name: str=None, **kwargs) -> None:
+        super(SqlDWTableDataSet, self).__init__(**kwargs)
+        self.data_set_id = None
+        self.data_warehouse_name = data_warehouse_name
+        self.sql_server_resource_id = sql_server_resource_id
+        self.table_name = table_name
+        self.kind = 'SqlDWTable'
+
+
+class SqlDWTableDataSetMapping(DataSetMapping):
+    """A SQL DW Table dataset mapping.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: The resource id of the azure resource
+    :vartype id: str
+    :ivar name: Name of the azure resource
+    :vartype name: str
+    :ivar type: Type of the azure resource
+    :vartype type: str
+    :param kind: Required. Constant filled by server.
+    :type kind: str
+    :param data_set_id: Gets the id of source dataset.
+    :type data_set_id: str
+    :param data_set_mapping_status: Gets the status of the dataset mapping.
+     Possible values include: 'Ok', 'Broken'
+    :type data_set_mapping_status: str or
+     ~azure.mgmt.datashare.models.DataSetMappingStatus
+    :param data_warehouse_name: Required. DataWarehouse name of the source
+     data set
+    :type data_warehouse_name: str
+    :param sql_server_resource_id: Required. Resource id of SQL server
+    :type sql_server_resource_id: str
+    :param table_name: Required. SQL DW table name.
+    :type table_name: str
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'kind': {'required': True},
+        'data_warehouse_name': {'required': True},
+        'sql_server_resource_id': {'required': True},
+        'table_name': {'required': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'kind': {'key': 'kind', 'type': 'str'},
+        'data_set_id': {'key': 'properties.dataSetId', 'type': 'str'},
+        'data_set_mapping_status': {'key': 'properties.dataSetMappingStatus', 'type': 'str'},
+        'data_warehouse_name': {'key': 'properties.dataWarehouseName', 'type': 'str'},
+        'sql_server_resource_id': {'key': 'properties.sqlServerResourceId', 'type': 'str'},
+        'table_name': {'key': 'properties.tableName', 'type': 'str'},
+    }
+
+    def __init__(self, *, data_warehouse_name: str, sql_server_resource_id: str, table_name: str, data_set_id: str=None, data_set_mapping_status=None, **kwargs) -> None:
+        super(SqlDWTableDataSetMapping, self).__init__(**kwargs)
+        self.data_set_id = data_set_id
+        self.data_set_mapping_status = data_set_mapping_status
+        self.data_warehouse_name = data_warehouse_name
+        self.sql_server_resource_id = sql_server_resource_id
+        self.table_name = table_name
+        self.kind = 'SqlDWTable'
+
+
 class SynchronizationDetails(Model):
     """Synchronization details at dataset level.
 
@@ -2365,7 +2611,8 @@ class SynchronizationDetails(Model):
     :vartype data_set_id: str
     :ivar data_set_type: type of DataSet. Possible values include: 'Blob',
      'Container', 'BlobFolder', 'AdlsGen2FileSystem', 'AdlsGen2Folder',
-     'AdlsGen2File', 'AdlsGen1Folder', 'AdlsGen1File'
+     'AdlsGen2File', 'AdlsGen1Folder', 'AdlsGen1File', 'SqlDBTable',
+     'SqlDWTable'
     :vartype data_set_type: str or ~azure.mgmt.datashare.models.DataSetType
     :ivar duration_ms: duration of dataset level copy
     :vartype duration_ms: int
@@ -2379,6 +2626,10 @@ class SynchronizationDetails(Model):
     :vartype message: str
     :ivar name: name of dataSet
     :vartype name: str
+    :ivar rows_copied: The number of files copied into the sink dataset.
+    :vartype rows_copied: long
+    :ivar rows_read: The number of rows read from the source dataset.
+    :vartype rows_read: long
     :ivar size_read: The size of the data read from the source dataset in
      bytes.
     :vartype size_read: long
@@ -2402,6 +2653,8 @@ class SynchronizationDetails(Model):
         'files_written': {'readonly': True},
         'message': {'readonly': True},
         'name': {'readonly': True},
+        'rows_copied': {'readonly': True},
+        'rows_read': {'readonly': True},
         'size_read': {'readonly': True},
         'size_written': {'readonly': True},
         'start_time': {'readonly': True},
@@ -2418,6 +2671,8 @@ class SynchronizationDetails(Model):
         'files_written': {'key': 'filesWritten', 'type': 'long'},
         'message': {'key': 'message', 'type': 'str'},
         'name': {'key': 'name', 'type': 'str'},
+        'rows_copied': {'key': 'rowsCopied', 'type': 'long'},
+        'rows_read': {'key': 'rowsRead', 'type': 'long'},
         'size_read': {'key': 'sizeRead', 'type': 'long'},
         'size_written': {'key': 'sizeWritten', 'type': 'long'},
         'start_time': {'key': 'startTime', 'type': 'iso-8601'},
@@ -2435,6 +2690,8 @@ class SynchronizationDetails(Model):
         self.files_written = None
         self.message = None
         self.name = None
+        self.rows_copied = None
+        self.rows_read = None
         self.size_read = None
         self.size_written = None
         self.start_time = None

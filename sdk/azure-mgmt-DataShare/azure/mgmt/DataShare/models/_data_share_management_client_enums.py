@@ -59,6 +59,8 @@ class DataSetType(str, Enum):
     adls_gen2_file = "AdlsGen2File"
     adls_gen1_folder = "AdlsGen1Folder"
     adls_gen1_file = "AdlsGen1File"
+    sql_db_table = "SqlDBTable"
+    sql_dw_table = "SqlDWTable"
 
 
 class ShareSubscriptionStatus(str, Enum):
@@ -92,3 +94,9 @@ class DataSetMappingStatus(str, Enum):
 
     ok = "Ok"
     broken = "Broken"
+
+
+class OutputType(str, Enum):
+
+    csv = "Csv"
+    parquet = "Parquet"
