@@ -267,8 +267,7 @@ class Certificate(object):
         policy,  # type: CertificatePolicy
         key_id=None,  # type: Optional[str]
         secret_id=None,  # type: Optional[str]
-        cer=None,  # type: Optional[bytes]
-        **kwargs  # type: **Any
+        cer=None  # type: Optional[bytes]
     ):
         # type: (...) -> None
         self._properties = properties
@@ -1349,7 +1348,8 @@ class DeletedCertificate(Certificate):
         # type: (models.DeletedCertificateItem) -> DeletedCertificate
         """Construct a DeletedCertificate from an autorest-generated DeletedCertificateItem"""
         return cls(
-            properties=CertificateProperties._from_certificate_item(deleted_certificate_item),
+            properties=CertificateProperties._from_certificate_item(  # pylint: disable=protected-access
+                deleted_certificate_item),
             key_id=None,
             secret_id=None,
             policy=None,
@@ -1375,7 +1375,7 @@ class DeletedCertificate(Certificate):
             recovery_id=deleted_certificate_bundle.recovery_id,
             scheduled_purge_date=deleted_certificate_bundle.scheduled_purge_date,
             tags=deleted_certificate_bundle.tags,
-        ) 
+        )
 
     @property
     def deleted_date(self):
