@@ -1,4 +1,4 @@
-certificates package
+azure.keyvault.certificates package
 ====================
 
 Subpackages
@@ -6,31 +6,31 @@ Subpackages
 
 .. toctree::
 
-   certificates.aio
+   azure.keyvault.certificates.aio
 
 Submodules
 ----------
 
-certificates.client module
+azure.keyvault.certificates.client module
 --------------------------
 
-.. automodule:: certificates.client
+.. automodule:: azure.keyvault.certificates.client
    :members:
    :undoc-members:
    :show-inheritance:
 
-certificates.enums module
+azure.keyvault.certificates.enums module
 -------------------------
 
-.. automodule:: certificates.enums
+.. automodule:: azure.keyvault.certificates.enums
    :members:
    :undoc-members:
    :show-inheritance:
 
-certificates.models module
+azure.keyvault.certificates.models module
 --------------------------
 
-.. automodule:: certificates.models
+.. automodule:: azure.keyvault.certificates.models
    :members:
    :undoc-members:
    :show-inheritance:
@@ -39,7 +39,7 @@ certificates.models module
 Module contents
 ---------------
 
-.. automodule:: certificates
+.. automodule:: azure.keyvault.certificates
    :members:
    :undoc-members:
    :show-inheritance:

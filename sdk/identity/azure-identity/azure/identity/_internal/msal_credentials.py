@@ -21,11 +21,6 @@ except AttributeError:  # Python 2.7, abc exists, but not ABC
     ABC = abc.ABCMeta("ABC", (object,), {"__slots__": ()})  # type: ignore
 
 try:
-    from unittest import mock
-except ImportError:  # python < 3.3
-    import mock  # type: ignore
-
-try:
     from typing import TYPE_CHECKING
 except ImportError:
     TYPE_CHECKING = False
@@ -64,10 +59,11 @@ class MsalCredential(ABC):
         """Creates an MSAL application, patching msal.authority to use an azure-core pipeline during tenant discovery"""
 
         # MSAL application initializers use msal.authority to send AAD tenant discovery requests
-        with mock.patch("msal.authority.requests", self._adapter):
+        with self._adapter:
             app = cls(client_id=self._client_id, client_credential=self._client_credential, authority=self._authority)
 
         # monkeypatch the app to replace requests.Session with MsalTransportAdapter
+        app.client.session.close()
         app.client.session = self._adapter
 
         return app
@@ -106,8 +102,9 @@ class PublicClientCredential(MsalCredential):
 
     def __init__(self, **kwargs):
         # type: (Any) -> None
+        tenant = kwargs.pop("tenant", None) or "organizations"
         super(PublicClientCredential, self).__init__(
-            authority="https://login.microsoftonline.com/" + kwargs.pop("tenant", "organizations"), **kwargs
+            authority="https://login.microsoftonline.com/" + tenant, **kwargs
         )
 
     @abc.abstractmethod

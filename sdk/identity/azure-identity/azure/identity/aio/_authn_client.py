@@ -31,7 +31,7 @@ class AsyncAuthnClient(AuthnClientBase):  # pylint:disable=async-client-bad-name
     def __init__(
         self,
         auth_url: str,
-        config: Optional[Configuration] = None,
+        config: "Optional[Configuration]" = None,
         policies: Optional[Iterable[HTTPPolicy]] = None,
         transport: Optional[AsyncHttpTransport] = None,
         **kwargs: Mapping[str, Any]
@@ -55,7 +55,7 @@ class AsyncAuthnClient(AuthnClientBase):  # pylint:disable=async-client-bad-name
         headers: Optional[Mapping[str, str]] = None,
         form_data: Optional[Mapping[str, str]] = None,
         params: Optional[Dict[str, str]] = None,
-        **kwargs: Any
+        **kwargs: "Any"
     ) -> AccessToken:
         request = self._prepare_request(method, headers=headers, form_data=form_data, params=params)
         request_time = int(time.time())

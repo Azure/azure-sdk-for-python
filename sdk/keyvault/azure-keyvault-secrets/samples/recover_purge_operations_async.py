@@ -1,3 +1,7 @@
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
 import asyncio
 import os
 from azure.keyvault.secrets.aio import SecretClient
@@ -5,19 +9,13 @@ from azure.identity.aio import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 
 # ----------------------------------------------------------------------------------------------------------
-# Prerequistes -
+# Prerequisites:
+# 1. An Azure Key Vault (https://docs.microsoft.com/en-us/azure/key-vault/quick-create-cli)
 #
-# 1. An Azure Key Vault-
-#    https://docs.microsoft.com/en-us/azure/key-vault/quick-create-cli
+# 2. azure-keyvault-secrets and azure-identity libraries (pip install these)
 #
-# 2. Microsoft Azure Key Vault PyPI package -
-#    https://pypi.python.org/pypi/azure-keyvault-secrets/
-#
-# 3. Microsoft Azure Identity package -
-#    https://pypi.python.org/pypi/azure-identity/
-#
-# 4. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL.
-# How to do this - https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys#createget-credentials)
+# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL
+#    (See https://github.com/Azure/azure-sdk-for-python/tree/master/sdk/keyvault/azure-keyvault-keys#authenticate-the-client)
 #
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates the basic recover and purge operations on a vault(secret) resource for Azure Key Vault. The vault
@@ -43,21 +41,21 @@ async def run_sample():
     try:
         # Let's create secrets holding storage and bank accounts credentials. If the secret
         # already exists in the Key Vault, then a new version of the secret is created.
-        print("\n1. Create Secret")
+        print("\n.. Create Secret")
         bank_secret = await client.set_secret("recoverPurgeBankSecretName", "recoverPurgeSecretValue1")
         storage_secret = await client.set_secret("recoverPurgeStorageSecretName", "recoverPurgeSecretValue2")
         print("Secret with name '{0}' was created.".format(bank_secret.name))
         print("Secret with name '{0}' was created.".format(storage_secret.name))
 
         # The storage account was closed, need to delete its credentials from the Key Vault.
-        print("\n2. Delete a Secret")
+        print("\n.. Delete a Secret")
         secret = await client.delete_secret(bank_secret.name)
         await asyncio.sleep(20)
         print("Secret with name '{0}' was deleted on date {1}.".format(secret.name, secret.deleted_date))
 
         # We accidentally deleted the bank account secret. Let's recover it.
         # A deleted secret can only be recovered if the Key Vault is soft-delete enabled.
-        print("\n3. Recover Deleted  Secret")
+        print("\n.. Recover Deleted  Secret")
         recovered_secret = await client.recover_deleted_secret(bank_secret.name)
         print("Recovered Secret with name '{0}'.".format(recovered_secret.name))
 
@@ -70,7 +68,7 @@ async def run_sample():
         await asyncio.sleep(20)
 
         # To ensure permanent deletion, we might need to purge the secret.
-        print("\n4. Purge Deleted Secret")
+        print("\n.. Purge Deleted Secret")
         await client.purge_deleted_secret(storage_secret.name)
         print("Secret has been permanently deleted.")
 

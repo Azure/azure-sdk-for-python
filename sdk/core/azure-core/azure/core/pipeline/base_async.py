@@ -153,7 +153,7 @@ class AsyncPipeline(AbstractAsyncContextManager, Generic[HTTPRequestType, AsyncH
     async def __aexit__(self, *exc_details):  # pylint: disable=arguments-differ
         await self._transport.__aexit__(*exc_details)
 
-    async def run(self, request: PipelineRequest, **kwargs: Any):
+    async def run(self, request: PipelineRequest[HTTPRequestType], **kwargs: Any):
         """Runs the HTTP Request through the chained policies.
 
         :param request: The HTTP request object.

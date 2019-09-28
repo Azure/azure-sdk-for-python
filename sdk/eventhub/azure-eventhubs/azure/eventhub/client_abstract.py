@@ -181,6 +181,11 @@ class EventHubClientAbstract(object):  # pylint:disable=too-many-instance-attrib
         properties[types.AMQPSymbol("user-agent")] = final_user_agent
         return properties
 
+    def _add_span_request_attributes(self, span):
+        span.add_attribute("component", "eventhubs")
+        span.add_attribute("message_bus.destination", self._address.path)
+        span.add_attribute("peer.address", self._address.hostname)
+
     @classmethod
     def from_connection_string(cls, conn_str, **kwargs):
         """Create an EventHubClient from an EventHub connection string.

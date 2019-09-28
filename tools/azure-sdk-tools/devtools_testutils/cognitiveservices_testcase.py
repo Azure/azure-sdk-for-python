@@ -33,6 +33,7 @@ class CognitiveServicesAccountPreparer(AzureMgmtPreparer):
                  name_prefix='',
                  sku='S0', location='westus', kind='cognitiveservices',
                  parameter_name='cognitiveservices_account',
+                 legacy=False,
                  resource_group_parameter_name=RESOURCE_GROUP_PARAM,
                  disable_recording=True, playback_fake_resource=None,
                  client_kwargs=None):
@@ -46,6 +47,7 @@ class CognitiveServicesAccountPreparer(AzureMgmtPreparer):
         self.resource_group_parameter_name = resource_group_parameter_name
         self.parameter_name = parameter_name
         self.cogsci_key = ''
+        self.legacy = legacy
 
     def create_resource(self, name, **kwargs):
         if self.is_live:
@@ -62,17 +64,24 @@ class CognitiveServicesAccountPreparer(AzureMgmtPreparer):
                     'properties': {}
                 }
             )
-            time.sleep(5)  # it takes a few seconds to create a cognitive services account
+            time.sleep(10)  # it takes a few seconds to create a cognitive services account
             self.resource = cogsci_account
             self.cogsci_key = self.client.accounts.list_keys(group.name, name).key1
             # FIXME: LuisAuthoringClient and LuisRuntimeClient need authoring key from ARM API (coming soon-ish)
         else:
             self.resource = FakeCognitiveServicesAccount("https://{}.api.cognitive.microsoft.com".format(self.location))
             self.cogsci_key = 'ZmFrZV9hY29jdW50X2tleQ=='
-        return {
-            self.parameter_name: self.resource.endpoint,
-            '{}_key'.format(self.parameter_name): CognitiveServicesCredentials(self.cogsci_key),
-        }
+
+        if self.legacy:
+            return {
+                self.parameter_name: self.resource.endpoint,
+                '{}_key'.format(self.parameter_name): CognitiveServicesCredentials(self.cogsci_key),
+            }
+        else:
+            return {
+                self.parameter_name: self.resource.endpoint,
+                '{}_key'.format(self.parameter_name): self.cogsci_key,
+            }
 
     def remove_resource(self, name, **kwargs):
         if self.is_live:
