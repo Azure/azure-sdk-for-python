@@ -493,6 +493,110 @@ class CertificateOperation(object):
         return self._request_id
 
 
+class KeyProperties(object):
+    """Properties of the key pair backing a certificate.
+
+    :param bool exportable: Indicates if the private key can be exported.
+    :param key_type: The type of key pair to be used for the certificate.
+        Possible values include: 'EC', 'EC-HSM', 'RSA', 'RSA-HSM', 'oct'
+    :type key_type: str or ~azure.keyvault.certificates.enums.KeyType
+    :param int key_size: The key size in bits. For example: 2048, 3072, or 4096
+        for RSA.
+    :param bool reuse_key: Indicates if the same key pair will be used on certificate
+        renewal.
+    :param curve: Elliptic curve name. For valid values, see KeyCurveName.
+        Possible values include: 'P-256', 'P-384', 'P-521', 'P-256K'
+    :type curve: str or ~azure.keyvault.certificates.enums.KeyCurveName
+    """
+    def __init__(
+        self,
+        exportable=None,  # type: Optional[bool]
+        key_type=None,  # type: Optional[KeyType]
+        key_size=None,  # type: Optional[str]
+        reuse_key=None,  # type: Optional[bool]
+        curve=None  # type: Optional[KeyCurveName]
+    ):
+        # type: (...) -> None
+        self._exportable = exportable
+        self._key_type = key_type
+        self._key_size = key_size
+        self._reuse_key = reuse_key
+        self._curve = curve
+
+    @property
+    def exportable(self):
+        # type: () -> bool
+        """Whether the private key can be exported.
+
+        :rtype: bool
+        """
+        return self._exportable
+
+    @property
+    def key_type(self):
+        # type: () -> KeyType
+        """The type of key pair to be used for the certificate.
+
+        :rtype: ~azure.keyvault.certificates.enums.KeyType
+        """
+        return self._key_type
+
+    @property
+    def key_size(self):
+        # type: () -> int
+        """The key size in bits.
+
+        :rtype: int
+        """
+        return self._key_size
+
+    @property
+    def reuse_key(self):
+        # type: () -> bool
+        """Whether the same key pair will be used on certificate renewal.
+
+        :rtype: bool
+        """
+        return self._reuse_key
+
+    @property
+    def curve(self):
+        # type: () -> KeyCurveName
+        """Elliptic curve name.
+
+        :rtype: ~azure.keyvault.certificates.enums.KeyCurveName
+        """
+        return self._curve
+
+    @classmethod
+    def _from_key_properties_bundle(cls, key_properties_bundle):
+        # type: (models.KeyProperties) -> KeyProperties
+        """Construct a KeyProperties from an autorest-generated KeyProperties"""
+        return cls(
+            exportable=key_properties_bundle.exportable,
+            key_type=(KeyType(key_properties_bundle.key_type)
+                        if key_properties_bundle.key_type else None),
+            key_size=key_properties_bundle.key_size,
+            reuse_key=key_properties_bundle.reuse_key,
+            curve=(KeyCurveName(key_properties_bundle.curve)
+                    if key_properties_bundle.curve else None)
+        )
+
+    def _to_key_properties_bundle(self):
+        # type: (KeyProperties) -> models.KeyProperties
+        """Converts a KeyProperties to an autorest-generated KeyProperties"""
+        return models.KeyProperties(
+            exportable=self.exportable,
+            key_type=(self.key_type.value
+                        if not isinstance(self.key_type, str) and self.key_type
+                        else self.key_type),
+            key_size=self.key_size,
+            reuse_key=self.reuse_key,
+            curve=(self.curve.value
+                    if not isinstance(self.curve, str) and self.curve
+                    else self.curve)
+        )
+
 class X509Properties(object):
     """Properties of the X509 component of a certificate.
 
@@ -552,7 +656,8 @@ class X509Properties(object):
         return cls(
             subject_name=x509_properties_bundle.subject,
             ekus=x509_properties_bundle.ekus,
-            key_usage=x509_properties_bundle.key_usage,
+            key_usage=([KeyUsageType(k) for k in x509_properties_bundle.key_usage]
+                       if x509_properties_bundle.key_usage else None),
             validity_in_months=x509_properties_bundle.validity_in_months,
             san_emails=san_emails,
             san_dns_names=san_dns_names,
@@ -560,6 +665,8 @@ class X509Properties(object):
         )
 
     def _to_x509_properties_bundle(self):
+        # type: (X509Properties) -> models.X509CertificateProperties
+        """Converts a X509Properties to an autorest-generated X509Properties"""
         sans = models.SubjectAlternativeNames(
             emails=self.san_emails,
             dns_names=self.san_dns_names,
@@ -568,7 +675,7 @@ class X509Properties(object):
         return models.X509CertificateProperties(
             subject=self.subject_name,
             ekus=self.ekus,
-            key_usage=self.key_usage,
+            key_usage=self.key_usage.value if isinstance(self.key_usage, KeyUsageType) else self.key_usage,
             validity_in_months=self.validity_in_months,
             subject_alternative_names=sans
         )
@@ -652,8 +759,7 @@ class IssuerParameters(object):
         self,
         issuer_name,  # type: str
         certificate_type=None,  # type: str
-        certificate_transparency=None,  # type: bool
-        **kwargs
+        certificate_transparency=None  # type: bool
     ):
         self._issuer_name = issuer_name
         self._certificate_type = certificate_type
@@ -662,6 +768,7 @@ class IssuerParameters(object):
     @classmethod
     def _from_issuer_parameters_bundle(cls, issuer_parameters_bundle):
         # type: (models.IssuerParameters) -> IssuerParameters
+        """Converts an autorest-generated IssuerParameters to an IssuerParameters"""
         return cls(
             issuer_name=issuer_parameters_bundle.name,
             certificate_type=issuer_parameters_bundle.certificate_type,
@@ -669,6 +776,8 @@ class IssuerParameters(object):
         )
 
     def _to_issuer_parameters_bundle(self):
+        # type: (IssuerParameters) -> models.IssuerParameters
+        """Converts an IssuerParameters to an autorest-generated IssuerParameters"""
         return models.IssuerParameters(
             name=self.issuer_name,
             certificate_type=self.certificate_type,
@@ -750,8 +859,7 @@ class CertificatePolicy(object):
         lifetime_actions=None,  # type: Optional[list[LifetimeAction]]
         issuer_name=None,  # type: Optional[str]
         certificate_type=None,  # type: Optional[str]
-        certificate_transparency=None,  # type: Optional[bool]
-        **kwargs  # type: **Any
+        certificate_transparency=None  # type: Optional[bool]
     ):
         # type: (...) -> None
         self._x509_properties = x509_properties
@@ -764,7 +872,7 @@ class CertificatePolicy(object):
         self._issuer_name = issuer_name
         self._certificate_type = certificate_type
         self._certificate_transparency = certificate_transparency
-        
+
     def _to_certificate_policy_bundle(self):
         # type: (CertificatePolicy) -> models.CertificatePolicy
         """Construct a version emulating the generated CertificatePolicy from a wrapped CertificatePolicy"""
@@ -804,26 +912,6 @@ class CertificatePolicy(object):
         else:
             lifetime_actions = None
 
-        if (self.key_properties and
-                (self.key_properties.exportable or
-                self.key_properties.key_type or
-                self.key_properties.key_size or
-                self.key_properties.reuse_key or
-                self.key_properties.curve)):
-            key_properties = models.KeyProperties(
-                exportable=self.key_properties.exportable,
-                key_type=(self.key_properties.key_type.value
-                          if not isinstance(self.key_properties.key_type, str) and self.key_properties.key_type
-                          else self.key_properties.key_type),
-                key_size=self.key_properties.key_size,
-                reuse_key=self.key_properties.reuse_key,
-                curve=(self.key_properties.curve.value
-                       if not isinstance(self.key_properties.curve, str) and self.key_properties.curve
-                       else self.key_properties.curve)
-            )
-        else:
-            key_properties = None
-
         if self.content_type:
             secret_properties = models.SecretProperties(content_type=self.content_type.value
                                                         if not isinstance(self.content_type, str) and self.content_type
@@ -832,8 +920,10 @@ class CertificatePolicy(object):
             secret_properties = None
 
         policy_bundle = models.CertificatePolicy(
+            # pylint: disable=protected-access
             id=self.id,
-            key_properties=key_properties,
+            key_properties=(self._key_properties._to_key_properties_bundle()
+                            if self._key_properties else None),
             secret_properties=secret_properties,
             x509_certificate_properties=self.x509_properties._to_x509_properties_bundle(),
             lifetime_actions=lifetime_actions,
@@ -858,27 +948,8 @@ class CertificatePolicy(object):
             ]
         else:
             lifetime_actions = None
-        key_properties_bundle = certificate_policy_bundle.key_properties
-        # pylint:disable=too-many-boolean-expressions
-        if key_properties_bundle:
-            if certificate_policy_bundle.x509_certificate_properties and \
-                    certificate_policy_bundle.x509_certificate_properties.key_usage:
-                key_usage = [KeyUsageType(k) for k in certificate_policy_bundle.x509_certificate_properties.key_usage]
-            else:
-                key_usage = None
-
-            key_properties = KeyProperties(
-                exportable=certificate_policy_bundle.key_properties.exportable,
-                key_type=(KeyType(certificate_policy_bundle.key_properties.key_type)
-                          if certificate_policy_bundle.key_properties.key_type else None),
-                key_size=certificate_policy_bundle.key_properties.key_size,
-                reuse_key=certificate_policy_bundle.key_properties.reuse_key,
-                curve=(KeyCurveName(certificate_policy_bundle.key_properties.curve)
-                       if certificate_policy_bundle.key_properties.curve else None)
-            )
-        else:
-            key_properties = None
         return cls(
+            # pylint: disable=protected-access
             x509_properties=X509Properties._from_x509_properties_bundle(
                                 certificate_policy_bundle.x509_certificate_properties
                             ),
@@ -887,7 +958,8 @@ class CertificatePolicy(object):
             issuer_parameters=IssuerParameters._from_issuer_parameters_bundle(
                             certificate_policy_bundle.issuer_parameters),
             lifetime_actions=lifetime_actions,
-            key_properties=key_properties,
+            key_properties=(KeyProperties._from_key_properties_bundle(certificate_policy_bundle.key_properties)
+                            if certificate_policy_bundle.key_properties else None),
             content_type=(SecretContentType(certificate_policy_bundle.secret_properties.content_type)
                           if certificate_policy_bundle.secret_properties else None),
         )
@@ -1204,82 +1276,6 @@ class Issuer(IssuerBase):
         :rtype: list[~azure.keyvault.certificates.models.AdministratorDetails]
         """
         return self._admin_details
-
-
-class KeyProperties(object):
-    """Properties of the key pair backing a certificate.
-
-    :param bool exportable: Indicates if the private key can be exported.
-    :param key_type: The type of key pair to be used for the certificate.
-        Possible values include: 'EC', 'EC-HSM', 'RSA', 'RSA-HSM', 'oct'
-    :type key_type: str or ~azure.keyvault.certificates.enums.KeyType
-    :param int key_size: The key size in bits. For example: 2048, 3072, or 4096
-        for RSA.
-    :param bool reuse_key: Indicates if the same key pair will be used on certificate
-        renewal.
-    :param curve: Elliptic curve name. For valid values, see KeyCurveName.
-        Possible values include: 'P-256', 'P-384', 'P-521', 'P-256K'
-    :type curve: str or ~azure.keyvault.certificates.enums.KeyCurveName
-    """
-    def __init__(
-        self,
-        exportable=None,  # type: Optional[bool]
-        key_type=None,  # type: Optional[KeyType]
-        key_size=None,  # type: Optional[str]
-        reuse_key=None,  # type: Optional[bool]
-        curve=None  # type: Optional[KeyCurveName]
-    ):
-        # type: (...) -> None
-        self._exportable = exportable
-        self._key_type = key_type
-        self._key_size = key_size
-        self._reuse_key = reuse_key
-        self._curve = curve
-
-    @property
-    def exportable(self):
-        # type: () -> bool
-        """Whether the private key can be exported.
-
-        :rtype: bool
-        """
-        return self._exportable
-
-    @property
-    def key_type(self):
-        # type: () -> KeyType
-        """The type of key pair to be used for the certificate.
-
-        :rtype: ~azure.keyvault.certificates.enums.KeyType
-        """
-        return self._key_type
-
-    @property
-    def key_size(self):
-        # type: () -> int
-        """The key size in bits.
-
-        :rtype: int
-        """
-        return self._key_size
-
-    @property
-    def reuse_key(self):
-        # type: () -> bool
-        """Whether the same key pair will be used on certificate renewal.
-
-        :rtype: bool
-        """
-        return self._reuse_key
-
-    @property
-    def curve(self):
-        # type: () -> KeyCurveName
-        """Elliptic curve name.
-
-        :rtype: ~azure.keyvault.certificates.enums.KeyCurveName
-        """
-        return self._curve
 
 
 class LifetimeAction(object):

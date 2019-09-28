@@ -60,7 +60,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         print(certificate.id)
         print(certificate.name)
-        print(certificate.policy.issuer_name)
+        print(certificate.policy.issuer_parameters.issuer_name)
 
         # [END create_certificate]
 

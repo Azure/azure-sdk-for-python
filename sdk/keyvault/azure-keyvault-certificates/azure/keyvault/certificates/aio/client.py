@@ -137,7 +137,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         )
 
         create_certificate_polling = CreateCertificatePollerAsync(
-            unknown_issuer=(policy.issuer_parameters.issuer_name.lower() == 'unknown')
+            get_certificate_command=get_certificate_command
         )
         return async_poller(
             command,

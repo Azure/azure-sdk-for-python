@@ -148,7 +148,7 @@ class CertificateClient(KeyVaultClientBase):
         )
 
         create_certificate_polling = CreateCertificatePoller(
-            unknown_issuer=(policy.issuer_parameters.issuer_name.lower() == 'unknown')
+            get_certificate_command=get_certificate_command
         )
         return LROPoller(
             command,
