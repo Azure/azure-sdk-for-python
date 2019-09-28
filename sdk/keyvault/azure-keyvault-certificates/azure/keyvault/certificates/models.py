@@ -1356,8 +1356,7 @@ class DeletedCertificate(Certificate):
             cer=None,
             deleted_date=deleted_certificate_item.deleted_date,
             recovery_id=deleted_certificate_item.recovery_id,
-            scheduled_purge_date=deleted_certificate_item.scheduled_purge_date,
-            tags=deleted_certificate_item.tags,
+            scheduled_purge_date=deleted_certificate_item.scheduled_purge_date
         )
 
     @classmethod
@@ -1366,15 +1365,15 @@ class DeletedCertificate(Certificate):
         """Construct a DeletedCertificate from an autorest-generated DeletedCertificateItem"""
         # pylint:disable=protected-access
         return cls(
-            properties=CertificateProperties._from_certificate_item(deleted_certificate_bundle),
+            properties=CertificateProperties._from_certificate_item(
+                deleted_certificate_bundle),
             key_id=deleted_certificate_bundle.kid,
             secret_id=deleted_certificate_bundle.sid,
             policy=CertificatePolicy._from_certificate_policy_bundle(deleted_certificate_bundle.policy),
             cer=deleted_certificate_bundle.cer,
             deleted_date=deleted_certificate_bundle.deleted_date,
             recovery_id=deleted_certificate_bundle.recovery_id,
-            scheduled_purge_date=deleted_certificate_bundle.scheduled_purge_date,
-            tags=deleted_certificate_bundle.tags,
+            scheduled_purge_date=deleted_certificate_bundle.scheduled_purge_date
         )
 
     @property
