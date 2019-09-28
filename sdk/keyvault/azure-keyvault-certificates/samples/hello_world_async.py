@@ -68,9 +68,12 @@ async def run_sample():
                                     content_type=SecretContentType.PKCS12
                                     )
         cert_name = "HelloWorldCertificate"
+
+        # create_certificate returns a poller. Awaiting the poller will return the certificate
+        # if creation is successful, and the CertificateOperation if not.
         create_certificate_poller = await client.create_certificate(name=cert_name, policy=cert_policy)
-        await create_certificate_poller
-        print("Certificate with name '{0}' created".format(cert_name))
+        certificate = await create_certificate_poller
+        print("Certificate with name '{0}' created".format(certificate.name))
 
         # Let's get the bank certificate using its name
         print("\n.. Get a Certificate by name")

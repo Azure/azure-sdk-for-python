@@ -223,8 +223,15 @@ class CertificateClientTests(KeyVaultTestCase):
 
         # create certificate
         create_certificate_poller = await client.create_certificate(name=cert_name)
+        cert = await create_certificate_poller
 
-        self.assertEqual(await create_certificate_poller, 'completed')
+        self._validate_certificate_bundle(
+            cert=cert,
+            vault=client.vault_url,
+            cert_name=cert_name,
+            cert_policy=cert_policy
+        )
+
         self.assertEqual((await client.get_certificate_operation(name=cert_name)).status.lower(), 'completed')
 
         # get certificate
@@ -383,7 +390,6 @@ class CertificateClientTests(KeyVaultTestCase):
         # delete all certificates
         for cert_name in certs.keys():
             delcert = await client.delete_certificate(name=cert_name)
-            print(delcert)
 
         if not self.is_playback():
             await asyncio.sleep(30)
@@ -456,7 +462,7 @@ class CertificateClientTests(KeyVaultTestCase):
             cert_policy=cert_policy
         )
 
-        self.assertEqual(await create_certificate_poller, 'cancelled')
+        self.assertEqual((await create_certificate_poller).status.lower(), 'cancelled')
 
         retrieved_operation = await client.get_certificate_operation(name=cert_name)
         self.assertTrue(hasattr(retrieved_operation, 'cancellation_requested'))
@@ -581,9 +587,7 @@ class CertificateClientTests(KeyVaultTestCase):
 
         # create certificate
         create_certificate_poller = await client.create_certificate(name=cert_name, policy=CertificatePolicy._from_certificate_policy_bundle(cert_policy))
-
-        self.assertEqual(await create_certificate_poller, 'completed')
-        self.assertEqual((await client.get_certificate_operation(name=cert_name)).status.lower(), 'completed')
+        await create_certificate_poller
 
         # create a backup
         certificate_backup = await client.backup_certificate(name=cert_name)

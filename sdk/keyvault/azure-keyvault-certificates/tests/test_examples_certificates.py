@@ -60,10 +60,14 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         certificate_operation_poller = certificate_client.create_certificate(name=cert_name, policy=cert_policy)
 
         # Here we are waiting for the certificate creation operation to be completed
-        certificate_operation_poller.wait()
+        certificate = certificate_operation_poller.result()
 
         # You can get the final status of the certificate operation poller using .result()
         print(certificate_operation_poller.result())
+
+        print(certificate.id)
+        print(certificate.name)
+        print(certificate.policy.issuer_name)
 
         # [END create_certificate]
 
@@ -74,15 +78,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         print(certificate.id)
         print(certificate.name)
-        print(certificate.policy.key_properties.exportable)
-        print(certificate.policy.key_properties.key_type)
-        print(certificate.policy.key_properties.key_size)
-        print(certificate.policy.key_properties.reuse_key)
-        print(certificate.policy.content_type)
         print(certificate.policy.issuer_parameters.issuer_name)
-        print(certificate.policy.x509_properties.subject_name)
-        print(certificate.policy.x509_properties.san_dns_names)
-        print(certificate.policy.x509_properties.validity_in_months)
 
         # [END get_certificate]
         # [START update_certificate]
@@ -136,8 +132,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
                                         )
 
         for i in range(4):
-            create_certificate_poller = certificate_client.create_certificate(name="certificate{}".format(i), policy=cert_policy)
-            create_certificate_poller.wait()
+            certificate_client.create_certificate(name="certificate{}".format(i), policy=cert_policy).wait()
 
         # [START list_certificates]
 
@@ -202,8 +197,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
                                         )
 
         cert_name = "cert-name"
-        create_certificate_poller = certificate_client.create_certificate(name=cert_name, policy=cert_policy)
-        create_certificate_poller.wait()
+        certificate_client.create_certificate(name=cert_name, policy=cert_policy).wait()
 
         # [START backup_certificate]
 
@@ -254,8 +248,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
                                         )
 
         cert_name = "cert-name"
-        create_certificate_poller = certificate_client.create_certificate(name=cert_name, policy=cert_policy)
-        create_certificate_poller.wait()
+        certificate_client.create_certificate(name=cert_name, policy=cert_policy).wait()
         certificate_client.delete_certificate(name=cert_name)
         self._poll_until_no_exception(
             functools.partial(certificate_client.get_deleted_certificate, cert_name),

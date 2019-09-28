@@ -5,7 +5,7 @@
 # pylint:disable=too-many-lines,too-many-public-methods
 import base64
 import uuid
-from typing import Any, AsyncIterable, Optional, Iterable, List, Dict
+from typing import Any, AsyncIterable, Optional, Iterable, List, Dict, Coroutine
 from functools import partial
 
 from azure.core.tracing.decorator import distributed_trace
@@ -55,7 +55,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         enabled: Optional[bool] = None,
         tags: Optional[Dict[str, str]] = None,
         **kwargs: "**Any"
-    ) -> CertificateOperation:
+    ) -> Coroutine:
         """Creates a new certificate.
 
         If this is the first version, the certificate resource is created. This
@@ -68,8 +68,10 @@ class CertificateClient(AsyncKeyVaultClientBase):
         :param bool enabled: Determines whether the object is enabled.
         :param tags: Application specific metadata in the form of key-value pairs.
         :type tags: dict(str, str)
-        :returns: The created CertificateOperation
-        :rtype: coroutine
+        :returns: A coroutine for the creation of the certificate. Awaiting the coroutine
+         returns the created Certificate if creation is successful, the CertificateOperation if not.
+        :rtype: coroutine[~azure.keyvault.certificates.models.Certificate or
+         ~azure.keyvault.certificates.models.CertificateOperation]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
         Example:
@@ -112,8 +114,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
                                        lifetime_actions=lifetime_actions,
                                        content_type=SecretContentType.PKCS12
                                        )
-
-        create_certificate_operation = await self._client.create_certificate(
+        cert_bundle = await self._client.create_certificate(
             vault_base_url=self.vault_url,
             certificate_name=name,
             certificate_policy=policy._to_certificate_policy_bundle(),
@@ -121,11 +122,17 @@ class CertificateClient(AsyncKeyVaultClientBase):
             tags=tags,
             **kwargs
         )
+        create_certificate_operation = CertificateOperation._from_certificate_operation_bundle(cert_bundle)
 
         command = partial(
-            self._client.get_certificate_operation,
-            vault_base_url=self.vault_url,
-            certificate_name=name,
+            self.get_certificate_operation,
+            name=name,
+            **kwargs
+        )
+
+        get_certificate_command = partial(
+            self.get_certificate_with_policy,
+            name=name,
             **kwargs
         )
 
@@ -134,7 +141,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         )
         return async_poller(
             command,
-            create_certificate_operation.status.lower(),
+            create_certificate_operation,
             None,
             create_certificate_polling
         )
