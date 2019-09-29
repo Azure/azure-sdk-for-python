@@ -10,6 +10,7 @@ import time
 
 from uamqp import errors, types  # type: ignore
 from uamqp import ReceiveClientAsync, Source  # type: ignore
+import uamqp
 
 from azure.eventhub import EventData, EventPosition
 from azure.eventhub.error import EventHubError, ConnectError, _error_handler
@@ -132,6 +133,8 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
             error_policy=self._retry_policy,
             keep_alive_interval=self._keep_alive,
             client_name=self._name,
+            receive_settle_mode=uamqp.constants.ReceiverSettleMode.ReceiveAndDelete,
+            auto_complete=False,
             properties=self._client._create_properties(  # pylint:disable=protected-access
                 self._client._config.user_agent),  # pylint:disable=protected-access
             loop=self._loop)
