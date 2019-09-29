@@ -174,8 +174,9 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
             timeout=remaining_time_ms)
         for message in message_batch:
             event_data = EventData._from_message(message)  # pylint:disable=protected-access
-            self._offset = EventPosition(event_data.offset)
             data_batch.append(event_data)
+        if data_batch:
+            self._offset = EventPosition(data_batch[-1].offset)
         return data_batch
 
     def _receive_with_retry(self, timeout=None, max_batch_size=None, **kwargs):
