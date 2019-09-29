@@ -60,6 +60,9 @@ try:
     from ._models_py3 import AzureDataLakeStoreSink
     from ._models_py3 import AzureDataLakeStoreSource
     from ._models_py3 import AzureDataLakeStoreWriteSettings
+    from ._models_py3 import AzureFileStorageLinkedService
+    from ._models_py3 import AzureFileStorageLocation
+    from ._models_py3 import AzureFileStorageReadSettings
     from ._models_py3 import AzureFunctionActivity
     from ._models_py3 import AzureFunctionLinkedService
     from ._models_py3 import AzureKeyVaultLinkedService
@@ -242,6 +245,9 @@ try:
     from ._models_py3 import GoogleBigQueryLinkedService
     from ._models_py3 import GoogleBigQueryObjectDataset
     from ._models_py3 import GoogleBigQuerySource
+    from ._models_py3 import GoogleCloudStorageLinkedService
+    from ._models_py3 import GoogleCloudStorageLocation
+    from ._models_py3 import GoogleCloudStorageReadSettings
     from ._models_py3 import GreenplumLinkedService
     from ._models_py3 import GreenplumSource
     from ._models_py3 import GreenplumTableDataset
@@ -283,6 +289,7 @@ try:
     from ._models_py3 import IntegrationRuntimeComputeProperties
     from ._models_py3 import IntegrationRuntimeConnectionInfo
     from ._models_py3 import IntegrationRuntimeCustomSetupScriptProperties
+    from ._models_py3 import IntegrationRuntimeDataFlowProperties
     from ._models_py3 import IntegrationRuntimeDataProxyProperties
     from ._models_py3 import IntegrationRuntimeMonitoringData
     from ._models_py3 import IntegrationRuntimeNodeIpAddress
@@ -610,6 +617,9 @@ except (SyntaxError, ImportError):
     from ._models import AzureDataLakeStoreSink
     from ._models import AzureDataLakeStoreSource
     from ._models import AzureDataLakeStoreWriteSettings
+    from ._models import AzureFileStorageLinkedService
+    from ._models import AzureFileStorageLocation
+    from ._models import AzureFileStorageReadSettings
     from ._models import AzureFunctionActivity
     from ._models import AzureFunctionLinkedService
     from ._models import AzureKeyVaultLinkedService
@@ -792,6 +802,9 @@ except (SyntaxError, ImportError):
     from ._models import GoogleBigQueryLinkedService
     from ._models import GoogleBigQueryObjectDataset
     from ._models import GoogleBigQuerySource
+    from ._models import GoogleCloudStorageLinkedService
+    from ._models import GoogleCloudStorageLocation
+    from ._models import GoogleCloudStorageReadSettings
     from ._models import GreenplumLinkedService
     from ._models import GreenplumSource
     from ._models import GreenplumTableDataset
@@ -833,6 +846,7 @@ except (SyntaxError, ImportError):
     from ._models import IntegrationRuntimeComputeProperties
     from ._models import IntegrationRuntimeConnectionInfo
     from ._models import IntegrationRuntimeCustomSetupScriptProperties
+    from ._models import IntegrationRuntimeDataFlowProperties
     from ._models import IntegrationRuntimeDataProxyProperties
     from ._models import IntegrationRuntimeMonitoringData
     from ._models import IntegrationRuntimeNodeIpAddress
@@ -1191,6 +1205,7 @@ from ._data_factory_management_client_enums import (
     IntegrationRuntimeSsisCatalogPricingTier,
     IntegrationRuntimeLicenseType,
     IntegrationRuntimeEdition,
+    DataFlowComputeType,
     SsisObjectMetadataType,
     IntegrationRuntimeAuthKeyName,
 )
@@ -1246,6 +1261,9 @@ __all__ = [
     'AzureDataLakeStoreSink',
     'AzureDataLakeStoreSource',
     'AzureDataLakeStoreWriteSettings',
+    'AzureFileStorageLinkedService',
+    'AzureFileStorageLocation',
+    'AzureFileStorageReadSettings',
     'AzureFunctionActivity',
     'AzureFunctionLinkedService',
     'AzureKeyVaultLinkedService',
@@ -1428,6 +1446,9 @@ __all__ = [
     'GoogleBigQueryLinkedService',
     'GoogleBigQueryObjectDataset',
     'GoogleBigQuerySource',
+    'GoogleCloudStorageLinkedService',
+    'GoogleCloudStorageLocation',
+    'GoogleCloudStorageReadSettings',
     'GreenplumLinkedService',
     'GreenplumSource',
     'GreenplumTableDataset',
@@ -1469,6 +1490,7 @@ __all__ = [
     'IntegrationRuntimeComputeProperties',
     'IntegrationRuntimeConnectionInfo',
     'IntegrationRuntimeCustomSetupScriptProperties',
+    'IntegrationRuntimeDataFlowProperties',
     'IntegrationRuntimeDataProxyProperties',
     'IntegrationRuntimeMonitoringData',
     'IntegrationRuntimeNodeIpAddress',
@@ -1826,6 +1848,7 @@ __all__ = [
     'IntegrationRuntimeSsisCatalogPricingTier',
     'IntegrationRuntimeLicenseType',
     'IntegrationRuntimeEdition',
+    'DataFlowComputeType',
     'SsisObjectMetadataType',
     'IntegrationRuntimeAuthKeyName',
 ]
