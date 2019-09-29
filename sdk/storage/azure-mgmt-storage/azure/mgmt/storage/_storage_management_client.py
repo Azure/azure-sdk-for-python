@@ -14,7 +14,6 @@ from msrest import Serializer, Deserializer
 
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
-from .version import VERSION
 from ._configuration import StorageManagementClientConfiguration
 
 
@@ -51,8 +50,8 @@ class StorageManagementClient(MultiApiClientMixin, SDKClient):
     _PROFILE_TAG = "azure.mgmt.storage.StorageManagementClient"
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
+            None: DEFAULT_API_VERSION,
             'usage': '2018-02-01',
-            None: DEFAULT_API_VERSION
         }},
         _PROFILE_TAG + " latest"
     )
@@ -157,6 +156,32 @@ class StorageManagementClient(MultiApiClientMixin, SDKClient):
             from .v2018_11_01.operations import BlobServicesOperations as OperationClass
         elif api_version == '2019-04-01':
             from .v2019_04_01.operations import BlobServicesOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def file_services(self):
+        """Instance depends on the API version:
+
+           * 2019-04-01: :class:`FileServicesOperations<azure.mgmt.storage.v2019_04_01.operations.FileServicesOperations>`
+        """
+        api_version = self._get_api_version('file_services')
+        if api_version == '2019-04-01':
+            from .v2019_04_01.operations import FileServicesOperations as OperationClass
+        else:
+            raise NotImplementedError("APIVersion {} is not available".format(api_version))
+        return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def file_shares(self):
+        """Instance depends on the API version:
+
+           * 2019-04-01: :class:`FileSharesOperations<azure.mgmt.storage.v2019_04_01.operations.FileSharesOperations>`
+        """
+        api_version = self._get_api_version('file_shares')
+        if api_version == '2019-04-01':
+            from .v2019_04_01.operations import FileSharesOperations as OperationClass
         else:
             raise NotImplementedError("APIVersion {} is not available".format(api_version))
         return OperationClass(self._client, self.config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
