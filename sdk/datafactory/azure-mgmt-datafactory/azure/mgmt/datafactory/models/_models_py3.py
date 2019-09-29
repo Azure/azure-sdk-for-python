@@ -9144,9 +9144,6 @@ class Transformation(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param additional_properties: Unmatched properties from the message are
-     deserialized this collection
-    :type additional_properties: dict[str, object]
     :param name: Required. Transformation name.
     :type name: str
     :param description: Transformation description.
@@ -9158,14 +9155,12 @@ class Transformation(Model):
     }
 
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
     }
 
-    def __init__(self, *, name: str, additional_properties=None, description: str=None, **kwargs) -> None:
+    def __init__(self, *, name: str, description: str=None, **kwargs) -> None:
         super(Transformation, self).__init__(**kwargs)
-        self.additional_properties = additional_properties
         self.name = name
         self.description = description
 
@@ -9175,9 +9170,6 @@ class DataFlowSink(Transformation):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param additional_properties: Unmatched properties from the message are
-     deserialized this collection
-    :type additional_properties: dict[str, object]
     :param name: Required. Transformation name.
     :type name: str
     :param description: Transformation description.
@@ -9191,15 +9183,13 @@ class DataFlowSink(Transformation):
     }
 
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'dataset': {'key': 'dataset', 'type': 'DatasetReference'},
     }
 
-    def __init__(self, *, name: str, additional_properties=None, description: str=None, dataset=None, **kwargs) -> None:
-        super(DataFlowSink, self).__init__(additional_properties=additional_properties, name=name, description=description, **kwargs)
-        self.additional_properties = additional_properties
+    def __init__(self, *, name: str, description: str=None, dataset=None, **kwargs) -> None:
+        super(DataFlowSink, self).__init__(name=name, description=description, **kwargs)
         self.dataset = dataset
 
 
@@ -9208,9 +9198,6 @@ class DataFlowSource(Transformation):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param additional_properties: Unmatched properties from the message are
-     deserialized this collection
-    :type additional_properties: dict[str, object]
     :param name: Required. Transformation name.
     :type name: str
     :param description: Transformation description.
@@ -9224,15 +9211,13 @@ class DataFlowSource(Transformation):
     }
 
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{object}'},
         'name': {'key': 'name', 'type': 'str'},
         'description': {'key': 'description', 'type': 'str'},
         'dataset': {'key': 'dataset', 'type': 'DatasetReference'},
     }
 
-    def __init__(self, *, name: str, additional_properties=None, description: str=None, dataset=None, **kwargs) -> None:
-        super(DataFlowSource, self).__init__(additional_properties=additional_properties, name=name, description=description, **kwargs)
-        self.additional_properties = additional_properties
+    def __init__(self, *, name: str, description: str=None, dataset=None, **kwargs) -> None:
+        super(DataFlowSource, self).__init__(name=name, description=description, **kwargs)
         self.dataset = dataset
 
 
@@ -16411,6 +16396,10 @@ class IntegrationRuntimeComputeProperties(Model):
     :param max_parallel_executions_per_node: Maximum parallel executions count
      per node for managed integration runtime.
     :type max_parallel_executions_per_node: int
+    :param data_flow_properties: Data flow properties for managed integration
+     runtime.
+    :type data_flow_properties:
+     ~azure.mgmt.datafactory.models.IntegrationRuntimeDataFlowProperties
     :param v_net_properties: VNet properties for managed integration runtime.
     :type v_net_properties:
      ~azure.mgmt.datafactory.models.IntegrationRuntimeVNetProperties
@@ -16427,16 +16416,18 @@ class IntegrationRuntimeComputeProperties(Model):
         'node_size': {'key': 'nodeSize', 'type': 'str'},
         'number_of_nodes': {'key': 'numberOfNodes', 'type': 'int'},
         'max_parallel_executions_per_node': {'key': 'maxParallelExecutionsPerNode', 'type': 'int'},
+        'data_flow_properties': {'key': 'dataFlowProperties', 'type': 'IntegrationRuntimeDataFlowProperties'},
         'v_net_properties': {'key': 'vNetProperties', 'type': 'IntegrationRuntimeVNetProperties'},
     }
 
-    def __init__(self, *, additional_properties=None, location: str=None, node_size: str=None, number_of_nodes: int=None, max_parallel_executions_per_node: int=None, v_net_properties=None, **kwargs) -> None:
+    def __init__(self, *, additional_properties=None, location: str=None, node_size: str=None, number_of_nodes: int=None, max_parallel_executions_per_node: int=None, data_flow_properties=None, v_net_properties=None, **kwargs) -> None:
         super(IntegrationRuntimeComputeProperties, self).__init__(**kwargs)
         self.additional_properties = additional_properties
         self.location = location
         self.node_size = node_size
         self.number_of_nodes = number_of_nodes
         self.max_parallel_executions_per_node = max_parallel_executions_per_node
+        self.data_flow_properties = data_flow_properties
         self.v_net_properties = v_net_properties
 
 
@@ -16517,6 +16508,44 @@ class IntegrationRuntimeCustomSetupScriptProperties(Model):
         super(IntegrationRuntimeCustomSetupScriptProperties, self).__init__(**kwargs)
         self.blob_container_uri = blob_container_uri
         self.sas_token = sas_token
+
+
+class IntegrationRuntimeDataFlowProperties(Model):
+    """Data flow properties for managed integration runtime.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param compute_type: Compute type of the cluster which will execute data
+     flow job. Possible values include: 'General', 'MemoryOptimized',
+     'ComputeOptimized'
+    :type compute_type: str or
+     ~azure.mgmt.datafactory.models.DataFlowComputeType
+    :param core_count: Core count of the cluster which will execute data flow
+     job. Supported values are: 8, 16, 32, 48, 80, 144 and 272.
+    :type core_count: int
+    :param time_to_live: Time to live (in minutes) setting of the cluster
+     which will execute data flow job.
+    :type time_to_live: int
+    """
+
+    _validation = {
+        'time_to_live': {'minimum': 0},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'compute_type': {'key': 'computeType', 'type': 'str'},
+        'core_count': {'key': 'coreCount', 'type': 'int'},
+        'time_to_live': {'key': 'timeToLive', 'type': 'int'},
+    }
+
+    def __init__(self, *, additional_properties=None, compute_type=None, core_count: int=None, time_to_live: int=None, **kwargs) -> None:
+        super(IntegrationRuntimeDataFlowProperties, self).__init__(**kwargs)
+        self.additional_properties = additional_properties
+        self.compute_type = compute_type
+        self.core_count = core_count
+        self.time_to_live = time_to_live
 
 
 class IntegrationRuntimeDataProxyProperties(Model):

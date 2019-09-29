@@ -289,6 +289,7 @@ try:
     from ._models_py3 import IntegrationRuntimeComputeProperties
     from ._models_py3 import IntegrationRuntimeConnectionInfo
     from ._models_py3 import IntegrationRuntimeCustomSetupScriptProperties
+    from ._models_py3 import IntegrationRuntimeDataFlowProperties
     from ._models_py3 import IntegrationRuntimeDataProxyProperties
     from ._models_py3 import IntegrationRuntimeMonitoringData
     from ._models_py3 import IntegrationRuntimeNodeIpAddress
@@ -845,6 +846,7 @@ except (SyntaxError, ImportError):
     from ._models import IntegrationRuntimeComputeProperties
     from ._models import IntegrationRuntimeConnectionInfo
     from ._models import IntegrationRuntimeCustomSetupScriptProperties
+    from ._models import IntegrationRuntimeDataFlowProperties
     from ._models import IntegrationRuntimeDataProxyProperties
     from ._models import IntegrationRuntimeMonitoringData
     from ._models import IntegrationRuntimeNodeIpAddress
@@ -1203,6 +1205,7 @@ from ._data_factory_management_client_enums import (
     IntegrationRuntimeSsisCatalogPricingTier,
     IntegrationRuntimeLicenseType,
     IntegrationRuntimeEdition,
+    DataFlowComputeType,
     SsisObjectMetadataType,
     IntegrationRuntimeAuthKeyName,
 )
@@ -1487,6 +1490,7 @@ __all__ = [
     'IntegrationRuntimeComputeProperties',
     'IntegrationRuntimeConnectionInfo',
     'IntegrationRuntimeCustomSetupScriptProperties',
+    'IntegrationRuntimeDataFlowProperties',
     'IntegrationRuntimeDataProxyProperties',
     'IntegrationRuntimeMonitoringData',
     'IntegrationRuntimeNodeIpAddress',
@@ -1844,6 +1848,7 @@ __all__ = [
     'IntegrationRuntimeSsisCatalogPricingTier',
     'IntegrationRuntimeLicenseType',
     'IntegrationRuntimeEdition',
+    'DataFlowComputeType',
     'SsisObjectMetadataType',
     'IntegrationRuntimeAuthKeyName',
 ]
