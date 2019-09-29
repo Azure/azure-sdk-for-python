@@ -336,14 +336,15 @@ class LinkedService(Model):
     MicrosoftAccessLinkedService, InformixLinkedService, OdbcLinkedService,
     AzureMLLinkedService, TeradataLinkedService, Db2LinkedService,
     SybaseLinkedService, PostgreSqlLinkedService, MySqlLinkedService,
-    AzureMySqlLinkedService, OracleLinkedService, FileServerLinkedService,
-    HDInsightLinkedService, CommonDataServiceForAppsLinkedService,
-    DynamicsCrmLinkedService, DynamicsLinkedService, CosmosDbLinkedService,
-    AzureKeyVaultLinkedService, AzureBatchLinkedService,
-    AzureSqlMILinkedService, AzureSqlDatabaseLinkedService,
-    SqlServerLinkedService, AzureSqlDWLinkedService,
-    AzureTableStorageLinkedService, AzureBlobStorageLinkedService,
-    AzureStorageLinkedService
+    AzureMySqlLinkedService, OracleLinkedService,
+    GoogleCloudStorageLinkedService, AzureFileStorageLinkedService,
+    FileServerLinkedService, HDInsightLinkedService,
+    CommonDataServiceForAppsLinkedService, DynamicsCrmLinkedService,
+    DynamicsLinkedService, CosmosDbLinkedService, AzureKeyVaultLinkedService,
+    AzureBatchLinkedService, AzureSqlMILinkedService,
+    AzureSqlDatabaseLinkedService, SqlServerLinkedService,
+    AzureSqlDWLinkedService, AzureTableStorageLinkedService,
+    AzureBlobStorageLinkedService, AzureStorageLinkedService
 
     All required parameters must be populated in order to send to Azure.
 
@@ -379,7 +380,7 @@ class LinkedService(Model):
     }
 
     _subtype_map = {
-        'type': {'AzureFunction': 'AzureFunctionLinkedService', 'AzureDataExplorer': 'AzureDataExplorerLinkedService', 'SapTable': 'SapTableLinkedService', 'GoogleAdWords': 'GoogleAdWordsLinkedService', 'OracleServiceCloud': 'OracleServiceCloudLinkedService', 'DynamicsAX': 'DynamicsAXLinkedService', 'Responsys': 'ResponsysLinkedService', 'AzureDatabricks': 'AzureDatabricksLinkedService', 'AzureDataLakeAnalytics': 'AzureDataLakeAnalyticsLinkedService', 'HDInsightOnDemand': 'HDInsightOnDemandLinkedService', 'SalesforceMarketingCloud': 'SalesforceMarketingCloudLinkedService', 'Netezza': 'NetezzaLinkedService', 'Vertica': 'VerticaLinkedService', 'Zoho': 'ZohoLinkedService', 'Xero': 'XeroLinkedService', 'Square': 'SquareLinkedService', 'Spark': 'SparkLinkedService', 'Shopify': 'ShopifyLinkedService', 'ServiceNow': 'ServiceNowLinkedService', 'QuickBooks': 'QuickBooksLinkedService', 'Presto': 'PrestoLinkedService', 'Phoenix': 'PhoenixLinkedService', 'Paypal': 'PaypalLinkedService', 'Marketo': 'MarketoLinkedService', 'AzureMariaDB': 'AzureMariaDBLinkedService', 'MariaDB': 'MariaDBLinkedService', 'Magento': 'MagentoLinkedService', 'Jira': 'JiraLinkedService', 'Impala': 'ImpalaLinkedService', 'Hubspot': 'HubspotLinkedService', 'Hive': 'HiveLinkedService', 'HBase': 'HBaseLinkedService', 'Greenplum': 'GreenplumLinkedService', 'GoogleBigQuery': 'GoogleBigQueryLinkedService', 'Eloqua': 'EloquaLinkedService', 'Drill': 'DrillLinkedService', 'Couchbase': 'CouchbaseLinkedService', 'Concur': 'ConcurLinkedService', 'AzurePostgreSql': 'AzurePostgreSqlLinkedService', 'AmazonMWS': 'AmazonMWSLinkedService', 'SapHana': 'SapHanaLinkedService', 'SapBW': 'SapBWLinkedService', 'Sftp': 'SftpServerLinkedService', 'FtpServer': 'FtpServerLinkedService', 'HttpServer': 'HttpLinkedService', 'AzureSearch': 'AzureSearchLinkedService', 'CustomDataSource': 'CustomDataSourceLinkedService', 'AmazonRedshift': 'AmazonRedshiftLinkedService', 'AmazonS3': 'AmazonS3LinkedService', 'RestService': 'RestServiceLinkedService', 'SapOpenHub': 'SapOpenHubLinkedService', 'SapEcc': 'SapEccLinkedService', 'SapCloudForCustomer': 'SapCloudForCustomerLinkedService', 'SalesforceServiceCloud': 'SalesforceServiceCloudLinkedService', 'Salesforce': 'SalesforceLinkedService', 'Office365': 'Office365LinkedService', 'AzureBlobFS': 'AzureBlobFSLinkedService', 'AzureDataLakeStore': 'AzureDataLakeStoreLinkedService', 'CosmosDbMongoDbApi': 'CosmosDbMongoDbApiLinkedService', 'MongoDbV2': 'MongoDbV2LinkedService', 'MongoDb': 'MongoDbLinkedService', 'Cassandra': 'CassandraLinkedService', 'Web': 'WebLinkedService', 'OData': 'ODataLinkedService', 'Hdfs': 'HdfsLinkedService', 'MicrosoftAccess': 'MicrosoftAccessLinkedService', 'Informix': 'InformixLinkedService', 'Odbc': 'OdbcLinkedService', 'AzureML': 'AzureMLLinkedService', 'Teradata': 'TeradataLinkedService', 'Db2': 'Db2LinkedService', 'Sybase': 'SybaseLinkedService', 'PostgreSql': 'PostgreSqlLinkedService', 'MySql': 'MySqlLinkedService', 'AzureMySql': 'AzureMySqlLinkedService', 'Oracle': 'OracleLinkedService', 'FileServer': 'FileServerLinkedService', 'HDInsight': 'HDInsightLinkedService', 'CommonDataServiceForApps': 'CommonDataServiceForAppsLinkedService', 'DynamicsCrm': 'DynamicsCrmLinkedService', 'Dynamics': 'DynamicsLinkedService', 'CosmosDb': 'CosmosDbLinkedService', 'AzureKeyVault': 'AzureKeyVaultLinkedService', 'AzureBatch': 'AzureBatchLinkedService', 'AzureSqlMI': 'AzureSqlMILinkedService', 'AzureSqlDatabase': 'AzureSqlDatabaseLinkedService', 'SqlServer': 'SqlServerLinkedService', 'AzureSqlDW': 'AzureSqlDWLinkedService', 'AzureTableStorage': 'AzureTableStorageLinkedService', 'AzureBlobStorage': 'AzureBlobStorageLinkedService', 'AzureStorage': 'AzureStorageLinkedService'}
+        'type': {'AzureFunction': 'AzureFunctionLinkedService', 'AzureDataExplorer': 'AzureDataExplorerLinkedService', 'SapTable': 'SapTableLinkedService', 'GoogleAdWords': 'GoogleAdWordsLinkedService', 'OracleServiceCloud': 'OracleServiceCloudLinkedService', 'DynamicsAX': 'DynamicsAXLinkedService', 'Responsys': 'ResponsysLinkedService', 'AzureDatabricks': 'AzureDatabricksLinkedService', 'AzureDataLakeAnalytics': 'AzureDataLakeAnalyticsLinkedService', 'HDInsightOnDemand': 'HDInsightOnDemandLinkedService', 'SalesforceMarketingCloud': 'SalesforceMarketingCloudLinkedService', 'Netezza': 'NetezzaLinkedService', 'Vertica': 'VerticaLinkedService', 'Zoho': 'ZohoLinkedService', 'Xero': 'XeroLinkedService', 'Square': 'SquareLinkedService', 'Spark': 'SparkLinkedService', 'Shopify': 'ShopifyLinkedService', 'ServiceNow': 'ServiceNowLinkedService', 'QuickBooks': 'QuickBooksLinkedService', 'Presto': 'PrestoLinkedService', 'Phoenix': 'PhoenixLinkedService', 'Paypal': 'PaypalLinkedService', 'Marketo': 'MarketoLinkedService', 'AzureMariaDB': 'AzureMariaDBLinkedService', 'MariaDB': 'MariaDBLinkedService', 'Magento': 'MagentoLinkedService', 'Jira': 'JiraLinkedService', 'Impala': 'ImpalaLinkedService', 'Hubspot': 'HubspotLinkedService', 'Hive': 'HiveLinkedService', 'HBase': 'HBaseLinkedService', 'Greenplum': 'GreenplumLinkedService', 'GoogleBigQuery': 'GoogleBigQueryLinkedService', 'Eloqua': 'EloquaLinkedService', 'Drill': 'DrillLinkedService', 'Couchbase': 'CouchbaseLinkedService', 'Concur': 'ConcurLinkedService', 'AzurePostgreSql': 'AzurePostgreSqlLinkedService', 'AmazonMWS': 'AmazonMWSLinkedService', 'SapHana': 'SapHanaLinkedService', 'SapBW': 'SapBWLinkedService', 'Sftp': 'SftpServerLinkedService', 'FtpServer': 'FtpServerLinkedService', 'HttpServer': 'HttpLinkedService', 'AzureSearch': 'AzureSearchLinkedService', 'CustomDataSource': 'CustomDataSourceLinkedService', 'AmazonRedshift': 'AmazonRedshiftLinkedService', 'AmazonS3': 'AmazonS3LinkedService', 'RestService': 'RestServiceLinkedService', 'SapOpenHub': 'SapOpenHubLinkedService', 'SapEcc': 'SapEccLinkedService', 'SapCloudForCustomer': 'SapCloudForCustomerLinkedService', 'SalesforceServiceCloud': 'SalesforceServiceCloudLinkedService', 'Salesforce': 'SalesforceLinkedService', 'Office365': 'Office365LinkedService', 'AzureBlobFS': 'AzureBlobFSLinkedService', 'AzureDataLakeStore': 'AzureDataLakeStoreLinkedService', 'CosmosDbMongoDbApi': 'CosmosDbMongoDbApiLinkedService', 'MongoDbV2': 'MongoDbV2LinkedService', 'MongoDb': 'MongoDbLinkedService', 'Cassandra': 'CassandraLinkedService', 'Web': 'WebLinkedService', 'OData': 'ODataLinkedService', 'Hdfs': 'HdfsLinkedService', 'MicrosoftAccess': 'MicrosoftAccessLinkedService', 'Informix': 'InformixLinkedService', 'Odbc': 'OdbcLinkedService', 'AzureML': 'AzureMLLinkedService', 'Teradata': 'TeradataLinkedService', 'Db2': 'Db2LinkedService', 'Sybase': 'SybaseLinkedService', 'PostgreSql': 'PostgreSqlLinkedService', 'MySql': 'MySqlLinkedService', 'AzureMySql': 'AzureMySqlLinkedService', 'Oracle': 'OracleLinkedService', 'GoogleCloudStorage': 'GoogleCloudStorageLinkedService', 'AzureFileStorage': 'AzureFileStorageLinkedService', 'FileServer': 'FileServerLinkedService', 'HDInsight': 'HDInsightLinkedService', 'CommonDataServiceForApps': 'CommonDataServiceForAppsLinkedService', 'DynamicsCrm': 'DynamicsCrmLinkedService', 'Dynamics': 'DynamicsLinkedService', 'CosmosDb': 'CosmosDbLinkedService', 'AzureKeyVault': 'AzureKeyVaultLinkedService', 'AzureBatch': 'AzureBatchLinkedService', 'AzureSqlMI': 'AzureSqlMILinkedService', 'AzureSqlDatabase': 'AzureSqlDatabaseLinkedService', 'SqlServer': 'SqlServerLinkedService', 'AzureSqlDW': 'AzureSqlDWLinkedService', 'AzureTableStorage': 'AzureTableStorageLinkedService', 'AzureBlobStorage': 'AzureBlobStorageLinkedService', 'AzureStorage': 'AzureStorageLinkedService'}
     }
 
     def __init__(self, **kwargs):
@@ -3663,6 +3664,162 @@ class AzureDataLakeStoreWriteSettings(StoreWriteSettings):
         self.type = 'AzureDataLakeStoreWriteSettings'
 
 
+class AzureFileStorageLinkedService(LinkedService):
+    """Azure File Storage linked service.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param connect_via: The integration runtime reference.
+    :type connect_via:
+     ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
+    :param description: Linked service description.
+    :type description: str
+    :param parameters: Parameters for linked service.
+    :type parameters: dict[str,
+     ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :param annotations: List of tags that can be used for describing the
+     linked service.
+    :type annotations: list[object]
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param host: Required. Host name of the server. Type: string (or
+     Expression with resultType string).
+    :type host: object
+    :param user_id: User ID to logon the server. Type: string (or Expression
+     with resultType string).
+    :type user_id: object
+    :param password: Password to logon the server.
+    :type password: ~azure.mgmt.datafactory.models.SecretBase
+    :param encrypted_credential: The encrypted credential used for
+     authentication. Credentials are encrypted using the integration runtime
+     credential manager. Type: string (or Expression with resultType string).
+    :type encrypted_credential: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+        'host': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
+        'description': {'key': 'description', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
+        'type': {'key': 'type', 'type': 'str'},
+        'host': {'key': 'typeProperties.host', 'type': 'object'},
+        'user_id': {'key': 'typeProperties.userId', 'type': 'object'},
+        'password': {'key': 'typeProperties.password', 'type': 'SecretBase'},
+        'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
+    }
+
+    def __init__(self, **kwargs):
+        super(AzureFileStorageLinkedService, self).__init__(**kwargs)
+        self.host = kwargs.get('host', None)
+        self.user_id = kwargs.get('user_id', None)
+        self.password = kwargs.get('password', None)
+        self.encrypted_credential = kwargs.get('encrypted_credential', None)
+        self.type = 'AzureFileStorage'
+
+
+class AzureFileStorageLocation(DatasetLocation):
+    """The location of file server dataset.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param type: Required. Type of dataset storage location.
+    :type type: str
+    :param folder_path: Specify the folder path of dataset. Type: string (or
+     Expression with resultType string)
+    :type folder_path: object
+    :param file_name: Specify the file name of dataset. Type: string (or
+     Expression with resultType string).
+    :type file_name: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'folder_path': {'key': 'folderPath', 'type': 'object'},
+        'file_name': {'key': 'fileName', 'type': 'object'},
+    }
+
+    def __init__(self, **kwargs):
+        super(AzureFileStorageLocation, self).__init__(**kwargs)
+
+
+class AzureFileStorageReadSettings(StoreReadSettings):
+    """Azure File Storage read settings.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param type: Required. The read setting type.
+    :type type: str
+    :param max_concurrent_connections: The maximum concurrent connection count
+     for the source data store. Type: integer (or Expression with resultType
+     integer).
+    :type max_concurrent_connections: object
+    :param recursive: If true, files under the folder path will be read
+     recursively. Default is true. Type: boolean (or Expression with resultType
+     boolean).
+    :type recursive: object
+    :param wildcard_folder_path: Azure File Storage wildcardFolderPath. Type:
+     string (or Expression with resultType string).
+    :type wildcard_folder_path: object
+    :param wildcard_file_name: Azure File Storage wildcardFileName. Type:
+     string (or Expression with resultType string).
+    :type wildcard_file_name: object
+    :param enable_partition_discovery: Indicates whether to enable partition
+     discovery.
+    :type enable_partition_discovery: bool
+    :param modified_datetime_start: The start of file's modified datetime.
+     Type: string (or Expression with resultType string).
+    :type modified_datetime_start: object
+    :param modified_datetime_end: The end of file's modified datetime. Type:
+     string (or Expression with resultType string).
+    :type modified_datetime_end: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'recursive': {'key': 'recursive', 'type': 'object'},
+        'wildcard_folder_path': {'key': 'wildcardFolderPath', 'type': 'object'},
+        'wildcard_file_name': {'key': 'wildcardFileName', 'type': 'object'},
+        'enable_partition_discovery': {'key': 'enablePartitionDiscovery', 'type': 'bool'},
+        'modified_datetime_start': {'key': 'modifiedDatetimeStart', 'type': 'object'},
+        'modified_datetime_end': {'key': 'modifiedDatetimeEnd', 'type': 'object'},
+    }
+
+    def __init__(self, **kwargs):
+        super(AzureFileStorageReadSettings, self).__init__(**kwargs)
+        self.recursive = kwargs.get('recursive', None)
+        self.wildcard_folder_path = kwargs.get('wildcard_folder_path', None)
+        self.wildcard_file_name = kwargs.get('wildcard_file_name', None)
+        self.enable_partition_discovery = kwargs.get('enable_partition_discovery', None)
+        self.modified_datetime_start = kwargs.get('modified_datetime_start', None)
+        self.modified_datetime_end = kwargs.get('modified_datetime_end', None)
+
+
 class AzureFunctionActivity(ExecutionActivity):
     """Azure Function activity.
 
@@ -4525,6 +4682,9 @@ class AzureMySqlTableDataset(Dataset):
     :param table_name: The Azure MySQL database table name. Type: string (or
      Expression with resultType string).
     :type table_name: object
+    :param table: The name of Azure MySQL database table. Type: string (or
+     Expression with resultType string).
+    :type table: object
     """
 
     _validation = {
@@ -4543,11 +4703,13 @@ class AzureMySqlTableDataset(Dataset):
         'folder': {'key': 'folder', 'type': 'DatasetFolder'},
         'type': {'key': 'type', 'type': 'str'},
         'table_name': {'key': 'typeProperties.tableName', 'type': 'object'},
+        'table': {'key': 'typeProperties.table', 'type': 'object'},
     }
 
     def __init__(self, **kwargs):
         super(AzureMySqlTableDataset, self).__init__(**kwargs)
         self.table_name = kwargs.get('table_name', None)
+        self.table = kwargs.get('table', None)
         self.type = 'AzureMySqlTable'
 
 
@@ -13331,6 +13493,181 @@ class GoogleBigQuerySource(TabularSource):
         super(GoogleBigQuerySource, self).__init__(**kwargs)
         self.query = kwargs.get('query', None)
         self.type = 'GoogleBigQuerySource'
+
+
+class GoogleCloudStorageLinkedService(LinkedService):
+    """Linked service for Google Cloud Storage.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param connect_via: The integration runtime reference.
+    :type connect_via:
+     ~azure.mgmt.datafactory.models.IntegrationRuntimeReference
+    :param description: Linked service description.
+    :type description: str
+    :param parameters: Parameters for linked service.
+    :type parameters: dict[str,
+     ~azure.mgmt.datafactory.models.ParameterSpecification]
+    :param annotations: List of tags that can be used for describing the
+     linked service.
+    :type annotations: list[object]
+    :param type: Required. Constant filled by server.
+    :type type: str
+    :param access_key_id: The access key identifier of the Google Cloud
+     Storage Identity and Access Management (IAM) user. Type: string (or
+     Expression with resultType string).
+    :type access_key_id: object
+    :param secret_access_key: The secret access key of the Google Cloud
+     Storage Identity and Access Management (IAM) user.
+    :type secret_access_key: ~azure.mgmt.datafactory.models.SecretBase
+    :param service_url: This value specifies the endpoint to access with the
+     Google Cloud Storage Connector. This is an optional property; change it
+     only if you want to try a different service endpoint or want to switch
+     between https and http. Type: string (or Expression with resultType
+     string).
+    :type service_url: object
+    :param encrypted_credential: The encrypted credential used for
+     authentication. Credentials are encrypted using the integration runtime
+     credential manager. Type: string (or Expression with resultType string).
+    :type encrypted_credential: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'connect_via': {'key': 'connectVia', 'type': 'IntegrationRuntimeReference'},
+        'description': {'key': 'description', 'type': 'str'},
+        'parameters': {'key': 'parameters', 'type': '{ParameterSpecification}'},
+        'annotations': {'key': 'annotations', 'type': '[object]'},
+        'type': {'key': 'type', 'type': 'str'},
+        'access_key_id': {'key': 'typeProperties.accessKeyId', 'type': 'object'},
+        'secret_access_key': {'key': 'typeProperties.secretAccessKey', 'type': 'SecretBase'},
+        'service_url': {'key': 'typeProperties.serviceUrl', 'type': 'object'},
+        'encrypted_credential': {'key': 'typeProperties.encryptedCredential', 'type': 'object'},
+    }
+
+    def __init__(self, **kwargs):
+        super(GoogleCloudStorageLinkedService, self).__init__(**kwargs)
+        self.access_key_id = kwargs.get('access_key_id', None)
+        self.secret_access_key = kwargs.get('secret_access_key', None)
+        self.service_url = kwargs.get('service_url', None)
+        self.encrypted_credential = kwargs.get('encrypted_credential', None)
+        self.type = 'GoogleCloudStorage'
+
+
+class GoogleCloudStorageLocation(DatasetLocation):
+    """The location of Google Cloud Storage dataset.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param type: Required. Type of dataset storage location.
+    :type type: str
+    :param folder_path: Specify the folder path of dataset. Type: string (or
+     Expression with resultType string)
+    :type folder_path: object
+    :param file_name: Specify the file name of dataset. Type: string (or
+     Expression with resultType string).
+    :type file_name: object
+    :param bucket_name: Specify the bucketName of Google Cloud Storage. Type:
+     string (or Expression with resultType string)
+    :type bucket_name: object
+    :param version: Specify the version of Google Cloud Storage. Type: string
+     (or Expression with resultType string).
+    :type version: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'folder_path': {'key': 'folderPath', 'type': 'object'},
+        'file_name': {'key': 'fileName', 'type': 'object'},
+        'bucket_name': {'key': 'bucketName', 'type': 'object'},
+        'version': {'key': 'version', 'type': 'object'},
+    }
+
+    def __init__(self, **kwargs):
+        super(GoogleCloudStorageLocation, self).__init__(**kwargs)
+        self.bucket_name = kwargs.get('bucket_name', None)
+        self.version = kwargs.get('version', None)
+
+
+class GoogleCloudStorageReadSettings(StoreReadSettings):
+    """Google Cloud Storage read settings.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param additional_properties: Unmatched properties from the message are
+     deserialized this collection
+    :type additional_properties: dict[str, object]
+    :param type: Required. The read setting type.
+    :type type: str
+    :param max_concurrent_connections: The maximum concurrent connection count
+     for the source data store. Type: integer (or Expression with resultType
+     integer).
+    :type max_concurrent_connections: object
+    :param recursive: If true, files under the folder path will be read
+     recursively. Default is true. Type: boolean (or Expression with resultType
+     boolean).
+    :type recursive: object
+    :param wildcard_folder_path: Google Cloud Storage wildcardFolderPath.
+     Type: string (or Expression with resultType string).
+    :type wildcard_folder_path: object
+    :param wildcard_file_name: Google Cloud Storage wildcardFileName. Type:
+     string (or Expression with resultType string).
+    :type wildcard_file_name: object
+    :param prefix: The prefix filter for the Google Cloud Storage object name.
+     Type: string (or Expression with resultType string).
+    :type prefix: object
+    :param enable_partition_discovery: Indicates whether to enable partition
+     discovery.
+    :type enable_partition_discovery: bool
+    :param modified_datetime_start: The start of file's modified datetime.
+     Type: string (or Expression with resultType string).
+    :type modified_datetime_start: object
+    :param modified_datetime_end: The end of file's modified datetime. Type:
+     string (or Expression with resultType string).
+    :type modified_datetime_end: object
+    """
+
+    _validation = {
+        'type': {'required': True},
+    }
+
+    _attribute_map = {
+        'additional_properties': {'key': '', 'type': '{object}'},
+        'type': {'key': 'type', 'type': 'str'},
+        'max_concurrent_connections': {'key': 'maxConcurrentConnections', 'type': 'object'},
+        'recursive': {'key': 'recursive', 'type': 'object'},
+        'wildcard_folder_path': {'key': 'wildcardFolderPath', 'type': 'object'},
+        'wildcard_file_name': {'key': 'wildcardFileName', 'type': 'object'},
+        'prefix': {'key': 'prefix', 'type': 'object'},
+        'enable_partition_discovery': {'key': 'enablePartitionDiscovery', 'type': 'bool'},
+        'modified_datetime_start': {'key': 'modifiedDatetimeStart', 'type': 'object'},
+        'modified_datetime_end': {'key': 'modifiedDatetimeEnd', 'type': 'object'},
+    }
+
+    def __init__(self, **kwargs):
+        super(GoogleCloudStorageReadSettings, self).__init__(**kwargs)
+        self.recursive = kwargs.get('recursive', None)
+        self.wildcard_folder_path = kwargs.get('wildcard_folder_path', None)
+        self.wildcard_file_name = kwargs.get('wildcard_file_name', None)
+        self.prefix = kwargs.get('prefix', None)
+        self.enable_partition_discovery = kwargs.get('enable_partition_discovery', None)
+        self.modified_datetime_start = kwargs.get('modified_datetime_start', None)
+        self.modified_datetime_end = kwargs.get('modified_datetime_end', None)
 
 
 class GreenplumLinkedService(LinkedService):
