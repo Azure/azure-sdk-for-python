@@ -92,6 +92,14 @@ class DocumentType(str, Enum):
     credit_note = "CreditNote"
 
 
+class PaymentMethodFamily(str, Enum):
+
+    credits = "Credits"
+    check_wire = "CheckWire"
+    credit_card = "CreditCard"
+    none = "None"
+
+
 class ProductStatusType(str, Enum):
 
     active = "Active"
