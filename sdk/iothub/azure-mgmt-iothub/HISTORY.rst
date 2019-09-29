@@ -3,6 +3,13 @@
 Release History
 ===============
 
+0.9.0rc1 (2019-09-29)
++++++++++++++++++++++
+
+**Features**
+
+- Model IotHubProperties has a new parameter locations
+
 0.8.2 (2019-05-15)
 ++++++++++++++++++
 
