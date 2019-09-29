@@ -10,6 +10,7 @@
 # --------------------------------------------------------------------------
 
 from msrest.serialization import Model
+from msrest.exceptions import HttpOperationError
 
 
 class AccountSasParameters(Model):
@@ -315,6 +316,8 @@ class BlobServiceProperties(Resource):
     :param automatic_snapshot_policy_enabled: Automatic Snapshot is enabled if
      set to true.
     :type automatic_snapshot_policy_enabled: bool
+    :param change_feed: The blob service properties for change feed events.
+    :type change_feed: ~azure.mgmt.storage.v2019_04_01.models.ChangeFeed
     """
 
     _validation = {
@@ -331,14 +334,33 @@ class BlobServiceProperties(Resource):
         'default_service_version': {'key': 'properties.defaultServiceVersion', 'type': 'str'},
         'delete_retention_policy': {'key': 'properties.deleteRetentionPolicy', 'type': 'DeleteRetentionPolicy'},
         'automatic_snapshot_policy_enabled': {'key': 'properties.automaticSnapshotPolicyEnabled', 'type': 'bool'},
+        'change_feed': {'key': 'properties.changeFeed', 'type': 'ChangeFeed'},
     }
 
-    def __init__(self, *, cors=None, default_service_version: str=None, delete_retention_policy=None, automatic_snapshot_policy_enabled: bool=None, **kwargs) -> None:
+    def __init__(self, *, cors=None, default_service_version: str=None, delete_retention_policy=None, automatic_snapshot_policy_enabled: bool=None, change_feed=None, **kwargs) -> None:
         super(BlobServiceProperties, self).__init__(**kwargs)
         self.cors = cors
         self.default_service_version = default_service_version
         self.delete_retention_policy = delete_retention_policy
         self.automatic_snapshot_policy_enabled = automatic_snapshot_policy_enabled
+        self.change_feed = change_feed
+
+
+class ChangeFeed(Model):
+    """The blob service properties for change feed events.
+
+    :param enabled: Indicates whether change feed event logging is enabled for
+     the Blob service.
+    :type enabled: bool
+    """
+
+    _attribute_map = {
+        'enabled': {'key': 'enabled', 'type': 'bool'},
+    }
+
+    def __init__(self, *, enabled: bool=None, **kwargs) -> None:
+        super(ChangeFeed, self).__init__(**kwargs)
+        self.enabled = enabled
 
 
 class CheckNameAvailabilityResult(Model):
@@ -380,11 +402,62 @@ class CheckNameAvailabilityResult(Model):
 
 
 class CloudError(Model):
-    """CloudError.
+    """An error response from the Storage service.
+
+    :param error:
+    :type error: ~azure.mgmt.storage.v2019_04_01.models.CloudErrorBody
     """
 
     _attribute_map = {
+        'error': {'key': 'error', 'type': 'CloudErrorBody'},
     }
+
+    def __init__(self, *, error=None, **kwargs) -> None:
+        super(CloudError, self).__init__(**kwargs)
+        self.error = error
+
+
+class CloudErrorException(HttpOperationError):
+    """Server responsed with exception of type: 'CloudError'.
+
+    :param deserialize: A deserializer
+    :param response: Server response to be deserialized.
+    """
+
+    def __init__(self, deserialize, response, *args):
+
+        super(CloudErrorException, self).__init__(deserialize, response, 'CloudError', *args)
+
+
+class CloudErrorBody(Model):
+    """An error response from the Storage service.
+
+    :param code: An identifier for the error. Codes are invariant and are
+     intended to be consumed programmatically.
+    :type code: str
+    :param message: A message describing the error, intended to be suitable
+     for display in a user interface.
+    :type message: str
+    :param target: The target of the particular error. For example, the name
+     of the property in error.
+    :type target: str
+    :param details: A list of additional details about the error.
+    :type details: list[~azure.mgmt.storage.v2019_04_01.models.CloudErrorBody]
+    """
+
+    _attribute_map = {
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
+        'target': {'key': 'target', 'type': 'str'},
+        'details': {'key': 'details', 'type': '[CloudErrorBody]'},
+    }
+
+    def __init__(self, *, code: str=None, message: str=None, target: str=None, details=None, **kwargs) -> None:
+        super(CloudErrorBody, self).__init__(**kwargs)
+        self.code = code
+        self.message = message
+        self.target = target
+        self.details = details
 
 
 class CorsRule(Model):
@@ -488,20 +561,20 @@ class DateAfterCreation(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param days_after_creation_greater_than: Required. Integer value
-     indicating the age in days after creation
-    :type days_after_creation_greater_than: int
+    :param days_after_creation_greater_than: Required. Value indicating the
+     age in days after creation
+    :type days_after_creation_greater_than: float
     """
 
     _validation = {
-        'days_after_creation_greater_than': {'required': True, 'minimum': 0},
+        'days_after_creation_greater_than': {'required': True, 'minimum': 0, 'multiple': 1},
     }
 
     _attribute_map = {
-        'days_after_creation_greater_than': {'key': 'daysAfterCreationGreaterThan', 'type': 'int'},
+        'days_after_creation_greater_than': {'key': 'daysAfterCreationGreaterThan', 'type': 'float'},
     }
 
-    def __init__(self, *, days_after_creation_greater_than: int, **kwargs) -> None:
+    def __init__(self, *, days_after_creation_greater_than: float, **kwargs) -> None:
         super(DateAfterCreation, self).__init__(**kwargs)
         self.days_after_creation_greater_than = days_after_creation_greater_than
 
@@ -511,20 +584,20 @@ class DateAfterModification(Model):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param days_after_modification_greater_than: Required. Integer value
-     indicating the age in days after last modification
-    :type days_after_modification_greater_than: int
+    :param days_after_modification_greater_than: Required. Value indicating
+     the age in days after last modification
+    :type days_after_modification_greater_than: float
     """
 
     _validation = {
-        'days_after_modification_greater_than': {'required': True, 'minimum': 0},
+        'days_after_modification_greater_than': {'required': True, 'minimum': 0, 'multiple': 1},
     }
 
     _attribute_map = {
-        'days_after_modification_greater_than': {'key': 'daysAfterModificationGreaterThan', 'type': 'int'},
+        'days_after_modification_greater_than': {'key': 'daysAfterModificationGreaterThan', 'type': 'float'},
     }
 
-    def __init__(self, *, days_after_modification_greater_than: int, **kwargs) -> None:
+    def __init__(self, *, days_after_modification_greater_than: float, **kwargs) -> None:
         super(DateAfterModification, self).__init__(**kwargs)
         self.days_after_modification_greater_than = days_after_modification_greater_than
 
@@ -724,6 +797,176 @@ class Endpoints(Model):
         self.file = None
         self.web = None
         self.dfs = None
+
+
+class FileServiceItems(Model):
+    """FileServiceItems.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar value: List of file services returned.
+    :vartype value:
+     list[~azure.mgmt.storage.v2019_04_01.models.FileServiceProperties]
+    """
+
+    _validation = {
+        'value': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'value': {'key': 'value', 'type': '[FileServiceProperties]'},
+    }
+
+    def __init__(self, **kwargs) -> None:
+        super(FileServiceItems, self).__init__(**kwargs)
+        self.value = None
+
+
+class FileServiceProperties(Resource):
+    """The properties of File services in storage account.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :vartype type: str
+    :param cors: Specifies CORS rules for the File service. You can include up
+     to five CorsRule elements in the request. If no CorsRule elements are
+     included in the request body, all CORS rules will be deleted, and CORS
+     will be disabled for the File service.
+    :type cors: ~azure.mgmt.storage.v2019_04_01.models.CorsRules
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'cors': {'key': 'properties.cors', 'type': 'CorsRules'},
+    }
+
+    def __init__(self, *, cors=None, **kwargs) -> None:
+        super(FileServiceProperties, self).__init__(**kwargs)
+        self.cors = cors
+
+
+class FileShare(AzureEntityResource):
+    """Properties of the file share, including Id, resource name, resource type,
+    Etag.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :vartype type: str
+    :ivar etag: Resource Etag.
+    :vartype etag: str
+    :ivar last_modified_time: Returns the date and time the share was last
+     modified.
+    :vartype last_modified_time: datetime
+    :param metadata: A name-value pair to associate with the share as
+     metadata.
+    :type metadata: dict[str, str]
+    :param share_quota: The maximum size of the share, in gigabytes. Must be
+     greater than 0, and less than or equal to 5TB (5120).
+    :type share_quota: int
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'etag': {'readonly': True},
+        'last_modified_time': {'readonly': True},
+        'share_quota': {'maximum': 5120, 'minimum': 1},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
+        'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
+        'metadata': {'key': 'properties.metadata', 'type': '{str}'},
+        'share_quota': {'key': 'properties.shareQuota', 'type': 'int'},
+    }
+
+    def __init__(self, *, metadata=None, share_quota: int=None, **kwargs) -> None:
+        super(FileShare, self).__init__(**kwargs)
+        self.last_modified_time = None
+        self.metadata = metadata
+        self.share_quota = share_quota
+
+
+class FileShareItem(AzureEntityResource):
+    """The file share properties be listed out.
+
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
+    :ivar id: Fully qualified resource Id for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}
+    :vartype id: str
+    :ivar name: The name of the resource
+    :vartype name: str
+    :ivar type: The type of the resource. Ex-
+     Microsoft.Compute/virtualMachines or Microsoft.Storage/storageAccounts.
+    :vartype type: str
+    :ivar etag: Resource Etag.
+    :vartype etag: str
+    :ivar last_modified_time: Returns the date and time the share was last
+     modified.
+    :vartype last_modified_time: datetime
+    :param metadata: A name-value pair to associate with the share as
+     metadata.
+    :type metadata: dict[str, str]
+    :param share_quota: The maximum size of the share, in gigabytes. Must be
+     greater than 0, and less than or equal to 5TB (5120).
+    :type share_quota: int
+    """
+
+    _validation = {
+        'id': {'readonly': True},
+        'name': {'readonly': True},
+        'type': {'readonly': True},
+        'etag': {'readonly': True},
+        'last_modified_time': {'readonly': True},
+        'share_quota': {'maximum': 5120, 'minimum': 1},
+    }
+
+    _attribute_map = {
+        'id': {'key': 'id', 'type': 'str'},
+        'name': {'key': 'name', 'type': 'str'},
+        'type': {'key': 'type', 'type': 'str'},
+        'etag': {'key': 'etag', 'type': 'str'},
+        'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
+        'metadata': {'key': 'properties.metadata', 'type': '{str}'},
+        'share_quota': {'key': 'properties.shareQuota', 'type': 'int'},
+    }
+
+    def __init__(self, *, metadata=None, share_quota: int=None, **kwargs) -> None:
+        super(FileShareItem, self).__init__(**kwargs)
+        self.last_modified_time = None
+        self.metadata = metadata
+        self.share_quota = share_quota
 
 
 class GeoReplicationStats(Model):
@@ -2226,9 +2469,8 @@ class StorageAccountCreateParameters(Model):
      at this time. To clear the existing custom domain, use an empty string for
      the custom domain name property.
     :type custom_domain: ~azure.mgmt.storage.v2019_04_01.models.CustomDomain
-    :param encryption: Provides the encryption settings on the account. If
-     left unspecified the account encryption settings will remain the same. The
-     default setting is unencrypted.
+    :param encryption: Not applicable. Azure Storage encryption is enabled for
+     all storage accounts and cannot be disabled.
     :type encryption: ~azure.mgmt.storage.v2019_04_01.models.Encryption
     :param network_rule_set: Network rule set
     :type network_rule_set:
