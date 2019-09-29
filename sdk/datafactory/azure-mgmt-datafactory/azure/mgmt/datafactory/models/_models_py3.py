@@ -6391,6 +6391,9 @@ class BlobEventsTrigger(MultiplePipelineTrigger):
      fire the trigger for blobs named boxes in a december folder. At least one
      of these must be provided: blobPathBeginsWith, blobPathEndsWith.
     :type blob_path_ends_with: str
+    :param ignore_empty_blobs: If set to true, blobs with zero bytes will be
+     ignored.
+    :type ignore_empty_blobs: bool
     :param events: Required. The type of events that cause this trigger to
      fire.
     :type events: list[str or ~azure.mgmt.datafactory.models.BlobEventTypes]
@@ -6414,14 +6417,16 @@ class BlobEventsTrigger(MultiplePipelineTrigger):
         'pipelines': {'key': 'pipelines', 'type': '[TriggerPipelineReference]'},
         'blob_path_begins_with': {'key': 'typeProperties.blobPathBeginsWith', 'type': 'str'},
         'blob_path_ends_with': {'key': 'typeProperties.blobPathEndsWith', 'type': 'str'},
+        'ignore_empty_blobs': {'key': 'typeProperties.ignoreEmptyBlobs', 'type': 'bool'},
         'events': {'key': 'typeProperties.events', 'type': '[str]'},
         'scope': {'key': 'typeProperties.scope', 'type': 'str'},
     }
 
-    def __init__(self, *, events, scope: str, additional_properties=None, description: str=None, annotations=None, pipelines=None, blob_path_begins_with: str=None, blob_path_ends_with: str=None, **kwargs) -> None:
+    def __init__(self, *, events, scope: str, additional_properties=None, description: str=None, annotations=None, pipelines=None, blob_path_begins_with: str=None, blob_path_ends_with: str=None, ignore_empty_blobs: bool=None, **kwargs) -> None:
         super(BlobEventsTrigger, self).__init__(additional_properties=additional_properties, description=description, annotations=annotations, pipelines=pipelines, **kwargs)
         self.blob_path_begins_with = blob_path_begins_with
         self.blob_path_ends_with = blob_path_ends_with
+        self.ignore_empty_blobs = ignore_empty_blobs
         self.events = events
         self.scope = scope
         self.type = 'BlobEventsTrigger'
