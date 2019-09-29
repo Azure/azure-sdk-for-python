@@ -60,6 +60,9 @@ try:
     from ._models_py3 import AzureDataLakeStoreSink
     from ._models_py3 import AzureDataLakeStoreSource
     from ._models_py3 import AzureDataLakeStoreWriteSettings
+    from ._models_py3 import AzureFileStorageLinkedService
+    from ._models_py3 import AzureFileStorageLocation
+    from ._models_py3 import AzureFileStorageReadSettings
     from ._models_py3 import AzureFunctionActivity
     from ._models_py3 import AzureFunctionLinkedService
     from ._models_py3 import AzureKeyVaultLinkedService
@@ -242,6 +245,9 @@ try:
     from ._models_py3 import GoogleBigQueryLinkedService
     from ._models_py3 import GoogleBigQueryObjectDataset
     from ._models_py3 import GoogleBigQuerySource
+    from ._models_py3 import GoogleCloudStorageLinkedService
+    from ._models_py3 import GoogleCloudStorageLocation
+    from ._models_py3 import GoogleCloudStorageReadSettings
     from ._models_py3 import GreenplumLinkedService
     from ._models_py3 import GreenplumSource
     from ._models_py3 import GreenplumTableDataset
@@ -611,6 +617,9 @@ except (SyntaxError, ImportError):
     from ._models import AzureDataLakeStoreSink
     from ._models import AzureDataLakeStoreSource
     from ._models import AzureDataLakeStoreWriteSettings
+    from ._models import AzureFileStorageLinkedService
+    from ._models import AzureFileStorageLocation
+    from ._models import AzureFileStorageReadSettings
     from ._models import AzureFunctionActivity
     from ._models import AzureFunctionLinkedService
     from ._models import AzureKeyVaultLinkedService
@@ -793,6 +802,9 @@ except (SyntaxError, ImportError):
     from ._models import GoogleBigQueryLinkedService
     from ._models import GoogleBigQueryObjectDataset
     from ._models import GoogleBigQuerySource
+    from ._models import GoogleCloudStorageLinkedService
+    from ._models import GoogleCloudStorageLocation
+    from ._models import GoogleCloudStorageReadSettings
     from ._models import GreenplumLinkedService
     from ._models import GreenplumSource
     from ._models import GreenplumTableDataset
@@ -1249,6 +1261,9 @@ __all__ = [
     'AzureDataLakeStoreSink',
     'AzureDataLakeStoreSource',
     'AzureDataLakeStoreWriteSettings',
+    'AzureFileStorageLinkedService',
+    'AzureFileStorageLocation',
+    'AzureFileStorageReadSettings',
     'AzureFunctionActivity',
     'AzureFunctionLinkedService',
     'AzureKeyVaultLinkedService',
@@ -1431,6 +1446,9 @@ __all__ = [
     'GoogleBigQueryLinkedService',
     'GoogleBigQueryObjectDataset',
     'GoogleBigQuerySource',
+    'GoogleCloudStorageLinkedService',
+    'GoogleCloudStorageLocation',
+    'GoogleCloudStorageReadSettings',
     'GreenplumLinkedService',
     'GreenplumSource',
     'GreenplumTableDataset',
