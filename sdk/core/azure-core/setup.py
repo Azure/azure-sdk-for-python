@@ -62,10 +62,10 @@ setup(
     ]),
     install_requires=[
         'requests>=2.18.4',
-        'enum34>=1.0.4',
-        'typing',
     ],
     extras_require={
         ":python_version<'3.0'": ['azure-nspkg'],
+        ":python_version<'3.4'": ['enum34>=1.0.4'],
+        ":python_version<'3.5'": ['typing'],
     }
 )
