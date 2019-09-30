@@ -861,7 +861,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase):
         request = self._client._client.post(
             url='https://{}/?comp=batch'.format(self.primary_hostname),
             headers={
-                'x-ms-version': "2019-02-02"
+                'x-ms-version': self._config.version
             }
         )
 
