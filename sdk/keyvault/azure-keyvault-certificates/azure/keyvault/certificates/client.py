@@ -18,7 +18,7 @@ from .models import (
     CertificatePolicy,
     DeletedCertificate,
     Issuer,
-    IssuerBase,
+    IssuerProperties,
     Contact,
     CertificateOperation,
     LifetimeAction,
@@ -1083,7 +1083,7 @@ class CertificateClient(KeyVaultClientBase):
 
     @distributed_trace
     def list_issuers(self, **kwargs):
-        # type: (**Any) -> Iterable[IssuerBase]
+        # type: (**Any) -> Iterable[IssuerProperties]
         """List certificate issuers for the key vault.
 
         Returns the set of certificate issuer resources in the key
@@ -1106,6 +1106,6 @@ class CertificateClient(KeyVaultClientBase):
         return self._client.get_certificate_issuers(
             vault_base_url=self.vault_url,
             maxresults=max_page_size,
-            cls=lambda objs: [IssuerBase._from_issuer_item(issuer_item=x) for x in objs],
+            cls=lambda objs: [IssuerProperties._from_issuer_item(issuer_item=x) for x in objs],
             **kwargs
         )

@@ -950,10 +950,11 @@ class Contact(object):
         return self._phone
 
 
-class IssuerBase(object):
-    """The base for the issuer containing the issuer metadata.
+class IssuerProperties(object):
+    """The properties of an issuer containing the issuer metadata.
 
     :param str issuer_id: the ID of the issuer.
+    :param str provider: The issuer provider.
     """
     def __init__(self, issuer_id=None, provider=None):
         # type: (Optional[str], Optional[str]) -> None
@@ -963,8 +964,8 @@ class IssuerBase(object):
 
     @classmethod
     def _from_issuer_item(cls, issuer_item):
-        # type: (models.CertificateIssuerItem) -> IssuerBase
-        """Construct a IssuerBase from an autorest-generated CertificateIssuerItem"""
+        # type: (models.CertificateIssuerItem) -> IssuerProperties
+        """Construct a IssuerProperties from an autorest-generated CertificateIssuerItem"""
         return cls(issuer_id=issuer_item.id, provider=issuer_item.provider)
 
     @property
@@ -996,13 +997,12 @@ class IssuerBase(object):
         return self._vault_id.vault_url
 
 
-class Issuer(IssuerBase):
+class Issuer(object):
     """The issuer for a Key Vault certificate.
 
+    :param properties:
     :param attributes: Attributes of the issuer object. Only populated by server.
     :type attributes: ~azure.keyvault.v7_0.models.IssuerAttributes
-    :param str provider: The issuer provider.
-    :param str issuer_id: The ID of the issuer.
     :param str account_id: The username / account name / account id.
     :param str password: The password / secret / account key.
     :param str organization_id: The ID of the organization.
@@ -1011,17 +1011,15 @@ class Issuer(IssuerBase):
     """
     def __init__(
         self,
+        properties,
         attributes=None,  # type: Optional[models.IssuerAttributes]
-        provider=None,  # type: Optional[str]
-        issuer_id=None,  # type: Optional[str]
         account_id=None,  # type: Optional[str]
         password=None,  # type: Optional[str]
         organization_id=None,  # type: Optional[str]
-        admin_details=None,  # type: Optional[List[AdministratorDetails]]
-        **kwargs  # type: **Any
+        admin_details=None  # type: Optional[List[AdministratorDetails]]
     ):
         # type: (...) -> None
-        super(Issuer, self).__init__(issuer_id=issuer_id, provider=provider, **kwargs)
+        self._properties = properties
         self._attributes = attributes
         self._account_id = account_id
         self._password = password
@@ -1040,14 +1038,44 @@ class Issuer(IssuerBase):
             for admin_detail in admin_details_service:
                 admin_details.append(AdministratorDetails._from_admin_details_bundle(admin_detail))
         return cls(
+            properties=IssuerProperties._from_issuer_item(issuer_bundle),  # pylint: disable=protected-access
             attributes=issuer_bundle.attributes,
-            issuer_id=issuer_bundle.id,
-            provider=issuer_bundle.provider,
             account_id=issuer_bundle.credentials.account_id if issuer_bundle.credentials else None,
             password=issuer_bundle.credentials.password if issuer_bundle.credentials else None,
             organization_id=issuer_bundle.organization_details.id if issuer_bundle.organization_details else None,
             admin_details=admin_details
         )
+
+    @property
+    def id(self):
+        # type: () -> str
+        """:rtype: str"""
+        return self._properties.id
+
+    @property
+    def name(self):
+        # type: () -> str
+        # Issuer name is listed under version under vault_id
+        """:rtype: str"""
+        return self._properties.name
+
+    @property
+    def vault_url(self):
+        # type: () -> str
+        """The name of the vault with this issuer.
+
+        :rtype: str
+        """
+        return self._properties.vault_url
+
+    @property
+    def properties(self):
+        # type: () -> IssuerProperties
+        """The properties of the issuer.
+
+        :rtype: ~azure.keyvault.certificates.models.IssuerProperties
+        """
+        return self._properties
 
     @property
     def enabled(self):

@@ -21,7 +21,7 @@ from azure.keyvault.certificates.models import(
     CertificateBase,
     Contact,
     Issuer,
-    IssuerBase,
+    IssuerProperties,
     KeyProperties,
     SecretContentType,
     LifetimeAction,
@@ -1080,7 +1080,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         return Issuer._from_issuer_bundle(issuer_bundle=issuer_bundle)
 
     @distributed_trace
-    def list_issuers(self, **kwargs: "**Any") -> AsyncIterable[IssuerBase]:
+    def list_issuers(self, **kwargs: "**Any") -> AsyncIterable[IssuerProperties]:
         """List certificate issuers for the key vault.
 
         Returns the set of certificate issuer resources in the key
@@ -1103,6 +1103,6 @@ class CertificateClient(AsyncKeyVaultClientBase):
         return self._client.get_certificate_issuers(
             vault_base_url=self.vault_url,
             maxresults=max_page_size,
-            cls=lambda objs: [IssuerBase._from_issuer_item(x) for x in objs],
+            cls=lambda objs: [IssuerProperties._from_issuer_item(x) for x in objs],
             **kwargs
         )
