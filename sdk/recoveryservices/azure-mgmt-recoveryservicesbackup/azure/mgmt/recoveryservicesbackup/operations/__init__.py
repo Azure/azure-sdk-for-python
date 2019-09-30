@@ -10,6 +10,7 @@
 # --------------------------------------------------------------------------
 
 from ._protected_items_operations import ProtectedItemsOperations
+from ._protected_item_operation_results_operations import ProtectedItemOperationResultsOperations
 from ._recovery_points_operations import RecoveryPointsOperations
 from ._restores_operations import RestoresOperations
 from ._backup_jobs_operations import BackupJobsOperations
@@ -24,7 +25,6 @@ from ._backup_policies_operations import BackupPoliciesOperations
 from ._protection_policies_operations import ProtectionPoliciesOperations
 from ._backup_protection_intent_operations import BackupProtectionIntentOperations
 from ._backup_usage_summaries_operations import BackupUsageSummariesOperations
-from ._protected_item_operation_results_operations import ProtectedItemOperationResultsOperations
 from ._operation_operations import OperationOperations
 from ._backup_resource_vault_configs_operations import BackupResourceVaultConfigsOperations
 from ._backup_engines_operations import BackupEnginesOperations
@@ -50,6 +50,7 @@ from ._operations import Operations
 
 __all__ = [
     'ProtectedItemsOperations',
+    'ProtectedItemOperationResultsOperations',
     'RecoveryPointsOperations',
     'RestoresOperations',
     'BackupJobsOperations',
@@ -64,7 +65,6 @@ __all__ = [
     'ProtectionPoliciesOperations',
     'BackupProtectionIntentOperations',
     'BackupUsageSummariesOperations',
-    'ProtectedItemOperationResultsOperations',
     'OperationOperations',
     'BackupResourceVaultConfigsOperations',
     'BackupEnginesOperations',
