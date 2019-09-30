@@ -42,16 +42,19 @@ async def test_uses_msal_correctly():
 
 
 @pytest.mark.asyncio
-async def test_respects_authority():
-    my_authority = "my.authority.com"
+async def test_request_url():
+    authority = "authority.com"
+    tenant = "expected_tenant"
 
-    def check_url(url, **kwargs):
-        nonlocal authority_respected
-        authority_respected = url.startswith("https://" + my_authority)
+    def validate_url(url, **kwargs):
+        scheme, netloc, path, _, _, _ = urlparse(url)
+        assert scheme == "https"
+        assert netloc == authority
+        assert path.startswith("/" + tenant)
 
-    transport = Mock(side_effect=check_url)
+    transport = Mock(side_effect=validate_url)
     session = Mock(get=transport, post=transport)
-    client = MockClient("client id", "tenant id", session=session, authority=my_authority)
+    client = MockClient("client id", "tenant id", session=session, authority=authority)
 
     coros = [
         client.obtain_token_by_authorization_code("code", "uri", "scope"),
@@ -59,8 +62,6 @@ async def test_respects_authority():
     ]
 
     for coro in coros:
-        authority_respected = False
         with pytest.raises(ClientAuthenticationError):
             # raises because the mock transport returns nothing
             await coro
-        assert authority_respected

@@ -7,6 +7,9 @@ import functools
 from azure.core.exceptions import ClientAuthenticationError
 from azure.identity._internal.aad_client import AadClient
 import pytest
+from six.moves.urllib_parse import urlparse
+
+from helpers import mock_response
 
 try:
     from unittest.mock import Mock
@@ -95,18 +98,19 @@ def test_exceptions_do_not_expose_secrets():
     assert_secrets_not_exposed()
 
 
-def test_respects_authority():
-    my_authority = "my.authority.com"
+def test_request_url():
+    authority = "authority.com"
+    tenant = "expected_tenant"
 
-    class Authority:
-        respected = False
+    def validate_url(url, **kwargs):
+        scheme, netloc, path, _, _, _ = urlparse(url)
+        assert scheme == "https"
+        assert netloc == authority
+        assert path.startswith("/" + tenant)
 
-    def check_url(url, **kwargs):
-        Authority.respected = url.startswith("https://" + my_authority)
-
-    transport = Mock(side_effect=check_url)
+    transport = Mock(side_effect=validate_url)
     session = Mock(get=transport, post=transport)
-    client = MockClient("client id", "tenant id", session=session, authority=my_authority)
+    client = MockClient("client id", tenant, session=session, authority=authority)
 
     fns = [
         functools.partial(client.obtain_token_by_authorization_code, "code", "uri", "scope"),
@@ -114,8 +118,9 @@ def test_respects_authority():
     ]
 
     for fn in fns:
-        Authority.respected = False
         with pytest.raises(ClientAuthenticationError):
             # raises because the mock transport returns nothing
             fn()
-        assert Authority.respected
+
+if __name__ == "__main__":
+    test_request_url()
