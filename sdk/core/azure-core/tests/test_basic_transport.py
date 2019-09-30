@@ -4,6 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 from six.moves.http_client import HTTPConnection
+from collections import OrderedDict
 import time
 import sys
 
@@ -32,11 +33,12 @@ def test_http_request_serialization():
     request = HttpRequest(
         "DELETE",
         "/container0/blob0",
-        headers={
+        # Use OrderedDict to get consistent test result on 3.5 where order is not guaranted
+        headers=OrderedDict({
             "x-ms-date": "Thu, 14 Jun 2018 16:46:54 GMT",
             "Authorization": "SharedKey account:G4jjBXA7LI/RnWKIOQ8i9xH4p76pAQ+4Fs4R1VxasaE=",
             "Content-Length": "0",
-        }
+        })
     )
     serialized = request.serialize()
 
