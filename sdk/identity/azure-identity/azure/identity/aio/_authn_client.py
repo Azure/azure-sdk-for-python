@@ -30,7 +30,6 @@ class AsyncAuthnClient(AuthnClientBase):  # pylint:disable=async-client-bad-name
     # pylint:disable=missing-client-constructor-parameter-credential
     def __init__(
         self,
-        auth_url: str,
         config: "Optional[Configuration]" = None,
         policies: Optional[Iterable[HTTPPolicy]] = None,
         transport: Optional[AsyncHttpTransport] = None,
@@ -46,7 +45,7 @@ class AsyncAuthnClient(AuthnClientBase):  # pylint:disable=async-client-bad-name
         if not transport:
             transport = AsyncioRequestsTransport(**kwargs)
         self._pipeline = AsyncPipeline(transport=transport, policies=policies)
-        super(AsyncAuthnClient, self).__init__(auth_url, **kwargs)
+        super().__init__(**kwargs)
 
     async def request_token(
         self,

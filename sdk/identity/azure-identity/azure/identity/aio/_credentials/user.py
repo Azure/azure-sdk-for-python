@@ -5,7 +5,6 @@
 from typing import TYPE_CHECKING
 from azure.core.exceptions import ClientAuthenticationError
 
-from azure.identity._constants import Endpoints
 from ... import SharedTokenCacheCredential as SyncSharedTokenCacheCredential
 from .._authn_client import AsyncAuthnClient
 from .._internal.exception_wrapper import wrap_exceptions
@@ -37,6 +36,11 @@ class SharedTokenCacheCredential(SyncSharedTokenCacheCredential):
         :raises:
             :class:`azure.core.exceptions.ClientAuthenticationError` when the cache is unavailable or no access token
             can be acquired from it
+
+        Keyword arguments
+            - **authority**: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
+                the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities`
+                defines authorities for other clouds.
         """
 
         if not self._client:
@@ -50,4 +54,4 @@ class SharedTokenCacheCredential(SyncSharedTokenCacheCredential):
 
     @staticmethod
     def _get_auth_client(cache: "msal_extensions.FileTokenCache") -> "AuthnClientBase":
-        return AsyncAuthnClient(Endpoints.AAD_OAUTH2_V2_FORMAT.format("common"), cache=cache)
+        return AsyncAuthnClient(tenant="common", cache=cache)

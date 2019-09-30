@@ -10,7 +10,6 @@ from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 
 from .._authn_client import AuthnClient
-from .._constants import Endpoints
 from .._internal import PublicClientCredential, wrap_exceptions
 
 try:
@@ -112,6 +111,11 @@ class SharedTokenCacheCredential(object):
     :param str username:
         Username (typically an email address) of the user to authenticate as. This is required because the local cache
         may contain tokens for multiple identities.
+
+    Keyword arguments
+        - **authority**: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com', the
+            authority for Azure Public Cloud (which is the default). :class:`~azure.identity.KnownAuthorities` defines
+            authorities for other clouds.
     """
 
     def __init__(self, username, **kwargs):  # pylint:disable=unused-argument
@@ -166,7 +170,7 @@ class SharedTokenCacheCredential(object):
     @staticmethod
     def _get_auth_client(cache):
         # type: (msal_extensions.FileTokenCache) -> AuthnClientBase
-        return AuthnClient(Endpoints.AAD_OAUTH2_V2_FORMAT.format("common"), cache=cache)
+        return AuthnClient(tenant="common", cache=cache)
 
 
 class UsernamePasswordCredential(PublicClientCredential):
