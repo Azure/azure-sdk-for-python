@@ -181,6 +181,16 @@ class KeyProperties(object):
         """
         return self._tags
 
+    @property
+    def managed(self):
+        # type: () -> bool
+        """
+        Returns if the key's lifetime is managed by key vault
+
+        :rtype: bool
+        """
+        return self._managed
+
 
 class Key(object):
     """A key's attributes and cryptographic material"""
@@ -249,11 +259,10 @@ class DeletedKey(Key):
         key_material=None,  # type: _models.JsonWebKey
         deleted_date=None,  # type: Optional[datetime]
         recovery_id=None,  # type: Optional[str]
-        scheduled_purge_date=None,  # type: Optional[datetime]
-        **kwargs  # type: **Any
+        scheduled_purge_date=None  # type: Optional[datetime]
     ):
         # type: (...) -> None
-        super(DeletedKey, self).__init__(properties, key_material, **kwargs)
+        super(DeletedKey, self).__init__(properties, key_material)
         self._deleted_date = deleted_date
         self._recovery_id = recovery_id
         self._scheduled_purge_date = scheduled_purge_date
@@ -267,9 +276,7 @@ class DeletedKey(Key):
             key_material=deleted_key_bundle.key,
             deleted_date=deleted_key_bundle.deleted_date,
             recovery_id=deleted_key_bundle.recovery_id,
-            scheduled_purge_date=deleted_key_bundle.scheduled_purge_date,
-            managed=deleted_key_bundle.managed,
-            tags=deleted_key_bundle.tags,
+            scheduled_purge_date=deleted_key_bundle.scheduled_purge_date
         )
 
     @classmethod
@@ -280,9 +287,7 @@ class DeletedKey(Key):
             properties=KeyProperties._from_key_item(deleted_key_item),  #pylint: disable=protected-access
             deleted_date=deleted_key_item.deleted_date,
             recovery_id=deleted_key_item.recovery_id,
-            scheduled_purge_date=deleted_key_item.scheduled_purge_date,
-            managed=deleted_key_item.managed,
-            tags=deleted_key_item.tags,
+            scheduled_purge_date=deleted_key_item.scheduled_purge_date
         )
 
     @property

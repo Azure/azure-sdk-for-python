@@ -50,8 +50,11 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         create_certificate_poller = await certificate_client.create_certificate(name=cert_name, policy=cert_policy)
 
         # awaiting the certificate poller gives us the result of the long running operation
-        create_certificate_result = await create_certificate_poller
-        print(create_certificate_result)
+        certificate = await create_certificate_poller
+
+        print(certificate.id)
+        print(certificate.name)
+        print(certificate.policy.issuer_name)
 
         # [END create_certificate]
 
@@ -62,15 +65,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         print(certificate.id)
         print(certificate.name)
-        print(certificate.policy.key_properties.exportable)
-        print(certificate.policy.key_properties.key_type)
-        print(certificate.policy.key_properties.key_size)
-        print(certificate.policy.key_properties.reuse_key)
-        print(certificate.policy.content_type)
         print(certificate.policy.issuer_name)
-        print(certificate.policy.subject_name)
-        print(certificate.policy.san_dns_names)
-        print(certificate.policy.validity_in_months)
 
         # [END get_certificate]
         # [START update_certificate]
@@ -80,8 +75,8 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         updated_certificate = await certificate_client.update_certificate(certificate.name, tags=tags)
 
         print(updated_certificate.version)
-        print(updated_certificate.updated)
-        print(updated_certificate.tags)
+        print(updated_certificate.properties.updated)
+        print(updated_certificate.properties.tags)
 
         # [END update_certificate]
         # [START delete_certificate]
@@ -145,7 +140,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         async for certificate in certificate_versions:
             print(certificate.id)
-            print(certificate.updated)
+            print(certificate.properties.updated)
             print(certificate.version)
 
         # [END list_certificate_versions]
