@@ -8,10 +8,6 @@ from datetime import datetime
 import re
 from azure.core import MatchConditions
 
-def return_header(response, body, response_headers):
-    # pylint: disable=unused-argument
-    return response_headers
-
 def escape_reserved(value):
     """
     Reserved characters are star(*), comma(,) and backslash(\\)
@@ -37,19 +33,6 @@ def escape_and_tostr(value):
         return None
     value = escape_reserved(value)
     return ','.join(value)
-
-def dequote_etag(etag):
-    if not etag:
-        return etag
-    if etag.startswith('"') and etag.endswith('"'):
-        etag = etag[1:]
-        etag = etag[:-1]
-        return etag
-    if etag.startswith("'") and etag.endswith("'"):
-        etag = etag[1:]
-        etag = etag[:-1]
-        return etag
-    return etag
 
 def quote_etag(etag):
     if etag != "*" and etag is not None:

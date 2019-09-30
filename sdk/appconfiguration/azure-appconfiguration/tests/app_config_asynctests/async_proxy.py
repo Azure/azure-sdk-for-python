@@ -85,8 +85,3 @@ class AzureAppConfigurationClientProxy(object):
         return get_event_loop().run_until_complete(
             self.obj.clear_read_only(configuration_setting, **kwargs)
         )
-
-    def has_changed(self, configuration_setting, **kwargs):
-        return get_event_loop().run_until_complete(
-            self.obj.has_changed(configuration_setting, **kwargs)
-        )

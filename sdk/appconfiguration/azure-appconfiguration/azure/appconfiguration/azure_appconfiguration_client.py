@@ -26,8 +26,6 @@ from .azure_appconfiguration_credential import AppConfigConnectionStringCredenti
 from ._utils import (
     get_endpoint_from_connection_string,
     escape_and_tostr,
-    dequote_etag,
-    return_header,
     prep_if_match,
     prep_if_none_match,
 )
@@ -597,50 +595,3 @@ class AzureAppConfigurationClient:
             **kwargs
         )
         return ConfigurationSetting._from_key_value(key_value)
-
-    @distributed_trace
-    def has_changed(
-            self, configuration_setting, **kwargs
-    ):  # type: (ConfigurationSetting, dict) -> ConfigurationSetting
-
-        """Check if the configuration setting has changed or not
-
-        :param configuration_setting: the ConfigurationSetting to be read only clear
-        :type configuration_setting: :class:`ConfigurationSetting`
-        :keyword dict headers: if "headers" exists, its value (a dict) will be added to the http request header
-        :return: Return True if the configuration setting has changed. Or return False
-        :rtype: :class:`ConfigurationSetting`
-
-        Example
-
-        .. code-block:: python
-
-            config_setting = client.get_configuration_setting(
-                key="MyKey", label="MyLabel"
-            )
-
-            has_changed = client.has_changed(config_setting)
-        """
-        if not configuration_setting.key:
-            raise ValueError
-        error_map = {
-            404: ResourceNotFoundError,
-        }
-        try:
-            response_headers = self._impl.check_key_value(
-                key=configuration_setting.key,
-                label=configuration_setting.label,
-                cls=return_header,
-                error_map=error_map,
-                **kwargs
-            )
-        except ResourceNotFoundError:
-            if configuration_setting.etag:
-                return True
-            return  False
-
-        if not configuration_setting.etag:
-            return True
-        if configuration_setting.etag == dequote_etag(response_headers.get('ETag')):
-            return False
-        return True

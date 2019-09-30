@@ -381,12 +381,3 @@ class AppConfigurationClientTest(AzureAppConfigurationClientTestBase):
                 and to_set_kv.tags == set_kv.tags
                 and to_set_kv.etag != set_kv.etag
         )
-
-    def test_has_changed(self):
-        kv = self.test_config_setting
-        has_changed = self.get_config_client().has_changed(kv)
-        assert not has_changed
-        kv.value = kv.value + "a"
-        self.get_config_client().set_configuration_setting(kv)
-        has_changed = self.get_config_client().has_changed(kv)
-        assert has_changed
