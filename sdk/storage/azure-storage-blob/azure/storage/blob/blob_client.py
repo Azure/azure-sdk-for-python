@@ -23,11 +23,10 @@ from ._shared import encode_base64
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
 from ._shared.encryption import generate_blob_encryption_data
 from ._shared.uploads import IterStreamer
-from ._shared.downloads import StorageStreamDownloader
 from ._shared.request_handlers import (
     add_metadata_headers, get_length, read_length,
     validate_and_format_range_headers)
-from ._shared.response_handlers import return_response_headers, process_storage_error
+from ._shared.response_handlers import return_response_headers, process_storage_error, get_page_ranges_result
 from ._generated import AzureBlobStorage
 from ._generated.models import ( # pylint: disable=unused-import
     DeleteSnapshotsOptionType,
@@ -47,13 +46,13 @@ from ._upload_helpers import (
     upload_append_blob,
     upload_page_blob)
 from .models import BlobType, BlobBlock
+from .download import StorageStreamDownloader
 from .lease import LeaseClient, get_access_conditions
 from ._shared_access_signature import BlobSharedAccessSignature
 
 if TYPE_CHECKING:
     from datetime import datetime
-    from azure.core.pipeline.policies import HTTPPolicy
-    from ._generated.models import BlockList, PageList
+    from ._generated.models import BlockList
     from .models import (  # pylint: disable=unused-import
         ContainerProperties,
         BlobProperties,
@@ -580,7 +579,8 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                                encryption_algorithm=cpk.algorithm)
 
         options = {
-            'service': self._client.blob,
+            'client': self._client.blob,
+            'clients': self._client,
             'config': self._config,
             'offset': offset,
             'length': length,
@@ -2100,16 +2100,6 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         options.update(kwargs)
         return options
 
-    def _get_page_ranges_result(self, ranges):
-        # type: (PageList) -> Tuple(List[Dict[str, int]], List[Dict[str, int]])
-        page_range = [] # type: ignore
-        clear_range = [] # type: List
-        if ranges.page_range:
-            page_range = [{'start': b.start, 'end': b.end} for b in ranges.page_range] # type: ignore
-        if ranges.clear_range:
-            clear_range = [{'start': b.start, 'end': b.end} for b in ranges.clear_range]
-        return page_range, clear_range # type: ignore
-
     @distributed_trace
     def get_page_ranges( # type: ignore
             self, start_range=None, # type: Optional[int]
@@ -2183,7 +2173,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
                 ranges = self._client.page_blob.get_page_ranges(**options)
         except StorageErrorException as error:
             process_storage_error(error)
-        return self._get_page_ranges_result(ranges)
+        return get_page_ranges_result(ranges)
 
     def _set_sequence_number_options(self, sequence_number_action, sequence_number=None, **kwargs):
         # type: (Union[str, SequenceNumberAction], Optional[str], **Any) -> Dict[str, Any]

@@ -8,12 +8,13 @@ import sys
 import threading
 from io import BytesIO
 
-from azure.core.exceptions import HttpResponseError
+from azure.core import HttpResponseError
 from azure.core.tracing.common import with_current_context
-
-from .request_handlers import validate_and_format_range_headers
-from .response_handlers import process_storage_error, parse_length_from_content_range
-from .encryption import decrypt_blob
+from ._shared.encryption import decrypt_blob
+from ._shared.parser import get_empty_chunk
+from ._shared.request_handlers import validate_and_format_range_headers
+from ._shared.response_handlers import process_storage_error, parse_length_from_content_range, \
+    get_page_ranges_result
 
 
 def process_range_and_offset(start_range, end_range, length, encryption):
@@ -62,7 +63,8 @@ def process_content(data, start_offset, end_offset, encryption):
 class _ChunkDownloader(object):
     def __init__(
         self,
-        service=None,
+        client=None,
+        non_empty_ranges=None,
         total_size=None,
         chunk_size=None,
         current_progress=None,
@@ -74,7 +76,9 @@ class _ChunkDownloader(object):
         **kwargs
     ):
 
-        self.service = service
+        self.client = client
+
+        self.non_empty_ranges = non_empty_ranges
 
         # information on the download range/chunk size
         self.chunk_size = chunk_size
@@ -128,39 +132,58 @@ class _ChunkDownloader(object):
     def _write_to_stream(self, chunk_data, chunk_start):
         pass
 
+    def _do_optimize(self, given_range_start, given_range_end):
+        if self.non_empty_ranges is None:
+            return False
+
+        for source_range in self.non_empty_ranges:
+            if given_range_end < source_range['start']:
+                return True
+            elif source_range['end'] < given_range_start:
+                pass
+            else:
+                return False
+
+        return True
+
     def _download_chunk(self, chunk_start, chunk_end):
         download_range, offset = process_range_and_offset(
             chunk_start, chunk_end, chunk_end, self.encryption_options
         )
-        range_header, range_validation = validate_and_format_range_headers(
-            download_range[0], download_range[1] - 1, check_content_md5=self.validate_content
-        )
 
-        try:
-            _, response = self.service.download(
-                range=range_header,
-                range_get_content_md5=range_validation,
-                validate_content=self.validate_content,
-                data_stream_total=self.total_size,
-                download_stream_current=self.progress_total,
-                **self.request_options
+        if self._do_optimize(download_range[0], download_range[1] - 1):
+            chunk_data = get_empty_chunk(self.chunk_size)
+        else:
+            range_header, range_validation = validate_and_format_range_headers(
+                download_range[0], download_range[1] - 1, check_content_md5=self.validate_content
             )
-        except HttpResponseError as error:
-            process_storage_error(error)
 
-        chunk_data = process_content(response, offset[0], offset[1], self.encryption_options)
+            try:
+                _, response = self.client.download(
+                    range=range_header,
+                    range_get_content_md5=range_validation,
+                    validate_content=self.validate_content,
+                    data_stream_total=self.total_size,
+                    download_stream_current=self.progress_total,
+                    **self.request_options
+                )
+            except HttpResponseError as error:
+                process_storage_error(error)
 
-        # This makes sure that if_match is set so that we can validate
-        # that subsequent downloads are to an unmodified blob
-        if self.request_options.get("modified_access_conditions"):
-            self.request_options["modified_access_conditions"].if_match = response.properties.etag
+            chunk_data = process_content(response, offset[0], offset[1], self.encryption_options)
+
+            # This makes sure that if_match is set so that we can validate
+            # that subsequent downloads are to an unmodified blob
+            if self.request_options.get("modified_access_conditions"):
+                self.request_options["modified_access_conditions"].if_match = response.properties.etag
+
         return chunk_data
 
 
 class ParallelChunkDownloader(_ChunkDownloader):
     def __init__(
         self,
-        service=None,
+        client=None,
         total_size=None,
         chunk_size=None,
         current_progress=None,
@@ -172,7 +195,7 @@ class ParallelChunkDownloader(_ChunkDownloader):
         **kwargs
     ):
         super(ParallelChunkDownloader, self).__init__(
-            service=service,
+            client=client,
             total_size=total_size,
             chunk_size=chunk_size,
             current_progress=current_progress,
@@ -221,7 +244,8 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
 
     def __init__(
         self,
-        service=None,
+        client=None,
+        clients=None,
         config=None,
         offset=None,
         length=None,
@@ -230,7 +254,8 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         extra_properties=None,
         **kwargs
     ):
-        self.service = service
+        self.client = client
+        self.clients = clients
         self.config = config
         self.offset = offset
         self.length = length
@@ -258,6 +283,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
 
         self.download_size = None
         self.file_size = None
+        self.non_empty_ranges = None
         self.response = self._initial_request()
         self.properties = self.response.properties
 
@@ -300,7 +326,8 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             data_end = min(self.file_size, self.length + 1)
 
         downloader = SequentialChunkDownloader(
-            service=self.service,
+            client=self.client,
+            non_empty_ranges=self.non_empty_ranges,
             total_size=self.download_size,
             chunk_size=self.config.max_chunk_get_size,
             current_progress=self.first_get_size,
@@ -326,7 +353,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         )
 
         try:
-            location_mode, response = self.service.download(
+            location_mode, response = self.client.download(
                 range=range_header,
                 range_get_content_md5=range_validation,
                 validate_content=self.validate_content,
@@ -356,7 +383,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
                 # request a range, do a regular get request in order to get
                 # any properties.
                 try:
-                    _, response = self.service.download(
+                    _, response = self.client.download(
                         validate_content=self.validate_content,
                         data_stream_total=0,
                         download_stream_current=0,
@@ -371,6 +398,14 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             else:
                 process_storage_error(error)
 
+        # get page ranges to optimize downloading sparse page blob
+        if response.properties.blob_type == 'PageBlob':
+            try:
+                page_ranges = self.clients.page_blob.get_page_ranges()
+                self.non_empty_ranges = get_page_ranges_result(page_ranges)[0]
+            except HttpResponseError:
+                pass
+
         # If the file is small, the download is complete at this point.
         # If file size is large, download the rest of the file in chunks.
         if response.properties.size != self.download_size:
@@ -383,32 +418,32 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
 
         return response
 
-    def content_as_bytes(self, max_concurrency=1):
+    def content_as_bytes(self, max_connections=1):
         """Download the contents of this file.
 
         This operation is blocking until all data is downloaded.
 
-        :param int max_concurrency:
+        :param int max_connections:
             The number of parallel connections with which to download.
         :rtype: bytes
         """
         stream = BytesIO()
-        self.download_to_stream(stream, max_concurrency=max_concurrency)
+        self.download_to_stream(stream, max_connections=max_connections)
         return stream.getvalue()
 
-    def content_as_text(self, max_concurrency=1, encoding="UTF-8"):
+    def content_as_text(self, max_connections=1, encoding="UTF-8"):
         """Download the contents of this file, and decode as text.
 
         This operation is blocking until all data is downloaded.
 
-        :param int max_concurrency:
+        :param int max_connections:
             The number of parallel connections with which to download.
         :rtype: str
         """
-        content = self.content_as_bytes(max_concurrency=max_concurrency)
+        content = self.content_as_bytes(max_connections=max_connections)
         return content.decode(encoding)
 
-    def download_to_stream(self, stream, max_concurrency=1):
+    def download_to_stream(self, stream, max_connections=1):
         """Download the contents of this file to a stream.
 
         :param stream:
@@ -419,7 +454,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         :rtype: Any
         """
         # the stream must be seekable if parallel download is required
-        if max_concurrency > 1:
+        if max_connections > 1:
             error_message = "Target stream handle must be seekable."
             if sys.version_info >= (3,) and not stream.seekable():
                 raise ValueError(error_message)
@@ -447,9 +482,10 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             # Use the length unless it is over the end of the file
             data_end = min(self.file_size, self.length + 1)
 
-        downloader_class = ParallelChunkDownloader if max_concurrency > 1 else SequentialChunkDownloader
+        downloader_class = ParallelChunkDownloader if max_connections > 1 else SequentialChunkDownloader
         downloader = downloader_class(
-            service=self.service,
+            client=self.client,
+            non_empty_ranges=self.non_empty_ranges,
             total_size=self.download_size,
             chunk_size=self.config.max_chunk_get_size,
             current_progress=self.first_get_size,
@@ -462,9 +498,9 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             **self.request_options
         )
 
-        if max_concurrency > 1:
+        if max_connections > 1:
             import concurrent.futures
-            executor = concurrent.futures.ThreadPoolExecutor(max_concurrency)
+            executor = concurrent.futures.ThreadPoolExecutor(max_connections)
             list(executor.map(
                     with_current_context(downloader.process_chunk),
                     downloader.get_chunk_offsets()

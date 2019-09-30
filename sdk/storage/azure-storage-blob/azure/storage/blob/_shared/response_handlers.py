@@ -144,3 +144,14 @@ def parse_to_internal_user_delegation_key(service_user_delegation_key):
     internal_user_delegation_key.signed_version = service_user_delegation_key.signed_version
     internal_user_delegation_key.value = service_user_delegation_key.value
     return internal_user_delegation_key
+
+
+def get_page_ranges_result(ranges):
+    # type: (PageList) -> Tuple(List[Dict[str, int]], List[Dict[str, int]])
+    page_range = [] # type: ignore
+    clear_range = [] # type: List
+    if ranges.page_range:
+        page_range = [{'start': b.start, 'end': b.end} for b in ranges.page_range] # type: ignore
+    if ranges.clear_range:
+        clear_range = [{'start': b.start, 'end': b.end} for b in ranges.clear_range]
+    return page_range, clear_range # type: ignore

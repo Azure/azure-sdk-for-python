@@ -4,45 +4,22 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import sys
 import asyncio
+import sys
 from io import BytesIO
 from itertools import islice
 
-from azure.core.exceptions import HttpResponseError
-
-from .request_handlers import validate_and_format_range_headers
-from .response_handlers import process_storage_error, parse_length_from_content_range
-from .encryption import decrypt_blob
-from .downloads import process_range_and_offset
-
-
-async def process_content(data, start_offset, end_offset, encryption):
-    if data is None:
-        raise ValueError("Response cannot be None.")
-    content = data.response.body()
-    if encryption.get('key') is not None or encryption.get('resolver') is not None:
-        try:
-            return decrypt_blob(
-                encryption.get('required'),
-                encryption.get('key'),
-                encryption.get('resolver'),
-                content,
-                start_offset,
-                end_offset,
-                data.response.headers)
-        except Exception as error:
-            raise HttpResponseError(
-                message="Decryption failed.",
-                response=data.response,
-                error=error)
-    return content
+from azure.core import HttpResponseError
+from .._shared.encryption import decrypt_blob
+from .._shared.request_handlers import validate_and_format_range_headers
+from .._shared.response_handlers import process_storage_error, parse_length_from_content_range
+from ..download import process_range_and_offset
 
 
 class _AsyncChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
 
     def __init__(
-            self, service=None,
+            self, client=None,
             total_size=None,
             chunk_size=None,
             current_progress=None,
@@ -54,7 +31,7 @@ class _AsyncChunkDownloader(object):  # pylint: disable=too-many-instance-attrib
             encryption_options=None,
             **kwargs):
 
-        self.service = service
+        self.client = client
 
         # information on the download range/chunk size
         self.chunk_size = chunk_size
@@ -130,7 +107,7 @@ class _AsyncChunkDownloader(object):  # pylint: disable=too-many-instance-attrib
             check_content_md5=self.validate_content)
 
         try:
-            _, response = await self.service.download(
+            _, response = await self.client.download(
                 range=range_header,
                 range_get_content_md5=range_validation,
                 validate_content=self.validate_content,
@@ -149,6 +126,7 @@ class _AsyncChunkDownloader(object):  # pylint: disable=too-many-instance-attrib
 
         return chunk_data
 
+
 class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attributes
     """A streaming object to download from Azure Storage.
 
@@ -157,14 +135,14 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
     """
 
     def __init__(
-            self, service=None,
+            self, client=None,
             config=None,
             offset=None,
             length=None,
             validate_content=None,
             encryption_options=None,
             **kwargs):
-        self.service = service
+        self.client = client
         self.config = config
         self.offset = offset
         self.length = length
@@ -218,7 +196,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
                     # Use the length unless it is over the end of the file
                     data_end = min(self.file_size, self.length + 1)
                 self._iter_downloader = _AsyncChunkDownloader(
-                    service=self.service,
+                    client=self.client,
                     total_size=self.download_size,
                     chunk_size=self.config.max_chunk_get_size,
                     current_progress=self.first_get_size,
@@ -274,7 +252,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             check_content_md5=self.validate_content)
 
         try:
-            location_mode, response = await self.service.download(
+            location_mode, response = await self.client.download(
                 range=range_header,
                 range_get_content_md5=range_validation,
                 validate_content=self.validate_content,
@@ -303,7 +281,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
                 # request a range, do a regular get request in order to get
                 # any properties.
                 try:
-                    _, response = await self.service.download(
+                    _, response = await self.client.download(
                         validate_content=self.validate_content,
                         data_stream_total=0,
                         download_stream_current=0,
@@ -396,7 +374,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             data_end = min(self.file_size, self.length + 1)
 
         downloader = _AsyncChunkDownloader(
-            service=self.service,
+            client=self.client,
             total_size=self.download_size,
             chunk_size=self.config.max_chunk_get_size,
             current_progress=self.first_get_size,
@@ -429,3 +407,25 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
             # Wait for the remaining downloads to finish
             await asyncio.wait(running_futures)
         return self.properties
+
+
+async def process_content(data, start_offset, end_offset, encryption):
+    if data is None:
+        raise ValueError("Response cannot be None.")
+    content = data.response.body()
+    if encryption.get('key') is not None or encryption.get('resolver') is not None:
+        try:
+            return decrypt_blob(
+                encryption.get('required'),
+                encryption.get('key'),
+                encryption.get('resolver'),
+                content,
+                start_offset,
+                end_offset,
+                data.response.headers)
+        except Exception as error:
+            raise HttpResponseError(
+                message="Decryption failed.",
+                response=data.response,
+                error=error)
+    return content
