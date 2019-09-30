@@ -29,7 +29,7 @@ import copy
 import logging
 
 from typing import (TYPE_CHECKING, Generic, TypeVar, cast, IO, List, Union, Any, Mapping, Dict, Optional,  # pylint: disable=unused-import
-                    Tuple, Callable, Iterator)
+                    Tuple, Callable, Iterator, Awaitable)
 
 from azure.core.pipeline import ABC, PipelineRequest, PipelineResponse
 
@@ -72,10 +72,12 @@ class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType]):
     on the specifics of any particular transport. SansIOHTTPPolicy
     subclasses will function in either a Pipeline or an AsyncPipeline,
     and can act either before the request is done, or after.
+    You can optionally make these methods coroutines (or returns awaitable objects)
+    but they will then be tight to AsyncPipeline usage.
     """
 
     def on_request(self, request):
-        # type: (PipelineRequest) -> None
+        # type: (PipelineRequest) -> Union[None, Awaitable[None]]
         """Is executed before sending the request from next policy.
 
         :param request: Request to be modified before sent from next policy.
@@ -83,7 +85,7 @@ class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType]):
         """
 
     def on_response(self, request, response):
-        # type: (PipelineRequest, PipelineResponse) -> None
+        # type: (PipelineRequest, PipelineResponse) -> Union[None, Awaitable[None]]
         """Is executed after the request comes back from the policy.
 
         :param request: Request to be modified after returning from the policy.
@@ -94,7 +96,7 @@ class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType]):
 
     #pylint: disable=no-self-use
     def on_exception(self, _request):  #pylint: disable=unused-argument
-        # type: (PipelineRequest) -> bool
+        # type: (PipelineRequest) -> Union[bool, Awaitable[bool]]
         """Is executed if an exception is raised while executing the next policy.
 
         Developer can optionally implement this method to return True
