@@ -24,11 +24,6 @@ class EnvironmentCredential:
       - **AZURE_CLIENT_ID**: the service principal's client ID
       - **AZURE_CLIENT_CERTIFICATE_PATH**: path to a PEM-encoded certificate file including the private key
       - **AZURE_TENANT_ID**: ID of the service principal's tenant. Also called its 'directory' ID.
-
-    User with username and password:
-      - **AZURE_CLIENT_ID**: the application's client ID
-      - **AZURE_USERNAME**: a username (usually an email address)
-      - **AZURE_PASSWORD**: that user's password
     """
 
     def __init__(self, **kwargs: "Any") -> None:
