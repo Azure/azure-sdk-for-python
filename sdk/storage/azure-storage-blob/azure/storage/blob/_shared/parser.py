@@ -18,3 +18,10 @@ else:
 
 def _to_utc_datetime(value):
     return value.strftime('%Y-%m-%dT%H:%M:%SZ')
+
+
+def get_empty_chunk(chunk_size):
+    empty_chunk = b''
+    for i in range(0, chunk_size):
+        empty_chunk += b'\x00'
+    return empty_chunk
