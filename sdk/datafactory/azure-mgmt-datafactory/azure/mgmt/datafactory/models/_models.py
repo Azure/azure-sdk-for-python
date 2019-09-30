@@ -8271,14 +8271,14 @@ class CreateDataFlowDebugSessionRequest(Model):
     :param integration_runtime: Set to use integration runtime setting for
      data flow debug session.
     :type integration_runtime:
-     ~azure.mgmt.datafactory.models.IntegrationRuntimeResource
+     ~azure.mgmt.datafactory.models.IntegrationRuntimeDefinitionWrapper
     """
 
     _attribute_map = {
         'compute_type': {'key': 'computeType', 'type': 'str'},
         'core_count': {'key': 'coreCount', 'type': 'int'},
         'time_to_live': {'key': 'timeToLive', 'type': 'int'},
-        'integration_runtime': {'key': 'integrationRuntime', 'type': 'IntegrationRuntimeResource'},
+        'integration_runtime': {'key': 'integrationRuntime', 'type': 'IntegrationRuntimeDefinitionWrapper'},
     }
 
     def __init__(self, **kwargs):
@@ -8894,12 +8894,13 @@ class DataFlowDebugPackage(Model):
     :param session_id: The ID of data flow debug session.
     :type session_id: str
     :param data_flow: Data flow instance.
-    :type data_flow: ~azure.mgmt.datafactory.models.DataFlowResource
+    :type data_flow: ~azure.mgmt.datafactory.models.DataFlowDefinitionWrapper
     :param datasets: List of datasets.
-    :type datasets: list[~azure.mgmt.datafactory.models.DatasetResource]
+    :type datasets:
+     list[~azure.mgmt.datafactory.models.DatasetDefinitionWrapper]
     :param linked_services: List of linked services.
     :type linked_services:
-     list[~azure.mgmt.datafactory.models.LinkedServiceResource]
+     list[~azure.mgmt.datafactory.models.LinkedServiceDefinitionWrapper]
     :param staging: Staging info for debug session.
     :type staging: ~azure.mgmt.datafactory.models.DataFlowStagingInfo
     :param debug_settings: Data flow debug settings.
@@ -8910,9 +8911,9 @@ class DataFlowDebugPackage(Model):
     _attribute_map = {
         'additional_properties': {'key': '', 'type': '{object}'},
         'session_id': {'key': 'sessionId', 'type': 'str'},
-        'data_flow': {'key': 'dataFlow', 'type': 'DataFlowResource'},
-        'datasets': {'key': 'datasets', 'type': '[DatasetResource]'},
-        'linked_services': {'key': 'linkedServices', 'type': '[LinkedServiceResource]'},
+        'data_flow': {'key': 'dataFlow', 'type': 'DataFlowDefinitionWrapper'},
+        'datasets': {'key': 'datasets', 'type': '[DatasetDefinitionWrapper]'},
+        'linked_services': {'key': 'linkedServices', 'type': '[LinkedServiceDefinitionWrapper]'},
         'staging': {'key': 'staging', 'type': 'DataFlowStagingInfo'},
         'debug_settings': {'key': 'debugSettings', 'type': 'DataFlowDebugPackageDebugSettings'},
     }
@@ -9005,6 +9006,47 @@ class DataFlowDebugSessionInfo(Model):
         self.start_time = kwargs.get('start_time', None)
         self.time_to_live_in_minutes = kwargs.get('time_to_live_in_minutes', None)
         self.last_activity_time = kwargs.get('last_activity_time', None)
+
+
+class SubResourceDefinitionWrapper(Model):
+    """Azure Data Factory nested resource as full request payload.
+
+    :param name: The resource name.
+    :type name: str
+    """
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+    }
+
+    def __init__(self, **kwargs):
+        super(SubResourceDefinitionWrapper, self).__init__(**kwargs)
+        self.name = kwargs.get('name', None)
+
+
+class DataFlowDefinitionWrapper(SubResourceDefinitionWrapper):
+    """Data flow resource as full request payload.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: The resource name.
+    :type name: str
+    :param properties: Required. Data flow properties.
+    :type properties: ~azure.mgmt.datafactory.models.DataFlow
+    """
+
+    _validation = {
+        'properties': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'DataFlow'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DataFlowDefinitionWrapper, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)
 
 
 class DataFlowFolder(Model):
@@ -9417,6 +9459,31 @@ class DatasetBZip2Compression(DatasetCompression):
     def __init__(self, **kwargs):
         super(DatasetBZip2Compression, self).__init__(**kwargs)
         self.type = 'BZip2'
+
+
+class DatasetDefinitionWrapper(SubResourceDefinitionWrapper):
+    """Dataset resource as full request payload.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: The resource name.
+    :type name: str
+    :param properties: Required. Dataset properties.
+    :type properties: ~azure.mgmt.datafactory.models.Dataset
+    """
+
+    _validation = {
+        'properties': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'Dataset'},
+    }
+
+    def __init__(self, **kwargs):
+        super(DatasetDefinitionWrapper, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)
 
 
 class DatasetDeflateCompression(DatasetCompression):
@@ -16578,6 +16645,31 @@ class IntegrationRuntimeDataProxyProperties(Model):
         self.path = kwargs.get('path', None)
 
 
+class IntegrationRuntimeDefinitionWrapper(SubResourceDefinitionWrapper):
+    """Integration runtime as full request payload.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: The resource name.
+    :type name: str
+    :param properties: Required. Integration runtime properties.
+    :type properties: ~azure.mgmt.datafactory.models.IntegrationRuntime
+    """
+
+    _validation = {
+        'properties': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'IntegrationRuntime'},
+    }
+
+    def __init__(self, **kwargs):
+        super(IntegrationRuntimeDefinitionWrapper, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)
+
+
 class IntegrationRuntimeMonitoringData(Model):
     """Get monitoring data response.
 
@@ -17642,6 +17734,31 @@ class LinkedIntegrationRuntimeRequest(Model):
     def __init__(self, **kwargs):
         super(LinkedIntegrationRuntimeRequest, self).__init__(**kwargs)
         self.linked_factory_name = kwargs.get('linked_factory_name', None)
+
+
+class LinkedServiceDefinitionWrapper(SubResourceDefinitionWrapper):
+    """Linked service resource as full request payload.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :param name: The resource name.
+    :type name: str
+    :param properties: Required. Properties of linked service.
+    :type properties: ~azure.mgmt.datafactory.models.LinkedService
+    """
+
+    _validation = {
+        'properties': {'required': True},
+    }
+
+    _attribute_map = {
+        'name': {'key': 'name', 'type': 'str'},
+        'properties': {'key': 'properties', 'type': 'LinkedService'},
+    }
+
+    def __init__(self, **kwargs):
+        super(LinkedServiceDefinitionWrapper, self).__init__(**kwargs)
+        self.properties = kwargs.get('properties', None)
 
 
 class LinkedServiceReference(Model):
