@@ -1845,7 +1845,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_blob_tier_copy_blob())
 
-    async def _test_download_sparse_page_blob_non_parallel(self):
+    async def _test_download_sparse_page_blob(self):
         # Arrange
         await self._setup()
         self.config.max_single_get_size = 4*1024
@@ -1874,9 +1874,9 @@ class StoragePageBlobTestAsync(StorageTestCase):
             self.assertEqual(byte, 0)
 
     @record
-    def test_download_sparse_page_blob_non_parallel_async(self):
+    def test_download_sparse_page_blob_async(self):
         loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_download_sparse_page_blob_non_parallel())
+        loop.run_until_complete(self._test_download_sparse_page_blob())
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
