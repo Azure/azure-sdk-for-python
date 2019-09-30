@@ -195,34 +195,17 @@ class AzureAppConfigurationClient:
                 key="MyKey", label="MyLabel"
             )
         """
-        if match_condition == MatchConditions.Unconditionally:
-            error_map = {
-                404: ResourceNotFoundError
-            }
-
+        error_map = {
+            404: ResourceNotFoundError
+        }
         if match_condition == MatchConditions.IfNotModified:
-            error_map = {
-                404: ResourceNotFoundError,
-                412: ResourceModifiedError,
-            }
-
+            error_map[412] = ResourceNotModifiedError
         if match_condition == MatchConditions.IfModified:
-            error_map = {
-                304: ResourceNotModifiedError,
-                404: ResourceNotFoundError
-            }
-
+            error_map[304] = ResourceNotModifiedError
         if match_condition == MatchConditions.IfPresent:
-            error_map = {
-                404: ResourceNotFoundError,
-                412: ResourceNotFoundError
-            }
-
+            error_map[412] = ResourceNotFoundError
         if match_condition == MatchConditions.IfMissing:
-            error_map = {
-                404: ResourceNotFoundError,
-                412: ResourceExistsError
-            }
+            error_map[412] = ResourceExistsError
 
         key_value = await self._impl.get_key_value(
             key=key,
@@ -323,33 +306,17 @@ class AzureAppConfigurationClient:
             tags=configuration_setting.tags
         )
         custom_headers = CaseInsensitiveDict(kwargs.get("headers"))
-        if match_condition == MatchConditions.Unconditionally:
-            error_map = {
-                409: ResourceReadOnlyError,
-            }
-
+        error_map = {
+            409: ResourceReadOnlyError
+        }
         if match_condition == MatchConditions.IfNotModified:
-            error_map = {
-                409: ResourceReadOnlyError,
-                412: ResourceModifiedError,
-            }
-
+            error_map[412] = ResourceModifiedError
         if match_condition == MatchConditions.IfModified:
-            error_map = {
-                409: ResourceReadOnlyError,
-                412: ResourceNotModifiedError,
-            }
-
+            error_map[412] = ResourceNotModifiedError
         if match_condition == MatchConditions.IfPresent:
-            error_map = {
-                409: ResourceReadOnlyError,
-                412: ResourceNotFoundError,
-            }
-
+            error_map[412] = ResourceNotFoundError
         if match_condition == MatchConditions.IfMissing:
-            error_map = {
-                412: ResourceExistsError,
-            }
+            error_map[412] = ResourceExistsError
 
         key_value_set = await self._impl.put_key_value(
             entity=key_value,
@@ -392,34 +359,17 @@ class AzureAppConfigurationClient:
             )
         """
         custom_headers = CaseInsensitiveDict(kwargs.get("headers"))
-        if match_condition == MatchConditions.Unconditionally:
-            error_map = {
-                409: ResourceReadOnlyError,
-            }
-
+        error_map = {
+            409: ResourceReadOnlyError
+        }
         if match_condition == MatchConditions.IfNotModified:
-            error_map = {
-                409: ResourceReadOnlyError,
-                412: ResourceModifiedError,
-            }
-
+            error_map[412] = ResourceModifiedError
         if match_condition == MatchConditions.IfModified:
-            error_map = {
-                409: ResourceReadOnlyError,
-                412: ResourceNotModifiedError,
-            }
-
+            error_map[412] = ResourceNotModifiedError
         if match_condition == MatchConditions.IfPresent:
-            error_map = {
-                409: ResourceReadOnlyError,
-                412: ResourceNotFoundError,
-            }
-
+            error_map[412] = ResourceNotFoundError
         if match_condition == MatchConditions.IfMissing:
-            error_map = {
-                409: ResourceReadOnlyError,
-                412: ResourceExistsError,
-            }
+            error_map[412] = ResourceExistsError
 
         key_value_deleted = await self._impl.delete_key_value(
             key=key,
@@ -506,34 +456,17 @@ class AzureAppConfigurationClient:
 
             read_only_config_setting = await async_client.set_read_only(config_setting)
         """
-        if match_condition == MatchConditions.Unconditionally:
-            error_map = {
-                404: ResourceNotFoundError,
-            }
-
+        error_map = {
+            404: ResourceNotFoundError
+        }
         if match_condition == MatchConditions.IfNotModified:
-            error_map = {
-                404: ResourceNotFoundError,
-                412: ResourceModifiedError,
-            }
-
+            error_map[412] = ResourceModifiedError
         if match_condition == MatchConditions.IfModified:
-            error_map = {
-                404: ResourceNotFoundError,
-                412: ResourceNotModifiedError,
-            }
-
+            error_map[412] = ResourceNotModifiedError
         if match_condition == MatchConditions.IfPresent:
-            error_map = {
-                404: ResourceNotFoundError,
-                412: ResourceNotFoundError,
-            }
-
+            error_map[412] = ResourceNotFoundError
         if match_condition == MatchConditions.IfMissing:
-            error_map = {
-                404: ResourceNotFoundError,
-                412: ResourceExistsError,
-            }
+            error_map[412] = ResourceExistsError
 
         key_value = await self._impl.put_lock(
             key=configuration_setting.key,
@@ -571,34 +504,17 @@ class AzureAppConfigurationClient:
 
             read_only_config_setting = await async_client.clear_read_only(config_setting)
         """
-        if match_condition == MatchConditions.Unconditionally:
-            error_map = {
-                404: ResourceNotFoundError,
-            }
-
+        error_map = {
+            404: ResourceNotFoundError
+        }
         if match_condition == MatchConditions.IfNotModified:
-            error_map = {
-                404: ResourceNotFoundError,
-                412: ResourceModifiedError,
-            }
-
+            error_map[412] = ResourceModifiedError
         if match_condition == MatchConditions.IfModified:
-            error_map = {
-                404: ResourceNotFoundError,
-                412: ResourceNotModifiedError,
-            }
-
+            error_map[412] = ResourceNotModifiedError
         if match_condition == MatchConditions.IfPresent:
-            error_map = {
-                404: ResourceNotFoundError,
-                412: ResourceNotFoundError,
-            }
-
+            error_map[412] = ResourceNotFoundError
         if match_condition == MatchConditions.IfMissing:
-            error_map = {
-                404: ResourceNotFoundError,
-                412: ResourceExistsError,
-            }
+            error_map[412] = ResourceExistsError
 
         key_value = await self._impl.delete_lock(
             key=configuration_setting.key,
