@@ -106,7 +106,7 @@ class CertificateClient(KeyVaultClientBase):
                                                                     key_size=2048,
                                                                     reuse_key=True,
                                                                     key_usage=[
-                                                                        KeyUsageType.c_rl_sign,
+                                                                        KeyUsageType.crl_sign,
                                                                         KeyUsageType.data_encipherment,
                                                                         KeyUsageType.digital_signature,
                                                                         KeyUsageType.key_agreement,
