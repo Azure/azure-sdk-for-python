@@ -998,6 +998,45 @@ class ContainerClient(StorageAccountHostsMixin):
 
         return query_parameters, header_parameters
 
+    def _batch_send(
+        self, *reqs  # type: HttpRequest
+    ):
+        """Given a series of request, do a Storage batch call.
+        """
+        request = self._client._client.post(
+            url='https://{}/?comp=batch'.format(self.primary_hostname),
+            headers={
+                'x-ms-version': self._config.version
+            }
+        )
+
+        request.set_multipart_mixed(
+            *reqs,
+            policies=[
+                StorageHeadersPolicy(),
+                self._credential_policy
+            ]
+        )
+
+        pipeline_response = self._pipeline.run(
+            request,
+        )
+        response = pipeline_response.http_response
+
+        try:
+            if response.status_code not in [202]:
+                raise HttpResponseError(response=response)
+            parts = response.parts()
+            if len(parts) != len(reqs):
+                raise HttpResponseError(
+                    message="Didn't receive the same number of parts",
+                    response=response
+                )
+            return parts
+        except StorageErrorException as error:
+            process_storage_error(error)
+
+
     @distributed_trace
     def delete_blobs(
             self, *blobs,  # type: Union[str, BlobProperties]
@@ -1020,9 +1059,8 @@ class ContainerClient(StorageAccountHostsMixin):
         Soft deleted blob or snapshot is accessible through List Blobs API specifying `include="deleted"` option.
         Soft-deleted blob or snapshot can be restored using Undelete API.
 
-        :param blob: The blob with which to interact. If specified, this value will override
-         a blob value specified in the blob URL.
-        :type blob: str or ~azure.storage.blob.models.BlobProperties
+        :param blobs: The blobs with which to interact.
+        :type blobs: str or ~azure.storage.blob.models.BlobProperties
         :param str delete_snapshots:
             Required if the blob has associated snapshots. Values include:
              - "only": Deletes only the blobs snapshots.
@@ -1078,38 +1116,134 @@ class ContainerClient(StorageAccountHostsMixin):
             req.format_parameters(query_parameters)
             reqs.append(req)
 
-        request = self._client._client.post(
-            url='https://{}/?comp=batch'.format(self.primary_hostname),
-            headers={
-                'x-ms-version': self._config.version
-            }
+        return self._batch_send(*reqs)
+
+    def _generate_set_tier_options(self, tier, timeout=None, rehydrate_priority=None, request_id=None, lease_access_conditions=None):
+        """This code is a copy from _generated. Once Autorest is able to provide request preparation this code should be removed"""
+        lease_id = None
+        if lease_access_conditions is not None:
+            lease_id = lease_access_conditions.lease_id
+
+        comp = "tier"
+
+        # Construct parameters
+        query_parameters = {}
+        if timeout is not None:
+            query_parameters['timeout'] = self._client._serialize.query("timeout", timeout, 'int', minimum=0)
+        query_parameters['comp'] = self._client._serialize.query("comp", comp, 'str')
+
+        # Construct headers
+        header_parameters = {}
+        header_parameters['x-ms-access-tier'] = self._client._serialize.header("tier", tier, 'str')
+        if rehydrate_priority is not None:
+            header_parameters['x-ms-rehydrate-priority'] = self._client._serialize.header("rehydrate_priority", rehydrate_priority, 'str')
+        header_parameters['x-ms-version'] = self._client._serialize.header("self._config.version", self._config.version, 'str')
+        if request_id is not None:
+            header_parameters['x-ms-client-request-id'] = self._client._serialize.header("request_id", request_id, 'str')
+        if lease_id is not None:
+            header_parameters['x-ms-lease-id'] = self._client._serialize.header("lease_id", lease_id, 'str')
+
+        return query_parameters, header_parameters
+
+    @distributed_trace
+    def set_standard_blob_tier_blobs(
+        self, *blobs,  # type: Union[str, BlobProperties]
+        standard_blob_tier,
+        **kwargs
+    ):
+        # type: (Union[str, BlobProperties], Union[str, StandardBlobTier], Any) -> None
+        """This operation sets the tier on block blobs.
+
+        A block blob's tier determines Hot/Cool/Archive storage type.
+        This operation does not update the blob's ETag.
+
+        :param blobs: The blobs with which to interact.
+        :type blobs: str or ~azure.storage.blob.models.BlobProperties
+        :param standard_blob_tier:
+            Indicates the tier to be set on the blob. Options include 'Hot', 'Cool',
+            'Archive'. The hot tier is optimized for storing data that is accessed
+            frequently. The cool storage tier is optimized for storing data that
+            is infrequently accessed and stored for at least a month. The archive
+            tier is optimized for storing data that is rarely accessed and stored
+            for at least six months with flexible latency requirements.
+        :type standard_blob_tier: str or ~azure.storage.blob.models.StandardBlobTier
+        :param int timeout:
+            The timeout parameter is expressed in seconds.
+        :param lease:
+            Required if the blob has an active lease. Value can be a LeaseClient object
+            or the lease ID as a string.
+        :type lease: ~azure.storage.blob.lease.LeaseClient or str
+        :rtype: None
+        """
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
+        if standard_blob_tier is None:
+            raise ValueError("A StandardBlobTier must be specified")
+
+        query_parameters, header_parameters = self._generate_set_tier_options(
+            tier=standard_blob_tier,
+            lease_access_conditions=access_conditions,
+            **kwargs
         )
 
-        request.set_multipart_mixed(
-            *reqs,
-            policies=[
-                StorageHeadersPolicy(),
-                self._credential_policy
-            ]
+        reqs = []
+        for blob in blobs:
+            req = HttpRequest(
+                "PUT",
+                "/{}/{}?comp=tier".format(self.container_name, blob),
+                headers=header_parameters
+            )
+            req.format_parameters(query_parameters)
+            reqs.append(req)
+
+        return self._batch_send(*reqs)
+
+    @distributed_trace
+    def set_premium_page_blob_tier_blobs(
+        self, *blobs,  # type: Union[str, BlobProperties]
+        premium_page_blob_tier,
+        **kwargs
+    ):
+        # type: (Union[str, BlobProperties], Union[str, PremiumPageBlobTier], Optional[int], Optional[Union[LeaseClient, str]], **Any) -> None
+        """Sets the page blob tiers on the blobs. This API is only supported for page blobs on premium accounts.
+
+        :param blobs: The blobs with which to interact.
+        :type blobs: str or ~azure.storage.blob.models.BlobProperties
+        :param premium_page_blob_tier:
+            A page blob tier value to set the blob to. The tier correlates to the size of the
+            blob and number of allowed IOPS. This is only applicable to page blobs on
+            premium storage accounts.
+        :type premium_page_blob_tier: ~azure.storage.blob.models.PremiumPageBlobTier
+        :param int timeout:
+            The timeout parameter is expressed in seconds. This method may make
+            multiple calls to the Azure service and the timeout will apply to
+            each call individually.
+        :param lease:
+            Required if the blob has an active lease. Value can be a LeaseClient object
+            or the lease ID as a string.
+        :type lease: ~azure.storage.blob.lease.LeaseClient or str
+        :rtype: None
+        """
+        access_conditions = get_access_conditions(kwargs.pop('lease', None))
+        if premium_page_blob_tier is None:
+            raise ValueError("A PremiumPageBlobTier must be specified")
+
+        query_parameters, header_parameters = self._generate_set_tier_options(
+            tier=premium_page_blob_tier,
+            lease_access_conditions=access_conditions,
+            **kwargs
         )
 
-        pipeline_response = self._pipeline.run(
-            request,
-        )
-        response = pipeline_response.http_response
+        reqs = []
+        for blob in blobs:
+            req = HttpRequest(
+                "PUT",
+                "/{}/{}?comp=tier".format(self.container_name, blob),
+                headers=header_parameters
+            )
+            req.format_parameters(query_parameters)
+            reqs.append(req)
 
-        try:
-            if response.status_code not in [202]:
-                raise HttpResponseError(response=response)
-            parts = response.parts()
-            if len(parts) != len(reqs):
-                raise HttpResponseError(
-                    message="Didn't receive the same number of parts",
-                    response=response
-                )
-            return parts
-        except StorageErrorException as error:
-            process_storage_error(error)
+        return self._batch_send(*reqs)
 
     def get_blob_client(
             self, blob,  # type: Union[str, BlobProperties]
