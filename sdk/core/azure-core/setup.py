@@ -62,6 +62,7 @@ setup(
     ]),
     install_requires=[
         'requests>=2.18.4',
+        'six',
     ],
     extras_require={
         ":python_version<'3.0'": ['azure-nspkg'],
