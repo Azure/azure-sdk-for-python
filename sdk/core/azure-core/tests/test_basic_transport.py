@@ -5,13 +5,17 @@
 # -------------------------------------------------------------------------
 from six.moves.http_client import HTTPConnection
 import time
+import sys
 
 from azure.core.pipeline.transport import HttpRequest, HttpResponse, RequestsTransport
 from azure.core.pipeline.transport.base import HttpClientTransportResponse, _deserialize_response, MultiPartHelper
 from azure.core.pipeline.policies import HeadersPolicy
 from azure.core.pipeline import Pipeline
 
+import pytest
 
+
+@pytest.mark.skipif(sys.version_info < (3, 0), reason="Multipart serialization not supported on 2.7")
 def test_http_request_serialization():
     # Method + Url
     request = HttpRequest("DELETE", "/container0/blob0")
@@ -36,21 +40,14 @@ def test_http_request_serialization():
     )
     serialized = request.serialize()
 
-    # For some reason Python 2.7 rotate the headers. Both are correct.
-    expected = [(
+    expected = (
         b'DELETE /container0/blob0 HTTP/1.1\r\n'
         b'x-ms-date: Thu, 14 Jun 2018 16:46:54 GMT\r\n'
         b'Authorization: SharedKey account:G4jjBXA7LI/RnWKIOQ8i9xH4p76pAQ+4Fs4R1VxasaE=\r\n'
         b'Content-Length: 0\r\n'
         b'\r\n'
-    ),(
-        b'DELETE /container0/blob0 HTTP/1.1\r\n'
-        b'Content-Length: 0\r\n'
-        b'Authorization: SharedKey account:G4jjBXA7LI/RnWKIOQ8i9xH4p76pAQ+4Fs4R1VxasaE=\r\n'
-        b'x-ms-date: Thu, 14 Jun 2018 16:46:54 GMT\r\n'
-        b'\r\n'
-    )]
-    assert serialized in expected
+    )
+    assert serialized == expected
 
 
     # Method + Url + Headers + Body
@@ -159,6 +156,8 @@ def test_response_deserialization_utf8_bom():
     response = _deserialize_response(body, request)
     assert response.body().startswith(b'\xef\xbb\xbf')
 
+
+@pytest.mark.skipif(sys.version_info < (3, 0), reason="Multipart serialization not supported on 2.7")
 def test_multipart_send():
 
     header_policy = HeadersPolicy({

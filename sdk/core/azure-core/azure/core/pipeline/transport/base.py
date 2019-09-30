@@ -730,8 +730,11 @@ class MultiPartHelper(object):
             full_message = main_message.as_bytes(policy=HTTP)
             eol = b'\r\n'
         except ImportError: # Python 2.7
-            full_message = main_message.as_string()
-            eol = b'\n'
+            # Right now we decide to not support Python 2.7 on serialization, since
+            # it doesn't serialize a valid HTTP request (and our main scenario Storage refuses it)
+            raise NotImplementedError("Multipart request are not supported on Python 2.7")
+            # full_message = main_message.as_string()
+            # eol = b'\n'
         _, _, body = full_message.split(eol, 2)
         self.main_request.set_bytes_body(body)
         self.main_request.headers['Content-Type'] = 'multipart/mixed; boundary='+main_message.get_boundary()
