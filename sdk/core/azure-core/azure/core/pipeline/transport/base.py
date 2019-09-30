@@ -414,7 +414,7 @@ class HttpResponse(_HttpResponseBase):
         return multipart_helper.parse_response(self)
 
 
-class HttpClientTransportResponse(HttpResponse):
+class _HttpClientTransportResponse(_HttpResponseBase):
     """Create a HTTPResponse from an http.client response.
 
     Body will NOT be read by the constructor. Call "body()" to load the body in memory if necessary.
@@ -423,7 +423,7 @@ class HttpClientTransportResponse(HttpResponse):
     :param httpclient_response: The object returned from an HTTP(S)Connection from http.client
     """
     def __init__(self, request, httpclient_response):
-        super(HttpClientTransportResponse, self).__init__(request, httpclient_response)
+        super(_HttpClientTransportResponse, self).__init__(request, httpclient_response)
         self.status_code = httpclient_response.status
         self.headers = _case_insensitive_dict(httpclient_response.getheaders())
         self.reason = httpclient_response.reason
@@ -434,6 +434,16 @@ class HttpClientTransportResponse(HttpResponse):
         if self.data is None:
             self.data = self.internal_response.read()
         return self.data
+
+
+class HttpClientTransportResponse(_HttpClientTransportResponse, HttpResponse):
+    """Create a HTTPResponse from an http.client response.
+
+    Body will NOT be read by the constructor. Call "body()" to load the body in memory if necessary.
+
+    :param HttpRequest request: The request.
+    :param httpclient_response: The object returned from an HTTP(S)Connection from http.client
+    """
 
 
 class BytesIOSocket(object):
@@ -449,14 +459,14 @@ class BytesIOSocket(object):
         return BytesIO(self.bytes_data)
 
 
-def _deserialize_response(http_response_as_bytes, http_request):
+def _deserialize_response(http_response_as_bytes, http_request, http_response_type=HttpClientTransportResponse):
     local_socket = BytesIOSocket(http_response_as_bytes)
     response = _HTTPResponse(
         local_socket,
         method=http_request.method
     )
     response.begin()
-    return HttpClientTransportResponse(http_request, response)
+    return http_response_type(http_request, response)
 
 
 class PipelineClientBase(object):
@@ -669,6 +679,7 @@ class MultiPartHelper(object):
         self,
         main_request,  # type: HttpRequest
         boundary=None, # type: str
+        http_response_type=HttpClientTransportResponse,  # type: Type[_HttpResponseBase]
     ):
         """Create a multipart helper to serialize and parse multipart/mixed payload.
 
@@ -685,6 +696,7 @@ class MultiPartHelper(object):
         self.requests = self.main_request.multipart_mixed_info[0]  # type: List[HttpRequest]
         self.policies = self.main_request.multipart_mixed_info[1]  # type: List[SansIOHTTPPolicy]
         self._boundary = boundary
+        self._http_response_type = http_response_type
 
     def prepare_request(self):
         # Apply on_requests concurrently to all requests
@@ -740,7 +752,11 @@ class MultiPartHelper(object):
         responses = []
         for request, raw_reponse in zip(self.requests, message.get_payload()):
             if raw_reponse.get_content_type() == "application/http":
-                responses.append(_deserialize_response(raw_reponse.get_payload(decode=True), request))
+                responses.append(_deserialize_response(
+                    raw_reponse.get_payload(decode=True),
+                    request,
+                    http_response_type=self._http_response_type
+                ))
             else:
                 raise ValueError("Multipart doesn't support part other than application/http for now")
 

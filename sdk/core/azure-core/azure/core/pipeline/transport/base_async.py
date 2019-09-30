@@ -29,7 +29,7 @@ import abc
 from collections.abc import AsyncIterator
 
 from typing import AsyncIterator as AsyncIteratorType, Iterator, Generic, TypeVar
-from .base import _HttpResponseBase, MultiPartHelper
+from .base import _HttpResponseBase, _HttpClientTransportResponse, MultiPartHelper
 
 try:
     from contextlib import AbstractAsyncContextManager  # type: ignore
@@ -103,8 +103,18 @@ class AsyncHttpResponse(_HttpResponseBase):
         if not self.content_type or not self.content_type.startswith("multipart/mixed"):
             raise ValueError("You can't get parts if the response is not multipart/mixed")
 
-        multipart_helper = MultiPartHelper(self.request)
+        multipart_helper = MultiPartHelper(self.request, http_response_type=AsyncHttpClientTransportResponse)
         return _PartGenerator(multipart_helper.parse_response(self))
+
+
+class AsyncHttpClientTransportResponse(_HttpClientTransportResponse, AsyncHttpResponse):
+    """Create a HTTPResponse from an http.client response.
+
+    Body will NOT be read by the constructor. Call "body()" to load the body in memory if necessary.
+
+    :param HttpRequest request: The request.
+    :param httpclient_response: The object returned from an HTTP(S)Connection from http.client
+    """
 
 
 class AsyncHttpTransport(AbstractAsyncContextManager, abc.ABC, Generic[HTTPRequestType, AsyncHTTPResponseType]):

@@ -135,3 +135,69 @@ async def test_multipart_receive_with_bom():
     res0 = parts[0]
     assert res0.status_code == 400
     assert res0.body().startswith(b'\xef\xbb\xbf')
+
+
+@pytest.mark.asyncio
+async def test_recursive_multipart_receive():
+    req0 = HttpRequest("DELETE", "/container0/blob0")
+    internal_req0 = HttpRequest("DELETE", "/container0/blob0")
+    req0.set_multipart_mixed(internal_req0)
+
+    request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
+    request.set_multipart_mixed(req0)
+
+    class MockResponse(AsyncHttpResponse):
+        def __init__(self, request, body, content_type):
+            super(MockResponse, self).__init__(request, None)
+            self._body = body
+            self.content_type = content_type
+
+        def body(self):
+            return self._body
+
+    internal_body_as_str = (
+        "--batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed\r\n"
+        "Content-Type: application/http\r\n"
+        "Content-ID: 0\r\n"
+        "\r\n"
+        "HTTP/1.1 400 Accepted\r\n"
+        "x-ms-request-id: 778fdc83-801e-0000-62ff-0334671e284f\r\n"
+        "x-ms-version: 2018-11-09\r\n"
+        "\r\n"
+        "--batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed--"
+    )
+
+    body_as_str = (
+        "--batchresponse_8d5f5bcd-2cb5-44bb-91b5-e9a722e68cb6\r\n"
+        "Content-Type: application/http\r\n"
+        "Content-ID: 0\r\n"
+        "\r\n"
+        "HTTP/1.1 202 Accepted\r\n"
+        "Content-Type: multipart/mixed; boundary=batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed\r\n"
+        "\r\n"
+        "{}"
+        "--batchresponse_8d5f5bcd-2cb5-44bb-91b5-e9a722e68cb6--"
+    ).format(internal_body_as_str)
+
+    response = MockResponse(
+        request,
+        body_as_str.encode('ascii'),
+        "multipart/mixed; boundary=batchresponse_8d5f5bcd-2cb5-44bb-91b5-e9a722e68cb6"
+    )
+
+    parts = []
+    async for part in response.parts():
+        parts.append(part)
+
+    assert len(parts) == 1
+
+    res0 = parts[0]
+    assert res0.status_code == 202
+
+    internal_parts = []
+    async for part in res0.parts():
+        internal_parts.append(part)
+    assert len(internal_parts) == 1
+
+    internal_response0 = internal_parts[0]
+    assert internal_response0.status_code == 400
