@@ -14,7 +14,7 @@ parameters:
   RunPylint: eq(variables['PythonVersion'], '3.7')
 
 steps:
-  - powershell: |
+  - pwsh: |
       gci -r $(Build.ArtifactStagingDirectory)
 
   - task: UsePythonVersion@0
