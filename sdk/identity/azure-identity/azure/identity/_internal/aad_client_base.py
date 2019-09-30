@@ -73,7 +73,7 @@ class AadClientBase(ABC):
             rt_getter=lambda token: token["secret"],
             **kwargs
         )
-        return self._obtain_token(scopes, fn)
+        return self._obtain_token(scopes, fn, **kwargs)
 
     def _process_response(self, response, scopes, now):
         # type: (dict, Iterable[str], int) -> AccessToken
