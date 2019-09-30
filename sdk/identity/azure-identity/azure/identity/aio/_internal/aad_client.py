@@ -19,13 +19,27 @@ if TYPE_CHECKING:
 
 
 class AadClient(AadClientBase):
+    # pylint:disable=arguments-differ
+
+    def obtain_token_by_authorization_code(
+        self, *args: "Any", loop: "asyncio.AbstractEventLoop" = None, **kwargs: "Any"
+    ) -> "AccessToken":
+        # 'loop' will reach the transport adapter as a kwarg, so here we ensure it's passed
+        loop = loop or asyncio.get_event_loop()
+        return super().obtain_token_by_authorization_code(*args, loop=loop, **kwargs)
+
+    def obtain_token_by_refresh_token(self, *args, loop: "asyncio.AbstractEventLoop" = None, **kwargs) -> "AccessToken":
+        # 'loop' will reach the transport adapter as a kwarg, so here we ensure it's passed
+        loop = loop or asyncio.get_event_loop()
+        return super().obtain_token_by_refresh_token(*args, loop=loop, **kwargs)
+
     def _get_client_session(self, **kwargs):
         return MsalTransportAdapter(**kwargs)
 
     @wrap_exceptions
-    async def _obtain_token(self, scopes: "Iterable[str]", fn: "Callable", **kwargs: "Any") -> "AccessToken":
+    async def _obtain_token(
+        self, scopes: "Iterable[str]", fn: "Callable", loop: "asyncio.AbstractEventLoop", executor=None, **kwargs: "Any"
+    ) -> "AccessToken":
         now = int(time.time())
-        executor = kwargs.get("executor", None)
-        loop = kwargs.get("loop", None) or asyncio.get_event_loop()
         response = await loop.run_in_executor(executor, fn)
         return self._process_response(response=response, scopes=scopes, now=now)

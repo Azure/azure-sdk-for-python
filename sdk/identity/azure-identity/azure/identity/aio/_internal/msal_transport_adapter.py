@@ -55,6 +55,7 @@ class MsalTransportAdapter:
     def get(
         self,
         url: str,
+        loop: "asyncio.AbstractEventLoop",
         headers: "Optional[Dict[str, str]]" = None,
         params: "Optional[Dict[str, str]]" = None,
         timeout: "Optional[float]" = None,
@@ -66,7 +67,6 @@ class MsalTransportAdapter:
         if params:
             request.format_parameters(params)
 
-        loop = kwargs.pop("loop", None)
         future = asyncio.run_coroutine_threadsafe(  # type: ignore
             self._pipeline.run(request, connection_timeout=timeout, connection_verify=verify, **kwargs), loop
         )
@@ -77,6 +77,7 @@ class MsalTransportAdapter:
     def post(
         self,
         url: str,
+        loop: "asyncio.AbstractEventLoop",
         data: "Any" = None,
         headers: "Optional[Dict[str, str]]" = None,
         params: "Optional[Dict[str, str]]" = None,
@@ -92,7 +93,6 @@ class MsalTransportAdapter:
             request.headers["Content-Type"] = "application/x-www-form-urlencoded"
             request.set_formdata_body(data)
 
-        loop = kwargs.pop("loop", None)
         future = asyncio.run_coroutine_threadsafe(  # type: ignore
             self._pipeline.run(request, connection_timeout=timeout, connection_verify=verify, **kwargs), loop
         )
