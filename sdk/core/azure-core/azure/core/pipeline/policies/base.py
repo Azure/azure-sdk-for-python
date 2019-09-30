@@ -28,13 +28,6 @@ import abc
 import copy
 import logging
 
-from azure.core.pipeline import ABC, PipelineRequest, PipelineResponse
-
-try:
-    from typing import TYPE_CHECKING, Awaitable
-except ImportError:
-    TYPE_CHECKING = False
-
 from typing import (
     Generic,
     TypeVar,
@@ -42,8 +35,15 @@ from typing import (
     Any,
     Dict,
     Optional,
-    Callable,
 )  # pylint: disable=unused-import
+
+try:
+    from typing import Awaitable   # pylint: disable=unused-import
+except ImportError:
+    pass
+
+from azure.core.pipeline import ABC, PipelineRequest, PipelineResponse
+
 
 HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
