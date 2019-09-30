@@ -207,8 +207,8 @@ def test_multipart_send():
 def test_multipart_receive():
 
     class MockResponse(HttpResponse):
-        def __init__(self, body, content_type):
-            super(MockResponse, self).__init__(None, None)
+        def __init__(self, request, body, content_type):
+            super(MockResponse, self).__init__(request, None)
             self._body = body
             self.content_type = content_type
 
@@ -219,6 +219,16 @@ def test_multipart_receive():
         def on_response(self, request, response):
             # type: (PipelineRequest, PipelineResponse) -> None
             response.http_response.headers['x-ms-fun'] = 'true'
+
+    req0 = HttpRequest("DELETE", "/container0/blob0")
+    req1 = HttpRequest("DELETE", "/container1/blob1")
+
+    request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
+    request.set_multipart_mixed(
+        req0,
+        req1,
+        policies=[ResponsePolicy()]
+    )
 
     body_as_str = (
         "--batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed\r\n"
@@ -248,23 +258,12 @@ def test_multipart_receive():
     )
 
     response = MockResponse(
+        request,
         body_as_str.encode('ascii'),
         "multipart/mixed; boundary=batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed"
     )
 
-    req0 = HttpRequest("DELETE", "/container0/blob0")
-    req1 = HttpRequest("DELETE", "/container1/blob1")
-
-    request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
-    request.set_multipart_mixed(
-        req0,
-        req1,
-        policies=[ResponsePolicy()]
-    )
-
-    helper = MultiPartHelper(request)
-
-    response = helper.parse_response(response)
+    response = response.parts()
 
     assert len(response) == 2
 
@@ -278,9 +277,14 @@ def test_multipart_receive():
 
 def test_multipart_receive_with_bom():
 
+    req0 = HttpRequest("DELETE", "/container0/blob0")
+
+    request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
+    request.set_multipart_mixed(req0)
+
     class MockResponse(HttpResponse):
-        def __init__(self, body, content_type):
-            super(MockResponse, self).__init__(None, None)
+        def __init__(self, request, body, content_type):
+            super(MockResponse, self).__init__(request, None)
             self._body = body
             self.content_type = content_type
 
@@ -304,18 +308,12 @@ def test_multipart_receive_with_bom():
     )
 
     response = MockResponse(
+        request,
         body_as_bytes,
         "multipart/mixed; boundary=batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed"
     )
 
-    req0 = HttpRequest("DELETE", "/container0/blob0")
-
-    request = HttpRequest("POST", "http://account.blob.core.windows.net/?comp=batch")
-    request.set_multipart_mixed(req0)
-
-    helper = MultiPartHelper(request)
-
-    response = helper.parse_response(response)
+    response = response.parts()
     assert len(response) == 1
 
     res0 = response[0]

@@ -400,6 +400,19 @@ class HttpResponse(_HttpResponseBase):
         is supported.
         """
 
+    def parts(self):
+        # type: () -> Iterator
+        """Assuming the content-type is multipart/mixed, will return the parts as an iterator.
+
+        :rtype: iterator
+        :raises ValueError: If the content is not multipart/mixed
+        """
+        if not self.content_type or not self.content_type.startswith("multipart/mixed"):
+            raise ValueError("You can't get parts if the response is not multipart/mixed")
+
+        multipart_helper = MultiPartHelper(self.request)
+        return multipart_helper.parse_response(self)
+
 
 class HttpClientTransportResponse(HttpResponse):
     """Create a HTTPResponse from an http.client response.

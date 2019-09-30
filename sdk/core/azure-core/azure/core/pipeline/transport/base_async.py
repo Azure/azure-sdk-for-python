@@ -26,11 +26,10 @@
 
 import asyncio
 import abc
+from collections.abc import AsyncIterator
 
-from typing import Any, List, Union, Callable, AsyncIterator, Optional, Generic, TypeVar
-from azure.core.pipeline import PipelineRequest, PipelineResponse, Pipeline
-from azure.core.pipeline.policies import SansIOHTTPPolicy
-from .base import _HttpResponseBase
+from typing import AsyncIterator as AsyncIteratorType, Iterator, Generic, TypeVar
+from .base import _HttpResponseBase, MultiPartHelper
 
 try:
     from contextlib import AbstractAsyncContextManager  # type: ignore
@@ -65,12 +64,27 @@ def _iterate_response_content(iterator):
         raise _ResponseStopIteration()
 
 
+class _PartGenerator(AsyncIterator):
+    """Until parts is a real async iterator, wrap the sync call.
+
+    :param parts: An iterable of parts
+    """
+    def __init__(self, parts: Iterator) -> None:
+        self.parts = iter(parts)
+
+    async def __anext__(self):
+        try:
+            return next(self.parts)
+        except StopIteration:
+            raise StopAsyncIteration()
+
+
 class AsyncHttpResponse(_HttpResponseBase):
     """An AsyncHttpResponse ABC.
 
     Allows for the asynchronous streaming of data from the response.
     """
-    def stream_download(self, pipeline) -> AsyncIterator[bytes]:
+    def stream_download(self, pipeline) -> AsyncIteratorType[bytes]:
         """Generator for streaming response body data.
 
         Should be implemented by sub-classes if streaming download
@@ -79,6 +93,18 @@ class AsyncHttpResponse(_HttpResponseBase):
         :param pipeline: The pipeline object
         :type pipeline: azure.core.pipeline
         """
+
+    def parts(self) -> AsyncIterator:
+        """Assuming the content-type is multipart/mixed, will return the parts as an async iterator.
+
+        :rtype: AsyncIterator
+        :raises ValueError: If the content is not multipart/mixed
+        """
+        if not self.content_type or not self.content_type.startswith("multipart/mixed"):
+            raise ValueError("You can't get parts if the response is not multipart/mixed")
+
+        multipart_helper = MultiPartHelper(self.request)
+        return _PartGenerator(multipart_helper.parse_response(self))
 
 
 class AsyncHttpTransport(AbstractAsyncContextManager, abc.ABC, Generic[HTTPRequestType, AsyncHTTPResponseType]):
