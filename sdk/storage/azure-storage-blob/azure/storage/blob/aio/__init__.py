@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 from .._shared.policies_async import ExponentialRetry, LinearRetry, NoRetry
-from .._shared.downloads_async import StorageStreamDownloader
+from azure.storage.blob.aio.download_async import StorageStreamDownloader
 from .._shared.models import(
     LocationMode,
     ResourceTypes,
@@ -82,5 +82,4 @@ __all__ = [
     'BlobPermissions',
     'ResourceTypes',
     'AccountPermissions',
-    'StorageStreamDownloader',
 ]

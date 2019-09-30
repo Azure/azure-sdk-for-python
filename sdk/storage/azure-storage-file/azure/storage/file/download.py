@@ -8,12 +8,11 @@ import sys
 import threading
 from io import BytesIO
 
-from azure.core.exceptions import HttpResponseError
+from azure.core import HttpResponseError
 from azure.core.tracing.context import tracing_context
-
-from .request_handlers import validate_and_format_range_headers
-from .response_handlers import process_storage_error, parse_length_from_content_range
-from .encryption import decrypt_blob
+from ._shared.encryption import decrypt_blob
+from ._shared.request_handlers import validate_and_format_range_headers
+from ._shared.response_handlers import process_storage_error, parse_length_from_content_range
 
 
 def process_range_and_offset(start_range, end_range, length, encryption):

@@ -23,7 +23,6 @@ from ._shared import encode_base64
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
 from ._shared.encryption import generate_blob_encryption_data
 from ._shared.uploads import IterStreamer
-from ._shared.downloads import StorageStreamDownloader
 from ._shared.request_handlers import (
     add_metadata_headers, get_length, read_length,
     validate_and_format_range_headers)
@@ -47,6 +46,7 @@ from ._upload_helpers import (
     upload_append_blob,
     upload_page_blob)
 from .models import BlobType, BlobBlock
+from .download import StorageStreamDownloader
 from .lease import LeaseClient, get_access_conditions
 from ._shared_access_signature import BlobSharedAccessSignature
 

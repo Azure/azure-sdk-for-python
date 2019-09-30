@@ -15,7 +15,6 @@ from azure.storage.blob._generated.models import CpkInfo
 
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._shared.policies_async import ExponentialRetry
-from .._shared.downloads_async import StorageStreamDownloader
 from .._shared.response_handlers import return_response_headers, process_storage_error, get_page_ranges_result
 from .._generated.aio import AzureBlobStorage
 from .._generated.models import ModifiedAccessConditions, StorageErrorException
@@ -28,6 +27,7 @@ from ._upload_helpers import (
 from ..models import BlobType, BlobBlock
 from ..lease import get_access_conditions
 from .lease_async import LeaseClient
+from .download_async import StorageStreamDownloader
 
 if TYPE_CHECKING:
     from datetime import datetime
