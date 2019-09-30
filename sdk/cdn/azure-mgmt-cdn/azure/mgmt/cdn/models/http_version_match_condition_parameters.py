@@ -31,8 +31,6 @@ class HttpVersionMatchConditionParameters(Model):
     :param match_values: Required. The match value for the condition of the
      delivery rule
     :type match_values: list[str]
-    :param transforms: List of transforms
-    :type transforms: list[str or ~azure.mgmt.cdn.models.Transform]
     """
 
     _validation = {
@@ -46,7 +44,6 @@ class HttpVersionMatchConditionParameters(Model):
         'operator': {'key': 'operator', 'type': 'str'},
         'negate_condition': {'key': 'negateCondition', 'type': 'bool'},
         'match_values': {'key': 'matchValues', 'type': '[str]'},
-        'transforms': {'key': 'transforms', 'type': '[str]'},
     }
 
     odatatype = "#Microsoft.Azure.Cdn.Models.DeliveryRuleHttpVersionConditionParameters"
@@ -57,4 +54,3 @@ class HttpVersionMatchConditionParameters(Model):
         super(HttpVersionMatchConditionParameters, self).__init__(**kwargs)
         self.negate_condition = kwargs.get('negate_condition', None)
         self.match_values = kwargs.get('match_values', None)
-        self.transforms = kwargs.get('transforms', None)
