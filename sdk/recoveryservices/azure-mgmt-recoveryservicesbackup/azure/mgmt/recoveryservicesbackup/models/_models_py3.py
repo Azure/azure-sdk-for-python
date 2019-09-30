@@ -653,7 +653,7 @@ class ProtectedItem(Model):
         'deferred_delete_time_in_utc': {'key': 'deferredDeleteTimeInUTC', 'type': 'iso-8601'},
         'is_scheduled_for_deferred_delete': {'key': 'isScheduledForDeferredDelete', 'type': 'bool'},
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
-        'is_deferred_delete_schedule_upcoming': {'key': 'isDeferredDeleteScheduleUpcoming', 'type': 'bool'},
+        'is_deferred_delete_schedule_upcoming': {'key': 'IsDeferredDeleteScheduleUpcoming', 'type': 'bool'},
         'is_rehydrate': {'key': 'isRehydrate', 'type': 'bool'},
         'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
     }
@@ -773,7 +773,7 @@ class AzureFileshareProtectedItem(ProtectedItem):
         'deferred_delete_time_in_utc': {'key': 'deferredDeleteTimeInUTC', 'type': 'iso-8601'},
         'is_scheduled_for_deferred_delete': {'key': 'isScheduledForDeferredDelete', 'type': 'bool'},
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
-        'is_deferred_delete_schedule_upcoming': {'key': 'isDeferredDeleteScheduleUpcoming', 'type': 'bool'},
+        'is_deferred_delete_schedule_upcoming': {'key': 'IsDeferredDeleteScheduleUpcoming', 'type': 'bool'},
         'is_rehydrate': {'key': 'isRehydrate', 'type': 'bool'},
         'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
         'friendly_name': {'key': 'friendlyName', 'type': 'str'},
@@ -809,19 +809,29 @@ class AzureFileshareProtectedItemExtendedInfo(Model):
     :param policy_state: Indicates consistency of policy object and policy
      applied to this backup item.
     :type policy_state: str
+    :param resource_state: Indicates the state of this resource. Possible
+     values are from enum ResourceState {Invalid, Active, SoftDeleted, Deleted}
+    :type resource_state: str
+    :param resource_state_sync_time: The resource state sync time for this
+     backup item.
+    :type resource_state_sync_time: datetime
     """
 
     _attribute_map = {
         'oldest_recovery_point': {'key': 'oldestRecoveryPoint', 'type': 'iso-8601'},
         'recovery_point_count': {'key': 'recoveryPointCount', 'type': 'int'},
         'policy_state': {'key': 'policyState', 'type': 'str'},
+        'resource_state': {'key': 'resourceState', 'type': 'str'},
+        'resource_state_sync_time': {'key': 'resourceStateSyncTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self, *, oldest_recovery_point=None, recovery_point_count: int=None, policy_state: str=None, **kwargs) -> None:
+    def __init__(self, *, oldest_recovery_point=None, recovery_point_count: int=None, policy_state: str=None, resource_state: str=None, resource_state_sync_time=None, **kwargs) -> None:
         super(AzureFileshareProtectedItemExtendedInfo, self).__init__(**kwargs)
         self.oldest_recovery_point = oldest_recovery_point
         self.recovery_point_count = recovery_point_count
         self.policy_state = policy_state
+        self.resource_state = resource_state
+        self.resource_state_sync_time = resource_state_sync_time
 
 
 class ProtectionPolicy(Model):
@@ -831,8 +841,7 @@ class ProtectionPolicy(Model):
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: AzureFileShareProtectionPolicy,
     AzureIaaSVMProtectionPolicy, AzureSqlProtectionPolicy,
-    AzureVmWorkloadProtectionPolicy, GenericProtectionPolicy,
-    MabProtectionPolicy
+    GenericProtectionPolicy, MabProtectionPolicy
 
     All required parameters must be populated in order to send to Azure.
 
@@ -852,7 +861,7 @@ class ProtectionPolicy(Model):
     }
 
     _subtype_map = {
-        'backup_management_type': {'AzureStorage': 'AzureFileShareProtectionPolicy', 'AzureIaasVM': 'AzureIaaSVMProtectionPolicy', 'AzureSql': 'AzureSqlProtectionPolicy', 'AzureWorkload': 'AzureVmWorkloadProtectionPolicy', 'GenericProtectionPolicy': 'GenericProtectionPolicy', 'MAB': 'MabProtectionPolicy'}
+        'backup_management_type': {'AzureStorage': 'AzureFileShareProtectionPolicy', 'AzureIaasVM': 'AzureIaaSVMProtectionPolicy', 'AzureSql': 'AzureSqlProtectionPolicy', 'GenericProtectionPolicy': 'GenericProtectionPolicy', 'MAB': 'MabProtectionPolicy'}
     }
 
     def __init__(self, *, protected_items_count: int=None, **kwargs) -> None:
@@ -958,6 +967,8 @@ class AzureFileShareRecoveryPoint(RecoveryPoint):
     :param file_share_snapshot_uri: Contains Url to the snapshot of fileshare,
      if applicable
     :type file_share_snapshot_uri: str
+    :param recovery_point_size_in_gb: Contains recovery point size
+    :type recovery_point_size_in_gb: int
     """
 
     _validation = {
@@ -969,13 +980,15 @@ class AzureFileShareRecoveryPoint(RecoveryPoint):
         'recovery_point_type': {'key': 'recoveryPointType', 'type': 'str'},
         'recovery_point_time': {'key': 'recoveryPointTime', 'type': 'iso-8601'},
         'file_share_snapshot_uri': {'key': 'fileShareSnapshotUri', 'type': 'str'},
+        'recovery_point_size_in_gb': {'key': 'recoveryPointSizeInGB', 'type': 'int'},
     }
 
-    def __init__(self, *, recovery_point_type: str=None, recovery_point_time=None, file_share_snapshot_uri: str=None, **kwargs) -> None:
+    def __init__(self, *, recovery_point_type: str=None, recovery_point_time=None, file_share_snapshot_uri: str=None, recovery_point_size_in_gb: int=None, **kwargs) -> None:
         super(AzureFileShareRecoveryPoint, self).__init__(**kwargs)
         self.recovery_point_type = recovery_point_type
         self.recovery_point_time = recovery_point_time
         self.file_share_snapshot_uri = file_share_snapshot_uri
+        self.recovery_point_size_in_gb = recovery_point_size_in_gb
         self.object_type = 'AzureFileShareRecoveryPoint'
 
 
@@ -1018,7 +1031,8 @@ class AzureFileShareRestoreRequest(RestoreRequest):
     :param object_type: Required. Constant filled by server.
     :type object_type: str
     :param recovery_type: Type of this recovery. Possible values include:
-     'Invalid', 'OriginalLocation', 'AlternateLocation', 'RestoreDisks'
+     'Invalid', 'OriginalLocation', 'AlternateLocation', 'RestoreDisks',
+     'Offline'
     :type recovery_type: str or
      ~azure.mgmt.recoveryservicesbackup.models.RecoveryType
     :param source_resource_id: Source storage account ARM Id
@@ -1354,6 +1368,9 @@ class AzureIaaSVMProtectedItem(ProtectedItem):
     :param extended_info: Additional information for this backup item.
     :type extended_info:
      ~azure.mgmt.recoveryservicesbackup.models.AzureIaaSVMProtectedItemExtendedInfo
+    :param extended_properties:
+    :type extended_properties:
+     ~azure.mgmt.recoveryservicesbackup.models.ExtendedProperties
     """
 
     _validation = {
@@ -1372,7 +1389,7 @@ class AzureIaaSVMProtectedItem(ProtectedItem):
         'deferred_delete_time_in_utc': {'key': 'deferredDeleteTimeInUTC', 'type': 'iso-8601'},
         'is_scheduled_for_deferred_delete': {'key': 'isScheduledForDeferredDelete', 'type': 'bool'},
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
-        'is_deferred_delete_schedule_upcoming': {'key': 'isDeferredDeleteScheduleUpcoming', 'type': 'bool'},
+        'is_deferred_delete_schedule_upcoming': {'key': 'IsDeferredDeleteScheduleUpcoming', 'type': 'bool'},
         'is_rehydrate': {'key': 'isRehydrate', 'type': 'bool'},
         'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
         'friendly_name': {'key': 'friendlyName', 'type': 'str'},
@@ -1385,13 +1402,14 @@ class AzureIaaSVMProtectedItem(ProtectedItem):
         'last_backup_time': {'key': 'lastBackupTime', 'type': 'iso-8601'},
         'protected_item_data_id': {'key': 'protectedItemDataId', 'type': 'str'},
         'extended_info': {'key': 'extendedInfo', 'type': 'AzureIaaSVMProtectedItemExtendedInfo'},
+        'extended_properties': {'key': 'extendedProperties', 'type': 'ExtendedProperties'},
     }
 
     _subtype_map = {
         'protected_item_type': {'Microsoft.ClassicCompute/virtualMachines': 'AzureIaaSClassicComputeVMProtectedItem', 'Microsoft.Compute/virtualMachines': 'AzureIaaSComputeVMProtectedItem'}
     }
 
-    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_time_in_utc=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, friendly_name: str=None, virtual_machine_id: str=None, protection_status: str=None, protection_state=None, health_status=None, health_details=None, last_backup_status: str=None, last_backup_time=None, protected_item_data_id: str=None, extended_info=None, **kwargs) -> None:
+    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_time_in_utc=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, friendly_name: str=None, virtual_machine_id: str=None, protection_status: str=None, protection_state=None, health_status=None, health_details=None, last_backup_status: str=None, last_backup_time=None, protected_item_data_id: str=None, extended_info=None, extended_properties=None, **kwargs) -> None:
         super(AzureIaaSVMProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, **kwargs)
         self.friendly_name = friendly_name
         self.virtual_machine_id = virtual_machine_id
@@ -1403,6 +1421,7 @@ class AzureIaaSVMProtectedItem(ProtectedItem):
         self.last_backup_time = last_backup_time
         self.protected_item_data_id = protected_item_data_id
         self.extended_info = extended_info
+        self.extended_properties = extended_properties
         self.protected_item_type = 'AzureIaaSVMProtectedItem'
 
 
@@ -1487,6 +1506,9 @@ class AzureIaaSClassicComputeVMProtectedItem(AzureIaaSVMProtectedItem):
     :param extended_info: Additional information for this backup item.
     :type extended_info:
      ~azure.mgmt.recoveryservicesbackup.models.AzureIaaSVMProtectedItemExtendedInfo
+    :param extended_properties:
+    :type extended_properties:
+     ~azure.mgmt.recoveryservicesbackup.models.ExtendedProperties
     """
 
     _validation = {
@@ -1505,7 +1527,7 @@ class AzureIaaSClassicComputeVMProtectedItem(AzureIaaSVMProtectedItem):
         'deferred_delete_time_in_utc': {'key': 'deferredDeleteTimeInUTC', 'type': 'iso-8601'},
         'is_scheduled_for_deferred_delete': {'key': 'isScheduledForDeferredDelete', 'type': 'bool'},
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
-        'is_deferred_delete_schedule_upcoming': {'key': 'isDeferredDeleteScheduleUpcoming', 'type': 'bool'},
+        'is_deferred_delete_schedule_upcoming': {'key': 'IsDeferredDeleteScheduleUpcoming', 'type': 'bool'},
         'is_rehydrate': {'key': 'isRehydrate', 'type': 'bool'},
         'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
         'friendly_name': {'key': 'friendlyName', 'type': 'str'},
@@ -1518,10 +1540,11 @@ class AzureIaaSClassicComputeVMProtectedItem(AzureIaaSVMProtectedItem):
         'last_backup_time': {'key': 'lastBackupTime', 'type': 'iso-8601'},
         'protected_item_data_id': {'key': 'protectedItemDataId', 'type': 'str'},
         'extended_info': {'key': 'extendedInfo', 'type': 'AzureIaaSVMProtectedItemExtendedInfo'},
+        'extended_properties': {'key': 'extendedProperties', 'type': 'ExtendedProperties'},
     }
 
-    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_time_in_utc=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, friendly_name: str=None, virtual_machine_id: str=None, protection_status: str=None, protection_state=None, health_status=None, health_details=None, last_backup_status: str=None, last_backup_time=None, protected_item_data_id: str=None, extended_info=None, **kwargs) -> None:
-        super(AzureIaaSClassicComputeVMProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, friendly_name=friendly_name, virtual_machine_id=virtual_machine_id, protection_status=protection_status, protection_state=protection_state, health_status=health_status, health_details=health_details, last_backup_status=last_backup_status, last_backup_time=last_backup_time, protected_item_data_id=protected_item_data_id, extended_info=extended_info, **kwargs)
+    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_time_in_utc=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, friendly_name: str=None, virtual_machine_id: str=None, protection_status: str=None, protection_state=None, health_status=None, health_details=None, last_backup_status: str=None, last_backup_time=None, protected_item_data_id: str=None, extended_info=None, extended_properties=None, **kwargs) -> None:
+        super(AzureIaaSClassicComputeVMProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, friendly_name=friendly_name, virtual_machine_id=virtual_machine_id, protection_status=protection_status, protection_state=protection_state, health_status=health_status, health_details=health_details, last_backup_status=last_backup_status, last_backup_time=last_backup_time, protected_item_data_id=protected_item_data_id, extended_info=extended_info, extended_properties=extended_properties, **kwargs)
         self.protected_item_type = 'Microsoft.ClassicCompute/virtualMachines'
 
 
@@ -1700,6 +1723,9 @@ class AzureIaaSComputeVMProtectedItem(AzureIaaSVMProtectedItem):
     :param extended_info: Additional information for this backup item.
     :type extended_info:
      ~azure.mgmt.recoveryservicesbackup.models.AzureIaaSVMProtectedItemExtendedInfo
+    :param extended_properties:
+    :type extended_properties:
+     ~azure.mgmt.recoveryservicesbackup.models.ExtendedProperties
     """
 
     _validation = {
@@ -1718,7 +1744,7 @@ class AzureIaaSComputeVMProtectedItem(AzureIaaSVMProtectedItem):
         'deferred_delete_time_in_utc': {'key': 'deferredDeleteTimeInUTC', 'type': 'iso-8601'},
         'is_scheduled_for_deferred_delete': {'key': 'isScheduledForDeferredDelete', 'type': 'bool'},
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
-        'is_deferred_delete_schedule_upcoming': {'key': 'isDeferredDeleteScheduleUpcoming', 'type': 'bool'},
+        'is_deferred_delete_schedule_upcoming': {'key': 'IsDeferredDeleteScheduleUpcoming', 'type': 'bool'},
         'is_rehydrate': {'key': 'isRehydrate', 'type': 'bool'},
         'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
         'friendly_name': {'key': 'friendlyName', 'type': 'str'},
@@ -1731,10 +1757,11 @@ class AzureIaaSComputeVMProtectedItem(AzureIaaSVMProtectedItem):
         'last_backup_time': {'key': 'lastBackupTime', 'type': 'iso-8601'},
         'protected_item_data_id': {'key': 'protectedItemDataId', 'type': 'str'},
         'extended_info': {'key': 'extendedInfo', 'type': 'AzureIaaSVMProtectedItemExtendedInfo'},
+        'extended_properties': {'key': 'extendedProperties', 'type': 'ExtendedProperties'},
     }
 
-    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_time_in_utc=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, friendly_name: str=None, virtual_machine_id: str=None, protection_status: str=None, protection_state=None, health_status=None, health_details=None, last_backup_status: str=None, last_backup_time=None, protected_item_data_id: str=None, extended_info=None, **kwargs) -> None:
-        super(AzureIaaSComputeVMProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, friendly_name=friendly_name, virtual_machine_id=virtual_machine_id, protection_status=protection_status, protection_state=protection_state, health_status=health_status, health_details=health_details, last_backup_status=last_backup_status, last_backup_time=last_backup_time, protected_item_data_id=protected_item_data_id, extended_info=extended_info, **kwargs)
+    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_time_in_utc=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, friendly_name: str=None, virtual_machine_id: str=None, protection_status: str=None, protection_state=None, health_status=None, health_details=None, last_backup_status: str=None, last_backup_time=None, protected_item_data_id: str=None, extended_info=None, extended_properties=None, **kwargs) -> None:
+        super(AzureIaaSComputeVMProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, friendly_name=friendly_name, virtual_machine_id=virtual_machine_id, protection_status=protection_status, protection_state=protection_state, health_status=health_status, health_details=health_details, last_backup_status=last_backup_status, last_backup_time=last_backup_time, protected_item_data_id=protected_item_data_id, extended_info=extended_info, extended_properties=extended_properties, **kwargs)
         self.protected_item_type = 'Microsoft.Compute/virtualMachines'
 
 
@@ -2513,7 +2540,7 @@ class AzureSqlProtectedItem(ProtectedItem):
         'deferred_delete_time_in_utc': {'key': 'deferredDeleteTimeInUTC', 'type': 'iso-8601'},
         'is_scheduled_for_deferred_delete': {'key': 'isScheduledForDeferredDelete', 'type': 'bool'},
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
-        'is_deferred_delete_schedule_upcoming': {'key': 'isDeferredDeleteScheduleUpcoming', 'type': 'bool'},
+        'is_deferred_delete_schedule_upcoming': {'key': 'IsDeferredDeleteScheduleUpcoming', 'type': 'bool'},
         'is_rehydrate': {'key': 'isRehydrate', 'type': 'bool'},
         'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
         'protected_item_data_id': {'key': 'protectedItemDataId', 'type': 'str'},
@@ -3353,7 +3380,7 @@ class AzureVmWorkloadProtectedItem(ProtectedItem):
         'deferred_delete_time_in_utc': {'key': 'deferredDeleteTimeInUTC', 'type': 'iso-8601'},
         'is_scheduled_for_deferred_delete': {'key': 'isScheduledForDeferredDelete', 'type': 'bool'},
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
-        'is_deferred_delete_schedule_upcoming': {'key': 'isDeferredDeleteScheduleUpcoming', 'type': 'bool'},
+        'is_deferred_delete_schedule_upcoming': {'key': 'IsDeferredDeleteScheduleUpcoming', 'type': 'bool'},
         'is_rehydrate': {'key': 'isRehydrate', 'type': 'bool'},
         'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
         'friendly_name': {'key': 'friendlyName', 'type': 'str'},
@@ -3416,50 +3443,6 @@ class AzureVmWorkloadProtectedItemExtendedInfo(Model):
         self.oldest_recovery_point = oldest_recovery_point
         self.recovery_point_count = recovery_point_count
         self.policy_state = policy_state
-
-
-class AzureVmWorkloadProtectionPolicy(ProtectionPolicy):
-    """Azure VM (Mercury) workload-specific backup policy.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :param protected_items_count: Number of items associated with this policy.
-    :type protected_items_count: int
-    :param backup_management_type: Required. Constant filled by server.
-    :type backup_management_type: str
-    :param work_load_type: Type of workload for the backup management.
-     Possible values include: 'Invalid', 'VM', 'FileFolder', 'AzureSqlDb',
-     'SQLDB', 'Exchange', 'Sharepoint', 'VMwareVM', 'SystemState', 'Client',
-     'GenericDataSource', 'SQLDataBase', 'AzureFileShare', 'SAPHanaDatabase',
-     'SAPAseDatabase'
-    :type work_load_type: str or
-     ~azure.mgmt.recoveryservicesbackup.models.WorkloadType
-    :param settings: Common settings for the backup management
-    :type settings: ~azure.mgmt.recoveryservicesbackup.models.Settings
-    :param sub_protection_policy: List of sub-protection policies which
-     includes schedule and retention
-    :type sub_protection_policy:
-     list[~azure.mgmt.recoveryservicesbackup.models.SubProtectionPolicy]
-    """
-
-    _validation = {
-        'backup_management_type': {'required': True},
-    }
-
-    _attribute_map = {
-        'protected_items_count': {'key': 'protectedItemsCount', 'type': 'int'},
-        'backup_management_type': {'key': 'backupManagementType', 'type': 'str'},
-        'work_load_type': {'key': 'workLoadType', 'type': 'str'},
-        'settings': {'key': 'settings', 'type': 'Settings'},
-        'sub_protection_policy': {'key': 'subProtectionPolicy', 'type': '[SubProtectionPolicy]'},
-    }
-
-    def __init__(self, *, protected_items_count: int=None, work_load_type=None, settings=None, sub_protection_policy=None, **kwargs) -> None:
-        super(AzureVmWorkloadProtectionPolicy, self).__init__(protected_items_count=protected_items_count, **kwargs)
-        self.work_load_type = work_load_type
-        self.settings = settings
-        self.sub_protection_policy = sub_protection_policy
-        self.backup_management_type = 'AzureWorkload'
 
 
 class AzureVmWorkloadSAPAseDatabaseProtectableItem(AzureVmWorkloadProtectableItem):
@@ -3639,7 +3622,7 @@ class AzureVmWorkloadSAPAseDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
         'deferred_delete_time_in_utc': {'key': 'deferredDeleteTimeInUTC', 'type': 'iso-8601'},
         'is_scheduled_for_deferred_delete': {'key': 'isScheduledForDeferredDelete', 'type': 'bool'},
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
-        'is_deferred_delete_schedule_upcoming': {'key': 'isDeferredDeleteScheduleUpcoming', 'type': 'bool'},
+        'is_deferred_delete_schedule_upcoming': {'key': 'IsDeferredDeleteScheduleUpcoming', 'type': 'bool'},
         'is_rehydrate': {'key': 'isRehydrate', 'type': 'bool'},
         'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
         'friendly_name': {'key': 'friendlyName', 'type': 'str'},
@@ -4017,7 +4000,7 @@ class AzureVmWorkloadSAPHanaDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
         'deferred_delete_time_in_utc': {'key': 'deferredDeleteTimeInUTC', 'type': 'iso-8601'},
         'is_scheduled_for_deferred_delete': {'key': 'isScheduledForDeferredDelete', 'type': 'bool'},
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
-        'is_deferred_delete_schedule_upcoming': {'key': 'isDeferredDeleteScheduleUpcoming', 'type': 'bool'},
+        'is_deferred_delete_schedule_upcoming': {'key': 'IsDeferredDeleteScheduleUpcoming', 'type': 'bool'},
         'is_rehydrate': {'key': 'isRehydrate', 'type': 'bool'},
         'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
         'friendly_name': {'key': 'friendlyName', 'type': 'str'},
@@ -4465,7 +4448,7 @@ class AzureVmWorkloadSQLDatabaseProtectedItem(AzureVmWorkloadProtectedItem):
         'deferred_delete_time_in_utc': {'key': 'deferredDeleteTimeInUTC', 'type': 'iso-8601'},
         'is_scheduled_for_deferred_delete': {'key': 'isScheduledForDeferredDelete', 'type': 'bool'},
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
-        'is_deferred_delete_schedule_upcoming': {'key': 'isDeferredDeleteScheduleUpcoming', 'type': 'bool'},
+        'is_deferred_delete_schedule_upcoming': {'key': 'IsDeferredDeleteScheduleUpcoming', 'type': 'bool'},
         'is_rehydrate': {'key': 'isRehydrate', 'type': 'bool'},
         'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
         'friendly_name': {'key': 'friendlyName', 'type': 'str'},
@@ -5036,9 +5019,9 @@ class AzureWorkloadRestoreRequest(RestoreRequest):
 
     :param object_type: Required. Constant filled by server.
     :type object_type: str
-    :param recovery_type: OLR/ALR, RestoreDisks is invalid option. Possible
-     values include: 'Invalid', 'OriginalLocation', 'AlternateLocation',
-     'RestoreDisks'
+    :param recovery_type: Type of this recovery. Possible values include:
+     'Invalid', 'OriginalLocation', 'AlternateLocation', 'RestoreDisks',
+     'Offline'
     :type recovery_type: str or
      ~azure.mgmt.recoveryservicesbackup.models.RecoveryType
     :param source_resource_id: Fully qualified ARM ID of the VM on which
@@ -5049,6 +5032,9 @@ class AzureWorkloadRestoreRequest(RestoreRequest):
     :param target_info: Details of target database
     :type target_info:
      ~azure.mgmt.recoveryservicesbackup.models.TargetRestoreInfo
+    :param recovery_mode: Defines whether the current recovery mode is file
+     restore or database restore
+    :type recovery_mode: str
     """
 
     _validation = {
@@ -5061,18 +5047,20 @@ class AzureWorkloadRestoreRequest(RestoreRequest):
         'source_resource_id': {'key': 'sourceResourceId', 'type': 'str'},
         'property_bag': {'key': 'propertyBag', 'type': '{str}'},
         'target_info': {'key': 'targetInfo', 'type': 'TargetRestoreInfo'},
+        'recovery_mode': {'key': 'recoveryMode', 'type': 'str'},
     }
 
     _subtype_map = {
         'object_type': {'AzureWorkloadPointInTimeRestoreRequest': 'AzureWorkloadPointInTimeRestoreRequest', 'AzureWorkloadSAPHanaRestoreRequest': 'AzureWorkloadSAPHanaRestoreRequest', 'AzureWorkloadSQLRestoreRequest': 'AzureWorkloadSQLRestoreRequest'}
     }
 
-    def __init__(self, *, recovery_type=None, source_resource_id: str=None, property_bag=None, target_info=None, **kwargs) -> None:
+    def __init__(self, *, recovery_type=None, source_resource_id: str=None, property_bag=None, target_info=None, recovery_mode: str=None, **kwargs) -> None:
         super(AzureWorkloadRestoreRequest, self).__init__(**kwargs)
         self.recovery_type = recovery_type
         self.source_resource_id = source_resource_id
         self.property_bag = property_bag
         self.target_info = target_info
+        self.recovery_mode = recovery_mode
         self.object_type = 'AzureWorkloadRestoreRequest'
 
 
@@ -5084,9 +5072,9 @@ class AzureWorkloadPointInTimeRestoreRequest(AzureWorkloadRestoreRequest):
 
     :param object_type: Required. Constant filled by server.
     :type object_type: str
-    :param recovery_type: OLR/ALR, RestoreDisks is invalid option. Possible
-     values include: 'Invalid', 'OriginalLocation', 'AlternateLocation',
-     'RestoreDisks'
+    :param recovery_type: Type of this recovery. Possible values include:
+     'Invalid', 'OriginalLocation', 'AlternateLocation', 'RestoreDisks',
+     'Offline'
     :type recovery_type: str or
      ~azure.mgmt.recoveryservicesbackup.models.RecoveryType
     :param source_resource_id: Fully qualified ARM ID of the VM on which
@@ -5097,6 +5085,9 @@ class AzureWorkloadPointInTimeRestoreRequest(AzureWorkloadRestoreRequest):
     :param target_info: Details of target database
     :type target_info:
      ~azure.mgmt.recoveryservicesbackup.models.TargetRestoreInfo
+    :param recovery_mode: Defines whether the current recovery mode is file
+     restore or database restore
+    :type recovery_mode: str
     :param point_in_time: PointInTime value
     :type point_in_time: datetime
     """
@@ -5111,11 +5102,12 @@ class AzureWorkloadPointInTimeRestoreRequest(AzureWorkloadRestoreRequest):
         'source_resource_id': {'key': 'sourceResourceId', 'type': 'str'},
         'property_bag': {'key': 'propertyBag', 'type': '{str}'},
         'target_info': {'key': 'targetInfo', 'type': 'TargetRestoreInfo'},
+        'recovery_mode': {'key': 'recoveryMode', 'type': 'str'},
         'point_in_time': {'key': 'pointInTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self, *, recovery_type=None, source_resource_id: str=None, property_bag=None, target_info=None, point_in_time=None, **kwargs) -> None:
-        super(AzureWorkloadPointInTimeRestoreRequest, self).__init__(recovery_type=recovery_type, source_resource_id=source_resource_id, property_bag=property_bag, target_info=target_info, **kwargs)
+    def __init__(self, *, recovery_type=None, source_resource_id: str=None, property_bag=None, target_info=None, recovery_mode: str=None, point_in_time=None, **kwargs) -> None:
+        super(AzureWorkloadPointInTimeRestoreRequest, self).__init__(recovery_type=recovery_type, source_resource_id=source_resource_id, property_bag=property_bag, target_info=target_info, recovery_mode=recovery_mode, **kwargs)
         self.point_in_time = point_in_time
         self.object_type = 'AzureWorkloadPointInTimeRestoreRequest'
 
@@ -5165,9 +5157,9 @@ class AzureWorkloadSAPHanaRestoreRequest(AzureWorkloadRestoreRequest):
 
     :param object_type: Required. Constant filled by server.
     :type object_type: str
-    :param recovery_type: OLR/ALR, RestoreDisks is invalid option. Possible
-     values include: 'Invalid', 'OriginalLocation', 'AlternateLocation',
-     'RestoreDisks'
+    :param recovery_type: Type of this recovery. Possible values include:
+     'Invalid', 'OriginalLocation', 'AlternateLocation', 'RestoreDisks',
+     'Offline'
     :type recovery_type: str or
      ~azure.mgmt.recoveryservicesbackup.models.RecoveryType
     :param source_resource_id: Fully qualified ARM ID of the VM on which
@@ -5178,6 +5170,9 @@ class AzureWorkloadSAPHanaRestoreRequest(AzureWorkloadRestoreRequest):
     :param target_info: Details of target database
     :type target_info:
      ~azure.mgmt.recoveryservicesbackup.models.TargetRestoreInfo
+    :param recovery_mode: Defines whether the current recovery mode is file
+     restore or database restore
+    :type recovery_mode: str
     """
 
     _validation = {
@@ -5190,14 +5185,15 @@ class AzureWorkloadSAPHanaRestoreRequest(AzureWorkloadRestoreRequest):
         'source_resource_id': {'key': 'sourceResourceId', 'type': 'str'},
         'property_bag': {'key': 'propertyBag', 'type': '{str}'},
         'target_info': {'key': 'targetInfo', 'type': 'TargetRestoreInfo'},
+        'recovery_mode': {'key': 'recoveryMode', 'type': 'str'},
     }
 
     _subtype_map = {
         'object_type': {'AzureWorkloadSAPHanaPointInTimeRestoreRequest': 'AzureWorkloadSAPHanaPointInTimeRestoreRequest'}
     }
 
-    def __init__(self, *, recovery_type=None, source_resource_id: str=None, property_bag=None, target_info=None, **kwargs) -> None:
-        super(AzureWorkloadSAPHanaRestoreRequest, self).__init__(recovery_type=recovery_type, source_resource_id=source_resource_id, property_bag=property_bag, target_info=target_info, **kwargs)
+    def __init__(self, *, recovery_type=None, source_resource_id: str=None, property_bag=None, target_info=None, recovery_mode: str=None, **kwargs) -> None:
+        super(AzureWorkloadSAPHanaRestoreRequest, self).__init__(recovery_type=recovery_type, source_resource_id=source_resource_id, property_bag=property_bag, target_info=target_info, recovery_mode=recovery_mode, **kwargs)
         self.object_type = 'AzureWorkloadSAPHanaRestoreRequest'
 
 
@@ -5209,9 +5205,9 @@ class AzureWorkloadSAPHanaPointInTimeRestoreRequest(AzureWorkloadSAPHanaRestoreR
 
     :param object_type: Required. Constant filled by server.
     :type object_type: str
-    :param recovery_type: OLR/ALR, RestoreDisks is invalid option. Possible
-     values include: 'Invalid', 'OriginalLocation', 'AlternateLocation',
-     'RestoreDisks'
+    :param recovery_type: Type of this recovery. Possible values include:
+     'Invalid', 'OriginalLocation', 'AlternateLocation', 'RestoreDisks',
+     'Offline'
     :type recovery_type: str or
      ~azure.mgmt.recoveryservicesbackup.models.RecoveryType
     :param source_resource_id: Fully qualified ARM ID of the VM on which
@@ -5222,6 +5218,9 @@ class AzureWorkloadSAPHanaPointInTimeRestoreRequest(AzureWorkloadSAPHanaRestoreR
     :param target_info: Details of target database
     :type target_info:
      ~azure.mgmt.recoveryservicesbackup.models.TargetRestoreInfo
+    :param recovery_mode: Defines whether the current recovery mode is file
+     restore or database restore
+    :type recovery_mode: str
     :param point_in_time: PointInTime value
     :type point_in_time: datetime
     """
@@ -5236,18 +5235,19 @@ class AzureWorkloadSAPHanaPointInTimeRestoreRequest(AzureWorkloadSAPHanaRestoreR
         'source_resource_id': {'key': 'sourceResourceId', 'type': 'str'},
         'property_bag': {'key': 'propertyBag', 'type': '{str}'},
         'target_info': {'key': 'targetInfo', 'type': 'TargetRestoreInfo'},
+        'recovery_mode': {'key': 'recoveryMode', 'type': 'str'},
         'point_in_time': {'key': 'pointInTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self, *, recovery_type=None, source_resource_id: str=None, property_bag=None, target_info=None, point_in_time=None, **kwargs) -> None:
-        super(AzureWorkloadSAPHanaPointInTimeRestoreRequest, self).__init__(recovery_type=recovery_type, source_resource_id=source_resource_id, property_bag=property_bag, target_info=target_info, **kwargs)
+    def __init__(self, *, recovery_type=None, source_resource_id: str=None, property_bag=None, target_info=None, recovery_mode: str=None, point_in_time=None, **kwargs) -> None:
+        super(AzureWorkloadSAPHanaPointInTimeRestoreRequest, self).__init__(recovery_type=recovery_type, source_resource_id=source_resource_id, property_bag=property_bag, target_info=target_info, recovery_mode=recovery_mode, **kwargs)
         self.point_in_time = point_in_time
         self.object_type = 'AzureWorkloadSAPHanaPointInTimeRestoreRequest'
 
 
 class AzureWorkloadSAPHanaRecoveryPoint(AzureWorkloadRecoveryPoint):
-    """SAPHana specific recovery point, specifically encapsulates full/diff
-    recovery points.
+    """SAPHana specific recoverypoint, specifically encapsulates full/diff
+    recoverypoints.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -5332,8 +5332,8 @@ class AzureWorkloadSQLAutoProtectionIntent(AzureWorkloadAutoProtectionIntent):
 
 
 class AzureWorkloadSQLRecoveryPoint(AzureWorkloadRecoveryPoint):
-    """SQL specific recovery point, specifically encapsulates full/diff recovery
-    point along with extended info.
+    """SQL specific recoverypoint, specifically encapsulates full/diff
+    recoverypoint along with extended info.
 
     You probably want to use the sub-classes and not this class directly. Known
     sub-classes are: AzureWorkloadSQLPointInTimeRecoveryPoint
@@ -5433,9 +5433,9 @@ class AzureWorkloadSQLRestoreRequest(AzureWorkloadRestoreRequest):
 
     :param object_type: Required. Constant filled by server.
     :type object_type: str
-    :param recovery_type: OLR/ALR, RestoreDisks is invalid option. Possible
-     values include: 'Invalid', 'OriginalLocation', 'AlternateLocation',
-     'RestoreDisks'
+    :param recovery_type: Type of this recovery. Possible values include:
+     'Invalid', 'OriginalLocation', 'AlternateLocation', 'RestoreDisks',
+     'Offline'
     :type recovery_type: str or
      ~azure.mgmt.recoveryservicesbackup.models.RecoveryType
     :param source_resource_id: Fully qualified ARM ID of the VM on which
@@ -5446,6 +5446,9 @@ class AzureWorkloadSQLRestoreRequest(AzureWorkloadRestoreRequest):
     :param target_info: Details of target database
     :type target_info:
      ~azure.mgmt.recoveryservicesbackup.models.TargetRestoreInfo
+    :param recovery_mode: Defines whether the current recovery mode is file
+     restore or database restore
+    :type recovery_mode: str
     :param should_use_alternate_target_location: Default option set to true.
      If this is set to false, alternate data directory must be provided
     :type should_use_alternate_target_location: bool
@@ -5467,6 +5470,7 @@ class AzureWorkloadSQLRestoreRequest(AzureWorkloadRestoreRequest):
         'source_resource_id': {'key': 'sourceResourceId', 'type': 'str'},
         'property_bag': {'key': 'propertyBag', 'type': '{str}'},
         'target_info': {'key': 'targetInfo', 'type': 'TargetRestoreInfo'},
+        'recovery_mode': {'key': 'recoveryMode', 'type': 'str'},
         'should_use_alternate_target_location': {'key': 'shouldUseAlternateTargetLocation', 'type': 'bool'},
         'is_non_recoverable': {'key': 'isNonRecoverable', 'type': 'bool'},
         'alternate_directory_paths': {'key': 'alternateDirectoryPaths', 'type': '[SQLDataDirectoryMapping]'},
@@ -5476,8 +5480,8 @@ class AzureWorkloadSQLRestoreRequest(AzureWorkloadRestoreRequest):
         'object_type': {'AzureWorkloadSQLPointInTimeRestoreRequest': 'AzureWorkloadSQLPointInTimeRestoreRequest'}
     }
 
-    def __init__(self, *, recovery_type=None, source_resource_id: str=None, property_bag=None, target_info=None, should_use_alternate_target_location: bool=None, is_non_recoverable: bool=None, alternate_directory_paths=None, **kwargs) -> None:
-        super(AzureWorkloadSQLRestoreRequest, self).__init__(recovery_type=recovery_type, source_resource_id=source_resource_id, property_bag=property_bag, target_info=target_info, **kwargs)
+    def __init__(self, *, recovery_type=None, source_resource_id: str=None, property_bag=None, target_info=None, recovery_mode: str=None, should_use_alternate_target_location: bool=None, is_non_recoverable: bool=None, alternate_directory_paths=None, **kwargs) -> None:
+        super(AzureWorkloadSQLRestoreRequest, self).__init__(recovery_type=recovery_type, source_resource_id=source_resource_id, property_bag=property_bag, target_info=target_info, recovery_mode=recovery_mode, **kwargs)
         self.should_use_alternate_target_location = should_use_alternate_target_location
         self.is_non_recoverable = is_non_recoverable
         self.alternate_directory_paths = alternate_directory_paths
@@ -5492,9 +5496,9 @@ class AzureWorkloadSQLPointInTimeRestoreRequest(AzureWorkloadSQLRestoreRequest):
 
     :param object_type: Required. Constant filled by server.
     :type object_type: str
-    :param recovery_type: OLR/ALR, RestoreDisks is invalid option. Possible
-     values include: 'Invalid', 'OriginalLocation', 'AlternateLocation',
-     'RestoreDisks'
+    :param recovery_type: Type of this recovery. Possible values include:
+     'Invalid', 'OriginalLocation', 'AlternateLocation', 'RestoreDisks',
+     'Offline'
     :type recovery_type: str or
      ~azure.mgmt.recoveryservicesbackup.models.RecoveryType
     :param source_resource_id: Fully qualified ARM ID of the VM on which
@@ -5505,6 +5509,9 @@ class AzureWorkloadSQLPointInTimeRestoreRequest(AzureWorkloadSQLRestoreRequest):
     :param target_info: Details of target database
     :type target_info:
      ~azure.mgmt.recoveryservicesbackup.models.TargetRestoreInfo
+    :param recovery_mode: Defines whether the current recovery mode is file
+     restore or database restore
+    :type recovery_mode: str
     :param should_use_alternate_target_location: Default option set to true.
      If this is set to false, alternate data directory must be provided
     :type should_use_alternate_target_location: bool
@@ -5528,14 +5535,15 @@ class AzureWorkloadSQLPointInTimeRestoreRequest(AzureWorkloadSQLRestoreRequest):
         'source_resource_id': {'key': 'sourceResourceId', 'type': 'str'},
         'property_bag': {'key': 'propertyBag', 'type': '{str}'},
         'target_info': {'key': 'targetInfo', 'type': 'TargetRestoreInfo'},
+        'recovery_mode': {'key': 'recoveryMode', 'type': 'str'},
         'should_use_alternate_target_location': {'key': 'shouldUseAlternateTargetLocation', 'type': 'bool'},
         'is_non_recoverable': {'key': 'isNonRecoverable', 'type': 'bool'},
         'alternate_directory_paths': {'key': 'alternateDirectoryPaths', 'type': '[SQLDataDirectoryMapping]'},
         'point_in_time': {'key': 'pointInTime', 'type': 'iso-8601'},
     }
 
-    def __init__(self, *, recovery_type=None, source_resource_id: str=None, property_bag=None, target_info=None, should_use_alternate_target_location: bool=None, is_non_recoverable: bool=None, alternate_directory_paths=None, point_in_time=None, **kwargs) -> None:
-        super(AzureWorkloadSQLPointInTimeRestoreRequest, self).__init__(recovery_type=recovery_type, source_resource_id=source_resource_id, property_bag=property_bag, target_info=target_info, should_use_alternate_target_location=should_use_alternate_target_location, is_non_recoverable=is_non_recoverable, alternate_directory_paths=alternate_directory_paths, **kwargs)
+    def __init__(self, *, recovery_type=None, source_resource_id: str=None, property_bag=None, target_info=None, recovery_mode: str=None, should_use_alternate_target_location: bool=None, is_non_recoverable: bool=None, alternate_directory_paths=None, point_in_time=None, **kwargs) -> None:
+        super(AzureWorkloadSQLPointInTimeRestoreRequest, self).__init__(recovery_type=recovery_type, source_resource_id=source_resource_id, property_bag=property_bag, target_info=target_info, recovery_mode=recovery_mode, should_use_alternate_target_location=should_use_alternate_target_location, is_non_recoverable=is_non_recoverable, alternate_directory_paths=alternate_directory_paths, **kwargs)
         self.point_in_time = point_in_time
         self.object_type = 'AzureWorkloadSQLPointInTimeRestoreRequest'
 
@@ -6579,6 +6587,48 @@ class Day(Model):
         self.is_last = is_last
 
 
+class DiskExclusionProperties(Model):
+    """DiskExclusionProperties.
+
+    :param disk_lun_list: List of Disks' Logical Unit Numbers (LUN) to be used
+     for VM Protection.
+    :type disk_lun_list: list[int]
+    :param is_inclusion_list: Flag to indicate whether DiskLunList is to be
+     included/ excluded from backup.
+    :type is_inclusion_list: bool
+    """
+
+    _attribute_map = {
+        'disk_lun_list': {'key': 'diskLunList', 'type': '[int]'},
+        'is_inclusion_list': {'key': 'isInclusionList', 'type': 'bool'},
+    }
+
+    def __init__(self, *, disk_lun_list=None, is_inclusion_list: bool=None, **kwargs) -> None:
+        super(DiskExclusionProperties, self).__init__(**kwargs)
+        self.disk_lun_list = disk_lun_list
+        self.is_inclusion_list = is_inclusion_list
+
+
+class DiskInformation(Model):
+    """Disk information.
+
+    :param lun:
+    :type lun: int
+    :param name:
+    :type name: str
+    """
+
+    _attribute_map = {
+        'lun': {'key': 'lun', 'type': 'int'},
+        'name': {'key': 'name', 'type': 'str'},
+    }
+
+    def __init__(self, *, lun: int=None, name: str=None, **kwargs) -> None:
+        super(DiskInformation, self).__init__(**kwargs)
+        self.lun = lun
+        self.name = name
+
+
 class DistributedNodesInfo(Model):
     """This is used to represent the various nodes of the distributed container.
 
@@ -6935,7 +6985,7 @@ class DPMProtectedItem(ProtectedItem):
         'deferred_delete_time_in_utc': {'key': 'deferredDeleteTimeInUTC', 'type': 'iso-8601'},
         'is_scheduled_for_deferred_delete': {'key': 'isScheduledForDeferredDelete', 'type': 'bool'},
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
-        'is_deferred_delete_schedule_upcoming': {'key': 'isDeferredDeleteScheduleUpcoming', 'type': 'bool'},
+        'is_deferred_delete_schedule_upcoming': {'key': 'IsDeferredDeleteScheduleUpcoming', 'type': 'bool'},
         'is_rehydrate': {'key': 'isRehydrate', 'type': 'bool'},
         'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
         'friendly_name': {'key': 'friendlyName', 'type': 'str'},
@@ -7139,6 +7189,23 @@ class ExportJobsOperationResultInfo(OperationResultInfoBase):
         self.object_type = 'ExportJobsOperationResultInfo'
 
 
+class ExtendedProperties(Model):
+    """Extended Properties for Azure IaasVM Backup.
+
+    :param disk_exclusion_properties: Extended Properties for Disk Exclusion.
+    :type disk_exclusion_properties:
+     ~azure.mgmt.recoveryservicesbackup.models.DiskExclusionProperties
+    """
+
+    _attribute_map = {
+        'disk_exclusion_properties': {'key': 'diskExclusionProperties', 'type': 'DiskExclusionProperties'},
+    }
+
+    def __init__(self, *, disk_exclusion_properties=None, **kwargs) -> None:
+        super(ExtendedProperties, self).__init__(**kwargs)
+        self.disk_exclusion_properties = disk_exclusion_properties
+
+
 class GenericContainer(ProtectionContainer):
     """Base class for generic container of backup items.
 
@@ -7299,7 +7366,7 @@ class GenericProtectedItem(ProtectedItem):
         'deferred_delete_time_in_utc': {'key': 'deferredDeleteTimeInUTC', 'type': 'iso-8601'},
         'is_scheduled_for_deferred_delete': {'key': 'isScheduledForDeferredDelete', 'type': 'bool'},
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
-        'is_deferred_delete_schedule_upcoming': {'key': 'isDeferredDeleteScheduleUpcoming', 'type': 'bool'},
+        'is_deferred_delete_schedule_upcoming': {'key': 'IsDeferredDeleteScheduleUpcoming', 'type': 'bool'},
         'is_rehydrate': {'key': 'isRehydrate', 'type': 'bool'},
         'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
         'friendly_name': {'key': 'friendlyName', 'type': 'str'},
@@ -7552,6 +7619,9 @@ class IaasVMRecoveryPoint(RecoveryPoint):
     :type original_storage_account_option: bool
     :param os_type: OS type
     :type os_type: str
+    :param rp_disk_configuration: Disk configuration
+    :type rp_disk_configuration:
+     ~azure.mgmt.recoveryservicesbackup.models.RecoveryPointDiskConfiguration
     """
 
     _validation = {
@@ -7572,9 +7642,10 @@ class IaasVMRecoveryPoint(RecoveryPoint):
         'virtual_machine_size': {'key': 'virtualMachineSize', 'type': 'str'},
         'original_storage_account_option': {'key': 'originalStorageAccountOption', 'type': 'bool'},
         'os_type': {'key': 'osType', 'type': 'str'},
+        'rp_disk_configuration': {'key': 'rpDiskConfiguration', 'type': 'RecoveryPointDiskConfiguration'},
     }
 
-    def __init__(self, *, recovery_point_type: str=None, recovery_point_time=None, recovery_point_additional_info: str=None, source_vm_storage_type: str=None, is_source_vm_encrypted: bool=None, key_and_secret=None, is_instant_ilr_session_active: bool=None, recovery_point_tier_details=None, is_managed_virtual_machine: bool=None, virtual_machine_size: str=None, original_storage_account_option: bool=None, os_type: str=None, **kwargs) -> None:
+    def __init__(self, *, recovery_point_type: str=None, recovery_point_time=None, recovery_point_additional_info: str=None, source_vm_storage_type: str=None, is_source_vm_encrypted: bool=None, key_and_secret=None, is_instant_ilr_session_active: bool=None, recovery_point_tier_details=None, is_managed_virtual_machine: bool=None, virtual_machine_size: str=None, original_storage_account_option: bool=None, os_type: str=None, rp_disk_configuration=None, **kwargs) -> None:
         super(IaasVMRecoveryPoint, self).__init__(**kwargs)
         self.recovery_point_type = recovery_point_type
         self.recovery_point_time = recovery_point_time
@@ -7588,6 +7659,7 @@ class IaasVMRecoveryPoint(RecoveryPoint):
         self.virtual_machine_size = virtual_machine_size
         self.original_storage_account_option = original_storage_account_option
         self.os_type = os_type
+        self.rp_disk_configuration = rp_disk_configuration
         self.object_type = 'IaasVMRecoveryPoint'
 
 
@@ -7601,7 +7673,8 @@ class IaasVMRestoreRequest(RestoreRequest):
     :param recovery_point_id: ID of the backup copy to be recovered.
     :type recovery_point_id: str
     :param recovery_type: Type of this recovery. Possible values include:
-     'Invalid', 'OriginalLocation', 'AlternateLocation', 'RestoreDisks'
+     'Invalid', 'OriginalLocation', 'AlternateLocation', 'RestoreDisks',
+     'Offline'
     :type recovery_type: str or
      ~azure.mgmt.recoveryservicesbackup.models.RecoveryType
     :param source_resource_id: Fully qualified ARM ID of the VM which is being
@@ -7648,6 +7721,8 @@ class IaasVMRestoreRequest(RestoreRequest):
      time of backup.
     :type encryption_details:
      ~azure.mgmt.recoveryservicesbackup.models.EncryptionDetails
+    :param restore_disk_lun_list: List of Disk LUNs for partial restore
+    :type restore_disk_lun_list: list[int]
     """
 
     _validation = {
@@ -7670,9 +7745,10 @@ class IaasVMRestoreRequest(RestoreRequest):
         'create_new_cloud_service': {'key': 'createNewCloudService', 'type': 'bool'},
         'original_storage_account_option': {'key': 'originalStorageAccountOption', 'type': 'bool'},
         'encryption_details': {'key': 'encryptionDetails', 'type': 'EncryptionDetails'},
+        'restore_disk_lun_list': {'key': 'restoreDiskLunList', 'type': '[int]'},
     }
 
-    def __init__(self, *, recovery_point_id: str=None, recovery_type=None, source_resource_id: str=None, target_virtual_machine_id: str=None, target_resource_group_id: str=None, storage_account_id: str=None, virtual_network_id: str=None, subnet_id: str=None, target_domain_name_id: str=None, region: str=None, affinity_group: str=None, create_new_cloud_service: bool=None, original_storage_account_option: bool=None, encryption_details=None, **kwargs) -> None:
+    def __init__(self, *, recovery_point_id: str=None, recovery_type=None, source_resource_id: str=None, target_virtual_machine_id: str=None, target_resource_group_id: str=None, storage_account_id: str=None, virtual_network_id: str=None, subnet_id: str=None, target_domain_name_id: str=None, region: str=None, affinity_group: str=None, create_new_cloud_service: bool=None, original_storage_account_option: bool=None, encryption_details=None, restore_disk_lun_list=None, **kwargs) -> None:
         super(IaasVMRestoreRequest, self).__init__(**kwargs)
         self.recovery_point_id = recovery_point_id
         self.recovery_type = recovery_type
@@ -7688,6 +7764,7 @@ class IaasVMRestoreRequest(RestoreRequest):
         self.create_new_cloud_service = create_new_cloud_service
         self.original_storage_account_option = original_storage_account_option
         self.encryption_details = encryption_details
+        self.restore_disk_lun_list = restore_disk_lun_list
         self.object_type = 'IaasVMRestoreRequest'
 
 
@@ -7815,7 +7892,7 @@ class JobQueryObject(Model):
      ~azure.mgmt.recoveryservicesbackup.models.BackupManagementType
     :param operation: Type of operation. Possible values include: 'Invalid',
      'Register', 'UnRegister', 'ConfigureBackup', 'Backup', 'Restore',
-     'DisableBackup', 'DeleteBackupData'
+     'DisableBackup', 'DeleteBackupData', 'Undelete'
     :type operation: str or
      ~azure.mgmt.recoveryservicesbackup.models.JobOperationType
     :param job_id: JobID represents the job uniquely.
@@ -7824,6 +7901,9 @@ class JobQueryObject(Model):
     :type start_time: datetime
     :param end_time: Job has ended at this time. Value is in UTC.
     :type end_time: datetime
+    :param generate_excel_file_for_export_jobs: True if excel file should be
+     generated.
+    :type generate_excel_file_for_export_jobs: bool
     """
 
     _attribute_map = {
@@ -7833,9 +7913,10 @@ class JobQueryObject(Model):
         'job_id': {'key': 'jobId', 'type': 'str'},
         'start_time': {'key': 'startTime', 'type': 'iso-8601'},
         'end_time': {'key': 'endTime', 'type': 'iso-8601'},
+        'generate_excel_file_for_export_jobs': {'key': 'generateExcelFileForExportJobs', 'type': 'bool'},
     }
 
-    def __init__(self, *, status=None, backup_management_type=None, operation=None, job_id: str=None, start_time=None, end_time=None, **kwargs) -> None:
+    def __init__(self, *, status=None, backup_management_type=None, operation=None, job_id: str=None, start_time=None, end_time=None, generate_excel_file_for_export_jobs: bool=None, **kwargs) -> None:
         super(JobQueryObject, self).__init__(**kwargs)
         self.status = status
         self.backup_management_type = backup_management_type
@@ -7843,6 +7924,7 @@ class JobQueryObject(Model):
         self.job_id = job_id
         self.start_time = start_time
         self.end_time = end_time
+        self.generate_excel_file_for_export_jobs = generate_excel_file_for_export_jobs
 
 
 class JobResource(Resource):
@@ -8309,6 +8391,9 @@ class MabFileFolderProtectedItem(ProtectedItem):
     :type computer_name: str
     :param last_backup_status: Status of last backup operation.
     :type last_backup_status: str
+    :param last_backup_time: Timestamp of the last backup operation on this
+     backup item.
+    :type last_backup_time: datetime
     :param protection_state: Protected, ProtectionStopped, IRPending or
      ProtectionError
     :type protection_state: str
@@ -8335,22 +8420,24 @@ class MabFileFolderProtectedItem(ProtectedItem):
         'deferred_delete_time_in_utc': {'key': 'deferredDeleteTimeInUTC', 'type': 'iso-8601'},
         'is_scheduled_for_deferred_delete': {'key': 'isScheduledForDeferredDelete', 'type': 'bool'},
         'deferred_delete_time_remaining': {'key': 'deferredDeleteTimeRemaining', 'type': 'str'},
-        'is_deferred_delete_schedule_upcoming': {'key': 'isDeferredDeleteScheduleUpcoming', 'type': 'bool'},
+        'is_deferred_delete_schedule_upcoming': {'key': 'IsDeferredDeleteScheduleUpcoming', 'type': 'bool'},
         'is_rehydrate': {'key': 'isRehydrate', 'type': 'bool'},
         'protected_item_type': {'key': 'protectedItemType', 'type': 'str'},
         'friendly_name': {'key': 'friendlyName', 'type': 'str'},
         'computer_name': {'key': 'computerName', 'type': 'str'},
         'last_backup_status': {'key': 'lastBackupStatus', 'type': 'str'},
+        'last_backup_time': {'key': 'lastBackupTime', 'type': 'iso-8601'},
         'protection_state': {'key': 'protectionState', 'type': 'str'},
         'deferred_delete_sync_time_in_utc': {'key': 'deferredDeleteSyncTimeInUTC', 'type': 'long'},
         'extended_info': {'key': 'extendedInfo', 'type': 'MabFileFolderProtectedItemExtendedInfo'},
     }
 
-    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_time_in_utc=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, friendly_name: str=None, computer_name: str=None, last_backup_status: str=None, protection_state: str=None, deferred_delete_sync_time_in_utc: int=None, extended_info=None, **kwargs) -> None:
+    def __init__(self, *, backup_management_type=None, workload_type=None, container_name: str=None, source_resource_id: str=None, policy_id: str=None, last_recovery_point=None, backup_set_name: str=None, create_mode=None, deferred_delete_time_in_utc=None, is_scheduled_for_deferred_delete: bool=None, deferred_delete_time_remaining: str=None, is_deferred_delete_schedule_upcoming: bool=None, is_rehydrate: bool=None, friendly_name: str=None, computer_name: str=None, last_backup_status: str=None, last_backup_time=None, protection_state: str=None, deferred_delete_sync_time_in_utc: int=None, extended_info=None, **kwargs) -> None:
         super(MabFileFolderProtectedItem, self).__init__(backup_management_type=backup_management_type, workload_type=workload_type, container_name=container_name, source_resource_id=source_resource_id, policy_id=policy_id, last_recovery_point=last_recovery_point, backup_set_name=backup_set_name, create_mode=create_mode, deferred_delete_time_in_utc=deferred_delete_time_in_utc, is_scheduled_for_deferred_delete=is_scheduled_for_deferred_delete, deferred_delete_time_remaining=deferred_delete_time_remaining, is_deferred_delete_schedule_upcoming=is_deferred_delete_schedule_upcoming, is_rehydrate=is_rehydrate, **kwargs)
         self.friendly_name = friendly_name
         self.computer_name = computer_name
         self.last_backup_status = last_backup_status
+        self.last_backup_time = last_backup_time
         self.protection_state = protection_state
         self.deferred_delete_sync_time_in_utc = deferred_delete_sync_time_in_utc
         self.extended_info = extended_info
@@ -9378,6 +9465,37 @@ class ProtectionPolicyResource(Resource):
         self.properties = properties
 
 
+class RecoveryPointDiskConfiguration(Model):
+    """Disk configuration.
+
+    :param number_of_disks_included_in_backup: Number of disks included in
+     backup
+    :type number_of_disks_included_in_backup: int
+    :param number_of_disks_attached_to_vm: Number of disks attached to the VM
+    :type number_of_disks_attached_to_vm: int
+    :param included_disk_list: Information of disks included in backup
+    :type included_disk_list:
+     list[~azure.mgmt.recoveryservicesbackup.models.DiskInformation]
+    :param excluded_disk_list: Information of disks excluded from backup
+    :type excluded_disk_list:
+     list[~azure.mgmt.recoveryservicesbackup.models.DiskInformation]
+    """
+
+    _attribute_map = {
+        'number_of_disks_included_in_backup': {'key': 'numberOfDisksIncludedInBackup', 'type': 'int'},
+        'number_of_disks_attached_to_vm': {'key': 'numberOfDisksAttachedToVm', 'type': 'int'},
+        'included_disk_list': {'key': 'includedDiskList', 'type': '[DiskInformation]'},
+        'excluded_disk_list': {'key': 'excludedDiskList', 'type': '[DiskInformation]'},
+    }
+
+    def __init__(self, *, number_of_disks_included_in_backup: int=None, number_of_disks_attached_to_vm: int=None, included_disk_list=None, excluded_disk_list=None, **kwargs) -> None:
+        super(RecoveryPointDiskConfiguration, self).__init__(**kwargs)
+        self.number_of_disks_included_in_backup = number_of_disks_included_in_backup
+        self.number_of_disks_attached_to_vm = number_of_disks_attached_to_vm
+        self.included_disk_list = included_disk_list
+        self.excluded_disk_list = excluded_disk_list
+
+
 class RecoveryPointResource(Resource):
     """Base class for backup copies. Workload-specific backup copies are derived
     from this class.
@@ -9775,19 +9893,24 @@ class TargetRestoreInfo(Model):
     :param database_name: Database name InstanceName/DataBaseName for SQL or
      System/DbName for SAP Hana
     :type database_name: str
+    :param target_directory_mapping: This will contain the target folder
+     mapping for the Full/Diff/Log/Incremental pits.
+    :type target_directory_mapping: dict[str, str]
     """
 
     _attribute_map = {
         'overwrite_option': {'key': 'overwriteOption', 'type': 'str'},
         'container_id': {'key': 'containerId', 'type': 'str'},
         'database_name': {'key': 'databaseName', 'type': 'str'},
+        'target_directory_mapping': {'key': 'targetDirectoryMapping', 'type': '{str}'},
     }
 
-    def __init__(self, *, overwrite_option=None, container_id: str=None, database_name: str=None, **kwargs) -> None:
+    def __init__(self, *, overwrite_option=None, container_id: str=None, database_name: str=None, target_directory_mapping=None, **kwargs) -> None:
         super(TargetRestoreInfo, self).__init__(**kwargs)
         self.overwrite_option = overwrite_option
         self.container_id = container_id
         self.database_name = database_name
+        self.target_directory_mapping = target_directory_mapping
 
 
 class TokenInformation(Model):
