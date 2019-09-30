@@ -147,7 +147,7 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
         :return: The PipelineResponse object
         :rtype: ~azure.core.pipeline.PipelineResponse
         """
-        request.prepare_multipart_mixed()
+        request.prepare_multipart_mixed()  # type: ignore
         context = PipelineContext(self._transport, **kwargs)
         pipeline_request = PipelineRequest(request, context) # type: PipelineRequest[HTTPRequestType]
         first_node = self._impl_policies[0] if self._impl_policies else _TransportRunner(self._transport)

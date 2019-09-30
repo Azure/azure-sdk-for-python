@@ -44,7 +44,7 @@ except ImportError:
 import xml.etree.ElementTree as ET
 
 from typing import (TYPE_CHECKING, Generic, TypeVar, cast, IO, List, Union, Any, Mapping, Dict, # pylint: disable=unused-import
-                    Optional, Tuple, Callable, Iterator, Iterable)
+                    Optional, Tuple, Callable, Iterator, Iterable, Type)
 
 from six.moves.http_client import HTTPConnection, HTTPResponse as _HTTPResponse
 
@@ -376,19 +376,6 @@ class _HttpResponseBase(object):
          Implementation can be smarter if they want (using headers).
         """
         return self.body().decode(encoding or "utf-8")
-
-    def parts(self):
-        # type: () -> Iterable
-        """Assuming the content-type is multipart/mixed, will return the parts as an iterable.
-
-        :rtype: list
-        :raises ValueError: If the content is not multipart/mixed
-        """
-        if not self.content_type or not self.content_type.startswith("multipart/mixed"):
-            raise ValueError("You can't get parts if the response is nit multipart/mixed")
-
-        multipart_helper = MultiPartHelper(self.request)
-        return multipart_helper.parse_response(self)
 
 
 class HttpResponse(_HttpResponseBase):
