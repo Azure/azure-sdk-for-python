@@ -27,7 +27,7 @@ class StorageErrorCode(str, Enum):
     condition_headers_not_supported = "ConditionHeadersNotSupported"
     condition_not_met = "ConditionNotMet"
     empty_metadata_key = "EmptyMetadataKey"
-    insufficient_account_permissions = "InsufficientAccountPermissions"
+    insufficient_account_permissions = "InsufficientAccountSasPermissions"
     internal_error = "InternalError"
     invalid_authentication_info = "InvalidAuthenticationInfo"
     invalid_header_value = "InvalidHeaderValue"
@@ -277,7 +277,7 @@ ResourceTypes.CONTAINER = ResourceTypes(container=True)
 ResourceTypes.OBJECT = ResourceTypes(object=True)
 
 
-class AccountPermissions(object):
+class AccountSasPermissions(object):
     """
     :class:`~ResourceTypes` class to be used with generate_shared_access_signature
     method and for the AccessPolicies used with set_*_acl. There are two types of
@@ -286,23 +286,23 @@ class AccountPermissions(object):
     entire service for a specific account and allow certain operations based on
     perms found here.
 
-    :cvar AccountPermissions AccountPermissions.ADD:
+    :cvar AccountSasPermissions AccountSasPermissions.ADD:
         Valid for the following Object resource types only: queue messages and append blobs.
-    :cvar AccountPermissions AccountPermissions.CREATE:
+    :cvar AccountSasPermissions AccountSasPermissions.CREATE:
         Valid for the following Object resource types only: blobs and files. Users
         can create new blobs or files, but may not overwrite existing blobs or files.
-    :cvar AccountPermissions AccountPermissions.DELETE:
+    :cvar AccountSasPermissions AccountSasPermissions.DELETE:
         Valid for Container and Object resource types, except for queue messages.
-    :cvar AccountPermissions AccountPermissions.LIST:
+    :cvar AccountSasPermissions AccountSasPermissions.LIST:
         Valid for Service and Container resource types only.
-    :cvar AccountPermissions AccountPermissions.PROCESS:
+    :cvar AccountSasPermissions AccountSasPermissions.PROCESS:
         Valid for the following Object resource type only: queue messages.
-    :cvar AccountPermissions AccountPermissions.READ:
+    :cvar AccountSasPermissions AccountSasPermissions.READ:
         Valid for all signed resources types (Service, Container, and Object).
         Permits read permissions to the specified resource type.
-    :cvar AccountPermissions AccountPermissions.UPDATE:
+    :cvar AccountSasPermissions AccountSasPermissions.UPDATE:
         Valid for the following Object resource types only: queue messages.
-    :cvar AccountPermissions AccountPermissions.WRITE:
+    :cvar AccountSasPermissions AccountSasPermissions.WRITE:
         Valid for all signed resources types (Service, Container, and Object).
         Permits write permissions to the specified resource type.
     :param bool read:
@@ -329,14 +329,14 @@ class AccountPermissions(object):
         A string representing the permissions.
     """
 
-    READ = None  # type: AccountPermissions
-    WRITE = None  # type: AccountPermissions
-    DELETE = None  # type: AccountPermissions
-    LIST = None  # type: AccountPermissions
-    ADD = None  # type: AccountPermissions
-    CREATE = None  # type: AccountPermissions
-    UPDATE = None  # type: AccountPermissions
-    PROCESS = None  # type: AccountPermissions
+    READ = None  # type: AccountSasPermissions
+    WRITE = None  # type: AccountSasPermissions
+    DELETE = None  # type: AccountSasPermissions
+    LIST = None  # type: AccountSasPermissions
+    ADD = None  # type: AccountSasPermissions
+    CREATE = None  # type: AccountSasPermissions
+    UPDATE = None  # type: AccountSasPermissions
+    PROCESS = None  # type: AccountSasPermissions
 
     def __init__(self, read=False, write=False, delete=False, list=False,  # pylint: disable=redefined-builtin
                  add=False, create=False, update=False, process=False, _str=None):
@@ -352,10 +352,10 @@ class AccountPermissions(object):
         self.process = process or ('p' in _str)
 
     def __or__(self, other):
-        return AccountPermissions(_str=str(self) + str(other))
+        return AccountSasPermissions(_str=str(self) + str(other))
 
     def __add__(self, other):
-        return AccountPermissions(_str=str(self) + str(other))
+        return AccountSasPermissions(_str=str(self) + str(other))
 
     def __str__(self):
         return (('r' if self.read else '') +
@@ -368,14 +368,14 @@ class AccountPermissions(object):
                 ('p' if self.process else ''))
 
 
-AccountPermissions.READ = AccountPermissions(read=True)
-AccountPermissions.WRITE = AccountPermissions(write=True)
-AccountPermissions.DELETE = AccountPermissions(delete=True)
-AccountPermissions.LIST = AccountPermissions(list=True)
-AccountPermissions.ADD = AccountPermissions(add=True)
-AccountPermissions.CREATE = AccountPermissions(create=True)
-AccountPermissions.UPDATE = AccountPermissions(update=True)
-AccountPermissions.PROCESS = AccountPermissions(process=True)
+AccountSasPermissions.READ = AccountSasPermissions(read=True)
+AccountSasPermissions.WRITE = AccountSasPermissions(write=True)
+AccountSasPermissions.DELETE = AccountSasPermissions(delete=True)
+AccountSasPermissions.LIST = AccountSasPermissions(list=True)
+AccountSasPermissions.ADD = AccountSasPermissions(add=True)
+AccountSasPermissions.CREATE = AccountSasPermissions(create=True)
+AccountSasPermissions.UPDATE = AccountSasPermissions(update=True)
+AccountSasPermissions.PROCESS = AccountSasPermissions(process=True)
 
 
 class Services(object):

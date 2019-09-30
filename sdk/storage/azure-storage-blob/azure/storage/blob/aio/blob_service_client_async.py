@@ -31,7 +31,7 @@ if TYPE_CHECKING:
     from datetime import datetime
     from azure.core.pipeline.transport import HttpTransport
     from azure.core.pipeline.policies import HTTPPolicy
-    from .._shared.models import AccountPermissions, ResourceTypes
+    from .._shared.models import AccountSasPermissions, ResourceTypes
     from .lease_async import LeaseClient
     from ..models import (
         BlobProperties,

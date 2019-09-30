@@ -20,7 +20,7 @@ from azure.storage.blob import (
     ContainerClient,
     BlobClient,
     LeaseClient,
-    ContainerPermissions,
+    ContainerSasPermissions,
     PublicAccess,
     ContainerPermissions,
     AccessPolicy,
@@ -434,7 +434,7 @@ class StorageContainerTest(StorageTestCase):
         container = self._create_container()
 
         # Act
-        access_policy = AccessPolicy(permission=ContainerPermissions.READ,
+        access_policy = AccessPolicy(permission=ContainerSasPermissions.READ,
                                      expiry=datetime.utcnow() + timedelta(hours=1),
                                      start=datetime.utcnow())
         signed_identifier = {'testid': access_policy}
@@ -450,7 +450,7 @@ class StorageContainerTest(StorageTestCase):
         container = self._create_container()
 
         # Act
-        access_policy = AccessPolicy(permission=ContainerPermissions.READ,
+        access_policy = AccessPolicy(permission=ContainerSasPermissions.READ,
                                      expiry=datetime.utcnow() + timedelta(hours=1),
                                      start=datetime.utcnow())
         signed_identifiers = {'testid': access_policy}
@@ -523,7 +523,7 @@ class StorageContainerTest(StorageTestCase):
         container = self._create_container()
 
         # Act
-        access_policy = AccessPolicy(permission=ContainerPermissions.READ,
+        access_policy = AccessPolicy(permission=ContainerSasPermissions.READ,
                                      expiry=datetime.utcnow() + timedelta(hours=1),
                                      start=datetime.utcnow() - timedelta(minutes=1))
         identifiers = {'testid': access_policy}
@@ -556,7 +556,7 @@ class StorageContainerTest(StorageTestCase):
     def test_set_container_acl_with_three_identifiers(self):
         # Arrange
         container = self._create_container()
-        access_policy = AccessPolicy(permission=ContainerPermissions.READ,
+        access_policy = AccessPolicy(permission=ContainerSasPermissions.READ,
                                      expiry=datetime.utcnow() + timedelta(hours=1),
                                      start=datetime.utcnow() - timedelta(minutes=1))
         identifiers = {str(i): access_policy for i in range(0, 3)}
@@ -1199,7 +1199,7 @@ class StorageContainerTest(StorageTestCase):
 
         token = container.generate_shared_access_signature(
             expiry=datetime.utcnow() + timedelta(hours=1),
-            permission=ContainerPermissions.READ,
+            permission=ContainerSasPermissions.READ,
         )
         blob = BlobClient(blob.url, credential=token)
 
@@ -1257,7 +1257,7 @@ class StorageContainerTest(StorageTestCase):
         container_client = service_client.create_container(self.get_resource_name('oauthcontainer'))
         token = container_client.generate_shared_access_signature(
             expiry=datetime.utcnow() + timedelta(hours=1),
-            permission=ContainerPermissions.READ,
+            permission=ContainerSasPermissions.READ,
             user_delegation_key=user_delegation_key,
             account_name='emilydevtest'
         )

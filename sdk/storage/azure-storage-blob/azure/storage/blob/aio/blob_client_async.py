@@ -35,7 +35,7 @@ if TYPE_CHECKING:
     from ..models import (  # pylint: disable=unused-import
         ContainerProperties,
         BlobProperties,
-        BlobPermissions,
+        BlobSasPermissions,
         ContentSettings,
         PremiumPageBlobTier,
         StandardBlobTier,

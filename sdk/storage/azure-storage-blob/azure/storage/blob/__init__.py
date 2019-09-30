@@ -17,7 +17,7 @@ from ._shared.downloads import StorageStreamDownloader
 from ._shared.models import(
     LocationMode,
     ResourceTypes,
-    AccountPermissions,
+    AccountSasPermissions,
     StorageErrorCode
 )
 from .models import (
@@ -43,8 +43,8 @@ from .models import (
     BlobBlock,
     PageRange,
     AccessPolicy,
-    ContainerPermissions,
-    BlobPermissions,
+    ContainerSasPermissions,
+    BlobSasPermissions,
 )
 
 __version__ = VERSION
@@ -82,10 +82,10 @@ __all__ = [
     'BlobBlock',
     'PageRange',
     'AccessPolicy',
-    'ContainerPermissions',
-    'BlobPermissions',
+    'ContainerSasPermissions',
+    'BlobSasPermissions',
     'ResourceTypes',
-    'AccountPermissions',
+    'AccountSasPermissions',
     'StorageStreamDownloader',
 ]
 
