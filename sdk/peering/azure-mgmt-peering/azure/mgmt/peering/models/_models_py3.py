@@ -149,9 +149,9 @@ class DirectConnection(Model):
 
     :param bandwidth_in_mbps: The bandwidth of the connection.
     :type bandwidth_in_mbps: int
-    :param provisioned_bandwidth_in_mbps: The bandwidth that is actually
+    :ivar provisioned_bandwidth_in_mbps: The bandwidth that is actually
      provisioned.
-    :type provisioned_bandwidth_in_mbps: int
+    :vartype provisioned_bandwidth_in_mbps: int
     :param session_address_provider: The field indicating if Microsoft
      provides session ip addresses. Possible values include: 'Microsoft',
      'Peer'
@@ -173,10 +173,15 @@ class DirectConnection(Model):
     :param connection_identifier: The unique identifier (GUID) for the
      connection.
     :type connection_identifier: str
+    :ivar error_message: The error message related to the connection state, if
+     any.
+    :vartype error_message: str
     """
 
     _validation = {
+        'provisioned_bandwidth_in_mbps': {'readonly': True},
         'connection_state': {'readonly': True},
+        'error_message': {'readonly': True},
     }
 
     _attribute_map = {
@@ -188,18 +193,20 @@ class DirectConnection(Model):
         'connection_state': {'key': 'connectionState', 'type': 'str'},
         'bgp_session': {'key': 'bgpSession', 'type': 'BgpSession'},
         'connection_identifier': {'key': 'connectionIdentifier', 'type': 'str'},
+        'error_message': {'key': 'errorMessage', 'type': 'str'},
     }
 
-    def __init__(self, *, bandwidth_in_mbps: int=None, provisioned_bandwidth_in_mbps: int=None, session_address_provider=None, use_for_peering_service: bool=None, peering_db_facility_id: int=None, bgp_session=None, connection_identifier: str=None, **kwargs) -> None:
+    def __init__(self, *, bandwidth_in_mbps: int=None, session_address_provider=None, use_for_peering_service: bool=None, peering_db_facility_id: int=None, bgp_session=None, connection_identifier: str=None, **kwargs) -> None:
         super(DirectConnection, self).__init__(**kwargs)
         self.bandwidth_in_mbps = bandwidth_in_mbps
-        self.provisioned_bandwidth_in_mbps = provisioned_bandwidth_in_mbps
+        self.provisioned_bandwidth_in_mbps = None
         self.session_address_provider = session_address_provider
         self.use_for_peering_service = use_for_peering_service
         self.peering_db_facility_id = peering_db_facility_id
         self.connection_state = None
         self.bgp_session = bgp_session
         self.connection_identifier = connection_identifier
+        self.error_message = None
 
 
 class DirectPeeringFacility(Model):
@@ -291,10 +298,14 @@ class ExchangeConnection(Model):
     :param connection_identifier: The unique identifier (GUID) for the
      connection.
     :type connection_identifier: str
+    :ivar error_message: The error message related to the connection state, if
+     any.
+    :vartype error_message: str
     """
 
     _validation = {
         'connection_state': {'readonly': True},
+        'error_message': {'readonly': True},
     }
 
     _attribute_map = {
@@ -302,6 +313,7 @@ class ExchangeConnection(Model):
         'connection_state': {'key': 'connectionState', 'type': 'str'},
         'bgp_session': {'key': 'bgpSession', 'type': 'BgpSession'},
         'connection_identifier': {'key': 'connectionIdentifier', 'type': 'str'},
+        'error_message': {'key': 'errorMessage', 'type': 'str'},
     }
 
     def __init__(self, *, peering_db_facility_id: int=None, bgp_session=None, connection_identifier: str=None, **kwargs) -> None:
@@ -310,6 +322,7 @@ class ExchangeConnection(Model):
         self.connection_state = None
         self.bgp_session = bgp_session
         self.connection_identifier = connection_identifier
+        self.error_message = None
 
 
 class ExchangePeeringFacility(Model):
@@ -487,12 +500,15 @@ class PeerAsn(Resource):
     :param validation_state: The validation state of the ASN associated with
      the peer. Possible values include: 'None', 'Pending', 'Approved', 'Failed'
     :type validation_state: str or ~azure.mgmt.peering.models.ValidationState
+    :ivar error_message: The error message for the validation state
+    :vartype error_message: str
     """
 
     _validation = {
         'name': {'readonly': True},
         'id': {'readonly': True},
         'type': {'readonly': True},
+        'error_message': {'readonly': True},
     }
 
     _attribute_map = {
@@ -503,6 +519,7 @@ class PeerAsn(Resource):
         'peer_contact_info': {'key': 'properties.peerContactInfo', 'type': 'ContactInfo'},
         'peer_name': {'key': 'properties.peerName', 'type': 'str'},
         'validation_state': {'key': 'properties.validationState', 'type': 'str'},
+        'error_message': {'key': 'properties.errorMessage', 'type': 'str'},
     }
 
     def __init__(self, *, peer_asn: int=None, peer_contact_info=None, peer_name: str=None, validation_state=None, **kwargs) -> None:
@@ -511,6 +528,7 @@ class PeerAsn(Resource):
         self.peer_contact_info = peer_contact_info
         self.peer_name = peer_name
         self.validation_state = validation_state
+        self.error_message = None
 
 
 class Peering(Resource):
@@ -709,12 +727,15 @@ class PeeringLocationPropertiesExchange(Model):
 class PeeringPropertiesDirect(Model):
     """The properties that define a direct peering.
 
+    Variables are only populated by the server, and will be ignored when
+    sending a request.
+
     :param connections: The set of connections that constitute a direct
      peering.
     :type connections: list[~azure.mgmt.peering.models.DirectConnection]
-    :param use_for_peering_service: The flag that indicates whether or not the
+    :ivar use_for_peering_service: The flag that indicates whether or not the
      peering is used for peering service.
-    :type use_for_peering_service: bool
+    :vartype use_for_peering_service: bool
     :param peer_asn: The reference of the peer ASN.
     :type peer_asn: ~azure.mgmt.peering.models.SubResource
     :param direct_peering_type: The type of direct peering. Possible values
@@ -723,6 +744,10 @@ class PeeringPropertiesDirect(Model):
      ~azure.mgmt.peering.models.DirectPeeringType
     """
 
+    _validation = {
+        'use_for_peering_service': {'readonly': True},
+    }
+
     _attribute_map = {
         'connections': {'key': 'connections', 'type': '[DirectConnection]'},
         'use_for_peering_service': {'key': 'useForPeeringService', 'type': 'bool'},
@@ -730,10 +755,10 @@ class PeeringPropertiesDirect(Model):
         'direct_peering_type': {'key': 'directPeeringType', 'type': 'str'},
     }
 
-    def __init__(self, *, connections=None, use_for_peering_service: bool=None, peer_asn=None, direct_peering_type=None, **kwargs) -> None:
+    def __init__(self, *, connections=None, peer_asn=None, direct_peering_type=None, **kwargs) -> None:
         super(PeeringPropertiesDirect, self).__init__(**kwargs)
         self.connections = connections
-        self.use_for_peering_service = use_for_peering_service
+        self.use_for_peering_service = None
         self.peer_asn = peer_asn
         self.direct_peering_type = direct_peering_type
 
@@ -870,16 +895,18 @@ class PeeringServicePrefix(Resource):
     :vartype id: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :param prefix: Valid route prefix
+    :param prefix: The prefix from which your traffic originates.
     :type prefix: str
-    :param prefix_validation_state: The prefix validation state. Possible
+    :ivar prefix_validation_state: The prefix validation state. Possible
      values include: 'None', 'Invalid', 'Verified', 'Failed', 'Pending',
-     'Unknown'
-    :type prefix_validation_state: str or
+     'Warning', 'Unknown'
+    :vartype prefix_validation_state: str or
      ~azure.mgmt.peering.models.PrefixValidationState
-    :param learned_type: The prefix learned type. Possible values include:
-     'None', 'ViaPartner', 'ViaSession'
-    :type learned_type: str or ~azure.mgmt.peering.models.LearnedType
+    :ivar learned_type: The prefix learned type. Possible values include:
+     'None', 'ViaServiceProvider', 'ViaSession'
+    :vartype learned_type: str or ~azure.mgmt.peering.models.LearnedType
+    :ivar error_message: The error message for validation state
+    :vartype error_message: str
     :ivar provisioning_state: The provisioning state of the resource. Possible
      values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'
     :vartype provisioning_state: str or
@@ -890,6 +917,9 @@ class PeeringServicePrefix(Resource):
         'name': {'readonly': True},
         'id': {'readonly': True},
         'type': {'readonly': True},
+        'prefix_validation_state': {'readonly': True},
+        'learned_type': {'readonly': True},
+        'error_message': {'readonly': True},
         'provisioning_state': {'readonly': True},
     }
 
@@ -900,14 +930,16 @@ class PeeringServicePrefix(Resource):
         'prefix': {'key': 'properties.prefix', 'type': 'str'},
         'prefix_validation_state': {'key': 'properties.prefixValidationState', 'type': 'str'},
         'learned_type': {'key': 'properties.learnedType', 'type': 'str'},
+        'error_message': {'key': 'properties.errorMessage', 'type': 'str'},
         'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
     }
 
-    def __init__(self, *, prefix: str=None, prefix_validation_state=None, learned_type=None, **kwargs) -> None:
+    def __init__(self, *, prefix: str=None, **kwargs) -> None:
         super(PeeringServicePrefix, self).__init__(**kwargs)
         self.prefix = prefix
-        self.prefix_validation_state = prefix_validation_state
-        self.learned_type = learned_type
+        self.prefix_validation_state = None
+        self.learned_type = None
+        self.error_message = None
         self.provisioning_state = None
 
 
