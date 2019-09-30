@@ -45,7 +45,7 @@ async def upload_blob(blob_client, stream, blob_type, max_connections):
 
 async def download_blob(blob_client, max_conn):
     #with open(DEST_FILE, "wb") as my_blob:
-    (await blob_client.download_blob()).content_as_bytes(max_connections=max_conn)
+    await (await blob_client.download_blob()).content_as_bytes(max_connections=max_conn)
 
 async def download_loop(blob_client, duration_in_secs=10):
     count = 0
