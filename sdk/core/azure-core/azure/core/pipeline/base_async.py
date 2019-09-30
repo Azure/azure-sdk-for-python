@@ -49,6 +49,15 @@ except ImportError: # Python <= 3.7
             return None
 
 
+async def _await_result(func, *args, **kwargs):
+    """If func returns an awaitable, await it."""
+    result = func(*args, **kwargs)
+    if hasattr(result, '__await__'):
+        # type ignore on await: https://github.com/python/mypy/issues/7587
+        return await result  # type: ignore
+    return result
+
+
 class _SansIOAsyncHTTPPolicyRunner(AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]): #pylint: disable=unsubscriptable-object
     """Async implementation of the SansIO policy.
 
@@ -70,22 +79,14 @@ class _SansIOAsyncHTTPPolicyRunner(AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPRes
         :return: The PipelineResponse object.
         :rtype: ~azure.core.pipeline.PipelineResponse
         """
-        # type ignore on await: https://github.com/python/mypy/issues/7587
-        request_result = self._policy.on_request(request)
-        if hasattr(request_result, '__await__'):
-            await request_result  # type: ignore
+        await _await_result(self._policy.on_request, request)
         try:
             response = await self.next.send(request)  # type: ignore
         except Exception: #pylint: disable=broad-except
-            excp_result = self._policy.on_exception(request)
-            if hasattr(excp_result, '__await__'):
-                excp_result = await excp_result  # type: ignore
-            if not excp_result:
+            if not await _await_result(self._policy.on_exception, request):
                 raise
         else:
-            resp_result = self._policy.on_response(request, response)
-            if hasattr(resp_result, '__await__'):
-                await resp_result  # type: ignore
+            await _await_result(self._policy.on_response, request, response)
         return response
 
 
