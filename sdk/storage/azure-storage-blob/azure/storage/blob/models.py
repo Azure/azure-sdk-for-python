@@ -882,25 +882,11 @@ class ContainerSasPermissions(object):
     :param str _str:
         A string representing the permissions.
     """
-
-    DELETE = None  # type: ContainerSasPermissions
-    LIST = None  # type: ContainerSasPermissions
-    READ = None  # type: ContainerSasPermissions
-    WRITE = None  # type: ContainerSasPermissions
-
-    def __init__(self, read=False, write=False, delete=False, list=False, _str=None):  # pylint: disable=redefined-builtin
-        if not _str:
-            _str = ''
-        self.read = read or ('r' in _str)
-        self.write = write or ('w' in _str)
-        self.delete = delete or ('d' in _str)
-        self.list = list or ('l' in _str)
-
-    def __or__(self, other):
-        return ContainerSasPermissions(_str=str(self) + str(other))
-
-    def __add__(self, other):
-        return ContainerSasPermissions(_str=str(self) + str(other))
+    def __init__(self, read=False, write=False, delete=False, list=False):  # pylint: disable=redefined-builtin
+        self.read = read
+        self.write = write
+        self.delete = delete
+        self.list = list
 
     def __str__(self):
         return (('r' if self.read else '') +
@@ -908,11 +894,23 @@ class ContainerSasPermissions(object):
                 ('d' if self.delete else '') +
                 ('l' if self.list else ''))
 
-
-ContainerSasPermissions.DELETE = ContainerSasPermissions(delete=True)
-ContainerSasPermissions.LIST = ContainerSasPermissions(list=True)
-ContainerSasPermissions.READ = ContainerSasPermissions(read=True)
-ContainerSasPermissions.WRITE = ContainerSasPermissions(write=True)
+    @classmethod
+    def from_string(cls, permission):
+        read, write, delete, list = False, False, False, False
+        curr = 0
+        while curr < len(permission):
+            if permission[curr] =='r':
+                read = True
+            elif permission[curr] == 'w':
+                write = True
+            elif permission[curr] == 'd':
+                delete = True
+            elif permission[curr] == 'l':
+                list = True
+            else:
+                raise ValueError("Invalid Permission String")
+            curr += 1
+        return cls(read, write, delete, list)
 
 
 class BlobSasPermissions(object):
@@ -947,28 +945,13 @@ class BlobSasPermissions(object):
     :param str _str:
         A string representing the permissions.
     """
-    ADD = None  # type: BlobSasPermissions
-    CREATE = None  # type: BlobSasPermissions
-    DELETE = None  # type: BlobSasPermissions
-    READ = None  # type: BlobSasPermissions
-    WRITE = None  # type: BlobSasPermissions
-
-
     def __init__(self, read=False, add=False, create=False, write=False,
-                 delete=False, _str=None):
-        if not _str:
-            _str = ''
-        self.read = read or ('r' in _str)
-        self.add = add or ('a' in _str)
-        self.create = create or ('c' in _str)
-        self.write = write or ('w' in _str)
-        self.delete = delete or ('d' in _str)
-
-    def __or__(self, other):
-        return BlobSasPermissions(_str=str(self) + str(other))
-
-    def __add__(self, other):
-        return BlobSasPermissions(_str=str(self) + str(other))
+                 delete=False):
+        self.read = read
+        self.add = add
+        self.create = create
+        self.write = write
+        self.delete = delete
 
     def __str__(self):
         return (('r' if self.read else '') +
@@ -977,12 +960,25 @@ class BlobSasPermissions(object):
                 ('w' if self.write else '') +
                 ('d' if self.delete else ''))
 
-
-BlobSasPermissions.ADD = BlobSasPermissions(add=True)
-BlobSasPermissions.CREATE = BlobSasPermissions(create=True)
-BlobSasPermissions.DELETE = BlobSasPermissions(delete=True)
-BlobSasPermissions.READ = BlobSasPermissions(read=True)
-BlobSasPermissions.WRITE = BlobSasPermissions(write=True)
+    @classmethod
+    def from_string(cls, permission):
+        read, add, create, write, delete = False, False, False, False, False
+        curr = 0
+        while curr < len(permission):
+            if permission[curr] =='r':
+                read = True
+            elif permission[curr] == 'a':
+                add = True
+            elif permission[curr] == 'c':
+                create = True
+            elif permission[curr] == 'w':
+                write = True
+            elif permission[curr] == 'd':
+                delete = True
+            else:
+                raise ValueError("Invalid Permission String")
+            curr += 1
+        return cls(read, add, create, write, delete)
 
 
 class CustomerProvidedEncryptionKey(object):

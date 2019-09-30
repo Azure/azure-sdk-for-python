@@ -328,20 +328,8 @@ class AccountSasPermissions(object):
     :param str _str:
         A string representing the permissions.
     """
-
-    READ = None  # type: AccountSasPermissions
-    WRITE = None  # type: AccountSasPermissions
-    DELETE = None  # type: AccountSasPermissions
-    LIST = None  # type: AccountSasPermissions
-    ADD = None  # type: AccountSasPermissions
-    CREATE = None  # type: AccountSasPermissions
-    UPDATE = None  # type: AccountSasPermissions
-    PROCESS = None  # type: AccountSasPermissions
-
     def __init__(self, read=False, write=False, delete=False, list=False,  # pylint: disable=redefined-builtin
-                 add=False, create=False, update=False, process=False, _str=None):
-        if not _str:
-            _str = ''
+                 add=False, create=False, update=False, process=False):
         self.read = read or ('r' in _str)
         self.write = write or ('w' in _str)
         self.delete = delete or ('d' in _str)
@@ -350,12 +338,6 @@ class AccountSasPermissions(object):
         self.create = create or ('c' in _str)
         self.update = update or ('u' in _str)
         self.process = process or ('p' in _str)
-
-    def __or__(self, other):
-        return AccountSasPermissions(_str=str(self) + str(other))
-
-    def __add__(self, other):
-        return AccountSasPermissions(_str=str(self) + str(other))
 
     def __str__(self):
         return (('r' if self.read else '') +
@@ -367,15 +349,32 @@ class AccountSasPermissions(object):
                 ('u' if self.update else '') +
                 ('p' if self.process else ''))
 
-
-AccountSasPermissions.READ = AccountSasPermissions(read=True)
-AccountSasPermissions.WRITE = AccountSasPermissions(write=True)
-AccountSasPermissions.DELETE = AccountSasPermissions(delete=True)
-AccountSasPermissions.LIST = AccountSasPermissions(list=True)
-AccountSasPermissions.ADD = AccountSasPermissions(add=True)
-AccountSasPermissions.CREATE = AccountSasPermissions(create=True)
-AccountSasPermissions.UPDATE = AccountSasPermissions(update=True)
-AccountSasPermissions.PROCESS = AccountSasPermissions(process=True)
+    @classmethod
+    def from_string(cls, permission):
+        read, write, delete, list = False, False, False, False
+        add, create, update, process = False, False, False, False
+        curr = 0
+        while curr < len(permission):
+            if permission[curr] =='r':
+                read = True
+            elif permission[curr] == 'w':
+                write = True
+            elif permission[curr] == 'd':
+                delete = True
+            elif permission[curr] == 'l':
+                list = True
+            elif permission[curr] =='a':
+                add = True
+            elif permission[curr] == 'c':
+                create = True
+            elif permission[curr] == 'u':
+                update = True
+            elif permission[curr] == 'p':
+                process = True
+            else:
+                raise ValueError("Invalid Permission String")
+            curr += 1
+        return cls(read, write, delete, list, add, create, update, process)
 
 
 class Services(object):
