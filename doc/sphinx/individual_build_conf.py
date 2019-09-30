@@ -15,36 +15,34 @@
 import sys
 import os
 import sphinx_rtd_theme
-import glob
-from shutil import copyfile
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-sys.path.insert(0, os.path.abspath('../azure'))
+# sys.path.insert(0, os.path.abspath('.'))
 
 # FIX FOR EXAMPLE REFERENCES
-REPO_ROOT = os.path.abspath(os.path.join(os.path.abspath(__file__), '..', '..', '..'))
-examples_tests_glob_expansion = os.path.join(REPO_ROOT, 'sdk/*/*/examples/**/test*example*.py')
-samples_glob_expansion = os.path.join(REPO_ROOT, 'sdk/*/*/tests/**/test*sample*.py')
-test_examples_glob_expansion = os.path.join(REPO_ROOT, 'sdk/*/*/tests/**/test*example*.py')
+# REPO_ROOT = os.path.abspath(os.path.join(os.path.abspath(__file__), '..', '..', '..'))
+# examples_tests_glob_expansion = os.path.join(REPO_ROOT, 'sdk/*/*/examples/**/test*example*.py')
+# samples_glob_expansion = os.path.join(REPO_ROOT, 'sdk/*/*/tests/**/test*sample*.py')
+# test_examples_glob_expansion = os.path.join(REPO_ROOT, 'sdk/*/*/tests/**/test*example*.py')
 
-example_tests_files = glob.glob(examples_tests_glob_expansion, recursive=True)
-test_examples_files = glob.glob(test_examples_glob_expansion, recursive=True)
-samples_files = glob.glob(samples_glob_expansion, recursive=True)
+# example_tests_files = glob.glob(examples_tests_glob_expansion, recursive=True)
+# test_examples_files = glob.glob(test_examples_glob_expansion, recursive=True)
+# samples_files = glob.glob(samples_glob_expansion, recursive=True)
 
-all_files = [os.path.relpath(file, REPO_ROOT) for file in list(set(example_tests_files + test_examples_files + samples_files))]
+# all_files = [os.path.relpath(file, REPO_ROOT) for file in list(set(example_tests_files + test_examples_files + samples_files))]
 
-# now for each package, we need to copy it and write it to the relative path FROM THE CURRENT CWD
-for example_file in all_files:
-    relative_path_in_pkg = os.path.join(*(example_file.split(os.path.sep)[3:]))
-    final_destination = os.path.abspath(os.path.join(os.path.dirname(__file__), relative_path_in_pkg))
+# # now for each package, we need to copy it and write it to the relative path FROM THE CURRENT CWD
+# for example_file in all_files:
+#     relative_path_in_pkg = os.path.join(*(example_file.split(os.path.sep)[3:]))
+#     final_destination = os.path.abspath(os.path.join(os.path.dirname(__file__), relative_path_in_pkg))
 
-    # create the directories if they don't already exist
-    os.makedirs(os.path.dirname(final_destination), exist_ok=True)
+#     # create the directories if they don't already exist
+#     os.makedirs(os.path.dirname(final_destination), exist_ok=True)
 
-    # finally copy the example file into the sphinx folder
-    copyfile(os.path.join(REPO_ROOT, example_file), final_destination)
+#     # finally copy the example file into the sphinx folder
+#     copyfile(os.path.join(REPO_ROOT, example_file), final_destination)
 
 # -- General configuration ------------------------------------------------
 
@@ -81,7 +79,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Azure SDK for Python'
-copyright = u'2016, Microsoft'
+copyright = u'2019, Microsoft'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -219,12 +217,12 @@ html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'azure-sdk-for-python-doc'
+#htmlhelp_basename = 'azure-sdk-for-python-doc'
 
 
 # -- Options for LaTeX output ---------------------------------------------
 
-latex_elements = {
+#latex_elements = {
 # The paper size ('letterpaper' or 'a4paper').
 #'papersize': 'letterpaper',
 
@@ -233,15 +231,15 @@ latex_elements = {
 
 # Additional stuff for the LaTeX preamble.
 #'preamble': '',
-}
+#}
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
-latex_documents = [
-  ('index', 'azure-sdk-for-python.tex', u'Azure SDK for Python Documentation',
-   u'Microsoft', 'manual'),
-]
+# latex_documents = [
+#   ('index', 'azure-sdk-for-python.tex', u'Azure SDK for Python Documentation',
+#    u'Microsoft', 'manual'),
+# ]
 
 # The name of an image file (relative to this directory) to place at the top of
 # the title page.
@@ -262,3 +260,5 @@ latex_documents = [
 
 # If false, no module index is generated.
 #latex_domain_indices = True
+
+

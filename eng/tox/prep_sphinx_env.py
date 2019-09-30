@@ -41,7 +41,7 @@ Indices and tables
 """
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
-sphinx_conf = os.path.join(root_dir, "doc", "sphinx", "conf.py")
+sphinx_conf = os.path.join(root_dir, "doc", "sphinx", "individual_build_conf.py")
 
 
 def create_index_file(readme_location, package_rst):
@@ -85,7 +85,7 @@ def copy_conf(doc_folder):
     if not os.path.exists(doc_folder):
         os.mkdir(doc_folder)
 
-    shutil.copy(sphinx_conf, doc_folder)
+    shutil.copy(sphinx_conf, os.path.join(doc_folder, 'conf.py'))
 
 
 def create_index(doc_folder, source_location, package_name):
@@ -195,6 +195,3 @@ if __name__ == "__main__":
 
     site_folder = os.path.join(args.dist_dir, "site")
     write_version(site_folder, package_version)
-
-    logging.info(doc_folder)
-    logging.info(os.listdir(doc_folder))

@@ -14,6 +14,8 @@ import os
 import logging
 import sys
 
+logging.getLogger().setLevel(logging.INFO)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(

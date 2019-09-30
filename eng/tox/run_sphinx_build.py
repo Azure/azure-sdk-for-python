@@ -14,38 +14,45 @@ import os
 import logging
 import sys
 
+logging.getLogger().setLevel(logging.INFO)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Run pylint against target folder. Add a local custom plugin to the path prior to execution. "
+        description="Run sphinx-build against target folder. Zips and moves resulting files to a root location as well."
     )
 
     parser.add_argument(
-        "-t",
-        "--target",
-        dest="target_package",
-        help="The target package directory on disk. The target module passed to pylint will be <target_package>/azure.",
+        "-w",
+        "--workingdir",
+        dest="working_directory",
+        help="The unzipped package directory on disk. Usually {distdir}/unzipped/",
         required=True,
     )
 
     args = parser.parse_args()
 
-    package_name = os.path.basename(os.path.abspath(args.target_package))
+    command_array = [
+                "sphinx-apidoc",
+                "--no-toc",
+                "-o",
+                os.path.join(args.working_directory, "unzipped/docgen"),
+                os.path.join(args.working_directory, "unzipped/"),
+                os.path.join(args.working_directory, "unzipped/test*"),
+                os.path.join(args.working_directory, "unzipped/example*"),
+                os.path.join(args.working_directory, "unzipped/sample*"),
+                os.path.join(args.working_directory, "unzipped/setup.py"),
+            ]
 
-    if package_name not in PYLINT_ACCEPTABLE_FAILURES:
-        try:
-            check_call(
-                [
-                    sys.executable,
-                    "-m",
-                    "pylint",
-                    "--rcfile={}".format(rcFileLocation),
-                    "--output-format=parseable",
-                    os.path.join(args.target_package, "azure"),
-                ]
+    try:
+        logging.info("Sphinx api-doc command: {}".format(command_array))
+
+        check_call(
+            command_array
+        )
+    except CalledProcessError as e:
+        logging.error(
+            "sphinx-apidoc failed for path {} exited with error {}".format(
+                args.working_directory, e.returncode
             )
-        except CalledProcessError as e:
-            logging.error(
-                "{} exited with linting error {}".format(package_name, e.returncode)
-            )
-            exit(1)
+        )
+        exit(1)
