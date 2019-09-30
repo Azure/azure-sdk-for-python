@@ -62,7 +62,7 @@ class _SansIOAsyncHTTPPolicyRunner(AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPRes
         super(_SansIOAsyncHTTPPolicyRunner, self).__init__()
         self._policy = policy
 
-    async def send(self, request: PipelineRequest):
+    async def send(self, request: PipelineRequest) -> PipelineResponse:
         """Modifies the request and sends to the next policy in the chain.
 
         :param request: The PipelineRequest object.
@@ -70,14 +70,22 @@ class _SansIOAsyncHTTPPolicyRunner(AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPRes
         :return: The PipelineResponse object.
         :rtype: ~azure.core.pipeline.PipelineResponse
         """
-        self._policy.on_request(request)
+        # type ignore on await: https://github.com/python/mypy/issues/7587
+        request_result = self._policy.on_request(request)
+        if hasattr(request_result, '__await__'):
+            await request_result  # type: ignore
         try:
             response = await self.next.send(request)  # type: ignore
         except Exception: #pylint: disable=broad-except
-            if not self._policy.on_exception(request):
+            excp_result = self._policy.on_exception(request)
+            if hasattr(excp_result, '__await__'):
+                excp_result = await excp_result  # type: ignore
+            if not excp_result:
                 raise
         else:
-            self._policy.on_response(request, response)
+            resp_result = self._policy.on_response(request, response)
+            if hasattr(resp_result, '__await__'):
+                await resp_result  # type: ignore
         return response
 
 
