@@ -28,10 +28,24 @@ import abc
 import copy
 import logging
 
-from typing import (TYPE_CHECKING, Generic, TypeVar, cast, IO, List, Union, Any, Mapping, Dict, Optional,  # pylint: disable=unused-import
-                    Tuple, Callable, Iterator, Awaitable)
-
 from azure.core.pipeline import ABC, PipelineRequest, PipelineResponse
+
+try:
+    from typing import TYPE_CHECKING
+except ImportError:
+    TYPE_CHECKING = False
+
+if TYPE_CHECKING:
+    from typing import (
+        Generic,
+        TypeVar,
+        Union,
+        Any,
+        Dict,
+        Optional,
+        Callable,
+        Awaitable,
+    )  # pylint: disable=unused-import
 
 HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
@@ -39,7 +53,7 @@ HTTPRequestType = TypeVar("HTTPRequestType")
 _LOGGER = logging.getLogger(__name__)
 
 
-class HTTPPolicy(ABC, Generic[HTTPRequestType, HTTPResponseType]): # type: ignore
+class HTTPPolicy(ABC, Generic[HTTPRequestType, HTTPResponseType]):  # type: ignore
     """An HTTP policy ABC.
 
     Use with a synchronous pipeline.
@@ -48,6 +62,7 @@ class HTTPPolicy(ABC, Generic[HTTPRequestType, HTTPResponseType]): # type: ignor
      instantiated and all policies chained.
     :type next: ~azure.core.pipeline.policies.HTTPPolicy or ~azure.core.pipeline.transport.HTTPTransport
     """
+
     def __init__(self):
         self.next = None
 
@@ -63,6 +78,7 @@ class HTTPPolicy(ABC, Generic[HTTPRequestType, HTTPResponseType]): # type: ignor
         :return: The pipeline response object.
         :rtype: ~azure.core.pipeline.PipelineResponse
         """
+
 
 class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType]):
     """Represents a sans I/O policy.
@@ -94,8 +110,8 @@ class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType]):
         :type response: ~azure.core.pipeline.PipelineResponse
         """
 
-    #pylint: disable=no-self-use
-    def on_exception(self, _request):  #pylint: disable=unused-argument
+    # pylint: disable=no-self-use
+    def on_exception(self, _request):  # pylint: disable=unused-argument
         # type: (PipelineRequest) -> Union[bool, Awaitable[bool]]
         """Is executed if an exception is raised while executing the next policy.
 
@@ -131,6 +147,7 @@ class RequestHistory(object):
     :param Exception error: An error encountered during the request, or None if the response was received successfully.
     :param dict context: The pipeline context.
     """
+
     def __init__(self, http_request, http_response=None, error=None, context=None):
         # type: (PipelineRequest, Optional[PipelineResponse], Exception, Optional[Dict[str, Any]]) -> None
         self.http_request = copy.deepcopy(http_request)
