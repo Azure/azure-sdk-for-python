@@ -72,8 +72,8 @@ class SansIOHTTPPolicy(Generic[HTTPRequestType, HTTPResponseType]):
     on the specifics of any particular transport. SansIOHTTPPolicy
     subclasses will function in either a Pipeline or an AsyncPipeline,
     and can act either before the request is done, or after.
-    You can optionally make these methods coroutines (or returns awaitable objects)
-    but they will then be tight to AsyncPipeline usage.
+    You can optionally make these methods coroutines (or return awaitable objects)
+    but they will then be tied to AsyncPipeline usage.
     """
 
     def on_request(self, request):
