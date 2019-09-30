@@ -955,6 +955,7 @@ class ContainerClient(StorageAccountHostsMixin):
             **kwargs)
 
     def _generate_delete_blobs_options(self, snapshot=None, timeout=None, delete_snapshots=None, request_id=None, lease_access_conditions=None, modified_access_conditions=None):
+        """This code is a copy from _generated. Once Autorest is able to provide request preparation this code should be removed"""
         lease_id = None
         if lease_access_conditions is not None:
             lease_id = lease_access_conditions.lease_id
