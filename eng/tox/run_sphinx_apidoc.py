@@ -30,26 +30,28 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    dist_location = os.path.abspath(args.target_package)
-
-    default_command_array = [
-        sys.executable,
-        "-m",
-        "sphinx-apidoc",
-        "--no-toc",
-        "-o",
-        os.path.join(output_directory, "unzipped/docgen"),
-        os.path.join(output_directory, "unzipped/"),
-        os.path.join(output_directory, "unzipped/test*"),
-        os.path.join(output_directory, "unzipped/example*"),
-        os.path.join(output_directory, "unzipped/sample*"),
-        os.path.join(output_directory, "unzipped/setup.py"),
-    ]
+    command_array = [
+                "sphinx-apidoc",
+                "--no-toc",
+                "-o",
+                os.path.join(args.working_directory, "unzipped/docgen"),
+                os.path.join(args.working_directory, "unzipped/"),
+                os.path.join(args.working_directory, "unzipped/test*"),
+                os.path.join(args.working_directory, "unzipped/example*"),
+                os.path.join(args.working_directory, "unzipped/sample*"),
+                os.path.join(args.working_directory, "unzipped/setup.py"),
+            ]
 
     try:
-        check_call()
+        logging.info("Sphinx api-doc command: {}".format(command_array))
+
+        check_call(
+            command_array
+        )
     except CalledProcessError as e:
         logging.error(
-            "{} exited with linting error {}".format(package_name, e.returncode)
+            "sphinx-apidoc failed for path {} exited with error {}".format(
+                args.working_directory, e.returncode
+            )
         )
         exit(1)
