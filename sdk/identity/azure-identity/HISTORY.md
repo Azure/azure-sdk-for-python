@@ -1,6 +1,12 @@
 # Release History
 
 ## 1.0.0b4
+### New features:
+- `AuthorizationCodeCredential` authenticates with a previously obtained
+authorization code. See Azure Active Directory's
+[authorization code documentation](https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow)
+for more information about this authentication flow.
+
 ### Fixes and improvements:
 - `UsernamePasswordCredential` correctly handles environment configuration with
 no tenant information (#7260)
