@@ -22,6 +22,7 @@ class DeliveryRuleCondition(Model):
     DeliveryRuleRequestHeaderCondition, DeliveryRuleRequestBodyCondition,
     DeliveryRuleRequestSchemeCondition, DeliveryRuleUrlPathCondition,
     DeliveryRuleUrlFileExtensionCondition, DeliveryRuleUrlFileNameCondition,
+    DeliveryRuleHttpVersionCondition, DeliveryRuleCookiesCondition,
     DeliveryRuleIsDeviceCondition
 
     All required parameters must be populated in order to send to Azure.
@@ -39,7 +40,7 @@ class DeliveryRuleCondition(Model):
     }
 
     _subtype_map = {
-        'name': {'RemoteAddress': 'DeliveryRuleRemoteAddressCondition', 'RequestMethod': 'DeliveryRuleRequestMethodCondition', 'QueryString': 'DeliveryRuleQueryStringCondition', 'PostArgs': 'DeliveryRulePostArgsCondition', 'RequestUri': 'DeliveryRuleRequestUriCondition', 'RequestHeader': 'DeliveryRuleRequestHeaderCondition', 'RequestBody': 'DeliveryRuleRequestBodyCondition', 'RequestScheme': 'DeliveryRuleRequestSchemeCondition', 'UrlPath': 'DeliveryRuleUrlPathCondition', 'UrlFileExtension': 'DeliveryRuleUrlFileExtensionCondition', 'UrlFileName': 'DeliveryRuleUrlFileNameCondition', 'IsDevice': 'DeliveryRuleIsDeviceCondition'}
+        'name': {'RemoteAddress': 'DeliveryRuleRemoteAddressCondition', 'RequestMethod': 'DeliveryRuleRequestMethodCondition', 'QueryString': 'DeliveryRuleQueryStringCondition', 'PostArgs': 'DeliveryRulePostArgsCondition', 'RequestUri': 'DeliveryRuleRequestUriCondition', 'RequestHeader': 'DeliveryRuleRequestHeaderCondition', 'RequestBody': 'DeliveryRuleRequestBodyCondition', 'RequestScheme': 'DeliveryRuleRequestSchemeCondition', 'UrlPath': 'DeliveryRuleUrlPathCondition', 'UrlFileExtension': 'DeliveryRuleUrlFileExtensionCondition', 'UrlFileName': 'DeliveryRuleUrlFileNameCondition', 'HttpVersion': 'DeliveryRuleHttpVersionCondition', 'Cookies': 'DeliveryRuleCookiesCondition', 'IsDevice': 'DeliveryRuleIsDeviceCondition'}
     }
 
     def __init__(self, **kwargs) -> None:

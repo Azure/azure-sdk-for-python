@@ -182,6 +182,19 @@ class UrlFileNameOperator(str, Enum):
     greater_than_or_equal = "GreaterThanOrEqual"
 
 
+class CookiesOperator(str, Enum):
+
+    any = "Any"
+    equal = "Equal"
+    contains = "Contains"
+    begins_with = "BeginsWith"
+    ends_with = "EndsWith"
+    less_than = "LessThan"
+    less_than_or_equal = "LessThanOrEqual"
+    greater_than = "GreaterThan"
+    greater_than_or_equal = "GreaterThanOrEqual"
+
+
 class RedirectType(str, Enum):
 
     moved = "Moved"

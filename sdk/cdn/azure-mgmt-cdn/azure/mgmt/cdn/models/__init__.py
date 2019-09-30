@@ -45,6 +45,10 @@ try:
     from .delivery_rule_url_file_extension_condition_py3 import DeliveryRuleUrlFileExtensionCondition
     from .url_file_name_match_condition_parameters_py3 import UrlFileNameMatchConditionParameters
     from .delivery_rule_url_file_name_condition_py3 import DeliveryRuleUrlFileNameCondition
+    from .http_version_match_condition_parameters_py3 import HttpVersionMatchConditionParameters
+    from .delivery_rule_http_version_condition_py3 import DeliveryRuleHttpVersionCondition
+    from .cookies_match_condition_parameters_py3 import CookiesMatchConditionParameters
+    from .delivery_rule_cookies_condition_py3 import DeliveryRuleCookiesCondition
     from .is_device_match_condition_parameters_py3 import IsDeviceMatchConditionParameters
     from .delivery_rule_is_device_condition_py3 import DeliveryRuleIsDeviceCondition
     from .url_redirect_action_parameters_py3 import UrlRedirectActionParameters
@@ -121,6 +125,10 @@ except (SyntaxError, ImportError):
     from .delivery_rule_url_file_extension_condition import DeliveryRuleUrlFileExtensionCondition
     from .url_file_name_match_condition_parameters import UrlFileNameMatchConditionParameters
     from .delivery_rule_url_file_name_condition import DeliveryRuleUrlFileNameCondition
+    from .http_version_match_condition_parameters import HttpVersionMatchConditionParameters
+    from .delivery_rule_http_version_condition import DeliveryRuleHttpVersionCondition
+    from .cookies_match_condition_parameters import CookiesMatchConditionParameters
+    from .delivery_rule_cookies_condition import DeliveryRuleCookiesCondition
     from .is_device_match_condition_parameters import IsDeviceMatchConditionParameters
     from .delivery_rule_is_device_condition import DeliveryRuleIsDeviceCondition
     from .url_redirect_action_parameters import UrlRedirectActionParameters
@@ -185,6 +193,7 @@ from .cdn_management_client_enums import (
     UrlPathOperator,
     UrlFileExtensionOperator,
     UrlFileNameOperator,
+    CookiesOperator,
     RedirectType,
     DestinationProtocol,
     HeaderAction,
@@ -235,6 +244,10 @@ __all__ = [
     'DeliveryRuleUrlFileExtensionCondition',
     'UrlFileNameMatchConditionParameters',
     'DeliveryRuleUrlFileNameCondition',
+    'HttpVersionMatchConditionParameters',
+    'DeliveryRuleHttpVersionCondition',
+    'CookiesMatchConditionParameters',
+    'DeliveryRuleCookiesCondition',
     'IsDeviceMatchConditionParameters',
     'DeliveryRuleIsDeviceCondition',
     'UrlRedirectActionParameters',
@@ -298,6 +311,7 @@ __all__ = [
     'UrlPathOperator',
     'UrlFileExtensionOperator',
     'UrlFileNameOperator',
+    'CookiesOperator',
     'RedirectType',
     'DestinationProtocol',
     'HeaderAction',
