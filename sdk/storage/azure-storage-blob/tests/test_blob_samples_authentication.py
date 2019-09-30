@@ -119,7 +119,7 @@ class TestAuthSamples(StorageTestCase):
 
         sas_token = blob_service_client.generate_shared_access_signature(
             resource_types=ResourceTypes.OBJECT,
-            permission=AccountSasPermissions.READ,
+            permission=AccountSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1)
         )
         # [END create_sas_token]

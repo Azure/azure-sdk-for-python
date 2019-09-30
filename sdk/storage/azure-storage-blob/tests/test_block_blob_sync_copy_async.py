@@ -69,7 +69,7 @@ class StorageBlockBlobTestAsync(StorageTestCase):
 
         # generate a SAS so that it is accessible with a URL
         sas_token = blob.generate_shared_access_signature(
-            permission=BlobSasPermissions.READ,
+            permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
         self.source_blob_url = BlobClient(blob.url, credential=sas_token).url
@@ -95,7 +95,7 @@ class StorageBlockBlobTestAsync(StorageTestCase):
 
         # generate a SAS so that it is accessible with a URL
         sas_token = blob.generate_shared_access_signature(
-            permission=BlobSasPermissions.READ,
+            permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
         self.source_blob_url = BlobClient(blob.url, credential=sas_token).url

@@ -946,7 +946,7 @@ class StorageCommonBlobTest(StorageTestCase):
         self._create_remote_container()
         source_blob = self._create_remote_block_blob(blob_data=data)
         sas_token = source_blob.generate_shared_access_signature(
-            permission=BlobSasPermissions.READ,
+            permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
         blob = BlobClient(source_blob.url, credential=sas_token)
@@ -1209,7 +1209,7 @@ class StorageCommonBlobTest(StorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         
         token = blob.generate_shared_access_signature(
-            permission=BlobSasPermissions.READ,
+            permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
 
@@ -1233,7 +1233,7 @@ class StorageCommonBlobTest(StorageTestCase):
         blob_snapshot_client = self.bsc.get_blob_client(self.container_name, blob_name, snapshot=blob_snapshot)
 
         token = blob_snapshot_client.generate_shared_access_signature(
-            permission=BlobSasPermissions.READ + BlobSasPermissions.DELETE,
+            permission=BlobSasPermissions(read=True, write=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
 
@@ -1266,7 +1266,7 @@ class StorageCommonBlobTest(StorageTestCase):
         access_policy = AccessPolicy()
         access_policy.start = datetime.utcnow() - timedelta(hours=1)
         access_policy.expiry = datetime.utcnow() + timedelta(hours=1)
-        access_policy.permission = BlobSasPermissions.READ
+        access_policy.permission = BlobSasPermissions(read=True)
         identifiers = {'testid': access_policy}
 
         resp = container.set_container_access_policy(identifiers)
@@ -1292,7 +1292,7 @@ class StorageCommonBlobTest(StorageTestCase):
 
         token = self.bsc.generate_shared_access_signature(
             ResourceTypes(container=True, object=True),
-            AccountSasPermissions.READ,
+            AccountSasPermissions(read=True),
             datetime.utcnow() + timedelta(hours=1),
         )
 
@@ -1358,7 +1358,7 @@ class StorageCommonBlobTest(StorageTestCase):
         blob_client.upload_blob(self.byte_data, length=len(self.byte_data))
 
         token = blob_client.generate_shared_access_signature(
-            permission=BlobSasPermissions.READ,
+            permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
             user_delegation_key=user_delegation_key,
             account_name='emilydevtest',
@@ -1404,7 +1404,7 @@ class StorageCommonBlobTest(StorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         token = blob.generate_shared_access_signature(
-            permission=BlobSasPermissions.READ,
+            permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
 
@@ -1428,7 +1428,7 @@ class StorageCommonBlobTest(StorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         token = blob.generate_shared_access_signature(
-            permission=BlobSasPermissions.READ,
+            permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
             cache_control='no-cache',
             content_disposition='inline',
@@ -1462,7 +1462,7 @@ class StorageCommonBlobTest(StorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         token = blob.generate_shared_access_signature(
-            permission=BlobSasPermissions.WRITE,
+            permission=BlobSasPermissions(write=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
         sas_blob = BlobClient(blob.url, credential=token)
@@ -1488,7 +1488,7 @@ class StorageCommonBlobTest(StorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         token = blob.generate_shared_access_signature(
-            permission=BlobSasPermissions.DELETE,
+            permission=BlobSasPermissions(delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
         sas_blob = BlobClient(blob.url, credential=token)
@@ -1542,7 +1542,7 @@ class StorageCommonBlobTest(StorageTestCase):
         # Arrange
         container = self.bsc.get_container_client(self.container_name)
         token = container.generate_shared_access_signature(
-            permission=ContainerSasPermissions.READ,
+            permission=ContainerSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
         sas_container = ContainerClient(container.url, credential=token)
@@ -1565,7 +1565,7 @@ class StorageCommonBlobTest(StorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         token = blob.generate_shared_access_signature(
-            permission=BlobSasPermissions.READ,
+            permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
         sas_blob = BlobClient(blob.url, credential=token)
@@ -1586,7 +1586,7 @@ class StorageCommonBlobTest(StorageTestCase):
         self._create_remote_container()
         source_blob = self._create_remote_block_blob(blob_data=data)
         sas_token = source_blob.generate_shared_access_signature(
-            permission=BlobSasPermissions.READ,
+            permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
         blob = BlobClient(source_blob.url, credential=sas_token)
@@ -1700,7 +1700,7 @@ class StorageCommonBlobTest(StorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         token = blob.generate_shared_access_signature(
-            permission=BlobSasPermissions.WRITE,
+            permission=BlobSasPermissions(write=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
         sas_blob = BlobClient(blob.url, credential=token)

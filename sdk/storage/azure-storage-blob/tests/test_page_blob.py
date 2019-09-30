@@ -367,7 +367,7 @@ class StoragePageBlobTest(StorageTestCase):
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data, 0, SOURCE_BLOB_SIZE - 1)
         sas = source_blob_client.generate_shared_access_signature(
-            permission=BlobSasPermissions.READ + BlobSasPermissions.DELETE,
+            permission=BlobSasPermissions(read=True, write=True),
             expiry=datetime.utcnow() + timedelta(hours=1))
 
         destination_blob_client = self._create_blob(SOURCE_BLOB_SIZE)
@@ -395,7 +395,7 @@ class StoragePageBlobTest(StorageTestCase):
         source_blob_client = self._create_source_blob(source_blob_data, 0, SOURCE_BLOB_SIZE - 1)
         src_md5 = StorageContentValidation.get_content_md5(source_blob_data)
         sas = source_blob_client.generate_shared_access_signature(
-            permission=BlobSasPermissions.READ + BlobSasPermissions.DELETE,
+            permission=BlobSasPermissions(read=True, write=True),
             expiry=datetime.utcnow() + timedelta(hours=1))
 
         destination_blob_client = self._create_blob(SOURCE_BLOB_SIZE)
@@ -430,7 +430,7 @@ class StoragePageBlobTest(StorageTestCase):
         source_blob_client = self._create_source_blob(source_blob_data, 0, SOURCE_BLOB_SIZE - 1)
         source_properties = source_blob_client.get_blob_properties()
         sas = source_blob_client.generate_shared_access_signature(
-            permission=BlobSasPermissions.READ + BlobSasPermissions.DELETE,
+            permission=BlobSasPermissions(read=True, write=True),
             expiry=datetime.utcnow() + timedelta(hours=1))
 
         destination_blob_client = self._create_blob(SOURCE_BLOB_SIZE)
@@ -467,7 +467,7 @@ class StoragePageBlobTest(StorageTestCase):
         source_blob_client = self._create_source_blob(source_blob_data, 0, SOURCE_BLOB_SIZE - 1)
         source_properties = source_blob_client.get_blob_properties()
         sas = source_blob_client.generate_shared_access_signature(
-            permission=BlobSasPermissions.READ + BlobSasPermissions.DELETE,
+            permission=BlobSasPermissions(read=True, write=True),
             expiry=datetime.utcnow() + timedelta(hours=1))
 
         destination_blob_client = self._create_blob(SOURCE_BLOB_SIZE)
@@ -504,7 +504,7 @@ class StoragePageBlobTest(StorageTestCase):
         source_blob_client = self._create_source_blob(source_blob_data, 0, SOURCE_BLOB_SIZE - 1)
         source_properties = source_blob_client.get_blob_properties()
         sas = source_blob_client.generate_shared_access_signature(
-            permission=BlobSasPermissions.READ + BlobSasPermissions.DELETE,
+            permission=BlobSasPermissions(read=True, write=True),
             expiry=datetime.utcnow() + timedelta(hours=1))
 
         destination_blob_client = self._create_blob(SOURCE_BLOB_SIZE)
@@ -540,7 +540,7 @@ class StoragePageBlobTest(StorageTestCase):
         source_blob_client = self._create_source_blob(source_blob_data, 0, SOURCE_BLOB_SIZE - 1)
         source_properties = source_blob_client.get_blob_properties()
         sas = source_blob_client.generate_shared_access_signature(
-            permission=BlobSasPermissions.READ + BlobSasPermissions.DELETE,
+            permission=BlobSasPermissions(read=True, write=True),
             expiry=datetime.utcnow() + timedelta(hours=1))
 
         destination_blob_client = self._create_blob(SOURCE_BLOB_SIZE)
@@ -576,7 +576,7 @@ class StoragePageBlobTest(StorageTestCase):
         source_blob_client = self._create_source_blob(source_blob_data, 0, SOURCE_BLOB_SIZE - 1)
         source_properties = source_blob_client.get_blob_properties()
         sas = source_blob_client.generate_shared_access_signature(
-            permission=BlobSasPermissions.READ + BlobSasPermissions.DELETE,
+            permission=BlobSasPermissions(read=True, write=True),
             expiry=datetime.utcnow() + timedelta(hours=1))
 
         destination_blob_client = self._create_blob(SOURCE_BLOB_SIZE)
@@ -613,7 +613,7 @@ class StoragePageBlobTest(StorageTestCase):
         source_blob_client = self._create_source_blob(source_blob_data, 0, SOURCE_BLOB_SIZE - 1)
         source_properties = source_blob_client.get_blob_properties()
         sas = source_blob_client.generate_shared_access_signature(
-            permission=BlobSasPermissions.READ + BlobSasPermissions.DELETE,
+            permission=BlobSasPermissions(read=True, write=True),
             expiry=datetime.utcnow() + timedelta(hours=1))
 
         destination_blob_client = self._create_blob(SOURCE_BLOB_SIZE)
@@ -650,7 +650,7 @@ class StoragePageBlobTest(StorageTestCase):
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data, 0, SOURCE_BLOB_SIZE - 1)
         sas = source_blob_client.generate_shared_access_signature(
-            permission=BlobSasPermissions.READ + BlobSasPermissions.DELETE,
+            permission=BlobSasPermissions(read=True, write=True),
             expiry=datetime.utcnow() + timedelta(hours=1))
 
         destination_blob_client = self._create_blob(SOURCE_BLOB_SIZE)
@@ -686,7 +686,7 @@ class StoragePageBlobTest(StorageTestCase):
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data, 0, SOURCE_BLOB_SIZE - 1)
         sas = source_blob_client.generate_shared_access_signature(
-            permission=BlobSasPermissions.READ + BlobSasPermissions.DELETE,
+            permission=BlobSasPermissions(read=True, write=True),
             expiry=datetime.utcnow() + timedelta(hours=1))
 
         destination_blob_client = self._create_blob(SOURCE_BLOB_SIZE)
@@ -723,7 +723,7 @@ class StoragePageBlobTest(StorageTestCase):
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data, 0, SOURCE_BLOB_SIZE - 1)
         sas = source_blob_client.generate_shared_access_signature(
-            permission=BlobSasPermissions.READ + BlobSasPermissions.DELETE,
+            permission=BlobSasPermissions(read=True, write=True),
             expiry=datetime.utcnow() + timedelta(hours=1))
 
         destination_blob_client = self._create_blob(SOURCE_BLOB_SIZE, sequence_number=start_sequence)
@@ -759,7 +759,7 @@ class StoragePageBlobTest(StorageTestCase):
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data, 0, SOURCE_BLOB_SIZE - 1)
         sas = source_blob_client.generate_shared_access_signature(
-            permission=BlobSasPermissions.READ + BlobSasPermissions.DELETE,
+            permission=BlobSasPermissions(read=True, write=True),
             expiry=datetime.utcnow() + timedelta(hours=1))
 
         destination_blob_client = self._create_blob(SOURCE_BLOB_SIZE, sequence_number=start_sequence)
@@ -795,7 +795,7 @@ class StoragePageBlobTest(StorageTestCase):
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data, 0, SOURCE_BLOB_SIZE - 1)
         sas = source_blob_client.generate_shared_access_signature(
-            permission=BlobSasPermissions.READ + BlobSasPermissions.DELETE,
+            permission=BlobSasPermissions(read=True, write=True),
             expiry=datetime.utcnow() + timedelta(hours=1))
 
         destination_blob_client = self._create_blob(SOURCE_BLOB_SIZE, sequence_number=start_sequence)
@@ -1342,7 +1342,7 @@ class StoragePageBlobTest(StorageTestCase):
         snapshot_blob = BlobClient(
             source_blob.url, credential=source_blob.credential, snapshot=source_snapshot_blob)
         sas_token = snapshot_blob.generate_shared_access_signature(
-            permission=BlobSasPermissions.READ,
+            permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
         sas_blob = BlobClient(snapshot_blob.url, credential=sas_token)

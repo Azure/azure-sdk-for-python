@@ -219,7 +219,7 @@ class StorageCPKTest(StorageTestCase):
         self.config.use_byte_buffer = True  # Make sure using chunk upload, then we can record the request
         source_blob_client, _ = self._create_block_blob(blob_name=source_blob_name, data=self.byte_data)
         source_blob_sas = source_blob_client.generate_shared_access_signature(
-            permission=BlobSasPermissions.READ,
+            permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1)
         )
         source_blob_url = source_blob_client.url + "?" + source_blob_sas
@@ -298,7 +298,7 @@ class StorageCPKTest(StorageTestCase):
         self.config.use_byte_buffer = True  # chunk upload
         source_blob_client, _ = self._create_block_blob(blob_name=source_blob_name, data=self.byte_data)
         source_blob_sas = source_blob_client.generate_shared_access_signature(
-            permission=BlobSasPermissions.READ,
+            permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1)
         )
         source_blob_url = source_blob_client.url + "?" + source_blob_sas
@@ -393,7 +393,7 @@ class StorageCPKTest(StorageTestCase):
         self.config.use_byte_buffer = True  # Make sure using chunk upload, then we can record the request
         source_blob_client, _ = self._create_block_blob(blob_name=source_blob_name, data=self.byte_data)
         source_blob_sas = source_blob_client.generate_shared_access_signature(
-            permission=BlobSasPermissions.READ,
+            permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1)
         )
         source_blob_url = source_blob_client.url + "?" + source_blob_sas

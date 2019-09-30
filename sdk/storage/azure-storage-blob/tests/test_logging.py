@@ -56,7 +56,7 @@ class StorageLoggingTest(StorageTestCase):
 
         # generate a SAS so that it is accessible with a URL
         sas_token = source_blob.generate_shared_access_signature(
-            permission=BlobSasPermissions.READ,
+            permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
         sas_source = BlobClient(source_blob.url, credential=sas_token)
@@ -91,7 +91,7 @@ class StorageLoggingTest(StorageTestCase):
         # Arrange
         container = self.bsc.get_container_client(self.container_name)
         token = container.generate_shared_access_signature(
-            permission=ContainerSasPermissions.READ,
+            permission=ContainerSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
         # parse out the signed signature
