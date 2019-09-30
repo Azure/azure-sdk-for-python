@@ -2,12 +2,13 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import functools
 from unittest.mock import Mock
+from urllib.parse import urlparse
 
-from azure.core.exceptions import ClientAuthenticationError
 from azure.identity.aio._internal.aad_client import AadClient
 import pytest
+
+from helpers import mock_response
 
 
 class MockClient(AadClient):
@@ -21,9 +22,8 @@ class MockClient(AadClient):
 
 @pytest.mark.asyncio
 async def test_uses_msal_correctly():
-    session = Mock()
     transport = Mock()
-    session.get = session.post = transport
+    session = Mock(get=transport, post=transport)
 
     client = MockClient("client id", "tenant id", session=session)
 
@@ -46,22 +46,14 @@ async def test_request_url():
     authority = "authority.com"
     tenant = "expected_tenant"
 
-    def validate_url(url, **kwargs):
-        scheme, netloc, path, _, _, _ = urlparse(url)
+    async def send(request, **_):
+        scheme, netloc, path, _, _, _ = urlparse(request.url)
         assert scheme == "https"
         assert netloc == authority
         assert path.startswith("/" + tenant)
+        return mock_response(json_payload={"token_type": "Bearer", "expires_in": 42, "access_token": "***"})
 
-    transport = Mock(side_effect=validate_url)
-    session = Mock(get=transport, post=transport)
-    client = MockClient("client id", "tenant id", session=session, authority=authority)
+    client = AadClient("client id", tenant, transport=Mock(send=send), authority=authority)
 
-    coros = [
-        client.obtain_token_by_authorization_code("code", "uri", "scope"),
-        client.obtain_token_by_refresh_token({"secret": "refresh token"}, "scope"),
-    ]
-
-    for coro in coros:
-        with pytest.raises(ClientAuthenticationError):
-            # raises because the mock transport returns nothing
-            await coro
+    await client.obtain_token_by_authorization_code("code", "uri", "scope")
+    await client.obtain_token_by_refresh_token("refresh token", "scope")

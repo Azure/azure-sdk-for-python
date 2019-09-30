@@ -102,25 +102,14 @@ def test_request_url():
     authority = "authority.com"
     tenant = "expected_tenant"
 
-    def validate_url(url, **kwargs):
-        scheme, netloc, path, _, _, _ = urlparse(url)
+    def send(request, **_):
+        scheme, netloc, path, _, _, _ = urlparse(request.url)
         assert scheme == "https"
         assert netloc == authority
         assert path.startswith("/" + tenant)
+        return mock_response(json_payload={"token_type": "Bearer", "expires_in": 42, "access_token": "***"})
 
-    transport = Mock(side_effect=validate_url)
-    session = Mock(get=transport, post=transport)
-    client = MockClient("client id", tenant, session=session, authority=authority)
+    client = AadClient("client id", tenant, transport=Mock(send=send), authority=authority)
 
-    fns = [
-        functools.partial(client.obtain_token_by_authorization_code, "code", "uri", "scope"),
-        functools.partial(client.obtain_token_by_refresh_token, {"secret": "refresh token"}, "scope"),
-    ]
-
-    for fn in fns:
-        with pytest.raises(ClientAuthenticationError):
-            # raises because the mock transport returns nothing
-            fn()
-
-if __name__ == "__main__":
-    test_request_url()
+    client.obtain_token_by_authorization_code("code", "uri", "scope")
+    client.obtain_token_by_refresh_token("refresh token", "scope")
