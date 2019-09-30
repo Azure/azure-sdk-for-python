@@ -35,9 +35,13 @@ def escape_and_tostr(value):
     return ','.join(value)
 
 def quote_etag(etag):
-    if etag != "*" and etag is not None:
-        return '"' + etag + '"'
-    return etag
+    if not etag or etag == "*":
+        return etag
+    if etag.startswith('"') and etag.endswith('"'):
+        return etag
+    if etag.startswith("'") and etag.endswith("'"):
+        return etag
+    return '"' + etag + '"'
 
 def prep_if_match(etag, match_condition):
     # type: (str, MatchConditions) -> str
