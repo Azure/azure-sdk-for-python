@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from .authorization_code import AuthorizationCodeCredential
 from .browser import InteractiveBrowserCredential
 from .chained import ChainedTokenCredential
 from .client_credential import CertificateCredential, ClientSecretCredential
@@ -12,6 +13,7 @@ from .user import DeviceCodeCredential, SharedTokenCacheCredential, UsernamePass
 
 
 __all__ = [
+    "AuthorizationCodeCredential",
     "CertificateCredential",
     "ChainedTokenCredential",
     "ClientSecretCredential",
