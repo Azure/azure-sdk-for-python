@@ -13,7 +13,7 @@ parameters:
   RunMyPy: and(ne(variables['PythonVersion'], '2.7'), ne(variables['PythonVersion'], 'pypy3'))
 
 steps:
-  - powershell: |
+  - pwsh: |
       gci -r $(Build.ArtifactStagingDirectory)
 
   - task: UsePythonVersion@0
