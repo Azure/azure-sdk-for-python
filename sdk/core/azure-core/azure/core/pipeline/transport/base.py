@@ -455,7 +455,7 @@ class BytesIOSocket(object):
     def __init__(self, bytes_data):
         self.bytes_data = bytes_data
 
-    def makefile(self, *args):
+    def makefile(self, *_):
         return BytesIO(self.bytes_data)
 
 
