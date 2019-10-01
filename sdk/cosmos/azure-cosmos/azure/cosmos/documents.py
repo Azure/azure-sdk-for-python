@@ -372,8 +372,10 @@ class ConnectionPolicy(object):  # pylint: disable=too-many-instance-attributes
     :ivar boolean UseMultipleWriteLocations:
         Flag to enable writes on any locations (regions) for geo-replicated database accounts
         in the azure Cosmos service.
-    :ivar (int or requests.packages.urllib3.util.retry) ConnectionRetryConfiguration:
+    :ivar ConnectionRetryConfiguration:
         Retry Configuration to be used for urllib3 connection retries.
+    :vartype ConnectionRetryConfiguration:
+        int or requests.packages.urllib3.util.retry or azure.core.pipeline.policies.HTTPPolicy
     """
 
     __defaultRequestTimeout = 60000  # milliseconds

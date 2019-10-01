@@ -32,11 +32,13 @@ from azure.core.paging import ItemPaged  # type: ignore
 from azure.core import PipelineClient  # type: ignore
 from azure.core.pipeline.transport import RequestsTransport
 from azure.core.pipeline.policies import (  # type: ignore
+    HTTPPolicy,
     ContentDecodePolicy,
     HeadersPolicy,
     UserAgentPolicy,
     NetworkTraceLoggingPolicy,
     CustomHookPolicy,
+    RetryPolicy,
     ProxyPolicy)
 from azure.core.pipeline.policies.distributed_tracing import DistributedTracingPolicy  # type: ignore
 
@@ -151,15 +153,22 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
         self._useMultipleWriteLocations = False
         self._global_endpoint_manager = global_endpoint_manager._GlobalEndpointManager(self)
 
-        # creating a requests session used for connection pooling and re-used by all requests
-        requests_session = requests.Session()
-
-        transport = None
-        if self.connection_policy.ConnectionRetryConfiguration is not None:
-            adapter = HTTPAdapter(max_retries=self.connection_policy.ConnectionRetryConfiguration)
-            requests_session.mount('http://', adapter)
-            requests_session.mount('https://', adapter)
-            transport = RequestsTransport(session=requests_session)
+        retry_policy = None
+        if isinstance(self.connection_policy.ConnectionRetryConfiguration, HTTPPolicy):
+            retry_policy = self.connection_policy.ConnectionRetryConfiguration
+        elif isinstance(self.connection_policy.ConnectionRetryConfiguration, int):
+            retry_policy = RetryPolicy(total=self.connection_policy.ConnectionRetryConfiguration)
+        elif self.connection_policy.ConnectionRetryConfiguration is not None:
+            # Convert a urllib3 retry policy to a Pipeline policy
+            retry_policy = RetryPolicy(
+                retry_total=self.connection_policy.ConnectionRetryConfiguration.total,
+                retry_connect=self.connection_policy.ConnectionRetryConfiguration.connect,
+                retry_read=self.connection_policy.ConnectionRetryConfiguration.read,
+                retry_status=self.connection_policy.ConnectionRetryConfiguration.status,
+                retry_backoff_max=self.connection_policy.ConnectionRetryConfiguration.BACKOFF_MAX,
+                retry_on_status_codes=list(self.connection_policy.ConnectionRetryConfiguration.status_forcelist),
+                retry_backoff_factor=self.connection_policy.ConnectionRetryConfiguration.backoff_factor
+            )
 
         proxies = kwargs.pop('proxies', {})
         if self.connection_policy.ProxyConfiguration and self.connection_policy.ProxyConfiguration.Host:
@@ -173,11 +182,13 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             ProxyPolicy(proxies=proxies),
             UserAgentPolicy(base_user_agent=_utils.get_user_agent(), **kwargs),
             ContentDecodePolicy(),
+            retry_policy,
             CustomHookPolicy(**kwargs),
             DistributedTracingPolicy(),
             NetworkTraceLoggingPolicy(**kwargs),
             ]
 
+        transport = kwargs.pop("transport", None)
         self.pipeline_client = PipelineClient(url_connection, "empty-config", transport=transport, policies=policies)
 
         # Query compatibility mode.
