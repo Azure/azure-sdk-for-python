@@ -336,6 +336,7 @@ except (SyntaxError, ImportError):
     from ._models import VulnerabilityAssessmentScanError
     from ._models import VulnerabilityAssessmentScanRecord
 from ._paged_models import BackupShortTermRetentionPolicyPaged
+from ._paged_models import DatabaseBlobAuditingPolicyPaged
 from ._paged_models import DatabaseOperationPaged
 from ._paged_models import DatabasePaged
 from ._paged_models import DatabaseUsagePaged
@@ -383,6 +384,7 @@ from ._paged_models import RestorableDroppedManagedDatabasePaged
 from ._paged_models import RestorePointPaged
 from ._paged_models import SensitivityLabelPaged
 from ._paged_models import ServerAzureADAdministratorPaged
+from ._paged_models import ServerBlobAuditingPolicyPaged
 from ._paged_models import ServerCommunicationLinkPaged
 from ._paged_models import ServerDnsAliasPaged
 from ._paged_models import ServerKeyPaged
@@ -688,6 +690,8 @@ __all__ = [
     'SubscriptionUsagePaged',
     'VirtualClusterPaged',
     'VirtualNetworkRulePaged',
+    'ServerBlobAuditingPolicyPaged',
+    'DatabaseBlobAuditingPolicyPaged',
     'DatabaseVulnerabilityAssessmentPaged',
     'JobAgentPaged',
     'JobCredentialPaged',
