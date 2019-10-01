@@ -17,7 +17,7 @@ from .. import models
 class ComputerVisionClientOperationsMixin(object):
 
     def analyze_image(
-            self, url, visual_features=None, details=None, language="en", custom_headers=None, raw=False, **operation_config):
+            self, url, visual_features=None, details=None, language="en", description_exclude=None, custom_headers=None, raw=False, **operation_config):
         """This operation extracts a rich set of visual features based on the
         image content.
         Two input methods are supported -- (1) Uploading an image or (2)
@@ -40,12 +40,13 @@ class ComputerVisionClientOperationsMixin(object):
          coordinates, gender and age. ImageType - detects if image is clipart
          or a line drawing. Color - determines the accent color, dominant
          color, and whether an image is black&white. Adult - detects if the
-         image is pornographic in nature (depicts nudity or a sex act).
-         Sexually suggestive content is also detected. Objects - detects
-         various objects within an image, including the approximate location.
-         The Objects argument is only available in English. Brands - detects
-         various brands within an image, including the approximate location.
-         The Brands argument is only available in English.
+         image is pornographic in nature (depicts nudity or a sex act), or is
+         gory (depicts extreme violence or blood). Sexually suggestive content
+         (aka racy content) is also detected. Objects - detects various objects
+         within an image, including the approximate location. The Objects
+         argument is only available in English. Brands - detects various brands
+         within an image, including the approximate location. The Brands
+         argument is only available in English.
         :type visual_features: list[str or
          ~azure.cognitiveservices.vision.computervision.models.VisualFeatureTypes]
         :param details: A string indicating which domain-specific details to
@@ -61,6 +62,10 @@ class ComputerVisionClientOperationsMixin(object):
          Spanish, ja - Japanese, pt - Portuguese, zh - Simplified Chinese.
          Possible values include: 'en', 'es', 'ja', 'pt', 'zh'
         :type language: str
+        :param description_exclude: Turn off specified domain models when
+         generating the description.
+        :type description_exclude: list[str or
+         ~azure.cognitiveservices.vision.computervision.models.DescriptionExclude]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -90,6 +95,8 @@ class ComputerVisionClientOperationsMixin(object):
             query_parameters['details'] = self._serialize.query("details", details, '[Details]', div=',')
         if language is not None:
             query_parameters['language'] = self._serialize.query("language", language, 'str')
+        if description_exclude is not None:
+            query_parameters['descriptionExclude'] = self._serialize.query("description_exclude", description_exclude, '[DescriptionExclude]', div=',')
 
         # Construct headers
         header_parameters = {}
@@ -120,12 +127,13 @@ class ComputerVisionClientOperationsMixin(object):
     analyze_image.metadata = {'url': '/analyze'}
 
     def describe_image(
-            self, url, max_candidates=1, language="en", custom_headers=None, raw=False, **operation_config):
+            self, url, max_candidates=1, language="en", description_exclude=None, custom_headers=None, raw=False, **operation_config):
         """This operation generates a description of an image in human readable
         language with complete sentences. The description is based on a
         collection of content tags, which are also returned by the operation.
         More than one description can be generated for each image. Descriptions
-        are ordered by their confidence score. All descriptions are in English.
+        are ordered by their confidence score. Descriptions may include results
+        from celebrity and landmark domain models, if applicable.
         Two input methods are supported -- (1) Uploading an image or (2)
         specifying an image URL.
         A successful response will be returned in JSON. If the request failed,
@@ -143,6 +151,10 @@ class ComputerVisionClientOperationsMixin(object):
          Spanish, ja - Japanese, pt - Portuguese, zh - Simplified Chinese.
          Possible values include: 'en', 'es', 'ja', 'pt', 'zh'
         :type language: str
+        :param description_exclude: Turn off specified domain models when
+         generating the description.
+        :type description_exclude: list[str or
+         ~azure.cognitiveservices.vision.computervision.models.DescriptionExclude]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -170,6 +182,8 @@ class ComputerVisionClientOperationsMixin(object):
             query_parameters['maxCandidates'] = self._serialize.query("max_candidates", max_candidates, 'int')
         if language is not None:
             query_parameters['language'] = self._serialize.query("language", language, 'str')
+        if description_exclude is not None:
+            query_parameters['descriptionExclude'] = self._serialize.query("description_exclude", description_exclude, '[DescriptionExclude]', div=',')
 
         # Construct headers
         header_parameters = {}
@@ -484,8 +498,7 @@ class ComputerVisionClientOperationsMixin(object):
         images. Unlike categories, tags are not organized according to a
         hierarchical classification system, but correspond to image content.
         Tags may contain hints to avoid ambiguity or provide context, for
-        example the tag "cello" may be accompanied by the hint "musical
-        instrument". All tags are in English.
+        example the tag "ascomycete" may be accompanied by the hint "fungus".
         Two input methods are supported -- (1) Uploading an image or (2)
         specifying an image URL.
         A successful response will be returned in JSON. If the request failed,
@@ -932,7 +945,7 @@ class ComputerVisionClientOperationsMixin(object):
     get_read_operation_result.metadata = {'url': '/read/operations/{operationId}'}
 
     def analyze_image_in_stream(
-            self, image, visual_features=None, details=None, language="en", custom_headers=None, raw=False, callback=None, **operation_config):
+            self, image, visual_features=None, details=None, language="en", description_exclude=None, custom_headers=None, raw=False, callback=None, **operation_config):
         """This operation extracts a rich set of visual features based on the
         image content.
         Two input methods are supported -- (1) Uploading an image or (2)
@@ -955,12 +968,13 @@ class ComputerVisionClientOperationsMixin(object):
          coordinates, gender and age. ImageType - detects if image is clipart
          or a line drawing. Color - determines the accent color, dominant
          color, and whether an image is black&white. Adult - detects if the
-         image is pornographic in nature (depicts nudity or a sex act).
-         Sexually suggestive content is also detected. Objects - detects
-         various objects within an image, including the approximate location.
-         The Objects argument is only available in English. Brands - detects
-         various brands within an image, including the approximate location.
-         The Brands argument is only available in English.
+         image is pornographic in nature (depicts nudity or a sex act), or is
+         gory (depicts extreme violence or blood). Sexually suggestive content
+         (aka racy content) is also detected. Objects - detects various objects
+         within an image, including the approximate location. The Objects
+         argument is only available in English. Brands - detects various brands
+         within an image, including the approximate location. The Brands
+         argument is only available in English.
         :type visual_features: list[str or
          ~azure.cognitiveservices.vision.computervision.models.VisualFeatureTypes]
         :param details: A string indicating which domain-specific details to
@@ -976,6 +990,10 @@ class ComputerVisionClientOperationsMixin(object):
          Spanish, ja - Japanese, pt - Portuguese, zh - Simplified Chinese.
          Possible values include: 'en', 'es', 'ja', 'pt', 'zh'
         :type language: str
+        :param description_exclude: Turn off specified domain models when
+         generating the description.
+        :type description_exclude: list[str or
+         ~azure.cognitiveservices.vision.computervision.models.DescriptionExclude]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1008,6 +1026,8 @@ class ComputerVisionClientOperationsMixin(object):
             query_parameters['details'] = self._serialize.query("details", details, '[Details]', div=',')
         if language is not None:
             query_parameters['language'] = self._serialize.query("language", language, 'str')
+        if description_exclude is not None:
+            query_parameters['descriptionExclude'] = self._serialize.query("description_exclude", description_exclude, '[DescriptionExclude]', div=',')
 
         # Construct headers
         header_parameters = {}
@@ -1107,12 +1127,13 @@ class ComputerVisionClientOperationsMixin(object):
     get_area_of_interest_in_stream.metadata = {'url': '/areaOfInterest'}
 
     def describe_image_in_stream(
-            self, image, max_candidates=1, language="en", custom_headers=None, raw=False, callback=None, **operation_config):
+            self, image, max_candidates=1, language="en", description_exclude=None, custom_headers=None, raw=False, callback=None, **operation_config):
         """This operation generates a description of an image in human readable
         language with complete sentences. The description is based on a
         collection of content tags, which are also returned by the operation.
         More than one description can be generated for each image. Descriptions
-        are ordered by their confidence score. All descriptions are in English.
+        are ordered by their confidence score. Descriptions may include results
+        from celebrity and landmark domain models, if applicable.
         Two input methods are supported -- (1) Uploading an image or (2)
         specifying an image URL.
         A successful response will be returned in JSON. If the request failed,
@@ -1130,6 +1151,10 @@ class ComputerVisionClientOperationsMixin(object):
          Spanish, ja - Japanese, pt - Portuguese, zh - Simplified Chinese.
          Possible values include: 'en', 'es', 'ja', 'pt', 'zh'
         :type language: str
+        :param description_exclude: Turn off specified domain models when
+         generating the description.
+        :type description_exclude: list[str or
+         ~azure.cognitiveservices.vision.computervision.models.DescriptionExclude]
         :param dict custom_headers: headers that will be added to the request
         :param bool raw: returns the direct response alongside the
          deserialized response
@@ -1160,6 +1185,8 @@ class ComputerVisionClientOperationsMixin(object):
             query_parameters['maxCandidates'] = self._serialize.query("max_candidates", max_candidates, 'int')
         if language is not None:
             query_parameters['language'] = self._serialize.query("language", language, 'str')
+        if description_exclude is not None:
+            query_parameters['descriptionExclude'] = self._serialize.query("description_exclude", description_exclude, '[DescriptionExclude]', div=',')
 
         # Construct headers
         header_parameters = {}
@@ -1507,8 +1534,7 @@ class ComputerVisionClientOperationsMixin(object):
         images. Unlike categories, tags are not organized according to a
         hierarchical classification system, but correspond to image content.
         Tags may contain hints to avoid ambiguity or provide context, for
-        example the tag "cello" may be accompanied by the hint "musical
-        instrument". All tags are in English.
+        example the tag "ascomycete" may be accompanied by the hint "fungus".
         Two input methods are supported -- (1) Uploading an image or (2)
         specifying an image URL.
         A successful response will be returned in JSON. If the request failed,
