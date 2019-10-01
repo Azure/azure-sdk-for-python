@@ -31,6 +31,9 @@ class IdentityProviderContract(Resource):
      'aad', 'aadB2C'
     :type identity_provider_contract_type: str or
      ~azure.mgmt.apimanagement.models.IdentityProviderType
+    :param signin_tenant: The TenantId to use instead of Common when logging
+     into Active Directory
+    :type signin_tenant: str
     :param allowed_tenants: List of Allowed Tenants when configuring Azure
      Active Directory login.
     :type allowed_tenants: list[str]
@@ -78,6 +81,7 @@ class IdentityProviderContract(Resource):
         'name': {'key': 'name', 'type': 'str'},
         'type': {'key': 'type', 'type': 'str'},
         'identity_provider_contract_type': {'key': 'properties.type', 'type': 'str'},
+        'signin_tenant': {'key': 'properties.signinTenant', 'type': 'str'},
         'allowed_tenants': {'key': 'properties.allowedTenants', 'type': '[str]'},
         'authority': {'key': 'properties.authority', 'type': 'str'},
         'signup_policy_name': {'key': 'properties.signupPolicyName', 'type': 'str'},
@@ -88,9 +92,10 @@ class IdentityProviderContract(Resource):
         'client_secret': {'key': 'properties.clientSecret', 'type': 'str'},
     }
 
-    def __init__(self, *, client_id: str, client_secret: str, identity_provider_contract_type=None, allowed_tenants=None, authority: str=None, signup_policy_name: str=None, signin_policy_name: str=None, profile_editing_policy_name: str=None, password_reset_policy_name: str=None, **kwargs) -> None:
+    def __init__(self, *, client_id: str, client_secret: str, identity_provider_contract_type=None, signin_tenant: str=None, allowed_tenants=None, authority: str=None, signup_policy_name: str=None, signin_policy_name: str=None, profile_editing_policy_name: str=None, password_reset_policy_name: str=None, **kwargs) -> None:
         super(IdentityProviderContract, self).__init__(**kwargs)
         self.identity_provider_contract_type = identity_provider_contract_type
+        self.signin_tenant = signin_tenant
         self.allowed_tenants = allowed_tenants
         self.authority = authority
         self.signup_policy_name = signup_policy_name

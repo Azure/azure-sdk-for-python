@@ -18,6 +18,9 @@ class IdentityProviderBaseParameters(Model):
     :param type: Identity Provider Type identifier. Possible values include:
      'facebook', 'google', 'microsoft', 'twitter', 'aad', 'aadB2C'
     :type type: str or ~azure.mgmt.apimanagement.models.IdentityProviderType
+    :param signin_tenant: The TenantId to use instead of Common when logging
+     into Active Directory
+    :type signin_tenant: str
     :param allowed_tenants: List of Allowed Tenants when configuring Azure
      Active Directory login.
     :type allowed_tenants: list[str]
@@ -48,6 +51,7 @@ class IdentityProviderBaseParameters(Model):
 
     _attribute_map = {
         'type': {'key': 'type', 'type': 'str'},
+        'signin_tenant': {'key': 'signinTenant', 'type': 'str'},
         'allowed_tenants': {'key': 'allowedTenants', 'type': '[str]'},
         'authority': {'key': 'authority', 'type': 'str'},
         'signup_policy_name': {'key': 'signupPolicyName', 'type': 'str'},
@@ -59,6 +63,7 @@ class IdentityProviderBaseParameters(Model):
     def __init__(self, **kwargs):
         super(IdentityProviderBaseParameters, self).__init__(**kwargs)
         self.type = kwargs.get('type', None)
+        self.signin_tenant = kwargs.get('signin_tenant', None)
         self.allowed_tenants = kwargs.get('allowed_tenants', None)
         self.authority = kwargs.get('authority', None)
         self.signup_policy_name = kwargs.get('signup_policy_name', None)
