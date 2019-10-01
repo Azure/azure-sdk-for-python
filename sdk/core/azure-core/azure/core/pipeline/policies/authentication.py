@@ -5,7 +5,7 @@
 # -------------------------------------------------------------------------
 import time
 
-from . import HTTPPolicy
+from . import SansIOHTTPPolicy
 
 try:
     from typing import TYPE_CHECKING  # pylint:disable=unused-import
@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     # pylint:disable=unused-import
     from typing import Any, Dict, Mapping, Optional
     from azure.core.credentials import AccessToken, TokenCredential
-    from azure.core.pipeline import PipelineRequest, PipelineResponse
+    from azure.core.pipeline import PipelineRequest
 
 
 # pylint:disable=too-few-public-methods
@@ -51,7 +51,7 @@ class _BearerTokenCredentialPolicyBase(object):
         return not self._token or self._token.expires_on - time.time() < 300
 
 
-class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
+class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, SansIOHTTPPolicy):
     """Adds a bearer token Authorization header to requests.
 
     :param credential: The credential.
@@ -59,16 +59,13 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
     :param str scopes: Lets you specify the type of access needed.
     """
 
-    def send(self, request):
-        # type: (PipelineRequest) -> PipelineResponse
+    def on_request(self, request):
+        # type: (PipelineRequest) -> None
         """Adds a bearer token Authorization header to request and sends request to next policy.
 
         :param request: The pipeline request object
         :type request: ~azure.core.pipeline.PipelineRequest
-        :return: The pipeline response object
-        :rtype: ~azure.core.pipeline.PipelineResponse
         """
         if self._need_new_token:
             self._token = self._credential.get_token(*self._scopes)
         self._update_headers(request.http_request.headers, self._token.token)  # type: ignore
-        return self.next.send(request)

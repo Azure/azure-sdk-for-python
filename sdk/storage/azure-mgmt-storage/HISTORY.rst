@@ -3,6 +3,16 @@
 Release History
 ===============
 
+4.1.0 (2019-09-27)
+++++++++++++++++++
+
+**Features**
+
+- Model BlobServiceProperties has a new parameter change_feed
+- Added operation BlobServicesOperations.list
+- Added operation group FileServicesOperations
+- Added operation group FileSharesOperations
+
 4.0.0 (2019-06-12)
 ++++++++++++++++++
 
