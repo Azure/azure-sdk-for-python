@@ -178,7 +178,7 @@ class StressTestRunner(object):
         threads = []
         for pid in partitions:
             if "receive" in method_name:
-                worker = client.create_consumer(consumer_group_name=self.args.consumer,
+                worker = client.create_consumer(consumer_group=self.args.consumer,
                                                   partition_id=pid,
                                                   event_position=EventPosition(self.args.offset),
                                                   prefetch=300)
@@ -228,7 +228,7 @@ class StressTestRunner(object):
         tasks = []
         for pid in partitions:
             if "receive" in method_name:
-                worker = client.create_consumer(consumer_group_name=self.args.consumer,
+                worker = client.create_consumer(consumer_group=self.args.consumer,
                                                      partition_id=pid,
                                                      event_position=EventPosition(self.args.offset),
                                                      prefetch=300)
