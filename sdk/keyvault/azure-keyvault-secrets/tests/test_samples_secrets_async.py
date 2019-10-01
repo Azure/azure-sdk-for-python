@@ -50,7 +50,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         # [END set_secret]
 
-        secret_version = secret.version
+        secret_version = secret.properties.version
         # [START get_secret]
 
         # get the latest version of a secret
@@ -61,8 +61,8 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
 
         print(secret.id)
         print(secret.name)
-        print(secret.version)
-        print(secret.vault_url)
+        print(secret.properties.version)
+        print(secret.properties.vault_url)
 
         # [END get_secret]
         # [START update_secret]

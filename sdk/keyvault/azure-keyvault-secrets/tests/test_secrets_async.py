@@ -75,7 +75,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
         self._assert_secret_attributes_equal(created.properties, retrieved_secret.properties)
 
         # get secret with version
-        secret_with_version = await client.get_secret(created.name, created.version)
+        secret_with_version = await client.get_secret(created.name, created.properties.version)
         self.assertEqual(created.id, retrieved_secret.id)
         self._assert_secret_attributes_equal(created.properties, secret_with_version.properties)
 
@@ -85,7 +85,7 @@ class KeyVaultSecretTest(AsyncKeyVaultTestCase):
             tags = {"foo": "updated tag"}
             enabled = not secret.properties.enabled
             updated_secret = await client.update_secret_properties(
-                secret.name, secret.version, content_type=content_type, expires=expires, tags=tags, enabled=enabled
+                secret.name, secret.properties.version, content_type=content_type, expires=expires, tags=tags, enabled=enabled
             )
             self.assertEqual(tags, updated_secret.tags)
             self.assertEqual(secret.id, updated_secret.id)

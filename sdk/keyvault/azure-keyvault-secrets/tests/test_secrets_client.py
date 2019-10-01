@@ -80,7 +80,7 @@ class SecretClientTests(KeyVaultTestCase):
         self.assertEqual(tags, created.properties.tags)
 
         self._assert_secret_attributes_equal(created.properties, client.get_secret(created.name).properties)
-        self._assert_secret_attributes_equal(created.properties, client.get_secret(created.name, created.version).properties)
+        self._assert_secret_attributes_equal(created.properties, client.get_secret(created.name, created.properties.version).properties)
 
         def _update_secret(secret):
             content_type = "text/plain"
@@ -88,7 +88,7 @@ class SecretClientTests(KeyVaultTestCase):
             tags = {"foo": "updated tag"}
             enabled = not secret.properties.enabled
             updated_secret = client.update_secret_properties(
-                secret.name, secret.version, content_type=content_type, expires=expires, tags=tags, enabled=enabled
+                secret.name, secret.properties.version, content_type=content_type, expires=expires, tags=tags, enabled=enabled
             )
             self.assertEqual(tags, updated_secret.tags)
             self.assertEqual(secret.id, updated_secret.id)

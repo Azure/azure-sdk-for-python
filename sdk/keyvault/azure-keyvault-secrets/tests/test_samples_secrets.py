@@ -45,7 +45,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         secret = secret_client.set_secret("secret-name", "secret-value", expires=expires)
 
         print(secret.name)
-        print(secret.version)
+        print(secret.properties.version)
         print(secret.properties.expires)
 
         # [END set_secret]
@@ -55,12 +55,12 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         secret = secret_client.get_secret("secret-name")
 
         # alternatively, specify a version
-        secret = secret_client.get_secret("secret-name", secret.version)
+        secret = secret_client.get_secret("secret-name", secret.properties.version)
 
         print(secret.id)
         print(secret.name)
-        print(secret.version)
-        print(secret.vault_url)
+        print(secret.properties.version)
+        print(secret.properties.vault_url)
 
         # [END get_secret]
         # [START update_secret]

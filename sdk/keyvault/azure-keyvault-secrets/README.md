@@ -154,7 +154,7 @@ already exists, a new version of that secret is created.
 
     print(secret.name)
     print(secret.value)
-    print(secret.version)
+    print(secret.properties.version)
 ```
 
 ### Retrieve a Secret
@@ -227,7 +227,7 @@ This example creates a secret in the Key Vault with the specified optional argum
 
     print(secret.name)
     print(secret.value)
-    print(secret.version)
+    print(secret.properties.version)
 ```
 
 ### Async list secrets
