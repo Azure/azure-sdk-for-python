@@ -81,7 +81,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
         tags = {"foo": "updated tag"}
         updated_certificate = certificate_client.update_certificate_properties(name=certificate.name, tags=tags)
 
-        print(updated_certificate.version)
+        print(updated_certificate.properties.version)
         print(updated_certificate.properties.updated)
         print(updated_certificate.properties.tags)
 
@@ -200,7 +200,7 @@ class TestExamplesKeyVault(KeyVaultTestCase):
 
         print(restored_certificate.id)
         print(restored_certificate.name)
-        print(restored_certificate.version)
+        print(restored_certificate.properties.version)
 
         # [END restore_certificate]
 

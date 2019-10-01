@@ -308,24 +308,6 @@ class Certificate(object):
         return self._properties.name
 
     @property
-    def vault_url(self):
-        # type: () -> str
-        """The name of the vault that the certificate is created in.
-
-        :rtype: str
-        """
-        return self._properties.vault_url
-
-    @property
-    def version(self):
-        # type: () -> str
-        """The version of the certificate
-
-        :rtype: str
-        """
-        return self._properties.version
-
-    @property
     def properties(self):
         # type: () -> CertificateProperties
         """The certificate's properties
@@ -1095,15 +1077,6 @@ class Issuer(object):
         # Issuer name is listed under version under vault_id
         """:rtype: str"""
         return self._properties.name
-
-    @property
-    def vault_url(self):
-        # type: () -> str
-        """The name of the vault with this issuer.
-
-        :rtype: str
-        """
-        return self._properties.vault_url
 
     @property
     def properties(self):

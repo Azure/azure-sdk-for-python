@@ -74,7 +74,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         tags = {"foo": "updated tag"}
         updated_certificate = await certificate_client.update_certificate_properties(certificate.name, tags=tags)
 
-        print(updated_certificate.version)
+        print(updated_certificate.properties.version)
         print(updated_certificate.properties.updated)
         print(updated_certificate.properties.tags)
 
@@ -141,7 +141,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         async for certificate in certificate_versions:
             print(certificate.id)
             print(certificate.properties.updated)
-            print(certificate.version)
+            print(certificate.properties.version)
 
         # [END list_certificate_versions]
         # [START list_deleted_certificates]
@@ -201,7 +201,7 @@ class TestExamplesKeyVault(AsyncKeyVaultTestCase):
         restored_certificate = await certificate_client.restore_certificate(certificate_backup)
         print(restored_certificate.id)
         print(restored_certificate.name)
-        print(restored_certificate.version)
+        print(restored_certificate.properties.version)
 
         # [END restore_certificate]
 

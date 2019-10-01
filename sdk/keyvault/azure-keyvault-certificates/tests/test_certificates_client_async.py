@@ -241,7 +241,7 @@ class CertificateClientTests(KeyVaultTestCase):
 
         # get certificate returns not found
         try:
-            await client.get_certificate(name=cert_name, version=deleted_cert_bundle.version)
+            await client.get_certificate(name=cert_name, version=deleted_cert_bundle.properties.version)
             self.fail('Get should fail')
         except Exception as ex:
             if not hasattr(ex, 'message') or 'not found' not in ex.message.lower():
