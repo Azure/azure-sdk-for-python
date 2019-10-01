@@ -246,9 +246,9 @@ class RequestsTransport(HttpTransport):
                 allow_redirects=False,
                 **kwargs)
 
-        except urllib3.exceptions.NewConnectionError as err:
+        except (urllib3.exceptions.NewConnectionError, urllib3.exceptions.ConnectTimeoutError) as err:
             error = ServiceRequestError(err, error=err)
-        except (requests.exceptions.ReadTimeout, urllib3.exceptions.ConnectTimeoutError) as err:
+        except requests.exceptions.ReadTimeout as err:
             error = ServiceResponseError(err, error=err)
         except requests.exceptions.ConnectionError as err:
             if err.args and isinstance(err.args[0], urllib3.exceptions.ProtocolError):
