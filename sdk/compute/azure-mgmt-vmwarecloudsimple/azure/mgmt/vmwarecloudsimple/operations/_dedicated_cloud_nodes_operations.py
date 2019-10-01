@@ -17,8 +17,8 @@ from msrestazure.polling.arm_polling import ARMPolling
 from .. import models
 
 
-class DedicatedCloudNodeOperations(object):
-    """DedicatedCloudNodeOperations operations.
+class DedicatedCloudNodesOperations(object):
+    """DedicatedCloudNodesOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 
@@ -233,6 +233,7 @@ class DedicatedCloudNodeOperations(object):
 
         # Construct parameters
         query_parameters = {}
+        query_parameters['api-version'] = self._serialize.query("self.api_version", self.api_version, 'str')
 
         # Construct headers
         header_parameters = {}

@@ -17,8 +17,8 @@ from msrestazure.polling.arm_polling import ARMPolling
 from .. import models
 
 
-class VirtualMachineOperations(object):
-    """VirtualMachineOperations operations.
+class VirtualMachinesOperations(object):
+    """VirtualMachinesOperations operations.
 
     You should not instantiate directly this class, but create a Client instance that will create it for you and attach it as attribute.
 

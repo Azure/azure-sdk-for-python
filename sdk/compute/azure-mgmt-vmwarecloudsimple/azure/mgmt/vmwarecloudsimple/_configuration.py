@@ -21,26 +21,22 @@ class VMwareCloudSimpleClientConfiguration(AzureConfiguration):
     :param credentials: Credentials needed for the client to connect to Azure.
     :type credentials: :mod:`A msrestazure Credentials
      object<msrestazure.azure_active_directory>`
-    :param referer: referer url
-    :type referer: str
-    :param region_id: The region Id (westus, eastus)
-    :type region_id: str
     :param subscription_id: The subscription ID.
     :type subscription_id: str
+    :param referer: referer url
+    :type referer: str
     :param str base_url: Service URL
     """
 
     def __init__(
-            self, credentials, referer, region_id, subscription_id, base_url=None):
+            self, credentials, subscription_id, referer, base_url=None):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
-        if referer is None:
-            raise ValueError("Parameter 'referer' must not be None.")
-        if region_id is None:
-            raise ValueError("Parameter 'region_id' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
+        if referer is None:
+            raise ValueError("Parameter 'referer' must not be None.")
         if not base_url:
             base_url = 'https://management.azure.com'
 
@@ -53,6 +49,5 @@ class VMwareCloudSimpleClientConfiguration(AzureConfiguration):
         self.add_user_agent('Azure-SDK-For-Python')
 
         self.credentials = credentials
-        self.referer = referer
-        self.region_id = region_id
         self.subscription_id = subscription_id
+        self.referer = referer
