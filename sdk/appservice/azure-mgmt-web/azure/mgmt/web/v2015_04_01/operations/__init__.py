@@ -9,11 +9,12 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from ._configuration import WebSiteManagementClientConfiguration
-from ._web_site_management_client import WebSiteManagementClient
-__all__ = ['WebSiteManagementClient', 'WebSiteManagementClientConfiguration']
+from ._domains_operations import DomainsOperations
+from ._top_level_domains_operations import TopLevelDomainsOperations
+from ._domain_registration_provider_operations import DomainRegistrationProviderOperations
 
-from .version import VERSION
-
-__version__ = VERSION
-
+__all__ = [
+    'DomainsOperations',
+    'TopLevelDomainsOperations',
+    'DomainRegistrationProviderOperations',
+]
