@@ -1006,7 +1006,7 @@ class ContainerClient(StorageAccountHostsMixin):
         request = self._client._client.post(
             url='https://{}/?comp=batch'.format(self.primary_hostname),
             headers={
-                'x-ms-version': self._config.version
+                'x-ms-version': self._client._config.version
             }
         )
 
@@ -1026,13 +1026,7 @@ class ContainerClient(StorageAccountHostsMixin):
         try:
             if response.status_code not in [202]:
                 raise HttpResponseError(response=response)
-            parts = response.parts()
-            if len(parts) != len(reqs):
-                raise HttpResponseError(
-                    message="Didn't receive the same number of parts",
-                    response=response
-                )
-            return parts
+            return response.parts()
         except StorageErrorException as error:
             process_storage_error(error)
 

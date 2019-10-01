@@ -986,6 +986,38 @@ class StorageContainerTest(StorageTestCase):
         assert response[2].status_code == 202
 
     @record
+    def test_delete_blobs_snapshot(self):
+        # Arrange
+        container = self._create_container()
+        data = b'hello world'
+
+        try:
+            blob1_client = container.get_blob_client('blob1')
+            blob1_client.upload_blob(data)
+            blob1_client.create_snapshot()
+            container.get_blob_client('blob2').upload_blob(data)
+            container.get_blob_client('blob3').upload_blob(data)
+        except:
+            pass
+        blobs = list(container.list_blobs(include='snapshots'))
+        assert len(blobs) == 4  # 3 blobs + 1 snapshot
+
+        # Act
+        response = container.delete_blobs(
+            'blob1',
+            'blob2',
+            'blob3',
+            delete_snapshots='only'
+        )
+        assert len(response) == 3
+        assert response[0].status_code == 202
+        assert response[1].status_code == 404  # There was no snapshot
+        assert response[2].status_code == 404  # There was no snapshot
+
+        blobs = list(container.list_blobs(include='snapshots'))
+        assert len(blobs) == 3  # 3 blobs
+
+    @record
     def test_walk_blobs_with_delimiter(self):
         # Arrange
         container = self._create_container()

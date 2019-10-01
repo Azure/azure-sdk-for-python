@@ -38,6 +38,13 @@ from testcase import StorageTestCase, TestMode, record, LogCaptured
 TEST_CONTAINER_PREFIX = 'container'
 #------------------------------------------------------------------------------
 
+async def _to_list(async_iterator):
+    result = []
+    async for item in async_iterator:
+        result.append(item)
+    return result
+
+
 class AiohttpTestTransport(AioHttpTransport):
     """Workaround to vcrpy bug: https://github.com/kevin1024/vcrpy/pull/461
     """
@@ -1210,16 +1217,51 @@ class StorageContainerTestAsync(StorageTestCase):
             pass
 
         # Act
-        response = await container.delete_blobs(
+        response = await _to_list(await container.delete_blobs(
             'blob1',
             'blob2',
             'blob3',
-        )
+        ))
         assert len(response) == 3
         assert response[0].status_code == 202
         assert response[1].status_code == 202
         assert response[2].status_code == 202
 
+    @record
+    def test_delete_blobs_snapshot(self):
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._test_delete_blobs_snapshot())
+
+    async def _test_delete_blobs_snapshot(self):
+        # Arrange
+        container = await self._create_container()
+        data = b'hello world'
+
+        try:
+            blob1_client = container.get_blob_client('blob1')
+            await blob1_client.upload_blob(data)
+            await blob1_client.create_snapshot()
+            await container.get_blob_client('blob2').upload_blob(data)
+            await container.get_blob_client('blob3').upload_blob(data)
+        except:
+            pass
+        blobs = await _to_list(container.list_blobs(include='snapshots'))
+        assert len(blobs) == 4  # 3 blobs + 1 snapshot
+
+        # Act
+        response = await _to_list(await container.delete_blobs(
+            'blob1',
+            'blob2',
+            'blob3',
+            delete_snapshots='only'
+        ))
+        assert len(response) == 3
+        assert response[0].status_code == 202
+        assert response[1].status_code == 404  # There was no snapshot
+        assert response[2].status_code == 404  # There was no snapshot
+
+        blobs = await _to_list(container.list_blobs(include='snapshots'))
+        assert len(blobs) == 3  # 3 blobs
 
     @record
     def test_list_blobs_with_delimiter(self):
