@@ -176,7 +176,7 @@ class StorageLargeBlockBlobTest(StorageTestCase):
 
         # Act
         with open(FILE_PATH, 'rb') as stream:
-            blob.upload_blob(stream, max_connections=2)
+            blob.upload_blob(stream, max_concurrency=2)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)
@@ -195,7 +195,7 @@ class StorageLargeBlockBlobTest(StorageTestCase):
 
         # Act
         with open(FILE_PATH, 'rb') as stream:
-            blob.upload_blob(stream, validate_content=True, max_connections=2)
+            blob.upload_blob(stream, validate_content=True, max_concurrency=2)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)
@@ -213,7 +213,7 @@ class StorageLargeBlockBlobTest(StorageTestCase):
 
         # Act
         with open(FILE_PATH, 'rb') as stream:
-            blob.upload_blob(stream, max_connections=1)
+            blob.upload_blob(stream, max_concurrency=1)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)
@@ -239,7 +239,7 @@ class StorageLargeBlockBlobTest(StorageTestCase):
                 progress.append((current, total))
 
         with open(FILE_PATH, 'rb') as stream:
-            blob.upload_blob(stream, max_connections=2, raw_response_hook=callback)
+            blob.upload_blob(stream, max_concurrency=2, raw_response_hook=callback)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)
@@ -262,7 +262,7 @@ class StorageLargeBlockBlobTest(StorageTestCase):
             content_type='image/png',
             content_language='spanish')
         with open(FILE_PATH, 'rb') as stream:
-            blob.upload_blob(stream, content_settings=content_settings, max_connections=2)
+            blob.upload_blob(stream, content_settings=content_settings, max_concurrency=2)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)
@@ -284,7 +284,7 @@ class StorageLargeBlockBlobTest(StorageTestCase):
 
         # Act
         with open(FILE_PATH, 'rb') as stream:
-            blob.upload_blob(stream, max_connections=2)
+            blob.upload_blob(stream, max_concurrency=2)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)
@@ -310,7 +310,7 @@ class StorageLargeBlockBlobTest(StorageTestCase):
                 progress.append((current, total))
 
         with open(FILE_PATH, 'rb') as stream:
-            blob.upload_blob(stream, max_connections=2, raw_response_hook=callback)
+            blob.upload_blob(stream, max_concurrency=2, raw_response_hook=callback)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)
@@ -331,7 +331,7 @@ class StorageLargeBlockBlobTest(StorageTestCase):
         # Act
         blob_size = len(data) - 301
         with open(FILE_PATH, 'rb') as stream:
-            blob.upload_blob(stream, length=blob_size, max_connections=2)
+            blob.upload_blob(stream, length=blob_size, max_concurrency=2)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data[:blob_size])
@@ -355,7 +355,7 @@ class StorageLargeBlockBlobTest(StorageTestCase):
         blob_size = len(data) - 301
         with open(FILE_PATH, 'rb') as stream:
             blob.upload_blob(
-                stream, length=blob_size, content_settings=content_settings, max_connections=2)
+                stream, length=blob_size, content_settings=content_settings, max_concurrency=2)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data[:blob_size])
@@ -380,7 +380,7 @@ class StorageLargeBlockBlobTest(StorageTestCase):
             content_type='image/png',
             content_language='spanish')
         with open(FILE_PATH, 'rb') as stream:
-            blob.upload_blob(stream, content_settings=content_settings, max_connections=2)
+            blob.upload_blob(stream, content_settings=content_settings, max_concurrency=2)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)

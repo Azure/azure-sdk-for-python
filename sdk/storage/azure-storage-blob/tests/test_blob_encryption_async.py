@@ -383,8 +383,8 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
-        await blob.upload_blob(content, max_connections=3)
-        blob_content = await (await blob.download_blob()).content_as_bytes(max_connections=3)
+        await blob.upload_blob(content, max_concurrency=3)
+        blob_content = await (await blob.download_blob()).content_as_bytes(max_concurrency=3)
 
         # Assert
         self.assertEqual(content, blob_content)
@@ -408,8 +408,8 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
-        await blob.upload_blob(content, max_connections=3)
-        blob_content = await (await blob.download_blob()).content_as_bytes(max_connections=3)
+        await blob.upload_blob(content, max_concurrency=3)
+        blob_content = await (await blob.download_blob()).content_as_bytes(max_concurrency=3)
 
         # Assert
         self.assertEqual(content, blob_content)
@@ -436,8 +436,8 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
         await blob.upload_blob(
             content,
             length=self.config.max_single_put_size + 53,
-            max_connections=3)
-        blob_content = await (await blob.download_blob()).content_as_bytes(max_connections=3)
+            max_concurrency=3)
+        blob_content = await (await blob.download_blob()).content_as_bytes(max_concurrency=3)
 
         # Assert
         self.assertEqual(content[:self.config.max_single_put_size+53], blob_content)
@@ -484,8 +484,8 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
         await blob.upload_blob(
             content[2:],
             length=self.config.max_single_put_size + 5,
-            max_connections=1)
-        blob_content = await (await blob.download_blob()).content_as_bytes(max_connections=1)
+            max_concurrency=1)
+        blob_content = await (await blob.download_blob()).content_as_bytes(max_concurrency=1)
 
         # Assert
         self.assertEqual(content[2:2 + self.config.max_single_put_size + 5], blob_content)
@@ -506,7 +506,7 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
 
         # Act
         await blob.upload_blob(content)
-        blob_content = await (await blob.download_blob()).content_as_bytes(max_connections=2)
+        blob_content = await (await blob.download_blob()).content_as_bytes(max_concurrency=2)
 
         # Assert
         self.assertEqual(content, blob_content)
@@ -526,8 +526,8 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
-        await blob.upload_blob(content, max_connections=1)
-        blob_content = await (await blob.download_blob()).content_as_bytes(max_connections=1)
+        await blob.upload_blob(content, max_concurrency=1)
+        blob_content = await (await blob.download_blob()).content_as_bytes(max_concurrency=1)
 
         # Assert
         self.assertEqual(content, blob_content)
@@ -547,8 +547,8 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
-        await blob.upload_blob(content, max_connections=1)
-        blob_content = await (await blob.download_blob(offset=0, length=50)).content_as_bytes(max_connections=1)
+        await blob.upload_blob(content, max_concurrency=1)
+        blob_content = await (await blob.download_blob(offset=0, length=50)).content_as_bytes(max_concurrency=1)
 
         # Assert
         self.assertEqual(content[:51], blob_content)
@@ -568,7 +568,7 @@ class StorageBlobEncryptionTestAsync(StorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
-        await blob.upload_blob(content, max_connections=1)
+        await blob.upload_blob(content, max_concurrency=1)
         blob_content = await (await blob.download_blob(offset=50, length=127)).content_as_bytes()
         blob_content2 = await (await blob.download_blob(offset=50)).content_as_bytes()
 

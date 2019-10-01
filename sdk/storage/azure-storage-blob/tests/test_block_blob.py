@@ -559,7 +559,7 @@ class StorageBlockBlobTest(StorageTestCase):
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
 
         # Act
-        blob.upload_blob(data, length=LARGE_BLOB_SIZE, max_connections=1)
+        blob.upload_blob(data, length=LARGE_BLOB_SIZE, max_concurrency=1)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob.blob_name, data)
@@ -612,7 +612,7 @@ class StorageBlockBlobTest(StorageTestCase):
 
         # Act
         with open(FILE_PATH, 'rb') as stream:
-            create_resp = blob.upload_blob(stream, length=100, max_connections=1)
+            create_resp = blob.upload_blob(stream, length=100, max_concurrency=1)
         props = blob.get_blob_properties()
 
         # Assert
@@ -631,7 +631,7 @@ class StorageBlockBlobTest(StorageTestCase):
         blob_tier = StandardBlobTier.Cool
         # Act
         with open(FILE_PATH, 'rb') as stream:
-            blob.upload_blob(stream, length=100, max_connections=1, standard_blob_tier=blob_tier)
+            blob.upload_blob(stream, length=100, max_concurrency=1, standard_blob_tier=blob_tier)
         props = blob.get_blob_properties()
 
         # Assert
@@ -727,7 +727,7 @@ class StorageBlockBlobTest(StorageTestCase):
         # Act
         with open(FILE_PATH, 'rb') as stream:
             non_seekable_file = StorageBlockBlobTest.NonSeekableFile(stream)
-            blob.upload_blob(non_seekable_file, length=blob_size, max_connections=1)
+            blob.upload_blob(non_seekable_file, length=blob_size, max_concurrency=1)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data[:blob_size])
@@ -747,7 +747,7 @@ class StorageBlockBlobTest(StorageTestCase):
         # Act
         with open(FILE_PATH, 'rb') as stream:
             non_seekable_file = StorageBlockBlobTest.NonSeekableFile(stream)
-            blob.upload_blob(non_seekable_file, max_connections=1)
+            blob.upload_blob(non_seekable_file, max_concurrency=1)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)
@@ -868,7 +868,7 @@ class StorageBlockBlobTest(StorageTestCase):
             content_type='image/png',
             content_language='spanish')
         with open(FILE_PATH, 'rb') as stream:
-            blob.upload_blob(stream, content_settings=content_settings, max_connections=2, standard_blob_tier=blob_tier)
+            blob.upload_blob(stream, content_settings=content_settings, max_concurrency=2, standard_blob_tier=blob_tier)
 
         properties = blob.get_blob_properties()
 

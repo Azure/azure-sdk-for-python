@@ -94,7 +94,7 @@ def upload_blob_to_url(
         blob_url,  # type: str
         data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
         overwrite=False,  # type: bool
-        max_connections=1,  # type: int
+        max_concurrency=1,  # type: int
         encoding='UTF-8', # type: str
         credential=None,  # type: Any
         **kwargs):
@@ -125,22 +125,22 @@ def upload_blob_to_url(
             data=data,
             blob_type=BlobType.BlockBlob,
             overwrite=overwrite,
-            max_connections=max_connections,
+            max_concurrency=max_concurrency,
             encoding=encoding,
             **kwargs)
 
 
-def _download_to_stream(client, handle, max_connections, **kwargs):
+def _download_to_stream(client, handle, max_concurrency, **kwargs):
     """Download data to specified open file-handle."""
     stream = client.download_blob(**kwargs)
-    stream.download_to_stream(handle, max_connections=max_connections)
+    stream.download_to_stream(handle, max_concurrency=max_concurrency)
 
 
 def download_blob_from_url(
         blob_url,  # type: str
         output,  # type: str
         overwrite=False,  # type: bool
-        max_connections=1,  # type: int
+        max_concurrency=1,  # type: int
         credential=None,  # type: Any
         **kwargs):
     # type: (...) -> None
@@ -166,9 +166,9 @@ def download_blob_from_url(
     """
     with BlobClient(blob_url, credential=credential) as client:
         if hasattr(output, 'write'):
-            _download_to_stream(client, output, max_connections, **kwargs)
+            _download_to_stream(client, output, max_concurrency, **kwargs)
         else:
             if not overwrite and os.path.isfile(output):
                 raise ValueError("The file '{}' already exists.".format(output))
             with open(output, 'wb') as file_handle:
-                _download_to_stream(client, file_handle, max_connections, **kwargs)
+                _download_to_stream(client, file_handle, max_concurrency, **kwargs)

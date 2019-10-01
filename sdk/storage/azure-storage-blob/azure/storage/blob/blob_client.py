@@ -356,7 +356,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             metadata=None,  # type: Optional[Dict[str, str]]
             content_settings=None,  # type: Optional[ContentSettings]
             validate_content=False,  # type: Optional[bool]
-            max_connections=1,  # type: int
+            max_concurrency=1,  # type: int
             **kwargs
         ):
         # type: (...) -> Dict[str, Any]
@@ -422,7 +422,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
         kwargs['headers'] = headers
         kwargs['validate_content'] = validate_content
         kwargs['blob_settings'] = self._config
-        kwargs['max_connections'] = max_connections
+        kwargs['max_concurrency'] = max_concurrency
         kwargs['encryption_options'] = encryption_options
         if blob_type == BlobType.BlockBlob:
             kwargs['client'] = self._client.block_blob
@@ -446,7 +446,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             metadata=None,  # type: Optional[Dict[str, str]]
             content_settings=None,  # type: Optional[ContentSettings]
             validate_content=False,  # type: Optional[bool]
-            max_connections=1,  # type: int
+            max_concurrency=1,  # type: int
             **kwargs
         ):
         # type: (...) -> Any
@@ -516,7 +516,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             to exceed that limit or if the blob size is already greater than the
             value specified in this header, the request will fail with
             MaxBlobSizeConditionNotMet error (HTTP status code 412 - Precondition Failed).
-        :param int max_connections:
+        :param int max_concurrency:
             Maximum number of parallel connections to use when the blob size exceeds
             64MB.
         :param ~azure.storage.blob.models.CustomerProvidedEncryptionKey cpk:
@@ -549,7 +549,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             metadata=metadata,
             content_settings=content_settings,
             validate_content=validate_content,
-            max_connections=max_connections,
+            max_concurrency=max_concurrency,
             **kwargs)
         if blob_type == BlobType.BlockBlob:
             return upload_block_blob(**options)
@@ -1534,7 +1534,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             process_storage_error(error)
 
     def _abort_copy_options(self, copy_id, **kwargs):
-        # type: (Union[str, FileProperties], **Any) -> Dict[str, Any]
+        # type: (Union[str, Dict[str, Any], BlobProperties], **Any) -> Dict[str, Any]
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
         try:
             copy_id = copy_id.copy.id
@@ -1552,7 +1552,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
     @distributed_trace
     def abort_copy(self, copy_id, **kwargs):
-        # type: (Union[str, BlobProperties], **Any) -> None
+        # type: (Union[str, Dict[str, Any], BlobProperties], **Any) -> None
         """Abort an ongoing copy operation.
 
         This will leave a destination blob with zero length and full metadata.
@@ -2758,7 +2758,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
             process_storage_error(error)
 
     def _append_block_options( # type: ignore
-            self, data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
+            self, data,  # type: Union[AnyStr, Iterable[AnyStr], IO[AnyStr]]
             length=None,  # type: Optional[int]
             validate_content=False,  # type: Optional[bool]
             maxsize_condition=None,  # type: Optional[int]
@@ -2816,7 +2816,7 @@ class BlobClient(StorageAccountHostsMixin):  # pylint: disable=too-many-public-m
 
     @distributed_trace
     def append_block( # type: ignore
-            self, data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
+            self, data,  # type: Union[AnyStr, Iterable[AnyStr], IO[AnyStr]]
             length=None,  # type: Optional[int]
             validate_content=False,  # type: Optional[bool]
             maxsize_condition=None,  # type: Optional[int]
