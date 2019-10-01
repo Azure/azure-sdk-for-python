@@ -16,6 +16,9 @@ import sys
 
 logging.getLogger().setLevel(logging.INFO)
 
+def in_ci():
+    return os.getenv('TF_BUILD', False)
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Run sphinx-build against target folder. Zips and moves resulting files to a root location as well."
@@ -29,22 +32,31 @@ if __name__ == "__main__":
         required=True,
     )
 
+    parser.add_argument(
+        "-o",
+        "--outputdir",
+        dest="output_directory",
+        help="",
+        required=True,
+    )
+
     args = parser.parse_args()
 
+    output_dir = os.path.abspath(args.output_directory)
+    target_dir = os.path.abspath(args.working_directory)
+
+
+    # sphinx-build -b html {distdir}/unzipped/docgen {distdir}/site
     command_array = [
-                "sphinx-apidoc",
-                "--no-toc",
-                "-o",
-                os.path.join(args.working_directory, "unzipped/docgen"),
-                os.path.join(args.working_directory, "unzipped/"),
-                os.path.join(args.working_directory, "unzipped/test*"),
-                os.path.join(args.working_directory, "unzipped/example*"),
-                os.path.join(args.working_directory, "unzipped/sample*"),
-                os.path.join(args.working_directory, "unzipped/setup.py"),
+                "sphinx-build",
+                "-b",
+                "html",
+                target_dir,
+                output_dir
             ]
 
     try:
-        logging.info("Sphinx api-doc command: {}".format(command_array))
+        logging.info("Sphinx build command: {}".format(command_array))
 
         check_call(
             command_array
