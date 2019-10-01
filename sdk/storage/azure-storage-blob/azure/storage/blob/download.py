@@ -141,8 +141,8 @@ class _ChunkDownloader(object):
                 return True
             elif source_range['end'] < given_range_start:
                 pass
-            else:
-                return False
+
+            return False
 
         return True
 

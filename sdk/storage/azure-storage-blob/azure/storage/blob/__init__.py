@@ -13,7 +13,6 @@ from .container_client import ContainerClient
 from .blob_service_client import BlobServiceClient
 from .lease import LeaseClient
 from ._shared.policies import ExponentialRetry, LinearRetry, NoRetry
-from .download import StorageStreamDownloader
 from ._shared.models import(
     LocationMode,
     ResourceTypes,

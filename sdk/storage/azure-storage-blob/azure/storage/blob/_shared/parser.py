@@ -22,6 +22,6 @@ def _to_utc_datetime(value):
 
 def get_empty_chunk(chunk_size):
     empty_chunk = b''
-    for i in range(0, chunk_size):
+    for i in range(0, chunk_size):  # pylint:disable=unused-variable
         empty_chunk += b'\x00'
     return empty_chunk

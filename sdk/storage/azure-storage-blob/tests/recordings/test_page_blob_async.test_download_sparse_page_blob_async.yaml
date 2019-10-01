@@ -3,15 +3,15 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
-      - b5aa8766-e3b8-11e9-a55a-001a7dda7113
+      - 9dfc46f6-e48c-11e9-a959-001a7dda7113
       x-ms-date:
-      - Mon, 30 Sep 2019 19:30:07 GMT
+      - Tue, 01 Oct 2019 20:47:00 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: http://storagename.blob.core.windows.net/utcontainera2801741?restype=container
+    uri: https://storagename.blob.core.windows.net/utcontainera2801741?restype=container
   response:
     body:
       string: ''
@@ -21,17 +21,17 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Mon, 30 Sep 2019 19:30:06 GMT
+      : Tue, 01 Oct 2019 20:47:00 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D745DC99E9E71F"'
+      : '"0x8D746B08253C0AA"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Mon, 30 Sep 2019 19:30:07 GMT
+      : Tue, 01 Oct 2019 20:47:01 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 22eecb05-e01e-001e-4cc5-777ee3000000
+      x-ms-request-id: d6035edf-a01e-0042-3899-782bbb000000
       x-ms-version: '2019-02-02'
     status:
       code: 201
@@ -39,7 +39,7 @@ interactions:
     url: !!python/object/new:yarl.URL
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
-        - http
+        - https
         - emilystageaccount.blob.core.windows.net
         - /utcontainera2801741
         - restype=container
@@ -48,15 +48,15 @@ interactions:
     body: null
     headers:
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
-      - b5cd861e-e3b8-11e9-aa09-001a7dda7113
+      - 9e34039c-e48c-11e9-811d-001a7dda7113
       x-ms-date:
-      - Mon, 30 Sep 2019 19:30:07 GMT
+      - Tue, 01 Oct 2019 20:47:01 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: http://storagename.blob.core.windows.net/utcontainersourcea2801741?restype=container
+    uri: https://storagename.blob.core.windows.net/utcontainersourcea2801741?restype=container
   response:
     body:
       string: ''
@@ -66,17 +66,17 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Mon, 30 Sep 2019 19:30:06 GMT
+      : Tue, 01 Oct 2019 20:47:00 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D745DC99FDE460"'
+      : '"0x8D746B082646275"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Mon, 30 Sep 2019 19:30:07 GMT
+      : Tue, 01 Oct 2019 20:47:01 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 22eecb0d-e01e-001e-52c5-777ee3000000
+      x-ms-request-id: d6035ee9-a01e-0042-3f99-782bbb000000
       x-ms-version: '2019-02-02'
     status:
       code: 201
@@ -84,7 +84,7 @@ interactions:
     url: !!python/object/new:yarl.URL
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
-        - http
+        - https
         - emilystageaccount.blob.core.windows.net
         - /utcontainersourcea2801741
         - restype=container
@@ -95,19 +95,19 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-blob-content-length:
       - '1048576'
       x-ms-blob-type:
       - PageBlob
       x-ms-client-request-id:
-      - b5e18b6c-e3b8-11e9-9ae9-001a7dda7113
+      - 9e444c26-e48c-11e9-b0b2-001a7dda7113
       x-ms-date:
-      - Mon, 30 Sep 2019 19:30:07 GMT
+      - Tue, 01 Oct 2019 20:47:01 GMT
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: http://storagename.blob.core.windows.net/utcontainera2801741/bloba2801741
+    uri: https://storagename.blob.core.windows.net/utcontainera2801741/bloba2801741
   response:
     body:
       string: ''
@@ -117,17 +117,17 @@ interactions:
       : '0'
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Mon, 30 Sep 2019 19:30:06 GMT
+      : Tue, 01 Oct 2019 20:47:00 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D745DC9A11FD49"'
+      : '"0x8D746B0827543EA"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Mon, 30 Sep 2019 19:30:07 GMT
+      : Tue, 01 Oct 2019 20:47:01 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
-      x-ms-request-id: 22eecb11-e01e-001e-55c5-777ee3000000
+      x-ms-request-id: d6035eeb-a01e-0042-4099-782bbb000000
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2019-02-02'
     status:
@@ -136,7 +136,7 @@ interactions:
     url: !!python/object/new:yarl.URL
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
-        - http
+        - https
         - emilystageaccount.blob.core.windows.net
         - /utcontainera2801741/bloba2801741
         - ''
@@ -185,11 +185,11 @@ interactions:
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
-      - b5efc7d2-e3b8-11e9-8432-001a7dda7113
+      - 9e522562-e48c-11e9-bf31-001a7dda7113
       x-ms-date:
-      - Mon, 30 Sep 2019 19:30:07 GMT
+      - Tue, 01 Oct 2019 20:47:01 GMT
       x-ms-page-write:
       - update
       x-ms-range:
@@ -197,7 +197,7 @@ interactions:
       x-ms-version:
       - '2019-02-02'
     method: PUT
-    uri: http://storagename.blob.core.windows.net/utcontainera2801741/bloba2801741?comp=page
+    uri: https://storagename.blob.core.windows.net/utcontainera2801741/bloba2801741?comp=page
   response:
     body:
       string: ''
@@ -210,18 +210,18 @@ interactions:
       : 1mBZE71nun3IX0hA/2fhCg==
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Mon, 30 Sep 2019 19:30:07 GMT
+      : Tue, 01 Oct 2019 20:47:00 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D745DC9A202D05"'
+      : '"0x8D746B082828A6E"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Mon, 30 Sep 2019 19:30:07 GMT
+      : Tue, 01 Oct 2019 20:47:01 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-blob-sequence-number: '0'
-      x-ms-request-id: 22eecb16-e01e-001e-5ac5-777ee3000000
+      x-ms-request-id: d6035eed-a01e-0042-4299-782bbb000000
       x-ms-request-server-encrypted: 'true'
       x-ms-version: '2019-02-02'
     status:
@@ -230,7 +230,7 @@ interactions:
     url: !!python/object/new:yarl.URL
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
-        - http
+        - https
         - emilystageaccount.blob.core.windows.net
         - /utcontainera2801741/bloba2801741
         - comp=page
@@ -241,15 +241,15 @@ interactions:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
-      - b5fe3108-e3b8-11e9-9439-001a7dda7113
+      - 9e5f14ca-e48c-11e9-8c9d-001a7dda7113
       x-ms-date:
-      - Mon, 30 Sep 2019 19:30:07 GMT
+      - Tue, 01 Oct 2019 20:47:01 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: http://storagename.blob.core.windows.net/utcontainera2801741/bloba2801741?comp=pagelist
+    uri: https://storagename.blob.core.windows.net/utcontainera2801741/bloba2801741?comp=pagelist
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><PageList><PageRange><Start>8704</Start><End>10751</End></PageRange></PageList>"
@@ -259,13 +259,13 @@ interactions:
       : application/xml
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Mon, 30 Sep 2019 19:30:07 GMT
+      : Tue, 01 Oct 2019 20:47:00 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D745DC9A202D05"'
+      : '"0x8D746B082828A6E"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Mon, 30 Sep 2019 19:30:07 GMT
+      : Tue, 01 Oct 2019 20:47:01 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
@@ -276,7 +276,7 @@ interactions:
       - Vary
       : Origin
       x-ms-blob-content-length: '1048576'
-      x-ms-request-id: 22eecb1a-e01e-001e-5ec5-777ee3000000
+      x-ms-request-id: d6035eef-a01e-0042-4499-782bbb000000
       x-ms-version: '2019-02-02'
     status:
       code: 200
@@ -284,7 +284,7 @@ interactions:
     url: !!python/object/new:yarl.URL
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
-        - http
+        - https
         - emilystageaccount.blob.core.windows.net
         - /utcontainera2801741/bloba2801741
         - comp=pagelist
@@ -295,17 +295,17 @@ interactions:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
-      - b60c47d8-e3b8-11e9-a7d0-001a7dda7113
+      - 9e6bdd48-e48c-11e9-9dd6-001a7dda7113
       x-ms-date:
-      - Mon, 30 Sep 2019 19:30:07 GMT
+      - Tue, 01 Oct 2019 20:47:01 GMT
       x-ms-range:
       - bytes=0-4095
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: http://storagename.blob.core.windows.net/utcontainera2801741/bloba2801741
+    uri: https://storagename.blob.core.windows.net/utcontainera2801741/bloba2801741
   response:
     body:
       string: "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
@@ -324,13 +324,13 @@ interactions:
       : application/octet-stream
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Mon, 30 Sep 2019 19:30:07 GMT
+      : Tue, 01 Oct 2019 20:47:00 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D745DC9A202D05"'
+      : '"0x8D746B082828A6E"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Mon, 30 Sep 2019 19:30:07 GMT
+      : Tue, 01 Oct 2019 20:47:01 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
@@ -339,10 +339,10 @@ interactions:
       : Origin
       x-ms-blob-sequence-number: '0'
       x-ms-blob-type: PageBlob
-      x-ms-creation-time: Mon, 30 Sep 2019 19:30:07 GMT
+      x-ms-creation-time: Tue, 01 Oct 2019 20:47:01 GMT
       x-ms-lease-state: available
       x-ms-lease-status: unlocked
-      x-ms-request-id: 22eecb1d-e01e-001e-61c5-777ee3000000
+      x-ms-request-id: d6035ef6-a01e-0042-4999-782bbb000000
       x-ms-server-encrypted: 'true'
       x-ms-version: '2019-02-02'
     status:
@@ -351,7 +351,7 @@ interactions:
     url: !!python/object/new:yarl.URL
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
-        - http
+        - https
         - emilystageaccount.blob.core.windows.net
         - /utcontainera2801741/bloba2801741
         - ''
@@ -362,15 +362,15 @@ interactions:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
-      - b619d998-e3b8-11e9-8bbe-001a7dda7113
+      - 9e7830ee-e48c-11e9-890a-001a7dda7113
       x-ms-date:
-      - Mon, 30 Sep 2019 19:30:08 GMT
+      - Tue, 01 Oct 2019 20:47:01 GMT
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: http://storagename.blob.core.windows.net/utcontainera2801741/bloba2801741?comp=pagelist
+    uri: https://storagename.blob.core.windows.net/utcontainera2801741/bloba2801741?comp=pagelist
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><PageList><PageRange><Start>8704</Start><End>10751</End></PageRange></PageList>"
@@ -380,13 +380,13 @@ interactions:
       : application/xml
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Mon, 30 Sep 2019 19:30:07 GMT
+      : Tue, 01 Oct 2019 20:47:00 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D745DC9A202D05"'
+      : '"0x8D746B082828A6E"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Mon, 30 Sep 2019 19:30:07 GMT
+      : Tue, 01 Oct 2019 20:47:01 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
@@ -397,7 +397,7 @@ interactions:
       - Vary
       : Origin
       x-ms-blob-content-length: '1048576'
-      x-ms-request-id: 22eecb20-e01e-001e-64c5-777ee3000000
+      x-ms-request-id: d6035efd-a01e-0042-4e99-782bbb000000
       x-ms-version: '2019-02-02'
     status:
       code: 200
@@ -405,7 +405,7 @@ interactions:
     url: !!python/object/new:yarl.URL
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
-        - http
+        - https
         - emilystageaccount.blob.core.windows.net
         - /utcontainera2801741/bloba2801741
         - comp=pagelist
@@ -416,19 +416,19 @@ interactions:
       Accept:
       - application/xml
       If-Match:
-      - '"0x8D745DC9A202D05"'
+      - '"0x8D746B082828A6E"'
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
-      - b626c690-e3b8-11e9-bb80-001a7dda7113
+      - 9e84d34c-e48c-11e9-ad8e-001a7dda7113
       x-ms-date:
-      - Mon, 30 Sep 2019 19:30:08 GMT
+      - Tue, 01 Oct 2019 20:47:01 GMT
       x-ms-range:
       - bytes=8192-9215
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: http://storagename.blob.core.windows.net/utcontainera2801741/bloba2801741
+    uri: https://storagename.blob.core.windows.net/utcontainera2801741/bloba2801741
   response:
     body:
       string: !!binary |
@@ -465,13 +465,13 @@ interactions:
       : application/octet-stream
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Mon, 30 Sep 2019 19:30:07 GMT
+      : Tue, 01 Oct 2019 20:47:00 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D745DC9A202D05"'
+      : '"0x8D746B082828A6E"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Mon, 30 Sep 2019 19:30:07 GMT
+      : Tue, 01 Oct 2019 20:47:01 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
@@ -480,10 +480,10 @@ interactions:
       : Origin
       x-ms-blob-sequence-number: '0'
       x-ms-blob-type: PageBlob
-      x-ms-creation-time: Mon, 30 Sep 2019 19:30:07 GMT
+      x-ms-creation-time: Tue, 01 Oct 2019 20:47:01 GMT
       x-ms-lease-state: available
       x-ms-lease-status: unlocked
-      x-ms-request-id: 22eecb24-e01e-001e-68c5-777ee3000000
+      x-ms-request-id: d6035f03-a01e-0042-5299-782bbb000000
       x-ms-server-encrypted: 'true'
       x-ms-version: '2019-02-02'
     status:
@@ -492,7 +492,7 @@ interactions:
     url: !!python/object/new:yarl.URL
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
-        - http
+        - https
         - emilystageaccount.blob.core.windows.net
         - /utcontainera2801741/bloba2801741
         - ''
@@ -503,19 +503,19 @@ interactions:
       Accept:
       - application/xml
       If-Match:
-      - '"0x8D745DC9A202D05"'
+      - '"0x8D746B082828A6E"'
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
-      - b633994a-e3b8-11e9-aaa6-001a7dda7113
+      - 9e9173f4-e48c-11e9-a4bc-001a7dda7113
       x-ms-date:
-      - Mon, 30 Sep 2019 19:30:08 GMT
+      - Tue, 01 Oct 2019 20:47:01 GMT
       x-ms-range:
       - bytes=9216-10239
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: http://storagename.blob.core.windows.net/utcontainera2801741/bloba2801741
+    uri: https://storagename.blob.core.windows.net/utcontainera2801741/bloba2801741
   response:
     body:
       string: !!binary |
@@ -552,13 +552,13 @@ interactions:
       : application/octet-stream
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Mon, 30 Sep 2019 19:30:07 GMT
+      : Tue, 01 Oct 2019 20:47:01 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D745DC9A202D05"'
+      : '"0x8D746B082828A6E"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Mon, 30 Sep 2019 19:30:07 GMT
+      : Tue, 01 Oct 2019 20:47:01 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
@@ -567,10 +567,10 @@ interactions:
       : Origin
       x-ms-blob-sequence-number: '0'
       x-ms-blob-type: PageBlob
-      x-ms-creation-time: Mon, 30 Sep 2019 19:30:07 GMT
+      x-ms-creation-time: Tue, 01 Oct 2019 20:47:01 GMT
       x-ms-lease-state: available
       x-ms-lease-status: unlocked
-      x-ms-request-id: 22eecb27-e01e-001e-6bc5-777ee3000000
+      x-ms-request-id: d6035f07-a01e-0042-5699-782bbb000000
       x-ms-server-encrypted: 'true'
       x-ms-version: '2019-02-02'
     status:
@@ -579,7 +579,7 @@ interactions:
     url: !!python/object/new:yarl.URL
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
-        - http
+        - https
         - emilystageaccount.blob.core.windows.net
         - /utcontainera2801741/bloba2801741
         - ''
@@ -590,19 +590,19 @@ interactions:
       Accept:
       - application/xml
       If-Match:
-      - '"0x8D745DC9A202D05"'
+      - '"0x8D746B082828A6E"'
       User-Agent:
-      - azsdk-python-storage-blob/12.0.0b3 Python/3.7.3 (Windows-10-10.0.18362-SP0)
+      - azsdk-python-storage-blob/12.0.0b4 Python/3.7.3 (Windows-10-10.0.18362-SP0)
       x-ms-client-request-id:
-      - b640dbe6-e3b8-11e9-9769-001a7dda7113
+      - 9e9dee82-e48c-11e9-af55-001a7dda7113
       x-ms-date:
-      - Mon, 30 Sep 2019 19:30:08 GMT
+      - Tue, 01 Oct 2019 20:47:01 GMT
       x-ms-range:
       - bytes=10240-11263
       x-ms-version:
       - '2019-02-02'
     method: GET
-    uri: http://storagename.blob.core.windows.net/utcontainera2801741/bloba2801741
+    uri: https://storagename.blob.core.windows.net/utcontainera2801741/bloba2801741
   response:
     body:
       string: !!binary |
@@ -639,13 +639,13 @@ interactions:
       : application/octet-stream
       ? !!python/object/new:multidict._istr.istr
       - Date
-      : Mon, 30 Sep 2019 19:30:07 GMT
+      : Tue, 01 Oct 2019 20:47:01 GMT
       ? !!python/object/new:multidict._istr.istr
       - Etag
-      : '"0x8D745DC9A202D05"'
+      : '"0x8D746B082828A6E"'
       ? !!python/object/new:multidict._istr.istr
       - Last-Modified
-      : Mon, 30 Sep 2019 19:30:07 GMT
+      : Tue, 01 Oct 2019 20:47:01 GMT
       ? !!python/object/new:multidict._istr.istr
       - Server
       : Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
@@ -654,10 +654,10 @@ interactions:
       : Origin
       x-ms-blob-sequence-number: '0'
       x-ms-blob-type: PageBlob
-      x-ms-creation-time: Mon, 30 Sep 2019 19:30:07 GMT
+      x-ms-creation-time: Tue, 01 Oct 2019 20:47:01 GMT
       x-ms-lease-state: available
       x-ms-lease-status: unlocked
-      x-ms-request-id: 22eecb28-e01e-001e-6cc5-777ee3000000
+      x-ms-request-id: d6035f0c-a01e-0042-5b99-782bbb000000
       x-ms-server-encrypted: 'true'
       x-ms-version: '2019-02-02'
     status:
@@ -666,7 +666,7 @@ interactions:
     url: !!python/object/new:yarl.URL
       state: !!python/tuple
       - !!python/object/new:urllib.parse.SplitResult
-        - http
+        - https
         - emilystageaccount.blob.core.windows.net
         - /utcontainera2801741/bloba2801741
         - ''

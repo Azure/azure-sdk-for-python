@@ -5,7 +5,6 @@
 # --------------------------------------------------------------------------
 
 from .._shared.policies_async import ExponentialRetry, LinearRetry, NoRetry
-from azure.storage.blob.aio.download_async import StorageStreamDownloader
 from .._shared.models import(
     LocationMode,
     ResourceTypes,

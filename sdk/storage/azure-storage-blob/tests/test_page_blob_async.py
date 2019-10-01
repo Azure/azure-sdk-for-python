@@ -1155,7 +1155,7 @@ class StoragePageBlobTestAsync(StorageTestCase):
         self.assertEqual(props.blob_type, BlobType.PageBlob)
 
     @record
-    def test_create_page_blob_with_no_overwrite(self):
+    def test_create_page_blob_with_no_overwrite_async(self):
         loop = asyncio.get_event_loop()
         loop.run_until_complete(self._test_create_page_blob_with_no_overwrite())
 

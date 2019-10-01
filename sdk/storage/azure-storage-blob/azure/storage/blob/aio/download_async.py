@@ -134,8 +134,8 @@ class _AsyncChunkDownloader(object):  # pylint: disable=too-many-instance-attrib
                 return True
             elif source_range['end'] < given_range_start:
                 pass
-            else:
-                return False
+
+            return False
 
         return True
 
