@@ -80,7 +80,7 @@ async def stress_send_async(producer: EventHubProducer, args, logger):
         return len(batch)
 
 
-def get_logger(filename, method_name, level=logging.INFO):
+def get_logger(filename, method_name, level=logging.INFO, print_console=False):
     stress_logger = logging.getLogger(method_name)
     stress_logger.setLevel(level)
     azure_logger = logging.getLogger("azure.eventhub")
@@ -89,14 +89,15 @@ def get_logger(filename, method_name, level=logging.INFO):
     uamqp_logger.setLevel(level)
 
     formatter = logging.Formatter('%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
-    console_handler = logging.StreamHandler(stream=sys.stdout)
-    console_handler.setFormatter(formatter)
-    if not azure_logger.handlers:
-        azure_logger.addHandler(console_handler)
-    if not uamqp_logger.handlers:
-        uamqp_logger.addHandler(console_handler)
-    if not stress_logger.handlers:
-        stress_logger.addHandler(console_handler)
+    if print_console:
+        console_handler = logging.StreamHandler(stream=sys.stdout)
+        console_handler.setFormatter(formatter)
+        if not azure_logger.handlers:
+            azure_logger.addHandler(console_handler)
+        if not uamqp_logger.handlers:
+            uamqp_logger.addHandler(console_handler)
+        if not stress_logger.handlers:
+            stress_logger.addHandler(console_handler)
 
     if filename:
         file_handler = RotatingFileHandler(filename, maxBytes=20*1024*1024, backupCount=3)
@@ -127,6 +128,7 @@ class StressTestRunner(object):
         self.argument_parser.add_argument("--aad_secret", help="AAD secret")
         self.argument_parser.add_argument("--aad_tenant_id", help="AAD tenant id")
         self.argument_parser.add_argument("--payload", help="payload size", type=int, default=1024)
+        self.argument_parser.add_argument("--print_console", help="print to console", type=bool, default=False)
         self.args, _ = parser.parse_known_args()
 
         self.running = False
@@ -164,8 +166,8 @@ class StressTestRunner(object):
 
     def run_sync(self):
         method_name = self.args.method
-        logger = get_logger("{}.log".format(method_name), method_name, level=logging.INFO)
-        method_name = self.args.method
+        logger = get_logger("{}.log".format(method_name), method_name,
+                            level=logging.INFO, print_console=self.args.print_console)
         test_method = globals()[method_name]
         client = self.create_client(EventHubClient)
         self.running = True
@@ -214,7 +216,8 @@ class StressTestRunner(object):
 
     async def run_async(self):
         method_name = self.args.method
-        logger = get_logger("{}.log".format(method_name), method_name, level=logging.INFO)
+        logger = get_logger("{}.log".format(method_name), method_name,
+                            level=logging.INFO, print_console=self.args.print_console)
         test_method = globals()[method_name]
         client = self.create_client(EventHubClientAsync)
         self.running = True
